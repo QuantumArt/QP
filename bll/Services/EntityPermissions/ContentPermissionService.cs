@@ -7,74 +7,71 @@ using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL.Services.EntityPermissions
 {
-	public class ContentPermissionService : PermissionServiceAbstract
-	{
-		private Lazy<IContentPermissionRepository> repository = new Lazy<IContentPermissionRepository>(() => new ContentPermissionRepository());
-		public override IPermissionRepository Repository { get { return repository.Value; } }
-		private IContentPermissionRepository ContentPermissionRepository { get { return repository.Value; } }
+    public class ContentPermissionService : PermissionServiceAbstract
+    {
+        private readonly Lazy<IContentPermissionRepository> _repository = new Lazy<IContentPermissionRepository>(() => new ContentPermissionRepository());
 
-		public override IPermissionListViewModelSettings ListViewModelSettings
-		{
-			get 
-			{
-				return new GenericPermissionListViewModelSettings
-				{
-					ActionCode = ActionCode.ContentPermissions,
-					AddNewItemActionCode = ActionCode.AddNewContentPermission,
-					EntityTypeCode = EntityTypeCode.ContentPermission,
-					IsPropagateable = true,
-					CanHide = true,
-					PermissionEntityTypeCode = EntityTypeCode.ContentPermission
-				};
-			}
-		}
+        public override IPermissionRepository Repository => _repository.Value;
 
-		public override IPermissionViewModelSettings ViewModelSettings
-		{
-			get 
-			{
-				return new GenericPermissionViewModelSettings
-				{
-					ActionCode = ActionCode.ContentPermissionProperties,
-					EntityTypeCode = EntityTypeCode.ContentPermission,
-					IsPropagateable = true,
-					CanHide = true
-				};
-			}
-		}
+        private IContentPermissionRepository ContentPermissionRepository => _repository.Value;
 
-		public override EntityPermission Save(EntityPermission permission)
-		{
-			if (permission.ExplicitPermissionToRelatedContents)
-				ExplicitPermissionToRelatedContents(permission);			
+        public override IPermissionListViewModelSettings ListViewModelSettings => new GenericPermissionListViewModelSettings
+        {
+            ActionCode = ActionCode.ContentPermissions,
+            AddNewItemActionCode = ActionCode.AddNewContentPermission,
+            EntityTypeCode = EntityTypeCode.ContentPermission,
+            IsPropagateable = true,
+            CanHide = true,
+            PermissionEntityTypeCode = EntityTypeCode.ContentPermission
+        };
 
-			return base.Save(permission);
-		}
+        public override IPermissionViewModelSettings ViewModelSettings => new GenericPermissionViewModelSettings
+        {
+            ActionCode = ActionCode.ContentPermissionProperties,
+            EntityTypeCode = EntityTypeCode.ContentPermission,
+            IsPropagateable = true,
+            CanHide = true
+        };
 
-		public override EntityPermission Update(EntityPermission permission)
-		{
-			if (permission.ExplicitPermissionToRelatedContents)
-				ExplicitPermissionToRelatedContents(permission);
+        public override EntityPermission Save(EntityPermission permission)
+        {
+            if (permission.ExplicitPermissionToRelatedContents)
+            {
+                ExplicitPermissionToRelatedContents(permission);
+            }
 
-			return base.Update(permission);
-		}
+            return base.Save(permission);
+        }
 
-		private void ExplicitPermissionToRelatedContents(EntityPermission permission)
-		{
-			Debug.Assert(permission != null);
+        public override EntityPermission Update(EntityPermission permission)
+        {
+            if (permission.ExplicitPermissionToRelatedContents)
+            {
+                ExplicitPermissionToRelatedContents(permission);
+            }
 
-			Content content = ContentPermissionRepository.GetContentByID(permission.ParentEntityId);
-			if (content == null)
-				throw new ApplicationException("Content has not been found. ID: " + permission.ParentEntityId);						
+            return base.Update(permission);
+        }
 
-			IEnumerable<int> relatedContentID = content.Fields
-				.Select(f => f.RelateToContentId)
-				.Where(id => id.HasValue && id.Value != permission.ParentEntityId)
-				.Select(id => id.Value)
-				.Distinct()
-				.ToArray();
-			IEnumerable<int> noPermissionRelatedContentID = ContentPermissionRepository.FilterNoPermissionContent(relatedContentID, permission.UserId, permission.GroupId);
-			ContentPermissionRepository.MultipleSetPermission(noPermissionRelatedContentID, permission.UserId, permission.GroupId, Constants.PermissionLevel.Read);			
-		}
-	}
+        private void ExplicitPermissionToRelatedContents(EntityPermissionBase permission)
+        {
+            Debug.Assert(permission != null);
+
+            var content = ContentPermissionRepository.GetContentById(permission.ParentEntityId);
+            if (content == null)
+            {
+                throw new ApplicationException("Content has not been found. ID: " + permission.ParentEntityId);
+            }
+
+            IEnumerable<int> relatedContentId = content.Fields
+                .Select(f => f.RelateToContentId)
+                .Where(id => id.HasValue && id.Value != permission.ParentEntityId)
+                .Select(id => id.Value)
+                .Distinct()
+                .ToArray();
+
+            var noPermissionRelatedContentId = ContentPermissionRepository.FilterNoPermissionContent(relatedContentId, permission.UserId, permission.GroupId);
+            ContentPermissionRepository.MultipleSetPermission(noPermissionRelatedContentId, permission.UserId, permission.GroupId, PermissionLevel.Read);
+        }
+    }
 }

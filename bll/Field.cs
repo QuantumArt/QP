@@ -419,8 +419,7 @@ namespace Quantumart.QP8.BLL
 
         public static int ParseFormName(string formName)
         {
-            int value;
-            return int.TryParse(formName.Replace(Prefix, string.Empty), out value) ? value : 0;
+            return int.TryParse(formName.Replace(Prefix, string.Empty), out int value) ? value : 0;
         }
 
         public string ParamName => "@" + FormName;
@@ -707,8 +706,7 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = string.Empty;
-                int parsedArticleId;
-                if (Relation != null && int.TryParse(O2MDefaultValue, out parsedArticleId))
+                if (Relation != null && int.TryParse(O2MDefaultValue, out int parsedArticleId))
                 {
                     result = ArticleRepository.GetFieldValue(parsedArticleId, Relation.ContentId, Relation.Name);
                 }
@@ -722,8 +720,7 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = string.Empty;
-                int parsedArticleId;
-                if (Relation != null && int.TryParse(M2MDefaultValue, out parsedArticleId))
+                if (Relation != null && int.TryParse(M2MDefaultValue, out int parsedArticleId))
                 {
                     result = ArticleRepository.GetFieldValue(parsedArticleId, Relation.ContentId, Relation.Name);
                 }
@@ -2093,8 +2090,7 @@ namespace Quantumart.QP8.BLL
                             foreach (var error in ex.Errors)
                             {
                                 var isLinq = false;
-                                var expr = error.Property?.Body as MemberExpression;
-                                if (expr != null && expr.Member.Name == "LinqPropertyName")
+                                if (error.Property?.Body is MemberExpression expr && expr.Member.Name == "LinqPropertyName")
                                 {
                                     errors.ErrorFor(f => f.LinqBackPropertyName, error.Message);
                                     isLinq = true;
@@ -2261,7 +2257,7 @@ namespace Quantumart.QP8.BLL
                 // Перестроить подчиненные контенты
                 if (removeVirtualFields)
                 {
-                    helper.RebuildSubContentViews(rebuildedSubContentViews);
+                    helper.RebuildSubContentViews(rebuildedSubContentViews.ToList());
                 }
 
                 // Удалить записи OrderField
@@ -2519,7 +2515,7 @@ namespace Quantumart.QP8.BLL
                 var result = Persist(explicitOrder);
                 if (RebuildVirtualContents)
                 {
-                    var helper = new VirtualContentHelper(result.ForceVirtualFieldIds);
+                    var helper = new VirtualContentHelper(result.ForceVirtualFieldIds.ToList());
                     helper.UpdateVirtualFields(result);
                     result.NewVirtualFieldIds = result.NewVirtualFieldIds?.Concat(helper.NewFieldIds).ToArray() ?? helper.NewFieldIds;
                     result.ForceVirtualFieldIds = helper.ForceNewFieldIds;

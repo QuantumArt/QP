@@ -13,7 +13,7 @@ namespace Quantumart.QP8.DAL
     {
         public static DataRow[] GetRelationSecurityFields(SqlConnection sqlConnection)
         {
-            string sqlText = @"
+            const string sqlText = @"
 				select coalesce(ca3.content_id, ca1.content_id) as path_content_id, coalesce(ca4.CONTENT_ID, cl.linked_content_id) as rel_content_id, ca1.content_id, 
 				cast(case when ca1.link_id is not null then 1 else 0 end as bit) as is_m2m,
 				cast(case when ca2.attribute_id is not null then 1 else 0 end as bit) as is_ext,
@@ -27,23 +27,23 @@ namespace Quantumart.QP8.DAL
 				 where ca1.USE_RELATION_SECURITY = 1
 			 ";
 
-            using (SqlCommand cmd = SqlCommandFactory.Create(sqlText, sqlConnection))
+            using (var cmd = SqlCommandFactory.Create(sqlText, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                DataTable dt = new DataTable();
+                var dt = new DataTable();
                 new SqlDataAdapter(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static List<RelationSecurityPathItem> FindRelationSecurityPath(IEnumerable<DataRow> pathRows, int contentId)
+        public static List<RelationSecurityPathItem> FindRelationSecurityPath(List<DataRow> pathRows, int contentId)
         {
             var result = new List<RelationSecurityPathItem>();
 
-            int currentContentId = contentId;
+            var currentContentId = contentId;
 
-            int old_i = 0;
-            int i = 1;
+            var oldI = 0;
+            var i = 1;
 
             while (true)
             {
@@ -52,55 +52,54 @@ namespace Quantumart.QP8.DAL
                     .OrderBy(n => (int)n.Field<decimal>("attribute_id"))
                     .ToArray();
                 if (!nextRows.Any())
+                {
                     break;
+                }
+
+                if (nextRows.Any(n => n.Field<bool>("is_ext")))
+                {
+                    if (!nextRows.All(n => n.Field<bool>("is_ext")))
+                    {
+                        throw new Exception("Incorrect relation security settings: mixed extensions and normal");
+                    }
+
+                    var nextIds = nextRows.Select(n => (int)n.Field<decimal>("rel_content_id")).Distinct();
+                    if (nextIds.Count() > 1)
+                    {
+                        throw new Exception("Incorrect relation security settings: extensions targets different contents");
+                    }
+
+                    var param = new RelationSecurityPathItem
+                    {
+                        ContentId = (int)nextRows.First().Field<decimal>("path_content_id"),
+                        Extensions = nextRows.Select((n, k) => new RelationSecurityPathItem(n) { Order = i + k + 1, JoinOrder = oldI }).ToArray(),
+                        Order = i,
+                        JoinOrder = oldI
+                    };
+
+                    oldI = i;
+                    i = i + 1 + param.Extensions.Length;
+                    result.Add(param);
+                }
                 else
                 {
-                    if (nextRows.Any(n => n.Field<bool>("is_ext")))
+                    var param = new RelationSecurityPathItem(nextRows.First()) { Order = i, JoinOrder = oldI };
+                    oldI = i;
+                    i++;
+
+                    if (nextRows.Length > 1)
                     {
-                        if (!nextRows.All(n => n.Field<bool>("is_ext")))
-                            throw new Exception("Incorrect relation security settings: mixed extensions and normal");
-
-                        var nextIds = nextRows.Select(n => (int)n.Field<decimal>("rel_content_id")).Distinct();
-                        if (nextIds.Count() > 1)
-                            throw new Exception("Incorrect relation security settings: extensions targets different contents");
-
-                        var param =
-                            new RelationSecurityPathItem()
-                            {
-                                ContentId = (int)nextRows.First().Field<decimal>("path_content_id"),
-                                Extensions =
-                                    nextRows.Select((n, k) => new RelationSecurityPathItem(n) { Order = i + k + 1, JoinOrder = old_i }).ToArray(),
-                                Order = i,
-                                JoinOrder = old_i
-                            };
-                        old_i = i;
-                        i = i + 1 + param.Extensions.Count();
-
-                        result.Add(param);
+                        param.Secondary = nextRows.Skip(1).Select((n, j) => new RelationSecurityPathItem(n) { Order = i + j + 1, JoinOrder = param.JoinOrder }).ToArray();
+                        i = i + param.Secondary.Length;
                     }
                     else
                     {
-                        var param = new RelationSecurityPathItem(nextRows.First()) { Order = i, JoinOrder = old_i };
-                        old_i = i;
-                        i++;
-                        if (nextRows.Count() > 1)
-                        {
-                            param.Secondary =
-                                nextRows.Skip(1)
-                                    .Select((n, j) => new RelationSecurityPathItem(n) { Order = i + j + 1, JoinOrder = param.JoinOrder })
-                                    .ToArray();
-                            i = i + param.Secondary.Count();
-                        }
-                        else
-                        {
-                            param.Secondary = new RelationSecurityPathItem[] { };
-                        }
-                        result.Add(param);
-
-
+                        param.Secondary = new RelationSecurityPathItem[] { };
                     }
-                    currentContentId = nextRows.Select(n => (int)(n.Field<decimal?>("rel_content_id") ?? 0)).First();
+                    result.Add(param);
                 }
+
+                currentContentId = nextRows.Select(n => (int)(n.Field<decimal?>("rel_content_id") ?? 0)).First();
             }
 
             return result;
@@ -109,35 +108,33 @@ namespace Quantumart.QP8.DAL
         public static Dictionary<int, bool> CheckArticleSecurity(SqlConnection sqlConnection, int contentId, int[] testIds,
             int userId, int startLevel)
         {
-            var columnName = "content_item_id";
-            var entityName = EntityTypeCode.OldArticle;
-            var parentEntityName = EntityTypeCode.Content;
-
+            const string columnName = "content_item_id";
+            const string entityName = EntityTypeCode.OldArticle;
+            const string parentEntityName = EntityTypeCode.Content;
             return CheckSecurity(sqlConnection, contentId, testIds, userId, startLevel, entityName, parentEntityName, columnName);
         }
 
         public static Dictionary<int, bool> CheckContentSecurity(SqlConnection sqlConnection, int siteId, int[] testIds,
-    int userId, int startLevel)
+            int userId, int startLevel)
         {
-            var columnName = "content_id";
-            var entityName = EntityTypeCode.Content;
-            var parentEntityName = EntityTypeCode.Site;
-
+            const string columnName = "content_id";
+            const string entityName = EntityTypeCode.Content;
+            const string parentEntityName = EntityTypeCode.Site;
             return CheckSecurity(sqlConnection, siteId, testIds, userId, startLevel, entityName, parentEntityName, columnName);
         }
 
-        private static Dictionary<int, bool> CheckSecurity(SqlConnection sqlConnection, int parentId, int[] testIds, int userId, int startLevel, string entityName, string parentEntityName, string columnName)
+        private static Dictionary<int, bool> CheckSecurity(SqlConnection sqlConnection, int parentId, IEnumerable<int> testIds, int userId, int startLevel, string entityName, string parentEntityName, string columnName)
         {
             var granted = new Dictionary<int, bool>();
-            string securitySql = Common.GetPermittedItemsAsQuery(sqlConnection, userId, 0, startLevel, PermissionLevel.FullAccess,
+            var securitySql = Common.GetPermittedItemsAsQuery(sqlConnection, userId, 0, startLevel, PermissionLevel.FullAccess,
                 entityName, parentEntityName, parentId);
 
-            var sql = String.Format(
+            var sql = string.Format(
                 @" select i.id, cast((case when pi.{1} is null then 0 else 1 end) as bit) as granted from @ids i
 				left join ({0}) as pi on pi.{1} = i.id "
                 , securitySql, columnName);
 
-            using (SqlCommand cmd = SqlCommandFactory.Create(sql, sqlConnection))
+            using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured)
                 {
@@ -159,27 +156,27 @@ namespace Quantumart.QP8.DAL
         public static string GetSecurityPathSql(List<RelationSecurityPathItem> items, int contentId)
         {
             if (items == null)
-                throw new ArgumentNullException("Invalid security path");
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
             var sqlBuilder = new StringBuilder();
-            var selectBuilder = new StringBuilder();
-
             var lastItem = items.Last();
-
-            var selects = Enumerable.Repeat<RelationSecurityPathItem>(lastItem, 1).
-                Concat(lastItem.Secondary).
-                Select(n => GetSelectExpression(n));
-
-            sqlBuilder.Append(string.Format("select c0.content_item_id as id, {0} from content_{1}_united c0 ",
-                string.Join(", ", selects), contentId));
-
+            var selects = Enumerable.Repeat(lastItem, 1).Concat(lastItem.Secondary).Select(GetSelectExpression);
+            sqlBuilder.Append($"select c0.content_item_id as id, {string.Join(", ", selects)} from content_{contentId}_united c0 ");
             foreach (var item in items)
             {
                 if (item != lastItem)
                 {
                     if (item.LinkId.HasValue)
+                    {
                         throw new ApplicationException("Invalid security path settings: m2m");
-                    else if (item.Secondary != null && item.Secondary.Any())
+                    }
+
+                    if (item.Secondary != null && item.Secondary.Any())
+                    {
                         throw new ApplicationException("Invalid security path settings: secondary");
+                    }
                 }
 
                 if (!item.LinkId.HasValue)
@@ -194,18 +191,17 @@ namespace Quantumart.QP8.DAL
                                         @"select {0} as agg, il.linked_item_id as {3} From content_{2}_united c
 											inner join item_link il on c.content_item_id = il.item_id and il.link_id = {1} {4} ",
                                         n.AggAttributeName, n.LinkId.Value, n.ContentId, first.AttributeName, Environment.NewLine
-                                        )
+                                    )
                                     : string.Format(
                                         "select {0} as agg, {1} as {3} From content_{2}_united {4}", n.AggAttributeName, n.AttributeName, n.ContentId,
                                         first.AttributeName, Environment.NewLine
-                                        ))
-                            );
+                                    ))
+                        );
 
                         sqlBuilder.AppendFormat("inner join ({3}{0}{3}) c{1} on c{1}.agg = c{2}.CONTENT_ITEM_ID{3}", inner, first.Order,
                             item.JoinOrder, Environment.NewLine);
                         sqlBuilder.AppendFormat("inner join content_{0}_united c{1} on c{2}.{3} = c{1}.CONTENT_ITEM_ID{4}",
                             first.RelContentId, item.Order, first.Order, first.AttributeName, Environment.NewLine);
-
                     }
                     else if (!item.IsClassifier)
                     {
@@ -222,7 +218,6 @@ namespace Quantumart.QP8.DAL
                             secItem.RelContentId, secItem.Order, secItem.JoinOrder, secItem.AttributeName, Environment.NewLine);
                     }
                 }
-
             }
 
             sqlBuilder.AppendFormat("where c0.content_item_id in (select id from @ids)");
@@ -233,23 +228,17 @@ namespace Quantumart.QP8.DAL
         {
             if (n.IsClassifier)
             {
-                return String.Format("c{0}.[{1}]", n.JoinOrder, n.AttributeName);
+                return $"c{n.JoinOrder}.[{n.AttributeName}]";
             }
 
-            if (n.LinkId.HasValue)
-            {
-                return string.Format("dbo.qp_link_ids({0}, c{1}.CONTENT_ITEM_ID, 1) as '{2}'", n.LinkId, n.JoinOrder, n.RelContentId);
-            }
-            else
-            {
-                return string.Format("cast(c{0}.content_item_id as nvarchar(30)) as '{1}'", n.Order, n.RelContentId);
-            }
+            return n.LinkId.HasValue
+                ? $"dbo.qp_link_ids({n.LinkId}, c{n.JoinOrder}.CONTENT_ITEM_ID, 1) as '{n.RelContentId}'"
+                : $"cast(c{n.Order}.content_item_id as nvarchar(30)) as '{n.RelContentId}'";
         }
 
         public static Dictionary<int, bool> CheckLockedBy(SqlConnection dbConnection, int[] ids, int currentUserId, bool forceUnlock)
         {
-            string sql =
-                @"select locked_by, content_item_id from content_item ci with(nolock)
+            const string sql = @"select locked_by, content_item_id from content_item ci with(nolock) 
 				inner join @ids i on i.id = ci.content_item_id where locked_by is not null and locked_by <> @userId ";
 
             var result = ids.ToDictionary(kvp => kvp, kvp => true);
@@ -272,36 +261,36 @@ namespace Quantumart.QP8.DAL
                             result[id] = false;
                         }
                     }
-
                 }
             }
 
             return result;
-
-
         }
-        public static RelationSecurityInfo GetRelationSecurityInfo(SqlConnection dbConnection,
-            int contentId, int[] ids)
+
+        public static RelationSecurityInfo GetRelationSecurityInfo(SqlConnection dbConnection, int contentId, int[] ids)
         {
             var result = new RelationSecurityInfo();
             var pathRows = GetRelationSecurityFields(dbConnection);
-            var securityPath = FindRelationSecurityPath(pathRows, contentId);
-
+            var securityPath = FindRelationSecurityPath(pathRows.ToList(), contentId);
             if (securityPath.Count <= 0)
             {
                 var isEndNode = pathRows.Any(n => (int)(n.Field<decimal?>("rel_content_id") ?? 0) == contentId);
                 if (!isEndNode)
+                {
                     result.MakeEmpty();
+                }
                 else
+                {
                     result.AddContentInItemMapping(contentId, ids.ToDictionary(n => n, m => Enumerable.Repeat(m, 1).ToArray()));
+                }
+
                 return result;
             }
 
             var lastItem = securityPath.Last();
-            var lastItemWithSecondary = Enumerable.Repeat(lastItem, 1).Concat(lastItem.Secondary);
+            var lastItemWithSecondary = Enumerable.Repeat(lastItem, 1).Concat(lastItem.Secondary).ToList();
             var contentIds = lastItemWithSecondary.Where(n => !n.IsClassifier).Select(n => n.RelContentId).ToArray();
             var attNames = lastItemWithSecondary.Where(n => n.IsClassifier).Select(n => n.AttributeName).ToArray();
-
             foreach (var item in contentIds)
             {
                 result.AddContentInItemMapping(item, new Dictionary<int, int[]>());
@@ -345,7 +334,7 @@ namespace Quantumart.QP8.DAL
         }
 
         private static void ProcessSecurityPathSqlReader(SqlDataReader reader, int[] contentIds, string[] classifierNames,
-             RelationSecurityInfo result)
+            RelationSecurityInfo result)
         {
             var id = (int)(decimal)reader["id"];
             foreach (var item in contentIds)
@@ -361,13 +350,11 @@ namespace Quantumart.QP8.DAL
                     var clValue = Converter.ToInt32((decimal)reader[clName]);
                     result.AppendToContentMapping(clValue, id);
                 }
-
             }
         }
 
         public class RelationSecurityPathItem
         {
-
             public RelationSecurityPathItem()
             {
             }
@@ -404,7 +391,6 @@ namespace Quantumart.QP8.DAL
             public RelationSecurityPathItem[] Extensions { get; set; }
 
             public RelationSecurityPathItem[] Secondary { get; set; }
-
         }
 
         public class RelationSecurityInfo
@@ -417,29 +403,22 @@ namespace Quantumart.QP8.DAL
 
             private Dictionary<int, Dictionary<int, int[]>> Data { get; set; }
 
-            private Dictionary<int, int> ContentData { get; set; }
+            private Dictionary<int, int> ContentData { get; }
 
-            public IEnumerable<int> ContentIds
-            {
-                get { return Data.Keys; }
-            }
+            public IEnumerable<int> ContentIds => Data.Keys;
 
             public Dictionary<int, int[]> GetItemMapping(int contentId)
             {
                 Dictionary<int, int[]> result;
                 if (Data.TryGetValue(contentId, out result))
+                {
                     return result;
-                else
-                    throw new ApplicationException("Security mapping not exists:" + contentId);
+                }
+
+                throw new ApplicationException("Security mapping not exists:" + contentId);
             }
 
-            public bool IsEmpty
-            {
-                get
-                {
-                    return Data == null;
-                }
-            }
+            public bool IsEmpty => Data == null;
 
             public void AddContentInItemMapping(int contentId, Dictionary<int, int[]> initValues)
             {
@@ -448,7 +427,6 @@ namespace Quantumart.QP8.DAL
 
             internal void AppendToItemMapping(int contentId, int id, int[] ids)
             {
-
                 if (!Data[contentId].ContainsKey(id))
                 {
                     Data[contentId].Add(id, ids);
@@ -459,10 +437,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
 
-            public bool IsItemMappingExists(int contentId, int id)
-            {
-                return Data[contentId].ContainsKey(id);
-            }
+            public bool IsItemMappingExists(int contentId, int id) => Data[contentId].ContainsKey(id);
 
             public void MakeEmpty()
             {
@@ -479,10 +454,7 @@ namespace Quantumart.QP8.DAL
                 return ContentData.Select(n => n.Value).Distinct().ToArray();
             }
 
-            public Dictionary<int, int> GetContentMapping()
-            {
-                return ContentData;
-            }
+            public Dictionary<int, int> GetContentMapping() => ContentData;
         }
     }
 }

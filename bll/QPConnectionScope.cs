@@ -86,7 +86,7 @@ namespace Quantumart.QP8.BLL
             Current = null;
         }
 
-        public SqlConnection DbConnection => (SqlConnection) EfConnection.StoreConnection;
+        public SqlConnection DbConnection => (SqlConnection)EfConnection.StoreConnection;
 
         public EntityConnection EfConnection
         {
@@ -125,7 +125,7 @@ namespace Quantumart.QP8.BLL
             "res://*/QP8Model.csdl",
             "res://*/QP8Model.ssdl",
             "res://*/QP8Model.msl"
-        }, new[] {typeof(QP8Entities).Assembly});
+        }, new[] { typeof(QP8Entities).Assembly });
 
         [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         private MetadataWorkspace MetadataWorkspace
@@ -142,7 +142,7 @@ namespace Quantumart.QP8.BLL
                 var ssdl = XElement.Load(metaReader);
                 CorrectSsdl(ssdl);
 
-                var rdr = new List<XmlReader> {ssdl.CreateReader()};
+                var rdr = new List<XmlReader> { ssdl.CreateReader() };
                 var sic = new StoreItemCollection(rdr);
                 rdr[0] = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.csdl"));
 

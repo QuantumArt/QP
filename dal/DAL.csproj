@@ -111,7 +111,7 @@
     <Compile Include="DTO\SitePageOptions.cs" />
     <Compile Include="DTO\UserPageOptions.cs" />
     <Compile Include="DynamicQuery.cs" />
-    <Compile Include="IQPEntityObject.cs" />
+    <Compile Include="IQpEntityObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QP8Entities.cs" />
     <Compile Include="QP8Model.cs">

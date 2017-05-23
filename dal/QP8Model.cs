@@ -234,14 +234,14 @@ using System.Runtime.Serialization;
 namespace Quantumart.QP8.DAL
 {
     #region Contexts
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     public partial class QP8Entities : ObjectContext
     {
         #region Constructors
-    
+
         /// <summary>
         /// Initializes a new QP8Entities object using the connection string found in the 'QP8Entities' section of the application configuration file.
         /// </summary>
@@ -250,7 +250,7 @@ namespace Quantumart.QP8.DAL
             this.ContextOptions.LazyLoadingEnabled = false;
             OnContextCreated();
         }
-    
+
         /// <summary>
         /// Initialize a new QP8Entities object.
         /// </summary>
@@ -259,7 +259,7 @@ namespace Quantumart.QP8.DAL
             this.ContextOptions.LazyLoadingEnabled = false;
             OnContextCreated();
         }
-    
+
         /// <summary>
         /// Initialize a new QP8Entities object.
         /// </summary>
@@ -268,17 +268,17 @@ namespace Quantumart.QP8.DAL
             this.ContextOptions.LazyLoadingEnabled = false;
             OnContextCreated();
         }
-    
+
         #endregion
-    
+
         #region Partial Methods
-    
+
         partial void OnContextCreated();
-    
+
         #endregion
-    
+
         #region ObjectSet Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -294,7 +294,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ActionTypeDAL> _ActionTypeSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -310,7 +310,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ArticleWorkflowBindDAL> _ArticleWorkflowBindSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -326,7 +326,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<FieldTypeDAL> _FieldTypeSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -342,7 +342,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<BackendActionDAL> _BackendActionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -358,7 +358,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<BackendActionLogDAL> _BackendActionLogSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -374,7 +374,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<CharsetDAL> _CharsetSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -390,7 +390,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<CodeSnippetDAL> _CodeSnippetSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -406,7 +406,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContainerDAL> _ContainerSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -422,7 +422,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentDAL> _ContentSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -438,7 +438,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentPermissionDAL> _ContentPermissionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -454,7 +454,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<FieldDAL> _FieldSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -470,7 +470,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentConstraintDAL> _ContentConstraintSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -486,7 +486,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentDataDAL> _ContentDataSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -502,7 +502,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentFolderDAL> _ContentFolderSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -518,7 +518,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentFolderAccessDAL> _ContentFolderAccessSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -534,7 +534,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentFormDAL> _ContentFormSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -550,7 +550,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentGroupDAL> _ContentGroupSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -566,7 +566,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ArticleDAL> _ArticleSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -582,7 +582,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ArticlePermissionDAL> _ArticlePermissionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -598,7 +598,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ArticleScheduleDAL> _ArticleScheduleSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -614,7 +614,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ArticleStatusHistoryDAL> _ArticleStatusHistorySet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -630,7 +630,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ArticleVersionDAL> _ArticleVersionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -646,7 +646,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentToContentDAL> _ContentToContentSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -662,7 +662,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentWorkflowBindDAL> _ContentWorkflowBindSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -678,7 +678,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<DangerousActionsDAL> _DangerousActionsSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -694,7 +694,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<DeveloperDAL> _DeveloperSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -710,7 +710,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<DynamicImageFieldDAL> _DynamicImageFieldSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -726,7 +726,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<EntityTypeDAL> _EntityTypeSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -742,7 +742,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<SiteFolderDAL> _SiteFolderSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -758,7 +758,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<SiteFolderPermissionDAL> _SiteFolderPermissionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -774,7 +774,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ItemToItemDAL> _ItemToItemSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -790,7 +790,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ItemToItemVersionDAL> _ItemToItemVersionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -806,7 +806,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<LanguagesDAL> _LanguagesSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -822,7 +822,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<LocaleDAL> _LocaleSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -838,7 +838,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<MaskTemplateDAL> _MaskTemplateSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -854,7 +854,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<NetLanguagesDAL> _NetLanguagesSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -870,7 +870,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<NotificationsDAL> _NotificationsSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -886,7 +886,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<NotificationsSentDAL> _NotificationsSentSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -902,7 +902,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ObjectDAL> _ObjectSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -918,7 +918,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ObjectFormatDAL> _ObjectFormatSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -934,7 +934,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ObjectFormatVersionDAL> _ObjectFormatVersionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -950,7 +950,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ObjectTypeDAL> _ObjectTypeSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -966,7 +966,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ObjectValuesDAL> _ObjectValuesSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -982,7 +982,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<PageDAL> _PageSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -998,7 +998,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<PageTemplateDAL> _PageTemplateSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1014,7 +1014,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<PageTraceDAL> _PageTraceSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1030,7 +1030,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<PageTraceFormatDAL> _PageTraceFormatSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1046,7 +1046,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<PageTraceFormatValuesDAL> _PageTraceFormatValuesSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1062,7 +1062,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<PermissionLevelDAL> _PermissionLevelSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1078,7 +1078,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<RemovedEntitiesDAL> _RemovedEntitiesSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1094,7 +1094,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<RemovedFilesDAL> _RemovedFilesSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1110,7 +1110,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<SessionsLogDAL> _SessionsLogSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1126,7 +1126,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<SiteDAL> _SiteSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1142,7 +1142,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<SitePermissionDAL> _SitePermissionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1158,7 +1158,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<StatusTypeDAL> _StatusTypeSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1174,7 +1174,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<StyleDAL> _StyleSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1190,7 +1190,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<StyleAttributeDAL> _StyleAttributeSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1206,7 +1206,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<StyleTagDAL> _StyleTagSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1222,7 +1222,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<SystemStatusTypeDAL> _SystemStatusTypeSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1238,7 +1238,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<TodayPanelsDAL> _TodayPanelsSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1254,7 +1254,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<TranslationsDAL> _TranslationsSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1270,7 +1270,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<UnionContentsDAL> _UnionContentsSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1286,7 +1286,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<UserGroupDAL> _UserGroupSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1302,7 +1302,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<UserQueryAttrsDAL> _UserQueryAttrsSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1318,7 +1318,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<UserQueryContentsDAL> _UserQueryContentsSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1334,7 +1334,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<UserToPanelDAL> _UserToPanelSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1350,7 +1350,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<UserDAL> _UserSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1366,7 +1366,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<VersionContentDataDAL> _VersionContentDataSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1382,7 +1382,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<WaitingForApprovalDAL> _WaitingForApprovalSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1398,7 +1398,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<WorkflowDAL> _WorkflowSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1414,7 +1414,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<WorkflowPermissionDAL> _WorkflowPermissionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1430,7 +1430,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<WorkflowRulesDAL> _WorkflowRulesSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1446,7 +1446,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ActionViewDAL> _ActionViewSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1462,7 +1462,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ViewTypeDAL> _ViewTypeSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1478,7 +1478,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ToolbarButtonDAL> _ToolbarButtonSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1494,7 +1494,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<UnionAttrDAL> _UnionAttrSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1510,7 +1510,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContentConstraintRuleDAL> _ContentConstraintRuleSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1526,7 +1526,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<CustomActionDAL> _CustomActionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1542,7 +1542,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContextMenuDAL> _ContextMenuSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1558,7 +1558,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ContextMenuItemDAL> _ContextMenuItemSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1574,7 +1574,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<BackendActionPermissionDAL> _BackendActionPermissionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1590,7 +1590,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<EntityTypePermissionDAL> _EntityTypePermissionSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1606,7 +1606,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<VeCommandDAL> _VeCommandSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1622,7 +1622,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<VePluginDAL> _VePluginSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1638,7 +1638,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<VeStyleDAL> _VeStyleSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1654,7 +1654,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<UserDefaultFilterItemDAL> _UserDefaultFilterSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1670,7 +1670,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<DbDAL> _DbSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1686,7 +1686,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<AppSettingsDAL> _AppSettingsSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1702,7 +1702,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<ExternalNotificationDAL> _ExternalNotificationSet;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1718,7 +1718,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<XmlDbUpdateLogEntity> _XML_DB_UPDATE;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1734,7 +1734,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<XmlDbUpdateActionsLogEntity> _XML_DB_UPDATE_ACTIONS;
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -1754,7 +1754,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region AddTo Methods
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ActionTypeSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1762,7 +1762,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ActionTypeSet", actionTypeDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ArticleWorkflowBindSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1770,7 +1770,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ArticleWorkflowBindSet", articleWorkflowBindDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the FieldTypeSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1778,7 +1778,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("FieldTypeSet", fieldTypeDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the BackendActionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1786,7 +1786,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("BackendActionSet", backendActionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the BackendActionLogSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1794,7 +1794,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("BackendActionLogSet", backendActionLogDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the CharsetSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1802,7 +1802,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("CharsetSet", charsetDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the CodeSnippetSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1810,7 +1810,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("CodeSnippetSet", codeSnippetDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContainerSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1818,7 +1818,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContainerSet", containerDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1826,7 +1826,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentSet", contentDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentPermissionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1834,7 +1834,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentPermissionSet", contentPermissionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the FieldSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1842,7 +1842,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("FieldSet", fieldDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentConstraintSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1850,7 +1850,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentConstraintSet", contentConstraintDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentDataSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1858,7 +1858,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentDataSet", contentDataDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentFolderSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1866,7 +1866,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentFolderSet", contentFolderDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentFolderAccessSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1874,7 +1874,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentFolderAccessSet", contentFolderAccessDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentFormSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1882,7 +1882,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentFormSet", contentFormDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentGroupSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1890,7 +1890,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentGroupSet", contentGroupDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ArticleSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1898,7 +1898,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ArticleSet", articleDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ArticlePermissionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1906,7 +1906,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ArticlePermissionSet", articlePermissionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ArticleScheduleSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1914,7 +1914,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ArticleScheduleSet", articleScheduleDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ArticleStatusHistorySet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1922,7 +1922,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ArticleStatusHistorySet", articleStatusHistoryDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ArticleVersionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1930,7 +1930,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ArticleVersionSet", articleVersionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentToContentSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1938,7 +1938,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentToContentSet", contentToContentDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentWorkflowBindSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1946,7 +1946,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentWorkflowBindSet", contentWorkflowBindDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the DangerousActionsSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1954,7 +1954,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("DangerousActionsSet", dangerousActionsDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the DeveloperSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1962,7 +1962,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("DeveloperSet", developerDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the DynamicImageFieldSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1970,7 +1970,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("DynamicImageFieldSet", dynamicImageFieldDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the EntityTypeSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1978,7 +1978,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("EntityTypeSet", entityTypeDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the SiteFolderSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1986,7 +1986,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("SiteFolderSet", siteFolderDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the SiteFolderPermissionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -1994,7 +1994,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("SiteFolderPermissionSet", siteFolderPermissionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ItemToItemSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2002,7 +2002,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ItemToItemSet", itemToItemDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ItemToItemVersionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2010,7 +2010,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ItemToItemVersionSet", itemToItemVersionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the LanguagesSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2018,7 +2018,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("LanguagesSet", languagesDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the LocaleSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2026,7 +2026,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("LocaleSet", localeDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the MaskTemplateSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2034,7 +2034,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("MaskTemplateSet", maskTemplateDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the NetLanguagesSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2042,7 +2042,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("NetLanguagesSet", netLanguagesDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the NotificationsSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2050,7 +2050,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("NotificationsSet", notificationsDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the NotificationsSentSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2058,7 +2058,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("NotificationsSentSet", notificationsSentDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ObjectSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2066,7 +2066,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ObjectSet", objectDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ObjectFormatSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2074,7 +2074,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ObjectFormatSet", objectFormatDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ObjectFormatVersionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2082,7 +2082,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ObjectFormatVersionSet", objectFormatVersionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ObjectTypeSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2090,7 +2090,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ObjectTypeSet", objectTypeDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ObjectValuesSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2098,7 +2098,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ObjectValuesSet", objectValuesDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the PageSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2106,7 +2106,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("PageSet", pageDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the PageTemplateSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2114,7 +2114,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("PageTemplateSet", pageTemplateDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the PageTraceSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2122,7 +2122,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("PageTraceSet", pageTraceDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the PageTraceFormatSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2130,7 +2130,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("PageTraceFormatSet", pageTraceFormatDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the PageTraceFormatValuesSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2138,7 +2138,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("PageTraceFormatValuesSet", pageTraceFormatValuesDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the PermissionLevelSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2146,7 +2146,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("PermissionLevelSet", permissionLevelDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the RemovedEntitiesSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2154,7 +2154,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("RemovedEntitiesSet", removedEntitiesDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the RemovedFilesSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2162,7 +2162,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("RemovedFilesSet", removedFilesDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the SessionsLogSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2170,7 +2170,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("SessionsLogSet", sessionsLogDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the SiteSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2178,7 +2178,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("SiteSet", siteDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the SitePermissionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2186,7 +2186,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("SitePermissionSet", sitePermissionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the StatusTypeSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2194,7 +2194,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("StatusTypeSet", statusTypeDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the StyleSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2202,7 +2202,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("StyleSet", styleDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the StyleAttributeSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2210,7 +2210,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("StyleAttributeSet", styleAttributeDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the StyleTagSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2218,7 +2218,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("StyleTagSet", styleTagDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the SystemStatusTypeSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2226,7 +2226,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("SystemStatusTypeSet", systemStatusTypeDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the TodayPanelsSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2234,7 +2234,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("TodayPanelsSet", todayPanelsDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the TranslationsSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2242,7 +2242,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("TranslationsSet", translationsDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the UnionContentsSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2250,7 +2250,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("UnionContentsSet", unionContentsDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the UserGroupSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2258,7 +2258,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("UserGroupSet", userGroupDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the UserQueryAttrsSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2266,7 +2266,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("UserQueryAttrsSet", userQueryAttrsDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the UserQueryContentsSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2274,7 +2274,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("UserQueryContentsSet", userQueryContentsDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the UserToPanelSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2282,7 +2282,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("UserToPanelSet", userToPanelDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the UserSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2290,7 +2290,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("UserSet", userDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the VersionContentDataSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2298,7 +2298,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("VersionContentDataSet", versionContentDataDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the WaitingForApprovalSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2306,7 +2306,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("WaitingForApprovalSet", waitingForApprovalDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the WorkflowSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2314,7 +2314,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("WorkflowSet", workflowDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the WorkflowPermissionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2322,7 +2322,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("WorkflowPermissionSet", workflowPermissionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the WorkflowRulesSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2330,7 +2330,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("WorkflowRulesSet", workflowRulesDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ActionViewSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2338,7 +2338,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ActionViewSet", actionViewDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ViewTypeSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2346,7 +2346,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ViewTypeSet", viewTypeDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ToolbarButtonSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2354,7 +2354,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ToolbarButtonSet", toolbarButtonDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the UnionAttrSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2362,7 +2362,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("UnionAttrSet", unionAttrDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContentConstraintRuleSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2370,7 +2370,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContentConstraintRuleSet", contentConstraintRuleDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the CustomActionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2378,7 +2378,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("CustomActionSet", customActionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContextMenuSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2386,7 +2386,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContextMenuSet", contextMenuDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ContextMenuItemSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2394,7 +2394,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ContextMenuItemSet", contextMenuItemDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the BackendActionPermissionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2402,7 +2402,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("BackendActionPermissionSet", backendActionPermissionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the EntityTypePermissionSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2410,7 +2410,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("EntityTypePermissionSet", entityTypePermissionDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the VeCommandSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2418,7 +2418,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("VeCommandSet", veCommandDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the VePluginSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2426,7 +2426,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("VePluginSet", vePluginDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the VeStyleSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2434,7 +2434,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("VeStyleSet", veStyleDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the UserDefaultFilterSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2442,7 +2442,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("UserDefaultFilterSet", userDefaultFilterItemDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the DbSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2450,7 +2450,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("DbSet", dbDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the AppSettingsSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2458,7 +2458,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("AppSettingsSet", appSettingsDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the ExternalNotificationSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2466,7 +2466,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ExternalNotificationSet", externalNotificationDAL);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the XML_DB_UPDATE EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2474,7 +2474,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("XML_DB_UPDATE", xmlDbUpdateLogEntity);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the XML_DB_UPDATE_ACTIONS EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2482,7 +2482,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("XML_DB_UPDATE_ACTIONS", xmlDbUpdateActionsLogEntity);
         }
-    
+
         /// <summary>
         /// Deprecated Method for adding a new object to the SystemNotificationSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2494,13 +2494,13 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
 
     #endregion
 
-    
+
     #region Entities
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -2510,7 +2510,7 @@ namespace Quantumart.QP8.DAL
     public partial class ActionTypeDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ActionTypeDAL object.
         /// </summary>
@@ -2533,7 +2533,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2560,7 +2560,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2584,7 +2584,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2608,7 +2608,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Code;
         partial void OnCodeChanging(global::System.String value);
         partial void OnCodeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2632,7 +2632,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _RequiredPermissionLevelId;
         partial void OnRequiredPermissionLevelIdChanging(global::System.Decimal value);
         partial void OnRequiredPermissionLevelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2659,9 +2659,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2699,7 +2699,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2725,7 +2725,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -2735,7 +2735,7 @@ namespace Quantumart.QP8.DAL
     public partial class ActionViewDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ActionViewDAL object.
         /// </summary>
@@ -2756,7 +2756,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2783,7 +2783,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ActionId;
         partial void OnActionIdChanging(global::System.Int32 value);
         partial void OnActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2810,7 +2810,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ViewTypeId;
         partial void OnViewTypeIdChanging(global::System.Int32 value);
         partial void OnViewTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2834,7 +2834,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _PreventDefaultBehavior;
         partial void OnPreventDefaultBehaviorChanging(global::System.Boolean value);
         partial void OnPreventDefaultBehaviorChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2858,7 +2858,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ControllerActionUrl;
         partial void OnControllerActionUrlChanging(global::System.String value);
         partial void OnControllerActionUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2885,9 +2885,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2925,7 +2925,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2967,7 +2967,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -2977,7 +2977,7 @@ namespace Quantumart.QP8.DAL
     public partial class AppSettingsDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new AppSettingsDAL object.
         /// </summary>
@@ -2994,7 +2994,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3021,7 +3021,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Key;
         partial void OnKeyChanging(global::System.String value);
         partial void OnKeyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3048,19 +3048,19 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ArticleDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ArticleDAL : EntityObject, IQPEntityObject
+    public partial class ArticleDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ArticleDAL object.
         /// </summary>
@@ -3101,7 +3101,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3128,7 +3128,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3152,7 +3152,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Visible;
         partial void OnVisibleChanging(global::System.Decimal value);
         partial void OnVisibleChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3176,7 +3176,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _StatusTypeId;
         partial void OnStatusTypeIdChanging(global::System.Decimal value);
         partial void OnStatusTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3200,7 +3200,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3224,7 +3224,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3248,7 +3248,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentId;
         partial void OnContentIdChanging(global::System.Decimal value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3272,7 +3272,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3296,7 +3296,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LockedBy;
         partial void OnLockedByChanging(Nullable<global::System.Decimal> value);
         partial void OnLockedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3320,7 +3320,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Locked;
         partial void OnLockedChanging(Nullable<global::System.DateTime> value);
         partial void OnLockedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3344,7 +3344,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Archived;
         partial void OnArchivedChanging(global::System.Decimal value);
         partial void OnArchivedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3368,7 +3368,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _NotForReplication;
         partial void OnNotForReplicationChanging(global::System.Boolean value);
         partial void OnNotForReplicationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3392,7 +3392,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Delayed;
         partial void OnDelayedChanging(global::System.Boolean value);
         partial void OnDelayedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3416,7 +3416,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Splitted;
         partial void OnSplittedChanging(global::System.Boolean value);
         partial void OnSplittedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3440,7 +3440,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _PermanentLock;
         partial void OnPermanentLockChanging(global::System.Boolean value);
         partial void OnPermanentLockChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3464,7 +3464,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _CancelSplit;
         partial void OnCancelSplitChanging(global::System.Boolean value);
         partial void OnCancelSplitChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3491,9 +3491,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3531,7 +3531,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3569,7 +3569,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3591,7 +3591,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3613,7 +3613,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3635,7 +3635,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3673,7 +3673,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3695,7 +3695,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3717,7 +3717,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3755,7 +3755,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3777,7 +3777,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3799,7 +3799,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3821,7 +3821,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3843,7 +3843,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3881,7 +3881,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3907,17 +3907,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ArticlePermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ArticlePermissionDAL : EntityObject, IQPEntityObject
+    public partial class ArticlePermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ArticlePermissionDAL object.
         /// </summary>
@@ -3942,7 +3942,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3966,7 +3966,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleId;
         partial void OnArticleIdChanging(global::System.Decimal value);
         partial void OnArticleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -3990,7 +3990,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4014,7 +4014,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4038,7 +4038,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PermissionLevelId;
         partial void OnPermissionLevelIdChanging(global::System.Decimal value);
         partial void OnPermissionLevelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4062,7 +4062,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4086,7 +4086,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4110,7 +4110,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4140,9 +4140,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4180,7 +4180,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4218,7 +4218,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4256,7 +4256,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4294,7 +4294,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4336,7 +4336,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -4346,7 +4346,7 @@ namespace Quantumart.QP8.DAL
     public partial class ArticleScheduleDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ArticleScheduleDAL object.
         /// </summary>
@@ -4401,7 +4401,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4425,7 +4425,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleId;
         partial void OnArticleIdChanging(global::System.Decimal value);
         partial void OnArticleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4452,7 +4452,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4476,7 +4476,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _MaximumOccurences;
         partial void OnMaximumOccurencesChanging(Nullable<global::System.Decimal> value);
         partial void OnMaximumOccurencesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4500,7 +4500,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4524,7 +4524,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4548,7 +4548,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4572,7 +4572,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _FreqType;
         partial void OnFreqTypeChanging(global::System.Int32 value);
         partial void OnFreqTypeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4596,7 +4596,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _FreqInterval;
         partial void OnFreqIntervalChanging(global::System.Int32 value);
         partial void OnFreqIntervalChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4620,7 +4620,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _FreqSubdayType;
         partial void OnFreqSubdayTypeChanging(global::System.Int32 value);
         partial void OnFreqSubdayTypeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4644,7 +4644,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _FreqSubdayInterval;
         partial void OnFreqSubdayIntervalChanging(global::System.Int32 value);
         partial void OnFreqSubdayIntervalChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4668,7 +4668,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _FreqRelativeInterval;
         partial void OnFreqRelativeIntervalChanging(global::System.Int32 value);
         partial void OnFreqRelativeIntervalChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4692,7 +4692,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _FreqRecurrenceFactor;
         partial void OnFreqRecurrenceFactorChanging(global::System.Int32 value);
         partial void OnFreqRecurrenceFactorChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4716,7 +4716,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _ActiveStartDate;
         partial void OnActiveStartDateChanging(Nullable<global::System.Int32> value);
         partial void OnActiveStartDateChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4740,7 +4740,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ActiveEndDate;
         partial void OnActiveEndDateChanging(global::System.Int32 value);
         partial void OnActiveEndDateChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4764,7 +4764,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ActiveStartTime;
         partial void OnActiveStartTimeChanging(global::System.Int32 value);
         partial void OnActiveStartTimeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4788,7 +4788,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ActiveEndTime;
         partial void OnActiveEndTimeChanging(global::System.Int32 value);
         partial void OnActiveEndTimeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4812,7 +4812,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Occurences;
         partial void OnOccurencesChanging(global::System.Int32 value);
         partial void OnOccurencesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4836,7 +4836,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UseDuration;
         partial void OnUseDurationChanging(global::System.Decimal value);
         partial void OnUseDurationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4860,7 +4860,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Duration;
         partial void OnDurationChanging(global::System.Decimal value);
         partial void OnDurationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4884,7 +4884,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _DurationUnits;
         partial void OnDurationUnitsChanging(global::System.String value);
         partial void OnDurationUnitsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4908,7 +4908,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Deactivate;
         partial void OnDeactivateChanging(global::System.Boolean value);
         partial void OnDeactivateChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4932,7 +4932,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DeleteJob;
         partial void OnDeleteJobChanging(global::System.Boolean value);
         partial void OnDeleteJobChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -4959,9 +4959,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5003,7 +5003,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -5013,7 +5013,7 @@ namespace Quantumart.QP8.DAL
     public partial class ArticleStatusHistoryDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ArticleStatusHistoryDAL object.
         /// </summary>
@@ -5036,7 +5036,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5063,7 +5063,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _StatusHistoryId;
         partial void OnStatusHistoryIdChanging(global::System.Decimal value);
         partial void OnStatusHistoryIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5087,7 +5087,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _StatusHistoryDate;
         partial void OnStatusHistoryDateChanging(global::System.DateTime value);
         partial void OnStatusHistoryDateChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5111,7 +5111,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleId;
         partial void OnArticleIdChanging(global::System.Decimal value);
         partial void OnArticleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5135,7 +5135,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _StatusTypeId;
         partial void OnStatusTypeIdChanging(Nullable<global::System.Decimal> value);
         partial void OnStatusTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5159,7 +5159,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UserId;
         partial void OnUserIdChanging(global::System.Decimal value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5183,7 +5183,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5207,7 +5207,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5231,7 +5231,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _SystemStatusTypeId;
         partial void OnSystemStatusTypeIdChanging(Nullable<global::System.Decimal> value);
         partial void OnSystemStatusTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5255,7 +5255,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ArticleVersionId;
         partial void OnArticleVersionIdChanging(Nullable<global::System.Decimal> value);
         partial void OnArticleVersionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5279,7 +5279,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Boolean> _ARCHIVE;
         partial void OnARCHIVEChanging(Nullable<global::System.Boolean> value);
         partial void OnARCHIVEChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5306,9 +5306,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5346,7 +5346,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5388,7 +5388,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -5398,7 +5398,7 @@ namespace Quantumart.QP8.DAL
     public partial class ArticleVersionDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ArticleVersionDAL object.
         /// </summary>
@@ -5427,7 +5427,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5454,7 +5454,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5478,7 +5478,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Version;
         partial void OnVersionChanging(global::System.String value);
         partial void OnVersionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5502,7 +5502,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _VersionLabel;
         partial void OnVersionLabelChanging(global::System.String value);
         partial void OnVersionLabelChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5526,7 +5526,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ContentVersionId;
         partial void OnContentVersionIdChanging(Nullable<global::System.Decimal> value);
         partial void OnContentVersionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5550,7 +5550,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleId;
         partial void OnArticleIdChanging(global::System.Decimal value);
         partial void OnArticleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5574,7 +5574,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5598,7 +5598,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5622,7 +5622,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _CreatedBy;
         partial void OnCreatedByChanging(global::System.Decimal value);
         partial void OnCreatedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5646,7 +5646,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5673,9 +5673,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5713,7 +5713,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5751,7 +5751,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5773,7 +5773,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5815,7 +5815,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -5825,7 +5825,7 @@ namespace Quantumart.QP8.DAL
     public partial class ArticleWorkflowBindDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ArticleWorkflowBindDAL object.
         /// </summary>
@@ -5842,7 +5842,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5869,7 +5869,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleId;
         partial void OnArticleIdChanging(global::System.Decimal value);
         partial void OnArticleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5893,7 +5893,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _WorkflowId;
         partial void OnWorkflowIdChanging(Nullable<global::System.Decimal> value);
         partial void OnWorkflowIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5920,9 +5920,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -5964,7 +5964,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -5974,7 +5974,7 @@ namespace Quantumart.QP8.DAL
     public partial class BackendActionDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new BackendActionDAL object.
         /// </summary>
@@ -6011,7 +6011,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6038,7 +6038,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6062,7 +6062,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _TypeId;
         partial void OnTypeIdChanging(global::System.Int32 value);
         partial void OnTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6086,7 +6086,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _EntityTypeId;
         partial void OnEntityTypeIdChanging(global::System.Int32 value);
         partial void OnEntityTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6110,7 +6110,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6134,7 +6134,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ShortName;
         partial void OnShortNameChanging(global::System.String value);
         partial void OnShortNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6158,7 +6158,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Code;
         partial void OnCodeChanging(global::System.String value);
         partial void OnCodeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6182,7 +6182,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _UserControlFile;
         partial void OnUserControlFileChanging(global::System.String value);
         partial void OnUserControlFileChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6206,7 +6206,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ControllerActionUrl;
         partial void OnControllerActionUrlChanging(global::System.String value);
         partial void OnControllerActionUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6230,7 +6230,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ConfirmPhrase;
         partial void OnConfirmPhraseChanging(global::System.String value);
         partial void OnConfirmPhraseChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6254,7 +6254,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsInterface;
         partial void OnIsInterfaceChanging(global::System.Boolean value);
         partial void OnIsInterfaceChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6278,7 +6278,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _HasPreAction;
         partial void OnHasPreActionChanging(global::System.Boolean value);
         partial void OnHasPreActionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6302,7 +6302,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _ParentId;
         partial void OnParentIdChanging(Nullable<global::System.Int32> value);
         partial void OnParentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6326,7 +6326,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsWindow;
         partial void OnIsWindowChanging(global::System.Boolean value);
         partial void OnIsWindowChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6350,7 +6350,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _WindowWidth;
         partial void OnWindowWidthChanging(Nullable<global::System.Int32> value);
         partial void OnWindowWidthChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6374,7 +6374,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _WindowHeight;
         partial void OnWindowHeightChanging(Nullable<global::System.Int32> value);
         partial void OnWindowHeightChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6398,7 +6398,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _DefaultViewTypeId;
         partial void OnDefaultViewTypeIdChanging(Nullable<global::System.Int32> value);
         partial void OnDefaultViewTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6422,7 +6422,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AllowSearch;
         partial void OnAllowSearchChanging(global::System.Boolean value);
         partial void OnAllowSearchChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6446,7 +6446,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AllowPreview;
         partial void OnAllowPreviewChanging(global::System.Boolean value);
         partial void OnAllowPreviewChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6470,7 +6470,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _NextSuccessfulActionId;
         partial void OnNextSuccessfulActionIdChanging(Nullable<global::System.Int32> value);
         partial void OnNextSuccessfulActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6494,7 +6494,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _NextFailedActionId;
         partial void OnNextFailedActionIdChanging(Nullable<global::System.Int32> value);
         partial void OnNextFailedActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6518,7 +6518,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsCustom;
         partial void OnIsCustomChanging(global::System.Boolean value);
         partial void OnIsCustomChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6542,7 +6542,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _TabId;
         partial void OnTabIdChanging(Nullable<global::System.Decimal> value);
         partial void OnTabIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6566,7 +6566,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsMultistep;
         partial void OnIsMultistepChanging(global::System.Boolean value);
         partial void OnIsMultistepChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6590,7 +6590,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Boolean> _HasSettings;
         partial void OnHasSettingsChanging(Nullable<global::System.Boolean> value);
         partial void OnHasSettingsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6614,7 +6614,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _AdditionalControllerActionUrl;
         partial void OnAdditionalControllerActionUrlChanging(global::System.String value);
         partial void OnAdditionalControllerActionUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6641,9 +6641,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6681,7 +6681,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6703,7 +6703,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6741,7 +6741,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6779,7 +6779,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6817,7 +6817,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6839,7 +6839,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6861,7 +6861,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6899,7 +6899,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6921,7 +6921,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6959,7 +6959,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -6981,7 +6981,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7003,7 +7003,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7025,7 +7025,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7047,7 +7047,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7069,7 +7069,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7095,7 +7095,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -7105,7 +7105,7 @@ namespace Quantumart.QP8.DAL
     public partial class BackendActionLogDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new BackendActionLogDAL object.
         /// </summary>
@@ -7132,7 +7132,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7159,7 +7159,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7183,7 +7183,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UserId;
         partial void OnUserIdChanging(global::System.Decimal value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7207,7 +7207,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _ExecutionTime;
         partial void OnExecutionTimeChanging(global::System.DateTime value);
         partial void OnExecutionTimeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7231,7 +7231,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ActionCode;
         partial void OnActionCodeChanging(global::System.String value);
         partial void OnActionCodeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7255,7 +7255,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ActionTypeCode;
         partial void OnActionTypeCodeChanging(global::System.String value);
         partial void OnActionTypeCodeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7279,7 +7279,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _EntityTypeCode;
         partial void OnEntityTypeCodeChanging(global::System.String value);
         partial void OnEntityTypeCodeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7303,7 +7303,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _EntityId;
         partial void OnEntityIdChanging(Nullable<global::System.Decimal> value);
         partial void OnEntityIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7327,7 +7327,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _EntityStringId;
         partial void OnEntityStringIdChanging(global::System.String value);
         partial void OnEntityStringIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7351,7 +7351,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ParentEntityId;
         partial void OnParentEntityIdChanging(Nullable<global::System.Decimal> value);
         partial void OnParentEntityIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7375,7 +7375,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _EntityTitle;
         partial void OnEntityTitleChanging(global::System.String value);
         partial void OnEntityTitleChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7402,19 +7402,19 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="BackendActionPermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class BackendActionPermissionDAL : EntityObject, IQPEntityObject
+    public partial class BackendActionPermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new BackendActionPermissionDAL object.
         /// </summary>
@@ -7439,7 +7439,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7466,7 +7466,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7490,7 +7490,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ActionId;
         partial void OnActionIdChanging(global::System.Int32 value);
         partial void OnActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7514,7 +7514,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7538,7 +7538,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7562,7 +7562,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PermissionLevelId;
         partial void OnPermissionLevelIdChanging(global::System.Decimal value);
         partial void OnPermissionLevelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7586,7 +7586,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7610,7 +7610,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7637,9 +7637,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7677,7 +7677,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7715,7 +7715,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7753,7 +7753,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7791,7 +7791,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7833,7 +7833,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -7843,7 +7843,7 @@ namespace Quantumart.QP8.DAL
     public partial class CharsetDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new CharsetDAL object.
         /// </summary>
@@ -7862,7 +7862,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7889,7 +7889,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Subj;
         partial void OnSubjChanging(global::System.String value);
         partial void OnSubjChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7913,7 +7913,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Codepage;
         partial void OnCodepageChanging(global::System.Int32 value);
         partial void OnCodepageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -7940,9 +7940,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -7952,7 +7952,7 @@ namespace Quantumart.QP8.DAL
     public partial class CodeSnippetDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new CodeSnippetDAL object.
         /// </summary>
@@ -7977,7 +7977,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8004,7 +8004,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SnippetId;
         partial void OnSnippetIdChanging(global::System.Decimal value);
         partial void OnSnippetIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8028,7 +8028,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _SnippetName;
         partial void OnSnippetNameChanging(global::System.String value);
         partial void OnSnippetNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8052,7 +8052,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8076,7 +8076,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Code;
         partial void OnCodeChanging(global::System.String value);
         partial void OnCodeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8100,7 +8100,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8124,7 +8124,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8148,7 +8148,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8175,9 +8175,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8219,7 +8219,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -8229,7 +8229,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContainerDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContainerDAL object.
         /// </summary>
@@ -8264,7 +8264,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8291,7 +8291,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ObjectId;
         partial void OnObjectIdChanging(global::System.Decimal value);
         partial void OnObjectIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8315,7 +8315,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentId;
         partial void OnContentIdChanging(global::System.Decimal value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8339,7 +8339,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _AllowOrderDynamic;
         partial void OnAllowOrderDynamicChanging(Nullable<global::System.Decimal> value);
         partial void OnAllowOrderDynamicChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8363,7 +8363,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _OrderStatic;
         partial void OnOrderStaticChanging(global::System.String value);
         partial void OnOrderStaticChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8387,7 +8387,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _OrderDynamic;
         partial void OnOrderDynamicChanging(global::System.String value);
         partial void OnOrderDynamicChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8411,7 +8411,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FilterValue;
         partial void OnFilterValueChanging(global::System.String value);
         partial void OnFilterValueChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8435,7 +8435,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _SelectStart;
         partial void OnSelectStartChanging(global::System.String value);
         partial void OnSelectStartChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8459,7 +8459,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _SelectTotal;
         partial void OnSelectTotalChanging(global::System.String value);
         partial void OnSelectTotalChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8483,7 +8483,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ScheduleDependence;
         partial void OnScheduleDependenceChanging(global::System.Decimal value);
         partial void OnScheduleDependenceChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8507,7 +8507,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _RotateContent;
         partial void OnRotateContentChanging(global::System.Decimal value);
         partial void OnRotateContentChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8531,7 +8531,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ApplySecurity;
         partial void OnApplySecurityChanging(global::System.Decimal value);
         partial void OnApplySecurityChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8555,7 +8555,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ShowArchived;
         partial void OnShowArchivedChanging(global::System.Decimal value);
         partial void OnShowArchivedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8579,7 +8579,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CursorType;
         partial void OnCursorTypeChanging(global::System.String value);
         partial void OnCursorTypeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8603,7 +8603,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CursorLocation;
         partial void OnCursorLocationChanging(global::System.String value);
         partial void OnCursorLocationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8627,7 +8627,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _LockType;
         partial void OnLockTypeChanging(global::System.String value);
         partial void OnLockTypeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8651,7 +8651,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Locked;
         partial void OnLockedChanging(Nullable<global::System.DateTime> value);
         partial void OnLockedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8675,7 +8675,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LockedBy;
         partial void OnLockedByChanging(Nullable<global::System.Decimal> value);
         partial void OnLockedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8699,7 +8699,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _Duration;
         partial void OnDurationChanging(Nullable<global::System.Decimal> value);
         partial void OnDurationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8723,7 +8723,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _EnableCacheInvalidation;
         partial void OnEnableCacheInvalidationChanging(global::System.Boolean value);
         partial void OnEnableCacheInvalidationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8747,7 +8747,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _DynamicContentVariable;
         partial void OnDynamicContentVariableChanging(global::System.String value);
         partial void OnDynamicContentVariableChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8771,7 +8771,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _StartLevel;
         partial void OnStartLevelChanging(Nullable<global::System.Decimal> value);
         partial void OnStartLevelChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8795,7 +8795,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _EndLevel;
         partial void OnEndLevelChanging(Nullable<global::System.Decimal> value);
         partial void OnEndLevelChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8819,7 +8819,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Boolean> _UseLevelFiltration;
         partial void OnUseLevelFiltrationChanging(Nullable<global::System.Boolean> value);
         partial void OnUseLevelFiltrationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8846,9 +8846,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8886,7 +8886,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8924,7 +8924,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -8962,7 +8962,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9000,7 +9000,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9042,7 +9042,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -9052,7 +9052,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContentConstraintDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentConstraintDAL object.
         /// </summary>
@@ -9069,7 +9069,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9096,7 +9096,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9123,9 +9123,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9163,7 +9163,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9189,7 +9189,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -9199,7 +9199,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContentConstraintRuleDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentConstraintRuleDAL object.
         /// </summary>
@@ -9216,7 +9216,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9243,7 +9243,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ConstraintId;
         partial void OnConstraintIdChanging(global::System.Decimal value);
         partial void OnConstraintIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9273,9 +9273,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9313,7 +9313,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9355,17 +9355,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ContentDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ContentDAL : EntityObject, IQPEntityObject
+    public partial class ContentDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentDAL object.
         /// </summary>
@@ -9414,7 +9414,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9441,7 +9441,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9465,7 +9465,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9489,7 +9489,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9513,7 +9513,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SiteId;
         partial void OnSiteIdChanging(global::System.Decimal value);
         partial void OnSiteIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9537,7 +9537,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9561,7 +9561,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9585,7 +9585,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9609,7 +9609,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FriendlyPluralName;
         partial void OnFriendlyPluralNameChanging(global::System.String value);
         partial void OnFriendlyPluralNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9633,7 +9633,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FriendlySingularName;
         partial void OnFriendlySingularNameChanging(global::System.String value);
         partial void OnFriendlySingularNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9657,7 +9657,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _AllowItemsPermission;
         partial void OnAllowItemsPermissionChanging(global::System.Decimal value);
         partial void OnAllowItemsPermissionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9681,7 +9681,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9705,7 +9705,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ExternalId;
         partial void OnExternalIdChanging(global::System.String value);
         partial void OnExternalIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9729,7 +9729,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _VirtualType;
         partial void OnVirtualTypeChanging(global::System.Decimal value);
         partial void OnVirtualTypeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9753,7 +9753,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _JoinId;
         partial void OnJoinIdChanging(Nullable<global::System.Decimal> value);
         partial void OnJoinIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9777,7 +9777,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsShared;
         partial void OnIsSharedChanging(global::System.Boolean value);
         partial void OnIsSharedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9801,7 +9801,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AutoArchive;
         partial void OnAutoArchiveChanging(global::System.Boolean value);
         partial void OnAutoArchiveChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9825,7 +9825,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Byte _MaxNumOfStoredVersions;
         partial void OnMaxNumOfStoredVersionsChanging(global::System.Byte value);
         partial void OnMaxNumOfStoredVersionsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9849,7 +9849,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _CreateVersionControlView;
         partial void OnCreateVersionControlViewChanging(global::System.Boolean value);
         partial void OnCreateVersionControlViewChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9873,7 +9873,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _PageSize;
         partial void OnPageSizeChanging(global::System.Int32 value);
         partial void OnPageSizeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9897,7 +9897,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Query;
         partial void OnQueryChanging(global::System.String value);
         partial void OnQueryChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9921,7 +9921,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _AltQuery;
         partial void OnAltQueryChanging(global::System.String value);
         partial void OnAltQueryChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9945,7 +9945,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _MapAsClass;
         partial void OnMapAsClassChanging(global::System.Boolean value);
         partial void OnMapAsClassChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9969,7 +9969,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetName;
         partial void OnNetNameChanging(global::System.String value);
         partial void OnNetNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -9993,7 +9993,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetPluralName;
         partial void OnNetPluralNameChanging(global::System.String value);
         partial void OnNetPluralNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10017,7 +10017,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseDefaultFiltration;
         partial void OnUseDefaultFiltrationChanging(global::System.Boolean value);
         partial void OnUseDefaultFiltrationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10041,7 +10041,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _AdditionalContextClassName;
         partial void OnAdditionalContextClassNameChanging(global::System.String value);
         partial void OnAdditionalContextClassNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10065,7 +10065,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _XamlValidation;
         partial void OnXamlValidationChanging(global::System.String value);
         partial void OnXamlValidationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10089,7 +10089,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DisableXamlValidation;
         partial void OnDisableXamlValidationChanging(global::System.Boolean value);
         partial void OnDisableXamlValidationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10113,7 +10113,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DisableChangingActions;
         partial void OnDisableChangingActionsChanging(global::System.Boolean value);
         partial void OnDisableChangingActionsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10137,7 +10137,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ParentContentId;
         partial void OnParentContentIdChanging(Nullable<global::System.Decimal> value);
         partial void OnParentContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10161,7 +10161,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseForContext;
         partial void OnUseForContextChanging(global::System.Boolean value);
         partial void OnUseForContextChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10188,9 +10188,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10212,7 +10212,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10234,7 +10234,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10256,7 +10256,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10278,7 +10278,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10300,7 +10300,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10338,7 +10338,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10360,7 +10360,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10382,7 +10382,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10404,7 +10404,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10442,7 +10442,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10480,7 +10480,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10502,7 +10502,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10524,7 +10524,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10546,7 +10546,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10584,7 +10584,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10606,7 +10606,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10628,7 +10628,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10650,7 +10650,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10672,7 +10672,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10694,7 +10694,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10716,7 +10716,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10738,7 +10738,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10760,7 +10760,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10782,7 +10782,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10820,7 +10820,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10846,7 +10846,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -10856,7 +10856,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContentDataDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentDataDAL object.
         /// </summary>
@@ -10881,7 +10881,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10908,7 +10908,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _FieldId;
         partial void OnFieldIdChanging(global::System.Decimal value);
         partial void OnFieldIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10935,7 +10935,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleId;
         partial void OnArticleIdChanging(global::System.Decimal value);
         partial void OnArticleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10959,7 +10959,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Data;
         partial void OnDataChanging(global::System.String value);
         partial void OnDataChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -10983,7 +10983,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11007,7 +11007,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11031,7 +11031,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _BlobData;
         partial void OnBlobDataChanging(global::System.String value);
         partial void OnBlobDataChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11055,7 +11055,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11082,9 +11082,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11122,7 +11122,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11164,7 +11164,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -11174,7 +11174,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContentFolderAccessDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentFolderAccessDAL object.
         /// </summary>
@@ -11199,7 +11199,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11223,7 +11223,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentFolderId;
         partial void OnContentFolderIdChanging(global::System.Decimal value);
         partial void OnContentFolderIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11247,7 +11247,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11271,7 +11271,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11295,7 +11295,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PermissionLevelId;
         partial void OnPermissionLevelIdChanging(global::System.Decimal value);
         partial void OnPermissionLevelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11319,7 +11319,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11343,7 +11343,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11367,7 +11367,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11397,9 +11397,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11437,7 +11437,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11475,7 +11475,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11513,7 +11513,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11555,17 +11555,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ContentFolderDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ContentFolderDAL : EntityObject, IQPEntityObject
+    public partial class ContentFolderDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentFolderDAL object.
         /// </summary>
@@ -11590,7 +11590,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11614,7 +11614,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentId;
         partial void OnContentIdChanging(global::System.Decimal value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11641,7 +11641,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11665,7 +11665,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ParentId;
         partial void OnParentIdChanging(Nullable<global::System.Decimal> value);
         partial void OnParentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11689,7 +11689,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11713,7 +11713,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11737,7 +11737,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Filter;
         partial void OnFilterChanging(global::System.String value);
         partial void OnFilterChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11761,7 +11761,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Path;
         partial void OnPathChanging(global::System.String value);
         partial void OnPathChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11785,7 +11785,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11809,7 +11809,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11836,9 +11836,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11876,7 +11876,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11898,7 +11898,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11920,7 +11920,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -11958,7 +11958,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12000,7 +12000,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -12010,7 +12010,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContentFormDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentFormDAL object.
         /// </summary>
@@ -12029,7 +12029,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12056,7 +12056,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ObjectId;
         partial void OnObjectIdChanging(global::System.Decimal value);
         partial void OnObjectIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12080,7 +12080,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentId;
         partial void OnContentIdChanging(global::System.Decimal value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12104,7 +12104,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _GenerateUpdateScript;
         partial void OnGenerateUpdateScriptChanging(global::System.Decimal value);
         partial void OnGenerateUpdateScriptChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12128,7 +12128,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ThankYouPageId;
         partial void OnThankYouPageIdChanging(Nullable<global::System.Decimal> value);
         partial void OnThankYouPageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12152,7 +12152,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _NetLanguageId;
         partial void OnNetLanguageIdChanging(Nullable<global::System.Decimal> value);
         partial void OnNetLanguageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12176,7 +12176,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Locked;
         partial void OnLockedChanging(Nullable<global::System.DateTime> value);
         partial void OnLockedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12203,9 +12203,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12243,7 +12243,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12281,7 +12281,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12319,7 +12319,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12357,7 +12357,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12399,7 +12399,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -12409,7 +12409,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContentGroupDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentGroupDAL object.
         /// </summary>
@@ -12428,7 +12428,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12455,7 +12455,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12479,7 +12479,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SiteId;
         partial void OnSiteIdChanging(global::System.Decimal value);
         partial void OnSiteIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12506,9 +12506,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12530,7 +12530,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12572,17 +12572,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ContentPermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ContentPermissionDAL : EntityObject, IQPEntityObject
+    public partial class ContentPermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentPermissionDAL object.
         /// </summary>
@@ -12611,7 +12611,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12635,7 +12635,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentId;
         partial void OnContentIdChanging(global::System.Decimal value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12659,7 +12659,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12683,7 +12683,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12707,7 +12707,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PermissionLevelId;
         partial void OnPermissionLevelIdChanging(global::System.Decimal value);
         partial void OnPermissionLevelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12731,7 +12731,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12755,7 +12755,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12779,7 +12779,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12803,7 +12803,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PropagateToItems;
         partial void OnPropagateToItemsChanging(global::System.Decimal value);
         partial void OnPropagateToItemsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12830,7 +12830,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12857,9 +12857,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12897,7 +12897,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12935,7 +12935,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -12973,7 +12973,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13011,7 +13011,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13053,7 +13053,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -13063,7 +13063,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContentToContentDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentToContentDAL object.
         /// </summary>
@@ -13086,7 +13086,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13113,7 +13113,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LinkId;
         partial void OnLinkIdChanging(global::System.Decimal value);
         partial void OnLinkIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13137,7 +13137,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LContentId;
         partial void OnLContentIdChanging(global::System.Decimal value);
         partial void OnLContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13161,7 +13161,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _RContentId;
         partial void OnRContentIdChanging(global::System.Decimal value);
         partial void OnRContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13185,7 +13185,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _MapAsClass;
         partial void OnMapAsClassChanging(global::System.Boolean value);
         partial void OnMapAsClassChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13209,7 +13209,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetLinkName;
         partial void OnNetLinkNameChanging(global::System.String value);
         partial void OnNetLinkNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13233,7 +13233,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetPluralLinkName;
         partial void OnNetPluralLinkNameChanging(global::System.String value);
         partial void OnNetPluralLinkNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13260,9 +13260,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13300,7 +13300,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13338,7 +13338,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13360,7 +13360,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13386,7 +13386,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -13396,7 +13396,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContentWorkflowBindDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContentWorkflowBindDAL object.
         /// </summary>
@@ -13415,7 +13415,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13442,7 +13442,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentId;
         partial void OnContentIdChanging(global::System.Decimal value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13469,7 +13469,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _WorkflowId;
         partial void OnWorkflowIdChanging(global::System.Decimal value);
         partial void OnWorkflowIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13496,9 +13496,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13540,7 +13540,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -13550,7 +13550,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContextMenuDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContextMenuDAL object.
         /// </summary>
@@ -13567,7 +13567,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13594,7 +13594,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13621,9 +13621,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13649,7 +13649,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -13659,7 +13659,7 @@ namespace Quantumart.QP8.DAL
     public partial class ContextMenuItemDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ContextMenuItemDAL object.
         /// </summary>
@@ -13682,7 +13682,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13709,7 +13709,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ContextMenuId;
         partial void OnContextMenuIdChanging(global::System.Int32 value);
         partial void OnContextMenuIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13736,7 +13736,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ActionId;
         partial void OnActionIdChanging(global::System.Int32 value);
         partial void OnActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13760,7 +13760,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13784,7 +13784,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Order;
         partial void OnOrderChanging(global::System.Int32 value);
         partial void OnOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13808,7 +13808,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Icon;
         partial void OnIconChanging(global::System.String value);
         partial void OnIconChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13832,7 +13832,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _IconDisabled;
         partial void OnIconDisabledChanging(global::System.String value);
         partial void OnIconDisabledChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13859,9 +13859,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13899,7 +13899,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -13941,17 +13941,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="CustomActionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class CustomActionDAL : EntityObject, IQPEntityObject
+    public partial class CustomActionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new CustomActionDAL object.
         /// </summary>
@@ -13988,7 +13988,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14015,7 +14015,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14039,7 +14039,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ActionId;
         partial void OnActionIdChanging(global::System.Int32 value);
         partial void OnActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14063,7 +14063,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Url;
         partial void OnUrlChanging(global::System.String value);
         partial void OnUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14087,7 +14087,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _IconUrl;
         partial void OnIconUrlChanging(global::System.String value);
         partial void OnIconUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14111,7 +14111,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Order;
         partial void OnOrderChanging(global::System.Int32 value);
         partial void OnOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14135,7 +14135,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _SiteExcluded;
         partial void OnSiteExcludedChanging(global::System.Boolean value);
         partial void OnSiteExcludedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14159,7 +14159,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ContentExcluded;
         partial void OnContentExcludedChanging(global::System.Boolean value);
         partial void OnContentExcludedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14183,7 +14183,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ShowInMenu;
         partial void OnShowInMenuChanging(global::System.Boolean value);
         partial void OnShowInMenuChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14207,7 +14207,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ShowInToolbar;
         partial void OnShowInToolbarChanging(global::System.Boolean value);
         partial void OnShowInToolbarChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14231,7 +14231,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14255,7 +14255,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14279,7 +14279,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14303,7 +14303,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14330,9 +14330,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14370,7 +14370,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14392,7 +14392,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14414,7 +14414,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14456,7 +14456,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -14466,7 +14466,7 @@ namespace Quantumart.QP8.DAL
     public partial class DangerousActionsDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new DangerousActionsDAL object.
         /// </summary>
@@ -14489,7 +14489,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14513,7 +14513,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ActionName;
         partial void OnActionNameChanging(global::System.String value);
         partial void OnActionNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14537,7 +14537,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _EntityName;
         partial void OnEntityNameChanging(global::System.String value);
         partial void OnEntityNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14561,7 +14561,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14585,7 +14585,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UserId;
         partial void OnUserIdChanging(global::System.Decimal value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14612,7 +14612,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Performed;
         partial void OnPerformedChanging(global::System.DateTime value);
         partial void OnPerformedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14639,19 +14639,19 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="DbDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class DbDAL : EntityObject, IQPEntityObject
+    public partial class DbDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new DbDAL object.
         /// </summary>
@@ -14682,7 +14682,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14709,7 +14709,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14733,7 +14733,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _RecordActions;
         partial void OnRecordActionsChanging(global::System.Boolean value);
         partial void OnRecordActionsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14757,7 +14757,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _SingleUserId;
         partial void OnSingleUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnSingleUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14781,7 +14781,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14805,7 +14805,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14829,7 +14829,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14853,7 +14853,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseADSyncService;
         partial void OnUseADSyncServiceChanging(global::System.Boolean value);
         partial void OnUseADSyncServiceChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14877,7 +14877,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AutoOpenHome;
         partial void OnAutoOpenHomeChanging(global::System.Boolean value);
         partial void OnAutoOpenHomeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14901,7 +14901,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseDpc;
         partial void OnUseDpcChanging(global::System.Boolean value);
         partial void OnUseDpcChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14928,9 +14928,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14972,7 +14972,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -14982,7 +14982,7 @@ namespace Quantumart.QP8.DAL
     public partial class DeveloperDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new DeveloperDAL object.
         /// </summary>
@@ -15001,7 +15001,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15028,7 +15028,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15052,7 +15052,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15079,9 +15079,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -15091,7 +15091,7 @@ namespace Quantumart.QP8.DAL
     public partial class DynamicImageFieldDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new DynamicImageFieldDAL object.
         /// </summary>
@@ -15110,7 +15110,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15137,7 +15137,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15161,7 +15161,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int16> _Width;
         partial void OnWidthChanging(Nullable<global::System.Int16> value);
         partial void OnWidthChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15185,7 +15185,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int16> _Height;
         partial void OnHeightChanging(Nullable<global::System.Int16> value);
         partial void OnHeightChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15209,7 +15209,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Type;
         partial void OnTypeChanging(global::System.String value);
         partial void OnTypeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15233,7 +15233,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int16> _Quality;
         partial void OnQualityChanging(Nullable<global::System.Int16> value);
         partial void OnQualityChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15260,9 +15260,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15304,7 +15304,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -15314,7 +15314,7 @@ namespace Quantumart.QP8.DAL
     public partial class EntityTypeDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new EntityTypeDAL object.
         /// </summary>
@@ -15341,7 +15341,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15368,7 +15368,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15392,7 +15392,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15416,7 +15416,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Code;
         partial void OnCodeChanging(global::System.String value);
         partial void OnCodeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15440,7 +15440,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _ParentId;
         partial void OnParentIdChanging(Nullable<global::System.Int32> value);
         partial void OnParentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15464,7 +15464,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Order;
         partial void OnOrderChanging(global::System.Int32 value);
         partial void OnOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15488,7 +15488,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Source;
         partial void OnSourceChanging(global::System.String value);
         partial void OnSourceChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15512,7 +15512,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _SourceSP;
         partial void OnSourceSPChanging(global::System.String value);
         partial void OnSourceSPChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15536,7 +15536,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _IdField;
         partial void OnIdFieldChanging(global::System.String value);
         partial void OnIdFieldChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15560,7 +15560,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _TitleField;
         partial void OnTitleFieldChanging(global::System.String value);
         partial void OnTitleFieldChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15584,7 +15584,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _OrderField;
         partial void OnOrderFieldChanging(global::System.String value);
         partial void OnOrderFieldChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15608,7 +15608,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ParentIdField;
         partial void OnParentIdFieldChanging(global::System.String value);
         partial void OnParentIdFieldChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15632,7 +15632,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FolderIcon;
         partial void OnFolderIconChanging(global::System.String value);
         partial void OnFolderIconChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15656,7 +15656,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _IconModifierField;
         partial void OnIconModifierFieldChanging(global::System.String value);
         partial void OnIconModifierFieldChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15680,7 +15680,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _IconField;
         partial void OnIconFieldChanging(global::System.String value);
         partial void OnIconFieldChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15704,7 +15704,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _HasItemNodes;
         partial void OnHasItemNodesChanging(global::System.Boolean value);
         partial void OnHasItemNodesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15728,7 +15728,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _RecurringIdField;
         partial void OnRecurringIdFieldChanging(global::System.String value);
         partial void OnRecurringIdFieldChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15752,7 +15752,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _DefaultActionId;
         partial void OnDefaultActionIdChanging(Nullable<global::System.Int32> value);
         partial void OnDefaultActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15776,7 +15776,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _FolderDefaultActionId;
         partial void OnFolderDefaultActionIdChanging(Nullable<global::System.Int32> value);
         partial void OnFolderDefaultActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15800,7 +15800,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _ContextMenuId;
         partial void OnContextMenuIdChanging(Nullable<global::System.Int32> value);
         partial void OnContextMenuIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15824,7 +15824,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _FolderContextMenuId;
         partial void OnFolderContextMenuIdChanging(Nullable<global::System.Int32> value);
         partial void OnFolderContextMenuIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15848,7 +15848,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _TabId;
         partial void OnTabIdChanging(Nullable<global::System.Decimal> value);
         partial void OnTabIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15872,7 +15872,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Disabled;
         partial void OnDisabledChanging(global::System.Boolean value);
         partial void OnDisabledChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15896,7 +15896,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _CancelActionId;
         partial void OnCancelActionIdChanging(Nullable<global::System.Int32> value);
         partial void OnCancelActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15920,7 +15920,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ContextName;
         partial void OnContextNameChanging(global::System.String value);
         partial void OnContextNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15944,7 +15944,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ACTION_PERMISSION_ENABLE;
         partial void OnACTION_PERMISSION_ENABLEChanging(global::System.Boolean value);
         partial void OnACTION_PERMISSION_ENABLEChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15968,7 +15968,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _GROUP_PARENT_ID;
         partial void OnGROUP_PARENT_IDChanging(Nullable<global::System.Int32> value);
         partial void OnGROUP_PARENT_IDChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -15995,9 +15995,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16019,7 +16019,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16057,7 +16057,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16095,7 +16095,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16117,7 +16117,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16155,7 +16155,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16193,7 +16193,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16231,7 +16231,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16269,7 +16269,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16291,7 +16291,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16313,7 +16313,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16355,17 +16355,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="EntityTypePermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class EntityTypePermissionDAL : EntityObject, IQPEntityObject
+    public partial class EntityTypePermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new EntityTypePermissionDAL object.
         /// </summary>
@@ -16390,7 +16390,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16417,7 +16417,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16441,7 +16441,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _EntityTypeId;
         partial void OnEntityTypeIdChanging(global::System.Int32 value);
         partial void OnEntityTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16465,7 +16465,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16489,7 +16489,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16513,7 +16513,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PermissionLevelId;
         partial void OnPermissionLevelIdChanging(global::System.Decimal value);
         partial void OnPermissionLevelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16537,7 +16537,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16561,7 +16561,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16588,9 +16588,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16628,7 +16628,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16666,7 +16666,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16704,7 +16704,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16742,7 +16742,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16784,7 +16784,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -16794,7 +16794,7 @@ namespace Quantumart.QP8.DAL
     public partial class ExternalNotificationDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ExternalNotificationDAL object.
         /// </summary>
@@ -16821,7 +16821,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16848,7 +16848,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16872,7 +16872,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _EventName;
         partial void OnEventNameChanging(global::System.String value);
         partial void OnEventNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16896,7 +16896,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleId;
         partial void OnArticleIdChanging(global::System.Decimal value);
         partial void OnArticleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16920,7 +16920,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16944,7 +16944,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Url;
         partial void OnUrlChanging(global::System.String value);
         partial void OnUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16968,7 +16968,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Tries;
         partial void OnTriesChanging(global::System.Decimal value);
         partial void OnTriesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -16992,7 +16992,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NewXml;
         partial void OnNewXmlChanging(global::System.String value);
         partial void OnNewXmlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17016,7 +17016,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _OldXml;
         partial void OnOldXmlChanging(global::System.String value);
         partial void OnOldXmlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17040,7 +17040,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Sent;
         partial void OnSentChanging(global::System.Boolean value);
         partial void OnSentChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17064,7 +17064,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17088,7 +17088,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ContentId;
         partial void OnContentIdChanging(Nullable<global::System.Decimal> value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17115,19 +17115,19 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="FieldDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class FieldDAL : EntityObject, IQPEntityObject
+    public partial class FieldDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new FieldDAL object.
         /// </summary>
@@ -17234,7 +17234,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17261,7 +17261,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17285,7 +17285,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentId;
         partial void OnContentIdChanging(global::System.Decimal value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17309,7 +17309,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17333,7 +17333,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FormatMask;
         partial void OnFormatMaskChanging(global::System.String value);
         partial void OnFormatMaskChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17357,7 +17357,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _InputMask;
         partial void OnInputMaskChanging(global::System.String value);
         partial void OnInputMaskChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17381,7 +17381,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Size;
         partial void OnSizeChanging(global::System.Decimal value);
         partial void OnSizeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17405,7 +17405,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _DefaultValue;
         partial void OnDefaultValueChanging(global::System.String value);
         partial void OnDefaultValueChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17429,7 +17429,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _TypeId;
         partial void OnTypeIdChanging(global::System.Decimal value);
         partial void OnTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17453,7 +17453,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _RelationId;
         partial void OnRelationIdChanging(Nullable<global::System.Decimal> value);
         partial void OnRelationIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17477,7 +17477,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _IndexFlag;
         partial void OnIndexFlagChanging(global::System.Decimal value);
         partial void OnIndexFlagChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17501,7 +17501,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17525,7 +17525,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17549,7 +17549,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17573,7 +17573,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17597,7 +17597,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Order;
         partial void OnOrderChanging(global::System.Decimal value);
         partial void OnOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17621,7 +17621,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Required;
         partial void OnRequiredChanging(global::System.Decimal value);
         partial void OnRequiredChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17645,7 +17645,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PermanentFlag;
         partial void OnPermanentFlagChanging(global::System.Decimal value);
         partial void OnPermanentFlagChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17669,7 +17669,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PrimaryFlag;
         partial void OnPrimaryFlagChanging(global::System.Decimal value);
         partial void OnPrimaryFlagChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17693,7 +17693,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _RelationCondition;
         partial void OnRelationConditionChanging(global::System.String value);
         partial void OnRelationConditionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17717,7 +17717,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _DisplayAsRadioButton;
         partial void OnDisplayAsRadioButtonChanging(global::System.Decimal value);
         partial void OnDisplayAsRadioButtonChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17741,7 +17741,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ViewInList;
         partial void OnViewInListChanging(global::System.Boolean value);
         partial void OnViewInListChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17765,7 +17765,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ReadonlyFlag;
         partial void OnReadonlyFlagChanging(global::System.Boolean value);
         partial void OnReadonlyFlagChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17789,7 +17789,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _AllowStageEdit;
         partial void OnAllowStageEditChanging(global::System.Decimal value);
         partial void OnAllowStageEditChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17813,7 +17813,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Configuration;
         partial void OnConfigurationChanging(global::System.String value);
         partial void OnConfigurationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17837,7 +17837,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _BaseImageId;
         partial void OnBaseImageIdChanging(Nullable<global::System.Decimal> value);
         partial void OnBaseImageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17861,7 +17861,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _PersistentId;
         partial void OnPersistentIdChanging(Nullable<global::System.Decimal> value);
         partial void OnPersistentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17885,7 +17885,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _JoinId;
         partial void OnJoinIdChanging(Nullable<global::System.Decimal> value);
         partial void OnJoinIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17909,7 +17909,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LinkId;
         partial void OnLinkIdChanging(Nullable<global::System.Decimal> value);
         partial void OnLinkIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17933,7 +17933,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _DefaultBlobValue;
         partial void OnDefaultBlobValueChanging(global::System.String value);
         partial void OnDefaultBlobValueChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17957,7 +17957,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AutoLoad;
         partial void OnAutoLoadChanging(global::System.Boolean value);
         partial void OnAutoLoadChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -17981,7 +17981,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FriendlyName;
         partial void OnFriendlyNameChanging(global::System.String value);
         partial void OnFriendlyNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18005,7 +18005,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseSiteLibrary;
         partial void OnUseSiteLibraryChanging(global::System.Boolean value);
         partial void OnUseSiteLibraryChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18029,7 +18029,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseArchiveArticles;
         partial void OnUseArchiveArticlesChanging(global::System.Boolean value);
         partial void OnUseArchiveArticlesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18053,7 +18053,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AutoExpand;
         partial void OnAutoExpandChanging(global::System.Boolean value);
         partial void OnAutoExpandChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18077,7 +18077,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _RelationPageSize;
         partial void OnRelationPageSizeChanging(Nullable<global::System.Int32> value);
         partial void OnRelationPageSizeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18101,7 +18101,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Doctype;
         partial void OnDoctypeChanging(global::System.String value);
         partial void OnDoctypeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18125,7 +18125,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _FullPage;
         partial void OnFullPageChanging(global::System.Boolean value);
         partial void OnFullPageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18149,7 +18149,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _RenameMatched;
         partial void OnRenameMatchedChanging(global::System.Boolean value);
         partial void OnRenameMatchedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18173,7 +18173,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Subfolder;
         partial void OnSubfolderChanging(global::System.String value);
         partial void OnSubfolderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18197,7 +18197,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DisableVersionControl;
         partial void OnDisableVersionControlChanging(global::System.Boolean value);
         partial void OnDisableVersionControlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18221,7 +18221,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _MapAsProperty;
         partial void OnMapAsPropertyChanging(global::System.Boolean value);
         partial void OnMapAsPropertyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18245,7 +18245,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetName;
         partial void OnNetNameChanging(global::System.String value);
         partial void OnNetNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18269,7 +18269,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetBackName;
         partial void OnNetBackNameChanging(global::System.String value);
         partial void OnNetBackNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18293,7 +18293,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Boolean> _PEnterMode;
         partial void OnPEnterModeChanging(Nullable<global::System.Boolean> value);
         partial void OnPEnterModeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18317,7 +18317,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Boolean> _UseEnglishQuotes;
         partial void OnUseEnglishQuotesChanging(Nullable<global::System.Boolean> value);
         partial void OnUseEnglishQuotesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18341,7 +18341,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _BackRelationId;
         partial void OnBackRelationIdChanging(Nullable<global::System.Decimal> value);
         partial void OnBackRelationIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18365,7 +18365,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsLong;
         partial void OnIsLongChanging(global::System.Boolean value);
         partial void OnIsLongChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18389,7 +18389,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ExternalCss;
         partial void OnExternalCssChanging(global::System.String value);
         partial void OnExternalCssChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18413,7 +18413,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _RootElementClass;
         partial void OnRootElementClassChanging(global::System.String value);
         partial void OnRootElementClassChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18437,7 +18437,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseForTree;
         partial void OnUseForTreeChanging(global::System.Boolean value);
         partial void OnUseForTreeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18461,7 +18461,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AutoCheckChildren;
         partial void OnAutoCheckChildrenChanging(global::System.Boolean value);
         partial void OnAutoCheckChildrenChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18485,7 +18485,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Aggregated;
         partial void OnAggregatedChanging(global::System.Boolean value);
         partial void OnAggregatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18509,7 +18509,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ClassifierId;
         partial void OnClassifierIdChanging(Nullable<global::System.Decimal> value);
         partial void OnClassifierIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18533,7 +18533,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsClassifier;
         partial void OnIsClassifierChanging(global::System.Boolean value);
         partial void OnIsClassifierChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18557,7 +18557,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Changeable;
         partial void OnChangeableChanging(global::System.Boolean value);
         partial void OnChangeableChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18581,7 +18581,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseRelationSecurity;
         partial void OnUseRelationSecurityChanging(global::System.Boolean value);
         partial void OnUseRelationSecurityChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18605,7 +18605,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _CopyPermissionsToChildren;
         partial void OnCopyPermissionsToChildrenChanging(global::System.Boolean value);
         partial void OnCopyPermissionsToChildrenChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18629,7 +18629,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _EnumValues;
         partial void OnEnumValuesChanging(global::System.String value);
         partial void OnEnumValuesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18653,7 +18653,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ShowAsRadioButtons;
         partial void OnShowAsRadioButtonsChanging(global::System.Boolean value);
         partial void OnShowAsRadioButtonsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18677,7 +18677,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseForDefaultFiltration;
         partial void OnUseForDefaultFiltrationChanging(global::System.Boolean value);
         partial void OnUseForDefaultFiltrationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18701,7 +18701,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _OrderFieldId;
         partial void OnOrderFieldIdChanging(Nullable<global::System.Decimal> value);
         partial void OnOrderFieldIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18725,7 +18725,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ParentFieldId;
         partial void OnParentFieldIdChanging(Nullable<global::System.Decimal> value);
         partial void OnParentFieldIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18749,7 +18749,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Hide;
         partial void OnHideChanging(global::System.Boolean value);
         partial void OnHideChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18773,7 +18773,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Override;
         partial void OnOverrideChanging(global::System.Boolean value);
         partial void OnOverrideChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18797,7 +18797,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseForContext;
         partial void OnUseForContextChanging(global::System.Boolean value);
         partial void OnUseForContextChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18821,7 +18821,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseForVariations;
         partial void OnUseForVariationsChanging(global::System.Boolean value);
         partial void OnUseForVariationsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18845,7 +18845,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _OrderByTitle;
         partial void OnOrderByTitleChanging(global::System.Boolean value);
         partial void OnOrderByTitleChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18869,7 +18869,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _FieldTitleCount;
         partial void OnFieldTitleCountChanging(global::System.Int32 value);
         partial void OnFieldTitleCountChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18893,7 +18893,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IncludeRelationsInTitle;
         partial void OnIncludeRelationsInTitleChanging(global::System.Boolean value);
         partial void OnIncludeRelationsInTitleChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18917,7 +18917,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseInChildContentFilter;
         partial void OnUseInChildContentFilterChanging(global::System.Boolean value);
         partial void OnUseInChildContentFilterChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18941,7 +18941,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _OptimizeForHierarchy;
         partial void OnOptimizeForHierarchyChanging(global::System.Boolean value);
         partial void OnOptimizeForHierarchyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18965,7 +18965,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsLocalization;
         partial void OnIsLocalizationChanging(global::System.Boolean value);
         partial void OnIsLocalizationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -18989,7 +18989,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseSeparateReverseViews;
         partial void OnUseSeparateReverseViewsChanging(global::System.Boolean value);
         partial void OnUseSeparateReverseViewsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19013,7 +19013,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DisableListAutoWrap;
         partial void OnDisableListAutoWrapChanging(global::System.Boolean value);
         partial void OnDisableListAutoWrapChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19040,9 +19040,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19080,7 +19080,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19118,7 +19118,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19140,7 +19140,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19178,7 +19178,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19216,7 +19216,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19254,7 +19254,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19276,7 +19276,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19314,7 +19314,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19336,7 +19336,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19374,7 +19374,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19396,7 +19396,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19434,7 +19434,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19456,7 +19456,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19494,7 +19494,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19516,7 +19516,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19538,7 +19538,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19560,7 +19560,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19582,7 +19582,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19604,7 +19604,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19642,7 +19642,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19664,7 +19664,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19702,7 +19702,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19740,7 +19740,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19762,7 +19762,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19784,7 +19784,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19826,7 +19826,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -19836,7 +19836,7 @@ namespace Quantumart.QP8.DAL
     public partial class FieldTypeDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new FieldTypeDAL object.
         /// </summary>
@@ -19859,7 +19859,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19886,7 +19886,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19910,7 +19910,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19934,7 +19934,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19958,7 +19958,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Image;
         partial void OnImageChanging(global::System.String value);
         partial void OnImageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -19982,7 +19982,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _DatabaseType;
         partial void OnDatabaseTypeChanging(global::System.String value);
         partial void OnDatabaseTypeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20006,7 +20006,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _InputType;
         partial void OnInputTypeChanging(global::System.String value);
         partial void OnInputTypeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20030,7 +20030,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CheckFunction;
         partial void OnCheckFunctionChanging(global::System.String value);
         partial void OnCheckFunctionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20057,9 +20057,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20085,7 +20085,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -20095,7 +20095,7 @@ namespace Quantumart.QP8.DAL
     public partial class ItemToItemDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ItemToItemDAL object.
         /// </summary>
@@ -20114,7 +20114,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20141,7 +20141,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LinkId;
         partial void OnLinkIdChanging(global::System.Decimal value);
         partial void OnLinkIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20168,7 +20168,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LItemId;
         partial void OnLItemIdChanging(global::System.Decimal value);
         partial void OnLItemIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20198,9 +20198,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20238,7 +20238,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20276,7 +20276,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20318,7 +20318,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -20328,7 +20328,7 @@ namespace Quantumart.QP8.DAL
     public partial class ItemToItemVersionDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ItemToItemVersionDAL object.
         /// </summary>
@@ -20347,7 +20347,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20374,7 +20374,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleVersionId;
         partial void OnArticleVersionIdChanging(global::System.Decimal value);
         partial void OnArticleVersionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20401,7 +20401,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _FieldId;
         partial void OnFieldIdChanging(global::System.Decimal value);
         partial void OnFieldIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20431,9 +20431,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20471,7 +20471,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20509,7 +20509,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20551,7 +20551,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -20561,7 +20561,7 @@ namespace Quantumart.QP8.DAL
     public partial class LanguagesDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new LanguagesDAL object.
         /// </summary>
@@ -20598,7 +20598,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20625,7 +20625,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LanguageId;
         partial void OnLanguageIdChanging(global::System.Decimal value);
         partial void OnLanguageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20649,7 +20649,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _LanguageName;
         partial void OnLanguageNameChanging(global::System.String value);
         partial void OnLanguageNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20673,7 +20673,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LanguagePt;
         partial void OnLanguagePtChanging(global::System.Decimal value);
         partial void OnLanguagePtChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20697,7 +20697,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Locale;
         partial void OnLocaleChanging(global::System.Decimal value);
         partial void OnLocaleChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20721,7 +20721,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Codepage;
         partial void OnCodepageChanging(global::System.Decimal value);
         partial void OnCodepageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20745,7 +20745,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Charset;
         partial void OnCharsetChanging(global::System.String value);
         partial void OnCharsetChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20769,7 +20769,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _GeneralDateFormat;
         partial void OnGeneralDateFormatChanging(global::System.String value);
         partial void OnGeneralDateFormatChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20793,7 +20793,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _LongDateFormat;
         partial void OnLongDateFormatChanging(global::System.String value);
         partial void OnLongDateFormatChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20817,7 +20817,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ShortDateFormat;
         partial void OnShortDateFormatChanging(global::System.String value);
         partial void OnShortDateFormatChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20841,7 +20841,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _LongTimeFormat;
         partial void OnLongTimeFormatChanging(global::System.String value);
         partial void OnLongTimeFormatChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20865,7 +20865,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ShortTimeFormat;
         partial void OnShortTimeFormatChanging(global::System.String value);
         partial void OnShortTimeFormatChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20889,7 +20889,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Direction;
         partial void OnDirectionChanging(global::System.Boolean value);
         partial void OnDirectionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20916,9 +20916,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20940,7 +20940,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -20966,7 +20966,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -20976,7 +20976,7 @@ namespace Quantumart.QP8.DAL
     public partial class LocaleDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new LocaleDAL object.
         /// </summary>
@@ -20993,7 +20993,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21020,7 +21020,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21047,9 +21047,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -21059,7 +21059,7 @@ namespace Quantumart.QP8.DAL
     public partial class MaskTemplateDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new MaskTemplateDAL object.
         /// </summary>
@@ -21076,7 +21076,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21103,7 +21103,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21127,7 +21127,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Mask;
         partial void OnMaskChanging(global::System.String value);
         partial void OnMaskChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21154,9 +21154,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -21166,7 +21166,7 @@ namespace Quantumart.QP8.DAL
     public partial class NetLanguagesDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new NetLanguagesDAL object.
         /// </summary>
@@ -21183,7 +21183,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21210,7 +21210,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21237,9 +21237,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21261,7 +21261,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21283,7 +21283,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21305,7 +21305,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21331,17 +21331,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="NotificationsDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class NotificationsDAL : EntityObject, IQPEntityObject
+    public partial class NotificationsDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new NotificationsDAL object.
         /// </summary>
@@ -21392,7 +21392,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21419,7 +21419,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21443,7 +21443,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21467,7 +21467,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentId;
         partial void OnContentIdChanging(global::System.Decimal value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21491,7 +21491,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _FormatId;
         partial void OnFormatIdChanging(Nullable<global::System.Decimal> value);
         partial void OnFormatIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21515,7 +21515,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21539,7 +21539,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21563,7 +21563,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ForCreate;
         partial void OnForCreateChanging(global::System.Boolean value);
         partial void OnForCreateChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21587,7 +21587,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ForModify;
         partial void OnForModifyChanging(global::System.Boolean value);
         partial void OnForModifyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21611,7 +21611,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ForRemove;
         partial void OnForRemoveChanging(global::System.Boolean value);
         partial void OnForRemoveChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21635,7 +21635,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21659,7 +21659,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21683,7 +21683,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21707,7 +21707,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Boolean> _ForStatusChanged;
         partial void OnForStatusChangedChanging(Nullable<global::System.Boolean> value);
         partial void OnForStatusChangedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21731,7 +21731,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Boolean> _ForFrontend;
         partial void OnForFrontendChanging(Nullable<global::System.Boolean> value);
         partial void OnForFrontendChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21755,7 +21755,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _NotifyOnStatusTypeId;
         partial void OnNotifyOnStatusTypeIdChanging(Nullable<global::System.Decimal> value);
         partial void OnNotifyOnStatusTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21779,7 +21779,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _EmailFieldId;
         partial void OnEmailFieldIdChanging(Nullable<global::System.Decimal> value);
         partial void OnEmailFieldIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21803,7 +21803,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _NoEmail;
         partial void OnNoEmailChanging(global::System.Decimal value);
         partial void OnNoEmailChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21827,7 +21827,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _SendFiles;
         partial void OnSendFilesChanging(global::System.Boolean value);
         partial void OnSendFilesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21851,7 +21851,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _WorkflowId;
         partial void OnWorkflowIdChanging(Nullable<global::System.Decimal> value);
         partial void OnWorkflowIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21875,7 +21875,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _FromBackenduserId;
         partial void OnFromBackenduserIdChanging(global::System.Decimal value);
         partial void OnFromBackenduserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21899,7 +21899,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _FromBackenduser;
         partial void OnFromBackenduserChanging(global::System.Boolean value);
         partial void OnFromBackenduserChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21923,7 +21923,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _FromDefaultName;
         partial void OnFromDefaultNameChanging(global::System.Boolean value);
         partial void OnFromDefaultNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21947,7 +21947,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FromUserEmail;
         partial void OnFromUserEmailChanging(global::System.String value);
         partial void OnFromUserEmailChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21971,7 +21971,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FromUserName;
         partial void OnFromUserNameChanging(global::System.String value);
         partial void OnFromUserNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -21995,7 +21995,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ForStatusPartiallyChanged;
         partial void OnForStatusPartiallyChangedChanging(global::System.Boolean value);
         partial void OnForStatusPartiallyChangedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22019,7 +22019,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseQaMail;
         partial void OnUseQaMailChanging(global::System.Boolean value);
         partial void OnUseQaMailChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22043,7 +22043,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsExternal;
         partial void OnIsExternalChanging(global::System.Boolean value);
         partial void OnIsExternalChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22067,7 +22067,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ExternalUrl;
         partial void OnExternalUrlChanging(global::System.String value);
         partial void OnExternalUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22091,7 +22091,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ForDelayedPublication;
         partial void OnForDelayedPublicationChanging(global::System.Boolean value);
         partial void OnForDelayedPublicationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22118,9 +22118,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22158,7 +22158,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22196,7 +22196,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22234,7 +22234,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22272,7 +22272,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22310,7 +22310,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22348,7 +22348,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22386,7 +22386,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22424,7 +22424,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22466,7 +22466,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -22476,7 +22476,7 @@ namespace Quantumart.QP8.DAL
     public partial class NotificationsSentDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new NotificationsSentDAL object.
         /// </summary>
@@ -22497,7 +22497,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22524,7 +22524,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UserId;
         partial void OnUserIdChanging(global::System.Decimal value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22548,7 +22548,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _NotificationId;
         partial void OnNotificationIdChanging(global::System.Decimal value);
         partial void OnNotificationIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22572,7 +22572,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleId;
         partial void OnArticleIdChanging(global::System.Decimal value);
         partial void OnArticleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22599,7 +22599,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Sent;
         partial void OnSentChanging(global::System.DateTime value);
         partial void OnSentChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22626,19 +22626,19 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ObjectDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ObjectDAL : EntityObject, IQPEntityObject
+    public partial class ObjectDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ObjectDAL object.
         /// </summary>
@@ -22675,7 +22675,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22702,7 +22702,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22726,7 +22726,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ParentObjectId;
         partial void OnParentObjectIdChanging(Nullable<global::System.Decimal> value);
         partial void OnParentObjectIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22750,7 +22750,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _PageTemplateId;
         partial void OnPageTemplateIdChanging(Nullable<global::System.Decimal> value);
         partial void OnPageTemplateIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22774,7 +22774,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _PageId;
         partial void OnPageIdChanging(Nullable<global::System.Decimal> value);
         partial void OnPageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22798,7 +22798,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22822,7 +22822,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _DefaultFormatId;
         partial void OnDefaultFormatIdChanging(Nullable<global::System.Decimal> value);
         partial void OnDefaultFormatIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22846,7 +22846,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22870,7 +22870,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _TypeId;
         partial void OnTypeIdChanging(global::System.Decimal value);
         partial void OnTypeIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22894,7 +22894,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UseDefaultValues;
         partial void OnUseDefaultValuesChanging(global::System.Decimal value);
         partial void OnUseDefaultValuesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22918,7 +22918,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22942,7 +22942,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22966,7 +22966,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -22990,7 +22990,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _AllowStageEdit;
         partial void OnAllowStageEditChanging(global::System.Decimal value);
         partial void OnAllowStageEditChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23014,7 +23014,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Global;
         partial void OnGlobalChanging(global::System.Boolean value);
         partial void OnGlobalChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23038,7 +23038,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetName;
         partial void OnNetNameChanging(global::System.String value);
         partial void OnNetNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23062,7 +23062,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Locked;
         partial void OnLockedChanging(Nullable<global::System.DateTime> value);
         partial void OnLockedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23086,7 +23086,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LockedBy;
         partial void OnLockedByChanging(Nullable<global::System.Decimal> value);
         partial void OnLockedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23110,7 +23110,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _EnableViewstate;
         partial void OnEnableViewstateChanging(global::System.Boolean value);
         partial void OnEnableViewstateChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23134,7 +23134,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ControlCustomClass;
         partial void OnControlCustomClassChanging(global::System.String value);
         partial void OnControlCustomClassChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23158,7 +23158,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DisableDatabind;
         partial void OnDisableDatabindChanging(global::System.Boolean value);
         partial void OnDisableDatabindChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23185,9 +23185,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23225,7 +23225,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23263,7 +23263,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23285,7 +23285,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23323,7 +23323,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23345,7 +23345,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23383,7 +23383,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23421,7 +23421,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23459,7 +23459,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23497,7 +23497,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23519,7 +23519,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23557,7 +23557,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23579,7 +23579,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23621,17 +23621,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ObjectFormatDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ObjectFormatDAL : EntityObject, IQPEntityObject
+    public partial class ObjectFormatDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ObjectFormatDAL object.
         /// </summary>
@@ -23672,7 +23672,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23699,7 +23699,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23723,7 +23723,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ObjectId;
         partial void OnObjectIdChanging(global::System.Decimal value);
         partial void OnObjectIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23747,7 +23747,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23771,7 +23771,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23795,7 +23795,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23819,7 +23819,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23843,7 +23843,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23867,7 +23867,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FormatBody;
         partial void OnFormatBodyChanging(global::System.String value);
         partial void OnFormatBodyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23891,7 +23891,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _NetLanguageId;
         partial void OnNetLanguageIdChanging(Nullable<global::System.Decimal> value);
         partial void OnNetLanguageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23915,7 +23915,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetFormatName;
         partial void OnNetFormatNameChanging(global::System.String value);
         partial void OnNetFormatNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23939,7 +23939,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CodeBehind;
         partial void OnCodeBehindChanging(global::System.String value);
         partial void OnCodeBehindChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23963,7 +23963,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Locked;
         partial void OnLockedChanging(Nullable<global::System.DateTime> value);
         partial void OnLockedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -23987,7 +23987,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LockedBy;
         partial void OnLockedByChanging(Nullable<global::System.Decimal> value);
         partial void OnLockedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24011,7 +24011,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Assembled;
         partial void OnAssembledChanging(global::System.DateTime value);
         partial void OnAssembledChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24035,7 +24035,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssembleInLive;
         partial void OnAssembleInLiveChanging(global::System.Boolean value);
         partial void OnAssembleInLiveChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24059,7 +24059,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssembleInStage;
         partial void OnAssembleInStageChanging(global::System.Boolean value);
         partial void OnAssembleInStageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24083,7 +24083,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssembleNotificationInLive;
         partial void OnAssembleNotificationInLiveChanging(global::System.Boolean value);
         partial void OnAssembleNotificationInLiveChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24107,7 +24107,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssembleNotificationInStage;
         partial void OnAssembleNotificationInStageChanging(global::System.Boolean value);
         partial void OnAssembleNotificationInStageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24131,7 +24131,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssemblePreviewInLive;
         partial void OnAssemblePreviewInLiveChanging(global::System.Boolean value);
         partial void OnAssemblePreviewInLiveChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24155,7 +24155,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssemblePreviewInStage;
         partial void OnAssemblePreviewInStageChanging(global::System.Boolean value);
         partial void OnAssemblePreviewInStageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24179,7 +24179,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _TagName;
         partial void OnTagNameChanging(global::System.String value);
         partial void OnTagNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24206,9 +24206,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24246,7 +24246,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24268,7 +24268,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24306,7 +24306,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24328,7 +24328,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24366,7 +24366,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24388,7 +24388,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24410,7 +24410,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24452,7 +24452,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -24462,7 +24462,7 @@ namespace Quantumart.QP8.DAL
     public partial class ObjectFormatVersionDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ObjectFormatVersionDAL object.
         /// </summary>
@@ -24489,7 +24489,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24516,7 +24516,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24540,7 +24540,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ObjectFormatId;
         partial void OnObjectFormatIdChanging(global::System.Decimal value);
         partial void OnObjectFormatIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24564,7 +24564,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ObjectId;
         partial void OnObjectIdChanging(global::System.Decimal value);
         partial void OnObjectIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24588,7 +24588,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24612,7 +24612,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24636,7 +24636,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24660,7 +24660,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24684,7 +24684,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24708,7 +24708,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FormatBody;
         partial void OnFormatBodyChanging(global::System.String value);
         partial void OnFormatBodyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24732,7 +24732,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _NetLanguageId;
         partial void OnNetLanguageIdChanging(Nullable<global::System.Decimal> value);
         partial void OnNetLanguageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24756,7 +24756,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetFormatName;
         partial void OnNetFormatNameChanging(global::System.String value);
         partial void OnNetFormatNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24780,7 +24780,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CodeBehind;
         partial void OnCodeBehindChanging(global::System.String value);
         partial void OnCodeBehindChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24804,7 +24804,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Locked;
         partial void OnLockedChanging(Nullable<global::System.DateTime> value);
         partial void OnLockedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24828,7 +24828,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LockedBy;
         partial void OnLockedByChanging(Nullable<global::System.Decimal> value);
         partial void OnLockedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24855,9 +24855,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24895,7 +24895,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24933,7 +24933,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -24975,7 +24975,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -24985,7 +24985,7 @@ namespace Quantumart.QP8.DAL
     public partial class ObjectTypeDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ObjectTypeDAL object.
         /// </summary>
@@ -25004,7 +25004,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25031,7 +25031,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25055,7 +25055,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25079,7 +25079,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _RelatedTable;
         partial void OnRelatedTableChanging(global::System.String value);
         partial void OnRelatedTableChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25103,7 +25103,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ImageName;
         partial void OnImageNameChanging(global::System.String value);
         partial void OnImageNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25130,9 +25130,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25158,7 +25158,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -25168,7 +25168,7 @@ namespace Quantumart.QP8.DAL
     public partial class ObjectValuesDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ObjectValuesDAL object.
         /// </summary>
@@ -25187,7 +25187,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25214,7 +25214,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ObjectId;
         partial void OnObjectIdChanging(global::System.Decimal value);
         partial void OnObjectIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25241,7 +25241,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _VariableName;
         partial void OnVariableNameChanging(global::System.String value);
         partial void OnVariableNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25268,9 +25268,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25312,17 +25312,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="PageDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class PageDAL : EntityObject, IQPEntityObject
+    public partial class PageDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new PageDAL object.
         /// </summary>
@@ -25379,7 +25379,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25406,7 +25406,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25430,7 +25430,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _TemplateId;
         partial void OnTemplateIdChanging(global::System.Decimal value);
         partial void OnTemplateIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25454,7 +25454,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25478,7 +25478,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Filename;
         partial void OnFilenameChanging(global::System.String value);
         partial void OnFilenameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25502,7 +25502,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ProxyCache;
         partial void OnProxyCacheChanging(global::System.Decimal value);
         partial void OnProxyCacheChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25526,7 +25526,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _CacheHours;
         partial void OnCacheHoursChanging(global::System.Decimal value);
         partial void OnCacheHoursChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25550,7 +25550,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Charset;
         partial void OnCharsetChanging(global::System.String value);
         partial void OnCharsetChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25574,7 +25574,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Codepage;
         partial void OnCodepageChanging(global::System.Decimal value);
         partial void OnCodepageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25598,7 +25598,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Locale;
         partial void OnLocaleChanging(global::System.Decimal value);
         partial void OnLocaleChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25622,7 +25622,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25646,7 +25646,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Reassemble;
         partial void OnReassembleChanging(global::System.Decimal value);
         partial void OnReassembleChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25670,7 +25670,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25694,7 +25694,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25718,7 +25718,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25742,7 +25742,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Assembled;
         partial void OnAssembledChanging(global::System.DateTime value);
         partial void OnAssembledChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25766,7 +25766,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastAssembledBy;
         partial void OnLastAssembledByChanging(global::System.Decimal value);
         partial void OnLastAssembledByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25790,7 +25790,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _GenerateTrace;
         partial void OnGenerateTraceChanging(global::System.Boolean value);
         partial void OnGenerateTraceChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25814,7 +25814,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Folder;
         partial void OnFolderChanging(global::System.String value);
         partial void OnFolderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25838,7 +25838,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Locked;
         partial void OnLockedChanging(Nullable<global::System.DateTime> value);
         partial void OnLockedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25862,7 +25862,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LockedBy;
         partial void OnLockedByChanging(Nullable<global::System.Decimal> value);
         partial void OnLockedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25886,7 +25886,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _EnableViewstate;
         partial void OnEnableViewstateChanging(global::System.Boolean value);
         partial void OnEnableViewstateChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25910,7 +25910,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DisableBrowseServer;
         partial void OnDisableBrowseServerChanging(global::System.Boolean value);
         partial void OnDisableBrowseServerChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25934,7 +25934,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _SendLastModifiedHeader;
         partial void OnSendLastModifiedHeaderChanging(global::System.Boolean value);
         partial void OnSendLastModifiedHeaderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25958,7 +25958,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CustomClass;
         partial void OnCustomClassChanging(global::System.String value);
         partial void OnCustomClassChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -25982,7 +25982,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssembleInLive;
         partial void OnAssembleInLiveChanging(global::System.Boolean value);
         partial void OnAssembleInLiveChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26006,7 +26006,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssembleInStage;
         partial void OnAssembleInStageChanging(global::System.Boolean value);
         partial void OnAssembleInStageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26030,7 +26030,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Boolean> _SendNocacheHeaders;
         partial void OnSendNocacheHeadersChanging(Nullable<global::System.Boolean> value);
         partial void OnSendNocacheHeadersChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26057,9 +26057,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26081,7 +26081,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26103,7 +26103,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26141,7 +26141,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26179,7 +26179,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26201,7 +26201,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26243,17 +26243,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="PageTemplateDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class PageTemplateDAL : EntityObject, IQPEntityObject
+    public partial class PageTemplateDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new PageTemplateDAL object.
         /// </summary>
@@ -26306,7 +26306,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26333,7 +26333,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26357,7 +26357,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SiteId;
         partial void OnSiteIdChanging(global::System.Decimal value);
         partial void OnSiteIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26381,7 +26381,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26405,7 +26405,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _TemplatePicture;
         partial void OnTemplatePictureChanging(global::System.String value);
         partial void OnTemplatePictureChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26429,7 +26429,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26453,7 +26453,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26477,7 +26477,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26501,7 +26501,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26525,7 +26525,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Charset;
         partial void OnCharsetChanging(global::System.String value);
         partial void OnCharsetChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26549,7 +26549,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Codepage;
         partial void OnCodepageChanging(global::System.Decimal value);
         partial void OnCodepageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26573,7 +26573,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Locale;
         partial void OnLocaleChanging(global::System.Decimal value);
         partial void OnLocaleChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26597,7 +26597,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _TemplateBody;
         partial void OnTemplateBodyChanging(global::System.String value);
         partial void OnTemplateBodyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26621,7 +26621,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _TemplateFolder;
         partial void OnTemplateFolderChanging(global::System.String value);
         partial void OnTemplateFolderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26645,7 +26645,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsSystem;
         partial void OnIsSystemChanging(global::System.Boolean value);
         partial void OnIsSystemChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26669,7 +26669,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NetTemplateName;
         partial void OnNetTemplateNameChanging(global::System.String value);
         partial void OnNetTemplateNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26693,7 +26693,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CodeBehind;
         partial void OnCodeBehindChanging(global::System.String value);
         partial void OnCodeBehindChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26717,7 +26717,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _NetLanguageId;
         partial void OnNetLanguageIdChanging(Nullable<global::System.Decimal> value);
         partial void OnNetLanguageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26741,7 +26741,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Locked;
         partial void OnLockedChanging(Nullable<global::System.DateTime> value);
         partial void OnLockedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26765,7 +26765,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LockedBy;
         partial void OnLockedByChanging(Nullable<global::System.Decimal> value);
         partial void OnLockedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26789,7 +26789,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ShowFilenames;
         partial void OnShowFilenamesChanging(global::System.Boolean value);
         partial void OnShowFilenamesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26813,7 +26813,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _EnableViewstate;
         partial void OnEnableViewstateChanging(global::System.Boolean value);
         partial void OnEnableViewstateChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26837,7 +26837,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ForMobileDevices;
         partial void OnForMobileDevicesChanging(global::System.Boolean value);
         partial void OnForMobileDevicesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26861,7 +26861,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _PreviewTemplateBody;
         partial void OnPreviewTemplateBodyChanging(global::System.String value);
         partial void OnPreviewTemplateBodyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26885,7 +26885,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _PreviewCodeBehind;
         partial void OnPreviewCodeBehindChanging(global::System.String value);
         partial void OnPreviewCodeBehindChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26909,7 +26909,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _MaxNumOfFormatStoredVersions;
         partial void OnMaxNumOfFormatStoredVersionsChanging(global::System.Int32 value);
         partial void OnMaxNumOfFormatStoredVersionsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26933,7 +26933,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CustomClassForPages;
         partial void OnCustomClassForPagesChanging(global::System.String value);
         partial void OnCustomClassForPagesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26957,7 +26957,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _TemplateCustomClass;
         partial void OnTemplateCustomClassChanging(global::System.String value);
         partial void OnTemplateCustomClassChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -26981,7 +26981,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CustomClassForGenerics;
         partial void OnCustomClassForGenericsChanging(global::System.String value);
         partial void OnCustomClassForGenericsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27005,7 +27005,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CustomClassForContainers;
         partial void OnCustomClassForContainersChanging(global::System.String value);
         partial void OnCustomClassForContainersChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27029,7 +27029,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _CustomClassForForms;
         partial void OnCustomClassForFormsChanging(global::System.String value);
         partial void OnCustomClassForFormsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27053,7 +27053,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssembleInLive;
         partial void OnAssembleInLiveChanging(global::System.Boolean value);
         partial void OnAssembleInLiveChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27077,7 +27077,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssembleInStage;
         partial void OnAssembleInStageChanging(global::System.Boolean value);
         partial void OnAssembleInStageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27101,7 +27101,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DisableDatabind;
         partial void OnDisableDatabindChanging(global::System.Boolean value);
         partial void OnDisableDatabindChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27125,7 +27125,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Using;
         partial void OnUsingChanging(global::System.String value);
         partial void OnUsingChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27149,7 +27149,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _SendNocacheHeaders;
         partial void OnSendNocacheHeadersChanging(global::System.Boolean value);
         partial void OnSendNocacheHeadersChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27176,9 +27176,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27216,7 +27216,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27238,7 +27238,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27260,7 +27260,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27298,7 +27298,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27336,7 +27336,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27378,7 +27378,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -27388,7 +27388,7 @@ namespace Quantumart.QP8.DAL
     public partial class PageTraceDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new PageTraceDAL object.
         /// </summary>
@@ -27409,7 +27409,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27436,7 +27436,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _TraceId;
         partial void OnTraceIdChanging(global::System.Decimal value);
         partial void OnTraceIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27460,7 +27460,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PageId;
         partial void OnPageIdChanging(global::System.Decimal value);
         partial void OnPageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27484,7 +27484,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _QueryString;
         partial void OnQueryStringChanging(global::System.String value);
         partial void OnQueryStringChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27508,7 +27508,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Values;
         partial void OnValuesChanging(global::System.String value);
         partial void OnValuesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27532,7 +27532,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Session;
         partial void OnSessionChanging(global::System.String value);
         partial void OnSessionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27556,7 +27556,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Cookies;
         partial void OnCookiesChanging(global::System.String value);
         partial void OnCookiesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27580,7 +27580,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Traced;
         partial void OnTracedChanging(global::System.DateTime value);
         partial void OnTracedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27607,9 +27607,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27647,7 +27647,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27673,7 +27673,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -27683,7 +27683,7 @@ namespace Quantumart.QP8.DAL
     public partial class PageTraceFormatDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new PageTraceFormatDAL object.
         /// </summary>
@@ -27706,7 +27706,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27733,7 +27733,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _TraceFormatId;
         partial void OnTraceFormatIdChanging(global::System.Decimal value);
         partial void OnTraceFormatIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27757,7 +27757,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _FormatId;
         partial void OnFormatIdChanging(global::System.Decimal value);
         partial void OnFormatIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27781,7 +27781,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ParentTraceFormatId;
         partial void OnParentTraceFormatIdChanging(Nullable<global::System.Decimal> value);
         partial void OnParentTraceFormatIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27805,7 +27805,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _TraceId;
         partial void OnTraceIdChanging(global::System.Decimal value);
         partial void OnTraceIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27829,7 +27829,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Number;
         partial void OnNumberChanging(global::System.Decimal value);
         partial void OnNumberChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27856,9 +27856,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27896,7 +27896,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27934,7 +27934,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27956,7 +27956,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -27994,7 +27994,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28020,7 +28020,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -28030,7 +28030,7 @@ namespace Quantumart.QP8.DAL
     public partial class PageTraceFormatValuesDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new PageTraceFormatValuesDAL object.
         /// </summary>
@@ -28049,7 +28049,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28076,7 +28076,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _TraceFormatId;
         partial void OnTraceFormatIdChanging(global::System.Decimal value);
         partial void OnTraceFormatIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28103,7 +28103,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28127,7 +28127,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Value;
         partial void OnValueChanging(global::System.String value);
         partial void OnValueChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28157,9 +28157,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28201,7 +28201,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -28211,7 +28211,7 @@ namespace Quantumart.QP8.DAL
     public partial class PermissionLevelDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new PermissionLevelDAL object.
         /// </summary>
@@ -28230,7 +28230,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28254,7 +28254,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Level;
         partial void OnLevelChanging(global::System.Decimal value);
         partial void OnLevelChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28281,7 +28281,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28305,7 +28305,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28332,9 +28332,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28356,7 +28356,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28378,7 +28378,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28400,7 +28400,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28422,7 +28422,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28444,7 +28444,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28466,7 +28466,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28488,7 +28488,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28510,7 +28510,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28532,7 +28532,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28554,7 +28554,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28576,7 +28576,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28598,7 +28598,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28624,7 +28624,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -28634,7 +28634,7 @@ namespace Quantumart.QP8.DAL
     public partial class RemovedEntitiesDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new RemovedEntitiesDAL object.
         /// </summary>
@@ -28655,7 +28655,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28682,7 +28682,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _EntityName;
         partial void OnEntityNameChanging(global::System.String value);
         partial void OnEntityNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28709,7 +28709,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28733,7 +28733,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UserId;
         partial void OnUserIdChanging(global::System.Decimal value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28757,7 +28757,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Deleted;
         partial void OnDeletedChanging(global::System.DateTime value);
         partial void OnDeletedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28781,7 +28781,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ParentId;
         partial void OnParentIdChanging(Nullable<global::System.Decimal> value);
         partial void OnParentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28808,9 +28808,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -28820,7 +28820,7 @@ namespace Quantumart.QP8.DAL
     public partial class RemovedFilesDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new RemovedFilesDAL object.
         /// </summary>
@@ -28845,7 +28845,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28869,7 +28869,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28893,7 +28893,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Path;
         partial void OnPathChanging(global::System.String value);
         partial void OnPathChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28917,7 +28917,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UserId;
         partial void OnUserIdChanging(global::System.Decimal value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28944,7 +28944,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Deleted;
         partial void OnDeletedChanging(global::System.DateTime value);
         partial void OnDeletedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28968,7 +28968,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsFolder;
         partial void OnIsFolderChanging(global::System.Boolean value);
         partial void OnIsFolderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -28992,7 +28992,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsRenamed;
         partial void OnIsRenamedChanging(global::System.Boolean value);
         partial void OnIsRenamedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29016,7 +29016,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsMoved;
         partial void OnIsMovedChanging(global::System.Boolean value);
         partial void OnIsMovedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29043,9 +29043,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -29055,7 +29055,7 @@ namespace Quantumart.QP8.DAL
     public partial class SessionsLogDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new SessionsLogDAL object.
         /// </summary>
@@ -29082,7 +29082,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29109,7 +29109,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SessionId;
         partial void OnSessionIdChanging(global::System.Decimal value);
         partial void OnSessionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29133,7 +29133,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Login;
         partial void OnLoginChanging(global::System.String value);
         partial void OnLoginChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29157,7 +29157,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Password;
         partial void OnPasswordChanging(global::System.String value);
         partial void OnPasswordChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29181,7 +29181,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29205,7 +29205,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _StartTime;
         partial void OnStartTimeChanging(global::System.DateTime value);
         partial void OnStartTimeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29229,7 +29229,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _EndTime;
         partial void OnEndTimeChanging(Nullable<global::System.DateTime> value);
         partial void OnEndTimeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29253,7 +29253,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _IP;
         partial void OnIPChanging(global::System.String value);
         partial void OnIPChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29277,7 +29277,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Browser;
         partial void OnBrowserChanging(global::System.String value);
         partial void OnBrowserChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29301,7 +29301,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ServerName;
         partial void OnServerNameChanging(global::System.String value);
         partial void OnServerNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29325,7 +29325,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _AutoLogged;
         partial void OnAutoLoggedChanging(global::System.Int32 value);
         partial void OnAutoLoggedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29349,7 +29349,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Sid;
         partial void OnSidChanging(global::System.String value);
         partial void OnSidChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29373,7 +29373,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _VisualEditorUrl;
         partial void OnVisualEditorUrlChanging(global::System.String value);
         partial void OnVisualEditorUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29400,19 +29400,19 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SiteDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class SiteDAL : EntityObject, IQPEntityObject
+    public partial class SiteDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new SiteDAL object.
         /// </summary>
@@ -29497,7 +29497,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29524,7 +29524,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29548,7 +29548,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29572,7 +29572,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Dns;
         partial void OnDnsChanging(global::System.String value);
         partial void OnDnsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29596,7 +29596,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _LiveDirectory;
         partial void OnLiveDirectoryChanging(global::System.String value);
         partial void OnLiveDirectoryChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29620,7 +29620,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _LiveVirtualRoot;
         partial void OnLiveVirtualRootChanging(global::System.String value);
         partial void OnLiveVirtualRootChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29644,7 +29644,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _StageDirectory;
         partial void OnStageDirectoryChanging(global::System.String value);
         partial void OnStageDirectoryChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29668,7 +29668,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _StageVirtualRoot;
         partial void OnStageVirtualRootChanging(global::System.String value);
         partial void OnStageVirtualRootChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29692,7 +29692,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _IsLive;
         partial void OnIsLiveChanging(global::System.String value);
         partial void OnIsLiveChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29716,7 +29716,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29740,7 +29740,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29764,7 +29764,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29788,7 +29788,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29812,7 +29812,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _UploadDir;
         partial void OnUploadDirChanging(global::System.String value);
         partial void OnUploadDirChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29836,7 +29836,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _UploadUrl;
         partial void OnUploadUrlChanging(global::System.String value);
         partial void OnUploadUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29860,7 +29860,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _AllowUserSessions;
         partial void OnAllowUserSessionsChanging(global::System.Decimal value);
         partial void OnAllowUserSessionsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29884,7 +29884,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UseAbsoluteUploadUrl;
         partial void OnUseAbsoluteUploadUrlChanging(global::System.Decimal value);
         partial void OnUseAbsoluteUploadUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29908,7 +29908,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _UploadUrlPrefix;
         partial void OnUploadUrlPrefixChanging(global::System.String value);
         partial void OnUploadUrlPrefixChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29932,7 +29932,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ScriptLanguage;
         partial void OnScriptLanguageChanging(global::System.String value);
         partial void OnScriptLanguageChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29956,7 +29956,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _OnScreenFieldBorder;
         partial void OnOnScreenFieldBorderChanging(global::System.Decimal value);
         partial void OnOnScreenFieldBorderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -29980,7 +29980,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _OnScreenObjectBorder;
         partial void OnOnScreenObjectBorderChanging(global::System.Decimal value);
         partial void OnOnScreenObjectBorderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30004,7 +30004,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _OnScreenObjectTypeMask;
         partial void OnOnScreenObjectTypeMaskChanging(global::System.Decimal value);
         partial void OnOnScreenObjectTypeMaskChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30028,7 +30028,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Locked;
         partial void OnLockedChanging(Nullable<global::System.DateTime> value);
         partial void OnLockedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30052,7 +30052,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LockedBy;
         partial void OnLockedByChanging(Nullable<global::System.Decimal> value);
         partial void OnLockedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30076,7 +30076,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ForceAssemble;
         partial void OnForceAssembleChanging(global::System.Decimal value);
         partial void OnForceAssembleChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30100,7 +30100,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _AssemblyPath;
         partial void OnAssemblyPathChanging(global::System.String value);
         partial void OnAssemblyPathChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30124,7 +30124,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _StageDns;
         partial void OnStageDnsChanging(global::System.String value);
         partial void OnStageDnsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30148,7 +30148,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _StageAssemblyPath;
         partial void OnStageAssemblyPathChanging(global::System.String value);
         partial void OnStageAssemblyPathChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30172,7 +30172,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AssembleFormatsInLive;
         partial void OnAssembleFormatsInLiveChanging(global::System.Boolean value);
         partial void OnAssembleFormatsInLiveChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30196,7 +30196,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _TestDirectory;
         partial void OnTestDirectoryChanging(global::System.String value);
         partial void OnTestDirectoryChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30220,7 +30220,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ForceTestDirectory;
         partial void OnForceTestDirectoryChanging(global::System.Boolean value);
         partial void OnForceTestDirectoryChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30244,7 +30244,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ImportMappingToDb;
         partial void OnImportMappingToDbChanging(global::System.Boolean value);
         partial void OnImportMappingToDbChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30268,7 +30268,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ProceedMappingWithDb;
         partial void OnProceedMappingWithDbChanging(global::System.Boolean value);
         partial void OnProceedMappingWithDbChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30292,7 +30292,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ReplaceUrls;
         partial void OnReplaceUrlsChanging(global::System.Boolean value);
         partial void OnReplaceUrlsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30316,7 +30316,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseLongUrls;
         partial void OnUseLongUrlsChanging(global::System.Boolean value);
         partial void OnUseLongUrlsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30340,7 +30340,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Namespace;
         partial void OnNamespaceChanging(global::System.String value);
         partial void OnNamespaceChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30364,7 +30364,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ConnectionStringName;
         partial void OnConnectionStringNameChanging(global::System.String value);
         partial void OnConnectionStringNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30388,7 +30388,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ContextClassName;
         partial void OnContextClassNameChanging(global::System.String value);
         partial void OnContextClassNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30412,7 +30412,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _PEnterMode;
         partial void OnPEnterModeChanging(global::System.Boolean value);
         partial void OnPEnterModeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30436,7 +30436,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ProceedDbIndependentGeneration;
         partial void OnProceedDbIndependentGenerationChanging(global::System.Boolean value);
         partial void OnProceedDbIndependentGenerationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30460,7 +30460,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _GenerateMapFileOnly;
         partial void OnGenerateMapFileOnlyChanging(global::System.Boolean value);
         partial void OnGenerateMapFileOnlyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30484,7 +30484,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _EnableOnScreen;
         partial void OnEnableOnScreenChanging(global::System.Boolean value);
         partial void OnEnableOnScreenChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30508,7 +30508,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _PermanentLock;
         partial void OnPermanentLockChanging(global::System.Boolean value);
         partial void OnPermanentLockChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30532,7 +30532,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseEnglishQuotes;
         partial void OnUseEnglishQuotesChanging(global::System.Boolean value);
         partial void OnUseEnglishQuotesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30556,7 +30556,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ExternalUrl;
         partial void OnExternalUrlChanging(global::System.String value);
         partial void OnExternalUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30580,7 +30580,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _SendNotifications;
         partial void OnSendNotificationsChanging(global::System.Boolean value);
         partial void OnSendNotificationsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30604,7 +30604,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ExternalCss;
         partial void OnExternalCssChanging(global::System.String value);
         partial void OnExternalCssChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30628,7 +30628,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _RootElementClass;
         partial void OnRootElementClassChanging(global::System.String value);
         partial void OnRootElementClassChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30652,7 +30652,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _XamlDictionaries;
         partial void OnXamlDictionariesChanging(global::System.String value);
         partial void OnXamlDictionariesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30676,7 +30676,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ContentFormScript;
         partial void OnContentFormScriptChanging(global::System.String value);
         partial void OnContentFormScriptChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30700,7 +30700,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _ExternalDevelopment;
         partial void OnExternalDevelopmentChanging(global::System.Boolean value);
         partial void OnExternalDevelopmentChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30724,7 +30724,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DownloadEfSource;
         partial void OnDownloadEfSourceChanging(global::System.Boolean value);
         partial void OnDownloadEfSourceChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30751,9 +30751,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30775,7 +30775,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30797,7 +30797,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30819,7 +30819,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30841,7 +30841,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30863,7 +30863,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30885,7 +30885,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30923,7 +30923,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30961,7 +30961,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -30983,7 +30983,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31005,7 +31005,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31027,7 +31027,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31053,17 +31053,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SiteFolderDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class SiteFolderDAL : EntityObject, IQPEntityObject
+    public partial class SiteFolderDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new SiteFolderDAL object.
         /// </summary>
@@ -31088,7 +31088,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31112,7 +31112,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SiteId;
         partial void OnSiteIdChanging(global::System.Decimal value);
         partial void OnSiteIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31139,7 +31139,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31163,7 +31163,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _ParentId;
         partial void OnParentIdChanging(Nullable<global::System.Decimal> value);
         partial void OnParentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31187,7 +31187,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31211,7 +31211,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31235,7 +31235,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Filter;
         partial void OnFilterChanging(global::System.String value);
         partial void OnFilterChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31259,7 +31259,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Path;
         partial void OnPathChanging(global::System.String value);
         partial void OnPathChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31283,7 +31283,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31307,7 +31307,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31334,9 +31334,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31358,7 +31358,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31380,7 +31380,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31418,7 +31418,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31456,7 +31456,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31498,17 +31498,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SiteFolderPermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class SiteFolderPermissionDAL : EntityObject, IQPEntityObject
+    public partial class SiteFolderPermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new SiteFolderPermissionDAL object.
         /// </summary>
@@ -31533,7 +31533,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31557,7 +31557,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _FolderId;
         partial void OnFolderIdChanging(global::System.Decimal value);
         partial void OnFolderIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31581,7 +31581,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31605,7 +31605,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31629,7 +31629,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PermissionLevelId;
         partial void OnPermissionLevelIdChanging(global::System.Decimal value);
         partial void OnPermissionLevelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31653,7 +31653,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31677,7 +31677,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31701,7 +31701,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31731,9 +31731,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31771,7 +31771,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31809,7 +31809,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31847,7 +31847,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31885,7 +31885,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31927,17 +31927,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SitePermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class SitePermissionDAL : EntityObject, IQPEntityObject
+    public partial class SitePermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new SitePermissionDAL object.
         /// </summary>
@@ -31964,7 +31964,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -31988,7 +31988,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SiteId;
         partial void OnSiteIdChanging(global::System.Decimal value);
         partial void OnSiteIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32012,7 +32012,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32036,7 +32036,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32060,7 +32060,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PermissionLevelId;
         partial void OnPermissionLevelIdChanging(global::System.Decimal value);
         partial void OnPermissionLevelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32084,7 +32084,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32108,7 +32108,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32132,7 +32132,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32156,7 +32156,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PropagateToItems;
         partial void OnPropagateToItemsChanging(global::System.Decimal value);
         partial void OnPropagateToItemsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32186,9 +32186,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32226,7 +32226,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32264,7 +32264,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32302,7 +32302,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32340,7 +32340,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32382,17 +32382,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="StatusTypeDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class StatusTypeDAL : EntityObject, IQPEntityObject
+    public partial class StatusTypeDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new StatusTypeDAL object.
         /// </summary>
@@ -32421,7 +32421,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32445,7 +32445,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SiteId;
         partial void OnSiteIdChanging(global::System.Decimal value);
         partial void OnSiteIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32472,7 +32472,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32496,7 +32496,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32520,7 +32520,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Weight;
         partial void OnWeightChanging(global::System.Decimal value);
         partial void OnWeightChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32544,7 +32544,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32568,7 +32568,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32592,7 +32592,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32616,7 +32616,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32640,7 +32640,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _BuiltIn;
         partial void OnBuiltInChanging(global::System.Boolean value);
         partial void OnBuiltInChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32664,7 +32664,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Color;
         partial void OnColorChanging(global::System.String value);
         partial void OnColorChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32691,9 +32691,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32715,7 +32715,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32737,7 +32737,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32775,7 +32775,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32797,7 +32797,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32819,7 +32819,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32841,7 +32841,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32883,7 +32883,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -32893,7 +32893,7 @@ namespace Quantumart.QP8.DAL
     public partial class StyleAttributeDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new StyleAttributeDAL object.
         /// </summary>
@@ -32912,7 +32912,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32939,7 +32939,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32963,7 +32963,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _StyleId;
         partial void OnStyleIdChanging(global::System.Decimal value);
         partial void OnStyleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -32987,7 +32987,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33014,9 +33014,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33058,7 +33058,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -33068,7 +33068,7 @@ namespace Quantumart.QP8.DAL
     public partial class StyleDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new StyleDAL object.
         /// </summary>
@@ -33095,7 +33095,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33122,7 +33122,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33146,7 +33146,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _TagId;
         partial void OnTagIdChanging(Nullable<global::System.Decimal> value);
         partial void OnTagIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33170,7 +33170,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33194,7 +33194,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33218,7 +33218,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Class;
         partial void OnClassChanging(global::System.String value);
         partial void OnClassChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33242,7 +33242,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33266,7 +33266,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33290,7 +33290,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33314,7 +33314,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _SiteId;
         partial void OnSiteIdChanging(Nullable<global::System.Decimal> value);
         partial void OnSiteIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33341,9 +33341,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33381,7 +33381,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33407,7 +33407,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -33417,7 +33417,7 @@ namespace Quantumart.QP8.DAL
     public partial class StyleTagDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new StyleTagDAL object.
         /// </summary>
@@ -33434,7 +33434,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33461,7 +33461,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33488,9 +33488,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -33500,7 +33500,7 @@ namespace Quantumart.QP8.DAL
     public partial class SystemNotificationDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new SystemNotificationDAL object.
         /// </summary>
@@ -33529,7 +33529,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33556,7 +33556,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33580,7 +33580,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _TransactionDate;
         partial void OnTransactionDateChanging(global::System.DateTime value);
         partial void OnTransactionDateChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33604,7 +33604,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Url;
         partial void OnUrlChanging(global::System.String value);
         partial void OnUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33628,7 +33628,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Tries;
         partial void OnTriesChanging(global::System.Decimal value);
         partial void OnTriesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33652,7 +33652,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Json;
         partial void OnJsonChanging(global::System.String value);
         partial void OnJsonChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33676,7 +33676,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Sent;
         partial void OnSentChanging(global::System.Boolean value);
         partial void OnSentChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33700,7 +33700,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33724,7 +33724,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33751,9 +33751,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -33763,7 +33763,7 @@ namespace Quantumart.QP8.DAL
     public partial class SystemStatusTypeDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new SystemStatusTypeDAL object.
         /// </summary>
@@ -33780,7 +33780,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33807,7 +33807,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33831,7 +33831,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33855,7 +33855,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33882,9 +33882,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33910,7 +33910,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -33920,7 +33920,7 @@ namespace Quantumart.QP8.DAL
     public partial class TodayPanelsDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new TodayPanelsDAL object.
         /// </summary>
@@ -33949,7 +33949,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33973,7 +33973,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _PanelName;
         partial void OnPanelNameChanging(global::System.String value);
         partial void OnPanelNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34000,7 +34000,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PanelId;
         partial void OnPanelIdChanging(global::System.Decimal value);
         partial void OnPanelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34024,7 +34024,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _PanelFile;
         partial void OnPanelFileChanging(global::System.String value);
         partial void OnPanelFileChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34048,7 +34048,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PanelBlockNo;
         partial void OnPanelBlockNoChanging(global::System.Decimal value);
         partial void OnPanelBlockNoChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34072,7 +34072,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PanelOrder;
         partial void OnPanelOrderChanging(global::System.Decimal value);
         partial void OnPanelOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34096,7 +34096,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PanelHeight;
         partial void OnPanelHeightChanging(global::System.Decimal value);
         partial void OnPanelHeightChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34120,7 +34120,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _IconFileName;
         partial void OnIconFileNameChanging(global::System.String value);
         partial void OnIconFileNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34147,9 +34147,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34175,7 +34175,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -34185,7 +34185,7 @@ namespace Quantumart.QP8.DAL
     public partial class ToolbarButtonDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ToolbarButtonDAL object.
         /// </summary>
@@ -34208,7 +34208,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34235,7 +34235,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ParentActionId;
         partial void OnParentActionIdChanging(global::System.Int32 value);
         partial void OnParentActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34262,7 +34262,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ActionId;
         partial void OnActionIdChanging(global::System.Int32 value);
         partial void OnActionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34286,7 +34286,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34310,7 +34310,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Order;
         partial void OnOrderChanging(global::System.Int32 value);
         partial void OnOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34334,7 +34334,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Icon;
         partial void OnIconChanging(global::System.String value);
         partial void OnIconChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34358,7 +34358,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _IconDisabled;
         partial void OnIconDisabledChanging(global::System.String value);
         partial void OnIconDisabledChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34385,9 +34385,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34425,7 +34425,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34467,7 +34467,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -34477,7 +34477,7 @@ namespace Quantumart.QP8.DAL
     public partial class TranslationsDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new TranslationsDAL object.
         /// </summary>
@@ -34496,7 +34496,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34523,7 +34523,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PhraseId;
         partial void OnPhraseIdChanging(global::System.Decimal value);
         partial void OnPhraseIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34550,7 +34550,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LanguageId;
         partial void OnLanguageIdChanging(global::System.Decimal value);
         partial void OnLanguageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34577,9 +34577,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34621,7 +34621,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -34631,7 +34631,7 @@ namespace Quantumart.QP8.DAL
     public partial class UnionAttrDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new UnionAttrDAL object.
         /// </summary>
@@ -34648,7 +34648,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34675,7 +34675,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _VirtualFieldId;
         partial void OnVirtualFieldIdChanging(global::System.Decimal value);
         partial void OnVirtualFieldIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34702,7 +34702,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UnionFieldId;
         partial void OnUnionFieldIdChanging(global::System.Decimal value);
         partial void OnUnionFieldIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34729,9 +34729,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34769,7 +34769,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34811,7 +34811,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -34821,7 +34821,7 @@ namespace Quantumart.QP8.DAL
     public partial class UnionContentsDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new UnionContentsDAL object.
         /// </summary>
@@ -34838,7 +34838,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34865,7 +34865,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _VirtualContentId;
         partial void OnVirtualContentIdChanging(global::System.Decimal value);
         partial void OnVirtualContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34892,7 +34892,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UnionContentId;
         partial void OnUnionContentIdChanging(global::System.Decimal value);
         partial void OnUnionContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34919,9 +34919,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34959,7 +34959,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -34997,7 +34997,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35039,17 +35039,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="UserDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class UserDAL : EntityObject, IQPEntityObject
+    public partial class UserDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new UserDAL object.
         /// </summary>
@@ -35098,7 +35098,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35125,7 +35125,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35149,7 +35149,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Disabled;
         partial void OnDisabledChanging(global::System.Decimal value);
         partial void OnDisabledChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35173,7 +35173,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FirstName;
         partial void OnFirstNameChanging(global::System.String value);
         partial void OnFirstNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35197,7 +35197,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _LastName;
         partial void OnLastNameChanging(global::System.String value);
         partial void OnLastNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35221,7 +35221,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Email;
         partial void OnEmailChanging(global::System.String value);
         partial void OnEmailChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35245,7 +35245,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _AutoLogOn;
         partial void OnAutoLogOnChanging(global::System.Decimal value);
         partial void OnAutoLogOnChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35269,7 +35269,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NTLogOn;
         partial void OnNTLogOnChanging(global::System.String value);
         partial void OnNTLogOnChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35293,7 +35293,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _LastLogOn;
         partial void OnLastLogOnChanging(Nullable<global::System.DateTime> value);
         partial void OnLastLogOnChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35317,7 +35317,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Subscribed;
         partial void OnSubscribedChanging(global::System.Decimal value);
         partial void OnSubscribedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35341,7 +35341,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35365,7 +35365,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35389,7 +35389,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35413,7 +35413,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _LanguageId;
         partial void OnLanguageIdChanging(Nullable<global::System.Decimal> value);
         partial void OnLanguageIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35437,7 +35437,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _VMode;
         partial void OnVModeChanging(global::System.Decimal value);
         partial void OnVModeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35461,7 +35461,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Byte[] _AdSid;
         partial void OnAdSidChanging(global::System.Byte[] value);
         partial void OnAdSidChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35485,7 +35485,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _AllowStageEditField;
         partial void OnAllowStageEditFieldChanging(global::System.Decimal value);
         partial void OnAllowStageEditFieldChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35509,7 +35509,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _AllowStageEditObject;
         partial void OnAllowStageEditObjectChanging(global::System.Decimal value);
         partial void OnAllowStageEditObjectChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35533,7 +35533,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _BuiltIn;
         partial void OnBuiltInChanging(global::System.Boolean value);
         partial void OnBuiltInChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35557,7 +35557,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _LogOn;
         partial void OnLogOnChanging(global::System.String value);
         partial void OnLogOnChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35581,7 +35581,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _PasswordModified;
         partial void OnPasswordModifiedChanging(global::System.DateTime value);
         partial void OnPasswordModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35605,7 +35605,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _PASSWORD;
         partial void OnPASSWORDChanging(global::System.String value);
         partial void OnPASSWORDChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35632,9 +35632,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35656,7 +35656,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35678,7 +35678,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35700,7 +35700,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35722,7 +35722,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35744,7 +35744,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35766,7 +35766,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35788,7 +35788,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35810,7 +35810,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35832,7 +35832,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35870,7 +35870,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35892,7 +35892,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35914,7 +35914,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35936,7 +35936,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35958,7 +35958,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -35980,7 +35980,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36002,7 +36002,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36024,7 +36024,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36046,7 +36046,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36068,7 +36068,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36090,7 +36090,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36112,7 +36112,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36134,7 +36134,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36156,7 +36156,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36178,7 +36178,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36200,7 +36200,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36222,7 +36222,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36244,7 +36244,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36282,7 +36282,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36304,7 +36304,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36326,7 +36326,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36348,7 +36348,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36370,7 +36370,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36392,7 +36392,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36414,7 +36414,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36436,7 +36436,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36458,7 +36458,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36480,7 +36480,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36502,7 +36502,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36524,7 +36524,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36546,7 +36546,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36568,7 +36568,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36590,7 +36590,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36612,7 +36612,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36634,7 +36634,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36656,7 +36656,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36682,7 +36682,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -36692,7 +36692,7 @@ namespace Quantumart.QP8.DAL
     public partial class UserDefaultFilterItemDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new UserDefaultFilterItemDAL object.
         /// </summary>
@@ -36711,7 +36711,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36738,7 +36738,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UserId;
         partial void OnUserIdChanging(global::System.Decimal value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36765,7 +36765,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ContentId;
         partial void OnContentIdChanging(global::System.Decimal value);
         partial void OnContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36795,9 +36795,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36835,7 +36835,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36873,7 +36873,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36915,7 +36915,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -36925,7 +36925,7 @@ namespace Quantumart.QP8.DAL
     public partial class UserGroupDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new UserGroupDAL object.
         /// </summary>
@@ -36952,7 +36952,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -36979,7 +36979,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37003,7 +37003,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37027,7 +37027,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37051,7 +37051,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Created;
         partial void OnCreatedChanging(Nullable<global::System.DateTime> value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37075,7 +37075,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.DateTime> _Modified;
         partial void OnModifiedChanging(Nullable<global::System.DateTime> value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37099,7 +37099,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37123,7 +37123,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SharedArticles;
         partial void OnSharedArticlesChanging(global::System.Decimal value);
         partial void OnSharedArticlesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37147,7 +37147,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _NtGroup;
         partial void OnNtGroupChanging(global::System.String value);
         partial void OnNtGroupChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37171,7 +37171,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Byte[] _AdSid;
         partial void OnAdSidChanging(global::System.Byte[] value);
         partial void OnAdSidChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37195,7 +37195,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _BuiltIn;
         partial void OnBuiltInChanging(global::System.Boolean value);
         partial void OnBuiltInChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37219,7 +37219,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsReadOnly;
         partial void OnIsReadOnlyChanging(global::System.Boolean value);
         partial void OnIsReadOnlyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37243,7 +37243,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseParallelWorkflow;
         partial void OnUseParallelWorkflowChanging(global::System.Boolean value);
         partial void OnUseParallelWorkflowChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37270,9 +37270,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37294,7 +37294,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37316,7 +37316,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37338,7 +37338,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37360,7 +37360,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37382,7 +37382,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37404,7 +37404,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37426,7 +37426,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37448,7 +37448,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37470,7 +37470,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37492,7 +37492,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37514,7 +37514,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37552,7 +37552,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37574,7 +37574,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37600,7 +37600,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -37610,7 +37610,7 @@ namespace Quantumart.QP8.DAL
     public partial class UserQueryAttrsDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new UserQueryAttrsDAL object.
         /// </summary>
@@ -37627,7 +37627,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37654,7 +37654,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _VirtualContentId;
         partial void OnVirtualContentIdChanging(global::System.Decimal value);
         partial void OnVirtualContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37684,9 +37684,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37728,7 +37728,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -37738,7 +37738,7 @@ namespace Quantumart.QP8.DAL
     public partial class UserQueryContentsDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new UserQueryContentsDAL object.
         /// </summary>
@@ -37755,7 +37755,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37782,7 +37782,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _VirtualContentId;
         partial void OnVirtualContentIdChanging(global::System.Decimal value);
         partial void OnVirtualContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37809,7 +37809,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _RealContentId;
         partial void OnRealContentIdChanging(global::System.Decimal value);
         partial void OnRealContentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37836,9 +37836,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37876,7 +37876,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37918,7 +37918,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -37928,7 +37928,7 @@ namespace Quantumart.QP8.DAL
     public partial class UserToPanelDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new UserToPanelDAL object.
         /// </summary>
@@ -37955,7 +37955,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -37982,7 +37982,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UserId;
         partial void OnUserIdChanging(global::System.Decimal value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38009,7 +38009,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PanelId;
         partial void OnPanelIdChanging(global::System.Decimal value);
         partial void OnPanelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38033,7 +38033,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PanelBlockNo;
         partial void OnPanelBlockNoChanging(global::System.Decimal value);
         partial void OnPanelBlockNoChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38057,7 +38057,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PanelOrder;
         partial void OnPanelOrderChanging(global::System.Decimal value);
         partial void OnPanelOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38081,7 +38081,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PanelHeight;
         partial void OnPanelHeightChanging(global::System.Decimal value);
         partial void OnPanelHeightChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38105,7 +38105,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SaveBlockNo;
         partial void OnSaveBlockNoChanging(global::System.Decimal value);
         partial void OnSaveBlockNoChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38132,9 +38132,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38172,7 +38172,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38214,17 +38214,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="VeCommandDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class VeCommandDAL : EntityObject, IQPEntityObject
+    public partial class VeCommandDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new VeCommandDAL object.
         /// </summary>
@@ -38257,7 +38257,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38284,7 +38284,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38308,7 +38308,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38332,7 +38332,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Alias;
         partial void OnAliasChanging(global::System.String value);
         partial void OnAliasChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38356,7 +38356,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _RowOrder;
         partial void OnRowOrderChanging(global::System.Int32 value);
         partial void OnRowOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38380,7 +38380,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ToolbarInRowOrder;
         partial void OnToolbarInRowOrderChanging(global::System.Int32 value);
         partial void OnToolbarInRowOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38404,7 +38404,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _GroupInToolbarOrder;
         partial void OnGroupInToolbarOrderChanging(global::System.Int32 value);
         partial void OnGroupInToolbarOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38428,7 +38428,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _CommandInGroupOrder;
         partial void OnCommandInGroupOrderChanging(global::System.Int32 value);
         partial void OnCommandInGroupOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38452,7 +38452,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _On;
         partial void OnOnChanging(global::System.Boolean value);
         partial void OnOnChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38476,7 +38476,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _PluginId;
         partial void OnPluginIdChanging(Nullable<global::System.Decimal> value);
         partial void OnPluginIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38500,7 +38500,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38524,7 +38524,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38551,9 +38551,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38591,7 +38591,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38633,17 +38633,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="VePluginDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class VePluginDAL : EntityObject, IQPEntityObject
+    public partial class VePluginDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new VePluginDAL object.
         /// </summary>
@@ -38668,7 +38668,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38695,7 +38695,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38719,7 +38719,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38743,7 +38743,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38767,7 +38767,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Url;
         partial void OnUrlChanging(global::System.String value);
         partial void OnUrlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38791,7 +38791,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Order;
         partial void OnOrderChanging(global::System.Int32 value);
         partial void OnOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38815,7 +38815,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38839,7 +38839,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38866,9 +38866,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38890,7 +38890,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38932,7 +38932,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -38942,7 +38942,7 @@ namespace Quantumart.QP8.DAL
     public partial class VersionContentDataDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new VersionContentDataDAL object.
         /// </summary>
@@ -38961,7 +38961,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -38988,7 +38988,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _FieldId;
         partial void OnFieldIdChanging(global::System.Decimal value);
         partial void OnFieldIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39015,7 +39015,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleVersionId;
         partial void OnArticleVersionIdChanging(global::System.Decimal value);
         partial void OnArticleVersionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39039,7 +39039,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Data;
         partial void OnDataChanging(global::System.String value);
         partial void OnDataChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39063,7 +39063,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _BlobData;
         partial void OnBlobDataChanging(global::System.String value);
         partial void OnBlobDataChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39090,9 +39090,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39134,17 +39134,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="VeStyleDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class VeStyleDAL : EntityObject, IQPEntityObject
+    public partial class VeStyleDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new VeStyleDAL object.
         /// </summary>
@@ -39171,7 +39171,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39198,7 +39198,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39222,7 +39222,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39246,7 +39246,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39270,7 +39270,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Tag;
         partial void OnTagChanging(global::System.String value);
         partial void OnTagChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39294,7 +39294,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Order;
         partial void OnOrderChanging(global::System.Int32 value);
         partial void OnOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39318,7 +39318,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _OverridesTag;
         partial void OnOverridesTagChanging(global::System.String value);
         partial void OnOverridesTagChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39342,7 +39342,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsFormat;
         partial void OnIsFormatChanging(global::System.Boolean value);
         partial void OnIsFormatChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39366,7 +39366,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _IsSystem;
         partial void OnIsSystemChanging(global::System.Boolean value);
         partial void OnIsSystemChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39390,7 +39390,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Attributes;
         partial void OnAttributesChanging(global::System.String value);
         partial void OnAttributesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39414,7 +39414,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Styles;
         partial void OnStylesChanging(global::System.String value);
         partial void OnStylesChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39438,7 +39438,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39462,7 +39462,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39489,9 +39489,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39533,7 +39533,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -39543,7 +39543,7 @@ namespace Quantumart.QP8.DAL
     public partial class ViewTypeDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new ViewTypeDAL object.
         /// </summary>
@@ -39562,7 +39562,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39589,7 +39589,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39613,7 +39613,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39637,7 +39637,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Code;
         partial void OnCodeChanging(global::System.String value);
         partial void OnCodeChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39664,9 +39664,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39692,7 +39692,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -39702,7 +39702,7 @@ namespace Quantumart.QP8.DAL
     public partial class WaitingForApprovalDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new WaitingForApprovalDAL object.
         /// </summary>
@@ -39721,7 +39721,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39748,7 +39748,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _ArticleId;
         partial void OnArticleIdChanging(global::System.Decimal value);
         partial void OnArticleIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39775,7 +39775,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _UserId;
         partial void OnUserIdChanging(global::System.Decimal value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39802,9 +39802,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39842,7 +39842,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39880,7 +39880,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39922,17 +39922,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="WorkflowDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class WorkflowDAL : EntityObject, IQPEntityObject
+    public partial class WorkflowDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new WorkflowDAL object.
         /// </summary>
@@ -39961,7 +39961,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -39988,7 +39988,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40012,7 +40012,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40036,7 +40036,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40060,7 +40060,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40084,7 +40084,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40108,7 +40108,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40132,7 +40132,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SiteId;
         partial void OnSiteIdChanging(global::System.Decimal value);
         partial void OnSiteIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40156,7 +40156,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _CreateDefaultNotification;
         partial void OnCreateDefaultNotificationChanging(global::System.Boolean value);
         partial void OnCreateDefaultNotificationChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40183,9 +40183,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40207,7 +40207,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40245,7 +40245,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40267,7 +40267,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40289,7 +40289,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40331,17 +40331,17 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="WorkflowPermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class WorkflowPermissionDAL : EntityObject, IQPEntityObject
+    public partial class WorkflowPermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new WorkflowPermissionDAL object.
         /// </summary>
@@ -40366,7 +40366,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40390,7 +40390,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _WorkflowId;
         partial void OnWorkflowIdChanging(global::System.Decimal value);
         partial void OnWorkflowIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40414,7 +40414,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40438,7 +40438,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40462,7 +40462,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _PermissionLevelId;
         partial void OnPermissionLevelIdChanging(global::System.Decimal value);
         partial void OnPermissionLevelIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40486,7 +40486,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40510,7 +40510,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40534,7 +40534,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _LastModifiedBy;
         partial void OnLastModifiedByChanging(global::System.Decimal value);
         partial void OnLastModifiedByChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40564,9 +40564,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40604,7 +40604,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40642,7 +40642,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40680,7 +40680,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40718,7 +40718,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40760,7 +40760,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -40770,7 +40770,7 @@ namespace Quantumart.QP8.DAL
     public partial class WorkflowRulesDAL : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new WorkflowRulesDAL object.
         /// </summary>
@@ -40791,7 +40791,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40818,7 +40818,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40842,7 +40842,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _UserId;
         partial void OnUserIdChanging(Nullable<global::System.Decimal> value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40866,7 +40866,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _GroupId;
         partial void OnGroupIdChanging(Nullable<global::System.Decimal> value);
         partial void OnGroupIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40890,7 +40890,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _RuleOrder;
         partial void OnRuleOrderChanging(global::System.Decimal value);
         partial void OnRuleOrderChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40914,7 +40914,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _PredecessorPermissionId;
         partial void OnPredecessorPermissionIdChanging(Nullable<global::System.Decimal> value);
         partial void OnPredecessorPermissionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40938,7 +40938,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Decimal> _SuccessorPermissionId;
         partial void OnSuccessorPermissionIdChanging(Nullable<global::System.Decimal> value);
         partial void OnSuccessorPermissionIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40962,7 +40962,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _SuccessorStatusId;
         partial void OnSuccessorStatusIdChanging(global::System.Decimal value);
         partial void OnSuccessorStatusIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -40986,7 +40986,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41013,9 +41013,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41053,7 +41053,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41091,7 +41091,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41129,7 +41129,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41167,7 +41167,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41209,7 +41209,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -41219,7 +41219,7 @@ namespace Quantumart.QP8.DAL
     public partial class XmlDbUpdateActionsLogEntity : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new XmlDbUpdateActionsLogEntity object.
         /// </summary>
@@ -41248,7 +41248,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41275,7 +41275,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41299,7 +41299,7 @@ namespace Quantumart.QP8.DAL
         private Nullable<global::System.Int32> _UpdateId;
         partial void OnUpdateIdChanging(Nullable<global::System.Int32> value);
         partial void OnUpdateIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41323,7 +41323,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Ids;
         partial void OnIdsChanging(global::System.String value);
         partial void OnIdsChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41347,7 +41347,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _ParentId;
         partial void OnParentIdChanging(global::System.Int32 value);
         partial void OnParentIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41371,7 +41371,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Hash;
         partial void OnHashChanging(global::System.String value);
         partial void OnHashChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41395,7 +41395,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Applied;
         partial void OnAppliedChanging(global::System.DateTime value);
         partial void OnAppliedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41419,7 +41419,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _UserId;
         partial void OnUserIdChanging(global::System.Int32 value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41443,7 +41443,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _SourceXml;
         partial void OnSourceXmlChanging(global::System.String value);
         partial void OnSourceXmlChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41470,9 +41470,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41514,7 +41514,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     }
-    
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
@@ -41524,7 +41524,7 @@ namespace Quantumart.QP8.DAL
     public partial class XmlDbUpdateLogEntity : EntityObject
     {
         #region Factory Method
-    
+
         /// <summary>
         /// Create a new XmlDbUpdateLogEntity object.
         /// </summary>
@@ -41545,7 +41545,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41572,7 +41572,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41596,7 +41596,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Applied;
         partial void OnAppliedChanging(global::System.DateTime value);
         partial void OnAppliedChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41620,7 +41620,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Hash;
         partial void OnHashChanging(global::System.String value);
         partial void OnHashChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41644,7 +41644,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FileName;
         partial void OnFileNameChanging(global::System.String value);
         partial void OnFileNameChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41668,7 +41668,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Int32 _UserId;
         partial void OnUserIdChanging(global::System.Int32 value);
         partial void OnUserIdChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41692,7 +41692,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Body;
         partial void OnBodyChanging(global::System.String value);
         partial void OnBodyChanged();
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41719,9 +41719,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-    
+
         #region Navigation Properties
-    
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -41750,5 +41750,5 @@ namespace Quantumart.QP8.DAL
 
     #endregion
 
-    
+
 }

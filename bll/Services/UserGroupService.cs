@@ -1,165 +1,138 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Resources;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
-
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
-	public interface IUserGroupService
-	{
-		UserGroupInitListResult InitList(int parentId);
+    public class UserGroupService : IUserGroupService
+    {
+        public ListResult<UserGroupListItem> List(ListCommand cmd, IEnumerable<int> selectedIds = null)
+        {
+            var list = UserGroupRepository.List(cmd, out int totalRecords, selectedIds.ToList());
+            return new ListResult<UserGroupListItem>
+            {
+                Data = list.ToList(),
+                TotalRecords = totalRecords
+            };
+        }
 
-		ListResult<UserGroupListItem> List(ListCommand cmd, IEnumerable<int> selectedIDs = null);
+        public IEnumerable<User> GetUsers(IEnumerable<int> userIDs) => UserRepository.GetUsers(userIDs);
 
-		IEnumerable<User> GetUsers(IEnumerable<int> userIDs);
+        public IEnumerable<UserGroup> GetAllGroups() => UserGroupRepository.GetAllGroups();
 
-		UserGroup ReadProperties(int id);
+        public UserGroup NewProperties() => UserGroup.Create();
 
-		UserGroup Read(int id);
+        public UserGroup ReadProperties(int id)
+        {
+            var group = UserGroupRepository.GetPropertiesById(id);
+            if (group == null)
+            {
+                throw new ApplicationException(string.Format(UserGroupStrings.GroupNotFound, id));
+            }
 
-		IEnumerable<UserGroup> GetAllGroups();
+            return group;
+        }
 
-		UserGroup UpdateProperties(UserGroup userGroup);
+        public UserGroup Read(int id)
+        {
+            var group = UserGroupRepository.GetById(id);
+            if (group == null)
+            {
+                throw new ApplicationException(string.Format(UserGroupStrings.GroupNotFound, id));
+            }
 
-		UserGroup NewProperties();
+            return group;
+        }
 
-		UserGroup SaveProperties(UserGroup userGroup);
+        public UserGroup UpdateProperties(UserGroup userGroup) => UserGroupRepository.UpdateProperties(userGroup);
 
-		MessageResult Remove(int id);
+        public UserGroup SaveProperties(UserGroup userGroup)
+        {
+            var result = UserGroupRepository.SaveProperties(userGroup);
+            return result;
+        }
 
-		MessageResult RemovePreAction(int id);
+        public CopyResult Copy(int id)
+        {
+            var result = new CopyResult();
+            var group = UserGroupRepository.GetPropertiesById(id);
+            if (group == null)
+            {
+                throw new ApplicationException(string.Format(UserGroupStrings.GroupNotFound, id));
+            }
 
-		CopyResult Copy(int id);
+            group.MutateName();
+            var newId = UserGroupRepository.CopyGroup(group, QPContext.CurrentUserId);
+            if (newId == 0)
+            {
+                result.Message = MessageResult.Error(UserGroupStrings.GroupHasNotBeenCreated);
+            }
+            else
+            {
+                result.Id = newId;
+            }
+            return result;
+        }
 
-		UserGroupInitTreeResult InitTree(int parentId);
-	}
+        public MessageResult RemovePreAction(int id)
+        {
+            var group = UserGroupRepository.GetPropertiesById(id);
+            if (group == null)
+            {
+                throw new ApplicationException(string.Format(UserGroupStrings.GroupNotFound, id));
+            }
 
-	public class UserGroupService : IUserGroupService
-	{
-		public ListResult<UserGroupListItem> List(ListCommand cmd, IEnumerable<int> selectedIDs = null)
-		{
-			int totalRecords;
-			IEnumerable<UserGroupListItem> list = UserGroupRepository.List(cmd, out totalRecords, selectedIDs);
-			return new ListResult<UserGroupListItem>
-			{
-				Data = list.ToList(),
-				TotalRecords = totalRecords
-			};
-		}
+            if (group.ChildGroups.Any())
+            {
+                return MessageResult.Confirm(UserGroupStrings.ConfirmHasChildren);
+            }
 
-		public IEnumerable<User> GetUsers(IEnumerable<int> userIDs)
-		{
-			return UserRepository.GetUsers(userIDs);
-		}
+            return null;
+        }
 
-		public IEnumerable<UserGroup> GetAllGroups()
-		{
-			return UserGroupRepository.GetAllGroups();
-		}
+        public MessageResult Remove(int id)
+        {
+            var group = UserGroupRepository.GetById(id);
+            if (group == null)
+            {
+                throw new ApplicationException(string.Format(UserGroupStrings.GroupNotFound, id));
+            }
 
-		public UserGroup NewProperties()
-		{
-			return UserGroup.Create();
-		}
-		public UserGroup ReadProperties(int id)
-		{
-			UserGroup group = UserGroupRepository.GetPropertiesById(id);
-			if (group == null)
-				throw new ApplicationException(String.Format(UserGroupStrings.GroupNotFound, id));
-			return group;
-		}
+            if (group.BuiltIn)
+            {
+                return MessageResult.Error(UserGroupStrings.CannotRemoveBuitInGroup);
+            }
 
-		public UserGroup Read(int id)
-		{
-			UserGroup group = UserGroupRepository.GetById(id);
-			if (group == null)
-				throw new ApplicationException(String.Format(UserGroupStrings.GroupNotFound, id));
-			return group;
-		}
+            var notifications = new NotificationRepository().GetUserGroupNotifications(id).ToList();
+            if (notifications.Any())
+            {
+                var message = string.Join(",", notifications.Select(w => $"({w.Id}) \"{w.Name}\""));
+                return MessageResult.Error(string.Format(UserGroupStrings.NotificationsExist, message));
+            }
 
+            var workflows = WorkflowRepository.GetUserGroupWorkflows(id).ToList();
+            if (workflows.Any())
+            {
+                var message = string.Join(",", workflows.Select(w => $"({w.Id}) \"{w.Name}\""));
+                return MessageResult.Error(string.Format(UserGroupStrings.WorkflowsExist, message));
+            }
 
-		public UserGroup UpdateProperties(UserGroup userGroup)
-		{
-			return UserGroupRepository.UpdateProperties(userGroup);
-		}
+            UserGroupRepository.Delete(id);
+            return null;
+        }
 
-		public UserGroup SaveProperties(UserGroup userGroup)
-		{
-			UserGroup result = UserGroupRepository.SaveProperties(userGroup);
-			return result;
-		}
+        public UserGroupInitListResult InitList(int parentId) => new UserGroupInitListResult
+        {
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewUserGroup)
+        };
 
-		public CopyResult Copy(int id)
-		{
-			CopyResult result = new CopyResult();
-			UserGroup group = UserGroupRepository.GetPropertiesById(id);
-			if (group == null)
-				throw new ApplicationException(String.Format(UserGroupStrings.GroupNotFound, id));
-
-			group.MutateName();
-			int newId = UserGroupRepository.CopyGroup(group, QPContext.CurrentUserId);
-			if (newId == 0)
-				result.Message = MessageResult.Error(UserGroupStrings.GroupHasNotBeenCreated);
-			else
-				result.Id = newId;
-			return result;
-		}
-
-		public MessageResult RemovePreAction(int id)
-		{
-			UserGroup group = UserGroupRepository.GetPropertiesById(id);
-			if (group == null)
-				throw new ApplicationException(String.Format(UserGroupStrings.GroupNotFound, id));
-			if (group.ChildGroups.Any())
-				return MessageResult.Confirm(UserGroupStrings.ConfirmHasChildren);
-			else
-				return null;
-		}
-
-		public MessageResult Remove(int id)
-		{
-			UserGroup group = UserGroupRepository.GetById(id);
-			if (group == null)
-				throw new ApplicationException(String.Format(UserGroupStrings.GroupNotFound, id));
-			if (group.BuiltIn)
-				return MessageResult.Error(UserGroupStrings.CannotRemoveBuitInGroup);
-
-			IEnumerable<Notification> notifications = new NotificationRepository().GetUserGroupNotifications(id);
-			if (notifications.Any())
-			{
-				string message = String.Join(",", notifications.Select(w => String.Format("({0}) \"{1}\"", w.Id, w.Name)));
-				return MessageResult.Error(String.Format(UserGroupStrings.NotificationsExist, message));
-			}
-
-			IEnumerable<Workflow> workflows = WorkflowRepository.GetUserGroupWorkflows(id);
-			if (workflows.Any())
-			{
-				string message = String.Join(",", workflows.Select(w => String.Format("({0}) \"{1}\"", w.Id, w.Name)));
-				return MessageResult.Error(String.Format(UserGroupStrings.WorkflowsExist, message));
-			}
-
-			UserGroupRepository.Delete(id);
-			return null;
-		}
-	
-		public UserGroupInitListResult InitList(int parentId)
-		{
-			return new UserGroupInitListResult
-			{
-				IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewUserGroup)
-			};
-		}
-
-		public UserGroupInitTreeResult InitTree(int parentId)
-		{
-			return new UserGroupInitTreeResult
-			{
-				IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewUserGroup)
-			};
-		}		
-	}
+        public UserGroupInitTreeResult InitTree(int parentId) => new UserGroupInitTreeResult
+        {
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewUserGroup)
+        };
+    }
 }

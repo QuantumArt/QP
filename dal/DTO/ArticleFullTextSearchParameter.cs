@@ -8,7 +8,7 @@
 
         public string QueryString { get; set; }
 
-		public string RawQueryString { get; set; }
+        public string RawQueryString { get; set; }
 
         public int SearchResultLimit { get; set; }
     }

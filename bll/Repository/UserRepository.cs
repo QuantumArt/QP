@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -276,17 +276,17 @@ namespace Quantumart.QP8.BLL.Repository
                 }).ToArray();
         }
 
-        private static IEnumerable<UserDefaultFilterItemDAL> MapUserDefaultFilter(User biz, IQPEntityObject dal)
+        private static IEnumerable<UserDefaultFilterItemDAL> MapUserDefaultFilter(User biz, IQpEntityObject dal)
         {
             return biz.ContentDefaultFilters
                 .Where(f => f.ArticleIDs.Any())
                 .SelectMany(f =>
                     f.ArticleIDs.Select(aid => new UserDefaultFilterItemDAL
-                    {
-                        UserId = dal.Id,
-                        ContentId = f.ContentId.Value,
-                        ArticleId = aid
-                    }
+                        {
+                            UserId = dal.Id,
+                            ContentId = f.ContentId.Value,
+                            ArticleId = aid
+                        }
                     )
                 );
         }

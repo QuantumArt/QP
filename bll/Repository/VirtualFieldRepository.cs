@@ -25,17 +25,13 @@ namespace Quantumart.QP8.BLL.Repository
             return newItem;
         }
 
-
         /// <summary>
         /// Определяет, существуют ли виртуальные поля в Join-контентах построенные на текущем поле
         /// </summary>
-        /// <param name="field"></param>
-        /// <returns></returns>
         internal static bool JoinVirtualChildrenFieldsExist(Field field)
         {
             return QPContext.EFContext.FieldSet.Any(f => f.PersistentId != null && f.PersistentId.Value == field.Id);
         }
-
 
         /// <summary>
         /// Удалить записи в таблице union_contents для всех полей union-контента
@@ -51,7 +47,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Удалить записи в таблице union_contents для базовых полей
         /// </summary>
-        internal static void RemoveUnionAttrs(IEnumerable<int> baseFieldIds)
+        internal static void RemoveUnionAttrs(List<int> baseFieldIds)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -141,6 +137,7 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     // уменьшаем счетчик вложенных scope
                     _storage[rootContentId].ScopeCount--;
+
                     // если это последний, то все очищаем
 
                     if (_storage[rootContentId].ScopeCount == 0)
@@ -165,15 +162,12 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        public static IDisposable LoadVirtualFieldsRelationsToMemory(int rootContentId)
-        {
-            return new VirtualFieldRelationsStorage(rootContentId);
-        }
+        public static IDisposable LoadVirtualFieldsRelationsToMemory(int rootContentId) => new VirtualFieldRelationsStorage(rootContentId);
 
         /// <summary>
         /// Возвращает информацию о дочерних витуальных полях
         /// </summary>
-        public static IEnumerable<VirtualFieldsRelation> GetVirtualSubFields(IEnumerable<int> rootFieldId)
+        public static IEnumerable<VirtualFieldsRelation> GetVirtualSubFields(List<int> rootFieldId)
         {
             if (VirtualFieldRelationsStorage.Data == null)
             {
@@ -194,7 +188,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        public static IEnumerable<VirtualFieldsRelation> GetVirtualBaseFieldIDs(IEnumerable<int> subFieldIds)
+        public static IEnumerable<VirtualFieldsRelation> GetVirtualBaseFieldIDs(List<int> subFieldIds)
         {
             var result = new List<VirtualFieldsRelation>(VirtualFieldRelationsStorage.Data.Where(r => subFieldIds.Contains(r.VirtualFieldId)));
             using (var scope = new QPConnectionScope())
@@ -209,7 +203,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Получить количество полей связей в Union_ATTR для union-полей
         /// </summary>
-        public static IEnumerable<UnionFieldRelationCount> GetUnionFieldRelationCount(IEnumerable<int> unionFieldIds)
+        public static IEnumerable<UnionFieldRelationCount> GetUnionFieldRelationCount(List<int> unionFieldIds)
         {
             if (!unionFieldIds.Any())
             {
@@ -219,8 +213,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var dt = Common.GetUnionFieldRelationCount(scope.DbConnection, unionFieldIds);
-                var result = MapperFacade.UnionFieldRelationCountMapper.GetBizList(dt.AsEnumerable().ToList());
-                return result;
+                return MapperFacade.UnionFieldRelationCountMapper.GetBizList(dt.AsEnumerable().ToList());
             }
         }
 

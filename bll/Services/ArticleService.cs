@@ -27,8 +27,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public int GetArticleIdByGuid(string rawGuid)
         {
-            Guid guid;
-            if (!Guid.TryParse(rawGuid, out guid))
+            if (!Guid.TryParse(rawGuid, out Guid guid))
             {
                 throw new Exception($"Неверный формат GUID: {rawGuid}");
             }
@@ -47,15 +46,11 @@ namespace Quantumart.QP8.BLL.Services
             return articleId;
         }
 
-        public int GetArticleIdByGuidOrDefault(Guid guid)
-        {
-            return _articleRepository.GetIdByGuid(guid);
-        }
+        public int GetArticleIdByGuidOrDefault(Guid guid) => _articleRepository.GetIdByGuid(guid);
 
         public Guid GetArticleGuidById(string rawId)
         {
-            int id;
-            if (!int.TryParse(rawId, out id))
+            if (!int.TryParse(rawId, out int id))
             {
                 throw new Exception($"Неверный формат Id: {rawId}");
             }
@@ -69,20 +64,11 @@ namespace Quantumart.QP8.BLL.Services
             return articleGuid ?? Guid.Empty;
         }
 
-        public Guid[] GetArticleGuidsByIds(int[] ids)
-        {
-            return _articleRepository.GetGuidsByIds(ids);
-        }
+        public Guid[] GetArticleGuidsByIds(int[] ids) => _articleRepository.GetGuidsByIds(ids);
 
-        public int[] GetArticleIdsByGuids(Guid[] ids)
-        {
-            return _articleRepository.GetIdsByGuids(ids);
-        }
+        public int[] GetArticleIdsByGuids(Guid[] ids) => _articleRepository.GetIdsByGuids(ids);
 
-        public Guid? GetArticleGuidByIdOrDefault(int id)
-        {
-            return _articleRepository.GetById(id)?.UniqueId;
-        }
+        public Guid? GetArticleGuidByIdOrDefault(int id) => _articleRepository.GetById(id)?.UniqueId;
 
         private static Article Read(int id, int contentId, bool withAutoLock)
         {
@@ -144,58 +130,41 @@ namespace Quantumart.QP8.BLL.Services
             return string.IsNullOrEmpty(message) ? null : MessageResult.Confirm(message);
         }
 
-        public static ArticleInitListResult InitList(int contentId, bool? boundToExternal)
-        {
-            return InitList(contentId, false, boundToExternal);
-        }
+        public static ArticleInitListResult InitList(int contentId, bool? boundToExternal) => InitList(contentId, false, boundToExternal);
 
-        public static ArticleInitListResult InitArchiveList(int contentId)
-        {
-            return InitList(contentId, true);
-        }
+        public static ArticleInitListResult InitArchiveList(int contentId) => InitList(contentId, true);
 
-        public static int Count(int contentId, string filter)
-        {
-            return ArticleRepository.GetCount(contentId);
-        }
+        public static int Count(int contentId, string filter) => ArticleRepository.GetCount(contentId);
 
         public static ListResult<SimpleDataRow> List(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds = null, int[] filterIds = null)
         {
-            int totalRecords;
-            var dt = ArticleRepository.GetList(contentId, selectedArticleIDs, cmd, searchQueryParams, contextQueryParams, filter, ftsParser, onlyIds, filterIds, out totalRecords);
+            var dt = ArticleRepository.GetList(contentId, selectedArticleIDs, cmd, searchQueryParams, contextQueryParams, filter, ftsParser, onlyIds, filterIds, out int totalRecords);
             var result = ArticleListHelper.GetResult(dt, FieldRepository.GetList(contentId, true), onlyIds).ToList();
             return new ListResult<SimpleDataRow> { Data = result, TotalRecords = totalRecords };
         }
 
         public static ListResult<ArticleListItem> ListLocked(ListCommand cmd)
         {
-            int totalRecords;
-            var dt = ArticleRepository.GetLockedList(cmd, out totalRecords);
+            var dt = ArticleRepository.GetLockedList(cmd, out int totalRecords);
             return new ListResult<ArticleListItem> { Data = dt, TotalRecords = totalRecords };
         }
 
         public static ListResult<ArticleListItem> ArticlesForApproval(ListCommand cmd)
         {
-            int totalRecords;
-            var dt = ArticleRepository.GetArticlesForApprovalList(cmd, out totalRecords);
+            var dt = ArticleRepository.GetArticlesForApprovalList(cmd, out int totalRecords);
             return new ListResult<ArticleListItem> { Data = dt, TotalRecords = totalRecords };
         }
 
         public static ListResult<StatusHistoryListItem> ArticleStatusHistory(ListCommand cmd, int articleId)
         {
-            int totalRecords;
-            var dt = ArticleRepository.GetStatusHistoryListItems(cmd, articleId, out totalRecords);
+            var dt = ArticleRepository.GetStatusHistoryListItems(cmd, articleId, out int totalRecords);
             return new ListResult<StatusHistoryListItem> { Data = dt, TotalRecords = totalRecords };
         }
 
-        public static List<ListItem> SimpleList(int contentId, int articleId, int fieldId, ListSelectionMode selectionMode, int[] selectedArticleIDs, string filter)
-        {
-            return ArticleRepository.GetSimpleList(contentId, articleId, fieldId, selectionMode, selectedArticleIDs, filter, 0);
-        }
+        public static List<ListItem> SimpleList(int contentId, int articleId, int fieldId, ListSelectionMode selectionMode, int[] selectedArticleIDs, string filter) => ArticleRepository.GetSimpleList(contentId, articleId, fieldId, selectionMode, selectedArticleIDs, filter, 0);
 
         public static ArticleInitTreeResult InitTree(int contentId, bool isMultipleSelection, bool? boundToExternal)
         {
-
             var content = ContentRepository.GetById(contentId);
             if (content == null)
             {
@@ -251,15 +220,9 @@ namespace Quantumart.QP8.BLL.Services
             return result;
         }
 
-        public static Article ReadForUpdate(int id, int contentId)
-        {
-            return Read(id, contentId, false);
-        }
+        public static Article ReadForUpdate(int id, int contentId) => Read(id, contentId, false);
 
-        public static CopyResult Copy(int id, bool? boundToExternal, bool disableNotifications)
-        {
-            return Copy(ArticleRepository.GetById(id), boundToExternal, disableNotifications, null);
-        }
+        public static CopyResult Copy(int id, bool? boundToExternal, bool disableNotifications) => Copy(ArticleRepository.GetById(id), boundToExternal, disableNotifications, null);
 
         public static CopyResult Copy(Article article, bool? boundToExternal, bool disableNotifications, Guid? guidForSubstitution)
         {
@@ -323,10 +286,7 @@ namespace Quantumart.QP8.BLL.Services
             return article;
         }
 
-        public static Article NewForSave(int contentId)
-        {
-            return Article.CreateNewForSave(contentId);
-        }
+        public static Article NewForSave(int contentId) => Article.CreateNewForSave(contentId);
 
         public static Article Create(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
         {
@@ -461,7 +421,6 @@ namespace Quantumart.QP8.BLL.Services
             var repo = new NotificationPushRepository();
             repo.PrepareNotifications(contentId, idsToNotify, code, disableNotifications);
 
-
             if (content.AutoArchive && !fromArchive)
             {
                 ArticleRepository.SetArchiveFlag(idsToProceed, true);
@@ -483,15 +442,9 @@ namespace Quantumart.QP8.BLL.Services
             return result.GetServiceResult();
         }
 
-        public static MessageResult Remove(int contentId, int[] ids, bool fromArchive, bool? boundToExternal, bool disableNotifications)
-        {
-            return RemoveInternal(contentId, ids, fromArchive, boundToExternal, disableNotifications);
-        }
+        public static MessageResult Remove(int contentId, int[] ids, bool fromArchive, bool? boundToExternal, bool disableNotifications) => RemoveInternal(contentId, ids, fromArchive, boundToExternal, disableNotifications);
 
-        public static MessageResult MultistepRemove(int contentId, int[] ids, bool fromArchive, bool? boundToExternal)
-        {
-            return RemoveInternal(contentId, ids, fromArchive, boundToExternal, false);
-        }
+        public static MessageResult MultistepRemove(int contentId, int[] ids, bool fromArchive, bool? boundToExternal) => RemoveInternal(contentId, ids, fromArchive, boundToExternal, false);
 
         public static void Cancel(int id)
         {
@@ -551,19 +504,12 @@ namespace Quantumart.QP8.BLL.Services
             ArticleRepository.Publish(idsToProceed);
             repo.SendNotifications();
 
-
             return result.GetServiceResult();
         }
 
-        public static MessageResult Publish(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
-        {
-            return PublishInternal(contentId, ids, boundToExternal, disableNotifications);
-        }
+        public static MessageResult Publish(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications) => PublishInternal(contentId, ids, boundToExternal, disableNotifications);
 
-        public static MessageResult MultistepPublish(int contentId, int[] ids, bool? boundToExternal)
-        {
-            return PublishInternal(contentId, ids, boundToExternal, false);
-        }
+        public static MessageResult MultistepPublish(int contentId, int[] ids, bool? boundToExternal) => PublishInternal(contentId, ids, boundToExternal, false);
 
         public static MessageResult MoveToArchive(int id, bool? boundToExternal, bool disableNotifications)
         {
@@ -654,15 +600,9 @@ namespace Quantumart.QP8.BLL.Services
             return result.GetServiceResult();
         }
 
-        public static MessageResult MoveToArchive(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
-        {
-            return MoveToArchiveInternal(contentId, ids, boundToExternal, disableNotifications);
-        }
+        public static MessageResult MoveToArchive(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications) => MoveToArchiveInternal(contentId, ids, boundToExternal, disableNotifications);
 
-        public static MessageResult MultistepMoveToArchive(int contentId, int[] ids, bool? boundToExternal)
-        {
-            return MoveToArchiveInternal(contentId, ids, boundToExternal, false);
-        }
+        public static MessageResult MultistepMoveToArchive(int contentId, int[] ids, bool? boundToExternal) => MoveToArchiveInternal(contentId, ids, boundToExternal, false);
 
         public static MessageResult RestoreFromArchive(int id, bool? boundToExternal, bool disableNotifications)
         {
@@ -741,54 +681,26 @@ namespace Quantumart.QP8.BLL.Services
             ArticleRepository.SetArchiveFlag(idsToProceed, false);
             repo.SendNotifications();
 
-
             return result.GetServiceResult();
         }
 
-        public static MessageResult RestoreFromArchive(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
-        {
-            return RestoreFromArchiveInternal(contentId, ids, boundToExternal, disableNotifications);
-        }
+        public static MessageResult RestoreFromArchive(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications) => RestoreFromArchiveInternal(contentId, ids, boundToExternal, disableNotifications);
 
-        public static MessageResult MultistepRestoreFromArchive(int contentId, int[] ids, bool? boundToExternal)
-        {
-            return RestoreFromArchiveInternal(contentId, ids, boundToExternal, false);
-        }
+        public static MessageResult MultistepRestoreFromArchive(int contentId, int[] ids, bool? boundToExternal) => RestoreFromArchiveInternal(contentId, ids, boundToExternal, false);
 
-        public static MessageResult RemovePreAction(int parentId, int id)
-        {
-            return ConfirmHasChildren(id, true);
-        }
+        public static MessageResult RemovePreAction(int parentId, int id) => ConfirmHasChildren(id, true);
 
-        public static MessageResult MultipleRemovePreAction(int parentId, int[] ids)
-        {
-            return MultipleConfirmHasChildren(ids, true);
-        }
+        public static MessageResult MultipleRemovePreAction(int parentId, int[] ids) => MultipleConfirmHasChildren(ids, true);
 
-        public static MessageResult MultistepRemovePreAction(int parentId, int[] ids)
-        {
-            return MultipleConfirmHasChildren(ids, true);
-        }
+        public static MessageResult MultistepRemovePreAction(int parentId, int[] ids) => MultipleConfirmHasChildren(ids, true);
 
-        public static MessageResult MoveToArchivePreAction(int id)
-        {
-            return ConfirmHasChildren(id, false);
-        }
+        public static MessageResult MoveToArchivePreAction(int id) => ConfirmHasChildren(id, false);
 
-        public static MessageResult MultipleMoveToArchivePreAction(int[] ids)
-        {
-            return MultipleConfirmHasChildren(ids, false);
-        }
+        public static MessageResult MultipleMoveToArchivePreAction(int[] ids) => MultipleConfirmHasChildren(ids, false);
 
-        public static MessageResult MultistepMoveToArchivePreAction(int[] ids)
-        {
-            return MultipleConfirmHasChildren(ids, false);
-        }
+        public static MessageResult MultistepMoveToArchivePreAction(int[] ids) => MultipleConfirmHasChildren(ids, false);
 
-        public static IEnumerable<ListItem> GetAggregetableContentsForClassifier(Field classifier, string excludeValue)
-        {
-            return FieldRepository.GetAggregatableContentListItemsForClassifier(classifier, excludeValue);
-        }
+        public static IEnumerable<ListItem> GetAggregetableContentsForClassifier(Field classifier, string excludeValue) => FieldRepository.GetAggregatableContentListItemsForClassifier(classifier, excludeValue);
 
         public static Article GetAggregatedArticle(int rootArticleId, int rootContentId, int aggregatedContentId)
         {
@@ -822,25 +734,13 @@ namespace Quantumart.QP8.BLL.Services
             return FieldRepository.GetList(contentId, false).Where(n => n.ExactType != FieldExactTypes.M2ORelation).Select(f => new ListItem { Text = f.Name, Value = f.Id.ToString() }).ToList();
         }
 
-        public static List<ListItem> GetListOfFieldsToSort(int contentId)
-        {
-            return new List<ListItem> { new ListItem { Text = FieldName.Id, Value = FieldName.Id } };
-        }
+        public static List<ListItem> GetListOfFieldsToSort(int contentId) => new List<ListItem> { new ListItem { Text = FieldName.Id, Value = FieldName.Id } };
 
-        public static Dictionary<string, List<string>> GetM2MValuesBatch(IEnumerable<int> ids, int linkId, string displayFieldName, int contentId)
-        {
-            return ArticleRepository.GetM2MValuesBatch(ids, linkId, displayFieldName, contentId);
-        }
+        public static Dictionary<string, List<string>> GetM2MValuesBatch(IEnumerable<int> ids, int linkId, string displayFieldName, int contentId) => ArticleRepository.GetM2MValuesBatch(ids.ToList(), linkId, displayFieldName, contentId);
 
-        public static Dictionary<string, List<string>> GetM2OValuesBatch(IEnumerable<int> ids, int contentId, int fieldId, string fieldName, string displayFieldName)
-        {
-            return ArticleRepository.GetM2OValuesBatch(ids, contentId, fieldId, fieldName, displayFieldName);
-        }
+        public static Dictionary<string, List<string>> GetM2OValuesBatch(IEnumerable<int> ids, int contentId, int fieldId, string fieldName, string displayFieldName) => ArticleRepository.GetM2OValuesBatch(ids.ToList(), contentId, fieldId, fieldName, displayFieldName);
 
-        public static string GetTitleName(int contentId)
-        {
-            return ContentRepository.GetTitleName(contentId);
-        }
+        public static string GetTitleName(int contentId) => ContentRepository.GetTitleName(contentId);
 
         public static IList<int> GetParentIds(int id, int fieldId)
         {

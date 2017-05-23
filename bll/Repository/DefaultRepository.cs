@@ -33,15 +33,15 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static TBiz Save<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQPEntityObject
+            where TDal : D.EntityObject, IQpEntityObject
             where TBiz : EntityObject => SaveAsUser<TBiz, TDal>(item, QPContext.CurrentUserId);
 
         internal static TBiz SaveAsAdmin<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQPEntityObject
+            where TDal : D.EntityObject, IQpEntityObject
             where TBiz : EntityObject => SaveAsUser<TBiz, TDal>(item, SpecialIds.AdminUserId);
 
         internal static TBiz SaveAsUser<TBiz, TDal>(TBiz item, int userId)
-            where TDal : D.EntityObject, IQPEntityObject
+            where TDal : D.EntityObject, IQpEntityObject
             where TBiz : EntityObject
         {
             var entities = QPContext.EFContext;
@@ -68,7 +68,7 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static TBiz Update<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQPEntityObject
+            where TDal : D.EntityObject, IQpEntityObject
             where TBiz : EntityObject
         {
             var dalItem = DefaultMapper.GetDalObject<TDal, TBiz>(item);

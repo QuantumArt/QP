@@ -306,7 +306,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             if (!field.IsNew && field.ExactType == FieldExactTypes.StringEnum && field.StringEnumItems.Any())
             {
-                var enumValues = field.StringEnumItems.Select(v => v.Value);
+                var enumValues = field.StringEnumItems.Select(v => v.Value).ToList();
                 using (var scope = new QPConnectionScope())
                 {
                     Common.CorrectEnumInContentData(scope.DbConnection, field.Id, enumValues, field.StringDefaultValue);
@@ -421,7 +421,6 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                int totalRecords;
                 var options = new FieldPageOptions
                 {
                     ContentId = contentId,
@@ -430,7 +429,7 @@ namespace Quantumart.QP8.BLL.Repository
                     PageSize = cmd.PageSize
                 };
 
-                var rows = Common.GetFieldsPage(scope.DbConnection, options, out totalRecords);
+                var rows = Common.GetFieldsPage(scope.DbConnection, options, out int totalRecords);
                 return new ListResult<FieldListItem> { Data = MapperFacade.FieldListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }
@@ -457,7 +456,6 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                int totalRecords;
                 var options = new FieldPageOptions
                 {
                     ContentId = contentId,
@@ -468,7 +466,7 @@ namespace Quantumart.QP8.BLL.Repository
                     Mode = mode
                 };
 
-                var rows = Common.GetFieldsPage(scope.DbConnection, options, out totalRecords);
+                var rows = Common.GetFieldsPage(scope.DbConnection, options, out int totalRecords);
                 return new ListResult<FieldListItem> { Data = MapperFacade.FieldListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }

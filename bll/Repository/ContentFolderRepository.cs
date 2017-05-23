@@ -31,26 +31,17 @@ namespace Quantumart.QP8.BLL.Repository
             return CurrentMapper.GetBizObject(CurrentSet.SingleOrDefault(s => s.ParentId == parentId && s.Name == name));
         }
 
-        public override Folder CreateInDb(Folder folder)
-        {
-            return DefaultRepository.Save<ContentFolder, ContentFolderDAL>((ContentFolder)folder);
-        }
+        public override Folder CreateInDb(Folder folder) => DefaultRepository.Save<ContentFolder, ContentFolderDAL>((ContentFolder)folder);
 
-        public override Folder CreateInDbAsAdmin(Folder folder)
-        {
-            return DefaultRepository.SaveAsAdmin<ContentFolder, ContentFolderDAL>((ContentFolder)folder);
-        }
+        public override Folder CreateInDbAsAdmin(Folder folder) => DefaultRepository.SaveAsAdmin<ContentFolder, ContentFolderDAL>((ContentFolder)folder);
 
         public override IEnumerable<Folder> GetAllChildrenFromDb(int parentId)
         {
             return CurrentMapper.GetBizList(CurrentSet.Where(c => c.ParentId == parentId).ToList());
         }
 
-        public override IEnumerable<Folder> GetChildrenFromDb(int parentEntityId, int parentId)
-        {
-            int totalRecords;
-            return CurrentMapper.GetBizList(QPContext.EFContext.GetChildContentFoldersList(QPContext.CurrentUserId, parentEntityId, parentId, PermissionLevel.List, false, out totalRecords));
-        }
+        public override IEnumerable<Folder> GetChildrenFromDb(int parentEntityId, int parentId) =>
+            CurrentMapper.GetBizList(QPContext.EFContext.GetChildContentFoldersList(QPContext.CurrentUserId, parentEntityId, parentId, PermissionLevel.List, false, out int _));
 
         public override IEnumerable<Folder> GetChildrenWithSync(int parentEntityId, int? parentId)
         {
@@ -63,10 +54,7 @@ namespace Quantumart.QP8.BLL.Repository
             return CurrentSet.Where(n => n.ContentId == contentId).Select(n => new PathSecurityInfo { Id = (int)n.Id, Path = n.Path }).ToList();
         }
 
-        public override string FolderNotFoundMessage(int id)
-        {
-            return string.Format(LibraryStrings.ContentFolderNotExists);
-        }
+        public override string FolderNotFoundMessage(int id) => string.Format(LibraryStrings.ContentFolderNotExists);
 
         protected override Folder UpdateInDb(Folder folder)
         {
@@ -79,8 +67,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         protected override void DeleteFromDb(Folder folder)
         {
-            Action<Folder> traverse = null;
-            traverse = f =>
+            void Traverse(Folder f)
             {
                 f.LoadAllChildren = true;
                 f.AutoLoadChildren = true;
@@ -88,14 +75,14 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     foreach (var sb in f.Children)
                     {
-                        traverse((Folder)sb);
+                        Traverse((Folder)sb);
                     }
                 }
 
                 DefaultRepository.Delete<ContentFolderDAL>(f.Id);
-            };
+            }
 
-            traverse(folder);
+            Traverse(folder);
         }
     }
 }

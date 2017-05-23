@@ -62,7 +62,7 @@ namespace Quantumart.QP8.BLL
                 return threadStorageData;
             }
 
-            return (T) HttpContext.Current.Items[key];
+            return (T)HttpContext.Current.Items[key];
         }
 
         private static void SetValueToStorage<T>(ref T threadStorage, T value, string key)
@@ -200,7 +200,7 @@ namespace Quantumart.QP8.BLL
                     }
                     else
                     {
-                        dict.Add(item.ContentId, new List<int> {item.Id});
+                        dict.Add(item.ContentId, new List<int> { item.Id });
                     }
                 }
 
@@ -337,7 +337,7 @@ namespace Quantumart.QP8.BLL
                     SetIsAdminValueToStorage(result);
                 }
 
-                return (bool) result;
+                return (bool)result;
             }
             set => SetIsAdminValueToStorage(value);
         }
@@ -375,7 +375,7 @@ namespace Quantumart.QP8.BLL
                     }
                     SetCanUnlockItemsValueToStorage(result);
                 }
-                return (bool) result;
+                return (bool)result;
             }
             set => SetCanUnlockItemsValueToStorage(value);
         }
@@ -521,7 +521,7 @@ namespace Quantumart.QP8.BLL
 
         public static string LogOut()
         {
-            using (var transaction = new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions {IsolationLevel = IsolationLevel.ReadCommitted}))
+            using (var transaction = new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
                 using (new QPConnectionScope())
                 {

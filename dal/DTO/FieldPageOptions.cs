@@ -1,8 +1,4 @@
 ﻿using Quantumart.QP8.Constants;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Quantumart.QP8.DAL.DTO
 {
@@ -10,7 +6,6 @@ namespace Quantumart.QP8.DAL.DTO
     {
         public int ContentId { get; set; }
 
-		public FieldSelectMode Mode { get; set; }
-
+        public FieldSelectMode Mode { get; set; }
     }
 }
