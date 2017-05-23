@@ -69,7 +69,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
             Logger.Log.Trace($"All tasks for thread #{Thread.CurrentThread.ManagedThreadId} were proceeded successfuly");
         }
 
-        private void ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
+        private async void ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
         {
             var isSuccessfulHttpResonse = true;
             var tableTypeModels = GetCdcDataModels(customer.ConnectionString, out string lastExecutedLsn);
@@ -82,8 +82,17 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
             {
                 while (isSuccessfulHttpResonse && dtosQueue.Any() && !_cts.Token.IsCancellationRequested)
                 {
+                    isSuccessfulHttpResonse = false;
                     var data = dtosQueue.Peek();
-                    isSuccessfulHttpResonse = PushDataToHttpChannel(data);
+                    try
+                    {
+                        isSuccessfulHttpResonse = await PushDataToHttpChannel(data);
+                    }
+                    catch (FlurlHttpException ex)
+                    {
+                        Logger.Log.Warn("There was an error while sending http push notification", ex);
+                    }
+
                     if (isSuccessfulHttpResonse)
                     {
                         lastPushedLsn = dtosQueue.Dequeue().TransactionLsn;
@@ -113,7 +122,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
             return result;
         }
 
-        private static IEnumerable<CdcDataTableDto> GroupCdcTableTypeModelsByLsn(string customerName, List<CdcTableTypeModel> tableTypeModels)
+        private static IEnumerable<CdcDataTableDto> GroupCdcTableTypeModelsByLsn(string customerName, IEnumerable<CdcTableTypeModel> tableTypeModels)
         {
             return tableTypeModels
                 .GroupBy(gr => gr.TransactionLsn)
@@ -133,12 +142,12 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
                 }).ToList();
         }
 
-        private static bool PushDataToHttpChannel(CdcDataTableDto data) => Settings.Default.HttpEndpoint
-            .AllowAnyHttpStatus()
-            .WithTimeout(Settings.Default.HttpTimeout)
-            .PostJsonAsync(data)
-            .Result
-            .IsSuccessStatusCode;
+        private static async Task<bool> PushDataToHttpChannel(CdcDataTableDto data) => (
+            await Settings.Default.HttpEndpoint
+                .AllowAnyHttpStatus()
+                .WithTimeout(Settings.Default.HttpTimeout)
+                .PostJsonAsync(data)
+            ).IsSuccessStatusCode;
 
         private void AddDataToNotificationQueue(QaConfigCustomer customer, List<CdcDataTableDto> data, string lastPushedLsn, string lastExecutedLsn)
         {

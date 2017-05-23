@@ -39,7 +39,7 @@ namespace Quantumart.QP8.Scheduler.Users
                 new InjectionFactory(c => new UsersProcessor(
                         Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName).GetLogger(assemblyType),
                         new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName)),
-                        c.Resolve<ISchedulerCustomers>(),
+                        c.Resolve<ISchedulerCustomerCollection>(),
                         c.Resolve<Func<IUserSynchronizationService>>()
                     )
                 ));

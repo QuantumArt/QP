@@ -6,11 +6,11 @@ using Quantumart.QP8.Configuration.Models;
 
 namespace Quantumart.QP8.Scheduler.API
 {
-    public class SchedulerCustomers : ISchedulerCustomers
+    public class SchedulerCustomerCollection : ISchedulerCustomerCollection
     {
         private readonly ServiceDescriptor _descriptor;
 
-        public SchedulerCustomers(ServiceDescriptor descriptor)
+        public SchedulerCustomerCollection(ServiceDescriptor descriptor)
         {
             _descriptor = descriptor;
         }

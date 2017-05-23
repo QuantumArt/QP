@@ -9,29 +9,29 @@
 //------------------------------------------------------------------------------
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Properties {
-
-
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.1.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
+        
         public static Settings Default {
             get {
                 return defaultInstance;
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://microsoft.com/authorproxy")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://mscpc20:8081/product-building/replication")]
         public string HttpEndpoint {
             get {
                 return ((string)(this["HttpEndpoint"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("00:00:30")]
@@ -40,16 +40,16 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Properties {
                 return ((global::System.TimeSpan)(this["CheckNotificationsQueueRecurrentTimeout"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("00:00:05")]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:00:01")]
         public global::System.TimeSpan CdcRecurrentTimeout {
             get {
                 return ((global::System.TimeSpan)(this["CdcRecurrentTimeout"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("00:00:10")]

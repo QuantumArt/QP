@@ -12,7 +12,7 @@ namespace Quantumart.QP8.Scheduler.Core
         protected override void Initialize()
         {
             Container.RegisterType<ISchedule, NullSchedule>(ConfigurationExtension.DefaultScheduleName);
-            Container.RegisterType<ISchedulerCustomers, SchedulerCustomers>();
+            Container.RegisterType<ISchedulerCustomerCollection, SchedulerCustomerCollection>();
 
             var descriptors = Container.ResolveAll<ProcessorDescriptor>().ToList();
             var services = descriptors.Select(d => d.Service).Distinct().ToList();

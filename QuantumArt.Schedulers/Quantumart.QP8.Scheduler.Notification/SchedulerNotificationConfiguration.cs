@@ -42,7 +42,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                 new InjectionFactory(c => new SystemNotificationProcessor(
                         Container.Resolve<IPrtgNLogFactory>(nlogConfigName).GetLogger(assemblyType),
                         new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(nlogConfigName)),
-                        c.Resolve<ISchedulerCustomers>(),
+                        c.Resolve<ISchedulerCustomerCollection>(),
                         c.Resolve<IExternalSystemNotificationService>(serviceConfigName)
                     )
                 ));
@@ -64,7 +64,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                 new InjectionFactory(c => new SystemCleanupProcessor(
                         Container.Resolve<IPrtgNLogFactory>(nlogConfigName).GetLogger(assemblyType),
                         new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(nlogConfigName)),
-                        c.Resolve<ISchedulerCustomers>(),
+                        c.Resolve<ISchedulerCustomerCollection>(),
                         c.Resolve<IExternalSystemNotificationService>(serviceConfigName)
                     )
                 ));
@@ -84,7 +84,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                 new InjectionFactory(c => new InterfaceNotificationProcessor(
                         Container.Resolve<IPrtgNLogFactory>(nlogConfigName).GetLogger(assemblyType),
                         new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(nlogConfigName)),
-                        c.Resolve<ISchedulerCustomers>(),
+                        c.Resolve<ISchedulerCustomerCollection>(),
                         c.Resolve<IExternalInterfaceNotificationService>(serviceConfigName),
                         c.Resolve<IInterfaceNotificationProvider>()
                     )
@@ -107,7 +107,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                 new InjectionFactory(c => new InterfaceCleanupProcessor(
                         Container.Resolve<IPrtgNLogFactory>(nlogConfigName).GetLogger(assemblyType),
                         new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(nlogConfigName)),
-                        c.Resolve<ISchedulerCustomers>(),
+                        c.Resolve<ISchedulerCustomerCollection>(),
                         c.Resolve<IExternalInterfaceNotificationService>(serviceConfigName)
                     )
                 ));
