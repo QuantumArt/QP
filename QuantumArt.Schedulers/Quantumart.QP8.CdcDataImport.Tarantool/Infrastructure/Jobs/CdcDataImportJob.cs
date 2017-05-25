@@ -128,6 +128,52 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             return result;
         }
 
+        public List<CdcTableTypeModel> GetCdcDataFromTables(string fromLsn = null, string toLsn = null)
+        {
+            Logger.Log.Trace($"Getting cdc data for with fromLsn:{fromLsn} and toLsn:{toLsn}");
+            var tablesGroup = new List<List<CdcTableTypeModel>>
+            {
+                _cdcImportService.ImportData(CdcCaptureConstants.Content, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.ContentAttribute, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.ContentToContent, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.ContentToContentRev, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.StatusType, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.ItemToItem, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.ItemLinkAsync, fromLsn, toLsn),
+                GetContentArticleDtoFilteredByNetChanges(fromLsn, toLsn).ToList()
+            };
+
+            return tablesGroup.SelectMany(tg => tg).OrderBy(t => t.TransactionLsn).ToList();
+        }
+
+        private IEnumerable<CdcTableTypeModel> GetContentArticleDtoFilteredByNetChanges(string fromLsn = null, string toLsn = null)
+        {
+            var contentItemModel = _cdcImportService.ImportData(CdcCaptureConstants.ContentItem, fromLsn, toLsn);
+            var contentDataModel = _cdcImportService.ImportData(CdcCaptureConstants.ContentData, fromLsn, toLsn);
+
+            var contentItemsFilteredByNetChanges = contentItemModel.FilterCdcTableTypeByLsnNetChanges(cim => new
+            {
+                id = (string)cim.Entity.Columns["CONTENT_ITEM_ID"],
+                cim.TransactionLsn
+            });
+
+            var contentDataFilteredByNetChanges = contentDataModel.FilterCdcTableTypeByLsnNetChanges(cdm => new
+            {
+                id = (string)cdm.Entity.Columns["CONTENT_ITEM_ID"],
+                cdm.TransactionLsn
+            });
+
+            foreach (var cim in contentItemsFilteredByNetChanges)
+            {
+                var fieldColumns = contentDataFilteredByNetChanges
+                    .OrderBy(cdm => cdm.SequenceLsn)
+                    .Select(cdt => new KeyValuePair<string, object>($"field_{cdt.Entity.Columns["ATTRIBUTE_ID"]}", cdt.Entity.Columns["DATA"]));
+
+                cim.Entity.Columns.AddRange(fieldColumns);
+                yield return cim;
+            }
+        }
+
         private static IEnumerable<CdcDataTableDto> GroupCdcTableTypeModelsByLsn(string customerName, IEnumerable<CdcTableTypeModel> tableTypeModels)
         {
             return tableTypeModels
