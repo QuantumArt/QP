@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.WebMvc.Infrastructure.Enums
+﻿namespace QP8.Infrastructure.Web.Enums
 {
     /// <summary>
     /// Ajax result status in JSend format

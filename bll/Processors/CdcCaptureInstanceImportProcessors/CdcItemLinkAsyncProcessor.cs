@@ -34,7 +34,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                     Entity = new CdcEntityModel
                     {
                         EntityType = "item_link",
-                        InvariantName = $"item_link_{linkId}" + (isRev ? "_rev" : string.Empty),
+                        InvariantName = $"item_link_{linkId}_async" + (isRev ? "_rev" : string.Empty),
                         Columns = new Dictionary<string, object>
                         {
                             { "id", isRev ? rightId : leftId },
@@ -44,7 +44,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                 };
 
                 // ReSharper restore ConditionIsAlwaysTrueOrFalse
-            }).ToList();
+            }).OrderBy(cdc => cdc.TransactionLsn).ToList();
         }
     }
 }

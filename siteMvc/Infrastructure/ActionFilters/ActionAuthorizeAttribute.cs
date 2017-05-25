@@ -1,4 +1,4 @@
-using System.Security;
+﻿using System.Security;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -24,8 +24,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
             }
 
-            BackendAction action;
-            if (!DependencyResolver.Current.GetService<ISecurityService>().IsActionAccessible(_actionCode, out action))
+            if (!DependencyResolver.Current.GetService<ISecurityService>().IsActionAccessible(_actionCode, out BackendAction action))
             {
                 throw new SecurityException(string.Format(GlobalStrings.ActionIsNotAccessible, action.Name));
             }

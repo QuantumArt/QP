@@ -34,7 +34,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                         { "STATUS_TYPE_NAME", row["status_type_name"] as string }
                     }
                 }
-            }).ToList();
+            }).OrderBy(cdc => cdc.TransactionLsn).ToList();
         }
     }
 }

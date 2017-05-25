@@ -313,7 +313,6 @@
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateLogService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateNonMvcReplayService.cs" />
     <Compile Include="Infrastructure\Enums\ExceptionResultMode.cs" />
-    <Compile Include="Infrastructure\Enums\JSendStatus.cs" />
     <Compile Include="Infrastructure\Extensions\ArrayExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
@@ -1616,7 +1615,6 @@
     <Compile Include="ViewModels\HomePage\HomeViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\IActionAccessChecker.cs" />
     <Compile Include="ViewModels\Interfaces\IUserAndGroupSearchBlockViewModel.cs" />
-    <Compile Include="ViewModels\JSendResponse.cs" />
     <Compile Include="ViewModels\Library\ContentFolderViewModel.cs" />
     <Compile Include="ViewModels\Library\FolderViewModel.cs" />
     <Compile Include="ViewModels\Library\LibraryMode.cs" />

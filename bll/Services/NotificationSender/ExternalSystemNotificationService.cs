@@ -1,10 +1,9 @@
-﻿using QP8.Infrastructure.Helpers;
+﻿using System.Collections.Generic;
+using System.Linq;
+using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.DAL.NotificationSender;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 namespace Quantumart.QP8.BLL.Services.NotificationSender
 {

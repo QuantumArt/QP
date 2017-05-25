@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using AutoMapper;
 using Flurl.Http;
 using QP8.Infrastructure;
+using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure;
+using Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Data;
 using Quantumart.QP8.CdcDataImport.Tarantool.Properties;
 using Quantumart.QP8.Configuration.Models;
+using Quantumart.QP8.Constants;
 using Quartz;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
@@ -25,10 +29,10 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
     {
         private readonly PrtgErrorsHandler _prtgLogger;
         private readonly CancellationTokenSource _cts;
-        private readonly CdcImportService _cdcImportService;
+        private readonly ICdcImportService _cdcImportService;
         private readonly IExternalSystemNotificationService _systemNotificationService;
 
-        public CdcDataImportJob(PrtgErrorsHandler prtgLogger, CdcImportService cdcImportService, IExternalSystemNotificationService systemNotificationService)
+        public CdcDataImportJob(PrtgErrorsHandler prtgLogger, ICdcImportService cdcImportService, IExternalSystemNotificationService systemNotificationService)
         {
             _prtgLogger = prtgLogger;
             _cts = new CancellationTokenSource();
@@ -69,7 +73,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             Logger.Log.Trace($"All tasks for thread #{Thread.CurrentThread.ManagedThreadId} were proceeded successfuly");
         }
 
-        private void ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
+        private async void ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
         {
             var isSuccessfulHttpResponse = true;
             var tableTypeModels = GetCdcDataModels(customer.ConnectionString, out string lastExecutedLsn);
@@ -82,8 +86,19 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             {
                 while (isSuccessfulHttpResponse && dtosQueue.Any() && !_cts.Token.IsCancellationRequested)
                 {
+                    isSuccessfulHttpResponse = false;
                     var data = dtosQueue.Peek();
-                    isSuccessfulHttpResponse = PushDataToHttpChannel(data);
+                    try
+                    {
+                        var responseMessage = await PushDataToHttpChannel(data);
+                        isSuccessfulHttpResponse = responseMessage.IsSuccessStatusCode;
+                        Logger.Log.Trace($"Http push notification was pushed with response status code: {responseMessage.StatusCode}");
+                    }
+                    catch (FlurlHttpException ex)
+                    {
+                        Logger.Log.Warn("There was an error while sending http push notification", ex);
+                    }
+
                     if (isSuccessfulHttpResponse)
                     {
                         lastPushedLsn = dtosQueue.Dequeue().TransactionLsn;
@@ -106,7 +121,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             {
                 var fromLsn = _cdcImportService.GetLastExecutedLsn();
                 toLsn = _cdcImportService.GetMaxLsn();
-                result = _cdcImportService.GetCdcDataFromTables(fromLsn, toLsn);
+                result = GetCdcDataFromTables(fromLsn, toLsn);
                 ts.Complete();
             }
 
@@ -125,20 +140,16 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                     TransactionDate = gr.Select(data => data.TransactionDate).First(),
                     Changes = gr.OrderBy(data => data.SequenceLsn).Select((data, i) => new CdcChangeDto
                     {
-                        Action = data.Action,
-                        ChangeType = data.ChangeType,
+                        Action = data.Action.ToLowerInvariant(),
+                        ChangeType = data.ChangeType.ToString().ToLowerInvariant(),
                         OrderNumber = i,
                         Entity = Mapper.Map<CdcEntityModel, CdcEntityDto>(data.Entity)
                     }).ToList()
                 }).ToList();
         }
 
-        private static bool PushDataToHttpChannel(CdcDataTableDto data) => Settings.Default.HttpEndpoint
-            .AllowAnyHttpStatus()
-            .WithTimeout(Settings.Default.HttpTimeout)
-            .PostJsonAsync(data)
-            .Result
-            .IsSuccessStatusCode;
+        private static async Task<HttpResponseMessage> PushDataToHttpChannel(CdcDataTableDto data) =>
+            await Settings.Default.HttpEndpoint.AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostJsonAsync(data);
 
         private void AddDataToNotificationQueue(QaConfigCustomer customer, List<CdcDataTableDto> data, string lastPushedLsn, string lastExecutedLsn)
         {

@@ -14,14 +14,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.UnityExtensions
             _container = container;
         }
 
-        public override object GetService(Type serviceType)
-        {
-            return _container.IsRegistered(serviceType) ? _container.Resolve(serviceType) : base.GetService(serviceType);
-        }
+        public override object GetService(Type serviceType) => _container.IsRegistered(serviceType) ? _container.Resolve(serviceType) : base.GetService(serviceType);
 
-        public override IEnumerable<object> GetServices(Type serviceType)
-        {
-            return _container.IsRegistered(serviceType) ? _container.ResolveAll(serviceType) : base.GetServices(serviceType);
-        }
+        public override IEnumerable<object> GetServices(Type serviceType) => _container.IsRegistered(serviceType) ? _container.ResolveAll(serviceType) : base.GetServices(serviceType);
     }
 }

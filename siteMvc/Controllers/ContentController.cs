@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using QP8.Infrastructure.Web.ActionResults;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Interfaces.Db;
@@ -699,13 +701,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> GetContentFormScript(int contentId)
+        public JsonCamelCaseResult<JSendResponse> GetContentFormScript(int contentId) => new JSendResponse
         {
-            return new JSendResponse
-            {
-                Status = JSendStatus.Success,
-                Data = _contentRepository.GetById(contentId).FormScript
-            };
-        }
+            Status = JSendStatus.Success,
+            Data = _contentRepository.GetById(contentId).FormScript
+        };
     }
 }

@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\CdcOperationType.cs" />
     <Compile Include="Infrastructure\CdcSynchronizationContext.cs" />
+    <Compile Include="Infrastructure\Extensions\CdcFilterByLsnNetChangesExtensions.cs" />
     <Compile Include="JobConfigurator.cs" />
     <Compile Include="Infrastructure\JobListeners\JobListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,6 +72,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\bll\BLL.csproj">
+      <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
+      <Name>BLL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>

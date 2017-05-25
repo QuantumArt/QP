@@ -24,6 +24,10 @@ namespace Quantumart.QP8.BLL.Factories
                     return new CdcContentToContentProcessor(CdcCaptureConstants.ContentToContent);
                 case CdcCaptureConstants.ContentToContentRev:
                     return new CdcContentToContentRevProcessor(CdcCaptureConstants.ContentToContent);
+                case CdcCaptureConstants.ContentToContentAsync:
+                    return new CdcContentToContentAsyncProcessor(CdcCaptureConstants.ContentToContent);
+                case CdcCaptureConstants.ContentToContentAsyncRev:
+                    return new CdcContentToContentAsyncRevProcessor(CdcCaptureConstants.ContentToContent);
                 case CdcCaptureConstants.ItemToItem:
                     return new CdcItemToItemProcessor(CdcCaptureConstants.ItemToItem);
                 case CdcCaptureConstants.ItemLinkAsync:

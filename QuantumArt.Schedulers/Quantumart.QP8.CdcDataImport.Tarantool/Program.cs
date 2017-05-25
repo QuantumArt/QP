@@ -1,32 +1,54 @@
-﻿using QP8.Infrastructure.Logging.Factories;
+﻿using System;
+using System.Collections.Specialized;
+using Autofac;
+using Autofac.Extras.Quartz;
+using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.Factories;
+using QP8.Infrastructure.Logging.Interfaces;
+using QP8.Infrastructure.Logging.IoC;
 using Quantumart.QP8.CdcDataImport.Common;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs;
 using Quantumart.QP8.CdcDataImport.Tarantool.Properties;
+using Quartz;
 using Topshelf;
+using Topshelf.Autofac;
 using Topshelf.Quartz;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool
 {
     internal static class Program
     {
+        private static readonly IContainer Container;
+
+        static Program()
+        {
+            Container = BuildContainer();
+        }
+
         private static void Main()
         {
-            LogProvider.LogFactory = new NLogFactory();
+            Init();
             HostFactory.Run(factory =>
             {
                 factory.UseNLog();
+                factory.UseAutofacContainer(Container);
+
                 factory.Service<CdcServiceHost>(service =>
                 {
-                    service.ConstructUsing(settings => new CdcServiceHost());
-                    service.WhenStarted(host => host.Start());
-                    service.WhenStopped(host => host.Stop());
-                    service.UsingQuartzJobFactory(() => new QuartzJobFactory());
+                    service.ConstructUsingAutofacContainer();
+                    service.WhenStarted((sc, hc) => sc.Start(hc));
+                    service.WhenStopped((sc, hc) =>
+                    {
+                        Container.Dispose();
+                        return sc.Stop(hc);
+                    });
+
                     service.ScheduleQuartzJob(cfg => JobConfigurator.GetConfigurationForJob<CdcDataImportJob>(cfg, Settings.Default.CdcRecurrentTimeout));
                     service.ScheduleQuartzJob(cfg => JobConfigurator.GetConfigurationForJob<CheckNotificationQueueJob>(cfg, Settings.Default.CheckNotificationsQueueRecurrentTimeout));
                 });
 
-                factory.RunAsLocalSystem().StartAutomatically().EnableServiceRecovery(sr =>
+                factory.RunAsLocalSystem().StartAutomaticallyDelayed().EnableServiceRecovery(sr =>
                 {
                     sr.OnCrashOnly();
                     sr.RestartService(0);
@@ -38,6 +60,38 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
                 factory.SetDescription("Import data from CDC data tables and push them to notification service queue (using Tarantool formatting)");
                 factory.SetHelpTextPrefix("Import data from CDC data tables and push them to notification service queue (using Tarantool formatting)");
             });
+        }
+
+        private static void Init()
+        {
+            ScheduleJobServiceConfiguratorExtensions.SchedulerFactory = Container.Resolve<IScheduler>;
+            LogProvider.LogFactory = Container.Resolve<INLogFactory>();
+            AppDomain.CurrentDomain.UnhandledException += (o, ea) =>
+            {
+                Logger.Log.Fatal("Unhandled application exception: ", ea.ExceptionObject as Exception);
+                Logger.Log.Dispose();
+            };
+        }
+
+        private static IContainer BuildContainer()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new QuartzAutofacFactoryModule
+            {
+                ConfigurationProvider = c => new NameValueCollection
+                {
+                    { "quartz.threadPool.threadCount", "4" },
+                    { "quartz.threadPool.threadNamePrefix", "CdcTarantoolSchedulerWorker" },
+                    { "quartz.scheduler.threadName", "CdcTarantoolScheduler" }
+                }
+            });
+
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(CdcDataImportJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(CheckNotificationQueueJob).Assembly));
+
+            builder.RegisterModule<NLogAutofacModule>();
+            builder.RegisterModule<IoCTarantoolModule>();
+            return builder.Build();
         }
     }
 }

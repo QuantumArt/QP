@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Helpers;
-using QP8.Infrastructure.Logging.UnityExtensions;
+using QP8.Infrastructure.Logging.IoC;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Interfaces.Services;
@@ -41,7 +41,6 @@ namespace Quantumart.QP8.WebMvc
         {
             UnityContainer = new UnityContainer()
                 .RegisterInstance<ISearchGrammarParser>(new IronySearchGrammarParser(new StopWordList()))
-
                 .RegisterType<IArticleSearchRepository, ArticleSearchRepository>()
                 .RegisterType<ISearchInArticlesRepository, SearchInArticlesRepository>()
                 .RegisterType<ISearchInArticlesService, SearchInArticlesService>()
@@ -53,7 +52,6 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<IApplicationInfoRepository, ApplicationInfoRepository>()
                 .RegisterType<IArticleRepository, ArticleRepository>()
                 .RegisterType<IContentRepository, ContentRepository>()
-
                 .RegisterType<IArticleSearchService, ArticleSearchService>()
                 .RegisterType<IBackendActionLogService, BackendActionLogService>()
                 .RegisterType<IButtonTraceService, ButtonTraceService>()
@@ -64,14 +62,12 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<IRecreateDynamicImagesService, RecreateDynamicImagesService>()
                 .RegisterType<IUserService, UserService>()
                 .RegisterType<IUserGroupService, UserGroupService>()
-
                 .RegisterType<IXmlDbUpdateLogRepository, XmlDbUpdateLogRepository>()
                 .RegisterType<IXmlDbUpdateActionsLogRepository, XmlDbUpdateActionsLogRepository>()
                 .RegisterType<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
                 .RegisterType<IArticleService, ArticleService>()
                 .RegisterType<IXmlDbUpdateHttpContextProcessor, XmlDbUpdateHttpContextProcessor>()
                 .RegisterType<IXmlDbUpdateActionCorrecterService, XmlDbUpdateActionCorrecterService>()
-
                 .RegisterType<ClearContentController>(new InjectionFactory(c => new ClearContentController(new ClearContentService())))
                 .RegisterType<RemoveContentController>(new InjectionFactory(c => new RemoveContentController(new RemoveContentService())))
                 .RegisterType<ImportArticlesController>(new InjectionFactory(c => new ImportArticlesController(new ImportArticlesService())))
@@ -86,7 +82,6 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<AssembleTemplateFromObjectController>(new InjectionFactory(c => new AssembleTemplateFromObjectController(new AssembleTemplateService())))
                 .RegisterType<AssembleTemplateFromObjectListController>(new InjectionFactory(c => new AssembleTemplateFromObjectListController(new AssembleTemplateService())))
                 .RegisterType<RebuildVirtualContentsController>(new InjectionFactory(c => new RebuildVirtualContentsController(new RebuildVirtualContentsService())))
-
                 .RegisterType<VisualEditorPluginController>(new InjectionFactory(c => new VisualEditorPluginController(new VisualEditorService())))
                 .RegisterType<VisualEditorStyleController>(new InjectionFactory(c => new VisualEditorStyleController(new VisualEditorService())))
                 .RegisterType<SitePermissionController>(new InjectionFactory(c => new SitePermissionController(new SitePermissionService())))
@@ -103,17 +98,15 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<PageController>(new InjectionFactory(c => new PageController(new PageService())))
                 .RegisterType<ObjectController>(new InjectionFactory(c => new ObjectController(new ObjectService())))
                 .RegisterType<FormatController>(new InjectionFactory(c => new FormatController(new FormatService())))
-
                 .RegisterType<INotificationService, NotificationService>()
                 .RegisterType<IActionPermissionTreeService, ActionPermissionTreeService>()
-
                 .RegisterType<ISecurityService, SecurityService>()
                 .RegisterType<ICommunicationService, CommunicationService>()
                 .RegisterType<SingleUserModeHub>();
 
             RegisterMultistepActionServices(UnityContainer);
             UnityContainer.RegisterType<ExceptionManager>(new InjectionFactory(c => EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>()));
-            UnityContainer.AddExtension(new NLogContainerExtension(AssemblyHelpers.GetAssemblyName()));
+            UnityContainer.AddExtension(new NLogUnityContainerExtension(AssemblyHelpers.GetAssemblyName()));
         }
 
         private static void RegisterMultistepActionServices(IUnityContainer container)
@@ -130,7 +123,6 @@ namespace Quantumart.QP8.WebMvc
                 {
                     container.RegisterType(typeof(IActionCode), t, t.Name);
                 }
-
             }
 
             container.RegisterType<Func<string, IMultistepActionService>>(new InjectionFactory(c => new Func<string, IMultistepActionService>(command => c.Resolve<IMultistepActionService>(command))));

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Logging;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure;
 using Quantumart.QP8.Configuration;
@@ -19,16 +19,16 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
     {
         private const string AppName = "QP8CdcDataImportService.Tarantool";
         private readonly PrtgErrorsHandler _prtgLogger;
-        private readonly CancellationTokenSource _cts;
-        private readonly DbService _dbService;
+        private readonly IDbService _dbService;
         private readonly IExternalSystemNotificationService _systemNotificationService;
+        private readonly CancellationTokenSource _cts;
 
-        public CheckNotificationQueueJob(PrtgErrorsHandler prtgLogger, DbService dbService, IExternalSystemNotificationService systemNotificationService)
+        public CheckNotificationQueueJob(PrtgErrorsHandler prtgLogger, IDbService dbService, IExternalSystemNotificationService systemNotificationService)
         {
             _prtgLogger = prtgLogger;
-            _cts = new CancellationTokenSource();
             _dbService = dbService;
             _systemNotificationService = systemNotificationService;
+            _cts = new CancellationTokenSource();
         }
 
         public void Execute(IJobExecutionContext context)

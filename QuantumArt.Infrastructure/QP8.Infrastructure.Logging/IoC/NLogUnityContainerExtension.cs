@@ -2,17 +2,17 @@
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
 
-namespace QP8.Infrastructure.Logging.UnityExtensions
+namespace QP8.Infrastructure.Logging.IoC
 {
-    public class NLogContainerExtension : UnityContainerExtension
+    public class NLogUnityContainerExtension : UnityContainerExtension
     {
         private readonly string _loggerName;
 
-        public NLogContainerExtension()
+        public NLogUnityContainerExtension()
         {
         }
 
-        public NLogContainerExtension(string loggerName)
+        public NLogUnityContainerExtension(string loggerName)
         {
             _loggerName = loggerName;
         }

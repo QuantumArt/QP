@@ -17,6 +17,7 @@ using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
+using static Quantumart.QP8.BLL.BackendActionContext;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
@@ -27,13 +28,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             var action = new XmlDbUpdateRecordedAction
             {
                 Code = actionCode,
-                ParentId = BackendActionContext.Current.ParentEntityId.HasValue ? BackendActionContext.Current.ParentEntityId.Value : 0,
+                ParentId = Current.ParentEntityId ?? 0,
                 Lcid = CultureInfo.CurrentCulture.LCID,
                 Executed = DateTime.Now,
                 ExecutedBy = (httpContext.User.Identity as QpIdentity)?.Name,
                 Ids = httpContext.Items.Contains(HttpContextItems.FromId)
                     ? new[] { httpContext.Items[HttpContextItems.FromId].ToString() }
-                    : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray(),
+                    : Current.Entities.Select(n => n.StringId).ToArray(),
                 ResultId = GetContextData<int>(httpContext, HttpContextItems.ResultId),
                 UniqueId = GetGuidsContextData(httpContext, HttpContextItems.FromGuid),
                 ResultUniqueId = GetGuidContextData(httpContext, HttpContextItems.ResultGuid),

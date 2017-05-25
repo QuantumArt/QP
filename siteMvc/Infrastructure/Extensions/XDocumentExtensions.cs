@@ -8,10 +8,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
 {
     public static class XDocumentExtensions
     {
-        public static string ToNormalizedString(this XDocument doc, bool withoutXmlDeclaration = false)
-        {
-            return doc.ToNormalizedString(SaveOptions.None, withoutXmlDeclaration);
-        }
+        public static string ToNormalizedString(this XDocument doc, bool withoutXmlDeclaration = false) => doc.ToNormalizedString(SaveOptions.None, withoutXmlDeclaration);
 
         public static string ToNormalizedString(this XDocument doc, SaveOptions saveOptions, bool omitXmlDeclaration = false)
         {
@@ -44,14 +41,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
             return builder.ToString();
         }
 
-        public static string ToNormalizedString(this XElement element)
-        {
-            return ToNormalizedString(new XDocument(element));
-        }
+        public static string ToNormalizedString(this XElement element) => ToNormalizedString(new XDocument(element));
 
-        public static string ToNormalizedString(this XElement element, SaveOptions saveOptions, bool withoutXmlDeclaration = false)
-        {
-            return ToNormalizedString(new XDocument(element), saveOptions, withoutXmlDeclaration);
-        }
+        public static string ToNormalizedString(this XElement element, SaveOptions saveOptions, bool withoutXmlDeclaration = false) =>
+            ToNormalizedString(new XDocument(element), saveOptions, withoutXmlDeclaration);
     }
 }

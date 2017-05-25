@@ -64,7 +64,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                         }
                     }
                 };
-            }).ToList();
+            }).OrderBy(cdc => cdc.TransactionLsn).ToList();
         }
     }
 }

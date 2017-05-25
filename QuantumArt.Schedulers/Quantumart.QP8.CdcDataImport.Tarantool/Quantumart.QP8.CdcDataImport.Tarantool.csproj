@@ -38,6 +38,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.6.0\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Extras.Quartz, Version=3.4.0.0, Culture=neutral, PublicKeyToken=595f708ada5feacc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.Extras.Quartz.3.4.0\lib\net45\Autofac.Extras.Quartz.dll</HintPath>
+    </Reference>
     <Reference Include="AutoMapper, Version=1.1.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\..\packages\AutoMapper.1.1.2\lib\net35\AutoMapper.dll</HintPath>
     </Reference>
@@ -66,6 +72,7 @@
       <HintPath>$(SolutionDir)packages\Quartz.2.5.0\lib\net40\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
@@ -78,6 +85,9 @@
     <Reference Include="Topshelf, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Topshelf.4.0.3\lib\net452\Topshelf.dll</HintPath>
     </Reference>
+    <Reference Include="Topshelf.Autofac, Version=2.0.0.0, Culture=neutral, PublicKeyToken=ebfabbe7fb167e88, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Topshelf.Autofac.3.1.1\lib\net452\Topshelf.Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="Topshelf.NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Topshelf.NLog.4.0.3\lib\net452\Topshelf.NLog.dll</HintPath>
     </Reference>
@@ -87,12 +97,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CdcServiceHost.cs" />
+    <Compile Include="Infrastructure\IoCTarantoolModule.cs" />
     <Compile Include="Infrastructure\Jobs\CheckNotificationQueueJob.cs" />
     <Compile Include="Infrastructure\Data\CdcChangeDto.cs" />
     <Compile Include="Infrastructure\Data\CdcDataTableDto.cs" />
     <Compile Include="Infrastructure\Data\CdcEntityDto.cs" />
     <Compile Include="Infrastructure\Jobs\CdcDataImportJob.cs" />
-    <Compile Include="Infrastructure\QuartzJobFactory.cs" />
     <Compile Include="Infrastructure\TarantoolMapperProfile.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

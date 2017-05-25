@@ -7,10 +7,12 @@
         public const string ContentItem = "dbo_content_item";
         public const string ContentData = "dbo_content_data";
         public const string Content = "dbo_content";
-        public const string ContentToContent = "dbo_content_to_content";
         public const string ItemToItem = "dbo_item_to_item";
         public const string ItemLinkAsync = "dbo_item_link_async";
 
+        public const string ContentToContent = "dbo_content_to_content";
         public const string ContentToContentRev = "dbo_content_to_content_rev";
+        public const string ContentToContentAsync = "dbo_content_to_content_async";
+        public const string ContentToContentAsyncRev = "dbo_content_to_content_async_rev";
     }
 }

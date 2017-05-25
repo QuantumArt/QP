@@ -25,7 +25,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://mscpc20:8081/product-building/replication")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://authorproxy.com/")]
         public string HttpEndpoint {
             get {
                 return ((string)(this["HttpEndpoint"]));

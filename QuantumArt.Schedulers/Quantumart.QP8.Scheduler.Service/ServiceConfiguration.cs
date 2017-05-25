@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ServiceProcess;
 using Microsoft.Practices.Unity;
-using QP8.Infrastructure.Logging.UnityExtensions;
+using QP8.Infrastructure.Logging.IoC;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.Core;
@@ -18,7 +18,7 @@ namespace Quantumart.QP8.Scheduler.Service
                 .AddNewExtension<SchedulerUsersConfiguration>()
                 .AddNewExtension<SchedulerNotificationConfiguration>()
                 .AddNewExtension<SchedulerCoreConfiguration>()
-                .AddExtension(new NLogContainerExtension());
+                .AddExtension(new NLogUnityContainerExtension());
 
             var descriptors = Container.ResolveAll<ServiceDescriptor>();
             foreach (var descriptor in descriptors)

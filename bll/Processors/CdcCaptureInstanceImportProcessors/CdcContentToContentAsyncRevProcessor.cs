@@ -6,7 +6,7 @@ using Quantumart.QP8.BLL.Models.NotificationSender;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
-    public class CdcContentToContentRevProcessor : CdcImportProcessor
+    public class CdcContentToContentAsyncRevProcessor : CdcImportProcessor
     {
         private readonly object _defaultFields = new object[]
         {
@@ -36,7 +36,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
             }
         };
 
-        public CdcContentToContentRevProcessor(string captureInstanseName)
+        public CdcContentToContentAsyncRevProcessor(string captureInstanseName)
             : base(captureInstanseName)
         {
         }
@@ -62,7 +62,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                         Columns = new Dictionary<string, object>
                         {
                             { "linkId", linkId },
-                            { "invariantName", $"item_link_{linkId}_rev" },
+                            { "invariantName", $"item_link_{linkId}_async_rev" },
                             { "leftContentId", (decimal)row["r_content_id"] },
                             { "rightContentId", (decimal)row["l_content_id"] },
                             { "isSymmetric", (bool)row["symmetric"] },

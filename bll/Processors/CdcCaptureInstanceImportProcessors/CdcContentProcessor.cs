@@ -146,7 +146,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                         { "defaultFields", _defaultFields }
                     }
                 }
-            }).ToList();
+            }).OrderBy(cdc => cdc.TransactionLsn).ToList();
         }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.DTO;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public class DbService
+    public class DbService : IDbService
     {
         public Db GetDbSettings() => DbRepository.Get();
 

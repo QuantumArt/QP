@@ -5,6 +5,8 @@ namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.JobListeners
 {
     public class JobListener : IJobListener
     {
+        private const string LogStartMessage = "JOB LISTENER:";
+
         public JobListener()
             : this("Job Listener")
         {
@@ -19,17 +21,17 @@ namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.JobListeners
 
         public void JobToBeExecuted(IJobExecutionContext context)
         {
-            Logger.Log.Trace($"JOB LISTENER: Job is about to execute: {context.JobDetail.Key.Name}");
+            Logger.Log.Trace($"{LogStartMessage} Job is about to execute: {context.JobDetail.Key.Name}");
         }
 
         public void JobExecutionVetoed(IJobExecutionContext context)
         {
-            Logger.Log.Trace($"JOB LISTENER: Job execution vetoed: {context.JobDetail.Key.Name}");
+            Logger.Log.Trace($"{LogStartMessage} Job execution vetoed: {context.JobDetail.Key.Name}");
         }
 
         public void JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException)
         {
-            Logger.Log.Trace($"JOB LISTENER: Job was executed: {context.JobDetail.Key.Name}");
+            Logger.Log.Trace($"{LogStartMessage} Job was executed: {context.JobDetail.Key.Name}");
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using QP8.Infrastructure.Web.Enums;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace QP8.Infrastructure.Web.Responses
 {
-    public class JSendResponse : JSendResponse<dynamic> { }
+    public class JSendResponse : JSendResponse<dynamic>
+    {
+    }
 
     public class JSendResponse<T>
     {

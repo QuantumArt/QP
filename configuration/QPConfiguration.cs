@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web.Configuration;
 using System.Xml.Linq;
 using QP8.Infrastructure.Helpers;
+using QP8.Infrastructure.Logging.Extensions;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
 
@@ -164,6 +165,6 @@ namespace Quantumart.QP8.Configuration
             settings[Config.MailFromNameKey] = ConfigVariable(Config.MailFromNameKey);
         }
 
-        private static QaConfiguration GetQaConfiguration() => XmlSerializerHelpers.Deserialize<QaConfiguration>(XmlConfig);
+        private static QaConfiguration GetQaConfiguration() => XmlSerializerHelpers.Deserialize<QaConfiguration>(XmlConfig).LogTraceFormat("Load customers from config {0}");
     }
 }
