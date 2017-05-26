@@ -746,7 +746,13 @@ namespace Quantumart.QP8.BLL
             {
                 try
                 {
+                    var valuesState = new Dictionary<string,string>(values);
                     var vcontext = ValidationServices.ValidateModel(values, Content.XamlValidation, aggregatedXamlValidators, Content.Site.XamlDictionaries);
+                    if (!Enumerable.SequenceEqual(valuesState, values))
+                    {
+                        UpdateFieldValues(values);
+                    }
+
                     if (!vcontext.IsValid)
                     {
                         foreach (var ve in vcontext.Result.Errors)
