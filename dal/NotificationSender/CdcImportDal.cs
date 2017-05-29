@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Cdc.Enums;
 
 namespace Quantumart.QP8.DAL.NotificationSender
 {
@@ -96,8 +97,28 @@ LEFT JOIN (
 	FROM dbo.ATTRIBUTE_TYPE attrt
 ) result ON result.attr_type_id = cdc.ATTRIBUTE_TYPE_ID";
                     break;
+                case CdcCaptureConstants.ContentItem:
+                    filterClause = @"
+WHERE __$operation = 2 OR not_for_replication = 0";
+                    break;
                 case CdcCaptureConstants.ContentData:
-                    filterClause = @"WHERE not_for_replication = 0";
+                    filterClause = $@"
+INNER JOIN 
+(
+	SELECT
+		ca.ATTRIBUTE_ID,
+		ca.ATTRIBUTE_TYPE_ID
+	FROM dbo.CONTENT_ATTRIBUTE ca
+) ca ON ca.ATTRIBUTE_ID = cdc.ATTRIBUTE_ID
+INNER JOIN 
+(
+	SELECT
+		attrt.ATTRIBUTE_TYPE_ID AS attr_type_id,
+		attrt.TYPE_NAME AS attr_type_name,
+		attrt.DATABASE_TYPE AS attr_type_db
+	FROM dbo.ATTRIBUTE_TYPE attrt
+) result ON result.attr_type_id = ca.ATTRIBUTE_TYPE_ID
+WHERE __$operation = {(int)CdcOperationType.Insert} OR not_for_replication = 0";
                     break;
             }
 

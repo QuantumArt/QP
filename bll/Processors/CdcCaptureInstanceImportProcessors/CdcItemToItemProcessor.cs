@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.Constants.Cdc;
+using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Constants.DbColumns;
+using static Quantumart.QP8.Constants.Cdc.TarantoolItemToItemModel;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
@@ -19,19 +22,17 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-#pragma warning disable 162
+                var isRev = Equals(true, row[ItemToItemColumnName.IsRev]);
+                var isSelf = Equals(true, row[ItemToItemColumnName.IsSelf]);
+                Ensure.Not(isRev && isSelf, "IsRev and IsSelf flags could not be both flagged as true");
 
-                // ReSharper disable UnreachableCode
-                // ReSharper disable ConditionIsAlwaysTrueOrFalse
-
-                const bool isRev = false;
                 var linkId = (decimal)row[ItemToItemColumnName.LinkId];
                 var leftId = (decimal)row[ItemToItemColumnName.LItemId];
                 var rightId = (decimal)row[ItemToItemColumnName.RItemId];
                 return new CdcTableTypeModel
                 {
                     ChangeType = CdcActionType.Data,
-                    Action = row[TarantoolCommonConstants.Operation] as string,
+                    Action = (CdcOperationType)Enum.Parse(typeof(CdcOperationType), row[TarantoolCommonConstants.Operation] as string),
                     TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
                     TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
                     SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
@@ -40,19 +41,20 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                     Entity = new CdcEntityModel
                     {
                         EntityType = TarantoolItemToItemModel.EntityType,
-                        InvariantName = $"{TarantoolItemToItemModel.EntityType}_{linkId}" + (isRev ? "_rev" : string.Empty),
+                        InvariantName = GetInvariantName(linkId, isRev),
                         Columns = new Dictionary<string, object>
                         {
-                            { TarantoolItemToItemModel.Id, isRev ? rightId : leftId },
-                            { TarantoolItemToItemModel.LinkedId, isRev ? leftId : rightId }
+                            { Id, leftId },
+                            { LinkedId, rightId }
+                        },
+                        MetaData = new Dictionary<string, object>
+                        {
+                            { LinkId, linkId },
+                            { IsRev, isRev },
+                            { IsSelf, isSelf }
                         }
                     }
                 };
-
-                // ReSharper restore ConditionIsAlwaysTrueOrFalse
-                // ReSharper restore UnreachableCode
-
-#pragma warning restore 162
             }).OrderBy(cdc => cdc.TransactionLsn).ToList();
         }
     }

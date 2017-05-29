@@ -1,11 +1,11 @@
-﻿using Quantumart.QP8.BLL.Models.NotificationSender;
-using System;
+﻿using System;
+using Quantumart.QP8.Constants.Cdc.Enums;
 
 namespace Quantumart.QP8.BLL.Models.NotificationSender
 {
     public class CdcTableTypeModel
     {
-        public string Action { get; set; }
+        public CdcOperationType Action { get; set; }
 
         public CdcActionType ChangeType { get; set; }
 

@@ -10,5 +10,9 @@
         public const string BlobData = "blob_data";
         public const string Created = "created";
         public const string Modified = "modified";
+        public const string Splitted = "splitted";
+
+        public const string AttributeTypeDb = "attr_type_db";
+        public const string AttributeTypeName = "attr_type_name";
     }
 }

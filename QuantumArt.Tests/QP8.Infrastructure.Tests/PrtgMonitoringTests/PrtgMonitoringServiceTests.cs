@@ -1,4 +1,4 @@
-using System.Net.Http;
+﻿using System.Net.Http;
 using Flurl.Http.Testing;
 using Newtonsoft.Json;
 using Ploeh.AutoFixture;
@@ -29,6 +29,7 @@ namespace QP8.Infrastructure.Tests.PrtgMonitoringTests
         {
             _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization()).Customize(new MultipleCustomization());
             _fixture.Customizations.Add(new PrtgMonitoringServiceSpecimenBuilder());
+
             _httpTest = new HttpTest();
             _httpTest.RespondWithJson(new PrtgHttpResponse());
 

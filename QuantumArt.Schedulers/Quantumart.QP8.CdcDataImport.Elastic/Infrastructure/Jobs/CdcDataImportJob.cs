@@ -60,7 +60,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
             Logger.Log.Trace($"All tasks for thread #{Thread.CurrentThread.ManagedThreadId} were proceeded successfuly");
         }
 
-        private async void ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
+        private void ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
         {
         }
 

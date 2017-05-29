@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.Constants.Cdc;
-using static Quantumart.QP8.Constants.DbColumns.ContentDataColumnName;
+using Quantumart.QP8.Constants.Cdc.Enums;
+using Quantumart.QP8.Constants.DbColumns;
+using static Quantumart.QP8.Constants.Cdc.TarantoolContentArticleModel;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
@@ -19,12 +22,27 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-                var data = row[Data] as string;
-                var blobData = row[BlobData] as string;
+                object data = row[ContentDataColumnName.Data] as string;
+                object blobData = row[ContentDataColumnName.BlobData] as string;
+
+                var typedb = row[ContentDataColumnName.AttributeTypeDb] as string;
+                var typeName = row[ContentDataColumnName.AttributeTypeName] as string;
+                if (string.Equals(typedb, "NUMERIC", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (string.Equals(typeName, "BOOLEAN", StringComparison.OrdinalIgnoreCase))
+                    {
+                        data = Convert.ToBoolean(Convert.ToInt16(data));
+                    }
+                    else
+                    {
+                        data = data == null ? (object)null : Convert.ToDecimal(data, CultureInfo.InvariantCulture);
+                    }
+                }
+
                 return new CdcTableTypeModel
                 {
                     ChangeType = CdcActionType.Data,
-                    Action = row[TarantoolCommonConstants.Operation] as string,
+                    Action = (CdcOperationType)Enum.Parse(typeof(CdcOperationType), row[TarantoolCommonConstants.Operation] as string),
                     TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
                     TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
                     SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
@@ -32,16 +50,20 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                     ToLsn = row[TarantoolCommonConstants.ToLsn] as string,
                     Entity = new CdcEntityModel
                     {
-                        EntityType = TableName,
-                        InvariantName = TableName.ToUpper(),
+                        EntityType = ContentDataColumnName.TableName,
+                        InvariantName = ContentDataColumnName.TableName.ToUpper(),
                         Columns = new Dictionary<string, object>
                         {
-                            { AttributeId.ToUpper(), (decimal)row[AttributeId] },
-                            { ContentItemId.ToUpper(), (decimal)row[ContentItemId] },
-                            { ContentDataId.ToUpper(), (decimal)row[ContentDataId] },
-                            { Data.ToUpper(), blobData ?? data },
-                            { Created.ToUpper(), (DateTime)row[Created] },
-                            { Modified.ToUpper(), (DateTime)row[Modified] }
+                            { AttributeId, (decimal)row[ContentDataColumnName.AttributeId] },
+                            { ContentItemId, (decimal)row[ContentDataColumnName.ContentItemId] },
+                            { ContentDataId, (decimal)row[ContentDataColumnName.ContentDataId] },
+                            { Data, blobData ?? data },
+                            { Created, (DateTime)row[ContentDataColumnName.Created] },
+                            { Modified, (DateTime)row[ContentDataColumnName.Modified] }
+                        },
+                        MetaData = new Dictionary<string, object>
+                        {
+                            { IsSplitted, Equals(true, row[ContentDataColumnName.Splitted]) }
                         }
                     }
                 };

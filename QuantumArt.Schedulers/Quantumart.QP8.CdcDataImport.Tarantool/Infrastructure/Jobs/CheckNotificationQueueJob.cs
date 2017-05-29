@@ -67,7 +67,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
         {
             using (new QPConnectionScope(customer.ConnectionString))
             {
-                return !_systemNotificationService.ExistsSentNotifications();
+                return !_systemNotificationService.ExistsUnsentNotifications();
             }
         }
 

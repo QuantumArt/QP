@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL.Models.NotificationSender;
+﻿using Quantumart.QP8.Constants.Cdc.Enums;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Data
 {

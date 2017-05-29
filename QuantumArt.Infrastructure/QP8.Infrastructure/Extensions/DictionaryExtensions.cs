@@ -8,15 +8,8 @@ namespace QP8.Infrastructure.Extensions
     {
         public static void AddRange<TKey, TValue>(this IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (target == null)
-            {
-                throw new ArgumentNullException(nameof(target));
-            }
+            Ensure.Argument.NotNull(target);
+            Ensure.Argument.NotNull(source);
 
             foreach (var keyValuePair in source)
             {

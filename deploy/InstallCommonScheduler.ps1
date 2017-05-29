@@ -8,10 +8,7 @@ If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 function Stop-And-Remove-Service([string] $name, [string] $timeout = "00:03:00")
 {
     $s = Get-Service $name -ErrorAction SilentlyContinue
-
     if ($s) {
-
-
         if ( $s.Status -eq "Running")
         {
             Write-Host "Stopping service $name..."
@@ -34,7 +31,6 @@ function Stop-And-Remove-Service([string] $name, [string] $timeout = "00:03:00")
 function Start-Service-With-Timeout([string] $name, [string] $timeout = "00:03:00")
 {
     $s = Get-Service $name
-
     if ( $s.Status -eq "Stopped")
     {
         Write-Output "Starting service $name..."
@@ -83,10 +79,12 @@ if (-not(Test-Path $schedulerFolder) -or -not(Test-Path $schedulerPath))
 
 Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
 
-Write-Host "Installing service: $name"
+Write-Host "Installing service: $name1"
+Write-Host "Installing service: $name2"
 $frameworkDir = $([System.Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory())
 Invoke-Expression "$frameworkDir\installutil ""$installRoot\$projectName.exe"""
-Write-Host "Installation completed: $name"
+Write-Host "Installation completed: $name1"
+Write-Host "Installation completed: $name2"
 
 Write-Host "Waiting for a while..."
 Start-Sleep -s 5

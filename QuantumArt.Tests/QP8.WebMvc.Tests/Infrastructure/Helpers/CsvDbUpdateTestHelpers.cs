@@ -25,10 +25,7 @@ namespace QP8.WebMvc.Tests.Infrastructure.Helpers
                 .Create();
         }
 
-        public static IEnumerable<CsvDbUpdateModel> GenerateCsvDbUpdateModel(int contentId, IList<CsvDbUpdateFieldModel> csvRowFields, IFixture fixture)
-        {
-            return GenerateCsvDbUpdateModel(contentId, new List<IList<CsvDbUpdateFieldModel>> { csvRowFields }, fixture);
-        }
+        public static IEnumerable<CsvDbUpdateModel> GenerateCsvDbUpdateModel(int contentId, IList<CsvDbUpdateFieldModel> csvRowFields, IFixture fixture) => GenerateCsvDbUpdateModel(contentId, new List<IList<CsvDbUpdateFieldModel>> { csvRowFields }, fixture);
 
         public static IEnumerable<CsvDbUpdateModel> GenerateCsvDbUpdateModel(int contentId, IList<IList<CsvDbUpdateFieldModel>> csvFilesRowFieldData, IFixture fixture)
         {

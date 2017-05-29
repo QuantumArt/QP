@@ -10,16 +10,18 @@ using Flurl.Http;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure;
-using Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Data;
+using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services;
 using Quantumart.QP8.CdcDataImport.Tarantool.Properties;
 using Quantumart.QP8.Configuration.Models;
-using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Cdc;
 using Quartz;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
@@ -30,13 +32,15 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
         private readonly PrtgErrorsHandler _prtgLogger;
         private readonly CancellationTokenSource _cts;
         private readonly ICdcImportService _cdcImportService;
+        private readonly ICdcDataImportProcessor _cdcImportProcessor;
         private readonly IExternalSystemNotificationService _systemNotificationService;
 
-        public CdcDataImportJob(PrtgErrorsHandler prtgLogger, ICdcImportService cdcImportService, IExternalSystemNotificationService systemNotificationService)
+        public CdcDataImportJob(PrtgErrorsHandler prtgLogger, ICdcImportService cdcImportService, ICdcDataImportProcessor cdcImportProcessor, IExternalSystemNotificationService systemNotificationService)
         {
             _prtgLogger = prtgLogger;
             _cts = new CancellationTokenSource();
             _cdcImportService = cdcImportService;
+            _cdcImportProcessor = cdcImportProcessor;
             _systemNotificationService = systemNotificationService;
         }
 
@@ -59,7 +63,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
 
                 try
                 {
-                    ProcessCustomer(customerKvp.Key, customerKvp.Value);
+                    ProcessCustomer(customerKvp.Key, customerKvp.Value).Wait();
                 }
                 catch (Exception ex)
                 {
@@ -73,7 +77,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             Logger.Log.Trace($"All tasks for thread #{Thread.CurrentThread.ManagedThreadId} were proceeded successfuly");
         }
 
-        private async void ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
+        internal async Task ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
         {
             var isSuccessfulHttpResponse = true;
             var tableTypeModels = GetCdcDataModels(customer.ConnectionString, out string lastExecutedLsn);
@@ -84,24 +88,37 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             string lastPushedLsn = null;
             if (isNotificationQueueEmpty)
             {
-                while (isSuccessfulHttpResponse && dtosQueue.Any() && !_cts.Token.IsCancellationRequested)
+                while (dtosQueue.Any() && !_cts.Token.IsCancellationRequested)
                 {
                     isSuccessfulHttpResponse = false;
                     var data = dtosQueue.Peek();
                     try
                     {
-                        var responseMessage = await PushDataToHttpChannel(data);
-                        isSuccessfulHttpResponse = responseMessage.IsSuccessStatusCode;
-                        Logger.Log.Trace($"Http push notification was pushed with response status code: {responseMessage.StatusCode}");
+                        var responseMessage = PushDataToHttpChannel(data);
+                        (await responseMessage).EnsureSuccessStatusCode();
+
+                        var response = await responseMessage.ReceiveJson<JSendResponse>();
+                        if (response.Status == JSendStatus.Success && response.Code == 200)
+                        {
+                            isSuccessfulHttpResponse = true;
+                            lastPushedLsn = dtosQueue.Dequeue().TransactionLsn;
+                            Logger.Log.Trace($"Http push notification was pushed successfuly: {response.ToJsonLog()}");
+                        }
+                        else
+                        {
+                            Logger.Log.Warn($"Http push notification response was failed: {response.ToJsonLog()}");
+                            break;
+                        }
                     }
                     catch (FlurlHttpException ex)
                     {
-                        Logger.Log.Warn("There was an error while sending http push notification", ex);
+                        Logger.Log.Warn("There was an unhandled http error while sending http push notification", ex);
+                        break;
                     }
-
-                    if (isSuccessfulHttpResponse)
+                    catch (HttpRequestException ex)
                     {
-                        lastPushedLsn = dtosQueue.Dequeue().TransactionLsn;
+                        Logger.Log.Warn("There was an unhandled http error while sending http push notification", ex);
+                        break;
                     }
                 }
             }
@@ -113,6 +130,29 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             }
         }
 
+        private static IEnumerable<CdcDataTableDto> GroupCdcTableTypeModelsByLsn(string customerName, IEnumerable<CdcTableTypeModel> tableTypeModels)
+        {
+            return tableTypeModels
+                .GroupBy(gr => gr.TransactionLsn)
+                .OrderBy(gr => gr.Key)
+                .Select(gr => new CdcDataTableDto
+                {
+                    CustomerCode = customerName,
+                    TransactionLsn = gr.Key,
+                    TransactionDate = gr.Select(data => data.TransactionDate).First(),
+                    Changes = gr.OrderBy(data => data.SequenceLsn).Select((data, i) => new CdcChangeDto
+                    {
+                        Action = data.Action.ToString().ToLower(),
+                        ChangeType = data.ChangeType.ToString().ToLower(),
+                        SequenceLsn = data.SequenceLsn,
+                        OrderNumber = i,
+                        Entity = data.Entity.EntityType == TarantoolContentArticleModel.EntityType
+                            ? Mapper.Map<CdcEntityModel, CdcArticleEntityDto>(data.Entity)
+                            : Mapper.Map<CdcEntityModel, CdcEntityDto>(data.Entity)
+                    }).ToList()
+                }).ToList();
+        }
+
         private List<CdcTableTypeModel> GetCdcDataModels(string connectionString, out string toLsn)
         {
             List<CdcTableTypeModel> result;
@@ -121,81 +161,15 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             {
                 var fromLsn = _cdcImportService.GetLastExecutedLsn();
                 toLsn = _cdcImportService.GetMaxLsn();
-                result = GetCdcDataFromTables(fromLsn, toLsn);
+                result = _cdcImportProcessor.GetCdcDataFromTables(fromLsn, toLsn);
                 ts.Complete();
             }
 
             return result;
         }
 
-        public List<CdcTableTypeModel> GetCdcDataFromTables(string fromLsn = null, string toLsn = null)
-        {
-            Logger.Log.Trace($"Getting cdc data for with fromLsn:{fromLsn} and toLsn:{toLsn}");
-            var tablesGroup = new List<List<CdcTableTypeModel>>
-            {
-                _cdcImportService.ImportData(CdcCaptureConstants.Content, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.ContentAttribute, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.ContentToContent, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.ContentToContentRev, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.StatusType, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.ItemToItem, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.ItemLinkAsync, fromLsn, toLsn),
-                GetContentArticleDtoFilteredByNetChanges(fromLsn, toLsn).ToList()
-            };
-
-            return tablesGroup.SelectMany(tg => tg).OrderBy(t => t.TransactionLsn).ToList();
-        }
-
-        private IEnumerable<CdcTableTypeModel> GetContentArticleDtoFilteredByNetChanges(string fromLsn = null, string toLsn = null)
-        {
-            var contentItemModel = _cdcImportService.ImportData(CdcCaptureConstants.ContentItem, fromLsn, toLsn);
-            var contentDataModel = _cdcImportService.ImportData(CdcCaptureConstants.ContentData, fromLsn, toLsn);
-
-            var contentItemsFilteredByNetChanges = contentItemModel.FilterCdcTableTypeByLsnNetChanges(cim => new
-            {
-                id = (string)cim.Entity.Columns["CONTENT_ITEM_ID"],
-                cim.TransactionLsn
-            });
-
-            var contentDataFilteredByNetChanges = contentDataModel.FilterCdcTableTypeByLsnNetChanges(cdm => new
-            {
-                id = (string)cdm.Entity.Columns["CONTENT_ITEM_ID"],
-                cdm.TransactionLsn
-            });
-
-            foreach (var cim in contentItemsFilteredByNetChanges)
-            {
-                var fieldColumns = contentDataFilteredByNetChanges
-                    .OrderBy(cdm => cdm.SequenceLsn)
-                    .Select(cdt => new KeyValuePair<string, object>($"field_{cdt.Entity.Columns["ATTRIBUTE_ID"]}", cdt.Entity.Columns["DATA"]));
-
-                cim.Entity.Columns.AddRange(fieldColumns);
-                yield return cim;
-            }
-        }
-
-        private static IEnumerable<CdcDataTableDto> GroupCdcTableTypeModelsByLsn(string customerName, IEnumerable<CdcTableTypeModel> tableTypeModels)
-        {
-            return tableTypeModels
-                .GroupBy(gr => gr.TransactionLsn)
-                .OrderBy(gr => gr.Key).ToList()
-                .Select(gr => new CdcDataTableDto
-                {
-                    CustomerCode = customerName,
-                    TransactionLsn = gr.Key,
-                    TransactionDate = gr.Select(data => data.TransactionDate).First(),
-                    Changes = gr.OrderBy(data => data.SequenceLsn).Select((data, i) => new CdcChangeDto
-                    {
-                        Action = data.Action.ToLowerInvariant(),
-                        ChangeType = data.ChangeType.ToString().ToLowerInvariant(),
-                        OrderNumber = i,
-                        Entity = Mapper.Map<CdcEntityModel, CdcEntityDto>(data.Entity)
-                    }).ToList()
-                }).ToList();
-        }
-
         private static async Task<HttpResponseMessage> PushDataToHttpChannel(CdcDataTableDto data) =>
-            await Settings.Default.HttpEndpoint.AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostJsonAsync(data);
+            await Settings.Default.HttpEndpoint.AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostJsonAsync(new NginxResponse(data));
 
         private void AddDataToNotificationQueue(QaConfigCustomer customer, List<CdcDataTableDto> data, string lastPushedLsn, string lastExecutedLsn)
         {

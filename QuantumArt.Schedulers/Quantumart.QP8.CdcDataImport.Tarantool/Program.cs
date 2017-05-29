@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using Autofac;
 using Autofac.Extras.Quartz;
+using AutoMapper;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
@@ -71,6 +72,10 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
                 Logger.Log.Fatal("Unhandled application exception: ", ea.ExceptionObject as Exception);
                 Logger.Log.Dispose();
             };
+
+            Mapper.Initialize(cfg => { cfg.AddProfile<TarantoolMapperProfile>(); });
+
+            Mapper.AssertConfigurationIsValid();
         }
 
         private static IContainer BuildContainer()

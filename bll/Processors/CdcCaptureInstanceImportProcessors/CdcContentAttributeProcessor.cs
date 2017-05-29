@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.Constants.Cdc;
+using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Constants.DbColumns;
 using static Quantumart.QP8.Constants.Cdc.TarantoolContentAttributeModel;
 
@@ -27,17 +28,17 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                 switch (attributeTypeId)
                 {
                     case 11:
-                        relationType = linkId == null ? "o2m" : "m2m";
+                        relationType = linkId == null ? O2M : M2M;
                         break;
                     case 13:
-                        relationType = "m2o";
+                        relationType = M2O;
                         break;
                 }
 
                 return new CdcTableTypeModel
                 {
                     ChangeType = CdcActionType.Schema,
-                    Action = row[TarantoolCommonConstants.Operation] as string,
+                    Action = (CdcOperationType)Enum.Parse(typeof(CdcOperationType), row[TarantoolCommonConstants.Operation] as string),
                     TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
                     TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
                     SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
@@ -51,9 +52,9 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                         {
                             { Id, attributeId },
                             { ContentId, (decimal)row[ContentAttributeColumnName.ContentId] },
-                            { InvariantName, $"field_{attributeId}" },
+                            { InvariantName, GetInvariantName(attributeId) },
                             { Name, row[ContentAttributeColumnName.AttributeName] as string },
-                            { IsIndexed, relationType == "o2m" },
+                            { IsIndexed, relationType == O2M },
                             { LinkId, linkId },
                             { IsLocalization, (bool)row[ContentAttributeColumnName.IsLocalization] },
                             { IsSystem, false },

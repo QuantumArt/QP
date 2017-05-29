@@ -15,6 +15,8 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
 
         bool ExistsSentNotifications();
 
+        bool ExistsUnsentNotifications();
+
         void InsertNotification(List<SystemNotificationModel> notifications);
     }
 }

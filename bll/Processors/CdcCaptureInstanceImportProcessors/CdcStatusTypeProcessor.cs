@@ -4,7 +4,9 @@ using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.Constants.Cdc;
+using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Constants.DbColumns;
+using static Quantumart.QP8.Constants.Cdc.TarantoolStatusTypeModel;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
@@ -20,7 +22,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row => new CdcTableTypeModel
             {
                 ChangeType = CdcActionType.Data,
-                Action = row[TarantoolCommonConstants.Operation] as string,
+                Action = (CdcOperationType)Enum.Parse(typeof(CdcOperationType), row[TarantoolCommonConstants.Operation] as string),
                 TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
                 TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
                 SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
@@ -32,8 +34,8 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                     InvariantName = StatusTypeColumnName.TableName.ToUpper(),
                     Columns = new Dictionary<string, object>
                     {
-                        { StatusTypeColumnName.StatusTypeId.ToUpper(), (decimal)row[StatusTypeColumnName.StatusTypeId] },
-                        { StatusTypeColumnName.StatusTypeName.ToUpper(), row[StatusTypeColumnName.StatusTypeName] as string }
+                        { StatusTypeId, (decimal)row[StatusTypeColumnName.StatusTypeId] },
+                        { StatusTypeName, row[StatusTypeColumnName.StatusTypeName] as string }
                     }
                 }
             }).OrderBy(cdc => cdc.TransactionLsn).ToList();

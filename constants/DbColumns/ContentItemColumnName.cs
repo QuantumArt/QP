@@ -9,6 +9,7 @@
         public const string Archive = "archive";
         public const string Created = "created";
         public const string Modified = "modified";
+        public const string Splitted = "splitted";
         public const string LastModifiedBy = "last_modified_by";
     }
 }

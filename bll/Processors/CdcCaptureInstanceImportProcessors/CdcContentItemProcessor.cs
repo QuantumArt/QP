@@ -4,7 +4,9 @@ using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.Constants.Cdc;
-using static Quantumart.QP8.Constants.DbColumns.ContentItemColumnName;
+using Quantumart.QP8.Constants.Cdc.Enums;
+using Quantumart.QP8.Constants.DbColumns;
+using static Quantumart.QP8.Constants.Cdc.TarantoolContentArticleModel;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
@@ -19,11 +21,11 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-                var contentId = (decimal)row[ContentId];
+                var contentId = (decimal)row[ContentItemColumnName.ContentId];
                 return new CdcTableTypeModel
                 {
                     ChangeType = CdcActionType.Data,
-                    Action = row[TarantoolCommonConstants.Operation] as string,
+                    Action = (CdcOperationType)Enum.Parse(typeof(CdcOperationType), row[TarantoolCommonConstants.Operation] as string),
                     TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
                     TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
                     SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
@@ -31,17 +33,21 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                     ToLsn = row[TarantoolCommonConstants.ToLsn] as string,
                     Entity = new CdcEntityModel
                     {
-                        EntityType = "article",
-                        InvariantName = $"content_{contentId}",
+                        EntityType = TarantoolContentArticleModel.EntityType,
+                        InvariantName = GetInvariantName(contentId),
                         Columns = new Dictionary<string, object>
                         {
-                            { ContentItemId.ToUpper(), (decimal)row[ContentItemId] },
-                            { StatusTypeId.ToUpper(), (decimal)row[StatusTypeId] },
-                            { Visible.ToUpper(), (decimal)row[Visible] == 1 },
-                            { Archive.ToUpper(), (decimal)row[Archive] == 1 },
-                            { Created.ToUpper(), (DateTime)row[Created] },
-                            { Modified.ToUpper(), (DateTime)row[Modified] },
-                            { LastModifiedBy.ToUpper(), (decimal)row[LastModifiedBy] }
+                            { ContentItemId, (decimal)row[ContentItemColumnName.ContentItemId] },
+                            { StatusTypeId, (decimal)row[ContentItemColumnName.StatusTypeId] },
+                            { Visible, (decimal)row[ContentItemColumnName.Visible] == 1 },
+                            { Archive, (decimal)row[ContentItemColumnName.Archive] == 1 },
+                            { Created, (DateTime)row[ContentItemColumnName.Created] },
+                            { Modified, (DateTime)row[ContentItemColumnName.Modified] },
+                            { LastModifiedBy, (decimal)row[ContentItemColumnName.LastModifiedBy] }
+                        },
+                        MetaData = new Dictionary<string, object>
+                        {
+                            { IsSplitted, Equals(true, row[ContentItemColumnName.Splitted]) }
                         }
                     }
                 };

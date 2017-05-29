@@ -10,6 +10,9 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Data
         [JsonProperty("changeType")]
         public string ChangeType { get; set; }
 
+        [JsonProperty("sequenceLsn")]
+        public string SequenceLsn { get; set; }
+
         [JsonProperty("orderNumber")]
         public int OrderNumber { get; set; }
 

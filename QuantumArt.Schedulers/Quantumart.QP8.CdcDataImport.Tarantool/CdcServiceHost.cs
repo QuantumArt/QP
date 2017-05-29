@@ -1,6 +1,5 @@
-﻿using AutoMapper;
+﻿using QP8.Infrastructure;
 using QP8.Infrastructure.Logging;
-using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure;
 using Quartz;
 using Topshelf;
 
@@ -12,6 +11,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
 
         public CdcServiceHost(IScheduler scheduler)
         {
+            Ensure.Argument.NotNull(scheduler);
             _scheduler = scheduler;
         }
 
@@ -22,14 +22,15 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
                 _scheduler.Start();
             }
 
-            Mapper.Initialize(cfg => { cfg.AddProfile<TarantoolMapperProfile>(); });
             Logger.Log.Debug("Service was started");
             return true;
         }
 
         public bool Stop(HostControl hostControl)
         {
+            Logger.Log.Debug("Stopping scheduler");
             _scheduler.Shutdown(true);
+
             Logger.Log.Debug("Service was stopped");
             return true;
         }

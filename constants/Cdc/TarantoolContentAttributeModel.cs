@@ -17,5 +17,11 @@
         public const string IsPrimaryKey = "isPrimaryKey";
         public const string AttributeRelationType = "relationType";
         public const string IsAggregated = "isAggregated";
+
+        public const string O2M = "o2m";
+        public const string M2O = "m2o";
+        public const string M2M = "O2o";
+
+        public static string GetInvariantName(decimal attributeId) => $"field_{attributeId}";
     }
 }

@@ -8,6 +8,8 @@ using AutoMapper;
 using Flurl.Http;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging.Interfaces;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Models.NotificationSender;
@@ -80,18 +82,22 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
 
                 try
                 {
-                    var response = await PushDataToHttpChannel(dto.Url, dto.Json);
-                    if (response.IsSuccessStatusCode)
+                    var responseMessage = PushDataToHttpChannel(dto.Url, dto.Json);
+                    (await responseMessage).EnsureSuccessStatusCode();
+
+                    var response = await responseMessage.ReceiveJson<JSendResponse>();
+                    if (response.Status == JSendStatus.Success && response.Code == 200)
                     {
                         sentNotificationIds.Add(dto.Id);
                     }
                     else
                     {
+                        _logger.Warn($"Http push notification response was failed for customer code: {response.ToJsonLog()}");
                         unsentNotificationIds.Add(dto.Id);
                         break;
                     }
 
-                    _logger.Info($"Sended notification for customer code: {customer.CustomerName}, status code: {response.StatusCode}. Notification: {dto.ToJsonLog()}");
+                    _logger.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
                 }
                 catch (Exception ex)
                 {

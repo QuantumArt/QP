@@ -59,7 +59,11 @@
     <Compile Include="ArticleSelectionIncludeMode.cs" />
     <Compile Include="ArticleViewType.cs" />
     <Compile Include="CdcCaptureConstants.cs" />
+    <Compile Include="Cdc\Enums\CdcOperationType.cs" />
+    <Compile Include="Cdc\Enums\CdcActionType.cs" />
     <Compile Include="Cdc\TarantoolCommonConstants.cs" />
+    <Compile Include="Cdc\TarantoolContentArticleModel.cs" />
+    <Compile Include="Cdc\TarantoolStatusTypeModel.cs" />
     <Compile Include="Cdc\TarantoolItemToItemModel.cs" />
     <Compile Include="Cdc\TarantoolItemLinkAsyncModel.cs" />
     <Compile Include="Cdc\TarantoolContentToContentModel.cs" />

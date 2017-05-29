@@ -5,14 +5,8 @@ namespace Quantumart.QP8.Configuration.Comparers
 {
     public class QaConfigCustomerComparer : IEqualityComparer<QaConfigCustomer>
     {
-        public bool Equals(QaConfigCustomer obj1, QaConfigCustomer obj2)
-        {
-            return obj1.CustomerName == obj2.CustomerName;
-        }
+        public bool Equals(QaConfigCustomer obj1, QaConfigCustomer obj2) => obj1.CustomerName == obj2.CustomerName;
 
-        public int GetHashCode(QaConfigCustomer obj)
-        {
-            return obj.CustomerName.GetHashCode();
-        }
+        public int GetHashCode(QaConfigCustomer obj) => obj.CustomerName.GetHashCode();
     }
 }

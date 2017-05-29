@@ -9,10 +9,7 @@ $name = "ArticleSchedulerService"
 $timeout = "00:03:00"
 
 $s = Get-Service $name -ErrorAction SilentlyContinue
-
 if ($s) {
-
-
     if ( $s.Status -eq "Running")
     {
         Write-Host "Stopping service $name..."

@@ -20,6 +20,11 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
             return QPContext.EFContext.SystemNotificationSet.Any(entity => entity.Sent);
         }
 
+        public bool ExistsUnsentNotifications()
+        {
+            return QPContext.EFContext.SystemNotificationSet.Any(entity => !entity.Sent);
+        }
+
         public void UpdateSentNotifications(IEnumerable<int> notificationIds)
         {
             CommonSystemNotificationsDal.UpdateSentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);

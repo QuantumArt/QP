@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -94,7 +94,6 @@
   <ItemGroup>
     <Compile Include="ArticleDAL.cs" />
     <Compile Include="NotificationSender\CdcImportDal.cs" />
-    <Compile Include="NotificationSender\CdcOperationType.cs" />
     <Compile Include="NotificationSender\CommonSystemNotificationsDal.cs" />
     <Compile Include="NotificationSender\CommonExternalNotificationsDal.cs" />
     <Compile Include="CommonSecurity.cs" />

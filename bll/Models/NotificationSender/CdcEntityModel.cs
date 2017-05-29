@@ -9,5 +9,7 @@ namespace Quantumart.QP8.BLL.Models.NotificationSender
         public string InvariantName { get; set; }
 
         public IDictionary<string, object> Columns { get; set; }
+
+        public IDictionary<string, object> MetaData { get; set; }
     }
 }
