@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.Constants.Cdc;
+using static Quantumart.QP8.Constants.DbColumns.ContentDataColumnName;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
@@ -17,29 +19,29 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-                var data = row["data"] as string;
-                var blobData = row["blob_data"] as string;
+                var data = row[Data] as string;
+                var blobData = row[BlobData] as string;
                 return new CdcTableTypeModel
                 {
-                    Action = row["operation"] as string,
                     ChangeType = CdcActionType.Data,
-                    TransactionDate = (DateTime)row["transactionDate"],
-                    TransactionLsn = row["transactionLsn"] as string,
-                    SequenceLsn = row["sequenceLsn"] as string,
-                    FromLsn = row["fromLsn"] as string,
-                    ToLsn = row["toLsn"] as string,
+                    Action = row[TarantoolCommonConstants.Operation] as string,
+                    TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
+                    TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
+                    SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
+                    FromLsn = row[TarantoolCommonConstants.FromLsn] as string,
+                    ToLsn = row[TarantoolCommonConstants.ToLsn] as string,
                     Entity = new CdcEntityModel
                     {
-                        EntityType = "content_data",
-                        InvariantName = "CONTENT_DATA",
+                        EntityType = TableName,
+                        InvariantName = TableName.ToUpper(),
                         Columns = new Dictionary<string, object>
                         {
-                            { "ATTRIBUTE_ID", (decimal)row["attribute_id"] },
-                            { "CONTENT_ITEM_ID", (decimal)row["content_item_id"] },
-                            { "CONTENT_DATA_ID", (decimal)row["content_data_id"] },
-                            { "DATA", blobData ?? data },
-                            { "CREATED", (DateTime)row["created"] },
-                            { "MODIFIED", (DateTime)row["modified"] }
+                            { AttributeId.ToUpper(), (decimal)row[AttributeId] },
+                            { ContentItemId.ToUpper(), (decimal)row[ContentItemId] },
+                            { ContentDataId.ToUpper(), (decimal)row[ContentDataId] },
+                            { Data.ToUpper(), blobData ?? data },
+                            { Created.ToUpper(), (DateTime)row[Created] },
+                            { Modified.ToUpper(), (DateTime)row[Modified] }
                         }
                     }
                 };

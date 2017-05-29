@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.Constants.Cdc;
+using static Quantumart.QP8.Constants.DbColumns.ContentColumnName;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
@@ -10,111 +12,13 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
     {
         private readonly object _defaultFields = new object[]
         {
-            new
-            {
-                order = 1,
-                invariantName = "CONTENT_ITEM_ID",
-                name = "CONTENT_ITEM_ID",
-                isIndexed = true,
-                netAttributeName = "Id",
-                isLocalization = false,
-                isSystem = true,
-                storageType = "INT",
-                isRelation = false,
-                isClassifier = false,
-                isPrimaryKey = true,
-                isAggregated = false
-            },
-            new
-            {
-                order = 2,
-                invariantName = "STATUS_TYPE_ID",
-                name = "STATUS_TYPE_ID",
-                isIndexed = false,
-                netAttributeName = "StatusTypeId",
-                isLocalization = false,
-                isSystem = true,
-                storageType = "INT",
-                isRelation = false,
-                isClassifier = false,
-                isPrimaryKey = true,
-                isAggregated = false
-            },
-            new
-            {
-                order = 3,
-                invariantName = "VISIBLE",
-                name = "VISIBLE",
-                isIndexed = false,
-                netAttributeName = "Visible",
-                isLocalization = false,
-                isSystem = true,
-                storageType = "BIT",
-                isRelation = false,
-                isClassifier = false,
-                isPrimaryKey = true,
-                isAggregated = false
-            },
-            new
-            {
-                order = 4,
-                invariantName = "ARCHIVE",
-                name = "ARCHIVE",
-                isIndexed = false,
-                netAttributeName = "Archive",
-                isLocalization = false,
-                isSystem = true,
-                storageType = "BIT",
-                isRelation = false,
-                isClassifier = false,
-                isPrimaryKey = true,
-                isAggregated = false
-            },
-            new
-            {
-                order = 5,
-                invariantName = "CREATED",
-                name = "CREATED",
-                isIndexed = false,
-                netAttributeName = "Created",
-                isLocalization = false,
-                isSystem = true,
-                storageType = "DATETIME",
-                isRelation = false,
-                isClassifier = false,
-                isPrimaryKey = true,
-                isAggregated = false
-            },
-            new
-            {
-                order = 6,
-                invariantName = "MODIFIED",
-                name = "MODIFIED",
-                isIndexed = false,
-                netAttributeName = "Modified",
-                isLocalization = false,
-                isSystem = true,
-                storageType = "DATETIME",
-                isRelation = false,
-                isClassifier = false,
-                isPrimaryKey = true,
-                isAggregated = false
-            },
-            new
-            {
-                order = 7,
-                invariantName = "LAST_MODIFIED_BY",
-                name = "LAST_MODIFIED_BY",
-                isIndexed = false,
-                netAttributeName = "LastModifiedBy",
-                isLocalization = false,
-                isSystem = true,
-                storageType = "INT",
-                isRelation = false,
-                isClassifier = false,
-                isPrimaryKey = true,
-                isAggregated = false
-            }
+            new { order = 1, isIndexed = true, isLocalization = false, isSystem = true, isRelation = false, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "INT", invariantName = "CONTENT_ITEM_ID", name = "CONTENT_ITEM_ID", netAttributeName = "Id" },
+            new { order = 2, isIndexed = false, isLocalization = false, isSystem = true, isRelation = false, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "INT", invariantName = "STATUS_TYPE_ID", name = "STATUS_TYPE_ID", netAttributeName = "StatusTypeId" },
+            new { order = 3, isIndexed = false, isLocalization = false, isSystem = true, isRelation = false, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "BIT", invariantName = "VISIBLE", name = "VISIBLE", netAttributeName = "Visible" },
+            new { order = 4, isIndexed = false, isLocalization = false, isSystem = true, isRelation = false, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "BIT", invariantName = "ARCHIVE", name = "ARCHIVE", netAttributeName = "Archive" },
+            new { order = 5, isIndexed = false, isLocalization = false, isSystem = true, isRelation = false, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "DATETIME", invariantName = "CREATED", name = "CREATED", netAttributeName = "Created" },
+            new { order = 6, isIndexed = false, isLocalization = false, isSystem = true, isRelation = false, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "DATETIME", invariantName = "MODIFIED", name = "MODIFIED", netAttributeName = "Modified" },
+            new { order = 7, isIndexed = false, isLocalization = false, isSystem = true, isRelation = false, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "INT", invariantName = "LAST_MODIFIED_BY", name = "LAST_MODIFIED_BY", netAttributeName = "LastModifiedBy" }
         };
 
         public CdcContentProcessor(string captureInstanseName)
@@ -126,24 +30,24 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row => new CdcTableTypeModel
             {
-                Action = row["operation"] as string,
                 ChangeType = CdcActionType.Schema,
-                TransactionDate = (DateTime)row["transactionDate"],
-                TransactionLsn = row["transactionLsn"] as string,
-                SequenceLsn = row["sequenceLsn"] as string,
-                FromLsn = row["fromLsn"] as string,
-                ToLsn = row["toLsn"] as string,
+                Action = row[TarantoolCommonConstants.Operation] as string,
+                TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
+                TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
+                SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
+                FromLsn = row[TarantoolCommonConstants.FromLsn] as string,
+                ToLsn = row[TarantoolCommonConstants.ToLsn] as string,
                 Entity = new CdcEntityModel
                 {
-                    EntityType = "content",
-                    InvariantName = "CONTENT",
+                    EntityType = TableName,
+                    InvariantName = TableName.ToUpper(),
                     Columns = new Dictionary<string, object>
                     {
-                        { "CONTENT_ID", (decimal)row["content_id"] },
-                        { "CONTENT_NAME", row["content_name"] as string },
-                        { "NET_CONTENT_NAME", row["net_content_name"] as string },
-                        { "isForReplication", true },
-                        { "defaultFields", _defaultFields }
+                        { ContentId.ToUpper(), (decimal)row[ContentId] },
+                        { ContentName.ToUpper(), row[ContentName] as string },
+                        { NetContentName.ToUpper(), row[NetContentName] as string },
+                        { TarantoolContentModel.IsForReplication, true },
+                        { TarantoolContentModel.DefaultFields, _defaultFields }
                     }
                 }
             }).OrderBy(cdc => cdc.TransactionLsn).ToList();

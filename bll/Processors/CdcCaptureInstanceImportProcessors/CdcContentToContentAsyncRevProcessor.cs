@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.Constants.Cdc;
+using Quantumart.QP8.Constants.DbColumns;
+using static Quantumart.QP8.Constants.Cdc.TarantoolContentToContentModel;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
@@ -10,30 +13,8 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
     {
         private readonly object _defaultFields = new object[]
         {
-            new
-            {
-                invariantName = "id",
-                isIndexed = true,
-                isLocalization = false,
-                isSystem = false,
-                storageType = "INT",
-                isRelation = true,
-                isClassifier = false,
-                isPrimaryKey = true,
-                isAggregated = false
-            },
-            new
-            {
-                invariantName = "linked_id",
-                isIndexed = true,
-                isLocalization = false,
-                isSystem = false,
-                storageType = "INT",
-                isRelation = true,
-                isClassifier = false,
-                isPrimaryKey = true,
-                isAggregated = false
-            }
+            new { isIndexed = true, isLocalization = false, isSystem = false, isRelation = true, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "INT", invariantName = "id" },
+            new { isIndexed = true, isLocalization = false, isSystem = false, isRelation = true, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "INT", invariantName = "linked_id" }
         };
 
         public CdcContentToContentAsyncRevProcessor(string captureInstanseName)
@@ -45,29 +26,29 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-                var linkId = (decimal)row["link_id"];
+                var linkId = (decimal)row[ContentToContentColumnName.LinkId];
                 return new CdcTableTypeModel
                 {
-                    Action = row["operation"] as string,
                     ChangeType = CdcActionType.Schema,
-                    TransactionDate = (DateTime)row["transactionDate"],
-                    TransactionLsn = row["transactionLsn"] as string,
-                    SequenceLsn = row["sequenceLsn"] as string,
-                    FromLsn = row["fromLsn"] as string,
-                    ToLsn = row["toLsn"] as string,
+                    Action = row[TarantoolCommonConstants.Operation] as string,
+                    TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
+                    TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
+                    SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
+                    FromLsn = row[TarantoolCommonConstants.FromLsn] as string,
+                    ToLsn = row[TarantoolCommonConstants.ToLsn] as string,
                     Entity = new CdcEntityModel
                     {
-                        EntityType = "content_to_content",
-                        InvariantName = "CONTENT_TO_CONTENT",
+                        EntityType = ContentToContentColumnName.TableName,
+                        InvariantName = ContentToContentColumnName.TableName.ToUpper(),
                         Columns = new Dictionary<string, object>
                         {
-                            { "linkId", linkId },
-                            { "invariantName", $"item_link_{linkId}_async_rev" },
-                            { "leftContentId", (decimal)row["r_content_id"] },
-                            { "rightContentId", (decimal)row["l_content_id"] },
-                            { "isSymmetric", (bool)row["symmetric"] },
-                            { "isReverse", true },
-                            { "defaultFields", _defaultFields }
+                            { LinkId, linkId },
+                            { InvariantName, $"item_link_{linkId}_async_rev" },
+                            { LeftContentId, (decimal)row[ContentToContentColumnName.RContentId] },
+                            { RightContentId, (decimal)row[ContentToContentColumnName.LContentId] },
+                            { IsSymmetric, (bool)row[ContentToContentColumnName.IsSymmetric] },
+                            { IsReverse, true },
+                            { DefaultFields, _defaultFields }
                         }
                     }
                 };

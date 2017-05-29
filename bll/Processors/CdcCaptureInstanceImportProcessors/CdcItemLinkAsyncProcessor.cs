@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.Constants.Cdc;
+using Quantumart.QP8.Constants.DbColumns;
+using static Quantumart.QP8.Constants.Cdc.TarantoolItemLinkAsyncModel;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
@@ -17,33 +20,40 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
+#pragma warning disable 162
+
+                // ReSharper disable UnreachableCode
                 // ReSharper disable ConditionIsAlwaysTrueOrFalse
-                var isRev = false;
-                var linkId = (decimal)row["link_id"];
-                var leftId = (decimal)row["item_id"];
-                var rightId = (decimal)row["linked_item_id"];
+
+                const bool isRev = false;
+                var linkId = (decimal)row[ItemLinkAsyncColumnName.LinkId];
+                var leftId = (decimal)row[ItemLinkAsyncColumnName.ItemId];
+                var rightId = (decimal)row[ItemLinkAsyncColumnName.LinkedItemId];
                 return new CdcTableTypeModel
                 {
-                    Action = row["operation"] as string,
                     ChangeType = CdcActionType.Data,
-                    TransactionDate = (DateTime)row["transactionDate"],
-                    TransactionLsn = row["transactionLsn"] as string,
-                    SequenceLsn = row["sequenceLsn"] as string,
-                    FromLsn = row["fromLsn"] as string,
-                    ToLsn = row["toLsn"] as string,
+                    Action = row[TarantoolCommonConstants.Operation] as string,
+                    TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
+                    TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
+                    SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
+                    FromLsn = row[TarantoolCommonConstants.FromLsn] as string,
+                    ToLsn = row[TarantoolCommonConstants.ToLsn] as string,
                     Entity = new CdcEntityModel
                     {
-                        EntityType = "item_link",
-                        InvariantName = $"item_link_{linkId}_async" + (isRev ? "_rev" : string.Empty),
+                        EntityType = TarantoolItemLinkAsyncModel.EntityType,
+                        InvariantName = $"{TarantoolItemLinkAsyncModel.EntityType}_{linkId}_async" + (isRev ? "_rev" : string.Empty),
                         Columns = new Dictionary<string, object>
                         {
-                            { "id", isRev ? rightId : leftId },
-                            { "linked_id", isRev ? leftId : rightId }
+                            { Id, isRev ? rightId : leftId },
+                            { LinkedId, isRev ? leftId : rightId }
                         }
                     }
                 };
 
                 // ReSharper restore ConditionIsAlwaysTrueOrFalse
+                // ReSharper restore UnreachableCode
+
+#pragma warning restore 162
             }).OrderBy(cdc => cdc.TransactionLsn).ToList();
         }
     }

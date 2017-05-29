@@ -97,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CdcServiceHost.cs" />
+    <Compile Include="Infrastructure\Constants.cs" />
     <Compile Include="Infrastructure\IoCTarantoolModule.cs" />
     <Compile Include="Infrastructure\Jobs\CheckNotificationQueueJob.cs" />
     <Compile Include="Infrastructure\Data\CdcChangeDto.cs" />

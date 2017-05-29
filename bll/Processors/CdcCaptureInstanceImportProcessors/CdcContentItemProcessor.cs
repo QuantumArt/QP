@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.Constants.Cdc;
+using static Quantumart.QP8.Constants.DbColumns.ContentItemColumnName;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
@@ -17,29 +19,29 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-                var contentId = (decimal)row["content_id"];
+                var contentId = (decimal)row[ContentId];
                 return new CdcTableTypeModel
                 {
-                    Action = row["operation"] as string,
                     ChangeType = CdcActionType.Data,
-                    TransactionDate = (DateTime)row["transactionDate"],
-                    TransactionLsn = row["transactionLsn"] as string,
-                    SequenceLsn = row["sequenceLsn"] as string,
-                    FromLsn = row["fromLsn"] as string,
-                    ToLsn = row["toLsn"] as string,
+                    Action = row[TarantoolCommonConstants.Operation] as string,
+                    TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
+                    TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
+                    SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
+                    FromLsn = row[TarantoolCommonConstants.FromLsn] as string,
+                    ToLsn = row[TarantoolCommonConstants.ToLsn] as string,
                     Entity = new CdcEntityModel
                     {
                         EntityType = "article",
                         InvariantName = $"content_{contentId}",
                         Columns = new Dictionary<string, object>
                         {
-                            { "CONTENT_ITEM_ID", (decimal)row["CONTENT_ITEM_ID"] },
-                            { "STATUS_TYPE_ID", (decimal)row["STATUS_TYPE_ID"] },
-                            { "VISIBLE", (decimal)row["visible"] == 1 },
-                            { "ARCHIVE", (decimal)row["archive"] == 1 },
-                            { "CREATED", (DateTime)row["created"] },
-                            { "MODIFIED", (DateTime)row["modified"] },
-                            { "LAST_MODIFIED_BY", (decimal)row["last_modified_by"] }
+                            { ContentItemId.ToUpper(), (decimal)row[ContentItemId] },
+                            { StatusTypeId.ToUpper(), (decimal)row[StatusTypeId] },
+                            { Visible.ToUpper(), (decimal)row[Visible] == 1 },
+                            { Archive.ToUpper(), (decimal)row[Archive] == 1 },
+                            { Created.ToUpper(), (DateTime)row[Created] },
+                            { Modified.ToUpper(), (DateTime)row[Modified] },
+                            { LastModifiedBy.ToUpper(), (decimal)row[LastModifiedBy] }
                         }
                     }
                 };
