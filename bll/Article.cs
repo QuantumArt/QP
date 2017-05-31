@@ -748,10 +748,7 @@ namespace Quantumart.QP8.BLL
                 {
                     var valuesState = new Dictionary<string,string>(values);
                     var vcontext = ValidationServices.ValidateModel(values, Content.XamlValidation, aggregatedXamlValidators, Content.Site.XamlDictionaries);
-                    if (!Enumerable.SequenceEqual(valuesState, values))
-                    {
-                        UpdateFieldValues(values);
-                    }
+                    CheckChangesValues(valuesState, values);
 
                     if (!vcontext.IsValid)
                     {
@@ -769,6 +766,14 @@ namespace Quantumart.QP8.BLL
                 {
                     errors.ErrorForModel(string.Format(ArticleStrings.CustomValidationFailed, exp.Message));
                 }
+            }
+        }
+
+        public void CheckChangesValues(Dictionary<string, string> stateValues, Dictionary<string, string> values)
+        {
+            if (!Enumerable.SequenceEqual(stateValues, values))
+            {
+                UpdateFieldValues(values);
             }
         }
 
