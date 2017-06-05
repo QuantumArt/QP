@@ -717,56 +717,6 @@ BEGIN
 END
 GO
 
-
-exec qp_drop_existing 'tu_item_to_item', 'IsTrigger'
-go
-
-CREATE TRIGGER [dbo].[tu_item_to_item] ON [dbo].[item_to_item] AFTER UPDATE
-AS
-BEGIN
-declare @links table
-	(
-		id numeric primary key,
-		item_id numeric
-	)
-
-	if not update(is_rev) and not update(is_self)
-	begin
-
-		insert into @links
-		select distinct link_id, l_item_id from inserted
-
-		declare @link_id numeric, @item_id numeric , @query nvarchar(max)
-
-		while exists(select id from @links)
-		begin
-
-			select @link_id = id from @links
-			select 	@item_id = item_id from @links
-
-			declare @table_name nvarchar(50), @table_name_rev nvarchar(50)
-			set @table_name = 'item_link_' + cast(@link_id as varchar)
-			set @table_name_rev = 'item_link_' + cast(@link_id as varchar) + '_rev'
-
-			declare @linked_item numeric
-			select @linked_item = l_item_id from inserted
-
-			set @query = 'update ' + @table_name + ' set linked_id = @linked_item where id = @item_id'
-			print @query
-			exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
-
-			set @query = 'update ' + @table_name_rev + ' set linked_id = @linked_item where id = @item_id'
-			print @query
-			exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
-
-			delete from @links where id = @link_id
-		end
-	END
-END
-;
-GO
-
-
 exec qp_rebuild_all_new_views
 GO
 exec qp_rebuild_all_link_views
