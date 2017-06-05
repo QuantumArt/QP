@@ -17,7 +17,6 @@ if (-not(Test-Path $source)) { throw [System.ArgumentException] "Folder $source 
 
 try {
   $s = Get-Item "IIS:\sites\$name" -ErrorAction SilentlyContinue
-
 } catch {
   # http://help.octopusdeploy.com/discussions/problems/5172-error-using-get-website-in-predeploy-because-of-filenotfoundexception
   $s = Get-Item "IIS:\sites\$name" -ErrorAction SilentlyContinue
@@ -25,19 +24,18 @@ try {
 
 if (!$s) { throw "Site $name not found"}
 
+  $p = Get-Item "IIS:\sites\$name\Plugins" -ErrorAction SilentlyContinue
+  $b = Get-Item "IIS:\sites\$name\Backend" -ErrorAction SilentlyContinue
+  $w = Get-Item "IIS:\sites\$name\Backend\Winlogon" -ErrorAction SilentlyContinue
+
 $path = $s.PhysicalPath
 
-$pluginsPath = Join-Path $path "Plugins"
-$p = Get-WebVirtualDirectory -Site $name -Name "Plugins" -ErrorAction SilentlyContinue
 if ($p) { $pluginsPath = $p.PhysicalPath }
-
-$backendPath = (Get-WebApplication -Site $name -Name "Backend").PhysicalPath
-$winlogonPath = (Get-WebApplication -Site $name -Name "Backend/Winlogon").PhysicalPath
+if ($b) { $backendPath = $b.PhysicalPath }
+if ($w) { $winlogonPath = $w.PhysicalPath }
 
 $backendSource = Join-Path $source "Backend.zip"
 $winLogonSource = Join-Path $source "WinLogon.zip"
-
-
 $pluginsSource = Join-Path $source "plugins.zip"
 
 if ([string]::IsNullOrEmpty($pluginsPath)) { throw [System.ArgumentException] "Virtual directory 'plugins' is not found"}
