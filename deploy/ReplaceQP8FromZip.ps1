@@ -56,42 +56,42 @@ if ($p.State -ne "Stopped"){
   $p.Stop()
 
   while($p.State -ne "Stopped"){
-    Write-Output "AppPool $($s.applicationPool) is stopping..."
+    Write-Verbose "AppPool $($s.applicationPool) is stopping..."
     Start-Sleep -Milliseconds 500
   }
 }
 
-Write-Output "Stopped"
+Write-Verbose "Stopped"
 
-Write-Output "Creating backup files ..."
+Write-Verbose "Creating backup files ..."
 Invoke-Expression "7za.exe a -r -y ""$path\Backend_old.zip"" ""$backendPath\*.*"""
 Invoke-Expression "7za.exe a -r -y ""$path\Winlogon_old.zip"" ""$winlogonPath\*.*"""
 Invoke-Expression "7za.exe a -r -y ""$path\plugins_old.zip"" ""$pluginsPath\*.*"""
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Removing files for $name from $backendPath..."
+Write-Verbose "Removing files for $name from $backendPath..."
 Get-ChildItem -Path $backendPath -Recurse | Remove-Item -force -recurse
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Removing files for $name from $winlogonPath..."
+Write-Verbose "Removing files for $name from $winlogonPath..."
 Get-ChildItem -Path $winlogonPath -Recurse | Remove-Item -force -recurse
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Removing files for $name from $pluginsPath..."
+Write-Verbose "Removing files for $name from $pluginsPath..."
 Get-ChildItem -Path $pluginsPath -Recurse | Remove-Item -force -recurse
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Unarchiving zip-files to $backendPath..."
+Write-Verbose "Unarchiving zip-files to $backendPath..."
 Invoke-Expression "7za.exe x -r -y -o""$backendPath"" ""$backendSource"""
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Unarchiving zip-files to $winLogonPath..."
+Write-Verbose "Unarchiving zip-files to $winLogonPath..."
 Invoke-Expression "7za.exe x -r -y -o""$winLogonPath"" ""$winLogonSource"""
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Unarchiving zip-files to $pluginsPath..."
+Write-Verbose "Unarchiving zip-files to $pluginsPath..."
 Invoke-Expression "7za.exe x -r -y -o""$pluginsPath"" ""$pluginsSource"""
-Write-Output "Done"
+Write-Verbose "Done"
 
 if ($transform)
 {
@@ -102,5 +102,5 @@ if ($transform)
     Invoke-Expression -command $command
 }
 
-Write-Output "AppPool $($s.applicationPool) is starting"
+Write-Verbose "AppPool $($s.applicationPool) is starting"
 $p.Start()

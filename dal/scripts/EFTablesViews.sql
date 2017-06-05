@@ -1,3 +1,267 @@
+﻿exec qp_drop_existing 'qp_update_m2m', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_update_m2m]
+@id numeric,
+@linkId numeric,
+@value nvarchar(max),
+@splitted bit = 0,
+@update_archive bit = 1
+AS
+BEGIN
+    declare @newIds table (id numeric primary key, attribute_id numeric null, has_data bit, splitted bit, has_async bit null)
+    declare @ids table (id numeric primary key)
+    declare @crossIds table (id numeric primary key)
+
+    insert into @newIds (id) select * from dbo.split(@value, ',')
+
+    IF @splitted = 1
+        insert into @ids select linked_item_id from item_link_async where link_id = @linkId and item_id = @id
+    ELSE
+        insert into @ids select linked_item_id from item_link where link_id = @linkId and item_id = @id
+
+    insert into @crossIds select t1.id from @ids t1 inner join @newIds t2 on t1.id = t2.id
+    delete from @ids where id in (select id from @crossIds)
+    delete from @newIds where id in (select id from @crossIds)
+
+    if @update_archive = 0
+    begin
+        delete from @ids where id in (select content_item_id from content_item where ARCHIVE = 1)
+    end
+
+    IF @splitted = 0
+        DELETE FROM item_link_async WHERE link_id = @linkId AND item_id = @id
+
+    IF @splitted = 1
+        DELETE FROM item_link_async WHERE link_id = @linkId AND item_id = @id and linked_item_id in (select id from @ids)
+    ELSE
+        DELETE FROM item_link_united_full WHERE link_id = @linkId AND item_id = @id and linked_item_id in (select id from @ids)
+
+    IF @splitted = 1
+        INSERT INTO item_link_async (link_id, item_id, linked_item_id) SELECT @linkId, @id, id from @newIds
+    ELSE
+        INSERT INTO item_link (link_id, item_id, linked_item_id) SELECT @linkId, @id, id from @newIds
+
+    if dbo.qp_is_link_symmetric(@linkId) = 1
+    begin
+
+        with newItems (id, attribute_id, has_data, splitted, has_async) as
+        (
+        select
+            n.id, ca.attribute_id,
+            case when cd.content_item_id is null then 0 else 1 end as has_data,
+            ci.splitted,
+            case when ila.link_id is null then 0 else 1 end as has_async
+        from @newIds n
+            inner join content_item ci on ci.CONTENT_ITEM_ID = n.id
+            inner join content c on ci.content_id = c.content_id
+            inner join content_attribute ca on ca.content_id = c.content_id and ca.link_id = @linkId
+            left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = ci.content_item_id
+            left join item_link_async ila on @linkId = ila.link_id and n.id = ila.item_id and ila.linked_item_id = @id
+        )
+        update @newIds
+        set attribute_id = ext.attribute_id, has_data = ext.has_data, splitted = ext.splitted, has_async = ext.has_async
+        from @newIds n inner join newItems ext on n.id = ext.id
+
+        if @splitted = 0
+        begin
+            update content_data set data = @linkId
+            from content_data cd
+            inner join @newIds n on cd.ATTRIBUTE_ID = n.attribute_id and cd.CONTENT_ITEM_ID = n.id
+            where n.has_data = 1
+
+            insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA)
+            select n.id, n.attribute_id, @linkId
+            from @newIds n
+            where n.has_data = 0 and n.attribute_id is not null
+
+            insert into item_link_async(link_id, item_id, linked_item_id)
+            select @linkId, n.id, @id
+            from @newIds n
+            where n.splitted = 1 and n.has_async = 0 and n.attribute_id is not null
+        end
+    end
+END
+GO
+
+exec qp_drop_existing 'qp_update_m2m_values', 'IsProcedure'
+GO
+
+
+CREATE  PROCEDURE [dbo].[qp_update_m2m_values]
+  @xmlParameter xml
+AS
+BEGIN
+  DECLARE @fieldValues TABLE(rowNumber numeric, id numeric, linkId numeric, value nvarchar(max), splitted bit)
+    DECLARE @rowValues TABLE(id numeric, linkId numeric, value nvarchar(max), splitted bit)
+  INSERT INTO @fieldValues
+  SELECT
+    ROW_NUMBER() OVER(order by doc.col.value('./@id', 'int')) as rowNumber
+     ,doc.col.value('./@id', 'int') id
+     ,doc.col.value('./@linkId', 'int') linkId
+     ,doc.col.value('./@value', 'nvarchar(max)') value
+     ,c.SPLITTED as splitted
+    FROM @xmlParameter.nodes('/items/item') doc(col)
+    INNER JOIN content_item as c on c.CONTENT_ITEM_ID = doc.col.value('./@id', 'int')
+
+
+  declare @newIds table (id numeric, link_id numeric, linked_item_id numeric, splitted bit, linked_attribute_id numeric null, linked_has_data bit, linked_splitted bit, linked_has_async bit null)
+  declare @ids table (id numeric, link_id numeric, linked_item_id numeric, splitted bit)
+  declare @crossIds table (id numeric, link_id numeric, linked_item_id numeric, splitted bit)
+
+  insert into @newIds (id, link_id, linked_item_id, splitted)
+  select a.id, a.linkId, b.nstr, a.splitted from @fieldValues a cross apply dbo.SplitNew(a.value, ',') b
+  where b.nstr is not null and b.nstr <> '' and b.nstr <> '0'
+
+  insert into @ids
+  select item_id, link_id, linked_item_id, f.splitted
+  from item_link_async ila inner join @fieldValues f
+  on ila.link_id = f.linkId and ila.item_id = f.id
+  where f.splitted = 1
+  union all
+  select item_id, link_id, linked_item_id, f.splitted
+  from item_link il inner join @fieldValues f
+  on il.link_id = f.linkId and il.item_id = f.id
+  where f.splitted = 0
+
+  insert into @crossIds
+  select t1.id, t1.link_id, t1.linked_item_id, t1.splitted from @ids t1 inner join @newIds t2
+  on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_item_id = t2.linked_item_id
+
+  delete @ids from @ids t1 inner join @crossIds t2 on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_item_id = t2.linked_item_id
+  delete @newIds from @newIds t1 inner join @crossIds t2 on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_item_id = t2.linked_item_id
+
+  delete item_link_async from item_link_async il inner join @fieldValues f on il.item_id = f.id and il.link_id = f.linkId
+  where f.splitted = 0
+
+  delete item_link_united_full from item_link_united_full il
+  where exists(
+    select * from @ids i where il.item_id = i.id and il.link_id = i.link_id and il.linked_item_id = i.linked_item_id
+    and i.splitted = 0
+  )
+
+  delete item_link_async from item_link_async il
+  inner join @ids i on il.item_id = i.id and il.link_id = i.link_id and il.linked_item_id = i.linked_item_id
+  where i.splitted = 1
+
+  insert into item_link_async (link_id, item_id, linked_item_id)
+  select link_id, id, linked_item_id from @newIds
+  where splitted = 1
+
+  insert into item_link (link_id, item_id, linked_item_id)
+  select link_id, id, linked_item_id from @newIds
+  where splitted = 0
+
+  delete from @newIds where dbo.qp_is_link_symmetric(link_id) = 0;
+
+  with newItems (id, link_id, linked_item_id, attribute_id, has_data, splitted, has_async) as
+  (
+  select
+    n.id, n.link_id, n.linked_item_id, ca.attribute_id,
+    case when cd.content_item_id is null then 0 else 1 end as has_data,
+    ci.splitted,
+    case when ila.link_id is null then 0 else 1 end as has_async
+  from @newIds n
+    inner join content_item ci on ci.CONTENT_ITEM_ID = n.linked_item_id
+    inner join content c on ci.content_id = c.content_id
+    inner join content_attribute ca on ca.content_id = c.content_id and ca.link_id = n.link_id
+    left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = ci.content_item_id
+    left join item_link_async ila on n.link_id = ila.link_id and n.linked_item_id = ila.item_id and n.id = ila.linked_item_id
+  )
+  update @newIds
+  set linked_attribute_id = ext.attribute_id, linked_has_data = ext.has_data, linked_splitted = ext.splitted, linked_has_async = ext.has_async
+  from @newIds n inner join newItems ext on n.id = ext.id and n.link_id = ext.link_id and n.linked_item_id = ext.linked_item_id
+
+  update content_data set data = n.link_id
+  from content_data cd
+  inner join @newIds n on cd.ATTRIBUTE_ID = n.linked_attribute_id and cd.CONTENT_ITEM_ID = n.linked_item_id
+  where n.splitted = 0 and n.linked_has_data = 1
+
+  insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA)
+  select distinct n.linked_item_id, n.linked_attribute_id, n.link_id
+  from @newIds n
+  where n.splitted = 0 and n.linked_has_data = 0 and n.linked_attribute_id is not null
+
+  insert into item_link_async(link_id, item_id, linked_item_id)
+  select n.link_id, n.linked_item_id, n.id
+  from @newIds n
+  where n.splitted = 0 and n.linked_splitted = 1 and n.linked_has_async = 0 and n.linked_attribute_id is not null
+END
+GO
+
+
+exec qp_drop_existing 'qp_merge_links_multiple', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_merge_links_multiple]
+@ids [Ids] READONLY,
+@force_merge bit = 0
+AS
+BEGIN
+
+  declare @idsWithLinks Table (id numeric, link_id numeric)
+
+  insert into @idsWithLinks
+  select i.id, ca.link_id from @ids i
+  inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = i.ID and (SPLITTED = 1 or @force_merge = 1)
+  inner join content c on ci.CONTENT_ID = c.CONTENT_ID
+  inner join CONTENT_ATTRIBUTE ca on ca.CONTENT_ID = c.CONTENT_ID and link_id is not null
+
+  declare @newIds table (id numeric, link_id numeric, linked_item_id numeric, splitted bit, linked_attribute_id numeric null, linked_has_data bit, linked_splitted bit, linked_has_async bit null)
+  declare @oldIds table (id numeric, link_id numeric, linked_item_id numeric, splitted bit)
+  declare @crossIds table (id numeric, link_id numeric, linked_item_id numeric, splitted bit)
+
+  declare @linkIds table (link_id numeric, primary key (link_id))
+
+  insert into @newIds (id, link_id, linked_item_id)
+  select ila.item_id, ila.link_id, ila.linked_item_id from item_link_async ila inner join @idsWithLinks i on ila.item_id = i.id and ila.link_id = i.link_id
+
+  insert into @oldIds (id, link_id, linked_item_id)
+  select il.item_id, il.link_id, il.linked_item_id from item_link il inner join @idsWithLinks i on il.item_id = i.id and il.link_id = i.link_id
+
+  insert into @crossIds
+  select t1.id, t1.link_id, t1.linked_item_id, t1.splitted from @oldIds t1 inner join @newIds t2
+  on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_item_id = t2.linked_item_id
+
+  delete @oldIds from @oldIds t1 inner join @crossIds t2 on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_item_id = t2.linked_item_id
+  delete @newIds from @newIds t1 inner join @crossIds t2 on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_item_id = t2.linked_item_id
+
+  delete item_to_item from item_to_item il inner join @oldIds i on il.l_item_id = i.id and il.link_id = i.link_id and il.r_item_id = i.linked_item_id
+
+  insert into item_link (link_id, item_id, linked_item_id)
+  select link_id, id, linked_item_id from @newIds;
+
+  with newItems (id, link_id, linked_item_id, attribute_id, has_data) as
+  (
+    select
+    n.id, n.link_id, n.linked_item_id, ca.attribute_id,
+    case when cd.content_item_id is null then 0 else 1 end as has_data
+    from @newIds n
+      inner join content_item ci on ci.CONTENT_ITEM_ID = n.linked_item_id
+      inner join content c on ci.content_id = c.content_id
+      inner join content_attribute ca on ca.content_id = c.content_id and ca.link_id = n.link_id
+    left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = ci.content_item_id
+  )
+  update @newIds
+  set linked_attribute_id = ext.attribute_id, linked_has_data = ext.has_data
+  from @newIds n inner join newItems ext on n.id = ext.id and n.link_id = ext.link_id and n.linked_item_id = ext.linked_item_id
+
+  update content_data set data = n.link_id
+  from content_data cd
+  inner join @newIds n on cd.ATTRIBUTE_ID = n.linked_attribute_id and cd.CONTENT_ITEM_ID = n.linked_item_id
+  where n.linked_has_data = 1
+
+  insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA)
+  select distinct n.linked_item_id, n.linked_attribute_id, n.link_id
+  from @newIds n
+  where n.linked_has_data = 0 and n.linked_attribute_id is not null
+
+  delete item_link_async from item_link_async ila inner join @idsWithLinks i on ila.item_id = i.id and ila.link_id = i.link_id
+
+
+END
+;
+GO
 exec qp_drop_existing 'qp_content_new_views_create', 'IsProcedure'
 go
 
@@ -9,116 +273,115 @@ BEGIN
     if object_id('tempdb..#disable_create_new_views') is null
     begin
         declare @ca table (
-      id numeric identity(1,1) primary key,
-      attribute_id numeric,
-      attribute_name nvarchar(255),
-      attribute_size numeric,
-      attribute_type_id numeric,
-      is_long bit,
-      link_id numeric
-    )
+			id numeric identity(1,1) primary key,
+			attribute_id numeric,
+			attribute_name nvarchar(255),
+			attribute_size numeric,
+			attribute_type_id numeric,
+			is_long bit,
+			link_id numeric
+		)
 
-    declare @attribute_id numeric, @attribute_name nvarchar(255), @attribute_size numeric
-    declare @attribute_type_id numeric, @link_id numeric, @is_long bit
-    declare @sql nvarchar(max), @result_sql nvarchar(max), @field_sql nvarchar(max)
-    declare @field_template nvarchar(max), @type_name nvarchar(20), @cast bit
-    declare @i numeric, @count numeric, @preserve_index bit
+		declare @attribute_id numeric, @attribute_name nvarchar(255), @attribute_size numeric
+		declare @attribute_type_id numeric, @link_id numeric, @is_long bit
+		declare @sql nvarchar(max), @result_sql nvarchar(max), @field_sql nvarchar(max)
+		declare @field_template nvarchar(max), @type_name nvarchar(20), @cast bit
+		declare @i numeric, @count numeric, @preserve_index bit
 
-    set @sql = '
-  isnull(cast([CONTENT_ITEM_ID] as int), 0) as [CONTENT_ITEM_ID]
-  ,isnull(cast([STATUS_TYPE_ID] as int), 0) as [STATUS_TYPE_ID]
-  ,isnull(cast([VISIBLE] as bit), 0) as [VISIBLE]
-  ,isnull(cast([ARCHIVE] as bit), 0) as [ARCHIVE]
-  ,[CREATED]
-  ,[MODIFIED]
-  ,isnull(cast([LAST_MODIFIED_BY] as int), 0) as [LAST_MODIFIED_BY]
-  '
-    insert into @ca (attribute_id, attribute_name, attribute_size, attribute_type_id, link_id, is_long)
+		set @sql = '
+	isnull(cast([CONTENT_ITEM_ID] as int), 0) as [CONTENT_ITEM_ID]
+	,isnull(cast([STATUS_TYPE_ID] as int), 0) as [STATUS_TYPE_ID]
+	,isnull(cast([VISIBLE] as bit), 0) as [VISIBLE]
+	,isnull(cast([ARCHIVE] as bit), 0) as [ARCHIVE]
+	,[CREATED]
+	,[MODIFIED]
+	,isnull(cast([LAST_MODIFIED_BY] as int), 0) as [LAST_MODIFIED_BY]
+	'
+		insert into @ca (attribute_id, attribute_name, attribute_size, attribute_type_id, link_id, is_long)
 
-    select ca.attribute_id, ca.attribute_name, ca.attribute_size, ca.attribute_type_id, isnull(ca.link_id, 0), ca.IS_LONG
-    from CONTENT_ATTRIBUTE ca
-    where ca.content_id = @content_id
-    order by ATTRIBUTE_ORDER
+		select ca.attribute_id, ca.attribute_name, ca.attribute_size, ca.attribute_type_id, isnull(ca.link_id, 0), ca.IS_LONG
+		from CONTENT_ATTRIBUTE ca
+		where ca.content_id = @content_id
+		order by ATTRIBUTE_ORDER
 
-    set @i = 1
-    select @count = count(id) from @ca
+		set @i = 1
+		select @count = count(id) from @ca
 
-    while @i < @count + 1
-    begin
+		while @i < @count + 1
+		begin
 
-      select @attribute_id = attribute_id, @attribute_name = '[' + attribute_name + ']', @attribute_size = attribute_size,
-      @attribute_type_id = attribute_type_id, @link_id = link_id, @is_long = is_long
-      from @ca where id = @i
+			select @attribute_id = attribute_id, @attribute_name = '[' + attribute_name + ']', @attribute_size = attribute_size,
+			@attribute_type_id = attribute_type_id, @link_id = link_id, @is_long = is_long
+			from @ca where id = @i
 
-      set @cast = 0
-      set @field_template = 'cast({0} as {1}) as {0}'
+			set @cast = 0
+			set @field_template = 'cast({0} as {1}) as {0}'
 
-      if @attribute_type_id = 2 and @attribute_size = 0 and @is_long = 1
-      begin
-        set @type_name = 'bigint'
-        set @cast = 1
-      end
+			if @attribute_type_id = 2 and @attribute_size = 0 and @is_long = 1
+			begin
+				set @type_name = 'bigint'
+				set @cast = 1
+			end
 
-      else if @attribute_type_id = 11
-      or @attribute_type_id = 13
-      or @attribute_type_id = 2 and @attribute_size = 0 and @is_long = 0
-      begin
-        set @type_name = 'int'
-        set @cast = 1
-      end
+			else if @attribute_type_id = 11
+			or @attribute_type_id = 13
+			or @attribute_type_id = 2 and @attribute_size = 0 and @is_long = 0
+			begin
+				set @type_name = 'int'
+				set @cast = 1
+			end
 
-      else if @attribute_type_id = 2 and @attribute_size <> 0 and @is_long = 0
-      begin
-        set @type_name = 'float'
-        set @cast = 1
-      end
+			else if @attribute_type_id = 2 and @attribute_size <> 0 and @is_long = 0
+			begin
+				set @type_name = 'float'
+				set @cast = 1
+			end
 
-      else if @attribute_type_id = 2 and @attribute_size <> 0 and @is_long = 1
-      begin
-        set @type_name = 'decimal(18,' + cast(@attribute_size as nvarchar) + ')'
-        set @cast = 1
-      end
+			else if @attribute_type_id = 2 and @attribute_size <> 0 and @is_long = 1
+			begin
+				set @type_name = 'decimal'
+				set @cast = 1
+			end
 
-      else if @attribute_type_id = 3
-      begin
-        set @type_name = 'bit'
-        set @cast = 1
-        set @field_template = 'cast(isnull({0}, 0) as {1}) as {0}'
-      end
+			else if @attribute_type_id = 3
+			begin
+				set @type_name = 'bit'
+				set @cast = 1
+				set @field_template = 'cast(isnull({0}, 0) as {1}) as {0}'
+			end
 
-      else if @attribute_type_id = 4
-      begin
-        set @type_name = 'date'
-        set @cast = 1
-      end
+			else if @attribute_type_id = 4
+			begin
+				set @type_name = 'date'
+				set @cast = 1
+			end
 
-      else if @attribute_type_id = 5
-      begin
-        set @type_name = 'time'
-        set @cast = 1
-      end
+			else if @attribute_type_id = 5
+			begin
+				set @type_name = 'time'
+				set @cast = 1
+			end
 
-      else if @attribute_type_id in (9,10)
-      begin
-        set @type_name = 'nvarchar(max)'
-        set @cast = 1
-      end
+			else if @attribute_type_id in (9,10)
+			begin
+				set @type_name = 'nvarchar(max)'
+				set @cast = 1
+			end
 
-      if @cast = 1
-      begin
-        set @field_sql = replace(@field_template, '{0}', @attribute_name)
-        set @field_sql = replace(@field_sql, '{1}', @type_name)
-      end
-      else
-      begin
-        set @field_sql = @attribute_name
-      end
+			if @cast = 1
+			begin
+				set @field_sql = replace(@field_template, '{0}', @attribute_name)
+				set @field_sql = replace(@field_sql, '{1}', @type_name)
+			end
+			else
+			begin
+				set @field_sql = @attribute_name
+			end
 
-      set @sql = @sql + CHAR(13) + CHAR(9) + ',' + @field_sql
+			set @sql = @sql + CHAR(13) + CHAR(9) + ',' + @field_sql
 
-      set @i = @i + 1
-    end
-
+			set @i = @i + 1
+		end
 
 
         SET @result_sql =  ' create view dbo.content_' + cast(@content_id as varchar(20)) + '_new as (select ' + char(13) + @sql
@@ -437,7 +700,41 @@ create view USER_GROUP_BIND_NEW as
 select cast([group_id] as int) as [group_id], cast([user_id] as int) as [user_id]
 from USER_GROUP_BIND
 GO
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_TO_ITEM]') AND name = 'IS_REV')
+	ALTER TABLE [dbo].[ITEM_TO_ITEM] ADD [IS_REV] [bit] NOT NULL DEFAULT ((0))
+GO
 
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_LINK_ASYNC]') AND name = 'IS_REV')
+	ALTER TABLE [dbo].[ITEM_LINK_ASYNC] ADD [IS_REV] [bit] NOT NULL DEFAULT ((0))
+GO
+
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_TO_ITEM]') AND name = 'IS_SELF')
+	ALTER TABLE [dbo].[ITEM_TO_ITEM] ADD [IS_SELF] [bit] NOT NULL DEFAULT ((0))
+GO
+
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_LINK_ASYNC]') AND name = 'IS_SELF')
+	ALTER TABLE [dbo].[ITEM_LINK_ASYNC] ADD [IS_SELF] [bit] NOT NULL DEFAULT ((0))
+GO
+
+ALTER VIEW [dbo].[item_link] AS
+SELECT ii.link_id AS link_id, ii.l_item_id AS item_id, ii.r_item_id AS linked_item_id, ii.is_rev, ii.is_self
+FROM item_to_item AS ii
+GO
+
+ALTER VIEW [dbo].[item_link_united] AS
+select link_id, item_id, linked_item_id, is_rev, is_self from item_link il where not exists (select * from content_item_splitted cis where il.item_id = cis.CONTENT_ITEM_ID)
+union all
+SELECT link_id, item_id, linked_item_id, is_rev, is_self from item_link_async ila
+GO
+
+ALTER VIEW [dbo].[site_item_link] AS
+SELECT l.link_id, l.l_item_id, l.r_item_id, c.site_id
+FROM item_to_item AS l
+  LEFT OUTER JOIN content_item AS i ON i.content_item_id = l.l_item_id
+  LEFT OUTER JOIN content AS c ON c.content_id = i.content_id
+GO
+
+exec sp_refreshview 'item_link_united_full'
 
 exec qp_drop_existing 'qp_build_link_table', 'IsProcedure'
 GO
@@ -532,6 +829,18 @@ BEGIN
   set @sql = 'insert into item_link_' + cast(@link_id as varchar) + '_async_rev select ' + @rev_fields + ' from item_link_async il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID  where CONTENT_ID = '+ cast(@r_content_id as varchar) + ' and link_id = ' + cast(@link_id as varchar)
   exec(@sql)
 
+  if @r_content_id <> @l_content_id
+  BEGIN
+    update item_link set is_rev = 1 from item_link il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID = @r_content_id
+    update item_link set is_rev = 1 from item_link_async il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID = @r_content_id
+  END
+
+  if @r_content_id = @l_content_id
+  BEGIN
+    update item_link set is_self = 1 where link_id = @link_id
+    update item_link_async set is_self = 1 where link_id = @link_id
+  END
+
 END
 GO
 
@@ -595,6 +904,12 @@ BEGIN
   declare @table_name nvarchar(50)
   set @table_name = 'item_link_' + cast(@link_id as varchar)
 
+  declare @is_self BIT
+  select @is_self = CASE WHEN l_content_id = r_content_id THEN 1 ELSE 0 END from content_to_content where link_id = @link_id
+
+  declare @source_name nvarchar(20)
+  set @source_name = CASE WHEN @is_async = 1 THEN 'item_link_async' ELSE 'item_link' END
+
   if @is_async = 1
     set @table_name = @table_name + '_async'
 
@@ -609,12 +924,30 @@ BEGIN
   declare @condition nvarchar(200)
   select @condition = case when @reverse_fields = 0 then 'il2.id = il.id and il2.linked_id = il.linked_id' else 'il2.id = il.linked_id and il2.linked_id = il.id' end
 
+  declare @links2 LINKS
 
-  set @sql = 'insert into ' + @table_name + ' select ' + @rev_fields + ' from @links il inner join content_item ci with(nolock) on il.id = ci.CONTENT_ITEM_ID where CONTENT_ID = @content_id '
-  + ' and not exists(select * from ' + @table_name + ' il2 where ' + @condition + ')'
+  insert into @links2 select il.* from @links il inner join content_item ci with(nolock) on il.id = ci.CONTENT_ITEM_ID where CONTENT_ID = @content_id
 
-  exec sp_executesql @sql, N'@link_id numeric, @content_id numeric, @links LINKS READONLY', @link_id = @link_id , @content_id = @content_id, @links = @links
+  set @sql = 'insert into ' + @table_name + ' select ' + @rev_fields + ' from @links2 il'
+  + ' where not exists(select * from ' + @table_name + ' il2 where ' + @condition + ')'
 
+  exec sp_executesql @sql, N'@link_id numeric, @links2 LINKS READONLY', @link_id = @link_id, @links2 = @links2
+
+  if @is_self = 1
+  BEGIN
+    set @sql =
+    'update ' + @source_name + ' set is_self = 1 from ' + @source_name + ' i with(rowlock) ' +
+    'inner join @links2 i2 on i.link_id = @link_id and i.item_id = i2.id and i.linked_item_id = i2.linked_id '
+  END
+
+  if @use_reverse_table = 1 and @is_self = 0
+  BEGIN
+    set @sql =
+    'update ' + @source_name + ' set is_rev = 1 from ' + @source_name + ' i with(rowlock) ' +
+    'inner join @links2 i2 on i.link_id = @link_id and i.item_id = i2.id and i.linked_item_id = i2.linked_id '
+  END
+
+  exec sp_executesql @sql, N'@link_id numeric, @links2 LINKS READONLY', @link_id = @link_id, @links2 = @links2
 
 END
 GO
@@ -648,7 +981,55 @@ BEGIN
 END
 GO
 
+
+exec qp_drop_existing 'tu_item_to_item', 'IsTrigger'
+go
+
+CREATE TRIGGER [dbo].[tu_item_to_item] ON [dbo].[item_to_item] AFTER UPDATE
+AS
+BEGIN
+declare @links table
+	(
+		id numeric primary key,
+		item_id numeric
+	)
+
+	if not update(is_rev) and not update(is_self)
+	begin
+
+		insert into @links
+		select distinct link_id, l_item_id from inserted
+
+		declare @link_id numeric, @item_id numeric , @query nvarchar(max)
+
+		while exists(select id from @links)
+		begin
+
+			select @link_id = id from @links
+			select 	@item_id = item_id from @links
+
+			declare @table_name nvarchar(50), @table_name_rev nvarchar(50)
+			set @table_name = 'item_link_' + cast(@link_id as varchar)
+			set @table_name_rev = 'item_link_' + cast(@link_id as varchar) + '_rev'
+
+			declare @linked_item numeric
+			select @linked_item = l_item_id from inserted
+
+			set @query = 'update ' + @table_name + ' set linked_id = @linked_item where id = @item_id'
+			print @query
+			exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+
+			set @query = 'update ' + @table_name_rev + ' set linked_id = @linked_item where id = @item_id'
+			print @query
+			exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+
+			delete from @links where id = @link_id
+		end
+	END
+END
+;
 GO
+
 
 exec qp_rebuild_all_new_views
 GO
@@ -656,7 +1037,6 @@ exec qp_rebuild_all_link_views
 GO
 exec qp_recreate_link_tables
 GO
-
 
 ALTER TRIGGER [dbo].[ti_item_to_item] ON [dbo].[item_to_item] AFTER INSERT
 AS
@@ -719,7 +1099,6 @@ if object_id('tempdb..#disable_ti_item_to_item') is null
   end
 END
 GO
-
 
 ALTER TRIGGER [dbo].[td_item_to_item] ON [dbo].[item_to_item] AFTER DELETE
 AS
@@ -870,130 +1249,130 @@ BEGIN
   end
 END
 GO
-ALTER  TRIGGER [dbo].[tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
-AS
+ALTER  TRIGGER [dbo].[tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE 
+AS 
 BEGIN
-if not update(attribute_order) and
-    (
-      update(attribute_name) or update(attribute_type_id)
-      or update(attribute_size) or update(index_flag) or update(is_long)
-    )
-  begin
-    declare @attribute_id numeric, @attribute_name nvarchar(255), @attribute_size numeric, @content_id numeric
-    declare @indexed numeric, @required numeric, @is_long bit
-    declare @attribute_type_id numeric, @type_name nvarchar(255), @database_type nvarchar(255)
+if not update(attribute_order) and 
+		(
+			update(attribute_name) or update(attribute_type_id) 
+			or update(attribute_size) or update(index_flag) or update(is_long)
+		)
+	begin
+		declare @attribute_id numeric, @attribute_name nvarchar(255), @attribute_size numeric, @content_id numeric
+		declare @indexed numeric, @required numeric, @is_long bit
+		declare @attribute_type_id numeric, @type_name nvarchar(255), @database_type nvarchar(255)
 
-    declare @new_attribute_name nvarchar(255), @new_attribute_size numeric
-    declare @new_indexed numeric, @new_required numeric, @new_is_long bit
-    declare @new_attribute_type_id numeric, @new_type_name nvarchar(255), @new_database_type nvarchar(255)
-    declare @related_content_id numeric, @new_related_content_id numeric
-    declare @link_id numeric, @new_link_id numeric
+		declare @new_attribute_name nvarchar(255), @new_attribute_size numeric
+		declare @new_indexed numeric, @new_required numeric, @new_is_long bit
+		declare @new_attribute_type_id numeric, @new_type_name nvarchar(255), @new_database_type nvarchar(255)
+		declare @related_content_id numeric, @new_related_content_id numeric
+		declare @link_id numeric, @new_link_id numeric
+		
+		declare @base_table_name nvarchar(30), @table_name nvarchar(30)
+	
+		declare @i numeric, @count numeric, @preserve_index bit
+	
+		declare @ca table (
+			id numeric identity(1,1) primary key,
+			attribute_id numeric, 
+			attribute_name nvarchar(255), 
+			attribute_size numeric,
+			indexed numeric,
+			required numeric, 
+			attribute_type_id numeric, 
+			type_name nvarchar(255), 
+			database_type nvarchar(255),
+			content_id numeric,
+			related_content_id numeric,
+			link_id numeric,
+			is_long bit
+		)
+	
+	/* Collect affected items */
+		insert into @ca (attribute_id, attribute_name, attribute_size, indexed, required, attribute_type_id, type_name, database_type, content_id, related_content_id, link_id, is_long)
+			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id, 
+			isnull(ca1.content_id, 0), isnull(d.link_id, 0), d.is_long
+			from deleted d 
+			inner join attribute_type at on d.attribute_type_id = at.attribute_type_id
+			inner join content c on d.content_id = c.content_id
+			left join CONTENT_ATTRIBUTE ca1 on d.RELATED_ATTRIBUTE_ID = ca1.ATTRIBUTE_ID
+			where c.virtual_type = 0
 
-    declare @base_table_name nvarchar(30), @table_name nvarchar(30)
+		set @i = 1
+		select @count = count(id) from @ca
 
-    declare @i numeric, @count numeric, @preserve_index bit
+		while @i < @count + 1
+		begin
+			select @attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_size = attribute_size,
+				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id, 
+				@type_name = type_name, @database_type = database_type, @content_id = content_id,
+				@related_content_id = related_content_id, @link_id = link_id, @is_long = is_long 
+				from @ca where id = @i
 
-    declare @ca table (
-      id numeric identity(1,1) primary key,
-      attribute_id numeric,
-      attribute_name nvarchar(255),
-      attribute_size numeric,
-      indexed numeric,
-      required numeric,
-      attribute_type_id numeric,
-      type_name nvarchar(255),
-      database_type nvarchar(255),
-      content_id numeric,
-      related_content_id numeric,
-      link_id numeric,
-      is_long bit
-    )
+			select @new_attribute_name = ca.attribute_name, @new_attribute_size = ca.attribute_size,
+				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id, 
+				@new_type_name = at.type_name, @new_database_type = at.database_type,
+				@new_related_content_id = isnull(ca1.content_id, 0), @new_link_id = isnull(ca.link_id, 0), @new_is_long = ca.IS_LONG
+				from content_attribute ca 
+				inner join attribute_type at on ca.attribute_type_id = at.attribute_type_id
+				left join CONTENT_ATTRIBUTE ca1 on ca.RELATED_ATTRIBUTE_ID = ca1.ATTRIBUTE_ID
+				where ca.attribute_id = @attribute_id
 
-  /* Collect affected items */
-    insert into @ca (attribute_id, attribute_name, attribute_size, indexed, required, attribute_type_id, type_name, database_type, content_id, related_content_id, link_id, is_long)
-      select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id,
-      isnull(ca1.content_id, 0), isnull(d.link_id, 0), d.is_long
-      from deleted d
-      inner join attribute_type at on d.attribute_type_id = at.attribute_type_id
-      inner join content c on d.content_id = c.content_id
-      left join CONTENT_ATTRIBUTE ca1 on d.RELATED_ATTRIBUTE_ID = ca1.ATTRIBUTE_ID
-      where c.virtual_type = 0
+				set @base_table_name = 'content_' + convert(nvarchar, @content_id)		
+				set @table_name = @base_table_name + '_ASYNC'
 
-    set @i = 1
-    select @count = count(id) from @ca
+				if @indexed = 1 and @new_indexed = 1
+					set @preserve_index = 1
+				else 
+					set @preserve_index = 0
+					
+				if @attribute_type_id <> @new_attribute_type_id 
+					or @link_id <> @new_link_id 
+					or @related_content_id <> @new_related_content_id
+					or (@attribute_size > @new_attribute_size and @attribute_type_id = 1)
+				begin
+					exec qp_clear_versions_for_field @attribute_id
+				end
 
-    while @i < @count + 1
-    begin
-      select @attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_size = attribute_size,
-        @indexed = indexed, @required = required, @attribute_type_id = attribute_type_id,
-        @type_name = type_name, @database_type = database_type, @content_id = content_id,
-        @related_content_id = related_content_id, @link_id = link_id, @is_long = is_long
-        from @ca where id = @i
+				if @indexed = 1 and @new_indexed = 0
+				begin
+					exec qp_drop_index @base_table_name, @attribute_name
+					exec qp_drop_index @table_name, @attribute_name
+				end
 
-      select @new_attribute_name = ca.attribute_name, @new_attribute_size = ca.attribute_size,
-        @new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id,
-        @new_type_name = at.type_name, @new_database_type = at.database_type,
-        @new_related_content_id = isnull(ca1.content_id, 0), @new_link_id = isnull(ca.link_id, 0), @new_is_long = ca.IS_LONG
-        from content_attribute ca
-        inner join attribute_type at on ca.attribute_type_id = at.attribute_type_id
-        left join CONTENT_ATTRIBUTE ca1 on ca.RELATED_ATTRIBUTE_ID = ca1.ATTRIBUTE_ID
-        where ca.attribute_id = @attribute_id
+				if @database_type <> @new_database_type or (@attribute_size <> @new_attribute_size and @new_database_type <> 'ntext')
+				begin
+					if @database_type = 'ntext' and @new_database_type <> 'ntext'
+						exec qp_copy_blob_data_to_data @attribute_id				
+					else if @database_type <> 'ntext' and @new_database_type = 'ntext'
+						exec qp_copy_data_to_blob_data @attribute_id	
 
-        set @base_table_name = 'content_' + convert(nvarchar, @content_id)
-        set @table_name = @base_table_name + '_ASYNC'
+					exec qp_recreate_column @base_table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
+					exec qp_recreate_column @table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
+					exec qp_content_united_view_recreate @content_id
+					exec qp_content_frontend_views_recreate @content_id
+				end 
+				else if @attribute_name <> @new_attribute_name
+				begin
+					exec qp_rename_column @base_table_name, @attribute_name, @new_attribute_name, @preserve_index
+					exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index 
+					exec qp_content_united_view_recreate @content_id
+					exec qp_content_frontend_views_recreate @content_id
+				end
+				else if @is_long <> @new_is_long
+				begin
+					exec qp_content_frontend_views_recreate @content_id
+				end
 
-        if @indexed = 1 and @new_indexed = 1
-          set @preserve_index = 1
-        else
-          set @preserve_index = 0
+				if @attribute_name <> @new_attribute_name
+					UPDATE container Set order_static = REPLACE(order_static, @attribute_name, @new_attribute_name) WHERE content_id = @content_id AND order_static LIKE '%'+ @attribute_name +'%'
 
-        if @attribute_type_id <> @new_attribute_type_id
-          or @link_id <> @new_link_id
-          or @related_content_id <> @new_related_content_id
-          or (@attribute_size > @new_attribute_size and @attribute_type_id = 1)
-        begin
-          exec qp_clear_versions_for_field @attribute_id
-        end
-
-        if @indexed = 1 and @new_indexed = 0
-        begin
-          exec qp_drop_index @base_table_name, @attribute_name
-          exec qp_drop_index @table_name, @attribute_name
-        end
-
-        if @database_type <> @new_database_type or (@attribute_size <> @new_attribute_size and @new_database_type <> 'ntext')
-        begin
-          if @database_type = 'ntext' and @new_database_type <> 'ntext'
-            exec qp_copy_blob_data_to_data @attribute_id
-          else if @database_type <> 'ntext' and @new_database_type = 'ntext'
-            exec qp_copy_data_to_blob_data @attribute_id
-
-          exec qp_recreate_column @base_table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
-          exec qp_recreate_column @table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
-          exec qp_content_united_view_recreate @content_id
-          exec qp_content_frontend_views_recreate @content_id
-        end
-        else if @attribute_name <> @new_attribute_name
-        begin
-          exec qp_rename_column @base_table_name, @attribute_name, @new_attribute_name, @preserve_index
-          exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index
-          exec qp_content_united_view_recreate @content_id
-          exec qp_content_frontend_views_recreate @content_id
-        end
-        else if @is_long <> @new_is_long
-        begin
-          exec qp_content_frontend_views_recreate @content_id
-        end
-
-        if @attribute_name <> @new_attribute_name
-          UPDATE container Set order_static = REPLACE(order_static, @attribute_name, @new_attribute_name) WHERE content_id = @content_id AND order_static LIKE '%'+ @attribute_name +'%'
-
-        if @indexed = 0 and @new_indexed = 1
-        begin
-          exec qp_add_index @base_table_name, @new_attribute_name
-          exec qp_add_index @table_name, @new_attribute_name
-        end
-      set @i = @i + 1
-    end
-  end
+				if @indexed = 0 and @new_indexed = 1
+				begin
+					exec qp_add_index @base_table_name, @new_attribute_name
+					exec qp_add_index @table_name, @new_attribute_name
+				end
+			set @i = @i + 1
+		end
+	end
 END

@@ -54,11 +54,11 @@ BEGIN
   inner join @ids i on il.item_id = i.id and il.link_id = i.link_id and il.linked_item_id = i.linked_item_id
   where i.splitted = 1
 
-  insert into item_link_async
+  insert into item_link_async (link_id, item_id, linked_item_id)
   select link_id, id, linked_item_id from @newIds
   where splitted = 1
 
-  insert into item_to_item
+  insert into item_link (link_id, item_id, linked_item_id)
   select link_id, id, linked_item_id from @newIds
   where splitted = 0
 
@@ -92,7 +92,7 @@ BEGIN
   from @newIds n
   where n.splitted = 0 and n.linked_has_data = 0 and n.linked_attribute_id is not null
 
-  insert into item_link_async(link_id, item_id, linked_item_id)
+  insert into item_link_async (link_id, item_id, linked_item_id)
   select n.link_id, n.linked_item_id, n.id
   from @newIds n
   where n.splitted = 0 and n.linked_splitted = 1 and n.linked_has_async = 0 and n.linked_attribute_id is not null
