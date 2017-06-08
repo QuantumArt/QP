@@ -7,6 +7,9 @@ GO
 exec qp_drop_existing 'ProductRelevance', 'IsUserTable'
 GO
 
+exec qp_drop_existing 'RegionUpdates', 'IsUserTable'
+GO
+
 exec qp_drop_existing 'ClearAllProducts', 'IsProcedure'
 GO
 
@@ -99,6 +102,13 @@ BEGIN
     delete from ProductRegions with(rowlock) where ProductId = @id
     delete from Products with(rowlock) where Id = @id
 END
+GO
+CREATE TABLE [dbo].[RegionUpdates](
+    [Id] [int] IDENTITY(1,1) NOT NULL,
+    [Updated] [datetime] NOT NULL,
+    [RegionId] [int] NULL,
+ CONSTRAINT [PK_RegionUpdates] PRIMARY KEY CLUSTERED ([Id] ASC)
+)
 GO
 CREATE PROCEDURE [dbo].[RegionUpdated]
     -- Add the parameters for the stored procedure here

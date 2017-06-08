@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <package >
   <metadata>
     <id>$id$</id>
@@ -27,7 +27,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="$OutputPath$Quantumart.QP8.*.dll" target="lib\net452" />
+    <file src="$OutputPath$Quantumart.QP8.*.dll" exclude="$OutputPath$Quantumart.QP8.Assembling.dll" target="lib\net452" />
     <file src="$OutputPath$EFExtensions.dll" target="lib\net452" />
     <file src="$OutputPath$Irony.dll" target="lib\net452" />
   </files>

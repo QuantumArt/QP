@@ -36,7 +36,7 @@ BEGIN
 
   delete item_to_item from item_to_item il inner join @oldIds i on il.l_item_id = i.id and il.link_id = i.link_id and il.r_item_id = i.linked_item_id
 
-  insert into item_to_item
+  insert into item_link (link_id, item_id, linked_item_id)
   select link_id, id, linked_item_id from @newIds;
 
   with newItems (id, link_id, linked_item_id, attribute_id, has_data) as

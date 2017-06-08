@@ -17,7 +17,6 @@ if (-not(Test-Path $source)) { throw [System.ArgumentException] "Folder $source 
 
 try {
   $s = Get-Item "IIS:\sites\$name" -ErrorAction SilentlyContinue
-
 } catch {
   # http://help.octopusdeploy.com/discussions/problems/5172-error-using-get-website-in-predeploy-because-of-filenotfoundexception
   $s = Get-Item "IIS:\sites\$name" -ErrorAction SilentlyContinue
@@ -25,19 +24,18 @@ try {
 
 if (!$s) { throw "Site $name not found"}
 
+  $p = Get-Item "IIS:\sites\$name\Plugins" -ErrorAction SilentlyContinue
+  $b = Get-Item "IIS:\sites\$name\Backend" -ErrorAction SilentlyContinue
+  $w = Get-Item "IIS:\sites\$name\Backend\Winlogon" -ErrorAction SilentlyContinue
+
 $path = $s.PhysicalPath
 
-$pluginsPath = Join-Path $path "Plugins"
-$p = Get-WebVirtualDirectory -Site $name -Name "Plugins" -ErrorAction SilentlyContinue
 if ($p) { $pluginsPath = $p.PhysicalPath }
-
-$backendPath = (Get-WebApplication -Site $name -Name "Backend").PhysicalPath
-$winlogonPath = (Get-WebApplication -Site $name -Name "Backend/Winlogon").PhysicalPath
+if ($b) { $backendPath = $b.PhysicalPath }
+if ($w) { $winlogonPath = $w.PhysicalPath }
 
 $backendSource = Join-Path $source "Backend.zip"
 $winLogonSource = Join-Path $source "WinLogon.zip"
-
-
 $pluginsSource = Join-Path $source "plugins.zip"
 
 if ([string]::IsNullOrEmpty($pluginsPath)) { throw [System.ArgumentException] "Virtual directory 'plugins' is not found"}
@@ -56,42 +54,42 @@ if ($p.State -ne "Stopped"){
   $p.Stop()
 
   while($p.State -ne "Stopped"){
-    Write-Output "AppPool $($s.applicationPool) is stopping..."
+    Write-Verbose "AppPool $($s.applicationPool) is stopping..."
     Start-Sleep -Milliseconds 500
   }
 }
 
-Write-Output "Stopped"
+Write-Verbose "Stopped"
 
-Write-Output "Creating backup files ..."
+Write-Verbose "Creating backup files ..."
 Invoke-Expression "7za.exe a -r -y ""$path\Backend_old.zip"" ""$backendPath\*.*"""
 Invoke-Expression "7za.exe a -r -y ""$path\Winlogon_old.zip"" ""$winlogonPath\*.*"""
 Invoke-Expression "7za.exe a -r -y ""$path\plugins_old.zip"" ""$pluginsPath\*.*"""
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Removing files for $name from $backendPath..."
+Write-Verbose "Removing files for $name from $backendPath..."
 Get-ChildItem -Path $backendPath -Recurse | Remove-Item -force -recurse
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Removing files for $name from $winlogonPath..."
+Write-Verbose "Removing files for $name from $winlogonPath..."
 Get-ChildItem -Path $winlogonPath -Recurse | Remove-Item -force -recurse
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Removing files for $name from $pluginsPath..."
+Write-Verbose "Removing files for $name from $pluginsPath..."
 Get-ChildItem -Path $pluginsPath -Recurse | Remove-Item -force -recurse
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Unarchiving zip-files to $backendPath..."
+Write-Verbose "Unarchiving zip-files to $backendPath..."
 Invoke-Expression "7za.exe x -r -y -o""$backendPath"" ""$backendSource"""
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Unarchiving zip-files to $winLogonPath..."
+Write-Verbose "Unarchiving zip-files to $winLogonPath..."
 Invoke-Expression "7za.exe x -r -y -o""$winLogonPath"" ""$winLogonSource"""
-Write-Output "Done"
+Write-Verbose "Done"
 
-Write-Output "Unarchiving zip-files to $pluginsPath..."
+Write-Verbose "Unarchiving zip-files to $pluginsPath..."
 Invoke-Expression "7za.exe x -r -y -o""$pluginsPath"" ""$pluginsSource"""
-Write-Output "Done"
+Write-Verbose "Done"
 
 if ($transform)
 {
@@ -102,5 +100,5 @@ if ($transform)
     Invoke-Expression -command $command
 }
 
-Write-Output "AppPool $($s.applicationPool) is starting"
+Write-Verbose "AppPool $($s.applicationPool) is starting"
 $p.Start()

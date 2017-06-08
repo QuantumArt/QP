@@ -1,4 +1,4 @@
-FixContentItemTriggers
+﻿FixContentItemTriggers
 MultipleUpdate
 OptimizeHierarchy
 VisualEditor
@@ -19,3 +19,4 @@ DBTable
 UpdateWrongWFStatuses
 UpdateItemToItemTrigger
 AddProducts
+DPC
