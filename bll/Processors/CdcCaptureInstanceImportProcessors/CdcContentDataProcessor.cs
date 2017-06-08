@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.Constants.Cdc;
 using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Constants.DbColumns;
+using Quantumart.QP8.Utils;
 using static Quantumart.QP8.Constants.Cdc.TarantoolContentArticleModel;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
@@ -22,51 +24,58 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-                object data = row[ContentDataColumnName.Data] as string;
-                object blobData = row[ContentDataColumnName.BlobData] as string;
-
-                var typedb = row[ContentDataColumnName.AttributeTypeDb] as string;
-                var typeName = row[ContentDataColumnName.AttributeTypeName] as string;
-                if (string.Equals(typedb, "NUMERIC", StringComparison.OrdinalIgnoreCase))
+                try
                 {
-                    if (string.Equals(typeName, "BOOLEAN", StringComparison.OrdinalIgnoreCase))
-                    {
-                        data = Convert.ToBoolean(Convert.ToInt16(data));
-                    }
-                    else
-                    {
-                        data = data == null ? (object)null : Convert.ToDecimal(data, CultureInfo.InvariantCulture);
-                    }
-                }
+                    object data = row[ContentDataColumnName.Data] as string;
+                    object blobData = row[ContentDataColumnName.BlobData] as string;
 
-                return new CdcTableTypeModel
-                {
-                    ChangeType = CdcActionType.Data,
-                    Action = (CdcOperationType)Enum.Parse(typeof(CdcOperationType), row[TarantoolCommonConstants.Operation] as string),
-                    TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
-                    TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
-                    SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
-                    FromLsn = row[TarantoolCommonConstants.FromLsn] as string,
-                    ToLsn = row[TarantoolCommonConstants.ToLsn] as string,
-                    Entity = new CdcEntityModel
+                    var typedb = row[ContentDataColumnName.AttributeTypeDb] as string;
+                    var typeName = row[ContentDataColumnName.AttributeTypeName] as string;
+                    if (string.Equals(typedb, "NUMERIC", StringComparison.OrdinalIgnoreCase))
                     {
-                        EntityType = ContentDataColumnName.TableName,
-                        InvariantName = ContentDataColumnName.TableName.ToUpper(),
-                        Columns = new Dictionary<string, object>
+                        if (string.Equals(typeName, "BOOLEAN", StringComparison.OrdinalIgnoreCase))
                         {
-                            { AttributeId, (int)row[ContentDataColumnName.AttributeId] },
-                            { ContentItemId, (int)row[ContentDataColumnName.ContentItemId] },
-                            { ContentDataId, (int)row[ContentDataColumnName.ContentDataId] },
-                            { Data, blobData ?? data },
-                            { Created, (DateTime)row[ContentDataColumnName.Created] },
-                            { Modified, (DateTime)row[ContentDataColumnName.Modified] }
-                        },
-                        MetaData = new Dictionary<string, object>
+                            data = Convert.ToBoolean(Convert.ToInt16(data));
+                        }
+                        else
                         {
-                            { IsSplitted, Equals(true, row[ContentDataColumnName.Splitted]) }
+                            data = data == null ? (object)null : Convert.ToDecimal(data, CultureInfo.InvariantCulture);
                         }
                     }
-                };
+
+                    return new CdcTableTypeModel
+                    {
+                        ChangeType = CdcActionType.Data,
+                        Action = (CdcOperationType)Enum.Parse(typeof(CdcOperationType), row[TarantoolCommonConstants.Operation] as string),
+                        TransactionDate = (DateTime)row[TarantoolCommonConstants.TransactionDate],
+                        TransactionLsn = row[TarantoolCommonConstants.TransactionLsn] as string,
+                        SequenceLsn = row[TarantoolCommonConstants.SequenceLsn] as string,
+                        FromLsn = row[TarantoolCommonConstants.FromLsn] as string,
+                        ToLsn = row[TarantoolCommonConstants.ToLsn] as string,
+                        Entity = new CdcEntityModel
+                        {
+                            EntityType = ContentDataColumnName.TableName,
+                            InvariantName = ContentDataColumnName.TableName.ToUpper(),
+                            Columns = new Dictionary<string, object>
+                            {
+                                { AttributeId, Convert.ToInt32(row[ContentDataColumnName.AttributeId]) },
+                                { ContentItemId, Convert.ToInt32(row[ContentDataColumnName.ContentItemId]) },
+                                { ContentDataId, Convert.ToInt32(row[ContentDataColumnName.ContentDataId]) },
+                                { Data, blobData ?? data },
+                                { Created, (DateTime)row[ContentDataColumnName.Created] },
+                                { Modified, (DateTime)row[ContentDataColumnName.Modified] }
+                            },
+                            MetaData = new Dictionary<string, object>
+                            {
+                                { IsSplitted, Equals(true, row[ContentDataColumnName.Splitted]) }
+                            }
+                        }
+                    };
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"There was an exception for parsing \"{CaptureInstanceName}\" row: {row.ToSimpleDataRow().ToJsonLog()}", ex);
+                }
             }).OrderBy(cdc => cdc.TransactionLsn).ToList();
         }
     }

@@ -79,62 +79,63 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
 
         internal async Task ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
         {
-            var isSuccessfulHttpResponse = true;
+            var shouldSendHttpRequests = isNotificationQueueEmpty;
             var tableTypeModels = GetCdcDataModels(customer.ConnectionString, out string lastExecutedLsn);
 
             Ensure.Items(tableTypeModels, ttm => ttm.ToLsn == lastExecutedLsn, "All cdc tables should be proceeded at single transaction");
 
-            var dtosQueue = new Queue<CdcDataTableDto>(GroupCdcTableTypeModelsByLsn(customer.CustomerName, tableTypeModels));
+            var notSendedDtosQueue = new Queue<CdcDataTableDto>(GroupCdcTableTypeModelsByLsn(customer.CustomerName, tableTypeModels));
             string lastPushedLsn = null;
-            if (isNotificationQueueEmpty)
+            while (shouldSendHttpRequests && notSendedDtosQueue.Any() && !_cts.Token.IsCancellationRequested)
             {
-                while (dtosQueue.Any() && !_cts.Token.IsCancellationRequested)
+                shouldSendHttpRequests = false;
+                var data = notSendedDtosQueue.Peek();
+                try
                 {
-                    isSuccessfulHttpResponse = false;
-                    var data = dtosQueue.Peek();
-                    try
-                    {
-                        var responseMessage = PushDataToHttpChannel(data);
-                        (await responseMessage).EnsureSuccessStatusCode();
+                    var responseMessage = PushDataToHttpChannel(data);
+                    (await responseMessage).EnsureSuccessStatusCode();
 
-                        var response = await responseMessage.ReceiveJson<JSendResponse>();
-                        if (response.Status == JSendStatus.Success && response.Code == 200)
-                        {
-                            isSuccessfulHttpResponse = true;
-                            lastPushedLsn = dtosQueue.Dequeue().TransactionLsn;
-                            Logger.Log.Trace($"Http push notification was pushed successfuly: {response.ToJsonLog()}");
-                        }
-                        else
-                        {
-                            Logger.Log.Warn($"Http push notification response was failed: {response.ToJsonLog()}");
-                            break;
-                        }
-                    }
-                    catch (FlurlHttpException ex)
+                    var response = await responseMessage.ReceiveJson<JSendResponse>();
+                    if (response.Status == JSendStatus.Success && response.Code == 200)
                     {
-                        Logger.Log.Warn("There was an unhandled http error while sending http push notification", ex);
-                        break;
+                        shouldSendHttpRequests = true;
+                        lastPushedLsn = notSendedDtosQueue.Dequeue().TransactionLsn;
+                        Logger.Log.Trace($"Http push notification was pushed successfuly: {response.ToJsonLog()}");
                     }
-                    catch (HttpRequestException ex)
+                    else
                     {
-                        Logger.Log.Warn("There was an unhandled http error while sending http push notification", ex);
+                        Logger.Log.Warn($"Http push notification response was failed: {response.ToJsonLog()}");
                         break;
                     }
                 }
+                catch (FlurlHttpException ex)
+                {
+                    Logger.Log.Warn("There was an unhandled http error while sending http push notification", ex);
+                    break;
+                }
+                catch (HttpRequestException ex)
+                {
+                    Logger.Log.Warn("There was an unhandled http error while sending http push notification", ex);
+                    break;
+                }
             }
 
-            AddDataToNotificationQueue(customer, dtosQueue.ToList(), lastPushedLsn, lastExecutedLsn);
-            if (!isSuccessfulHttpResponse)
+            AddDataToNotificationQueue(customer, notSendedDtosQueue.ToList(), lastPushedLsn, lastExecutedLsn);
+            if (!shouldSendHttpRequests)
             {
-                CdcSynchronizationContext.SetCustomerNotificationQueueNotEmpty(customer);
+                Ensure.That(notSendedDtosQueue.Any() || !isNotificationQueueEmpty);
+                if (isNotificationQueueEmpty)
+                {
+                    CdcSynchronizationContext.SetCustomerNotificationQueueNotEmpty(customer);
+                }
             }
         }
 
         private static IEnumerable<CdcDataTableDto> GroupCdcTableTypeModelsByLsn(string customerName, IEnumerable<CdcTableTypeModel> tableTypeModels)
         {
             return tableTypeModels
+                .AsParallel()
                 .GroupBy(gr => gr.TransactionLsn)
-                .OrderBy(gr => gr.Key)
                 .Select(gr => new CdcDataTableDto
                 {
                     CustomerCode = customerName,
@@ -150,7 +151,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                             ? Mapper.Map<CdcEntityModel, CdcArticleEntityDto>(data.Entity)
                             : Mapper.Map<CdcEntityModel, CdcEntityDto>(data.Entity)
                     }).ToList()
-                }).ToList();
+                }).OrderBy(dto => dto.TransactionLsn).ToList();
         }
 
         private List<CdcTableTypeModel> GetCdcDataModels(string connectionString, out string toLsn)

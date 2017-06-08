@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Reflection;
 using AutoMapper;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
@@ -129,6 +129,6 @@ namespace Quantumart.QP8.Scheduler.Notification
             LoggerData.DefaultPrtgServiceStatusVariableName
         );
 
-        private static string GetAbsolutePath(string relativePath) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+        private static string GetAbsolutePath(string relativePath) => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), relativePath);
     }
 }

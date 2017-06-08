@@ -27,7 +27,7 @@ namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions
 
         public static List<T> GetDataFilteredByLsnNetChanges<T>(this IEnumerable<T> data, Func<T, object> groupkey, Func<T, T, T> maxPredicate)
         {
-            return data.GroupBy(groupkey).Select(d => d.Aggregate(maxPredicate)).ToList();
+            return data.GroupBy(groupkey).AsParallel().Select(d => d.Aggregate(maxPredicate)).ToList();
         }
 
         private static CdcTableTypeModel HandleSimpleTableTypeDataModifier(CdcTableTypeModel prevInSortOrder, CdcTableTypeModel nextInSortOrder)

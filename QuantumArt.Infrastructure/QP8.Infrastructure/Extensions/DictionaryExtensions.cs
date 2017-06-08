@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace QP8.Infrastructure.Extensions
 {
@@ -19,7 +17,13 @@ namespace QP8.Infrastructure.Extensions
 
         public static void AddRange<TKey, TValue>(this IDictionary<TKey, TValue> target, IEnumerable<KeyValuePair<TKey, TValue>> source)
         {
-            target.AddRange(source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+            Ensure.Argument.NotNull(target);
+            Ensure.Argument.NotNull(source);
+
+            foreach (var keyValuePair in source)
+            {
+                target.Add(keyValuePair.Key, keyValuePair.Value);
+            }
         }
     }
 }

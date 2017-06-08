@@ -1,10 +1,9 @@
 {
-	"folders":
-	[
-		{
-      "folder_exclude_patterns": ["QP.Global.sublime-workspace"],
+  "folders":
+  [
+    {
       "follow_symlinks": true,
-			"path": "."
-		}
-	]
+      "path": "./"
+    }
+  ]
 }

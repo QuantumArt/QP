@@ -7,16 +7,16 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
     public abstract class CdcImportProcessor
     {
-        private readonly string _captureInstanceName;
+        protected internal readonly string CaptureInstanceName;
 
         protected CdcImportProcessor(string captureInstanceName)
         {
-            _captureInstanceName = captureInstanceName;
+            CaptureInstanceName = captureInstanceName;
         }
 
         public abstract List<CdcTableTypeModel> ImportCdcData(string fromLsn = null, string toLsn = null);
 
         public virtual DataTable GetCdcDataTable(string fromLsn = null, string toLsn = null) =>
-            CdcImportDal.GetCdcTableData(QPConnectionScope.Current.DbConnection, _captureInstanceName, fromLsn, toLsn);
+            CdcImportDal.GetCdcTableData(QPConnectionScope.Current.DbConnection, CaptureInstanceName, fromLsn, toLsn);
     }
 }

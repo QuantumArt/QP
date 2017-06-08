@@ -89,6 +89,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                     if (response.Status == JSendStatus.Success && response.Code == 200)
                     {
                         sentNotificationIds.Add(dto.Id);
+                        _logger.Trace($"Http push notification was pushed successfuly: {response.ToJsonLog()}");
                     }
                     else
                     {

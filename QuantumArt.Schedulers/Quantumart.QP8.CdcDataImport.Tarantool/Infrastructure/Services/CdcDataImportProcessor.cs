@@ -106,24 +106,30 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services
                 cdm.TransactionLsn
             });
 
-            foreach (var cim in contentItemsFilteredByNetChanges)
+            var contentDataLookup = contentDataFilteredByNetChanges.ToLookup(k => new
             {
-                var fieldColumns = contentDataFilteredByNetChanges
-                    .Where(cdc => cdc.TransactionLsn == cim.TransactionLsn)
-                    .Where(cdm => Equals(
-                        cdm.Entity.MetaData[TarantoolContentArticleModel.IsSplitted],
-                        cim.Entity.MetaData[TarantoolContentArticleModel.IsSplitted]))
-                    .Where(cdm => Equals(
-                        cdm.Entity.Columns[TarantoolContentArticleModel.ContentItemId],
-                        cim.Entity.Columns[TarantoolContentArticleModel.ContentItemId]))
+                k.TransactionLsn,
+                contentItemId = k.Entity.Columns[TarantoolContentArticleModel.ContentItemId],
+                isSplitted = k.Entity.MetaData[TarantoolContentArticleModel.IsSplitted]
+            });
+
+            return contentItemsFilteredByNetChanges.AsParallel().Select(cim =>
+            {
+                var fieldColumns = contentDataLookup[new
+                    {
+                        cim.TransactionLsn,
+                        contentItemId = cim.Entity.Columns[TarantoolContentArticleModel.ContentItemId],
+                        isSplitted = cim.Entity.MetaData[TarantoolContentArticleModel.IsSplitted]
+                    }]
                     .OrderBy(cdm => cdm.SequenceLsn)
                     .Select(cdm => new KeyValuePair<string, object>(
                         TarantoolContentArticleModel.GetFieldName(cdm.Entity.Columns[TarantoolContentArticleModel.AttributeId]),
-                        cdm.Entity.Columns[TarantoolContentArticleModel.Data]));
+                        cdm.Entity.Columns[TarantoolContentArticleModel.Data])
+                    );
 
                 cim.Entity.Columns.AddRange(fieldColumns);
-                yield return cim;
-            }
+                return cim;
+            });
         }
     }
 }

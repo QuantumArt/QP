@@ -70,6 +70,7 @@ if ((Test-Path $schedulerZipPath))
     Write-Host "Zip file found. Unpacking..."
     Invoke-Expression "7za.exe x -r -y -o""$schedulerFolder"" ""$schedulerZipPath"""
     $schedulerPath = Join-Path $schedulerFolder "bin\Release\$projectName.exe"
+    $schedulerFolder = $schedulerFolder + "\bin\Release"
 }
 
 if (-not(Test-Path $schedulerFolder) -or -not(Test-Path $schedulerPath))
