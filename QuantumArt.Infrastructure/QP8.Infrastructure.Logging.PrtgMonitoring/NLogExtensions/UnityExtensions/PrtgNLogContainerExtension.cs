@@ -35,7 +35,7 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.UnityExtensio
                 _prtgServiceQueueVariableName,
                 _prtgServiceStatusVariableName));
 
-            Container.RegisterType<IPrtgServiceLogger>(string.IsNullOrWhiteSpace(_loggerName)
+            Container.RegisterType<IPrtgServiceLogger>(new ContainerControlledLifetimeManager(), string.IsNullOrWhiteSpace(_loggerName)
                 ? new InjectionFactory(c => c.Resolve<IPrtgNLogFactory>().GetLogger())
                 : new InjectionFactory(c => c.Resolve<IPrtgNLogFactory>().GetLogger(_loggerName)));
 

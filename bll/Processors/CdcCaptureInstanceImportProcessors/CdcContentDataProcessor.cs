@@ -54,9 +54,9 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                         InvariantName = ContentDataColumnName.TableName.ToUpper(),
                         Columns = new Dictionary<string, object>
                         {
-                            { AttributeId, (decimal)row[ContentDataColumnName.AttributeId] },
-                            { ContentItemId, (decimal)row[ContentDataColumnName.ContentItemId] },
-                            { ContentDataId, (decimal)row[ContentDataColumnName.ContentDataId] },
+                            { AttributeId, (int)row[ContentDataColumnName.AttributeId] },
+                            { ContentItemId, (int)row[ContentDataColumnName.ContentItemId] },
+                            { ContentDataId, (int)row[ContentDataColumnName.ContentDataId] },
                             { Data, blobData ?? data },
                             { Created, (DateTime)row[ContentDataColumnName.Created] },
                             { Modified, (DateTime)row[ContentDataColumnName.Modified] }

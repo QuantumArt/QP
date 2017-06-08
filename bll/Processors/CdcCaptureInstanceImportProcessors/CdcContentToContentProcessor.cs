@@ -21,7 +21,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-                var linkId = (decimal)row[ContentToContentColumnName.LinkId];
+                var linkId = (int)row[ContentToContentColumnName.LinkId];
                 return new CdcTableTypeModel
                 {
                     ChangeType = CdcActionType.Schema,
@@ -39,8 +39,8 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                         {
                             { LinkId, linkId },
                             { InvariantName, GetInvariantName(linkId, false) },
-                            { LeftContentId, (decimal)row[ContentToContentColumnName.LContentId] },
-                            { RightContentId, (decimal)row[ContentToContentColumnName.RContentId] },
+                            { LeftContentId, (int)row[ContentToContentColumnName.LContentId] },
+                            { RightContentId, (int)row[ContentToContentColumnName.RContentId] },
                             { IsSymmetric, (bool)row[ContentToContentColumnName.IsSymmetric] },
                             { IsReverse, false },
                             { DefaultFieldsName, DefaultFields }

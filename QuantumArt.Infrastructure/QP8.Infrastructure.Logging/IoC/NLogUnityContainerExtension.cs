@@ -20,7 +20,7 @@ namespace QP8.Infrastructure.Logging.IoC
         protected override void Initialize()
         {
             Container.RegisterType<INLogFactory, NLogFactory>(new ContainerControlledLifetimeManager(), new InjectionConstructor());
-            Container.RegisterType<ILog>(string.IsNullOrWhiteSpace(_loggerName)
+            Container.RegisterType<ILog>(new ContainerControlledLifetimeManager(), string.IsNullOrWhiteSpace(_loggerName)
                 ? new InjectionFactory(c => c.Resolve<INLogFactory>().GetLogger())
                 : new InjectionFactory(c => c.Resolve<INLogFactory>().GetLogger(_loggerName)));
 

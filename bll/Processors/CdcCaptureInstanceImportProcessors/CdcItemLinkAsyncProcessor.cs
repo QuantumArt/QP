@@ -26,9 +26,9 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                 var isSelf = Equals(true, row[ItemLinkAsyncColumnName.IsSelf]);
                 Ensure.Not(isRev && isSelf, "IsRev and IsSelf flags could not be both flagged as true");
 
-                var linkId = (decimal)row[ItemLinkAsyncColumnName.LinkId];
-                var leftId = (decimal)row[ItemLinkAsyncColumnName.ItemId];
-                var rightId = (decimal)row[ItemLinkAsyncColumnName.LinkedItemId];
+                var linkId = (int)row[ItemLinkAsyncColumnName.LinkId];
+                var leftId = (int)row[ItemLinkAsyncColumnName.ItemId];
+                var rightId = (int)row[ItemLinkAsyncColumnName.LinkedItemId];
                 return new CdcTableTypeModel
                 {
                     ChangeType = CdcActionType.Data,

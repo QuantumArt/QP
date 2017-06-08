@@ -113,6 +113,7 @@ custom.paths = {
     'Content/codemirror/mode/htmlmixed/htmlmixed.js',
     'Content/codemirror/mode/htmlembedded/htmlembedded.js',
     'Content/codemirror/addon/mode/multiplex.js',
+    'Content/jsoneditor/dist/jsoneditor.js',
 
     'Scripts/PlUpload/moxie.js',
     'Scripts/PlUpload/plupload.dev.js',
@@ -257,15 +258,18 @@ custom.paths = {
     'Content/telerik.qp8.css',
     'Content/codemirror/lib/codemirror.css',
     'Content/codemirrorTheme.css',
+    'Content/jsoneditor/dist/jsoneditor.css',
     'Content/QpCodemirror.css',
     'Content/custom/**/*.{scss,css}',
+
     '!Content/build/**/*.css'
   ],
   images: [
-    'Content/**/*.{jpg,jpeg,png,gif}',
-    '!Content/ckeditor/**/*.{jpg,jpeg,png,gif}',
-    '!Content/codemirror/**/*.{jpg,jpeg,png,gif}',
-    '!Content/build/**/*.{jpg,jpeg,png,gif}'
+    'Content/**/*.{jpg,jpeg,png,gif,svg}',
+
+    '!Content/ckeditor/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Content/codemirror/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Content/build/**/*.{jpg,jpeg,png,gif,svg}'
   ],
   clean: [
     'Scripts/Quantumart/**/*.{min.js,map}',

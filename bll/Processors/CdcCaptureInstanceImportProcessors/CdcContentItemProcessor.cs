@@ -21,7 +21,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-                var contentId = (decimal)row[ContentItemColumnName.ContentId];
+                var contentId = (int)row[ContentItemColumnName.ContentId];
                 return new CdcTableTypeModel
                 {
                     ChangeType = CdcActionType.Data,
@@ -37,13 +37,13 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                         InvariantName = GetInvariantName(contentId),
                         Columns = new Dictionary<string, object>
                         {
-                            { ContentItemId, (decimal)row[ContentItemColumnName.ContentItemId] },
-                            { StatusTypeId, (decimal)row[ContentItemColumnName.StatusTypeId] },
-                            { Visible, (decimal)row[ContentItemColumnName.Visible] == 1 },
-                            { Archive, (decimal)row[ContentItemColumnName.Archive] == 1 },
+                            { ContentItemId, (int)row[ContentItemColumnName.ContentItemId] },
+                            { StatusTypeId, (int)row[ContentItemColumnName.StatusTypeId] },
+                            { Visible, (int)row[ContentItemColumnName.Visible] == 1 },
+                            { Archive, (int)row[ContentItemColumnName.Archive] == 1 },
                             { Created, (DateTime)row[ContentItemColumnName.Created] },
                             { Modified, (DateTime)row[ContentItemColumnName.Modified] },
-                            { LastModifiedBy, (decimal)row[ContentItemColumnName.LastModifiedBy] }
+                            { LastModifiedBy, (int)row[ContentItemColumnName.LastModifiedBy] }
                         },
                         MetaData = new Dictionary<string, object>
                         {

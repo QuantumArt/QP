@@ -35,14 +35,20 @@ namespace QP8.Infrastructure.Logging.IoC
 
         private NLogFactory RegisterNLogFactory(IComponentContext cc)
         {
-            var factory = string.IsNullOrWhiteSpace(_configPath) ? new NLogFactory() : new NLogFactory(_configPath);
+            var factory = string.IsNullOrWhiteSpace(_configPath)
+                ? new NLogFactory()
+                : new NLogFactory(_configPath);
+
             LogProvider.LogFactory = factory;
             return factory;
         }
 
         private ILog RegisterNLogInstance(IComponentContext cc)
         {
-            var instanse = _type == null ? cc.Resolve<INLogFactory>().GetLogger(_loggerName) : cc.Resolve<INLogFactory>().GetLogger(_type);
+            var instanse = _type == null
+                ? cc.Resolve<INLogFactory>().GetLogger(_loggerName)
+                : cc.Resolve<INLogFactory>().GetLogger(_type);
+
             Logger.Log = instanse;
             return instanse;
         }

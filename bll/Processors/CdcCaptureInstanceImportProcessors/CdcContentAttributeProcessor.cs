@@ -21,9 +21,9 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
         {
             return GetCdcDataTable(fromLsn, toLsn).AsEnumerable().Select(row =>
             {
-                var attributeId = (decimal)row[ContentAttributeColumnName.AttributeId];
-                var attributeTypeId = (decimal)row[ContentAttributeColumnName.AttributeTypeId];
-                var linkId = row[ContentAttributeColumnName.LinkId] as decimal?;
+                var attributeId = (int)row[ContentAttributeColumnName.AttributeId];
+                var attributeTypeId = (int)row[ContentAttributeColumnName.AttributeTypeId];
+                var linkId = row[ContentAttributeColumnName.LinkId] as int?;
                 var relationType = string.Empty;
                 switch (attributeTypeId)
                 {
@@ -51,7 +51,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                         Columns = new Dictionary<string, object>
                         {
                             { Id, attributeId },
-                            { ContentId, (decimal)row[ContentAttributeColumnName.ContentId] },
+                            { ContentId, (int)row[ContentAttributeColumnName.ContentId] },
                             { InvariantName, GetInvariantName(attributeId) },
                             { Name, row[ContentAttributeColumnName.AttributeName] as string },
                             { IsIndexed, relationType == O2M },

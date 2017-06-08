@@ -34,7 +34,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                     InvariantName = StatusTypeColumnName.TableName.ToUpper(),
                     Columns = new Dictionary<string, object>
                     {
-                        { StatusTypeId, (decimal)row[StatusTypeColumnName.StatusTypeId] },
+                        { StatusTypeId, (int)row[StatusTypeColumnName.StatusTypeId] },
                         { StatusTypeName, row[StatusTypeColumnName.StatusTypeName] as string }
                     }
                 }

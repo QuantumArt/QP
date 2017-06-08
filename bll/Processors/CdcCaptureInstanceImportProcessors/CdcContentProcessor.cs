@@ -34,7 +34,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                     InvariantName = ContentColumnName.TableName.ToUpper(),
                     Columns = new Dictionary<string, object>
                     {
-                        { ContentId, (decimal)row[ContentColumnName.ContentId] },
+                        { ContentId, (int)row[ContentColumnName.ContentId] },
                         { ContentName, row[ContentColumnName.ContentName] as string },
                         { NetContentName, row[ContentColumnName.NetContentName] as string },
                         { IsForReplication, true },

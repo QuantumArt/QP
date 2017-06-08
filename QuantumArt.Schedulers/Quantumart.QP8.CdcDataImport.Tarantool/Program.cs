@@ -34,7 +34,6 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
             {
                 factory.UseNLog();
                 factory.UseAutofacContainer(Container);
-
                 factory.Service<CdcServiceHost>(service =>
                 {
                     service.ConstructUsingAutofacContainer();
@@ -74,7 +73,6 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
             };
 
             Mapper.Initialize(cfg => { cfg.AddProfile<TarantoolMapperProfile>(); });
-
             Mapper.AssertConfigurationIsValid();
         }
 
