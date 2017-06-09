@@ -102,8 +102,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
           contentFieldName: this._componentElem.closest('dl').data('field_name')
         });
       }
-    }
-    else if (this._componentElem.data('jsonEditor')) {
+    } else if (this._componentElem.data('jsonEditor')) {
       curVal = this._componentElem.data('jsonEditor').getText();
       if (this._storedTempValue !== curVal) {
         this._storedTempValue = curVal;
@@ -162,8 +161,6 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   initialize: function () {
-    var cm;
-    var je;
     var tArea = this._componentElem;
     this._presentationOrCodeBehind = tArea.data('is_presentation') === 'True';
     this._templateId = tArea.data('template_id');
@@ -172,17 +169,17 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._libraryEntityId = tArea.data('site_id');
     if (tArea.hasClass('hta-JsonTextArea')) {
       if ($q.isNull(tArea.data('jsonEditor'))) {
-        this.initjsonEditor(tArea);
+        this.initJsonEditor(tArea);
       }
-    }
-    else if ($q.isNull(tArea.data('codeMirror'))) {
-      this.iniCodeMirrorTArea(tArea);
+    } else if ($q.isNull(tArea.data('codeMirror'))) {
+      this.initCodeMirrorTArea(tArea);
     }
 
     this._checkIntervalID = setInterval($.proxy(this._onCheckChangesIntervalHandler, this), 10000);
   },
 
-  iniCodeMirrorTArea: function (tArea) {
+  initCodeMirrorTArea: function (tArea) {
+    var cm;
     tArea.wrap('<div class="CodemirrorContainer">');
     cm = CodeMirror.fromTextArea(tArea.get(0), {
       lineNumbers: $q.toBoolean(tArea.data('hta_lineNumbers'), true),
@@ -205,31 +202,32 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
 
     this._storedTempValue = cm.getValue();
-    this._storedTempValue = "qweqwe";
+    this._storedTempValue = 'qweqwe';
     tArea.data('codeMirror', cm);
     cm = null;
   },
 
-  initjsonEditor: function (tArea) {
+  initJsonEditor: function (tArea) {
+    var options, height, je, json;
     tArea.hide();
 
     tArea.wrap('<div id="jsonEditor">');
-
-    var options = {
+    tArea.is('[disabled]');
+    options = {
       mode: 'code',
       modes: ['text', 'code', 'tree'],
-      onError: function (err) {
-        alert($l.TextArea.forbiddenJsonMode);
+      onError: function () {
+        $q.alertError($l.TextArea.forbiddenJsonMode);
       }
     };
 
-    var height = parseInt(tArea.css('height'), 10);
-    this._editorHeight = (!height || height < this._minJsonEditorHeight) ? this._minJsonEditorHeight : height;
+    height = parseInt(tArea.css('height'), 10);
+    this._editorHeight = !height || height < this._minJsonEditorHeight ? this._minJsonEditorHeight : height;
 
     tArea.parent().css('height', this._editorHeight);
 
-    je = new JSONEditor(tArea.parent().get(0), options)
-    var json = "";
+    je = new JSONEditor(tArea.parent().get(0), options);
+    json = '';
     if (tArea.val()) {
       json = tArea.val();
       je.setText(json);
@@ -237,7 +235,6 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
 
     this._storedTempValue = je.getText();
     tArea.data('jsonEditor', je);
-    je = null;
   },
 
   _onLibraryButtonClick: function () {
@@ -401,6 +398,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   saveData: function () {
+    var jsonEditor;
     var codeMirror = this._componentElem.data('codeMirror');
     if (codeMirror) {
       if (this._componentElem.val() !== codeMirror.getValue()) {
@@ -408,9 +406,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       }
 
       codeMirror.save();
-    }
-    else {
-      var jsonEditor = this._componentElem.data('jsonEditor');
+    } else {
+      jsonEditor = this._componentElem.data('jsonEditor');
       if (jsonEditor) {
         if (this._componentElem.val() !== jsonEditor.getText()) {
           this._componentElem.val(jsonEditor.getText());

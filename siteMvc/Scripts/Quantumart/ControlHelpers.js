@@ -605,10 +605,18 @@ Quantumart.QP8.ControlHelpers.setAllHighlightedTextAreaValues = function (parent
       var componentJE = $htas.filter('[name="' + v.fieldName + '"]:first').data('jsonEditor');
       if (componentCM || componentJE) {
         if ($q.isNullOrEmpty(v.value)) {
-          componentCM ? componentCM.setValue('') : componentJE.setText('');
+          if (componentCM) {
+            componentCM.setValue('')
+          } else {
+            componentJE.setText('');
+          }
         }
         else {
-          componentCM ? componentCM.setValue(v.value) : componentJE.setText(v.value);
+          if (componentCM) {
+            componentCM.setValue(v.value)
+          } else {
+            componentJE.setText(v.value);
+          }
         }
       }
     });
