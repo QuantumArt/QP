@@ -1,4 +1,4 @@
-/* global CodeMirror */
+/* global CodeMirror, JSONEditor */
 
 Quantumart.QP8.BackendHighlightedTextArea = function BackendHighlightedTextArea(componentElem) {
   this._componentElem = componentElem;
