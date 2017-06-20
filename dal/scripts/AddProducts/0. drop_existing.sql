@@ -1,11 +1,3 @@
-exec qp_drop_existing 'Products', 'IsUserTable'
-GO
-
-exec qp_drop_existing 'ProductRegions', 'IsUserTable'
-GO
-
-exec qp_drop_existing 'ProductRelevance', 'IsUserTable'
-GO
 
 exec qp_drop_existing 'RegionUpdates', 'IsUserTable'
 GO
