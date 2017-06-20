@@ -130,6 +130,8 @@ custom.paths = {
     'Scripts/Quantumart/ckeditor/codemirror/plugin.js',
     'Scripts/Quantumart/ckeditor/globalSettings.js',
 
+    'Content/jsoneditor/dist/jsoneditor.js',
+
     'Scripts/Quantumart/Utils.js',
     'Scripts/Quantumart/Cache.js',
     'Scripts/Quantumart/Common.js',
@@ -263,15 +265,16 @@ custom.paths = {
     'Content/telerik.qp8.css',
     'Content/codemirror/lib/codemirror.css',
     'Content/codemirrorTheme.css',
+    'Content/jsoneditor/dist/jsoneditor.css',
     'Content/QpCodemirror.css',
     'Content/custom/**/*.{css,sass,scss}',
     '!Content/build/**/*.css'
   ],
   images: [
-    'Content/**/*.{jpg,jpeg,png,gif}',
-    '!Content/ckeditor/**/*.{jpg,jpeg,png,gif}',
-    '!Content/codemirror/**/*.{jpg,jpeg,png,gif}',
-    '!Content/build/**/*.{jpg,jpeg,png,gif}'
+    'Content/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Content/ckeditor/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Content/codemirror/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Content/build/**/*.{jpg,jpeg,png,gif,svg}'
   ],
   clean: [
     'Scripts/Quantumart/**/*.{min.js,map}',
