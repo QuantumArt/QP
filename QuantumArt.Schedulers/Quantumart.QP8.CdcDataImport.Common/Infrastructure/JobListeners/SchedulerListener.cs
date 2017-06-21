@@ -1,4 +1,4 @@
-using QP8.Infrastructure.Logging;
+﻿using QP8.Infrastructure.Logging;
 using Quartz;
 
 namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.JobListeners
@@ -72,9 +72,9 @@ namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.JobListeners
             Logger.Log.Trace($"{LogStartMessage} Jobs Resumed for group: {jobGroup}");
         }
 
-        public void SchedulerError(string msg, SchedulerException cause)
+        public void SchedulerError(string msg, SchedulerException error)
         {
-            Logger.Log.Trace($"{LogStartMessage} Scheduler error: {msg} with exception: {cause.Message}");
+            Logger.Log.Fatal($"{LogStartMessage} Scheduler error: {msg} with exception", error);
         }
 
         public void SchedulerInStandbyMode()
@@ -104,7 +104,7 @@ namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.JobListeners
 
         public void SchedulingDataCleared()
         {
-            Logger.Log.Trace($"{LogStartMessage} Scheduling data cleard");
+            Logger.Log.Trace($"{LogStartMessage} Scheduling data clear");
         }
     }
 }

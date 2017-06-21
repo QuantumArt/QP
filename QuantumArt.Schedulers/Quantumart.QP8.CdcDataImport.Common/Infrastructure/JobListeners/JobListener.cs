@@ -31,7 +31,7 @@ namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.JobListeners
 
         public void JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException)
         {
-            Logger.Log.Trace($"{LogStartMessage} Job was executed: {context.JobDetail.Key.Name}");
+            Logger.Log.Trace($"{LogStartMessage} Job was executed: {context.JobDetail.Key.Name}", jobException);
         }
     }
 }
