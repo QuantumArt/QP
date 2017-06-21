@@ -1,8 +1,8 @@
 /*
- * pmrpc 0.6 - Inter-widget remote procedure call library based on HTML5
- *             postMessage API and JSON-RPC. https://github.com/izuzak/pmrpc
+ * pmrpc 0.7.1 - Inter-widget remote procedure call library based on HTML5
+ *               postMessage API and JSON-RPC. https://github.com/izuzak/pmrpc
  *
- * Copyright 2011 Ivan Zuzak, Marko Ivankovic
+ * Copyright 2012 Ivan Zuzak, Marko Ivankovic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,15 +43,6 @@ pmrpc = self.pmrpc =  function() {
     return uuid.join('');
   }
 
-  // TODO: remove this - make everything a regex?
-  // Converts a wildcard expression into a regular expression
-  function convertWildcardToRegex(wildcardExpression) {
-    var regex = wildcardExpression.replace(
-                  /([\^\$\.\+\?\=\!\:\|\\\/\(\)\[\]\{\}])/g, "\\$1");
-    regex = "^" + regex.replace(/\*/g, ".*") + "$";
-    return regex;
-  }
-
   // Checks whether a domain satisfies the access control list. The access
   // control list has a whitelist and a blacklist. In order to satisfy the acl,
   // the domain must be on the whitelist, and must not be on the blacklist.
@@ -63,16 +54,14 @@ pmrpc = self.pmrpc =  function() {
     var isBlacklisted = false;
 
     for (var i=0; i<aclWhitelist.length; ++i) {
-      var aclRegex = convertWildcardToRegex(aclWhitelist[i]);
-      if(origin.match(aclRegex)) {
+      if(origin.match(new RegExp(aclWhitelist[i]))) {
         isWhitelisted = true;
         break;
       }
     }
 
-    for (var j=0; i<aclBlacklist.length; ++j) {
-      var aclRegex = convertWildcardToRegex(aclBlacklist[j]);
-      if(origin.match(aclRegex)) {
+    for (var j=0; j<aclBlacklist.length; ++j) {
+      if(origin.match(new RegExp(aclBlacklist[j]))) {
         isBlacklisted = true;
         break;
       }
@@ -103,7 +92,7 @@ pmrpc = self.pmrpc =  function() {
         if (typeof argIndexes[paramName] !== "undefined") {
           callParameters[argIndexes[paramName]] = params[paramName];
         } else {
-          throw "No such param!";
+          throw "No such param: " + paramName;
         }
       }
 
@@ -190,7 +179,7 @@ pmrpc = self.pmrpc =  function() {
         "isAsync" : typeof config.isAsynchronous !== "undefined" ?
                       config.isAsynchronous : false,
         "acl" : typeof config.acl !== "undefined" ?
-                  config.acl : {whitelist: ["*"], blacklist: []}};
+                  config.acl : {whitelist: ["(.*)"], blacklist: []}};
       return true;
     }
   }
@@ -217,15 +206,14 @@ pmrpc = self.pmrpc =  function() {
     var isWorkerComm = typeof eventSource !== "undefined" && eventSource !== null;
 
     // if the message is not for pmrpc, ignore it.
-    if (serviceCallEvent.data.indexOf("pmrpc.") !== 0) {
+    if (typeof serviceCallEvent.data !== "string" || serviceCallEvent.data.indexOf("pmrpc.") !== 0) {
       return;
     } else {
       var message = decode(serviceCallEvent.data);
-      //if (typeof console !== "undefined" && console.log !== "undefined" && (typeof this.frames !== "undefined")) { console.log("Received:" + encode(message)); }
+
       if (typeof message.method !== "undefined") {
         // this is a request
 
-        // ako je
         var newServiceCallEvent = {
           data : serviceCallEvent.data,
           source : isWorkerComm ? eventSource : serviceCallEvent.source,
@@ -233,7 +221,7 @@ pmrpc = self.pmrpc =  function() {
           shouldCheckACL : !isWorkerComm
         };
 
-        response = processJSONRpcRequest(message, newServiceCallEvent);
+        var response = processJSONRpcRequest(message, newServiceCallEvent);
 
         // return the response
         if (response !== null) {
@@ -275,8 +263,19 @@ pmrpc = self.pmrpc =  function() {
                          createJSONRpcResponseObject(null, returnValue, id),
                          serviceCallEvent.origin);
                      };
+             // create a errorback which the service
+             // must call in order to send an error back
+             var eb = function (errorValue) {
+                 sendPmrpcMessage(
+                   serviceCallEvent.source,
+                   createJSONRpcResponseObject(
+                		   createJSONRpcErrorObject(
+                		     -1, "Application error.",errorValue.message),
+                		   null, id),
+                   serviceCallEvent.origin);
+               };
             invokeProcedure(
-              service.procedure, service.context, request.params, [cb, serviceCallEvent]);
+              service.procedure, service.context, request.params, [cb, eb, serviceCallEvent]);
             return null;
           } else {
             // if the service is not async, just call it and return the value
@@ -293,10 +292,10 @@ pmrpc = self.pmrpc =  function() {
             return null;
           }
 
-          if (error === "No such param!") {
+          if (error.match("^(No such param)")) {
             return createJSONRpcResponseObject(
               createJSONRpcErrorObject(
-                -32602, "Invalid params.", error.description),
+                -32602, "Invalid params.", error.message),
               null,
               id);
           }
@@ -304,7 +303,7 @@ pmrpc = self.pmrpc =  function() {
           // the -1 value is "application defined"
           return createJSONRpcResponseObject(
             createJSONRpcErrorObject(
-              -1, "Application error.", error.description),
+              -1, "Application error.", error.message),
             null,
             id);
         }
@@ -322,7 +321,7 @@ pmrpc = self.pmrpc =  function() {
         createJSONRpcErrorObject(
           -32601,
           "Method not found.",
-          "The requestd remote procedure does not exist or is not available."),
+          "The requested remote procedure does not exist or is not available."),
         null,
         id);
     }
@@ -352,7 +351,7 @@ pmrpc = self.pmrpc =  function() {
         "publicProcedureName" : callObj.publicProcedureName,
         "params" : callObj.params,
         "status" : "error",
-        "description" : response.error.message + " " + response.error.data} );
+        "message" : response.error.message + " " + response.error.data} );
     }
   }
 
@@ -420,7 +419,6 @@ pmrpc = self.pmrpc =  function() {
 
   // Use the postMessage API to send a pmrpc message to a destination
   function sendPmrpcMessage(destination, message, acl) {
-    //if (typeof console !== "undefined" && console.log !== "undefined" && (typeof this.frames !== "undefined")) { console.log("Sending:" + encode(message)); }
     if (typeof destination === "undefined" || destination === null) {
       self.postMessage(encode(message));
     } else if (typeof destination.frames !== "undefined") {
@@ -457,7 +455,8 @@ pmrpc = self.pmrpc =  function() {
     } else {
       // if we can ping some more - send a new ping request
       callObj.status = "pinging";
-      callObj.retries = callObj.retries - 1;
+      var retries = callObj.retries;
+      callObj.retries = retries - 1;
 
       call({
         "destination" : callObj.destination,
@@ -473,7 +472,11 @@ pmrpc = self.pmrpc =  function() {
         "retries" : 0,
         "destinationDomain" : callObj.destinationDomain});
       callQueue[callId] = callObj;
-      self.setTimeout(function() { waitAndSendRequest(callId); }, callObj.timeout / callObj.retries);
+      self.setTimeout(function() {
+        if (callQueue[callId] && callQueue[callId].status === "pinging") {
+          waitAndSendRequest(callId);
+        }
+      }, callObj.timeout / retries);
     }
   }
 
@@ -603,7 +606,7 @@ pmrpc = self.pmrpc =  function() {
   function getRegisteredProcedures() {
     var regSvcs = [];
     var origin = typeof this.frames !== "undefined" ? (window.location.protocol + "//" + window.location.host + (window.location.port !== "" ? ":" + window.location.port : "")) : "";
-    for (publicProcedureName in registeredServices) {
+    for (var publicProcedureName in registeredServices) {
       if (publicProcedureName in reservedProcedureNames) {
         continue;
       } else {
@@ -633,17 +636,18 @@ pmrpc = self.pmrpc =  function() {
     } else {
       windowsForDiscovery = params.destination;
     }
-    var originRegex = typeof params.origin === "undefined" ?
-      ".*" : params.origin;
-    var nameRegex = typeof params.publicProcedureName === "undefined" ?
-      ".*" : params.publicProcedureName;
+    var originRegex = typeof params.originRegex === "undefined" ?
+      "(.*)" : params.originRegex;
+    var nameRegex = typeof params.nameRegex === "undefined" ?
+      "(.*)" : params.nameRegex;
 
     var counter = windowsForDiscovery.length;
 
     var discoveredMethods = [];
     function addToDiscoveredMethods(methods, destination) {
       for (var i=0; i<methods.length; i++) {
-        if (methods[i].origin.match(originRegex) && methods[i].publicProcedureName.match(nameRegex)) {
+        if (methods[i].origin.match(new RegExp(originRegex)) &&
+            methods[i].publicProcedureName.match(new RegExp(nameRegex))) {
           discoveredMethods.push({
             publicProcedureName : methods[i].publicProcedureName,
             destination : destination,
@@ -684,3 +688,8 @@ pmrpc = self.pmrpc =  function() {
     discover : discover
   };
 }();
+
+//AMD suppport
+if (typeof define == 'function' && define.amd) {
+	define(pmrpc);
+}

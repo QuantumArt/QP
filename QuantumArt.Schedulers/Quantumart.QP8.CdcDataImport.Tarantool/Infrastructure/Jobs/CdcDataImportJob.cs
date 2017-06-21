@@ -68,7 +68,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                 catch (Exception ex)
                 {
                     ex.Data.Add("CustomerCode", customerKvp.Key.CustomerName);
-                    Logger.Log.Error($"There was an error on customer code: {customerKvp.Key.CustomerName}", ex);
+                    Logger.Log.Warn($"There was an error on customer code: {customerKvp.Key.CustomerName}", ex);
                     prtgErrorsHandlerVm.EnqueueNewException(ex);
                 }
             });
@@ -108,12 +108,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                         break;
                     }
                 }
-                catch (FlurlHttpException ex)
-                {
-                    Logger.Log.Warn("There was an unhandled http error while sending http push notification", ex);
-                    break;
-                }
-                catch (HttpRequestException ex)
+                catch (Exception ex)
                 {
                     Logger.Log.Warn("There was an unhandled http error while sending http push notification", ex);
                     break;

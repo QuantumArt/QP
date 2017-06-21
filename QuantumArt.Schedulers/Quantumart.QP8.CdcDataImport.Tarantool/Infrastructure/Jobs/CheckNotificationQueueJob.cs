@@ -36,7 +36,27 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             var customers = QPConfiguration.GetCustomers(AppName).Where(c => !(c.ExcludeFromSchedulers || c.ExcludeFromSchedulersCdcTarantool)).ToList();
             var customersDictionary = new Dictionary<QaConfigCustomer, bool>();
             var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(customers);
-            foreach (var customer in customers.Where(c => !c.ExcludeFromSchedulersCdcTarantool).Where(ShouldUseCdcForCustomerCode))
+            List<QaConfigCustomer> customersWithEnabledCdc;
+
+            customersWithEnabledCdc = customers.Where(c => !c.ExcludeFromSchedulersCdcTarantool).Where(customer =>
+            {
+                try
+                {
+                    return ShouldUseCdcForCustomerCode(customer);
+                }
+                catch (Exception ex)
+                {
+                    ex.Data.Clear();
+                    ex.Data.Add("CustomerCode", customer.CustomerName);
+                    Logger.Log.Warn($"There was an error read customer code settings: {customer.CustomerName}", ex);
+                    prtgErrorsHandlerVm.EnqueueNewException(ex);
+                }
+
+                return false;
+            }).ToList();
+
+
+            foreach (var customer in customersWithEnabledCdc)
             {
                 try
                 {
@@ -46,7 +66,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                 {
                     ex.Data.Clear();
                     ex.Data.Add("CustomerCode", customer.CustomerName);
-                    Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}", ex);
+                    Logger.Log.Warn($"There was an error read customer code settings: {customer.CustomerName}", ex);
                     prtgErrorsHandlerVm.EnqueueNewException(ex);
                 }
             }

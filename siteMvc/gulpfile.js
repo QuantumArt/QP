@@ -125,6 +125,8 @@ custom.paths = {
     'Scripts/Quantumart/ckeditor/codemirror/plugin.js',
     'Scripts/Quantumart/ckeditor/globalSettings.js',
 
+    'Content/jsoneditor/dist/jsoneditor.js',
+
     'Scripts/Quantumart/Utils.js',
     'Scripts/Quantumart/Cache.js',
     'Scripts/Quantumart/Common.js',
@@ -266,9 +268,9 @@ custom.paths = {
   ],
   images: [
     'Content/**/*.{jpg,jpeg,png,gif,svg}',
-
     '!Content/ckeditor/**/*.{jpg,jpeg,png,gif,svg}',
     '!Content/codemirror/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Content/build/**/*.{jpg,jpeg,png,gif,svg}',
     '!Content/build/**/*.{jpg,jpeg,png,gif,svg}'
   ],
   clean: [
@@ -395,7 +397,7 @@ gulp.task('assets:css', ['assets:revisions'], function assetsCssTask() {
   return gulp.src(custom.paths.styles)
     .pipe($.plumber({ errorHandler: custom.reportError }))
     .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
-    .pipe($.sass({ precision: 10 }).on('error', /*$.sass.logError*/bs.notify))
+    .pipe($.sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
     .pipe($.replace(/url\('/g, 'url(\'images/'))
     .pipe($.autoprefixer())
     .pipe($.cssnano({ zindex: false }))
