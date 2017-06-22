@@ -110,7 +110,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log.Warn("There was an unhandled http error while sending http push notification", ex);
+                    Logger.Log.Warn("There was an http error while sending http push notification", ex);
                     break;
                 }
             }

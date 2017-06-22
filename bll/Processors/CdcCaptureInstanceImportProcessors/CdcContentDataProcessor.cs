@@ -26,22 +26,8 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
             {
                 try
                 {
-                    object data = row[ContentDataColumnName.Data] as string;
+                    object data = GetDataField(row);
                     object blobData = row[ContentDataColumnName.BlobData] as string;
-
-                    var typedb = row[ContentDataColumnName.AttributeTypeDb] as string;
-                    var typeName = row[ContentDataColumnName.AttributeTypeName] as string;
-                    if (string.Equals(typedb, "NUMERIC", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (string.Equals(typeName, "BOOLEAN", StringComparison.OrdinalIgnoreCase))
-                        {
-                            data = Convert.ToBoolean(Convert.ToInt16(data));
-                        }
-                        else
-                        {
-                            data = data == null ? (object)null : Convert.ToDecimal(data, CultureInfo.InvariantCulture);
-                        }
-                    }
 
                     return new CdcTableTypeModel
                     {
@@ -77,6 +63,31 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                     throw new Exception($"There was an exception for parsing \"{CaptureInstanceName}\" row: {row.ToSimpleDataRow().ToJsonLog()}", ex);
                 }
             }).OrderBy(cdc => cdc.TransactionLsn).ToList();
+        }
+
+        private object GetDataField(DataRow row)
+        {
+            object data = row[ContentDataColumnName.Data] as string;
+            var typedb = row[ContentDataColumnName.AttributeTypeDb] as string;
+            var typeName = row[ContentDataColumnName.AttributeTypeName] as string;
+            if (string.Equals(typedb, "NUMERIC", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.Equals(typeName, "BOOLEAN", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Convert.ToBoolean(Convert.ToInt16(data));
+                }
+                else
+                {
+                    return data == null ? (object)null : Convert.ToDecimal(data, CultureInfo.InvariantCulture);
+                }
+            }
+
+            if (string.Equals(typedb, "DATETIME", StringComparison.OrdinalIgnoreCase))
+            {
+                return data == null ? (object)null : Convert.ToDateTime(data, CultureInfo.InvariantCulture);
+            }
+
+            return data;
         }
     }
 }

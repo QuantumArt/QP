@@ -91,7 +91,8 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services
             var contentItemModel = _cdcImportService.ImportData(CdcCaptureConstants.ContentItem, fromLsn, toLsn);
             var contentDataModel = _cdcImportService.ImportData(CdcCaptureConstants.ContentData, fromLsn, toLsn);
 
-            var contentItemsFilteredByNetChanges = contentItemModel.GetCdcDataFilteredByLsnNetChanges(cim => new
+            var filteredContentItemModel = FilterByIsSplitted(contentItemModel, contentDataModel);
+            var contentItemsFilteredByNetChanges = filteredContentItemModel.GetCdcDataFilteredByLsnNetChanges(cim => new
             {
                 contentItemId = cim.Entity.Columns[TarantoolContentArticleModel.ContentItemId].ToString(),
                 isSplitted = (bool)cim.Entity.MetaData[TarantoolContentArticleModel.IsSplitted],
@@ -106,30 +107,60 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services
                 cdm.TransactionLsn
             });
 
-            var contentDataLookup = contentDataFilteredByNetChanges.ToLookup(k => new
+            var contentDataToItemLookup = contentDataFilteredByNetChanges.ToLookup(cdm => new
             {
-                k.TransactionLsn,
-                contentItemId = k.Entity.Columns[TarantoolContentArticleModel.ContentItemId],
-                isSplitted = k.Entity.MetaData[TarantoolContentArticleModel.IsSplitted]
+                cdm.TransactionLsn,
+                contentItemId = cdm.Entity.Columns[TarantoolContentArticleModel.ContentItemId],
+                isSplitted = cdm.Entity.MetaData[TarantoolContentArticleModel.IsSplitted]
             });
 
             return contentItemsFilteredByNetChanges.AsParallel().Select(cim =>
             {
-                var fieldColumns = contentDataLookup[new
-                    {
-                        cim.TransactionLsn,
-                        contentItemId = cim.Entity.Columns[TarantoolContentArticleModel.ContentItemId],
-                        isSplitted = cim.Entity.MetaData[TarantoolContentArticleModel.IsSplitted]
-                    }]
-                    .OrderBy(cdm => cdm.SequenceLsn)
-                    .Select(cdm => new KeyValuePair<string, object>(
-                        TarantoolContentArticleModel.GetFieldName(cdm.Entity.Columns[TarantoolContentArticleModel.AttributeId]),
-                        cdm.Entity.Columns[TarantoolContentArticleModel.Data])
-                    );
+                var fieldColumns = contentDataToItemLookup[new
+                {
+                    cim.TransactionLsn,
+                    contentItemId = cim.Entity.Columns[TarantoolContentArticleModel.ContentItemId],
+                    isSplitted = cim.Entity.MetaData[TarantoolContentArticleModel.IsSplitted]
+                }].OrderBy(cdm => cdm.SequenceLsn).Select(cdm => new KeyValuePair<string, object>(
+                    TarantoolContentArticleModel.GetFieldName(cdm.Entity.Columns[TarantoolContentArticleModel.AttributeId]),
+                    cdm.Entity.Columns[TarantoolContentArticleModel.Data])
+                );
 
                 cim.Entity.Columns.AddRange(fieldColumns);
                 return cim;
             });
+        }
+
+        private IEnumerable<CdcTableTypeModel> FilterByIsSplitted(List<CdcTableTypeModel> contentItemModel, List<CdcTableTypeModel> contentDataModel)
+        {
+            if (!contentItemModel.Any())
+            {
+                yield break;
+            }
+
+            for (int i = 1; i < contentItemModel.Count; i++)
+            {
+                var currCim = contentItemModel[i];
+                var prevCim = contentItemModel[i - 1];
+                if ((bool)currCim.Entity.MetaData[TarantoolContentArticleModel.IsSplitted])
+                {
+                    if (Equals(prevCim.TransactionLsn, currCim.TransactionLsn)
+                        && Equals(prevCim.Entity.Columns[TarantoolContentArticleModel.ContentItemId], currCim.Entity.Columns[TarantoolContentArticleModel.ContentItemId])
+                        && Equals(prevCim.Entity.Columns[TarantoolContentArticleModel.StatusTypeId], currCim.Entity.Columns[TarantoolContentArticleModel.StatusTypeId])
+                        && Equals(prevCim.Entity.Columns[TarantoolContentArticleModel.Visible], currCim.Entity.Columns[TarantoolContentArticleModel.Visible])
+                        && Equals(prevCim.Entity.Columns[TarantoolContentArticleModel.Archive], currCim.Entity.Columns[TarantoolContentArticleModel.Archive])
+                        && Equals(prevCim.Entity.Columns[TarantoolContentArticleModel.LastModifiedBy], currCim.Entity.Columns[TarantoolContentArticleModel.LastModifiedBy])
+                        && !(bool)prevCim.Entity.MetaData[TarantoolContentArticleModel.IsSplitted]
+                    )
+                    {
+                        continue;
+                    }
+                }
+
+                yield return prevCim;
+            }
+
+            yield return contentItemModel.Last();
         }
     }
 }
