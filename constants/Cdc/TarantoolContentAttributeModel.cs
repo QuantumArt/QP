@@ -19,12 +19,12 @@
         public const string AttributeRelationType = "relationType";
         public const string IsAggregated = "isAggregated";
 
-        public const string O2M = "o2m";
-        public const string M2O = "m2o";
-        public const string M2M = "O2o";
+        public const string O2M = "O2M";
+        public const string M2O = "M2O";
+        public const string M2M = "M2M";
 
         public static string GetInvariantName(decimal attributeId) => $"field_{attributeId}";
 
-        public static string GetParentInvariantName(decimal contentId) => $"content_{contentId}";
+        public static string GetContentInvariantName(decimal contentId, bool isAsync) => isAsync ? $"content_{contentId}_async" : $"content_{contentId}";
     }
 }

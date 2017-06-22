@@ -12,6 +12,7 @@
         public const string ItemLinkAsync = "dbo_item_link_async";
 
         public const string VirtualContentAsync = "dbo_content_async";
+        public const string VirtualContentAttributeAsync = "dbo_content_attribute_async";
         public const string VirtualContentToContentRev = "dbo_content_to_content_rev";
         public const string VirtualContentToContentAsync = "dbo_content_to_content_async";
         public const string VirtualContentToContentAsyncRev = "dbo_content_to_content_async_rev";

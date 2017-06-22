@@ -30,6 +30,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services
                 _cdcImportService.ImportData(CdcCaptureConstants.ContentAttribute, fromLsn, toLsn),
                 _cdcImportService.ImportData(CdcCaptureConstants.ContentToContent, fromLsn, toLsn),
                 _cdcImportService.ImportData(CdcCaptureConstants.VirtualContentAsync, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.VirtualContentAttributeAsync, fromLsn, toLsn),
                 _cdcImportService.ImportData(CdcCaptureConstants.VirtualContentToContentRev, fromLsn, toLsn),
                 _cdcImportService.ImportData(CdcCaptureConstants.VirtualContentToContentAsync, fromLsn, toLsn),
                 _cdcImportService.ImportData(CdcCaptureConstants.VirtualContentToContentAsyncRev, fromLsn, toLsn),

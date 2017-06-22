@@ -12,9 +12,9 @@ using static Quantumart.QP8.Constants.Cdc.TarantoolContentAttributeModel;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
-    public class CdcContentAttributeProcessor : CdcImportProcessor
+    public class CdcContentAttributeAsyncProcessor : CdcImportProcessor
     {
-        public CdcContentAttributeProcessor(string captureInstanseName)
+        public CdcContentAttributeAsyncProcessor(string captureInstanseName)
             : base(captureInstanseName)
         {
         }
@@ -58,7 +58,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                                 { Id, attributeId },
                                 { ContentId, Convert.ToInt32(row[ContentAttributeColumnName.ContentId]) },
                                 { InvariantName, GetInvariantName(attributeId) },
-                                { ContentInvariantName, GetContentInvariantName(contentId, false) },
+                                { ContentInvariantName, GetContentInvariantName(contentId, true) },
                                 { Name, row[ContentAttributeColumnName.AttributeName] as string },
                                 { IsIndexed, relationType == O2M },
                                 { LinkId, linkId },

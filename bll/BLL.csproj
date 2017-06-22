@@ -158,6 +158,7 @@
     <Compile Include="Mappers\GenericMapperBase.cs" />
     <Compile Include="Mappers\SystemNotificationMapper.cs" />
     <Compile Include="Models\NotificationSender\SystemNotificationBulkXmlSerilizableModel.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentAttributeAsyncProcessor.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentDataProcessor.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentItemProcessor.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentAsyncProcessor.cs" />

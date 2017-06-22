@@ -25,11 +25,14 @@ namespace Quantumart.QP8.BLL.Factories
                 case CdcCaptureConstants.Content:
                     return new CdcContentProcessor(CdcCaptureConstants.Content);
 
+                case CdcCaptureConstants.ContentToContent:
+                    return new CdcContentToContentProcessor(CdcCaptureConstants.ContentToContent);
+
                 case CdcCaptureConstants.VirtualContentAsync:
                     return new CdcContentAsyncProcessor(CdcCaptureConstants.Content);
 
-                case CdcCaptureConstants.ContentToContent:
-                    return new CdcContentToContentProcessor(CdcCaptureConstants.ContentToContent);
+                case CdcCaptureConstants.VirtualContentAttributeAsync:
+                    return new CdcContentAttributeAsyncProcessor(CdcCaptureConstants.ContentAttribute);
 
                 case CdcCaptureConstants.VirtualContentToContentRev:
                     return new CdcContentToContentRevProcessor(CdcCaptureConstants.ContentToContent);
