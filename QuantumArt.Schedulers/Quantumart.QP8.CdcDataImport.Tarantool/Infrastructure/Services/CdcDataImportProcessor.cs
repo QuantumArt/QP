@@ -26,12 +26,13 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services
             var tablesGroup = new List<List<CdcTableTypeModel>>
             {
                 _cdcImportService.ImportData(CdcCaptureConstants.Content, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.StatusType, fromLsn, toLsn),
                 _cdcImportService.ImportData(CdcCaptureConstants.ContentAttribute, fromLsn, toLsn),
                 _cdcImportService.ImportData(CdcCaptureConstants.ContentToContent, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.ContentToContentRev, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.ContentToContentAsync, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.ContentToContentAsyncRev, fromLsn, toLsn),
-                _cdcImportService.ImportData(CdcCaptureConstants.StatusType, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.VirtualContentAsync, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.VirtualContentToContentRev, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.VirtualContentToContentAsync, fromLsn, toLsn),
+                _cdcImportService.ImportData(CdcCaptureConstants.VirtualContentToContentAsyncRev, fromLsn, toLsn),
                 GetItemToItemDtosFilteredByNetChanges(fromLsn, toLsn).ToList(),
                 GetItemLinkAsyncDtosFilteredByNetChanges(fromLsn, toLsn).ToList(),
                 GetContentArticleDtoFilteredByNetChanges(fromLsn, toLsn).ToList()

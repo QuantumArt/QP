@@ -12,9 +12,9 @@ using static Quantumart.QP8.Constants.Cdc.TarantoolContentModel;
 
 namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
 {
-    public class CdcContentProcessor : CdcImportProcessor
+    public class CdcContentAsyncProcessor : CdcImportProcessor
     {
-        public CdcContentProcessor(string captureInstanseName)
+        public CdcContentAsyncProcessor(string captureInstanseName)
             : base(captureInstanseName)
         {
         }
@@ -25,7 +25,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
             {
                 try
                 {
-                    var isAsync = false;
+                    var isAsync = true;
                     var contentId = Convert.ToDecimal(row[ContentColumnName.ContentId]);
                     return new CdcTableTypeModel
                     {
@@ -46,7 +46,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                                 { UseSplitting, !isAsync },
                                 { ContentId, contentId },
                                 { InvariantName, GetInvariantName(contentId, isAsync) },
-                                { InvariantNameAsync, GetInvariantName(contentId, !isAsync) },
+                                { InvariantNameSync, GetInvariantName(contentId, !isAsync) },
                                 { ContentName, row[ContentColumnName.ContentName] as string },
                                 { NetContentName, row[ContentColumnName.NetContentName] as string },
                                 { IsForReplication, true },

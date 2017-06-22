@@ -23,7 +23,7 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
         /// <param name="captureInstance">Using to customize import and processing cdc data from db</param>
         /// <param name="fromLsn">Lower bound lsn, if null - min available for each table will be used</param>
         /// <param name="toLsn">Upper bound lsn, if null - max lsn for database will be used</param>
-        /// <returns></returns>
+        /// <returns>Get cdc table data</returns>
         List<CdcTableTypeModel> ImportData(string captureInstance, string fromLsn = null, string toLsn = null);
 
         /// <summary>

@@ -6,7 +6,13 @@ namespace Quantumart.QP8.Constants.Cdc
     {
         public const string IsForReplication = "isForReplication";
         public const string DefaultFieldsName = "defaultFields";
+
         public static readonly string ContentId = ContentColumnName.ContentId.ToUpper();
+        public static readonly string IsAsync = "isAsync";
+        public static readonly string UseSplitting = "useSplitting";
+        public static readonly string InvariantName = "invariantName";
+        public static readonly string InvariantNameSync = "invariantNameSync";
+        public static readonly string InvariantNameAsync = "invariantNameAsync";
         public static readonly string ContentName = ContentColumnName.ContentName.ToUpper();
         public static readonly string NetContentName = ContentColumnName.NetContentName.ToUpper();
 
@@ -20,5 +26,7 @@ namespace Quantumart.QP8.Constants.Cdc
             new { order = 6, isIndexed = false, isLocalization = false, isSystem = true, isRelation = false, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "DATETIME", invariantName = "MODIFIED", name = "MODIFIED", netAttributeName = "Modified" },
             new { order = 7, isIndexed = false, isLocalization = false, isSystem = true, isRelation = false, isClassifier = false, isPrimaryKey = true, isAggregated = false, storageType = "INT", invariantName = "LAST_MODIFIED_BY", name = "LAST_MODIFIED_BY", netAttributeName = "LastModifiedBy" }
         };
+
+        public static string GetInvariantName(decimal contentId, bool isAsync) => isAsync ? $"content_{contentId}_async" : $"content_{contentId}";
     }
 }

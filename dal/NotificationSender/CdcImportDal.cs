@@ -97,10 +97,12 @@ LEFT JOIN (
 	FROM dbo.ATTRIBUTE_TYPE attrt
 ) result ON result.attr_type_id = cdc.ATTRIBUTE_TYPE_ID";
                     break;
+
                 case CdcCaptureConstants.ContentItem:
                     filterClause = @"
 WHERE __$operation = 2 OR not_for_replication = 0";
                     break;
+
                 case CdcCaptureConstants.ContentData:
                     filterClause = $@"
 INNER JOIN 

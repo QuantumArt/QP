@@ -25,6 +25,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
             {
                 try
                 {
+                    var contentId = Convert.ToInt32(row[ContentAttributeColumnName.ContentId]);
                     var attributeId = Convert.ToInt32(row[ContentAttributeColumnName.AttributeId]);
                     var attributeTypeId = Convert.ToInt32(row[ContentAttributeColumnName.AttributeTypeId]);
                     var linkId = row[ContentAttributeColumnName.LinkId] == DBNull.Value ? (int?)null : Convert.ToInt32(row[ContentAttributeColumnName.LinkId]);
@@ -57,6 +58,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors
                                 { Id, attributeId },
                                 { ContentId, Convert.ToInt32(row[ContentAttributeColumnName.ContentId]) },
                                 { InvariantName, GetInvariantName(attributeId) },
+                                { ContentInvariantName, GetParentInvariantName(contentId) },
                                 { Name, row[ContentAttributeColumnName.AttributeName] as string },
                                 { IsIndexed, relationType == O2M },
                                 { LinkId, linkId },

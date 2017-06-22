@@ -160,9 +160,10 @@
     <Compile Include="Models\NotificationSender\SystemNotificationBulkXmlSerilizableModel.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentDataProcessor.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentItemProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentAsyncProcessor.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentToContentAsyncProcessor.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentToContentAsyncRevProcessor.cs" />
-    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentToContentProcessorRev.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentToContentRevProcessor.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcItemLinkAsyncProcessor.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcItemToItemProcessor.cs" />
     <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentToContentProcessor.cs" />

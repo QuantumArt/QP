@@ -5,6 +5,7 @@
         public const string Id = "id";
         public const string ContentId = "contentId";
         public const string InvariantName = "invariantName";
+        public const string ContentInvariantName = "contentInvariantName";
         public const string Name = "name";
         public const string IsIndexed = "isIndexed";
         public const string LinkId = "linkId";
@@ -23,5 +24,7 @@
         public const string M2M = "O2o";
 
         public static string GetInvariantName(decimal attributeId) => $"field_{attributeId}";
+
+        public static string GetParentInvariantName(decimal contentId) => $"content_{contentId}";
     }
 }
