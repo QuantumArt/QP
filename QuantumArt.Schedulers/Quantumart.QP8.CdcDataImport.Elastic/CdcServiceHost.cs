@@ -1,32 +1,38 @@
-﻿using AutoMapper;
-using Flurl.Http;
-using Flurl.Http.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using QP8.Infrastructure;
 using QP8.Infrastructure.Logging;
-using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure;
+using Quartz;
+using Topshelf;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic
 {
-    internal class CdcServiceHost
+    public class CdcServiceHost : ServiceControl
     {
-        public void Start()
-        {
-            Mapper.Initialize(cfg => { cfg.AddProfile<ElasticMapperProfile>(); });
-            FlurlHttp.Configure(c =>
-            {
-                c.JsonSerializer = new NewtonsoftJsonSerializer(new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                });
-            });
+        private readonly IScheduler _scheduler;
 
-            Logger.Log.Debug("Service was started");
+        public CdcServiceHost(IScheduler scheduler)
+        {
+            Ensure.Argument.NotNull(scheduler);
+            _scheduler = scheduler;
         }
 
-        public void Stop()
+        public bool Start(HostControl hostControl)
         {
+            if (!_scheduler.IsStarted)
+            {
+                _scheduler.Start();
+            }
+
+            Logger.Log.Debug("Service was started");
+            return true;
+        }
+
+        public bool Stop(HostControl hostControl)
+        {
+            Logger.Log.Debug("Stopping scheduler");
+            _scheduler.Shutdown(true);
+
             Logger.Log.Debug("Service was stopped");
+            return true;
         }
     }
 }

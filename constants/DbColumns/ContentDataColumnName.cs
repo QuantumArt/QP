@@ -3,6 +3,7 @@
     public class ContentDataColumnName
     {
         public const string TableName = "content_data";
+        public const string ContentId = "content_id";
         public const string AttributeId = "attribute_id";
         public const string ContentItemId = "content_item_id";
         public const string ContentDataId = "content_data_id";

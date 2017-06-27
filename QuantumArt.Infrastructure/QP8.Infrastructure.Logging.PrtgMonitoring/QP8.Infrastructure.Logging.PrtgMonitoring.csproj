@@ -141,6 +141,10 @@
     <None Include="QP8.Infrastructure.Logging.PrtgMonitoring.nuspec" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\constants\Constants.csproj">
+      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
+      <Name>Constants</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6E317F05-226C-4C9F-B918-FE71D743C3A3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>

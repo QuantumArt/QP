@@ -2,6 +2,7 @@
 {
     public class LoggerData
     {
+        public const string AppNameCustomVariable = "appName";
         public const string CustomerCodeCustomVariable = "customerCode";
         public const string HttpErrorCodeCustomVariable = "httpErrorCode";
         public const string EnterpiseBaseCategory = "Custom";

@@ -25,6 +25,11 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
             return QPContext.EFContext.SystemNotificationSet.Any(entity => !entity.Sent);
         }
 
+        public bool ExistsUnsentNotifications(string providerUrl)
+        {
+            return QPContext.EFContext.SystemNotificationSet.Any(entity => entity.CdcLastExecutedLsn.ProviderUrl == providerUrl && !entity.Sent);
+        }
+
         public void UpdateSentNotifications(IEnumerable<int> notificationIds)
         {
             CommonSystemNotificationsDal.UpdateSentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
@@ -40,11 +45,11 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
             CommonSystemNotificationsDal.DeleteSentNotifications(QPConnectionScope.Current.DbConnection);
         }
 
-        public void InsertNotification(List<SystemNotificationModel> notifications)
+        public void InsertNotification(IEnumerable<SystemNotificationModel> notifications)
         {
             var rawXml = XmlSerializerHelpers.Serialize(new SystemNotificationBulkXmlSerilizableModel
             {
-                Notifications = notifications
+                Notifications = notifications.ToList()
             });
 
             CommonSystemNotificationsDal.InsertNotifications(QPConnectionScope.Current.DbConnection, rawXml);

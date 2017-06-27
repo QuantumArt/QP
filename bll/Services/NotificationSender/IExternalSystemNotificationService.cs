@@ -1,5 +1,5 @@
-﻿using Quantumart.QP8.BLL.Models.NotificationSender;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Quantumart.QP8.BLL.Models.NotificationSender;
 
 namespace Quantumart.QP8.BLL.Services.NotificationSender
 {
@@ -17,6 +17,8 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
 
         bool ExistsUnsentNotifications();
 
-        void InsertNotification(List<SystemNotificationModel> notifications);
+        bool ExistsUnsentNotifications(string providerUrl);
+
+        void InsertNotification(IEnumerable<SystemNotificationModel> notifications);
     }
 }

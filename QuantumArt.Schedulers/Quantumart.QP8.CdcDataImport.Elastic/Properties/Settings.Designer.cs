@@ -25,7 +25,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://authorproxy.com/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://mscnosql01:9200/")]
         public string HttpEndpoint {
             get {
                 return ((string)(this["HttpEndpoint"]));
@@ -34,7 +34,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("00:00:30")]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:00:20")]
         public global::System.TimeSpan CheckNotificationsQueueRecurrentTimeout {
             get {
                 return ((global::System.TimeSpan)(this["CheckNotificationsQueueRecurrentTimeout"]));

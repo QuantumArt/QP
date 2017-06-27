@@ -8,6 +8,7 @@ using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure;
+using Quantumart.QP8.CdcDataImport.Tarantool.Properties;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Configuration.Models;
 using Quartz;
@@ -36,9 +37,8 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             var customers = QPConfiguration.GetCustomers(AppName).Where(c => !(c.ExcludeFromSchedulers || c.ExcludeFromSchedulersCdcTarantool)).ToList();
             var customersDictionary = new Dictionary<QaConfigCustomer, bool>();
             var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(customers);
-            List<QaConfigCustomer> customersWithEnabledCdc;
 
-            customersWithEnabledCdc = customers.Where(c => !c.ExcludeFromSchedulersCdcTarantool).Where(customer =>
+            var customersWithEnabledCdc = customers.Where(customer =>
             {
                 try
                 {
@@ -54,7 +54,6 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
 
                 return false;
             }).ToList();
-
 
             foreach (var customer in customersWithEnabledCdc)
             {
@@ -87,7 +86,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
         {
             using (new QPConnectionScope(customer.ConnectionString))
             {
-                return !_systemNotificationService.ExistsUnsentNotifications();
+                return !_systemNotificationService.ExistsUnsentNotifications(Settings.Default.HttpEndpoint);
             }
         }
 

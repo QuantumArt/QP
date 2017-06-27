@@ -5,7 +5,7 @@ using Topshelf;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool
 {
-    internal class CdcServiceHost : ServiceControl
+    public class CdcServiceHost : ServiceControl
     {
         private readonly IScheduler _scheduler;
 

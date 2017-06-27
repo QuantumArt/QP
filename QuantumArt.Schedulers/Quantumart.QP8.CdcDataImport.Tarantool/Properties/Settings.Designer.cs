@@ -25,15 +25,6 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("qwhttpqw://mscnix01123.artq.com/product-building/replication")]
-        public string HttpEndpoint {
-            get {
-                return ((string)(this["HttpEndpoint"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("00:00:20")]
         public global::System.TimeSpan CheckNotificationsQueueRecurrentTimeout {
             get {
@@ -56,6 +47,15 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Properties {
         public global::System.TimeSpan HttpTimeout {
             get {
                 return ((global::System.TimeSpan)(this["HttpTimeout"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://mscnix01.artq.com/product-building/replication")]
+        public string HttpEndpoint {
+            get {
+                return ((string)(this["HttpEndpoint"]));
             }
         }
     }

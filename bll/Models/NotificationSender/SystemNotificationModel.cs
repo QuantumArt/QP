@@ -6,6 +6,8 @@ namespace Quantumart.QP8.BLL.Models.NotificationSender
     {
         public int Id { get; set; }
 
+        public int CdcLastExecutedLsnId { get; set; }
+
         public string TransactionLsn { get; set; }
 
         public DateTime TransactionDate { get; set; }

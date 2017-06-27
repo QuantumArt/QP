@@ -15,13 +15,14 @@ using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.BLL.Services.CdcImport;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Data;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services;
 using Quantumart.QP8.CdcDataImport.Tarantool.Properties;
 using Quantumart.QP8.Configuration.Models;
-using Quantumart.QP8.Constants.Cdc;
+using Quantumart.QP8.Constants.Cdc.Tarantool;
 using Quartz;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
@@ -84,8 +85,8 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
 
             Ensure.Items(tableTypeModels, ttm => ttm.ToLsn == lastExecutedLsn, "All cdc tables should be proceeded at single transaction");
 
-            var notSendedDtosQueue = new Queue<CdcDataTableDto>(GroupCdcTableTypeModelsByLsn(customer.CustomerName, tableTypeModels));
             string lastPushedLsn = null;
+            var notSendedDtosQueue = new Queue<CdcDataTableDto>(GroupCdcTableTypeModelsByLsn(customer.CustomerName, tableTypeModels));
             while (shouldSendHttpRequests && notSendedDtosQueue.Any() && !_cts.Token.IsCancellationRequested)
             {
                 shouldSendHttpRequests = false;
@@ -164,20 +165,30 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             return result;
         }
 
-        private static async Task<HttpResponseMessage> PushDataToHttpChannel(CdcDataTableDto data) =>
-            await Settings.Default.HttpEndpoint.AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostJsonAsync(new NginxResponse(data));
-
-        private void AddDataToNotificationQueue(QaConfigCustomer customer, List<CdcDataTableDto> data, string lastPushedLsn, string lastExecutedLsn)
+        private void AddDataToNotificationQueue(QaConfigCustomer customer, IEnumerable<CdcDataTableDto> data, string lastPushedLsn, string lastExecutedLsn)
         {
+            Ensure.That(lastPushedLsn == null || !string.IsNullOrWhiteSpace(lastPushedLsn));
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             using (new QPConnectionScope(customer.ConnectionString))
             {
-                var notificationsData = Mapper.Map<List<CdcDataTableDto>, List<SystemNotificationModel>>(data);
-                _systemNotificationService.InsertNotification(notificationsData);
-                _cdcImportService.PostLastExecutedLsn(Settings.Default.HttpEndpoint, lastPushedLsn, lastExecutedLsn);
+                var cdcLastExecutedLsnId = _cdcImportService.PostLastExecutedLsn(Settings.Default.HttpEndpoint, lastPushedLsn, lastExecutedLsn);
+                _systemNotificationService.InsertNotification(GetSystemNotificationModels(cdcLastExecutedLsnId, data));
                 ts.Complete();
             }
         }
+
+        private static IEnumerable<SystemNotificationModel> GetSystemNotificationModels(int cdcLastExecutedLsnId, IEnumerable<CdcDataTableDto> cdcDataTableDtos)
+        {
+            foreach (var dto in cdcDataTableDtos)
+            {
+                var systemNotificationModel = Mapper.Map<CdcDataTableDto, SystemNotificationModel>(dto);
+                systemNotificationModel.CdcLastExecutedLsnId = cdcLastExecutedLsnId;
+                yield return systemNotificationModel;
+            }
+        }
+
+        private static async Task<HttpResponseMessage> PushDataToHttpChannel(CdcDataTableDto data) =>
+            await Settings.Default.HttpEndpoint.AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostJsonAsync(new NginxRequest(data));
 
         public void Interrupt()
         {

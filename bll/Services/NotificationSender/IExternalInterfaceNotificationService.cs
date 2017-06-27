@@ -1,5 +1,5 @@
-﻿using Quantumart.QP8.BLL.Models.NotificationSender;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Quantumart.QP8.BLL.Models.NotificationSender;
 
 namespace Quantumart.QP8.BLL.Services.NotificationSender
 {

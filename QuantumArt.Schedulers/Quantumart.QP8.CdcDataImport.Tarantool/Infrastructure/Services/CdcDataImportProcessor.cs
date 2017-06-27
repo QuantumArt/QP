@@ -3,11 +3,11 @@ using System.Linq;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Models.NotificationSender;
-using Quantumart.QP8.BLL.Services.NotificationSender;
+using Quantumart.QP8.BLL.Services.CdcImport;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Helpers;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.Constants.Cdc;
+using Quantumart.QP8.Constants.Cdc.Tarantool;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services
 {
@@ -93,7 +93,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services
             var contentItemModel = _cdcImportService.ImportData(CdcCaptureConstants.ContentItem, fromLsn, toLsn);
             var contentDataModel = _cdcImportService.ImportData(CdcCaptureConstants.ContentData, fromLsn, toLsn);
 
-            var filteredContentItemModel = FilterByIsSplitted(contentItemModel, contentDataModel);
+            var filteredContentItemModel = FilterByIsSplitted(contentItemModel);
             var contentItemsFilteredByNetChanges = filteredContentItemModel.GetCdcDataFilteredByLsnNetChanges(cim => new
             {
                 contentItemId = cim.Entity.Columns[TarantoolContentArticleModel.ContentItemId].ToString(),
@@ -133,14 +133,14 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services
             });
         }
 
-        private IEnumerable<CdcTableTypeModel> FilterByIsSplitted(List<CdcTableTypeModel> contentItemModel, List<CdcTableTypeModel> contentDataModel)
+        private static IEnumerable<CdcTableTypeModel> FilterByIsSplitted(IReadOnlyList<CdcTableTypeModel> contentItemModel)
         {
             if (!contentItemModel.Any())
             {
                 yield break;
             }
 
-            for (int i = 1; i < contentItemModel.Count; i++)
+            for (var i = 1; i < contentItemModel.Count; i++)
             {
                 var currCim = contentItemModel[i];
                 var prevCim = contentItemModel[i - 1];

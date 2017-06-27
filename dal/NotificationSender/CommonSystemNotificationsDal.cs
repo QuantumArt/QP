@@ -9,12 +9,14 @@ namespace Quantumart.QP8.DAL.NotificationSender
         private const string InsertNotificationsQuery =
             @"INSERT INTO [dbo].[SYSTEM_NOTIFICATION_QUEUE]
 			(
+                [CdcLastExecutedLsnId],
 				[TRANSACTION_LSN],
 				[TRANSACTION_DATE],
 				[URL],
 				[JSON]
 			)
 			SELECT
+                col.value('(CdcLastExecutedLsnId)[1]','int') [CdcLastExecutedLsnId],
                 col.value('(TransactionLsn)[1]','varchar(22)') [TRANSACTION_LSN],
                 col.value('(TransactionDate)[1]','datetime') [TRANSACTION_DATE],
                 col.value('(Url)[1]','nvarchar(max)') [URL],

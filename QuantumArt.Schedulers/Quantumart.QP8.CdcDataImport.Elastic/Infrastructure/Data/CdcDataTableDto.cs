@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Data
 {
@@ -11,6 +10,6 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Data
 
         public DateTime TransactionDate { get; set; }
 
-        public List<CdcChangeDto> Changes { get; set; }
+        public CdcEntityDto Entity { get; set; }
     }
 }
