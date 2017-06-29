@@ -108,6 +108,7 @@ custom.paths = {
     'Scripts/telerik/telerik.splitter.js',
 
     'Content/ckeditor/ckeditor.js',
+    'Content/jsoneditor/dist/jsoneditor.js',
     'Content/codemirror/lib/codemirror.js',
     'Content/codemirror/mode/clike/clike.js',
     'Content/codemirror/mode/sql/sql.js',
@@ -130,8 +131,6 @@ custom.paths = {
     'Scripts/Quantumart/ckeditor/typographer/plugin.js',
     'Scripts/Quantumart/ckeditor/codemirror/plugin.js',
     'Scripts/Quantumart/ckeditor/globalSettings.js',
-
-    'Content/jsoneditor/dist/jsoneditor.js',
 
     'Scripts/Quantumart/Utils.js',
     'Scripts/Quantumart/Cache.js',
@@ -261,7 +260,6 @@ custom.paths = {
     'Content/jquery.qtip.css',
     'Content/imgCropResizeClient.css',
     'Content/imgareaselect.css',
-    'Content/version.6.3.css',
     'Content/jquery.jeegoocontext.qp8.css',
     'Content/telerik.qp8.css',
     'Content/codemirror/lib/codemirror.css',

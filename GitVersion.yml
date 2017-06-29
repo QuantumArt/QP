@@ -6,7 +6,7 @@ tag-prefix: '[vV](?:ersion)?[-_.\s]?'
 continuous-delivery-fallback-tag: ci
 major-version-bump-message: '\+semver:\s?(breaking|major)'
 minor-version-bump-message: '\+semver:\s?(feature|minor)'
-patch-version-bump-message: '\+semver:\s?(fix|patch|bugfix)'
+patch-version-bump-message: '\+semver:\s?(bugfix|patch|fix)'
 commit-message-incrementing: Enabled
 branches:
   master:
