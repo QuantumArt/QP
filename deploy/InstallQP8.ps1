@@ -1,6 +1,6 @@
 ﻿# restart as admin
 If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{   
+{
     $arguments = "-noexit & '" + $myinvocation.mycommand.definition + "'"
     Start-Process powershell -Verb runAs -ArgumentList $arguments
     Break
@@ -44,7 +44,7 @@ if ($b) { throw "Binding for port $port already exists"}
 
 $p = Get-Item "IIS:\AppPools\$name" -ErrorAction SilentlyContinue
 
-if (!$p) { 
+if (!$p) {
 
     Write-Host "Creating application pool..."
 
@@ -77,7 +77,7 @@ if (Test-Path($BackendZipPath))
         $currentPath = Read-Host "Please enter path to install QP8 (default - $defaultcurrentPath)"
         if ([string]::IsNullOrEmpty($currentPath)) { $currentPath = $defaultcurrentPath }
     }
-    
+
     if (-not(Test-Path($currentPath))) { New-Item $currentPath -ItemType Directory }
 }
 
@@ -104,11 +104,11 @@ if (Test-Path($BackendZipPath))
     if (-not(Test-Path($rootPath))) { New-Item $rootPath -ItemType Directory}
     if (-not(Test-Path($qaPath))) { New-Item $qaPath -ItemType Directory}
 
-    Invoke-Expression "7za.exe x -r -y -o""$BackendPath"" ""$BackendZipPath"""
-    Invoke-Expression "7za.exe x -r -y -o""$WinlogonPath"" ""$WinlogonZipPath"""
-    if ((Test-Path($pluginsZipPath))) { Invoke-Expression "7za.exe x -r -y -o""$pluginsPath"" ""$pluginsZipPath""" }
-    Invoke-Expression "7za.exe x -r -y -o""$rootPath"" ""$sitesZipPath"""
-    Invoke-Expression "7za.exe x -r -y -o""$qaPath"" ""$qaZipPath"""
+    Expand-Archive -LiteralPath $BackendZipPath -DestinationPath $BackendPath
+    Expand-Archive -LiteralPath $WinlogonZipPath -DestinationPath $WinlogonPath
+    if ((Test-Path($pluginsZipPath))) { Expand-Archive -LiteralPath $pluginsZipPath -DestinationPath $pluginsPath }
+    Expand-Archive -LiteralPath $sitesZipPath -DestinationPath  $rootPath
+    Expand-Archive -LiteralPath $qaZipPath -DestinationPath  $qaPath
 }
 
 Give-Access "IIS AppPool\$name" $currentPath 'ReadAndExecute'
@@ -159,7 +159,7 @@ $sourcePsPath = Join-Path $qaPath "AddToRegistry.ps1"
 
 if (-not(Test-Path $configDir -PathType Container))
 {
-    New-Item $configDir -ItemType Directory 
+    New-Item $configDir -ItemType Directory
 }
 
 if (-not(Test-Path $configPath -PathType Leaf))
@@ -184,7 +184,7 @@ $sdk3path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 T
 if (Test-Path $sdk1path -PathType Container)
 {
     Copy-Item "$sdk1path\sqlmetal.*" $configDir
-} 
+}
 elseif (Test-Path $sdk2path -PathType Container)
 {
     Copy-Item "$sdk2path\sqlmetal.*" $configDir
@@ -202,7 +202,7 @@ $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule('Everyone', 
 if (-not(Test-Path $tempDir -PathType Container))
 {
     Write-Host "Creating temporary directory..."
-    
+
     New-Item $tempDir -ItemType Directory
 
     Give-Access 'Everyone' $tempDir 'Modify'
@@ -214,7 +214,7 @@ if (-not(Test-Path $logDir -PathType Container))
     Write-Host "Creating directory for logs..."
 
     New-Item $logDir -ItemType Directory
-    
+
     Give-Access 'Everyone' $logDir 'Modify'
 }
 
