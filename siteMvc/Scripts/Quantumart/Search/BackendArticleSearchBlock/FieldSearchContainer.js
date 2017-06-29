@@ -184,6 +184,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
       case Quantumart.QP8.Enums.ArticleFieldSearchType.TimeRange:
         this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch(this._contentContainerElement, this._parentEntityId, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldId, Quantumart.QP8.Enums.ArticleFieldSearchType.TimeRange);
         break;
+      case Quantumart.QP8.Enums.ArticleFieldSearchType.DateTimeRange:
+        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch(this._contentContainerElement, this._parentEntityId, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldId, Quantumart.QP8.Enums.ArticleFieldSearchType.DateTimeRange);
+        break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Classifier:
         this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch(this._contentContainerElement, this._parentEntityId, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldId, Quantumart.QP8.Enums.ArticleFieldSearchType.Classifier);
         break;
@@ -201,6 +204,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier:
         return { w: 365, h: 150 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Text:
+        return { w: 410, h: 150 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum:
         return { w: 410, h: 130 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean:
@@ -208,6 +212,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
       case Quantumart.QP8.Enums.ArticleFieldSearchType.DateRange:
       case Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange:
       case Quantumart.QP8.Enums.ArticleFieldSearchType.TimeRange:
+      case Quantumart.QP8.Enums.ArticleFieldSearchType.DateTimeRange:
         return { w: 350, h: 200 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.O2MRelation:
       case Quantumart.QP8.Enums.ArticleFieldSearchType.M2MRelation:

@@ -39,7 +39,8 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
             "BackendEntityEditorAutoSaver.Lang.js",
             "BackendImageCropResizeClient.Lang.js",
             "BackendCommunacation.Lang.js",
-            "BackendDocumentHost.Lang.js"
+            "BackendDocumentHost.Lang.js",
+            "BackendTextArea.Lang.js"
         };
 
         public void ProcessRequest(HttpContext context)

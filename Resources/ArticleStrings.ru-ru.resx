@@ -609,4 +609,10 @@
   <data name="Archive" xml:space="preserve">
     <value>Архивная</value>
   </data>
+  <data name="SearchBlock_ExactMatchBoxLabelText" xml:space="preserve">
+    <value>Точное совпадение</value>
+  </data>
+  <data name="SearchBlock_StartBeginningCheckBoxLabelText" xml:space="preserve">
+    <value>Поиск от начала строки</value>
+  </data>
 </root>

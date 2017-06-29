@@ -136,6 +136,13 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="NLog.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <Content Include="Views\WinLogOn\Popup.cshtml" />
     <None Include="Views\WinLogOn\Index.cshtml" />
@@ -186,6 +193,14 @@
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
+      <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
+      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
+      <Name>QP8.Infrastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -203,8 +218,5 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)dal\scripts\fix_dbo.sql" "$(ProjectDir)" /s /e /r /i /y</PostBuildEvent>
-  </PropertyGroup>
   <Import Project="$(SolutionDir)packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('$(SolutionDir)packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
 </Project>

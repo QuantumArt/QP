@@ -1,3 +1,38 @@
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_TO_ITEM]') AND name = 'IS_REV')
+	ALTER TABLE [dbo].[ITEM_TO_ITEM] ADD [IS_REV] [bit] NOT NULL DEFAULT ((0))
+GO
+
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_LINK_ASYNC]') AND name = 'IS_REV')
+	ALTER TABLE [dbo].[ITEM_LINK_ASYNC] ADD [IS_REV] [bit] NOT NULL DEFAULT ((0))
+GO
+
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_TO_ITEM]') AND name = 'IS_SELF')
+	ALTER TABLE [dbo].[ITEM_TO_ITEM] ADD [IS_SELF] [bit] NOT NULL DEFAULT ((0))
+GO
+
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_LINK_ASYNC]') AND name = 'IS_SELF')
+	ALTER TABLE [dbo].[ITEM_LINK_ASYNC] ADD [IS_SELF] [bit] NOT NULL DEFAULT ((0))
+GO
+
+ALTER VIEW [dbo].[item_link] AS
+SELECT ii.link_id AS link_id, ii.l_item_id AS item_id, ii.r_item_id AS linked_item_id, ii.is_rev, ii.is_self
+FROM item_to_item AS ii
+GO
+
+ALTER VIEW [dbo].[item_link_united] AS
+select link_id, item_id, linked_item_id, is_rev, is_self from item_link il where not exists (select * from content_item_splitted cis where il.item_id = cis.CONTENT_ITEM_ID)
+union all
+SELECT link_id, item_id, linked_item_id, is_rev, is_self from item_link_async ila
+GO
+
+ALTER VIEW [dbo].[site_item_link] AS
+SELECT l.link_id, l.l_item_id, l.r_item_id, c.site_id
+FROM item_to_item AS l
+  LEFT OUTER JOIN content_item AS i ON i.content_item_id = l.l_item_id
+  LEFT OUTER JOIN content AS c ON c.content_id = i.content_id
+GO
+
+exec sp_refreshview 'item_link_united_full'
 
 exec qp_drop_existing 'qp_build_link_table', 'IsProcedure'
 GO
@@ -92,6 +127,18 @@ BEGIN
   set @sql = 'insert into item_link_' + cast(@link_id as varchar) + '_async_rev select ' + @rev_fields + ' from item_link_async il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID  where CONTENT_ID = '+ cast(@r_content_id as varchar) + ' and link_id = ' + cast(@link_id as varchar)
   exec(@sql)
 
+  if @r_content_id <> @l_content_id
+  BEGIN
+    update item_link set is_rev = 1 from item_link il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID = @r_content_id
+    update item_link set is_rev = 1 from item_link_async il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID = @r_content_id
+  END
+
+  if @r_content_id = @l_content_id
+  BEGIN
+    update item_link set is_self = 1 where link_id = @link_id
+    update item_link_async set is_self = 1 where link_id = @link_id
+  END
+
 END
 GO
 
@@ -155,6 +202,12 @@ BEGIN
   declare @table_name nvarchar(50)
   set @table_name = 'item_link_' + cast(@link_id as varchar)
 
+  declare @is_self BIT
+  select @is_self = CASE WHEN l_content_id = r_content_id THEN 1 ELSE 0 END from content_to_content where link_id = @link_id
+
+  declare @source_name nvarchar(20)
+  set @source_name = CASE WHEN @is_async = 1 THEN 'item_link_async' ELSE 'item_link' END
+
   if @is_async = 1
     set @table_name = @table_name + '_async'
 
@@ -169,12 +222,30 @@ BEGIN
   declare @condition nvarchar(200)
   select @condition = case when @reverse_fields = 0 then 'il2.id = il.id and il2.linked_id = il.linked_id' else 'il2.id = il.linked_id and il2.linked_id = il.id' end
 
+  declare @links2 LINKS
 
-  set @sql = 'insert into ' + @table_name + ' select ' + @rev_fields + ' from @links il inner join content_item ci with(nolock) on il.id = ci.CONTENT_ITEM_ID where CONTENT_ID = @content_id '
-  + ' and not exists(select * from ' + @table_name + ' il2 where ' + @condition + ')'
+  insert into @links2 select il.* from @links il inner join content_item ci with(nolock) on il.id = ci.CONTENT_ITEM_ID where CONTENT_ID = @content_id
 
-  exec sp_executesql @sql, N'@link_id numeric, @content_id numeric, @links LINKS READONLY', @link_id = @link_id , @content_id = @content_id, @links = @links
+  set @sql = 'insert into ' + @table_name + ' select ' + @rev_fields + ' from @links2 il'
+  + ' where not exists(select * from ' + @table_name + ' il2 where ' + @condition + ')'
 
+  exec sp_executesql @sql, N'@link_id numeric, @links2 LINKS READONLY', @link_id = @link_id, @links2 = @links2
+
+  if @is_self = 1
+  BEGIN
+    set @sql =
+    'update ' + @source_name + ' set is_self = 1 from ' + @source_name + ' i with(rowlock) ' +
+    'inner join @links2 i2 on i.link_id = @link_id and i.item_id = i2.id and i.linked_item_id = i2.linked_id '
+  END
+
+  if @use_reverse_table = 1 and @is_self = 0
+  BEGIN
+    set @sql =
+    'update ' + @source_name + ' set is_rev = 1 from ' + @source_name + ' i with(rowlock) ' +
+    'inner join @links2 i2 on i.link_id = @link_id and i.item_id = i2.id and i.linked_item_id = i2.linked_id '
+  END
+
+  exec sp_executesql @sql, N'@link_id numeric, @links2 LINKS READONLY', @link_id = @link_id, @links2 = @links2
 
 END
 GO

@@ -1,4 +1,4 @@
-/* global CodeMirror */
+/* global CodeMirror, JSONEditor */
 
 Quantumart.QP8.BackendHighlightedTextArea = function BackendHighlightedTextArea(componentElem) {
   this._componentElem = componentElem;
@@ -30,6 +30,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
 
   _editorWidth: null,
   _editorHeight: null,
+
+  _minJsonEditorHeight: 190,
 
   _openLibrary: function () {
     var eventArgs = new Quantumart.QP8.BackendEventArgs();
@@ -100,6 +102,17 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
           contentFieldName: this._componentElem.closest('dl').data('field_name')
         });
       }
+    } else if (this._componentElem.data('jsonEditor')) {
+      curVal = this._componentElem.data('jsonEditor').getText();
+      if (this._storedTempValue !== curVal) {
+        this._storedTempValue = curVal;
+        this._componentElem.addClass(window.CHANGED_FIELD_CLASS_NAME);
+        this._componentElem.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, {
+          fieldName: this._componentElem.attr('name'),
+          value: this._componentElem.data('jsonEditor').getText(),
+          contentFieldName: this._componentElem.closest('dl').data('field_name')
+        });
+      }
     }
   },
 
@@ -148,40 +161,80 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   initialize: function () {
-    var cm;
     var tArea = this._componentElem;
     this._presentationOrCodeBehind = tArea.data('is_presentation') === 'True';
     this._templateId = tArea.data('template_id');
     this._formatId = tArea.data('format_id');
     this._netLanguageId = tArea.data('net_language');
     this._libraryEntityId = tArea.data('site_id');
-    if ($q.isNull(tArea.data('codeMirror'))) {
-      this._componentElem.wrap('<div class="CodemirrorContainer">');
-      cm = CodeMirror.fromTextArea(this._componentElem.get(0), {
-        lineNumbers: $q.toBoolean(tArea.data('hta_lineNumbers'), true),
-        matchBrackets: $q.toBoolean(tArea.data('hta_matchBrackets'), true),
-        lineWrapping: $q.toBoolean(tArea.data('hta_lineWrapping'), true),
-        mode: this.getMode(tArea),
-        readOnly: tArea.is('[disabled]'),
-        tabMode: 'indent'
-      });
-
-      this.initTemplateToolbar(cm);
-      cm.setSize(this._editorWidth, this._editorHeight);
-
-      if (!$q.isNull(tArea.data('height'))) {
-        cm.setSize(null, tArea.data('height'));
+    if (tArea.hasClass('hta-JsonTextArea')) {
+      if ($q.isNull(tArea.data('jsonEditor'))) {
+        this.initJsonEditor(tArea);
       }
-
-      if (!$q.isNull(tArea.data('width'))) {
-        cm.setSize(tArea.data('width'));
-      }
-
-      this._storedTempValue = cm.getValue();
-      tArea.data('codeMirror', cm);
-      this._checkIntervalID = setInterval($.proxy(this._onCheckChangesIntervalHandler, this), 10000);
-      cm = null;
+    } else if ($q.isNull(tArea.data('codeMirror'))) {
+      this.initCodeMirrorTArea(tArea);
     }
+
+    this._checkIntervalID = setInterval($.proxy(this._onCheckChangesIntervalHandler, this), 10000);
+  },
+
+  initCodeMirrorTArea: function (tArea) {
+    var cm;
+    tArea.wrap('<div class="CodemirrorContainer">');
+    cm = CodeMirror.fromTextArea(tArea.get(0), {
+      lineNumbers: $q.toBoolean(tArea.data('hta_lineNumbers'), true),
+      matchBrackets: $q.toBoolean(tArea.data('hta_matchBrackets'), true),
+      lineWrapping: $q.toBoolean(tArea.data('hta_lineWrapping'), true),
+      mode: this.getMode(tArea),
+      readOnly: tArea.is('[disabled]'),
+      tabMode: 'indent'
+    });
+
+    this.initTemplateToolbar(cm);
+    cm.setSize(this._editorWidth, this._editorHeight);
+
+    if (!$q.isNull(tArea.data('height'))) {
+      cm.setSize(null, tArea.data('height'));
+    }
+
+    if (!$q.isNull(tArea.data('width'))) {
+      cm.setSize(tArea.data('width'));
+    }
+
+    this._storedTempValue = cm.getValue();
+    this._storedTempValue = 'qweqwe';
+    tArea.data('codeMirror', cm);
+    cm = null;
+  },
+
+  initJsonEditor: function (tArea) {
+    var options, height, je, json;
+    tArea.hide();
+
+    tArea.wrap('<div id="jsonEditor">');
+    tArea.is('[disabled]');
+    options = {
+      mode: 'code',
+      modes: ['text', 'code', 'tree'],
+      onError: function () {
+        $q.alertError($l.TextArea.forbiddenJsonMode);
+      }
+    };
+
+    height = parseInt(tArea.css('height'), 10);
+    this._editorHeight = !height || height < this._minJsonEditorHeight ? this._minJsonEditorHeight : height;
+
+    tArea.parent().css('height', this._editorHeight);
+
+    je = new JSONEditor(tArea.parent().get(0), options);
+    json = '';
+    if (tArea.val()) {
+      json = tArea.val();
+      je.setText(json);
+    }
+
+    this._storedTempValue = je.getText();
+    tArea.data('jsonEditor', je);
   },
 
   _onLibraryButtonClick: function () {
@@ -307,7 +360,9 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         draggable: false,
         actions: ['Close'],
         effects: {
-          list: [{ name: 'toggle' }, { name: 'property', properties: ['opacity'] }],
+          list: [{ name: 'toggle' }, {
+            name: 'property', properties: ['opacity']
+          }],
           openDuration: 'fast',
           closeDuration: 'fast'
         }
@@ -343,6 +398,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   saveData: function () {
+    var jsonEditor;
     var codeMirror = this._componentElem.data('codeMirror');
     if (codeMirror) {
       if (this._componentElem.val() !== codeMirror.getValue()) {
@@ -350,6 +406,14 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       }
 
       codeMirror.save();
+    } else {
+      jsonEditor = this._componentElem.data('jsonEditor');
+      if (jsonEditor) {
+        if (this._componentElem.val() !== jsonEditor.getText()) {
+          this._componentElem.val(jsonEditor.getText());
+          this._componentElem.change();
+        }
+      }
     }
   },
 
@@ -369,8 +433,6 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       return 'text/javascript';
     } else if (tArea.hasClass('hta-SqlTextArea')) {
       return 'text/x-sql';
-    } else if (tArea.hasClass('hta-JsonTextArea')) {
-      return 'application/json';
     }
 
     return null;

@@ -25,6 +25,7 @@ Quantumart.QP8.ControlHelpers.setFieldRowsVisibility = function (parentElement, 
   }
 };
 
+
 Quantumart.QP8.ControlHelpers.getAllCheckboxToggles = function (parentElement) {
   // Возвращает все чекбоксы-переключатели
   if (!parentElement) {
@@ -248,11 +249,11 @@ Quantumart.QP8.ControlHelpers._switchPanel = function ($selectedSwitcher, panelI
         function () {
           return $(this).css('display') == 'block';
         }
-            ).hide().trigger('hide').each(
+      ).hide().trigger('hide').each(
         function () {
           $c._setPanelControlsDisabledState(jQuery(this), true);
         }
-            );
+      );
     }
   }
 
@@ -264,7 +265,7 @@ Quantumart.QP8.ControlHelpers._switchPanel = function ($selectedSwitcher, panelI
       function () {
         $c._setPanelControlsDisabledState(jQuery(this), false);
       }
-        ).show().trigger('show');
+    ).show().trigger('show');
     $c.fixAllEntityDataListsOverflow($panels);
     $c._refreshAllHta($panels);
     $panels = null;
@@ -330,6 +331,7 @@ Quantumart.QP8.ControlHelpers.setAllRadioListValues = function (parentElement, f
     });
   }
 };
+
 
 // Возвращает все Boolean поля
 Quantumart.QP8.ControlHelpers.getAllBoolean = function (parentElement) {
@@ -535,12 +537,19 @@ Quantumart.QP8.ControlHelpers.setAllHighlightedTextAreaValues = function (parent
   if (!$q.isNullOrEmpty(fieldValues)) {
     var $htas = Quantumart.QP8.ControlHelpers.getAllHighlightedTextAreas(parentElement);
     $(fieldValues).each(function (i, v) {
-      var component = $htas.filter('[name="' + v.fieldName + '"]:first').data('codeMirror');
-      if (component) {
+      var componentCM = $htas.filter('[name="' + v.fieldName + '"]:first').data('codeMirror');
+      var componentJE = $htas.filter('[name="' + v.fieldName + '"]:first').data('jsonEditor');
+      if (componentCM || componentJE) {
         if ($q.isNullOrEmpty(v.value)) {
-          component.setValue('');
+          if (componentCM) {
+            componentCM.setValue('');
+          } else {
+            componentJE.setText('');
+          }
+        } else if (componentCM) {
+          componentCM.setValue(v.value);
         } else {
-          component.setValue(v.value);
+          componentJE.setText(v.value);
         }
       }
     });
@@ -614,8 +623,8 @@ Quantumart.QP8.ControlHelpers.getAllDateTimePickersValues = function (parentElem
         };
       }
     }), function (v) {
-      return v;
-    }
+    return v;
+  }
   );
 };
 
@@ -640,8 +649,8 @@ Quantumart.QP8.ControlHelpers.getAllVisualEditorValues = function (parentElement
         };
       }
     }), function (v) {
-      return v;
-    }
+    return v;
+  }
   );
 };
 
@@ -693,11 +702,12 @@ Quantumart.QP8.ControlHelpers.getAllAggregationListValues = function (parentElem
 Quantumart.QP8.ControlHelpers.getAllHighlightedTextAreaValues = function (parentElement) {
   return Quantumart.QP8.ControlHelpers.getAllHighlightedTextAreas(parentElement).filter('[name]').map(function () {
     var $a = $(this);
-    var component = $a.data('codeMirror');
-    if (component) {
+    var componentCM = $a.data('codeMirror');
+    var componentJE = $a.data('jsonEditor');
+    if (componentCM || componentJE) {
       return {
         fieldName: $a.prop('name'),
-        value: component.getValue()
+        value: componentCM ? componentCM.getValue() : componentJE.getText()
       };
     }
   });
@@ -875,6 +885,7 @@ Quantumart.QP8.ControlHelpers.makeReadonlyClassifierFields = function (parentEle
   }
 };
 
+
 Quantumart.QP8.ControlHelpers.getAllDateTimePickers = function Quantumart$QP8$ControlHelpers$getAllDateTimePickers(parentElement) {
   // Возвращает все DateTimePicker`ы
   if (!parentElement) {
@@ -987,6 +998,7 @@ Quantumart.QP8.ControlHelpers.destroyDateTimePicker = function Quantumart$QP8$Co
     .removeData('tTimePicker');
 };
 
+
 Quantumart.QP8.ControlHelpers.getAllNumericTextBoxes = function Quantumart$QP8$ControlHelpers$getAllNumericTextBoxes(parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1025,7 +1037,7 @@ Quantumart.QP8.ControlHelpers.initNumericTextBox = function Quantumart$QP8$Contr
       color: '',
       'text-decoration': ''
     }
-    );
+  );
 
   $textBox = null;
 };
@@ -1136,6 +1148,7 @@ Quantumart.QP8.ControlHelpers.destroyFileField = function Quantumart$QP8$Control
   $field = null;
 };
 
+
 Quantumart.QP8.ControlHelpers.getAllClassifierFields = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1181,6 +1194,7 @@ Quantumart.QP8.ControlHelpers.destroyClassifierField = function (componentElem) 
     component.dispose();
   }
 };
+
 
 Quantumart.QP8.ControlHelpers.getAllVisualEditors = function Quantumart$QP8$ControlHelpers$getAllVisualEditors(parentElement) {
   if (!parentElement) {
@@ -1240,6 +1254,7 @@ Quantumart.QP8.ControlHelpers.saveVisualEditorData = function Quantumart$QP8$Con
   }
 };
 
+
 Quantumart.QP8.ControlHelpers.getAllHighlightedTextAreas = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1282,6 +1297,7 @@ Quantumart.QP8.ControlHelpers.destroyHighlightedTextArea = function Quantumart$Q
   area.destroy();
   area = null;
 };
+
 
 Quantumart.QP8.ControlHelpers.getAllAggregationLists = function Quantumart$QP8$ControlHelpers$getAllAggregationLists(parentElement) {
   // Возвращает компоненты типа "AggregationList"
@@ -1337,6 +1353,7 @@ Quantumart.QP8.ControlHelpers.saveAggregationListData = function Quantumart$QP8$
   (new Quantumart.QP8.BackendAggregationList(editorElem)).saveAggregationListData();
 };
 
+
 Quantumart.QP8.ControlHelpers.getAllWorkflows = function Quantumart$QP8$ControlHelpers$getAllWorkflows(parentElement) {
   // Возвращает компоненты типа "AggregationList"
   if (!parentElement) {
@@ -1373,6 +1390,7 @@ Quantumart.QP8.ControlHelpers.saveDataOfAllWorkflows = function Quantumart$QP8$C
 Quantumart.QP8.ControlHelpers.saveWorkflowData = function Quantumart$QP8$ControlHelper$saveWorkflowData(editorElem) {
   var workflow = editorElem.data('workflow');
 };
+
 
 
 Quantumart.QP8.ControlHelpers.preview = function Quantumart$QP8$ControlHelpers$preview(testUrl) {
@@ -1475,6 +1493,7 @@ Quantumart.QP8.ControlHelpers.downloadFileWithChecking = function Quantumart$QP8
   }
 };
 
+
 // Преобразует список сущностей в коллекцию элементов списка
 Quantumart.QP8.ControlHelpers.getListItemCollectionFromEntities = function (entities) {
   var dataItems = [];
@@ -1494,6 +1513,7 @@ Quantumart.QP8.ControlHelpers.getEntitiesFromListItemCollection = function (data
 
   return entities;
 };
+
 
 Quantumart.QP8.ControlHelpers.setPopupWindowTitle = function Quantumart$QP8$ControlHelpers$destroyPopupWindow$setPopupWindowTitle(windowComponent, titleText) {
   // Задает текст заголовка окна
@@ -1530,6 +1550,7 @@ Quantumart.QP8.ControlHelpers.closePopupWindow = function Quantumart$QP8$Control
     }
   }
 };
+
 
 Quantumart.QP8.ControlHelpers.getAllEntityDataLists = function Quantumart$QP8$ControlHelpers$getAllEntityDataLists(parentElement) {
   // Возвращает компоненты типа "Упрощенный список сущностей"
@@ -1654,6 +1675,7 @@ Quantumart.QP8.ControlHelpers.destroyEntityDataList = function Quantumart$QP8$Co
     }
   }
 };
+
 
 Quantumart.QP8.ControlHelpers.getAllEntityDataTrees = function Quantumart$QP8$ControlHelpers$getAllEntityDataTrees(parentElement) {
   if (!parentElement) {

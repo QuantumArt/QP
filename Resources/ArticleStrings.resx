@@ -612,4 +612,10 @@
   <data name="Archive" xml:space="preserve">
     <value>Archive</value>
   </data>
+  <data name="SearchBlock_ExactMatchBoxLabelText" xml:space="preserve">
+    <value>Exact Match</value>
+  </data>
+  <data name="SearchBlock_StartBeginningCheckBoxLabelText" xml:space="preserve">
+    <value>Search from beginning</value>
+  </data>
 </root>

@@ -219,6 +219,10 @@
             siteId: that._siteId,
             fieldId: that._fieldId
           }, function ajaxDone(data) {
+            var instance = that.getCkEditor();
+            if (instance) {
+              that.disposeCKEditor(false);
+            }
             window.CKEDITOR.replace(that._editorElem.id, getCkEditorConfig(that, data));
           });
         }

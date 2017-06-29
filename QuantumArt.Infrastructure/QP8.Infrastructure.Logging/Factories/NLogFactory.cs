@@ -97,6 +97,5 @@ namespace QP8.Infrastructure.Logging.Factories
             Ensure.Argument.NotNullOrWhiteSpace(loggerName);
             return new NLogLogger(CreateInnerLogger(loggerName));
         }
-
     }
 }
