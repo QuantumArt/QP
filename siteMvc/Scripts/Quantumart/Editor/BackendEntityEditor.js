@@ -766,8 +766,6 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     $c.saveDataOfAllVisualEditors(this._formElement);
     $c.SaveDataOfAllHighlightedTextAreas(this._formElement);
     $c.saveDataOfAllAggregationLists(this._formElement);
-    $c.saveDataOfAllWorkflows(this._formElement);
-
     if (this._entityTypeCode !== ENTITY_TYPE_CODE_ARTICLE_VERSION) {
       if (!this.isFieldsChanged()) {
         alert($l.EntityEditor.fieldsNotChangedMessage);
@@ -779,7 +777,6 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     this._saveVariationsModelData($form);
 
     var $form = jQuery(this._formElement);
-
     $form.find('input[name="' + BACKEND_ACTION_CODE_HIDDEN_NAME + '"]').val(actionCode);
     $form.trigger('submit');
   },

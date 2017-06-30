@@ -20,7 +20,7 @@ window.$q = {
 };
 
 $q.trace = function trace() {
-  var args, firstArg, otherArgs;
+  let args, firstArg, otherArgs;
   if ($q.isDebug || window.Sys.Debug.isDebug) {
     args = [].slice.call(arguments);
     firstArg = args.slice(0, 1)[0];
@@ -73,7 +73,7 @@ $q.confirmMessage = function confirmMessage(msg) {
  * @return {Object}      jQuery XHR deffered
  */
 $q.sendAjax = function sendAjax(opts) {
-  var defaultOptions = {
+  const defaultOptions = {
     type: 'GET',
     dataType: 'json',
     contentType: 'application/json; charset=utf-8',
@@ -82,22 +82,22 @@ $q.sendAjax = function sendAjax(opts) {
     traditional: true
   };
 
-  var options = Object.assign({}, defaultOptions, opts);
-  var maxLogDataLengthToLog = 300;
-  var logData = JSON.stringify(options.data || {});
-  var logDataLength = logData.length;
-  var cuttedLogData = logDataLength > maxLogDataLengthToLog
-    ? logData.slice(0, maxLogDataLengthToLog) + '..'
+  const options = Object.assign({}, defaultOptions, opts);
+  const maxLogDataLengthToLog = 300;
+  const logData = JSON.stringify(options.data || {});
+  const logDataLength = logData.length;
+  const cuttedLogData = logDataLength > maxLogDataLengthToLog
+    ? `${logData.slice(0, maxLogDataLengthToLog)}..`
     : logData;
 
-  var debugMessage = 'ajax: ' + options.type + ' ' + options.url + '. Data: ' + cuttedLogData;
+  const debugMessage = `ajax: ${options.type} ${options.url}. Data: ${cuttedLogData}`;
   if (options.dataType.toLowerCase() === 'jsonp' && !options.async) {
     window.console.error('Sync requests cannot be combined with jsonp');
   }
 
-  $q.trace('Sending ' + debugMessage, 'Request object: ', options);
-  return $.ajax(options).done(function ajaxDone(response) {
-    $q.trace('Parsing ' + debugMessage, 'Response object: ', response);
+  $q.trace(`Sending ${debugMessage}`, 'Request object: ', options);
+  return $.ajax(options).done(response => {
+    $q.trace(`Parsing ${debugMessage}`, 'Response object: ', response);
     if (response.status.toUpperCase() === 'SUCCESS') {
       if (options.jsendSuccess) {
         options.jsendSuccess(response.data, response);
@@ -113,29 +113,29 @@ $q.sendAjax = function sendAjax(opts) {
     } else {
       $q.alertError(response.message || 'Unknown server error');
     }
-  }).done(function ajaxDone() {
+  }).done(() => {
     $q.hideLoader();
   });
 };
 
 $q.getAjax = function getAjax(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
-    url: url,
-    data: data,
-    jsendSuccess: jsendSuccess,
-    jsendFail: jsendFail,
-    jsendError: jsendError
+    url,
+    data,
+    jsendSuccess,
+    jsendFail,
+    jsendError
   });
 };
 
 $q.postAjax = function postAjax(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
-    url: url,
+    url,
     type: 'POST',
     data: JSON.stringify(data),
-    jsendSuccess: jsendSuccess,
-    jsendFail: jsendFail,
-    jsendError: jsendError
+    jsendSuccess,
+    jsendFail,
+    jsendError
   });
 };
 
@@ -168,7 +168,7 @@ $q.toBoolean = function toBoolean(value, defaultValue) {
 };
 
 $q.isNull = function isNull(value) {
-  var result = false;
+  let result = false;
   if (value === undefined || value === null) {
     result = true;
   }
@@ -177,7 +177,7 @@ $q.isNull = function isNull(value) {
 };
 
 $q.isNullOrEmpty = function isNullOrEmpty(value) {
-  var result = false;
+  let result = false;
   if ($q.isNull(value)) {
     result = true;
   } else if ($q.isArray(value) || ($q.isObject(value) && value.jquery)) {
@@ -192,7 +192,7 @@ $q.isNullOrEmpty = function isNullOrEmpty(value) {
 };
 
 $q.isNullOrWhiteSpace = function isNullOrWhiteSpace(value) {
-  var result = false;
+  let result = false;
   if ($q.isNull(value)) {
     result = true;
   } else if ($q.isArray(value) || ($q.isObject(value) && value.jquery)) {
@@ -207,7 +207,7 @@ $q.isNullOrWhiteSpace = function isNullOrWhiteSpace(value) {
 };
 
 $q.toString = function convertToString(value, defaultValue) {
-  var string;
+  let string;
   if ($q.isNull(value)) {
     string = $q.isNull(defaultValue) ? null : defaultValue;
   } else {
@@ -218,7 +218,7 @@ $q.toString = function convertToString(value, defaultValue) {
 };
 
 $q.isString = function isString(value) {
-  var result = false;
+  let result = false;
   if (!$q.isNull(value)) {
     result = typeof value.valueOf() === 'string';
   }
@@ -229,8 +229,8 @@ $q.isString = function isString(value) {
 // Подготавливает значение к преобразованию в число
 // forCheck - признак, указывающий что преобразование используется при проверки типа</param>
 $q._prepareNumber = function prepareNumber(value, forCheck) {
-  var processedValue;
-  var number = null;
+  let processedValue;
+  let number = null;
   if (!$q.isNullOrEmpty(value)) {
     processedValue = value.toString().replace(/\s/igm, '').replace(',', '.').toLowerCase();
     if (!forCheck) {
@@ -250,7 +250,7 @@ $q._prepareNumber = function prepareNumber(value, forCheck) {
 };
 
 $q.toInt = function toInt(value, defaultValue) {
-  var result = value;
+  let result = value;
   if (result === 'true' || result === 'false') {
     result = result === 'true' || 0;
   }
@@ -263,7 +263,7 @@ $q.toInt = function toInt(value, defaultValue) {
 };
 
 $q.toDate = function toDate(value, defaultValue) {
-  var date = null;
+  let date = null;
   if (!$q.isNullOrEmpty(value)) {
     date = Date.parseLocale(value);
   }
@@ -272,8 +272,8 @@ $q.toDate = function toDate(value, defaultValue) {
 };
 
 $q.isDate = function isDate(value) {
-  var localDate;
-  var result = false;
+  let localDate;
+  let result = false;
   if (!$q.isNullOrEmpty(value)) {
     localDate = Date.parseLocale(value);
     if (localDate !== null) {
@@ -285,7 +285,7 @@ $q.isDate = function isDate(value) {
 };
 
 $q.isArray = function isArray(value) {
-  var result = false;
+  let result = false;
   if (value) {
     result = typeof value === 'object' && value.join;
   }
@@ -294,7 +294,7 @@ $q.isArray = function isArray(value) {
 };
 
 $q.isObject = function isObject(value) {
-  var result = false;
+  let result = false;
   if (!$q.isNull(value)) {
     result = typeof value === 'object';
   }
@@ -303,7 +303,7 @@ $q.isObject = function isObject(value) {
 };
 
 $q.isFunction = function isFunction(value) {
-  var result = false;
+  let result = false;
   if (!$q.isNull(value)) {
     result = typeof value.valueOf() === 'function';
   }
@@ -350,7 +350,7 @@ $q.isInRange = function isInRange(value, lowerBound, lowerBoundType, upperBound,
 };
 
 $q.compareValues = function compareValues(firstValue, secondValue, comparisonOperator) {
-  var result = false;
+  let result = false;
   if (comparisonOperator === Quantumart.QP8.Enums.ComparisonOperator.Equal) {
     result = firstValue === secondValue;
   } else if (comparisonOperator === Quantumart.QP8.Enums.ComparisonOperator.NotEqual) {
@@ -369,15 +369,15 @@ $q.compareValues = function compareValues(firstValue, secondValue, comparisonOpe
 };
 
 $q.getJsonFromUrl = function getJsonFromUrl(method, url, params, async, allowCaching, callbackSuccess, callbackError) {
-  var methodName = method.toUpperCase();
-  var data = methodName === 'POST' ? JSON.stringify(params) : params;
-  var settings = {
+  const methodName = method.toUpperCase();
+  const data = methodName === 'POST' ? JSON.stringify(params) : params;
+  const settings = {
     type: methodName,
     contentType: 'application/json; charset=utf-8',
     dataType: 'json',
-    url: url,
-    data: data,
-    async: async,
+    url,
+    data,
+    async,
     cache: allowCaching,
     error: callbackError || $q.processGenericAjaxError
   };
@@ -395,8 +395,8 @@ $q.getJsonPFromUrl = function getJsonPFromUrl(
   callbackSuccess,
   callbackError
 ) {
-  var methodName = method.toUpperCase();
-  var data = params;
+  const methodName = method.toUpperCase();
+  let data = params;
   if (methodName.toUpperCase() === 'POST') {
     data = JSON.stringify(params);
   }
@@ -405,10 +405,10 @@ $q.getJsonPFromUrl = function getJsonPFromUrl(
     type: methodName,
     contentType: 'application/json; charset=utf-8',
     dataType: 'jsonp',
-    url: url,
-    data: data,
+    url,
+    data,
     cache: allowCaching,
-    timeout: timeout,
+    timeout,
     success: callbackSuccess,
     error: callbackError
   });
@@ -417,8 +417,8 @@ $q.getJsonPFromUrl = function getJsonPFromUrl(
 $q.getCustomActionJson = function getCustomActionJson(url, params, callbackSuccess, callbackError) {
   $q.getJsonFromUrl(
     'POST',
-    window.CONTROLLER_URL_CUSTOM_ACTION + 'Proxy',
-    Object.assign(params, { url: url }),
+    `${window.CONTROLLER_URL_CUSTOM_ACTION}Proxy`,
+    Object.assign(params, { url }),
     false,
     false,
     callbackSuccess,
@@ -426,18 +426,18 @@ $q.getCustomActionJson = function getCustomActionJson(url, params, callbackSucce
 };
 
 $q.getTextContentFromUrl = function getTextContentFromUrl(url, allowCaching) {
-  var textContent = '';
+  let textContent = '';
 
   $.ajax({
     type: 'GET',
     dataType: 'text',
-    url: url,
+    url,
     async: false,
     cache: allowCaching,
-    success: function (data) {
+    success(data) {
       textContent = data;
     },
-    error: function () {
+    error() {
       textContent = '';
     }
   });
@@ -446,17 +446,17 @@ $q.getTextContentFromUrl = function getTextContentFromUrl(url, allowCaching) {
 };
 
 $q.getHtmlContentFromUrl = function getHtmlContentFromUrl(url, allowCaching) {
-  var htmlContent = '';
+  let htmlContent = '';
   $.ajax({
     type: 'GET',
     dataType: 'html',
-    url: url,
+    url,
     async: false,
     cache: allowCaching,
-    success: function (data) {
+    success(data) {
       htmlContent = data;
     },
-    error: function () {
+    error() {
       htmlContent = '';
     }
   });
@@ -469,9 +469,9 @@ $q.postDataToUrl = function postDataToUrl(url, data, async, callbackSuccess, cal
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     dataType: 'json',
-    url: url,
-    data: data,
-    async: async,
+    url,
+    data,
+    async,
     cache: false,
     success: callbackSuccess,
     error: callbackError
@@ -483,7 +483,7 @@ $q.getJsonSync = function getJsonSync(url, params) {
     type: 'GET',
     contentType: 'application/json; charset=utf-8',
     dataType: 'json',
-    url: url,
+    url,
     data: params,
     async: false,
     cache: false,
@@ -496,8 +496,8 @@ $q.getJsonSync = function getJsonSync(url, params) {
 // typeName - название типа данных
 // Возвращает название JSON-типа данных
 $q.getTypeNameForJson = function getTypeNameForJson(typeName) {
-  var type, namespace, part, parts, partCount, partIndex;
-  var jsonTypeName = typeName;
+  let type, namespace, part, parts, partCount, partIndex;
+  let jsonTypeName = typeName;
   if (typeName.length > 0) {
     if (typeName.indexOf('.') !== -1) {
       type = '';
@@ -524,7 +524,7 @@ $q.getTypeNameForJson = function getTypeNameForJson(typeName) {
 };
 
 $q.processGenericAjaxError = function processGenericAjaxError(jqXHR) {
-  var errorMessage = String.format($l.Common.ajaxGenericErrorMessage, status);
+  let errorMessage = String.format($l.Common.ajaxGenericErrorMessage, status);
   if (status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
     errorMessage = $l.Common.ajaxUserSessionExpiredErrorMessage;
   } else if (status === 500) {
@@ -535,7 +535,7 @@ $q.processGenericAjaxError = function processGenericAjaxError(jqXHR) {
 };
 
 $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
-  var html = new $.telerik.stringBuilder();
+  const html = new $.telerik.stringBuilder();
   if (httpStatus === 500 || httpStatus === 404) {
     html.cat('<div class="alignCenter" style="margin-top: 1.0em;">');
     html.cat('  <div class="alignCenterToLeft">');
@@ -544,22 +544,22 @@ $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
     html.cat('        <tr class="top">');
     if (httpStatus === 500) {
       html.cat(
-        '          <td style="width: 110px;"><img src="'
-        + window.COMMON_IMAGE_FOLDER_URL_ROOT
-        + '/errors/bug.gif" width="100" height="118" border="0" style="margin: 0 5px;" /></td>');
+        `          <td style="width: 110px;"><img src="${
+         window.COMMON_IMAGE_FOLDER_URL_ROOT
+         }/errors/bug.gif" width="100" height="118" border="0" style="margin: 0 5px;" /></td>`);
 
       html.cat('          <td style="padding: 0 10px;">');
-      html.cat('            <h1>' + $l.EditingArea.error500Title + '</h1>');
+      html.cat(`            <h1>${$l.EditingArea.error500Title}</h1>`);
       html.cat($l.EditingArea.error500Text);
       html.cat('          </td>');
     } else if (httpStatus === 404) {
       html.cat(
-        '          <td style="width: 110px;"><img src="'
-        + window.COMMON_IMAGE_FOLDER_URL_ROOT
-        + '/errors/compass.png" width="100" height="115" border="0" alt="Компас" style="margin: 0 5px;" /></td>');
+        `          <td style="width: 110px;"><img src="${
+         window.COMMON_IMAGE_FOLDER_URL_ROOT
+         }/errors/compass.png" width="100" height="115" border="0" alt="Компас" style="margin: 0 5px;" /></td>`);
 
       html.cat('          <td style="padding: 0 10px;">');
-      html.cat('            <h1>' + $l.EditingArea.error404Title + '</h1>');
+      html.cat(`            <h1>${$l.EditingArea.error404Title}</h1>`);
       html.cat($l.EditingArea.error404Text);
       html.cat('          </td>');
     }
@@ -589,11 +589,11 @@ $q.ajaxCallbackDecorator = function ajaxCallbackDecorator(callback, settings) {
 };
 
 $q.decorateDeferred = function decorateDeferred(deferred, decorator, settings) {
-  var result = deferred;
+  const result = deferred;
   result._doneBase = deferred.done;
   result.done = function doneCb(callback) {
-    var currentCallback = decorator(callback, settings);
-    var currentDeferred = this._doneBase(currentCallback);
+    const currentCallback = decorator(callback, settings);
+    const currentDeferred = this._doneBase(currentCallback);
 
     return $q.decorateDeferred(currentDeferred);
   };
@@ -606,8 +606,8 @@ $q.decorateDeferred = function decorateDeferred(deferred, decorator, settings) {
  * и дробная часть добивается нулями до нужной длины.
  * Если число целое, то дробная часть отбрасывается */
 $q.toFixed = function toFixed(number, digits) {
-  var defaultDigits = digits || 0;
-  return number.toFixed(defaultDigits).replace(new RegExp('\\.0{' + defaultDigits + '}'), '');
+  const defaultDigits = digits || 0;
+  return number.toFixed(defaultDigits).replace(new RegExp(`\\.0{${defaultDigits}}`), '');
 };
 
 if (typeof String.prototype.left !== 'function') {
@@ -631,10 +631,10 @@ if (typeof String.prototype.right !== 'function') {
 }
 
 $q.generateRandomString = function generateRandomString(stringLength) {
-  var i, randomNumber, randomSymbol;
-  var symbolString = 'QuantumArt98BCDEFGHIJKLMNOPRSTUVWXYZbcdefghijklopqsvwxyz01234567';
-  var symbolStringLength = symbolString.length;
-  var result = '';
+  let i, randomNumber, randomSymbol;
+  const symbolString = 'QuantumArt98BCDEFGHIJKLMNOPRSTUVWXYZbcdefghijklopqsvwxyz01234567';
+  const symbolStringLength = symbolString.length;
+  let result = '';
 
   for (i = 0; i < stringLength; i++) {
     randomNumber = parseInt(symbolStringLength * Math.random(), 10);
@@ -647,7 +647,7 @@ $q.generateRandomString = function generateRandomString(stringLength) {
 };
 
 $q.htmlEncode = function htmlEncode(htmlContent, allowFormatText) {
-  var processedContent = htmlContent;
+  let processedContent = htmlContent;
   if (!$q.isNullOrWhiteSpace(htmlContent)) {
     processedContent = processedContent.toString()
       .replace(/&/igm, '&amp;')
@@ -666,7 +666,7 @@ $q.htmlEncode = function htmlEncode(htmlContent, allowFormatText) {
 };
 
 $q.cutShort = function cutShort(value, maxLength, endSymbol) {
-  var result = $q.toString(value, '').trim();
+  let result = $q.toString(value, '').trim();
   if (result.length > maxLength) {
     result = result.left(maxLength).trim() + (endSymbol || '…');
   }
@@ -675,9 +675,9 @@ $q.cutShort = function cutShort(value, maxLength, endSymbol) {
 };
 
 $q.middleCutShort = function middleCutShort(value, maxLength, dividingSymbol) {
-  var divSymbol = dividingSymbol || '…';
-  var halfMaxLength, leftPart, rightPart;
-  var result = $q.toString(value, '').trim();
+  const divSymbol = dividingSymbol || '…';
+  let halfMaxLength, leftPart, rightPart;
+  let result = $q.toString(value, '').trim();
   if (result.length > maxLength) {
     halfMaxLength = Math.floor((maxLength - divSymbol.length) / 2);
     leftPart = value.left(halfMaxLength).trim();
@@ -689,7 +689,7 @@ $q.middleCutShort = function middleCutShort(value, maxLength, dividingSymbol) {
 };
 
 $q.setPropertyValue = function setPropertyValue(object, propertyName, value) {
-  var part, parts, partCount, newObject, partIndex;
+  let part, parts, partCount, newObject, partIndex;
   if (propertyName.indexOf('.') === -1) {
     // eslint-disable-next-line no-param-reassign
     object[propertyName] = value;
@@ -724,20 +724,20 @@ $q.removeProperty = function removeProperty(object, propertyName) {
 };
 
 $q.hashToString = function hashToString(obj) {
-  var key;
-  var result = '';
+  let key;
+  let result = '';
 
   // eslint-disable-next-line guard-for-in, no-restricted-syntax
   for (key in obj) {
-    result = result + key + '=' + obj[key] + ',';
+    result = `${result + key}=${obj[key]},`;
   }
 
   return result.substr(0, result.length - 1);
 };
 
 $q.getHashKeysCount = function getHashKeysCount(hash) {
-  var key; // eslint-disable-line no-unused-vars
-  var keysCount = 0;
+  let key; // eslint-disable-line no-unused-vars
+  let keysCount = 0;
   if (hash) {
     // eslint-disable-next-line guard-for-in, no-restricted-syntax
     for (key in hash) {
@@ -749,8 +749,8 @@ $q.getHashKeysCount = function getHashKeysCount(hash) {
 };
 
 Array.distinct = function distinct(array) {
-  var itemIndex, item;
-  var uniqueArray = [];
+  let itemIndex, item;
+  const uniqueArray = [];
   if ($q.isArray(array)) {
     for (itemIndex = 0; itemIndex < array.length; itemIndex++) {
       item = array[itemIndex];
@@ -789,9 +789,9 @@ $q.preventDefaultFunction = function preventDefaultFunction(e) {
 };
 
 $q.hashToQueryString = function hashToQueryString(hash) {
-  var param, value;
-  var counter = 0;
-  var result = '';
+  let param, value;
+  let counter = 0;
+  let result = '';
   if (hash) {
     // eslint-disable-next-line guard-for-in, no-restricted-syntax
     for (param in hash) {
@@ -800,7 +800,7 @@ $q.hashToQueryString = function hashToQueryString(hash) {
         result += '&';
       }
 
-      result += param + '=' + escape(value);
+      result += `${param}=${escape(value)}`;
       counter += 1;
     }
   }
@@ -809,8 +809,8 @@ $q.hashToQueryString = function hashToQueryString(hash) {
 };
 
 $q.arrayToQueryString = function arrayToQueryString(parameterName, array) {
-  var i, value;
-  var result = '';
+  let i, value;
+  let result = '';
   if (!$q.isNullOrWhiteSpace(parameterName) && !$q.isNullOrEmpty(array)) {
     for (i = 0; i < array.length; i++) {
       value = $q.toString(array[i], '');
@@ -818,7 +818,7 @@ $q.arrayToQueryString = function arrayToQueryString(parameterName, array) {
         result += '&';
       }
 
-      result += parameterName + '=' + escape(value);
+      result += `${parameterName}=${escape(value)}`;
     }
   }
 
@@ -826,13 +826,13 @@ $q.arrayToQueryString = function arrayToQueryString(parameterName, array) {
 };
 
 $q.updateQueryStringParameter = function updateQueryStringParameter(uri, key, value) {
-  var re = new RegExp('([?|&])' + key + '=.*?(&|$)', 'i');
-  var separator = uri.indexOf('?') === -1 ? '?' : '&';
+  const re = new RegExp(`([?|&])${key}=.*?(&|$)`, 'i');
+  const separator = uri.indexOf('?') === -1 ? '?' : '&';
   if (uri.match(re)) {
-    return uri.replace(re, '$1' + key + '=' + value + '$2');
+    return uri.replace(re, `$1${key}=${value}$2`);
   }
 
-  return uri + separator + key + '=' + value;
+  return `${uri + separator + key}=${value}`;
 };
 
 $q.collectGarbageInIE = function collectGarbageInIE() {
@@ -842,17 +842,17 @@ $q.collectGarbageInIE = function collectGarbageInIE() {
 };
 
 $q.addRemoveToArrUniq = function addRemoveToArrUniq(arrToModify, valToAddRemove, shouldBeExcluded) {
-  var underscoreMethod = shouldBeExcluded ? 'difference' : 'union';
+  const underscoreMethod = shouldBeExcluded ? 'difference' : 'union';
   return _[underscoreMethod](arrToModify, valToAddRemove);
 };
 
 $q.bindProxies = function bindProxies(listOfFnNames, fnPostfix) {
-  var postfix = fnPostfix || 'Handler';
+  const postfix = fnPostfix || 'Handler';
   [].forEach.call(listOfFnNames, function eachFn(fnName) {
     try {
       this[fnName + postfix] = this[fnName].bind(this);
     } catch (e) {
-      window.console.error('Failed to register: ' + fnName, e);
+      window.console.error(`Failed to register: ${fnName}`, e);
     }
   }, this);
 };
@@ -864,7 +864,7 @@ $q.dispose = function dispose(listOfObjs) {
         this[obj] = null;
       }
     } catch (e) {
-      window.console.error('Failed to dispose: ' + obj, e);
+      window.console.error(`Failed to dispose: ${obj}`, e);
     }
   }, this);
 };
