@@ -46,6 +46,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 ArticleFieldSearchType.Boolean,
                 ArticleFieldSearchType.DateRange,
                 ArticleFieldSearchType.TimeRange,
+                ArticleFieldSearchType.DateTimeRange,
                 ArticleFieldSearchType.NumericRange,
                 ArticleFieldSearchType.O2MRelation,
                 ArticleFieldSearchType.Classifier,
@@ -70,6 +71,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                         return ParseTextParam(p);
                     case ArticleFieldSearchType.DateRange:
                         return ParseDateRangeParam(p);
+                    case ArticleFieldSearchType.DateTimeRange:
+                        return ParseDateTimeRangeParam(p);
                     case ArticleFieldSearchType.TimeRange:
                         return ParseTimeRangeParam(p);
                     case ArticleFieldSearchType.NumericRange:
@@ -264,7 +267,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             if (startFromBegin)
             {
-                return string.Format("({1}.[{0}] LIKE '{2}')", p.FieldColumn.ToLower(), GetTableAlias(p), inverse ? "%" + value : value + "%" );
+                return string.Format("({1}.[{0}] LIKE '{2}')", p.FieldColumn.ToLower(), GetTableAlias(p), inverse ? "%" + value : value + "%");
             }
 
             return string.Format("({2}.[{0}] {3}LIKE '%{1}%')", p.FieldColumn.ToLower(), value, GetTableAlias(p), inverse ? "NOT " : "");
@@ -395,6 +398,123 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             Converter.TryConvertToSqlDateString(dateToString, null, out sqlDateToString, out dateTo);
 
             return string.Format("({1}.[{0}] BETWEEN '{2}' AND '{3}')", p.FieldColumn.ToLower(), GetTableAlias(p), sqlDateToString, sqlDateFromString);
+        }
+
+        private static string ParseDateTimeRangeParam(ArticleSearchQueryParam p)
+        {
+            Contract.Requires(p != null);
+            Contract.Requires(p.SearchType == ArticleFieldSearchType.DateTimeRange);
+
+            if (string.IsNullOrWhiteSpace(p.FieldColumn))
+            {
+                throw new ArgumentException("FieldColumn");
+            }
+
+            // параметры не пустые и их не меньше 4х (используем 1й, 2й, 3й и 4й остальные отбрасываем)
+            if (p.QueryParams == null || p.QueryParams.Length < 4)
+            {
+                throw new ArgumentException();
+            }
+
+            // первый параметр должен быть bool
+            if (!(p.QueryParams[0] is bool))
+            {
+                throw new InvalidCastException();
+            }
+
+            // второй параметр должен быть строкой или null
+            if (p.QueryParams[1] != null && !(p.QueryParams[1] is string))
+            {
+                throw new InvalidCastException();
+            }
+
+            // третий параметр должен быть строкой или null
+            if (p.QueryParams[2] != null && !(p.QueryParams[2] is string))
+            {
+                throw new InvalidCastException();
+            }
+
+            // четвертый параметр должен быть bool
+            if (!(p.QueryParams[3] is bool))
+            {
+                throw new InvalidCastException();
+            }
+
+            var isNull = (bool)p.QueryParams[0];
+            var datetimeFromString = (string)p.QueryParams[1];
+            var datetimeToString = (string)p.QueryParams[2];
+            var isByValue = (bool)p.QueryParams[3];
+
+            string sqlDateTimeFromString;
+            DateTime? datetimeFrom;
+            string sqlDateTimeToString;
+            DateTime? datetimeTo;
+
+            if (isNull)
+            {
+                return string.Format("({1}.[{0}] IS NULL)", p.FieldColumn.ToLower(), GetTableAlias(p));
+            }
+
+            if (isByValue)
+            {
+                if (string.IsNullOrWhiteSpace(datetimeFromString))
+                {
+                    return null;
+                }
+
+                if (!Converter.TryConvertToSqlDateString(datetimeFromString, null, out sqlDateTimeFromString, out datetimeFrom))
+                {
+                    throw new FormatException("datetime From");
+                }
+
+                return string.Format("({1}.[{0}] = '{2}')", p.FieldColumn.ToLower(), GetTableAlias(p), sqlDateTimeFromString);
+            }
+
+            // если обе даты пустые - то возвращаем null
+            if (string.IsNullOrWhiteSpace(datetimeFromString) && string.IsNullOrWhiteSpace(datetimeToString))
+            {
+                return null;
+            }
+
+            // дата "до" пустая а "от" не пустая
+            if (!string.IsNullOrWhiteSpace(datetimeFromString) && string.IsNullOrWhiteSpace(datetimeToString))
+            {
+                if (!Converter.TryConvertToSqlDateString(datetimeFromString, null, out sqlDateTimeFromString, out datetimeFrom))
+                {
+                    throw new FormatException("datetime From");
+                }
+
+                return string.Format("({1}.[{0}] >= '{2}')", p.FieldColumn.ToLower(), GetTableAlias(p), sqlDateTimeFromString);
+            }
+
+            // дата "от" пустая а "до" не пустая
+            if (string.IsNullOrWhiteSpace(datetimeFromString) && !string.IsNullOrWhiteSpace(datetimeToString))
+            {
+                if (!Converter.TryConvertToSqlDateString(datetimeToString, new TimeSpan(23, 59, 59), out sqlDateTimeToString, out datetimeTo))
+                {
+                    throw new FormatException("datetime To");
+                }
+
+                return string.Format("({1}.[{0}] <= '{2}')", p.FieldColumn.ToLower(), GetTableAlias(p), sqlDateTimeToString);
+            }
+
+            // обе границы диапазона не пустые
+            if (!Converter.TryConvertToSqlDateString(datetimeFromString, null, out sqlDateTimeFromString, out datetimeFrom))
+            {
+                throw new FormatException("datetime From");
+            }
+            if (!Converter.TryConvertToSqlDateString(datetimeToString, null, out sqlDateTimeToString, out datetimeTo))
+            {
+                throw new FormatException("datetime To");
+            }
+
+            // From < To
+            if (datetimeFrom.Value < datetimeTo.Value)
+            {
+                return string.Format("({1}.[{0}] BETWEEN '{2}' AND '{3}')", p.FieldColumn.ToLower(), GetTableAlias(p), sqlDateTimeFromString, sqlDateTimeToString);
+            }
+
+            return string.Format("({1}.[{0}] BETWEEN '{2}' AND '{3}')", p.FieldColumn.ToLower(), GetTableAlias(p), sqlDateTimeToString, sqlDateTimeFromString);
         }
 
         private static string ParseTimeRangeParam(ArticleSearchQueryParam p)
