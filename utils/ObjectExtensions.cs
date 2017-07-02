@@ -18,5 +18,12 @@ namespace Quantumart.QP8.Utils
 			}
 		}
 
+        public static IEnumerable<string> GetFields(this object source)
+        {
+            var type = source.GetType();
+            var fields = type.GetFields();
+            return fields.Select(f => f.GetValue(source).ToString()).ToArray();
+        }
+
 	}
 }

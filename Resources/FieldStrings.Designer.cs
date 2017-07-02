@@ -979,6 +979,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Such LINQ Back Property Name is already in using in system names.
+        /// </summary>
+        public static string LinqBackPropertyNameExistInSystemColumns {
+            get {
+                return ResourceManager.GetString("LinqBackPropertyNameExistInSystemColumns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid LINQ Back Property Name format.
         /// </summary>
         public static string LinqBackPropertyNameInvalidFormat {
@@ -1029,6 +1038,15 @@ namespace Quantumart.QP8.Resources {
         public static string LinqPropertyName {
             get {
                 return ResourceManager.GetString("LinqPropertyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Such LINQ Property Name is already in using in system names.
+        /// </summary>
+        public static string LinqPropertyNameExistInSystemColumns {
+            get {
+                return ResourceManager.GetString("LinqPropertyNameExistInSystemColumns", resourceCulture);
             }
         }
         

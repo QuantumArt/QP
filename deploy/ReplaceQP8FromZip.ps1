@@ -62,9 +62,9 @@ if ($p.State -ne "Stopped"){
 Write-Verbose "Stopped"
 
 Write-Verbose "Creating backup files ..."
-Invoke-Expression "7za.exe a -r -y ""$path\Backend_old.zip"" ""$backendPath\*.*"""
-Invoke-Expression "7za.exe a -r -y ""$path\Winlogon_old.zip"" ""$winlogonPath\*.*"""
-Invoke-Expression "7za.exe a -r -y ""$path\plugins_old.zip"" ""$pluginsPath\*.*"""
+Compress-Archive -Path $backendPath\* -DestinationPath $path\Backend_old.zip -Force
+Compress-Archive -Path $winlogonPath\* -DestinationPath $path\Winlogon_old.zip -Force
+Compress-Archive -Path $pluginsPath\* -DestinationPath $path\plugins_old.zip -Force
 Write-Verbose "Done"
 
 Write-Verbose "Removing files for $name from $backendPath..."
@@ -80,15 +80,15 @@ Get-ChildItem -Path $pluginsPath -Recurse | Remove-Item -force -recurse
 Write-Verbose "Done"
 
 Write-Verbose "Unarchiving zip-files to $backendPath..."
-Invoke-Expression "7za.exe x -r -y -o""$backendPath"" ""$backendSource"""
+Expand-Archive -LiteralPath $backendSource -DestinationPath $backendPath
 Write-Verbose "Done"
 
 Write-Verbose "Unarchiving zip-files to $winLogonPath..."
-Invoke-Expression "7za.exe x -r -y -o""$winLogonPath"" ""$winLogonSource"""
+Expand-Archive -LiteralPath $winLogonSource -DestinationPath $winLogonPath
 Write-Verbose "Done"
 
 Write-Verbose "Unarchiving zip-files to $pluginsPath..."
-Invoke-Expression "7za.exe x -r -y -o""$pluginsPath"" ""$pluginsSource"""
+Expand-Archive -LiteralPath $pluginsSource -DestinationPath $pluginsPath
 Write-Verbose "Done"
 
 if ($transform)
