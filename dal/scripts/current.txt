@@ -20,3 +20,4 @@ UpdateWrongWFStatuses
 UpdateItemToItemTrigger
 AddProducts
 DPC
+ContextMenuAction
