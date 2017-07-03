@@ -263,6 +263,7 @@ siteMvc/Scripts/Quantumart/**/*.min.js
 **/*.generated.cs
 npm-debug.log.*
 
+siteMvc/Views/Home/Index.cshtml
 siteMvc/Scripts/build
 siteMvc/Content/build
 package/pack/qp8release

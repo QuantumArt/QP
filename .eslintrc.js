@@ -13,8 +13,8 @@ module.exports = {
     Quantumart: false
   },
   rules: {
-    // 'no-invalid-this': 'off',
     // 'func-name-matching': 'off',
+    'no-invalid-this': 'warn',
     'no-underscore-dangle': 'off',
     'func-names': 'off'
   }

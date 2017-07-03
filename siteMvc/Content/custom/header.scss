@@ -1,0 +1,46 @@
+.main-header {
+  padding: 0 10px 0;
+  width: 100%;
+  height: 26px;
+  display: table;
+  box-sizing: border-box;
+  background-color: #bcc7d8;
+}
+
+.main-header > div {
+  display: table-cell;
+  width: 33%;
+  vertical-align: middle;
+}
+
+.enableDebugMode {
+  text-align: center;
+  visibility: hidden;
+}
+
+.userInformation {
+  text-align: right;
+}
+
+.signOut,
+.signOut:link,
+.signOut:visited,
+.signOut:hover,
+.signOut:active {
+  color: #ffefbb;
+  font-weight: bold;
+  padding: 0 0 0 8px;
+}
+
+.userName {
+  font-weight: bold;
+}
+
+.info {
+  font-weight: bold;
+}
+
+.warning {
+  color: red;
+  font-weight: bold;
+}

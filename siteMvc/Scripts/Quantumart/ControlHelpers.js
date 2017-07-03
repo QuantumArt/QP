@@ -1,4 +1,17 @@
+/* eslint max-lines: 'off' */
+/* eslint no-empty-function: 'off' */
+
 window.$c = function () {};
+
+window.$c.getAllFieldRows = function (parentElement) {
+  window.console.error('TODO: SHOULD NOT USE THIS METHOD');
+  if (!parentElement) {
+    throw new Error($l.Common.parentDomElementNotSpecified);
+  }
+
+  return $q.toJQuery(parentElement).find('dl.row');
+};
+
 $c.setFieldRowsVisibility = function (parentElement, fieldNames, visible) {
   if ($q.isArray(fieldNames) && !$q.isNullOrEmpty(fieldNames)) {
     if (!parentElement) {
@@ -17,6 +30,7 @@ $c.setFieldRowsVisibility = function (parentElement, fieldNames, visible) {
   }
 };
 
+// #region Свертывание/развертывание панелей
 $c.getAllCheckboxToggles = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -218,17 +232,20 @@ $c._setPanelControlsDisabledState = function ($panel, state) {
 };
 
 $c._switchPanel = function ($selectedSwitcher, panelIDs) {
+  // eslint-disable-next-line no-restricted-syntax
   for (const key in panelIDs) {
-    const panelId = panelIDs[key];
-    if (panelId) {
-      $(panelId).filter(function () {
-        return $(this).css('display') === 'block';
-      }).hide()
-        .trigger('hide')
-        .each(function () {
-          $c._setPanelControlsDisabledState($(this), true);
-        }
-      );
+    if ({}.hasOwnProperty.call(panelIDs, key)) {
+      const panelId = panelIDs[key];
+      if (panelId) {
+        $(panelId).filter(function () {
+          return $(this).css('display') === 'block';
+        }).hide()
+          .trigger('hide')
+          .each(function () {
+            $c._setPanelControlsDisabledState($(this), true);
+          }
+        );
+      }
     }
   }
 
@@ -245,6 +262,9 @@ $c._switchPanel = function ($selectedSwitcher, panelIDs) {
   }
 };
 
+// #endregion
+
+// #region Установка значений полей
 $c.setValidator = function (input, errors) {
   const message = errors && errors[0] ? errors[0].Message : '';
   const $input = $(input);
@@ -316,6 +336,8 @@ $c.setAllBooleanValues = function (parentElement, fieldValues) {
     const $tboxes = $c.getAllBoolean(parentElement);
     $(fieldValues).each((i, fv) => {
       const $chbox = $tboxes.filter(`[name="${fv.fieldName}"]`).first();
+
+      // eslint-disable-next-line eqeqeq
       const value = $q.isString(fv.value) ? fv.value == 'true' || fv.value == '1' : fv.value;
       if ($chbox.length > 0) {
         if (value === true) {
@@ -476,11 +498,11 @@ $c.setAllAggregationListValues = function (parentElement, fieldValues) {
 
   if (!$q.isNullOrEmpty(fieldValues)) {
     const $lists = $c.getAllAggregationLists(parentElement);
-    $(fieldValues).each((i, v) => {
-      const $l = $lists.filter(`[data-field_name="${v.fieldName}"]:first`);
-      const component = Quantumart.QP8.BackendAggregationList.getComponent($l);
+    $(fieldValues).each((i, fv) => {
+      const $lf = $lists.filter(`[data-field_name="${fv.fieldName}"]:first`);
+      const component = Quantumart.QP8.BackendAggregationList.getComponent($lf);
       if (component) {
-        component.set_items(v.value);
+        component.set_items(fv.value);
       }
     });
   }
@@ -513,7 +535,9 @@ $c.setAllHighlightedTextAreaValues = function (parentElement, fieldValues) {
   }
 };
 
+// #endregion
 
+// #region Получение значения полей
 $c.getAllSimpleTextBoxValues = function (parentElement) {
   return $c.getAllSimpleTextBox(parentElement).filter('[name]').map(function () {
     const $tb = $(this);
@@ -678,6 +702,9 @@ $c.getAllFieldValues = function (parentElement) {
   return result;
 };
 
+// #endregion
+
+// #region Readonly полей
 $c.makeReadonlySimpleTextBoxes = function (parentElement, fieldNames) {
   if ($q.isArray(fieldNames) && !$q.isNullOrEmpty(fieldNames)) {
     const $tboxes = $c.getAllSimpleTextBox(parentElement);
@@ -825,6 +852,9 @@ $c.makeReadonlyClassifierFields = function (parentElement, fieldNames) {
   }
 };
 
+// #endregion
+
+// #region Работа с DateTimePicker`ами
 $c.getAllDateTimePickers = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -933,6 +963,7 @@ $c.destroyDateTimePicker = function (fieldElem) {
     .removeData('tTimePicker');
 };
 
+// #endregion
 
 $c.getAllNumericTextBoxes = function (parentElement) {
   if (!parentElement) {
@@ -993,6 +1024,7 @@ $c.destroyNumericTextBox = function (textBoxElement) {
     .removeData('tTextBox');
 };
 
+// #region Работа с файловыми полями
 $c.getAllFileFields = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1074,7 +1106,9 @@ $c.destroyFileField = function (fieldElem) {
   }
 };
 
+// #endregion
 
+// #region Работа с компонентом "поле-классификатор"
 $c.getAllClassifierFields = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1120,7 +1154,9 @@ $c.destroyClassifierField = function (componentElem) {
   }
 };
 
+// #endregion
 
+// #region Работа с визуальными редакторами
 $c.getAllVisualEditors = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1178,7 +1214,9 @@ $c.saveVisualEditorData = function (editorElem) {
   }
 };
 
+// #endregion
 
+// #region Работа с Highlighted TextArea
 $c.getAllHighlightedTextAreas = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1222,7 +1260,9 @@ $c.destroyHighlightedTextArea = function (editorElem) {
   area = null;
 };
 
+// #endregion
 
+// #region Работа с AggregationLists
 $c.getAllAggregationLists = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1274,7 +1314,9 @@ $c.saveAggregationListData = function (editorElem) {
   (new Quantumart.QP8.BackendAggregationList(editorElem)).saveAggregationListData();
 };
 
+// #endregion
 
+// #region Работа с Workflows
 $c.getAllWorkflows = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1299,6 +1341,21 @@ $c.initWorkflow = function (editorElem) {
   workflow.initialize();
 };
 
+$c.saveDataOfAllWorkflows = function Quantumart$QP8$ControlHelper$saveDataOfAllWorkflows(editorElem) {
+  window.console.error('TODO: SHOULD NOT USE THIS METHOD');
+  const $workflows = $c.getAllWorkflows(editorElem);
+  $workflows.each(function () {
+    $c.saveWorkflowData($(this));
+  });
+};
+
+$c.saveWorkflowData = function Quantumart$QP8$ControlHelper$saveWorkflowData() {
+  window.console.error('TODO: SHOULD NOT USE THIS METHOD');
+};
+
+// #endregion
+
+// #region preview и download
 $c.preview = function (testUrl) {
   let win = null;
   const queryResult = $q.getJsonSync(testUrl);
@@ -1405,7 +1462,9 @@ $c.downloadFileWithChecking = function (checkUrl, fileName) {
   }
 };
 
+// #endregion
 
+// #region select popup
 $c.getListItemCollectionFromEntities = function (entities) {
   const dataItems = [];
   $.each(entities, (index, entity) => {
@@ -1424,7 +1483,9 @@ $c.getEntitiesFromListItemCollection = function (dataItems) {
   return entities;
 };
 
+// #endregion
 
+// #region Работа со всплывающими окнами
 $c.setPopupWindowTitle = function (windowComponent, titleText) {
   if (windowComponent) {
     $(windowComponent.element).find('.t-window-titlebar > .t-window-title').text(titleText);
@@ -1459,7 +1520,9 @@ $c.closePopupWindow = function (windowComponent) {
   }
 };
 
+// #endregion
 
+// #region Работа с упрощенными списками сущностей
 $c.getAllEntityDataLists = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1579,7 +1642,9 @@ $c.destroyEntityDataList = function (dataListElem) {
   }
 };
 
+// #endregion
 
+// #region Работа c деревьями сущностей
 $c.getAllEntityDataTrees = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1654,6 +1719,8 @@ $c.destroyEntityDataTree = function (dataTreeElem) {
     }
   }
 };
+
+// #endregion
 
 $c.notImplemented = function () {
   $q.alertError($l.Common.methodNotImplemented);

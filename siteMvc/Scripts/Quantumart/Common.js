@@ -2,66 +2,65 @@
 // *** Объявляем пространства имен                            ***
 // ****************************************************************************************
 
-if (typeof (Quantumart) == 'undefined') {
+if (typeof Quantumart === 'undefined') {
   Type.registerNamespace('Quantumart');
-};
+}
 
-if (typeof (Quantumart.QP8) == 'undefined') {
+if (typeof Quantumart.QP8 === 'undefined') {
   Type.registerNamespace('Quantumart.QP8');
-};
+}
 
-if (typeof (Quantumart.QP8.Constants) == 'undefined') {
+if (typeof Quantumart.QP8.Constants === 'undefined') {
   Type.registerNamespace('Quantumart.QP8.Constants');
-};
+}
 
 // ********************************************************************************************
 // *** Интерфейсы и классы для реализации паттернов "Наблюдатель" и "Посредник"       ***
 // ********************************************************************************************
 
-//#region interface IObserver
+// #region interface IObserver
 // === Интерфейс "Наблюдатель" ===
-Quantumart.QP8.IObserver = function() { };
+Quantumart.QP8.IObserver = function () { };
 
 Quantumart.QP8.IObserver.prototype = {
-  update: function() { }
+  update() { }
 };
 
 Quantumart.QP8.IObserver.registerInterface('Quantumart.QP8.IObserver');
 
-//#endregion
+// #endregion
 
-//#region interface IObservable
+// #region interface IObservable
 // === Интерфейс "Наблюдаемый" ===
-Quantumart.QP8.IObservable = function() { };
+Quantumart.QP8.IObservable = function () { };
 
 Quantumart.QP8.IObservable.prototype = {
-  attachObserver: function() { },
-  detachObserver: function() { },
-  notify: function() { }
+  attachObserver() { },
+  detachObserver() { },
+  notify() { }
 };
 
 Quantumart.QP8.IObservable.registerInterface('Quantumart.QP8.IObservable');
 
-//#endregion
+// #endregion
 
-//#region class Observable
+// #region class Observable
 // === Класс "Наблюдаемый" ===
-Quantumart.QP8.Observable = function() {
+Quantumart.QP8.Observable = function () {
   this._observerInfos = [];
 };
 
 Quantumart.QP8.Observable.prototype = {
   _observerInfos: null,
 
-  _getObserverInfo: function(eventType, observer) {
-    var observerInfo = null;
+  _getObserverInfo(eventType, observer) {
+    let observerInfo = null;
 
-    var observerInfos = jQuery.grep(this._observerInfos[eventType], function(observerInfo) {
+    const observerInfos = jQuery.grep(this._observerInfos[eventType], observerInfo => {
       if (observerInfo.observer) {
-        return (observerInfo.observer == observer);
-      } else {
-        return false;
+        return observerInfo.observer == observer;
       }
+      return false;
     });
 
     if (observerInfos && observerInfos.length > 0) {
@@ -71,8 +70,8 @@ Quantumart.QP8.Observable.prototype = {
     return observerInfo;
   },
 
-  _checkObserver: function(observer) {
-    var result = false;
+  _checkObserver(observer) {
+    let result = false;
     if ($q.isObject(observer) || $q.isFunction(observer)) {
       result = true;
     } else {
@@ -81,7 +80,7 @@ Quantumart.QP8.Observable.prototype = {
 
     if (result) {
       if (!$q.isFunction(observer)) {
-        var isObserver = true;
+        let isObserver = true;
 
         try {
           isObserver = Object.getType(observer).implementsInterface(Quantumart.QP8.IObserver);
@@ -99,7 +98,7 @@ Quantumart.QP8.Observable.prototype = {
     return result;
   },
 
-  attachObserver: function(eventType, observer, times) {
+  attachObserver(eventType, observer, times) {
     if (!this._checkObserver(observer)) {
       return;
     }
@@ -112,34 +111,35 @@ Quantumart.QP8.Observable.prototype = {
       this._observerInfos[eventType] = [];
     }
 
-    var observerInfo = this._getObserverInfo(eventType, observer);
+    const observerInfo = this._getObserverInfo(eventType, observer);
 
     if (!$q.isNull(observerInfo)) {
       observerInfo.times = times;
     } else {
-      Array.add(this._observerInfos[eventType], { observer: observer, times: times });
+      Array.add(this._observerInfos[eventType], { observer, times });
     }
   },
 
-  detachObserver: function(eventType, observer) {
+  detachObserver(eventType, observer) {
     if (!$q.isNull(this._observerInfos)
     && this._observerInfos[eventType]) {
       if (!$q.isNull(observer)) {
-        var observerInfo = this._getObserverInfo(eventType, observer);
+        const observerInfo = this._getObserverInfo(eventType, observer);
 
         if (!$q.isNull(observerInfo)) {
           Array.remove(this._observerInfos[eventType], observerInfo);
         }
-      } else
-      $q.removeProperty(this._observerInfos, eventType);
+      } else {
+        $q.removeProperty(this._observerInfos, eventType);
+      }
     }
   },
 
-  oneTimeObserver: function(eventType, observer) {
+  oneTimeObserver(eventType, observer) {
     this.attachObserver(eventType, observer, 1);
   },
 
-  notify: function(eventType, eventArgs) {
+  notify(eventType, eventArgs) {
     if ($q.isNullOrWhiteSpace(eventType)) {
       throw new Error($l.Common.eventTypeNotSpecified);
     }
@@ -152,40 +152,38 @@ Quantumart.QP8.Observable.prototype = {
       return;
     }
 
-    var observerInfos = this._observerInfos[eventType];
-    var observerInfoCount = 0;
+    const observerInfos = this._observerInfos[eventType];
+    let observerInfoCount = 0;
 
     if (!$q.isNull(observerInfos)) {
       observerInfoCount = observerInfos.length;
     }
 
     if (observerInfoCount > 0) {
-      for (var observerInfoIndex = observerInfoCount - 1; observerInfoIndex >= 0; observerInfoIndex--) {
-        var observerInfo = observerInfos[observerInfoIndex];
+      for (let observerInfoIndex = observerInfoCount - 1; observerInfoIndex >= 0; observerInfoIndex--) {
+        const observerInfo = observerInfos[observerInfoIndex];
 
         if (observerInfo) {
-          var observer = observerInfo.observer;
+          const observer = observerInfo.observer;
 
           if (observerInfo.times == -1) {
             this._updateObserver(eventType, eventArgs, observer);
-          } else {
-            if (observerInfo.times > 0) {
-              observerInfo.times--;
-              if (observerInfo.times == 0) {
-                this.detachObserver(eventType, observer);
-              }
-
-              this._updateObserver(eventType, eventArgs, observer);
+          } else if (observerInfo.times > 0) {
+            observerInfo.times--;
+            if (observerInfo.times == 0) {
+              this.detachObserver(eventType, observer);
             }
+
+            this._updateObserver(eventType, eventArgs, observer);
           }
         }
       }
     }
   },
 
-  _updateObserver: function(eventType, eventArgs, observer) {
+  _updateObserver(eventType, eventArgs, observer) {
     if ($q.isObject(observer)) {
-      var isObserver = false;
+      let isObserver = false;
 
       try {
         isObserver = Object.getType(observer).implementsInterface(Quantumart.QP8.IObserver);
@@ -201,30 +199,30 @@ Quantumart.QP8.Observable.prototype = {
     }
   },
 
-  dispose: function() {
+  dispose() {
     $q.clearArray(this._observerInfos);
   }
 };
 
 Quantumart.QP8.Observable.registerClass('Quantumart.QP8.Observable', null, Quantumart.QP8.IObservable, Sys.IDisposable);
 
-//#endregion
+// #endregion
 
-//#region interface IMediator
+// #region interface IMediator
 // === Интерфейс "Посредник" ===
-Quantumart.QP8.IMediator = function() { };
+Quantumart.QP8.IMediator = function () { };
 
 Quantumart.QP8.IMediator.prototype = {
-  introduce: function() { }
+  introduce() { }
 };
 
 Quantumart.QP8.IMediator.registerInterface('Quantumart.QP8.IMediator');
 
-//#endregion
+// #endregion
 
-//#region class Mediator
+// #region class Mediator
 // === Класс "Посредник" ===
-Quantumart.QP8.Mediator = function() {
+Quantumart.QP8.Mediator = function () {
   this._firstComponent = null;
   this._secondComponent = null;
 };
@@ -233,40 +231,38 @@ Quantumart.QP8.Mediator.prototype = {
   _firstComponent: null, // первый компонент
   _secondComponent: null, // второй компонент
 
-  introduce: function(firstComponent, secondComponent) {
+  introduce(firstComponent, secondComponent) {
     if (!$q.isObject(firstComponent)) {
       throw new Error($l.Common.firstComponentInMediatorNotSpecified);
-      return;
     }
 
     if (!$q.isObject(secondComponent)) {
       throw new Error($l.Common.secondComponentInMediatorNotSpecified);
-      return;
     }
 
     this._firstComponent = firstComponent;
     this._secondComponent = secondComponent;
   },
 
-  update: function() {
+  update() {
   },
 
-  dispose: function() {
+  dispose() {
   }
 };
 
 Quantumart.QP8.Mediator.registerClass('Quantumart.QP8.Mediator', null,
   Quantumart.QP8.IMediator, Quantumart.QP8.IObserver, Sys.IDisposable);
 
-//#endregion
+// #endregion
 
 // ********************************************************************************************
 // *** Классы аргументов событий                              ***
 // ********************************************************************************************
 
-//#region class BackendPreviousAction
+// #region class BackendPreviousAction
 // === Класс "Предыдущее действие" ===
-Quantumart.QP8.BackendPreviousAction = function(options) {
+Quantumart.QP8.BackendPreviousAction = function (options) {
   if ($q.isObject(options)) {
     if (options.entityTypeCode) {
       this._entityTypeCode = options.entityTypeCode;
@@ -292,46 +288,46 @@ Quantumart.QP8.BackendPreviousAction.prototype = {
   _actionCode: '', // код действия
   _isSuccessfullyExecuted: false, // признак успешного выполнения события
 
-  get_entityTypeCode: function() {
+  get_entityTypeCode() {
     return this._entityTypeCode;
   },
 
-  set_entityTypeCode: function(value) {
+  set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
 
-  get_actionTypeCode: function() {
+  get_actionTypeCode() {
     return this._actionTypeCode;
   },
 
-  set_actionTypeCode: function(value) {
+  set_actionTypeCode(value) {
     this._actionTypeCode = value;
   },
 
-  get_actionCode: function() {
+  get_actionCode() {
     return this._actionCode;
   },
 
-  set_actionCode: function(value) {
+  set_actionCode(value) {
     this._actionCode = value;
   },
 
-  get_isSuccessfullyExecuted: function() {
+  get_isSuccessfullyExecuted() {
     return this._isSuccessfullyExecuted;
   },
 
-  set_isSuccessfullyExecuted: function(value) {
+  set_isSuccessfullyExecuted(value) {
     this._isSuccessfullyExecuted = value;
   }
 };
 
 Quantumart.QP8.BackendPreviousAction.registerClass('Quantumart.QP8.BackendPreviousAction');
 
-//#endregion
+// #endregion
 
-//#region class BackendEventArgs
+// #region class BackendEventArgs
 // === Класс "Аргументы события сущности" ===
-Quantumart.QP8.BackendEventArgs = function() {
+Quantumart.QP8.BackendEventArgs = function () {
   Quantumart.QP8.BackendEventArgs.initializeBase(this);
 };
 
@@ -364,232 +360,232 @@ Quantumart.QP8.BackendEventArgs.prototype = {
   _externalCallerContext: null,
   _startedByExternal: false,
 
-  get_entityId: function() {
+  get_entityId() {
     return this._entityId;
   },
-  set_entityId: function(value) {
+  set_entityId(value) {
     this._entityId = value;
   },
-  get_entityName: function() {
+  get_entityName() {
     return this._entityName;
   },
-  set_entityName: function(value) {
+  set_entityName(value) {
     this._entityName = value;
   },
-  get_entities: function() {
+  get_entities() {
     return this._entities;
   },
-  set_entities: function(value) {
+  set_entities(value) {
     this._entities = value;
   },
-  get_isMultipleEntities: function() {
+  get_isMultipleEntities() {
     return this._isMultipleEntities;
   },
-  set_isMultipleEntities: function(value) {
+  set_isMultipleEntities(value) {
     this._isMultipleEntities = value;
   },
-  get_entityTypeCode: function() {
+  get_entityTypeCode() {
     return this._entityTypeCode;
   },
 
-  set_entityTypeCode: function(value) {
+  set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
 
-  get_entityTypeName: function() {
+  get_entityTypeName() {
     return this._entityTypeName;
   },
 
-  set_entityTypeName: function(value) {
+  set_entityTypeName(value) {
     this._entityTypeName = value;
   },
 
-  get_parentEntityId: function() {
+  get_parentEntityId() {
     return this._parentEntityId;
   },
 
-  set_parentEntityId: function(value) {
+  set_parentEntityId(value) {
     this._parentEntityId = value;
   },
 
-  get_actionCode: function() {
+  get_actionCode() {
     return this._actionCode;
   },
 
-  set_actionCode: function(value) {
+  set_actionCode(value) {
     this._actionCode = value;
   },
 
-  get_actionName: function() {
+  get_actionName() {
     return this._actionName;
   },
 
-  set_actionName: function(value) {
+  set_actionName(value) {
     this._actionName = value;
   },
 
-  get_actionTypeCode: function() {
+  get_actionTypeCode() {
     return this._actionTypeCode;
   },
 
-  set_actionTypeCode: function(value) {
+  set_actionTypeCode(value) {
     this._actionTypeCode = value;
   },
 
-  get_isInterface: function() {
+  get_isInterface() {
     return this._isInterface;
   },
 
-  set_isInterface: function(value) {
+  set_isInterface(value) {
     this._isInterface = value;
   },
 
-  get_isCustomAction: function() {
+  get_isCustomAction() {
     return this._isCustomAction;
   },
 
-  set_isCustomAction: function(value) {
+  set_isCustomAction(value) {
     this._isCustomAction = value;
   },
 
-  get_isMultistepAction: function() {
+  get_isMultistepAction() {
     return this._isMultistepAction;
   },
 
-  set_isMultistepAction: function(value) {
+  set_isMultistepAction(value) {
     this._isMultistepAction = value;
   },
 
-  get_isWindow: function() {
+  get_isWindow() {
     return this._isWindow;
   },
 
-  set_isWindow: function(value) {
+  set_isWindow(value) {
     this._isWindow = value;
   },
 
-  get_windowWidth: function() {
+  get_windowWidth() {
     return this._windowWidth;
   },
 
-  set_windowWidth: function(value) {
+  set_windowWidth(value) {
     this._windowWidth = value;
   },
 
-  get_windowHeight: function() {
+  get_windowHeight() {
     return this._windowHeight;
   },
 
-  set_windowHeight: function(value) {
+  set_windowHeight(value) {
     this._windowHeight = value;
   },
 
-  get_confirmPhrase: function() {
+  get_confirmPhrase() {
     return this._confirmPhrase;
   },
 
-  set_confirmPhrase: function(value) {
+  set_confirmPhrase(value) {
     this._confirmPhrase = value;
   },
 
-  get_previousAction: function() {
+  get_previousAction() {
     return this._previousAction;
   },
 
-  set_previousAction: function(value) {
+  set_previousAction(value) {
     this._previousAction = value;
   },
 
-  get_nextSuccessfulActionCode: function() {
+  get_nextSuccessfulActionCode() {
     return this._nextSuccessfulActionCode;
   },
 
-  set_nextSuccessfulActionCode: function(value) {
+  set_nextSuccessfulActionCode(value) {
     this._nextSuccessfulActionCode = value;
   },
 
-  get_nextFailedActionCode: function() {
+  get_nextFailedActionCode() {
     return this._nextFailedActionCode;
   },
 
-  set_nextFailedActionCode: function(value) {
+  set_nextFailedActionCode(value) {
     this._nextFailedActionCode = value;
   },
 
-  get_context: function() {
+  get_context() {
     return this._context;
   },
-  set_context: function(value) {
+  set_context(value) {
     this._context = value;
   },
 
-  get_isLoaded: function() {
+  get_isLoaded() {
     return this._actionTypeCode == ACTION_TYPE_CODE_READ && this.get_previousActionTypeCode() == ACTION_TYPE_CODE_NONE;
   },
 
-  get_isSaved: function() {
+  get_isSaved() {
     return this._actionTypeCode == ACTION_TYPE_CODE_READ && (this.get_previousActionTypeCode() == ACTION_TYPE_CODE_SAVE || this.get_previousActionTypeCode() == ACTION_TYPE_CODE_SAVE_AND_UP);
   },
 
-  get_isUpdated: function() {
+  get_isUpdated() {
     return this._actionTypeCode == ACTION_TYPE_CODE_READ && (this.get_previousActionTypeCode() == ACTION_TYPE_CODE_UPDATE || this.get_previousActionTypeCode() == ACTION_TYPE_CODE_UPDATE_AND_UP);
   },
 
-  get_isRestored: function() {
+  get_isRestored() {
     return this._actionTypeCode == ACTION_TYPE_CODE_READ && this.get_previousActionTypeCode() == ACTION_TYPE_CODE_RESTORE;
   },
 
-  get_needUp: function() {
+  get_needUp() {
     return this.get_previousActionTypeCode() == ACTION_TYPE_CODE_SAVE_AND_UP || this.get_previousActionTypeCode() == ACTION_TYPE_CODE_UPDATE_AND_UP;
   },
 
-  get_previousActionTypeCode: function() {
-    return (this._previousAction && this._previousAction.get_isSuccessfullyExecuted()) ? this._previousAction.get_actionTypeCode() : ACTION_TYPE_CODE_NONE;
+  get_previousActionTypeCode() {
+    return this._previousAction && this._previousAction.get_isSuccessfullyExecuted() ? this._previousAction.get_actionTypeCode() : ACTION_TYPE_CODE_NONE;
   },
 
-  get_isArchiving: function() {
+  get_isArchiving() {
     return this._actionTypeCode == ACTION_TYPE_CODE_ARCHIVE || this._actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_ARCHIVE;
   },
 
-  get_isRemoving: function() {
+  get_isRemoving() {
     return this._actionTypeCode == ACTION_TYPE_CODE_REMOVE || this._actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_REMOVE;
   },
 
-  get_isRestoring: function() {
+  get_isRestoring() {
     return this._actionTypeCode == ACTION_TYPE_CODE_RESTORE || this._actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_RESTORE;
   },
 
-  get_callerContext: function() {
+  get_callerContext() {
     return this._callerContext;
   },
 
-  set_callerContext: function(value) {
+  set_callerContext(value) {
     this._callerContext = value;
   },
 
-  get_externalCallerContext: function() {
+  get_externalCallerContext() {
     return this._externalCallerContext;
   },
 
-  set_externalCallerContext: function(value) {
+  set_externalCallerContext(value) {
     this._externalCallerContext = value;
   },
 
-  get_additionalData: function() {
+  get_additionalData() {
     return this._additionalData;
   },
-  set_additionalData: function(value) {
+  set_additionalData(value) {
     this._additionalData = value;
   },
 
-  get_startedByExternal: function() {
+  get_startedByExternal() {
     return this._startedByExternal;
   },
-  set_startedByExternal: function(value) {
+  set_startedByExternal(value) {
     this._startedByExternal = value;
   },
 
-  init: function(entityTypeCode, entities, parentEntityId, action, options, actionCode) {
+  init(entityTypeCode, entities, parentEntityId, action, options, actionCode) {
     this._entityTypeCode = entityTypeCode;
     this._parentEntityId = parentEntityId;
     if (action.ActionType.IsMultiple) {
@@ -600,10 +596,12 @@ Quantumart.QP8.BackendEventArgs.prototype = {
     }
 
     if (options) {
-      if (options.previousAction)
-      this._previousAction = options.previousAction;
-      if (options.forceOpenWindow)
-      this._isWindow = true;
+      if (options.previousAction) {
+        this._previousAction = options.previousAction;
+      }
+      if (options.forceOpenWindow) {
+        this._isWindow = true;
+      }
       if (options.context) {
         this._context = options.context;
       }
@@ -616,12 +614,12 @@ Quantumart.QP8.BackendEventArgs.prototype = {
 };
 
 // Возвращает агрументы события на основе агрументов другого события
-Quantumart.QP8.BackendEventArgs.getEventArgsFromOtherEventArgs = function(sourceArgs) {
+Quantumart.QP8.BackendEventArgs.getEventArgsFromOtherEventArgs = function (sourceArgs) {
   if (!$q.isObject(sourceArgs)) {
     throw new Error($l.Common.sourceEventArgsNotSpecified);
   }
 
-  var targetArgs = new Quantumart.QP8.BackendEventArgs();
+  const targetArgs = new Quantumart.QP8.BackendEventArgs();
 
   Quantumart.QP8.BackendEventArgs.fillEventArgsFromOtherEventArgs(targetArgs, sourceArgs);
 
@@ -629,7 +627,7 @@ Quantumart.QP8.BackendEventArgs.getEventArgsFromOtherEventArgs = function(source
 };
 
 // Заполняет агрументы события на основе агрументов другого события
-Quantumart.QP8.BackendEventArgs.fillEventArgsFromOtherEventArgs = function(targetArgs, sourceArgs) {
+Quantumart.QP8.BackendEventArgs.fillEventArgsFromOtherEventArgs = function (targetArgs, sourceArgs) {
   if (!$q.isObject(targetArgs)) {
     throw new Error($l.Common.targetEventArgsNotSpecified);
   }
@@ -666,5 +664,5 @@ Quantumart.QP8.BackendEventArgs.fillEventArgsFromOtherEventArgs = function(targe
 
 Quantumart.QP8.BackendEventArgs.registerClass('Quantumart.QP8.BackendEventArgs');
 
-//#endregion
+// #endregion
 

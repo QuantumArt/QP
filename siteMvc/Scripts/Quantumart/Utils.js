@@ -6,7 +6,7 @@
 /* eslint no-alert: 'off' */
 /* eslint no-sync: 'off' */
 
-/* wait4webpack
+/* TODO: wait4{webpack|browserify}
 var config = require("./config");
 if (config.env === 'development') {
   $q.isDebug = true;
