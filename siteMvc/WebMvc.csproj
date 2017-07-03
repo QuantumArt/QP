@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -1444,6 +1444,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Settings.StyleCop" />
     <Content Include="Scripts\immutablejs\immutable.js" />
     <Content Include="Scripts\immutablejs\immutable.min.js" />
     <Content Include="Scripts\jquery\jquery.signalR-2.2.1.js" />
@@ -1594,9 +1595,6 @@
     <Content Include="Scripts\Quantumart\Helpers\vanilla.helpers.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.js" />
-    <Content Include="Scripts\Quantumart\version.6.32.js" />
-    <None Include="Scripts\jquery\jquery-1.7.1.intellisense.js" />
-    <None Include="Settings.StyleCop" />
     <Content Include="Content\QpCodemirror.css" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\jquery\jquery.imgareaselect.js" />
@@ -1644,7 +1642,6 @@
     <Content Include="Scripts\Quantumart\Search\BackendArticleSearchBlock\IdentifierFieldSearch.js" />
     <Content Include="Scripts\Quantumart\BackendLogOnWindow.js" />
     <Content Include="Scripts\Quantumart\Search\BackendArticleSearchBlock\StringEnumFieldSearch.js" />
-    <Content Include="Scripts\Quantumart\version_login.6.0.js" />
     <Content Include="Scripts\Quantumart\CustomAction\BackendCustomActionHost.js" />
     <Content Include="Scripts\Quantumart\CustomAction\CustomActionProperties.js" />
     <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.js" />
@@ -2268,9 +2265,6 @@
     <None Include="Views\Article\Properties.cshtml">
       <LastGenOutput>Properties.generated.cs</LastGenOutput>
     </None>
-    <Content Include="Views\Home\Index.cshtml">
-      <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </Content>
     <Content Include="Views\Home\Index.Template.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
     </Content>
