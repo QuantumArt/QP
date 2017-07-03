@@ -51,13 +51,13 @@ Write-Output "Removing sources for $commonSchedulerSource"
 Invoke-Expression "CleanSource.ps1 -source '$commonSchedulerSource'"
 Write-Output "Done"
 
-Compress-Archive -Path $backendSource\*.* -DestinationPath $parentSource\Backend.zip
-Compress-Archive -Path $winLogonSource\*.*  -DestinationPath $parentSource\Winlogon.zip
-Compress-Archive -Path $schedulerSource\*.*  -DestinationPath $parentSource\ArticleScheduler.zip
-Compress-Archive -Path $commonSchedulerSource\*.*  -DestinationPath $parentSource\CommonScheduler.zip
-Compress-Archive -Path $pluginsSource\*.* -DestinationPath $parentSource\plugins.zip
-Compress-Archive -Path $sitesSource\*.* -DestinationPath $parentSource\sites.zip
-Compress-Archive -Path $qaSource\*.* -DestinationPath $parentSource\qa.zip
+Compress-Archive -Path $backendSource\* -DestinationPath $parentSource\Backend.zip
+Compress-Archive -Path $winLogonSource\* -DestinationPath $parentSource\Winlogon.zip
+Compress-Archive -Path $schedulerSource\* -DestinationPath $parentSource\ArticleScheduler.zip
+Compress-Archive -Path $commonSchedulerSource\* -DestinationPath $parentSource\CommonScheduler.zip
+Compress-Archive -Path $pluginsSource\* -DestinationPath $parentSource\plugins.zip
+Compress-Archive -Path $sitesSource\* -DestinationPath $parentSource\sites.zip
+Compress-Archive -Path $qaSource\* -DestinationPath $parentSource\qa.zip
 
 Copy-Item $installQp8Source $parentSource
 Copy-Item $replacelQp8Source $parentSource

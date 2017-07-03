@@ -62,9 +62,9 @@ if ($p.State -ne "Stopped"){
 Write-Verbose "Stopped"
 
 Write-Verbose "Creating backup files ..."
-Compress-Archive -Path $backendPath\*.* -DestinationPath $path\Backend_old.zip
-Compress-Archive -Path $winlogonPath\*.* -DestinationPath $path\Winlogon_old.zip
-Compress-Archive -Path $pluginsPath\*.* -DestinationPath $path\plugins_old.zip
+Compress-Archive -Path $backendPath\* -DestinationPath $path\Backend_old.zip -Force
+Compress-Archive -Path $winlogonPath\* -DestinationPath $path\Winlogon_old.zip -Force
+Compress-Archive -Path $pluginsPath\* -DestinationPath $path\plugins_old.zip -Force
 Write-Verbose "Done"
 
 Write-Verbose "Removing files for $name from $backendPath..."
@@ -80,7 +80,7 @@ Get-ChildItem -Path $pluginsPath -Recurse | Remove-Item -force -recurse
 Write-Verbose "Done"
 
 Write-Verbose "Unarchiving zip-files to $backendPath..."
-Expand-Archive -LiteralPath $backendSource -DestinationPath $backendPath 
+Expand-Archive -LiteralPath $backendSource -DestinationPath $backendPath
 Write-Verbose "Done"
 
 Write-Verbose "Unarchiving zip-files to $winLogonPath..."
