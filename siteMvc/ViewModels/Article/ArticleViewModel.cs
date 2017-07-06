@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -35,9 +34,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public ArticleViewModel()
         {
-            _variationModel = new InitPropertyValue<string>(() => new JavaScriptSerializer().Serialize(Data.VariationListItems));
-            _contextModel = new InitPropertyValue<string>(() => new JavaScriptSerializer().Serialize(Data.ContextListItems));
-            _errorModel = new InitPropertyValue<string>(() => new JavaScriptSerializer().Serialize(Data.VariationsErrorModel.Select(n => new
+            _variationModel = new InitPropertyValue<string>(() => JsonConvert.SerializeObject(Data.VariationListItems));
+            _contextModel = new InitPropertyValue<string>(() => JsonConvert.SerializeObject(Data.ContextListItems));
+
+            _errorModel = new InitPropertyValue<string>(() => JsonConvert.SerializeObject(Data.VariationsErrorModel.Select(n => new
             {
                 Context = n.Key,
                 Errors = n.Value.Errors.Select(m => new
