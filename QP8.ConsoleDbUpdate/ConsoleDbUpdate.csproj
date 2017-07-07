@@ -98,10 +98,10 @@
     <EmbeddedResource Include="..\packages\Quantumart.2.1.3\lib\net45\Quantumart.QP8.Assembling.dll">
       <Link>References\Quantumart.QP8.Assembling.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\QA.Validation.Xaml.1.0.3\lib\net40\QA.Validation.Xaml.dll">
+    <EmbeddedResource Include="..\packages\QA.Validation.Xaml.1.0.4\lib\net40\QA.Validation.Xaml.dll">
       <Link>References\QA.Validation.Xaml.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\QA.Validation.Xaml.Extensions.1.0.3\lib\net40\QA.Validation.Xaml.Extensions.dll">
+    <EmbeddedResource Include="..\packages\QA.Validation.Xaml.Extensions.1.0.4\lib\net40\QA.Validation.Xaml.Extensions.dll">
       <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.dll">
