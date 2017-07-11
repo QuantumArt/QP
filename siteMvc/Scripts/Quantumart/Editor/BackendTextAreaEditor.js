@@ -186,7 +186,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       matchBrackets: $q.toBoolean(tArea.data('hta_matchBrackets'), true),
       lineWrapping: $q.toBoolean(tArea.data('hta_lineWrapping'), true),
       mode: this.getMode(tArea),
-      readOnly: tArea.is('[disabled]'),
+      readOnly: tArea.is('[readOnly]'),
       tabMode: 'indent'
     });
 
@@ -212,7 +212,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     tArea.hide();
 
     tArea.wrap('<div id="jsonEditor">');
-    tArea.is('[disabled]');
+
     options = {
       mode: 'code',
       modes: ['text', 'code', 'tree'],
@@ -220,6 +220,15 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         $q.alertError($l.TextArea.forbiddenJsonMode);
       }
     };
+
+    if (tArea.is('[readOnly]'))
+    {
+      options.onEditable = function (node) {
+        if (!node.path) {
+          return false;
+        }
+      };
+    }
 
     height = parseInt(tArea.css('height'), 10);
     this._editorHeight = !height || height < this._minJsonEditorHeight ? this._minJsonEditorHeight : height;
