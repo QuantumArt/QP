@@ -3,7 +3,8 @@ param(
   [String] $source='',
   [Bool] $transform=$true,
   [String] $config='Default',
-  [String] $configFiles='Web,NLog'
+  [String] $configFiles='Web,NLog',
+  [String] $backupsPath = ''
 )
 
 Import-Module WebAdministration
@@ -64,13 +65,21 @@ if ($p.State -ne "Stopped"){
 Write-Verbose "Stopped" -Verbose
 
 Write-Verbose "Creating backup files ..." -Verbose
-$backupPath = if ($isRootSites) { (Split-Path $path -Parent)} Else { $path }
-Compress-Archive -Path $backendPath\* -DestinationPath $backupPath\Backend_old.zip -Force
-Compress-Archive -Path $winlogonPath\* -DestinationPath $backupPath\Winlogon_old.zip -Force
-Compress-Archive -Path $pluginsPath\* -DestinationPath $backupPath\plugins_old.zip -Force
+Write-Verbose "Check backups path to $backupsPath..." -Verbose
+$backupPath = if(([String]::IsNullOrEmpty($backupsPath)) -or (-not(Test-Path $backupsPath)))
+{
+  if ($isRootSites) { (Split-Path $path -Parent)} Else { $path }
+}
+else { $backupsPath }
+Write-Verbose "Preparing zip-files to $backupPath..." -Verbose
+$command = "CreateBackup.ps1 -sourcePath ""$backendPath"" -name Backend -path ""$backupPath""
+            CreateBackup.ps1 -sourcePath ""$winlogonPath"" -name WinLogon -path ""$backupPath""
+            CreateBackup.ps1 -sourcePath ""$pluginsPath"" -name plugins -path ""$backupPath"""
+invoke-expression -command $command
 if ($isRootSites)
 {
-  Compress-Archive -Path $path\* -DestinationPath $backupPath\sites_old.zip -Force
+  $command = "CreateBackup.ps1 -sourcePath ""$path"" -name sites -path ""$backupPath"""
+  invoke-expression -command $command
 }
 Write-Verbose "Done" -Verbose
 
