@@ -385,6 +385,9 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("UseForContext", NameResourceType = typeof(ContentStrings))]
         public bool UseForContext { get; set; }
 
+        [LocalizedDisplayName("ForReplication", NameResourceType = typeof(ContentStrings))]
+        public bool ForReplication { get; set; }
+
         [LocalizedDisplayName("DisableChangingActions", NameResourceType = typeof(ContentStrings))]
         public bool DisableChangingActions { get; set; }
 

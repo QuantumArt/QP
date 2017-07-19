@@ -9363,7 +9363,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="disableXamlValidation">Initial value of the DisableXamlValidation property.</param>
         /// <param name="disableChangingActions">Initial value of the DisableChangingActions property.</param>
         /// <param name="useForContext">Initial value of the UseForContext property.</param>
-        public static ContentDAL CreateContentDAL(global::System.Decimal id, global::System.String name, global::System.Decimal siteId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Decimal allowItemsPermission, global::System.Decimal virtualType, global::System.Boolean isShared, global::System.Boolean autoArchive, global::System.Byte maxNumOfStoredVersions, global::System.Boolean createVersionControlView, global::System.Int32 pageSize, global::System.Boolean mapAsClass, global::System.Boolean useDefaultFiltration, global::System.Boolean disableXamlValidation, global::System.Boolean disableChangingActions, global::System.Boolean useForContext)
+        /// <param name="forReplication">Initial value of the ForReplication property.</param>
+        public static ContentDAL CreateContentDAL(global::System.Decimal id, global::System.String name, global::System.Decimal siteId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Decimal allowItemsPermission, global::System.Decimal virtualType, global::System.Boolean isShared, global::System.Boolean autoArchive, global::System.Byte maxNumOfStoredVersions, global::System.Boolean createVersionControlView, global::System.Int32 pageSize, global::System.Boolean mapAsClass, global::System.Boolean useDefaultFiltration, global::System.Boolean disableXamlValidation, global::System.Boolean disableChangingActions, global::System.Boolean useForContext, global::System.Boolean forReplication)
         {
             ContentDAL contentDAL = new ContentDAL();
             contentDAL.Id = id;
@@ -9384,6 +9385,7 @@ namespace Quantumart.QP8.DAL
             contentDAL.DisableXamlValidation = disableXamlValidation;
             contentDAL.DisableChangingActions = disableChangingActions;
             contentDAL.UseForContext = useForContext;
+            contentDAL.ForReplication = forReplication;
             return contentDAL;
         }
 
@@ -10161,6 +10163,30 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FormScript;
         partial void OnFormScriptChanging(global::System.String value);
         partial void OnFormScriptChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean ForReplication
+        {
+            get
+            {
+                return _ForReplication;
+            }
+            set
+            {
+                OnForReplicationChanging(value);
+                ReportPropertyChanging("ForReplication");
+                _ForReplication = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ForReplication");
+                OnForReplicationChanged();
+            }
+        }
+        private global::System.Boolean _ForReplication;
+        partial void OnForReplicationChanging(global::System.Boolean value);
+        partial void OnForReplicationChanged();
 
         #endregion
 
@@ -10842,7 +10868,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="modified">Initial value of the Modified property.</param>
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="notForReplication">Initial value of the NotForReplication property.</param>
-        public static ContentDataDAL CreateContentDataDAL(global::System.Decimal fieldId, global::System.Decimal articleId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal id, global::System.Boolean notForReplication)
+        /// <param name="sPLITTED">Initial value of the SPLITTED property.</param>
+        public static ContentDataDAL CreateContentDataDAL(global::System.Decimal fieldId, global::System.Decimal articleId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal id, global::System.Boolean notForReplication, global::System.Boolean sPLITTED)
         {
             ContentDataDAL contentDataDAL = new ContentDataDAL();
             contentDataDAL.FieldId = fieldId;
@@ -10851,6 +10878,7 @@ namespace Quantumart.QP8.DAL
             contentDataDAL.Modified = modified;
             contentDataDAL.Id = id;
             contentDataDAL.NotForReplication = notForReplication;
+            contentDataDAL.SPLITTED = sPLITTED;
             return contentDataDAL;
         }
 
@@ -11055,6 +11083,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _NotForReplication;
         partial void OnNotForReplicationChanging(global::System.Boolean value);
         partial void OnNotForReplicationChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean SPLITTED
+        {
+            get
+            {
+                return _SPLITTED;
+            }
+            set
+            {
+                OnSPLITTEDChanging(value);
+                ReportPropertyChanging("SPLITTED");
+                _SPLITTED = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SPLITTED");
+                OnSPLITTEDChanged();
+            }
+        }
+        private global::System.Boolean _SPLITTED;
+        partial void OnSPLITTEDChanging(global::System.Boolean value);
+        partial void OnSPLITTEDChanged();
 
         #endregion
 
@@ -14639,7 +14691,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="useADSyncService">Initial value of the UseADSyncService property.</param>
         /// <param name="useDPC">Initial value of the UseDPC property.</param>
         /// <param name="autoOpenHome">Initial value of the AutoOpenHome property.</param>
-        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDPC, global::System.Boolean autoOpenHome)
+        /// <param name="uSE_CDC">Initial value of the USE_CDC property.</param>
+        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDPC, global::System.Boolean autoOpenHome, global::System.Boolean uSE_CDC)
         {
             DbDAL dbDAL = new DbDAL();
             dbDAL.Id = id;
@@ -14650,6 +14703,7 @@ namespace Quantumart.QP8.DAL
             dbDAL.UseADSyncService = useADSyncService;
             dbDAL.UseDPC = useDPC;
             dbDAL.AutoOpenHome = autoOpenHome;
+            dbDAL.USE_CDC = uSE_CDC;
             return dbDAL;
         }
 
@@ -14875,6 +14929,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AutoOpenHome;
         partial void OnAutoOpenHomeChanging(global::System.Boolean value);
         partial void OnAutoOpenHomeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean USE_CDC
+        {
+            get
+            {
+                return _USE_CDC;
+            }
+            set
+            {
+                OnUSE_CDCChanging(value);
+                ReportPropertyChanging("USE_CDC");
+                _USE_CDC = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("USE_CDC");
+                OnUSE_CDCChanged();
+            }
+        }
+        private global::System.Boolean _USE_CDC;
+        partial void OnUSE_CDCChanging(global::System.Boolean value);
+        partial void OnUSE_CDCChanged();
 
         #endregion
 
@@ -20052,12 +20130,16 @@ namespace Quantumart.QP8.DAL
         /// <param name="linkId">Initial value of the LinkId property.</param>
         /// <param name="lItemId">Initial value of the LItemId property.</param>
         /// <param name="rItemId">Initial value of the RItemId property.</param>
-        public static ItemToItemDAL CreateItemToItemDAL(global::System.Decimal linkId, global::System.Decimal lItemId, global::System.Decimal rItemId)
+        /// <param name="iS_REV">Initial value of the IS_REV property.</param>
+        /// <param name="iS_SELF">Initial value of the IS_SELF property.</param>
+        public static ItemToItemDAL CreateItemToItemDAL(global::System.Decimal linkId, global::System.Decimal lItemId, global::System.Decimal rItemId, global::System.Boolean iS_REV, global::System.Boolean iS_SELF)
         {
             ItemToItemDAL itemToItemDAL = new ItemToItemDAL();
             itemToItemDAL.LinkId = linkId;
             itemToItemDAL.LItemId = lItemId;
             itemToItemDAL.RItemId = rItemId;
+            itemToItemDAL.IS_REV = iS_REV;
+            itemToItemDAL.IS_SELF = iS_SELF;
             return itemToItemDAL;
         }
 
@@ -20145,6 +20227,54 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _RItemId;
         partial void OnRItemIdChanging(global::System.Decimal value);
         partial void OnRItemIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IS_REV
+        {
+            get
+            {
+                return _IS_REV;
+            }
+            set
+            {
+                OnIS_REVChanging(value);
+                ReportPropertyChanging("IS_REV");
+                _IS_REV = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IS_REV");
+                OnIS_REVChanged();
+            }
+        }
+        private global::System.Boolean _IS_REV;
+        partial void OnIS_REVChanging(global::System.Boolean value);
+        partial void OnIS_REVChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IS_SELF
+        {
+            get
+            {
+                return _IS_SELF;
+            }
+            set
+            {
+                OnIS_SELFChanging(value);
+                ReportPropertyChanging("IS_SELF");
+                _IS_SELF = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IS_SELF");
+                OnIS_SELFChanged();
+            }
+        }
+        private global::System.Boolean _IS_SELF;
+        partial void OnIS_SELFChanging(global::System.Boolean value);
+        partial void OnIS_SELFChanged();
 
         #endregion
 
