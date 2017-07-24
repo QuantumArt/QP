@@ -119,14 +119,15 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     up.refresh();
   },
 
-  _showOrHidePreviewButton: function _showOrHidePreviewButton(filename)
-  {
-    if (filename.endsWith('.gif')
-   || filename.endsWith('.jpg')
-   || filename.endsWith('.jpeg')
-   || filename.endsWith('.png')
-   || filename.endsWith('.bmp')
-   || filename.endsWith('.svg')) {
+  _checkExt: function (filename, value) {
+    return filename.toLowerCase().endsWith(value.toLowerCase());
+  },
+
+  _showOrHidePreviewButton: function (filename, $previewButton) {
+    var _arrayOfExtensions = LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
+
+    var result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename)) ;
+    if (typeof result !== 'undefined' && result.length > 0 || this._isImage) {
       this._previewButton.show();
     }
     else {

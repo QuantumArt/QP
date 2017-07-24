@@ -202,7 +202,7 @@ namespace Quantumart.QP8.BLL.Services
             { FieldExactTypes.Date, new[] { FieldExactTypes.String, FieldExactTypes.Date, FieldExactTypes.Time, FieldExactTypes.DateTime, FieldExactTypes.Textbox, FieldExactTypes.VisualEdit } },
             { FieldExactTypes.Time, new[] { FieldExactTypes.String, FieldExactTypes.Date, FieldExactTypes.Time, FieldExactTypes.DateTime, FieldExactTypes.Textbox, FieldExactTypes.VisualEdit } },
             { FieldExactTypes.DateTime, new[] { FieldExactTypes.String, FieldExactTypes.Date, FieldExactTypes.Time, FieldExactTypes.DateTime, FieldExactTypes.Textbox, FieldExactTypes.VisualEdit } },
-            { FieldExactTypes.File, new[] { FieldExactTypes.String, FieldExactTypes.File, FieldExactTypes.Textbox, FieldExactTypes.VisualEdit } },
+            { FieldExactTypes.File, new[] { FieldExactTypes.String, FieldExactTypes.File, FieldExactTypes.Image, FieldExactTypes.Textbox, FieldExactTypes.VisualEdit } },
             { FieldExactTypes.Image, new[] { FieldExactTypes.String, FieldExactTypes.File, FieldExactTypes.Image, FieldExactTypes.Textbox, FieldExactTypes.VisualEdit } },
             { FieldExactTypes.Textbox, new[] { FieldExactTypes.String, FieldExactTypes.Textbox, FieldExactTypes.VisualEdit } },
             { FieldExactTypes.VisualEdit, new[] { FieldExactTypes.String, FieldExactTypes.Textbox, FieldExactTypes.VisualEdit } },
