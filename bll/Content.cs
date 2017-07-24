@@ -248,6 +248,7 @@ namespace Quantumart.QP8.BLL
             UseVersionControl = true;
             MaxNumOfStoredVersions = DefaultLimitOfStoredVersions;
             UseDefaultFiltration = true;
+            ForReplication = true;
 
             _virtualJoinFieldNodes = new InitPropertyValue<IEnumerable<VirtualFieldNode>>(() =>
             {
