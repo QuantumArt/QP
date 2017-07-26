@@ -9363,7 +9363,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="disableXamlValidation">Initial value of the DisableXamlValidation property.</param>
         /// <param name="disableChangingActions">Initial value of the DisableChangingActions property.</param>
         /// <param name="useForContext">Initial value of the UseForContext property.</param>
-        public static ContentDAL CreateContentDAL(global::System.Decimal id, global::System.String name, global::System.Decimal siteId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Decimal allowItemsPermission, global::System.Decimal virtualType, global::System.Boolean isShared, global::System.Boolean autoArchive, global::System.Byte maxNumOfStoredVersions, global::System.Boolean createVersionControlView, global::System.Int32 pageSize, global::System.Boolean mapAsClass, global::System.Boolean useDefaultFiltration, global::System.Boolean disableXamlValidation, global::System.Boolean disableChangingActions, global::System.Boolean useForContext)
+        /// <param name="forReplication">Initial value of the ForReplication property.</param>
+        public static ContentDAL CreateContentDAL(global::System.Decimal id, global::System.String name, global::System.Decimal siteId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Decimal allowItemsPermission, global::System.Decimal virtualType, global::System.Boolean isShared, global::System.Boolean autoArchive, global::System.Byte maxNumOfStoredVersions, global::System.Boolean createVersionControlView, global::System.Int32 pageSize, global::System.Boolean mapAsClass, global::System.Boolean useDefaultFiltration, global::System.Boolean disableXamlValidation, global::System.Boolean disableChangingActions, global::System.Boolean useForContext, global::System.Boolean forReplication)
         {
             ContentDAL contentDAL = new ContentDAL();
             contentDAL.Id = id;
@@ -9384,6 +9385,7 @@ namespace Quantumart.QP8.DAL
             contentDAL.DisableXamlValidation = disableXamlValidation;
             contentDAL.DisableChangingActions = disableChangingActions;
             contentDAL.UseForContext = useForContext;
+            contentDAL.ForReplication = forReplication;
             return contentDAL;
         }
 
@@ -10161,6 +10163,30 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FormScript;
         partial void OnFormScriptChanging(global::System.String value);
         partial void OnFormScriptChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean ForReplication
+        {
+            get
+            {
+                return _ForReplication;
+            }
+            set
+            {
+                OnForReplicationChanging(value);
+                ReportPropertyChanging("ForReplication");
+                _ForReplication = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ForReplication");
+                OnForReplicationChanged();
+            }
+        }
+        private global::System.Boolean _ForReplication;
+        partial void OnForReplicationChanging(global::System.Boolean value);
+        partial void OnForReplicationChanged();
 
         #endregion
 
