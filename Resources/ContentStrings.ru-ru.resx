@@ -498,4 +498,7 @@
   <data name="FormScript" xml:space="preserve">
     <value>Скрипт для формы</value>
   </data>
+  <data name="ForReplication" xml:space="preserve">
+    <value>Включить репликацию</value>
+  </data>
 </root>

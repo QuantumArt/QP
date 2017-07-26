@@ -245,6 +245,7 @@
           <Property Name="PARENT_CONTENT_ID" Type="numeric" Precision="18" Scale="0" />
           <Property Name="USE_FOR_CONTEXT" Type="bit" Nullable="false" />
           <Property Name="FORM_SCRIPT" Type="ntext" />
+          <Property Name="FOR_REPLICATION" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="CONTENT_ACCESS">
           <Key>
@@ -369,6 +370,7 @@
           <Property Name="BLOB_DATA" Type="ntext" />
           <Property Name="CONTENT_DATA_ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="not_for_replication" Type="bit" Nullable="false" />
+          <Property Name="SPLITTED" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="content_FOLDER">
           <Key>
@@ -596,6 +598,7 @@
           <Property Name="USE_AD_SYNC_SERVICE" Type="bit" Nullable="false" />
           <Property Name="AUTO_OPEN_HOME" Type="bit" Nullable="false" />
           <Property Name="USE_DPC" Type="bit" Nullable="false" />
+          <Property Name="USE_CDC" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="DEVELOPER">
           <Key>
@@ -723,6 +726,8 @@
           <Property Name="link_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="l_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="r_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="IS_REV" Type="bit" Nullable="false" />
+          <Property Name="IS_SELF" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="item_to_item_version">
           <Key>
@@ -6256,6 +6261,7 @@
           <NavigationProperty Name="ChildContents" Relationship="QP8Model.FK_CONTENT_PARENT_CONTENT_ID1" FromRole="ContentDAL" ToRole="ContentDAL1" />
 					<Property Type="Boolean" Name="UseForContext" Nullable="false" />
           <Property Type="String" Name="FormScript" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ForReplication" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="ContentPermissionDAL">
           <Key>
@@ -6407,6 +6413,7 @@
           <Property Name="NotForReplication" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Field" Relationship="QP8Model.FK_CONTENT_DATA_CONTENT_ATTRIBUTE" FromRole="CONTENT_DATA" ToRole="CONTENT_ATTRIBUTE" />
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_CONTENT_DATA_CONTENT_ITEM" FromRole="CONTENT_DATA" ToRole="CONTENT_ITEM" />
+          <Property Name="SPLITTED" Type="Boolean" Nullable="false" />
 				</EntityType>
         <EntityType Name="ContentFolderDAL">
           <Key>
@@ -6745,6 +6752,8 @@
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_ITEM_TO_ITEM_L_ITEM_ID" FromRole="item_to_item" ToRole="CONTENT_ITEM" />
           <NavigationProperty Name="Article1" Relationship="QP8Model.FK_ITEM_TO_ITEM_R_ITEM_ID" FromRole="item_to_item" ToRole="CONTENT_ITEM" />
           <NavigationProperty Name="ContentToContent" Relationship="QP8Model.FK_ITEM_TO_ITEM_LINK_ID" FromRole="item_to_item" ToRole="content_to_content" />
+          <Property Name="IS_REV" Type="Boolean" Nullable="false" />
+          <Property Name="IS_SELF" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="ItemToItemVersionDAL">
           <Key>
@@ -10228,6 +10237,7 @@
           <Property Type="Boolean" Name="UseADSyncService" Nullable="false" />
           <Property Type="Boolean" Name="UseDPC" Nullable="false" />          
           <Property Type="Boolean" Name="AutoOpenHome" Nullable="false" />
+          <Property Name="USE_CDC" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_DB_LAST_MODIFIED_BY">
           <End Type="QP8Model.UserDAL" Role="UserDAL" Multiplicity="1" />
@@ -10550,7 +10560,8 @@
           <EntitySetMapping Name="ContentSet">
             <EntityTypeMapping TypeName="QP8Model.ContentDAL">
               <MappingFragment StoreEntitySet="CONTENT">
-								<ScalarProperty Name="FormScript" ColumnName="FORM_SCRIPT" />
+								<ScalarProperty Name="ForReplication" ColumnName="FOR_REPLICATION" />
+                <ScalarProperty Name="FormScript" ColumnName="FORM_SCRIPT" />
                 <ScalarProperty Name="UseForContext" ColumnName="USE_FOR_CONTEXT" />
 								<ScalarProperty Name="ParentContentId" ColumnName="PARENT_CONTENT_ID" />
 								<ScalarProperty Name="DisableChangingActions" ColumnName="DISABLE_CHANGING_ACTIONS" />
@@ -10693,7 +10704,8 @@
           <EntitySetMapping Name="ContentDataSet">
             <EntityTypeMapping TypeName="QP8Model.ContentDataDAL">
               <MappingFragment StoreEntitySet="CONTENT_DATA">
-								<ScalarProperty Name="FieldId" ColumnName="ATTRIBUTE_ID" />
+								<ScalarProperty Name="SPLITTED" ColumnName="SPLITTED" />
+                <ScalarProperty Name="FieldId" ColumnName="ATTRIBUTE_ID" />
                 <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
                 <ScalarProperty Name="Data" ColumnName="DATA" />
                 <ScalarProperty Name="Created" ColumnName="CREATED" />
@@ -10977,6 +10989,8 @@
           <EntitySetMapping Name="ItemToItemSet">
             <EntityTypeMapping TypeName="QP8Model.ItemToItemDAL">
               <MappingFragment StoreEntitySet="item_to_item">
+                <ScalarProperty Name="IS_SELF" ColumnName="IS_SELF" />
+                <ScalarProperty Name="IS_REV" ColumnName="IS_REV" />
                 <ScalarProperty Name="LinkId" ColumnName="link_id" />
                 <ScalarProperty Name="LItemId" ColumnName="l_item_id" />
                 <ScalarProperty Name="RItemId" ColumnName="r_item_id" />
@@ -11879,6 +11893,7 @@
           <EntitySetMapping Name="DbSet">
             <EntityTypeMapping TypeName="QP8Model.DbDAL">
               <MappingFragment StoreEntitySet="DB">
+                <ScalarProperty Name="USE_CDC" ColumnName="USE_CDC" />
                 <ScalarProperty Name="UseDPC" ColumnName="USE_DPC" />
                 <ScalarProperty Name="AutoOpenHome" ColumnName="AUTO_OPEN_HOME" />
                 <ScalarProperty Name="UseADSyncService" ColumnName="USE_AD_SYNC_SERVICE" />
@@ -11975,7 +11990,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="66">
+      <Diagram Name="QP8Model" ZoomLevel="83">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -12081,7 +12096,7 @@
           <ConnectorPoint PointX="8.88076923076923" PointY="12.066793619791666" />
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.FieldDAL" Width="4" PointX="11.75" PointY="10" Height="13.133769531250003" />
-        <EntityTypeShape EntityType="QP8Model.ContentDAL" Width="1.5" PointX="7.5" PointY="13.625" Height="5.2079475911458353" />
+        <EntityTypeShape EntityType="QP8Model.ContentDAL" Width="1.5" PointX="7.5" PointY="13.625" Height="5.2079475911458353" IsExpanded="true" />
         <AssociationConnector Association="QP8Model.ContentDALSiteDAL">
           <ConnectorPoint PointX="7.5" PointY="16.228973795572919" />
           <ConnectorPoint PointX="7.0625" PointY="16.228973795572919" />

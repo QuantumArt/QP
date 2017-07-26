@@ -448,6 +448,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to For replication.
+        /// </summary>
+        public static string ForReplication {
+            get {
+                return ResourceManager.GetString("ForReplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The length of plural friendly name should not exceed {5} characters.
         /// </summary>
         public static string FriendlyPluralMaxLengthExceeded {

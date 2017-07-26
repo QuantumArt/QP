@@ -498,4 +498,7 @@
   <data name="FormScript" xml:space="preserve">
     <value>Script for form</value>
   </data>
+  <data name="ForReplication" xml:space="preserve">
+    <value>For replication</value>
+  </data>
 </root>
