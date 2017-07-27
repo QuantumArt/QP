@@ -370,7 +370,6 @@
           <Property Name="BLOB_DATA" Type="ntext" />
           <Property Name="CONTENT_DATA_ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="not_for_replication" Type="bit" Nullable="false" />
-          <Property Name="SPLITTED" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="content_FOLDER">
           <Key>
@@ -598,7 +597,6 @@
           <Property Name="USE_AD_SYNC_SERVICE" Type="bit" Nullable="false" />
           <Property Name="AUTO_OPEN_HOME" Type="bit" Nullable="false" />
           <Property Name="USE_DPC" Type="bit" Nullable="false" />
-          <Property Name="USE_CDC" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="DEVELOPER">
           <Key>
@@ -726,8 +724,6 @@
           <Property Name="link_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="l_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="r_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="IS_REV" Type="bit" Nullable="false" />
-          <Property Name="IS_SELF" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="item_to_item_version">
           <Key>
@@ -6413,7 +6409,6 @@
           <Property Name="NotForReplication" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Field" Relationship="QP8Model.FK_CONTENT_DATA_CONTENT_ATTRIBUTE" FromRole="CONTENT_DATA" ToRole="CONTENT_ATTRIBUTE" />
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_CONTENT_DATA_CONTENT_ITEM" FromRole="CONTENT_DATA" ToRole="CONTENT_ITEM" />
-          <Property Name="SPLITTED" Type="Boolean" Nullable="false" />
 				</EntityType>
         <EntityType Name="ContentFolderDAL">
           <Key>
@@ -6752,8 +6747,6 @@
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_ITEM_TO_ITEM_L_ITEM_ID" FromRole="item_to_item" ToRole="CONTENT_ITEM" />
           <NavigationProperty Name="Article1" Relationship="QP8Model.FK_ITEM_TO_ITEM_R_ITEM_ID" FromRole="item_to_item" ToRole="CONTENT_ITEM" />
           <NavigationProperty Name="ContentToContent" Relationship="QP8Model.FK_ITEM_TO_ITEM_LINK_ID" FromRole="item_to_item" ToRole="content_to_content" />
-          <Property Name="IS_REV" Type="Boolean" Nullable="false" />
-          <Property Name="IS_SELF" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="ItemToItemVersionDAL">
           <Key>
@@ -10235,9 +10228,8 @@
           <Property Type="Decimal" Name="LastModifiedBy" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="LastModifiedByUser" Relationship="QP8Model.FK_DB_LAST_MODIFIED_BY" FromRole="DB" ToRole="UserDAL" />
           <Property Type="Boolean" Name="UseADSyncService" Nullable="false" />
-          <Property Type="Boolean" Name="UseDPC" Nullable="false" />          
+          <Property Type="Boolean" Name="UseDPC" Nullable="false" />
           <Property Type="Boolean" Name="AutoOpenHome" Nullable="false" />
-          <Property Name="USE_CDC" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_DB_LAST_MODIFIED_BY">
           <End Type="QP8Model.UserDAL" Role="UserDAL" Multiplicity="1" />
@@ -10704,8 +10696,7 @@
           <EntitySetMapping Name="ContentDataSet">
             <EntityTypeMapping TypeName="QP8Model.ContentDataDAL">
               <MappingFragment StoreEntitySet="CONTENT_DATA">
-								<ScalarProperty Name="SPLITTED" ColumnName="SPLITTED" />
-                <ScalarProperty Name="FieldId" ColumnName="ATTRIBUTE_ID" />
+								<ScalarProperty Name="FieldId" ColumnName="ATTRIBUTE_ID" />
                 <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
                 <ScalarProperty Name="Data" ColumnName="DATA" />
                 <ScalarProperty Name="Created" ColumnName="CREATED" />
@@ -10989,8 +10980,6 @@
           <EntitySetMapping Name="ItemToItemSet">
             <EntityTypeMapping TypeName="QP8Model.ItemToItemDAL">
               <MappingFragment StoreEntitySet="item_to_item">
-                <ScalarProperty Name="IS_SELF" ColumnName="IS_SELF" />
-                <ScalarProperty Name="IS_REV" ColumnName="IS_REV" />
                 <ScalarProperty Name="LinkId" ColumnName="link_id" />
                 <ScalarProperty Name="LItemId" ColumnName="l_item_id" />
                 <ScalarProperty Name="RItemId" ColumnName="r_item_id" />
@@ -11893,7 +11882,6 @@
           <EntitySetMapping Name="DbSet">
             <EntityTypeMapping TypeName="QP8Model.DbDAL">
               <MappingFragment StoreEntitySet="DB">
-                <ScalarProperty Name="USE_CDC" ColumnName="USE_CDC" />
                 <ScalarProperty Name="UseDPC" ColumnName="USE_DPC" />
                 <ScalarProperty Name="AutoOpenHome" ColumnName="AUTO_OPEN_HOME" />
                 <ScalarProperty Name="UseADSyncService" ColumnName="USE_AD_SYNC_SERVICE" />
