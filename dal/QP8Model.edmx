@@ -245,6 +245,7 @@
           <Property Name="PARENT_CONTENT_ID" Type="numeric" Precision="18" Scale="0" />
           <Property Name="USE_FOR_CONTEXT" Type="bit" Nullable="false" />
           <Property Name="FORM_SCRIPT" Type="ntext" />
+          <Property Name="FOR_REPLICATION" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="CONTENT_ACCESS">
           <Key>
@@ -10227,7 +10228,7 @@
           <Property Type="Decimal" Name="LastModifiedBy" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="LastModifiedByUser" Relationship="QP8Model.FK_DB_LAST_MODIFIED_BY" FromRole="DB" ToRole="UserDAL" />
           <Property Type="Boolean" Name="UseADSyncService" Nullable="false" />
-          <Property Type="Boolean" Name="UseDPC" Nullable="false" />          
+          <Property Type="Boolean" Name="UseDPC" Nullable="false" />
           <Property Type="Boolean" Name="AutoOpenHome" Nullable="false" />
         </EntityType>
         <Association Name="FK_DB_LAST_MODIFIED_BY">
@@ -10551,7 +10552,8 @@
           <EntitySetMapping Name="ContentSet">
             <EntityTypeMapping TypeName="QP8Model.ContentDAL">
               <MappingFragment StoreEntitySet="CONTENT">
-								<ScalarProperty Name="FormScript" ColumnName="FORM_SCRIPT" />
+								<ScalarProperty Name="ForReplication" ColumnName="FOR_REPLICATION" />
+                <ScalarProperty Name="FormScript" ColumnName="FORM_SCRIPT" />
                 <ScalarProperty Name="UseForContext" ColumnName="USE_FOR_CONTEXT" />
 								<ScalarProperty Name="ParentContentId" ColumnName="PARENT_CONTENT_ID" />
 								<ScalarProperty Name="DisableChangingActions" ColumnName="DISABLE_CHANGING_ACTIONS" />
@@ -11976,7 +11978,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="73">
+      <Diagram Name="QP8Model" ZoomLevel="83">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -12082,7 +12084,7 @@
           <ConnectorPoint PointX="8.88076923076923" PointY="12.066793619791666" />
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.FieldDAL" Width="4" PointX="11.75" PointY="10" Height="13.133769531250003" />
-        <EntityTypeShape EntityType="QP8Model.ContentDAL" Width="1.5" PointX="7.5" PointY="13.625" Height="5.2079475911458353" />
+        <EntityTypeShape EntityType="QP8Model.ContentDAL" Width="1.5" PointX="7.5" PointY="13.625" Height="5.2079475911458353" IsExpanded="true" />
         <AssociationConnector Association="QP8Model.ContentDALSiteDAL">
           <ConnectorPoint PointX="7.5" PointY="16.228973795572919" />
           <ConnectorPoint PointX="7.0625" PointY="16.228973795572919" />
