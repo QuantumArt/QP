@@ -12,8 +12,8 @@ namespace Quantumart.QP8.BLL.Services.CdcImport
         public string GetLastExecutedLsn() =>
             CdcImportDal.GetLastExecutedLsn(QPConnectionScope.Current.DbConnection);
 
-        public int PostLastExecutedLsn(string providerUrl, string lastPushedLsn, string lastExecutedLsn) =>
-            CdcImportDal.PostLastExecutedLsn(QPConnectionScope.Current.DbConnection, providerUrl, lastPushedLsn, lastExecutedLsn);
+        public int PostLastExecutedLsn(string providerName, string providerUrl, string lastPushedLsn, string lastExecutedLsn) =>
+            CdcImportDal.PostLastExecutedLsn(QPConnectionScope.Current.DbConnection, providerName, providerUrl, lastPushedLsn, lastExecutedLsn);
 
         public abstract List<CdcTableTypeModel> ImportData(string captureInstance, string fromLsn = null, string toLsn = null);
     }

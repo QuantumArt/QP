@@ -12,7 +12,7 @@ namespace QP8.Infrastructure.Logging.Factories
     /// </summary>
     public class NLogFactory : INLogFactory
     {
-        protected readonly LogFactory LogFactory;
+        public readonly LogFactory LogFactory;
 
         /// <summary>
         /// Creates a NLog logger factory, that search config at default places

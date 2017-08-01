@@ -20,11 +20,12 @@ namespace Quantumart.QP8.BLL.Services.CdcImport
         /// <summary>
         /// Save cdc log information for provider
         /// </summary>
+        /// <param name="providerName">Provider name</param>
         /// <param name="providerUrl">Provider url endpoint</param>
         /// <param name="lastPushedLsn">Last transaction lsn that was successfuly pushed for current provider</param>
         /// <param name="lastExecutedLsn">Upper bound lsn used for search</param>
         /// <returns>Primary key of the table</returns>
-        int PostLastExecutedLsn(string providerUrl, string lastPushedLsn, string lastExecutedLsn);
+        int PostLastExecutedLsn(string providerName, string providerUrl, string lastPushedLsn, string lastExecutedLsn);
 
         /// <summary>
         /// Import single data table from cdc, and customize based on

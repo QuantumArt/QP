@@ -22,6 +22,7 @@ using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Data;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services;
 using Quantumart.QP8.CdcDataImport.Tarantool.Properties;
 using Quantumart.QP8.Configuration.Models;
+using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Constants.Cdc.Tarantool;
 using Quartz;
 
@@ -94,8 +95,6 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                 try
                 {
                     var responseMessage = PushDataToHttpChannel(data);
-                    (await responseMessage).EnsureSuccessStatusCode();
-
                     var response = await responseMessage.ReceiveJson<JSendResponse>();
                     if (response.Status == JSendStatus.Success && response.Code == 200)
                     {
@@ -171,7 +170,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             using (new QPConnectionScope(customer.ConnectionString))
             {
-                var cdcLastExecutedLsnId = _cdcImportService.PostLastExecutedLsn(Settings.Default.HttpEndpoint, lastPushedLsn, lastExecutedLsn);
+                var cdcLastExecutedLsnId = _cdcImportService.PostLastExecutedLsn(CdcProviderName.Tarantool.ToString(), Settings.Default.HttpEndpoint, lastPushedLsn, lastExecutedLsn);
                 _systemNotificationService.InsertNotification(GetSystemNotificationModels(cdcLastExecutedLsnId, data));
                 ts.Complete();
             }

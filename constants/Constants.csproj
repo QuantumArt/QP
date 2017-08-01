@@ -63,6 +63,7 @@
     <Compile Include="Cdc\Enums\CdcOperationType.cs" />
     <Compile Include="Cdc\Enums\CdcActionType.cs" />
     <Compile Include="Cdc\CdcCommonConstants.cs" />
+    <Compile Include="Cdc\Enums\CdcProviderName.cs" />
     <Compile Include="Cdc\Tarantool\TarantoolContentArticleModel.cs" />
     <Compile Include="Cdc\Tarantool\TarantoolStatusTypeModel.cs" />
     <Compile Include="Cdc\Tarantool\TarantoolItemToItemModel.cs" />

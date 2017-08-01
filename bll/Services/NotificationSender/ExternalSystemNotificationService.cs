@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL.Facades;
@@ -9,9 +10,21 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
 {
     public class ExternalSystemNotificationService : IExternalSystemNotificationService
     {
-        public List<SystemNotificationModel> GetPendingNotifications()
+        public List<SystemNotificationModel> GetTarantoolPendingNotifications()
         {
-            var notifications = QPContext.EFContext.SystemNotificationSet.Where(entity => !entity.Sent).ToList();
+            var notifications = QPContext.EFContext.SystemNotificationSet
+                .Where(entity => !entity.Sent && string.Equals("Tarantool", entity.CdcLastExecutedLsn.ProviderName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            return MapperFacade.SystemNotificationMapper.GetBizList(notifications);
+        }
+
+        public List<SystemNotificationModel> GetElasticPendingNotifications()
+        {
+            var notifications = QPContext.EFContext.SystemNotificationSet
+                .Where(entity => !entity.Sent && string.Equals("Elastic", entity.CdcLastExecutedLsn.ProviderName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
             return MapperFacade.SystemNotificationMapper.GetBizList(notifications);
         }
 

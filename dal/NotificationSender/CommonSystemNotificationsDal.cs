@@ -36,7 +36,7 @@ namespace Quantumart.QP8.DAL.NotificationSender
 				MODIFIED = getdate()
 			WHERE ID IN (SELECT Id FROM @ids)";
 
-        private const string DeleteSentNotificationsQuery = @"DELETE SYSTEM_NOTIFICATION_QUEUE WHERE SENT = 1";
+        private const string DeleteSentNotificationsQuery = @"DELETE FROM SYSTEM_NOTIFICATION_QUEUE WHERE SENT = 1";
 
         private static void ExecuteIdsQuery(SqlConnection connection, string query, IEnumerable<int> ids)
         {

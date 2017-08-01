@@ -5,7 +5,9 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
 {
     public interface IExternalSystemNotificationService
     {
-        List<SystemNotificationModel> GetPendingNotifications();
+        List<SystemNotificationModel> GetTarantoolPendingNotifications();
+
+        List<SystemNotificationModel> GetElasticPendingNotifications();
 
         void UpdateSentNotifications(IEnumerable<int> notificationIds);
 

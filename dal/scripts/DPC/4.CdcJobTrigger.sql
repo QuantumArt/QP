@@ -1,5 +1,4 @@
-IF OBJECT_ID ('[dbo].[tu_db]','TR') IS NOT NULL
-   DROP TRIGGER [dbo].[tu_db]
+EXEC qp_drop_existing '[dbo].[tu_db]', 'IsTrigger'
 GO
 
 CREATE TRIGGER [dbo].[tu_db]

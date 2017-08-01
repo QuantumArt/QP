@@ -7875,12 +7875,14 @@ namespace Quantumart.QP8.DAL
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="providerUrl">Initial value of the ProviderUrl property.</param>
         /// <param name="lastExecutedLsn">Initial value of the LastExecutedLsn property.</param>
-        public static CdcLastExecutedLsn CreateCdcLastExecutedLsn(global::System.Int32 id, global::System.String providerUrl, global::System.String lastExecutedLsn)
+        /// <param name="providerName">Initial value of the ProviderName property.</param>
+        public static CdcLastExecutedLsn CreateCdcLastExecutedLsn(global::System.Int32 id, global::System.String providerUrl, global::System.String lastExecutedLsn, global::System.String providerName)
         {
             CdcLastExecutedLsn cdcLastExecutedLsn = new CdcLastExecutedLsn();
             cdcLastExecutedLsn.Id = id;
             cdcLastExecutedLsn.ProviderUrl = providerUrl;
             cdcLastExecutedLsn.LastExecutedLsn = lastExecutedLsn;
+            cdcLastExecutedLsn.ProviderName = providerName;
             return cdcLastExecutedLsn;
         }
 
@@ -8010,6 +8012,30 @@ namespace Quantumart.QP8.DAL
         private global::System.String _LastExecutedLsn;
         partial void OnLastExecutedLsnChanging(global::System.String value);
         partial void OnLastExecutedLsnChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ProviderName
+        {
+            get
+            {
+                return _ProviderName;
+            }
+            set
+            {
+                OnProviderNameChanging(value);
+                ReportPropertyChanging("ProviderName");
+                _ProviderName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ProviderName");
+                OnProviderNameChanged();
+            }
+        }
+        private global::System.String _ProviderName;
+        partial void OnProviderNameChanging(global::System.String value);
+        partial void OnProviderNameChanged();
 
         #endregion
 

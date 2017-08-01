@@ -9,6 +9,7 @@ namespace Quantumart.QP8.DAL.CdcImport
     {
         private const string @LastExecutedLsn = "@lastExecutedLsn";
         private const string @LastPushedLsn = "@lastPushedLsn";
+        private const string @ProviderName = "@providerName";
         private const string @ProviderUrl = "@providerUrl";
 
         public static string GetLastExecutedLsn(SqlConnection connection)
@@ -27,7 +28,7 @@ namespace Quantumart.QP8.DAL.CdcImport
             }
         }
 
-        public static int PostLastExecutedLsn(SqlConnection connection, string providerUrl, string lastPushedLsn, string lastExecutedLsn)
+        public static int PostLastExecutedLsn(SqlConnection connection, string providerName, string providerUrl, string lastPushedLsn, string lastExecutedLsn)
         {
             var query = $@"
 IF EXISTS (SELECT * FROM [dbo].[CdcLastExecutedLsn] WHERE providerUrl = {@ProviderUrl})
@@ -39,9 +40,16 @@ IF EXISTS (SELECT * FROM [dbo].[CdcLastExecutedLsn] WHERE providerUrl = {@Provid
     OUTPUT inserted.id
     WHERE providerUrl = {@ProviderUrl}
 ELSE
-    INSERT INTO [dbo].[CdcLastExecutedLsn]
+    INSERT INTO [dbo].[CdcLastExecutedLsn] (
+        [ProviderName],
+        [ProviderUrl],
+        [TransactionLsn],
+        [TransactionDate],
+        [LastExecutedLsn]
+    )
     OUTPUT inserted.id
     VALUES (
+        {@ProviderName},
         {@ProviderUrl},
         {@LastPushedLsn},
         sys.fn_cdc_map_lsn_to_time(CONVERT(binary, {@LastPushedLsn}, 1)),
@@ -51,6 +59,7 @@ ELSE
 
             using (var cmd = SqlCommandFactory.Create(query, connection))
             {
+                cmd.Parameters.AddWithValue(@ProviderName, providerName);
                 cmd.Parameters.AddWithValue(@ProviderUrl, providerUrl);
                 cmd.Parameters.AddWithValue(@LastPushedLsn, (object)lastPushedLsn ?? DBNull.Value);
                 cmd.Parameters.AddWithValue(@LastExecutedLsn, lastExecutedLsn);

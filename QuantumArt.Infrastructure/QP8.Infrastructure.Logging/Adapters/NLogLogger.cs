@@ -10,7 +10,7 @@ namespace QP8.Infrastructure.Logging.Adapters
     /// </summary>
     public class NLogLogger : ILog
     {
-        protected readonly ILogger Logger;
+        public readonly ILogger Logger;
 
         /// <summary>
         /// Initialize new instance of the <see cref="ILog" /> class

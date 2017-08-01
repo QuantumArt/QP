@@ -20,6 +20,7 @@ using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Data;
 using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Services;
 using Quantumart.QP8.CdcDataImport.Elastic.Properties;
 using Quantumart.QP8.Configuration.Models;
+using Quantumart.QP8.Constants.Cdc.Enums;
 using Quartz;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
@@ -92,7 +93,6 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
                 {
                     var responseMessage = PushDataToHttpChannel(data);
                     var response = await responseMessage.ReceiveString();
-
                     if ((await responseMessage).IsSuccessStatusCode)
                     {
                         shouldSendHttpRequests = true;
@@ -144,7 +144,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             using (new QPConnectionScope(customer.ConnectionString))
             {
-                var cdcLastExecutedLsnId = _cdcImportService.PostLastExecutedLsn(Settings.Default.HttpEndpoint, lastPushedLsn, lastExecutedLsn);
+                var cdcLastExecutedLsnId = _cdcImportService.PostLastExecutedLsn(CdcProviderName.Elastic.ToString(), Settings.Default.HttpEndpoint, lastPushedLsn, lastExecutedLsn);
                 _systemNotificationService.InsertNotification(GetSystemNotificationModels(cdcLastExecutedLsnId, data));
                 ts.Complete();
             }

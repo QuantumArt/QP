@@ -156,6 +156,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProviderName" Type="nvarchar" MaxLength="512" Nullable="false" />
           <Property Name="ProviderUrl" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="TransactionLsn" Type="varchar" MaxLength="22" />
           <Property Name="TransactionDate" Type="datetime" />
@@ -3767,18 +3768,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn">
-          <End Role="CdcLastExecutedLsn" Type="Self.CdcLastExecutedLsn" Multiplicity="1" />
-          <End Role="SYSTEM_NOTIFICATION_QUEUE" Type="Self.SYSTEM_NOTIFICATION_QUEUE" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="CdcLastExecutedLsn">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SYSTEM_NOTIFICATION_QUEUE">
-              <PropertyRef Name="CdcLastExecutedLsnId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_TEMPLATE_OBJECT_OBJECT_FORMAT">
           <End Role="OBJECT_FORMAT" Type="Self.OBJECT_FORMAT" Multiplicity="0..1" />
           <End Role="OBJECT" Type="Self.OBJECT" Multiplicity="*" />
@@ -5008,10 +4997,6 @@
           <AssociationSet Name="FK_STYLE_SITE" Association="Self.FK_STYLE_SITE">
             <End Role="SITE" EntitySet="SITE" />
             <End Role="STYLE" EntitySet="STYLE" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" Association="Self.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn">
-            <End Role="CdcLastExecutedLsn" EntitySet="CdcLastExecutedLsn" />
-            <End Role="SYSTEM_NOTIFICATION_QUEUE" EntitySet="SYSTEM_NOTIFICATION_QUEUE" />
           </AssociationSet>
           <AssociationSet Name="FK_TEMPLATE_OBJECT_OBJECT_FORMAT" Association="Self.FK_TEMPLATE_OBJECT_OBJECT_FORMAT">
             <End Role="OBJECT_FORMAT" EntitySet="OBJECT_FORMAT" />
@@ -10490,6 +10475,7 @@
           <Property Name="TransactionDate" Type="DateTime" Precision="3" />
           <Property Name="LastExecutedLsn" Type="String" Nullable="false" MaxLength="22" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="SYSTEM_NOTIFICATION_QUEUE" Relationship="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" FromRole="CdcLastExecutedLsn" ToRole="SystemNotificationDAL" />
+          <Property Name="ProviderName" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn">
           <End Type="QP8Model.CdcLastExecutedLsn" Role="CdcLastExecutedLsn" Multiplicity="1" />
@@ -12075,6 +12061,7 @@
           <EntitySetMapping Name="CdcLastExecutedLsn">
             <EntityTypeMapping TypeName="QP8Model.CdcLastExecutedLsn">
               <MappingFragment StoreEntitySet="CdcLastExecutedLsn">
+                <ScalarProperty Name="ProviderName" ColumnName="ProviderName" />
                 <ScalarProperty Name="LastExecutedLsn" ColumnName="LastExecutedLsn" />
                 <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
                 <ScalarProperty Name="TransactionLsn" ColumnName="TransactionLsn" />
@@ -12105,7 +12092,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="98">
+      <Diagram Name="QP8Model" ZoomLevel="86">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -15605,7 +15592,7 @@
         <EntityTypeShape EntityType="QP8Model.XmlDbUpdateActionsLogEntity" Width="3" PointX="12.125" PointY="1" />
         <AssociationConnector Association="QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1" />
         <EntityTypeShape EntityType="QP8Model.SystemNotificationDAL" Width="1.5" PointX="12.625" PointY="4.75" />
-        <EntityTypeShape EntityType="QP8Model.CdcLastExecutedLsn" Width="1.5" PointX="14.875" PointY="5.25" />
+        <EntityTypeShape EntityType="QP8Model.CdcLastExecutedLsn" Width="1.5" PointX="14.875" PointY="5.25" IsExpanded="true" />
         <AssociationConnector Association="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" />
 		</Diagram>
     </Diagrams>
