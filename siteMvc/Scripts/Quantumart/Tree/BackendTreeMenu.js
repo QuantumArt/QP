@@ -232,7 +232,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       if (!!eventArgs.isExpandRequested) {
         var self = this;
         Quantumart.QP8.BackendTreeMenu.getSubTreeToEntity(eventArgs.get_entityTypeCode(), eventArgs.get_parentEntityId(), eventArgs.get_entityId(), function(data) {
-          if (data) {
+          if (!data) {
             return;
           }
 

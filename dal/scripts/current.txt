@@ -1,4 +1,4 @@
-FixContentItemTriggers
+﻿FixContentItemTriggers
 MultipleUpdate
 OptimizeHierarchy
 VisualEditor
@@ -17,4 +17,6 @@ GetPermittedItemsAsQuery
 DeleteSite
 UpdateWrongWFStatuses
 UpdateItemToItemTrigger
+AddProducts
 DPC
+ContextMenuAction

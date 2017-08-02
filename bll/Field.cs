@@ -16,6 +16,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
+using Quantumart.QPublishing.Info;
 
 namespace Quantumart.QP8.BLL
 {
@@ -1941,6 +1942,15 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        private bool LinqPropertyNameExistsInSystemColumns(string linqPropertyName)
+        {
+            //Проверка на пересечение служебных полей и введённого пользователем LINQ имени
+            var systemMembersNames = ObjectExtensions.GetFields(new SystemColumnMemberNames());
+            var systemNames = ObjectExtensions.GetFields(new SystemColumnNames());
+            return systemNames.Contains(linqPropertyName, StringComparer.CurrentCultureIgnoreCase)
+                   || systemMembersNames.Contains(linqPropertyName, StringComparer.CurrentCultureIgnoreCase);
+        }
+
         private void ValidateRelations(RulesException<Field> errors)
         {
             if (MapAsProperty)
@@ -1953,6 +1963,10 @@ namespace Quantumart.QP8.BLL
                 {
                     errors.ErrorFor(f => f.LinqPropertyName, FieldStrings.LinqPropertyNameNonUnique);
                 }
+                else if (LinqPropertyNameExistsInSystemColumns(this.LinqPropertyName))
+                {
+                    errors.ErrorFor(f => f.LinqPropertyName, FieldStrings.LinqPropertyNameExistInSystemColumns);
+                }
 
                 if (ExactType == FieldExactTypes.O2MRelation && O2MBackwardField == null)
                 {
@@ -1963,6 +1977,10 @@ namespace Quantumart.QP8.BLL
                     else if (_fieldRepository.LinqBackPropertyNameExists(this))
                     {
                         errors.ErrorFor(f => f.LinqBackPropertyName, FieldStrings.LinqBackPropertyNameNonUnique);
+                    }
+                    else if (LinqPropertyNameExistsInSystemColumns(this.LinqBackPropertyName))
+                    {
+                        errors.ErrorFor(f => f.LinqBackPropertyName, FieldStrings.LinqBackPropertyNameExistInSystemColumns);
                     }
 
                     if (!string.IsNullOrWhiteSpace(LinqPropertyName) && LinqPropertyName.Equals(LinqBackPropertyName, StringComparison.InvariantCulture))

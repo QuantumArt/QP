@@ -100,13 +100,11 @@
       <HintPath>$(SolutionDir)packages\QA.Configuration.1.0.2\lib\net40\QA.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="QA.Validation.Xaml, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.1.0.3\lib\net40\QA.Validation.Xaml.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="QA.Validation.Xaml, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.1.0.4\lib\net40\QA.Validation.Xaml.dll</HintPath>
     </Reference>
-    <Reference Include="QA.Validation.Xaml.Extensions, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.Extensions.1.0.3\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="QA.Validation.Xaml.Extensions, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.Extensions.1.0.4\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -209,3 +207,4 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
+

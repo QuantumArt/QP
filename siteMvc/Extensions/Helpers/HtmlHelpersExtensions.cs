@@ -893,7 +893,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var sb = new StringBuilder();
             sb.Append(source.QpTextBox(id, value, htmlAttributes));
-            if (allowPreview && field.ExactType != FieldExactTypes.File)
+            if (allowPreview)
             {
                 sb.Append(source.ImagePreview(id));
             }

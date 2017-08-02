@@ -49,7 +49,7 @@ if ((Test-Path $schedulerZipPath))
 {
     $schedulerFolder = $schedulerZipPath.Replace(".zip", "")
     Write-Host "Zip file found. Unpacking..."
-    Invoke-Expression "7za.exe x -r -y -o""$schedulerFolder"" ""$schedulerZipPath"""
+    Expand-Archive -LiteralPath $schedulerZipPath -DestinationPath $schedulerFolder
     $schedulerPath = Join-Path $schedulerFolder "bin\Release\$projectName.exe"
     $schedulerFolder = $schedulerFolder + "\bin\Release"
 }

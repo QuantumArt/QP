@@ -168,10 +168,6 @@
     <None Include="QP8.Infrastructure.TestTools.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\bll\BLL.csproj">
-      <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
-      <Name>BLL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6E317F05-226C-4C9F-B918-FE71D743C3A3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>

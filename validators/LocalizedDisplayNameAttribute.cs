@@ -12,14 +12,12 @@ namespace Quantumart.QP8.Validators
 
         public LocalizedDisplayNameAttribute(string displayNameKey)
             : base(displayNameKey)
-        { }
+        {
+        }
 
         public Type NameResourceType
         {
-            get
-            {
-                return _resourceType;
-            }
+            get => _resourceType;
             set
             {
                 _resourceType = value;

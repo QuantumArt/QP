@@ -19,6 +19,7 @@ $currentSqlSource = Join-Path $source "dal\scripts\current.sql"
 $schedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler.WinService"
 $commonSchedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Service"
 $cdcTarantoolSchedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.CdcDataImport.Tarantool"
+
 $installSchedulerSource = Join-Path $source "deploy\InstallArticleScheduler.ps1"
 $installCommonSchedulerSource = Join-Path $source "deploy\InstallCommonScheduler.ps1"
 $installTarantoolCdcSchedulerSource = Join-Path $source "deploy\InstallCdcTarantoolService.ps1"
@@ -32,6 +33,7 @@ if (-not(Test-Path $parentSource)) { throw [System.ArgumentException] "Folder $p
 if (-not(Test-Path $pluginsSource)) { throw [System.ArgumentException] "Folder $pluginsSource not exists"}
 if (-not(Test-Path $sitesSource)) { throw [System.ArgumentException] "Folder $sitesSource not exists"}
 if (-not(Test-Path $qaSource)) { throw [System.ArgumentException] "Folder $qaSource not exists"}
+
 if (-not(Test-Path $installQp8Source)) { throw [System.ArgumentException] "File $installQp8Source not exists"}
 if (-not(Test-Path $replaceQp8Source)) { throw [System.ArgumentException] "File $replaceQp8Source not exists"}
 if (-not(Test-Path $currentSqlSource)) { throw [System.ArgumentException] "File $currentSqlSource not exists"}
@@ -39,6 +41,7 @@ if (-not(Test-Path $currentSqlSource)) { throw [System.ArgumentException] "File 
 if (-not(Test-Path $schedulerSource)) { throw [System.ArgumentException] "Folder $schedulerSource not exists"}
 if (-not(Test-Path $commonSchedulerSource)) { throw [System.ArgumentException] "Folder $commonSchedulerSource not exists"}
 if (-not(Test-Path $cdcTarantoolSchedulerSource)) { throw [System.ArgumentException] "Folder $cdcTarantoolSchedulerSource not exists"}
+
 if (-not(Test-Path $installSchedulerSource)) { throw [System.ArgumentException] "File $installSchedulerSource not exists"}
 if (-not(Test-Path $installCommonSchedulerSource)) { throw [System.ArgumentException] "File $installCommonSchedulerSource not exists"}
 if (-not(Test-Path $installTarantoolCdcSchedulerSource)) { throw [System.ArgumentException] "File $installTarantoolCdcSchedulerSource not exists"}
@@ -63,15 +66,15 @@ Write-Output "Removing sources for $cdcTarantoolSchedulerSource"
 Invoke-Expression "CleanSource.ps1 -source '$cdcTarantoolSchedulerSource'"
 Write-Output "Done"
 
-Invoke-Expression "7za.exe a -r -y ""$parentSource\Backend.zip"" ""$backendSource\*.*"""
-Invoke-Expression "7za.exe a -r -y ""$parentSource\Winlogon.zip"" ""$winLogonSource\*.*"""
-Invoke-Expression "7za.exe a -r -y ""$parentSource\plugins.zip"" ""$pluginsSource\*.*"""
-Invoke-Expression "7za.exe a -r -y ""$parentSource\sites.zip"" ""$sitesSource\*.*"""
-Invoke-Expression "7za.exe a -r -y ""$parentSource\qa.zip"" ""$qaSource\*.*"""
+Compress-Archive -Path $backendSource\* -DestinationPath $parentSource\Backend.zip
+Compress-Archive -Path $winLogonSource\* -DestinationPath $parentSource\Winlogon.zip
+Compress-Archive -Path $pluginsSource\* -DestinationPath $parentSource\plugins.zip
+Compress-Archive -Path $sitesSource\* -DestinationPath $parentSource\sites.zip
+Compress-Archive -Path $qaSource\* -DestinationPath $parentSource\qa.zip
 
-Invoke-Expression "7za.exe a -r -y ""$parentSource\ArticleScheduler.zip"" ""$schedulerSource\*.*"""
-Invoke-Expression "7za.exe a -r -y ""$parentSource\CommonScheduler.zip"" ""$commonSchedulerSource\*.*"""
-Invoke-Expression "7za.exe a -r -y ""$parentSource\CdcTarantoolScheduler.zip"" ""$cdcTarantoolSchedulerSource\*.*"""
+Compress-Archive -Path $schedulerSource\* -DestinationPath $parentSource\ArticleScheduler.zip
+Compress-Archive -Path $commonSchedulerSource\* -DestinationPath $parentSource\CommonScheduler.zip
+Compress-Archive -Path $cdcTarantoolSchedulerSource\* -DestinationPath $parentSource\CdcTarantoolScheduler.zip
 
 Copy-Item $installQp8Source $parentSource
 Copy-Item $replaceQp8Source $parentSource
