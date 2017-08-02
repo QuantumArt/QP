@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.Constants
+﻿namespace Quantumart.QP8.Constants.Cdc
 {
     public class CdcCaptureConstants
     {

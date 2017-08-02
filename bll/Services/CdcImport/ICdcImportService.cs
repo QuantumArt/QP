@@ -8,8 +8,9 @@ namespace Quantumart.QP8.BLL.Services.CdcImport
         /// <summary>
         /// Get saved before upper bound lsn, that was checked at previous run
         /// </summary>
+        /// <param name="providerUrl">Provider url endpoint</param>
         /// <returns>Cdc last executed lsn</returns>
-        string GetLastExecutedLsn();
+        string GetLastExecutedLsn(string providerUrl);
 
         /// <summary>
         /// Get max available lsn for current database

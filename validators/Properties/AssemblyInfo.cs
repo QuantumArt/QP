@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Quantumart.QP8.Validators")]
-[assembly: AssemblyDescription("QP infrastructure for web projects")]
+[assembly: AssemblyDescription("Internal QP8 Validators")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quantum Art")]
 [assembly: AssemblyProduct("Quantumart.QP8.Validators")]

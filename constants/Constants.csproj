@@ -58,7 +58,7 @@
     <Compile Include="ArticleSelectionMode.cs" />
     <Compile Include="ArticleSelectionIncludeMode.cs" />
     <Compile Include="ArticleViewType.cs" />
-    <Compile Include="CdcCaptureConstants.cs" />
+    <Compile Include="Cdc\CdcCaptureConstants.cs" />
     <Compile Include="Cdc\Elastic\ElasticContentArticleModel.cs" />
     <Compile Include="Cdc\Enums\CdcOperationType.cs" />
     <Compile Include="Cdc\Enums\CdcActionType.cs" />

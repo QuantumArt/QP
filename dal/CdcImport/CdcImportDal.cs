@@ -12,10 +12,11 @@ namespace Quantumart.QP8.DAL.CdcImport
         private const string @ProviderName = "@providerName";
         private const string @ProviderUrl = "@providerUrl";
 
-        public static string GetLastExecutedLsn(SqlConnection connection)
+        public static string GetLastExecutedLsn(SqlConnection connection, string providerUrl)
         {
-            using (var cmd = SqlCommandFactory.Create("SELECT LastExecutedLsn FROM [dbo].[CdcLastExecutedLsn];", connection))
+            using (var cmd = SqlCommandFactory.Create($"SELECT TOP(1) LastExecutedLsn FROM [dbo].[CdcLastExecutedLsn] WHERE ProviderUrl = {@ProviderUrl};", connection))
             {
+                cmd.Parameters.AddWithValue(@ProviderUrl, providerUrl);
                 return (string)cmd.ExecuteScalar();
             }
         }

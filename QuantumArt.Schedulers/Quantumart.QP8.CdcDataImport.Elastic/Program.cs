@@ -11,7 +11,6 @@ using Quantumart.QP8.CdcDataImport.Common;
 using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure;
 using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs;
 using Quantumart.QP8.CdcDataImport.Elastic.Properties;
-using Quantumart.QP8.Constants;
 using Quartz;
 using Topshelf;
 using Topshelf.Autofac;
@@ -66,8 +65,6 @@ namespace Quantumart.QP8.CdcDataImport.Elastic
         private static void Init()
         {
             LogProvider.LogFactory = Container.Resolve<INLogFactory>();
-            Logger.Log.SetGlobalContext(LoggerData.AppNameCustomVariable, "QP.CdcDataImport.Elastic");
-
             ScheduleJobServiceConfiguratorExtensions.SchedulerFactory = Container.Resolve<IScheduler>;
             AppDomain.CurrentDomain.UnhandledException += (o, ea) =>
             {

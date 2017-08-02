@@ -108,7 +108,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
             if (assemblyFullName.Contains(","))
             {
-                var shortenedName = assemblyFullName.Substring(0, assemblyFullName.IndexOf(","));
+                var shortenedName = assemblyFullName.Substring(0, assemblyFullName.IndexOf(",", StringComparison.Ordinal));
                 if (_mapShortNameToAssembly.ContainsKey(shortenedName))
                 {
                     ConsoleHelpers.WriteLineDebug(" .. Ok");
@@ -141,6 +141,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Data.dll", "Microsoft.Practices.EnterpriseLibrary.Data.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Common.dll", "Microsoft.Practices.EnterpriseLibrary.Common.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Validation.dll", "Microsoft.Practices.EnterpriseLibrary.Validation.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll", "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll");
 
             Load("Quantumart.QP8.ConsoleDbUpdate.References.AutoMapper.dll", "AutoMapper.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.EFExtensions.dll", "EFExtensions.dll");

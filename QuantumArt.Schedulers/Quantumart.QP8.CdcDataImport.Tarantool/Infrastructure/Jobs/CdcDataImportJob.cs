@@ -96,21 +96,19 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                 {
                     var responseMessage = PushDataToHttpChannel(data);
                     var response = await responseMessage.ReceiveJson<JSendResponse>();
-                    if (response.Status == JSendStatus.Success && response.Code == 200)
+                    if (response.Status != JSendStatus.Success || response.Code != 200)
                     {
-                        shouldSendHttpRequests = true;
-                        lastPushedLsn = notSendedDtosQueue.Dequeue().TransactionLsn;
-                        Logger.Log.Trace($"Http push notification was pushed successfuly: {response.ToJsonLog()}");
-                    }
-                    else
-                    {
-                        Logger.Log.Warn($"Http push notification response was failed: {response.ToJsonLog()}");
+                        Logger.Log.Warn($"Http push notification response was failed for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
                         break;
                     }
+
+                    shouldSendHttpRequests = true;
+                    lastPushedLsn = notSendedDtosQueue.Dequeue().TransactionLsn;
+                    Logger.Log.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log.Warn("There was an http error while sending http push notification", ex);
+                    Logger.Log.Warn($"There was an http error while sending http push notification for customer code: {customer.CustomerName}. Notification: {data.ToJsonLog()}", ex);
                     break;
                 }
             }
@@ -155,7 +153,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             using (new QPConnectionScope(connectionString))
             {
-                var fromLsn = _cdcImportService.GetLastExecutedLsn();
+                var fromLsn = _cdcImportService.GetLastExecutedLsn(Settings.Default.HttpEndpoint);
                 toLsn = _cdcImportService.GetMaxLsn();
                 result = _cdcImportProcessor.GetCdcDataFromTables(fromLsn, toLsn);
                 ts.Complete();
@@ -187,7 +185,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
         }
 
         private static async Task<HttpResponseMessage> PushDataToHttpChannel(CdcDataTableDto data) =>
-            await Settings.Default.HttpEndpoint.AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostJsonAsync(new NginxRequest(data));
+            await Settings.Default.HttpEndpoint.Replace("{customercode}", data.CustomerCode).AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostJsonAsync(new NginxRequest(data));
 
         public void Interrupt()
         {

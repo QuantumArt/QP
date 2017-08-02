@@ -15,6 +15,7 @@ using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Configuration.Models;
+using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.Notification.Data;
 using Quantumart.QP8.Scheduler.Notification.Properties;
@@ -80,107 +81,80 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             var elasticSentUnsentTuple = await ProcessElasticNotifications(customer, token);
             sentNotificationIds.AddRange(elasticSentUnsentTuple.Item1);
             unsentNotificationIds.AddRange(elasticSentUnsentTuple.Item2);
-            
+
             UpdateDbNotificationsData(customer.ConnectionString, sentNotificationIds, unsentNotificationIds);
             return Tuple.Create(sentNotificationIds, unsentNotificationIds);
         }
 
         private async Task<Tuple<List<int>, List<int>>> ProcessTarantoolNotifications(QaConfigCustomer customer, CancellationToken token)
         {
-            var notificationDtos = GetTarantoolPendingNotifications(customer.ConnectionString);
+            var notificationDtos = GetPendingNotifications(customer.ConnectionString, CdcProviderName.Tarantool.ToString()).ToList();
             var sentNotificationIds = new List<int>();
-            var unsentNotificationIds = new List<int>();
-            foreach (var dto in notificationDtos)
-            {
-                if (token.IsCancellationRequested)
-                {
-                    break;
-                }
 
+            var notSendedDtosQueue = new Queue<SystemNotificationDto>(notificationDtos);
+            while (notSendedDtosQueue.Any() && !token.IsCancellationRequested)
+            {
+                var dto = notSendedDtosQueue.Peek();
                 try
                 {
-                    var responseMessage = PushDataToHttpChannel(dto.Url, dto.Json);
+                    var responseMessage = PushDataToHttpChannel(dto.Url, dto.Json, customer.CustomerName);
                     var response = await responseMessage.ReceiveJson<JSendResponse>();
-                    if (response.Status == JSendStatus.Success && response.Code == 200)
+                    if (response.Status != JSendStatus.Success || response.Code != 200)
                     {
-                        sentNotificationIds.Add(dto.Id);
-                        _logger.Trace($"Http push notification was pushed successfuly: {response.ToJsonLog()}");
-                    }
-                    else
-                    {
-                        _logger.Warn($"Http push notification response was failed for customer code: {response.ToJsonLog()}");
-                        unsentNotificationIds.Add(dto.Id);
+                        _logger.Warn($"Http push notification response was failed for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
                         break;
                     }
 
+                    sentNotificationIds.Add(notSendedDtosQueue.Dequeue().Id);
                     _logger.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
                 }
                 catch (Exception ex)
                 {
-                    unsentNotificationIds.Add(dto.Id);
-                    var message = $"Exception while sending notification for customer code: {customer.CustomerName}. Notification: {dto.ToJsonLog()}";
-                    _logger.Error(message, ex);
+                    _logger.Error($"Exception while sending notification for customer code: {customer.CustomerName}. Notification: {dto.ToJsonLog()}", ex);
+                    break;
                 }
             }
 
-            return Tuple.Create(sentNotificationIds, unsentNotificationIds);
+            return Tuple.Create(sentNotificationIds, notSendedDtosQueue.Select(dto => dto.Id).ToList());
         }
 
         private async Task<Tuple<List<int>, List<int>>> ProcessElasticNotifications(QaConfigCustomer customer, CancellationToken token)
         {
-            var notificationDtos = GetElasticPendingNotifications(customer.ConnectionString);
+            var notificationDtos = GetPendingNotifications(customer.ConnectionString, CdcProviderName.Elastic.ToString());
             var sentNotificationIds = new List<int>();
-            var unsentNotificationIds = new List<int>();
-            foreach (var dto in notificationDtos)
-            {
-                if (token.IsCancellationRequested)
-                {
-                    break;
-                }
 
+            var notSendedDtosQueue = new Queue<SystemNotificationDto>(notificationDtos);
+            while (notSendedDtosQueue.Any() && !token.IsCancellationRequested)
+            {
+                var dto = notSendedDtosQueue.Peek();
                 try
                 {
-                    var responseMessage = PushDataToHttpChannel(dto.Url, dto.Json);
+                    var responseMessage = PushDataToHttpChannel(dto.Url, dto.Json, customer.CustomerName);
                     var response = await responseMessage.ReceiveString();
-                    if ((await responseMessage).IsSuccessStatusCode)
+                    if (!(await responseMessage).IsSuccessStatusCode)
                     {
-                        sentNotificationIds.Add(dto.Id);
-                        _logger.Trace($"Http push notification was pushed successfuly: {response}");
-                    }
-                    else
-                    {
-                        _logger.Warn($"Http push notification response was failed for customer code: {response}");
-                        unsentNotificationIds.Add(dto.Id);
+                        _logger.Warn($"Http push notification response was failed for customer code: {customer.CustomerName}: {response}");
                         break;
                     }
 
+                    sentNotificationIds.Add(notSendedDtosQueue.Dequeue().Id);
                     _logger.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName}: {response}");
                 }
                 catch (Exception ex)
                 {
-                    unsentNotificationIds.Add(dto.Id);
-                    var message = $"Exception while sending notification for customer code: {customer.CustomerName}. Notification: {dto.ToJsonLog()}";
-                    _logger.Error(message, ex);
+                    _logger.Error($"Exception while sending notification for customer code: {customer.CustomerName}. Notification: {dto.ToJsonLog()}", ex);
+                        break;
                 }
             }
 
-            return Tuple.Create(sentNotificationIds, unsentNotificationIds);
+            return Tuple.Create(sentNotificationIds, notSendedDtosQueue.Select(dto => dto.Id).ToList());
         }
 
-        private IEnumerable<SystemNotificationDto> GetTarantoolPendingNotifications(string connection)
+        private IEnumerable<SystemNotificationDto> GetPendingNotifications(string connection, string providerName)
         {
             using (new QPConnectionScope(connection))
             {
-                var notificationModels = _externalNotificationService.GetTarantoolPendingNotifications();
-                return Mapper.Map<List<SystemNotificationModel>, List<SystemNotificationDto>>(notificationModels).OrderBy(n => n.TransactionLsn).ToList();
-            }
-        }
-
-        private IEnumerable<SystemNotificationDto> GetElasticPendingNotifications(string connection)
-        {
-            using (new QPConnectionScope(connection))
-            {
-                var notificationModels = _externalNotificationService.GetElasticPendingNotifications();
+                var notificationModels = _externalNotificationService.GetPendingNotifications(providerName);
                 return Mapper.Map<List<SystemNotificationModel>, List<SystemNotificationDto>>(notificationModels).OrderBy(n => n.TransactionLsn).ToList();
             }
         }
@@ -201,7 +175,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             }
         }
 
-        private static async Task<HttpResponseMessage> PushDataToHttpChannel(string urlEndpoint, string jsonData) =>
-            await urlEndpoint.AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostStringAsync(jsonData);
+        private static async Task<HttpResponseMessage> PushDataToHttpChannel(string urlEndpoint, string jsonData, string customerCode) =>
+            await urlEndpoint.Replace("{customercode}", customerCode).AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostStringAsync(jsonData);
     }
 }

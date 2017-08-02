@@ -18,10 +18,12 @@ $currentSqlSource = Join-Path $source "dal\scripts\current.sql"
 
 $schedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler.WinService"
 $commonSchedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Service"
+$cdcElasticSchedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.CdcDataImport.Elastic"
 $cdcTarantoolSchedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.CdcDataImport.Tarantool"
 
 $installSchedulerSource = Join-Path $source "deploy\InstallArticleScheduler.ps1"
 $installCommonSchedulerSource = Join-Path $source "deploy\InstallCommonScheduler.ps1"
+$installElasticCdcSchedulerSource = Join-Path $source "deploy\InstallCdcElasticService.ps1"
 $installTarantoolCdcSchedulerSource = Join-Path $source "deploy\InstallCdcTarantoolService.ps1"
 
 $parentSource = Join-Path $source "zip"
@@ -40,10 +42,12 @@ if (-not(Test-Path $currentSqlSource)) { throw [System.ArgumentException] "File 
 
 if (-not(Test-Path $schedulerSource)) { throw [System.ArgumentException] "Folder $schedulerSource not exists"}
 if (-not(Test-Path $commonSchedulerSource)) { throw [System.ArgumentException] "Folder $commonSchedulerSource not exists"}
+if (-not(Test-Path $cdcElasticSchedulerSource)) { throw [System.ArgumentException] "Folder $cdcElasticSchedulerSource not exists"}
 if (-not(Test-Path $cdcTarantoolSchedulerSource)) { throw [System.ArgumentException] "Folder $cdcTarantoolSchedulerSource not exists"}
 
 if (-not(Test-Path $installSchedulerSource)) { throw [System.ArgumentException] "File $installSchedulerSource not exists"}
 if (-not(Test-Path $installCommonSchedulerSource)) { throw [System.ArgumentException] "File $installCommonSchedulerSource not exists"}
+if (-not(Test-Path $installElasticCdcSchedulerSource)) { throw [System.ArgumentException] "File $installElasticCdcSchedulerSource not exists"}
 if (-not(Test-Path $installTarantoolCdcSchedulerSource)) { throw [System.ArgumentException] "File $installTarantoolCdcSchedulerSource not exists"}
 
 Write-Output "Removing sources for $backendSource"
@@ -62,6 +66,10 @@ Write-Output "Removing sources for $commonSchedulerSource"
 Invoke-Expression "CleanSource.ps1 -source '$commonSchedulerSource'"
 Write-Output "Done"
 
+Write-Output "Removing sources for $cdcElasticSchedulerSource"
+Invoke-Expression "CleanSource.ps1 -source '$cdcElasticSchedulerSource'"
+Write-Output "Done"
+
 Write-Output "Removing sources for $cdcTarantoolSchedulerSource"
 Invoke-Expression "CleanSource.ps1 -source '$cdcTarantoolSchedulerSource'"
 Write-Output "Done"
@@ -74,6 +82,7 @@ Compress-Archive -Path $qaSource\* -DestinationPath $parentSource\qa.zip
 
 Compress-Archive -Path $schedulerSource\* -DestinationPath $parentSource\ArticleScheduler.zip
 Compress-Archive -Path $commonSchedulerSource\* -DestinationPath $parentSource\CommonScheduler.zip
+Compress-Archive -Path $cdcElasticSchedulerSource\* -DestinationPath $parentSource\CdcElasticScheduler.zip
 Compress-Archive -Path $cdcTarantoolSchedulerSource\* -DestinationPath $parentSource\CdcTarantoolScheduler.zip
 
 Copy-Item $installQp8Source $parentSource
@@ -82,4 +91,5 @@ Copy-Item $currentSqlSource $parentSource
 
 Copy-Item $installSchedulerSource $parentSource
 Copy-Item $installCommonSchedulerSource $parentSource
+Copy-Item $installElasticCdcSchedulerSource $parentSource
 Copy-Item $installTarantoolCdcSchedulerSource $parentSource

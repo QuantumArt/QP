@@ -11,7 +11,6 @@ using Quantumart.QP8.CdcDataImport.Common;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs;
 using Quantumart.QP8.CdcDataImport.Tarantool.Properties;
-using Quantumart.QP8.Constants;
 using Quartz;
 using Topshelf;
 using Topshelf.Autofac;
@@ -66,8 +65,6 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
         private static void Init()
         {
             LogProvider.LogFactory = Container.Resolve<INLogFactory>();
-            Logger.Log.SetGlobalContext(LoggerData.AppNameCustomVariable, "QP.CdcDataImport.Tarantool");
-
             ScheduleJobServiceConfiguratorExtensions.SchedulerFactory = Container.Resolve<IScheduler>;
             AppDomain.CurrentDomain.UnhandledException += (o, ea) =>
             {

@@ -7,6 +7,7 @@ using Quantumart.QP8.BLL.Services.CdcImport;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Helpers;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Cdc;
 using Quantumart.QP8.Constants.Cdc.Tarantool;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services

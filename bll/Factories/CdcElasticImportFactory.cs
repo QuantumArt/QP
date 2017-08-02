@@ -2,6 +2,7 @@
 using Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors;
 using Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors.Elastic;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Cdc;
 
 namespace Quantumart.QP8.BLL.Factories
 {

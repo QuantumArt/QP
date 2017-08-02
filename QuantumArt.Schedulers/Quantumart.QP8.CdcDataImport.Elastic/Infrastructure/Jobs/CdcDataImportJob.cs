@@ -9,6 +9,7 @@ using AutoMapper;
 using Flurl;
 using Flurl.Http;
 using QP8.Infrastructure;
+using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
@@ -93,21 +94,19 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
                 {
                     var responseMessage = PushDataToHttpChannel(data);
                     var response = await responseMessage.ReceiveString();
-                    if ((await responseMessage).IsSuccessStatusCode)
+                    if (!(await responseMessage).IsSuccessStatusCode)
                     {
-                        shouldSendHttpRequests = true;
-                        lastPushedLsn = notSendedDtosQueue.Dequeue().TransactionLsn;
-                        Logger.Log.Trace($"Http push notification was pushed successfuly: {response}");
-                    }
-                    else
-                    {
-                        Logger.Log.Warn($"Http push notification response was failed: {response}");
+                        Logger.Log.Warn($"Http push notification response was failed for customer code: {customer.CustomerName}: {response}");
                         break;
                     }
+
+                    shouldSendHttpRequests = true;
+                    lastPushedLsn = notSendedDtosQueue.Dequeue().TransactionLsn;
+                    Logger.Log.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName}: {response}");
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log.Warn("There was an http error while sending http push notification", ex);
+                    Logger.Log.Warn($"There was an http error while sending http push notification for customer code: {customer.CustomerName}. Notification: {data.ToJsonLog()}", ex);
                     break;
                 }
             }
@@ -129,7 +128,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             using (new QPConnectionScope(connectionString))
             {
-                var fromLsn = _cdcImportService.GetLastExecutedLsn();
+                var fromLsn = _cdcImportService.GetLastExecutedLsn(Settings.Default.HttpEndpoint);
                 toLsn = _cdcImportService.GetMaxLsn();
                 result = _cdcImportProcessor.GetCdcDataFromTables(fromLsn, toLsn);
                 ts.Complete();
