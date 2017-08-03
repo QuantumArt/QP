@@ -50,19 +50,16 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
 
         public TimeSpan Duration { get; }
 
-        public static RecurringTask Create(ArticleScheduleTask task)
-        {
-            return new RecurringTask(
-                task.Id,
-                task.ArticleId,
-                (RecurringTaskTypes)task.FreqType,
-                task.FreqInterval,
-                task.FreqRelativeInterval,
-                task.FreqRecurrenceFactor,
-                task.StartDate,
-                task.EndDate,
-                task.StartTime,
-                task.Duration);
-        }
+        public static RecurringTask Create(ArticleScheduleTask task) => new RecurringTask(
+            task.Id,
+            task.ArticleId,
+            (RecurringTaskTypes)task.FreqType,
+            task.FreqInterval,
+            task.FreqRelativeInterval,
+            task.FreqRecurrenceFactor,
+            task.StartDate,
+            task.EndDate,
+            task.StartTime,
+            task.Duration);
     }
 }

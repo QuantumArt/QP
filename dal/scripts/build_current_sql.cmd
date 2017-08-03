@@ -1,0 +1,1 @@
+powershell ./CreateCurrent.ps1

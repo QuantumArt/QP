@@ -78,22 +78,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Redirect(loginUrl);
         }
 
-        private static string GetAuthorizationUrl(DirectLinkOptions directLinkOptions)
-        {
-            // Если IP-адрес пользователя входит в диапазон IP-адресов
-            // внутренней сети, то перенаправляем его на страницу Windows-аутентификации
-            return directLinkOptions != null ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl) : AuthenticationHelper.WindowsAuthenticationUrl;
-        }
+        private static string GetAuthorizationUrl(DirectLinkOptions directLinkOptions) => directLinkOptions != null ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl) : AuthenticationHelper.WindowsAuthenticationUrl;
 
         private void FillViewBagData()
         {
             ViewBag.AllowSelectCustomerCode = QPConfiguration.AllowSelectCustomerCode;
-            ViewBag.CustomerCodes = QPConfiguration.CustomerCodes.Select(cc => new QPSelectListItem { Text = cc, Value = cc }).OrderBy(cc => cc.Text);
+            ViewBag.CustomerCodes = QPConfiguration.GetCustomerCodes().Select(cc => new QPSelectListItem { Text = cc, Value = cc }).OrderBy(cc => cc.Text);
         }
 
-        private ActionResult LogOnView()
-        {
-            return Request.IsAjaxRequest() ? JsonHtml("Popup", null) : View();
-        }
+        private ActionResult LogOnView() => Request.IsAjaxRequest() ? JsonHtml("Popup", null) : View();
     }
 }

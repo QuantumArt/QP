@@ -12,7 +12,9 @@ namespace QP8.WebMvc.Tests.Infrastructure.Attributes
         private readonly string _hash;
 
         public XmlDbUpdateDataReader(string fileName)
-            : base(fileName) { }
+            : base(fileName)
+        {
+        }
 
         public XmlDbUpdateDataReader(string fileName, string hash)
             : base(fileName)

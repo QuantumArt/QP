@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
-using Quantumart.QP8.BLL.Factories;
+using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -13,7 +13,6 @@ namespace Quantumart.QP8.BLL
 {
     public abstract class Folder : EntityObject
     {
-
         private Folder _parentFolder;
         private EntityObject _parent;
         private IEnumerable<EntityObject> _children;
@@ -38,6 +37,7 @@ namespace Quantumart.QP8.BLL
                 {
                     _children = LoadAllChildren ? Repository.GetAllChildrenFromDb(Id) : Repository.GetChildrenFromDb(ParentEntityId, Id);
                 }
+
                 return _children;
             }
         }
@@ -74,7 +74,6 @@ namespace Quantumart.QP8.BLL
 
                 return IsNew || !Directory.Exists(PathInfo.Path) || Directory.EnumerateFileSystemEntries(PathInfo.Path, "*", SearchOption.AllDirectories).Any();
             }
-
         }
 
         /// <summary>
@@ -112,6 +111,7 @@ namespace Quantumart.QP8.BLL
                 return _repository;
             }
         }
+
         public Folder ParentFolder => _parentFolder ?? (_parentFolder = ParentId == null ? null : Repository.GetById((int)ParentId));
 
         public string OutputName => !string.IsNullOrEmpty(Name) ? Name : LibraryStrings.RootFolder;
@@ -194,7 +194,6 @@ namespace Quantumart.QP8.BLL
 
                 directory.Delete(true);
             }
-
         }
 
         protected override RulesException ValidateUnique(RulesException errors)
@@ -230,8 +229,7 @@ namespace Quantumart.QP8.BLL
 
         internal static PathInfo GetPathInfo(FolderFactory factory, int id)
         {
-            var folder = factory.CreateRepository().GetById(id);
-            return folder?.PathInfo;
+            return factory.CreateRepository().GetById(id)?.PathInfo;
         }
 
         internal Folder TraverseTree(string subFolder)
@@ -248,7 +246,6 @@ namespace Quantumart.QP8.BLL
                         currentFolder = Repository.GetChildByName(id, name) ?? Repository.Create(ParentEntityId, id, name);
                         id = currentFolder.Id;
                     }
-
                 }
             }
 

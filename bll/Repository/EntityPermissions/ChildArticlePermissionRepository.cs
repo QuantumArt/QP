@@ -56,7 +56,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 			}
 		}
 
-		public void MultipleChange(int parentId, IEnumerable<int> entityIDs, ChildEntityPermission permissionSettings)
+		public void MultipleChange(int parentId, List<int> entityIDs, ChildEntityPermission permissionSettings)
 		{
 			using (var scope = new QPConnectionScope())
 			{

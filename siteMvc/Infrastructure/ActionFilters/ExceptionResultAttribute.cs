@@ -1,4 +1,4 @@
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Logging;
@@ -55,10 +55,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             filterContext.HttpContext.Response.TrySkipIisCustomErrors = true;
         }
 
-        private static bool IsAjaxRequest(ControllerContext filterContext)
-        {
-            return filterContext.HttpContext.Request.Headers[RequestHeaders.XRequestedWith] == "XMLHttpRequest";
-        }
+        private static bool IsAjaxRequest(ControllerContext filterContext) => filterContext.HttpContext.Request.Headers[RequestHeaders.XRequestedWith] == "XMLHttpRequest";
 
         private bool ShouldBeHandled(ExceptionContext filterContext)
         {

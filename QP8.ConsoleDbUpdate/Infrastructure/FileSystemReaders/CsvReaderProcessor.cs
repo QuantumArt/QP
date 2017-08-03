@@ -5,7 +5,7 @@ using System.Linq;
 using CsvHelper;
 using CsvHelper.Configuration;
 using QP8.Infrastructure;
-using Quantumart.QP8.BLL.Extensions;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
@@ -71,9 +71,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             return new CsvReaderSettings(Directory.EnumerateFiles(absDirPath, "*.csv", SearchOption.TopDirectoryOnly).OrderBy(fn => fn).ToList()).FilePathes;
         }
 
-        private static int GetContentIdFromFileName(string path)
-        {
-            return Convert.ToInt32(Path.GetFileName(path).Split('_').Skip(1).First());
-        }
+        private static int GetContentIdFromFileName(string path) => Convert.ToInt32(Path.GetFileName(path)?.Split('_').Skip(1).First());
     }
 }

@@ -28,17 +28,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             base.PrintEnteredData();
         }
 
-        protected internal override BaseSettingsModel CreateSettingsFromArguments()
+        protected internal override BaseSettingsModel CreateSettingsFromArguments() => new CsvSettingsModel(FilePathes, CustomerCode, ConfigPath, new CsvConfiguration
         {
-            return new CsvSettingsModel(FilePathes, CustomerCode, ConfigPath, new CsvConfiguration
-            {
-                HasHeaderRecord = true,
-                TrimFields = true,
-                TrimHeaders = true,
-                Encoding = Encoding.GetEncoding(_encoding),
-                CultureInfo = CultureInfo.GetCultureInfo(_cultureInfo),
-                HasExcelSeparator = true
-            });
-        }
+            HasHeaderRecord = true,
+            TrimFields = true,
+            TrimHeaders = true,
+            Encoding = Encoding.GetEncoding(_encoding),
+            CultureInfo = CultureInfo.GetCultureInfo(_cultureInfo),
+            HasExcelSeparator = true
+        });
     }
 }

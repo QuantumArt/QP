@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Exceptions;
-using Quantumart.QP8.BLL.Factories;
+using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -15,10 +15,7 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class ContentService
     {
-        public static Content New(int siteId, int? groupId)
-        {
-            return InternalNew(siteId, groupId);
-        }
+        public static Content New(int siteId, int? groupId) => InternalNew(siteId, groupId);
 
         internal static Content InternalNew(int siteId, int? groupId)
         {
@@ -37,10 +34,7 @@ namespace Quantumart.QP8.BLL.Services
             return content;
         }
 
-        public static Content Read(int id)
-        {
-            return InternalRead(id);
-        }
+        public static Content Read(int id) => InternalRead(id);
 
         internal static Content InternalRead(int id)
         {
@@ -58,10 +52,7 @@ namespace Quantumart.QP8.BLL.Services
             return content;
         }
 
-        public static Content ReadForUpdate(int id)
-        {
-            return Read(id);
-        }
+        public static Content ReadForUpdate(int id) => Read(id);
 
         public static Content Save(Content item)
         {
@@ -121,20 +112,11 @@ namespace Quantumart.QP8.BLL.Services
             return group;
         }
 
-        public static ContentGroup ReadGroupForUpdate(int id, int siteId)
-        {
-            return ReadGroup(id, siteId);
-        }
+        public static ContentGroup ReadGroupForUpdate(int id, int siteId) => ReadGroup(id, siteId);
 
-        public static ContentGroup NewGroup(int siteId)
-        {
-            return new ContentGroup(siteId);
-        }
+        public static ContentGroup NewGroup(int siteId) => new ContentGroup(siteId);
 
-        public static ContentGroup NewGroupForSave(int siteId)
-        {
-            return NewGroup(siteId);
-        }
+        public static ContentGroup NewGroupForSave(int siteId) => NewGroup(siteId);
 
         public static ContentGroup SaveGroup(ContentGroup item)
         {
@@ -213,44 +195,23 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public static ContentInitListResult InitListForObject()
-        {
-            return new ContentInitListResult { IsAddNewAccessable = false };
-        }
+        public static ContentInitListResult InitListForObject() => new ContentInitListResult { IsAddNewAccessable = false };
 
-        public static ContentInitListResult InitList(string parentName)
+        public static ContentInitListResult InitList(string parentName) => new ContentInitListResult
         {
-            return new ContentInitListResult
-            {
-                ParentName = parentName,
-                IsAddNewAccessable = false
-            };
-        }
+            ParentName = parentName,
+            IsAddNewAccessable = false
+        };
 
-        public static IEnumerable<ListItem> GetContentsForUnion(int currentSiteId, IEnumerable<int> ids)
-        {
-            return ContentRepository.GetSimpleList(currentSiteId, ids);
-        }
+        public static IEnumerable<ListItem> GetContentsForUnion(int currentSiteId, IEnumerable<int> ids) => ContentRepository.GetSimpleList(currentSiteId, ids);
 
-        public static IEnumerable<ListItem> GetContentsForParentContent(int currentSiteId, int id)
-        {
-            return ContentRepository.GetSimpleList(currentSiteId, id);
-        }
+        public static IEnumerable<ListItem> GetContentsForParentContent(int currentSiteId, int id) => ContentRepository.GetSimpleList(currentSiteId, id);
 
-        public static ListResult<ContentListItem> List(ContentListFilter filter, ListCommand cmd)
-        {
-            return ContentRepository.GetList(filter, cmd);
-        }
+        public static ListResult<ContentListItem> List(ContentListFilter filter, ListCommand cmd) => ContentRepository.GetList(filter, cmd);
 
-        public static ListResult<ContentListItem> List(ContentListFilter filter, ListCommand cmd, int id)
-        {
-            return ContentRepository.GetList(filter, cmd, new[] { id });
-        }
+        public static ListResult<ContentListItem> List(ContentListFilter filter, ListCommand cmd, int id) => ContentRepository.GetList(filter, cmd, new[] { id });
 
-        public static ListResult<ContentListItem> List(ContentListFilter filter, ListCommand cmd, int[] selectedContentIds)
-        {
-            return ContentRepository.GetList(filter, cmd, selectedContentIds);
-        }
+        public static ListResult<ContentListItem> List(ContentListFilter filter, ListCommand cmd, int[] selectedContentIds) => ContentRepository.GetList(filter, cmd, selectedContentIds);
 
         public static ListResult<ContentListItem> ListForContainer(ContentListFilter filter, ListCommand cmd, int id)
         {
@@ -294,10 +255,7 @@ namespace Quantumart.QP8.BLL.Services
             return List(filter, cmd, ids);
         }
 
-        public static IEnumerable<ListItem> GetSiteContentGroupsForFilter(int siteId)
-        {
-            return ContentRepository.GetGroupSimpleList(siteId);
-        }
+        public static IEnumerable<ListItem> GetSiteContentGroupsForFilter(int siteId) => ContentRepository.GetGroupSimpleList(siteId);
 
         public static LibraryResult Library(int id, string subFolder)
         {
@@ -325,10 +283,7 @@ namespace Quantumart.QP8.BLL.Services
             return folder.GetFiles(command, filter);
         }
 
-        public static PathInfo GetPathInfo(int folderId)
-        {
-            return ContentFolder.GetPathInfo(folderId);
-        }
+        public static PathInfo GetPathInfo(int folderId) => ContentFolder.GetPathInfo(folderId);
 
         public static IEnumerable<ListItem> GetAcceptableContentForRelation(int contentId)
         {
@@ -340,7 +295,6 @@ namespace Quantumart.QP8.BLL.Services
             return ContentRepository.GetAcceptableContentForRelation(contentId);
         }
 
-
         public static MessageResult EnableArticlePermissions(int id)
         {
             var content = ReadForUpdate(id);
@@ -350,6 +304,7 @@ namespace Quantumart.QP8.BLL.Services
                 Update(content);
                 return MessageResult.Info(ContentStrings.ArticlePermissionsComplete);
             }
+
             return null;
         }
 
@@ -360,15 +315,9 @@ namespace Quantumart.QP8.BLL.Services
                 .Select(f => new ListItem(f.Id.ToString(), f.Name));
         }
 
-        public static IEnumerable<ArticleContextSearchBlockItem> GetContentsForContextSwitching(int id)
-        {
-            return ContentRepository.GetById(id).GetContextSearchBlockItems();
-        }
+        public static IEnumerable<ArticleContextSearchBlockItem> GetContentsForContextSwitching(int id) => ContentRepository.GetById(id).GetContextSearchBlockItems();
 
-        public static string GetNameById(int contentId)
-        {
-            return EntityObjectRepository.GetName(EntityTypeCode.Content, contentId);
-        }
+        public static string GetNameById(int contentId) => EntityObjectRepository.GetName(EntityTypeCode.Content, contentId);
 
         public static void CopyContentLinks(int sourceSiteId, int destinationSiteId)
         {

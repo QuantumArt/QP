@@ -1,14 +1,16 @@
-﻿using System;
+﻿using QP8.Infrastructure.Logging;
+using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Services.NotificationSender;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QPublishing.Database;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using QP8.Infrastructure.Logging;
-using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.Configuration;
-using Quantumart.QP8.Constants;
-using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -136,12 +138,12 @@ namespace Quantumart.QP8.BLL.Repository
 
             try
             {
-                IEnumerable<ExternalNotification> notificationQueue;
+                IEnumerable<ExternalNotificationModel> notificationQueue;
                 if (Codes.Contains(NotificationCode.Delete))
                 {
                     notificationQueue = from notification in ServiceNotifications
                                         join article in Articles on notification.ContentId equals article.ContentId
-                                        select new ExternalNotification
+                                        select new ExternalNotificationModel
                                         {
                                             EventName = NotificationCode.Delete,
                                             ArticleId = article.Id,
@@ -157,7 +159,7 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     notificationQueue = from notification in ServiceNotifications
                                         join article in GetArticles() on notification.ContentId equals article.ContentId
-                                        select new ExternalNotification
+                                        select new ExternalNotificationModel
                                         {
                                             EventName = NotificationCode.Create,
                                             ArticleId = article.Id,
@@ -172,7 +174,6 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     var oldArticles = Articles;
                     var newArticles = GetArticles();
-
                     notificationQueue = from notification in ServiceNotifications
                                         from code in Codes
                                         join oldArticle in oldArticles on notification.ContentId equals oldArticle.ContentId
@@ -183,7 +184,7 @@ namespace Quantumart.QP8.BLL.Repository
                                             notification.ForStatusChanged && code == NotificationCode.ChangeStatus ||
                                             notification.ForStatusPartiallyChanged && code == NotificationCode.PartialChangeStatus ||
                                             notification.ForDelayedPublication && code == NotificationCode.DelayedPublication
-                                        select new ExternalNotification
+                                        select new ExternalNotificationModel
                                         {
                                             EventName = code,
                                             ArticleId = oldArticle.Id,
@@ -195,7 +196,7 @@ namespace Quantumart.QP8.BLL.Repository
                                         };
                 }
 
-                ExternalNotificationRepository.Insert(notificationQueue);
+                new ExternalInterfaceNotificationService().Insert(notificationQueue);
             }
             catch (Exception ex)
             {
@@ -210,14 +211,14 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static void Queue(Action action)
         {
-            var evt = new ManualResetEvent(false);
-            ThreadPool.QueueUserWorkItem((o) =>
+            var @event = new ManualResetEvent(false);
+            ThreadPool.QueueUserWorkItem(o =>
             {
                 action();
-                evt.Set();
+                @event.Set();
             });
 
-            evt.WaitOne();
+            @event.WaitOne();
         }
 
         private static void Notify(string connectionString, int id, string code, bool disableInternalNotifications)

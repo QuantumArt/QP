@@ -14,7 +14,7 @@ namespace Quantumart.QP8.BLL.Logging
 
         public ConcurrentQueue<Exception> CustomersExceptions { get; } = new ConcurrentQueue<Exception>();
 
-        public List<QaConfigCustomer> Customers { get; private set; }
+        public List<QaConfigCustomer> Customers { get; }
 
         public PrtgErrorsHandlerViewModel(List<QaConfigCustomer> customers)
         {

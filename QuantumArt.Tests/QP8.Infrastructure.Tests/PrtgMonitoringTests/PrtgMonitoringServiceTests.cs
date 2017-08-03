@@ -1,5 +1,4 @@
-using System.Net.Http;
-using Flurl.Http.Testing;
+﻿using Flurl.Http.Testing;
 using Newtonsoft.Json;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
@@ -7,6 +6,7 @@ using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring;
 using QP8.Infrastructure.Logging.PrtgMonitoring.Data;
 using QP8.Infrastructure.Tests.Infrastructure.Specimens;
+using System.Net.Http;
 using Xunit;
 
 namespace QP8.Infrastructure.Tests.PrtgMonitoringTests
@@ -29,6 +29,7 @@ namespace QP8.Infrastructure.Tests.PrtgMonitoringTests
         {
             _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization()).Customize(new MultipleCustomization());
             _fixture.Customizations.Add(new PrtgMonitoringServiceSpecimenBuilder());
+
             _httpTest = new HttpTest();
             _httpTest.RespondWithJson(new PrtgHttpResponse());
 

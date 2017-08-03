@@ -1,8 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Enums.Csv;
-using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
 using Quantumart.QP8.Constants;
@@ -28,10 +28,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult PreSettings(int parentId, int[] IDs)
-        {
-            return Json(_service.MultistepActionSettings(parentId, 0, IDs));
-        }
+        public ActionResult PreSettings(int parentId, int[] IDs) => Json(_service.MultistepActionSettings(parentId, 0, IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -54,10 +51,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Setup(int parentId, int[] IDs, bool? boundToExternal)
-        {
-            return Json(_service.Setup(parentId, 0, IDs, boundToExternal));
-        }
+        public ActionResult Setup(int parentId, int[] IDs, bool? boundToExternal) => Json(_service.Setup(parentId, 0, IDs, boundToExternal));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -93,10 +87,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step)
-        {
-            return Json(_service.Step(stage, step));
-        }
+        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
 
         [HttpPost]
         public ActionResult TearDown(bool isError)

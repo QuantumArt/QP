@@ -2,10 +2,10 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8BE1BB60-1938-45E8-BAFB-1D008D62059C}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -57,9 +57,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=1.1.0.188, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="AutoMapper, Version=1.1.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.1.1.2\lib\net35\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll</HintPath>
@@ -78,16 +77,16 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Microsoft.Owin.Host.SystemWeb.3.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Microsoft.Owin.Host.SystemWeb.3.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Security, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Security, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Microsoft.Owin.Security.3.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -107,40 +106,37 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>$(SolutionDir)packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Moq, Version=4.7.8.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Moq.4.7.8\lib\net45\Moq.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Moq, Version=4.7.25.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.7.25\lib\net45\Moq.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\NLog.4.4.5\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\NLog.4.4.10\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="NLog.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\NLog.Web.4.4.0\lib\net35\NLog.Web.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\NLog.Web.4.5.0\lib\net35\NLog.Web.dll</HintPath>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -314,7 +310,6 @@
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateLogService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateNonMvcReplayService.cs" />
     <Compile Include="Infrastructure\Enums\ExceptionResultMode.cs" />
-    <Compile Include="Infrastructure\Enums\JSendStatus.cs" />
     <Compile Include="Infrastructure\Extensions\ArrayExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
@@ -853,7 +848,6 @@
     <Content Include="Content\codemirror\addon\tern\tern.js" />
     <Content Include="Content\codemirror\addon\tern\worker.js" />
     <Content Include="Content\codemirror\addon\wrap\hardwrap.js" />
-    <Content Include="Content\codemirror\bin\upload-release.js" />
     <Content Include="Content\codemirror\demo\activeline.html" />
     <Content Include="Content\codemirror\demo\anywordhint.html" />
     <Content Include="Content\codemirror\demo\bidi.html" />
@@ -1195,23 +1189,6 @@
     <Content Include="Content\codemirror\mode\yaml\yaml.js" />
     <Content Include="Content\codemirror\mode\z80\index.html" />
     <Content Include="Content\codemirror\mode\z80\z80.js" />
-    <Content Include="Content\codemirror\test\comment_test.js" />
-    <Content Include="Content\codemirror\test\doc_test.js" />
-    <Content Include="Content\codemirror\test\driver.js" />
-    <Content Include="Content\codemirror\test\emacs_test.js" />
-    <Content Include="Content\codemirror\test\index.html" />
-    <Content Include="Content\codemirror\test\lint.js" />
-    <Content Include="Content\codemirror\test\mode_test.css" />
-    <Content Include="Content\codemirror\test\mode_test.js" />
-    <Content Include="Content\codemirror\test\multi_test.js" />
-    <Content Include="Content\codemirror\test\phantom_driver.js" />
-    <Content Include="Content\codemirror\test\run.js" />
-    <Content Include="Content\codemirror\test\scroll_test.js" />
-    <Content Include="Content\codemirror\test\search_test.js" />
-    <Content Include="Content\codemirror\test\sql-hint-test.js" />
-    <Content Include="Content\codemirror\test\sublime_test.js" />
-    <Content Include="Content\codemirror\test\test.js" />
-    <Content Include="Content\codemirror\test\vim_test.js" />
     <Content Include="Content\codemirror\theme\3024-day.css" />
     <Content Include="Content\codemirror\theme\3024-night.css" />
     <Content Include="Content\codemirror\theme\abcdef.css" />
@@ -1381,11 +1358,6 @@
     <Content Include="Content\QP8\icons\16x16\visual_editor_styles.gif" />
     <Content Include="Content\codemirror\.gitattributes" />
     <Content Include="Content\codemirror\.gitignore" />
-    <Content Include="Content\codemirror\bin\authors.sh" />
-    <Content Include="Content\codemirror\bin\compress" />
-    <Content Include="Content\codemirror\bin\lint" />
-    <Content Include="Content\codemirror\bin\release" />
-    <Content Include="Content\codemirror\bin\source-highlight" />
     <Content Include="Content\ckeditor\CHANGES.md" />
     <Content Include="Content\ckeditor\LICENSE.md" />
     <Content Include="Content\ckeditor\plugins\scayt\CHANGELOG.md" />
@@ -1721,7 +1693,6 @@
     <Compile Include="ViewModels\HomePage\HomeViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\IActionAccessChecker.cs" />
     <Compile Include="ViewModels\Interfaces\IUserAndGroupSearchBlockViewModel.cs" />
-    <Compile Include="ViewModels\JSendResponse.cs" />
     <Compile Include="ViewModels\Library\ContentFolderViewModel.cs" />
     <Compile Include="ViewModels\Library\FolderViewModel.cs" />
     <Compile Include="ViewModels\Library\LibraryMode.cs" />
@@ -1793,7 +1764,6 @@
     <Compile Include="ViewModels\Workflow\WorkflowContentViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowListViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowViewModel.cs" />
-    <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepBaseSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepCopySiteSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepExportSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepImportSettings.js" />

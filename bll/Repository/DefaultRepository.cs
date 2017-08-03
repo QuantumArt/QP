@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
@@ -33,21 +33,15 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static TBiz Save<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQPEntityObject
-            where TBiz : EntityObject
-        {
-            return SaveAsUser<TBiz, TDal>(item, QPContext.CurrentUserId);
-        }
+            where TDal : D.EntityObject, IQpEntityObject
+            where TBiz : EntityObject => SaveAsUser<TBiz, TDal>(item, QPContext.CurrentUserId);
 
         internal static TBiz SaveAsAdmin<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQPEntityObject
-            where TBiz : EntityObject
-        {
-            return SaveAsUser<TBiz, TDal>(item, SpecialIds.AdminUserId);
-        }
+            where TDal : D.EntityObject, IQpEntityObject
+            where TBiz : EntityObject => SaveAsUser<TBiz, TDal>(item, SpecialIds.AdminUserId);
 
         internal static TBiz SaveAsUser<TBiz, TDal>(TBiz item, int userId)
-            where TDal : D.EntityObject, IQPEntityObject
+            where TDal : D.EntityObject, IQpEntityObject
             where TBiz : EntityObject
         {
             var entities = QPContext.EFContext;
@@ -74,7 +68,7 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static TBiz Update<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQPEntityObject
+            where TDal : D.EntityObject, IQpEntityObject
             where TBiz : EntityObject
         {
             var dalItem = DefaultMapper.GetDalObject<TDal, TBiz>(item);
@@ -99,10 +93,10 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static void Delete<TDal>(int[] id)
-        where TDal : D.EntityObject
+            where TDal : D.EntityObject
         {
             var entities = QPContext.EFContext;
-            var sql = $"SELECT VALUE entity FROM {GetSetNameByType(typeof(TDal), true)} AS entity WHERE entity.Id IN {{{String.Join(",", id)}}}";
+            var sql = $"SELECT VALUE entity FROM {GetSetNameByType(typeof(TDal), true)} AS entity WHERE entity.Id IN {{{string.Join(",", id)}}}";
             var list = entities.CreateQuery<TDal>(sql).ToList();
             foreach (var result in list)
             {
@@ -113,7 +107,7 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static TDal GetById<TDal>(int id)
-        where TDal : D.EntityObject
+            where TDal : D.EntityObject
         {
             var entities = QPContext.EFContext;
             var key = new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id);
@@ -151,7 +145,7 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static TDal SimpleUpdate<TDal>(TDal dalItem)
-        where TDal : D.EntityObject
+            where TDal : D.EntityObject
         {
             var entities = QPContext.EFContext;
             entities.AttachTo(GetSetNameByType(typeof(TDal)), dalItem);
@@ -163,8 +157,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void SimpleDelete(EntityKey key)
         {
             var entities = QPContext.EFContext;
-            object result;
-            if (entities.TryGetObjectByKey(key, out result))
+            if (entities.TryGetObjectByKey(key, out object result))
             {
                 entities.DeleteObject(result);
             }
@@ -178,8 +171,7 @@ namespace Quantumart.QP8.BLL.Repository
             var entities = QPContext.EFContext;
             foreach (var dalItem in dalItems)
             {
-                object result;
-                if (entities.TryGetObjectByKey(dalItem.EntityKey, out result))
+                if (entities.TryGetObjectByKey(dalItem.EntityKey, out object result))
                 {
                     entities.DeleteObject(result);
                 }
@@ -190,7 +182,6 @@ namespace Quantumart.QP8.BLL.Repository
 
         public static void ChangeIdentityInsertState(string entityTypeCode, bool state)
         {
-
             if (QPConnectionScope.Current.IdentityInsertOptions.Contains(entityTypeCode))
             {
                 string table = null;

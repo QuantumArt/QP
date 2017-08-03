@@ -2,6 +2,8 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0978B8F2-3561-4E20-8ED3-91917B0600D0}</ProjectGuid>
@@ -122,12 +124,33 @@
     <EmbeddedResource Include="..\packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Data.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Moq.dll">
-      <Link>References\Moq.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\NLog.dll">
       <Link>References\NLog.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Mono.Options.5.3.0.1\lib\portable-net45+netcore45+wpa81+wp8\Mono.Options.dll">
+      <Link>References\Mono.Options.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Moq.dll">
+      <Link>References\Moq.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\AutoMapper.dll">
+      <Link>References\AutoMapper.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll">
+      <Link>References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</Link>
+    </EmbeddedResource>
+    <Content Include="..\siteMvc\bin\QA.Validation.Xaml.dll">
+      <Link>References\QA.Validation.Xaml.dll</Link>
+    </Content>
+    <Content Include="..\siteMvc\bin\QA.Validation.Xaml.Extensions.dll">
+      <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
+    </Content>
+    <Content Include="..\siteMvc\bin\Quantumart.dll">
+      <Link>References\Quantumart.dll</Link>
+    </Content>
+    <Content Include="..\siteMvc\bin\Quantumart.QP8.Assembling.dll">
+      <Link>References\Quantumart.QP8.Assembling.dll</Link>
+    </Content>
     <Content Include="App.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -247,19 +270,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll">
-      <Link>References\Mono.Options.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll">
       <Link>References\CsvHelper.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Merger.dll">
       <Link>References\Quantumart.QP8.Merger.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll">
-      <Link>References\AutoMapper.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
       <Link>References\Microsoft.Web.Infrastructure.dll</Link>
@@ -303,9 +318,9 @@
       <HintPath>$(SolutionDir)packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Options">
-      <HintPath>$(SolutionDir)packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Mono.Options, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -323,4 +338,3 @@
     </PostBuildEvent>
   </PropertyGroup>
 </Project>
-

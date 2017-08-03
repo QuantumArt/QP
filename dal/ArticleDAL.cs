@@ -1,9 +1,5 @@
-
-using System.Diagnostics.CodeAnalysis;
-
-namespace Quantumart.QP8.DAL
+﻿namespace Quantumart.QP8.DAL
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class ArticleDAL
     {
         public ArticleDAL()

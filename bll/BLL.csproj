@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
@@ -40,13 +42,15 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=1.1.0.188, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="AutoMapper, Version=1.1.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\AutoMapper.1.1.2\lib\net35\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="EFExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SolutionDir)binaries\EFExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurl, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Flurl.2.3.0\lib\portable40-net40+sl5+win8+wp8+wpa81\Flurl.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
@@ -65,22 +69,23 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quantumart.2.1.1\lib\net45\Microsoft.VisualStudio.TextTemplating.Interfaces.10.0.dll</HintPath>
       <HintPath>$(SolutionDir)packages\Quantumart.2.1.3\lib\net45\Microsoft.VisualStudio.TextTemplating.Interfaces.10.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -91,6 +96,9 @@
     <Reference Include="QA.Configuration, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\QA.Configuration.1.0.2\lib\net40\QA.Configuration.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Quantumart.QP8.Assembling, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Quantumart.2.1.1\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
     </Reference>
     <Reference Include="QA.Validation.Xaml, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.1.0.4\lib\net40\QA.Validation.Xaml.dll</HintPath>
@@ -110,10 +118,14 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\System.Diagnostics.DiagnosticSource.4.3.1\lib\portable-net45+win8+wpa81\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
@@ -131,21 +143,54 @@
     <Compile Include="ArticleContextSearchBlockItem.cs" />
     <Compile Include="ArticleFieldSearchType.cs" />
     <Compile Include="Db.cs" />
+    <Compile Include="Enums\CdcImportType.cs" />
     <Compile Include="Enums\Csv\CsvCulture.cs" />
     <Compile Include="Enums\Csv\CsvDelimiter.cs" />
     <Compile Include="Enums\Csv\CsvEncoding.cs" />
     <Compile Include="Enums\Csv\CsvLineSeparator.cs" />
     <Compile Include="Enums\Csv\CsvImportMode.cs" />
     <Compile Include="Exceptions\ImportException.cs" />
-    <Compile Include="Extensions\CollectionExtensions.cs" />
-    <Compile Include="Extensions\EnumExtensions.cs" />
-    <Compile Include="Extensions\ObjectExtensions.cs" />
-    <Compile Include="ExternalNotification.cs" />
+    <Compile Include="Factories\CdcElasticImportFactory.cs" />
+    <Compile Include="Factories\CdcTarantoolImportFactory.cs" />
+    <Compile Include="Factories\FolderFactory\ContentFolderFactory.cs" />
+    <Compile Include="Factories\FolderFactory\SiteFolderFactory.cs" />
+    <Compile Include="IContextStorage.cs" />
+    <Compile Include="Mappers\GenericMapperBase.cs" />
+    <Compile Include="Mappers\SystemNotificationMapper.cs" />
+    <Compile Include="Models\NotificationSender\SystemNotificationBulkXmlSerilizableModel.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\BaseCdcElasticImportProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\BaseCdcTarantoolImportProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Elastic\CdcElasticContentDataProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentAttributeAsyncProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentDataProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentItemProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentAsyncProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentToContentAsyncProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentToContentAsyncRevProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentToContentRevProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolItemLinkAsyncProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolItemToItemProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentToContentProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolStatusTypeProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\Tarantool\CdcTarantoolContentAttributeProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\ICdcImportProcessor.cs" />
+    <Compile Include="Models\NotificationSender\CdcEntityModel.cs" />
+    <Compile Include="Models\NotificationSender\CdcTableTypeModel.cs" />
+    <Compile Include="Repository\EntityPermissions\IChildContentPermissionRepository.cs" />
+    <Compile Include="Services\FieldDefaultValueContext.cs" />
+    <Compile Include="Interfaces\Services\IDbService.cs" />
+    <Compile Include="Services\IFieldDefaultValueService.cs" />
+    <Compile Include="Services\IUserGroupService.cs" />
+    <Compile Include="Services\CdcImport\CdcElasticImportService.cs" />
+    <Compile Include="Services\CdcImport\BaseCdcImportService.cs" />
+    <Compile Include="Services\CdcImport\CdcTarantoolImportService.cs" />
+    <Compile Include="Models\NotificationSender\SystemNotificationModel.cs" />
+    <Compile Include="Models\NotificationSender\ExternalNotificationModel.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
-    <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
     <Compile Include="Helpers\PlaceHolderHelper.cs" />
@@ -205,8 +250,7 @@
     <Compile Include="Repository\ArticleMatching\Models\IField.cs" />
     <Compile Include="Repository\ArticleMatching\Models\QueryField.cs" />
     <Compile Include="Repository\ArticleMatching\Models\SchemaInfo.cs" />
-    <Compile Include="Repository\DBRepository.cs" />
-    <Compile Include="Repository\ExternalNotificationRepository.cs" />
+    <Compile Include="Repository\DbRepository.cs" />
     <Compile Include="Repository\FingerprintRepository.cs" />
     <Compile Include="Repository\FormatRepository.cs" />
     <Compile Include="Repository\Helpers\ContentPermissionHelper.cs" />
@@ -447,7 +491,7 @@
     <Compile Include="Services\EntityPermissions\PermissionServiceAbstract.cs" />
     <Compile Include="Services\EntityPermissions\SitePermissionService.cs" />
     <Compile Include="Services\ActionPermissions\ActionPermissionTreeService.cs" />
-    <Compile Include="Services\ExternalNotificationService.cs" />
+    <Compile Include="Services\NotificationSender\ExternalInterfaceNotificationService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
     <Compile Include="Interfaces\Services\IArticleService.cs" />
@@ -500,6 +544,10 @@
     <Compile Include="Services\MultistepActions\Remove\RemoveArticlesFromArchiveCommand.cs" />
     <Compile Include="Services\MultistepActions\Remove\RemoveArticlesFromArchiveService.cs" />
     <Compile Include="Services\MultistepActions\Removing\RemovingServiceAbstract.cs" />
+    <Compile Include="Services\NotificationSender\ExternalSystemNotificationService.cs" />
+    <Compile Include="Services\CdcImport\ICdcImportService.cs" />
+    <Compile Include="Services\NotificationSender\IExternalSystemNotificationService.cs" />
+    <Compile Include="Services\NotificationSender\IExternalInterfaceNotificationService.cs" />
     <Compile Include="Services\ObjectService.cs" />
     <Compile Include="Services\PageService.cs" />
     <Compile Include="Services\PageTemplateService.cs" />
@@ -538,7 +586,7 @@
     <Compile Include="Helpers\TranslateSortExpressionHelper.cs" />
     <Compile Include="QPConnectionScope.cs" />
     <Compile Include="DynamicImage.cs" />
-    <Compile Include="Factories\FolderFactory.cs" />
+    <Compile Include="Factories\FolderFactory\FolderFactory.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="ContentFolder.cs" />
     <Compile Include="Repository\Articles\ArticleFilterSearchQueryParser.cs" />
@@ -761,4 +809,3 @@
   </Target>
   -->
 </Project>
-

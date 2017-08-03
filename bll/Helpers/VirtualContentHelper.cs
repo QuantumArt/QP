@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Quantumart.QP8.BLL.Exceptions;
@@ -19,7 +20,8 @@ namespace Quantumart.QP8.BLL.Helpers
         {
         }
 
-        public VirtualContentHelper(IEnumerable<int> forceIds) : this()
+        public VirtualContentHelper(List<int> forceIds)
+            : this()
         {
             if (forceIds != null && forceIds.Any())
             {
@@ -44,7 +46,6 @@ namespace Quantumart.QP8.BLL.Helpers
             public IEnumerable<Field> FieldsToRemove { get; set; }
 
             public IEnumerable<Field> FieldsToRemain { get; set; }
-
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </summary>
         internal Content SaveJoinContent(Content content, Content newContent)
         {
-            SaveJoinContentFields(content.VirtualJoinFieldNodes, newContent);
+            SaveJoinContentFields(content.VirtualJoinFieldNodes.ToList(), newContent);
             CreateContentViews(newContent);
             return ContentRepository.GetById(newContent.Id);
         }
@@ -60,7 +61,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// Создать поля Join-контента
         /// </summary>
-        private void SaveJoinContentFields(IEnumerable<Content.VirtualFieldNode> newVirtualJoinFieldNodes, Content newContent)
+        private void SaveJoinContentFields(List<Content.VirtualFieldNode> newVirtualJoinFieldNodes, Content newContent)
         {
             // получить все поля на основе которых необходимо построить виртуальные поля
             IEnumerable<int> baseFieldsIDs = Content.VirtualFieldNode.Linearize(newVirtualJoinFieldNodes).Select(n => n.Id).Distinct().ToArray();
@@ -68,8 +69,7 @@ namespace Quantumart.QP8.BLL.Helpers
             var baseFieldsDictionary = baseFields.ToDictionary(bs => bs.Id);
 
             // Сохранить иерархию полей
-            Action<Field, IEnumerable<Content.VirtualFieldNode>> traverse = null;
-            traverse = (parentVirtualField, nodes) =>
+            void Traverse(Field parentVirtualField, IEnumerable<Content.VirtualFieldNode> nodes)
             {
                 // сортируем в том порядке в котором расположены соответствующие базовые поля
                 var orderedNodes = nodes.OrderBy(n => baseFieldsDictionary[Content.VirtualFieldNode.ParseFieldTreeId(n.TreeId)].Order);
@@ -93,16 +93,17 @@ namespace Quantumart.QP8.BLL.Helpers
                         node.Id = newVirtualField.Id;
 
                         // вниз по иерархии
-                        traverse(newVirtualField, node.Children);
+                        Traverse(newVirtualField, node.Children);
                     }
                     else
                     {
                         // вниз по иерархии
-                        traverse(baseField, node.Children);
+                        Traverse(baseField, node.Children);
                     }
                 }
-            };
-            traverse(null, newVirtualJoinFieldNodes);
+            }
+
+            Traverse(null, newVirtualJoinFieldNodes);
         }
 
         /// <summary>
@@ -183,19 +184,18 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             var result = new List<Tuple<Field, Field>>();
 
-            var groupedColumns = viewColumns.GroupBy
-            (
-                c => c.ColumnName,
-                c => c,
-                (name, c) => new
+            var groupedColumns = viewColumns.GroupBy(c => c.ColumnName, c => c, (name, c) =>
+            {
+                var columns = c.ToList();
+                return new
                 {
                     Name = name,
-                    DbType = c.Select(n => n.DbType).First(),
-                    DecimalPlaces = c.Select(n => n.NumericScale).First(),
-                    CharMaxLength = c.Select(n => n.CharMaxLength).First(),
-                    BaseContentIds = string.Join(",", c.Select(n => n.ContentId).Where(n => n.HasValue))
-                }
-            );
+                    DbType = columns.Select(n => n.DbType).First(),
+                    DecimalPlaces = columns.Select(n => n.NumericScale).First(),
+                    CharMaxLength = columns.Select(n => n.CharMaxLength).First(),
+                    BaseContentIds = string.Join(",", columns.Select(n => n.ContentId).Where(n => n.HasValue))
+                };
+            });
 
             foreach (var column in groupedColumns)
             {
@@ -268,8 +268,8 @@ namespace Quantumart.QP8.BLL.Helpers
         public List<Content.TreeItem> TraverseForUpdateVirtualSubContents(Content content)
         {
             var rebuildedViewSubContents = new List<Content.TreeItem>();
-            Action<Content, int> traverse = null;
-            traverse = (parentContent, level) =>
+
+            void Traverse(Content parentContent, int level)
             {
                 foreach (var subContent in parentContent.VirtualSubContents)
                 {
@@ -302,9 +302,9 @@ namespace Quantumart.QP8.BLL.Helpers
                         throw new VirtualContentProcessingException(subContent, exp);
                     }
 
-                    traverse(subContent, level + 1);
+                    Traverse(subContent, level + 1);
                 }
-            };
+            }
 
             // --- обновить виртуальные поля созданные на основе полей родительского контента ВО ВСЕХ JOIN-КОНТЕНТАХ которые содержат такие поля ---
             // определить в каких join-контентах есть виртуальные поля построенные на основе полей родительского контента
@@ -318,7 +318,7 @@ namespace Quantumart.QP8.BLL.Helpers
                     var needToRebuildView = UpdateJoinRelatedContentFields(content, jrc);
                     if (needToRebuildView)
                     {
-                        traverse(jrc, 1);
+                        Traverse(jrc, 1);
                         rebuildedViewSubContents.Add(new Content.TreeItem { ContentId = jrc.Id, Level = 0 });
                     }
                 }
@@ -333,7 +333,7 @@ namespace Quantumart.QP8.BLL.Helpers
             }
 
             // Обновление дочерних контентов
-            traverse(content, 0);
+            Traverse(content, 0);
             return rebuildedViewSubContents;
         }
 
@@ -345,14 +345,13 @@ namespace Quantumart.QP8.BLL.Helpers
             if (content.VirtualJoinFieldNodes.Any())
             {
                 // сначала удалить поля в подчиненных контентах
-                RemoveSubContentVirtualFields(content, Except(content.VirtualJoinFieldNodes, dbContent.VirtualJoinFieldNodes));
+                RemoveSubContentVirtualFields(content, Except(content.VirtualJoinFieldNodes, dbContent.VirtualJoinFieldNodes).ToList());
 
                 // удалить из БД удаляемые поля
                 RemoveJoinContentFields(content.VirtualJoinFieldNodes, dbContent.VirtualJoinFieldNodes);
 
                 // Сохранить новые поля
-                SaveJoinContentFields(content.VirtualJoinFieldNodes, dbContent);
-
+                SaveJoinContentFields(content.VirtualJoinFieldNodes.ToList(), dbContent);
 
                 dbContent = ContentRepository.GetById(dbContent.Id);
 
@@ -380,7 +379,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
             // --- добавить в дочерний join-контент на первый уровень те поля, которых там нет, но которые добавлены в родительский контент ---
             // получить id новых базовых полей на основе которых нужно создать виртуальные поля верхнего уровня в дочернем join-контенте
-            var newFieldIds = parentContent.Fields.Select(f => f.Id).Except(rootBaseFieldIDs);
+            var newFieldIds = parentContent.Fields.Select(f => f.Id).Except(rootBaseFieldIDs).ToList();
 
             // создать ноды для новых полей верхнего уровня
             var newFieldNodes = newFieldIds.Select(id => new Content.VirtualFieldNode
@@ -395,10 +394,11 @@ namespace Quantumart.QP8.BLL.Helpers
                 var newVirtualFieldNodes = new List<Content.VirtualFieldNode>(virtualContent.VirtualJoinFieldNodes);
                 newVirtualFieldNodes.AddRange(newFieldNodes);
                 virtualContent.VirtualJoinFieldNodes = newVirtualFieldNodes;
+
                 // Сохранить новую коллекцию полей дочернего контента
                 var updatingContent = ContentRepository.GetById(virtualContent.Id);
-                SaveJoinContentFields(virtualContent.VirtualJoinFieldNodes, updatingContent);
-                // -----------------------------------
+                SaveJoinContentFields(virtualContent.VirtualJoinFieldNodes.ToList(), updatingContent);
+
                 return true;
             }
 
@@ -456,6 +456,7 @@ namespace Quantumart.QP8.BLL.Helpers
                             needToViewRebuild = true;
                         }
                     }
+
                     //--------------------
 
                     UpdateImportantFieldAttrribute(pfield, vfield, ref isChanged, ref needToViewRebuild);
@@ -500,7 +501,6 @@ namespace Quantumart.QP8.BLL.Helpers
             return dbContent;
         }
 
-
         /// <summary>
         /// Обновить состав полей Union-контента
         /// </summary>
@@ -511,7 +511,7 @@ namespace Quantumart.QP8.BLL.Helpers
             if (makeoutResult.NewFieldsToAdd.Any() || makeoutResult.FieldsToRemove.Any() || makeoutResult.FieldsToRemain.Any())
             {
                 // удалить поля в подчиненных контентах
-                RemoveSubContentVirtualFields(content, makeoutResult.FieldsToRemove.Select(f => f.Id));
+                RemoveSubContentVirtualFields(content, makeoutResult.FieldsToRemove.Select(f => f.Id).ToList());
 
                 // Удалить привязки полей
                 VirtualFieldRepository.RemoveUnionAttrs(dbContent);
@@ -611,10 +611,9 @@ namespace Quantumart.QP8.BLL.Helpers
                 .ToArray();
 
             // Информация о соответствии базовых полей и полей Union-контента
-            IEnumerable<VirtualFieldsRelation> v2bRelations = VirtualFieldRepository.GetVirtualSubFields(allBaseFieldsAfterUpdate.Select(f => f.Id))
-                                  .Where(r => r.VirtualFieldContentId == content.Id)
-                                  .ToArray();
-
+            IEnumerable<VirtualFieldsRelation> v2bRelations = VirtualFieldRepository.GetVirtualSubFields(allBaseFieldsAfterUpdate.Select(f => f.Id).ToList())
+                .Where(r => r.VirtualFieldContentId == content.Id)
+                .ToArray();
 
             // --- сначала обрабатываются виртуальные поля Union-контента, которые имеют только одно базовое поле ---
             IEnumerable<VirtualFieldsRelation> o2oRelations = v2bRelations
@@ -622,17 +621,22 @@ namespace Quantumart.QP8.BLL.Helpers
                 .Where(g => g.Count() < 2)
                 .SelectMany(g => g)
                 .ToArray();
+
             // id виртуальных полей, которые должны остаться
             var fieldToRemainIDs = o2oRelations.Select(r => r.VirtualFieldId).Distinct().ToList();
+
             // id базовых полей, виртуальные поля для которых должны быть
             IEnumerable<int> baseFieldToRemainIDs = o2oRelations.Select(r => r.BaseFieldId).Distinct().ToArray();
+
             // id виртуальных полей которые должны быть удалены
             var fieldToRemoveIDs = dbContent.Fields.Select(f => f.Id).Except(fieldToRemainIDs).Distinct().ToList();
+
             // Базовые поля для новых виртуальных полей
             var baseFieldsToAddIds = allBaseFieldsAfterUpdate
                 .Where(f => !baseFieldToRemainIDs.Contains(f.Id))
                 .Select(f => f.Id)
                 .ToList();
+
             //-----------------------------
 
             // --- теперь обрабатываются виртуальные поля Union-контента, которые имеют несколько базовых полей ---
@@ -650,11 +654,12 @@ namespace Quantumart.QP8.BLL.Helpers
                 IEnumerable<int> baseFieldIDs = o2mRelations.Select(r => r.BaseFieldId).Distinct().ToArray();
                 baseFieldsToAddIds.AddRange(baseFieldIDs);
             }
-            //------------------
 
+            //------------------
 
             // --- получить окончательный результат ---
             IEnumerable<Field> fieldToRemain = dbContent.Fields.Where(f => fieldToRemainIDs.Contains(f.Id)).ToArray();
+
             // получить поля в состоянии после обновления
             var newStateRemainingFields = new List<Field>(fieldToRemainIDs.Count);
             foreach (var rid in fieldToRemainIDs)
@@ -681,6 +686,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 FieldsToRemove = fieldToRemove,
                 FieldsToRemain = fieldToRemain
             };
+
             //----------------
         }
 
@@ -733,7 +739,7 @@ namespace Quantumart.QP8.BLL.Helpers
             if (makeoutResult.NewFieldsToAdd.Any() || makeoutResult.FieldsToRemove.Any() || makeoutResult.FieldsToRemain.Any())
             {
                 // удалить поля в подчиненных контентах
-                RemoveSubContentVirtualFields(content, makeoutResult.FieldsToRemove.Select(f => f.Id));
+                RemoveSubContentVirtualFields(content, makeoutResult.FieldsToRemove.Select(f => f.Id).ToList());
 
                 // Удалить привязки полей
                 VirtualFieldRepository.RemoveUserQueryAttrs(dbContent);
@@ -774,12 +780,9 @@ namespace Quantumart.QP8.BLL.Helpers
             if (rebuildedViewSubContents.Any())
             {
                 // Уникальные контенты по id
-                var uniqueItems = rebuildedViewSubContents.Distinct(new LambdaEqualityComparer<Content.TreeItem>((x, y) => x.ContentId.Equals(y.ContentId), x => x.ContentId));
-
-                var updatedContents = ContentRepository.GetList(uniqueItems.Select(c => c.ContentId))
-                    .Where(c => c.VirtualType == VirtualType.UserQuery);
+                var uniqueItems = rebuildedViewSubContents.Distinct(new LambdaEqualityComparer<Content.TreeItem>((x, y) => x.ContentId.Equals(y.ContentId), x => x.ContentId)).ToList();
+                var updatedContents = ContentRepository.GetList(uniqueItems.Select(c => c.ContentId)).Where(c => c.VirtualType == VirtualType.UserQuery);
                 var updatedContentsDict = updatedContents.ToDictionary(c => c.Id);
-
                 var uqContents = uniqueItems
                     .Where(c => updatedContentsDict.ContainsKey(c.ContentId))
                     .OrderBy(c => c.Level)
@@ -801,9 +804,7 @@ namespace Quantumart.QP8.BLL.Helpers
             try
             {
                 // определить какие поля удалять, какие оставить и какие добавить
-
                 var makeoutResult = MakeOutUserQueryFields(dbContent);
-
                 if (makeoutResult.NewFieldsToAdd.Any() || makeoutResult.FieldsToRemove.Any() || makeoutResult.FieldsToRemain.Any())
                 {
                     // Удалить привязки полей
@@ -821,6 +822,7 @@ namespace Quantumart.QP8.BLL.Helpers
                         }
                         var fResult = VirtualFieldRepository.Save(f);
                         _newFieldIds.Add(fResult.Id);
+
                         f.Id = fResult.Id;
                     }
 
@@ -832,7 +834,6 @@ namespace Quantumart.QP8.BLL.Helpers
 
                     // сохранить записи в таблице user_query_contents
                     VirtualContentRepository.RecreateUserQuerySourcesInfo(dbContent);
-
                     return true;
                 }
 
@@ -853,22 +854,23 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </summary>
         private static UpdateFieldCollectionOperationParams MakeOutUserQueryFields(Content dbContent)
         {
-            var newFieldsAfterUpdateInfo = CreateFieldsForUserQueryColumns(dbContent, dbContent.UserQueryContentViewSchema, false);
+            var newFieldsAfterUpdateInfo = CreateFieldsForUserQueryColumns(dbContent, dbContent.UserQueryContentViewSchema, false).ToList();
 
             // получить базовые поля
             IEnumerable<Field> allBaseFieldsAfterUpdate = newFieldsAfterUpdateInfo.Where(t => t.Item2 != null).Select(t => t.Item2).ToArray();
 
             // определить что делать с полями основанными на полях контента
-            var upateParamsForContentBasedFields = MakeOutUserQueryFields(dbContent, allBaseFieldsAfterUpdate);
+            var upateParamsForContentBasedFields = MakeOutUserQueryFields(dbContent, allBaseFieldsAfterUpdate.ToList());
 
             // определить что делать со свободными полями
             // получить несвободные поля контента
-            IEnumerable<int> notFreeFieldIDs = VirtualFieldRepository.GetVirtualBaseFieldIDs(dbContent.Fields.Select(f => f.Id).ToArray())
+            IEnumerable<int> notFreeFieldIDs = VirtualFieldRepository.GetVirtualBaseFieldIDs(dbContent.Fields.Select(f => f.Id).ToList())
                 .Select(r => r.VirtualFieldId)
                 .Distinct()
                 .ToArray();
 
             IEnumerable<Field> freeFields = dbContent.Fields.Where(f => !notFreeFieldIDs.Contains(f.Id)).ToArray();
+
             //IEnumerable<Field> freeFields = dbContent.Fields.Where(f => !f.GetVirtualBaseFieldIDs().Any()).ToArray();
 
             //получить требуемые свободные поля
@@ -898,32 +900,34 @@ namespace Quantumart.QP8.BLL.Helpers
             };
         }
 
-        private static UpdateFieldCollectionOperationParams MakeOutUserQueryFields(Content updatedContent, IEnumerable<Field> allBaseFieldsAfterUpdate)
+        private static UpdateFieldCollectionOperationParams MakeOutUserQueryFields(Content updatedContent, List<Field> allBaseFieldsAfterUpdate)
         {
-            IEnumerable<VirtualFieldsRelation> v2bRelations = VirtualFieldRepository.GetVirtualSubFields(allBaseFieldsAfterUpdate.Select(f => f.Id))
-                                  .Where(r => r.VirtualFieldContentId == updatedContent.Id)
-                                  .ToArray();
+            IEnumerable<VirtualFieldsRelation> v2bRelations = VirtualFieldRepository.GetVirtualSubFields(allBaseFieldsAfterUpdate.Select(f => f.Id).ToList())
+                .Where(r => r.VirtualFieldContentId == updatedContent.Id)
+                .ToArray();
 
             // рассматриваем только поля основанные на полях контентов
-            IEnumerable<int> dbContentFieldIDs = VirtualFieldRepository.GetVirtualBaseFieldIDs(updatedContent.Fields.Select(f => f.Id).ToArray())
+            IEnumerable<int> dbContentFieldIds = VirtualFieldRepository.GetVirtualBaseFieldIDs(updatedContent.Fields.Select(f => f.Id).ToList())
                 .Select(r => r.VirtualFieldId)
-                .ToArray();
-            var dbContentFields = FieldRepository.GetList(dbContentFieldIDs);
+                .ToList();
 
+            var dbContentFields = FieldRepository.GetList(dbContentFieldIds).ToList();
 
             // id виртуальных полей, которые должны остаться
             IEnumerable<int> fieldToRemainIDs = v2bRelations.Select(r => r.VirtualFieldId).Distinct().ToArray();
+
             // id базовых полей виртуальных полей, которые должны остаться
             IEnumerable<int> baseFieldToRemainIDs = v2bRelations.Select(r => r.BaseFieldId).Distinct().ToArray();
+
             // id виртуальных полей которые должны быть удалены
             IEnumerable<int> fieldToRemoveIDs = dbContentFields.Select(f => f.Id).Except(fieldToRemainIDs).ToArray();
-
 
             // получить поля
             IEnumerable<Field> newFieldsToAdd = allBaseFieldsAfterUpdate
                 .Where(f => !baseFieldToRemainIDs.Contains(f.Id))
                 .Select(f => f.GetVirtualClone(updatedContent))
                 .ToArray();
+
             IEnumerable<Field> fieldToRemain = dbContentFields.Where(f => fieldToRemainIDs.Contains(f.Id)).ToArray();
             IEnumerable<Field> fieldToRemove = dbContentFields.Where(f => fieldToRemoveIDs.Contains(f.Id)).ToArray();
 
@@ -937,7 +941,6 @@ namespace Quantumart.QP8.BLL.Helpers
                 newStateRemainingFields.Add(faupd);
             }
 
-
             return new UpdateFieldCollectionOperationParams
             {
                 NewStateRemainingFields = newStateRemainingFields.ToArray(),
@@ -950,35 +953,32 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// Удаляет поля в подчиненных контентах
         /// </summary>
-        public IEnumerable<Content.TreeItem> RemoveSubContentVirtualFields(Content content, IEnumerable<int> removingFieldIds)
+        public IEnumerable<Content.TreeItem> RemoveSubContentVirtualFields(Content content, ICollection<int> removingFieldIds)
         {
             var rebuildedViewSubContents = new List<Content.TreeItem>();
-
             FieldRepository.GetList(removingFieldIds);
-            Action<Content, int, IEnumerable<int>> traverse = null;
-            traverse = (parentContent, level, baseRemovingFields) =>
+
+            void Traverse(Content parentContent, int level, List<int> baseRemovingFields)
             {
                 foreach (var subContent in parentContent.VirtualSubContents)
                 {
                     try
                     {
                         // реализовать получение списка наследников удаляемых полей (curlevRemovingFields) на текущем уровне иерархии контентов (subContent)
-                        IEnumerable<int> curlevRemovingFieldIds = VirtualFieldRepository.GetVirtualSubFields(baseRemovingFields)
-                            .Where(r => r.VirtualFieldContentId == subContent.Id)
-                            .Select(r => r.VirtualFieldId)
-                            .ToArray();
+                        var curlevRemovingFieldIds = VirtualFieldRepository.GetVirtualSubFields(baseRemovingFields).Where(r => r.VirtualFieldContentId == subContent.Id).Select(r => r.VirtualFieldId).ToList();
 
                         // вниз по иерархии
-                        traverse(subContent, level + 1, curlevRemovingFieldIds);
+                        Traverse(subContent, level + 1, curlevRemovingFieldIds);
 
                         var needToRebuildView = false;
-                        if (subContent.VirtualType == VirtualType.Union)
+                        switch (subContent.VirtualType)
                         {
-                            needToRebuildView = RemoveChildUnionVirtualFields(curlevRemovingFieldIds, subContent, baseRemovingFields);
-                        }
-                        else if (subContent.VirtualType == VirtualType.UserQuery)
-                        {
-                            needToRebuildView = RemoveChildUserQueryVirtualFields(curlevRemovingFieldIds, subContent);
+                            case VirtualType.Union:
+                                needToRebuildView = RemoveChildUnionVirtualFields(curlevRemovingFieldIds, subContent, baseRemovingFields);
+                                break;
+                            case VirtualType.UserQuery:
+                                needToRebuildView = RemoveChildUserQueryVirtualFields(curlevRemovingFieldIds, subContent);
+                                break;
                         }
 
                         if (needToRebuildView)
@@ -995,13 +995,13 @@ namespace Quantumart.QP8.BLL.Helpers
                         throw new VirtualContentProcessingException(subContent, exp);
                     }
                 }
-            };
+            }
 
             // определить в каких join-контентах есть виртуальные поля построенные на основе полей родительского контента
-            var joinRelatedContents = VirtualContentRepository.GetJoinRelatedContents(content);
+            var joinRelatedContents = VirtualContentRepository.GetJoinRelatedContents(content).ToList();
             if (joinRelatedContents.Any())
             {
-                VirtualFieldRepository.GetVirtualSubFields(removingFieldIds);
+                VirtualFieldRepository.GetVirtualSubFields(removingFieldIds.ToList());
 
                 // удалить поля в найденных виртуальных контентов
                 foreach (var jrc in joinRelatedContents)
@@ -1009,12 +1009,13 @@ namespace Quantumart.QP8.BLL.Helpers
                     try
                     {
                         // Получить иерархию удаляемых полей JOIN-контента
-                        IEnumerable<Content.VirtualFieldNode> removingFieldNodes = GetRemovingFieldNodes(jrc, removingFieldIds);
+                        var removingFieldNodes = GetRemovingFieldNodes(jrc, removingFieldIds);
+
                         // получить полный список удаляемых из JOIN полей
-                        IEnumerable<int> allRemovingSubFieldsIds = Content.VirtualFieldNode.Linearize(removingFieldNodes).Select(n => n.Id).ToArray();
+                        var allRemovingSubFieldsIds = Content.VirtualFieldNode.Linearize(removingFieldNodes).Select(n => n.Id).ToList();
 
                         // удалить поля в дочерних Union и UQ контентах
-                        traverse(jrc, 1, allRemovingSubFieldsIds);
+                        Traverse(jrc, 1, allRemovingSubFieldsIds);
 
                         var needToRebuildView = RemoveJoinRelatedContentFields(removingFieldNodes);
                         if (needToRebuildView)
@@ -1034,7 +1035,7 @@ namespace Quantumart.QP8.BLL.Helpers
             }
 
             // обновить Union и UQ контенты
-            traverse(content, 0, removingFieldIds);
+            Traverse(content, 0, removingFieldIds.ToList());
 
             return rebuildedViewSubContents;
         }
@@ -1049,10 +1050,10 @@ namespace Quantumart.QP8.BLL.Helpers
             if (content.StoredVirtualType == VirtualType.Join)
             {
                 DropContentViews(content);
-                // сначала удалить поля в подчиненных контентах
-                var rebuildedSubContentViews = RemoveSubContentVirtualFields(content, Except(Enumerable.Empty<Content.VirtualFieldNode>(), dbContentVersion.VirtualJoinFieldNodes));
-                RebuildSubContentViews(rebuildedSubContentViews);
 
+                // сначала удалить поля в подчиненных контентах
+                var rebuildedSubContentViews = RemoveSubContentVirtualFields(content, Except(Enumerable.Empty<Content.VirtualFieldNode>(), dbContentVersion.VirtualJoinFieldNodes).ToList());
+                RebuildSubContentViews(rebuildedSubContentViews.ToList());
                 RemoveJoinContentFields(Enumerable.Empty<Content.VirtualFieldNode>(), dbContentVersion.VirtualJoinFieldNodes);
             }
             else if (content.StoredVirtualType == VirtualType.Union)
@@ -1063,6 +1064,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 {
                     f.Die(false);
                 }
+
                 DropContentViews(content);
             }
             else if (content.StoredVirtualType == VirtualType.UserQuery)
@@ -1073,6 +1075,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 {
                     f.Die(false);
                 }
+
                 DropContentViews(content);
             }
         }
@@ -1080,10 +1083,12 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// Удалить дочерние виртуальные поля из JOIN-контента
         /// </summary>
-        /// <returns></returns>
+        [SuppressMessage("ReSharper", "ConvertToLocalFunction")]
         private static bool RemoveJoinRelatedContentFields(IEnumerable<Content.VirtualFieldNode> removingFieldNodes)
         {
             var result = false;
+
+            // check local function conversion
             Action<IEnumerable<Content.VirtualFieldNode>> removingTraverse = null;
             removingTraverse = nodes =>
             {
@@ -1112,8 +1117,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
             // идем по дереву полей контента, и если PersisntentID поля есть в коллекции id удаляемых полей, то такое поле и все его наследники должно быть удалено
             // помещаем его в коллекцию удаляемых полей (включая подчиненные)
-            Action<IEnumerable<Content.VirtualFieldNode>> traverse = null;
-            traverse = nodes =>
+            void Traverse(IEnumerable<Content.VirtualFieldNode> nodes)
             {
                 foreach (var node in nodes)
                 {
@@ -1127,31 +1131,33 @@ namespace Quantumart.QP8.BLL.Helpers
                         }
                         else
                         {
-                            traverse(node.Children);
+                            Traverse(node.Children);
                         }
                     }
                 }
-            };
-            traverse(content.VirtualJoinFieldNodes);
+            }
 
+            Traverse(content.VirtualJoinFieldNodes);
             return removingFieldNodes;
         }
 
         /// <summary>
         /// Удалить из БД удаляемые поля
         /// </summary>
+        [SuppressMessage("ReSharper", "ConvertToLocalFunction")]
         private static void RemoveJoinContentFields(IEnumerable<Content.VirtualFieldNode> newVirtualJoinFieldNodes, IEnumerable<Content.VirtualFieldNode> oldVirtualJoinFieldNodes)
         {
-            var virtualFieldsIDs = new HashSet<int>(Content.VirtualFieldNode.Linearize(newVirtualJoinFieldNodes).Select(n => n.Id).Distinct());
+            var virtualFieldsIds = new HashSet<int>(Content.VirtualFieldNode.Linearize(newVirtualJoinFieldNodes).Select(n => n.Id).Distinct());
 
             // идем по дереву полей (которые в БД) контента, и если id поля нет в новой virtualJoinFieldNodes, то такое поле должно быть удалено
+            // check local function conversion
             Action<IEnumerable<Content.VirtualFieldNode>> traverse = null;
             traverse = nodes =>
             {
                 foreach (var node in nodes)
                 {
                     traverse(node.Children);
-                    if (!virtualFieldsIDs.Contains(node.Id))
+                    if (!virtualFieldsIds.Contains(node.Id))
                     {
                         Field.Die(node.Id, false);
                     }
@@ -1175,12 +1181,13 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// Удаляет дочерние виртуальные поля из UNION-контента
         /// </summary>
-        private static bool RemoveChildUnionVirtualFields(IEnumerable<int> removingUnionFieldIds, Content unionContent, IEnumerable<int> removingBaseFieldIds)
+        private static bool RemoveChildUnionVirtualFields(List<int> removingUnionFieldIds, Content unionContent, IEnumerable<int> removingBaseFieldIds)
         {
             // теперь отсеять те поля из удаляемых, для которых есть есть более одной связи в union_attr - это значит что в других контентах-источниках есть поля которые могут быть основой для удаляемого поля
             var fieldToRemoveIds = VirtualFieldRepository.GetUnionFieldRelationCount(removingUnionFieldIds)
                 .Where(c => c.Count < 2)
-                .Select(c => c.UnionFieldId);
+                .Select(c => c.UnionFieldId)
+                .ToList();
 
             if (fieldToRemoveIds.Any())
             {
@@ -1191,7 +1198,7 @@ namespace Quantumart.QP8.BLL.Helpers
             else
             {
                 // удалить только связи только для удаляемых базовых полей
-                VirtualFieldRepository.RemoveUnionAttrs(removingBaseFieldIds);
+                VirtualFieldRepository.RemoveUnionAttrs(removingBaseFieldIds.ToList());
             }
 
             return true;
@@ -1207,7 +1214,8 @@ namespace Quantumart.QP8.BLL.Helpers
             var dbUnionSubContentsDict = dbUnionSubContents.ToDictionary(c => c.Id);
 
             // получить вторую копию union-контентов
-            var unionSubContents = ContentRepository.GetById(sourceContent.Id).VirtualSubContents.Where(c => c.VirtualType == VirtualType.Union);
+            var unionSubContents = ContentRepository.GetById(sourceContent.Id).VirtualSubContents.Where(c => c.VirtualType == VirtualType.Union).ToList();
+
             // удалить контент из списка источников копий
             // (по сути смоделировать удаление пользователем контента из списка)
             foreach (var usb in unionSubContents)
@@ -1231,13 +1239,12 @@ namespace Quantumart.QP8.BLL.Helpers
                     throw new VirtualContentProcessingException(usb, exp);
                 }
             }
-
         }
 
         /// <summary>
         /// Удаляет дочерние виртуальные поля из UQ-контента
         /// </summary>
-        private static bool RemoveChildUserQueryVirtualFields(IEnumerable<int> removingUserQueryFieldIds, Content uqContent)
+        private static bool RemoveChildUserQueryVirtualFields(List<int> removingUserQueryFieldIds, Content uqContent)
         {
             if (removingUserQueryFieldIds.Any())
             {
@@ -1286,7 +1293,7 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             if (newContent.VirtualType == VirtualType.Join)
             {
-                var vfData = VirtualContentRepository.GetJoinFieldData(newContent.Id);
+                var vfData = VirtualContentRepository.GetJoinFieldData(newContent.Id).ToList();
                 var viewCreateDdl = GenerateCreateJoinViewDdl(newContent.Id, newContent.JoinRootId.Value, vfData);
                 var asyncViewCreateDdl = GenerateCreateJoinAsyncViewDdl(newContent.Id, newContent.JoinRootId.Value, vfData);
                 VirtualContentRepository.RunCreateViewDdl(viewCreateDdl);
@@ -1295,7 +1302,7 @@ namespace Quantumart.QP8.BLL.Helpers
             }
         }
 
-        private static void CreateFrontendViews(Content newContent)
+        private static void CreateFrontendViews(EntityObject newContent)
         {
             VirtualContentRepository.CreateFrontendViews(newContent.Id);
         }
@@ -1308,7 +1315,7 @@ namespace Quantumart.QP8.BLL.Helpers
             const string viewNameTemplate = "CREATE VIEW [dbo].[content_{0}] AS ";
             const string joinTableNameTemplate = "dbo.CONTENT_{0} ";
             const string rootContentNameTemplate = "dbo.CONTENT_{0}";
-            return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData, viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
+            return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData.ToList(), viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
         }
 
         /// <summary>
@@ -1319,13 +1326,13 @@ namespace Quantumart.QP8.BLL.Helpers
             const string viewNameTemplate = "CREATE VIEW [dbo].[content_{0}_async] AS ";
             const string joinTableNameTemplate = "dbo.CONTENT_{0}_united ";
             const string rootContentNameTemplate = "dbo.CONTENT_{0}_async";
-            return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData, viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
+            return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData.ToList(), viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
         }
 
         /// <summary>
         /// Генерирует DDL-запрос для создания View для JOIN-контента
         /// </summary>
-        private static string GenerateCreateJoinViewDdl(int virtualContentId, int joinRootContentId, IEnumerable<VirtualFieldData> virtualFieldsData, string viewNameTemplate, string joinTableNameTemplate, string rootContentNameTemplate)
+        private static string GenerateCreateJoinViewDdl(int virtualContentId, int joinRootContentId, List<VirtualFieldData> virtualFieldsData, string viewNameTemplate, string joinTableNameTemplate, string rootContentNameTemplate)
         {
             const string joinRootTableAlias = "c_0";
             var selectBlock = new StringBuilder();
@@ -1337,15 +1344,10 @@ namespace Quantumart.QP8.BLL.Helpers
 
             if (virtualFieldsData != null && virtualFieldsData.Any())
             {
-                Action<string, VirtualFieldData, int> traverse = null;
-                traverse = (parentTableAlias, parentFieldData, i) =>
+                void Traverse(string parentTableAlias, VirtualFieldData parentFieldData, int i)
                 {
                     var cfTableAlias = string.Concat(parentTableAlias, '_', i);
-
-                    fromBlock
-                        .Append("LEFT OUTER JOIN ")
-                        .AppendFormat(joinTableNameTemplate, parentFieldData.RelateToPersistentContentId)
-                        .AppendFormat("AS {0} WITH (nolock) ON {0}.CONTENT_ITEM_ID = {1}.[{2}] ", cfTableAlias, parentTableAlias, parentFieldData.PersistentName);
+                    fromBlock.Append("LEFT OUTER JOIN ").AppendFormat(joinTableNameTemplate, parentFieldData.RelateToPersistentContentId).AppendFormat("AS {0} WITH (nolock) ON {0}.CONTENT_ITEM_ID = {1}.[{2}] ", cfTableAlias, parentTableAlias, parentFieldData.PersistentName);
 
                     //fromBlock.AppendFormat("LEFT OUTER JOIN dbo.CONTENT_{0} AS {1} WITH (nolock) ON {1}.CONTENT_ITEM_ID = {2}.{3} ", parentFieldData.RelateToPersistentContentId, cfTableAlias, parentTableAlias, parentFieldData.PersistentName);
                     var c = 0;
@@ -1355,11 +1357,11 @@ namespace Quantumart.QP8.BLL.Helpers
 
                         if (cf.Type == FieldTypeCodes.Relation && cf.RelateToPersistentContentId.HasValue)
                         {
-                            traverse(cfTableAlias, cf, c);
+                            Traverse(cfTableAlias, cf, c);
                             c++;
                         }
                     }
-                };
+                }
 
                 // получить поля верхнего уровня
                 var rc = 0;
@@ -1370,7 +1372,7 @@ namespace Quantumart.QP8.BLL.Helpers
                     if (rf.Type == FieldTypeCodes.Relation && rf.RelateToPersistentContentId.HasValue)
                     {
                         // далее вниз по иерархии
-                        traverse(joinRootTableAlias, rf, rc);
+                        Traverse(joinRootTableAlias, rf, rc);
                         rc++;
                     }
                 }
@@ -1384,14 +1386,13 @@ namespace Quantumart.QP8.BLL.Helpers
             // Построить словарь по которому можно определить есть ли в контенте поля с указанным именем
             var fieldNameInContentsTemp =
                 VirtualContentRepository.GetFieldsOfContents(content.UnionSourceContentIDs)
-                .GroupBy(f => f.Name.ToLowerInvariant())
-                .Select(g => new { key = g.Key, data = new HashSet<int>(g.Select(f => f.ContentId).ToArray()) })
-                .ToArray();
+                    .GroupBy(f => f.Name.ToLowerInvariant())
+                    .Select(g => new { key = g.Key, data = new HashSet<int>(g.Select(f => f.ContentId).ToArray()) })
+                    .ToArray();
 
             var fieldNameInSourceContents = fieldNameInContentsTemp.ToDictionary(d => d.key, d => d.data, StringComparer.InvariantCultureIgnoreCase);
 
-            var contentFieldNames = content.Fields.Select(f => f.Name);
-
+            var contentFieldNames = content.Fields.Select(f => f.Name).ToList();
             var viewCreateDdl = GenerateCreateUnionViewDdl(content.Id, content.UnionSourceContentIDs, contentFieldNames, fieldNameInSourceContents);
             var asyncViewCreateDdl = GenerateCreateUnionAsyncViewDdl(content.Id, content.UnionSourceContentIDs, contentFieldNames, fieldNameInSourceContents);
             VirtualContentRepository.RunCreateViewDdl(viewCreateDdl);
@@ -1399,30 +1400,30 @@ namespace Quantumart.QP8.BLL.Helpers
             VirtualContentRepository.CreateUnitedView(content.Id);
         }
 
-        internal string GenerateCreateUnionViewDdl(int contentId, IEnumerable<int> unionSourceContentIDs, IEnumerable<string> contentFieldNames, Dictionary<string, HashSet<int>> fieldNameInSourceContents)
+        internal string GenerateCreateUnionViewDdl(int contentId, IEnumerable<int> unionSourceContentIds, IEnumerable<string> contentFieldNames, Dictionary<string, HashSet<int>> fieldNameInSourceContents)
         {
             const string viewNameTemplate = "CREATE VIEW [dbo].[content_{0}] AS";
             const string sourceTableNameTemplate = "dbo.CONTENT_{0}";
-            return GenerateCreateUnionViewDdl(contentId, unionSourceContentIDs, contentFieldNames, fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
+            return GenerateCreateUnionViewDdl(contentId, unionSourceContentIds.ToList(), contentFieldNames.ToList(), fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
         }
 
-        internal string GenerateCreateUnionAsyncViewDdl(int contentId, IEnumerable<int> unionSourceContentIDs, IEnumerable<string> contentFieldNames, Dictionary<string, HashSet<int>> fieldNameInSourceContents)
+        internal string GenerateCreateUnionAsyncViewDdl(int contentId, IEnumerable<int> unionSourceContentIds, IEnumerable<string> contentFieldNames, Dictionary<string, HashSet<int>> fieldNameInSourceContents)
         {
             const string viewNameTemplate = "CREATE VIEW [dbo].[content_{0}_async] AS";
             const string sourceTableNameTemplate = "dbo.CONTENT_{0}_async";
-            return GenerateCreateUnionViewDdl(contentId, unionSourceContentIDs, contentFieldNames, fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
+            return GenerateCreateUnionViewDdl(contentId, unionSourceContentIds.ToList(), contentFieldNames.ToList(), fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
         }
 
-        private static string GenerateCreateUnionViewDdl(int contentId, IEnumerable<int> unionSourceContentIDs, IEnumerable<string> contentFieldNames, IReadOnlyDictionary<string, HashSet<int>> fieldNameInSourceContents, string viewNameTemplate, string sourceTableNameTemplate)
+        private static string GenerateCreateUnionViewDdl(int contentId, IReadOnlyCollection<int> unionSourceContentIds, IReadOnlyCollection<string> contentFieldNames, IReadOnlyDictionary<string, HashSet<int>> fieldNameInSourceContents, string viewNameTemplate, string sourceTableNameTemplate)
         {
             var sb = new StringBuilder();
             sb.AppendFormat(viewNameTemplate, contentId);
 
-            var i = unionSourceContentIDs.Count();
-            foreach (var usId in unionSourceContentIDs)
+            var i = unionSourceContentIds.Count;
+            foreach (var usId in unionSourceContentIds)
             {
                 sb.AppendFormat(" SELECT {0} content_id,content_item_id,created,modified,last_modified_by,status_type_id,visible,archive,", usId);
-                var j = contentFieldNames.Count();
+                var j = contentFieldNames.Count;
                 foreach (var fname in contentFieldNames)
                 {
                     sb.AppendFormat(fieldNameInSourceContents[fname].Contains(usId) ? "[{0}] [{0}]" : "NULL [{0}]", fname);
@@ -1433,6 +1434,7 @@ namespace Quantumart.QP8.BLL.Helpers
                         sb.Append(',');
                     }
                 }
+
                 sb.Replace(',', ' ', sb.Length - 1, 1);
                 sb.Append(" FROM ");
                 sb.AppendFormat(sourceTableNameTemplate, usId);
@@ -1523,12 +1525,12 @@ namespace Quantumart.QP8.BLL.Helpers
             }
         }
 
-        internal void RebuildSubContentViews(IEnumerable<Content.TreeItem> rebuildedViewSubContents)
+        internal void RebuildSubContentViews(List<Content.TreeItem> rebuildedViewSubContents)
         {
             if (rebuildedViewSubContents.Any())
             {
                 // Уникальные контенты по id
-                var uniqueItems = rebuildedViewSubContents.Distinct(new LambdaEqualityComparer<Content.TreeItem>((x, y) => x.ContentId.Equals(y.ContentId), x => x.ContentId));
+                var uniqueItems = rebuildedViewSubContents.Distinct(new LambdaEqualityComparer<Content.TreeItem>((x, y) => x.ContentId.Equals(y.ContentId), x => x.ContentId)).ToList();
                 var updatedContents = ContentRepository.GetList(uniqueItems.Select(i => i.ContentId));
                 var updatedContentsDict = updatedContents.ToDictionary(c => c.Id);
 
@@ -1583,43 +1585,43 @@ namespace Quantumart.QP8.BLL.Helpers
             switch (destField.TypeId)
             {
                 case FieldTypeCodes.Textbox:
+                {
+                    if (destField.TextBoxRows != sourceField.TextBoxRows)
                     {
-                        if (destField.TextBoxRows != sourceField.TextBoxRows)
-                        {
-                            destField.TextBoxRows = sourceField.TextBoxRows;
-                            isChanged = true;
-                        }
-                        break;
+                        destField.TextBoxRows = sourceField.TextBoxRows;
+                        isChanged = true;
                     }
+                    break;
+                }
                 case FieldTypeCodes.VisualEdit:
+                {
+                    if (destField.VisualEditorHeight != sourceField.VisualEditorHeight)
                     {
-                        if (destField.VisualEditorHeight != sourceField.VisualEditorHeight)
-                        {
-                            destField.VisualEditorHeight = sourceField.VisualEditorHeight;
-                            isChanged = true;
-                        }
-                        break;
+                        destField.VisualEditorHeight = sourceField.VisualEditorHeight;
+                        isChanged = true;
                     }
+                    break;
+                }
                 case FieldTypeCodes.Numeric:
+                {
+                    if (destField.DecimalPlaces != sourceField.DecimalPlaces)
                     {
-                        if (destField.DecimalPlaces != sourceField.DecimalPlaces)
-                        {
-                            destField.DecimalPlaces = sourceField.DecimalPlaces;
-                            isChanged = true;
-                            needToViewRebuild = true;
-                        }
-                        break;
+                        destField.DecimalPlaces = sourceField.DecimalPlaces;
+                        isChanged = true;
+                        needToViewRebuild = true;
                     }
+                    break;
+                }
                 case FieldTypeCodes.String:
+                {
+                    if (destField.StringSize != sourceField.StringSize)
                     {
-                        if (destField.StringSize != sourceField.StringSize)
-                        {
-                            destField.StringSize = sourceField.StringSize;
-                            isChanged = true;
-                            needToViewRebuild = true;
-                        }
-                        break;
+                        destField.StringSize = sourceField.StringSize;
+                        isChanged = true;
+                        needToViewRebuild = true;
                     }
+                    break;
+                }
             }
 
             if (destField.BaseImageId != sourceField.BaseImageId)
@@ -1704,22 +1706,13 @@ namespace Quantumart.QP8.BLL.Helpers
 
             // Определить у каких полей дочернего Join-контента имя было изменено
             // сделать это можно сравнив текущее поля с тем, что должно быть сгенерено автоматически
-            Action<Field, IEnumerable<Field>> joinFieldsTraverse = null;
-            joinFieldsTraverse = (o2mField, fields) =>
+            void JoinFieldsTraverse(EntityObject o2mField, List<Field> fields)
             {
                 if (o2mField == null) // первый уровень
                 {
                     // на первом уровне ирархии имена порожденных полей должны совпадать с именами пораждающих полей родительского контента
                     // если это не так - то имя поля верхнего уровня было изменено
-                    virtualFieldsWithChangedName.AddRange(
-                        (
-                            from scf in parentContent.Fields
-                            join f in fields on scf.Id equals f.PersistentId
-                            select new { PersistentField = scf, VirtualField = f }
-                        )
-                        .Where(p => !p.PersistentField.Name.Equals(p.VirtualField.Name, StringComparison.InvariantCultureIgnoreCase))
-                        .Select(p => p.VirtualField)
-                    );
+                    virtualFieldsWithChangedName.AddRange((from scf in parentContent.Fields join f in fields on scf.Id equals f.PersistentId select new { PersistentField = scf, VirtualField = f }).Where(p => !p.PersistentField.Name.Equals(p.VirtualField.Name, StringComparison.InvariantCultureIgnoreCase)).Select(p => p.VirtualField));
 
                     // Вниз по иерархии полей
                     foreach (var f in fields)
@@ -1727,7 +1720,7 @@ namespace Quantumart.QP8.BLL.Helpers
                         if (f.ExactType == FieldExactTypes.O2MRelation)
                         {
                             f.Name = persistentFieds[f.PersistentId.Value].Name;
-                            joinFieldsTraverse(f, subContent.Fields.Where(cf => cf.JoinId == f.Id));
+                            JoinFieldsTraverse(f, subContent.Fields.Where(cf => cf.JoinId == f.Id).ToList());
                         }
                     }
                 }
@@ -1737,6 +1730,7 @@ namespace Quantumart.QP8.BLL.Helpers
                     {
                         // сгенерить имя поля
                         var generatedName = string.Concat(o2mField.Name, '.', persistentFieds[f.PersistentId.Value].Name);
+
                         // Если сгенеренное имя и реальное имя поля не совпадают, то имя поля было изменено пользователем
                         // добавляем его в коллекцию на основании которой будем проводить валидацию
                         if (!generatedName.Equals(f.Name, StringComparison.InvariantCultureIgnoreCase))
@@ -1748,12 +1742,13 @@ namespace Quantumart.QP8.BLL.Helpers
                         if (f.ExactType == FieldExactTypes.O2MRelation)
                         {
                             f.Name = generatedName; // Это важно, так как на нижних уровнях имена полей должны генериться на основе СГЕНЕРЕННОГО имени родительского  O2M поля
-                            joinFieldsTraverse(f, subContent.Fields.Where(cf => cf.JoinId == f.Id));
+                            JoinFieldsTraverse(f, subContent.Fields.Where(cf => cf.JoinId == f.Id).ToList());
                         }
                     }
                 }
-            };
-            joinFieldsTraverse(null, subContent.Fields);
+            }
+
+            JoinFieldsTraverse(null, subContent.Fields.ToList());
             return virtualFieldsWithChangedName;
         }
 
@@ -1766,6 +1761,7 @@ namespace Quantumart.QP8.BLL.Helpers
             if (virtualContentId > 0)
             {
                 content = ContentRepository.GetById(virtualContentId);
+
                 // если id реального контента отличается от значения из БД для текущего виртуального контента,
                 // то получаем поля выбранного пользователем контента
                 if (joinedContentId.HasValue && (!content.JoinRootId.HasValue || content.JoinRootId.Value != joinedContentId.Value))
@@ -1778,34 +1774,31 @@ namespace Quantumart.QP8.BLL.Helpers
                 content = ContentRepository.GetById(joinedContentId.Value);
             }
 
-            Func<Field, string, string, IEnumerable<EntityTreeItem>> getChildren = null;
-            getChildren = (f, eid, alias) =>
+            IEnumerable<EntityTreeItem> GetChildren(Field f, string eid, string alias)
             {
                 // если у поля есть выбранные подчиненные поля на любом уровне иерархии, то получаем дочернии поля
                 if (f.ExactType == FieldExactTypes.O2MRelation && !string.IsNullOrWhiteSpace(selectItemIDs) && selectItemIDs.IndexOf(eid.TrimEnd(']') + ".", 0, StringComparison.InvariantCultureIgnoreCase) > 0)
                 {
-                    return GetChildFieldList(eid, alias, getChildren);
+                    return GetChildFieldList(eid, alias, GetChildren);
                 }
 
                 return Enumerable.Empty<EntityTreeItem>();
-            };
+            }
 
             return content.Fields
-                        .Where(f => f.JoinId == null)
-                        .Select(f => new EntityTreeItem
-                        {
-                            Id = Content.VirtualFieldNode.GetFieldTreeId(f.Id),
-                            Alias = f.Name,
-                            HasChildren = f.RelationId.HasValue,
-                            Children = getChildren(f, Content.VirtualFieldNode.GetFieldTreeId(f.Id), f.Name),
-                            Enabled = false,
-                            Checked = true,
-                            IconUrl = f.Type.Icon,
-                            IconTitle = f.Type.Name
-                        }
-                        );
-
-
+                .Where(f => f.JoinId == null)
+                .Select(f => new EntityTreeItem
+                    {
+                        Id = Content.VirtualFieldNode.GetFieldTreeId(f.Id),
+                        Alias = f.Name,
+                        HasChildren = f.RelationId.HasValue,
+                        Children = GetChildren(f, Content.VirtualFieldNode.GetFieldTreeId(f.Id), f.Name),
+                        Enabled = false,
+                        Checked = true,
+                        IconUrl = f.Type.Icon,
+                        IconTitle = f.Type.Name
+                    }
+                );
         }
 
         /// <summary>
@@ -1822,39 +1815,42 @@ namespace Quantumart.QP8.BLL.Helpers
             var field = FieldRepository.GetById(parentFieldId);
 
             alias = string.IsNullOrWhiteSpace(alias) ? field.Name : alias;
-            Func<Field, string> getAlias = f => !f.PersistentId.HasValue ? string.Concat(alias, '.', f.Name) : f.Name;
+            string GetAlias(Field f) => !f.PersistentId.HasValue ? string.Concat(alias, '.', f.Name) : f.Name;
 
             if (field.ExactType == FieldExactTypes.O2MRelation)
             {
-                var fieldSelect = Enumerable.Empty<Field>();
+                var fieldSelect = Enumerable.Empty<Field>().ToList();
 
                 // если поле виртуальное (для типа контента JOIN) - то получить его дочерние виртуальные поля
                 if (field.PersistentId.HasValue)
                 {
-                    fieldSelect = ContentRepository.GetById(field.ContentId).Fields.Where(f => f.JoinId == field.Id);
+                    fieldSelect = ContentRepository.GetById(field.ContentId).Fields.Where(f => f.JoinId == field.Id).ToList();
                 }
 
                 // получить id реальных полей для которых уже получены виртуальные поля
                 var joinedFieldPersistentIDs = new HashSet<int>(fieldSelect.Select(f => f.PersistentId.Value).ToArray());
+
                 // добавить только те реальные поля, для которых нет виртуальных
-                fieldSelect = fieldSelect.Concat(ContentRepository.GetById(field.RelateToContentId.Value)
-                                                    .Fields
-                                                    .Where(f => f.ExactType != FieldExactTypes.M2MRelation && f.ExactType != FieldExactTypes.M2ORelation)
-                                                    .Where(f => !joinedFieldPersistentIDs.Contains(f.Id))
-                                                 );
+                fieldSelect = fieldSelect.Concat(
+                    ContentRepository.GetById(field.RelateToContentId.Value).Fields
+                        .Where(f => f.ExactType != FieldExactTypes.M2MRelation && f.ExactType != FieldExactTypes.M2ORelation)
+                        .Where(f => !joinedFieldPersistentIDs.Contains(f.Id)
+                        )
+                ).ToList();
 
                 result = fieldSelect.Select(f => new EntityTreeItem
                 {
                     Id = Content.VirtualFieldNode.GetFieldTreeId(f.Id, entityId),
-                    Alias = getAlias(f),
+                    Alias = GetAlias(f),
                     HasChildren = f.RelationId.HasValue,
                     Enabled = true,
                     Checked = f.PersistentId.HasValue,
                     IconUrl = f.Type.Icon,
                     IconTitle = f.Type.Name,
-                    Children = getChildren(f, Content.VirtualFieldNode.GetFieldTreeId(f.Id, entityId), getAlias(f))
+                    Children = getChildren(f, Content.VirtualFieldNode.GetFieldTreeId(f.Id, entityId), GetAlias(f))
                 });
             }
+
             return result;
         }
     }

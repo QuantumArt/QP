@@ -17,7 +17,7 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories
         private readonly string _prtgServiceStatusVariableName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PrtgNLogLogger"/> class
+        /// Initializes a new instance of the <see cref="PrtgNLogLogger" /> class
         /// </summary>
         /// <param name="prtgServiceStateVariableName">The name of state parameter to send to prtg monitor</param>
         /// <param name="prtgServiceQueueVariableName">The name of queue parameter to send to prtg monitor</param>
@@ -30,7 +30,7 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PrtgNLogLogger"/> class
+        /// Initializes a new instance of the <see cref="PrtgNLogLogger" /> class
         /// </summary>
         /// <param name="configPath">Path to NLog config file</param>
         /// <param name="prtgServiceStateVariableName">The name of state parameter to send to prtg monitor</param>
@@ -47,41 +47,29 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories
         /// <summary>
         /// Gets the logger
         /// </summary>
-        public new IPrtgServiceLogger GetLogger()
-        {
-            return (IPrtgServiceLogger)base.GetLogger();
-        }
+        public new IPrtgServiceLogger GetLogger() => (IPrtgServiceLogger)base.GetLogger();
 
         /// <summary>
         /// Gets the logger
         /// </summary>
         /// <param name="type">The type on which logger name is based</param>
-        public new IPrtgServiceLogger GetLogger(Type type)
-        {
-            return (IPrtgServiceLogger)base.GetLogger(type);
-        }
+        public new IPrtgServiceLogger GetLogger(Type type) => (IPrtgServiceLogger)base.GetLogger(type);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IPrtgServiceLogger"/> class
+        /// Initializes a new instance of the <see cref="IPrtgServiceLogger" /> class
         /// </summary>
         /// <param name="loggerName">The string based logger name</param>
-        public new IPrtgServiceLogger GetLogger(string loggerName)
-        {
-            return (IPrtgServiceLogger)base.GetLogger(loggerName);
-        }
+        public new IPrtgServiceLogger GetLogger(string loggerName) => (IPrtgServiceLogger)base.GetLogger(loggerName);
 
         /// <summary>
-        /// Create a new instance of the <see cref="PrtgNLogLogger"/> class
+        /// Create a new instance of the <see cref="PrtgNLogLogger" /> class
         /// </summary>
         /// <param name="loggerName">The string based logger name</param>
-        protected override ILog CreateLogger(string loggerName)
-        {
-            return new PrtgNLogLogger(
-                CreateInnerLogger(loggerName),
-                _prtgServiceStateVariableName,
-                _prtgServiceQueueVariableName,
-                _prtgServiceStatusVariableName
-            );
-        }
+        protected override ILog CreateLogger(string loggerName) => new PrtgNLogLogger(
+            CreateInnerLogger(loggerName),
+            _prtgServiceStateVariableName,
+            _prtgServiceQueueVariableName,
+            _prtgServiceStatusVariableName
+        );
     }
 }

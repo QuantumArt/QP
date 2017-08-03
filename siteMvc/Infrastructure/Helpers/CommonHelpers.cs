@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Web;
@@ -10,10 +10,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
     internal static class CommonHelpers
     {
-        internal static string GetAssemblyVersion()
-        {
-            return FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion;
-        }
+        internal static string GetAssemblyVersion() => FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion;
 
         internal static string GetBackendUrl(HttpContextBase context)
         {

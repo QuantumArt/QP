@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Web.ActionResults;
-using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
-using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Factories
 {

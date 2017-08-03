@@ -43,7 +43,7 @@ namespace QP8.Infrastructure.Helpers
         public static T Deserialize<T>(XDocument doc)
         {
             var xmlSerializer = new XmlSerializer(typeof(T));
-            using (var reader = doc.Root.CreateReader())
+            using (var reader = doc.Root?.CreateReader())
             {
                 return (T)xmlSerializer.Deserialize(reader);
             }

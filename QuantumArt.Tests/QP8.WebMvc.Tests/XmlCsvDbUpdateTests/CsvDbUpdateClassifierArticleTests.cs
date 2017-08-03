@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using Ploeh.AutoFixture;
@@ -85,7 +85,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
                         Id = dbf.Id,
                         Value = csvf.Value,
                         ArticleIds = dbf.IsClassifier ? new[] { -externalArticleId } : Enumerable.Empty<int>().ToArray()
-                    }).ToList(),
+                    }).ToList()
                 },
                 new ArticleData
                 {
@@ -147,7 +147,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
                         Id = dbf.Id,
                         Value = csvf.Value,
                         ArticleIds = Enumerable.Empty<int>().ToArray()
-                    }).ToList(),
+                    }).ToList()
                 }
             };
 

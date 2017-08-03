@@ -172,6 +172,9 @@
     <value>Проигрывание записанных действий</value>
   </data>
   <data name="UseDPC" xml:space="preserve">
-    <value>Включить Продуктовый Каталог</value>
+    <value>Использовать встроенный продуктовый каталог</value>
+  </data>
+  <data name="UseCDC" xml:space="preserve">
+    <value>Использовать CDC для отправки системных уведомлений</value>
   </data>
 </root>

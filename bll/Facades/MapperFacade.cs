@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#pragma warning disable CS0618 // Type or member is obsolete
+
+using System.Collections.Generic;
 using System.Data;
 using AutoMapper;
 using Quantumart.QP8.BLL.Mappers;
@@ -15,12 +17,11 @@ namespace Quantumart.QP8.BLL.Facades
 {
     public static class MapperFacade
     {
-        internal static T Create<T>() where T : GenericMapper, new()
-        {
-            return Create<T>(false);
-        }
+        internal static T Create<T>()
+            where T : GenericMapper, new() => Create<T>(false);
 
-        internal static T Create<T>(bool withDal) where T : GenericMapper, new()
+        internal static T Create<T>(bool withDal)
+            where T : GenericMapper, new()
         {
             var item = new T();
             item.CreateBizMapper();
@@ -92,9 +93,9 @@ namespace Quantumart.QP8.BLL.Facades
 
         internal static readonly ContentConstraintMapper ContentConstraintMapper = Create<ContentConstraintMapper>(true);
 
-        internal static readonly NotificationTemplateFormatMapper NotificationTemplateFormatMapper = Create<NotificationTemplateFormatMapper>(true);
-
         internal static readonly ContentConstraintRuleMapper ContentConstraintRuleMapper = Create<ContentConstraintRuleMapper>(true);
+
+        internal static readonly NotificationTemplateFormatMapper NotificationTemplateFormatMapper = Create<NotificationTemplateFormatMapper>(true);
 
         internal static readonly ContentWorkflowBindMapper ContentWorkflowBindMapper = Create<ContentWorkflowBindMapper>(true);
 
@@ -259,6 +260,8 @@ namespace Quantumart.QP8.BLL.Facades
         internal static readonly TemplateObjectFormatDtoRowMapper TemplateObjectFormatDtoRowMapper = Create<TemplateObjectFormatDtoRowMapper>();
 
         internal static readonly ExternalNotificationMapper ExternalNotificationMapper = Create<ExternalNotificationMapper>();
+
+        internal static readonly SystemNotificationMapper SystemNotificationMapper = Create<SystemNotificationMapper>();
 
         internal static readonly DataRowMapper DataRowMapper = new DataRowMapper();
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
@@ -62,7 +62,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine(message);
-                Console.WriteLine($"Exceptions:{Environment.NewLine}{exception.Dump()}");
+                Console.WriteLine($@"Exceptions:{Environment.NewLine}{exception.Dump()}");
                 Console.ResetColor();
             }
 
@@ -99,7 +99,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(message);
-                Console.WriteLine($"Exceptions:{Environment.NewLine}{exception.Dump()}");
+                Console.WriteLine($@"Exceptions:{Environment.NewLine}{exception.Dump()}");
                 Console.ResetColor();
             }
 
@@ -136,7 +136,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(message);
-                Console.WriteLine($"Exceptions:{Environment.NewLine}{exception.Dump()}");
+                Console.WriteLine($@"Exceptions:{Environment.NewLine}{exception.Dump()}");
                 Console.ResetColor();
             }
 
@@ -173,7 +173,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine(message);
-                Console.WriteLine($"Exceptions:{Environment.NewLine}{exception.Dump()}");
+                Console.WriteLine($@"Exceptions:{Environment.NewLine}{exception.Dump()}");
                 Console.ResetColor();
             }
 

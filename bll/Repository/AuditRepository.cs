@@ -85,7 +85,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetEntitiesTitles(scope.DbConnection, entityTypeCode, entitiesIDs).Select(r => new ListItem(Converter.ToInt32(r["ID"]).ToString(), r["TITLE"].ToString()));
+                return Common.GetEntitiesTitles(scope.DbConnection, entityTypeCode, entitiesIDs.ToList()).Select(r => new ListItem(Converter.ToInt32(r["ID"]).ToString(), r["TITLE"].ToString()));
             }
         }
 
@@ -102,7 +102,7 @@ namespace Quantumart.QP8.BLL.Repository
                     filter.parentEntityId,
                     filter.entityTitle,
                     filter.from, filter.to,
-                    filter.userIDs ?? Enumerable.Empty<int>(),
+                    (filter.userIDs ?? Enumerable.Empty<int>()).ToList(),
                     out totalRecords, cmd.StartRecord, cmd.PageSize);
 
                 return MapperFacade.BackendActionLogRowMapper.GetBizList(rows.ToList());

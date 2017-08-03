@@ -11,11 +11,12 @@ namespace Quantumart.QP8.Scheduler.API.Extensions
             Func<TSource, TKey> keySelector,
             Func<TSource, TElement> elementSelector)
         {
-            if (source.Any())
+            var list = source.ToList();
+            if (list.Any())
             {
-                var currentKey = keySelector(source.First());
+                var currentKey = keySelector(list.First());
                 var foundItems = new List<TElement>();
-                foreach (var item in source)
+                foreach (var item in list)
                 {
                     var key = keySelector(item);
                     if (!currentKey.Equals(key))

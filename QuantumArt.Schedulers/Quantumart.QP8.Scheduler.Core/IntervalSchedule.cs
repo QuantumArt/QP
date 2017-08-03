@@ -12,9 +12,6 @@ namespace Quantumart.QP8.Scheduler.Core
             _interval = interval;
         }
 
-        public bool NeedProcess(SchedulerContext context)
-        {
-            return context.CurrentTime - context.LastEndTime > _interval;
-        }
+        public bool NeedProcess(SchedulerContext context) => context.CurrentTime - context.LastEndTime > _interval;
     }
 }

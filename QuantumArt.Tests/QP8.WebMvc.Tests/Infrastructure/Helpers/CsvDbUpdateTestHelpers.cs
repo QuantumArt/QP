@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Ploeh.AutoFixture;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.Constants;
@@ -25,10 +25,7 @@ namespace QP8.WebMvc.Tests.Infrastructure.Helpers
                 .Create();
         }
 
-        public static IEnumerable<CsvDbUpdateModel> GenerateCsvDbUpdateModel(int contentId, IList<CsvDbUpdateFieldModel> csvRowFields, IFixture fixture)
-        {
-            return GenerateCsvDbUpdateModel(contentId, new List<IList<CsvDbUpdateFieldModel>> { csvRowFields }, fixture);
-        }
+        public static IEnumerable<CsvDbUpdateModel> GenerateCsvDbUpdateModel(int contentId, IList<CsvDbUpdateFieldModel> csvRowFields, IFixture fixture) => GenerateCsvDbUpdateModel(contentId, new List<IList<CsvDbUpdateFieldModel>> { csvRowFields }, fixture);
 
         public static IEnumerable<CsvDbUpdateModel> GenerateCsvDbUpdateModel(int contentId, IList<IList<CsvDbUpdateFieldModel>> csvFilesRowFieldData, IFixture fixture)
         {

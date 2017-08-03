@@ -1,130 +1,133 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL.Repository;
 using System.Text.RegularExpressions;
-using Quantumart.QP8.BLL.Factories;
+using Quantumart.QP8.BLL.Factories.FolderFactory;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL
 {
-	public class PathSecurityInfo
-	{
-		public int Id { get; set; }
-		public string Path { get; set; }
-	}
-	
+    public class PathSecurityInfo
+    {
+        public int Id { get; set; }
+
+        public string Path { get; set; }
+    }
+
     public class PathSecurityResult
     {
         public bool Result { get; set; }
+
         public bool IsSite { get; set; }
+
         public int FolderId { get; set; }
     }
 
-	public class PathSecurity
-	{
-		#region private
+    public class PathSecurity
+    {
+        private static StringComparison CompareOption = StringComparison.InvariantCultureIgnoreCase;
 
-		private static StringComparison CompareOption = StringComparison.InvariantCultureIgnoreCase;
+        private static PathSecurityInfo FindFirst(string path, List<PathSecurityInfo> input)
+        {
+            return FindMatched(path, input).FirstOrDefault();
+        }
 
-		private static PathSecurityInfo FindFirst(string path, List<PathSecurityInfo> input)
-		{
-			return FindMatched(path, input).FirstOrDefault();
-		}
+        private static PathSecurityInfo FindLongest(string path, List<PathSecurityInfo> input)
+        {
+            return FindMatched(path, input).OrderByDescending(n => n.Path.Length).FirstOrDefault();
+        }
 
-		private static PathSecurityInfo FindLongest(string path, List<PathSecurityInfo> input)
-		{
-			return FindMatched(path, input).OrderByDescending(n => n.Path.Length).FirstOrDefault();
-		}
+        private static List<PathSecurityInfo> FindMatched(string path, List<PathSecurityInfo> input)
+        {
+            var result = new List<PathSecurityInfo>();
+            foreach (var item in input)
+            {
+                if (path.StartsWith(item.Path.TrimEnd('\\') + @"\", CompareOption))
+                {
+                    result.Add(item);
+                }
+            }
 
-		private static List<PathSecurityInfo> FindMatched(string path, List<PathSecurityInfo> input)
-		{
-			List<PathSecurityInfo> result = new List<PathSecurityInfo>();
-			foreach (var item in input)
-			{
-				if (path.StartsWith(item.Path.TrimEnd('\\') + @"\", CompareOption))
-				{
-					result.Add(item);
-				}
-			}
-			return result;
-		}
+            return result;
+        }
 
         private static PathSecurityResult CheckContentFolder(string pathToFind, int contentId)
-		{
-            PathSecurityResult result = new PathSecurityResult();
-			ContentFolderFactory factory = new ContentFolderFactory();
-			PathSecurityInfo contentFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(contentId));
-			if (contentFolder != null)
-			{
-				result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.ContentFolder, contentFolder.Id, ActionTypeCode.Update);
+        {
+            var result = new PathSecurityResult();
+            var factory = new ContentFolderFactory();
+            var contentFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(contentId));
+            if (contentFolder != null)
+            {
+                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.ContentFolder, contentFolder.Id, ActionTypeCode.Update);
                 result.FolderId = contentFolder.Id;
-			}
-			else
-			{
-                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update);                
-			}
+            }
+            else
+            {
+                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update);
+            }
+
             return result;
-		}
+        }
 
         private static PathSecurityResult CheckSiteFolder(string pathToFind, int siteId)
-		{
-            PathSecurityResult result = new PathSecurityResult();
-			SiteFolderFactory factory = new SiteFolderFactory();
-			PathSecurityInfo siteFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(siteId));
-			if (siteFolder != null)
-			{
-				result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.SiteFolder, siteFolder.Id, ActionTypeCode.Update);
+        {
+            var result = new PathSecurityResult();
+            var factory = new SiteFolderFactory();
+            var siteFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(siteId));
+            if (siteFolder != null)
+            {
+                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.SiteFolder, siteFolder.Id, ActionTypeCode.Update);
                 result.FolderId = siteFolder.Id;
-			}
-			else
-			{
-				result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.Site, siteId, ActionTypeCode.Update);
-			}
+            }
+            else
+            {
+                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.Site, siteId, ActionTypeCode.Update);
+            }
+
             return result;
-		}
-		
-		#endregion
+        }
 
         public static PathSecurityResult Check(string path)
-		{
-            PathSecurityResult result = new PathSecurityResult();
-			string pathToFind = path.Replace(@"\\", @"\");
-			if (pathToFind[pathToFind.Length - 1].ToString() != @"\")
-				pathToFind = pathToFind + @"\";
+        {
+            var result = new PathSecurityResult();
+            var pathToFind = path.Replace(@"\\", @"\");
+            if (pathToFind[pathToFind.Length - 1].ToString() != @"\")
+            {
+                pathToFind = pathToFind + @"\";
+            }
 
-			PathSecurityInfo site = FindFirst(pathToFind, SiteRepository.GetPaths());
+            var site = FindFirst(pathToFind, SiteRepository.GetPaths());
             if (site == null)
             {
                 result.Result = false;
                 return result;
             }
-			
-			pathToFind = pathToFind.Replace(site.Path, "");
-	
-			string images = @"\images";
-			if (pathToFind.StartsWith(images, CompareOption))
-			{
+
+            var images = @"\images";
+            pathToFind = pathToFind.Replace(site.Path, "");
+            if (pathToFind.StartsWith(images, CompareOption))
+            {
                 result.IsSite = true;
-				pathToFind = pathToFind.Replace(images, "");
+                pathToFind = pathToFind.Replace(images, "");
                 var checksiteFolderResult = CheckSiteFolder(pathToFind, site.Id);
                 result.Result = checksiteFolderResult.Result;
                 result.FolderId = checksiteFolderResult.FolderId;
                 return result;
-			}
-			else
-			{
-				Regex contents = new Regex(@"^\\contents\\([\d]+)");
-				Match match = contents.Match(pathToFind);
-				if (match.Success)
-				{
-					int contentId = Int32.Parse(match.Groups[1].Value);
-					pathToFind = pathToFind.Replace(match.Value, "");
+            }
+            else
+            {
+                Regex contents = new Regex(@"^\\contents\\([\d]+)");
+                Match match = contents.Match(pathToFind);
+                if (match.Success)
+                {
+                    int contentId = Int32.Parse(match.Groups[1].Value);
+                    pathToFind = pathToFind.Replace(match.Value, "");
                     return CheckContentFolder(pathToFind, contentId);
-				}
-			}
+                }
+            }
+
             return result;
-		}
-	}
+        }
+    }
 }

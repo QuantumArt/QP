@@ -21,7 +21,7 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces
         new IPrtgServiceLogger GetLogger(Type type);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IPrtgServiceLogger"/> class
+        /// Initializes a new instance of the <see cref="IPrtgServiceLogger" /> class
         /// </summary>
         /// <param name="loggerName">The string based logger name</param>
         new IPrtgServiceLogger GetLogger(string loggerName);

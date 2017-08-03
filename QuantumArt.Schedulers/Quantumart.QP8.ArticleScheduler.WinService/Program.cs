@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ServiceProcess;
 
 namespace Quantumart.QP8.ArticleScheduler.WinService
@@ -10,10 +10,10 @@ namespace Quantumart.QP8.ArticleScheduler.WinService
             var service = new ArticleSchedulerService();
             if (Environment.UserInteractive)
             {
-                Console.WriteLine("Starting...");
+                Console.WriteLine(@"Starting...");
                 service.Processor.Run();
 
-                Console.WriteLine("Running...");
+                Console.WriteLine(@"Running...");
                 Console.ReadLine();
             }
             else

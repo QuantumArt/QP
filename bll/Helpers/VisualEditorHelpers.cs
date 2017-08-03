@@ -1,8 +1,8 @@
-﻿using Quantumart.QP8.BLL.Extensions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.VisualEditor;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Quantumart.QP8.BLL.Helpers
 {

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Objects;
@@ -18,10 +18,7 @@ namespace Quantumart.QP8.BLL.Repository
 {
     public class ContentRepository : IContentRepository
     {
-        Content IContentRepository.GetById(int id)
-        {
-            return GetById(id);
-        }
+        Content IContentRepository.GetById(int id) => GetById(id);
 
         ContentLink IContentRepository.GetContentLinkById(int linkId)
         {
@@ -45,17 +42,17 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 IEnumerable<DataRow> rows = Common.GetDisplayFields(QPConnectionScope.Current.DbConnection, contentId, withRelations).AsEnumerable();
                 return rows.Select(n => new
-                {
-                    id = Converter.ToInt32(n.Field<decimal>("ATTRIBUTE_ID")),
-                    viewInList = n.Field<bool>("view_in_list"),
-                    priority = n.Field<int>("attribute_priority"),
-                    order = n.Field<decimal>("attribute_order")
-                })
-                .Where(n => n.id != excludeId)
-                .OrderByDescending(n => n.viewInList)
-                .ThenByDescending(n => n.priority)
-                .ThenBy(n => n.order)
-                .Select(n => n.id);
+                    {
+                        id = Converter.ToInt32(n.Field<decimal>("ATTRIBUTE_ID")),
+                        viewInList = n.Field<bool>("view_in_list"),
+                        priority = n.Field<int>("attribute_priority"),
+                        order = n.Field<decimal>("attribute_order")
+                    })
+                    .Where(n => n.id != excludeId)
+                    .OrderByDescending(n => n.viewInList)
+                    .ThenByDescending(n => n.priority)
+                    .ThenBy(n => n.order)
+                    .Select(n => n.id);
             }
         }
 
@@ -146,10 +143,7 @@ namespace Quantumart.QP8.BLL.Repository
             return Enumerable.Empty<Content>();
         }
 
-        internal static IEnumerable<Content> GetAll()
-        {
-            return MapperFacade.ContentMapper.GetBizList(QPContext.EFContext.ContentSet.ToList());
-        }
+        internal static IEnumerable<Content> GetAll() => MapperFacade.ContentMapper.GetBizList(QPContext.EFContext.ContentSet.ToList());
 
         internal static IEnumerable<Content> GetListBySiteId(int siteId)
         {
@@ -302,10 +296,7 @@ namespace Quantumart.QP8.BLL.Repository
             return result.OrderBy(g => g.Name).ToArray();
         }
 
-        internal static ContentGroup GetGroupById(int id)
-        {
-            return MapperFacade.ContentGroupMapper.GetBizObject(DefaultRepository.GetById<ContentGroupDAL>(id));
-        }
+        internal static ContentGroup GetGroupById(int id) => MapperFacade.ContentGroupMapper.GetBizObject(DefaultRepository.GetById<ContentGroupDAL>(id));
 
         internal static ContentGroup GetContentGroup(int contentId)
         {
@@ -364,15 +355,9 @@ namespace Quantumart.QP8.BLL.Repository
             return QPContext.EFContext.ContentToContentSet.Include("Content").Where(n => n.NetLinkName == content.NetName).Any(GetLinkScopeExpression(content));
         }
 
-        internal static bool NetNameExists(Content content)
-        {
-            return ContentNetNameExists(content) || LinkNetNameExists(content);
-        }
+        internal static bool NetNameExists(Content content) => ContentNetNameExists(content) || LinkNetNameExists(content);
 
-        internal static bool NetPluralNameExists(Content content)
-        {
-            return ContentNetPluralNameExists(content) || LinkNetPluralNameExists(content);
-        }
+        internal static bool NetPluralNameExists(Content content) => ContentNetPluralNameExists(content) || LinkNetPluralNameExists(content);
 
         private static bool ContentNetPluralNameExists(Content content)
         {
@@ -384,10 +369,7 @@ namespace Quantumart.QP8.BLL.Repository
             return QPContext.EFContext.ContentToContentSet.Include("Content").Where(n => n.NetPluralLinkName == content.NetPluralName).Any(GetLinkScopeExpression(content));
         }
 
-        internal static bool ContextClassNameExists(Content content)
-        {
-            return content.AdditionalContextClassName == content.Site.FullyQualifiedContextClassName;
-        }
+        internal static bool ContextClassNameExists(Content content) => content.AdditionalContextClassName == content.Site.FullyQualifiedContextClassName;
 
         internal static bool GroupNameExists(ContentGroup group)
         {
@@ -404,10 +386,7 @@ namespace Quantumart.QP8.BLL.Repository
             return n => n.Content.SiteId == content.SiteId;
         }
 
-        internal static Field GetTitleField(int contentId)
-        {
-            return FieldRepository.GetByName(contentId, GetTitleName(contentId));
-        }
+        internal static Field GetTitleField(int contentId) => FieldRepository.GetByName(contentId, GetTitleName(contentId));
 
         internal static string GetTitleName(int contentId)
         {
@@ -420,13 +399,13 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<Field> GetDisplayFields(int contentId, Field field = null)
         {
             var excludeId = field != null && field.ExactType == FieldExactTypes.M2ORelation ? field.BackRelationId.Value : 0;
-            var fields = field == null || field.ListFieldTitleCount <= 1 && field.ExactType == FieldExactTypes.O2MRelation || field.ListFieldTitleCount <= 0 ? null : ((IContentRepository)new ContentRepository()).GetDisplayFieldIds(contentId, field.IncludeRelationsInTitle, excludeId)
+            var fields = field == null || field.ListFieldTitleCount <= 1 && field.ExactType == FieldExactTypes.O2MRelation || field.ListFieldTitleCount <= 0
+                ? null
+                : ((IContentRepository)new ContentRepository()).GetDisplayFieldIds(contentId, field.IncludeRelationsInTitle, excludeId)
                 .Take(field.ListFieldTitleCount)
                 .Select(FieldRepository.GetById);
 
-            var displayField = field?.Relation != null && field.ExactType == FieldExactTypes.O2MRelation ?
-                field.Relation :
-                GetTitleField(contentId);
+            var displayField = field?.Relation != null && field.ExactType == FieldExactTypes.O2MRelation ? field.Relation : GetTitleField(contentId);
 
             return fields ?? new[] { displayField };
         }
@@ -547,10 +526,10 @@ namespace Quantumart.QP8.BLL.Repository
                 .ToArray();
 
             var fieldIds = QPContext.EFContext.FieldSet
-                    .Where(c => c.LinkId.HasValue && externalLinks.Contains(c.LinkId.Value))
-                    .Where(c => c.ContentId != contentId)
-                    .Select(c => (int)c.Id)
-                    .ToArray();
+                .Where(c => c.LinkId.HasValue && externalLinks.Contains(c.LinkId.Value))
+                .Where(c => c.ContentId != contentId)
+                .Select(c => (int)c.Id)
+                .ToArray();
 
             return FieldRepository.GetList(fieldIds);
         }
@@ -561,9 +540,9 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 var context = QPContext.EFContext;
                 var contentDal = (from f1 in context.FieldSet
-                                  join f2 in context.FieldSet on f1.Id equals f2.RelationId
-                                  where f1.ContentId == content.Id && f2.ContentId != content.Id
-                                  select f2.Content).ToList();
+                    join f2 in context.FieldSet on f1.Id equals f2.RelationId
+                    where f1.ContentId == content.Id && f2.ContentId != content.Id
+                    select f2.Content).ToList();
 
                 return MapperFacade.ContentMapper.GetBizList(contentDal)
                     .Distinct(new LambdaEqualityComparer<Content>((c1, c2) => c1.Id == c2.Id, c => c.Id))
@@ -577,9 +556,9 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var context = QPContext.EFContext;
             var fieldIds = (from f1 in context.FieldSet
-                            join f2 in context.FieldSet on f1.Id equals f2.RelationId
-                            where f1.ContentId == contentId && f2.ContentId != contentId
-                            select (int)f2.Id).ToArray();
+                join f2 in context.FieldSet on f1.Id equals f2.RelationId
+                where f1.ContentId == contentId && f2.ContentId != contentId
+                select (int)f2.Id).ToArray();
 
             return FieldRepository.GetList(fieldIds);
         }
@@ -588,9 +567,9 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var context = QPContext.EFContext;
             var fieldIds = (from f1 in context.FieldSet
-                            join f2 in context.FieldSet on f1.Id equals f2.BackRelationId
-                            where f1.ContentId == contentId && f2.ContentId != contentId
-                            select (int)f2.Id).ToArray();
+                join f2 in context.FieldSet on f1.Id equals f2.BackRelationId
+                where f1.ContentId == contentId && f2.ContentId != contentId
+                select (int)f2.Id).ToArray();
 
             return FieldRepository.GetList(fieldIds);
         }

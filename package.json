@@ -1,5 +1,5 @@
 {
-  "name": "QuantumArt.Qp8",
+  "name": "quantumart_qp8",
   "author": "Quantum Art",
   "description": "Quantum Art QP8 project",
   "repository": {
@@ -57,5 +57,6 @@
     "ProjectOpened": [
       "install"
     ]
-  }
+  },
+  "version": "1.0.0"
 }

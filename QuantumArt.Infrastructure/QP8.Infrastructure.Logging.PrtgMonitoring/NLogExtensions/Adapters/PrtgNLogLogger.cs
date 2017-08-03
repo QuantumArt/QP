@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NLog;
 using QP8.Infrastructure.Logging.Adapters;
 using QP8.Infrastructure.Logging.PrtgMonitoring.Data;
@@ -17,7 +17,7 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Adapters
         private readonly LogLevel _defaultLogLevel = LogLevel.Info;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PrtgNLogLogger"/> class
+        /// Initializes a new instance of the <see cref="PrtgNLogLogger" /> class
         /// </summary>
         /// <param name="logger">NLog logger instanse</param>
         /// <param name="prtgServiceStateVariableName">The name of state parameter to send to prtg monitor</param>

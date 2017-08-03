@@ -6,8 +6,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
     {
         internal static Guid? GetGuidOrDefault(string rawGuid, Guid? defaultValue = null)
         {
-            Guid result;
-            Guid.TryParse(rawGuid, out result);
+            Guid.TryParse(rawGuid, out Guid result);
             return result == default(Guid) ? defaultValue : result;
         }
     }

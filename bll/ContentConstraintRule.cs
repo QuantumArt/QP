@@ -1,38 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL.Repository;
+﻿using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL
 {
-	public class ContentConstraintRule : BizObject
-	{
-		public ContentConstraintRule()
-		{
-            field = new InitPropertyValue<Field>(() => FieldRepository.GetById(FieldId));
-		}
+    public class ContentConstraintRule : BizObject
+    {
+        private readonly InitPropertyValue<Field> _field;
 
-		public int ConstraintId
-		{
-			get;
-			set;
-		}
+        public ContentConstraintRule()
+        {
+            _field = new InitPropertyValue<Field>(() => FieldRepository.GetById(FieldId));
+        }
 
-		public int FieldId
-		{
-			get;
-			set;
-		}
+        public int ConstraintId { get; set; }
 
-		InitPropertyValue<Field> field = null;
-		public Field Field
-		{
-			get
-			{
-				return field.Value;
-			}
-		}		
-	}
+        public int FieldId { get; set; }
+
+        public Field Field => _field.Value;
+    }
 }

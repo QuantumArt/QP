@@ -132,10 +132,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
             return -Convert.ToInt32(csvRowFields.Single(getExtensionContentId).Value);
         }
 
-        private static int CreateSimpleArticleId(IEnumerable<CsvDbUpdateFieldModel> csvRowFields)
-        {
-            return -Convert.ToInt32(csvRowFields.Single(StringFilter(FieldName.ContentItemId)).Value);
-        }
+        private static int CreateSimpleArticleId(IEnumerable<CsvDbUpdateFieldModel> csvRowFields) => -Convert.ToInt32(csvRowFields.Single(StringFilter(FieldName.ContentItemId)).Value);
 
         private static IList<ArticleData> InsertFields(int contentId, IList<ArticleData> dataToAdd, IEnumerable<Field> dbFields, IList<CsvDbUpdateFieldModel> csvRowFields, string contentNameFieldPrefix = "")
         {

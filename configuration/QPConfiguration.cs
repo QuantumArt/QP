@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.SqlClient;
@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web.Configuration;
 using System.Xml.Linq;
 using QP8.Infrastructure.Helpers;
+using QP8.Infrastructure.Logging.Extensions;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
 
@@ -34,7 +35,7 @@ namespace Quantumart.QP8.Configuration
         /// </summary>
         public static string ConfigVariable(string name)
         {
-            var elem = XmlConfig.Descendants("app_var").SingleOrDefault(n => n.Attribute("app_var_name").Value == name);
+            var elem = XmlConfig.Descendants("app_var").SingleOrDefault(n => n.Attribute("app_var_name")?.Value == name);
             return elem?.Value ?? string.Empty;
         }
 
@@ -42,7 +43,7 @@ namespace Quantumart.QP8.Configuration
         {
             if (!string.IsNullOrWhiteSpace(customerCode))
             {
-                var customerElement = XmlConfig.Descendants("customer").SingleOrDefault(n => n.Attribute("customer_name").Value == customerCode);
+                var customerElement = XmlConfig.Descendants("customer").SingleOrDefault(n => n.Attribute("customer_name")?.Value == customerCode);
                 if (customerElement == null)
                 {
                     throw new Exception($"Данный customer code: {customerCode} - отсутствует в конфиге");
@@ -58,9 +59,9 @@ namespace Quantumart.QP8.Configuration
             return null;
         }
 
-        public static List<QaConfigCustomer> GetCustomers(string appName = null, bool shouldExcludeForSchedulers = false)
+        public static List<QaConfigCustomer> GetCustomers(string appName)
         {
-            var customers = GetQaConfiguration().Customers.Where(c => !shouldExcludeForSchedulers || !c.ExcludeFromSchedulers).ToList();
+            var customers = GetQaConfiguration().Customers.ToList();
             foreach (var entry in customers)
             {
                 entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName);
@@ -69,12 +70,9 @@ namespace Quantumart.QP8.Configuration
             return customers;
         }
 
-        public static List<string> CustomerCodes
+        public static List<string> GetCustomerCodes()
         {
-            get
-            {
-                return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
-            }
+            return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
         }
 
         private static string TuneConnectionString(string connectionString, string appName = null)
@@ -104,10 +102,7 @@ namespace Quantumart.QP8.Configuration
 
                 return _tempDirectory;
             }
-            set
-            {
-                _tempDirectory = value;
-            }
+            set => _tempDirectory = value;
         }
 
         public static bool UseScheduleService => ConfigVariable(Config.UseScheduleService).ToLowerInvariant() == "yes";
@@ -170,9 +165,6 @@ namespace Quantumart.QP8.Configuration
             settings[Config.MailFromNameKey] = ConfigVariable(Config.MailFromNameKey);
         }
 
-        private static QaConfiguration GetQaConfiguration()
-        {
-            return XmlSerializerHelpers.Deserialize<QaConfiguration>(XmlConfig);
-        }
+        private static QaConfiguration GetQaConfiguration() => XmlSerializerHelpers.Deserialize<QaConfiguration>(XmlConfig).LogTraceFormat("Load customers from config {0}");
     }
 }

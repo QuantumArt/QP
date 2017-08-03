@@ -45,12 +45,6 @@ custom.isProduction = function isProduction() {
   return custom.config.environment === 'production';
 };
 
-custom.AUTOPREFIXER_BROWSERS = [
-  'ie >= 8',
-  '> 3%',
-  'last 3 version'
-];
-
 custom.destPaths = {
   scripts: 'Scripts/build',
   styles: 'Content/build',
@@ -119,6 +113,7 @@ custom.paths = {
     'Content/codemirror/mode/htmlmixed/htmlmixed.js',
     'Content/codemirror/mode/htmlembedded/htmlembedded.js',
     'Content/codemirror/addon/mode/multiplex.js',
+    'Content/jsoneditor/dist/jsoneditor.js',
 
     'Scripts/PlUpload/moxie.js',
     'Scripts/PlUpload/plupload.dev.js',
@@ -267,13 +262,15 @@ custom.paths = {
     'Content/codemirrorTheme.css',
     'Content/jsoneditor/dist/jsoneditor.css',
     'Content/QpCodemirror.css',
-    'Content/custom/**/*.{css,sass,scss}',
+    'Content/custom/**/*.{scss,css}',
+
     '!Content/build/**/*.css'
   ],
   images: [
     'Content/**/*.{jpg,jpeg,png,gif,svg}',
     '!Content/ckeditor/**/*.{jpg,jpeg,png,gif,svg}',
     '!Content/codemirror/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Content/build/**/*.{jpg,jpeg,png,gif,svg}',
     '!Content/build/**/*.{jpg,jpeg,png,gif,svg}'
   ],
   clean: [
@@ -400,9 +397,9 @@ gulp.task('assets:css', ['assets:revisions'], function assetsCssTask() {
   return gulp.src(custom.paths.styles)
     .pipe($.plumber({ errorHandler: custom.reportError }))
     .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
-    .pipe($.sass().on('error', bs.notify))
+    .pipe($.sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
     .pipe($.replace(/url\('/g, 'url(\'images/'))
-    .pipe($.autoprefixer({ browsers: custom.AUTOPREFIXER_BROWSERS }))
+    .pipe($.autoprefixer())
     .pipe($.cssnano({ zindex: false }))
     .pipe($.concat('app.css'))
     .pipe($.sourcemaps.write('maps'))
@@ -439,8 +436,6 @@ gulp.task('default', ['clean'], function defaultTask() {
     + '.';
 
   global.console.log(welcomeMsg);
-
-  // TODO: ne pashet
   $.notify({ title: welcomeMsg, message: 'gulp is running' });
   gulp.start('assets:js', 'assets:css', 'assets:img');
 });

@@ -2,11 +2,11 @@
 {
     public class ServiceDescriptor
     {
-        public string Key { get; private set; }
+        public string Key { get; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public string Description { get; private set; }
+        public string Description { get; }
 
         public ServiceDescriptor(string key, string name, string description)
         {

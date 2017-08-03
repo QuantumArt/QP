@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Metadata.Edm;
@@ -152,7 +152,7 @@ namespace Quantumart.QP8.DAL
         /// <returns>название свойства модели хранилища</returns>
         private string GetStoragePropertyName(string conceptualPropertyName, string entitySetName, Dictionary<string, string> navigationPropertiesPrefixes = null)
         {
-            var storagePropertyName = conceptualPropertyName.IndexOf(".") == -1
+            var storagePropertyName = conceptualPropertyName.IndexOf(".", StringComparison.Ordinal) == -1
                 ? GetScalarPropertyColumnName(conceptualPropertyName, entitySetName)
                 : GetNavigationPropertyColumnName(conceptualPropertyName, entitySetName, navigationPropertiesPrefixes);
 
@@ -167,15 +167,15 @@ namespace Quantumart.QP8.DAL
         /// <returns>название поля БД</returns>
         private string GetScalarPropertyColumnName(string name, string entitySetName)
         {
-            var mappingDoc = Mapping; // настройки маппинга
+            var mappingDoc = Mapping;
             if (mappingDoc == null)
             {
                 throw new Exception("Элемент Mappings отсутствует в edmx-файле!");
             }
 
             var entitySetMappingElem = mappingDoc
-                .Element(_mappingNamespace + "Mapping")
-                .Element(_mappingNamespace + "EntityContainerMapping")
+                .Element(_mappingNamespace + "Mapping")?
+                .Element(_mappingNamespace + "EntityContainerMapping")?
                 .Elements(_mappingNamespace + "EntitySetMapping")
                 .SingleOrDefault(e => (string)e.Attribute("Name") == entitySetName);
 
@@ -185,8 +185,8 @@ namespace Quantumart.QP8.DAL
             }
 
             var scalarPropertyElem = entitySetMappingElem
-                .Element(_mappingNamespace + "EntityTypeMapping")
-                .Element(_mappingNamespace + "MappingFragment")
+                .Element(_mappingNamespace + "EntityTypeMapping")?
+                .Element(_mappingNamespace + "MappingFragment")?
                 .Elements(_mappingNamespace + "ScalarProperty")
                 .SingleOrDefault(e => (string)e.Attribute("Name") == name);
 
@@ -383,15 +383,19 @@ namespace Quantumart.QP8.DAL
         public string GetEntityName(string entityTypeCode, int entityId, int parentEntityId)
         {
             var entityName = string.Empty;
-
             object[] parameters =
             {
                 new SqlParameter { ParameterName = "entity_type_code", DbType = DbType.String, Size = 50, Value = entityTypeCode },
                 new SqlParameter { ParameterName = "entity_id", DbType = DbType.Int32, Value = entityId },
                 new SqlParameter { ParameterName = "parent_entity_id", DbType = DbType.Int32, IsNullable = true, Value = parentEntityId },
                 new SqlParameter
-                { ParameterName = "title", DbType = DbType.String, Size = 255,
-                    Direction = ParameterDirection.Output, Value = entityName }
+                {
+                    ParameterName = "title",
+                    DbType = DbType.String,
+                    Size = 255,
+                    Direction = ParameterDirection.Output,
+                    Value = entityName
+                }
             };
 
             using (var dbCommand = this.CreateStoreCommand("qp_get_entity_title", CommandType.StoredProcedure, parameters))
@@ -473,13 +477,13 @@ namespace Quantumart.QP8.DAL
             totalRecords = -1;
             object[] parameters =
             {
-                new SqlParameter { ParameterName = "p_site_id", DbType = DbType.Int32, Value = siteId},
-                new SqlParameter { ParameterName = "p_user_id", DbType = DbType.Int32, Value = userId},
+                new SqlParameter { ParameterName = "p_site_id", DbType = DbType.Int32, Value = siteId },
+                new SqlParameter { ParameterName = "p_user_id", DbType = DbType.Int32, Value = userId },
                 new SqlParameter { ParameterName = "p_item_id", DbType = DbType.Int32, Value = articleId },
-                new SqlParameter { ParameterName = "p_searchparam", DbType = DbType.String, Value = Cleaner.ToSafeSqlString(searchString)},
-                new SqlParameter { ParameterName = "p_order_by", DbType = DbType.String, Value = sortExpression},
-                new SqlParameter { ParameterName = "p_start_row", DbType = DbType.Int32, Value = startRow},
-                new SqlParameter { ParameterName = "p_page_size", DbType = DbType.Int32, Value = pageSize},
+                new SqlParameter { ParameterName = "p_searchparam", DbType = DbType.String, Value = Cleaner.ToSafeSqlString(searchString) },
+                new SqlParameter { ParameterName = "p_order_by", DbType = DbType.String, Value = sortExpression },
+                new SqlParameter { ParameterName = "p_start_row", DbType = DbType.Int32, Value = startRow },
+                new SqlParameter { ParameterName = "p_page_size", DbType = DbType.Int32, Value = pageSize },
                 new SqlParameter { ParameterName = "total_records", Direction = ParameterDirection.InputOutput, DbType = DbType.Int32, Value = totalRecords }
             };
 
@@ -499,7 +503,7 @@ namespace Quantumart.QP8.DAL
         {
             object[] parameters =
             {
-                new SqlParameter { ParameterName = "searchString", DbType = DbType.String, Value = Cleaner.ToSafeSqlString(searchString)}
+                new SqlParameter { ParameterName = "searchString", DbType = DbType.String, Value = Cleaner.ToSafeSqlString(searchString) }
             };
 
             var dt = new DataTable();
@@ -532,10 +536,10 @@ namespace Quantumart.QP8.DAL
         public IEnumerable<string> GetStopWordList()
         {
             const string query = "select stopword from sys.fulltext_system_stopwords " +
-                                 "where language_id = (" +
-                                 "select top 1 language_id from sys.fulltext_index_columns " +
-                                 "where object_id = object_id('dbo.CONTENT_DATA') " +
-                                 "and column_id = COLUMNPROPERTY (object_id('dbo.CONTENT_DATA'), 'DATA' , 'ColumnId' ))";
+                "where language_id = (" +
+                "select top 1 language_id from sys.fulltext_index_columns " +
+                "where object_id = object_id('dbo.CONTENT_DATA') " +
+                "and column_id = COLUMNPROPERTY (object_id('dbo.CONTENT_DATA'), 'DATA' , 'ColumnId' ))";
 
             var result = new List<string>();
 
@@ -552,6 +556,7 @@ namespace Quantumart.QP8.DAL
                     }
                 }
             }
+
             return result;
         }
     }

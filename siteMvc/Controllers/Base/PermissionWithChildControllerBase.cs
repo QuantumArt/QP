@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
@@ -49,7 +49,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
 
         public virtual ActionResult SaveMultipleChangeAsChild(string tabId, int parentId, FormCollection collection)
         {
-            return SaveAsChild(tabId, parentId, model => { ChildContentService.MultipleChange(parentId, model.EntityIDs, model.Data); });
+            return SaveAsChild(tabId, parentId, model => { ChildContentService.MultipleChange(parentId, model.EntityIDs.ToList(), model.Data); });
         }
 
         public virtual ActionResult AllChangeAsChild(string tabId, int parentId, int? userId, int? groupId)
@@ -129,16 +129,10 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             }
         }
 
-        private static string GetChildEntityPermissionModelKey(string tabId, int parentId)
-        {
-            return $"ChildEntityPermissionViewModel_{tabId}_{parentId}";
-        }
+        private static string GetChildEntityPermissionModelKey(string tabId, int parentId) => $"ChildEntityPermissionViewModel_{tabId}_{parentId}";
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public virtual ActionResult MultipleRemoveAsChild(int parentId, int[] IDs, int? userId, int? groupId)
-        {
-            return JsonMessageResult(ChildContentService.MultipleRemove(parentId, IDs, userId, groupId));
-        }
+        public virtual ActionResult MultipleRemoveAsChild(int parentId, int[] IDs, int? userId, int? groupId) => JsonMessageResult(ChildContentService.MultipleRemove(parentId, IDs, userId, groupId));
 
         public virtual ActionResult AllRemoveAsChild(int parentId, int? userId, int? groupId)
         {
@@ -150,9 +144,6 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return JsonMessageResult(ChildContentService.RemoveAll(parentId, userId, groupId));
         }
 
-        public virtual ActionResult RemoveAsChild(int parentId, int id, int? userId, int? groupId)
-        {
-            return JsonMessageResult(ChildContentService.Remove(parentId, id, userId, groupId));
-        }
+        public virtual ActionResult RemoveAsChild(int parentId, int id, int? userId, int? groupId) => JsonMessageResult(ChildContentService.Remove(parentId, id, userId, groupId));
     }
 }

@@ -1,4 +1,4 @@
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -79,10 +79,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveVisualEditorStyle)]
         [BackendActionContext(ActionCode.RemoveVisualEditorStyle)]
         [BackendActionLog]
-        public ActionResult Remove(int id)
-        {
-            return JsonMessageResult(_visualEditorService.RemoveVisualEditorStyle(id));
-        }
+        public ActionResult Remove(int id) => JsonMessageResult(_visualEditorService.RemoveVisualEditorStyle(id));
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewVisualEditorStyle)]

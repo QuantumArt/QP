@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Constants;
+﻿using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.DAL.DTO
 {
@@ -16,17 +12,16 @@ namespace Quantumart.QP8.DAL.DTO
 
         public bool IsVirtual { get; set; }
 
-		public ContentSelectMode Mode { get; set; }
+        public ContentSelectMode Mode { get; set; }
 
         public bool UseSecurity { get; set; }
 
         public int UserId { get; set; }
 
-		public bool IsAdmin { get; set; }
+        public bool IsAdmin { get; set; }
 
-		public int LanguageId { get; set; }
+        public int LanguageId { get; set; }
 
-		public string CustomFilter { get; set; }
-
+        public string CustomFilter { get; set; }
     }
 }

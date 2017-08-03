@@ -15,14 +15,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             return new OptionSet
             {
                 { "d|disable=", "disable identity options: [field|content]", ParseDisableOption },
-                { "useGuid", "enable guid substitution mode", ug => _useGuidSubstitution = ug != null },
+                { "useGuid", "enable guid substitution mode", ug => _useGuidSubstitution = ug != null }
             };
         }
 
-        protected internal override BaseSettingsModel CreateSettingsFromArguments()
-        {
-            return new XmlSettingsModel(FilePathes, CustomerCode, ConfigPath, _disableFieldIdentity, _disableContentIdentity, _useGuidSubstitution);
-        }
+        protected internal override BaseSettingsModel CreateSettingsFromArguments() =>
+            new XmlSettingsModel(FilePathes, CustomerCode, ConfigPath, _disableFieldIdentity, _disableContentIdentity, _useGuidSubstitution);
 
         protected internal override void PrintEnteredData()
         {

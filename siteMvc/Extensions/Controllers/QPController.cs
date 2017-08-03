@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +8,8 @@ using System.Web.Routing;
 using System.Web.WebPages;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Web.ActionResults;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -15,9 +17,7 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
-using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
-using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 {
@@ -104,10 +104,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             return formResult || context.Items.Contains(HttpContextItems.IsError);
         }
 
-        public ActionResult Redirect(string actionName, object routeValues)
-        {
-            return HttpContext.IsXmlDbUpdateReplayAction() ? null : RedirectToAction(actionName, routeValues);
-        }
+        public ActionResult Redirect(string actionName, object routeValues) => HttpContext.IsXmlDbUpdateReplayAction() ? null : RedirectToAction(actionName, routeValues);
 
         public JsonNetResult<MessageResult> JsonMessageResult(MessageResult result)
         {
@@ -129,10 +126,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             return result;
         }
 
-        public JsonResult JsonError(string msg)
-        {
-            return new JsonNetResult<object>(new { success = false, message = msg });
-        }
+        public JsonResult JsonError(string msg) => new JsonNetResult<object>(new { success = false, message = msg });
 
         private void PersistToHttpContext(string key, int item)
         {
@@ -276,9 +270,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                 if (validatedFormIds.Any() && validatedFormIds.Length <= (QPConfiguration.WebConfigSection?.RelationCountLimit ?? Default.RelationCountLimit))
                 {
                     var substitutedGuids = DbArticleService.GetArticleGuidsByIds(validatedFormIds)
-                       .Where(g => g != Guid.Empty)
-                       .Select(g => g.ToString())
-                       .ToArray();
+                        .Where(g => g != Guid.Empty)
+                        .Select(g => g.ToString())
+                        .ToArray();
 
                     HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
                 }

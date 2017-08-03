@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -24,14 +24,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         public new BLL.Workflow Data
         {
-            get
-            {
-                return (BLL.Workflow)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.Workflow)EntityData;
+            set => EntityData = value;
         }
 
         [LocalizedDisplayName("Contents", NameResourceType = typeof(WorkflowStrings))]
@@ -93,8 +87,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         public IEnumerable<BLL.Content> Contents
         {
-            get { return _contents.Value; }
-            set { _contents.Value = value; }
+            get => _contents.Value;
+            set => _contents.Value = value;
         }
 
         public IEnumerable<object> WorkflowRulesDisplay

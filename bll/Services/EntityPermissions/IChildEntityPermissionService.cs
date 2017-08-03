@@ -4,30 +4,36 @@ using Quantumart.QP8.BLL.Services.DTO;
 
 namespace Quantumart.QP8.BLL.Services.EntityPermissions
 {
-	/// <summary>
-	/// Интерфейс сервиса для правил доступа к дочерним элементам
-	/// </summary>
-	public interface IChildEntityPermissionService
-	{
-		/// <summary>
-		/// Стратегии, определяющая поведение View-моделей
-		/// </summary>
-		IPermissionListViewModelSettings ListViewModelSettings { get; }
-		IPermissionViewModelSettings ViewModelSettings { get; }
+    /// <summary>
+    /// Интерфейс сервиса для правил доступа к дочерним элементам
+    /// </summary>
+    public interface IChildEntityPermissionService
+    {
+        /// <summary>
+        /// Стратегии, определяющая поведение View-моделей
+        /// </summary>
+        IPermissionListViewModelSettings ListViewModelSettings { get; }
 
-		ChildPermissionInitListResult InitList(int parentId);
-		ListResult<ChildEntityPermissionListItem> List(int parentId, int? groupId, int? userId, ListCommand cmd);
+        IPermissionViewModelSettings ViewModelSettings { get; }
 
-		ChildEntityPermission Read(int parentId, int entityId, int? userId, int? groupId);
+        ChildPermissionInitListResult InitList(int parentId);
 
-		void MultipleChange(int parentId, IEnumerable<int> entityIDs, ChildEntityPermission permissionSettings);
-		void Change(int parentId, int entityId, ChildEntityPermission childEntityPermission);
-		void ChangeAll(int parentId, ChildEntityPermission childEntityPermission);
+        ListResult<ChildEntityPermissionListItem> List(int parentId, int? groupId, int? userId, ListCommand cmd);
 
-		MessageResult MultipleRemove(int parentId, IEnumerable<int> entityIDs, int? userId, int? groupId);
-		MessageResult Remove(int parentId, int entityId, int? userId, int? groupId);
-		MessageResult RemoveAll(int parentId, int? userId, int? groupId);
+        ChildEntityPermission Read(int parentId, int entityId, int? userId, int? groupId);
 
-		IEnumerable<EntityPermissionLevel> GetPermissionLevels();	
-	}
+        void MultipleChange(int parentId, List<int> entityIds, ChildEntityPermission permissionSettings);
+
+        void Change(int parentId, int entityId, ChildEntityPermission childEntityPermission);
+
+        void ChangeAll(int parentId, ChildEntityPermission childEntityPermission);
+
+        MessageResult MultipleRemove(int parentId, IEnumerable<int> entityIDs, int? userId, int? groupId);
+
+        MessageResult Remove(int parentId, int entityId, int? userId, int? groupId);
+
+        MessageResult RemoveAll(int parentId, int? userId, int? groupId);
+
+        IEnumerable<EntityPermissionLevel> GetPermissionLevels();
+    }
 }

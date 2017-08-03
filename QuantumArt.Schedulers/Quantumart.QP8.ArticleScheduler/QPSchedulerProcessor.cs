@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
@@ -37,7 +38,7 @@ namespace Quantumart.QP8.ArticleScheduler
                 {
                     try
                     {
-                        var customers = QPConfiguration.GetCustomers(AppName, true);
+                        var customers = QPConfiguration.GetCustomers(AppName).Where(c => !c.ExcludeFromSchedulers).ToList();
                         new QpScheduler(unityConfig.UnityContainer, prtgLogger, customers, _tasksQueueCheckShiftTime).Run();
                     }
                     catch (Exception ex)
