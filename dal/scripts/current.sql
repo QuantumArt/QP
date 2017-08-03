@@ -1694,10 +1694,6 @@ END
 GO
 
 GO
-IF NOT EXISTS (  SELECT * FROM   sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_DPC')
-	ALTER TABLE [dbo].[DB] ADD [USE_DPC] [bit] NOT NULL DEFAULT ((0))
-
-GO
 DECLARE @articles_with_wrong_statuses TABLE (
 Site_ID int,
 CONTENT_ID int,
@@ -1944,77 +1940,142 @@ END
 GO
 
 GO
-ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_DPC')
+	ALTER TABLE [dbo].[DB] ADD [USE_DPC] [bit] NOT NULL DEFAULT ((0))
+GO
+
+IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_CDC')
+	ALTER TABLE [dbo].[DB] ADD [USE_CDC] [bit] NOT NULL DEFAULT ((0))
+GO
+update CONTENT_DATA set SPLITTED = i.splitted
+from content_data cd inner join CONTENT_ITEM i on i.content_item_id = cd.CONTENT_ITEM_ID
+WHERE i.SPLITTED = 1
+GO
+IF dbo.qp_check_existence('SYSTEM_NOTIFICATION_QUEUE', 'IsUserTable') = 0
 BEGIN
-  set nocount on
-  IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
-    BEGIN
-        IF NOT (UPDATE(not_for_replication) AND EXISTS(select content_data_id from deleted))
-        BEGIN
+  CREATE TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] (
+    [ID] [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+    [CdcLastExecutedLsnId] [int] NOT NULL,
+    [TRANSACTION_LSN] [varchar](22) NOT NULL,
+    [TRANSACTION_DATE] [datetime] NOT NULL,
+    [URL] [nvarchar](1024) NOT NULL,
+    [TRIES] [numeric](18, 0) NOT NULL,
+    [JSON] [nvarchar](max) NULL,
+    [SENT] [bit] NOT NULL,
+    [CREATED] [datetime] NOT NULL,
+    [MODIFIED] [datetime] NOT NULL,
+    PRIMARY KEY CLUSTERED([ID] ASC)
+)
 
-            update content_item set modified = getdate() where content_item_id in (select content_item_id from deleted where not_for_replication = 0)
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_TRIES]  DEFAULT ((0)) FOR [TRIES]
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_SENT]  DEFAULT ((0)) FOR [SENT]
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_CREATED]  DEFAULT (getdate()) FOR [CREATED]
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_MODIFIED]  DEFAULT (getdate()) FOR [MODIFIED]
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE]  WITH CHECK ADD  CONSTRAINT [FK_SYSTEM_NOTIFICATION_QUEUE_SYSTEM_NOTIFICATION_QUEUE] FOREIGN KEY([ID]) REFERENCES [dbo].[SYSTEM_NOTIFICATION_QUEUE] ([ID])
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] CHECK CONSTRAINT [FK_SYSTEM_NOTIFICATION_QUEUE_SYSTEM_NOTIFICATION_QUEUE]
+END
+GO
+IF dbo.qp_check_existence('CdcLastExecutedLsn', 'IsUserTable') = 0
+BEGIN
+  CREATE TABLE [dbo].[CdcLastExecutedLsn] (
+    [Id] [int] IDENTITY(1,1) NOT NULL,
+    [ProviderName] [nvarchar](512) NOT NULL,
+    [ProviderUrl] [nvarchar](1024) NOT NULL,
+    [TransactionLsn] [varchar](22) NULL,
+    [TransactionDate] [datetime] NULL,
+    [LastExecutedLsn] [varchar](22) NOT NULL,
+    PRIMARY KEY CLUSTERED ([ID] ASC)
+  )
+END
+GO
+EXEC qp_drop_existing '[dbo].[tu_db]', 'IsTrigger'
+GO
 
-            DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC, @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC
-            DECLARE @table_name nvarchar(50), @sql NVARCHAR(max), @ids_list nvarchar(max), @async_ids_list nvarchar(max)
+CREATE TRIGGER [dbo].[tu_db]
+   ON [dbo].[DB]
+   AFTER UPDATE
+AS BEGIN
+    SET NOCOUNT ON;
 
-            declare @ca table
-            (
-                id numeric primary key
-            )
+    DECLARE @CdcChangeBit bit;
+    SELECT @CdcChangeBit = i.USE_CDC FROM Inserted i INNER JOIN Deleted d ON i.ID = d.ID AND i.USE_CDC != d.USE_CDC;
 
-            insert into @ca
-            select distinct attribute_id from inserted
-
-
-            declare @ids table
-            (
-                id numeric primary key,
-                splitted bit
-            )
-
-            while exists(select id from @ca)
-            begin
-
-                select @attribute_id = id from @ca
-
-                select @attribute_name = attribute_name, @attribute_type_id = attribute_type_id, @attribute_size = attribute_size, @default_value = default_value, @content_id = content_id
-                from content_attribute
-                where ATTRIBUTE_ID = @attribute_id
-
-                insert into @ids
-                select i.content_item_id, ci.SPLITTED from inserted i
-                inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
-                inner join content c on ci.CONTENT_ID = c.CONTENT_ID
-                where ATTRIBUTE_ID = @attribute_id and ci.not_for_replication = 0 and c.virtual_type = 0
-
-                set @ids_list = null
-                select @ids_list = coalesce(@ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 0
-                set @async_ids_list = null
-                select @async_ids_list = coalesce(@async_ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 1
-
-                set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
-
-                if @ids_list <> ''
-                begin
-                    exec qp_get_update_column_sql @table_name, @ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
-                    print @sql
-                    exec sp_executesql @sql
-                end
-
-                if @async_ids_list <> ''
-                begin
-                    set @table_name = @table_name + '_async'
-                    exec qp_get_update_column_sql @table_name, @async_ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
-                    print @sql
-                    exec sp_executesql @sql
-                end
-
-                delete from @ca where id = @attribute_id
-
-                delete from @ids
-            end --while
-        end --if
-    end --if
+    IF @CdcChangeBit = 1 BEGIN
+      EXEC sys.sp_cdc_enable_table
+           @source_schema = N'dbo',
+           @source_name = N'content_attribute',
+           @role_name = N'cdc_admin',
+           @supports_net_changes = 0;
+      EXEC sys.sp_cdc_enable_table
+           @source_schema = N'dbo',
+           @source_name = N'content',
+           @role_name = N'cdc_admin',
+           @supports_net_changes = 0;
+      EXEC sys.sp_cdc_enable_table
+           @source_schema = N'dbo',
+           @source_name = N'content_data',
+           @role_name = N'cdc_admin',
+           @supports_net_changes = 0;
+      EXEC sys.sp_cdc_enable_table
+           @source_schema = N'dbo',
+           @source_name = N'content_item',
+           @captured_column_list = 'content_item_id,visible,status_type_id,created,modified,content_id,last_modified_by,archive,not_for_replication,schedule_new_version_publication,splitted,permanent_lock,cancel_split,unique_id',
+           @role_name = N'cdc_admin',
+           @supports_net_changes = 0;
+      EXEC sys.sp_cdc_enable_table
+           @source_schema = N'dbo',
+           @source_name = N'content_to_content',
+           @role_name = N'cdc_admin',
+           @supports_net_changes = 0;
+      EXEC sys.sp_cdc_enable_table
+           @source_schema = N'dbo',
+           @source_name = N'item_link_async',
+           @role_name = N'cdc_admin',
+           @supports_net_changes = 0;
+      EXEC sys.sp_cdc_enable_table
+           @source_schema = N'dbo',
+           @source_name = N'item_to_item',
+           @role_name = N'cdc_admin',
+           @supports_net_changes = 0;
+      EXEC sys.sp_cdc_enable_table
+           @source_schema = N'dbo',
+           @source_name = N'status_type',
+           @role_name = N'cdc_admin',
+           @supports_net_changes = 0;
+    END ELSE IF @CdcChangeBit = 0 BEGIN
+      EXEC sys.sp_cdc_disable_table
+           @source_schema = N'dbo',
+           @source_name = N'content_attribute',
+           @capture_instance = N'dbo_content_attribute';
+      EXEC sys.sp_cdc_disable_table
+           @source_schema = N'dbo',
+           @source_name = N'content',
+           @capture_instance = N'dbo_content';
+      EXEC sys.sp_cdc_disable_table
+           @source_schema = N'dbo',
+           @source_name = N'content_data',
+           @capture_instance = N'dbo_content_data';
+      EXEC sys.sp_cdc_disable_table
+           @source_schema = N'dbo',
+           @source_name = N'content_item',
+           @capture_instance = N'dbo_content_item';
+      EXEC sys.sp_cdc_disable_table
+           @source_schema = N'dbo',
+           @source_name = N'content_to_content',
+           @capture_instance = N'dbo_content_to_content';
+      EXEC sys.sp_cdc_disable_table
+           @source_schema = N'dbo',
+           @source_name = N'item_link_async',
+           @capture_instance = N'dbo_item_link_async';
+      EXEC sys.sp_cdc_disable_table
+           @source_schema = N'dbo',
+           @source_name = N'item_to_item',
+           @capture_instance = N'dbo_item_to_item';
+      EXEC sys.sp_cdc_disable_table
+           @source_schema = N'dbo',
+           @source_name = N'status_type',
+           @capture_instance = N'dbo_status_type';
+    END
 END
 GO
 IF NOT EXISTS (  SELECT * FROM   sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[CONTENT]') AND name = 'FOR_REPLICATION')
@@ -2336,6 +2397,7 @@ IF NOT EXISTS (  SELECT * FROM   sys.columns WHERE  object_id = OBJECT_ID(N'[dbo
     ALTER TABLE [dbo].[CONTENT_DATA] ADD [SPLITTED] [bit] NOT NULL DEFAULT ((0))
 GO
 
+
 ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
 BEGIN
   set nocount on
@@ -2410,7 +2472,6 @@ BEGIN
 END
 ;
 GO
-
 ALTER TRIGGER [dbo].[tu_not_for_replication] ON [dbo].[CONTENT_ITEM] FOR UPDATE
 AS
 BEGIN
@@ -2426,14 +2487,7 @@ BEGIN
 		from content_data base inner join inserted i on i.content_item_id = base.CONTENT_ITEM_ID
 	end
 END
-
 GO
-
-update CONTENT_DATA set SPLITTED = i.splitted
-from content_data cd inner join CONTENT_ITEM i on i.content_item_id = cd.CONTENT_ITEM_ID
-WHERE i.SPLITTED = 1
-GO
-
 
 GO
 IF NOT EXISTS(SELECT * FROM CONTEXT_MENU_ITEM WHERE NAME = 'Unselect Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
