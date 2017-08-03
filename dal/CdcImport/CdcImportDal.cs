@@ -35,6 +35,7 @@ namespace Quantumart.QP8.DAL.CdcImport
 IF EXISTS (SELECT * FROM [dbo].[CdcLastExecutedLsn] WHERE providerUrl = {@ProviderUrl})
     UPDATE [dbo].[CdcLastExecutedLsn]
     SET
+        ProviderName = {@ProviderName},
         TransactionLsn = COALESCE({@LastPushedLsn}, TransactionLsn),
         TransactionDate = sys.fn_cdc_map_lsn_to_time(CONVERT(binary, COALESCE({@LastPushedLsn}, TransactionLsn), 1)),
         LastExecutedLsn = {@LastExecutedLsn}
