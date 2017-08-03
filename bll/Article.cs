@@ -684,7 +684,19 @@ namespace Quantumart.QP8.BLL
                 try
                 {
                     var valuesState = new Dictionary<string,string>(values);
-                    var vcontext = ValidationServices.ValidateModel(values, Content.XamlValidation, aggregatedXamlValidators, Content.Site.XamlDictionaries);
+
+                    var obj = new ValidationParamObject()
+                    {
+                        Model = values,
+                        Validator = Content.XamlValidation,
+                        AggregatedValidatorList = aggregatedXamlValidators,
+                        DynamicResource = Content.Site.XamlDictionaries,
+                        CustomerCode = QPContext.CurrentCustomerCode,
+                        SiteId = Content.SiteId,
+                        ContentId = ContentId
+                    };
+                    
+                    var vcontext = ValidationServices.ValidateModel(obj);
                     CheckChangesValues(valuesState, values);
 
                     if (!vcontext.IsValid)
