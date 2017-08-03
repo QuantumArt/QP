@@ -16,40 +16,25 @@ namespace QP8.Infrastructure.Logging.Factories
         /// </summary>
         public static ILogFactory LogFactory
         {
-            get
-            {
-                return _logFactory ?? new DiagnosticsLogFactory();
-            }
-            set
-            {
-                _logFactory = value;
-            }
+            get => _logFactory ?? new DiagnosticsLogFactory();
+            set => _logFactory = value;
         }
 
         /// <summary>
         /// Gets the logger
         /// </summary>
-        public static ILog GetLogger()
-        {
-            return LogFactory.GetLogger();
-        }
+        public static ILog GetLogger() => LogFactory.GetLogger();
 
         /// <summary>
         /// Gets the logger
         /// </summary>
         /// <param name="type">The type on which logger name is based</param>
-        public static ILog GetLogger(Type type)
-        {
-            return LogFactory.GetLogger(type);
-        }
+        public static ILog GetLogger(Type type) => LogFactory.GetLogger(type);
 
         /// <summary>
         /// Gets the logger
         /// </summary>
         /// <param name="loggerName">The string based logger name</param>
-        public static ILog GetLogger(string loggerName)
-        {
-            return LogFactory.GetLogger(loggerName);
-        }
+        public static ILog GetLogger(string loggerName) => LogFactory.GetLogger(loggerName);
     }
 }

@@ -16,25 +16,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _dbUpdateActionsLogRepository = dbUpdateActionsLogRepository;
         }
 
-        public bool IsFileAlreadyReplayed(string hash)
-        {
-            return _dbUpdateLogRepository.IsExist(hash);
-        }
+        public bool IsFileAlreadyReplayed(string hash) => _dbUpdateLogRepository.IsExist(hash);
 
-        public List<string> GetExistedHashes(List<string> hashes)
-        {
-            return _dbUpdateLogRepository.GetExistedHashes(hashes);
-        }
+        public List<string> GetExistedHashes(List<string> hashes) => _dbUpdateLogRepository.GetExistedHashes(hashes);
 
-        public int InsertFileLogEntry(XmlDbUpdateLogModel dbLogEntry)
-        {
-            return _dbUpdateLogRepository.Insert(dbLogEntry);
-        }
+        public int InsertFileLogEntry(XmlDbUpdateLogModel dbLogEntry) => _dbUpdateLogRepository.Insert(dbLogEntry);
 
-        public bool IsActionAlreadyReplayed(string logEntryHash)
-        {
-            return _dbUpdateActionsLogRepository.IsExist(logEntryHash);
-        }
+        public bool IsActionAlreadyReplayed(string logEntryHash) => _dbUpdateActionsLogRepository.IsExist(logEntryHash);
 
         public void InsertActionLogEntry(XmlDbUpdateActionsLogModel logEntry)
         {

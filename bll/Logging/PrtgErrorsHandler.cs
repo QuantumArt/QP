@@ -15,6 +15,11 @@ namespace Quantumart.QP8.BLL.Logging
 
         private readonly IPrtgServiceLogger _prtgLogger;
 
+        public PrtgErrorsHandler(IPrtgServiceLogger prtgLogger)
+        {
+            _prtgLogger = prtgLogger;
+        }
+
         public PrtgErrorsHandler(IPrtgNLogFactory logFactory)
             : this(logFactory, LoggerData.DefaultPrtgServiceLoggerName)
         {

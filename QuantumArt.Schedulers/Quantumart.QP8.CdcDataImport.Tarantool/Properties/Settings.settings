@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Quantumart.QP8.CdcDataImport.Tarantool.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="CheckNotificationsQueueRecurrentTimeout" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:00:20</Value>
+    </Setting>
+    <Setting Name="CdcRecurrentTimeout" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:00:01</Value>
+    </Setting>
+    <Setting Name="HttpTimeout" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:00:10</Value>
+    </Setting>
+    <Setting Name="HttpEndpoint" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://mscnix01.artq.com/{customercode}/product-building/replication</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

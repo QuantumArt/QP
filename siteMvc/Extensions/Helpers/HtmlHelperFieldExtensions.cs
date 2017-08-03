@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -253,10 +253,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.VersionText(id, resultValue);
         }
 
-        public static string UniqueId(this HtmlHelper html, string id, int index = -1)
-        {
-            return UniqueId(id, html.ViewContext.RouteData.Values[SpecialKeys.TabId], index);
-        }
+        public static string UniqueId(this HtmlHelper html, string id, int index = -1) => UniqueId(id, html.ViewContext.RouteData.Values[SpecialKeys.TabId], index);
 
         public static string UniqueId(string id, object tabId, int index = -1)
         {
@@ -269,10 +266,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return tabId == null ? $"{resultId}_{index}" : $"{tabId}_{resultId}_{index}";
         }
 
-        public static string TabId(this HtmlHelper html)
-        {
-            return html.ViewContext.RouteData.Values[SpecialKeys.TabId].ToString();
-        }
+        public static string TabId(this HtmlHelper html) => html.ViewContext.RouteData.Values[SpecialKeys.TabId].ToString();
 
         public static bool IsReadOnly(this HtmlHelper html)
         {
@@ -361,15 +355,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return $"<div class=\"articleWrapper_{extensionContentId}\">{html.AggregatedFieldValues(aggregatedArticle?.FieldValues.Where(n => !n.Field.Aggregated))}</div>"; // check;
         }
 
-        public static MvcHtmlString DisplayField(this HtmlHelper html, string id, string title, object value)
-        {
-            return MvcHtmlString.Create(string.Format(html.FieldTemplate(id, title), html.Span(html.UniqueId(id), value)));
-        }
+        public static MvcHtmlString DisplayField(this HtmlHelper html, string id, string title, object value) => MvcHtmlString.Create(string.Format(html.FieldTemplate(id, title), html.Span(html.UniqueId(id), value)));
 
-        public static ModelMetadata GetMetaData<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
-        {
-            return ModelMetadata.FromLambdaExpression(expression, html.ViewData);
-        }
+        public static ModelMetadata GetMetaData<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression) => ModelMetadata.FromLambdaExpression(expression, html.ViewData);
 
         public static MvcHtmlString HtmlFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Func<TModel, object> content)
         {
@@ -490,10 +478,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             );
         }
 
-        public static MvcHtmlString SelectFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, SelectOptions options)
-        {
-            return html.SelectFieldFor(expression, list, null, options);
-        }
+        public static MvcHtmlString SelectFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, SelectOptions options) => html.SelectFieldFor(expression, list, null, options);
 
         public static MvcHtmlString SelectFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, Dictionary<string, object> htmlAttributes = null, SelectOptions options = null, bool required = false)
         {
@@ -611,10 +596,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             ));
         }
 
-        public static MvcHtmlString WorkflowFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<TValue>>> expression, IEnumerable<TValue> list)
-        {
-            return source.WorkflowFor(ExpressionHelper.GetExpressionText(expression), list);
-        }
+        public static MvcHtmlString WorkflowFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<TValue>>> expression, IEnumerable<TValue> list) => source.WorkflowFor(ExpressionHelper.GetExpressionText(expression), list);
 
         public static MvcHtmlString CheckboxListFieldFor<TModel>(
             this HtmlHelper<TModel> html,
@@ -761,10 +743,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return $"<div id={componentElemId} data-host_id=\"{html.TabId()}\" data-field_name=\"{name}\" data-aggregated_content_id=\"{value}\" data-aggregated_article_id=\"{aggregatedArticleId}\" data-root_content_id=\"{article.ContentId}\" data-classifier_id=\"{field.Id}\" data-root_article_id=\"{article.Id}\" data-acticle_html_id=\"{acticleHtmlElemId}\" data-is_not_changeable=\"{!article.IsNew && !field.Changeable}\" class=\"classifierComponent\">";
         }
 
-        private static string EndClassifierFieldComponent()
-        {
-            return "</div>";
-        }
+        private static string EndClassifierFieldComponent() => "</div>";
 
         public static MvcHtmlString AggregatedFieldValues(this HtmlHelper html, IEnumerable<FieldValue> values)
         {

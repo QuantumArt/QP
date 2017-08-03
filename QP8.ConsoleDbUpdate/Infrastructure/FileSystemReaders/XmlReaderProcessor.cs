@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.Configuration;
@@ -43,11 +43,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             }
 
             Program.Logger.Info($"Total files readed from disk: {orderedFilePathes.Count}.");
-            Program.Logger.Debug($"Documents will be processed in next order: { orderedFilePathes.ToJsonLog()}.");
+            Program.Logger.Debug($"Documents will be processed in next order: {orderedFilePathes.ToJsonLog()}.");
 
             var filteredOrderedFilePathes = new List<string>();
+
             //TODO: DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! And remove unusing references then.
+
             #region DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!!
+
             if (settingsTemp == null)
             {
                 filteredOrderedFilePathes = orderedFilePathes;
@@ -87,6 +90,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                     }
                 }
             }
+
             #endregion DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!!
 
             Program.Logger.Info($"Skipped files count: {orderedFilePathes.Count - filteredOrderedFilePathes.Count}.");
@@ -122,8 +126,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             }
 
             var xmlData = XDocument.Load(configPath);
-            var actionNodes = xmlData.Root.Elements(XmlReaderSettings.ConfigElementNodeName).Where(el => el.NodeType != XmlNodeType.Comment);
-            return new XmlReaderSettings(actionNodes.Select(node => Path.Combine(absDirPath, node.Attribute(XmlReaderSettings.ConfigElementPathAttribute).Value)).ToList());
+            var actionNodes = xmlData.Root?.Elements(XmlReaderSettings.ConfigElementNodeName).Where(el => el.NodeType != XmlNodeType.Comment);
+            return new XmlReaderSettings(actionNodes.Select(node => Path.Combine(absDirPath, node.Attribute(XmlReaderSettings.ConfigElementPathAttribute)?.Value)).ToList());
         }
 
         private static XDocument CombineMultipleDocumentsWithSameRoot(IList<XDocument> xmlDocuments)
@@ -140,11 +144,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             }
 
             var root = new XDocument(xmlDocuments[0].Root);
-            root.Root.RemoveNodes();
+            root.Root?.RemoveNodes();
 
             return xmlDocuments.Aggregate(root, (result, xd) =>
             {
-                result.Root.Add(xd.Root.Elements());
+                result.Root?.Add(xd.Root?.Elements());
                 return result;
             });
         }

@@ -90,15 +90,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ValueProviders
             backingStore.Add(prefix, value);
         }
 
-        private static string MakeArrayKey(string prefix, int index)
-        {
-            return prefix + "[" + index.ToString(CultureInfo.InvariantCulture) + "]";
-        }
+        private static string MakeArrayKey(string prefix, int index) => prefix + "[" + index.ToString(CultureInfo.InvariantCulture) + "]";
 
-        private static string MakePropertyKey(string prefix, string propertyName)
-        {
-            return string.IsNullOrEmpty(prefix) ? propertyName : prefix + "." + propertyName;
-        }
+        private static string MakePropertyKey(string prefix, string propertyName) => string.IsNullOrEmpty(prefix) ? propertyName : prefix + "." + propertyName;
 
         private class EntryLimitedDictionary
         {

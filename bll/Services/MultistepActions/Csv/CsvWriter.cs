@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Enums.Csv;
-using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;

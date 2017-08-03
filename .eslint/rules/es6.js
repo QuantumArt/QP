@@ -36,7 +36,7 @@ module.exports = {
     'no-class-assign': 'error', // TODO: maybe 0 for React HOCs
 
     // disallow arrow functions where they could be confused with comparisons
-    'no-confusing-arrow': 'off',
+    'no-confusing-arrow': ['error', { allowParens: true }],
 
     // disallow modifying variables that are declared using const
     'no-const-assign': 'error',

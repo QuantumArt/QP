@@ -12,12 +12,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             public FieldGroup(HtmlHelper html)
             {
-                if (html == null)
-                {
-                    throw new ArgumentNullException(nameof(html));
-                }
-
-                _html = html;
+                _html = html ?? throw new ArgumentNullException(nameof(html));
             }
 
             public void Dispose()
@@ -37,11 +32,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         }
 
         /// <summary>
-		/// Генерирует начальную часть группы полей стандартной формы QP8
+        /// Генерирует начальную часть группы полей стандартной формы QP8
         /// </summary>
-		/// <param name="html">HTML-хелпер</param>
+        /// <param name="html">HTML-хелпер</param>
         /// <param name="title">заголовок группы</param>
-		/// <returns>объект типа FieldGroup</returns>
+        /// <returns>объект типа FieldGroup</returns>
         public static IDisposable BeginFieldGroup(this HtmlHelper html, string title)
         {
             html.ViewContext.Writer.WriteLine("<fieldset><legend>{0}</legend>", title);

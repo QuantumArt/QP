@@ -196,7 +196,16 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Turn on DPC.
+        ///   Looks up a localized string similar to Use CDC for system notifications.
+        /// </summary>
+        public static string UseCDC {
+            get {
+                return ResourceManager.GetString("UseCDC", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Use internal DPC.
         /// </summary>
         public static string UseDPC {
             get {

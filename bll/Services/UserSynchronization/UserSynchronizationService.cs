@@ -24,10 +24,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             QPContext.CurrentUserId = currentUserId;
         }
 
-        public bool NeedSynchronization()
-        {
-            return DbRepository.Get().UseAdSyncService;
-        }
+        public bool NeedSynchronization() => DbRepository.Get().UseAdSyncService;
 
         public void Synchronize()
         {
@@ -59,11 +56,12 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                 }
             }
         }
+
         private void UpdateUsers(IEnumerable<User> qpUsers, IEnumerable<ActiveDirectoryUser> adUsers, ActiveDirectoryGroup[] adGroups, List<UserGroup> qpGroups)
         {
             var usersToBeUpdated = from qpu in qpUsers
-                                   join adu in adUsers on qpu.NtLogOn equals adu.AccountName
-                                   select new { QP = qpu, AD = adu };
+                join adu in adUsers on qpu.NtLogOn equals adu.AccountName
+                select new { QP = qpu, AD = adu };
 
             foreach (var user in usersToBeUpdated)
             {
@@ -113,19 +111,19 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             }
 
             var adGroupRelations = from adg in adGroups
-                                   select new
-                                   {
-                                       Group = adg,
-                                       Members = from m in adg.MemberOf
-                                                 join g in adGroups on m equals g.ReferencedPath
-                                                 select g.Name
-                                   };
+                select new
+                {
+                    Group = adg,
+                    Members = from m in adg.MemberOf
+                    join g in adGroups on m equals g.ReferencedPath
+                    select g.Name
+                };
 
             var adGroupsToProcess = (from adRelation in adGroupRelations
-                                     join qpg in qpGroups on adRelation.Group.Name equals qpg.NtGroup
-                                     where qpg.ParentGroup == null || qpGroups.All(g => g.Id != qpg.ParentGroup.Id) || adRelation.Members.Any(m => qpg.ParentGroup.NtGroup == m)
-                                     select adRelation.Group)
-                                     .ToArray();
+                    join qpg in qpGroups on adRelation.Group.Name equals qpg.NtGroup
+                    where qpg.ParentGroup == null || qpGroups.All(g => g.Id != qpg.ParentGroup.Id) || adRelation.Members.Any(m => qpg.ParentGroup.NtGroup == m)
+                    select adRelation.Group)
+                .ToArray();
 
             var wrongMembershipAdGroups = adGroupNames.Except(adGroupsToProcess.Select(g => g.Name)).ToArray();
             if (wrongMembershipAdGroups.Any())
@@ -136,18 +134,15 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             return adGroupsToProcess;
         }
 
-        private User CreateUser(ActiveDirectoryUser user)
+        private User CreateUser(ActiveDirectoryUser user) => new User
         {
-            return new User
-            {
-                LogOn = user.AccountName,
-                NtLogOn = user.AccountName,
-                Password = UserRepository.GeneratePassword(),
-                LanguageId = _languageId,
-                AutoLogOn = true,
-                Groups = new UserGroup[0]
-            };
-        }
+            LogOn = user.AccountName,
+            NtLogOn = user.AccountName,
+            Password = UserRepository.GeneratePassword(),
+            LanguageId = _languageId,
+            AutoLogOn = true,
+            Groups = new UserGroup[0]
+        };
 
         private static void MapUser(ActiveDirectoryUser adUser, ref User qpUser)
         {
@@ -160,9 +155,9 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         private static void MapGroups(ActiveDirectoryEntityBase adUser, ref User qpUser, IEnumerable<ActiveDirectoryGroup> adGroups, List<UserGroup> qpGroups)
         {
             var importedGroups = from qpg in qpGroups
-                                 join adg in adGroups on qpg.NtGroup equals adg.Name
-                                 where adUser.MemberOf.Contains(adg.ReferencedPath)
-                                 select qpg;
+                join adg in adGroups on qpg.NtGroup equals adg.Name
+                where adUser.MemberOf.Contains(adg.ReferencedPath)
+                select qpg;
 
             var nativeGroups = qpUser.Groups.Except(qpGroups);
             qpUser.Groups = importedGroups.Concat(nativeGroups);

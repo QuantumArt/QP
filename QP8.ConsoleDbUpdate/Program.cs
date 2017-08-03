@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 using Mono.Options;
-using Quantumart.QP8.BLL.Extensions;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories;

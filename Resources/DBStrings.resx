@@ -172,6 +172,9 @@
     <value>Проигрывание записанных действий</value>
   </data>
   <data name="UseDPC" xml:space="preserve">
-    <value>Turn on DPC</value>
+    <value>Use internal DPC</value>
+  </data>
+  <data name="UseCDC" xml:space="preserve">
+    <value>Use CDC for system notifications</value>
   </data>
 </root>

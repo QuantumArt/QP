@@ -56,7 +56,7 @@ namespace Quantumart.QP8.DAL.DTO
         {
             if (ReferenceEquals(otherRef, null))
             {
-	            return false;
+                return false;
             }
 
             if (ReferenceEquals(this, otherRef))
@@ -67,9 +67,6 @@ namespace Quantumart.QP8.DAL.DTO
             return otherRef.TargetContentId == TargetContentId && otherRef.ReferenceFieldId == ReferenceFieldId;
         }
 
-        public override int GetHashCode()
-        {
-            return $"{TargetContentId};{ReferenceFieldId}".GetHashCode();
-        }
+        public override int GetHashCode() => $"{TargetContentId};{ReferenceFieldId}".GetHashCode();
     }
 }

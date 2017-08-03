@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Security;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services;
@@ -34,8 +34,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 throw new ArgumentException($"Entity id field is not found: {_entityIdParamName}");
             }
 
-            int entityId;
-            if (!int.TryParse(entityIdResult.AttemptedValue, out entityId))
+            if (!int.TryParse(entityIdResult.AttemptedValue, out int entityId))
             {
                 throw new ArgumentException($"Entity id is not a number: {entityIdResult.AttemptedValue}");
             }

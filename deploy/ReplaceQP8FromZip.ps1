@@ -3,7 +3,8 @@ param(
   [String] $source='',
   [Bool] $transform=$true,
   [String] $config='Default',
-  [String] $configFiles='Web,NLog'
+  [String] $configFiles='Web,NLog',
+  [String] $backupPath = ''
 )
 
 Import-Module WebAdministration
@@ -29,6 +30,8 @@ if (!$s) { throw "Site $name not found"}
   $w = Get-Item "IIS:\sites\$name\Backend\Winlogon" -ErrorAction SilentlyContinue
 
 $path = $s.PhysicalPath
+$dir = Split-Path $path -Leaf
+$isRootSites = ($dir -eq "sites")
 
 if ($p) { $pluginsPath = $p.PhysicalPath }
 if ($b) { $backendPath = $b.PhysicalPath }
@@ -37,16 +40,16 @@ if ($w) { $winlogonPath = $w.PhysicalPath }
 $backendSource = Join-Path $source "Backend.zip"
 $winLogonSource = Join-Path $source "WinLogon.zip"
 $pluginsSource = Join-Path $source "plugins.zip"
+$sitesSource = Join-Path $source "sites.zip"
 
 if ([string]::IsNullOrEmpty($pluginsPath)) { throw [System.ArgumentException] "Virtual directory 'plugins' is not found"}
 if ([string]::IsNullOrEmpty($backendPath)) { throw [System.ArgumentException] "Web application 'backend' is not found"}
 if ([string]::IsNullOrEmpty($winlogonPath)) { throw [System.ArgumentException] "Web application 'Backend/Winlogon' is not found"}
 
-
 if (-not(Test-Path $backendSource)) { throw [System.ArgumentException] "File $backendSource not exists"}
 if (-not(Test-Path $winLogonSource)) { throw [System.ArgumentException] "File $winLogonSource not exists"}
 if (-not(Test-Path $pluginsSource)) { throw [System.ArgumentException] "File $pluginsSource not exists"}
-
+if (-not(Test-Path $sitesSource)) { throw [System.ArgumentException] "File $sitesSource not exists"}
 
 $p = Get-Item "IIS:\AppPools\$($s.applicationPool)"
 
@@ -54,42 +57,74 @@ if ($p.State -ne "Stopped"){
   $p.Stop()
 
   while($p.State -ne "Stopped"){
-    Write-Verbose "AppPool $($s.applicationPool) is stopping..."
+    Write-Verbose "AppPool $($s.applicationPool) is stopping..." -Verbose
     Start-Sleep -Milliseconds 500
   }
 }
 
-Write-Verbose "Stopped"
+Write-Verbose "Stopped" -Verbose
 
-Write-Verbose "Creating backup files ..."
-Compress-Archive -Path $backendPath\* -DestinationPath $path\Backend_old.zip -Force
-Compress-Archive -Path $winlogonPath\* -DestinationPath $path\Winlogon_old.zip -Force
-Compress-Archive -Path $pluginsPath\* -DestinationPath $path\plugins_old.zip -Force
-Write-Verbose "Done"
+Write-Verbose "Checking backup path for $backupPath..." -Verbose
+if ([String]::IsNullOrEmpty($backupPath)) {
+  $backupPath = if ($isRootSites) { (Split-Path $path -Parent)} Else { $path }
+}
+Write-Verbose "Done" -Verbose
 
-Write-Verbose "Removing files for $name from $backendPath..."
+if (-not(Test-Path $backupPath)) {
+  Write-Verbose "Directory $backupPath not found. Creating..." -Verbose
+  New-Item -Force $backupPath -ItemType Directory
+  Write-Verbose "Done" -Verbose
+}
+
+Write-Verbose "Preparing zip-files to $backupPath..." -Verbose
+$command = "CreateBackup.ps1 -sourcePath ""$backendPath"" -name Backend -path ""$backupPath"" -separateFolder `$false
+            CreateBackup.ps1 -sourcePath ""$winlogonPath"" -name WinLogon -path ""$backupPath"" -separateFolder `$false
+            CreateBackup.ps1 -sourcePath ""$pluginsPath"" -name plugins -path ""$backupPath"" -separateFolder `$false"
+Invoke-Expression -command $command
+if ($isRootSites)
+{
+  $command = "CreateBackup.ps1 -sourcePath ""$path"" -name sites -path ""$backupPath"" -separateFolder `$false"
+  Invoke-Expression -command $command
+}
+Write-Verbose "Done" -Verbose
+
+if ($isRootSites)
+{
+  Write-Verbose "Removing files for $name from $path..." -Verbose
+  Get-ChildItem -Path $path -Recurse | Remove-Item -force -recurse
+  Write-Verbose "Done" -Verbose
+}
+
+Write-Verbose "Removing files for $name from $backendPath..." -Verbose
 Get-ChildItem -Path $backendPath -Recurse | Remove-Item -force -recurse
-Write-Verbose "Done"
+Write-Verbose "Done" -Verbose
 
-Write-Verbose "Removing files for $name from $winlogonPath..."
+Write-Verbose "Removing files for $name from $winlogonPath..." -Verbose
 Get-ChildItem -Path $winlogonPath -Recurse | Remove-Item -force -recurse
-Write-Verbose "Done"
+Write-Verbose "Done" -Verbose
 
-Write-Verbose "Removing files for $name from $pluginsPath..."
+Write-Verbose "Removing files for $name from $pluginsPath..." -Verbose
 Get-ChildItem -Path $pluginsPath -Recurse | Remove-Item -force -recurse
-Write-Verbose "Done"
+Write-Verbose "Done" -Verbose
 
-Write-Verbose "Unarchiving zip-files to $backendPath..."
+if ($isRootSites)
+{
+  Write-Verbose "Unarchiving zip-files to $path..." -Verbose
+  Expand-Archive -LiteralPath $sitesSource -DestinationPath $path
+  Write-Verbose "Done" -Verbose
+}
+
+Write-Verbose "Unarchiving zip-files to $backendPath..." -Verbose
 Expand-Archive -LiteralPath $backendSource -DestinationPath $backendPath
-Write-Verbose "Done"
+Write-Verbose "Done" -Verbose
 
-Write-Verbose "Unarchiving zip-files to $winLogonPath..."
+Write-Verbose "Unarchiving zip-files to $winLogonPath..." -Verbose
 Expand-Archive -LiteralPath $winLogonSource -DestinationPath $winLogonPath
-Write-Verbose "Done"
+Write-Verbose "Done" -Verbose
 
-Write-Verbose "Unarchiving zip-files to $pluginsPath..."
+Write-Verbose "Unarchiving zip-files to $pluginsPath..." -Verbose
 Expand-Archive -LiteralPath $pluginsSource -DestinationPath $pluginsPath
-Write-Verbose "Done"
+Write-Verbose "Done" -Verbose
 
 if ($transform)
 {
@@ -100,5 +135,5 @@ if ($transform)
     Invoke-Expression -command $command
 }
 
-Write-Verbose "AppPool $($s.applicationPool) is starting"
+Write-Verbose "AppPool $($s.applicationPool) is starting" -Verbose
 $p.Start()

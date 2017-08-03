@@ -15,8 +15,8 @@ ArchiveArticleSearch
 UpdateM2O
 GetPermittedItemsAsQuery
 DeleteSite
-DBTable
 UpdateWrongWFStatuses
 UpdateItemToItemTrigger
 AddProducts
 DPC
+ContextMenuAction

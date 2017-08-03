@@ -33,7 +33,7 @@ namespace Quantumart.QP8.BLL.Services.EntityPermissions
             CanHide = false
         };
 
-        public override void MultipleChange(int parentId, IEnumerable<int> entityIDs, ChildEntityPermission permissionSettings)
+        public override void MultipleChange(int parentId, List<int> entityIDs, ChildEntityPermission permissionSettings)
         {
             if (ContentRepository.IsAnyAggregatedFields(parentId))
             {
@@ -92,6 +92,7 @@ namespace Quantumart.QP8.BLL.Services.EntityPermissions
 
             return base.RemoveAll(parentId, userId, groupId);
         }
+
         #endregion
     }
 }

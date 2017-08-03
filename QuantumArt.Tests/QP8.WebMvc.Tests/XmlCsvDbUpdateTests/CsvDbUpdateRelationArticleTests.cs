@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Moq;
@@ -155,7 +155,6 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
                     }).ToList()
                 }
             };
-
 
             // Exercise system
             sut.Process(csvData);

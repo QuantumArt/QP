@@ -44,24 +44,15 @@ namespace Quantumart.QP8.BLL
 
         public static IEqualityComparer<Field> IdComparer
         {
-            get
-            {
-                return new LambdaEqualityComparer<Field>((f1, f2) => f1.Id == f2.Id, f => f.Id);
-            }
+            get { return new LambdaEqualityComparer<Field>((f1, f2) => f1.Id == f2.Id, f => f.Id); }
         }
 
         public static IEqualityComparer<Field> NameComparer
         {
-            get
-            {
-                return new LambdaEqualityComparer<Field>(NameComparerPredicate, f => GetNameHashCode(f.Name));
-            }
+            get { return new LambdaEqualityComparer<Field>(NameComparerPredicate, f => GetNameHashCode(f.Name)); }
         }
 
-        public static bool NameComparerPredicate(Field f1, Field f2)
-        {
-            return NameComparerPredicate(f1.Name, f2.Name);
-        }
+        public static bool NameComparerPredicate(Field f1, Field f2) => NameComparerPredicate(f1.Name, f2.Name);
 
         public static bool NameComparerPredicate(string n1, string n2)
         {
@@ -80,10 +71,7 @@ namespace Quantumart.QP8.BLL
 
         public static IEqualityComparer<string> NameStringComparer => StringComparer.InvariantCultureIgnoreCase;
 
-        public static int GetNameHashCode(string name)
-        {
-            return name?.ToLowerInvariant().GetHashCode() ?? 0;
-        }
+        public static int GetNameHashCode(string name) => name?.ToLowerInvariant().GetHashCode() ?? 0;
 
         public const int TextBoxRowsDefaultValue = 5;
         public const int VisualEditorHeightDefaultValue = 450;
@@ -259,26 +247,14 @@ namespace Quantumart.QP8.BLL
 
         public int[] ActiveVeCommandIds
         {
-            get
-            {
-                return _activeVeCommandIds.Value;
-            }
-            set
-            {
-                _activeVeCommandIds.Value = value;
-            }
+            get => _activeVeCommandIds.Value;
+            set => _activeVeCommandIds.Value = value;
         }
 
         public int[] ActiveVeStyleIds
         {
-            get
-            {
-                return _activeVeStyleIds.Value;
-            }
-            set
-            {
-                _activeVeStyleIds.Value = value;
-            }
+            get => _activeVeStyleIds.Value;
+            set => _activeVeStyleIds.Value = value;
         }
 
         public string FormatMask { get; set; }
@@ -321,40 +297,22 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("PEnterMode", NameResourceType = typeof(FieldStrings))]
         public bool PEnterMode
         {
-            get
-            {
-                return VisualEditFieldParams.PEnterMode;
-            }
-            set
-            {
-                VisualEditFieldParams.PEnterMode = value;
-            }
+            get => VisualEditFieldParams.PEnterMode;
+            set => VisualEditFieldParams.PEnterMode = value;
         }
 
         [LocalizedDisplayName("UseEnglishQuotes", NameResourceType = typeof(FieldStrings))]
         public bool UseEnglishQuotes
         {
-            get
-            {
-                return VisualEditFieldParams.UseEnglishQuotes;
-            }
-            set
-            {
-                VisualEditFieldParams.UseEnglishQuotes = value;
-            }
+            get => VisualEditFieldParams.UseEnglishQuotes;
+            set => VisualEditFieldParams.UseEnglishQuotes = value;
         }
 
         [LocalizedDisplayName("DisableListAutoWrap", NameResourceType = typeof(FieldStrings))]
         public bool DisableListAutoWrap
         {
-            get
-            {
-                return VisualEditFieldParams.DisableListAutoWrap;
-            }
-            set
-            {
-                VisualEditFieldParams.DisableListAutoWrap = value;
-            }
+            get => VisualEditFieldParams.DisableListAutoWrap;
+            set => VisualEditFieldParams.DisableListAutoWrap = value;
         }
 
         [LocalizedDisplayName("DisableVersionControl", NameResourceType = typeof(FieldStrings))]
@@ -450,14 +408,8 @@ namespace Quantumart.QP8.BLL
 
         public Field BackRelation
         {
-            get
-            {
-                return _backRelation.Value;
-            }
-            set
-            {
-                _backRelation.Value = value;
-            }
+            get => _backRelation.Value;
+            set => _backRelation.Value = value;
         }
 
         public string DisplayName => !string.IsNullOrEmpty(FriendlyName) ? FriendlyName : Name;
@@ -468,8 +420,7 @@ namespace Quantumart.QP8.BLL
 
         public static int ParseFormName(string formName)
         {
-            int value;
-            return int.TryParse(formName.Replace(Prefix, string.Empty), out value) ? value : 0;
+            return int.TryParse(formName.Replace(Prefix, string.Empty), out int value) ? value : 0;
         }
 
         public string ParamName => "@" + FormName;
@@ -505,14 +456,8 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("FieldType", NameResourceType = typeof(FieldStrings))]
         public FieldExactTypes ExactType
         {
-            get
-            {
-                return _exactType.Value;
-            }
-            set
-            {
-                _exactType.Value = value;
-            }
+            get => _exactType.Value;
+            set => _exactType.Value = value;
         }
 
         public Type XamlType
@@ -555,27 +500,15 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("IsUnique", NameResourceType = typeof(FieldStrings))]
         public bool IsUnique
         {
-            get
-            {
-                return _isUnique.Value;
-            }
-            set
-            {
-                _isUnique.Value = value;
-            }
+            get => _isUnique.Value;
+            set => _isUnique.Value = value;
         }
 
         [LocalizedDisplayName("RelateTo", NameResourceType = typeof(FieldStrings))]
         public int? RelateToContentId
         {
-            get
-            {
-                return _relateToContentId.Value;
-            }
-            set
-            {
-                _relateToContentId.Value = value;
-            }
+            get => _relateToContentId.Value;
+            set => _relateToContentId.Value = value;
         }
 
         public Content RelatedToContent => RelateToContentId.HasValue ? _contentRepository.GetById(RelateToContentId.Value) : null;
@@ -600,14 +533,8 @@ namespace Quantumart.QP8.BLL
 
         public DynamicImage DynamicImage
         {
-            get
-            {
-                return _dynamicImage.Value;
-            }
-            set
-            {
-                _dynamicImage.Value = value;
-            }
+            get => _dynamicImage.Value;
+            set => _dynamicImage.Value = value;
         }
 
         public VisualEditorConfig VisualEditor => _visualEditor.Value;
@@ -679,26 +606,14 @@ namespace Quantumart.QP8.BLL
 
         public ContentConstraint Constraint
         {
-            get
-            {
-                return _constraint.Value;
-            }
-            set
-            {
-                _constraint.Value = value;
-            }
+            get => _constraint.Value;
+            set => _constraint.Value = value;
         }
 
         public ContentLink ContentLink
         {
-            get
-            {
-                return _contentLink.Value;
-            }
-            set
-            {
-                _contentLink.Value = value;
-            }
+            get => _contentLink.Value;
+            set => _contentLink.Value = value;
         }
 
         /// <summary>
@@ -706,8 +621,8 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public Field M2MBackwardField
         {
-            get { return _m2MBackwardField.Value; }
-            set { _m2MBackwardField.Value = value; }
+            get => _m2MBackwardField.Value;
+            set => _m2MBackwardField.Value = value;
         }
 
         /// <summary>
@@ -715,8 +630,8 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public Field O2MBackwardField
         {
-            get { return _o2MBackwardField.Value; }
-            set { _o2MBackwardField.Value = value; }
+            get => _o2MBackwardField.Value;
+            set => _o2MBackwardField.Value = value;
         }
 
         /// <summary>
@@ -770,33 +685,21 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("RootElementClass", NameResourceType = typeof(VisualEditorStrings))]
         public string RootElementClass
         {
-            get
-            {
-                return VisualEditFieldParams.RootElementClass;
-            }
-            set
-            {
-                VisualEditFieldParams.RootElementClass = value;
-            }
+            get => VisualEditFieldParams.RootElementClass;
+            set => VisualEditFieldParams.RootElementClass = value;
         }
 
         public string ExternalCss
         {
-            get
-            {
-                return VisualEditFieldParams.ExternalCss;
-            }
-            set
-            {
-                VisualEditFieldParams.ExternalCss = value;
-            }
+            get => VisualEditFieldParams.ExternalCss;
+            set => VisualEditFieldParams.ExternalCss = value;
         }
 
         [LocalizedDisplayName("ExternalCss", NameResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<ExternalCss> ExternalCssItems
         {
-            get { return _externalCssItems.Value; }
-            set { _externalCssItems.Value = value; }
+            get => _externalCssItems.Value;
+            set => _externalCssItems.Value = value;
         }
 
         public string O2MDefaultValueName
@@ -804,8 +707,7 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = string.Empty;
-                int parsedArticleId;
-                if (Relation != null && int.TryParse(O2MDefaultValue, out parsedArticleId))
+                if (Relation != null && int.TryParse(O2MDefaultValue, out int parsedArticleId))
                 {
                     result = ArticleRepository.GetFieldValue(parsedArticleId, Relation.ContentId, Relation.Name);
                 }
@@ -819,8 +721,7 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = string.Empty;
-                int parsedArticleId;
-                if (Relation != null && int.TryParse(M2MDefaultValue, out parsedArticleId))
+                if (Relation != null && int.TryParse(M2MDefaultValue, out int parsedArticleId))
                 {
                     result = ArticleRepository.GetFieldValue(parsedArticleId, Relation.ContentId, Relation.Name);
                 }
@@ -871,9 +772,15 @@ namespace Quantumart.QP8.BLL
                 {
                     return true;
                 }
+
                 if (Name == null && StoredName != null || Name != null && StoredName == null)
                 {
                     return false;
+                }
+
+                if (StoredName == null)
+                {
+                    throw new ArgumentNullException();
                 }
 
                 return !StoredName.Equals(Name, StringComparison.InvariantCultureIgnoreCase); // игнорируем регист букв!
@@ -901,11 +808,13 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         [LocalizedDisplayName("Aggregated", NameResourceType = typeof(FieldStrings))]
         public bool Aggregated { get; set; }
+
         /// <summary>
         /// ID cвязанного классификатора если поле является агреггатором
         /// </summary>
         [LocalizedDisplayName("ClassifierId", NameResourceType = typeof(FieldStrings))]
         public int? ClassifierId { get; set; }
+
         /// <summary>
         /// Являеться ли поле классификатором
         /// </summary>
@@ -939,15 +848,9 @@ namespace Quantumart.QP8.BLL
 
         public Field ParentField
         {
-            get
-            {
-                return _parentField.Value;
-            }
+            get => _parentField.Value;
 
-            set
-            {
-                _parentField.Value = value;
-            }
+            set => _parentField.Value = value;
         }
 
         public FieldTypeInfo TypeInfo { get; private set; }
@@ -962,35 +865,17 @@ namespace Quantumart.QP8.BLL
             return _contentRepository.GetContentLinkById(LinkId.Value);
         }
 
-        private ContentConstraint GetConstraintForInit()
-        {
-            return IsNew ? null : ContentConstraintRepository.GetConstraintByFieldId(Id);
-        }
+        private ContentConstraint GetConstraintForInit() => IsNew ? null : ContentConstraintRepository.GetConstraintByFieldId(Id);
 
-        private DynamicImage GetDynamicImageForInit()
-        {
-            return !IsNew && TypeId == FieldTypeCodes.DynamicImage ? DynamicImage.Load(this) : null;
-        }
+        private DynamicImage GetDynamicImageForInit() => !IsNew && TypeId == FieldTypeCodes.DynamicImage ? DynamicImage.Load(this) : null;
 
-        private Field GetRelationForInit()
-        {
-            return RelationId.HasValue ? _fieldRepository.GetById(RelationId.Value) : null;
-        }
+        private Field GetRelationForInit() => RelationId.HasValue ? _fieldRepository.GetById(RelationId.Value) : null;
 
-        private Field GetBackRelationForInit()
-        {
-            return BackRelationId.HasValue ? _fieldRepository.GetById(BackRelationId.Value) : null;
-        }
+        private Field GetBackRelationForInit() => BackRelationId.HasValue ? _fieldRepository.GetById(BackRelationId.Value) : null;
 
-        private bool GetIsUniqueForInit()
-        {
-            return UniqueFieldTypes.Contains(ExactType) && Constraint != null;
-        }
+        private bool GetIsUniqueForInit() => UniqueFieldTypes.Contains(ExactType) && Constraint != null;
 
-        private bool GetIsUniqueForSet(bool value)
-        {
-            return value && UniqueFieldTypes.Contains(ExactType);
-        }
+        private bool GetIsUniqueForSet(bool value) => value && UniqueFieldTypes.Contains(ExactType);
 
         private int? GetRelateToForInit()
         {
@@ -1070,10 +955,7 @@ namespace Quantumart.QP8.BLL
             return null;
         }
 
-        private Field GetO2MBackwardForInit()
-        {
-            return _fieldRepository.GetByBackRelationId(Id);
-        }
+        private Field GetO2MBackwardForInit() => _fieldRepository.GetByBackRelationId(Id);
 
         private FieldExactTypes GetExactTypeForInit()
         {
@@ -1122,25 +1004,13 @@ namespace Quantumart.QP8.BLL
             return value;
         }
 
-        private Field GetParentFieldForInit()
-        {
-            return ParentFieldId.HasValue ? _fieldRepository.GetById(ParentFieldId.Value) : null;
-        }
+        private Field GetParentFieldForInit() => ParentFieldId.HasValue ? _fieldRepository.GetById(ParentFieldId.Value) : null;
 
-        private IEnumerable<Field> GetChildFieldsForInit()
-        {
-            return _fieldRepository.GetChildList(Id);
-        }
+        private IEnumerable<Field> GetChildFieldsForInit() => _fieldRepository.GetChildList(Id);
 
-        private bool GetHasAnyAggregatorsForInit()
-        {
-            return _fieldRepository.HasAnyAggregators(Id);
-        }
+        private bool GetHasAnyAggregatorsForInit() => _fieldRepository.HasAnyAggregators(Id);
 
-        private IEnumerable<ExternalCss> GetExternalCssItemsForInit()
-        {
-            return ExternalCssHelper.GenerateExternalCss(ExternalCss);
-        }
+        private IEnumerable<ExternalCss> GetExternalCssItemsForInit() => ExternalCssHelper.GenerateExternalCss(ExternalCss);
 
         private PathInfo GetPathInfoForInit()
         {
@@ -1153,15 +1023,9 @@ namespace Quantumart.QP8.BLL
             return pathInfo;
         }
 
-        private VisualEditFieldParams GetVisualEditFieldParamsForInit()
-        {
-            return IsNew ? new VisualEditFieldParams(Content.Site) : _fieldRepository.GetVisualEditFieldParams(Id);
-        }
+        private VisualEditFieldParams GetVisualEditFieldParamsForInit() => IsNew ? new VisualEditFieldParams(Content.Site) : _fieldRepository.GetVisualEditFieldParams(Id);
 
-        private VisualEditorConfig GetVisualEditorConfigForInit()
-        {
-            return new VisualEditorConfig(this);
-        }
+        private VisualEditorConfig GetVisualEditorConfigForInit() => new VisualEditorConfig(this);
 
         public Field Init()
         {
@@ -1531,6 +1395,7 @@ namespace Quantumart.QP8.BLL
                     if (RelateToContentId != null)
                     {
                         var relContent = _contentRepository.GetById(RelateToContentId.Value);
+
                         // возможно только если Related контент не виртуальный
                         if (relContent.VirtualType == 0)
                         {
@@ -1550,7 +1415,6 @@ namespace Quantumart.QP8.BLL
                         }
                     }
                 }
-
             }
 
             if (ExactType != FieldExactTypes.O2MRelation || ContentId != RelateToContentId)
@@ -1887,6 +1751,11 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorFor(f => Aggregated, FieldStrings.CannotResetAggregateBecauseOfExisting);
                 }
 
+                if (dbFieldVersion == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
                 if (dbFieldVersion.ClassifierId.HasValue && _fieldRepository.GetById(dbFieldVersion.ClassifierId.Value).ClassifierDefaultValue == ContentId)
                 {
                     // Если ClassifierDefaultValue классификатора равно контенту текущего поля, то
@@ -1930,6 +1799,7 @@ namespace Quantumart.QP8.BLL
                         errors.ErrorFor(f => f.ExactType, FieldStrings.CannotChangeClassifierType);
                     }
                 }
+
                 // String -> File || Image: контент в БД не более 255 символов
                 if (dbFieldVersion.ExactType == FieldExactTypes.String && (ExactType == FieldExactTypes.File || ExactType == FieldExactTypes.Image))
                 {
@@ -1938,6 +1808,7 @@ namespace Quantumart.QP8.BLL
                         errors.ErrorFor(f => f.ExactType, string.Format(FieldStrings.FieldValueLengthExceeded, 255));
                     }
                 }
+
                 // String -> StringEnum
                 else if (dbFieldVersion.ExactType == FieldExactTypes.String && ExactType == FieldExactTypes.StringEnum)
                 {
@@ -1946,6 +1817,7 @@ namespace Quantumart.QP8.BLL
                         errors.ErrorFor(f => f.ExactType, FieldStrings.NonEnumFieldValueExist);
                     }
                 }
+
                 // Textbox || VisualEdit -> String: контент в БД не более 3500 символов
                 else if (dbFieldVersion.IsBlob && ExactType == FieldExactTypes.String)
                 {
@@ -2047,25 +1919,25 @@ namespace Quantumart.QP8.BLL
                         }
                         break;
                     case FieldExactTypes.String:
+                    {
+                        if (!IsNew)
                         {
-                            if (!IsNew)
+                            var dbFieldVersion = _fieldRepository.GetById(Id);
+                            if (dbFieldVersion.ExactType == FieldExactTypes.String)
                             {
-                                var dbFieldVersion = _fieldRepository.GetById(Id);
-                                if (dbFieldVersion.ExactType == FieldExactTypes.String)
+                                var maxFieldLength = _fieldRepository.GetTextFieldMaxLength(dbFieldVersion);
+                                if (maxFieldLength > StringSize)
                                 {
-                                    var maxFieldLength = _fieldRepository.GetTextFieldMaxLength(dbFieldVersion);
-                                    if (maxFieldLength > StringSize)
-                                    {
-                                        errors.ErrorFor(f => f.StringSize, string.Format(FieldStrings.FieldValueLengthExceeded, maxFieldLength));
-                                    }
+                                    errors.ErrorFor(f => f.StringSize, string.Format(FieldStrings.FieldValueLengthExceeded, maxFieldLength));
                                 }
                             }
-                            if (!StringSize.IsInRange(1, 3500))
-                            {
-                                errors.ErrorFor(f => f.StringSize, FieldStrings.StringLengthNotInRange);
-                            }
-                            break;
                         }
+                        if (!StringSize.IsInRange(1, 3500))
+                        {
+                            errors.ErrorFor(f => f.StringSize, FieldStrings.StringLengthNotInRange);
+                        }
+                        break;
+                    }
                 }
             }
         }
@@ -2162,6 +2034,7 @@ namespace Quantumart.QP8.BLL
                 if (!string.IsNullOrWhiteSpace(NewM2MBackwardFieldName))
                 {
                     var relContent = _contentRepository.GetById(RelateToContentId.Value);
+
                     // BackwardField возможно создать только если Related контент не виртуальный
                     if (relContent.VirtualType != 0)
                     {
@@ -2210,6 +2083,7 @@ namespace Quantumart.QP8.BLL
                 if (!string.IsNullOrWhiteSpace(NewO2MBackwardFieldName))
                 {
                     var relContent = _contentRepository.GetById(RelateToContentId.Value);
+
                     // BackwardField возможно создать только если Related контент не виртуальный
                     if (relContent.VirtualType != 0)
                     {
@@ -2234,8 +2108,7 @@ namespace Quantumart.QP8.BLL
                             foreach (var error in ex.Errors)
                             {
                                 var isLinq = false;
-                                var expr = error.Property?.Body as MemberExpression;
-                                if (expr != null && expr.Member.Name == "LinqPropertyName")
+                                if (error.Property?.Body is MemberExpression expr && expr.Member.Name == "LinqPropertyName")
                                 {
                                     errors.ErrorFor(f => f.LinqBackPropertyName, error.Message);
                                     isLinq = true;
@@ -2258,6 +2131,7 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorFor(f => f.BackRelationId, FieldStrings.BackRelationIdNotSelected);
                     return;
                 }
+
                 if (Content.AssignedAsyncWorkflow && !BackRelation.Content.AssignedAsyncWorkflow)
                 {
                     errors.ErrorFor(f => f.BackRelationId, FieldStrings.BackRelationContentNotAssignedAsyncWorkflow);
@@ -2275,15 +2149,16 @@ namespace Quantumart.QP8.BLL
                     var virtualChildrenFieldsExist = VirtualFieldRepository.JoinVirtualChildrenFieldsExist(this);
                     if (virtualChildrenFieldsExist &&
                         (!dbVersion.Name.Equals(Name, StringComparison.InvariantCultureIgnoreCase) ||
-                         dbVersion.ExactType != ExactType ||
-                         dbVersion.RelateToContentId != RelateToContentId)
-                        )
+                            dbVersion.ExactType != ExactType ||
+                            dbVersion.RelateToContentId != RelateToContentId)
+                    )
                     {
                         errors.ErrorForModel(FieldStrings.VirtualChildrenFieldsExist);
                     }
                 }
             }
         }
+
         public void ValidateBeforeDie(IList<string> violationMessages, bool forceChildDelete)
         {
             if (violationMessages == null)
@@ -2396,10 +2271,11 @@ namespace Quantumart.QP8.BLL
                 _fieldRepository.Delete(Id);
 
                 var helper = new VirtualContentHelper();
+
                 // Перестроить подчиненные контенты
                 if (removeVirtualFields)
                 {
-                    helper.RebuildSubContentViews(rebuildedSubContentViews);
+                    helper.RebuildSubContentViews(rebuildedSubContentViews.ToList());
                 }
 
                 // Удалить записи OrderField
@@ -2533,11 +2409,11 @@ namespace Quantumart.QP8.BLL
                     }
                 }
             }
+
             ResultChildFieldIds = newChildFieldIds.ToArray();
             ResultChildLinkIds = newChildLinkIds.ToArray();
             NewVirtualFieldIds = newVirtualFieldIds.ToArray();
             ForceVirtualFieldIds = virtualIds.ToArray();
-
         }
 
         private void RemoveChildren()
@@ -2640,7 +2516,6 @@ namespace Quantumart.QP8.BLL
                 }
 
                 result.Constraint = cc;
-
             }
 
             return result;
@@ -2658,7 +2533,7 @@ namespace Quantumart.QP8.BLL
                 var result = Persist(explicitOrder);
                 if (RebuildVirtualContents)
                 {
-                    var helper = new VirtualContentHelper(result.ForceVirtualFieldIds);
+                    var helper = new VirtualContentHelper(result.ForceVirtualFieldIds.ToList());
                     helper.UpdateVirtualFields(result);
                     result.NewVirtualFieldIds = result.NewVirtualFieldIds?.Concat(helper.NewFieldIds).ToArray() ?? helper.NewFieldIds;
                     result.ForceVirtualFieldIds = helper.ForceNewFieldIds;
@@ -2736,8 +2611,8 @@ namespace Quantumart.QP8.BLL
         {
             if (ActiveVeCommandIds != null)
             {
-                var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToArray();//все возможные команды
-                var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, ActiveVeCommandIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
+                var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToArray(); //все возможные команды
+                var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, ActiveVeCommandIds).Select(c => c.Id).ToArray(); //opposite to activeVecommands
                 var oldSiteCommandIdsOn = new HashSet<int>(VisualEditorRepository.GetResultCommands(Id).Where(n => n.On).Select(n => n.Id));
                 var siteCommands = VisualEditorRepository.GetSiteCommands(Content.SiteId);
 
@@ -2766,9 +2641,9 @@ namespace Quantumart.QP8.BLL
         {
             if (ActiveVeStyleIds != null)
             {
-                var defaultStyles = VisualEditorRepository.GetAllStyles().ToArray();//все возможные стили
-                var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, ActiveVeStyleIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
-                var oldFieldStyleIdsOn = new HashSet<int>(VisualEditorRepository.GetResultStyles(Id).Where(n => n.On).Select(n => n.Id));// с этим нужно сравнивать на предмет измененеий
+                var defaultStyles = VisualEditorRepository.GetAllStyles().ToArray(); //все возможные стили
+                var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, ActiveVeStyleIds).Select(c => c.Id).ToArray(); //opposite to activeVecommands
+                var oldFieldStyleIdsOn = new HashSet<int>(VisualEditorRepository.GetResultStyles(Id).Where(n => n.On).Select(n => n.Id)); // с этим нужно сравнивать на предмет измененеий
                 var siteStyles = VisualEditorRepository.GetSiteStyles(Content.SiteId);
 
                 var defaultStylesDictionary = defaultStyles.ToDictionary(c => c.Id, c => c.On);
@@ -2845,15 +2720,9 @@ namespace Quantumart.QP8.BLL
             return _fieldRepository.GetById(newId);
         }
 
-        public List<Field> GetDynamicImages()
-        {
-            return _fieldRepository.GetDynamicImageFields(ContentId, Id);
-        }
+        public List<Field> GetDynamicImages() => _fieldRepository.GetDynamicImageFields(ContentId, Id);
 
-        public static IEnumerable<MaskTemplate> GetAllMaskTemplates()
-        {
-            return MaskTemplateRepository.GetAllMaskTemplates();
-        }
+        public static IEnumerable<MaskTemplate> GetAllMaskTemplates() => MaskTemplateRepository.GetAllMaskTemplates();
 
         /// <summary>
         /// Обновляет порядок полей контента
@@ -2875,6 +2744,7 @@ namespace Quantumart.QP8.BLL
                 else
                 {
                     var currentOrder = _fieldRepository.GetById(Id).Order;
+
                     // Если позиция поля поменялась - то выполняем reorder
                     if (currentOrder != Order)
                     {
@@ -2900,8 +2770,7 @@ namespace Quantumart.QP8.BLL
                     {
                         index++;
                         LinqBackPropertyName = MutateHelper.MutateNetName(name, index);
-                    }
-                    while (_fieldRepository.LinqBackPropertyNameExists(this));
+                    } while (_fieldRepository.LinqBackPropertyNameExists(this));
                 }
             }
         }
@@ -2916,8 +2785,7 @@ namespace Quantumart.QP8.BLL
                 {
                     index++;
                     LinqPropertyName = MutateHelper.MutateNetName(name, index);
-                }
-                while (_fieldRepository.LinqPropertyNameExists(this));
+                } while (_fieldRepository.LinqPropertyNameExists(this));
             }
         }
 
@@ -2929,9 +2797,7 @@ namespace Quantumart.QP8.BLL
             {
                 index++;
                 Name = MutateHelper.MutateTitle(name, index);
-            }
-
-            while (_fieldRepository.NameExists(this));
+            } while (_fieldRepository.NameExists(this));
         }
 
         internal void MutateNames()
@@ -3013,22 +2879,13 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public IEnumerable<Content> GetAggregatedContents()
-        {
-            return IsClassifier ? _fieldRepository.GetAggregatableContentsForClassifier(this) : null;
-        }
+        public IEnumerable<Content> GetAggregatedContents() => IsClassifier ? _fieldRepository.GetAggregatableContentsForClassifier(this) : null;
 
         [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
         public int[] DefaultArticleIds
         {
-            get
-            {
-                return _defaultArticleIds.Value;
-            }
-            set
-            {
-                _defaultArticleIds.Value = value;
-            }
+            get => _defaultArticleIds.Value;
+            set => _defaultArticleIds.Value = value;
         }
 
         public IEnumerable<ListItem> DefaultArticleListItems => !RelateToContentId.HasValue
@@ -3058,9 +2915,6 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        public override string ToString()
-        {
-            return $"{Id,6}: {Name}";
-        }
+        public override string ToString() => $"{Id,6}: {Name}";
     }
 }

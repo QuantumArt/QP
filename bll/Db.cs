@@ -19,7 +19,10 @@ namespace Quantumart.QP8.BLL
         public bool UseAdSyncService { get; set; }
 
         [LocalizedDisplayName("UseDPC", NameResourceType = typeof(DBStrings))]
-        public bool UseDPC { get; set; }
+        public bool UseDpc { get; set; }
+
+        [LocalizedDisplayName("UseCDC", NameResourceType = typeof(DBStrings))]
+        public bool UseCdc { get; set; }
 
         [LocalizedDisplayName("AutoLoadHome", NameResourceType = typeof(DBStrings))]
         public bool AutoOpenHome { get; set; }

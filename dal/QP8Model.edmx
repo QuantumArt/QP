@@ -151,6 +151,17 @@
           <Property Name="ENTITY_TITLE" Type="nvarchar" MaxLength="255" />
           <Property Name="API" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="CdcLastExecutedLsn">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProviderName" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="ProviderUrl" Type="nvarchar" MaxLength="1024" Nullable="false" />
+          <Property Name="TransactionLsn" Type="varchar" MaxLength="22" />
+          <Property Name="TransactionDate" Type="datetime" />
+          <Property Name="LastExecutedLsn" Type="varchar" MaxLength="22" Nullable="false" />
+        </EntityType>
         <EntityType Name="CHARSET">
           <Key>
             <PropertyRef Name="CHARSET" />
@@ -245,6 +256,7 @@
           <Property Name="PARENT_CONTENT_ID" Type="numeric" Precision="18" Scale="0" />
           <Property Name="USE_FOR_CONTEXT" Type="bit" Nullable="false" />
           <Property Name="FORM_SCRIPT" Type="ntext" />
+          <Property Name="FOR_REPLICATION" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="CONTENT_ACCESS">
           <Key>
@@ -369,6 +381,7 @@
           <Property Name="BLOB_DATA" Type="ntext" />
           <Property Name="CONTENT_DATA_ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="not_for_replication" Type="bit" Nullable="false" />
+          <Property Name="SPLITTED" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="content_FOLDER">
           <Key>
@@ -596,6 +609,7 @@
           <Property Name="USE_AD_SYNC_SERVICE" Type="bit" Nullable="false" />
           <Property Name="AUTO_OPEN_HOME" Type="bit" Nullable="false" />
           <Property Name="USE_DPC" Type="bit" Nullable="false" />
+          <Property Name="USE_CDC" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="DEVELOPER">
           <Key>
@@ -723,6 +737,8 @@
           <Property Name="link_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="l_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="r_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="IS_REV" Type="bit" Nullable="false" />
+          <Property Name="IS_SELF" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="item_to_item_version">
           <Key>
@@ -1190,6 +1206,21 @@
           </Key>
           <Property Name="STYLE_TAG_ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TAG_NAME" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SYSTEM_NOTIFICATION_QUEUE">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CdcLastExecutedLsnId" Type="int" Nullable="false" />
+          <Property Name="TRANSACTION_LSN" Type="varchar" MaxLength="22" Nullable="false" />
+          <Property Name="TRANSACTION_DATE" Type="datetime" Nullable="false" />
+          <Property Name="URL" Type="nvarchar" MaxLength="1024" Nullable="false" />
+          <Property Name="TRIES" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="JSON" Type="nvarchar(max)" />
+          <Property Name="SENT" Type="bit" Nullable="false" />
+          <Property Name="CREATED" Type="datetime" Nullable="false" />
+          <Property Name="MODIFIED" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="SYSTEM_STATUS_TYPE">
           <Key>
@@ -3737,6 +3768,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn">
+          <End Role="CdcLastExecutedLsn" Type="Self.CdcLastExecutedLsn" Multiplicity="1" />
+          <End Role="SYSTEM_NOTIFICATION_QUEUE" Type="Self.SYSTEM_NOTIFICATION_QUEUE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CdcLastExecutedLsn">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SYSTEM_NOTIFICATION_QUEUE">
+              <PropertyRef Name="CdcLastExecutedLsnId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TEMPLATE_OBJECT_OBJECT_FORMAT">
           <End Role="OBJECT_FORMAT" Type="Self.OBJECT_FORMAT" Multiplicity="0..1" />
           <End Role="OBJECT" Type="Self.OBJECT" Multiplicity="*" />
@@ -4164,6 +4207,7 @@
           <EntitySet Name="ATTRIBUTE_TYPE" EntityType="Self.ATTRIBUTE_TYPE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BACKEND_ACTION" EntityType="Self.BACKEND_ACTION" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BACKEND_ACTION_LOG" EntityType="Self.BACKEND_ACTION_LOG" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CdcLastExecutedLsn" EntityType="Self.CdcLastExecutedLsn" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CHARSET" EntityType="Self.CHARSET" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CODE_SNIPPET" EntityType="Self.CODE_SNIPPET" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CONTAINER" EntityType="Self.CONTAINER" Schema="dbo" store:Type="Tables" />
@@ -4226,6 +4270,7 @@
           <EntitySet Name="STYLE" EntityType="Self.STYLE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="STYLE_ATTRIBUTE" EntityType="Self.STYLE_ATTRIBUTE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="STYLE_TAG" EntityType="Self.STYLE_TAG" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SYSTEM_NOTIFICATION_QUEUE" EntityType="Self.SYSTEM_NOTIFICATION_QUEUE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SYSTEM_STATUS_TYPE" EntityType="Self.SYSTEM_STATUS_TYPE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="today_panels" EntityType="Self.today_panels" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TRANSLATIONS" EntityType="Self.TRANSLATIONS" Schema="dbo" store:Type="Tables" />
@@ -4964,6 +5009,10 @@
           <AssociationSet Name="FK_STYLE_SITE" Association="Self.FK_STYLE_SITE">
             <End Role="SITE" EntitySet="SITE" />
             <End Role="STYLE" EntitySet="STYLE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" Association="Self.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn">
+            <End Role="CdcLastExecutedLsn" EntitySet="CdcLastExecutedLsn" />
+            <End Role="SYSTEM_NOTIFICATION_QUEUE" EntitySet="SYSTEM_NOTIFICATION_QUEUE" />
           </AssociationSet>
           <AssociationSet Name="FK_TEMPLATE_OBJECT_OBJECT_FORMAT" Association="Self.FK_TEMPLATE_OBJECT_OBJECT_FORMAT">
             <End Role="OBJECT_FORMAT" EntitySet="OBJECT_FORMAT" />
@@ -6039,6 +6088,12 @@
             <End Role="XmlDbUpdateLogEntity" EntitySet="XML_DB_UPDATE" />
             <End Role="XmlDbUpdateActionsLogEntity" EntitySet="XML_DB_UPDATE_ACTIONS" />
           </AssociationSet>
+          <EntitySet Name="CdcLastExecutedLsn" EntityType="QP8Model.CdcLastExecutedLsn" />
+          <EntitySet Name="SystemNotificationSet" EntityType="QP8Model.SystemNotificationDAL" />
+          <AssociationSet Name="FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" Association="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn">
+            <End Role="CdcLastExecutedLsn" EntitySet="CdcLastExecutedLsn" />
+            <End Role="SYSTEM_NOTIFICATION_QUEUE" EntitySet="SystemNotificationSet" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="ActionTypeDAL">
           <Key>
@@ -6256,6 +6311,7 @@
           <NavigationProperty Name="ChildContents" Relationship="QP8Model.FK_CONTENT_PARENT_CONTENT_ID1" FromRole="ContentDAL" ToRole="ContentDAL1" />
 					<Property Type="Boolean" Name="UseForContext" Nullable="false" />
           <Property Type="String" Name="FormScript" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ForReplication" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="ContentPermissionDAL">
           <Key>
@@ -6407,6 +6463,7 @@
           <Property Name="NotForReplication" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Field" Relationship="QP8Model.FK_CONTENT_DATA_CONTENT_ATTRIBUTE" FromRole="CONTENT_DATA" ToRole="CONTENT_ATTRIBUTE" />
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_CONTENT_DATA_CONTENT_ITEM" FromRole="CONTENT_DATA" ToRole="CONTENT_ITEM" />
+          <Property Name="SPLITTED" Type="Boolean" Nullable="false" />
 				</EntityType>
         <EntityType Name="ContentFolderDAL">
           <Key>
@@ -6745,6 +6802,8 @@
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_ITEM_TO_ITEM_L_ITEM_ID" FromRole="item_to_item" ToRole="CONTENT_ITEM" />
           <NavigationProperty Name="Article1" Relationship="QP8Model.FK_ITEM_TO_ITEM_R_ITEM_ID" FromRole="item_to_item" ToRole="CONTENT_ITEM" />
           <NavigationProperty Name="ContentToContent" Relationship="QP8Model.FK_ITEM_TO_ITEM_LINK_ID" FromRole="item_to_item" ToRole="content_to_content" />
+          <Property Name="IS_REV" Type="Boolean" Nullable="false" />
+          <Property Name="IS_SELF" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="ItemToItemVersionDAL">
           <Key>
@@ -10226,8 +10285,9 @@
           <Property Type="Decimal" Name="LastModifiedBy" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="LastModifiedByUser" Relationship="QP8Model.FK_DB_LAST_MODIFIED_BY" FromRole="DB" ToRole="UserDAL" />
           <Property Type="Boolean" Name="UseADSyncService" Nullable="false" />
-          <Property Type="Boolean" Name="UseDPC" Nullable="false" />          
+          <Property Type="Boolean" Name="UseDpc" Nullable="false" />
           <Property Type="Boolean" Name="AutoOpenHome" Nullable="false" />
+          <Property Name="UseCdc" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_DB_LAST_MODIFIED_BY">
           <End Type="QP8Model.UserDAL" Role="UserDAL" Multiplicity="1" />
@@ -10405,6 +10465,46 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="CdcLastExecutedLsn">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProviderName" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderUrl" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionLsn" Type="String" MaxLength="22" FixedLength="false" Unicode="false" />
+          <Property Name="TransactionDate" Type="DateTime" Precision="3" />
+          <Property Name="LastExecutedLsn" Type="String" Nullable="false" MaxLength="22" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="SYSTEM_NOTIFICATION_QUEUE" Relationship="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" FromRole="CdcLastExecutedLsn" ToRole="SYSTEM_NOTIFICATION_QUEUE" />
+        </EntityType>
+        <EntityType Name="SystemNotificationDAL">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CdcLastExecutedLsnId" Type="Int32" Nullable="false" />
+          <Property Name="TRANSACTION_LSN" Type="String" Nullable="false" MaxLength="22" FixedLength="false" Unicode="false" />
+          <Property Name="TRANSACTION_DATE" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="URL" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="TRIES" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="JSON" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Sent" Type="Boolean" Nullable="false" />
+          <Property Name="CREATED" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MODIFIED" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="CdcLastExecutedLsn" Relationship="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" FromRole="SYSTEM_NOTIFICATION_QUEUE" ToRole="CdcLastExecutedLsn" />
+        </EntityType>
+        <Association Name="FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn">
+          <End Type="QP8Model.CdcLastExecutedLsn" Role="CdcLastExecutedLsn" Multiplicity="1" />
+          <End Type="QP8Model.SystemNotificationDAL" Role="SYSTEM_NOTIFICATION_QUEUE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CdcLastExecutedLsn">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SYSTEM_NOTIFICATION_QUEUE">
+              <PropertyRef Name="CdcLastExecutedLsnId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
 			</Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -10550,7 +10650,8 @@
           <EntitySetMapping Name="ContentSet">
             <EntityTypeMapping TypeName="QP8Model.ContentDAL">
               <MappingFragment StoreEntitySet="CONTENT">
-								<ScalarProperty Name="FormScript" ColumnName="FORM_SCRIPT" />
+								<ScalarProperty Name="ForReplication" ColumnName="FOR_REPLICATION" />
+                <ScalarProperty Name="FormScript" ColumnName="FORM_SCRIPT" />
                 <ScalarProperty Name="UseForContext" ColumnName="USE_FOR_CONTEXT" />
 								<ScalarProperty Name="ParentContentId" ColumnName="PARENT_CONTENT_ID" />
 								<ScalarProperty Name="DisableChangingActions" ColumnName="DISABLE_CHANGING_ACTIONS" />
@@ -10693,7 +10794,8 @@
           <EntitySetMapping Name="ContentDataSet">
             <EntityTypeMapping TypeName="QP8Model.ContentDataDAL">
               <MappingFragment StoreEntitySet="CONTENT_DATA">
-								<ScalarProperty Name="FieldId" ColumnName="ATTRIBUTE_ID" />
+								<ScalarProperty Name="SPLITTED" ColumnName="SPLITTED" />
+                <ScalarProperty Name="FieldId" ColumnName="ATTRIBUTE_ID" />
                 <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
                 <ScalarProperty Name="Data" ColumnName="DATA" />
                 <ScalarProperty Name="Created" ColumnName="CREATED" />
@@ -10977,6 +11079,8 @@
           <EntitySetMapping Name="ItemToItemSet">
             <EntityTypeMapping TypeName="QP8Model.ItemToItemDAL">
               <MappingFragment StoreEntitySet="item_to_item">
+                <ScalarProperty Name="IS_SELF" ColumnName="IS_SELF" />
+                <ScalarProperty Name="IS_REV" ColumnName="IS_REV" />
                 <ScalarProperty Name="LinkId" ColumnName="link_id" />
                 <ScalarProperty Name="LItemId" ColumnName="l_item_id" />
                 <ScalarProperty Name="RItemId" ColumnName="r_item_id" />
@@ -11879,7 +11983,8 @@
           <EntitySetMapping Name="DbSet">
             <EntityTypeMapping TypeName="QP8Model.DbDAL">
               <MappingFragment StoreEntitySet="DB">
-                <ScalarProperty Name="UseDPC" ColumnName="USE_DPC" />
+                <ScalarProperty Name="UseCdc" ColumnName="USE_CDC" />
+                <ScalarProperty Name="UseDpc" ColumnName="USE_DPC" />
                 <ScalarProperty Name="AutoOpenHome" ColumnName="AUTO_OPEN_HOME" />
                 <ScalarProperty Name="UseADSyncService" ColumnName="USE_AD_SYNC_SERVICE" />
                 <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
@@ -11953,6 +12058,34 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="CdcLastExecutedLsn">
+            <EntityTypeMapping TypeName="QP8Model.CdcLastExecutedLsn">
+              <MappingFragment StoreEntitySet="CdcLastExecutedLsn">
+                <ScalarProperty Name="LastExecutedLsn" ColumnName="LastExecutedLsn" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="TransactionLsn" ColumnName="TransactionLsn" />
+                <ScalarProperty Name="ProviderUrl" ColumnName="ProviderUrl" />
+                <ScalarProperty Name="ProviderName" ColumnName="ProviderName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SystemNotificationSet">
+            <EntityTypeMapping TypeName="QP8Model.SystemNotificationDAL">
+              <MappingFragment StoreEntitySet="SYSTEM_NOTIFICATION_QUEUE">
+                <ScalarProperty Name="MODIFIED" ColumnName="MODIFIED" />
+                <ScalarProperty Name="CREATED" ColumnName="CREATED" />
+                <ScalarProperty Name="Sent" ColumnName="SENT" />
+                <ScalarProperty Name="JSON" ColumnName="JSON" />
+                <ScalarProperty Name="TRIES" ColumnName="TRIES" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+                <ScalarProperty Name="TRANSACTION_DATE" ColumnName="TRANSACTION_DATE" />
+                <ScalarProperty Name="TRANSACTION_LSN" ColumnName="TRANSACTION_LSN" />
+                <ScalarProperty Name="CdcLastExecutedLsnId" ColumnName="CdcLastExecutedLsnId" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -11975,7 +12108,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="66">
+      <Diagram Name="QP8Model" ZoomLevel="59">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -12081,7 +12214,7 @@
           <ConnectorPoint PointX="8.88076923076923" PointY="12.066793619791666" />
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.FieldDAL" Width="4" PointX="11.75" PointY="10" Height="13.133769531250003" />
-        <EntityTypeShape EntityType="QP8Model.ContentDAL" Width="1.5" PointX="7.5" PointY="13.625" Height="5.2079475911458353" />
+        <EntityTypeShape EntityType="QP8Model.ContentDAL" Width="1.5" PointX="7.5" PointY="13.625" Height="5.2079475911458353" IsExpanded="true" />
         <AssociationConnector Association="QP8Model.ContentDALSiteDAL">
           <ConnectorPoint PointX="7.5" PointY="16.228973795572919" />
           <ConnectorPoint PointX="7.0625" PointY="16.228973795572919" />
@@ -15474,7 +15607,10 @@
         <EntityTypeShape EntityType="QP8Model.XmlDbUpdateLogEntity" Width="1.5" PointX="15.25" PointY="1" />
         <EntityTypeShape EntityType="QP8Model.XmlDbUpdateActionsLogEntity" Width="3" PointX="12.125" PointY="1" />
         <AssociationConnector Association="QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1" />
-		</Diagram>
+        <EntityTypeShape EntityType="QP8Model.CdcLastExecutedLsn" Width="1.5" PointX="12.375" PointY="5.625" />
+        <EntityTypeShape EntityType="QP8Model.SystemNotificationDAL" Width="1.5" PointX="14.625" PointY="5.25" />
+        <AssociationConnector Association="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" />
+        </Diagram>
     </Diagrams>
   </Designer>
 </edmx:Edmx>

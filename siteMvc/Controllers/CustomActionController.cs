@@ -1,15 +1,15 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security;
 using System.Text;
 using System.Web.Mvc;
+using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Web.ActionResults;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -71,10 +71,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult ExecutePreAction(string tabId, int parentId, int[] ids, string actionCode)
-        {
-            return Json(MessageResult.Confirm($"Action: {actionCode}, ParentId: {parentId}, IDs: {string.Join(";", ids)}"));
-        }
+        public ActionResult ExecutePreAction(string tabId, int parentId, int[] ids, string actionCode) => Json(MessageResult.Confirm($"Action: {actionCode}, ParentId: {parentId}, IDs: {string.Join(";", ids)}"));
 
         [HttpPost]
         public ActionResult Proxy(string url, string actionCode, int level, int[] ids, int? parentEntityId)
@@ -222,9 +219,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveCustomAction)]
         [BackendActionContext(ActionCode.RemoveCustomAction)]
         [BackendActionLog]
-        public ActionResult Remove(int id)
-        {
-            return JsonMessageResult(_service.Remove(id));
-        }
+        public ActionResult Remove(int id) => JsonMessageResult(_service.Remove(id));
     }
 }

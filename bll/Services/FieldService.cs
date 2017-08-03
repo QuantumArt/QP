@@ -29,10 +29,7 @@ namespace Quantumart.QP8.BLL.Services
             return field;
         }
 
-        public static Field VirtualRead(int id)
-        {
-            return Read(id);
-        }
+        public static Field VirtualRead(int id) => Read(id);
 
         public static Field Read(int id)
         {
@@ -50,10 +47,7 @@ namespace Quantumart.QP8.BLL.Services
             return field;
         }
 
-        public static Field ReadForUpdate(int id)
-        {
-            return Read(id);
-        }
+        public static Field ReadForUpdate(int id) => Read(id);
 
         public static Field Save(Field item)
         {
@@ -85,10 +79,7 @@ namespace Quantumart.QP8.BLL.Services
             return SaveOrUpdate(item);
         }
 
-        private static Field SaveOrUpdate(Field item)
-        {
-            return item.PersistWithBackward(true);
-        }
+        private static Field SaveOrUpdate(Field item) => item.PersistWithBackward(true);
 
         public static MessageResult Remove(int id)
         {
@@ -151,25 +142,13 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public static ListResult<FieldListItem> List(int contentId, ListCommand cmd)
-        {
-            return FieldRepository.GetList(cmd, contentId);
-        }
+        public static ListResult<FieldListItem> List(int contentId, ListCommand cmd) => FieldRepository.GetList(cmd, contentId);
 
-        public static ListResult<FieldListItem> ListForExport(ListCommand cmd, int contentId, int[] ids)
-        {
-            return FieldRepository.GetListForSelect(cmd, contentId, ids, FieldSelectMode.ForExport);
-        }
+        public static ListResult<FieldListItem> ListForExport(ListCommand cmd, int contentId, int[] ids) => FieldRepository.GetListForSelect(cmd, contentId, ids, FieldSelectMode.ForExport);
 
-        public static ListResult<FieldListItem> ListForExportExpanded(ListCommand cmd, int contentId, int[] ids)
-        {
-            return FieldRepository.GetListForSelect(cmd, contentId, ids, FieldSelectMode.ForExportExpanded);
-        }
+        public static ListResult<FieldListItem> ListForExportExpanded(ListCommand cmd, int contentId, int[] ids) => FieldRepository.GetListForSelect(cmd, contentId, ids, FieldSelectMode.ForExportExpanded);
 
-        public static IEnumerable<Field> GetList(int[] ids)
-        {
-            return FieldRepository.GetList(ids);
-        }
+        public static IEnumerable<Field> GetList(int[] ids) => FieldRepository.GetList(ids);
 
         /// <summary>
         /// Получение информации о библиотеке поля для просмотра/скачки файла
@@ -216,44 +195,23 @@ namespace Quantumart.QP8.BLL.Services
         /// <summary>
         /// Получить подмножество типов поля, конвертация в которые, разрешена из текущего типа поля
         /// </summary>
-        public static IEnumerable<FieldExactTypes> GetAcceptableExactFieldTypes(FieldExactTypes fieldType)
-        {
-            return fieldType == FieldExactTypes.Undefined
-                ? Enum.GetValues(typeof(FieldExactTypes)).Cast<FieldExactTypes>()
-                : FieldTypeConversionRules[fieldType];
-        }
+        public static IEnumerable<FieldExactTypes> GetAcceptableExactFieldTypes(FieldExactTypes fieldType) => fieldType == FieldExactTypes.Undefined
+            ? Enum.GetValues(typeof(FieldExactTypes)).Cast<FieldExactTypes>()
+            : FieldTypeConversionRules[fieldType];
 
-        public static IEnumerable<FieldType> GetAllFieldTypes()
-        {
-            return FieldRepository.GetAllFieldTypes();
-        }
+        public static IEnumerable<FieldType> GetAllFieldTypes() => FieldRepository.GetAllFieldTypes();
 
-        public static IEnumerable<ListItem> GetBaseFieldsForM2O(int contentId, int fieldId)
-        {
-            return FieldRepository.GetBaseFieldsForM2O(contentId, fieldId);
-        }
+        public static IEnumerable<ListItem> GetBaseFieldsForM2O(int contentId, int fieldId) => FieldRepository.GetBaseFieldsForM2O(contentId, fieldId);
 
-        public static IEnumerable<VisualEditorCommand> GetDefaultVisualEditorCommands()
-        {
-            return VisualEditorRepository.GetDefaultCommands();
-        }
+        public static IEnumerable<VisualEditorCommand> GetDefaultVisualEditorCommands() => VisualEditorRepository.GetDefaultCommands();
 
-        public static IEnumerable<VisualEditorCommand> GetResultVisualEditorCommands(int fieldId, int siteId)
-        {
-            return VisualEditorRepository.GetResultCommands(fieldId, siteId);
-        }
+        public static IEnumerable<VisualEditorCommand> GetResultVisualEditorCommands(int fieldId, int siteId) => VisualEditorRepository.GetResultCommands(fieldId, siteId);
 
-        public static IEnumerable<VisualEditorStyle> GetResultStyles(int fieldId, int siteId)
-        {
-            return VisualEditorRepository.GetResultStyles(fieldId, siteId);
-        }
+        public static IEnumerable<VisualEditorStyle> GetResultStyles(int fieldId, int siteId) => VisualEditorRepository.GetResultStyles(fieldId, siteId);
 
-        public static IEnumerable<ListItem> GetAggregetableContentsForClassifier(Field classifier)
-        {
-            return classifier.IsNew
-                ? Enumerable.Empty<ListItem>()
-                : FieldRepository.GetAggregatableContentListItemsForClassifier(classifier);
-        }
+        public static IEnumerable<ListItem> GetAggregetableContentsForClassifier(Field classifier) => classifier.IsNew
+            ? Enumerable.Empty<ListItem>()
+            : FieldRepository.GetAggregatableContentListItemsForClassifier(classifier);
 
         public static IEnumerable<ListItem> GetFieldsForTreeOrder(int contentId, int id)
         {

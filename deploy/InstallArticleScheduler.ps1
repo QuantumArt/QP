@@ -9,10 +9,7 @@ $name = "ArticleSchedulerService"
 $timeout = "00:03:00"
 
 $s = Get-Service $name -ErrorAction SilentlyContinue
-
 if ($s) {
-
-
     if ( $s.Status -eq "Running")
     {
         Write-Host "Stopping service $name..."
@@ -54,6 +51,7 @@ if ((Test-Path $schedulerZipPath))
     Write-Host "Zip file found. Unpacking..."
     Expand-Archive -LiteralPath $schedulerZipPath -DestinationPath $schedulerFolder
     $schedulerPath = Join-Path $schedulerFolder "bin\Release\$projectName.exe"
+    $schedulerFolder = $schedulerFolder + "\bin\Release"
 }
 
 if (-not(Test-Path $schedulerFolder) -or -not(Test-Path $schedulerPath))

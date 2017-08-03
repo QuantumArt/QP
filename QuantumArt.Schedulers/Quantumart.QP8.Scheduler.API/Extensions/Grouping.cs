@@ -16,14 +16,8 @@ namespace Quantumart.QP8.Scheduler.API.Extensions
             Elements = elements;
         }
 
-        public IEnumerator<TElement> GetEnumerator()
-        {
-            return Elements.GetEnumerator();
-        }
+        public IEnumerator<TElement> GetEnumerator() => Elements.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Elements.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => Elements.GetEnumerator();
     }
 }

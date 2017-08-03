@@ -10,47 +10,6 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public interface IFieldDefaultValueService
-    {
-        /// <summary>
-        /// PreAction
-        /// </summary>
-        MessageResult PreAction(int fieldId);
-
-        /// <summary>
-        /// Setup
-        /// </summary>
-        MultistepActionSettings SetupAction(int contentId, int fieldId);
-
-        /// <summary>
-        /// TearDown
-        /// </summary>
-        void TearDown();
-
-        /// <summary>
-        /// Step
-        /// </summary>
-        MultistepActionStepResult Step(int step);
-    }
-
-    [Serializable]
-    public class FieldDefaultValueContext
-    {
-        public int[] ProcessedContentItemIds { get; set; }
-
-        public int ContentId { get; set; }
-
-        public int FieldId { get; set; }
-
-        public bool IsBlob { get; set; }
-
-        public int[] DefaultArticles { get; set; }
-
-        public bool IsM2M { get; set; }
-
-        public bool Symmetric { get; set; }
-    }
-
     public class FieldDefaultValueService : IFieldDefaultValueService
     {
         private const int ItemsPerStep = 20;
@@ -109,17 +68,17 @@ namespace Quantumart.QP8.BLL.Services
             var idsForStep = context.ProcessedContentItemIds
                 .Skip(step * ItemsPerStep)
                 .Take(ItemsPerStep)
-                .ToArray();
+                .ToList();
 
             if (idsForStep.Any())
             {
-                var notificationRepository = new NotificationPushRepository() { IgnoreInternal = true };
-                notificationRepository.PrepareNotifications(context.ContentId, idsForStep, NotificationCode.Update);
+                var notificationRepository = new NotificationPushRepository { IgnoreInternal = true };
+                notificationRepository.PrepareNotifications(context.ContentId, idsForStep.ToArray(), NotificationCode.Update);
                 FieldDefaultValueRepository.SetDefaultValue(context.ContentId, context.FieldId, context.IsBlob, context.IsM2M, idsForStep, context.Symmetric);
                 notificationRepository.SendNotifications();
             }
 
-            return new MultistepActionStepResult { ProcessedItemsCount = idsForStep.Count() };
+            return new MultistepActionStepResult { ProcessedItemsCount = idsForStep.Count };
         }
 
         public void TearDown()
@@ -140,9 +99,6 @@ namespace Quantumart.QP8.BLL.Services
             return !string.IsNullOrEmpty(field.Default);
         }
 
-        private static bool HasAlreadyRun()
-        {
-            return HttpContext.Current.Session[HttpContextSession.FieldDefaultValueServiceProcessingContext] != null;
-        }
+        private static bool HasAlreadyRun() => HttpContext.Current.Session[HttpContextSession.FieldDefaultValueServiceProcessingContext] != null;
     }
 }

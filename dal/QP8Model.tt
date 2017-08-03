@@ -995,7 +995,7 @@ void UpdateObjectNamespaceMap(string objectNamespace)
 {
 	if(objectNamespace != ModelNamespace && !EdmToObjectNamespaceMap.ContainsKey(ModelNamespace))
 	{
-		EdmToObjectNamespaceMap.Add(ModelNamespace, objectNamespace);	
+		EdmToObjectNamespaceMap.Add(ModelNamespace, objectNamespace);
 	}
 }
 
@@ -1019,16 +1019,16 @@ string BaseTypeName(EntityType entity, CodeGenerationTools code)
 string EntityInterface(EntityType entity, CodeGenerationTools code)
 {
 	string name = code.Escape(entity);
-	string[] names = 
+	string[] names =
 	{
-		"SiteDAL", 
-		"UserDAL", 
-		"ArticleDAL", 
-		"SiteFolderDAL", 
-		"ContentFolderDAL", 
-		"ContentDAL", 
-		"FieldDAL", 
-		"CustomActionDAL", 
+		"SiteDAL",
+		"UserDAL",
+		"ArticleDAL",
+		"SiteFolderDAL",
+		"ContentFolderDAL",
+		"ContentDAL",
+		"FieldDAL",
+		"CustomActionDAL",
 		"SitePermissionDAL",
 		"ContentPermissionDAL",
 		"ArticlePermissionDAL",
@@ -1046,10 +1046,10 @@ string EntityInterface(EntityType entity, CodeGenerationTools code)
 		"PageTemplateDAL",
 		"PageDAL",
 		"ObjectDAL",
-		"DbDAL"		
+		"DbDAL"
 	};
 	if (names.Contains(name))
-		return ", IQPEntityObject";
+		return ", IQpEntityObject";
 	else
 		return String.Empty;
 }

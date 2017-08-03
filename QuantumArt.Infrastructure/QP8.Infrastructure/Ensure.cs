@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace QP8.Infrastructure
         /// <exception cref="Exception">Exception thrown if false condition</exception>
         /// <param name="condition">Condition to test/ensure</param>
         /// <param name="message">Message for the exception</param>
-        /// <exception cref="Exception">Thrown when <paramref name="condition"/> is false</exception>
+        /// <exception cref="Exception">Thrown when <paramref name="condition" /> is false</exception>
         public static void That(bool condition, string message = "")
         {
             That<Exception>(condition, message);
@@ -29,8 +29,8 @@ namespace QP8.Infrastructure
         /// <typeparam name="TException">Type of exception to throw</typeparam>
         /// <param name="condition">Condition to test/ensure</param>
         /// <param name="message">Message for the exception</param>
-        /// <exception>Thrown when <cref>TException</cref><paramref name="condition"/> is false</exception>
-        /// <remarks><see cref="TException"/> must have a constructor that takes a single string</remarks>
+        /// <exception>Thrown when <cref>TException</cref><paramref name="condition" /> is false</exception>
+        /// <remarks><see cref="TException" /> must have a constructor that takes a single string</remarks>
         public static void That<TException>(bool condition, string message = "")
             where TException : Exception
         {
@@ -43,8 +43,8 @@ namespace QP8.Infrastructure
         /// <typeparam name="TException">Type of exception to throw</typeparam>
         /// <param name="condition">Condition to test/ensure</param>
         /// <param name="args">args for TException constructor></param>
-        /// <exception>Thrown when <cref>TException</cref><paramref name="condition"/> is false</exception>
-        /// <remarks><see cref="TException"/> must have a constructor that takes a single string</remarks>
+        /// <exception>Thrown when <cref>TException</cref><paramref name="condition" /> is false</exception>
+        /// <remarks><see cref="TException" /> must have a constructor that takes a single string</remarks>
         public static void That<TException>(bool condition, params object[] args)
             where TException : Exception
         {
@@ -60,8 +60,8 @@ namespace QP8.Infrastructure
         /// <typeparam name="TException">Type of exception to throw</typeparam>
         /// <param name="condition">Condition to test</param>
         /// <param name="message">Message for the exception</param>
-        /// <exception>Thrown when <cref>TException</cref><paramref name="condition"/> is true</exception>
-        /// <remarks><see cref="TException"/> must have a constructor that takes a single string</remarks>
+        /// <exception>Thrown when <cref>TException</cref><paramref name="condition" /> is true</exception>
+        /// <remarks><see cref="TException" /> must have a constructor that takes a single string</remarks>
         public static void Not<TException>(bool condition, string message = "")
             where TException : Exception
         {
@@ -73,7 +73,7 @@ namespace QP8.Infrastructure
         /// </summary>
         /// <param name="condition">Condition to test</param>
         /// <param name="message">Message for the exception</param>
-        /// <exception cref="Exception">Thrown when <paramref name="condition"/> is true</exception>
+        /// <exception cref="Exception">Thrown when <paramref name="condition" /> is true</exception>
         public static void Not(bool condition, string message = "")
         {
             Not<Exception>(condition, message);
@@ -84,7 +84,7 @@ namespace QP8.Infrastructure
         /// </summary>
         /// <param name="value">Value of the object to test for null reference</param>
         /// <param name="message">Message for the Null Reference Exception</param>
-        /// <exception cref="NullReferenceException">Thrown when <paramref name="value"/> is null</exception>
+        /// <exception cref="NullReferenceException">Thrown when <paramref name="value" /> is null</exception>
         public static void NotNull(object value, string message = "")
         {
             That<NullReferenceException>(value != null, message);
@@ -97,7 +97,7 @@ namespace QP8.Infrastructure
         /// <param name="left">First Value to Compare</param>
         /// <param name="right">Second Value to Compare</param>
         /// <param name="message">Message of the exception when values equal</param>
-        /// <exception cref="Exception">Exception is thrown when <paramref cref="left"/> not equal to <paramref cref="right"/></exception>
+        /// <exception cref="Exception">Exception is thrown when <paramref cref="left" /> not equal to <paramref cref="right" /></exception>
         /// <remarks>Null values will cause an exception to be thrown</remarks>
         public static void Equal<T>(T left, T right, string message = "Values must be equal")
         {
@@ -111,7 +111,7 @@ namespace QP8.Infrastructure
         /// <param name="left">First Value to Compare</param>
         /// <param name="right">Second Value to Compare</param>
         /// <param name="message">Message of the exception when values equal</param>
-        /// <exception cref="Exception">Thrown when <paramref cref="left"/> equal to <paramref cref="right"/></exception>
+        /// <exception cref="Exception">Thrown when <paramref cref="left" /> equal to <paramref cref="right" /></exception>
         /// <remarks>Null values will cause an exception to be thrown</remarks>
         public static void NotEqual<T>(T left, T right, string message = "Values must not be equal")
         {
@@ -126,7 +126,7 @@ namespace QP8.Infrastructure
         /// <param name="predicate">Predicate where one value in the collection must satisfy</param>
         /// <param name="message">Message of the exception if value not found</param>
         /// <exception cref="Exception">
-        ///     Thrown if collection is null, empty or doesn't contain a value that satisfies <paramref cref="predicate"/>
+        /// Thrown if collection is null, empty or doesn't contain a value that satisfies <paramref cref="predicate" />
         /// </exception>
         public static void Contains<T>(IEnumerable<T> collection, Func<T, bool> predicate, string message = "")
         {
@@ -141,7 +141,7 @@ namespace QP8.Infrastructure
         /// <param name="predicate">Predicate that ALL values in the collection must satisfy</param>
         /// <param name="message">Message of the exception if not all values are valid</param>
         /// <exception cref="Exception">
-        ///     Thrown if collection is null, empty or not all values satisfies <paramref cref="predicate"/>
+        /// Thrown if collection is null, empty or not all values satisfies <paramref cref="predicate" />
         /// </exception>
         public static void Items<T>(IEnumerable<T> collection, Func<T, bool> predicate, string message = "")
         {
@@ -160,10 +160,10 @@ namespace QP8.Infrastructure
         }
 
         /// <summary>
-        /// Ensures given type is <see cref="Enum"/>
+        /// Ensures given type is <see cref="Enum" />
         /// </summary>
         /// <exception cref="ArgumentException">
-        ///     Given <paramref cref="T"/> is not <see cref="Enum"/>
+        /// Given <paramref cref="T" /> is not <see cref="Enum" />
         /// </exception>
         public static void IsEnum<T>()
         {
@@ -181,7 +181,7 @@ namespace QP8.Infrastructure
             /// <param name="condition">Condition to test</param>
             /// <param name="message">Message of the exception if condition fails</param>
             /// <exception cref="ArgumentException">
-            ///     Thrown if <paramref cref="condition"/> is false
+            /// Thrown if <paramref cref="condition" /> is false
             /// </exception>
             public static void Is(bool condition, string message = "")
             {
@@ -194,7 +194,7 @@ namespace QP8.Infrastructure
             /// <param name="condition">Condition to test</param>
             /// <param name="message">Message of the exception if condition is true</param>
             /// <exception cref="ArgumentException">
-            ///     Thrown if <paramref cref="condition"/> is true
+            /// Thrown if <paramref cref="condition" /> is true
             /// </exception>
             public static void IsNot(bool condition, string message = "")
             {
@@ -207,7 +207,7 @@ namespace QP8.Infrastructure
             /// <param name="value">Value to test for null</param>
             /// <param name="paramName">Name of the parameter in the method</param>
             /// <exception cref="ArgumentNullException">
-            ///     Thrown if <paramref cref="value" /> is null
+            /// Thrown if <paramref cref="value" /> is null
             /// </exception>
             public static void NotNull(object value, string paramName = "")
             {
@@ -220,7 +220,7 @@ namespace QP8.Infrastructure
             /// <param name="value">Value to test for null or empty</param>
             /// <param name="paramName">Name of the parameter in the method</param>
             /// <exception cref="ArgumentException">
-            ///     Thrown if <paramref cref="value"/> is null or empty string
+            /// Thrown if <paramref cref="value" /> is null or empty string
             /// </exception>
             public static void NotNullOrWhiteSpace(string value, string paramName = "")
             {

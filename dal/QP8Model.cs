@@ -227,6 +227,7 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("QP8Model", "FK_CONTENT_ATTRIBUTE_TREE_ORDER_FIELD", "FieldDAL", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Quantumart.QP8.DAL.FieldDAL), "FieldDAL1", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.FieldDAL), true)]
 [assembly: EdmRelationshipAttribute("QP8Model", "ACTION_EXCLUSIONS", "BackendActionDAL", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.BackendActionDAL), "BackendActionDAL1", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.BackendActionDAL))]
 [assembly: EdmRelationshipAttribute("QP8Model", "FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateLogEntity", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Quantumart.QP8.DAL.XmlDbUpdateLogEntity), "XmlDbUpdateActionsLogEntity", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.XmlDbUpdateActionsLogEntity), true)]
+[assembly: EdmRelationshipAttribute("QP8Model", "FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn", "CdcLastExecutedLsn", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Quantumart.QP8.DAL.CdcLastExecutedLsn), "SYSTEM_NOTIFICATION_QUEUE", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.SystemNotificationDAL), true)]
 
 #endregion
 
@@ -1734,6 +1735,38 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<XmlDbUpdateActionsLogEntity> _XML_DB_UPDATE_ACTIONS;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<CdcLastExecutedLsn> CdcLastExecutedLsn
+        {
+            get
+            {
+                if ((_CdcLastExecutedLsn == null))
+                {
+                    _CdcLastExecutedLsn = base.CreateObjectSet<CdcLastExecutedLsn>("CdcLastExecutedLsn");
+                }
+                return _CdcLastExecutedLsn;
+            }
+        }
+        private ObjectSet<CdcLastExecutedLsn> _CdcLastExecutedLsn;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<SystemNotificationDAL> SystemNotificationSet
+        {
+            get
+            {
+                if ((_SystemNotificationSet == null))
+                {
+                    _SystemNotificationSet = base.CreateObjectSet<SystemNotificationDAL>("SystemNotificationSet");
+                }
+                return _SystemNotificationSet;
+            }
+        }
+        private ObjectSet<SystemNotificationDAL> _SystemNotificationSet;
 
         #endregion
 
@@ -2466,6 +2499,22 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("XML_DB_UPDATE_ACTIONS", xmlDbUpdateActionsLogEntity);
         }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the CdcLastExecutedLsn EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToCdcLastExecutedLsn(CdcLastExecutedLsn cdcLastExecutedLsn)
+        {
+            base.AddObject("CdcLastExecutedLsn", cdcLastExecutedLsn);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the SystemNotificationSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToSystemNotificationSet(SystemNotificationDAL systemNotificationDAL)
+        {
+            base.AddObject("SystemNotificationSet", systemNotificationDAL);
+        }
 
         #endregion
 
@@ -3033,7 +3082,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ArticleDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ArticleDAL : EntityObject, IQPEntityObject
+    public partial class ArticleDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -3890,7 +3939,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ArticlePermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ArticlePermissionDAL : EntityObject, IQPEntityObject
+    public partial class ArticlePermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -7387,7 +7436,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="BackendActionPermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class BackendActionPermissionDAL : EntityObject, IQPEntityObject
+    public partial class BackendActionPermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -7802,6 +7851,215 @@ namespace Quantumart.QP8.DAL
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<UserDAL>("QP8Model.FK_ACT_ACC_LAST_MODIFIED_BY1", "UserDAL", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="CdcLastExecutedLsn")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class CdcLastExecutedLsn : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new CdcLastExecutedLsn object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="providerName">Initial value of the ProviderName property.</param>
+        /// <param name="providerUrl">Initial value of the ProviderUrl property.</param>
+        /// <param name="lastExecutedLsn">Initial value of the LastExecutedLsn property.</param>
+        public static CdcLastExecutedLsn CreateCdcLastExecutedLsn(global::System.Int32 id, global::System.String providerName, global::System.String providerUrl, global::System.String lastExecutedLsn)
+        {
+            CdcLastExecutedLsn cdcLastExecutedLsn = new CdcLastExecutedLsn();
+            cdcLastExecutedLsn.Id = id;
+            cdcLastExecutedLsn.ProviderName = providerName;
+            cdcLastExecutedLsn.ProviderUrl = providerUrl;
+            cdcLastExecutedLsn.LastExecutedLsn = lastExecutedLsn;
+            return cdcLastExecutedLsn;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _Id;
+        partial void OnIdChanging(global::System.Int32 value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ProviderName
+        {
+            get
+            {
+                return _ProviderName;
+            }
+            set
+            {
+                OnProviderNameChanging(value);
+                ReportPropertyChanging("ProviderName");
+                _ProviderName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ProviderName");
+                OnProviderNameChanged();
+            }
+        }
+        private global::System.String _ProviderName;
+        partial void OnProviderNameChanging(global::System.String value);
+        partial void OnProviderNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ProviderUrl
+        {
+            get
+            {
+                return _ProviderUrl;
+            }
+            set
+            {
+                OnProviderUrlChanging(value);
+                ReportPropertyChanging("ProviderUrl");
+                _ProviderUrl = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ProviderUrl");
+                OnProviderUrlChanged();
+            }
+        }
+        private global::System.String _ProviderUrl;
+        partial void OnProviderUrlChanging(global::System.String value);
+        partial void OnProviderUrlChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String TransactionLsn
+        {
+            get
+            {
+                return _TransactionLsn;
+            }
+            set
+            {
+                OnTransactionLsnChanging(value);
+                ReportPropertyChanging("TransactionLsn");
+                _TransactionLsn = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("TransactionLsn");
+                OnTransactionLsnChanged();
+            }
+        }
+        private global::System.String _TransactionLsn;
+        partial void OnTransactionLsnChanging(global::System.String value);
+        partial void OnTransactionLsnChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.DateTime> TransactionDate
+        {
+            get
+            {
+                return _TransactionDate;
+            }
+            set
+            {
+                OnTransactionDateChanging(value);
+                ReportPropertyChanging("TransactionDate");
+                _TransactionDate = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("TransactionDate");
+                OnTransactionDateChanged();
+            }
+        }
+        private Nullable<global::System.DateTime> _TransactionDate;
+        partial void OnTransactionDateChanging(Nullable<global::System.DateTime> value);
+        partial void OnTransactionDateChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LastExecutedLsn
+        {
+            get
+            {
+                return _LastExecutedLsn;
+            }
+            set
+            {
+                OnLastExecutedLsnChanging(value);
+                ReportPropertyChanging("LastExecutedLsn");
+                _LastExecutedLsn = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LastExecutedLsn");
+                OnLastExecutedLsnChanged();
+            }
+        }
+        private global::System.String _LastExecutedLsn;
+        partial void OnLastExecutedLsnChanging(global::System.String value);
+        partial void OnLastExecutedLsnChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("QP8Model", "FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn", "SYSTEM_NOTIFICATION_QUEUE")]
+        public EntityCollection<SystemNotificationDAL> SYSTEM_NOTIFICATION_QUEUE
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<SystemNotificationDAL>("QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn", "SYSTEM_NOTIFICATION_QUEUE");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<SystemNotificationDAL>("QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn", "SYSTEM_NOTIFICATION_QUEUE", value);
                 }
             }
         }
@@ -9338,7 +9596,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ContentDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ContentDAL : EntityObject, IQPEntityObject
+    public partial class ContentDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -9363,7 +9621,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="disableXamlValidation">Initial value of the DisableXamlValidation property.</param>
         /// <param name="disableChangingActions">Initial value of the DisableChangingActions property.</param>
         /// <param name="useForContext">Initial value of the UseForContext property.</param>
-        public static ContentDAL CreateContentDAL(global::System.Decimal id, global::System.String name, global::System.Decimal siteId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Decimal allowItemsPermission, global::System.Decimal virtualType, global::System.Boolean isShared, global::System.Boolean autoArchive, global::System.Byte maxNumOfStoredVersions, global::System.Boolean createVersionControlView, global::System.Int32 pageSize, global::System.Boolean mapAsClass, global::System.Boolean useDefaultFiltration, global::System.Boolean disableXamlValidation, global::System.Boolean disableChangingActions, global::System.Boolean useForContext)
+        /// <param name="forReplication">Initial value of the ForReplication property.</param>
+        public static ContentDAL CreateContentDAL(global::System.Decimal id, global::System.String name, global::System.Decimal siteId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Decimal allowItemsPermission, global::System.Decimal virtualType, global::System.Boolean isShared, global::System.Boolean autoArchive, global::System.Byte maxNumOfStoredVersions, global::System.Boolean createVersionControlView, global::System.Int32 pageSize, global::System.Boolean mapAsClass, global::System.Boolean useDefaultFiltration, global::System.Boolean disableXamlValidation, global::System.Boolean disableChangingActions, global::System.Boolean useForContext, global::System.Boolean forReplication)
         {
             ContentDAL contentDAL = new ContentDAL();
             contentDAL.Id = id;
@@ -9384,6 +9643,7 @@ namespace Quantumart.QP8.DAL
             contentDAL.DisableXamlValidation = disableXamlValidation;
             contentDAL.DisableChangingActions = disableChangingActions;
             contentDAL.UseForContext = useForContext;
+            contentDAL.ForReplication = forReplication;
             return contentDAL;
         }
 
@@ -10161,6 +10421,30 @@ namespace Quantumart.QP8.DAL
         private global::System.String _FormScript;
         partial void OnFormScriptChanging(global::System.String value);
         partial void OnFormScriptChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean ForReplication
+        {
+            get
+            {
+                return _ForReplication;
+            }
+            set
+            {
+                OnForReplicationChanging(value);
+                ReportPropertyChanging("ForReplication");
+                _ForReplication = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ForReplication");
+                OnForReplicationChanged();
+            }
+        }
+        private global::System.Boolean _ForReplication;
+        partial void OnForReplicationChanging(global::System.Boolean value);
+        partial void OnForReplicationChanged();
 
         #endregion
 
@@ -10842,7 +11126,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="modified">Initial value of the Modified property.</param>
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="notForReplication">Initial value of the NotForReplication property.</param>
-        public static ContentDataDAL CreateContentDataDAL(global::System.Decimal fieldId, global::System.Decimal articleId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal id, global::System.Boolean notForReplication)
+        /// <param name="sPLITTED">Initial value of the SPLITTED property.</param>
+        public static ContentDataDAL CreateContentDataDAL(global::System.Decimal fieldId, global::System.Decimal articleId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal id, global::System.Boolean notForReplication, global::System.Boolean sPLITTED)
         {
             ContentDataDAL contentDataDAL = new ContentDataDAL();
             contentDataDAL.FieldId = fieldId;
@@ -10851,6 +11136,7 @@ namespace Quantumart.QP8.DAL
             contentDataDAL.Modified = modified;
             contentDataDAL.Id = id;
             contentDataDAL.NotForReplication = notForReplication;
+            contentDataDAL.SPLITTED = sPLITTED;
             return contentDataDAL;
         }
 
@@ -11055,6 +11341,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _NotForReplication;
         partial void OnNotForReplicationChanging(global::System.Boolean value);
         partial void OnNotForReplicationChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean SPLITTED
+        {
+            get
+            {
+                return _SPLITTED;
+            }
+            set
+            {
+                OnSPLITTEDChanging(value);
+                ReportPropertyChanging("SPLITTED");
+                _SPLITTED = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SPLITTED");
+                OnSPLITTEDChanged();
+            }
+        }
+        private global::System.Boolean _SPLITTED;
+        partial void OnSPLITTEDChanging(global::System.Boolean value);
+        partial void OnSPLITTEDChanged();
 
         #endregion
 
@@ -11538,7 +11848,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ContentFolderDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ContentFolderDAL : EntityObject, IQPEntityObject
+    public partial class ContentFolderDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -12555,7 +12865,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ContentPermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ContentPermissionDAL : EntityObject, IQPEntityObject
+    public partial class ContentPermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -13924,7 +14234,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="CustomActionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class CustomActionDAL : EntityObject, IQPEntityObject
+    public partial class CustomActionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -14624,7 +14934,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="DbDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class DbDAL : EntityObject, IQPEntityObject
+    public partial class DbDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -14637,9 +14947,10 @@ namespace Quantumart.QP8.DAL
         /// <param name="modified">Initial value of the Modified property.</param>
         /// <param name="lastModifiedBy">Initial value of the LastModifiedBy property.</param>
         /// <param name="useADSyncService">Initial value of the UseADSyncService property.</param>
-        /// <param name="useDPC">Initial value of the UseDPC property.</param>
+        /// <param name="useDpc">Initial value of the UseDpc property.</param>
         /// <param name="autoOpenHome">Initial value of the AutoOpenHome property.</param>
-        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDPC, global::System.Boolean autoOpenHome)
+        /// <param name="useCdc">Initial value of the UseCdc property.</param>
+        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDpc, global::System.Boolean autoOpenHome, global::System.Boolean useCdc)
         {
             DbDAL dbDAL = new DbDAL();
             dbDAL.Id = id;
@@ -14648,8 +14959,9 @@ namespace Quantumart.QP8.DAL
             dbDAL.Modified = modified;
             dbDAL.LastModifiedBy = lastModifiedBy;
             dbDAL.UseADSyncService = useADSyncService;
-            dbDAL.UseDPC = useDPC;
+            dbDAL.UseDpc = useDpc;
             dbDAL.AutoOpenHome = autoOpenHome;
+            dbDAL.UseCdc = useCdc;
             return dbDAL;
         }
 
@@ -14833,24 +15145,24 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.Boolean UseDPC
+        public global::System.Boolean UseDpc
         {
             get
             {
-                return _UseDPC;
+                return _UseDpc;
             }
             set
             {
-                OnUseDPCChanging(value);
-                ReportPropertyChanging("UseDPC");
-                _UseDPC = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("UseDPC");
-                OnUseDPCChanged();
+                OnUseDpcChanging(value);
+                ReportPropertyChanging("UseDpc");
+                _UseDpc = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UseDpc");
+                OnUseDpcChanged();
             }
         }
-        private global::System.Boolean _UseDPC;
-        partial void OnUseDPCChanging(global::System.Boolean value);
-        partial void OnUseDPCChanged();
+        private global::System.Boolean _UseDpc;
+        partial void OnUseDpcChanging(global::System.Boolean value);
+        partial void OnUseDpcChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -14875,6 +15187,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _AutoOpenHome;
         partial void OnAutoOpenHomeChanging(global::System.Boolean value);
         partial void OnAutoOpenHomeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean UseCdc
+        {
+            get
+            {
+                return _UseCdc;
+            }
+            set
+            {
+                OnUseCdcChanging(value);
+                ReportPropertyChanging("UseCdc");
+                _UseCdc = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UseCdc");
+                OnUseCdcChanged();
+            }
+        }
+        private global::System.Boolean _UseCdc;
+        partial void OnUseCdcChanging(global::System.Boolean value);
+        partial void OnUseCdcChanged();
 
         #endregion
 
@@ -16312,7 +16648,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="EntityTypePermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class EntityTypePermissionDAL : EntityObject, IQPEntityObject
+    public partial class EntityTypePermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -17074,7 +17410,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="FieldDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class FieldDAL : EntityObject, IQPEntityObject
+    public partial class FieldDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -20052,12 +20388,16 @@ namespace Quantumart.QP8.DAL
         /// <param name="linkId">Initial value of the LinkId property.</param>
         /// <param name="lItemId">Initial value of the LItemId property.</param>
         /// <param name="rItemId">Initial value of the RItemId property.</param>
-        public static ItemToItemDAL CreateItemToItemDAL(global::System.Decimal linkId, global::System.Decimal lItemId, global::System.Decimal rItemId)
+        /// <param name="iS_REV">Initial value of the IS_REV property.</param>
+        /// <param name="iS_SELF">Initial value of the IS_SELF property.</param>
+        public static ItemToItemDAL CreateItemToItemDAL(global::System.Decimal linkId, global::System.Decimal lItemId, global::System.Decimal rItemId, global::System.Boolean iS_REV, global::System.Boolean iS_SELF)
         {
             ItemToItemDAL itemToItemDAL = new ItemToItemDAL();
             itemToItemDAL.LinkId = linkId;
             itemToItemDAL.LItemId = lItemId;
             itemToItemDAL.RItemId = rItemId;
+            itemToItemDAL.IS_REV = iS_REV;
+            itemToItemDAL.IS_SELF = iS_SELF;
             return itemToItemDAL;
         }
 
@@ -20145,6 +20485,54 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _RItemId;
         partial void OnRItemIdChanging(global::System.Decimal value);
         partial void OnRItemIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IS_REV
+        {
+            get
+            {
+                return _IS_REV;
+            }
+            set
+            {
+                OnIS_REVChanging(value);
+                ReportPropertyChanging("IS_REV");
+                _IS_REV = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IS_REV");
+                OnIS_REVChanged();
+            }
+        }
+        private global::System.Boolean _IS_REV;
+        partial void OnIS_REVChanging(global::System.Boolean value);
+        partial void OnIS_REVChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IS_SELF
+        {
+            get
+            {
+                return _IS_SELF;
+            }
+            set
+            {
+                OnIS_SELFChanging(value);
+                ReportPropertyChanging("IS_SELF");
+                _IS_SELF = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IS_SELF");
+                OnIS_SELFChanged();
+            }
+        }
+        private global::System.Boolean _IS_SELF;
+        partial void OnIS_SELFChanging(global::System.Boolean value);
+        partial void OnIS_SELFChanged();
 
         #endregion
 
@@ -21288,7 +21676,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="NotificationsDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class NotificationsDAL : EntityObject, IQPEntityObject
+    public partial class NotificationsDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -22585,7 +22973,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ObjectDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ObjectDAL : EntityObject, IQPEntityObject
+    public partial class ObjectDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -23578,7 +23966,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ObjectFormatDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ObjectFormatDAL : EntityObject, IQPEntityObject
+    public partial class ObjectFormatDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -25269,7 +25657,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="PageDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class PageDAL : EntityObject, IQPEntityObject
+    public partial class PageDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -26200,7 +26588,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="PageTemplateDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class PageTemplateDAL : EntityObject, IQPEntityObject
+    public partial class PageTemplateDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -29359,7 +29747,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SiteDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class SiteDAL : EntityObject, IQPEntityObject
+    public partial class SiteDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -31010,7 +31398,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SiteFolderDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class SiteFolderDAL : EntityObject, IQPEntityObject
+    public partial class SiteFolderDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -31455,7 +31843,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SiteFolderPermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class SiteFolderPermissionDAL : EntityObject, IQPEntityObject
+    public partial class SiteFolderPermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -31884,7 +32272,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SitePermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class SitePermissionDAL : EntityObject, IQPEntityObject
+    public partial class SitePermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -32339,7 +32727,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="StatusTypeDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class StatusTypeDAL : EntityObject, IQPEntityObject
+    public partial class StatusTypeDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -33439,6 +33827,337 @@ namespace Quantumart.QP8.DAL
         #endregion
 
     
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SystemNotificationDAL")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class SystemNotificationDAL : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new SystemNotificationDAL object.
+        /// </summary>
+        /// <param name="id">Initial value of the ID property.</param>
+        /// <param name="cdcLastExecutedLsnId">Initial value of the CdcLastExecutedLsnId property.</param>
+        /// <param name="tRANSACTION_LSN">Initial value of the TRANSACTION_LSN property.</param>
+        /// <param name="tRANSACTION_DATE">Initial value of the TRANSACTION_DATE property.</param>
+        /// <param name="uRL">Initial value of the URL property.</param>
+        /// <param name="tRIES">Initial value of the TRIES property.</param>
+        /// <param name="sent">Initial value of the Sent property.</param>
+        /// <param name="cREATED">Initial value of the CREATED property.</param>
+        /// <param name="mODIFIED">Initial value of the MODIFIED property.</param>
+        public static SystemNotificationDAL CreateSystemNotificationDAL(global::System.Decimal id, global::System.Int32 cdcLastExecutedLsnId, global::System.String tRANSACTION_LSN, global::System.DateTime tRANSACTION_DATE, global::System.String uRL, global::System.Decimal tRIES, global::System.Boolean sent, global::System.DateTime cREATED, global::System.DateTime mODIFIED)
+        {
+            SystemNotificationDAL systemNotificationDAL = new SystemNotificationDAL();
+            systemNotificationDAL.ID = id;
+            systemNotificationDAL.CdcLastExecutedLsnId = cdcLastExecutedLsnId;
+            systemNotificationDAL.TRANSACTION_LSN = tRANSACTION_LSN;
+            systemNotificationDAL.TRANSACTION_DATE = tRANSACTION_DATE;
+            systemNotificationDAL.URL = uRL;
+            systemNotificationDAL.TRIES = tRIES;
+            systemNotificationDAL.Sent = sent;
+            systemNotificationDAL.CREATED = cREATED;
+            systemNotificationDAL.MODIFIED = mODIFIED;
+            return systemNotificationDAL;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal ID
+        {
+            get
+            {
+                return _ID;
+            }
+            set
+            {
+                if (_ID != value)
+                {
+                    OnIDChanging(value);
+                    ReportPropertyChanging("ID");
+                    _ID = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("ID");
+                    OnIDChanged();
+                }
+            }
+        }
+        private global::System.Decimal _ID;
+        partial void OnIDChanging(global::System.Decimal value);
+        partial void OnIDChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CdcLastExecutedLsnId
+        {
+            get
+            {
+                return _CdcLastExecutedLsnId;
+            }
+            set
+            {
+                OnCdcLastExecutedLsnIdChanging(value);
+                ReportPropertyChanging("CdcLastExecutedLsnId");
+                _CdcLastExecutedLsnId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CdcLastExecutedLsnId");
+                OnCdcLastExecutedLsnIdChanged();
+            }
+        }
+        private global::System.Int32 _CdcLastExecutedLsnId;
+        partial void OnCdcLastExecutedLsnIdChanging(global::System.Int32 value);
+        partial void OnCdcLastExecutedLsnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String TRANSACTION_LSN
+        {
+            get
+            {
+                return _TRANSACTION_LSN;
+            }
+            set
+            {
+                OnTRANSACTION_LSNChanging(value);
+                ReportPropertyChanging("TRANSACTION_LSN");
+                _TRANSACTION_LSN = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("TRANSACTION_LSN");
+                OnTRANSACTION_LSNChanged();
+            }
+        }
+        private global::System.String _TRANSACTION_LSN;
+        partial void OnTRANSACTION_LSNChanging(global::System.String value);
+        partial void OnTRANSACTION_LSNChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime TRANSACTION_DATE
+        {
+            get
+            {
+                return _TRANSACTION_DATE;
+            }
+            set
+            {
+                OnTRANSACTION_DATEChanging(value);
+                ReportPropertyChanging("TRANSACTION_DATE");
+                _TRANSACTION_DATE = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("TRANSACTION_DATE");
+                OnTRANSACTION_DATEChanged();
+            }
+        }
+        private global::System.DateTime _TRANSACTION_DATE;
+        partial void OnTRANSACTION_DATEChanging(global::System.DateTime value);
+        partial void OnTRANSACTION_DATEChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String URL
+        {
+            get
+            {
+                return _URL;
+            }
+            set
+            {
+                OnURLChanging(value);
+                ReportPropertyChanging("URL");
+                _URL = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("URL");
+                OnURLChanged();
+            }
+        }
+        private global::System.String _URL;
+        partial void OnURLChanging(global::System.String value);
+        partial void OnURLChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal TRIES
+        {
+            get
+            {
+                return _TRIES;
+            }
+            set
+            {
+                OnTRIESChanging(value);
+                ReportPropertyChanging("TRIES");
+                _TRIES = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("TRIES");
+                OnTRIESChanged();
+            }
+        }
+        private global::System.Decimal _TRIES;
+        partial void OnTRIESChanging(global::System.Decimal value);
+        partial void OnTRIESChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String JSON
+        {
+            get
+            {
+                return _JSON;
+            }
+            set
+            {
+                OnJSONChanging(value);
+                ReportPropertyChanging("JSON");
+                _JSON = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("JSON");
+                OnJSONChanged();
+            }
+        }
+        private global::System.String _JSON;
+        partial void OnJSONChanging(global::System.String value);
+        partial void OnJSONChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean Sent
+        {
+            get
+            {
+                return _Sent;
+            }
+            set
+            {
+                OnSentChanging(value);
+                ReportPropertyChanging("Sent");
+                _Sent = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Sent");
+                OnSentChanged();
+            }
+        }
+        private global::System.Boolean _Sent;
+        partial void OnSentChanging(global::System.Boolean value);
+        partial void OnSentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime CREATED
+        {
+            get
+            {
+                return _CREATED;
+            }
+            set
+            {
+                OnCREATEDChanging(value);
+                ReportPropertyChanging("CREATED");
+                _CREATED = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CREATED");
+                OnCREATEDChanged();
+            }
+        }
+        private global::System.DateTime _CREATED;
+        partial void OnCREATEDChanging(global::System.DateTime value);
+        partial void OnCREATEDChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime MODIFIED
+        {
+            get
+            {
+                return _MODIFIED;
+            }
+            set
+            {
+                OnMODIFIEDChanging(value);
+                ReportPropertyChanging("MODIFIED");
+                _MODIFIED = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MODIFIED");
+                OnMODIFIEDChanged();
+            }
+        }
+        private global::System.DateTime _MODIFIED;
+        partial void OnMODIFIEDChanging(global::System.DateTime value);
+        partial void OnMODIFIEDChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("QP8Model", "FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn", "CdcLastExecutedLsn")]
+        public CdcLastExecutedLsn CdcLastExecutedLsn
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<CdcLastExecutedLsn>("QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn", "CdcLastExecutedLsn").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<CdcLastExecutedLsn>("QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn", "CdcLastExecutedLsn").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<CdcLastExecutedLsn> CdcLastExecutedLsnReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<CdcLastExecutedLsn>("QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn", "CdcLastExecutedLsn");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<CdcLastExecutedLsn>("QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn", "CdcLastExecutedLsn", value);
+                }
+            }
+        }
+
+        #endregion
+
     }
     
     /// <summary>
@@ -34733,7 +35452,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="UserDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class UserDAL : EntityObject, IQPEntityObject
+    public partial class UserDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -37908,7 +38627,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="VeCommandDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class VeCommandDAL : EntityObject, IQPEntityObject
+    public partial class VeCommandDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -38327,7 +39046,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="VePluginDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class VePluginDAL : EntityObject, IQPEntityObject
+    public partial class VePluginDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -38828,7 +39547,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="VeStyleDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class VeStyleDAL : EntityObject, IQPEntityObject
+    public partial class VeStyleDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -39616,7 +40335,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="WorkflowDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class WorkflowDAL : EntityObject, IQPEntityObject
+    public partial class WorkflowDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     
@@ -40025,7 +40744,7 @@ namespace Quantumart.QP8.DAL
     [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="WorkflowPermissionDAL")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class WorkflowPermissionDAL : EntityObject, IQPEntityObject
+    public partial class WorkflowPermissionDAL : EntityObject, IQpEntityObject
     {
         #region Factory Method
     

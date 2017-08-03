@@ -6,12 +6,13 @@ namespace Quantumart.QP8.BLL.Services.API
 {
     public class DbService : ServiceBase
     {
-
-        public DbService(string connectionString, int userId) : base(connectionString, userId)
+        public DbService(string connectionString, int userId)
+            : base(connectionString, userId)
         {
         }
 
-        public DbService(int userId) : base(userId)
+        public DbService(int userId)
+            : base(userId)
         {
         }
 

@@ -4,9 +4,6 @@ namespace Quantumart.QP8.Scheduler.Core
 {
     public class NullSchedule : ISchedule
     {
-        public bool NeedProcess(SchedulerContext context)
-        {
-            return true;
-        }
+        public bool NeedProcess(SchedulerContext context) => true;
     }
 }

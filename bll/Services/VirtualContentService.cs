@@ -15,7 +15,6 @@ namespace Quantumart.QP8.BLL.Services
 {
     public static class VirtualContentService
     {
-        #region Getting Lists
         /// <summary>
         /// Инициализация списка контентов
         /// </summary>
@@ -23,7 +22,10 @@ namespace Quantumart.QP8.BLL.Services
         {
             var site = SiteRepository.GetById(siteId);
             if (site == null)
+            {
                 throw new Exception(string.Format(SiteStrings.SiteNotFound, siteId));
+            }
+
             return new ContentInitListResult { ParentName = site.Name };
         }
 
@@ -41,69 +43,62 @@ namespace Quantumart.QP8.BLL.Services
         public static IEnumerable<ListItem> GetAcceptableContentForVirtualJoin(int siteId)
         {
             if (!SiteRepository.Exists(siteId))
+            {
                 throw new ArgumentException(string.Format(SiteStrings.SiteNotFound, siteId));
+            }
+
             return VirtualContentRepository.GetAcceptableContentForVirtualJoin(siteId);
         }
 
-        #endregion
-
-        #region Save
         /// <summary>
         /// Возвращает контент для добавления
         /// </summary>
-        public static Content New(int siteId, int? groupId)
-        {
-            return ContentService.InternalNew(siteId, groupId);
-        }
+        public static Content New(int siteId, int? groupId) => ContentService.InternalNew(siteId, groupId);
 
-        public static Content NewForSave(int siteId)
-        {
-            return New(siteId, null);
-        }
+        public static Content NewForSave(int siteId) => New(siteId, null);
 
         public static Content Save(Content content)
         {
             if (content == null)
+            {
                 throw new ArgumentNullException(nameof(content));
+            }
             if (content.VirtualType == VirtualType.None)
+            {
                 throw new ApplicationException("Content virtual type is undefined.");
+            }
 
             // Сохранить контент
-            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds);
+            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds.ToList());
             var newContent = VirtualContentRepository.Save(content);
 
             if (content.VirtualType == VirtualType.Join)
+            {
                 newContent = helper.SaveJoinContent(content, newContent);
+            }
             else if (content.VirtualType == VirtualType.Union)
+            {
                 newContent = helper.SaveUnionContent(content, newContent);
+            }
             else if (content.VirtualType == VirtualType.UserQuery)
+            {
                 newContent = helper.SaveUserQueryContent(content, newContent);
+            }
 
             newContent.NewVirtualFieldIds = helper.NewFieldIds;
 
             return newContent;
         }
 
-        #endregion
-
-        #region Read
         /// <summary>
         /// Возвращает контент для редактирования или просмотра
         /// </summary>
         /// <param name="id">идентификатор контента</param>
         /// <returns>контент</returns>
-        public static Content Read(int id)
-        {
-            return ContentService.InternalRead(id);
-        }
+        public static Content Read(int id) => ContentService.InternalRead(id);
 
-        public static Content ReadForUpdate(int id)
-        {
-            return Read(id);
-        }
-        #endregion
+        public static Content ReadForUpdate(int id) => Read(id);
 
-        #region Update
         /// <summary>
         /// Обновляет виртуальный контент
         /// </summary>
@@ -112,9 +107,11 @@ namespace Quantumart.QP8.BLL.Services
         public static Content Update(Content content)
         {
             if (content == null)
+            {
                 throw new ArgumentNullException(nameof(content));
+            }
 
-            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds);
+            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds.ToList());
             using (VirtualFieldRepository.LoadVirtualFieldsRelationsToMemory(content.Id))
             {
                 // Если тип контента изменился
@@ -129,72 +126,70 @@ namespace Quantumart.QP8.BLL.Services
 
                 // Спициальное обновления для конкретного типа контента
                 if (content.VirtualType == VirtualType.Join)
+                {
                     dbContent = helper.UpdateJoinContent(content, dbContent);
+                }
                 else if (content.VirtualType == VirtualType.Union)
+                {
                     dbContent = helper.UpdateUnionContent(content, dbContent);
+                }
                 else if (content.VirtualType == VirtualType.UserQuery)
+                {
                     dbContent = helper.UpdateUserQueryContent(content, dbContent);
+                }
 
                 dbContent.NewVirtualFieldIds = helper.NewFieldIds;
                 return dbContent;
             }
         }
 
-        #endregion
-
-        #region Remove
         public static MessageResult Remove(int id)
         {
             var content = ContentRepository.GetById(id);
             if (content == null)
+            {
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
+            }
 
             if (!content.IsAccessible(ActionTypeCode.Remove))
-                return MessageResult.Error(ArticleStrings.CannotRemoveBecauseOfSecurity);
-
-            var violationMessages = content.Die();
-            if (violationMessages.Any())
             {
-                return MessageResult.Error(string.Join(Environment.NewLine, violationMessages), new[] { id });
+                return MessageResult.Error(ArticleStrings.CannotRemoveBecauseOfSecurity);
+            }
+
+            var violationMessages = content.Die().ToList();
+            return violationMessages.Any() ? MessageResult.Error(string.Join(Environment.NewLine, violationMessages), new[] { id }) : null;
+        }
+
+        public static IEnumerable<EntityTreeItem> GetChildFieldList(int virtualContentId, int? joinedContentId, string entityId, string selectItemIDs, string parentAlias)
+        {
+            var helper = new VirtualContentHelper();
+
+            // Дочерние поля выбранного поля
+            if (!string.IsNullOrWhiteSpace(entityId))
+            {
+                return helper.GetChildFieldList(entityId, parentAlias, (f, eid, alias) => Enumerable.Empty<EntityTreeItem>());
+            }
+
+            // рутовые поля
+            if (virtualContentId > 0 || joinedContentId.HasValue)
+            {
+                return helper.GetRootFieldList(virtualContentId, joinedContentId, selectItemIDs);
             }
 
             return null;
         }
-        #endregion
-
-        #region Helpers
-
-        #region Join Virtual Content Fied List operations
-        public static IEnumerable<EntityTreeItem> GetChildFieldList(int virtualContentId, int? joinedContentId, string entityId, string selectItemIDs, string parentAlias)
-        {
-            var helper = new VirtualContentHelper();
-            // Дочерние поля выбранного поля
-            if (!string.IsNullOrWhiteSpace(entityId))
-                return helper.GetChildFieldList(entityId, parentAlias, (f, eid, alias) => Enumerable.Empty<EntityTreeItem>());
-            // рутовые поля
-            if (virtualContentId > 0 || joinedContentId.HasValue)
-                return helper.GetRootFieldList(virtualContentId, joinedContentId, selectItemIDs);
-            return null;
-        }
-
-
-        #endregion
-
-        #endregion
-
-        #region Copy
 
         public static IEnumerable<DataRow> CopyVirtualContents(int sourceSiteId, int destinationSiteId)
         {
-            var newContents = ContentRepository.CopyVirtualContents(sourceSiteId, destinationSiteId);
+            var newContents = ContentRepository.CopyVirtualContents(sourceSiteId, destinationSiteId).ToList();
             var newContentIds = string.Join(",", newContents.Select(r => r.Field<int>("content_id_new")));
-
             FieldRepository.CopyContentsAttributes(sourceSiteId, destinationSiteId, newContentIds, true);
 
             var relBetweenAttributes = FieldRepository.GetRelationsBetweenAttributesXml(sourceSiteId, destinationSiteId, string.Empty, null, true);
-
             if (string.IsNullOrEmpty(newContentIds))
+            {
                 newContentIds = "0";
+            }
 
             FieldRepository.UpdateAttributes(sourceSiteId, destinationSiteId, relBetweenAttributes, newContentIds);
             ContentRepository.CopyUnionContents(sourceSiteId, destinationSiteId, newContentIds);
@@ -217,7 +212,9 @@ namespace Quantumart.QP8.BLL.Services
         {
             var contentsWithErrors = new StringBuilder();
             if (rows == null)
+            {
                 return string.Empty;
+            }
 
             foreach (var row in rows)
             {
@@ -260,6 +257,5 @@ namespace Quantumart.QP8.BLL.Services
 
             return sqlQuery;
         }
-        #endregion
     }
 }

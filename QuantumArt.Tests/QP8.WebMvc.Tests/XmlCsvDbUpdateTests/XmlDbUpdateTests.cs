@@ -101,7 +101,6 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             actionsCorrecterService.Verify();
         }
 
-
         [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml")]
         [Theory, Trait("XmlDbUpdate", "DbValidation")]
         public void GivenXmlData_WhenDbRecordingIsOn_ShouldThrowException(string xmlString)
@@ -115,10 +114,10 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             appInfoRepository.Setup(m => m.GetCurrentDbVersion()).Returns(dbVersionFromXml);
 
             // Exercise system
-            Action sutAction = () => sut.Process(xmlString);
+            void SutAction() => sut.Process(xmlString);
 
             // Verify outcome
-            Assert.Throws<InvalidOperationException>(sutAction);
+            Assert.Throws<InvalidOperationException>((Action)SutAction);
             appInfoRepository.Verify();
         }
 
@@ -135,10 +134,10 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             appInfoRepository.Setup(m => m.GetCurrentDbVersion()).Returns(dbVersionFromXml).Verifiable();
 
             // Exercise system
-            Action sutAction = () => sut.Process(xmlString);
+            void SutAction() => sut.Process(xmlString);
 
             // Verify outcome
-            Assert.Throws<InvalidOperationException>(sutAction);
+            Assert.Throws<InvalidOperationException>((Action)SutAction);
             appInfoRepository.Verify();
         }
 
@@ -157,10 +156,10 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(true);
 
             // Exercise system
-            Action sutAction = () => sut.Process(xmlString);
+            void SutAction() => sut.Process(xmlString);
 
             // Verify outcome
-            Assert.Throws<XmlDbUpdateLoggingException>(sutAction);
+            Assert.Throws<XmlDbUpdateLoggingException>((Action)SutAction);
             dbLogService.Verify(m => m.InsertFileLogEntry(It.IsAny<XmlDbUpdateLogModel>()), Times.Never());
         }
 

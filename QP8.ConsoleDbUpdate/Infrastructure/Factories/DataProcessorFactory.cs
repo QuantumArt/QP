@@ -13,8 +13,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
     {
         internal static IDataProcessor Create(BaseSettingsModel settings)
         {
-            var xmlSettings = settings as XmlSettingsModel;
-            if (xmlSettings != null)
+            if (settings is XmlSettingsModel xmlSettings)
             {
                 return new XmlDataProcessor(
                     xmlSettings,
@@ -25,8 +24,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                 );
             }
 
-            var csvSettings = settings as CsvSettingsModel;
-            if (csvSettings != null)
+            if (settings is CsvSettingsModel csvSettings)
             {
                 return new CsvDataProcessor(
                     csvSettings,

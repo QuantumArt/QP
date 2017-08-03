@@ -71,15 +71,12 @@ namespace Quantumart.QP8.WebMvc.WinLogOn.Controllers
             return LogOnView(data);
         }
 
-        private string GetCurrentUser()
-        {
-            return Request.ServerVariables[RequestServerVariables.LogOnUser];
-        }
+        private string GetCurrentUser() => Request.ServerVariables[RequestServerVariables.LogOnUser];
 
         private void InitViewBag(DirectLinkOptions directLinkOptions)
         {
             ViewBag.AllowSelectCustomerCode = QPConfiguration.AllowSelectCustomerCode;
-            ViewBag.CustomerCodes = QPConfiguration.CustomerCodes.Select(c => new QPSelectListItem { Text = c, Value = c }).OrderBy(n => n.Text);
+            ViewBag.CustomerCodes = QPConfiguration.GetCustomerCodes().Select(c => new QPSelectListItem { Text = c, Value = c }).OrderBy(n => n.Text);
             ViewBag.AutoLoginLinkQuery = "?UseAutoLogin=false";
             if (directLinkOptions != null && directLinkOptions.IsDefined())
             {
@@ -87,9 +84,6 @@ namespace Quantumart.QP8.WebMvc.WinLogOn.Controllers
             }
         }
 
-        private ActionResult LogOnView(LogOnCredentials model)
-        {
-            return Request.IsAjaxRequest() ? JsonHtml("Popup", model) : View(model);
-        }
+        private ActionResult LogOnView(LogOnCredentials model) => Request.IsAjaxRequest() ? JsonHtml("Popup", model) : View(model);
     }
 }

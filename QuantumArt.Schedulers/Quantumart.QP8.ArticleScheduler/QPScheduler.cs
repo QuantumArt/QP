@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging;
@@ -27,20 +26,12 @@ namespace Quantumart.QP8.ArticleScheduler
 
         public void Run()
         {
-            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(_customers.ToList());
+            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(_customers);
             Parallel.ForEach(_customers, customer =>
             {
                 try
                 {
-                    var customerDbScheduler = _unityContainer.Resolve<DbScheduler>(
-                        new ParameterOverride("customer", customer),
-                        new ParameterOverride("connectionString", customer.ConnectionString)
-                    );
-
-                    customerDbScheduler.Run();
-                    var customerTasksQueueCount =
-                        customerDbScheduler.GetTasksCountToProcessAtSpecificDateTime(
-                            DateTime.Now.Add(_tasksQueueCheckShiftTime));
+                    var customerTasksQueueCount = ProcessCustomer(customer);
                     prtgErrorsHandlerVm.IncrementTasksQueueCount(customerTasksQueueCount);
                 }
                 catch (Exception ex)
@@ -53,6 +44,17 @@ namespace Quantumart.QP8.ArticleScheduler
             });
 
             _prtgLogger.LogMessage(prtgErrorsHandlerVm);
+        }
+
+        private int ProcessCustomer(QaConfigCustomer customer)
+        {
+            var customerDbScheduler = _unityContainer.Resolve<DbScheduler>(
+                new ParameterOverride("customer", customer),
+                new ParameterOverride("connectionString", customer.ConnectionString)
+            );
+
+            customerDbScheduler.Run();
+            return customerDbScheduler.GetTasksCountToProcessAtSpecificDateTime(DateTime.Now.Add(_tasksQueueCheckShiftTime));
         }
     }
 }

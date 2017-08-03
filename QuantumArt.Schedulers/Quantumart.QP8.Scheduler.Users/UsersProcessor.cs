@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,13 +17,13 @@ namespace Quantumart.QP8.Scheduler.Users
 
         private readonly ILog _logger;
         private readonly PrtgErrorsHandler _prtgLogger;
-        private readonly ISchedulerCustomers _schedulerCustomers;
+        private readonly ISchedulerCustomerCollection _schedulerCustomers;
         private readonly Func<IUserSynchronizationService> _getSynchronizationService;
 
         public UsersProcessor(
             ILog logger,
             PrtgErrorsHandler prtgLogger,
-            ISchedulerCustomers schedulerCustomers,
+            ISchedulerCustomerCollection schedulerCustomers,
             Func<IUserSynchronizationService> getSynchronizationService)
         {
             _logger = logger;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -10,7 +10,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Moq;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
@@ -18,6 +17,7 @@ using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
+using static Quantumart.QP8.BLL.BackendActionContext;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
@@ -28,13 +28,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             var action = new XmlDbUpdateRecordedAction
             {
                 Code = actionCode,
-                ParentId = BackendActionContext.Current.ParentEntityId.HasValue ? BackendActionContext.Current.ParentEntityId.Value : 0,
+                ParentId = Current.ParentEntityId ?? 0,
                 Lcid = CultureInfo.CurrentCulture.LCID,
                 Executed = DateTime.Now,
                 ExecutedBy = (httpContext.User.Identity as QpIdentity)?.Name,
                 Ids = httpContext.Items.Contains(HttpContextItems.FromId)
                     ? new[] { httpContext.Items[HttpContextItems.FromId].ToString() }
-                    : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray(),
+                    : Current.Entities.Select(n => n.StringId).ToArray(),
                 ResultId = GetContextData<int>(httpContext, HttpContextItems.ResultId),
                 UniqueId = GetGuidsContextData(httpContext, HttpContextItems.FromGuid),
                 ResultUniqueId = GetGuidContextData(httpContext, HttpContextItems.ResultGuid),
@@ -50,7 +50,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 NewCommandIds = GetContextData<string>(httpContext, HttpContextItems.NewCommandIds),
                 NewRulesIds = GetContextData<string>(httpContext, HttpContextItems.NewRulesIds),
                 NotificationFormatId = GetContextData<int>(httpContext, HttpContextItems.NotificationFormatId),
-                DefaultFormatId = GetContextData<int>(httpContext, HttpContextItems.DefaultFormatId),
+                DefaultFormatId = GetContextData<int>(httpContext, HttpContextItems.DefaultFormatId)
             };
 
             if (!ignoreForm)
@@ -297,20 +297,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return new QpPrincipal(identity, new string[] { });
         }
 
-        private static T GetContextData<T>(HttpContextBase httpContext, string key)
-        {
-            return httpContext.Items.Contains(key) ? (T)httpContext.Items[key] : default(T);
-        }
+        private static T GetContextData<T>(HttpContextBase httpContext, string key) => httpContext.Items.Contains(key) ? (T)httpContext.Items[key] : default(T);
 
-        private static Guid GetGuidContextData(HttpContextBase httpContext, string key)
-        {
-            return httpContext.Items.Contains(key) ? Guid.Parse(httpContext.Items[key].ToString()) : Guid.Empty;
-        }
+        private static Guid GetGuidContextData(HttpContextBase httpContext, string key) => httpContext.Items.Contains(key) ? Guid.Parse(httpContext.Items[key].ToString()) : Guid.Empty;
 
-        private static Guid[] GetGuidsContextData(HttpContextBase httpContext, string key)
-        {
-            return httpContext.Items.Contains(key) ? httpContext.Items[key].ToString().Split(",".ToCharArray()).Select(Guid.Parse).ToArray() : new Guid[] { };
-        }
+        private static Guid[] GetGuidsContextData(HttpContextBase httpContext, string key) => httpContext.Items.Contains(key) ? httpContext.Items[key].ToString().Split(",".ToCharArray()).Select(Guid.Parse).ToArray() : new Guid[] { };
 
         private static NameValueCollection GetDynamicFieldValuesFromHttpContext(HttpContextBase httpContext, string fieldPrefix)
         {

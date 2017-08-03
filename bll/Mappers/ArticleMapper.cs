@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -9,7 +10,7 @@ namespace Quantumart.QP8.BLL.Mappers
         public override void CreateBizMapper()
         {
             Mapper.CreateMap<ArticleDAL, Article>()
-                .ForMember(biz => biz.LockedBy, opt => opt.MapFrom(src => Utils.Converter.ToInt32(src.LockedBy)))
+                .ForMember(biz => biz.LockedBy, opt => opt.MapFrom(src => Converter.ToInt32(src.LockedBy)))
                 .ForMember(data => data.WorkflowBinding, opt => opt.Ignore());
         }
 

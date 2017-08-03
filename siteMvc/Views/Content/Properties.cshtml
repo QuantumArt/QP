@@ -20,11 +20,12 @@
 		@Html.CheckBoxFieldFor(s => s.Data.AutoArchive)
 		@Html.CheckBoxFieldFor(s => s.Data.IsShared)
 		@Html.CheckBoxFieldFor(s => s.Data.DisableChangingActions)
-        @Html.CheckBoxFieldFor(s => s.Data.UseForContext, Model.ContextBlock)
-	}
+    @Html.CheckBoxFieldFor(s => s.Data.UseForContext, Model.ContextBlock)
+    @Html.CheckBoxFieldFor(s => s.Data.ForReplication)
+  }
 
-	using (Html.BeginFieldGroup(ContentStrings.Legend_FriendlyName))
-	{
+  using (Html.BeginFieldGroup(ContentStrings.Legend_FriendlyName))
+  {
 		@Html.TextBoxFieldFor(s => s.Data.FriendlySingularName)
 		@Html.TextBoxFieldFor(s => s.Data.FriendlyPluralName)
 	}

@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
@@ -56,8 +58,29 @@
     <Compile Include="ArticleSelectionMode.cs" />
     <Compile Include="ArticleSelectionIncludeMode.cs" />
     <Compile Include="ArticleViewType.cs" />
+    <Compile Include="Cdc\CdcCaptureConstants.cs" />
+    <Compile Include="Cdc\Elastic\ElasticContentArticleModel.cs" />
+    <Compile Include="Cdc\Enums\CdcOperationType.cs" />
+    <Compile Include="Cdc\Enums\CdcActionType.cs" />
+    <Compile Include="Cdc\CdcCommonConstants.cs" />
+    <Compile Include="Cdc\Enums\CdcProviderName.cs" />
+    <Compile Include="Cdc\Tarantool\TarantoolContentArticleModel.cs" />
+    <Compile Include="Cdc\Tarantool\TarantoolStatusTypeModel.cs" />
+    <Compile Include="Cdc\Tarantool\TarantoolItemToItemModel.cs" />
+    <Compile Include="Cdc\Tarantool\TarantoolItemLinkAsyncModel.cs" />
+    <Compile Include="Cdc\Tarantool\TarantoolContentToContentModel.cs" />
+    <Compile Include="Cdc\Tarantool\TarantoolContentModel.cs" />
+    <Compile Include="Cdc\Tarantool\TarantoolContentAttributeModel.cs" />
     <Compile Include="ContentSelectMode.cs" />
     <Compile Include="ContextMenuCodes.cs" />
+    <Compile Include="DbColumns\ContentAttributeColumnName.cs" />
+    <Compile Include="DbColumns\StatusTypeColumnName.cs" />
+    <Compile Include="DbColumns\ItemToItemColumnName.cs" />
+    <Compile Include="DbColumns\ItemLinkAsyncColumnName.cs" />
+    <Compile Include="DbColumns\ContentToContentColumnName.cs" />
+    <Compile Include="DbColumns\ContentColumnName.cs" />
+    <Compile Include="DbColumns\ContentItemColumnName.cs" />
+    <Compile Include="DbColumns\ContentDataColumnName.cs" />
     <Compile Include="FieldSelectMode.cs" />
     <Compile Include="CssClasses.cs" />
     <Compile Include="DocumentContextState.cs" />
@@ -116,7 +139,7 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

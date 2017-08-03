@@ -88,6 +88,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 while (currentDate <= endDate)
                 {
                     yield return currentDate;
+
                     currentDate = currentDate.AddDays(1);
                 }
             }
@@ -97,16 +98,18 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         {
             Ensure.That<ArgumentOutOfRangeException>(number >= 1 && number <= 31, $"Day number: {number} is out of range");
             return (from day in days
-                    group day by day.GetMonthStartDate() into g
-                    select g.OrderBy(d => d).Skip(number - 1).FirstOrDefault()).Where(d => !d.Equals(default(DateTime)));
+                group day by day.GetMonthStartDate()
+                into g
+                select g.OrderBy(d => d).Skip(number - 1).FirstOrDefault()).Where(d => !d.Equals(default(DateTime)));
         }
 
         internal static IEnumerable<DateTime> GetEveryLastDayGroupedByMonth(this IEnumerable<DateTime> days)
         {
             return (from day in days
-                    group day by day.GetMonthStartDate() into g
+                    group day by day.GetMonthStartDate()
+                    into g
                     select g.OrderBy(d => d).LastOrDefault())
-                            .Where(d => !d.Equals(default(DateTime)));
+                .Where(d => !d.Equals(default(DateTime)));
         }
 
         internal static DateTime? GetNearestPreviousDateFromList(this IEnumerable<DateTime> dates, DateTime dateTime)
@@ -131,19 +134,10 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return iteratorDate.Date;
         }
 
-        internal static DateTime GetMonthStartDate(this DateTime dt)
-        {
-            return new DateTime(dt.Year, dt.Month, 1);
-        }
+        internal static DateTime GetMonthStartDate(this DateTime dt) => new DateTime(dt.Year, dt.Month, 1);
 
-        internal static bool IsWeekend(this DateTime dt)
-        {
-            return dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday;
-        }
+        internal static bool IsWeekend(this DateTime dt) => dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday;
 
-        internal static bool IsWeekday(this DateTime dt)
-        {
-            return !IsWeekend(dt);
-        }
+        internal static bool IsWeekday(this DateTime dt) => !IsWeekend(dt);
     }
 }
