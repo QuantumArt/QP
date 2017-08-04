@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -48,7 +48,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
                 {
                     ex.Data.Clear();
                     ex.Data.Add("CustomerCode", customer.CustomerName);
-                    Logger.Log.Warn($"There was an error read customer code settings: {customer.CustomerName}", ex);
+                    Logger.Log.Warn($"There was an error while reading customer code settings: {customer.CustomerName}", ex);
                     prtgErrorsHandlerVm.EnqueueNewException(ex);
                 }
 
@@ -65,7 +65,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
                 {
                     ex.Data.Clear();
                     ex.Data.Add("CustomerCode", customer.CustomerName);
-                    Logger.Log.Warn($"There was an error read customer code settings: {customer.CustomerName}", ex);
+                    Logger.Log.Warn($"There was an error while reading customer code settings: {customer.CustomerName}", ex);
                     prtgErrorsHandlerVm.EnqueueNewException(ex);
                 }
             }

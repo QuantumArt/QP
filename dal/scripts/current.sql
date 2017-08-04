@@ -1940,54 +1940,6 @@ END
 GO
 
 GO
-IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_DPC')
-	ALTER TABLE [dbo].[DB] ADD [USE_DPC] [bit] NOT NULL DEFAULT ((0))
-GO
-
-IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_CDC')
-	ALTER TABLE [dbo].[DB] ADD [USE_CDC] [bit] NOT NULL DEFAULT ((0))
-GO
-update CONTENT_DATA set SPLITTED = i.splitted
-from content_data cd inner join CONTENT_ITEM i on i.content_item_id = cd.CONTENT_ITEM_ID
-WHERE i.SPLITTED = 1
-GO
-IF dbo.qp_check_existence('SYSTEM_NOTIFICATION_QUEUE', 'IsUserTable') = 0
-BEGIN
-  CREATE TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] (
-    [ID] [numeric](18, 0) IDENTITY(1,1) NOT NULL,
-    [CdcLastExecutedLsnId] [int] NOT NULL,
-    [TRANSACTION_LSN] [varchar](22) NOT NULL,
-    [TRANSACTION_DATE] [datetime] NOT NULL,
-    [URL] [nvarchar](1024) NOT NULL,
-    [TRIES] [numeric](18, 0) NOT NULL,
-    [JSON] [nvarchar](max) NULL,
-    [SENT] [bit] NOT NULL,
-    [CREATED] [datetime] NOT NULL,
-    [MODIFIED] [datetime] NOT NULL,
-    PRIMARY KEY CLUSTERED([ID] ASC)
-)
-
-ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_TRIES]  DEFAULT ((0)) FOR [TRIES]
-ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_SENT]  DEFAULT ((0)) FOR [SENT]
-ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_CREATED]  DEFAULT (getdate()) FOR [CREATED]
-ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_MODIFIED]  DEFAULT (getdate()) FOR [MODIFIED]
-ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE]  WITH CHECK ADD  CONSTRAINT [FK_SYSTEM_NOTIFICATION_QUEUE_SYSTEM_NOTIFICATION_QUEUE] FOREIGN KEY([ID]) REFERENCES [dbo].[SYSTEM_NOTIFICATION_QUEUE] ([ID])
-ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] CHECK CONSTRAINT [FK_SYSTEM_NOTIFICATION_QUEUE_SYSTEM_NOTIFICATION_QUEUE]
-END
-GO
-IF dbo.qp_check_existence('CdcLastExecutedLsn', 'IsUserTable') = 0
-BEGIN
-  CREATE TABLE [dbo].[CdcLastExecutedLsn] (
-    [Id] [int] IDENTITY(1,1) NOT NULL,
-    [ProviderName] [nvarchar](512) NOT NULL,
-    [ProviderUrl] [nvarchar](1024) NOT NULL,
-    [TransactionLsn] [varchar](22) NULL,
-    [TransactionDate] [datetime] NULL,
-    [LastExecutedLsn] [varchar](22) NOT NULL,
-    PRIMARY KEY CLUSTERED ([ID] ASC)
-  )
-END
-GO
 EXEC qp_drop_existing '[dbo].[tu_db]', 'IsTrigger'
 GO
 
@@ -2078,8 +2030,71 @@ AS BEGIN
     END
 END
 GO
-IF NOT EXISTS (  SELECT * FROM   sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[CONTENT]') AND name = 'FOR_REPLICATION')
-    ALTER TABLE [dbo].[CONTENT] ADD [FOR_REPLICATION] [bit] NOT NULL DEFAULT ((1))
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_CDC')
+  ALTER TABLE [dbo].[DB] ADD [USE_CDC] [bit] NOT NULL DEFAULT ((0))
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[SYSTEM_NOTIFICATION_QUEUE]') AND name = 'CdcLastExecutedLsnId')
+BEGIN
+  DROP TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE];
+  PRINT 'DROP [dbo].[SYSTEM_NOTIFICATION_QUEUE]';
+END
+GO
+
+IF dbo.qp_check_existence('SYSTEM_NOTIFICATION_QUEUE', 'IsUserTable') = 0
+BEGIN
+  CREATE TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] (
+    [ID] [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+    [CdcLastExecutedLsnId] [int] NOT NULL,
+    [TRANSACTION_LSN] [varchar](22) NOT NULL,
+    [TRANSACTION_DATE] [datetime] NOT NULL,
+    [URL] [nvarchar](1024) NOT NULL,
+    [TRIES] [numeric](18, 0) NOT NULL,
+    [JSON] [nvarchar](max) NULL,
+    [SENT] [bit] NOT NULL,
+    [CREATED] [datetime] NOT NULL,
+    [MODIFIED] [datetime] NOT NULL,
+    PRIMARY KEY CLUSTERED([ID] ASC)
+);
+
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_TRIES]  DEFAULT ((0)) FOR [TRIES];
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_SENT]  DEFAULT ((0)) FOR [SENT];
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_CREATED]  DEFAULT (getdate()) FOR [CREATED];
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD  CONSTRAINT [DF_SYSTEM_NOTIFICATION_QUEUE_MODIFIED]  DEFAULT (getdate()) FOR [MODIFIED];
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE]  WITH CHECK ADD  CONSTRAINT [FK_SYSTEM_NOTIFICATION_QUEUE_SYSTEM_NOTIFICATION_QUEUE] FOREIGN KEY([ID]) REFERENCES [dbo].[SYSTEM_NOTIFICATION_QUEUE] ([ID]);
+ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] CHECK CONSTRAINT [FK_SYSTEM_NOTIFICATION_QUEUE_SYSTEM_NOTIFICATION_QUEUE];
+PRINT 'CREATE [dbo].[SYSTEM_NOTIFICATION_QUEUE]';
+END
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[CdcLastExecutedLsn]') AND name = 'ProviderName')
+BEGIN
+  DROP TABLE [dbo].[CdcLastExecutedLsn];
+  PRINT 'DROP [dbo].[CdcLastExecutedLsn]';
+END
+GO
+
+IF dbo.qp_check_existence('CdcLastExecutedLsn', 'IsUserTable') = 0
+BEGIN
+  CREATE TABLE [dbo].[CdcLastExecutedLsn] (
+    [Id] [int] IDENTITY(1,1) NOT NULL,
+    [ProviderName] [nvarchar](512) NOT NULL,
+    [ProviderUrl] [nvarchar](1024) NOT NULL,
+    [TransactionLsn] [varchar](22) NULL,
+    [TransactionDate] [datetime] NULL,
+    [LastExecutedLsn] [varchar](22) NOT NULL,
+    PRIMARY KEY CLUSTERED ([ID] ASC)
+  );
+
+  PRINT 'CREATE [dbo].[CdcLastExecutedLsn]';
+END
+GO
+
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_DPC')
+	ALTER TABLE [dbo].[DB] ADD [USE_DPC] [bit] NOT NULL DEFAULT ((0))
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[CONTENT]') AND name = 'FOR_REPLICATION')
+  ALTER TABLE [dbo].[CONTENT] ADD [FOR_REPLICATION] [bit] NOT NULL DEFAULT ((1))
 GO
 exec qp_drop_existing 'qp_update_m2m', 'IsProcedure'
 GO
@@ -2393,7 +2408,7 @@ BEGIN
 END
 ;
 GO
-IF NOT EXISTS (  SELECT * FROM   sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[CONTENT_DATA]') AND name = 'SPLITTED')
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[CONTENT_DATA]') AND name = 'SPLITTED')
     ALTER TABLE [dbo].[CONTENT_DATA] ADD [SPLITTED] [bit] NOT NULL DEFAULT ((0))
 GO
 
@@ -2487,6 +2502,10 @@ BEGIN
 		from content_data base inner join inserted i on i.content_item_id = base.CONTENT_ITEM_ID
 	end
 END
+GO
+update CONTENT_DATA set SPLITTED = i.splitted
+from content_data cd inner join CONTENT_ITEM i on i.content_item_id = cd.CONTENT_ITEM_ID
+WHERE i.SPLITTED = 1
 GO
 
 GO

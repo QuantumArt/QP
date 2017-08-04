@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Cdc;
 using Quantumart.QP8.Constants.Cdc.Enums;
 
@@ -34,7 +33,7 @@ namespace Quantumart.QP8.DAL.CdcImport
                 return dt;
             }
         }
-        
+
         private static string BuildQueryBody(string captureInstance)
         {
             var filterClause = string.Empty;

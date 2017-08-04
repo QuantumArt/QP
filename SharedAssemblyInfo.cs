@@ -1,9 +1,9 @@
-using System.Reflection;
+﻿using System.Reflection;
 
-[assembly: AssemblyCompany("Quantumart")]
 [assembly: AssemblyTrademark("Quantumart Art")]
-[assembly: AssemblyCopyright("Copyright 1998 � Quantumart")]
-[assembly: AssemblyProduct("Quantumart QP8 Backend")]
+[assembly: AssemblyCompany("Quantum Art")]
+[assembly: AssemblyProduct("QP8.Framework")]
+[assembly: AssemblyCopyright("Copyright © 2007-2017 Quantum Art")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
