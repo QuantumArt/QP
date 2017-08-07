@@ -206,7 +206,7 @@ $q.isNullOrWhiteSpace = function isNullOrWhiteSpace(value) {
   return result;
 };
 
-$q.toString = function convertToString(value, defaultValue) {
+$q.toString = function toString(value, defaultValue) {
   let string;
   if ($q.isNull(value)) {
     string = $q.isNull(defaultValue) ? null : defaultValue;
@@ -228,7 +228,7 @@ $q.isString = function isString(value) {
 
 // Подготавливает значение к преобразованию в число
 // forCheck - признак, указывающий что преобразование используется при проверки типа</param>
-$q._prepareNumber = function prepareNumber(value, forCheck) {
+$q._prepareNumber = function _prepareNumber(value, forCheck) {
   let processedValue;
   let number = null;
   if (!$q.isNullOrEmpty(value)) {
