@@ -111,7 +111,7 @@ namespace Quantumart.QP8.BLL.Services
                 throw new ArgumentNullException(nameof(content));
             }
 
-            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds.ToList());
+            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds?.ToList());
             using (VirtualFieldRepository.LoadVirtualFieldsRelationsToMemory(content.Id))
             {
                 // Если тип контента изменился
