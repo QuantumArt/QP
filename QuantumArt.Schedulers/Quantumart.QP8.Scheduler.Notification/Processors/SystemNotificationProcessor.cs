@@ -143,7 +143,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                 catch (Exception ex)
                 {
                     _logger.Error($"Exception while sending notification for customer code: {customer.CustomerName}. Notification: {dto.ToJsonLog()}", ex);
-                        break;
+                    break;
                 }
             }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors;
 using Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors.Tarantool;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Cdc;
 
 namespace Quantumart.QP8.BLL.Factories

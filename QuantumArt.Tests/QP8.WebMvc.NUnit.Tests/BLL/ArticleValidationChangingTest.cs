@@ -3,6 +3,7 @@ using System.Xaml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QA.Validation.Xaml;
 using System.Collections.Generic;
+using System.Globalization;
 using Quantumart.QP8.BLL;
 using System.Linq;
 using Quantumart.QP8.Constants;
@@ -37,46 +38,41 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
         [TestMethod]
         public void Check_That_Validator_Change_String_Field_Test()
         {
-            var old_value = "old_value";
-            var new_value = "new_value";
+            var oldValue = "old_value";
+            var newValue = "new_value";
 
-            var article = new Article();
-            article.FieldValues = new List<FieldValue>();
+            var article = new Article {FieldValues = new List<FieldValue>()};
 
             var field = GenerateField(_fixture, FieldExactTypes.String);
-            var fv = new FieldValue() { Field = field, Value = old_value };
+            var fv = new FieldValue() { Field = field, Value = oldValue };
             article.FieldValues.Add(fv);
 
             var valuesState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Value);
-            var new_model = CreateValidatorAndRun<string>(field.FormName, new_value, valuesState);
+            var newModel = CreateValidatorAndRun(field.FormName, newValue, valuesState);
 
             var currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Value);
 
-            Assert.AreNotEqual(currentState, new_model);
+            Assert.AreNotEqual(currentState, newModel);
 
-            article.CheckChangesValues(currentState, new_model);
+            article.CheckChangesValues(currentState, newModel);
             currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Value);
 
-            CollectionAssert.AreEqual(currentState, new_model);
+            CollectionAssert.AreEqual(currentState, newModel);
         }
 
         [TestMethod]
         public void Check_That_Validator_Change_Bool_Field_Test()
         {
-            var old_value = false;
-            var new_value = true;
-
-            var article = new Article();
-            article.FieldValues = new List<FieldValue>();
+            var article = new Article {FieldValues = new List<FieldValue>()};
 
             var field = GenerateField(_fixture, FieldExactTypes.Boolean);
-            var fv = new FieldValue() { Field = field, Value = old_value.ToString() };
+            var fv = new FieldValue() { Field = field, Value = false.ToString() };
             article.FieldValues.Add(fv);
 
             var valuesState = article.FieldValues
@@ -84,7 +80,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
                                v => v.Field.ExactType == FieldExactTypes.Boolean
                                ? Converter.ToBoolean(v.Value).ToString()
                                : v.Value);
-            var new_model = CreateValidatorAndRun<string>(field.FormName, new_value, valuesState);
+            var newModel = CreateValidatorAndRun(field.FormName, true, valuesState);
 
             var currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
@@ -92,128 +88,123 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
                                ? Converter.ToBoolean(v.Value).ToString()
                                : v.Value);
 
-            Assert.AreNotEqual(currentState, new_model);
+            Assert.AreNotEqual(currentState, newModel);
 
-            article.CheckChangesValues(currentState, new_model);
+            article.CheckChangesValues(currentState, newModel);
             currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Field.ExactType == FieldExactTypes.Boolean
                                ? Converter.ToBoolean(v.Value).ToString()
                                : v.Value);
 
-            CollectionAssert.AreEqual(currentState, new_model);
+            CollectionAssert.AreEqual(currentState, newModel);
         }
 
         [TestMethod]
         public void Check_That_Validator_Change_Numeric_Field_Test()
         {
-            var old_value = 10;
-            var new_value = 15;
+            var oldValue = 10;
+            var newValue = 15;
 
-            var article = new Article();
-            article.FieldValues = new List<FieldValue>();
+            var article = new Article {FieldValues = new List<FieldValue>()};
 
             var field = GenerateField(_fixture, FieldExactTypes.Numeric);
-            var fv = new FieldValue() { Field = field, Value = old_value.ToString() };
+            var fv = new FieldValue() { Field = field, Value = oldValue.ToString() };
             article.FieldValues.Add(fv);
 
             var valuesState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                                v => v.Value);
 
-            var new_model = CreateValidatorAndRun<string>(field.FormName, new_value, valuesState);
+            var newModel = CreateValidatorAndRun(field.FormName, newValue, valuesState);
 
             var currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Value);
 
-            Assert.AreNotEqual(currentState, new_model);
+            Assert.AreNotEqual(currentState, newModel);
 
-            article.CheckChangesValues(currentState, new_model);
+            article.CheckChangesValues(currentState, newModel);
             currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Value);
 
-            CollectionAssert.AreEqual(currentState, new_model);
+            CollectionAssert.AreEqual(currentState, newModel);
         }
 
         [TestMethod]
         public void Check_That_Validator_Change_NumericField_WithNonFormat_Value_Test()
         {
-            var old_value = 10;
-            var new_value = "value";
+            var oldValue = 10;
+            var newValue = "value";
 
-            var article = new Article();
-            article.FieldValues = new List<FieldValue>();
+            var article = new Article {FieldValues = new List<FieldValue>()};
 
             var field = GenerateField(_fixture, FieldExactTypes.Numeric);
-            var fv = new FieldValue() { Field = field, Value = old_value.ToString() };
+            var fv = new FieldValue() { Field = field, Value = oldValue.ToString() };
             article.FieldValues.Add(fv);
 
             var valuesState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                                v => v.Value);
 
-            var new_model = CreateValidatorAndRun<string>(field.FormName, new_value, valuesState);
+            var newModel = CreateValidatorAndRun(field.FormName, newValue, valuesState);
 
             var currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Value);
 
-            Assert.AreNotEqual(currentState, new_model);
+            Assert.AreNotEqual(currentState, newModel);
 
-            article.CheckChangesValues(currentState, new_model);
+            article.CheckChangesValues(currentState, newModel);
             currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Value);
 
-            CollectionAssert.AreEqual(currentState, new_model);
+            CollectionAssert.AreEqual(currentState, newModel);
         }
 
         [TestMethod]
         public void Check_That_Validator_Change_DateTimeField_WithNonFormat_Value_Test()
         {
-            var old_value = DateTime.Now;
-            var new_value = "value";
+            var oldValue = DateTime.Now;
+            var newValue = "value";
 
-            var article = new Article();
-            article.FieldValues = new List<FieldValue>();
+            var article = new Article {FieldValues = new List<FieldValue>()};
 
             var field = GenerateField(_fixture, FieldExactTypes.DateTime);
-            var fv = new FieldValue() { Field = field, Value = old_value.ToString() };
+            var fv = new FieldValue() { Field = field, Value = oldValue.ToString(CultureInfo.InvariantCulture) };
             article.FieldValues.Add(fv);
 
             var valuesState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                                v => v.Value);
 
-            var new_model = CreateValidatorAndRun<string>(field.FormName, new_value, valuesState);
+            var newModel = CreateValidatorAndRun(field.FormName, newValue, valuesState);
 
             var currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Value);
 
-            Assert.AreNotEqual(currentState, new_model);
+            Assert.AreNotEqual(currentState, newModel);
 
-            article.CheckChangesValues(currentState, new_model);
+            article.CheckChangesValues(currentState, newModel);
             currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Value);
 
-            CollectionAssert.AreEqual(currentState, new_model);
+            CollectionAssert.AreEqual(currentState, newModel);
         }
 
         [TestMethod]
         public void Check_That_Validator_Change_BoolField_WithNonFormat_Value_Test()
         {
-            var old_value = true;
-            var new_value = "value";
+            var newValue = "value";
 
-            var article = new Article();
-            article.FieldValues = new List<FieldValue>();
+            var article = new Article {FieldValues = new List<FieldValue>()};
 
             var field = GenerateField(_fixture, FieldExactTypes.Boolean);
-            var fv = new FieldValue() { Field = field, Value = old_value.ToString() };
+            var fv = new FieldValue() { Field = field, Value = true.ToString() };
             article.FieldValues.Add(fv);
 
             var valuesState = article.FieldValues
@@ -222,7 +213,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
                                ? Converter.ToBoolean(v.Value).ToString()
                                : v.Value);
 
-            var new_model = CreateValidatorAndRun<string>(field.FormName, new_value, valuesState);
+            var newModel = CreateValidatorAndRun(field.FormName, newValue, valuesState);
 
             var currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
@@ -230,9 +221,9 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
                                ? Converter.ToBoolean(v.Value).ToString()
                                : v.Value);
 
-            Assert.AreNotEqual(currentState, new_model);
+            Assert.AreNotEqual(currentState, newModel);
 
-            article.CheckChangesValues(currentState, new_model);
+            article.CheckChangesValues(currentState, newModel);
             currentState = article.FieldValues
                 .ToDictionary(v => v.Field.FormName,
                               v => v.Field.ExactType == FieldExactTypes.Boolean
@@ -242,9 +233,9 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
            Assert.AreEqual(Converter.ToBoolean(currentState.First().Value), false);
         }
 
-        private static string CreateSimpleValidatorText<T>(string fieldName, object fieldValue)
+        private static string CreateSimpleValidatorText(string fieldName, object fieldValue)
         {
-            var emptyValidatorString = ValidationServices.GenerateXamlValidatorText(new PropertyDefinition[] { new PropertyDefinition
+            var emptyValidatorString = ValidationServices.GenerateXamlValidatorText(new[] { new PropertyDefinition
             {
                 PropertyName = fieldName,
                 PropertyType = typeof(string),
@@ -264,12 +255,16 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
             return newValidatorText;
         }
 
-        private static Dictionary<string, string> CreateValidatorAndRun<T>(string fieldName, object valueToSet, Dictionary<string, string> model)
+        private static Dictionary<string, string> CreateValidatorAndRun(string fieldName, object valueToSet, Dictionary<string, string> model)
         {
             // создадим пустой валидатор c одним полем
-            string newValidatorText = CreateSimpleValidatorText<T>(fieldName, valueToSet);
+            var obj = new ValidationParamObject()
+            {
+                Validator = CreateSimpleValidatorText(fieldName, valueToSet),
+                Model = model
+            };
 
-            var result = ValidationServices.ValidateModel(model, newValidatorText, null);
+            var result = ValidationServices.ValidateModel(obj);
 
             Assert.IsTrue(result.IsValid);
 

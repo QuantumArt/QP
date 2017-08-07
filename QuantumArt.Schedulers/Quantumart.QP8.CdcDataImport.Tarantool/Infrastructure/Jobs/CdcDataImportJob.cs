@@ -98,17 +98,17 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                     var response = await responseMessage.ReceiveJson<JSendResponse>();
                     if (response.Status != JSendStatus.Success || response.Code != 200)
                     {
-                        Logger.Log.Warn($"Http push notification response was failed for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
+                        Logger.Log.Warn($"Http push notification response was failed for customer code: {customer.CustomerName} [{data.TransactionLsn}]: {response.ToJsonLog()}");
                         break;
                     }
 
                     shouldSendHttpRequests = true;
                     lastPushedLsn = notSendedDtosQueue.Dequeue().TransactionLsn;
-                    Logger.Log.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
+                    Logger.Log.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName} [{data.TransactionLsn}]: {response.ToJsonLog()}");
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log.Warn($"There was an http error while sending http push notification for customer code: {customer.CustomerName}. Notification: {data.ToJsonLog()}", ex);
+                    Logger.Log.Warn($"There was an http exception while sending push notification for customer code: {customer.CustomerName}. Notification: {data.ToJsonLog()}", ex);
                     break;
                 }
             }

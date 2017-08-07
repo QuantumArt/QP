@@ -30,7 +30,9 @@ namespace Quantumart.QP8.BLL.Factories
                     var hasFilterSearchParams = !string.IsNullOrEmpty(sourceQuery) || linkedFilters.Any();
                     var combinedFilter = string.IsNullOrWhiteSpace(sourceQuery)
                         ? hostFilter
-                        : string.IsNullOrWhiteSpace(hostFilter) ? sourceQuery : $"({hostFilter} AND {sourceQuery})";
+                        : string.IsNullOrWhiteSpace(hostFilter)
+                            ? sourceQuery
+                            : $"({hostFilter} AND {sourceQuery})";
 
                     var filterForSmpl = string.IsNullOrWhiteSpace(combinedFilter) ? commonFilter : combinedFilter;
                     return hasFtsSearchParams || hasFilterSearchParams

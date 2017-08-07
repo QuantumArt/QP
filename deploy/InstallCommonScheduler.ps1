@@ -82,8 +82,10 @@ Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
 
 Write-Host "Installing service: $name1"
 Write-Host "Installing service: $name2"
+
 $frameworkDir = $([System.Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory())
 Invoke-Expression "$frameworkDir\installutil ""$installRoot\$projectName.exe"""
+
 Write-Host "Installation completed: $name1"
 Write-Host "Installation completed: $name2"
 
