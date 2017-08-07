@@ -69,7 +69,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             // Сохранить контент
-            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds.ToList());
+            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds?.ToList());
             var newContent = VirtualContentRepository.Save(content);
 
             if (content.VirtualType == VirtualType.Join)
