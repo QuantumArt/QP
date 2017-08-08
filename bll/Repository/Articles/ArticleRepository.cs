@@ -591,10 +591,21 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 if (field.ExactType == FieldExactTypes.M2MRelation)
                 {
-                    if (field.RelateToContentId.HasValue && field.LinkId.HasValue)
+                    var content = ContentRepository.GetById(field.RelateToContentId.Value);
+                    var fieldId = field.RelateToContentId.Value;
+
+                    var fieldIds = content.UserQueryContentViewSchema.Any()
+                                  ? content.UserQueryContentViewSchema.SelectUniqContentIDs().OrderBy(i => i)
+                                  : content.JoinRootId.HasValue ? new[] { content.JoinRootId.Value }
+                                  : content.UnionSourceContentIDs.Any() ? content.UnionSourceContentIDs
+                                  : new[] { field.RelateToContentId.Value };
+                    if (fieldIds.Any() && field.LinkId.HasValue)
                     {
-                        var displayField = ContentRepository.GetTitleField(field.RelateToContentId.Value);
-                        parts.Add($"dbo.qp_link_titles({field.LinkId.Value}, c.content_item_id, {displayField.Id}, 255)");
+                        foreach (var id in fieldIds)
+                        {
+                            var displayField = ContentRepository.GetTitleField(id);
+                            parts.Add($"dbo.qp_link_titles({field.LinkId.Value}, c.content_item_id, {displayField.Id}, 255)");
+                        }
                     }
                 }
                 else if (field.ExactType == FieldExactTypes.O2MRelation)
@@ -1366,16 +1377,16 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         }
 
         private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations) => (from a in articles
-                from f in a.Fields
-                from linkedItemId in f.ArticleIds != null && f.ArticleIds.Any() ? f.ArticleIds : new[] { 0 }
-                join r in relations on f.Id equals r.FieldId
-                where r.LinkId.HasValue
-                select new LinkData
-                {
-                    LinkId = r.LinkId.Value,
-                    ItemId = a.Id,
-                    LinkedItemId = linkedItemId != 0 ? linkedItemId : (int?)null
-                })
+                                                                                                                              from f in a.Fields
+                                                                                                                              from linkedItemId in f.ArticleIds != null && f.ArticleIds.Any() ? f.ArticleIds : new[] { 0 }
+                                                                                                                              join r in relations on f.Id equals r.FieldId
+                                                                                                                              where r.LinkId.HasValue
+                                                                                                                              select new LinkData
+                                                                                                                              {
+                                                                                                                                  LinkId = r.LinkId.Value,
+                                                                                                                                  ItemId = a.Id,
+                                                                                                                                  LinkedItemId = linkedItemId != 0 ? linkedItemId : (int?)null
+                                                                                                                              })
             .ToArray();
 
         private static LinkData[] UpdateLinkIds(LinkData[] links, IEnumerable<InsertData> insertData)
@@ -1400,13 +1411,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         private static ArticleData[] UpdateArticleRelations(ArticleData[] articles, IEnumerable<RelationData> relations)
         {
             var items = (from article in articles
-                    from field in article.Fields
-                    join relation in relations
-                    on new { articleId = article.Id, fieldId = field.Id }
-                    equals new { articleId = relation.ArticleId, fieldId = relation.FieldId }
-                    into r
-                    from relation in r.DefaultIfEmpty()
-                    select new { article, field, relation })
+                         from field in article.Fields
+                         join relation in relations
+                         on new { articleId = article.Id, fieldId = field.Id }
+                         equals new { articleId = relation.ArticleId, fieldId = relation.FieldId }
+                         into r
+                         from relation in r.DefaultIfEmpty()
+                         select new { article, field, relation })
                 .ToArray();
 
             foreach (var item in items)
