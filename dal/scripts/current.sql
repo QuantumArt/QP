@@ -2033,10 +2033,13 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_CDC')
   ALTER TABLE [dbo].[DB] ADD [USE_CDC] [bit] NOT NULL DEFAULT ((0))
 GO
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[SYSTEM_NOTIFICATION_QUEUE]') AND name = 'CdcLastExecutedLsnId')
+IF dbo.qp_check_existence('SYSTEM_NOTIFICATION_QUEUE', 'IsUserTable') = 1
 BEGIN
-  DROP TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE];
-  PRINT 'DROP [dbo].[SYSTEM_NOTIFICATION_QUEUE]';
+    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[SYSTEM_NOTIFICATION_QUEUE]') AND name = 'CdcLastExecutedLsnId')
+    BEGIN
+      DROP TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE];
+      PRINT 'DROP [dbo].[SYSTEM_NOTIFICATION_QUEUE]';
+    END
 END
 GO
 
