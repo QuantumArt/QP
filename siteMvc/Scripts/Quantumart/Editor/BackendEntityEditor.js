@@ -1,20 +1,16 @@
-// ****************************************************************************
-// *** Компонент "Редактор сущности"                    ***
-// ****************************************************************************
+window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING = 'OnEntityEditorSubmitting';
+window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED = 'OnEntityEditorSubmitted';
+window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR = 'OnEntityEditorSubmittedError';
+window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING = 'OnEntityEditorRefreshStarting';
+window.EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING = 'OnEntityEditorActionExecuting';
 
-//#region event types of entity editor
-// === Типы событий редактора сущностей ===
-var EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING = 'OnEntityEditorSubmitting';
-var EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED = 'OnEntityEditorSubmitted';
-var EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR = 'OnEntityEditorSubmittedError';
-var EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING = 'OnEntityEditorRefreshStarting';
-var EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING = 'OnEntityEditorActionExecuting';
-
-//#endregion
-
-//#region class BackendEntityEditor
-// === Класс "Редактор сущности" ===
-Quantumart.QP8.BackendEntityEditor = function(editorGroupCode, documentWrapperElementId, entityTypeCode, entityId, actionTypeCode, options) {
+Quantumart.QP8.BackendEntityEditor = function (
+  editorGroupCode,
+  documentWrapperElementId,
+  entityTypeCode,
+  entityId,
+  actionTypeCode,
+  options) {
   Quantumart.QP8.BackendEntityEditor.initializeBase(this);
 
   this._editorGroupCode = editorGroupCode;
@@ -103,50 +99,50 @@ Quantumart.QP8.BackendEntityEditor = function(editorGroupCode, documentWrapperEl
     this._isBindToExternal = $q.toBoolean(options.isBindToExternal, false);
   }
 
-  this._onActionExecutingHandler = jQuery.proxy(this._onActionExecuting, this);
-  this._onHtmlInputChangedHandler = jQuery.proxy(this._onHtmlInputChanged, this);
-  this._onBeforeSubmitHandler = jQuery.proxy(this._onBeforeSubmit, this);
-  this._onSuccessHandler = jQuery.proxy(this._onSuccess, this);
-  this._onErrorHandler = jQuery.proxy(this._onError, this);
-  this._onLibraryFilesUploadedHandler = jQuery.proxy(this._onFileUploaded, this);
+  this._onActionExecutingHandler = $.proxy(this._onActionExecuting, this);
+  this._onHtmlInputChangedHandler = $.proxy(this._onHtmlInputChanged, this);
+  this._onBeforeSubmitHandler = $.proxy(this._onBeforeSubmit, this);
+  this._onSuccessHandler = $.proxy(this._onSuccess, this);
+  this._onErrorHandler = $.proxy(this._onError, this);
+  this._onLibraryFilesUploadedHandler = $.proxy(this._onFileUploaded, this);
 
   this._customButtons = [];
   this._customLinkButtons = [];
 
-  jQuery('#' + this._documentWrapperElementId).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey, this);
+  $(`#${this._documentWrapperElementId}`).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey, this);
 };
 
 Quantumart.QP8.BackendEntityEditor.componentRefDataKey = 'component_ref';
-Quantumart.QP8.BackendEntityEditor.getComponent = function(componentElem) {
-  return jQuery(componentElem).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey);
+Quantumart.QP8.BackendEntityEditor.getComponent = function (componentElem) {
+  return $(componentElem).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey);
 };
 
 Quantumart.QP8.BackendEntityEditor.prototype = {
-  _editorGroupCode: '', // код группы редакторов
-  _entityTypeCode: '', // код типа сущности
-  _entityId: 0, // идентификатор сущности
+  _editorGroupCode: '',
+  _entityTypeCode: '',
+  _entityId: 0,
   _parentEntityId: 0,
   _actionCode: '',
-  _actionTypeCode: '', // код типа действия
-  _documentWrapperElementId: '', // идентификатор DOM-элемента, образующего документ
-  _formElementId: '', // идентификатор формы
-  _formElement: null, // форма
-  _validationSummaryElementId: '', // идентификатор списка ошибок
-  _validationSummaryElement: null, // DOM-элемент, образующий список ошибок
-  _formHasErrors: false, // признак, того что форма содержит ошибки
-  _editorManagerComponent: null, // менеджер редакторов сущностей
+  _actionTypeCode: '',
+  _documentWrapperElementId: '',
+  _formElementId: '',
+  _formElement: null,
+  _validationSummaryElementId: '',
+  _validationSummaryElement: null,
+  _formHasErrors: false,
+  _editorManagerComponent: null,
   _hostIsWindow: false,
-  _initFieldValues: null, // значения для инициализации полей
-  _disabledFields: null, // идентификаторы полей который должны быть disable (массив имен полей)
-  _hideFields: null, // идентификаторы полей которые должны быть скрыты (массив имен полей)
-  _restoring: false, // документ восстановлен
+  _initFieldValues: null,
+  _disabledFields: null,
+  _hideFields: null,
+  _restoring: false,
   _contextBlockState: null,
   _variationsModel: null,
   _errorModel: null,
   _variationsModelChanged: false,
   _contextModel: null,
   _disableChangeTracking: false,
-  _needUp: false, // вызван функционал Save & Up, можно пропустить инициализацию
+  _needUp: false,
 
   _modifiedDateTime: null,
   _isBindToExternal: false,
@@ -169,8 +165,9 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
   FIELD_CHANGE_TRACK_SELECTORS: ':input:not(.qp-notChangeTrack)',
   CHANGED_FIELD_SELECTOR: '.changed',
   CHANGED_EXCEPT_VARMODEL_SELECTOR: '.changed:not(.variationModel)',
-  REAL_CHANGED_FIELD_SELECTOR: '.' + CHANGED_FIELD_CLASS_NAME + ':not(.' + REFRESHED_FIELD_CLASS_NAME + ')',
-  REAL_CHANGED_EXCEPT_VARMODEL_SELECTOR: '.' + CHANGED_FIELD_CLASS_NAME + ':not(.' + REFRESHED_FIELD_CLASS_NAME + '):not(.variationModel)',
+  REAL_CHANGED_FIELD_SELECTOR: `.${window.CHANGED_FIELD_CLASS_NAME}:not(.${window.REFRESHED_FIELD_CLASS_NAME})`,
+  REAL_CHANGED_EXCEPT_VARMODEL_SELECTOR:
+    `.${window.CHANGED_FIELD_CLASS_NAME}:not(.${window.REFRESHED_FIELD_CLASS_NAME}):not(.variationModel)`,
 
   CONTEXT_SELECTOR: '.currentContext',
   CONTEXT_MODEL_SELECTOR: '.contextModel',
@@ -180,103 +177,126 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
   OLD_CONTEXT_DATA_KEY: 'oldContext',
 
-  get_editorGroupCode: function() {
+  // eslint-disable-next-line camelcase
+  get_editorGroupCode() {
     return this._editorGroupCode;
   },
 
-  set_editorGroupCode: function(value) {
+  // eslint-disable-next-line camelcase
+  set_editorGroupCode(value) {
     this._editorGroupCode = value;
   },
 
-  get_documentWrapperElementId: function() {
+  // eslint-disable-next-line camelcase
+  get_documentWrapperElementId() {
     return this._documentWrapperElementId;
   },
 
-  set_documentWrapperElementId: function(value) {
+  // eslint-disable-next-line camelcase
+  set_documentWrapperElementId(value) {
     this._documentWrapperElementId = value;
   },
 
-  get_entityTypeCode: function() {
+  // eslint-disable-next-line camelcase
+  get_entityTypeCode() {
     return this._entityTypeCode;
   },
 
-  set_entityTypeCode: function(value) {
+  // eslint-disable-next-line camelcase
+  set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
 
-  get_entityId: function() {
+  // eslint-disable-next-line camelcase
+  get_entityId() {
     return this._entityId;
   },
 
-  set_entityId: function(value) {
+  // eslint-disable-next-line camelcase
+  set_entityId(value) {
     this._entityId = value;
   },
 
-  get_actionTypeCode: function() {
+  // eslint-disable-next-line camelcase
+  get_actionTypeCode() {
     return this._actionTypeCode;
   },
 
-  set_actionTypeCode: function(value) {
+  // eslint-disable-next-line camelcase
+  set_actionTypeCode(value) {
     this._actionTypeCode = value;
   },
 
-  get_formElementId: function() {
+  // eslint-disable-next-line camelcase
+  get_formElementId() {
     return this._formElementId;
   },
 
-  set_formElementId: function(value) {
+  // eslint-disable-next-line camelcase
+  set_formElementId(value) {
     this._formElementId = value;
   },
 
-  get_validationSummaryElementId: function() {
+  // eslint-disable-next-line camelcase
+  get_validationSummaryElementId() {
     return this._validationSummaryElementId;
   },
 
-  set_validationSummaryElementId: function(value) {
+  // eslint-disable-next-line camelcase
+  set_validationSummaryElementId(value) {
     this._validationSummaryElementId = value;
   },
 
-  get_editorManagerComponent: function() {
+  // eslint-disable-next-line camelcase
+  get_editorManagerComponent() {
     return this._editorManagerComponent;
   },
 
-  set_editorManagerComponent: function(value) {
+  // eslint-disable-next-line camelcase
+  set_editorManagerComponent(value) {
     this._editorManagerComponent = value;
   },
 
-  get_fieldValues: function() {
+  // eslint-disable-next-line camelcase
+  get_fieldValues() {
     return $c.getAllFieldValues(this._formElement);
   },
 
-  get_disabledFields: function() {
+  // eslint-disable-next-line camelcase
+  get_disabledFields() {
     return this._disabledFields;
   },
 
-  get_hideFields: function() {
+  // eslint-disable-next-line camelcase
+  get_hideFields() {
     return this._hideFields;
   },
 
-  get_parentEntityId: function() {
+  // eslint-disable-next-line camelcase
+  get_parentEntityId() {
     return this._parentEntityId;
   },
 
-  get_actionCode: function() {
+  // eslint-disable-next-line camelcase
+  get_actionCode() {
     return this._actionCode;
   },
 
-  // Дата модификации сущности (ticks)
-  get_modifiedDateTime: function() {
+  // eslint-disable-next-line camelcase
+  get_modifiedDateTime() {
     return this._modifiedDateTime;
   },
 
-  get_contextQuery: function() {
-    if (this._contextBlockState)
-    return JSON.stringify(this._contextBlockState);
-    else
+  // eslint-disable-next-line camelcase
+  get_contextQuery() {
+    if (this._contextBlockState) {
+      return JSON.stringify(this._contextBlockState);
+    }
+
     return '';
   },
 
-  allowAutoSave: function() {
+  allowAutoSave() {
     return this._entityTypeAllowedToAutosave && !this._isBindToExternal;
   },
 
@@ -284,13 +304,13 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
   _onActionExecutingHandler: null,
   _onLibraryFilesUploadedHandler: null,
 
-  initialize: function() {
+  initialize() {
     if (!this._needUp) {
-      var $form = null;
-      var formElementId = this._formElementId;
+      let $form = null;
+      let formElementId = this._formElementId;
 
       if ($q.isNullOrWhiteSpace(formElementId)) {
-        $form = jQuery('#' + this._documentWrapperElementId + ' FORM:first');
+        $form = $(`#${this._documentWrapperElementId} FORM:first`);
         formElementId = $form.attr('id');
       }
 
@@ -299,19 +319,13 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
         success: this._onSuccessHandler,
         error: this._onErrorHandler,
         iframe: false
-      }
-  );
+      });
 
       this._formElementId = formElementId;
       this._formElement = $form.get(0);
-
-      $form = null;
-
       if (!$q.isNullOrWhiteSpace(this._validationSummaryElementId)) {
-        var $validationSummary = jQuery('#' + this._validationSummaryElementId);
-
+        const $validationSummary = $(`#${this._validationSummaryElementId}`);
         this._formHasErrors = $validationSummary.length > 0 && $validationSummary.find('UL').length > 0;
-        $validationSummary = null;
       }
 
       if (this._formHasErrors) {
@@ -323,16 +337,13 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     }
   },
 
-  getFields: function() {
-    var $fields = jQuery(this._formElement).find(this.FIELD_SELECTORS);
-
-    return $fields;
+  getFields() {
+    return $(this._formElement).find(this.FIELD_SELECTORS);
   },
 
-  _initAllFields: function() {
+  _initAllFields() {
     if (this._formElement) {
-      var $form = jQuery(this._formElement);
-
+      let $form = $(this._formElement);
       $c.initAllClassifierFields($form, this._onActionExecutingHandler, {
         hostIsWindow: this._hostIsWindow,
         initFieldValues: this._initFieldValues,
@@ -343,21 +354,18 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
         parentEditor: this,
         customButtonsSettings: this._customButtonsSettings,
         customLinkButtonsSettings: this._customLinkButtonsSettings
-      }, jQuery.proxy(function(eventType, sender, eventArgs) {
-          this.notify(eventType, eventArgs);
-          if (eventArgs.toggleDisableChangeTracking) {
-            if (eventType === EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING) {
-              this._disableChangeTracking = true;
-            } else if (eventType === EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED) {
-              this._disableChangeTracking = false;
-            }
-          } else {
-            if (eventType === EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED && this._editorManagerComponent) {
-              this._editorManagerComponent.onAllFieldInvalidate(this._documentWrapperElementId);
-            }
+      }, $.proxy(function (eventType, sender, eventArgs) {
+        this.notify(eventType, eventArgs);
+        if (eventArgs.toggleDisableChangeTracking) {
+          if (eventType === window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING) {
+            this._disableChangeTracking = true;
+          } else if (eventType === window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED) {
+            this._disableChangeTracking = false;
           }
-        }, this)
-      );
+        } else if (eventType === window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED && this._editorManagerComponent) {
+          this._editorManagerComponent.onAllFieldInvalidate(this._documentWrapperElementId);
+        }
+      }, this));
 
       $c.setAllVisualEditorValues($form, this._initFieldValues);
       $c.makeReadonlyVisualEditors($form, this._disabledFields);
@@ -370,9 +378,11 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       $c.initAllEntityDataTrees($form);
       $c.initAllAggregationLists($form);
       $c.initAllWorkflows($form);
+
+      const _onFieldValueChangedProxy = $.proxy(this._onFieldValueChanged, this);
       $form
         .on('change paste', this.FIELD_CHANGE_TRACK_SELECTORS, this._onHtmlInputChangedHandler)
-        .on(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, this.CHANGED_FIELD_SELECTOR, jQuery.proxy(this._onFieldValueChanged, this));
+        .on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, this.CHANGED_FIELD_SELECTOR, _onFieldValueChangedProxy);
 
       $c.setAllSimpleTextBoxValues($form, this._initFieldValues);
       $c.setAllBooleanValues($form, this._initFieldValues);
@@ -400,22 +410,25 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
         this._customInit(this, $form);
       }
 
-      var self = this;
+      const that = this;
+      if (this._customButtonsSettings) {
+        $.each(this._customButtonsSettings, (index, item) => {
+          that.addCustomButton(item);
+        });
+      }
 
-      if (this._customButtonsSettings) jQuery.each(this._customButtonsSettings, function(index, item) {
-        self.addCustomButton(item);
-      });
-
-      if (this._customLinkButtonsSettings) jQuery.each(this._customLinkButtonsSettings, function(index, item) {
-        self.addCustomLinkButton(item);
-      });
+      if (this._customLinkButtonsSettings) {
+        $.each(this._customLinkButtonsSettings, (index, item) => {
+          that.addCustomLinkButton(item);
+        });
+      }
 
       $form = null;
     }
   },
 
-  _initAllFieldDescriptons: function() {
-    jQuery('span[data-field_description_text]', this._formElement).qtip({
+  _initAllFieldDescriptons() {
+    $('span[data-field_description_text]', this._formElement).qtip({
       style: 'qtip-light',
       content: {
         attr: 'data-field_description_text'
@@ -432,14 +445,13 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     });
   },
 
-  _disposeAllFieldDescriptons: function() {
-    jQuery('span[data-tooltip]').qtip('destroy', true);
+  _disposeAllFieldDescriptons() {
+    $('span[data-tooltip]').qtip('destroy', true);
   },
 
-  _disposeAllFields: function() {
+  _disposeAllFields() {
     if (this._formElement && !this._needUp) {
-      var $form = jQuery(this._formElement);
-
+      const $form = $(this._formElement);
       if (this._customDispose) {
         this._customDispose(this, $form);
       }
@@ -454,29 +466,26 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       $c.destroyAllEntityDataTrees($form);
       $c.destroyAllAggregationLists($form);
       $c.destroyAllHighlightedTextAreas($form);
+
       Quantumart.QP8.BackendExpandedContainer.destroyAll($form);
       $c.destroyAllClassifierFields($form);
 
       $form
         .off('change paste', this.FIELD_CHANGE_TRACK_SELECTORS)
-        .off(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, this.CHANGED_FIELD_SELECTOR);
+        .off(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, this.CHANGED_FIELD_SELECTOR);
 
       this._disposeContextModelField($form);
       this._disposeVariationInfo($form);
       this._disposeVariationsModelField($form);
       this._disposeErrorModelField($form);
-
-      $form = null;
     }
   },
 
-  _initVariationsModelField: function($form) {
-    var $modelElem = jQuery(this.VARIATION_SELECTOR, $form);
-
-    if ($modelElem.length == 1) {
-      var model = {};
-
-      jQuery.each(JSON.parse($modelElem.val()), function() {
+  _initVariationsModelField($form) {
+    const $modelElem = $(this.VARIATION_SELECTOR, $form);
+    if ($modelElem.length === 1) {
+      const model = {};
+      $.each(JSON.parse($modelElem.val()), function () {
         model[this.Context] = { Id: this.Id, FieldValues: this.FieldValues };
       });
 
@@ -485,27 +494,25 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     }
   },
 
-  _disposeVariationsModelField: function() {
+  _disposeVariationsModelField() {
     this._variationsModel = null;
   },
 
-  _initVariationInfo: function($form) {
-    var $infoElem = jQuery(this.VARIATION_INFO_SELECTOR, $form);
-
-    $infoElem.find('.removeVariation').on('click', jQuery.proxy(this._onRemoveVariation, this));
+  _initVariationInfo($form) {
+    const $infoElem = $(this.VARIATION_INFO_SELECTOR, $form);
+    $infoElem.find('.removeVariation').on('click', $.proxy(this._onRemoveVariation, this));
     $infoElem.find('.currentInfo').html($l.EntityEditor.baseArticle);
     $infoElem.find('.currentTotal').html(this._getVariationModelCount());
   },
 
-  _disposeVariationInfo: function($form) {
-    var $infoElem = jQuery(this.VARIATION_INFO_SELECTOR, $form);
-
+  _disposeVariationInfo($form) {
+    const $infoElem = $(this.VARIATION_INFO_SELECTOR, $form);
     $infoElem.find('.removeVariation').off('click');
   },
 
-  _onRemoveVariation: function() {
-    var $form = jQuery(this._formElement);
-    var contextValue = jQuery(this.CONTEXT_SELECTOR, $form).val();
+  _onRemoveVariation() {
+    const $form = $(this._formElement);
+    const contextValue = $(this.CONTEXT_SELECTOR, $form).val();
 
     $q.removeProperty(this._variationsModel, contextValue);
     this._variationsModelChanged = true;
@@ -514,15 +521,14 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     this._updateVariationInfo(contextValue);
   },
 
-  _updateVariationInfo: function(contextValue) {
-    var model = this._variationsModel[contextValue];
-    var exists = !!model && !!contextValue;
-    var isNew = model && model.Id === 0;
-    var $infoElem = jQuery(this.VARIATION_INFO_SELECTOR, this._formElement);
+  _updateVariationInfo(contextValue) {
+    const model = this._variationsModel[contextValue];
+    const exists = !!model && !!contextValue;
+    const isNew = model && model.Id === 0;
+    const $infoElem = $(this.VARIATION_INFO_SELECTOR, this._formElement);
 
-    var message = '';
-
-    if (contextValue == '') {
+    let message = '';
+    if (contextValue === '') {
       message = $l.EntityEditor.baseArticle;
     } else if (!exists) {
       message = $l.EntityEditor.variationNotExists;
@@ -537,32 +543,26 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     $infoElem.find('.removeItem').toggle(exists);
   },
 
-  _getVariationModelCount: function() {
-    var count = 0;
-
-    for (k in this._variationsModel) if (k && this._variationsModel.hasOwnProperty(k)) count++;
-    return count;
+  _getVariationModelCount() {
+    return this._variationsModel ? Object.keys(this._variationsModel).length : 0;
   },
 
-  _initContextModelField: function($form) {
-    var $modelElem = jQuery(this.CONTEXT_MODEL_SELECTOR, $form);
-
-    if ($modelElem.length == 1) {
+  _initContextModelField($form) {
+    const $modelElem = $(this.CONTEXT_MODEL_SELECTOR, $form);
+    if ($modelElem.length === 1) {
       this._contextModel = JSON.parse($modelElem.val());
     }
   },
 
-  _disposeContextModelField: function() {
+  _disposeContextModelField() {
     this._contextModel = null;
   },
 
-  _initErrorModelField: function($form) {
-    var $modelElem = jQuery(this.ERROR_SELECTOR, $form);
-
-    if ($modelElem.length == 1) {
-      var model = {};
-
-      jQuery.each(JSON.parse($modelElem.val()), function() {
+  _initErrorModelField($form) {
+    const $modelElem = $(this.ERROR_SELECTOR, $form);
+    if ($modelElem.length === 1) {
+      const model = {};
+      $.each(JSON.parse($modelElem.val()), function () {
         model[this.Context] = this.Errors;
       });
 
@@ -570,22 +570,18 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     }
   },
 
-  _disposeErrorModelField: function() {
+  _disposeErrorModelField() {
     this._errorModel = null;
   },
 
-  _saveVariationsModelData: function($form) {
+  _saveVariationsModelData($form) {
     if (this._variationsModelChanged) {
-      var $modelElem = jQuery(this.VARIATION_SELECTOR, $form);
-
-      if ($modelElem.length == 1) {
-        var model = [];
-
-        for (var prop in this._variationsModel) {
-          var currentItem = this._variationsModel[prop];
-
-          model.push({ Context: prop, Id: currentItem.Id, FieldValues: currentItem.FieldValues });
-        }
+      const $modelElem = $(this.VARIATION_SELECTOR, $form);
+      if ($modelElem.length === 1) {
+        const model = [];
+        Object.entries(this._variationsModel).forEach(([key, val]) => {
+          model.push({ Context: key, Id: val.Id, FieldValues: val.FieldValues });
+        });
 
         $modelElem.val(JSON.stringify(model)).change();
         this._variationsModelChanged = false;
@@ -593,243 +589,244 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     }
   },
 
-  _copyCurrentDataToVariationsModel: function($form) {
-    var $contextElem = jQuery(this.CONTEXT_SELECTOR, $form);
-
-    if ($contextElem.length == 1) {
+  _copyCurrentDataToVariationsModel($form) {
+    const $contextElem = $(this.CONTEXT_SELECTOR, $form);
+    if ($contextElem.length === 1) {
       $c.saveDataOfAllVisualEditors(this._formElement);
       this._copyToVariationsModel($contextElem.val());
     }
   },
 
-  isFieldsValid: function() {
+  isFieldsValid() {
     return !this._formHasErrors;
   },
 
-  isFieldsChanged: function() {
-    var $changedFields = jQuery(this._formElement).find(this.REAL_CHANGED_FIELD_SELECTOR);
-
-    return ($changedFields.length > 0);
+  isFieldsChanged() {
+    const $changedFields = $(this._formElement).find(this.REAL_CHANGED_FIELD_SELECTOR);
+    return $changedFields.length > 0;
   },
 
-  isFieldValuesChanged: function() {
-    var $changedFields = jQuery(this._formElement)
+  isFieldValuesChanged() {
+    const $changedFields = $(this._formElement)
       .find(this.VARIATION_SELECTOR)
       .closest('fieldset')
       .find(this.REAL_CHANGED_EXCEPT_VARMODEL_SELECTOR);
 
-    return ($changedFields.length > 0);
+    return $changedFields.length > 0;
   },
 
-  addCustomButton: function(settings, $parent) {
-    if (!settings.name && !settings.onClick && !settings.suffix && !settings.title)
-    alert('One of the required settings is missed: name, title, suffix, onClick');
-    else {
-      var defaultSettings =
-      {
-        'class': 'customButton'
+  addCustomButton(settings, $parent) {
+    if (!settings.name && !settings.onClick && !settings.suffix && !settings.title) {
+      window.alert('One of the required settings is missed: name, title, suffix, onClick');
+    } else {
+      const defaultSettings = {
+        class: 'customButton'
       };
 
-      settings = jQuery.extend(defaultSettings, settings);
-      var $form = $parent || jQuery(this._formElement);
-      var $input = $form.find("[name='" + settings.name + "'],[data-content_field_name='" + settings.name + "']");
+      const newSettings = Object.assign({}, defaultSettings, settings);
+      const $form = $parent || $(this._formElement);
+      const $input = $form.find(`[name='${newSettings.name}'],[data-content_field_name='${newSettings.name}']`);
 
-      if ($input.length == 0) {
-        if (this._notifyCustomButtonExistence) alert('Input ' + settings.name + ' is not found');
-        return;
+      if ($input.length === 0) {
+        if (this._notifyCustomButtonExistence) {
+          window.alert(`Input ${newSettings.name} is not found`);
+        }
+
+        return undefined;
       }
 
-      var et = $input.data('exact_type');
-      var sTypes = [FILE_FIELD_TYPE, IMAGE_FIELD_TYPE];
+      const et = $input.data('exact_type');
+      const sTypes = [window.FILE_FIELD_TYPE, window.IMAGE_FIELD_TYPE];
 
-      if (!et && ($input.prop('type') != 'text' || $input.parents('.t-numerictextbox').length > 0) || jQuery.inArray(et, sTypes) == -1) {
-        alert('Input ' + settings.name + ' type is not supported');
-        return;
+      if ((!et && ($input.prop('type') !== 'text' || $input.parents('.t-numerictextbox').length > 0))
+        || $.inArray(et, sTypes) === -1) {
+        window.alert(`Input ${newSettings.name} type is not supported`);
+        return undefined;
       }
 
-      var $fieldWrapper = $input.parent('.fieldWrapper');
-
-      if ($fieldWrapper.length == 0) {
-        $input.wrap($('<div/>', { id: $input.prop('id') + '_wrapper', 'class': 'fieldWrapper group myClass' }));
+      let $fieldWrapper = $input.parent('.fieldWrapper');
+      if ($fieldWrapper.length === 0) {
+        $input.wrap($('<div/>', { id: `${$input.prop('id')}_wrapper`, class: 'fieldWrapper group myClass' }));
         $fieldWrapper = $input.parent('.fieldWrapper');
       }
 
-      var options = {
-        id: $input.prop('id') + '_' + settings.suffix,
-        'class': settings['class'],
-        title: settings.title
+      const options = {
+        id: `${$input.prop('id')}_${newSettings.suffix}`,
+        class: newSettings.class,
+        title: newSettings.title
       };
 
-      if ($fieldWrapper.find('#' + options.id).length > 0) {
-        if (this._notifyCustomButtonExistence) alert('Button ' + options.id + ' already exists');
-        return;
+      if ($fieldWrapper.find(`#${options.id}`).length > 0) {
+        if (this._notifyCustomButtonExistence) {
+          window.alert(`Button ${options.id} already exists`);
+        }
+
+        return undefined;
       }
 
-      var $div = $('<div/>', options);
-
+      const $div = $('<div/>', options);
       $div.append($('<img/>', { src: '/Backend/Content/Common/0.gif' }));
-      if (settings.url) {
-        $div.css({ 'background-image': 'url(' + settings.url + ')', 'background-color': 'transparent' });
+
+      if (newSettings.url) {
+        $div.css({ 'background-image': `url(${newSettings.url})`, 'background-color': 'transparent' });
       }
 
       $fieldWrapper.append($div);
-      var onClick = function() {
-    settings.onClick.call(this, $input, $form);
-  };
-
-      $div.on('click', { $input: $input, $form: $form, settings: settings }, settings.onClick);
-
+      $div.on('click', { $input, $form, newSettings }, newSettings.onClick);
       this._customButtons.push(options.id);
     }
+
+    return undefined;
   },
 
-  addCustomLinkButton: function(settings, $parent) {
-    if (!settings.name && !settings.onClick && !settings.suffix && !settings.title)
-    alert('One of the required settings is missed: name, title, suffix, onClick');
-    else {
-      var defaultSettings =
-      {
-        'class': 'pick'
+  addCustomLinkButton(settings, $parent) {
+    if (!settings.name && !settings.onClick && !settings.suffix && !settings.title) {
+      window.alert('One of the required settings is missed: name, title, suffix, onClick');
+    } else {
+      const defaultSettings = {
+        class: 'pick'
       };
 
-      settings = jQuery.extend(defaultSettings, settings);
-      $form = $parent || jQuery(this._formElement);
-      var $input = $form.find("[name='" + settings.name + "'],[data-content_field_name='" + settings.name + "']");
+      const newSettings = Object.assign({}, defaultSettings, settings);
+      const $form = $parent || $(this._formElement);
+      const $input = $form.find(`[name='${newSettings.name}'],[data-content_field_name='${newSettings.name}']`);
 
-      if ($input.length == 0) {
+      if ($input.length === 0) {
         if (this._notifyCustomButtonExistence) {
-          alert('Input ' + settings.name + ' is not found');
+          window.alert(`Input ${newSettings.name} is not found`);
         }
 
-        return;
+        return undefined;
       }
 
-      var et = $input.data('exact_type');
-      var sTypes = [STRING_FIELD_TYPE, FILE_FIELD_TYPE, IMAGE_FIELD_TYPE, TEXTBOX_FIELD_TYPE, VISUAL_EDIT_FIELD_TYPE];
+      const et = $input.data('exact_type');
+      const sTypes = [
+        window.STRING_FIELD_TYPE,
+        window.FILE_FIELD_TYPE,
+        window.IMAGE_FIELD_TYPE,
+        window.TEXTBOX_FIELD_TYPE,
+        window.VISUAL_EDIT_FIELD_TYPE
+      ];
 
-      if (jQuery.inArray(et, sTypes) == -1) {
-        alert('Input ' + settings.name + ' type is not supported');
-        return;
+      if ($.inArray(et, sTypes) === -1) {
+        window.alert(`Input ${newSettings.name} type is not supported`);
+        return undefined;
       }
 
-      var $fieldWrapper = $input.parent('.fieldWrapper');
-
-      if ($fieldWrapper.length == 0) {
-        $input.wrap($('<div/>', { 'class': 'fieldWrapper group myClass' }));
+      let $fieldWrapper = $input.parent('.fieldWrapper');
+      if ($fieldWrapper.length === 0) {
+        $input.wrap($('<div/>', { class: 'fieldWrapper group myClass' }));
         $fieldWrapper = $input.parent('.fieldWrapper');
       }
 
-      var $ul = $fieldWrapper.find('ul.linkButtons');
-
-      if ($ul.length == 0) {
+      let $ul = $fieldWrapper.find('ul.linkButtons');
+      if ($ul.length === 0) {
         $fieldWrapper.prepend('<ul class="linkButtons group" style="display: block;" />');
         $ul = $fieldWrapper.find('ul.linkButtons');
       }
 
-      var options = {
-        id: $input.prop('id') + '_' + settings.suffix,
-        'class': settings['class'],
-        title: settings.title
+      const options = {
+        id: `${$input.prop('id')}_${newSettings.suffix}`,
+        class: newSettings.class,
+        title: newSettings.title
       };
 
-      if ($ul.find('#' + options.id).length > 0) {
-        if (this._notifyCustomButtonExistence) alert('Button ' + options.id + ' already exists');
-        return;
+      if ($ul.find(`#${options.id}`).length > 0) {
+        if (this._notifyCustomButtonExistence) {
+          window.alert(`Button ${options.id} already exists`);
+        }
+
+        return undefined;
       }
 
-      var builder = new $.telerik.stringBuilder();
-
+      const builder = new $.telerik.stringBuilder();
       builder
-        .cat('<li><span id="' + options.id + '" class="linkButton actionLink">')
+        .cat(`<li><span id="${options.id}" class="linkButton actionLink">`)
         .cat('<a href="javascript:void(0);">')
-        .cat('<span class="icon ' + options['class'] + '"><img src="/Backend/Content/Common/0.gif"></span>')
-        .cat('<span class="text">' + options.title + '</span>')
+        .cat(`<span class="icon ${options.class}"><img src="/Backend/Content/Common/0.gif"></span>`)
+        .cat(`<span class="text">${options.title}</span>`)
         .cat('</a></span></li>');
 
-      var $li = jQuery(builder.string());
-
-      if (settings.url) {
-        $li.find('.icon').css({ 'background-image': 'url(' + settings.url + ')' });
+      const $li = $(builder.string());
+      if (newSettings.url) {
+        $li.find('.icon').css({ 'background-image': `url(${newSettings.url})` });
       }
 
       $ul.append($li);
-      var onClick = function() {
-        settings.onClick.call(this, $input, $form);
-      };
-
-      $li.find('a').on('click', { $input: $input, $form: $form, settings: settings }, settings.onClick);
+      $li.find('a').on('click', { $input, $form, newSettings }, newSettings.onClick);
       this._customLinkButtons.push(options.id);
     }
+
+    return undefined;
   },
 
-  saveEntity: function(actionCode) {
+  saveEntity(actionCode) {
     $c.saveDataOfAllVisualEditors(this._formElement);
-    $c.SaveDataOfAllHighlightedTextAreas(this._formElement);
+    $c.saveDataOfAllHighlightedTextAreas(this._formElement);
     $c.saveDataOfAllAggregationLists(this._formElement);
-    if (this._entityTypeCode !== ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+    if (this._entityTypeCode !== window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
       if (!this.isFieldsChanged()) {
-        alert($l.EntityEditor.fieldsNotChangedMessage);
+        window.alert($l.EntityEditor.fieldsNotChangedMessage);
         return false;
       }
     }
 
+    const $form = $(this._formElement);
+
     this._copyCurrentDataToVariationsModel($form);
     this._saveVariationsModelData($form);
 
-    var $form = jQuery(this._formElement);
-    $form.find('input[name="' + BACKEND_ACTION_CODE_HIDDEN_NAME + '"]').val(actionCode);
+    $form.find(`input[name="${window.BACKEND_ACTION_CODE_HIDDEN_NAME}"]`).val(actionCode);
     $form.trigger('submit');
+
+    return undefined;
   },
 
-  refreshEditor: function(options) {
-    var message = (options && options.confirmMessageText) ? options.confirmMessageText : $l.EntityEditor.autoRefreshConfirmMessage;
+  refreshEditor(options) {
+    const message = options && options.confirmMessageText
+      ? options.confirmMessageText
+      : $l.EntityEditor.autoRefreshConfirmMessage;
 
     if (this._confirmAction(message)) {
-      var eventArgs = new Quantumart.QP8.BackendEventArgs();
-
-      this.notify(EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING, eventArgs);
-      eventArgs = null;
+      const eventArgs = new Quantumart.QP8.BackendEventArgs();
+      this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING, eventArgs);
     }
   },
 
-  fixEntityDataListsOverflow: function() {
+  fixEntityDataListsOverflow() {
     if (this._formElement) {
-      var $form = jQuery(this._formElement);
-
+      const $form = $(this._formElement);
       $c.fixAllEntityDataListsOverflow($form);
-      $form = null;
     }
   },
 
-  fixHtaInitializing: function() {
+  fixHtaInitializing() {
     if (this._formElement) {
-      var $form = jQuery(this._formElement);
-
+      const $form = $(this._formElement);
       $c._refreshAllHta($form);
-      $form = null;
     }
   },
 
-  confirmRefresh: function() {
+  confirmRefresh() {
     return this._confirmAction($l.EntityEditor.refreshConfirmMessage);
   },
 
-  confirmChange: function() {
+  confirmChange() {
     return this._confirmAction($l.EntityEditor.changeConfirmMessage);
   },
 
-  confirmClose: function() {
+  confirmClose() {
     return this._confirmAction($l.EntityEditor.closeConfirmMessage);
   },
 
-  _confirmAction: function(message) {
-    return (!this.isFieldsChanged() || confirm(message));
+  _confirmAction(message) {
+    return !this.isFieldsChanged() || window.confirm(message);
   },
 
-  onLoad: function() {
-    var $form = jQuery(this._formElement);
-
+  onLoad() {
+    const $form = $(this._formElement);
     $c.setAllEntityDataListValues($form, this._initFieldValues);
+
     this.fixEntityDataListsOverflow();
     $c.makeReadonlyEntityDataList($form, this._disabledFields);
 
@@ -840,11 +837,11 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     $c.setAllHighlightedTextAreaValues($form, this._initFieldValues);
 
     Quantumart.QP8.BackendExpandedContainer.initAll($form);
-
     $c.setFieldRowsVisibility($form, this._hideFields, false);
 
-    if (this._customLoad)
-    this._customLoad($form);
+    if (this._customLoad) {
+      this._customLoad($form);
+    }
 
     if (this._contextBlockState) {
       this.applyContext(this._contextBlockState);
@@ -852,102 +849,97 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
     this._initFieldValues = null;
 
-    var $wrapper = jQuery('#' + this._documentWrapperElementId);
-
-    $wrapper.scrollTop((this._formHasErrors) ? 0 : +$wrapper.data('scroll_position') || 0);
-    $wrapper = null;
-
-    $form = null;
-
+    const $wrapper = $(`#${this._documentWrapperElementId}`);
+    $wrapper.scrollTop(this._formHasErrors ? 0 : +$wrapper.data('scroll_position') || 0);
     this._editorManagerComponent.onEntityEditorReady(this._documentWrapperElementId);
   },
 
-  onSelect: function() {
+  onSelect() {
     this.fixEntityDataListsOverflow();
     this.fixHtaInitializing();
   },
 
-  _onActionExecuting: function(eventType, sender, eventArgs) {
-    this.notify(EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING, eventArgs);
+  _onActionExecuting(eventType, sender, eventArgs) {
+    this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING, eventArgs);
   },
 
-  _onHtmlInputChanged: function(e) {
+  _onHtmlInputChanged(e) {
     if (!this._disableChangeTracking) {
-      var $field = jQuery(e.currentTarget);
+      const $field = $(e.currentTarget);
+      $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
+      $field.removeClass(window.REFRESHED_FIELD_CLASS_NAME);
 
-      $field.addClass(CHANGED_FIELD_CLASS_NAME);
-      $field.removeClass(REFRESHED_FIELD_CLASS_NAME);
-
-      var value;
-
+      let value;
       if ($field.is(':checkbox')) {
         value = $field.is(':checked');
       } else {
         value = $field.val();
       }
 
-      $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr('name'), value: value, contentFieldName: $field.data('content_field_name') });
-      $field = null;
+      $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, {
+        fieldName: $field.attr('name'),
+        value,
+        contentFieldName: $field.data('content_field_name')
+      });
     }
   },
 
-  _onFieldValueChanged: function(e, data) {
+  _onFieldValueChanged(e, data) {
     if (!this._disableChangeTracking) {
       if (data && data.fieldName) {
-        if (this._customFieldValueChanged)
-        this._customFieldValueChanged(this, data);
-        this._editorManagerComponent.onFieldValueChanged(jQuery.extend({ documentWrapperElementId: this._documentWrapperElementId }, data));
+        if (this._customFieldValueChanged) {
+          this._customFieldValueChanged(this, data);
+        }
+
+        this._editorManagerComponent.onFieldValueChanged(Object.assign({
+          documentWrapperElementId: this._documentWrapperElementId
+        }, data));
       }
     }
   },
-  _onBeforeSubmit: function() {
-    var $wrapper = jQuery('#' + this._documentWrapperElementId);
 
+  _onBeforeSubmit() {
+    const $wrapper = $(`#${this._documentWrapperElementId}`);
     $wrapper.data('scroll_position', $wrapper.scrollTop());
-    $wrapper = null;
-
     if (this._customBeforeSubmit && !this._customBeforeSubmit(this)) {
       return false;
     }
 
-    var eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
-
-    this.notify(EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING, eventArgs);
-    eventArgs = null;
-
+    const eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
+    this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING, eventArgs);
     return true;
   },
-  _onSuccess: function(data) {
-    var eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
+
+  _onSuccess(data) {
+    let eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
 
     eventArgs.set_data(data);
-    this.notify(EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED, eventArgs);
+    this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED, eventArgs);
     eventArgs = null;
   },
-  _onError: function(jqXHR) {
+
+  _onError(jqXHR) {
     $q.processGenericAjaxError(jqXHR);
-    var eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
-
-    this.notify(EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR, eventArgs);
-    eventArgs = null;
+    const eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
+    this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR, eventArgs);
   },
 
-  _onFileUploaded: function(eventType, sender, eventArgs) {
-    this.notify(EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED, eventArgs);
+  _onFileUploaded(eventType, sender, eventArgs) {
+    this.notify(window.EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED, eventArgs);
   },
 
-  _onChangeContext: function() {
-    var $form = jQuery(this._formElement);
-    var oldContextValue = $form.data(this.OLD_CONTEXT_DATA_KEY);
-    var newContextValue = jQuery(this.CONTEXT_SELECTOR, $form).val();
+  _onChangeContext() {
+    const $form = $(this._formElement);
+    const oldContextValue = $form.data(this.OLD_CONTEXT_DATA_KEY);
+    const newContextValue = $(this.CONTEXT_SELECTOR, $form).val();
 
-    if (oldContextValue != newContextValue) {
+    if (oldContextValue !== newContextValue) {
       if (typeof oldContextValue !== 'undefined') {
         this._copyToVariationsModel(oldContextValue);
         this._saveVariationsModelData($form);
       }
 
-      if (this._initFieldValues == null) {
+      if (!this._initFieldValues) {
         this._restoreFromVariationsModel(newContextValue);
       }
 
@@ -955,13 +947,14 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       $form.data(this.OLD_CONTEXT_DATA_KEY, newContextValue);
     }
   },
-  _copyToVariationsModel: function(contextValue) {
-    if (this.isFieldValuesChanged()) {
-      var result = {};
 
-      jQuery.each(this.get_fieldValues(), function() {
+  _copyToVariationsModel(contextValue) {
+    if (this.isFieldValuesChanged()) {
+      const result = {};
+
+      $.each(this.get_fieldValues(), function () {
         if (this.fieldName.match(/^field_[\d]+$/)) {
-          result[this.fieldName] = (this.value === null) ? '' : this.value + '';
+          result[this.fieldName] = this.value === null ? '' : `${this.value}`;
         }
       });
 
@@ -974,56 +967,53 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     }
   },
 
-  _getActualContext: function(contextValue) {
+  _getActualContext(contextValue) {
     if (this._contextModel && this._variationsModel) {
       if (contextValue in this._variationsModel) {
         return contextValue;
-      } else {
-        var contextValues = contextValue.split(',');
-        var found = false;
+      }
 
-        while (!found && contextValues.length > 0) {
-          var lastIndex = contextValues.length - 1;
-          var lastValue = contextValues[lastIndex];
-          var parentValue = this._contextModel[lastIndex].Ids[lastValue];
+      const contextValues = contextValue.split(',');
 
-          if (parentValue == '0') {
-            contextValues.length--;
-          } else {
-            contextValues[lastIndex] = parentValue;
-          }
+      let found, testContextValue;
+      while (!found && contextValues.length > 0) {
+        const lastIndex = contextValues.length - 1;
+        const lastValue = contextValues[lastIndex];
+        const parentValue = this._contextModel[lastIndex].Ids[lastValue];
 
-          var testContextValue = contextValues.join();
-
-          found = testContextValue in this._variationsModel;
+        if (parentValue === '0') {
+          contextValues.length -= 1;
+        } else {
+          contextValues[lastIndex] = parentValue;
         }
 
-        return testContextValue;
+        testContextValue = contextValues.join();
+        found = testContextValue in this._variationsModel;
       }
-    } else
-    return '';
+
+      return testContextValue;
+    }
+
+    return undefined;
   },
 
-  _restoreFromVariationsModel: function(contextValue) {
+  _restoreFromVariationsModel(contextValue) {
     this._disableChangeTracking = true;
-    var actualContextValue = this._getActualContext(contextValue);
-    var fieldValues = this._variationsModel[actualContextValue].FieldValues;
-    var errors = this._errorModel[actualContextValue];
-    var initFieldValues = [];
+    const actualContextValue = this._getActualContext(contextValue);
+    const fieldValues = this._variationsModel[actualContextValue].FieldValues;
+    const errors = this._errorModel[actualContextValue];
+    const initFieldValues = [];
 
-    jQuery.each(fieldValues, function(key, value) {
-      var currentResult = { fieldName: key, value: value };
-
+    $.each(fieldValues, (key, value) => {
+      const currentResult = { fieldName: key, value };
       if (!$q.isNullOrEmpty(errors)) {
-        currentResult.errors = jQuery.grep(errors, function(elem) {
-          return elem.Name == key;
-        });
+        currentResult.errors = $.grep(errors, elem => elem.Name === key);
       }
 
       initFieldValues.push(currentResult);
     });
 
-    var $form = jQuery(this._formElement);
+    const $form = $(this._formElement);
 
     $c.setAllEntityDataListValues($form, initFieldValues);
     this.fixEntityDataListsOverflow();
@@ -1038,29 +1028,32 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     $c.setAllAggregationListValues($form, initFieldValues);
 
     this._disableChangeTracking = false;
-    jQuery(this.VARIATION_SELECTOR, $form).closest('fieldset').find(this.CHANGED_EXCEPT_VARMODEL_SELECTOR).removeClass(CHANGED_FIELD_CLASS_NAME);
+    $(this.VARIATION_SELECTOR, $form)
+      .closest('fieldset')
+      .find(this.CHANGED_EXCEPT_VARMODEL_SELECTOR)
+      .removeClass(window.CHANGED_FIELD_CLASS_NAME);
   },
 
-  applyContext: function(contextState) {
+  applyContext(contextState) {
     this._contextBlockState = contextState;
-    var result = [];
+    const result = [];
 
-    jQuery.each(contextState, function() {
+    $.each(contextState, function () {
       if (this.Value) {
         result.push(this.Value);
       }
     });
 
-    jQuery(this.CONTEXT_SELECTOR, this._formElement).val(result.join());
+    $(this.CONTEXT_SELECTOR, this._formElement).val(result.join());
     this._onChangeContext();
   },
 
-  dispose: function() {
+  dispose() {
     Quantumart.QP8.BackendEntityEditor.callBaseMethod(this, 'dispose');
     this._disposeAllFieldDescriptons();
     this._disposeAllFields();
     if (this._editorManagerComponent) {
-      var editorCode = this._editorCode;
+      const editorCode = this._editorCode;
 
       if (!$q.isNullOrWhiteSpace(editorCode)) {
         this._editorManagerComponent.removeEditor(editorCode);
@@ -1070,15 +1063,15 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       this._editorManagerComponent = null;
     }
 
-    jQuery.each(this._customButtons, function(index, value) {
-      jQuery('#' + value).off('click');
+    $.each(this._customButtons, (index, value) => {
+      $(`#${value}`).off('click');
     });
 
-    jQuery.each(this._customLinkButtons, function(index, value) {
-      jQuery('#' + value).find('a').off('click');
+    $.each(this._customLinkButtons, (index, value) => {
+      $(`#${value}`).find('a').off('click');
     });
 
-    jQuery('#' + this._documentWrapperElementId).removeData();
+    $(`#${this._documentWrapperElementId}`).removeData();
 
     this._validationSummaryElement = null;
     this._formElement = null;
@@ -1095,26 +1088,25 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
 Quantumart.QP8.BackendEntityEditor.registerClass('Quantumart.QP8.BackendEntityEditor', Quantumart.QP8.Observable);
 
-//#endregion
-
-//#region class BackendEntityEditorActionEventArgs
-// === Класс "Аргументы события, вызванного редактором сущности" ===
-Quantumart.QP8.BackendEntityEditorActionEventArgs = function() {
+Quantumart.QP8.BackendEntityEditorActionEventArgs = function () {
   Quantumart.QP8.BackendEntityEditorActionEventArgs.initializeBase(this);
 };
 
 Quantumart.QP8.BackendEntityEditorActionEventArgs.prototype = {
-  _data: null, // данные, в формате JSON
+  _data: null,
 
-  get_data: function() {
+  // eslint-disable-next-line camelcase
+  get_data() {
     return this._data;
   },
 
-  set_data: function(value) {
+  // eslint-disable-next-line camelcase
+  set_data(value) {
     this._data = value;
   }
 };
 
-Quantumart.QP8.BackendEntityEditorActionEventArgs.registerClass('Quantumart.QP8.BackendEntityEditorActionEventArgs', Quantumart.QP8.BackendEventArgs);
-
-//#endregion
+Quantumart.QP8.BackendEntityEditorActionEventArgs.registerClass(
+  'Quantumart.QP8.BackendEntityEditorActionEventArgs',
+  Quantumart.QP8.BackendEventArgs
+);

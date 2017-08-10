@@ -1241,7 +1241,7 @@ $c.initHighlightedTextArea = function (editorElem) {
   area = null;
 };
 
-$c.SaveDataOfAllHighlightedTextAreas = function (parentElem) {
+$c.saveDataOfAllHighlightedTextAreas = function (parentElem) {
   $c.getAllHighlightedTextAreas(parentElem).each(function () {
     const area = new Quantumart.QP8.BackendHighlightedTextArea($(this));
     area.saveData();
