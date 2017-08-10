@@ -10,7 +10,7 @@ var bs = require('browser-sync');
 var argv = require('yargs').argv;
 var loadPlugins = require('gulp-load-plugins');
 var es6Promise = require('es6-promise');
-var notifier = require('node-notifier')
+var notifier = require('node-notifier');
 
 es6Promise.polyfill();
 $ = loadPlugins();
@@ -306,32 +306,6 @@ custom.reportError = function onErrorHandler(error) {
   this.emit('end');
 };
 
-gulp.task('lint-jshint', function jsHintTask() {
-  return gulp.src(custom.paths.scripts)
-    .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.jshint())
-    .pipe($.jshint.reporter('jshint-stylish', { verbose: true }))
-    .pipe($.jshint.reporter('fail'));
-});
-
-gulp.task('lint-jscs', function jscsTask() {
-  return gulp.src(custom.paths.scripts)
-    .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.jscs())
-    .pipe($.jscs.reporter())
-    .pipe($.jscs.reporter('fail'));
-});
-
-gulp.task('lint-jscs-fix', function jscsFixTask() {
-  return gulp.src(custom.paths.scripts, { base: './' })
-    .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.jscs({ fix: true }))
-    .pipe($.jscs.reporter())
-    .pipe(gulp.dest('.'))
-    .pipe($.notify({ message: 'assets:js task complete' }));
-});
-
-
 gulp.task('assets:revisions', function assetsRevisionsTask() {
   return gulp.src('Views/Home/Index.Template.cshtml')
     .pipe($.plumber({ errorHandler: custom.reportError }))
@@ -353,7 +327,8 @@ gulp.task('assets:js', ['assets:vendorsjs', 'assets:qpjs'], function assetsJsTas
 gulp.task('assets:vendorsjs', ['assets:revisions'], function assetsVendorsJsTask() {
   return gulp.src(custom.paths.vendorsjs, { base: './' })
     .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
+    .pipe($.sourcemaps.init({ loadMaps: false }))
+    .pipe($.sourcemaps.identityMap())
     .pipe($.rename({ suffix: '.min' }))
     .pipe(custom.isProduction() ? $.uglify({
       compress: {
@@ -370,7 +345,8 @@ gulp.task('assets:vendorsjs', ['assets:revisions'], function assetsVendorsJsTask
 gulp.task('assets:qpjs', ['assets:revisions'], function assetsQpJsTask() {
   return gulp.src(custom.paths.qpjs, { base: './' })
     .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
+    .pipe($.sourcemaps.init({ loadMaps: false }))
+    .pipe($.sourcemaps.identityMap())
     .pipe($.babel())
     .pipe(custom.isProduction() ? $.uglify({
       compress: {
@@ -396,7 +372,8 @@ gulp.task('assets:img', function assetsImgTask() {
 gulp.task('assets:css', ['assets:revisions'], function assetsCssTask() {
   return gulp.src(custom.paths.styles)
     .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
+    .pipe($.sourcemaps.init({ loadMaps: false }))
+    .pipe($.sourcemaps.identityMap())
     .pipe($.sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
     .pipe($.replace(/url\('/g, 'url(\'images/'))
     .pipe($.autoprefixer())

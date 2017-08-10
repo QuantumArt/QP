@@ -1,18 +1,8 @@
-// ********************************************************************************************
-// *** Контейнерный элемент, в котором располагается содержимое документа         ***
-// ********************************************************************************************
+window.DOCUMENT_HOST_TYPE_EDITING_DOCUMENT = 1;
+window.DOCUMENT_HOST_TYPE_POPUP_WINDOW = 2;
+window.EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED = 'onHostExternalCallerContextsUnbinded';
 
-//#region Document Host Types
-var DOCUMENT_HOST_TYPE_EDITING_DOCUMENT = 1;
-var DOCUMENT_HOST_TYPE_POPUP_WINDOW = 2;
-
-//#endregion
-
-var EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED = 'onHostExternalCallerContextsUnbinded';
-
-//#region class BackendDocumentHost
-// === Абстрактный класс контейнера, в котором располагается содержимое документа" ===
-Quantumart.QP8.BackendDocumentHost = function(eventArgs, options) {
+Quantumart.QP8.BackendDocumentHost = function (eventArgs, options) {
   Quantumart.QP8.BackendDocumentHost.initializeBase(this);
 
   if ($q.isObject(eventArgs)) {
@@ -26,45 +16,45 @@ Quantumart.QP8.BackendDocumentHost = function(eventArgs, options) {
   }
 
   this._externalCallerContexts = [];
-  this._onSearchHandler = jQuery.proxy(this.onSearch, this);
-  this._onContextSwitchingHandler = jQuery.proxy(this.onContextSwitching, this);
-  this._onSearchBlockResizeHandler = jQuery.proxy(this.onSearchBlockResize, this);
-  this._onGeneralEventHandler = jQuery.proxy(this.onGeneralEvent, this);
+  this._onSearchHandler = $.proxy(this.onSearch, this);
+  this._onContextSwitchingHandler = $.proxy(this.onContextSwitching, this);
+  this._onSearchBlockResizeHandler = $.proxy(this.onSearchBlockResize, this);
+  this._onGeneralEventHandler = $.proxy(this.onGeneralEvent, this);
 };
 
 Quantumart.QP8.BackendDocumentHost.prototype = {
-  _documentWrapperElementId: '', // идентификатор DOM-элемента, образующего документ
-  _documentWrapperElement: null, // DOM-элемент, образующий документ
-  _documentUrl: '', // URL документа
-  _documentPostParams: null, // параметры, которые должны передаваться через POST
-  _documentContext: null, // изменяемый контекст документа
+  _documentWrapperElementId: '',
+  _documentWrapperElement: null,
+  _documentUrl: '',
+  _documentPostParams: null,
+  _documentContext: null,
 
-  _entityTypeCode: '', // код типа сущности
-  _entityId: 0, // идентификатор сущности
-  _entityName: '', // название сущности
-  _parentEntityId: 0, // идентификатор родительской сущности;
-  _isMultipleEntities: false, // признак привязки к нескольким сущностям
-  _entities: null, // список сущностей
-  _actionCode: '', // код действия
-  _actionTypeCode: '', // код типа действия
-  _isCustomAction: false, // является ли действие пользовательским
+  _entityTypeCode: '',
+  _entityId: 0,
+  _entityName: '',
+  _parentEntityId: 0,
+  _isMultipleEntities: false,
+  _entities: null,
+  _actionCode: '',
+  _actionTypeCode: '',
+  _isCustomAction: false,
 
-  _breadCrumbsComponent: null, // компонент "Хлебные крошки"
-  _actionToolbarComponent: null, // компонент "Панель инструментов" для действий
+  _breadCrumbsComponent: null,
+  _actionToolbarComponent: null,
   _useCustomActionToolbar: false,
-  _viewToolbarComponent: null, // компонент "Панель инструментов" для представлений
-  _searchBlockComponent: null, // компонент "Блок поиска"
-  _oldSearchBlockHeight: 0, // старая высота блока поиска
-  _isContextBlockVisible: false, // признак, разрешающий отображение блока контекста
-  _selectedEntities: null, // выбранные сущности
-  _selectedParentEntityId: 0, // ID родителя для выбранных сущностей
-  _filter: '', // фильтр сущностей
+  _viewToolbarComponent: null,
+  _searchBlockComponent: null,
+  _oldSearchBlockHeight: 0,
+  _isContextBlockVisible: false,
+  _selectedEntities: null,
+  _selectedParentEntityId: 0,
+  _filter: '',
 
-  _hostStateStorage: null, // хранилище состояния хоста
-  _callerContext: null, // контекст порождающего хоста
-  _externalCallerContexts: null, // контексты порождающих CustomAction-хостов
+  _hostStateStorage: null,
+  _callerContext: null,
+  _externalCallerContexts: null,
   _eventArgsAdditionalData: null,
-  _selectedEntitiesContext: null, // контекст выбора
+  _selectedEntitiesContext: null,
 
   _onSearchHandler: null,
   _onContextSwitchingHandler: null,
@@ -77,98 +67,154 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   _unnamedEntitiesLimit: 1000,
 
-  get_documentWrapperElementId: function() {
+
+  // eslint-disable-next-line camelcase
+  get_documentWrapperElementId() {
     return this._documentWrapperElementId;
   },
-  get_documentWrapperElement: function() {
+
+  // eslint-disable-next-line camelcase
+  get_documentWrapperElement() {
     return this._documentWrapperElement;
   },
-  get_documentUrl: function() {
+
+  // eslint-disable-next-line camelcase
+  get_documentUrl() {
     return this._documentUrl;
   },
-  get_selectedEntities: function() {
+
+  // eslint-disable-next-line camelcase
+  get_selectedEntities() {
     return this._selectedEntities;
   },
-  get_filter: function() {
+
+  // eslint-disable-next-line camelcase
+  get_filter() {
     return this._filter;
   },
 
+  // eslint-disable-next-line camelcase
   get_hostType: $c.notImplemented,
+
+  // eslint-disable-next-line camelcase
   get_zIndex: $c.notImplemented,
 
-  get_documentContext: function() {
+  // eslint-disable-next-line camelcase
+  get_documentContext() {
     return this._documentContext;
   },
-  set_documentContext: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_documentContext(value) {
     this._documentContext = value;
   },
 
-  get_entityTypeCode: function() {
+  // eslint-disable-next-line camelcase
+  get_entityTypeCode() {
     return this._entityTypeCode;
   },
-  set_entityTypeCode: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
-  get_entityId: function() {
+
+  // eslint-disable-next-line camelcase
+  get_entityId() {
     return this._entityId;
   },
-  set_entityId: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_entityId(value) {
     this._entityId = value;
   },
-  get_entityName: function() {
+
+  // eslint-disable-next-line camelcase
+  get_entityName() {
     return this._entityName;
   },
-  set_entityName: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_entityName(value) {
     this._entityName = value;
   },
-  get_parentEntityId: function() {
+
+  // eslint-disable-next-line camelcase
+  get_parentEntityId() {
     return this._parentEntityId;
   },
-  set_parentEntityId: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_parentEntityId(value) {
     this._parentEntityId = value;
   },
-  get_isMultipleEntities: function() {
+
+  // eslint-disable-next-line camelcase
+  get_isMultipleEntities() {
     return this._isMultipleEntities;
   },
-  set_isMultipleEntities: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_isMultipleEntities(value) {
     this._isMultipleEntities = value;
   },
-  get_isCustomAction: function() {
+
+  // eslint-disable-next-line camelcase
+  get_isCustomAction() {
     return this._isCustomAction;
   },
-  set_isCustomAction: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_isCustomAction(value) {
     this._isCustomAction = value;
   },
-  get_entities: function() {
+
+  // eslint-disable-next-line camelcase
+  get_entities() {
     return this._entities;
   },
-  set_entities: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_entities(value) {
     this._entities = value;
   },
-  get_actionCode: function() {
+
+  // eslint-disable-next-line camelcase
+  get_actionCode() {
     return this._actionCode;
   },
-  set_actionCode: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_actionCode(value) {
     this._actionCode = value;
   },
-  get_actionTypeCode: function() {
+
+  // eslint-disable-next-line camelcase
+  get_actionTypeCode() {
     return this._actionTypeCode;
   },
-  set_actionTypeCode: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_actionTypeCode(value) {
     this._actionTypeCode = value;
   },
-  get_externalCallerContexts: function() {
+
+  // eslint-disable-next-line camelcase
+  get_externalCallerContexts() {
     return this._externalCallerContexts;
   },
 
-  get_eventArgsAdditionalData: function() {
+  // eslint-disable-next-line camelcase
+  get_eventArgsAdditionalData() {
     return this._eventArgsAdditionalData;
   },
-  set_eventArgsAdditionalData: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_eventArgsAdditionalData(value) {
     this._eventArgsAdditionalData = value;
   },
 
-  _applyEventArgs: function(eventArgs, saveCallerContext) {
+  _applyEventArgs(eventArgs, saveCallerContext) {
     if ($q.isObject(eventArgs)) {
       this.set_entityTypeCode(eventArgs.get_entityTypeCode());
       this.set_entityId(eventArgs.get_entityId());
@@ -186,8 +232,8 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  _getAppliedEventArgs: function() {
-    var eventArgs = new Quantumart.QP8.BackendEventArgs();
+  _getAppliedEventArgs() {
+    const eventArgs = new Quantumart.QP8.BackendEventArgs();
 
     eventArgs.set_entityTypeCode(this.get_entityTypeCode());
     eventArgs.set_entityId(this.get_entityId());
@@ -202,52 +248,46 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     return eventArgs;
   },
 
-  bindExternalCallerContext: function(eventArgs) {
+  bindExternalCallerContext(eventArgs) {
     if (eventArgs) {
-      var bindedContext = eventArgs.get_externalCallerContext();
-
+      const bindedContext = eventArgs.get_externalCallerContext();
       if (bindedContext) {
-        if (jQuery.grep(this._externalCallerContexts, function(c) {
-          return c.hostUID == bindedContext.hostUID;
-        }).length == 0) {
+        if ($.grep(this._externalCallerContexts, c => c.hostUID === bindedContext.hostUID).length === 0) {
           this._externalCallerContexts.push(bindedContext);
         }
       }
     }
   },
 
-  unbindExternalCallerContexts: function(reason) {
-    var externalCallerContexts = this._externalCallerContexts;
-
+  unbindExternalCallerContexts(reason) {
+    const externalCallerContexts = this._externalCallerContexts;
     this._externalCallerContexts = [];
-
-    // Если есть родительские внешние документы, то уведомить их об отвязке
     if (!$q.isNullOrEmpty(externalCallerContexts)) {
-      this._onExternalCallerContextsUnbinded(
-        {
-          reason: reason,
-          externalCallerContexts: externalCallerContexts
-        });
+      this._onExternalCallerContextsUnbinded({
+        reason,
+        externalCallerContexts
+      });
     }
 
-    if (reason != 'close' && $q.isFunction(this._actionToolbarComponent.getDisabledActionCodes) && !$q.isNullOrEmpty(this._actionToolbarComponent.getDisabledActionCodes())) {
+    if (reason !== 'close'
+      && $q.isFunction(this._actionToolbarComponent.getDisabledActionCodes)
+      && !$q.isNullOrEmpty(this._actionToolbarComponent.getDisabledActionCodes())) {
       this.hidePanels();
       this._actionToolbarComponent.setDisabledActionCodes(null);
       this.renderPanels();
     }
-
-    externalCallerContexts = null;
   },
 
-  get_isBindToExternal: function() {
+  // eslint-disable-next-line camelcase
+  get_isBindToExternal() {
     return !$q.isNullOrEmpty(this._externalCallerContexts);
   },
 
   _onExternalCallerContextsUnbinded: $c.notImplemented,
 
-  loadHostState: function() {
+  loadHostState() {
     if (this._hostStateStorage) {
-      var result = this._hostStateStorage.loadHostState({
+      const result = this._hostStateStorage.loadHostState({
         entityId: this.get_entityId(),
         parentEntityId: this.get_parentEntityId(),
         actionCode: this.get_actionCode()
@@ -255,15 +295,20 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
       return result;
     }
-  },
-  getHostStateProp: function(name) {
-    var hostState = this.loadHostState();
 
-    if (hostState && hostState.hasOwnProperty(name)) {
-      return hostState[name];
-    }
+    return undefined;
   },
-  saveHostState: function(state) {
+
+  getHostStateProp(propName) {
+    const hostState = this.loadHostState();
+    if (hostState && Object.prototype.hasOwnProperty.call(hostState, propName)) {
+      return hostState[propName];
+    }
+
+    return undefined;
+  },
+
+  saveHostState(state) {
     if (this._hostStateStorage) {
       this._hostStateStorage.saveHostState({
         entityId: this.get_entityId(),
@@ -273,20 +318,25 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  fixActionToolbarWidth: function() {
-    var $actionToolbar = jQuery(this._actionToolbarComponent.get_toolbarElement()).parents('#actionToolbar');
-    var $viewToolbar = jQuery(this._viewToolbarComponent.get_toolbarElement()).parents('#viewToolbar');
-
-    $actionToolbar.width($actionToolbar.parents('#toolbar').width() - $viewToolbar.width() - $viewToolbar.paddingLeft() - $actionToolbar.paddingRight() - 1);
+  fixActionToolbarWidth() {
+    const $actionToolbar = $(this._actionToolbarComponent.get_toolbarElement()).parents('#actionToolbar');
+    const $viewToolbar = $(this._viewToolbarComponent.get_toolbarElement()).parents('#viewToolbar');
+    $actionToolbar.width(
+      $actionToolbar.parents('#toolbar').width()
+      - $viewToolbar.width()
+      - $viewToolbar.paddingLeft()
+      - $actionToolbar.paddingRight()
+      - 1
+    );
   },
 
-  restoreHostState: function() {
-    var state = this.loadHostState();
+  restoreHostState() {
+    const state = this.loadHostState();
 
-    if (!$q.isNullOrEmpty(state) &&
-    (
-    !jQuery.isEmptyObject(state.searchBlockState) ||
-    this.get_isSearchBlockVisible() === true
+    if (!$q.isNullOrEmpty(state)
+    && (
+      !$.isEmptyObject(state.searchBlockState)
+    || this.get_isSearchBlockVisible() === true
     )
     ) {
       if (!this._searchBlockComponent) {
@@ -302,62 +352,72 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  _loadDefaultSearchBlockState: function() {
+  _loadDefaultSearchBlockState() {
     if ($q.isNullOrEmpty(this.loadHostState())) {
-      var filterStates;
-      var actionTypeCode = this.get_actionTypeCode();
-      var entityTypeCode = this.get_entityTypeCode();
+      let filterStates;
+      const actionTypeCode = this.get_actionTypeCode();
+      const entityTypeCode = this.get_entityTypeCode();
 
-      if ((actionTypeCode == ACTION_TYPE_CODE_LIST || actionTypeCode == ACTION_TYPE_CODE_SELECT || actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_SELECT)
-                  && (entityTypeCode == ENTITY_TYPE_CODE_ARTICLE || entityTypeCode == ENTITY_TYPE_CODE_VIRTUAL_ARTICLE)) {
+      if ((actionTypeCode === window.ACTION_TYPE_CODE_LIST
+          || actionTypeCode === window.ACTION_TYPE_CODE_SELECT
+          || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
+      ) && (entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE
+          || entityTypeCode === window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE)
+      ) {
         $q.getJsonFromUrl(
-                            'GET',
-                            CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'DefaultFilterStates',
-                    {
-                      actionCode: this.get_actionCode(),
-                      contentId: this.get_parentEntityId()
-                    },
-                    false,
-                    false,
-                    function(data) {
-                      if (data.success) {
-                        filterStates = data.filterStates;
-                      } else {
-                        $q.alertFail(data.message);
-                      }
-                    },
-                    function(jqXHR) {
-                      filterStates = null;
-                      $q.processGenericAjaxError(jqXHR);
-                    }
-                );
+          'GET',
+          `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}DefaultFilterStates`,
+          {
+            actionCode: this.get_actionCode(),
+            contentId: this.get_parentEntityId()
+          },
+          false,
+          false,
+          data => {
+            if (data.success) {
+              filterStates = data.filterStates;
+            } else {
+              $q.alertFail(data.message);
+            }
+          },
+          jqXHR => {
+            filterStates = null;
+            $q.processGenericAjaxError(jqXHR);
+          }
+        );
       }
 
       if (!$q.isNullOrEmpty(filterStates) && $q.isArray(filterStates)) {
-        var fieldSearchBlockState = jQuery.map(filterStates, function(item) {
-          return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
-          item.SearchType,
-          item.FieldId,
-                                  item.ContentId,
-          item.FieldColumnName,
-          item.FieldName,
-                                  item.FieldGroup,
+        const fieldSearchBlockState = $.map(filterStates, item =>
+          new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+            item.SearchType,
+            item.FieldId,
+            item.ContentId,
+            item.FieldColumnName,
+            item.FieldName,
+            item.FieldGroup,
             {
               entities: item.SelectedEntities
-            });
+            }
+          )
+        );
+
+        const searchQuery = $.map(filterStates, item => {
+          const ids = $.map(item.SelectedEntities, ent => ent.Id);
+          return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+            item.SearchType,
+            item.FieldId,
+            item.FieldColumnName,
+            null,
+            ids,
+            false,
+            false
+          );
         });
 
-        var searchQuery = jQuery.map(filterStates, function(item) {
-          var ids = jQuery.map(item.SelectedEntities, function(ent) {
-            return ent.Id;
-          });
-
-          return new Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(item.SearchType, item.FieldId, item.FieldColumnName, null, ids, false, false);
-        });
-
-        var defaultSearchBlockState = {
+        const defaultSearchBlockState = {
           searchBlockState: {
-            fieldSearchBlockState: fieldSearchBlockState,
+            fieldSearchBlockState,
             defaultFieldSearchBlockState: fieldSearchBlockState
           },
           searchQuery: JSON.stringify(searchQuery)
@@ -367,166 +427,168 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
         return defaultSearchBlockState;
       }
     }
+
+    return undefined;
   },
 
-  showDocumentWrapper: function() {
-    var $documentWrapper = jQuery(this._documentWrapperElement); // скрытый документ
+  showDocumentWrapper() {
+    const $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.show();
-    $documentWrapper = null;
   },
 
-  hideDocumentWrapper: function() {
-    var $documentWrapper = jQuery(this._documentWrapperElement); // скрытый документ
+  hideDocumentWrapper() {
+    const $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.hide();
-    $documentWrapper = null;
   },
 
-  documentWrapperIsVisible: function() {
-    var $documentWrapper = jQuery(this._documentWrapperElement); // скрытый документ
-    var isVisible = $documentWrapper.is(':visible');
-
-    $documentWrapper = null;
-    return isVisible;
+  documentWrapperIsVisible() {
+    const $documentWrapper = $(this._documentWrapperElement);
+    return $documentWrapper.is(':visible');
   },
 
-  executeAction: function(actionCode) {
-    var action = $a.getBackendActionByCode(actionCode);
-
-    if (action == null) {
+  executeAction(actionCode) {
+    const action = $a.getBackendActionByCode(actionCode);
+    if (!action) {
       $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
-    } else {
-      var entityId = this._entityId;
-      var entityName = this._entityName;
-      var isMultiple = action.ActionType.IsMultiple;
-      var isEditor = Quantumart.QP8.BackendEntityEditor.isInstanceOfType(this.get_mainComponent());
-      var isCustomActionHost = Quantumart.QP8.BackendCustomActionHost.isInstanceOfType(this.get_mainComponent());
-      var selectedEntities = (!isEditor && !isCustomActionHost) ? this._selectedEntities : [{ Id: this._entityId, Name: this._entityName }];
-      var entities = (!isMultiple) ? null : ((!this._isMultipleEntities) ? selectedEntities : Array.clone(this._entities));
+      return;
+    }
 
-      var actionTypeCode = action.ActionType.Code;
+    let entityId = this._entityId;
+    let entityName = this._entityName;
+    const isMultiple = action.ActionType.IsMultiple;
+    const isEditor = Quantumart.QP8.BackendEntityEditor.isInstanceOfType(this.get_mainComponent());
+    const isCustomActionHost = Quantumart.QP8.BackendCustomActionHost.isInstanceOfType(this.get_mainComponent());
+    const selectedEntities = !isEditor
+      && !isCustomActionHost
+      ? this._selectedEntities
+      : [{ Id: this._entityId, Name: this._entityName }];
 
-      if (isMultiple) {
-        var filteredEntities = this._filterEntities(entities);
+    let entities = null;
+    if (isMultiple) {
+      entities = this._isMultipleEntities ? Array.clone(this._entities) : selectedEntities;
+    }
 
-        if (filteredEntities.length != entities.length) {
-          entities = filteredEntities;
+    const actionTypeCode = action.ActionType.Code;
+    if (isMultiple) {
+      const filteredEntities = this._filterEntities(entities);
+      if (filteredEntities.length !== entities.length) {
+        entities = filteredEntities;
+      }
+
+      if (entities.length === 0) {
+        $q.alertError($l.DocumentHost.noEntitiesToExecuteActionErrorMessage);
+        this.refresh();
+        return;
+      }
+
+      const unnamedEntities = $.grep(entities, elem => !elem.Name);
+      if (unnamedEntities.length > 0 && unnamedEntities.length <= this._unnamedEntitiesLimit) {
+        let entityTypeCode = this._entityTypeCode;
+        if (entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_PERMISSION) {
+          entityTypeCode = window.ENTITY_TYPE_CODE_CONTENT;
+        } else if (entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
+          entityTypeCode = window.ENTITY_TYPE_CODE_ARTICLE;
         }
 
-        filteredEntities = null;
+        const dataItems = $o.getSimpleEntityList(
+          entityTypeCode,
+          this._parentEntityId,
+          0,
+          0,
+          Quantumart.QP8.Enums.ListSelectionMode.OnlySelectedItems,
+          $o.getEntityIDsFromEntities(unnamedEntities)
+        );
 
-        if (entities.length == 0) {
-          $q.alertError($l.DocumentHost.noEntitiesToExecuteActionErrorMessage);
-          this.refresh();
-          return;
-        }
-
-        var unnamedEntities = jQuery.grep(entities, function(elem) {
-          return !elem.Name;
+        const namedEntities = $.map(dataItems, item => {
+          return { Id: $q.toInt(item.Value), Name: item.Text };
         });
 
-        if (unnamedEntities.length > 0 && unnamedEntities.length <= this._unnamedEntitiesLimit) {
-          var entityTypeCode = this._entityTypeCode;
-
-          if (entityTypeCode == ENTITY_TYPE_CODE_CONTENT_PERMISSION)
-          entityTypeCode = ENTITY_TYPE_CODE_CONTENT;
-          else if (entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_PERMISSION)
-          entityTypeCode = ENTITY_TYPE_CODE_ARTICLE;
-
-          var dataItems = $o.getSimpleEntityList(entityTypeCode, this._parentEntityId, 0, 0, Quantumart.QP8.Enums.ListSelectionMode.OnlySelectedItems, $o.getEntityIDsFromEntities(unnamedEntities));
-          var namedEntities = jQuery.map(dataItems, function(item) {
-            return { Id: $q.toInt(item.Value), Name: item.Text };
-          });
-
-          jQuery.each(namedEntities, function(index, elem) {
-            for (var i = 0; i < entities.length; i++) {
-              var entity = entities[i];
-
-              if (entity.Id == elem.Id) {
-                entity.Name = elem.Name;
-                break;
-              }
+        $.each(namedEntities, (index, elem) => {
+          for (let i = 0; i < entities.length; i++) {
+            const entity = entities[i];
+            if (entity.Id === elem.Id) {
+              entity.Name = elem.Name;
+              break;
             }
-          });
-        } else if (unnamedEntities.length > this._unnamedEntitiesLimit) {
-          for (var i = 0; i < unnamedEntities.length; i++) {
-            unnamedEntities[i].Name = unnamedEntities[i].Id;
           }
-        }
-      }
-
-      if (!isMultiple && (this._actionTypeCode == ACTION_TYPE_CODE_LIST || this._actionTypeCode == ACTION_TYPE_CODE_LIBRARY) && this._selectedEntities.length == 1) {
-        entityId = this._selectedEntities[0].Id;
-        entityName = this._selectedEntities[0].Name;
-      }
-
-      var isCustomAction = action.IsCustom;
-      var isMultistepAction = action.IsMultistep;
-
-      if (!isCustomAction && !isMultistepAction && actionTypeCode == ACTION_TYPE_CODE_REFRESH) {
-        var main = this.get_mainComponent();
-
-        if (main == null || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmRefresh()) {
-          this.refresh();
-        }
-      } else if (!isCustomAction && !isMultistepAction &&
-      (actionTypeCode == ACTION_TYPE_CODE_SAVE ||
-      actionTypeCode == ACTION_TYPE_CODE_UPDATE ||
-      actionTypeCode == ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE ||
-      actionTypeCode == ACTION_TYPE_CODE_SAVE_AND_UP ||
-      actionTypeCode == ACTION_TYPE_CODE_UPDATE_AND_UP ||
-                           actionTypeCode == ACTION_TYPE_CODE_RESTORE && action.EntityType.Code == ENTITY_TYPE_CODE_ARTICLE_VERSION
-      )
-      ) {
-        var main = this.get_mainComponent();
-
-        if (main != null && Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
-          main.saveEntity(actionCode);
-        }
-      } else {
-        var params = new Quantumart.QP8.BackendActionParameters({
-          entityTypeCode: this._entityTypeCode,
-          parentEntityId: this._selectedParentEntityId || this._parentEntityId,
-          entities: entities,
-          entityId: entityId,
-          entityName: entityName,
-          forceOpenWindow: this._isWindow()
         });
-
-        params.correct(action);
-
-        var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
-
-        eventArgs.set_startedByExternal(this._startedByExternal);
-        this.onActionExecuting(eventArgs);
-
-        params = null;
-        eventArgs = null;
+      } else if (unnamedEntities.length > this._unnamedEntitiesLimit) {
+        for (let i = 0; i < unnamedEntities.length; i++) {
+          unnamedEntities[i].Name = unnamedEntities[i].Id;
+        }
       }
+    }
+
+    if (!isMultiple
+      && (
+        this._actionTypeCode === window.ACTION_TYPE_CODE_LIST
+        || this._actionTypeCode === window.ACTION_TYPE_CODE_LIBRARY
+      ) && this._selectedEntities.length === 1) {
+      entityId = this._selectedEntities[0].Id;
+      entityName = this._selectedEntities[0].Name;
+    }
+
+    const isCustomAction = action.IsCustom;
+    const isMultistepAction = action.IsMultistep;
+
+    if (!isCustomAction && !isMultistepAction && actionTypeCode === window.ACTION_TYPE_CODE_REFRESH) {
+      const main = this.get_mainComponent();
+      if (!main || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmRefresh()) {
+        this.refresh();
+      }
+    } else if (!isCustomAction && !isMultistepAction
+    && (actionTypeCode === window.ACTION_TYPE_CODE_SAVE
+      || actionTypeCode === window.ACTION_TYPE_CODE_UPDATE
+      || actionTypeCode === window.ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE
+      || actionTypeCode === window.ACTION_TYPE_CODE_SAVE_AND_UP
+      || actionTypeCode === window.ACTION_TYPE_CODE_UPDATE_AND_UP
+      || (actionTypeCode === window.ACTION_TYPE_CODE_RESTORE
+        && action.EntityType.Code === window.ENTITY_TYPE_CODE_ARTICLE_VERSION)
+      )
+    ) {
+      const main = this.get_mainComponent();
+      if (main && Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
+        main.saveEntity(actionCode);
+      }
+    } else {
+      const params = new Quantumart.QP8.BackendActionParameters({
+        entityTypeCode: this._entityTypeCode,
+        parentEntityId: this._selectedParentEntityId || this._parentEntityId,
+        entities,
+        entityId,
+        entityName,
+        forceOpenWindow: this._isWindow()
+      });
+
+      params.correct(action);
+
+      const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+      eventArgs.set_startedByExternal(this._startedByExternal);
+      this.onActionExecuting(eventArgs);
     }
   },
 
-  _filterEntities: function(entities) {
+  _filterEntities(entities) {
     if (this._selectedEntitiesContext && this._selectedEntitiesContext.url) {
-      var queryData = jQuery.extend({
+      const queryData = Object.assign({
         page: 1,
         size: 0,
         onlyIds: true
       }, this._selectedEntitiesContext.dataQueryParams);
 
-      for (var i = 0; i < entities.length; i++) {
-        queryData['filterIds[' + i + ']'] = entities[i].Id;
+      for (let i = 0; i < entities.length; i++) {
+        queryData[`filterIds[${i}]`] = entities[i].Id;
       }
 
-      rowsData = null;
-      eventArgs = null;
+      let rowsData = null;
 
-      $q.postDataToUrl(this._selectedEntitiesContext.url, queryData, false, function(data) {
+      $q.postDataToUrl(this._selectedEntitiesContext.url, queryData, false, data => {
         rowsData = data;
-      }, function(jqXHR) {
+      }, jqXHR => {
         $q.processGenericAjaxError(jqXHR);
       });
 
-      return jQuery.map(rowsData.data, function(item) {
+      return $.map(rowsData.data, item => {
         return { Id: item.CONTENT_ITEM_ID };
       });
     }
@@ -534,21 +596,24 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     return entities;
   },
 
-  get_mainComponent: function() {
-    return ($q.isObject(this._documentContext)) ? this._documentContext.get_mainComponent() : null;
+  // eslint-disable-next-line camelcase
+  get_mainComponent() {
+    return $q.isObject(this._documentContext) ? this._documentContext.get_mainComponent() : null;
   },
 
-  get_viewTypeCode: function() {
-    return (this._viewToolbarComponent) ? this._viewToolbarComponent.getSelectedViewTypeCode() : '';
+  // eslint-disable-next-line camelcase
+  get_viewTypeCode() {
+    return this._viewToolbarComponent ? this._viewToolbarComponent.getSelectedViewTypeCode() : '';
   },
 
-  get_searchQuery: function() {
-    var result = '';
+  // eslint-disable-next-line camelcase
+  get_searchQuery() {
+    let result = '';
 
     if (this._searchBlockComponent) {
       result = this._searchBlockComponent.get_searchQuery();
     } else {
-      var state = this.loadHostState();
+      const state = this.loadHostState();
 
       if (!$q.isNullOrEmpty(state) && !$q.isNullOrWhiteSpace(state.searchQuery)) {
         result = state.searchQuery;
@@ -558,9 +623,9 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     return result;
   },
 
-  get_contextQuery: function() {
-    var result = '';
-
+  // eslint-disable-next-line camelcase
+  get_contextQuery() {
+    let result = '';
     if (this._contextBlockComponent) {
       result = this._contextBlockComponent.get_searchQuery();
     } else if (this._eventArgsAdditionalData) {
@@ -570,46 +635,48 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     return result;
   },
 
-  get_contextState: function() {
-    var query = this.get_contextQuery();
-
+  // eslint-disable-next-line camelcase
+  get_contextState() {
+    const query = this.get_contextQuery();
     if ($q.isNullOrEmpty(query)) {
       return null;
-    } else {
-      return JSON.parse(query);
     }
+
+    return JSON.parse(query);
   },
 
-  get_currentPage: function() {
-    var main = this.get_mainComponent();
-
+  // eslint-disable-next-line camelcase
+  get_currentPage() {
+    const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       return main.get_currentPage();
-    } else {
-      var state = this.loadHostState();
-
-      if (!$q.isNullOrEmpty(state) && !$q.isNullOrWhiteSpace(state.gridCurrentPage)) {
-        return state.gridCurrentPage;
-      }
     }
-  },
-  get_orderBy: function() {
-    var main = this.get_mainComponent();
 
+    const state = this.loadHostState();
+    if (!$q.isNullOrEmpty(state) && !$q.isNullOrWhiteSpace(state.gridCurrentPage)) {
+      return state.gridCurrentPage;
+    }
+
+    return undefined;
+  },
+
+  // eslint-disable-next-line camelcase
+  get_orderBy() {
+    const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       return main.get_orderBy();
-    } else {
-      var state = this.loadHostState();
-
-      if (!$q.isNullOrEmpty(state) && !$q.isNullOrWhiteSpace(state.gridOrderBy)) {
-        return state.gridOrderBy;
-      }
     }
+
+    const state = this.loadHostState();
+    if (!$q.isNullOrEmpty(state) && !$q.isNullOrWhiteSpace(state.gridOrderBy)) {
+      return state.gridOrderBy;
+    }
+
+    return undefined;
   },
 
-  markPanelsAsBusy: function() {
+  markPanelsAsBusy() {
     this.showLoadingLayer();
-
     if (this._breadCrumbsComponent) {
       this._breadCrumbsComponent.markBreadCrumbsAsBusy();
     }
@@ -623,7 +690,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  unmarkPanelsAsBusy: function(hideLoadingLayer) {
+  unmarkPanelsAsBusy(hideLoadingLayer) {
     if (this._breadCrumbsComponent) {
       this._breadCrumbsComponent.unmarkBreadCrumbsAsBusy();
     }
@@ -650,80 +717,78 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   saveSelectionContext: $c.notImplemented,
   showErrorMessageInDocumentWrapper: $c.notImplemented,
   _onLibraryResized: $c.notImplemented,
-  loadHtmlContentToDocumentWrapper: function(callback, options) {
-    var self = this;
-    var async = true;
+  loadHtmlContentToDocumentWrapper(callback, options) {
+    const that = this;
+    let async = true;
 
     if (options) {
       async = options.asyncReq;
     }
 
     $q.getJsonFromUrl(
-    this.htmlLoadingMethod(),
-    this._documentUrl,
-    this._documentPostParams,
-    async,
-    false,
-      function(data) {
-        self.loadReadyHtmlContent(data);
+      this.htmlLoadingMethod(),
+      this._documentUrl,
+      this._documentPostParams,
+      async,
+      false,
+      data => {
+        that.loadReadyHtmlContent(data);
         if ($q.isFunction(callback)) {
           callback(data.success);
         }
-
-        data = null;
       },
-      function(jqXHR) {
-        // Оповещаем об ошибке при загрузке документа
-        self.onDocumentError();
+      jqXHR => {
+        that.onDocumentError();
         if ($q.isFunction(callback)) {
           callback(false);
         }
 
         $q.processGenericAjaxError(jqXHR);
-
-        self.showErrorMessageInDocumentWrapper(jqXHR.status);
+        that.showErrorMessageInDocumentWrapper(jqXHR.status);
       }
     );
   },
 
-  _saveSelectedEntitiesContext: function(eventArgs) {
+  _saveSelectedEntitiesContext(eventArgs) {
     this._selectedEntitiesContext = eventArgs.get_context();
   },
 
-  refresh: function() {
+  refresh() {
     this.onDocumentChanging();
     this.resetSelectedEntities();
     this.refreshPanels();
     this.generateDocumentUrl();
-    var self = this;
 
-    this.loadHtmlContentToDocumentWrapper(function() {
-      jQuery(self._documentWrapperElement).scrollTo(0);
-      self.onDocumentChanged();
+    const that = this;
+    this.loadHtmlContentToDocumentWrapper(() => {
+      $(that._documentWrapperElement).scrollTo(0);
+      that.onDocumentChanged();
     });
   },
 
-  changeView: function(controllerActionUrl) {
+  changeView(controllerActionUrl) {
     this.onDocumentChanging();
-    this.generateDocumentUrl({ controllerActionUrl: controllerActionUrl });
-    var self = this;
+    this.generateDocumentUrl({ controllerActionUrl });
 
-    this.loadHtmlContentToDocumentWrapper(function() {
-      jQuery(self._documentWrapperElement).scrollTo(0);
-      self.onDocumentChanged();
+    const that = this;
+    this.loadHtmlContentToDocumentWrapper(() => {
+      $(that._documentWrapperElement).scrollTo(0);
+      that.onDocumentChanged();
     });
   },
-  changeViewForSettings: function(options) {
+
+  changeViewForSettings(options) {
     this.onDocumentChanging();
     this.generateDocumentUrl(options);
-    var self = this;
 
-    this.loadHtmlContentToDocumentWrapper(function() {
-      jQuery(self._documentWrapperElement).scrollTo(0);
-      self.onDocumentChanged();
+    const that = this;
+    this.loadHtmlContentToDocumentWrapper(() => {
+      $(that._documentWrapperElement).scrollTo(0);
+      that.onDocumentChanged();
     });
   },
-  changeContent: function(eventArgs, isSaveAndUp) {
+
+  changeContent(eventArgs, isSaveAndUp) {
     if (this.allowChange()) {
       this.onDocumentChanging();
       this.markMainComponentAsBusy();
@@ -733,41 +798,38 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
       this._copyContextQueryToEventArgs(eventArgs);
 
-      var appliedEventArgs = this._getAppliedEventArgs();
-
-      var externalCallerContexts = this._externalCallerContexts;
+      const appliedEventArgs = this._getAppliedEventArgs();
+      const externalCallerContexts = this._externalCallerContexts;
 
       this._externalCallerContexts = [];
       this.updateDocument(eventArgs);
       this._externalCallerContexts = externalCallerContexts;
 
-      var self = this;
-
+      const that = this;
       this._loadDefaultSearchBlockState();
-      this.loadHtmlContentToDocumentWrapper(function(success) {
-        self.unmarkMainComponentAsBusy();
-
-        if (!success) {
-          self.updateDocument(appliedEventArgs);
+      this.loadHtmlContentToDocumentWrapper(success => {
+        that.unmarkMainComponentAsBusy();
+        if (success) {
+          that.unbindExternalCallerContexts('changed');
         } else {
-          self.unbindExternalCallerContexts('changed');
+          that.updateDocument(appliedEventArgs);
         }
 
-        jQuery(self._documentWrapperElement).scrollTo(0);
-        self.onDocumentChanged();
+        $(that._documentWrapperElement).scrollTo(0);
+        that.onDocumentChanged();
       });
     }
   },
 
-  updateDocument: function(eventArgs) {
-    var oldActionCode = this.get_actionCode();
-    var newActionCode = eventArgs.get_actionCode();
+  updateDocument(eventArgs) {
+    const oldActionCode = this.get_actionCode();
+    const newActionCode = eventArgs.get_actionCode();
 
     this._applyEventArgs(eventArgs);
     this.generateDocumentUrl();
     this.updateTitle(eventArgs);
 
-    if (oldActionCode != newActionCode) {
+    if (oldActionCode !== newActionCode) {
       this.hidePanels();
       this.destroySearchBlock();
       this.destroyContextBlock();
@@ -775,12 +837,12 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  _fixDocumentWrapperHeight: function(searchBlockHeight) {
-    var $documentWrapper = jQuery(this._documentWrapperElement);
-    var oldDocumentWrapperHeight = parseInt($documentWrapper.height(), 10);
-    var oldSearchBlockHeight = this._oldSearchBlockHeight;
-    var newSearchBlockHeight = oldSearchBlockHeight;
-    var newDocumentWrapperHeight = 0;
+  _fixDocumentWrapperHeight(searchBlockHeight) {
+    const $documentWrapper = $(this._documentWrapperElement);
+    const oldDocumentWrapperHeight = parseInt($documentWrapper.height(), 10);
+    const oldSearchBlockHeight = this._oldSearchBlockHeight;
+    let newSearchBlockHeight = oldSearchBlockHeight;
+    let newDocumentWrapperHeight = 0;
 
     if (!$q.isNull(searchBlockHeight)) {
       newSearchBlockHeight = searchBlockHeight;
@@ -796,12 +858,12 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     this._oldSearchBlockHeight = newSearchBlockHeight;
   },
 
-  loadReadyHtmlContent: function(data) {
-    var $documentWrapper = jQuery(this._documentWrapperElement);
-    var visible = $documentWrapper.is(':visible');
+  loadReadyHtmlContent(data) {
+    const $documentWrapper = $(this._documentWrapperElement);
+    const visible = $documentWrapper.is(':visible');
 
     if (data.success) {
-      var scrollData = $documentWrapper.data('scroll_position');
+      const scrollData = $documentWrapper.data('scroll_position');
 
       this.onDocumentUnloaded();
       $documentWrapper.data('scroll_position', scrollData);
@@ -822,13 +884,13 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  onLoadMainComponent: function() {
-    var main = this.get_mainComponent();
+  onLoadMainComponent() {
+    const main = this.get_mainComponent();
     if (main) {
       if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
         main.onLoad();
       } else if (Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
-        main.attachObserver(EVENT_TYPE_LIBRARY_RESIZED, jQuery.proxy(this._onLibraryResized, this));
+        main.attachObserver(window.EVENT_TYPE_LIBRARY_RESIZED, $.proxy(this._onLibraryResized, this));
         main.onLoad();
       } else if (Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
         main.onLoad();
@@ -836,8 +898,8 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  onSelectMainComponent: function() {
-    var main = this.get_mainComponent();
+  onSelectMainComponent() {
+    const main = this.get_mainComponent();
 
     if (main) {
       if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
@@ -851,7 +913,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   // Вызывается после того как уже открытый хост был выбран в результате выполнения action
-  onSelectedThroughExecution: function(eventArgs) {
+  onSelectedThroughExecution(eventArgs) {
     this.bindExternalCallerContext(eventArgs);
     this.renderPanels();
 
@@ -860,26 +922,26 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  unmarkMainComponentAsBusy: function() {
-    var main = this.get_mainComponent();
+  unmarkMainComponentAsBusy() {
+    const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.unmarkGridAsBusy();
     }
   },
 
-  markMainComponentAsBusy: function() {
-    var main = this.get_mainComponent();
+  markMainComponentAsBusy() {
+    const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.markGridAsBusy();
     }
   },
 
-  onSearchBlockResize: function(eventType, sender, args) {
+  onSearchBlockResize(eventType, sender, args) {
     this._fixDocumentWrapperHeight(args.get_searchBlockHeight());
   },
 
-  onContextSwitching: function(eventType, sender, args) {
-    var main = this.get_mainComponent();
+  onContextSwitching(eventType, sender, args) {
+    const main = this.get_mainComponent();
     if (main) {
       if (Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
         main.resetGrid({ contextQuery: args.get_searchQuery() });
@@ -889,21 +951,22 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  _getComponentSearchProcessor: function(options) {
-    var main = this.get_mainComponent();
-    var isGrid = Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main);
-    var isTree = Quantumart.QP8.BackendEntityTree.isInstanceOfType(main);
-
+  _getComponentSearchProcessor(options) {
+    const main = this.get_mainComponent();
+    const isGrid = Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main);
+    const isTree = Quantumart.QP8.BackendEntityTree.isInstanceOfType(main);
     if (main && (isGrid || isTree)) {
-      if (!$q.isNullOrEmpty(options.state.searchBlockState)) {
-        options.state.searchQuery = options.searchQuery();
-      } else {
+      if ($q.isNullOrEmpty(options.state.searchBlockState)) {
         $q.removeProperty(options.state, 'searchQuery');
+      } else {
+        Object.assign(options.state, {
+          searchQuery: options.searchQuery()
+        });
       }
 
       if (isGrid) {
         return {
-          process: function() {
+          process() {
             main.resetGrid({ searchQuery: options.searchQuery() });
           }
         };
@@ -911,7 +974,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
       if (isTree) {
         return {
-          process: function() {
+          process() {
             main.searchByTerm({ searchQuery: options.searchQuery() });
           }
         };
@@ -919,65 +982,39 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
       throw new Error('Undefined search processor');
     }
+
+    return undefined;
   },
 
-  onSearch: function(eventType, sender, args) {
-    var state = this.loadHostState() || {};
-    var searchBlockState = args.get_searchBlockState();
+  onSearch(eventType, sender, args) {
+    const state = this.loadHostState() || {};
+    const searchBlockState = args.get_searchBlockState();
 
-    if (!$q.isNullOrEmpty(searchBlockState)) {
-      state.searchBlockState = searchBlockState;
-    } else {
+    if ($q.isNullOrEmpty(searchBlockState)) {
       $q.removeProperty(state, 'searchBlockState');
+    } else {
+      state.searchBlockState = searchBlockState;
     }
 
     this._getComponentSearchProcessor({
-      state: state,
+      state,
       searchQuery: args.get_searchQuery.bind(args)
     }).process();
 
     this.saveHostState(state);
   },
 
-  // onSearch: function (eventType, sender, args) {
-  //  var main = this.get_mainComponent();
-  //  var state = this.loadHostState();
-  //  if ($q.isNullOrEmpty(state)) {
-  //    state = {};
-  //  }
-  //  var searchBlockState = args.get_searchBlockState();
-  //  if (!$q.isNullOrEmpty(searchBlockState)) {
-  //    state.searchBlockState = searchBlockState;
-  //  }
-  //  else {
-  //    $q.removeProperty(state, "searchBlockState");
-  //  }
-  //  if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
-  //    if (!$q.isNullOrEmpty(state.searchBlockState)) {
-  //      state.searchQuery = args.get_searchQuery();
-  //    }
-  //    else {
-  //      $q.removeProperty(state, "searchQuery");
-  //    }
-  //    main.resetGrid({ "searchQuery": args.get_searchQuery() })
-  //  }
-  //  this.saveHostState(state);
-  // },
-
-  onViewChanging: function(eventType, sender, args) {
-    var state = this.loadHostState();
-
+  onViewChanging(eventType, sender, args) {
+    let state = this.loadHostState();
     if ($q.isNullOrEmpty(state)) {
       state = {};
     }
 
-    var code = args.get_code();
-
+    const code = args.get_code();
     state.viewTypeCode = code;
     this.saveHostState(state);
 
-    var main = this.get_mainComponent();
-
+    const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.changeViewType(code);
     } else {
@@ -985,83 +1022,70 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  onEntityLoaded: function(eventArgs) {
-    if (eventArgs.get_entityId() != 0) {
+  onEntityLoaded(eventArgs) {
+    if (eventArgs.get_entityId() !== 0) {
       this.updateDocument(eventArgs);
       this.onEntityReaded(eventArgs);
-      if (eventArgs.get_isRestored() && eventArgs.get_entityTypeCode() == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-        var message = String.format($l.EntityEditor.versionSuccessfullyRestoredMessage, eventArgs.get_entityId());
+      if (eventArgs.get_isRestored() && eventArgs.get_entityTypeCode() === window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+        const message = String.format($l.EntityEditor.versionSuccessfullyRestoredMessage, eventArgs.get_entityId());
         window.alert(message);
       }
-    } else if (eventArgs.get_actionTypeCode() == ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE) {
+    } else if (eventArgs.get_actionTypeCode() === window.ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE) {
       this.onEntityReaded(eventArgs);
     }
   },
 
-  onEntitySubmitting: function() {
+  onEntitySubmitting() {
     this.onDocumentChanging();
   },
 
-  onEntitySubmitted: function(eventArgs) {
+  onEntitySubmitted(eventArgs) {
     this.loadReadyHtmlContent(eventArgs.get_data());
     this.onDocumentChanged();
     this.saveAndUp();
     this.onSaveAndClose();
   },
 
-  onEntitySubmittedError: function() {
+  onEntitySubmittedError() {
     this._isCloseForced = false;
     this.onDocumentChanged();
   },
 
-  saveAndCloseRequest: function() { },
-  onSaveAndClose: function() {},
-
-  saveAndUp: function() {
-    var context = this.get_documentContext();
-
+  saveAndUp() {
+    const context = this.get_documentContext();
     if (context && context.needUp()) {
       this.onNeedUp(context.get_eventArgs());
     }
   },
 
-  onDocumentUnloaded: function() {
+  onDocumentUnloaded() {
     this.destroyAllActionLinks();
-
-    var main = this.get_mainComponent();
-
+    const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
-      main.detachObserver(EVENT_TYPE_LIBRARY_RESIZED);
+      main.detachObserver(window.EVENT_TYPE_LIBRARY_RESIZED);
     }
-
-    main = null;
 
     if (this._documentContext) {
       this._documentContext.dispose();
-      this._documentContext = null;
     }
   },
 
-  onDocumentLoaded: function() {
+  onDocumentLoaded() {
     this.initAllActionLinks();
     this.restoreHostState();
     this.onLoadMainComponent();
     if (this.get_eventArgsAdditionalData() && this.get_eventArgsAdditionalData().restoring === true) {
-      var argData = this.get_eventArgsAdditionalData();
-
+      const argData = this.get_eventArgsAdditionalData();
       argData.restoring = false;
       argData.initFieldValues = null;
     }
 
-    var context = this.get_documentContext();
-
+    const context = this.get_documentContext();
     if (context) {
-      var state = context.get_state();
-      var mainComponentType = context.get_mainComponentType();
-
-      if (mainComponentType == $e.MainComponentType.Editor && state != $e.DocumentContextState.Error) {
-        var eventArgs = context.get_eventArgs();
-
+      const state = context.get_state();
+      const mainComponentType = context.get_mainComponentType();
+      if (mainComponentType === $e.MainComponentType.Editor && state !== $e.DocumentContextState.Error) {
+        const eventArgs = context.get_eventArgs();
         this._copyContextQueryToEventArgs(eventArgs);
         this.onEntityLoaded(context.get_eventArgs());
       }
@@ -1070,43 +1094,40 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  onDocumentError: function() {
+  onDocumentError() {
     this._isCloseForced = false;
   },
 
-  onSelectionChanged: function(eventArgs) {
-    var selectedEntities = Array.clone(eventArgs.get_entities());
-
+  onSelectionChanged(eventArgs) {
+    const selectedEntities = Array.clone(eventArgs.get_entities());
     this._selectedEntities = selectedEntities;
     this.saveSelectionContext(eventArgs);
     this._saveSelectedEntitiesContext(eventArgs);
     this.refreshPanels();
   },
 
-  onDataBinding: function() {
+  onDataBinding() {
     this.onDocumentChanging(true);
   },
 
-  onDataBound: function(eventType, sender, eventArgs) {
-    var main = this.get_mainComponent();
-
+  onDataBound(eventType, sender, eventArgs) {
+    const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
-      var state = this.loadHostState();
-
+      let state = this.loadHostState();
       if ($q.isNullOrEmpty(state)) {
         state = {};
       }
 
-      if (!$q.isNullOrEmpty(sender.get_currentPage())) {
-        state.gridCurrentPage = main.get_currentPage();
-      } else {
+      if ($q.isNullOrEmpty(sender.get_currentPage())) {
         $q.removeProperty(state, 'gridCurrentPage');
+      } else {
+        state.gridCurrentPage = main.get_currentPage();
       }
 
-      if (!$q.isNullOrEmpty(sender.get_orderBy())) {
-        state.gridOrderBy = main.get_orderBy();
-      } else {
+      if ($q.isNullOrEmpty(sender.get_orderBy())) {
         $q.removeProperty(state, 'gridOrderBy');
+      } else {
+        state.gridOrderBy = main.get_orderBy();
       }
 
       this.saveHostState(state);
@@ -1116,7 +1137,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     this.onDocumentChanged(true);
   },
 
-  onGeneralEvent: function(eventType, sender, eventArgs) {
+  onGeneralEvent(eventType, sender, eventArgs) {
     if (eventType === window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING
       || eventType === window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING
       || eventType === window.EVENT_TYPE_LIBRARY_ACTION_EXECUTING
@@ -1135,11 +1156,17 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       }
     } else if (eventType === window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING) {
       this.onDataBinding(eventArgs);
-    } else if (eventType === window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND || eventType === window.EVENT_TYPE_LIBRARY_DATA_BOUND || eventType === window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND) {
+    } else if (eventType === window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND
+      || eventType === window.EVENT_TYPE_LIBRARY_DATA_BOUND
+      || eventType === window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND) {
       this.onDataBound(eventType, sender, eventArgs);
-    } else if (eventType === window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED || eventType === window.EVENT_TYPE_LIBRARY_ENTITY_SELECTED || eventType === window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED) {
+    } else if (eventType === window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED
+      || eventType === window.EVENT_TYPE_LIBRARY_ENTITY_SELECTED
+      || eventType === window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED) {
       this.onSelectionChanged(eventArgs);
-    } else if (eventType === window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK || eventType === window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK || eventType === window.EVENT_TYPE_ACTION_LINK_SELF_CLICK) {
+    } else if (eventType === window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK
+      || eventType === window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK
+      || eventType === window.EVENT_TYPE_ACTION_LINK_SELF_CLICK) {
       this.onChangeContent(eventType, sender, eventArgs);
     } else if (eventType === window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING) {
       this.onEntitySubmitting();
@@ -1164,33 +1191,32 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  getCurrentAction: function() {
+  getCurrentAction() {
     return $a.getBackendActionByCode(this._actionCode);
   },
 
-  cancel: function() {
-    var action = this.getCurrentAction();
-    var cancelActionCode = (action) ? action.EntityType.CancelActionCode : '';
-
-    if (!$q.isNullOrWhiteSpace(cancelActionCode) && action.ActionType.Code == ACTION_TYPE_CODE_READ && $o.checkEntityExistence(this._entityTypeCode, this._entityId)) {
+  cancel() {
+    const action = this.getCurrentAction();
+    const cancelActionCode = action ? action.EntityType.CancelActionCode : '';
+    if (!$q.isNullOrWhiteSpace(cancelActionCode)
+      && action.ActionType.Code === window.ACTION_TYPE_CODE_READ
+      && $o.checkEntityExistence(this._entityTypeCode, this._entityId)) {
       this.executeAction(cancelActionCode);
     }
   },
 
-  allowChange: function() {
-    var main = this.get_mainComponent();
-
-    return (main == null || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmChange());
+  allowChange() {
+    const main = this.get_mainComponent();
+    return !main || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmChange();
   },
 
-  allowClose: function() {
-    var main = this.get_mainComponent();
-
-    return (main == null || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmClose());
+  allowClose() {
+    const main = this.get_mainComponent();
+    return !main || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmClose();
   },
 
-  selectAllEntities: function() {
-    var main = this.get_mainComponent();
+  selectAllEntities() {
+    const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.selectAllRows();
     } else {
@@ -1198,8 +1224,8 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  deselectAllEntities: function() {
-    var main = this.get_mainComponent();
+  deselectAllEntities() {
+    const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.deselectAllRows();
     } else {
@@ -1207,9 +1233,9 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
   },
 
-  getAllActionLinks: function(documentWrapperElement) {
-    var $wrapper = $q.toJQuery(documentWrapperElement);
-    var result;
+  getAllActionLinks(documentWrapperElement) {
+    const $wrapper = $q.toJQuery(documentWrapperElement);
+    let result;
 
     if ($wrapper) {
       result = $wrapper.find('.actionLink');
@@ -1220,81 +1246,60 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     return result;
   },
 
-  initAllActionLinks: function(documentWrapperElement) {
-    var self = this;
+  initAllActionLinks(documentWrapperElement = this._documentWrapperElement) {
+    const that = this;
+    this.getAllActionLinks(documentWrapperElement).each((index, linkElem) => {
+      const $link = $q.toJQuery(linkElem);
+      if (!$q.isNullOrEmpty($link) && $q.isNull($link.data('action_link_component'))) {
+        const linkId = $link.attr('id');
+        const entityId = +$link.data('entity_id') || 0;
+        const entityName = $link.data('entity_name');
+        const parentEntityId = $q.toInt($link.data('parent_entity_id'), null);
+        const actionTypeCode = $link.data('action_type_code');
+        const actionCode = $link.data('action_code');
+        const actionTargetType = $q.toInt($link.data('action_target_type'), null);
+        const context = $link.data('context');
+        const actionLink = new Quantumart.QP8.BackendActionLink(linkId, {
+          entityId,
+          entityName,
+          parentEntityId,
+          actionTypeCode,
+          actionCode,
+          actionTargetType,
+          context
+        });
 
-    if ($q.isNull(documentWrapperElement)) {
-      documentWrapperElement = this._documentWrapperElement;
-    }
-
-    this.getAllActionLinks(documentWrapperElement).each(
-      function(index, linkElem) {
-        var $link = $q.toJQuery(linkElem);
-
-        if (!$q.isNullOrEmpty($link) && $q.isNull($link.data('action_link_component'))) {
-          var linkId = $link.attr('id');
-          var entityId = +$link.data('entity_id') || 0;
-          var entityName = $link.data('entity_name');
-          var parentEntityId = $q.toInt($link.data('parent_entity_id'), null);
-          var actionTypeCode = $link.data('action_type_code');
-          var actionCode = $link.data('action_code');
-          var actionTargetType = $q.toInt($link.data('action_target_type'), null);
-          var context = $link.data('context');
-
-          var actionLink = new Quantumart.QP8.BackendActionLink(linkId,
-            {
-              entityId: entityId,
-              entityName: entityName,
-              parentEntityId: parentEntityId,
-              actionTypeCode: actionTypeCode,
-              actionCode: actionCode,
-              actionTargetType: actionTargetType,
-              context: context
-            }
-          );
-
-          actionLink.initialize();
-          actionLink.attachObserver(EVENT_TYPE_ACTION_LINK_SELF_CLICK, self._onGeneralEventHandler);
-          actionLink.attachObserver(EVENT_TYPE_ACTION_LINK_CLICK, self._onGeneralEventHandler);
-          $link.data('action_link_component', actionLink);
-        }
+        actionLink.initialize();
+        actionLink.attachObserver(window.EVENT_TYPE_ACTION_LINK_SELF_CLICK, that._onGeneralEventHandler);
+        actionLink.attachObserver(window.EVENT_TYPE_ACTION_LINK_CLICK, that._onGeneralEventHandler);
+        $link.data('action_link_component', actionLink);
       }
-    );
+    });
   },
 
-  destroyAllActionLinks: function(documentWrapperElement) {
-    var self = this;
-
-    if ($q.isNull(documentWrapperElement)) {
-      documentWrapperElement = this._documentWrapperElement;
-    }
-
-    this.getAllActionLinks(documentWrapperElement).each(
-      function(index, linkElem) {
-        var $link = $q.toJQuery(linkElem);
-
-        if (!$q.isNullOrEmpty($link)) {
-          var actionLink = $link.data('action_link_component');
-
-          if ($q.isObject(actionLink)) {
-            actionLink.detachObserver(EVENT_TYPE_ACTION_LINK_SELF_CLICK, self._onGeneralEventHandler);
-            actionLink.detachObserver(EVENT_TYPE_ACTION_LINK_CLICK, self._onGeneralEventHandler);
-            actionLink.dispose();
-            actionLink = null;
-          }
-
-          $link.removeData('action_link_component');
+  destroyAllActionLinks(documentWrapperElement = this._documentWrapperElement) {
+    const that = this;
+    this.getAllActionLinks(documentWrapperElement).each((index, linkElem) => {
+      const $link = $q.toJQuery(linkElem);
+      if (!$q.isNullOrEmpty($link)) {
+        const actionLink = $link.data('action_link_component');
+        if ($q.isObject(actionLink)) {
+          actionLink.detachObserver(window.EVENT_TYPE_ACTION_LINK_SELF_CLICK, that._onGeneralEventHandler);
+          actionLink.detachObserver(window.EVENT_TYPE_ACTION_LINK_CLICK, that._onGeneralEventHandler);
+          actionLink.dispose();
         }
+
+        $link.removeData('action_link_component');
       }
-    );
+    });
   },
 
-  onActionToolbarButtonClicked: function(eventType, sender, eventArgs) {
+  onActionToolbarButtonClicked(eventType, sender, eventArgs) {
     this.executeAction(this._actionToolbarComponent.getToolbarItemValue(eventArgs.get_value()));
   },
 
-  onSearchViewToolbarButtonClicked: function() {
-    if (this.get_isSearchBlockVisible() == false) {
+  onSearchViewToolbarButtonClicked() {
+    if (!this.get_isSearchBlockVisible()) {
       if (!this._searchBlockComponent) {
         this.createSearchBlock();
       }
@@ -1302,26 +1307,25 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       this._searchBlockComponent.renderSearchBlock();
       this._searchBlockComponent.showSearchBlock();
       this.set_isSearchBlockVisible(true);
-    } else {
-      if (this._searchBlockComponent) {
-        this._searchBlockComponent.hideSearchBlock();
-        this.set_isSearchBlockVisible(false);
-      }
+    } else if (this._searchBlockComponent) {
+      this._searchBlockComponent.hideSearchBlock();
+      this.set_isSearchBlockVisible(false);
     }
   },
 
-  get_isSearchBlockVisible: function() {
-    var state = this.loadHostState();
+  // eslint-disable-next-line camelcase
+  get_isSearchBlockVisible() {
+    const state = this.loadHostState();
 
     if (!$q.isNullOrEmpty(state)) {
       return $q.toBoolean(state.isSearchBlockVisible, false);
-    } else {
-      return false;
     }
+    return false;
   },
 
-  set_isSearchBlockVisible: function(value) {
-    var state = this.loadHostState();
+  // eslint-disable-next-line camelcase
+  set_isSearchBlockVisible(value) {
+    let state = this.loadHostState();
 
     if ($q.isNullOrEmpty(state)) {
       state = {};
@@ -1331,8 +1335,8 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     this.saveHostState(state);
   },
 
-  onContextViewToolbarButtonClicked: function() {
-    if (this._isContextBlockVisible == false) {
+  onContextViewToolbarButtonClicked() {
+    if (!this._isContextBlockVisible) {
       if (!this._contextBlockComponent) {
         this.createContextBlock();
       }
@@ -1340,37 +1344,34 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       this._contextBlockComponent.renderSearchBlock();
       this._contextBlockComponent.showSearchBlock();
       this._isContextBlockVisible = true;
-    } else {
-      if (this._contextBlockComponent) {
-        this._contextBlockComponent.hideSearchBlock();
-        this._isContextBlockVisible = false;
-      }
+    } else if (this._contextBlockComponent) {
+      this._contextBlockComponent.hideSearchBlock();
+      this._isContextBlockVisible = false;
     }
   },
 
-  getEventArgs: function() {
-    var action = this.getCurrentAction();
-    var eventArgs = null;
-
-    if (!$q.isObject(action)) {
-      eventArgs = new Quantumart.QP8.BackendEventArgs();
-    } else {
+  getEventArgs() {
+    const action = this.getCurrentAction();
+    let eventArgs = null;
+    if ($q.isObject(action)) {
       eventArgs = $a.getEventArgsFromAction(action);
       eventArgs.set_entityTypeCode(this._entityTypeCode);
       eventArgs.set_entityId(this._entityId);
       eventArgs.set_entityName(this._entityName);
       eventArgs.set_parentEntityId(this._parentEntityId);
+    } else {
+      eventArgs = new Quantumart.QP8.BackendEventArgs();
     }
 
     return eventArgs;
   },
 
-  renderPanels: function() {
+  renderPanels() {
     if (this._breadCrumbsComponent) {
       this._breadCrumbsComponent.addItemsToBreadCrumbs();
     }
 
-    var selected = this._getSelectedEntities();
+    const selected = this._getSelectedEntities();
 
     if (this._actionToolbarComponent && !this._useCustomActionToolbar) {
       this._actionToolbarComponent.set_actionCode(this._actionCode);
@@ -1389,11 +1390,11 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     this.showPanels();
   },
 
-  refreshPanels: function() {
-    var selected = this._getSelectedEntities();
+  refreshPanels() {
+    const selected = this._getSelectedEntities();
 
     if (this._actionToolbarComponent) {
-      if (selected.length == 1 && selected.Id != this._entityId) {
+      if (selected.length === 1 && selected.Id !== this._entityId) {
         this._actionToolbarComponent.tuneToolbarItems(selected[0].Id, this._parentEntityId);
       } else {
         this._actionToolbarComponent.setVisibleStateForAll(true);
@@ -1410,22 +1411,24 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     this.fixActionToolbarWidth();
   },
 
-  _getSelectedEntities: function() {
-    if (this._actionTypeCode == ACTION_TYPE_CODE_LIST || this._actionTypeCode == ACTION_TYPE_CODE_LIBRARY) {
+  _getSelectedEntities() {
+    if (this._actionTypeCode === window.ACTION_TYPE_CODE_LIST
+      || this._actionTypeCode === window.ACTION_TYPE_CODE_LIBRARY) {
       return this._selectedEntities;
-    } else {
-      return [{ Id: this._entityId, Name: this._entityName }];
     }
+
+    return [{ Id: this._entityId, Name: this._entityName }];
   },
 
-  getCurrentViewActionUrl: function() {
-    var state = this.loadHostState();
-
-    return (state && state.viewTypeCode) ? $a.getActionViewByViewTypeCode(this.getCurrentAction(), state.viewTypeCode).ControllerActionUrl : '';
+  getCurrentViewActionUrl() {
+    const state = this.loadHostState();
+    return state && state.viewTypeCode
+      ? $a.getActionViewByViewTypeCode(this.getCurrentAction(), state.viewTypeCode).ControllerActionUrl
+      : '';
   },
 
-  _copyCurrentContextToEventArgs: function(eventArgs) {
-    var context = this.get_documentContext();
+  _copyCurrentContextToEventArgs(eventArgs) {
+    const context = this.get_documentContext();
 
     if (context) {
       eventArgs.set_context(context.modifyEventArgsContext(eventArgs.get_context()));
@@ -1438,138 +1441,151 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     this._copyContextQueryToEventArgs(eventArgs);
   },
 
-  _copyContextQueryToEventArgs: function(eventArgs) {
-    var query = this.get_contextQuery();
-
+  _copyContextQueryToEventArgs(eventArgs) {
+    const query = this.get_contextQuery();
     if (query) {
-      var addData = eventArgs.get_additionalData();
-
-      if (!addData)
-      eventArgs.set_additionalData({ contextQuery: query });
-      else
-      addData.contextQuery = query;
+      const addData = eventArgs.get_additionalData();
+      if (addData) {
+        addData.contextQuery = query;
+      } else {
+        eventArgs.set_additionalData({ contextQuery: query });
+      }
     }
-  },
-
-  dispose: function() {
   }
 };
 
 // Генерирует заголовок таба
-Quantumart.QP8.BackendDocumentHost.generateTitle = function(eventArgs, options) {
-  var actionCode = eventArgs.get_actionCode();
-  var action = $a.getBackendAction(actionCode);
-  var actionName = (action.ShortName) ? action.ShortName : action.Name;
-  var actionTypeCode = action.ActionType.Code;
-  var isMultipleEntities = eventArgs.get_isMultipleEntities();
-  var entities = eventArgs.get_entities();
-  var entityTypeCode = eventArgs.get_entityTypeCode();
-  var entityId = eventArgs.get_entityId();
-  var parentEntityId = eventArgs.get_parentEntityId();
-  var isTab = false;
-  var tabNumber = 0;
+Quantumart.QP8.BackendDocumentHost.generateTitle = function (eventArgs, options) {
+  const actionCode = eventArgs.get_actionCode();
+  const action = $a.getBackendAction(actionCode);
+  const actionName = action.ShortName ? action.ShortName : action.Name;
+  const actionTypeCode = action.ActionType.Code;
+  const isMultipleEntities = eventArgs.get_isMultipleEntities();
+  const entities = eventArgs.get_entities();
+  const entityTypeCode = eventArgs.get_entityTypeCode();
+  let entityId = eventArgs.get_entityId();
+  const parentEntityId = eventArgs.get_parentEntityId();
+  let tabNumber = 0;
 
   if ($q.isObject(options)) {
-    if ($q.isBoolean(options.isTab)) {
-      isTab = options.isTab;
-    }
-
     if ($.isNumeric(options.tabNumber)) {
       tabNumber = options.tabNumber;
     }
   }
 
-  var docHostTitle = (isTab) ? $l.Common.untitledTabText : $l.Common.untitledWindowTitle;
-
-  if (actionTypeCode == ACTION_TYPE_CODE_LIST && (entityTypeCode == ENTITY_TYPE_CODE_SITE || entityTypeCode == ENTITY_TYPE_CODE_USER || entityTypeCode == ENTITY_TYPE_CODE_USER_GROUP)) {
+  if (actionTypeCode === window.ACTION_TYPE_CODE_LIST
+    && (entityTypeCode === window.ENTITY_TYPE_CODE_SITE
+      || entityTypeCode === window.ENTITY_TYPE_CODE_USER
+      || entityTypeCode === window.ENTITY_TYPE_CODE_USER_GROUP)) {
     return actionName;
   }
 
-  if (actionTypeCode == ACTION_TYPE_CODE_READ && (entityTypeCode == ENTITY_TYPE_CODE_CUSTOMER_CODE || entityTypeCode == ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE)) {
+  if (actionTypeCode === window.ACTION_TYPE_CODE_READ
+    && (entityTypeCode === window.ENTITY_TYPE_CODE_CUSTOMER_CODE
+      || entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE
+      || entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_FILE)) {
     return actionName;
   }
 
-  if (actionCode == ACTION_CODE_CHILD_CONTENT_PERMISSIONS || actionCode == ACTION_CODE_CHILD_ARTICLE_PERMISSIONS) {
+  if (actionCode === window.ACTION_CODE_CHILD_CONTENT_PERMISSIONS
+    || actionCode === window.ACTION_CODE_CHILD_ARTICLE_PERMISSIONS) {
     return actionName;
   }
 
-  if (actionCode == ACTION_CODE_SELECT_USER_GROUP || actionCode == ACTION_CODE_SELECT_USER || actionCode == ACTION_CODE_MULTIPLE_SELECT_USER) {
+  if (actionCode === window.ACTION_CODE_SELECT_USER_GROUP
+    || actionCode === window.ACTION_CODE_SELECT_USER
+    || actionCode === window.ACTION_CODE_MULTIPLE_SELECT_USER) {
     return actionName;
   }
 
-  if (entityTypeCode == ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION) {
-    var pet = Quantumart.QP8.BackendEntityType.getEntityTypeById(parentEntityId);
+  if (entityTypeCode === window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION) {
+    const pet = Quantumart.QP8.BackendEntityType.getEntityTypeById(parentEntityId);
 
     if (pet) {
-      if (actionTypeCode == ACTION_TYPE_CODE_LIST) {
+      if (actionTypeCode === window.ACTION_TYPE_CODE_LIST) {
         return String.format($l.BackendPermission.entityPermissionListTitleFormat, pet.Name);
-      } else if (actionCode == ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE || actionCode == ACTION_CODE_NEW_ENTITY_TYPE_PERMISSION) {
+      } else if (actionCode === window.ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE
+        || actionCode === window.ACTION_CODE_NEW_ENTITY_TYPE_PERMISSION) {
         return String.format($l.BackendPermission.entityPermissionPropertyTitleFormat, pet.Name, actionName);
       }
     }
   }
 
-  if (entityTypeCode == ENTITY_TYPE_CODE_ACTION_PERMISSION) {
-    var pact = $a.getBackendActionById(parentEntityId);
-
+  if (entityTypeCode === window.ENTITY_TYPE_CODE_ACTION_PERMISSION) {
+    const pact = $a.getBackendActionById(parentEntityId);
     if (pact) {
-      if (actionTypeCode == ACTION_TYPE_CODE_LIST) {
-        return String.format($l.BackendPermission.actionPermissionListTitleFormat, (pact.ShortName) ? pact.ShortName : pact.Name);
-      } else if (actionCode == ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE || actionCode == ACTION_CODE_NEW_ACTION_PERMISSION) {
+      if (actionTypeCode === window.ACTION_TYPE_CODE_LIST) {
+        return String.format(
+          $l.BackendPermission.actionPermissionListTitleFormat,
+          pact.ShortName ? pact.ShortName : pact.Name
+        );
+      } else if (actionCode === window.ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE
+        || actionCode === window.ACTION_CODE_NEW_ACTION_PERMISSION) {
         return String.format($l.BackendPermission.actionPermissionPropertyTitleFormat, pact.Name, actionName);
       }
     }
   }
 
-  var docHostTitleTemplate = Quantumart.QP8.BackendDocumentHost.generateTitleTemplate(actionTypeCode, entityTypeCode, isMultipleEntities, tabNumber > 1);
+  const docHostTitleTemplate = Quantumart.QP8.BackendDocumentHost.generateTitleTemplate(
+    actionTypeCode,
+    entityTypeCode,
+    isMultipleEntities,
+    tabNumber > 1
+  );
 
-  var parentInfo = $o.getParentInfo(entityTypeCode, entityId, parentEntityId);
-
-  if (actionTypeCode == ACTION_TYPE_CODE_READ &&
-  (
-  entityTypeCode == ENTITY_TYPE_CODE_SITE_PERMISSION ||
-  entityTypeCode == ENTITY_TYPE_CODE_CONTENT_PERMISSION ||
-  entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_PERMISSION ||
-  entityTypeCode == ENTITY_TYPE_CODE_WORKFLOW_PERMISSION ||
-  entityTypeCode == ENTITY_TYPE_CODE_SITE_FODER_TYPE_PERMISSION ||
-  entityTypeCode == ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION ||
-  entityTypeCode == ENTITY_TYPE_CODE_ACTION_PERMISSION
-  )
+  const parentInfo = $o.getParentInfo(entityTypeCode, entityId, parentEntityId);
+  if (actionTypeCode === window.ACTION_TYPE_CODE_READ && (
+    entityTypeCode === window.NTITY_TYPE_CODE_SITE_PERMISSION
+    || entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_PERMISSION
+    || entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION
+    || entityTypeCode === window.ENTITY_TYPE_CODE_WORKFLOW_PERMISSION
+    || entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FODER_TYPE_PERMISSION
+    || entityTypeCode === window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION
+    || entityTypeCode === window.ENTITY_TYPE_CODE_ACTION_PERMISSION)
   ) {
-    return String.format('{0} {1} - {2}', '(' + entityId + ')', parentInfo[0].EntityTypeName, actionName);
+    return String.format('{0} {1} - {2}', `(${entityId})`, parentInfo[0].EntityTypeName, actionName);
   }
 
   if ($q.isNullOrEmpty(docHostTitleTemplate)) {
     return actionName;
   }
 
-  if ($q.isNull(entityId) || actionTypeCode == ACTION_TYPE_CODE_SELECT) {
+  if ($q.isNull(entityId) || actionTypeCode === window.ACTION_TYPE_CODE_SELECT) {
     entityId = 0;
   }
 
-  if (!$q.isArray(parentInfo) || parentInfo.length == 0) {
+  if (!$q.isArray(parentInfo) || parentInfo.length === 0) {
     return actionName;
   }
 
-  var entityListString = (isMultipleEntities) ? $o.getEntityNamesStringFromEntities(entities) : '';
-
-  return String.format(docHostTitleTemplate, parentInfo[0].EntityTypeName, parentInfo[0].Title, actionName, tabNumber, entityListString);
+  const entityListString = isMultipleEntities ? $o.getEntityNamesStringFromEntities(entities) : '';
+  return String.format(
+    docHostTitleTemplate,
+    parentInfo[0].EntityTypeName,
+    parentInfo[0].Title,
+    actionName,
+    tabNumber,
+    entityListString
+  );
 };
 
 // Генерирует шаблон заголовока таба
-Quantumart.QP8.BackendDocumentHost.generateTitleTemplate = function(actionTypeCode, entityTypeCode, isMultipleEntities, showTabNumber) {
-  var docHostTitleTemplate = '';
-
-  if (actionTypeCode == ACTION_TYPE_CODE_ADD_NEW) {
-    docHostTitleTemplate = (showTabNumber) ? '{0} "{1}" - {2}-{3}' : '{0} "{1}" - {2}';
+Quantumart.QP8.BackendDocumentHost.generateTitleTemplate = function (
+  actionTypeCode,
+  entityTypeCode,
+  isMultipleEntities,
+  showTabNumber) {
+  let docHostTitleTemplate = '';
+  if (actionTypeCode === window.ACTION_TYPE_CODE_ADD_NEW) {
+    docHostTitleTemplate = showTabNumber ? '{0} "{1}" - {2}-{3}' : '{0} "{1}" - {2}';
   } else if (
-  actionTypeCode == ACTION_TYPE_CODE_LIST
-  || actionTypeCode == ACTION_TYPE_CODE_LIBRARY
-  || actionTypeCode == ACTION_TYPE_CODE_READ
-  || actionTypeCode == ACTION_TYPE_CODE_SEARCH
-  || actionTypeCode == ACTION_TYPE_CODE_SELECT
-  || actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_SELECT
-  || actionTypeCode == ACTION_TYPE_ACTION_PERMISSION_TREE
+    actionTypeCode === window.ACTION_TYPE_CODE_LIST
+  || actionTypeCode === window.ACTION_TYPE_CODE_LIBRARY
+  || actionTypeCode === window.ACTION_TYPE_CODE_READ
+  || actionTypeCode === window.ACTION_TYPE_CODE_SEARCH
+  || actionTypeCode === window.ACTION_TYPE_CODE_SELECT
+  || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
+  || actionTypeCode === window.ACTION_TYPE_ACTION_PERMISSION_TREE
   ) {
     docHostTitleTemplate = '{0} "{1}" - {2}';
   } else if (isMultipleEntities) {
@@ -1580,5 +1596,3 @@ Quantumart.QP8.BackendDocumentHost.generateTitleTemplate = function(actionTypeCo
 };
 
 Quantumart.QP8.BackendDocumentHost.registerClass('Quantumart.QP8.BackendDocumentHost', Quantumart.QP8.Observable);
-
-//#endregion
