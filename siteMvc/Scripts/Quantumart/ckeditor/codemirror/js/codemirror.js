@@ -3426,7 +3426,7 @@ function updateScrollbarsInner(cm, measure) {
   } else { d.gutterFiller.style.display = ""; }
 }
 
-var scrollbarModel = {"native": NativeScrollbars, "null": NullScrollbars};
+var scrollbarModel = {native: NativeScrollbars, null: NullScrollbars};
 
 function initScrollbars(cm) {
   if (cm.display.scrollbars) {
@@ -6294,12 +6294,12 @@ for (var i$2 = 1; i$2 <= 12; i$2++) { keyNames[i$2 + 111] = keyNames[i$2 + 63235
 var keyMap = {};
 
 keyMap.basic = {
-  "Left": "goCharLeft", "Right": "goCharRight", "Up": "goLineUp", "Down": "goLineDown",
-  "End": "goLineEnd", "Home": "goLineStartSmart", "PageUp": "goPageUp", "PageDown": "goPageDown",
-  "Delete": "delCharAfter", "Backspace": "delCharBefore", "Shift-Backspace": "delCharBefore",
-  "Tab": "defaultTab", "Shift-Tab": "indentAuto",
-  "Enter": "newlineAndIndent", "Insert": "toggleOverwrite",
-  "Esc": "singleSelection"
+  Left: "goCharLeft", Right: "goCharRight", Up: "goLineUp", Down: "goLineDown",
+  End: "goLineEnd", Home: "goLineStartSmart", PageUp: "goPageUp", PageDown: "goPageDown",
+  Delete: "delCharAfter", Backspace: "delCharBefore", "Shift-Backspace": "delCharBefore",
+  Tab: "defaultTab", "Shift-Tab": "indentAuto",
+  Enter: "newlineAndIndent", Insert: "toggleOverwrite",
+  Esc: "singleSelection"
 };
 // Note that the save and find-related commands aren't defined by
 // default. User code or addons can define them. Unknown commands
@@ -9074,7 +9074,7 @@ eventMixin(Doc);
 
 // INPUT HANDLING
 
-CodeMirror$1.inputStyles = {"textarea": TextareaInput, "contenteditable": ContentEditableInput};
+CodeMirror$1.inputStyles = {textarea: TextareaInput, contenteditable: ContentEditableInput};
 
 // MODE DEFINITION AND QUERYING
 

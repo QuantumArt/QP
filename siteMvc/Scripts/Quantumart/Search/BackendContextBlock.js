@@ -55,8 +55,8 @@ Quantumart.QP8.BackendContextBlock.prototype =
 			"GET",
 			CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "ContextBlock/" + this._parentEntityId,
 			{
-			    "actionCode": this._actionCode,
-			    "hostId": this._hostId
+			    actionCode: this._actionCode,
+			    hostId: this._hostId
 			},
 			false,
 			false,

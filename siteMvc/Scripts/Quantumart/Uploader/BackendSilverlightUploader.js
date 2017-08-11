@@ -186,12 +186,12 @@ function Quantumart$QP8$BackendSilverlightUploader$returnFolderPath(id) {
 // Локализует Silverlight-uploader
 function Quantumart$QP8$BackendSilverlightUploader$localizeUpload() {
 	var result = {
-		"UploadBrowse": UPLOAD_BROWSE_BUTTON_NAME,
-		"UploadTotal": UPLOAD_TOTAL_LABEL,
-		"ExtensionMessage": UPLOAD_EXTENSION_MESSAGE,
-		"OverwriteMessage": UPLOAD_OVERWRITE_MESSAGE,
-		"MaxSizeMessage": UPLOAD_MAX_SIZE_MESSAGE,
-		"SecurityMessage": UPLOAD_SECURITY_MESSAGE
+		UploadBrowse: UPLOAD_BROWSE_BUTTON_NAME,
+		UploadTotal: UPLOAD_TOTAL_LABEL,
+		ExtensionMessage: UPLOAD_EXTENSION_MESSAGE,
+		OverwriteMessage: UPLOAD_OVERWRITE_MESSAGE,
+		MaxSizeMessage: UPLOAD_MAX_SIZE_MESSAGE,
+		SecurityMessage: UPLOAD_SECURITY_MESSAGE
 	};
 
 	return result;

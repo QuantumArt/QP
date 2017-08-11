@@ -10,8 +10,8 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     initialize: function () {
       var serverContent;
       $q.getJsonFromUrl('GET', CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'ContentsListForClassifier', {
-        'elementIdPrefix': this._elementIdPrefix,
-        'fieldID': this._fieldID
+        elementIdPrefix: this._elementIdPrefix,
+        fieldID: this._fieldID
       }, false, false, function (data, textStatus, jqXHR) {
         if (data.success) {
           serverContent = data.view;

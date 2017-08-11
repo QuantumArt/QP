@@ -29,7 +29,7 @@ Quantumart.QP8.Cache.addItem = function Quantumart$QP8$addItem(key, value) {
 	// / </summary>
 	// / <param name="key" type="String">ключ</param>
 	// / <param name="value" type="Object">элемент</param>
-	var itemInfo = { "Value": value };
+	var itemInfo = { Value: value };
 
 	Quantumart.QP8.Cache._itemInfos[key] = itemInfo;
 };

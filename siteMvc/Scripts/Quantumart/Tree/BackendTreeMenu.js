@@ -387,16 +387,16 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   _extendNodeElement: function (nodeElem, node) {
     var $node = this.getNode(nodeElem);
     $node.data({
-      'entity_type_code': node.Code,
-      'entity_id': node.Id,
-      'entity_name': node.Title,
-      'parent_entity_id': node.ParentId,
-      'is_folder': node.IsFolder,
-      'is_group': node.IsGroup,
-      'group_item_code': node.GroupItemCode,
-      'default_action_code': node.DefaultActionCode,
-      'default_action_type_code': node.DefaultActionTypeCode,
-      'context_menu_code': node.ContextMenuCode
+      entity_type_code: node.Code,
+      entity_id: node.Id,
+      entity_name: node.Title,
+      parent_entity_id: node.ParentId,
+      is_folder: node.IsFolder,
+      is_group: node.IsGroup,
+      group_item_code: node.GroupItemCode,
+      default_action_code: node.DefaultActionCode,
+      default_action_type_code: node.DefaultActionTypeCode,
+      context_menu_code: node.ContextMenuCode
     });
 
     var contextMenuCode = node.ContextMenuCode;

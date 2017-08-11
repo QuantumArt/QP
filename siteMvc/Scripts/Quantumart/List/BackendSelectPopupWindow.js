@@ -15,13 +15,13 @@ Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
 
 
 	options = jQuery.extend(options, {
-		"popupWindowId": this._popupWindowId,
-		"showBreadCrumbs": false,
-		"saveSelectionWhenChangingView": true,
-		"customActionToolbarComponent": this._popupWindowToolbarComponent,
-		"isModal": true,
-		"allowResize": false,
-		"allowDrag": false
+		popupWindowId: this._popupWindowId,
+		showBreadCrumbs: false,
+		saveSelectionWhenChangingView: true,
+		customActionToolbarComponent: this._popupWindowToolbarComponent,
+		isModal: true,
+		allowResize: false,
+		allowDrag: false
 	});
 
 	eventArgs.set_actionTypeCode(Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode(this._actionCode));

@@ -168,11 +168,11 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     var searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
 
     if (!searchBlockExist) {
-      $searchBlock = $('<div />', { 'id': this._searchBlockElementId, 'class': 'searchBlock', 'css': { 'display': 'none'} });
+      $searchBlock = $('<div />', { id: this._searchBlockElementId, class: 'searchBlock', css: { display: 'none'} });
     }
 
     if (!searchFormExist) {
-      var $searchForm = $('<form />', { 'class': 'formLayout' });
+      var $searchForm = $('<form />', { class: 'formLayout' });
       $searchBlock.append($searchForm);
 
       var $concreteSearchBlock = $('<div />');
@@ -185,8 +185,8 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 
       $searchForm.append($buttonsWrapper);
 
-      var $findButton = $('<input />', { 'type': 'button', value: $l.SearchBlock.findButtonText, 'class': 'button' });
-      var $resetButton = $('<input />', { 'type': 'button', value: $l.SearchBlock.resetButtonText, 'class': 'button' });
+      var $findButton = $('<input />', { type: 'button', value: $l.SearchBlock.findButtonText, class: 'button' });
+      var $resetButton = $('<input />', { type: 'button', value: $l.SearchBlock.resetButtonText, class: 'button' });
 
       $buttonsWrapper.append($findButton);
       $buttonsWrapper.append('&nbsp;');
@@ -207,7 +207,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
       }
     }
 
-    $searchBlock.verticalResizer({ 'bottomHandleCssClassName': 'searchBottomHandle', 'minPanelHeight': this._minSearchBlockHeight, 'maxPanelHeight': this._maxSearchBlockHeight });
+    $searchBlock.verticalResizer({ bottomHandleCssClassName: 'searchBottomHandle', minPanelHeight: this._minSearchBlockHeight, maxPanelHeight: this._maxSearchBlockHeight });
     this._verticalResizerComponent = $searchBlock.data('vertical_resizer');
 
     this._searchBlockElement = $searchBlock.get(0);

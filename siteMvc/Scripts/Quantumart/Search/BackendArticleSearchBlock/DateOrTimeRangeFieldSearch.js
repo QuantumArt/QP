@@ -34,7 +34,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			"GET",
 			url,
 			{
-				"elementIdPrefix": this._elementIdPrefix
+				elementIdPrefix: this._elementIdPrefix
 			},
 			false,
 			false,

@@ -20,7 +20,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       this._defaultFieldSearchBlockState = this._searchBlockState.defaultFieldSearchBlockState;
 
       var $buttonsWrapper = $(this._buttonsWrapperElement);
-      this._$defaultFilterButton = $('<input />', { type: 'button', value: $l.SearchBlock.defaultFilterButtonText, 'class': 'button' });
+      this._$defaultFilterButton = $('<input />', { type: 'button', value: $l.SearchBlock.defaultFilterButtonText, class: 'button' });
       $buttonsWrapper.append('&nbsp;');
       $buttonsWrapper.append(this._$defaultFilterButton);
       $buttonsWrapper = null;
@@ -33,7 +33,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
     if (!this.get_isRendered()) {
       var $concreteSearchBlockElement = $(this._concreteSearchBlockElement);
       if (!this.isVirtual) {
-        var $fullTextBlockElement = $('<div/>', { 'class': 'articleSearchRegion' });
+        var $fullTextBlockElement = $('<div/>', { class: 'articleSearchRegion' });
         this._fullTextBlockElement = $fullTextBlockElement.get(0);
         this._fullTextBlock = new Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock(this._fullTextBlockElement, this.get_parentEntityId());
         this._fullTextBlock.initialize();
@@ -41,7 +41,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
         $concreteSearchBlockElement.append($fullTextBlockElement);
       }
 
-      var $fieldSeachBlockElement = $('<div/>', { 'class': 'articleSearchRegion' });
+      var $fieldSeachBlockElement = $('<div/>', { class: 'articleSearchRegion' });
       this._fieldSearchBlockElement = $fieldSeachBlockElement.get(0);
 
       this._fieldSearchBlock = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock(this._fieldSearchBlockElement, this.get_parentEntityId());

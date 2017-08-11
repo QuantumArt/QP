@@ -38,8 +38,8 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
                 "GET",
                 relateableFieldsUrl,
                 {
-                	"contentId": selectedContentId,
-                	"fieldId": currentFieldId
+                	contentId: selectedContentId,
+                	fieldId: currentFieldId
                 },
                 true,
 				false
@@ -102,7 +102,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
                 "GET",
 				classifierFieldsUrl,
 				{
-					"contentId": selectedContentId
+					contentId: selectedContentId
 				},
 				true,
 				false

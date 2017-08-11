@@ -15,7 +15,7 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
 
 	_onSearchButtonClick: function () {
 		var searchQuery = jQuery("#" + this._searchBlockElementId + " input.textbox").val();
-		Quantumart.QP8.BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { "searchQuery": searchQuery });
+		Quantumart.QP8.BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { searchQuery: searchQuery });
 	},
 
 	_getButton: function ()

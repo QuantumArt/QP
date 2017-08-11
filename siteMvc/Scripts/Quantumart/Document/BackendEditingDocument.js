@@ -83,7 +83,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
     var $documentWrapper = jQuery('#' + documentWrapperElementId);
     if ($q.isNullOrEmpty($documentWrapper)) {
-      $documentWrapper = jQuery('<div />', { 'id': documentWrapperElementId, 'class': 'documentWrapper' });
+      $documentWrapper = jQuery('<div />', { id: documentWrapperElementId, class: 'documentWrapper' });
 
       var $documentsContainer = jQuery(this._editingArea.get_documentsContainerElement());
       $documentsContainer.append($documentWrapper);
@@ -143,9 +143,9 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   createPanels: function () {
     var action = this.getCurrentAction();
     var breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs('breadCrumbs_' + this._tabId, {
-      'documentHost': this,
-      'breadCrumbsContainerElementId': this._editingArea.get_breadCrumbsContainerElementId(),
-      'contextMenuManager': new Quantumart.QP8.BackendBreadMenuContextMenuManager()
+      documentHost: this,
+      breadCrumbsContainerElementId: this._editingArea.get_breadCrumbsContainerElementId(),
+      contextMenuManager: new Quantumart.QP8.BackendBreadMenuContextMenuManager()
     });
 
     breadCrumbsComponent.attachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
@@ -154,7 +154,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     this._breadCrumbsComponent = breadCrumbsComponent;
 
     var actionToolbarOptions = {
-      'toolbarContainerElementId': this._editingArea.get_actionToolbarContainerElementId()
+      toolbarContainerElementId: this._editingArea.get_actionToolbarContainerElementId()
     };
 
     var eventArgsAdditionalData = this.get_eventArgsAdditionalData();
@@ -167,7 +167,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     actionToolbarComponent.attachObserver(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
     this._actionToolbarComponent = actionToolbarComponent;
     var viewToolbarOptions = {
-      'toolbarContainerElementId': this._editingArea.get_viewToolbarContainerElementId()
+      toolbarContainerElementId: this._editingArea.get_viewToolbarContainerElementId()
     };
 
     var state = this.loadHostState();
@@ -228,10 +228,10 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
   createSearchBlock: function () {
     var searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock("searchBlock_" + this._tabId, this._entityTypeCode, this._parentEntityId, this, {
-      'searchBlockContainerElementId': this._editingArea.get_searchBlockContainerElementId(),
-      'tabId': this._tabId,
-      'actionCode': this._actionCode,
-      'searchBlockState': this.getHostStateProp('searchBlockState')
+      searchBlockContainerElementId: this._editingArea.get_searchBlockContainerElementId(),
+      tabId: this._tabId,
+      actionCode: this._actionCode,
+      searchBlockState: this.getHostStateProp('searchBlockState')
     });
 
     searchBlockComponent.attachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
@@ -242,12 +242,12 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
   createContextBlock: function () {
       var contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock("contextBlock_" + this._tabId, this._entityTypeCode, this._parentEntityId, this, {
-        'searchBlockContainerElementId': this._editingArea.get_contextBlockContainerElementId(),
-        'tabId': this._tabId,
-        'actionCode': this._actionCode,
-        'contextSearch': true,
-        'hideButtons': true,
-        'searchBlockState': this.get_contextState()
+        searchBlockContainerElementId: this._editingArea.get_contextBlockContainerElementId(),
+        tabId: this._tabId,
+        actionCode: this._actionCode,
+        contextSearch: true,
+        hideButtons: true,
+        searchBlockState: this.get_contextState()
       });
 
       contextBlockComponent.initialize();

@@ -2,13 +2,13 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 
 	function initialize() {
 		var $search = jQuery("#" + searchElementId);
-		$search.wrap($("<div/>", { 'id' : searchElementId + "_wrapper", 'class' : "fieldWrapper group myClass" }));
+		$search.wrap($("<div/>", { id : searchElementId + "_wrapper", class : "fieldWrapper group myClass" }));
 		var $wrapper = $search.parent("div");
 		var $form = $search.parents("form");
 		$form.on("submit", onSubmit);
 		var $div = $("<div/>", {
 			id : searchElementId + '_preview',
-			'class' : 'previewButton',
+			class : 'previewButton',
 			title: $l.Home.search
 		});
 		$div.append($("<img/>", { src: '/Backend/Content/Common/0.gif' }));
@@ -47,7 +47,7 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 		{
 			var siteName = $site.text();
 			var text = jQuery("#" + searchElementId).val();
-			executeAction('search_in_articles', 'site', siteId, siteName, 1, { "query": text });
+			executeAction('search_in_articles', 'site', siteId, siteName, 1, { query: text });
 		}
 	}
 

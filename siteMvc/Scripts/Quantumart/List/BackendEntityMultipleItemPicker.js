@@ -242,7 +242,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
 
     var value = this.getSelectedEntityIDs();
-    $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $list.data("list_item_name"), "value": value, contentFieldName: $list.closest("dl").data("field_name")});
+    $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data("list_item_name"), value: value, contentFieldName: $list.closest("dl").data("field_name")});
   },
 
   _getCheckBoxListHtml: function (dataItems) {

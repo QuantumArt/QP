@@ -139,9 +139,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   initialize: function () {
     var $tabStrip = $('#' + this._tabStripElementId);
-    var $scrollable = $('<div />', { 'class': 'scrollable' });
-    var $tabList = $('<ul />', { 'class': 'tabList' });
-    var $partialRemovedTabsContainer = $('<div />', { 'id': 'partialRemovedTabs', 'css': { 'display': 'none'} });
+    var $scrollable = $('<div />', { class: 'scrollable' });
+    var $tabList = $('<ul />', { class: 'tabList' });
+    var $partialRemovedTabsContainer = $('<div />', { id: 'partialRemovedTabs', css: { display: 'none'} });
 
     $tabStrip.empty();
     $tabStrip.append($scrollable);
@@ -320,7 +320,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   generateTabText: function (eventArgs, tabNumber) {
-    return Quantumart.QP8.BackendDocumentHost.generateTitle(eventArgs, { "isTab": true, "tabNumber": tabNumber });
+    return Quantumart.QP8.BackendDocumentHost.generateTitle(eventArgs, { isTab: true, tabNumber: tabNumber });
   },
 
   getAllTabs: function () {
@@ -502,7 +502,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var $tabList = jQuery(this._tabListElement);
     $tabList.append(this._getTabHtml(tabId, tabGroupCode));
     var $tab = this.getTab(tabId);
-    this._extendTabElement($tab, eventArgs, { "TabGroupCode": tabGroupCode, "TabText": tabText, "TabTypeCode": tabTypeCode, "TabNumber": tabNumber });
+    this._extendTabElement($tab, eventArgs, { TabGroupCode: tabGroupCode, TabText: tabText, TabTypeCode: tabTypeCode, TabNumber: tabNumber });
     this._addTabToGroup($tab, tabGroupCode);
     $tabList = null;
 
@@ -555,7 +555,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var newTabText = this.generateTabText(eventArgs, newTabNumber); // новый текст таба
 
     $tab.attr("groupCode", newTabGroupCode);
-    this._extendTabElement($tab, eventArgs, { "TabGroupCode": newTabGroupCode, "TabText": newTabText, "TabTypeCode": newActionCode, "TabNumber": newTabNumber });
+    this._extendTabElement($tab, eventArgs, { TabGroupCode: newTabGroupCode, TabText: newTabText, TabTypeCode: newActionCode, TabNumber: newTabNumber });
 
     if (newTabGroupCode != oldTabGroupCode) {
       this._moveTabToGroup($tab, oldTabGroupCode, newTabGroupCode);
@@ -621,9 +621,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
           {tabStripOffset += 30;}
       $scrollable.scrollTo($tab,
           {
-            "duration": duration || 400,
-            "axis": "x",
-            "offset": tabStripOffset
+            duration: duration || 400,
+            axis: "x",
+            offset: tabStripOffset
           }
         );
 
@@ -832,11 +832,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _addTabMenuToTabStrip: function () {
     var $tabStrip = $(this._tabStripElement);
     if (this._tabMenuButtonContainerElement == null) {
-      let $menuButtonContainer = $('<div />', { 'class': 'tabMenuButton' });
+      let $menuButtonContainer = $('<div />', { class: 'tabMenuButton' });
       var $menuButton = $('<span />');
       var $menuButtonImage = $('<img />', {
-        'src': COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif',
-        'css': { 'border': 'none' }
+        src: COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif',
+        css: { border: 'none' }
       });
 
       $menuButton.append($menuButtonImage);
@@ -849,17 +849,17 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     if (this._tabMenuElement == null) {
-      var $menu = $('<div />', { 'class': 'tabMenu' });
-      var $upArrow = $('<div />', { 'class': this.TAB_MENU_UP_ARROW_CLASS_NAME, 'css': { 'display': 'none'} });
+      var $menu = $('<div />', { class: 'tabMenu' });
+      var $upArrow = $('<div />', { class: this.TAB_MENU_UP_ARROW_CLASS_NAME, css: { display: 'none'} });
       $menu.append($upArrow);
 
-      var $scrollable = $('<div />', { 'class': 'scrollable' });
+      var $scrollable = $('<div />', { class: 'scrollable' });
       $menu.append($scrollable);
 
       var $menuItemList = $('<ul />');
       $scrollable.append($menuItemList);
 
-      var $downArrow = $('<div />', { 'class': this.TAB_MENU_DOWN_ARROW_CLASS_NAME, 'css': { 'display': 'none'} });
+      var $downArrow = $('<div />', { class: this.TAB_MENU_DOWN_ARROW_CLASS_NAME, css: { display: 'none'} });
       $downArrow.hide(0);
       $menu.append($downArrow);
 
@@ -945,10 +945,10 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var $tab = $tabs.eq(tabIndex);
       if ($tab) {
         var dataItem = {
-          'TabId': this.getTabId($tab),
-          'TabText': this.getTabText($tab),
-          'Selected': this.isTabSelected($tab),
-          'Icon': ''
+          TabId: this.getTabId($tab),
+          TabText: this.getTabText($tab),
+          Selected: this.isTabSelected($tab),
+          Icon: ''
         };
 
         menuItemsHtml = this._getTabMenuItemHtml(menuItemsHtml, dataItem);
@@ -957,15 +957,15 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
     menuItemsHtml.cat('<li class="separator"></li>');
     this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': this.TAB_MENU_SAVE_CLOSE_ALL_ITEM_CODE,
-      'TabText': $l.TabStrip.saveAndCloseAllTabs,
-      'Icon': ''
+      TabId: this.TAB_MENU_SAVE_CLOSE_ALL_ITEM_CODE,
+      TabText: $l.TabStrip.saveAndCloseAllTabs,
+      Icon: ''
     });
 
     this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': this.TAB_MENU_CLOSE_ALL_ITEM_CODE,
-      'TabText': $l.TabStrip.closeAllTabs,
-      'Icon': ''
+      TabId: this.TAB_MENU_CLOSE_ALL_ITEM_CODE,
+      TabText: $l.TabStrip.closeAllTabs,
+      Icon: ''
     });
 
     $menuList.html(menuItemsHtml.string());
@@ -1025,9 +1025,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
     var $scrollable = $(this._tabMenuScrollableElement);
     if (menuHeight > this._maxTabMenuHeight) {
-      $scrollable.css({ 'height': this._maxTabMenuHeight + 'px', 'overflow': 'hidden' });
+      $scrollable.css({ height: this._maxTabMenuHeight + 'px', overflow: 'hidden' });
     } else {
-      $scrollable.css({ 'height': 'auto', 'overflow': 'visible' });
+      $scrollable.css({ height: 'auto', overflow: 'visible' });
     }
 
     $menu.css('top', menuTop + 'px');
@@ -1091,7 +1091,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
     var $scrollable = $(this._tabMenuScrollableElement);
     var $firstMenuItem = this._getMenuItems().first();
-    var options = { 'axis': 'y', 'easing': 'swing' };
+    var options = { axis: 'y', easing: 'swing' };
     options.duration = duration;
     $scrollable.scrollTo($firstMenuItem, options);
   },
@@ -1102,7 +1102,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     var $lastMenuItem = this._getMenuItems().last();
-    var options = { 'axis': 'y', 'easing': 'swing' };
+    var options = { axis: 'y', easing: 'swing' };
     options.duration = duration;
     $(this._tabMenuScrollableElement).scrollTo($lastMenuItem, options);
   },
@@ -1458,31 +1458,31 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var FIND_IN_TREE_CODE = 'find_in_tree';
 
     var tabContextMenuElementId = this._tabStripElementId + '_tabContextMenu';
-    var $menu = $('<ul />', { 'id': tabContextMenuElementId, 'class': 'contextMenu' });
+    var $menu = $('<ul />', { id: tabContextMenuElementId, class: 'contextMenu' });
     var menuItemsHtml = new $.telerik.stringBuilder();
     this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': CLOSE_CODE,
-      'TabText': $l.TabStrip.closeTab,
-      'Icon': ''
+      TabId: CLOSE_CODE,
+      TabText: $l.TabStrip.closeTab,
+      Icon: ''
     });
 
     this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': CLOSE_BUT_THIS_CODE,
-      'TabText': $l.TabStrip.closeAllButThis,
-      'Icon': ''
+      TabId: CLOSE_BUT_THIS_CODE,
+      TabText: $l.TabStrip.closeAllButThis,
+      Icon: ''
     });
 
     this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': CLOSE_ALL_CODE,
-      'TabText': $l.TabStrip.closeAllTabs,
-      'Icon': ''
+      TabId: CLOSE_ALL_CODE,
+      TabText: $l.TabStrip.closeAllTabs,
+      Icon: ''
     });
 
     menuItemsHtml.cat('<li class="separator"></li>');
     this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': FIND_IN_TREE_CODE,
-      'TabText': $l.TabStrip.findInTree,
-      'Icon': ''
+      TabId: FIND_IN_TREE_CODE,
+      TabText: $l.TabStrip.findInTree,
+      Icon: ''
     });
 
     $menu.html(menuItemsHtml.string());

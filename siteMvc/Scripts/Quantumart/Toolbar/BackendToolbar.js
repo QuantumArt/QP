@@ -104,7 +104,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
 
     var isToolbarExist = !$q.isNullOrEmpty($toolbar); // признак существования панели инструментов
     if (!isToolbarExist) {
-      $toolbar = $("<div />", { "id": this._toolbarElementId, "class": "toolbar", "css": { "display": "none" } });
+      $toolbar = $("<div />", { id: this._toolbarElementId, class: "toolbar", css: { display: "none" } });
     }
 
     $toolbarItemList = $toolbar.find("UL:first");

@@ -17,7 +17,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 			"GET",
 			CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "NumericRange",
 			{
-				"elementIdPrefix": this._elementIdPrefix
+				elementIdPrefix: this._elementIdPrefix
 			},
 			false,
 			false,

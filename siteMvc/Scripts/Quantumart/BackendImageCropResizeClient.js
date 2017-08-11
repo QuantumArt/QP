@@ -183,11 +183,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             _slider = _$nouislider.noUiSlider({
                 range: {
                     // size down
-                    'min': _parameters.resizeRange.min,
+                    min: _parameters.resizeRange.min,
                     // default
                     '50%': 1,
                     // size up
-                    'max': _parameters.resizeRange.max
+                    max: _parameters.resizeRange.max
                 },
                 start: 1
             });

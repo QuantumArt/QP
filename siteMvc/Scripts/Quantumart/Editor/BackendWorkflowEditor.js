@@ -54,10 +54,10 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                         "GET",
                         CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
                         {
-                            "contentIdsString": activeContentsIds,
-                            "statusName": element.StName,
-                            "userIdString": element.UserId,
-                            "groupIdString": element.GroupId
+                            contentIdsString: activeContentsIds,
+                            statusName: element.StName,
+                            userIdString: element.UserId,
+                            groupIdString: element.GroupId
                         },
                         false,
                         false,
@@ -131,8 +131,8 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       "GET",
       CONTROLLER_URL_WORKFLOW + "CheckAllAccessOnContents",
       {
-          "contentIdsString": activeContentsIds,
-          "modelString": JSON.stringify(usersAndGroups)
+          contentIdsString: activeContentsIds,
+          modelString: JSON.stringify(usersAndGroups)
       },
       false,
       false,
@@ -171,10 +171,10 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       "GET",
       CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
       {
-          "contentIdsString": activeContentsIds,
-          "statusName": statusName,
-          "userIdString": userId,
-          "groupIdString": groupId
+          contentIdsString: activeContentsIds,
+          statusName: statusName,
+          userIdString: userId,
+          groupIdString: groupId
       },
       false,
       false,
@@ -249,7 +249,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     _setAsChanged: function () {
       var $field = jQuery(this._resultElem);
       $field.addClass(CHANGED_FIELD_CLASS_NAME);
-      $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $field.attr("name"), "value": this._items() });
+      $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr("name"), value: this._items() });
       $field = null;
     },
 

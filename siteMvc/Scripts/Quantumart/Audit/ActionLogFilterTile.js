@@ -101,7 +101,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	},
 
 	_onCloseTileClick: function () {
-		this.notify(EVENT_TYPE_FILTER_TILE_CLOSE, { "type": this._options.type });
+		this.notify(EVENT_TYPE_FILTER_TILE_CLOSE, { type: this._options.type });
 	},
 
 	_onOpenFilterWndClick: function () {

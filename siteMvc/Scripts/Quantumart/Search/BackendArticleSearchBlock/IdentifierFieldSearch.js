@@ -16,7 +16,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 			"GET",
 			CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "Identifier",
 			{
-				"elementIdPrefix": this._elementIdPrefix
+				elementIdPrefix: this._elementIdPrefix
 			},
 			false,
 			false,

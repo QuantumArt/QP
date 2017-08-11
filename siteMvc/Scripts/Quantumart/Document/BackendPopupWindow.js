@@ -320,7 +320,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       if (this._isMultipleEntities) {
         this._selectedEntities = Array.clone(this._entities);
       } else if (this._entityId && this._entityName) {
-        this._selectedEntities = [{ "Id": this._entityId, "Name": this._entityName}];
+        this._selectedEntities = [{ Id: this._entityId, Name: this._entityName}];
       } else {
         this._selectedEntities = [];
       }
@@ -437,7 +437,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     var $contextBlockWrapper = $popupWindow.find("#" + contextBlockWrapperId);
     var $documentArea = $popupWindow.find("#" + documentAreaId);
 
-    var $loadingLayer = $("<div />", { "class": "loadingLayer", "css": { "display": "none"} });
+    var $loadingLayer = $("<div />", { class: "loadingLayer", css: { display: "none"} });
     $documentArea.prepend($loadingLayer);
 
     var $documentWrapper = $popupWindow.find("#" + documentWrapperId);
@@ -559,7 +559,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     // Создаем хлебные крошки
     if (this._showBreadCrumbs) {
       var breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs("breadCrumbs_" + this._popupWindowId, {
-        "documentHost": this
+        documentHost: this
       });
 
       breadCrumbsComponent.attachObserver(EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
@@ -663,10 +663,10 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     var searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
       .createSearchBlock("searchBlock_" + this._popupWindowId, this._entityTypeCode, this._parentEntityId, this,
         {
-          "searchBlockContainerElementId": $(this._searchBlockWrapperElement).attr("id"),
-          "popupWindowId": this._popupWindowId,
-          "actionCode": this._actionCode,
-          "searchBlockState": this.getHostStateProp("searchBlockState")
+          searchBlockContainerElementId: $(this._searchBlockWrapperElement).attr("id"),
+          popupWindowId: this._popupWindowId,
+          actionCode: this._actionCode,
+          searchBlockState: this.getHostStateProp("searchBlockState")
         });
 
     searchBlockComponent.attachObserver(EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
@@ -680,12 +680,12 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       var contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
       .createSearchBlock("contextBlock_" + this._popupWindowId, this._entityTypeCode, this._parentEntityId, this,
         {
-            "searchBlockContainerElementId": $(this._searchBlockWrapperElement).attr("id"),
-            "popupWindowId": this._popupWindowId,
-            "actionCode": this._actionCode,
-            "contextSearch": true,
-            "hideButtons": true,
-            "searchBlockState": this.get_contextState()
+            searchBlockContainerElementId: $(this._searchBlockWrapperElement).attr("id"),
+            popupWindowId: this._popupWindowId,
+            actionCode: this._actionCode,
+            contextSearch: true,
+            hideButtons: true,
+            searchBlockState: this.get_contextState()
         });
       contextBlockComponent.initialize();
 

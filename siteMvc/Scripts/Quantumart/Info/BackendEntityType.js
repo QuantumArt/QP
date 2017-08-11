@@ -10,7 +10,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function Quantumart$QP8$B
 		$q.getJsonFromUrl(
 			"GET",
 			CONTROLLER_URL_ENTITY_TYPE + "/GetByCode",
-			{ "entityTypeCode": entityTypeCode },
+			{ entityTypeCode: entityTypeCode },
 			false,
 			false,
 			function (data, textStatus, jqXHR) {
@@ -36,7 +36,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeById = function Quantumart$QP8$Bac
 		$q.getJsonFromUrl(
 			"GET",
 			CONTROLLER_URL_ENTITY_TYPE + "/GetCodeById",
-			{ "entityTypeId": entityTypeId },
+			{ entityTypeId: entityTypeId },
 			false,
 			false,
 			function (data, textStatus, jqXHR) {
@@ -62,7 +62,7 @@ Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function Quantu
 		$q.getJsonFromUrl(
 			"GET",
 			CONTROLLER_URL_ENTITY_TYPE + "/GetParentCodeByCode",
-			{ "entityTypeCode": entityTypeCode },
+			{ entityTypeCode: entityTypeCode },
 			false,
 			false,
 			function (data, textStatus, jqXHR) {

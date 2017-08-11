@@ -32,7 +32,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 
 		if (!$q.isNullOrWhiteSpace(this._contextMenuCode)) {
 			var contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format("{0}_ContextMenu", $fileListContentElement.attr("id")),
-				{ "targetElements": this._fileListContentElement, "allowManualShowing": true, "zIndex": this._zIndex});
+				{ targetElements: this._fileListContentElement, allowManualShowing: true, zIndex: this._zIndex});
 			contextMenuComponent.initialize();
 
 			contextMenuComponent.addMenuItemsToMenu(false);
@@ -144,7 +144,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 			.find('.fileItem.' + this.SELECTED_CLASS)
 			.each(function (index, item) {
 				var name = jQuery(item).data('file_name');
-				Array.add(selectedEntities, { "Id": name, "Name": name });
+				Array.add(selectedEntities, { Id: name, Name: name });
 			});
 
 		$fileListContentElement = null;

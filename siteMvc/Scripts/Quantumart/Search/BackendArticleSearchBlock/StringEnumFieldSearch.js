@@ -17,8 +17,8 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
             "GET",
             CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "StringEnum",
             {
-                "elementIdPrefix": this._elementIdPrefix,
-                "fieldID": this._fieldID
+                elementIdPrefix: this._elementIdPrefix,
+                fieldID: this._fieldID
             },
             false,
             false,

@@ -221,7 +221,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
                 jQuery.ajax(settings).done(callback);
             }
             else {
-                callback({ "success": true });
+                callback({ success: true });
             }
         });
     },

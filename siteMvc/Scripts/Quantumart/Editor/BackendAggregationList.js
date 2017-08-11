@@ -94,7 +94,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     var $field = jQuery(this._resultElem);
     $field.addClass(CHANGED_FIELD_CLASS_NAME);
     var fieldName = jQuery(this._componentElem).data("field_name");
-    $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": fieldName, "value": this._items(), "contentFieldName": $field.closest("dl").data("field_name") });
+    $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: fieldName, value: this._items(), contentFieldName: $field.closest("dl").data("field_name") });
     $field = null;
   },
 

@@ -159,19 +159,19 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
       || actionTypeCode == ACTION_TYPE_CODE_CANCEL
       || actionTypeCode == ACTION_TYPE_CODE_CHANGE_LOCK)
       && entityTypeCode != ENTITY_TYPE_CODE_VIRTUAL_ARTICLE) {
-			this.refreshNode(entityTypeCode, parentEntityId, entityId, { "loadChildNodes": true, "saveNodesSelection": true });
+			this.refreshNode(entityTypeCode, parentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: true });
 		}
 		else if (eventArgs.get_isSaved() || actionTypeCode == ACTION_TYPE_CODE_COPY) {
 			var parentIdsInTree = $o.getParentIdsForTree(entityTypeCode, entityIds);
-			this.refreshNodes(entityTypeCode, parentEntityId, parentIdsInTree, { "loadChildNodes": true, "saveNodesSelection": false });
+			this.refreshNodes(entityTypeCode, parentEntityId, parentIdsInTree, { loadChildNodes: true, saveNodesSelection: false });
 		}
 		else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
 			var parentArticlesInTree = $o.getParentIdsForTree(ENTITY_TYPE_CODE_ARTICLE, entityIds);
-			this.refreshNodes(ENTITY_TYPE_CODE_ARTICLE, parentEntityId, parentArticlesInTree, { "loadChildNodes": true, "saveNodesSelection": false });
+			this.refreshNodes(ENTITY_TYPE_CODE_ARTICLE, parentEntityId, parentArticlesInTree, { loadChildNodes: true, saveNodesSelection: false });
 		}
 		else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
 			var newParentEntityId = +$o.getParentEntityId(ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
-			this.refreshNode(ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, { "loadChildNodes": true, "saveNodesSelection": false });
+			this.refreshNode(ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: false });
 		}
 	},
 

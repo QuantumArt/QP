@@ -11,11 +11,11 @@ Quantumart.QP8.LibraryPopupWindow.prototype =
 {
 	_options:
 	{
-		"entityName": "",
-		"isMultipleEntities": false,
-		"entities": [],
-		"isMultiOpen": true,
-	    "contentId": 0
+		entityName: "",
+		isMultipleEntities: false,
+		entities: [],
+		isMultiOpen: true,
+	    contentId: 0
 	},
 	_eventArgs: null,
 

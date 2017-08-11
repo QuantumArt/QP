@@ -189,7 +189,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     var $listWrapper = $list.parent();
     $listWrapper.addClass(this.LIST_WRAPPER_CLASS_NAME);
 
-    var $toolbar = jQuery("<ul />", { "class": this.LINK_BUTTON_LIST_CLASS_NAME });
+    var $toolbar = jQuery("<ul />", { class: this.LINK_BUTTON_LIST_CLASS_NAME });
     $toolbar.addClass(this.SELF_CLEAR_FLOATS_CLASS_NAME);
     $toolbar.prependTo($listWrapper);
 
@@ -409,7 +409,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _createLinkButton: function (id, text, cssClassName) {
-    var $linkButton = jQuery("<span />", { "id": id, "class": this.LINK_BUTTON_CLASS_NAME + " " + this.ACTION_LINK_CLASS_NAME });
+    var $linkButton = jQuery("<span />", { id: id, class: this.LINK_BUTTON_CLASS_NAME + " " + this.ACTION_LINK_CLASS_NAME });
     var linkContentHtml = new $.telerik.stringBuilder();
 
     linkContentHtml
@@ -749,7 +749,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       }
     }
     else {
-      eventArgs.set_context({ "ctrlKey": e.ctrlKey || isMiddleClick });
+      eventArgs.set_context({ ctrlKey: e.ctrlKey || isMiddleClick });
       this.notify(EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, eventArgs);
     }
   },

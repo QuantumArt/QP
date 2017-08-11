@@ -34,8 +34,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 			"GET",
 			CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "FieldSearchBlock",
 			{
-				"parentEntityId": this._parentEntityId,
-				"elementIdPrefix": this._elementIdPrefix
+				parentEntityId: this._parentEntityId,
+				elementIdPrefix: this._elementIdPrefix
 			},
 			false,
 			false,
@@ -173,7 +173,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 	},
 
 	_createFieldSearchContainerInner: function (fieldID, contentID, fieldSearchType, fieldName, fieldColumn, fieldGroup, referenceFieldID) {
-		var $fieldSearchContainerElement = jQuery("<div />", { "class": "fieldSearchContainer" });
+		var $fieldSearchContainerElement = jQuery("<div />", { class: "fieldSearchContainer" });
 		// добавить на страницу
 		jQuery(this._fieldSearchListElement).append($fieldSearchContainerElement);
 

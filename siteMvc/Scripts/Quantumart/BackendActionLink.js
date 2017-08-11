@@ -213,7 +213,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
           var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
 
           if (action.ActionType.Code === ACTION_TYPE_CODE_ADD_NEW) {
-            eventArgs.set_context(jQuery.extend({ "ctrlKey": e.ctrlKey || isMiddleClick }, eventArgs.get_context()));
+            eventArgs.set_context(jQuery.extend({ ctrlKey: e.ctrlKey || isMiddleClick }, eventArgs.get_context()));
           }
 
           if (action.IsInterface && actionTargetType == Quantumart.QP8.Enums.ActionTargetType.Self) {

@@ -15,8 +15,8 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 			"GET",
 			CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "TextSearch",
 			{
-			  "elementIdPrefix": this._elementIdPrefix,
-			  "fieldID": this._fieldID
+			  elementIdPrefix: this._elementIdPrefix,
+			  fieldID: this._fieldID
 			},
 			false,
 			false,

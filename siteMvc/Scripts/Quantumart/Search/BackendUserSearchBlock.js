@@ -17,10 +17,10 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 		var lastName = jQuery('.lastName', $root).val();
 
 		var query = JSON.stringify({
-			"Login": login,
-			"Email": email,
-			"FirstName": firstName,
-			"LastName": lastName
+			Login: login,
+			Email: email,
+			FirstName: firstName,
+			LastName: lastName
 		});
 
 		$root = null;
@@ -34,7 +34,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 				"GET",
 				CONTROLLER_URL_USER + "SearchBlock/" + this._parentEntityId,
 				{
-					"hostId": this._hostId
+					hostId: this._hostId
 				},
 				false,
 				false

@@ -283,7 +283,7 @@
                                             id: 'searchCode',
                                             label: '',
                                             title: lang.searchCode,
-                                            'class': 'searchCodeButton',
+                                            class: 'searchCodeButton',
                                             onClick: function () {
                                                 CodeMirror.commands.find(window["codemirror_" + editor.id]);
                                             }
@@ -292,7 +292,7 @@
                                             id: 'autoFormat',
                                             label: '',
                                             title: lang.autoFormat,
-                                            'class': 'autoFormat',
+                                            class: 'autoFormat',
                                             onClick: function () {
                                                 var range = {
                                                     from: window["codemirror_" + editor.id].getCursor(true),
@@ -305,7 +305,7 @@
                                             id: 'CommentSelectedRange',
                                             label: '',
                                             title: lang.commentSelectedRange,
-                                            'class': 'CommentSelectedRange',
+                                            class: 'CommentSelectedRange',
                                             onClick: function () {
                                                 var range = {
                                                     from: window["codemirror_" + editor.id].getCursor(true),
@@ -318,7 +318,7 @@
                                             id: 'UncommentSelectedRange',
                                             label: '',
                                             title: lang.uncommentSelectedRange,
-                                            'class': 'UncommentSelectedRange',
+                                            class: 'UncommentSelectedRange',
                                             onClick: function () {
                                                 var range = {
                                                     from: window["codemirror_" + editor.id].getCursor(true),
@@ -347,7 +347,7 @@
                                         'height:' + height + 'px;' +
                                         'tab-size:4;' +
                                         'text-align:left;',
-                                    'class': 'cke_source cke_enable_context_menu'
+                                    class: 'cke_source cke_enable_context_menu'
                                 }
                             ]
                         }]
@@ -632,7 +632,7 @@
                 textarea.setAttributes({
                     dir: 'ltr',
                     tabIndex: CKEDITOR.env.webkit ? -1 : editor.tabIndex,
-                    'role': 'textbox',
+                    role: 'textbox',
                     'aria-label': ariaLabel
                 });
                 textarea.addClass('cke_source');

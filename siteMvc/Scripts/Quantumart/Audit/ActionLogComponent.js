@@ -62,7 +62,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   _onDataBinding: function (e) {
     var filterData = this.get_filterData();
     if (!jQuery.isEmptyObject(filterData)) {
-      e.data = jQuery.extend(e.data, { "searchQuery": JSON.stringify(filterData) });
+      e.data = jQuery.extend(e.data, { searchQuery: JSON.stringify(filterData) });
     }
   },
 

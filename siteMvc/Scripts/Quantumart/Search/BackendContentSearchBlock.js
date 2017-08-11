@@ -26,9 +26,9 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 			{contentName = jQuery(this._contentNameElement).val();}
 
 		return JSON.stringify({
-			"GroupId": groupId,
-			"SiteId": siteId,
-			"ContentName": contentName
+			GroupId: groupId,
+			SiteId: siteId,
+			ContentName: contentName
 		});
 	},
 	// возвращает параметры поиска
@@ -43,8 +43,8 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 			"GET",
 			CONTROLLER_URL_CONTENT_SEARCH_BLOCK + "SearchBlock/" + this._parentEntityId,
 			{
-				"actionCode": this._actionCode,
-				"hostId": this._hostId
+				actionCode: this._actionCode,
+				hostId: this._hostId
 			},
 			false,
 			false,

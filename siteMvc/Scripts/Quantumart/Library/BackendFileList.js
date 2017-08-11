@@ -109,12 +109,12 @@ Quantumart.QP8.BackendFileList.prototype = {
 			"GET",
 			url,
 			{
-				"folderId": this._currentDataQueryOptions.folderId,
-				"pageSize": this._currentDataQueryOptions.pageSize,
-				"pageNumber": this._currentDataQueryOptions.pageNumber,
-				"fileTypeId": this._currentDataQueryOptions.fileTypeId,
-				"fileNameFilter": this._currentDataQueryOptions.fileNameFilter,
-				"fileShortNameLength": this._listViewComponent.shortNameLength
+				folderId: this._currentDataQueryOptions.folderId,
+				pageSize: this._currentDataQueryOptions.pageSize,
+				pageNumber: this._currentDataQueryOptions.pageNumber,
+				fileTypeId: this._currentDataQueryOptions.fileTypeId,
+				fileNameFilter: this._currentDataQueryOptions.fileNameFilter,
+				fileShortNameLength: this._listViewComponent.shortNameLength
 			},
 			false,
 			false,
