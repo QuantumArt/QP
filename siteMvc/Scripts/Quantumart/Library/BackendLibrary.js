@@ -27,8 +27,8 @@ Quantumart.QP8.BackendLibrary = function (libraryGroupCode, libraryElementId, pa
   this._fileContainers[VIEW_TYPE_CODE_THUMBNAILS] = jQuery('.' + this.LIBRARY_THUMBNAILS_CONTAINER_CLASS_NAME, this._libraryElement);
   this._parentEntityId = parentEntityId;
   this._actionCode = actionCode;
-  this._folderEntityTypeCode = (actionCode == ACTION_CODE_SITE_LIBRARY) ? ENTITY_TYPE_CODE_SITE_FOLDER : ENTITY_TYPE_CODE_CONTENT_FOLDER;
-  this._fileEntityTypeCode = (actionCode == ACTION_CODE_SITE_LIBRARY) ? ENTITY_TYPE_CODE_SITE_FILE : ENTITY_TYPE_CODE_CONTENT_FILE;
+  this._folderEntityTypeCode = actionCode == ACTION_CODE_SITE_LIBRARY ? ENTITY_TYPE_CODE_SITE_FOLDER : ENTITY_TYPE_CODE_CONTENT_FOLDER;
+  this._fileEntityTypeCode = actionCode == ACTION_CODE_SITE_LIBRARY ? ENTITY_TYPE_CODE_SITE_FILE : ENTITY_TYPE_CODE_CONTENT_FILE;
   this._folderId = options.folderId;
   this._splitterId = options.splitterId;
   this._folderTreeId = options.folderTreeId;
@@ -155,7 +155,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     this._fileGrid.attachObserver(EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, jQuery.proxy(this._onActionExecutingHandler, this));
     this._fileGrid.initialize();
 
-    var options = { selectMode: (this._allowMultipleSelection ? FILE_LIST_SELECT_MODE_MULTIPLE : FILE_LIST_SELECT_MODE_SINGLE), zIndex: this._zIndex };
+    var options = { selectMode: this._allowMultipleSelection ? FILE_LIST_SELECT_MODE_MULTIPLE : FILE_LIST_SELECT_MODE_SINGLE, zIndex: this._zIndex };
 
     this._fileList = new Quantumart.QP8.BackendFileList('#' + this._fileContainers[VIEW_TYPE_CODE_LIST].attr('id'), this._fileEntityTypeCode, this._actionCode, this._fileEntityTypeCode, FILE_LIST_MODE_NAME_LIST, options);
     this._fileList.attachObserver(EVENT_TYPE_FILE_LIST_SELECTED, jQuery.proxy(this._onFileSelectedHandler, this));

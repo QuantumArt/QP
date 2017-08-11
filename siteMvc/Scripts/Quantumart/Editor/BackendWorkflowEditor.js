@@ -203,7 +203,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     },
 
     manageItems: function (e) {
-        var target = ($(e.target));
+        var target = $(e.target);
         if (target.size() == 0) {
             target = $(e);
         }
@@ -239,7 +239,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
             this._items.push(item);
             this._items.sort(function (left, right) {
-                return left.Weight == right.Weight ? 0 : (left.Weight > right.Weight ? 1 : -1);
+                return left.Weight == right.Weight ? 0 : left.Weight > right.Weight ? 1 : -1;
             });
             this._setAsChanged();
         }

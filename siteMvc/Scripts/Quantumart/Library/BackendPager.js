@@ -71,9 +71,9 @@ Quantumart.QP8.BackendPager.prototype = {
 		if (this._totalCount > 0) {
 			for (var pn = this._currentFrameStartPageNumber; pn <= this._currentFrameEndPageNumber; pn++) {
 				if (pn != this._currentPageNumber) {
- html.cat('<a class="t-link qp-page-link">').cat((pn + 1)).cat('</a>');
+ html.cat('<a class="t-link qp-page-link">').cat(pn + 1).cat('</a>');
 } else {
- html.cat('<span class="t-state-active">').cat((pn + 1)).cat('</span>');
+ html.cat('<span class="t-state-active">').cat(pn + 1).cat('</span>');
 }
 			}
 		}

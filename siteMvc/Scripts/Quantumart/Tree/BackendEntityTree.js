@@ -323,12 +323,12 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       for (var levelIndex = levelCount - 2; levelIndex >= 0; levelIndex--) {
         var level = levels[levelIndex];
         var nodeInfos = $.grep(parentNodeInfos, function (parentNodeInfo) {
-          return (parentNodeInfo.level == level);
+          return parentNodeInfo.level == level;
         });
 
         var nodeInfoCount = nodeInfos.length;
         var childNodeInfos = $.grep(parentNodeInfos, function (parentNodeInfo) {
-          return (parentNodeInfo.level > level);
+          return parentNodeInfo.level > level;
         });
 
         var childNodeInfoCount = childNodeInfos.length;
@@ -426,9 +426,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       this._raiseDataBoundEvent();
 
       if (options.maxExpandLevel !== 0) {
-        options.$parentNode.find('> UL > LI').each((function (index, $childNode) {
+        options.$parentNode.find('> UL > LI').each(function (index, $childNode) {
           this.addNodesToParentNode($childNode, options.maxExpandLevel);
-        }).bind(this));
+        }.bind(this));
       }
 
       if (options.level === options.maxExpandLevel || options.maxExpandLevel === 0) {
@@ -787,7 +787,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   fillTreeViewItemFromEntityObject: function (dataItem, entity) {
     var icon = this._getIcon(entity);
 
-    var iconUrl = (icon.left(7).toLowerCase() !== 'http://') ? window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon : icon;
+    var iconUrl = icon.left(7).toLowerCase() !== 'http://' ? window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon : icon;
 
     dataItem.Value = entity.Id;
     dataItem.Text = entity.Alias;
@@ -986,7 +986,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         this._treeComponent.nodeCheckExcludeSelf(node, false, false, true);
       }
 
-      var context = (actionCode === window.ACTION_CODE_ADD_NEW_CHILD_ARTICLE) ? {
+      var context = actionCode === window.ACTION_CODE_ADD_NEW_CHILD_ARTICLE ? {
         additionalUrlParameters: {
           isChild: true,
           fieldId: this._treeFieldId,

@@ -9,7 +9,7 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     if (id) {
       var code = Quantumart.QP8.BackendEntityType.getEntityTypeById(id).Code;
       var testCodes = [ENTITY_TYPE_CODE_VIRTUAL_CONTENT, ENTITY_TYPE_CODE_VIRTUAL_ARTICLE, ENTITY_TYPE_CODE_VIRTUAL_FIELD];
-      var filter = (jQuery.inArray(code, testCodes) > -1) ? "c.virtual_type <> 0" : "c.virtual_type = 0";
+      var filter = jQuery.inArray(code, testCodes) > -1 ? "c.virtual_type <> 0" : "c.virtual_type = 0";
       var obj = $contents.data("entity_data_list_component");
       if (obj) {
         var oldFilter = obj.getFilter();
@@ -24,13 +24,13 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
   function updateActionList(selectedActions) {
     var $list = jQuery('ul', $actionsElement);
     $list.empty();
-    var actions = (selectedActions) ? selectedActions.split(",") : null;
+    var actions = selectedActions ? selectedActions.split(",") : null;
 
     var html = new $.telerik.stringBuilder();
     var entityTypeId = jQuery("option:selected", $entityTypesElement).val();
     var dictionary = Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary();
     var pair = jQuery.grep(dictionary, function (item) {
- return (item.EntityTypeId == entityTypeId);
+ return item.EntityTypeId == entityTypeId;
 });
     if (pair && pair[0]) {
       var listItems = pair[0].ActionItems;

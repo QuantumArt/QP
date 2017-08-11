@@ -422,7 +422,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       $titleCell.wrapInner('<a href="javascript:void(0)" />');
       $titleCell
         .find('A')
-        .addClass((this._linkOpenNewTab) ? 'js' : 'html')
+        .addClass(this._linkOpenNewTab ? 'js' : 'html')
         .bind('click', this._onTitleLinkClickHandler)
         .bind('mouseup', this._onTitleLinkClickHandler);
     }
@@ -775,7 +775,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
           entityTypeCode: this._entityTypeCode,
           entityId: entityId,
           entityName: entityName,
-          entities: (action.ActionType.IsMultiple) ? [{ Id: entityId, Name: entityName }] : null,
+          entities: action.ActionType.IsMultiple ? [{ Id: entityId, Name: entityName }] : null,
           parentEntityId: this.getParentEntityId($row),
           context: context
         });
@@ -836,7 +836,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   _isAllRowsSelectedInCurrentPage: function () {
     var $rows = this.getRows();
     var $selectedRows = this.getSelectedRows();
-    return ($rows.length == $selectedRows.length);
+    return $rows.length == $selectedRows.length;
   },
 
   _saveRowSelectionState: function () {
@@ -1116,7 +1116,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (id) {
       var $row = $(row);
       var isAlt = $row.hasClass('t-alt');
-      var className = (isAlt) ? 't-alt-' + id : 't-' + id;
+      var className = isAlt ? 't-alt-' + id : 't-' + id;
       $row.removeClass('t-alt').addClass(className);
     }
   },

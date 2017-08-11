@@ -74,7 +74,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
  return parseInt(e, 10);
 });
     ids = $.grep(ids, function (e) {
- return (e);
+ return e;
 });
     ids = _.uniq(ids);
     return ids;

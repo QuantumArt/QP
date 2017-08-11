@@ -148,7 +148,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 		var parentEntityId = eventArgs.get_parentEntityId();
 		var actionTypeCode = eventArgs.get_actionTypeCode();
 		var entityId = eventArgs.get_entityId();
-		var entityIds = (eventArgs.get_isMultipleEntities()) ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
+		var entityIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
 
 		if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving()) {
 			this.removeNodes(entityTypeCode, parentEntityId, entityIds);

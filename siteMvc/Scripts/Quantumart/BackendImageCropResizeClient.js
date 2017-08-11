@@ -367,7 +367,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         },
 		_getExtension = function (url) {
 			var index = url.lastIndexOf(".");
-			return (index == -1) ? "" : url.substr(index, url.length - index);
+			return index == -1 ? "" : url.substr(index, url.length - index);
 		},
         _removeErrors = function () {
             _$errors.empty();

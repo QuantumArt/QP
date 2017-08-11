@@ -85,12 +85,12 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   generateNodeCode: function (entityTypeCode, entityId, parentEntityId, isFolder) {
-    return String.format('{0}{1}_{2}_{3}', entityTypeCode, (isFolder ? 's' : ''), entityId, (parentEntityId ? parentEntityId : 0));
+    return String.format('{0}{1}_{2}_{3}', entityTypeCode, isFolder ? 's' : '', entityId, parentEntityId ? parentEntityId : 0);
   },
 
   generateNodeCodeToHighlight: function (eventArgs) {
     var isFolder = eventArgs.get_actionTypeCode() == ACTION_TYPE_CODE_LIST;
-    var entityId = (!isFolder) ? eventArgs.get_entityId() : Quantumart.QP8.BackendEntityType.getEntityTypeByCode(eventArgs.get_entityTypeCode()).Id;
+    var entityId = !isFolder ? eventArgs.get_entityId() : Quantumart.QP8.BackendEntityType.getEntityTypeByCode(eventArgs.get_entityTypeCode()).Id;
     return this.generateNodeCode(eventArgs.get_entityTypeCode(), entityId, eventArgs.get_parentEntityId(), isFolder);
   },
 
@@ -116,7 +116,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       level = this.getNodeLevel($parentNode);
       entityTypeCode = $parentNode.data('entity_type_code');
       entityId = $parentNode.data('entity_id');
-      parentEntityId = ($parentNode.data('is_folder')) ? $parentNode.data('parent_entity_id') : $parentNode.data('entity_id');
+      parentEntityId = $parentNode.data('is_folder') ? $parentNode.data('parent_entity_id') : $parentNode.data('entity_id');
       isFolder = $parentNode.data('is_folder');
       isGroup = $parentNode.data('is_group');
       groupItemCode = $parentNode.data('group_item_code');
@@ -164,12 +164,12 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
     var self = this;
     let $parentNode = this.getParentNode($node);
 
-    var entityTypeCode = ($parentNode) ? $parentNode.data('entity_type_code') : null;
-    var entityId = ($parentNode) ? $node.data('entity_id') : 0;
-    var isFolder = ($parentNode) ? $parentNode.data('is_folder') : false;
-    var parentEntityId = ($parentNode) ? ((isFolder) ? $parentNode.data('parent_entity_id') : $parentNode.data('entity_id')) : null;
-    var isGroup = ($parentNode) ? $parentNode.data('is_group') : false;
-    var groupItemCode = ($parentNode) ? $parentNode.data('group_item_code') : '';
+    var entityTypeCode = $parentNode ? $parentNode.data('entity_type_code') : null;
+    var entityId = $parentNode ? $node.data('entity_id') : 0;
+    var isFolder = $parentNode ? $parentNode.data('is_folder') : false;
+    var parentEntityId = $parentNode ? isFolder ? $parentNode.data('parent_entity_id') : $parentNode.data('entity_id') : null;
+    var isGroup = $parentNode ? $parentNode.data('is_group') : false;
+    var groupItemCode = $parentNode ? $parentNode.data('group_item_code') : '';
     var isRootNode = this.isRootNode($node);
 
     this._showAjaxLoadingIndicatorForNode($node);
@@ -346,7 +346,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   fillTreeViewItemFromTreeNode: function (dataItem, node) {
-    var iconUrl = (node.Icon.left(7).toLowerCase() !== 'http://') ? THEME_IMAGE_FOLDER_URL_SMALL_ICONS + node.Icon : node.Icon;
+    var iconUrl = node.Icon.left(7).toLowerCase() !== 'http://' ? THEME_IMAGE_FOLDER_URL_SMALL_ICONS + node.Icon : node.Icon;
     dataItem.Value = node.NodeCode;
     dataItem.Text = node.Title;
     dataItem.ImageUrl = iconUrl;
@@ -468,8 +468,8 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       } else {
         var parentNodeCode = this.generateNodeCode(entityTypeCode, entityType.Id, parentEntityId, true);
         var nodeCode = this.generateNodeCode(entityTypeCode, entityId, parentEntityId, false);
-        var orderChanged = (eventArgs.get_context() && eventArgs.get_context().orderChanged);
-        var groupChanged = (eventArgs.get_context() && eventArgs.get_context().groupChanged);
+        var orderChanged = eventArgs.get_context() && eventArgs.get_context().orderChanged;
+        var groupChanged = eventArgs.get_context() && eventArgs.get_context().groupChanged;
         var options = { loadChildNodes: true };
 
         if (actionTypeCode == ACTION_TYPE_CODE_REMOVE) {

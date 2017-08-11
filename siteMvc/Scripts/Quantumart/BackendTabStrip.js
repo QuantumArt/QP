@@ -215,7 +215,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var tabGroupCode = String.format(
       '{0}_{1}',
       associatedAction.Code,
-      (associatedAction.ActionType.Code === ACTION_TYPE_CODE_ADD_NEW) ? tabNumber : this._getTabEntityId(eventArgs));
+      associatedAction.ActionType.Code === ACTION_TYPE_CODE_ADD_NEW ? tabNumber : this._getTabEntityId(eventArgs));
 
     return tabGroupCode;
   },
@@ -392,7 +392,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   isLastTab: function (tab) {
     var $tab = this.getTab(tab);
-    return ($tab.next("LI").length == 0);
+    return $tab.next("LI").length == 0;
   },
 
   getTabId: function (tabElem) {
@@ -440,7 +440,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     if (!$q.isNullOrEmpty($tab)) {
       var processedTabText = $q.toString(tabText, "").trim();
       var truncatedTabText = $q.middleCutShort(processedTabText, this._maxTabTextLength);
-      var isTabTextTooLong = (processedTabText.length > truncatedTabText.length);
+      var isTabTextTooLong = processedTabText.length > truncatedTabText.length;
       if (isTabTextTooLong) {
         $tab.attr("title", processedTabText);
       } else {
@@ -494,7 +494,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var associatedAction = $a.getBackendAction(eventArgs.get_actionCode());
     var actionTypeCode = associatedAction.ActionType.Code;
     var tabTypeCode = associatedAction.Code; // код типа таба
-    var tabNumber = (actionTypeCode == ACTION_TYPE_CODE_ADD_NEW) ? this._getTabTypeCounter(tabTypeCode) + 1 : 0; // номер таба
+    var tabNumber = actionTypeCode == ACTION_TYPE_CODE_ADD_NEW ? this._getTabTypeCounter(tabTypeCode) + 1 : 0; // номер таба
     var tabId = this.generateTabId();
     var tabGroupCode = this.generateTabGroupCode(eventArgs, tabNumber); // код таба
     var tabText = this.generateTabText(eventArgs, tabNumber); // текст таба
@@ -1033,12 +1033,12 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $menu.css('top', menuTop + 'px');
     $menu.css('right', menuRight + 'px');
 
-    $menu.fadeIn(200, (function () {
+    $menu.fadeIn(200, function () {
       this._refreshTabMenuArrowButtons();
-      $menu.everyTime(30, this.TAB_MENU_TIMER_ID, (function () {
+      $menu.everyTime(30, this.TAB_MENU_TIMER_ID, function () {
         this._refreshTabMenuArrowButtons();
-      }).bind(this));
-    }).bind(this));
+      }.bind(this));
+    }.bind(this));
   },
 
   _hideTabMenu: function () {
@@ -1050,11 +1050,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $upArrow.fadeOut(50);
     $downArrow.fadeOut(50);
 
-    $menu.fadeOut(200, (function () {
+    $menu.fadeOut(200, function () {
       if (this._isTabMenuOverflow()) {
         this._scrollTabMenuToFirstItem(0);
       }
-    }).bind(this));
+    }.bind(this));
 
     var $menuButton = $(this._tabMenuButtonElement);
     this._cancelAllStylesForTabMenuButton($menuButton);

@@ -206,7 +206,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
             parentEntityId: this._parentEntityId,
             context: this._context,
             entityTypeCode: action.EntityType.Code,
-            forceOpenWindow: (actionTargetType == Quantumart.QP8.Enums.ActionTargetType.NewWindow)
+            forceOpenWindow: actionTargetType == Quantumart.QP8.Enums.ActionTargetType.NewWindow
           });
 
           params.correct(action);

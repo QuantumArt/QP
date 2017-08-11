@@ -14,8 +14,8 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 	},
 
 	getLibraryGroupCode: function (fileTypeCode, folderId) {
-		var folderTypeCode = (fileTypeCode == ENTITY_TYPE_CODE_SITE_FILE) ? ENTITY_TYPE_CODE_SITE_FOLDER : ENTITY_TYPE_CODE_CONTENT_FOLDER;
-		var libraryActionCode = (fileTypeCode == ENTITY_TYPE_CODE_SITE_FILE) ? ACTION_CODE_SITE_LIBRARY : ACTION_CODE_CONTENT_LIBRARY;
+		var folderTypeCode = fileTypeCode == ENTITY_TYPE_CODE_SITE_FILE ? ENTITY_TYPE_CODE_SITE_FOLDER : ENTITY_TYPE_CODE_CONTENT_FOLDER;
+		var libraryActionCode = fileTypeCode == ENTITY_TYPE_CODE_SITE_FILE ? ACTION_CODE_SITE_LIBRARY : ACTION_CODE_CONTENT_LIBRARY;
 		var parentEntityId = $o.getParentEntityId(folderTypeCode, folderId);
 		return this.generateLibraryGroupCode(libraryActionCode, parentEntityId);
 	},

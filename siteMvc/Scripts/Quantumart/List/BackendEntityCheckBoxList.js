@@ -88,7 +88,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   _setAsChanged: function (refreshOnly) {
     var $list = jQuery(this._listElement);
     $list.addClass(CHANGED_FIELD_CLASS_NAME);
-    var operation = (refreshOnly) ? "addClass" : "removeClass";
+    var operation = refreshOnly ? "addClass" : "removeClass";
     $list[operation](REFRESHED_FIELD_CLASS_NAME);
     var value = this.getSelectedEntityIDs();
     $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data("list_item_name"), value: value, contentFieldName: $list.closest("dl").data("field_name")  });
@@ -233,7 +233,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   },
 
   _checkAllowShowingToolbar: function () {
-    return (this._addNewActionCode != ACTION_CODE_NONE);
+    return this._addNewActionCode != ACTION_CODE_NONE;
   },
 
   _onSelectedItemChangeHandler: function () {

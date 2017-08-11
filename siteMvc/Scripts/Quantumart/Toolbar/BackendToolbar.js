@@ -267,7 +267,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       function (index, elem) {
         var $item = $(elem);
         var itemsAffected = +$item.data('items_affected') || 0;
-        var state = (selectedEntitiesCount == itemsAffected || (itemsAffected == MAX_ITEMS_AFFECTED_NUMBER && selectedEntitiesCount >= 1));
+        var state = selectedEntitiesCount == itemsAffected || (itemsAffected == MAX_ITEMS_AFFECTED_NUMBER && selectedEntitiesCount >= 1);
         self.setEnableState($item, state);
       }
     );
@@ -456,7 +456,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   _getToolbarButtonHtml: function (html, dataItem) {
-    var iconUrl = (dataItem.Icon.left(7).toLowerCase() !== "http://") ? THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon : dataItem.Icon;
+    var iconUrl = dataItem.Icon.left(7).toLowerCase() !== "http://" ? THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon : dataItem.Icon;
 
     html
           .cat('<li code="' + $q.htmlEncode(dataItem.Value) + '" class="item button">\n')
@@ -497,7 +497,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
         .cat('<span class="button"' + (!$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ' title="' + $q.htmlEncode(dataItem.Tooltip) + '"' : '') + '>')
         .catIf('<span class="icon" style="background-image: url(\'' + THEME_IMAGE_FOLDER_URL_SMALL_ICONS + selectedSubItem.Icon + '\')">'
           + '<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" /></span>', !$q.isNullOrWhiteSpace(selectedSubItem.Icon))
-        .catIf('<span class="text' + ($q.isNullOrWhiteSpace(selectedSubItem.Icon) ? " textOnly" : "") + '">' + $q.htmlEncode(selectedSubItem.Text) + '</span>', (!$q.isNullOrWhiteSpace(selectedSubItem.Text) && dataItem.ShowButtonText))
+        .catIf('<span class="text' + ($q.isNullOrWhiteSpace(selectedSubItem.Icon) ? " textOnly" : "") + '">' + $q.htmlEncode(selectedSubItem.Text) + '</span>', !$q.isNullOrWhiteSpace(selectedSubItem.Text) && dataItem.ShowButtonText)
         .cat('</span>')
         .cat('<span class="arrow"' + (!$q.isNullOrWhiteSpace(dataItem.ArrowTooltip) ? ' title="' + $q.htmlEncode(dataItem.ArrowTooltip) + '"' : '') + '><img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" /></span>')
         .cat('</span>')
@@ -518,7 +518,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   _getToolbarDropDownItemHtml: function (html, dataItem, selectedSubItemValue) {
-    var isSelected = (dataItem.Value == selectedSubItemValue);
+    var isSelected = dataItem.Value == selectedSubItemValue;
 
     html
           .cat('<li code="' + $q.htmlEncode(dataItem.Value) + '" class="item' + (isSelected ? ' ' + this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME : '') + '">\n')

@@ -186,7 +186,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
         var options = null;
 
         if (eventArgs.get_isArchiving() || eventArgs.get_isRestoring() || eventArgs.get_isRemoving() || actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_UNLOCK) {
-          var removedIds = (eventArgs.get_isMultipleEntities()) ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [eventArgs.get_entityId()];
+          var removedIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [eventArgs.get_entityId()];
 
           options = { removedIds: removedIds };
         }

@@ -129,7 +129,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     });
 
     var currentSelectedIDs = this.getSelectedEntityIDs();
-    var selectedItemsIsChanged = (newSelectedIDs.length != currentSelectedIDs.length || newSelectedIDs.length != _.union(newSelectedIDs, currentSelectedIDs).length);
+    var selectedItemsIsChanged = newSelectedIDs.length != currentSelectedIDs.length || newSelectedIDs.length != _.union(newSelectedIDs, currentSelectedIDs).length;
 
     if (selectedItemsIsChanged) {
       var oldCount = this.getSelectedEntities().length;
@@ -292,7 +292,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _checkAllowShowingToolbar: function () {
-    return (this._selectActionCode != ACTION_CODE_NONE);
+    return this._selectActionCode != ACTION_CODE_NONE;
   },
 
   _onSelectedItemChangeHandler: function () {

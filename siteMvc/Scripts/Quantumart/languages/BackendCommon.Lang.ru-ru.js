@@ -1,8 +1,8 @@
-if (typeof (Backend) == 'undefined') {
+if (typeof Backend == 'undefined') {
 	Backend = {};
 }
 
-if (typeof (Backend.Lang) == 'undefined') {
+if (typeof Backend.Lang == 'undefined') {
 	Backend.Lang = {};
 }
 

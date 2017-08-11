@@ -20,10 +20,10 @@ Quantumart.QP8.BackendLogin.prototype = {
   _useSavedCustomerCode: false,
 
   _initialize: function () {
-    jQuery('#IsSilverlightInstalled').val((Silverlight.isInstalled(null) == true) ? 'True' : 'False');
+    jQuery('#IsSilverlightInstalled').val(Silverlight.isInstalled(null) == true ? 'True' : 'False');
 
     if (this._useSavedCustomerCode) {
-      var isValid = (jQuery('.validation-summary-errors').length == 0);
+      var isValid = jQuery('.validation-summary-errors').length == 0;
 
       if (!isValid) {
         this.removeCustomerCode();

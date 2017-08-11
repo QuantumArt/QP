@@ -275,7 +275,7 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _initFileUploader: function () {
-    var extensions = (this._isImage) ? LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
+    var extensions = this._isImage ? LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
 
     if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
       this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
@@ -350,7 +350,7 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _openLibrary: function () {
-    var filterFileTypeId = (this._isImage) ? Quantumart.QP8.Enums.LibraryFileType.Image : '';
+    var filterFileTypeId = this._isImage ? Quantumart.QP8.Enums.LibraryFileType.Image : '';
     var eventArgs = new Quantumart.QP8.BackendEventArgs();
 
     eventArgs.set_entityId(this._libraryEntityId);

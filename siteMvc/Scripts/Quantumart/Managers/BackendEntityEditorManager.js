@@ -145,7 +145,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 		var entityId = eventArgs.get_entityId();
 
 		if (actionCode == ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
-			var entityIds = (eventArgs.get_isMultipleEntities()) ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
+			var entityIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
 			var self = this;
 			jQuery.each(entityIds, function (index, id) {
 				self.refreshEditorGroup(ENTITY_TYPE_CODE_ARTICLE, id);

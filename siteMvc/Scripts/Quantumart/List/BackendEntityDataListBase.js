@@ -417,7 +417,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
     linkContentHtml
       .cat('<a href="javascript:void(0);">')
-      .cat('<span class="icon' + (!$q.isNullOrWhiteSpace(cssClassName) ? (' ' + $q.htmlEncode(cssClassName)) : '') + '">')
+      .cat('<span class="icon' + (!$q.isNullOrWhiteSpace(cssClassName) ? ' ' + $q.htmlEncode(cssClassName) : '') + '">')
       .cat('<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif" />')
       .cat('</span>')
       .cat('<span class="text">' + text + '</span>')
@@ -461,7 +461,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
           }
         });
       }
-      var actionTarget = (this._hostIsWindow) ? Quantumart.QP8.Enums.ActionTargetType.NewWindow : Quantumart.QP8.Enums.ActionTargetType.NewTab;
+      var actionTarget = this._hostIsWindow ? Quantumart.QP8.Enums.ActionTargetType.NewWindow : Quantumart.QP8.Enums.ActionTargetType.NewTab;
       $linkButton.data("action_target_type", actionTarget);
     }
   },
@@ -629,7 +629,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     var itemElementName = String.format(idFormat, idPrefix, this._listItemName);
     var itemElementId = String.format(idFormat, idPrefix, this._listElementId);
     var itemText = $l.EntityDataList.selectDeselectAllText;
-    var style = (hidden) ? 'style="display:none"' : "";
+    var style = hidden ? 'style="display:none"' : "";
 
     var html = new $.telerik.stringBuilder();
     html
@@ -649,7 +649,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
   _getCountDivHtml: function (newCount, hidden) {
     var html = new $.telerik.stringBuilder();
-    var style = (hidden) ? 'style="display:none"' : "";
+    var style = hidden ? 'style="display:none"' : "";
     var countText = String.format($l.EntityDataList.countText, "<span class=\"countItems\">" + newCount + "</span>");
     var overflowText = "<span class=\"overflowText\">" + this._getOverflowText() + "</span>";
     html.cat('<div class="countItemsBlock" ' + style + '>').cat(countText).cat(overflowText).cat('</div>');
@@ -758,7 +758,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _getIdLinkCode: function (value) {
-    return (!this._showIds) ? "" : "<span class=\"idLink\">(<a class=\"js\" href=\"javascript:void(0)\">" + $q.htmlEncode(value) + "</a>)</span>";
+    return !this._showIds ? "" : "<span class=\"idLink\">(<a class=\"js\" href=\"javascript:void(0)\">" + $q.htmlEncode(value) + "</a>)</span>";
   },
 
   _getValueStorage: function () {
@@ -798,7 +798,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   applyFilter: function (filter) {
     var result = this._initFilter;
     if (filter) {
-      result = (result && result.trim()) ? result + " and " + filter : filter;
+      result = result && result.trim() ? result + " and " + filter : filter;
     }
 
     if (result != this._filter) {

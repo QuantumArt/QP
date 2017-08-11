@@ -69,7 +69,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         var actionToolbarItems = data;
         if (!$q.isNullOrEmpty(self.getDisabledActionCodes())) {
           actionToolbarItems = jQuery.grep(actionToolbarItems, function (itm) {
-            return (self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1);
+            return self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1;
           });
         }
 

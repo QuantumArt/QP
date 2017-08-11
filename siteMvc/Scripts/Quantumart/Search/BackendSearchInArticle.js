@@ -30,7 +30,7 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
 
 	refreshQuery: function (eventArgs) {
 		var context = eventArgs.get_context();
-		var query = (context && context.additionalUrlParameters) ? context.additionalUrlParameters.query : "";
+		var query = context && context.additionalUrlParameters ? context.additionalUrlParameters.query : "";
 		this._documentContext.getHost()._additionalUrlParameters = null;
 		this._refreshQuery(query);
 	},

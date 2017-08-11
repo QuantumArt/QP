@@ -29,13 +29,13 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
         var confirmPhrase = selectedAction.ConfirmPhrase;
 
         if (confirmPhrase) {
-          var nameString = (isMultiple) ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
+          var nameString = isMultiple ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
           nameString = '"' + nameString + '"';
           confirmPhrase = String.format(confirmPhrase, nameString);
         }
 
         if (!confirmPhrase || (confirmPhrase && $q.confirmMessage(confirmPhrase))) {
-          var entityIDs = (isMultiple) ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
+          var entityIDs = isMultiple ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
           var actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), "0", actionCode, {additionalUrlParameters: additionalUrlParameters});
           if (actionUrl) {
             var postParams = {
@@ -70,7 +70,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
             var normalCallback = function (data, textStatus, jqXHR) {
               Quantumart.QP8.BackendActionExecutor.showResult(data);
-              callback((data && data.Type == ACTION_MESSAGE_TYPE_ERROR) ? BACKEND_ACTION_EXECUTION_STATUS_ERROR : BACKEND_ACTION_EXECUTION_STATUS_SUCCESS, eventArgs);
+              callback(data && data.Type == ACTION_MESSAGE_TYPE_ERROR ? BACKEND_ACTION_EXECUTION_STATUS_ERROR : BACKEND_ACTION_EXECUTION_STATUS_SUCCESS, eventArgs);
             };
 
             var errorCallback = function (jqXHR, textStatus, errorThrown) {
@@ -166,14 +166,14 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
       var confirmPhrase = selectedAction.ConfirmPhrase;
 
       if (confirmPhrase) {
-          var nameString = (isMultiple) ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
+          var nameString = isMultiple ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
           nameString = '"' + nameString + '"';
         confirmPhrase = String.format(confirmPhrase, nameString);
       }
 
       if (!confirmPhrase || (confirmPhrase && $q.confirmMessage(confirmPhrase))) {
         var parentEntityId = eventArgs.get_parentEntityId();
-        var entityIDs = (isMultiple) ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
+        var entityIDs = isMultiple ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
         var params = {};
         if (isMultiple) {
           params.IDs = entityIDs;
@@ -492,7 +492,7 @@ Quantumart.QP8.BackendActionExecutor.generateActionUrl = function (isMultiple, e
 
   var url = '';
   var selectedAction = Quantumart.QP8.BackendActionExecutor.getSelectedAction(action);
-  var extraQueryString = (options && options.additionalUrlParameters) ? $q.hashToQueryString(options.additionalUrlParameters) : '';
+  var extraQueryString = options && options.additionalUrlParameters ? $q.hashToQueryString(options.additionalUrlParameters) : '';
 
   if (!$q.isNull(selectedAction)) {
     var isInterface = selectedAction.IsInterface;
@@ -502,7 +502,7 @@ Quantumart.QP8.BackendActionExecutor.generateActionUrl = function (isMultiple, e
     } else if (selectedAction.ControllerActionUrl) {
       url = selectedAction.ControllerActionUrl;
     } else {
-      url = (isInterface) ? '~/Diagnostics/Index/' : '';
+      url = isInterface ? '~/Diagnostics/Index/' : '';
     }
 
     if (options && options.isPreAction) {
@@ -518,7 +518,7 @@ Quantumart.QP8.BackendActionExecutor.generateActionUrl = function (isMultiple, e
       if (isMultiple) {
         url += String.format('{0}/{1}/', tabId, parentEntityId);
       } else {
-        var entityId = (entityIDs.length > 0) ? entityIDs[0] : 0;
+        var entityId = entityIDs.length > 0 ? entityIDs[0] : 0;
         url += String.format('{0}/{1}/{2}/', tabId, parentEntityId, entityId);
       }
 
@@ -547,7 +547,7 @@ Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl = function (sele
   }
 
   var url = '';
-  var extraQueryString = (options && options.additionalUrlParameters) ? $q.hashToQueryString(options.additionalUrlParameters) : '';
+  var extraQueryString = options && options.additionalUrlParameters ? $q.hashToQueryString(options.additionalUrlParameters) : '';
 
   if (!$q.isNull(selectedAction)) {
       if (!(selectedAction.IsMultistep || $q.isNullOrEmpty(selectedAction.AdditionalControllerActionUrl))) {
@@ -577,7 +577,7 @@ Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl = function (sele
             if (selectedAction.ActionType.IsMultiple) {
             url += String.format('{0}/{1}/', '0', parentEntityId);
         } else {
-            var entityId = (entityIDs.length > 0) ? entityIDs[0] : 0;
+            var entityId = entityIDs.length > 0 ? entityIDs[0] : 0;
             url += String.format('{0}/{1}/{2}/', '0', parentEntityId, entityId);
         }
 
@@ -747,7 +747,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
  return this._context;
 },
   get_entities: function () {
- return ($q.isArray(this._entities) && this._entities.length > 0) ? this._entities : [{ Id: this._entityId, Name: this._entityName}];
+ return $q.isArray(this._entities) && this._entities.length > 0 ? this._entities : [{ Id: this._entityId, Name: this._entityName}];
 },
   get_actionCode: function () {
  return this._actionCode;

@@ -553,7 +553,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   htmlLoadingMethod: function () {
-    return (this._isMultipleEntities || this._isCustomAction) ? "POST" : "GET";
+    return this._isMultipleEntities || this._isCustomAction ? "POST" : "GET";
   },
 
   createPanels: function () {
