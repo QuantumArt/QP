@@ -19,6 +19,7 @@ module.exports = {
     // 'func-name-matching': 'off',
     'no-invalid-this': 'warn',
     'no-underscore-dangle': 'off',
-    'func-names': 'off'
+    'func-names': 'off',
+    'sort-imports': 'off'
   }
 };

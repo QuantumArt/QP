@@ -1,32 +1,35 @@
 /* eslint-env node */
 
-var $; // eslint-disable-line id-length, no-shadow
-var custom = {};
-var fs = require('fs');
-var del = require('del');
-var gulp = require('gulp');
-var chalk = require('chalk');
-var bs = require('browser-sync');
-var argv = require('yargs').argv;
-var loadPlugins = require('gulp-load-plugins');
-var es6Promise = require('es6-promise');
-var notifier = require('node-notifier');
+import fs from 'fs';
+import del from 'del';
+import gulp from 'gulp';
+import chalk from 'chalk';
+import bs from 'browser-sync';
+import { argv } from 'yargs';
+import loadPlugins from 'gulp-load-plugins';
+import es6Promise from 'es6-promise';
+import notifier from 'node-notifier';
 
 es6Promise.polyfill();
-$ = loadPlugins();
+const $ = loadPlugins(); // eslint-disable-line id-length, no-shadow
 
-custom.project = JSON.parse(fs.readFileSync('../package.json'));
-custom.assemblyInfoFileContent = fs.readFileSync('./properties/AssemblyInfo.cs');
-custom.assembly = $.dotnetAssemblyInfo.getAssemblyMetadata(custom.assemblyInfoFileContent);
+const project = JSON.parse(fs.readFileSync('../package.json'));
+const assemblyInfo = fs.readFileSync('./properties/AssemblyInfo.cs');
+const assemblyMetadata = $.dotnetAssemblyInfo.getAssemblyMetadata(assemblyInfo);
 
-custom.config = {
-  name: custom.project.name,
-  version: custom.project.version,
-  assemblyVersion: custom.assembly.AssemblyVersion,
-  environment: 'development',
-  commit: process.env.BUILD_SOURCEVERSION || '0',
-  branchName: process.env.BUILD_SOURCEBRANCHNAME || '',
-  buildNumber: process.env.BUILD_BUILDNUMBER || ''
+const custom = {
+  project,
+  assemblyInfo,
+  assemblyMetadata,
+  config: {
+    name: project.name,
+    version: project.version,
+    assemblyVersion: assemblyMetadata.AssemblyVersion,
+    environment: 'development',
+    commit: process.env.BUILD_SOURCEVERSION || '0',
+    branchName: process.env.BUILD_SOURCEBRANCHNAME || '',
+    buildNumber: process.env.BUILD_BUILDNUMBER || ''
+  }
 };
 
 if (process.env.NODE_ENV
@@ -281,136 +284,121 @@ custom.paths = {
   ]
 };
 
-custom.reportError = function onErrorHandler(error) {
-  var report;
+custom.reportError = error => {
+  let report;
   $.notify({
-    title: 'Task Failed [' + error.plugin + ']',
-    message: error.lineNumber ? 'Line: ' + error.lineNumber + ' -- ' : 'See console.',
+    title: `Task Failed [${error.plugin}]`,
+    message: error.lineNumber ? `Line: ${error.lineNumber} -- ` : 'See console.',
     sound: 'Sosumi'
   }).write(error);
 
-  report = chalk.underline.bgRed('Task:') + ' [' + chalk.underline.bgCyan(error.plugin) + ']\n';
+  report = `${chalk.underline.bgRed('Task:')} [${chalk.underline.bgCyan(error.plugin)}]\n`;
   if (error.fileName) {
-    report += chalk.underline.bgRed('FileName:') + ' ' + chalk.underline.bgCyan(error.fileName) + '\n';
+    report += `${chalk.underline.bgRed('FileName:')} ${chalk.underline.bgCyan(error.fileName)}\n`;
   }
 
   if (error.lineNumber) {
-    report += chalk.underline.bgRed('LineNumber:') + ' ' + chalk.underline.bgCyan(error.lineNumber) + '\n';
+    report += `${chalk.underline.bgRed('LineNumber:')} ${chalk.underline.bgCyan(error.lineNumber)}\n`;
   }
 
-  report += chalk.underline.bgRed('Message:')
-    + ' ' + error.message.replace('Error:', chalk.underline.bgRed('Error:'))
-    + '\n';
+  report += `${chalk.underline.bgRed('Message:')
+     } ${error.message.replace('Error:', chalk.underline.bgRed('Error:'))
+     }\n`;
 
   global.console.error(report);
+
+  // eslint-disable-next-line no-invalid-this
   this.emit('end');
 };
 
-gulp.task('assets:revisions', function assetsRevisionsTask() {
-  return gulp.src('Views/Home/Index.Template.cshtml')
-    .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.replaceTask({
-      patterns: [{
-        match: 'version',
-        replacement: custom.config.assemblyVersion
-      }]
-    }))
-    .pipe($.rename('Index.cshtml'))
-    .pipe(gulp.dest('Views/Home/'));
-});
+gulp.task('assets:revisions', () => gulp.src('Views/Home/Index.Template.cshtml')
+  .pipe($.plumber({ errorHandler: custom.reportError }))
+  .pipe($.replaceTask({
+    patterns: [{
+      match: 'version',
+      replacement: custom.config.assemblyVersion
+    }]
+  }))
+  .pipe($.rename('Index.cshtml'))
+  .pipe(gulp.dest('Views/Home/')));
 
-gulp.task('assets:js', ['assets:vendorsjs', 'assets:qpjs'], function assetsJsTask() {
-  return gulp.src(custom.destPaths.scripts)
-    .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true }));
-});
+gulp.task('assets:js', ['assets:vendorsjs', 'assets:qpjs'], () => gulp.src(custom.destPaths.scripts)
+  .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true })));
 
-gulp.task('assets:vendorsjs', ['assets:revisions'], function assetsVendorsJsTask() {
-  return gulp.src(custom.paths.vendorsjs, { base: './' })
-    .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.sourcemaps.init({ loadMaps: false }))
-    .pipe($.sourcemaps.identityMap())
-    .pipe($.rename({ suffix: '.min' }))
-    .pipe(custom.isProduction() ? $.uglify({
-      compress: {
-        sequences: false
-      }
-    }) : $.util.noop())
-    .pipe($.concat('vendors.js'))
-    .pipe($.sourcemaps.write('maps'))
-    .pipe(gulp.dest(custom.destPaths.scripts))
-    .pipe($.size({ title: 'assets:js', showFiles: true }))
-    .pipe($.notify({ title: 'Part task was completed', message: 'assets:vendorsjs task complete', onLast: true }));
-});
+gulp.task('assets:vendorsjs', ['assets:revisions'], () => gulp.src(custom.paths.vendorsjs, { base: './' })
+  .pipe($.plumber({ errorHandler: custom.reportError }))
+  .pipe($.sourcemaps.init({ loadMaps: true }))
+  .pipe($.sourcemaps.identityMap())
+  .pipe($.rename({ suffix: '.min' }))
+  .pipe(custom.isProduction() ? $.uglify({
+    compress: {
+      sequences: false
+    }
+  }) : $.util.noop())
+  .pipe($.concat('vendors.js'))
+  .pipe($.sourcemaps.write('maps'))
+  .pipe(gulp.dest(custom.destPaths.scripts))
+  .pipe($.size({ title: 'assets:js', showFiles: true }))
+  .pipe($.notify({ title: 'Part task was completed', message: 'assets:vendorsjs task complete', onLast: true })));
 
-gulp.task('assets:qpjs', ['assets:revisions'], function assetsQpJsTask() {
-  return gulp.src(custom.paths.qpjs, { base: './' })
-    .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.sourcemaps.init({ loadMaps: false }))
-    .pipe($.sourcemaps.identityMap())
-    .pipe($.babel())
-    .pipe(custom.isProduction() ? $.uglify({
-      compress: {
-        sequences: false
-      }
-    }) : $.util.noop())
-    .pipe($.concat('app.js'))
-    .pipe($.sourcemaps.write('maps'))
-    .pipe(gulp.dest(custom.destPaths.scripts))
-    .pipe($.size({ title: 'assets:js', showFiles: true }))
-    .pipe($.notify({ title: 'Part task was completed', message: 'assets:qpjs task complete', onLast: true }));
-});
+gulp.task('assets:qpjs', ['assets:revisions'], () => gulp.src(custom.paths.qpjs, { base: './' })
+  .pipe($.plumber({ errorHandler: custom.reportError }))
+  .pipe($.sourcemaps.init({ loadMaps: true }))
+  .pipe($.sourcemaps.identityMap())
+  .pipe($.babel())
+  .pipe(custom.isProduction() ? $.uglify({
+    compress: {
+      sequences: false
+    }
+  }) : $.util.noop())
+  .pipe($.concat('app.js'))
+  .pipe($.sourcemaps.write('maps'))
+  .pipe(gulp.dest(custom.destPaths.scripts))
+  .pipe($.size({ title: 'assets:js', showFiles: true }))
+  .pipe($.notify({ title: 'Part task was completed', message: 'assets:qpjs task complete', onLast: true })));
 
-gulp.task('assets:img', function assetsImgTask() {
-  return gulp.src(custom.paths.images)
-    .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.newer(custom.destPaths.images))
-    .pipe($.imagemin({ optimizationLevel: 3, progessive: true, interlaced: true }))
-    .pipe(gulp.dest(custom.destPaths.images))
-    .pipe($.notify({ title: 'Task was completed', message: 'assets:img task complete', onLast: true }));
-});
+gulp.task('assets:img', () => gulp.src(custom.paths.images)
+  .pipe($.plumber({ errorHandler: custom.reportError }))
+  .pipe($.newer(custom.destPaths.images))
+  .pipe($.imagemin({ optimizationLevel: 3, progessive: true, interlaced: true }))
+  .pipe(gulp.dest(custom.destPaths.images))
+  .pipe($.notify({ title: 'Task was completed', message: 'assets:img task complete', onLast: true })));
 
-gulp.task('assets:css', ['assets:revisions'], function assetsCssTask() {
-  return gulp.src(custom.paths.styles)
-    .pipe($.plumber({ errorHandler: custom.reportError }))
-    .pipe($.sourcemaps.init({ loadMaps: false }))
-    .pipe($.sourcemaps.identityMap())
-    .pipe($.sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
-    .pipe($.replace(/url\('/g, 'url(\'images/'))
-    .pipe($.autoprefixer())
-    .pipe($.cssnano({ zindex: false }))
-    .pipe($.concat('app.css'))
-    .pipe($.sourcemaps.write('maps'))
-    .pipe(gulp.dest(custom.destPaths.styles))
-    .pipe(bs.stream({ match: '**/*.css' }))
-    .pipe($.size({ title: 'assets:css', showFiles: true }))
-    .pipe($.notify({ title: 'Task was completed', message: 'assets:css task complete', onLast: true }));
-});
+gulp.task('assets:css', ['assets:revisions'], () => gulp.src(custom.paths.styles)
+  .pipe($.plumber({ errorHandler: custom.reportError }))
+  .pipe($.sourcemaps.init({ loadMaps: true }))
+  .pipe($.sourcemaps.identityMap())
+  .pipe($.sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
+  .pipe($.replace(/url\('/g, 'url(\'images/'))
+  .pipe($.autoprefixer())
+  .pipe($.cssnano({ zindex: false }))
+  .pipe($.concat('app.css'))
+  .pipe($.sourcemaps.write('maps'))
+  .pipe(gulp.dest(custom.destPaths.styles))
+  .pipe(bs.stream({ match: '**/*.css' }))
+  .pipe($.size({ title: 'assets:css', showFiles: true }))
+  .pipe($.notify({ title: 'Task was completed', message: 'assets:css task complete', onLast: true })));
 
-gulp.task('clean', function clean() {
-  return del(custom.paths.clean);
-});
+gulp.task('clean', () => del(custom.paths.clean));
 
-gulp.task('browserSync', function browserSync() {
+gulp.task('browserSync', () => {
   bs.init([custom.paths.styles], {
     proxy: 'http://localhost:90/Backend'
   });
 });
 
-gulp.task('watch', function watchTask() {
-  var reportOnChange = function watchOnChange(ev) {
-    global.console.log('File ' + ev.path + ' was ' + ev.type + ', ' + chalk.underline.bgCyan('running tasks...'));
-  };
+gulp.task('watch', () => {
+  const reportOnChange = ev =>
+    global.console.log(`File ${ev.path} was ${ev.type}, ${chalk.underline.bgCyan('running tasks...')}`);
 
   gulp.watch(custom.paths.styles, ['assets:css']).on('change', reportOnChange);
 });
 
 gulp.task('serve', ['watch', 'browserSync']);
-gulp.task('default', ['clean'], function defaultTask() {
-  var welcomeMsg = '\nGulp tasks were started in '
-    + chalk.blue.underline.yellow(custom.config.environment)
-    + ' mode. Version: '
-    + custom.config.assemblyVersion
-    + '.';
+gulp.task('default', ['clean'], () => {
+  const welcomeMsg = `\nGulp tasks were started in ${chalk.blue.underline.yellow(custom.config.environment)} mode.
+    Version: ${custom.config.assemblyVersion}.
+  `;
 
   global.console.log(welcomeMsg);
   notifier.notify({ title: welcomeMsg, message: 'gulp is running' });

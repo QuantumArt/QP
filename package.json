@@ -50,28 +50,11 @@
     "yargs": "^8.0.2"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production gulp --production --gulpfile siteMvc/gulpfile.js",
-    "build-dev": "gulp --gulpfile siteMvc/gulpfile.js",
-    "postrestore": "echo something like npm install shoud here",
-    "prepare": "echo something like bower install should be here",
-    "predeploy": "echo im about to deploy",
-    "postdeploy": "echo ive deployed",
-    "test": "karma start",
-    "watch:test": "npm test -- --auto-watch --no-single-run",
-    "check-coverage": "echo \"Error: no test specified\" && exit 1",
-    "validate": "npm-run-all --parallel validate-webpack:* lint test --serial check-coverage",
-    "validate-webpack:dev": "webpack-validator webpack.config.js --env.dev",
-    "validate-webpack:prod": "webpack-validator webpack.config.js --env.prod",
-    "clean-dist": "rimraf dist",
-    "copy-files": "cpy src/index.html src/favicon.ico dist",
-    "clean-and-copy": "npm run clean-dist && npm run copy-files",
-    "prestart": "npm run clean-and-copy",
-    "prebuild": "npm run clean-and-copy",
-    "prebuild:prod": "npm run clean-and-copy",
-    "start": "webpack-dev-server --env.dev --content-base dist",
-    "new-build": "cross-env NODE_ENV=development && webpack --env.dev --progress --colors",
-    "new-build:prod": "cross-env NODE_ENV=production && webpack -p --env.prod --progress --colors",
-    "lint": "eslint ."
+    "start": "npm run build-dev",
+    "build": "cross-env NODE_ENV=production gulp --production --gulpfile siteMvc/gulpfile.babel.js",
+    "build-dev": "gulp --gulpfile siteMvc/gulpfile.babel.js",
+    "nibble": "eslint-nibble ./siteMvc/Scripts/Quantumart/ || exit 0",
+    "lint": "eslint ./siteMvc/Scripts/Quantumart/ || exit 0"
   },
   "private": true,
   "-vs-binding": {
