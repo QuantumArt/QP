@@ -1,6 +1,7 @@
 // #region event types of pager
 // === Типы событий пейджера ===
 var EVENT_TYPE_PAGE_NUMBER_CHANGED = "OnPageNumberChanged";
+
 // #endregion
 
 // #region class BackendPagerEventArgs
@@ -20,6 +21,7 @@ Quantumart.QP8.BackendPagerEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendPagerEventArgs.registerClass("Quantumart.QP8.BackendPagerEventArgs", Sys.EventArgs);
+
 // #endregion
 
 // #region class Pager
@@ -86,11 +88,13 @@ Quantumart.QP8.BackendPager.prototype = {
 		$pageFrameElement = null;
 		html = null;
 	},
+
  // перерисовать фрейм страниц
 	_setPageNumber: function (pageNumber) {
 		this.set({ currentPageNumber: pageNumber });
 		this.redraw();
 	},
+
  // установить номер страницы
 
 
@@ -132,6 +136,7 @@ Quantumart.QP8.BackendPager.prototype = {
 
 		$pagerElement = null;
 	},
+
  // начальная инициализация
 	set: function (options) {
 		if ($q.isObject(options)) {
@@ -149,8 +154,10 @@ Quantumart.QP8.BackendPager.prototype = {
  this._currentPageNumber = $q.toInt(options.currentPageNumber < 0 ? 0 : options.currentPageNumber); 
 }
 		}
+
 		// Посчитать количество страниц
 		this._pageCount = Math.floor(this._totalCount / this._pageSize) + (this._totalCount % this._pageSize == 0 ? 0 : 1);
+
 		// нормализовать номер текущей страницы
 		if (this._currentPageNumber >= this._pageCount) {
  this._currentPageNumber = this._pageCount - 1; 
@@ -158,16 +165,21 @@ Quantumart.QP8.BackendPager.prototype = {
 		if (this._currentPageNumber < 0) {
  this._currentPageNumber = 0; 
 }
+
 		// посчитать количество фреймов
 		this._pageFrameCount = Math.floor(this._pageCount / this._pageFrameSize) + (this._pageCount % this._pageFrameSize == 0 ? 0 : 1);
+
 		// почитать номер текущего фрейма
 		this._currentPageFrameNumber = Math.floor(this._currentPageNumber / this._pageFrameSize);
+
 		// первая страница текущего фрейма
 		this._currentFrameStartPageNumber = Quantumart.QP8.BackendPager.getFrameStartPageNumber(this._currentPageFrameNumber, this._pageFrameSize);
+
 		// последняя страница текущего фрейма
 		this._currentFrameEndPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(this._currentPageFrameNumber, this._pageFrameSize, this._pageCount);
 
 	},
+
  // устанавливает новое состояние пейджера
 	redraw: function () {
 		// если текущая страница - первая - то дизейблим соответствующие arrow
@@ -201,6 +213,7 @@ Quantumart.QP8.BackendPager.prototype = {
 		// нарисовать фрейм страниц
 		this._pageFrameRedraw();
 	},
+
  // перерисовать пейджер
 	get_pageCount: function () {
 		return this._pageCount;
@@ -285,4 +298,5 @@ Quantumart.QP8.BackendPager.getFrameEndPageNumber = function (pageFrameNumber, p
 };
 
 Quantumart.QP8.BackendPager.registerClass("Quantumart.QP8.BackendPager", Quantumart.QP8.Observable);
+
 // #endregion

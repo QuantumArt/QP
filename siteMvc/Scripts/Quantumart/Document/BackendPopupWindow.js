@@ -7,6 +7,7 @@
 var EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING = "OnPopupWindowActionExecuting";
 var EVENT_TYPE_POPUP_WINDOW_ENTITY_READED = "OnPopupWindowEntityReaded";
 var EVENT_TYPE_POPUP_WINDOW_CLOSED = "OnPopupWindowClosed";
+
 // #endregion
 
 // #region class BackendPopupWindow
@@ -866,4 +867,5 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 };
 
 Quantumart.QP8.BackendPopupWindow.registerClass("Quantumart.QP8.BackendPopupWindow", Quantumart.QP8.BackendDocumentHost);
+
 // #endregion

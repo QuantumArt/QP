@@ -140,4 +140,5 @@ Quantumart.QP8.BackendSearchBlockManager.destroyInstance = function Quantumart$Q
 };
 
 Quantumart.QP8.BackendSearchBlockManager.registerClass("Quantumart.QP8.BackendSearchBlockManager", Quantumart.QP8.Observable);
+
 // #endregion

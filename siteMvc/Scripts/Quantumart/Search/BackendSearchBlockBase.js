@@ -8,11 +8,13 @@ var EVENT_TYPE_SEARCH_BLOCK_FIND_START = "OnSearchBlockFindStart";
 var EVENT_TYPE_CONTEXT_BLOCK_FIND_START = "OnContextBlockFindStart";
 var EVENT_TYPE_SEARCH_BLOCK_RESET_START = "OnSearchBlockResetStart";
 var EVENT_TYPE_SEARCH_BLOCK_RESIZED = "OnSearchBlockResized";
+
 // #endregion
 
 // #region event types of conrete field
 // === Типы событий контейнера для блока поиска по конкрентому полю ===
 var EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE = "OnFieldSearchContainerClose";
+
 // #endregion
 
 // #region class BackendSearchBlockBase
@@ -349,6 +351,7 @@ Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function () {
 };
 
 Quantumart.QP8.BackendSearchBlockBase.registerClass("Quantumart.QP8.BackendSearchBlockBase", Quantumart.QP8.Observable);
+
 // #endregion
 
 // #region class BackendSearchBlockEventArgs
@@ -409,5 +412,6 @@ Quantumart.QP8.BackendSearchBlockEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendSearchBlockEventArgs.registerClass("Quantumart.QP8.BackendSearchBlockEventArgs", Sys.EventArgs);
+
 // #endregion
 

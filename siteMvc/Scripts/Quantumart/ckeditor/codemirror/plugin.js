@@ -87,6 +87,7 @@
                             showCursorWhenSelecting: true,
                             styleActiveLine: config.styleActiveLine,
                             viewportMargin: Infinity,
+
                             // extraKeys: {"Ctrl-Space": "autocomplete"},
                             extraKeys: {
                                 "Ctrl-Q": function (codeMirror_Editor) {
@@ -143,6 +144,7 @@
                         if (config.lineNumbers && config.enableCodeFolding) {
                             window["codemirror_" + editor.id].on("gutterClick", window["foldFunc_" + editor.id]);
                         }
+
                         // Run config.onLoad callback, if present.
                         if (typeof config.onLoad === 'function') {
                             config.onLoad(window["codemirror_" + editor.id], editor);
@@ -641,6 +643,7 @@
                 textarea.addClass('cke_enable_context_menu');
                 editor.ui.space('contents').append(textarea);
                 window["editable_" + editor.id] = editor.editable(new sourceEditable(editor, textarea));
+
                 // Fill the textarea with the current editor data.
                 window["editable_" + editor.id].setData(editor.getData(1));
                 window["editable_" + editor.id].editorID = editor.id;
@@ -721,6 +724,7 @@
                     showTrailingSpace: config.showTrailingSpace,
                     showCursorWhenSelecting: true,
                     styleActiveLine: config.styleActiveLine,
+
                     // extraKeys: {"Ctrl-Space": "autocomplete"},
                     extraKeys: extraKeys,
                     foldGutter: true,
@@ -985,6 +989,7 @@
             getData: function () {
                 return this.getValue();
             },
+
             // Insertions are not supported in source editable.
             insertHtml: function () {
             },
@@ -992,6 +997,7 @@
             },
             insertText: function () {
             },
+
             // Read-only support for textarea.
             setReadOnly: function (isReadOnly) {
                 this[(isReadOnly ? 'set' : 'remove') + 'Attribute']('readOnly', 'readonly');

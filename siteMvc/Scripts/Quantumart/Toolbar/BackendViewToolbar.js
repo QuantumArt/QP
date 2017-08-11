@@ -253,6 +253,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 };
 
 Quantumart.QP8.BackendViewToolbar.registerClass("Quantumart.QP8.BackendViewToolbar", Quantumart.QP8.BackendToolbar);
+
 // #endregion
 
 // #region class BackendViewToolbarButtonEventArgs
@@ -271,6 +272,7 @@ Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarButtonEventArgsFr
 };
 
 Quantumart.QP8.BackendViewToolbarButtonEventArgs.registerClass("Quantumart.QP8.BackendViewToolbarButtonEventArgs", Quantumart.QP8.BackendToolbarButtonEventArgs);
+
 // #endregion
 
 // #region class BackendViewToolbarDropDownListEventArgs
@@ -314,4 +316,5 @@ Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEvent
 };
 
 Quantumart.QP8.BackendViewToolbarDropDownListEventArgs.registerClass("Quantumart.QP8.BackendViewToolbarDropDownListEventArgs", Quantumart.QP8.BackendToolbarDropDownListEventArgs);
+
 // #endregion

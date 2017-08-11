@@ -5,6 +5,7 @@
 // === Типы событий активных ссылок ===
 var EVENT_TYPE_ACTION_LINK_CLICK = "OnActionLinkClick";
 var EVENT_TYPE_ACTION_LINK_SELF_CLICK = "OnActionLinkSelfClick";
+
 // #endregion
 
 // #region class BackendActionLink
@@ -322,4 +323,5 @@ Quantumart.QP8.BackendActionLink.prototype = {
 
 
 Quantumart.QP8.BackendActionLink.registerClass("Quantumart.QP8.BackendActionLink", Quantumart.QP8.Observable);
+
 // #endregion

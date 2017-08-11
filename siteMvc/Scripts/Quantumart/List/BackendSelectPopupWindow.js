@@ -157,4 +157,5 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 };
 
 Quantumart.QP8.BackendSelectPopupWindow.registerClass("Quantumart.QP8.BackendSelectPopupWindow", Quantumart.QP8.Observable);
+
 // #endregion

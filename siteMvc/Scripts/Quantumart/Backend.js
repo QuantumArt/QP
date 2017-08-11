@@ -598,4 +598,5 @@ Quantumart.QP8.Backend.getInstance = function (isDebugMode, options) {
 };
 
 Quantumart.QP8.Backend.registerClass('Quantumart.QP8.Backend');
+
 // #endregion

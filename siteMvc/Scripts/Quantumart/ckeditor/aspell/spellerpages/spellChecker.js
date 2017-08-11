@@ -17,6 +17,7 @@ window.spellChecker = function (textObject) {
 	this.popUpName = 'spellchecker';
 	this.popUpProps = "menu=no,width=440,height=350,top=70,left=120,resizable=no,status=no";
   this.spellCheckScript = CKEDITOR.aspellSettings.spellCheckScriptPath;
+
 	// this.spellCheckScript = '/speller/server-scripts/spellchecker.php';
 	// this.spellCheckScript = '/cgi-bin/spellchecker.pl';
 
@@ -82,8 +83,10 @@ window.spellChecker.prototype = {
 	    this.controlWin.resetForm();
 	    this.currentTextIndex = 0;
 	    this.currentWordIndex = 0;
+
 	    // initialize the flags to an array - one element for each text input
 	    this.wordFlags = new Array(this.wordWin.textInputs.length);
+
 	    // each element will be an array that keeps track of each word in the text
 	    for (var i = 0; i < this.wordFlags.length; i++) {
 		    this.wordFlags[i] = [];
@@ -106,6 +109,7 @@ window.spellChecker.prototype = {
 		    window.alert('Error: "Not in dictionary" text is missing.');
 		    return false;
 	    }
+
 	    // set as ignored
 	    if (this._setAsIgnored(ti, wi, this.ignrWordFlag)) {
 		    this.currentWordIndex++;
@@ -301,8 +305,10 @@ window.spellChecker.prototype = {
 		    }
 
 		    var i, j, origSpell;
+
 		    // examine what happened to this current word.
 		    switch (this.wordFlags[text_idx][idx]) {
+
 			    // replace all: go through this and all the future occurances of the word
 			    // and revert them all to the original spelling and clear their flags
 			    case this.replAllFlag :
@@ -347,10 +353,12 @@ window.spellChecker.prototype = {
 
     _spellcheck: function () {
 	    var ww = this.wordWin;
+
 	    // check if this is the last word in the current text element
 	    if (this.currentWordIndex == ww.totalWords(this.currentTextIndex)) {
 		    this.currentTextIndex++;
 		    this.currentWordIndex = 0;
+
 		    // keep going if we're not yet past the last text element
 		    if (this.currentTextIndex < this.wordWin.textInputs.length) {
 			    this._spellcheck();
@@ -383,6 +391,7 @@ window.spellChecker.prototype = {
 
     _getSuggestions: function (text_num, word_num) {
 	    this.controlWin.clearSuggestions();
+
 	    // add suggestion in list for each suggested word.
 	    // get the array of suggested words out of the
 	    // three-dimensional array containing all suggestions.
@@ -399,6 +408,7 @@ window.spellChecker.prototype = {
     _setAsIgnored: function (text_num, word_num, flag) {
 	    // set the UI
 	    this.wordWin.removeFocus(text_num, word_num);
+
 	    // do the bookkeeping
 	    this.wordFlags[text_num][word_num] = flag;
 	    return true;
@@ -421,6 +431,7 @@ window.spellChecker.prototype = {
     _setWordText: function (text_num, word_num, newText, flag) {
 	    // set the UI and form inputs
 	    this.wordWin.setText(text_num, word_num, newText);
+
 	    // keep track of what happened to this word:
 	    this.wordFlags[text_num][word_num] = flag;
 

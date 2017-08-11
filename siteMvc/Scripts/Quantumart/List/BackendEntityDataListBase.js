@@ -19,6 +19,7 @@ Quantumart.QP8.Enums.DataListType.prototype = {
 };
 
 Quantumart.QP8.Enums.DataListType.registerEnum("Quantumart.QP8.Enums.DataListType");
+
 // #endregion
 
 // #region class BackendEntityDataListBase
@@ -865,4 +866,5 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 };
 
 Quantumart.QP8.BackendEntityDataListBase.registerClass("Quantumart.QP8.BackendEntityDataListBase", Quantumart.QP8.Observable);
+
 // #endregion

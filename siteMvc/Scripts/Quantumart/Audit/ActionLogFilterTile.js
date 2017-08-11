@@ -165,4 +165,5 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 };
 
 Quantumart.QP8.ActionLogFilterTile.registerClass("Quantumart.QP8.ActionLogFilterTile", Quantumart.QP8.Observable);
+
 // #endregion

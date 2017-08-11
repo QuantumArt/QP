@@ -37,4 +37,5 @@ Quantumart.QP8.ActionLogDatetimeFilter.prototype = {
 };
 
 Quantumart.QP8.ActionLogDatetimeFilter.registerClass("Quantumart.QP8.ActionLogDatetimeFilter", Quantumart.QP8.ActionLogFilterBase);
+
 // #endregion

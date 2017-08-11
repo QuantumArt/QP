@@ -46,6 +46,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 			var $numberTo = $containerElement.find("#" + numberToID);
 			$numberFrom.focus(this._onNumericInputFocusHandler);
 			$numberTo.focus(this._onNumericInputFocusHandler);
+
 			// получить ссылки на dom-элеметы со значениями
 			this._numberFromElement = $numberFrom.get(0);
 			this._numberToElement = $numberTo.get(0);
@@ -219,4 +220,5 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+
 // #endregion

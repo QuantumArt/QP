@@ -62,6 +62,7 @@ Quantumart.QP8.Cache.dispose = function Quantumart$QP8$dispose() {
 };
 
 Quantumart.QP8.Cache.registerClass("Quantumart.QP8.Cache");
+
 // #endregion
 
 // Сокращенная запись

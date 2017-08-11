@@ -30,6 +30,7 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 
 		$fileListContentElement = null;
 	},
+
 	// инициализация
 	redraw: function (data, options) {
 		var $fileListContentElement = jQuery(this._fileListContentElement);
@@ -63,10 +64,12 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 		// поднимаем deselect так как на новой странице нет выбранных элементов
 		this._raiseSelectEvent();
 	},
+
 	// перерисовать
 	dispose: function () {
 		Quantumart.QP8.BackendFilePreviewListView.callBaseMethod(this, "dispose");
 	},
+
 	// dispose
 
 	shortNameLength: 15,
@@ -74,6 +77,7 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 	_getThumbnailLink: function (item, options) {
 		if (item.FileType == Quantumart.QP8.Enums.LibraryFileType.Image) {
 			var url = "";
+
 			// определить url в зависимости от fileEntityTypeCode
 			if (options.fileEntityTypeCode == ENTITY_TYPE_CODE_SITE_FILE) {
  url = CONTROLLER_URL_THUMBNAIL + '_SiteFileThumbnail'; 
@@ -89,4 +93,5 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 };
 
 Quantumart.QP8.BackendFilePreviewListView.registerClass("Quantumart.QP8.BackendFilePreviewListView", Quantumart.QP8.BackendFileNameListView);
+
 // #endregion

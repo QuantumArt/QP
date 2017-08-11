@@ -189,6 +189,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
 };
 
 Quantumart.QP8.BackendSplitter.registerClass("Quantumart.QP8.BackendSplitter", Quantumart.QP8.Observable);
+
 // #endregion
 
 // #region class BackendSplitterEventArgs
@@ -228,4 +229,5 @@ Quantumart.QP8.BackendSplitterEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendSplitterEventArgs.registerClass("Quantumart.QP8.BackendSplitterEventArgs", Sys.EventArgs);
+
 // #endregion

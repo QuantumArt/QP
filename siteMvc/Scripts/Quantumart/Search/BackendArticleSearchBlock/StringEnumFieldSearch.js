@@ -45,6 +45,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
             // назначить обработчик события change чекбоксу
             var $isNullCheckBoxElement = $containerElement.find("#" + isNullCheckBoxID);
             $isNullCheckBoxElement.bind("change", this._onIsNullCheckBoxChangeHandler);
+
             // запомнить ссылку на dom-элемент чекбокса
             this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
 
@@ -130,4 +131,5 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+
 // #endregion

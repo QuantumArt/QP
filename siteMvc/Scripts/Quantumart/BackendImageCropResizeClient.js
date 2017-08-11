@@ -6,6 +6,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     
 
     var
+
         // #region control parameters
         _defaultParameters = {
             sourceImageUrl: "",                                         //	URL исходного изображения
@@ -25,6 +26,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             	Sys.Debug.trace("imgCropResize: finished");
             }                                                           //	Callback, вызываемый при завершении работы
         },
+
         // #endregion
 
         // #region Content html
@@ -183,8 +185,10 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 range: {
                     // size down
                     min: _parameters.resizeRange.min,
+
                     // default
                     '50%': 1,
+
                     // size up
                     max: _parameters.resizeRange.max
                 },
@@ -220,6 +224,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 }
             });
         },
+
         // #endregion
 
         // #region ImgAreaSelect
@@ -276,6 +281,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 }
             }, 0);
         },
+
         // #endregion
 
         // #region Create conrols
@@ -285,6 +291,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
             _createSlider();
         },
+
         // #endregion
 
         _setSize = function ($img) {
@@ -333,6 +340,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         _assignRootElement = function () {
             _$rootElement = _$windowElement;
         },
+
         // #endregion
 
         // #region Assign internal controls
@@ -353,6 +361,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             _$radioInputs = _$rootElement.find("input[name=overwrite]:radio");
             _$imgArea = _$rootElement.find("img.img");
         },
+
         // #endregion
 
         // #region Misc methods
@@ -460,6 +469,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 displayErrors([_defaultErrorMessage]);
             });
         },
+
         // #endregion
 
         // #region Create content
@@ -557,6 +567,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 }
             });
         }
+
     // #endregion
     ;
 
@@ -587,6 +598,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             window: _$windowElement
         };
     };
+
     // #endregion
 
     // #region Public API
@@ -691,6 +703,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         delete this.parameters;
         delete this.window;
     };
+
     // #endregion
 
 }(jQuery, Quantumart.QP8.ImageCropResizeClient));

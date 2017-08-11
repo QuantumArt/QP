@@ -153,4 +153,5 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+
 // #endregion

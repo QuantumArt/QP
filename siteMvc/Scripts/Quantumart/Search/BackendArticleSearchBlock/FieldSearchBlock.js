@@ -177,6 +177,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   _createFieldSearchContainerInner: function (fieldID, contentID, fieldSearchType, fieldName, fieldColumn, fieldGroup, referenceFieldID) {
     var $fieldSearchContainerElement = jQuery("<div />", { class: "fieldSearchContainer" });
+
     // добавить на страницу
     jQuery(this._fieldSearchListElement).append($fieldSearchContainerElement);
 
@@ -202,13 +203,16 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   _destroyFieldSearchContainer: function (fieldID) {
     if (this._fieldSearchContainerList[fieldID]) { // если существует раздел поиска по этому полю то удаляем его
       var fieldSearchContainer = this._fieldSearchContainerList[fieldID];
+
       // получить контейнер
       var $fsContainer = jQuery(fieldSearchContainer.get_ContainerElement());
 
       // отписаться от событий
       fieldSearchContainer.detachObserver(EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE, this._onFieldSearchContainerCloseHandler);
+
       // dispose
       fieldSearchContainer.dispose();
+
       // удалить из коллекции
       $q.removeProperty(this._fieldSearchContainerList, fieldID);
 
@@ -260,4 +264,5 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.registerClass("Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock", null, Sys.IDisposable);
+
 // #endregion

@@ -470,5 +470,6 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 };
 
 Quantumart.QP8.BackendEditingDocument.registerClass("Quantumart.QP8.BackendEditingDocument", Quantumart.QP8.BackendDocumentHost);
+
 // #endregion
 

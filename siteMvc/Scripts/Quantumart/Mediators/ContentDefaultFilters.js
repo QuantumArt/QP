@@ -52,4 +52,5 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 		}
 	};
 };
+
 // #endregion

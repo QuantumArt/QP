@@ -1,5 +1,6 @@
 // #region event types of Action Permission view
 var EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING = "OnActionPermissionsViewExecuting";
+
 // #endregion
 
 

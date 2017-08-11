@@ -233,4 +233,5 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 };
 
 Quantumart.QP8.BackendEntitySingleItemPicker.registerClass("Quantumart.QP8.BackendEntitySingleItemPicker", Quantumart.QP8.BackendEntityDataListBase);
+
 // #endregion

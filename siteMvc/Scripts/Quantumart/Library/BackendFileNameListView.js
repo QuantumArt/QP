@@ -48,6 +48,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 
 		$fileListContentElement = null;
 	},
+
 	// инициализация
 	redraw: function (data, options) {
 		var $fileListContentElement = jQuery(this._fileListContentElement);
@@ -88,6 +89,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 		// поднимаем deselect так как на новой странице нет выбранных элементов
 		this._raiseSelectEvent();
 	},
+
 	// перерисовать
 	selectAll: function (value) {
 		var $fileListContentElement = jQuery(this._fileListContentElement);
@@ -97,6 +99,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 
 		this._raiseSelectEvent();
 	},
+
 	// выбрать все
 
 	isAllSelected: function () {
@@ -105,6 +108,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 		$fileListContentElement = null;
 		return b;
 	},
+
 	// позволяет определить, все ли выбраны
 	dispose: function () {
 		var $fileListContentElement = jQuery(this._fileListContentElement);
@@ -123,6 +127,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 		this._fileListContentElement = null;
 		this._contextMenuComponent = null;
 	},
+
 	// dispose
 
 	_raiseSelectEvent: function () {
@@ -134,6 +139,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 
 		eventArgs = null;
 	},
+
 	// поднять событие Selected
 
 	_getSelectedEntities: function () {
@@ -150,6 +156,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 		$fileListContentElement = null;
 		return selectedEntities;
 	},
+
 	// получить список выбранных файлов
 
 	_onFileCheckBoxClickedHandler: function (event) {
@@ -217,4 +224,5 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 };
 
 Quantumart.QP8.BackendFileNameListView.registerClass("Quantumart.QP8.BackendFileNameListView", Quantumart.QP8.Observable, Quantumart.QP8.IBackendFileListView);
+
 // #endregion

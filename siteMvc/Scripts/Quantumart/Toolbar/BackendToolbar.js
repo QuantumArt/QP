@@ -8,12 +8,14 @@ var EVENT_TYPE_TOOLBAR_BUTTON_CLICKING = "OnToolbarButtonClicking";
 var EVENT_TYPE_TOOLBAR_BUTTON_CLICKED = "OnToolbarButtonClicked";
 var EVENT_TYPE_TOOLBAR_DROPDOWN_SELECTED_INDEX_CHANGING = "OnToolbarDropDownListSelectedIndexChanging";
 var EVENT_TYPE_TOOLBAR_DROPDOWN_SELECTED_INDEX_CHANGED = "OnToolbarDropDownListSelectedIndexChanged";
+
 // #endregion
 
 // #region item types of toolbar
 // === Типы элементов панели инструментов ===
 var TOOLBAR_ITEM_TYPE_BUTTON = "button";
 var TOOLBAR_ITEM_TYPE_DROPDOWN = "drop_down";
+
 // #endregion
 
 // #region class BackendToolbar
@@ -1070,6 +1072,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
 };
 
 Quantumart.QP8.BackendToolbar.registerClass("Quantumart.QP8.BackendToolbar", Quantumart.QP8.Observable);
+
 // #endregion
 
 // #region class BackendToolbarButtonEventArgs
@@ -1109,6 +1112,7 @@ Quantumart.QP8.BackendToolbarButtonEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendToolbarButtonEventArgs.registerClass("Quantumart.QP8.BackendToolbarButtonEventArgs", Sys.EventArgs);
+
 // #endregion
 
 // #region class BackendToolbarDropDownListEventArgs
@@ -1148,4 +1152,5 @@ Quantumart.QP8.BackendToolbarDropDownListEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendToolbarDropDownListEventArgs.registerClass("Quantumart.QP8.BackendToolbarDropDownListEventArgs", Sys.EventArgs);
+
 // #endregion

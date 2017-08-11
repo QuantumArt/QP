@@ -206,4 +206,5 @@ Quantumart.QP8.BackendEntityTreeManager.destroyInstance = function Quantumart$QP
 };
 
 Quantumart.QP8.BackendEntityTreeManager.registerClass("Quantumart.QP8.BackendEntityTreeManager", Quantumart.QP8.Observable);
+
 // #endregion

@@ -67,6 +67,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			// назначить обработчик события change чекбоксу
 			var $isNullCheckBoxElement = $containerElement.find("#" + isNullCheckBoxID);
 			$isNullCheckBoxElement.bind("change", this._onIsNullCheckBoxChangeHandler);
+
 			// запомнить ссылку на dom-элемент чекбокса
 			this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
 
@@ -212,4 +213,5 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+
 // #endregion

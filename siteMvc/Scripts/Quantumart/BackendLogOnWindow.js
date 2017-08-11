@@ -13,6 +13,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     _windowComponent: null, // компонент "Всплывающее окно"
     _isAuthenticated: null,
     _userName: null,
+
     // #endregion
 
     // #region constants
@@ -23,6 +24,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     CUSTOMERCODE_SELECTOR: "#CustomerCode",
     Z_INDEX: 50000,
     AJAX_EVENT: "AjaxEvent",
+
     // #endregion
 
     // #region internal
@@ -199,6 +201,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         $(this.FORM_SELECTOR).off();
         $(this.FORM_SELECTOR).find("a").off();
     },
+
     // #endregion
 
     // #region object enents
@@ -224,6 +227,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     _clearDeferredCallcacks: function () {
         $(this).off(this.AJAX_EVENT);
     },
+
     // #endregion
     // #endregion
 
@@ -267,6 +271,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
         $q.collectGarbageInIE();
     }
+
     // #endregion
 };
 
@@ -301,4 +306,5 @@ Quantumart.QP8.BackendLogOnWindow.destroyInstance = function Quantumart$QP8$Back
 };
 
 Quantumart.QP8.BackendLogOnWindow.registerClass("Quantumart.QP8.BackendLogOnWindow", Quantumart.QP8.Observable);
+
 // #endregion

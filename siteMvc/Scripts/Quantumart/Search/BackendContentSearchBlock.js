@@ -34,6 +34,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 			ContentName: contentName
 		});
 	},
+
 	// возвращает параметры поиска
 
 	renderSearchBlock: function () {
@@ -112,4 +113,5 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 };
 
 Quantumart.QP8.BackendContentSearchBlock.registerClass("Quantumart.QP8.BackendContentSearchBlock", Quantumart.QP8.BackendSearchBlockBase);
+
 // #endregion

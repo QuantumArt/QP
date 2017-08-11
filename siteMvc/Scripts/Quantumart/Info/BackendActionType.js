@@ -29,4 +29,5 @@ Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function Quantu
 };
 
 Quantumart.QP8.BackendActionType.registerClass("Quantumart.QP8.BackendActionType");
+
 // #endregion

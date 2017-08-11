@@ -63,4 +63,5 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
 };
 
 Quantumart.QP8.BackendVirtualFieldTree.registerClass("Quantumart.QP8.BackendVirtualFieldTree", Quantumart.QP8.BackendEntityTree);
+
 // #endregion

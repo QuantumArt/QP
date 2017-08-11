@@ -218,6 +218,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
         if (data.success) {
           if (!$q.isNullOrEmpty(data.approvedRecordIDs)) {
             dfr.resolve(
+
               // Оставить только те записи, которые прошли проверку на сервере
               jQuery.grep(stateRecords, function (r) {
                 return _.indexOf(data.approvedRecordIDs, r.recordId) > -1;

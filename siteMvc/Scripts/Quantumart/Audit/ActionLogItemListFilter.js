@@ -45,4 +45,5 @@ Quantumart.QP8.ActionLogItemListFilter.prototype = {
 };
 
 Quantumart.QP8.ActionLogItemListFilter.registerClass("Quantumart.QP8.ActionLogItemListFilter", Quantumart.QP8.ActionLogFilterBase);
+
 // #endregion

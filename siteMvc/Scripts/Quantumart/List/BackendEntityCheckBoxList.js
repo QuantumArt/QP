@@ -130,6 +130,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
       _.difference(newSelectedIDs, currentSelectedIDs),
       _.difference(currentSelectedIDs, newSelectedIDs)
     ).length > 0;
+
     // #endregion
 
     var $list = jQuery(this._listElement);
@@ -252,4 +253,5 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 };
 
 Quantumart.QP8.BackendEntityCheckBoxList.registerClass("Quantumart.QP8.BackendEntityCheckBoxList", Quantumart.QP8.BackendEntityDataListBase);
+
 // #endregion

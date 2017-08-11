@@ -8,6 +8,7 @@ var EVENT_TYPE_ENTITY_TREE_DATA_BINDING = 'OnEntityTreeDataBinding';
 var EVENT_TYPE_ENTITY_TREE_DATA_BOUND = 'OnEntityTreeDataBound';
 var EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING = 'OnEntityTreeActionExecuting';
 var EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED = 'OnEntityTreeEntitySelected';
+
 // #endregion
 
 // #region class BackendEntityTree

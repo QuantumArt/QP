@@ -83,6 +83,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 			},
 			events: {
 				onError: this._onSilverlightErrorHandler
+
 				// onLoad: this._onSilverlightLoadHandler
 			}, // c:\\inetpub\\wwwroot\\qp_demo_nett\\upload
 			initParams: $q.hashToString(params),
@@ -200,4 +201,5 @@ function Quantumart$QP8$BackendSilverlightUploader$localizeUpload() {
 };
 
 Quantumart.QP8.BackendSilverlightUploader.registerClass("Quantumart.QP8.BackendSilverlightUploader", Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader);
+
 // #endregion

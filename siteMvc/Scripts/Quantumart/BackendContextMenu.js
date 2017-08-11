@@ -580,6 +580,7 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
 };
 
 Quantumart.QP8.BackendContextMenu.registerClass('Quantumart.QP8.BackendContextMenu', Quantumart.QP8.Observable);
+
 // #endregion
 
 Quantumart.QP8.BackendContextMenuEventArgs = function () {
