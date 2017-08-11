@@ -61,10 +61,10 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
               } else {
                 $q.getJsonFromUrl('POST', actionUrl, postParams, true, false, normalCallback, errorCallback);
               }
-            }
+            };
 
             var normalCallback = function (data, textStatus, jqXHR) {
-              Quantumart.QP8.BackendActionExecutor.showResult(data)
+              Quantumart.QP8.BackendActionExecutor.showResult(data);
               callback((data && data.Type == ACTION_MESSAGE_TYPE_ERROR) ? BACKEND_ACTION_EXECUTION_STATUS_ERROR : BACKEND_ACTION_EXECUTION_STATUS_SUCCESS, eventArgs);
             };
 
@@ -94,7 +94,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
             var customData;
             var getCustomUrlCallback = function (data) {
               if (data && data.Type == ACTION_MESSAGE_TYPE_ERROR) {
-                $a.showResult(data)
+                $a.showResult(data);
                 callback('', eventArgs);
               } else {
                 customData = data;
@@ -228,7 +228,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
           var errorCallback2 = function (jqXHR, textStatus, errorThrown) {
             $q.postDataToUrl(tearDownUrl, { isError: true }, true)
-              .done(function () { errorCallback1(jqXHR, textStatus, errorThrown) })
+              .done(function () { errorCallback1(jqXHR, textStatus, errorThrown); })
               .fail(errorCallback1);
           };
 
@@ -323,7 +323,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
               }
             }
           }).fail(errorCallback2);
-        }
+        };
 
         if (selectedAction.HasSettings && !eventArgs.isSettingsSet) {
           var settingsActionUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
@@ -503,11 +503,11 @@ Quantumart.QP8.BackendActionExecutor.generateActionUrl = function (isMultiple, e
     }
 
     if (options && options.isPreAction) {
-      url = url.replace(/\/$/, 'PreAction/')
+      url = url.replace(/\/$/, 'PreAction/');
     }
 
     if (options && options.hasSettings && !options.isSettingsSet) {
-      url = url.replace(/\/$/, '/Settings/')
+      url = url.replace(/\/$/, '/Settings/');
     }
 
     url = url.replace(/^~\//, APPLICATION_ROOT_URL);
@@ -567,11 +567,11 @@ Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl = function (sele
           url = url.replace(/\/$/, '/Settings/');
       }
       else {
-        url = url.replace(/\/$/, '/Step/')
+        url = url.replace(/\/$/, '/Step/');
       }
     }
     else {
-      url = url.replace(/\/$/, '/Step/')
+      url = url.replace(/\/$/, '/Step/');
     }
 
     url = url.replace(/^~\//, APPLICATION_ROOT_URL);
@@ -648,7 +648,7 @@ Quantumart.QP8.BackendActionExecutor.getEventArgsFromAction = function (action) 
   }
 
   var eventArgs = new Quantumart.QP8.BackendEventArgs();
-  Quantumart.QP8.BackendActionExecutor.fillEventArgsFromAction(eventArgs, action)
+  Quantumart.QP8.BackendActionExecutor.fillEventArgsFromAction(eventArgs, action);
 
   return eventArgs;
 };
@@ -736,11 +736,11 @@ Quantumart.QP8.BackendActionParameters.prototype = {
   _actionCode: null,
   _isGroup: false,
 
-  get_entityId: function () { return this._entityId },
-  get_entityName: function () { return this._entityName },
-  get_parentEntityId: function () { return this._parentEntityId },
-  get_entityTypeCode: function () { return this._entityTypeCode },
-  get_context: function () { return this._context },
+  get_entityId: function () { return this._entityId; },
+  get_entityName: function () { return this._entityName; },
+  get_parentEntityId: function () { return this._parentEntityId; },
+  get_entityTypeCode: function () { return this._entityTypeCode; },
+  get_context: function () { return this._context; },
   get_entities: function () { return ($q.isArray(this._entities) && this._entities.length > 0) ? this._entities : [{ Id: this._entityId, Name: this._entityName}]; },
   get_actionCode: function(){ return this._actionCode;},
 

@@ -685,7 +685,7 @@
                                 (function (command) {
                                     editorExtraKeys[key] = function () {
                                         editor.execCommand(command);
-                                    }
+                                    };
                                 })(ckeditorKeystrokes[i][1]);
                             }
                         }

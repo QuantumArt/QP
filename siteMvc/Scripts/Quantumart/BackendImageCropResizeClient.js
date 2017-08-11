@@ -212,7 +212,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                     var step = 1;
                     step *= delta < 0 //mouse down
                         ? currentvalue < 1 ? -0.25 : -0.5 //slide left
-                        : currentvalue < 1 ? 0.25 : 0.5 //slide right
+                        : currentvalue < 1 ? 0.25 : 0.5; //slide right
 
                     var newValue = currentvalue + step;
                     if (newValue >= 0 && newValue <= 3.5) {
@@ -254,7 +254,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                         minWidth: _parameters.crop.width,
                         maxHeight: _parameters.crop.height,
                         maxWidth: _parameters.crop.width
-                    })
+                    });
             };
 
             _imgAreaSelect = _$imgArea.imgAreaSelect(parameters);
@@ -390,11 +390,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         },
 
 		_getFromCache = function () {
-			return Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl]
+			return Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl];
 		},
 
 		_removeFromCache = function () {
-			delete Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl]
+			delete Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl];
 		},
 
 		_saveToCache = function () {
@@ -664,7 +664,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         _$height = null;
         _imgAreaSelect = null;
         _$btnSave.off("click");
-		_$saveForm.off("submit")
+		_$saveForm.off("submit");
 		_$btnSave = null;
 		_$saveForm = null;
         _$nouislider.off("slide");

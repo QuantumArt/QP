@@ -5,7 +5,7 @@ Quantumart.QP8.SearchInCodeComponent = function (filterElementId, gridElementId)
     this._onDataBindingHandler = jQuery.proxy(this._onDataBinding, this);
     this._onApplyFilterHandler = jQuery.proxy(this._onApplyFilter, this);
     this._onClearFilterHandler = jQuery.proxy(this._onClearFilter, this);
-}
+};
 
 Quantumart.QP8.SearchInCodeComponent.prototype = {
     _filterElementId: '',
@@ -65,7 +65,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
 			.bind("dataBinding", this._onDataBindingHandler);
 
         jQuery('.sic_search_button', $filter)
-			.click(this._onApplyFilterHandler)
+			.click(this._onApplyFilterHandler);
         jQuery('.sic_reset_button', $filter)
 			.click(this._onClearFilterHandler);
         if (jQuery('.sic_templateSelector select', $filter))
@@ -83,7 +83,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
         var $grid = jQuery("#" + this._gridElementId);
         var $filter = jQuery('#' + this._filterElementId);
 
-        $grid.unbind("dataBinding")
+        $grid.unbind("dataBinding");
         this._onDataBindingHandler = null;
 
         jQuery('.sic_search_button', $filter).unbind();
@@ -96,4 +96,4 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
         $filter = null;
         $q.collectGarbageInIE();
     }
-}
+};

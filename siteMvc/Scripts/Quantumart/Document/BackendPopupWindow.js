@@ -517,7 +517,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     var $content = $popupWindow.find("DIV.t-window-content:first");
     var $breadCrumbsWrapper = null;
     if (this._breadCrumbsWrapperElement) {
-      $breadCrumbsWrapper = jQuery(this._breadCrumbsWrapperElement)
+      $breadCrumbsWrapper = jQuery(this._breadCrumbsWrapperElement);
     }
 
     var $toolbarWrapper = jQuery(this._toolbarWrapperElement);

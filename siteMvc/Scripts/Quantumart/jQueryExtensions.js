@@ -187,7 +187,7 @@
 				return this.each(function() {
 					zmax += def.inc;
 					$(this).css("z-index", zmax);
-				})
+				});
 			}
 		}
 	);
@@ -205,7 +205,7 @@
 				Math.max(Math.min(parseInt((fx.pos * (fx.end[1] - fx.start[1])) + fx.start[1]), 255), 0),
 				Math.max(Math.min(parseInt((fx.pos * (fx.end[2] - fx.start[2])) + fx.start[2]), 255), 0)
 			].join(","), ")"].join("");
-		}
+		};
 	});
 
 	// Добавляем в jQuery возможность проверки поддержки CSS-свойства border-radius (взято из библиотеки Modernizr 2.0)

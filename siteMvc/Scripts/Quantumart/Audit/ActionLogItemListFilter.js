@@ -24,7 +24,7 @@ Quantumart.QP8.ActionLogItemListFilter.prototype = {
 
 		html
 			.cat('</select>')
-		.cat('</div>')
+		.cat('</div>');
 
 		this.$container.append(html.string());
 

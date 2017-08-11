@@ -93,7 +93,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
                         that._userName = data.userName;
                     }
                     else {
-                        serverContent = that._getServerContent(data)
+                        serverContent = that._getServerContent(data);
                     }
 
                     if (that._isAuthenticated) {
@@ -115,7 +115,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
                     }
                 },
                 function (jqXHR, textStatus, errorThrown) {
-                    that._updateWindow(errorThrown)
+                    that._updateWindow(errorThrown);
                 }
             );
         };

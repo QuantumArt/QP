@@ -263,7 +263,7 @@ Quantumart.QP8.BackendPager.prototype = {
 		this._statusTextElement = null;
 
 		this._onPageClickHandler = null;
-		this._onInHoverHandler = null
+		this._onInHoverHandler = null;
 		this._onOutHoverHandler = null;
 	} // dispose
 };

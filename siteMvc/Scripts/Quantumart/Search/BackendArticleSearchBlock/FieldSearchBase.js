@@ -70,8 +70,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
 
   _getIds: function (text) {
     var ids = text.replace(/\r?\n|\r|;/g, ",").split(",");
-    ids = ids.map(function (e) { return parseInt(e) });
-    ids = $.grep(ids, function (e) { return (e) });
+    ids = ids.map(function (e) { return parseInt(e); });
+    ids = $.grep(ids, function (e) { return (e); });
     ids = _.uniq(ids);
     return ids;
   }
@@ -79,7 +79,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.registerClass("Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase", null, Sys.IDisposable);
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState = function (searchType, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, data) {
-  this.searchType = searchType
+  this.searchType = searchType;
   this.fieldID = fieldID;
   this.contentID = contentID;
   this.fieldColumn = fieldColumn;
@@ -87,7 +87,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState = function (searchType
   this.fieldGroup = fieldGroup;
   this.referenceFieldID = referenceFieldID;
   this.data = data;
-}
+};
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState.prototype = {
   searchType: null,

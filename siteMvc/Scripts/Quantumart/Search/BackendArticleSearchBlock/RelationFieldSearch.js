@@ -174,7 +174,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
           self._replaceWithSelectedEntities();
         });
       }
-    }
+    };
   },
 
   _getEntityDataList: function() {
@@ -203,7 +203,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   _onLoad: function () {
-    $c.initAllEntityDataLists(this._containerElement)
+    $c.initAllEntityDataLists(this._containerElement);
     this._entityDataListElement = $c.getAllEntityDataLists(this._containerElement).get(0);
     this._toggleLinkVisibility(this.getSelectedIds());
   },
@@ -225,7 +225,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   dispose: function () {
-    $c.destroyAllEntityDataLists(this._containerElement)
+    $c.destroyAllEntityDataLists(this._containerElement);
     if (this._isNullCheckBoxElement) {
       $(this._isNullCheckBoxElement).off('change', this._onIsNullCheckBoxChangeHandler);
     }

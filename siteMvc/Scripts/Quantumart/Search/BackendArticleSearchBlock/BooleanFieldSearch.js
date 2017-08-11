@@ -101,10 +101,10 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 			}
 			if (!$q.isNull(state.value)) {
 				if (state.value === true) {
-					jQuery("input:radio[value=true]", this._containerElement).prop("checked", true)
+					jQuery("input:radio[value=true]", this._containerElement).prop("checked", true);
 				}
 				else if (state.value === false) {
-					jQuery("input:radio[value!=true]", this._containerElement).prop("checked", true)
+					jQuery("input:radio[value!=true]", this._containerElement).prop("checked", true);
 				}
 			}
 		}

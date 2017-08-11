@@ -44,7 +44,7 @@ Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, ac
 		folderId: 0,
 		fileTypeId: "",
 		fileNameFilter: ""
-	}
+	};
 	if (this._viewMode == FILE_LIST_MODE_NAME_LIST)
 		this._currentDataQueryOptions.pageSize = FILE_LIST_NAME_PAGE_SIZE;
 	else if (this._viewMode == FILE_LIST_MODE_PREVIEW_LIST)
@@ -297,7 +297,7 @@ Quantumart.QP8.BackendFileList.registerClass("Quantumart.QP8.BackendFileList", Q
 //#endregion
 
 //#region interface IBackendFileListView
-Quantumart.QP8.IBackendFileListView = function () { }
+Quantumart.QP8.IBackendFileListView = function () { };
 Quantumart.QP8.IBackendFileListView.prototype = {
 	initialize: function () { }, // инициализация
 	redraw: function (data, options) { }, // перерисовать

@@ -124,7 +124,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
 
       this._toolbarElement = $toolbar.get(0);
-      this._toolbarItemListElement = $toolbarItemList.get(0)
+      this._toolbarItemListElement = $toolbarItemList.get(0);
 
       if (!isToolbarExist) {
         this._attachToolbarEventHandlers();
@@ -268,7 +268,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       function (index, elem) {
         var $item = $(elem);
         var itemsAffected = +$item.data('items_affected') || 0;
-        var state = (selectedEntitiesCount == itemsAffected || (itemsAffected == MAX_ITEMS_AFFECTED_NUMBER && selectedEntitiesCount >= 1))
+        var state = (selectedEntitiesCount == itemsAffected || (itemsAffected == MAX_ITEMS_AFFECTED_NUMBER && selectedEntitiesCount >= 1));
         self.setEnableState($item, state);
       }
     );
@@ -504,15 +504,15 @@ Quantumart.QP8.BackendToolbar.prototype = {
         .cat('</span>')
         .cat('</a>\n')
         ;
-      html.cat('<div class="list">\n')
-      html.cat('<ul>\n')
+      html.cat('<div class="list">\n');
+      html.cat('<ul>\n');
       jQuery.each(subItems,
         function (index, subItem) {
           self._getToolbarDropDownItemHtml(html, subItem, selectedSubItemValue);
         }
       );
-      html.cat('</ul>\n')
-      html.cat('</div>\n')
+      html.cat('</ul>\n');
+      html.cat('</div>\n');
       html.cat('</li>\n');
     }
   },

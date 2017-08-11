@@ -78,7 +78,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	            .cat('<input class="button closeFilter" type="button" value="' + $l.SearchBlock.closeWndButtonText + '">')
 		    	.cat('</div>')
 				.cat('</form>')
-				.string()
+				.string();
 
 		this._popupWindowComponent = $.telerik.window.create({
 			title: $l.SearchBlock.filterSettings + this._options.title,
@@ -101,7 +101,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	},
 
 	_onCloseTileClick: function () {
-		this.notify(EVENT_TYPE_FILTER_TILE_CLOSE, { "type": this._options.type })
+		this.notify(EVENT_TYPE_FILTER_TILE_CLOSE, { "type": this._options.type });
 	},
 
 	_onOpenFilterWndClick: function () {
@@ -136,7 +136,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 		Quantumart.QP8.ActionLogFilterTile.callBaseMethod(this, "dispose");
 
 		if(this.$closeButton){
-			this.$closeButton.off("click")
+			this.$closeButton.off("click");
 			this.$closeButton = null;
 		}
 

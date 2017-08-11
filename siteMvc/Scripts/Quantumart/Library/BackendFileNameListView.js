@@ -144,7 +144,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 			.find('.fileItem.' + this.SELECTED_CLASS)
 			.each(function (index, item) {
 				var name = jQuery(item).data('file_name');
-				Array.add(selectedEntities, { "Id": name, "Name": name })
+				Array.add(selectedEntities, { "Id": name, "Name": name });
 			});
 
 		$fileListContentElement = null;

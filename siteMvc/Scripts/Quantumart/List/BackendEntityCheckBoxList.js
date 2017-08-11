@@ -89,7 +89,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     var $list = jQuery(this._listElement);
     $list.addClass(CHANGED_FIELD_CLASS_NAME);
     var operation = (refreshOnly) ? "addClass" : "removeClass";
-    $list[operation](REFRESHED_FIELD_CLASS_NAME)
+    $list[operation](REFRESHED_FIELD_CLASS_NAME);
     var value = this.getSelectedEntityIDs();
     $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $list.data("list_item_name"), "value": value, contentFieldName: $list.closest("dl").data("field_name")  });
   },
@@ -118,8 +118,8 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
     //#region Определяем, изменились ли значения
     var newSelectedIDs = jQuery.map(
-      jQuery.grep(dataItems, function (di) { return di.Selected === true }),
-      function (di) { return $q.toInt(di.Value) }
+      jQuery.grep(dataItems, function (di) { return di.Selected === true; }),
+      function (di) { return $q.toInt(di.Value); }
     );
     var currentSelectedIDs = this.getSelectedEntityIDs();
     var selectedItemsIsChanged = _.union(

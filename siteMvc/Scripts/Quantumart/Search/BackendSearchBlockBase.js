@@ -178,7 +178,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
       var $concreteSearchBlock = $('<div />');
       $searchForm.append($concreteSearchBlock);
 
-      var $buttonsWrapper = $('<div />')
+      var $buttonsWrapper = $('<div />');
       if (this._hideButtons) {
         $buttonsWrapper.hide();
       }

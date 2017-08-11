@@ -183,7 +183,7 @@
 
     function Beautifier(js_source_text, options) {
         "use strict";
-        var output
+        var output;
         var tokens = [], token_pos;
         var Tokenizer;
         var current_token;
@@ -293,7 +293,7 @@
             opt.indent_size = 1;
         }
 
-        opt.eol = opt.eol.replace(/\\r/, '\r').replace(/\\n/, '\n')
+        opt.eol = opt.eol.replace(/\\r/, '\r').replace(/\\n/, '\n');
 
         //----------------------------------
         indent_string = '';
@@ -420,7 +420,7 @@
 
             // Never wrap the first token on a line
             if (output.just_added_newline()) {
-                return
+                return;
             }
 
             if ((opt.preserve_newlines && current_token.wanted_newline) || force_linewrap) {
@@ -461,7 +461,7 @@
 
         function print_token(printable_token) {
             if (output.raw) {
-                output.add_raw_token(current_token)
+                output.add_raw_token(current_token);
                 return;
             }
 
@@ -724,8 +724,8 @@
 
         function handle_start_block() {
             // Check if this is should be treated as a ObjectLiteral
-            var next_token = get_token(1)
-            var second_token = get_token(2)
+            var next_token = get_token(1);
+            var second_token = get_token(2);
             if (second_token && (
                     (second_token.text === ':' && in_array(next_token.type, ['TK_STRING', 'TK_WORD', 'TK_RESERVED']))
                     || (in_array(next_token.text, ['get', 'set']) && in_array(second_token.type, ['TK_WORD', 'TK_RESERVED']))
@@ -1190,7 +1190,7 @@
 
         function handle_block_comment() {
             if (output.raw) {
-                output.add_raw_token(current_token)
+                output.add_raw_token(current_token);
                 if (current_token.directives && current_token.directives['preserve'] === 'end') {
                     // If we're testing the raw output behavior, do not allow a directive to turn it off.
                     if (!opt.test_output_raw) {
@@ -1310,17 +1310,17 @@
         var _empty = true;
 
         this.set_indent = function(level) {
-            _character_count = parent.baseIndentLength + level * parent.indent_length
+            _character_count = parent.baseIndentLength + level * parent.indent_length;
             _indent_count = level;
-        }
+        };
 
         this.get_character_count = function() {
             return _character_count;
-        }
+        };
 
         this.is_empty = function() {
             return _empty;
-        }
+        };
 
         this.last = function() {
             if (!this._empty) {
@@ -1328,13 +1328,13 @@
             } else {
               return null;
             }
-        }
+        };
 
         this.push = function(input) {
             _items.push(input);
             _character_count += input.length;
             _empty = false;
-        }
+        };
 
         this.pop = function() {
             var item = null;
@@ -1344,14 +1344,14 @@
                 _empty = _items.length === 0;
             }
             return item;
-        }
+        };
 
         this.remove_indent = function() {
             if (_indent_count > 0) {
                 _indent_count -= 1;
-                _character_count -= parent.indent_length
+                _character_count -= parent.indent_length;
             }
-        }
+        };
 
         this.trim = function() {
             while (this.last() === ' ') {
@@ -1359,7 +1359,7 @@
                 _character_count -= 1;
             }
             _empty = _items.length === 0;
-        }
+        };
 
         this.toString = function() {
             var result = '';
@@ -1367,10 +1367,10 @@
                 if (_indent_count >= 0) {
                     result = parent.indent_cache[_indent_count];
                 }
-                result += _items.join('')
+                result += _items.join('');
             }
             return result;
-        }
+        };
     }
 
     function Output(indent_string, baseIndentString) {
@@ -1391,7 +1391,7 @@
             this.previous_line = this.current_line;
             this.current_line = new OutputLine(this);
             lines.push(this.current_line);
-        }
+        };
 
         // initialize
         this.add_outputline();
@@ -1399,7 +1399,7 @@
 
         this.get_line_number = function() {
             return lines.length;
-        }
+        };
 
         // Using object instead of string to allow for later expansion of info about each line
         this.add_new_line = function(force_newline) {
@@ -1415,12 +1415,12 @@
             }
 
             return false;
-        }
+        };
 
         this.get_code = function() {
             var sweet_code = lines.join('\n').replace(/[\r\n\t ]+$/, '');
             return sweet_code;
-        }
+        };
 
         this.set_indent = function(level) {
             // Never indent your first output indent at the start of the file
@@ -1434,7 +1434,7 @@
             }
             this.current_line.set_indent(0);
             return false;
-        }
+        };
 
         this.add_raw_token = function(token) {
             for (var x = 0; x < token.newlines; x++) {
@@ -1443,19 +1443,19 @@
             this.current_line.push(token.whitespace_before);
             this.current_line.push(token.text);
             this.space_before_token = false;
-        }
+        };
 
         this.add_token = function(printable_token) {
             this.add_space_before_token();
             this.current_line.push(printable_token);
-        }
+        };
 
         this.add_space_before_token = function() {
             if (this.space_before_token && !this.just_added_newline()) {
                 this.current_line.push(' ');
             }
             this.space_before_token = false;
-        }
+        };
 
         this.remove_redundant_indentation = function (frame) {
             // This implementation is effective but has some issues:
@@ -1478,7 +1478,7 @@
                 lines[index].remove_indent();
                 index++;
             }
-        }
+        };
 
         this.trim = function(eat_newlines) {
             eat_newlines = (eat_newlines === undefined) ? false : eat_newlines;
@@ -1488,16 +1488,16 @@
             while (eat_newlines && lines.length > 1 &&
                 this.current_line.is_empty()) {
                 lines.pop();
-                this.current_line = lines[lines.length - 1]
+                this.current_line = lines[lines.length - 1];
                 this.current_line.trim();
             }
 
             this.previous_line = lines.length > 1 ? lines[lines.length - 2] : null;
-        }
+        };
 
         this.just_added_newline = function() {
             return this.current_line.is_empty();
-        }
+        };
 
         this.just_added_blankline = function() {
             if (this.just_added_newline()) {
@@ -1509,7 +1509,7 @@
                 return line.is_empty();
             }
             return false;
-        }
+        };
     }
 
 
@@ -1522,7 +1522,7 @@
         this.whitespace_before = whitespace_before || '';
         this.parent = null;
         this.directives = null;
-    }
+    };
 
     function tokenizer(input, opts, indent_string) {
 
@@ -1547,16 +1547,16 @@
         var directive_pattern = / (\w+)[:](\w+)/g;
         var directives_end_ignore_pattern = /([\s\S]*?)((?:\/\*\sbeautify\signore:end\s\*\/)|$)/g;
 
-        var template_pattern = /((<\?php|<\?=)[\s\S]*?\?>)|(<%[\s\S]*?%>)/g
+        var template_pattern = /((<\?php|<\?=)[\s\S]*?\?>)|(<%[\s\S]*?%>)/g;
 
         var n_newlines, whitespace_before_token, in_html_comment, tokens, parser_pos;
         var input_length;
 
         this.tokenize = function() {
             // cache the source's length.
-            input_length = input.length
+            input_length = input.length;
             parser_pos = 0;
-            in_html_comment = false
+            in_html_comment = false;
             tokens = [];
 
             var next, last;
@@ -1600,7 +1600,7 @@
             }
 
             return tokens;
-        }
+        };
 
         function get_directives (text) {
             if (!text.match(directives_block_pattern)) {
@@ -1676,11 +1676,11 @@
                     allow_e = false;
                     c += input.charAt(parser_pos);
                     parser_pos += 1;
-                    local_digit = digit_hex
+                    local_digit = digit_hex;
                 } else {
                     // we know this first loop will run.  It keeps the logic simpler.
                     c = '';
-                    parser_pos -= 1
+                    parser_pos -= 1;
                 }
 
                 // Add the digits
@@ -1766,7 +1766,7 @@
                     var directives = get_directives(comment);
                     if (directives && directives['ignore'] === 'start') {
                         directives_end_ignore_pattern.lastIndex = parser_pos;
-                        comment_match = directives_end_ignore_pattern.exec(input)
+                        comment_match = directives_end_ignore_pattern.exec(input);
                         comment += comment_match[0];
                         parser_pos += comment_match[0].length;
                     }

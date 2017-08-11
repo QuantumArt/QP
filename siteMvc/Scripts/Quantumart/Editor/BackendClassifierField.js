@@ -93,7 +93,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   makeReadonly: function() {
     var selectedVal = this._$contentList.find('OPTION:selected').val();
     if (!$q.isNullOrEmpty(selectedVal)) {
-      var $hidden = this._$contentList.siblings('input[name="' + this._$contentList.prop("name") + '"]:hidden')
+      var $hidden = this._$contentList.siblings('input[name="' + this._$contentList.prop("name") + '"]:hidden');
       if ($hidden.length) {
         $hidden.val(selectedVal);
       } else {
@@ -168,7 +168,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
 
       var script = window.document.createElement('script');
       script.id = 'aggregated_script_' + aggregatedContentId;
-      script.src = 'data:text/javascript,' + window.encodeURIComponent(articleScriptData)
+      script.src = 'data:text/javascript,' + window.encodeURIComponent(articleScriptData);
       window.document.body.appendChild(script);
     }
   },
@@ -217,11 +217,11 @@ Quantumart.QP8.BackendClassifierField.prototype = {
 
     var self = this;
     if (this._customButtonsSettings) {
-      $.each(this._customButtonsSettings, function (index, item) { self._parentEditor.addCustomButton(item, $form) });
+      $.each(this._customButtonsSettings, function (index, item) { self._parentEditor.addCustomButton(item, $form); });
     }
 
     if (this._customLinkButtonsSettings) {
-      $.each(this._customLinkButtonsSettings, function (index, item) { self._parentEditor.addCustomLinkButton(item, $form) });
+      $.each(this._customLinkButtonsSettings, function (index, item) { self._parentEditor.addCustomLinkButton(item, $form); });
     }
 
     $form = null;

@@ -84,7 +84,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		var $stateField = $(this._stateFieldElement);
 
 		if (!$q.isNullOrEmpty($stateField)) {
-			var itemValue = +$stateField.val() || 0
+			var itemValue = +$stateField.val() || 0;
 			if (itemValue != 0) {
 				selectedListItemCount = 1;
 			}
@@ -130,7 +130,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		$stateField.val(value);
 
 		if (oldValue != value) {
-		    $stateField.addClass(CHANGED_FIELD_CLASS_NAME)
+		    $stateField.addClass(CHANGED_FIELD_CLASS_NAME);
 		    var operation = (refreshOnly) ? "addClass" : "removeClass";
 		    $stateField[operation](REFRESHED_FIELD_CLASS_NAME);
 		    $stateField.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $stateField.attr("name"), "value": value, contentFieldName: $stateField.data('content_field_name') });

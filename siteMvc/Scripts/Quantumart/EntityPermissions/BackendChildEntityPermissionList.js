@@ -35,4 +35,4 @@ Quantumart.QP8.BackendChildEntityPermissionList = function (searchBlockElementId
 		dispose: dispose,
 		modifyEventArgsContext: modifyEventArgsContext
 	};
-}
+};

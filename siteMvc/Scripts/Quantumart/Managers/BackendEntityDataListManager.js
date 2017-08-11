@@ -90,7 +90,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 	},
 
 	refreshList: function (listElementId, testEntityId) {
-		var list = this.getList(listElementId)
+		var list = this.getList(listElementId);
 		if (list) {
 			list.refreshList(testEntityId);
 		}

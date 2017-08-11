@@ -200,7 +200,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         if (target.parent('div').hasClass('groupCheckbox')) {
             target.parent('.groupCheckbox').siblings('.workflow_control_selector').find('.checkbox').each(jQuery.proxy( function (index, item) {
                 this.manageItems(jQuery(item));
-            }, this))
+            }, this));
         }
         else {
             if (target.attr('checked') == 'checked')
@@ -230,7 +230,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
             this._items.push(item);
             this._items.sort(function (left, right) {
-                return left.Weight == right.Weight ? 0 : (left.Weight > right.Weight ? 1 : -1)
+                return left.Weight == right.Weight ? 0 : (left.Weight > right.Weight ? 1 : -1);
             });
             this._setAsChanged();
         }

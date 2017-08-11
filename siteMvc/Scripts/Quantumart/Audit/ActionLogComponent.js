@@ -8,7 +8,7 @@ Quantumart.QP8.ActionLogComponent = function (filterElementId, gridElementId, ac
   this._actionTypes = actionTypes;
   this._entityTypes = entityTypes;
   this._actions = actions;
-}
+};
 
 Quantumart.QP8.ActionLogComponent.prototype = {
   _filterElementId: '',
@@ -27,7 +27,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     $grid.unbind("dataBinding", gridComponent.onDataBinding)
        .bind("dataBinding", this._onDataBindingHandler);
 
-    jQuery('.alSearchButton', $filter).click(this._onApplyFilterHandler)
+    jQuery('.alSearchButton', $filter).click(this._onApplyFilterHandler);
     jQuery('.alResetButton', $filter).click(this._onClearFilterHandler);
 
 
@@ -200,7 +200,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     var $grid = jQuery("#" + this._gridElementId);
     var $filter = jQuery('#' + this._filterElementId);
 
-    $grid.unbind("dataBinding")
+    $grid.unbind("dataBinding");
     this._onDataBindingHandler = null;
 
     jQuery('.alSearchButton', $filter).unbind();
@@ -217,5 +217,5 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     $filter = null;
     $q.collectGarbageInIE();
   }
-}
+};
 Quantumart.QP8.ActionLogComponent.registerClass("Quantumart.QP8.ActionLogComponent");

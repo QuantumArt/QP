@@ -8,8 +8,8 @@ Quantumart.QP8.FieldPropertiesMediator = function (tabId)
 	function onIntegerClick()
 	{
 		var isInteger = $root.find("input[name='Data.IsInteger']").prop("checked");
-		$root.find("input[name='Data.IsLong']").closest("dl").toggle(isInteger)
-		$root.find("input[name='Data.IsDecimal']").closest("dl").toggle(!isInteger)
+		$root.find("input[name='Data.IsLong']").closest("dl").toggle(isInteger);
+		$root.find("input[name='Data.IsDecimal']").closest("dl").toggle(!isInteger);
 	}
 
 	function dispose()
@@ -21,7 +21,7 @@ Quantumart.QP8.FieldPropertiesMediator = function (tabId)
 		dispose: dispose
 	};
 
-}
+};
 
 Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElementId, displayFieldSelectElementId, currentFieldIdHiddenElementId, listOrderSelectElementId) {
     var contentPicker = jQuery("#" + relateToSelectElementId).data("entity_data_list_component"),
@@ -207,7 +207,7 @@ Quantumart.QP8.FieldTypeFileDefaultMediator = function(fieldTypeSelectElementId,
     return {
         dispose: dispose
     };
-}
+};
 
 // Показывает/скрывает панели при выборе контента на который ссылается поле
 Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, panelsSelector, fieldContentID) {
@@ -254,4 +254,4 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
 		refresh: onRelatedToChanged,
 		dispose: dispose
 	};
-}
+};

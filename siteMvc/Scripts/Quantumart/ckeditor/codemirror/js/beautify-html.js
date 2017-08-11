@@ -138,7 +138,7 @@
             indent_size = 1;
         }
 
-        eol = eol.replace(/\\r/, '\r').replace(/\\n/, '\n')
+        eol = eol.replace(/\\r/, '\r').replace(/\\n/, '\n');
 
         function Parser() {
 
@@ -690,7 +690,7 @@
                 this.input = js_source || ''; //gets the input for the Parser
 
                 // HACK: newline parsing inconsistent. This brute force normalizes the input.
-                this.input = this.input.replace(/\r\n|[\r\u2028\u2029]/g, '\n')
+                this.input = this.input.replace(/\r\n|[\r\u2028\u2029]/g, '\n');
 
                 this.output = [];
                 this.indent_character = indent_character;

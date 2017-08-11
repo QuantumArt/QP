@@ -49,7 +49,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 	},
 
 	removeEditorGroup: function (editorGroupCode) {
-		$q.removeProperty(this._editorGroups, editorGroupCode)
+		$q.removeProperty(this._editorGroups, editorGroupCode);
 	},
 
 	getEditor: function (editorCode) {
@@ -106,7 +106,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 	},
 
 	refreshEditor: function (documentWrapperElementId, options) {
-		var editor = this.getEditor(documentWrapperElementId)
+		var editor = this.getEditor(documentWrapperElementId);
 		if (editor) {
 			editor.refreshEditor(options);
 		}
@@ -157,7 +157,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 		}
 		else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
 			var confirmMessageText = String.format($l.EntityEditor.autoRefreshConfirmMessageAfterArticleRestoring, entityId);
-			this.refreshEditorGroup(ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { "confirmMessageText": confirmMessageText })
+			this.refreshEditorGroup(ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { "confirmMessageText": confirmMessageText });
 		}
 		else if (actionCode == ACTION_CODE_ENABLE_ARTICLES_PERMISSIONS && entityTypeCode == ENTITY_TYPE_CODE_CONTENT) {
 			this.refreshEditorGroup(entityTypeCode, entityId);

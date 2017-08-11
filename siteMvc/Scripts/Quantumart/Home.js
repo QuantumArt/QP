@@ -24,17 +24,17 @@
 		if ($locked.text().trim() != "0")
 		{
 			$locked.append(listStr);
-			$locked.find("a").on("click", function () { executeAction('list_locked_article', 'db', 1, customerCode, 0) })
+			$locked.find("a").on("click", function () { executeAction('list_locked_article', 'db', 1, customerCode, 0); });
 		}
 
 		if ($approval.text().trim() != "0")
 		{
 			$approval.append(listStr);
-			$approval.find("a").on("click", function () { executeAction('list_articles_for_approval', 'db', 1, customerCode, 0) })
+			$approval.find("a").on("click", function () { executeAction('list_articles_for_approval', 'db', 1, customerCode, 0); });
 		}
 
 		$loggedAs.append(profileStr);
-		$loggedAs.find("a").on("click", function () { executeAction('edit_profile', 'db', 1, customerCode, 0) })
+		$loggedAs.find("a").on("click", function () { executeAction('edit_profile', 'db', 1, customerCode, 0); });
 
 	}
 

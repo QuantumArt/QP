@@ -6,8 +6,8 @@
 // === Типы событий разделителя ===
 var EVENT_TYPE_SPLITTER_INITIALIZED = "OnSplitterInitialized";
 var EVENT_TYPE_SPLITTER_RESIZED = "OnSplitterResized";
-var EVENT_TYPE_SPLITTER_DRAG_START = "OnSplitterDragStart"
-var EVENT_TYPE_SPLITTER_DROP = "OnSplitterDrop"
+var EVENT_TYPE_SPLITTER_DRAG_START = "OnSplitterDragStart";
+var EVENT_TYPE_SPLITTER_DROP = "OnSplitterDrop";
 
 //#endregion
 

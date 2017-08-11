@@ -62,7 +62,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 			return_id: this._parentElementId,
 			extensions: this._extensions,
 			url: uploadUrl + "RadUploadHandler.ashx"
-		}
+		};
 
 		var objId = this._parentElementId + "_object";
 

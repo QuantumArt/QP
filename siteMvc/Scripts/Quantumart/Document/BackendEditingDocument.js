@@ -83,7 +83,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
     var $documentWrapper = jQuery('#' + documentWrapperElementId);
     if ($q.isNullOrEmpty($documentWrapper)) {
-      $documentWrapper = jQuery('<div />', { 'id': documentWrapperElementId, 'class': 'documentWrapper' })
+      $documentWrapper = jQuery('<div />', { 'id': documentWrapperElementId, 'class': 'documentWrapper' });
 
       var $documentsContainer = jQuery(this._editingArea.get_documentsContainerElement());
       $documentsContainer.append($documentWrapper);
@@ -258,7 +258,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   destroySearchBlock: function () {
     var searchBlockComponent = this._searchBlockComponent;
     if (searchBlockComponent) {
-      searchBlockComponent.hideSearchBlock()
+      searchBlockComponent.hideSearchBlock();
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
@@ -272,7 +272,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   destroyContextBlock: function () {
       var contextBlockComponent = this._contextBlockComponent;
       if (contextBlockComponent) {
-          contextBlockComponent.hideSearchBlock()
+          contextBlockComponent.hideSearchBlock();
           contextBlockComponent.detachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
 
           var contextBlockElementId = contextBlockComponent.get_searchBlockElementId();

@@ -11,7 +11,7 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     if (id)
     {
       var code = Quantumart.QP8.BackendEntityType.getEntityTypeById(id).Code;
-      var testCodes = [ENTITY_TYPE_CODE_VIRTUAL_CONTENT, ENTITY_TYPE_CODE_VIRTUAL_ARTICLE, ENTITY_TYPE_CODE_VIRTUAL_FIELD]
+      var testCodes = [ENTITY_TYPE_CODE_VIRTUAL_CONTENT, ENTITY_TYPE_CODE_VIRTUAL_ARTICLE, ENTITY_TYPE_CODE_VIRTUAL_FIELD];
       var filter = (jQuery.inArray(code, testCodes) > -1) ? "c.virtual_type <> 0" : "c.virtual_type = 0";
       var obj = $contents.data("entity_data_list_component");
       if (obj)
@@ -53,7 +53,7 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
 
   var $entityTypesElement = jQuery("#" + entityTypesElementId),
         $actionsElement = jQuery("#" + actionsElementId),
-    $contents = jQuery("#" + contentsElementId + "_list")
+    $contents = jQuery("#" + contentsElementId + "_list");
 
   $entityTypesElement.bind("change keyup", onEntityTypeChanged);
   setFilter();

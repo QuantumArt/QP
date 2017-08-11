@@ -135,7 +135,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
     if (selectedItemsIsChanged) {
       var oldCount = this.getSelectedEntities().length;
-      var $list = $(this._listElement)
+      var $list = $(this._listElement);
       var $ul = $list.find("UL");
 
       if (newSelectedIDs.length < this._countLimit) {
@@ -200,7 +200,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _changeAllListItemsSelection: function (isSelect) {
-    this.getListItems().find("INPUT:checkbox").prop("checked", isSelect)
+    this.getListItems().find("INPUT:checkbox").prop("checked", isSelect);
     this._setAsChanged();
   },
 

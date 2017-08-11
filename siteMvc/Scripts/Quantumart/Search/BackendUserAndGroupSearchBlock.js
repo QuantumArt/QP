@@ -47,4 +47,4 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, 
 		getSearchData: getSearchData,
 		dispose: dispose
 	};
-}
+};

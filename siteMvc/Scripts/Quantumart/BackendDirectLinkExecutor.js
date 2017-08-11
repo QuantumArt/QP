@@ -89,12 +89,12 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
       this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, this._uid);
       var that = this;
       setTimeout(function () {
-        var testResponse = !!window.localStorage.getItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE)
+        var testResponse = !!window.localStorage.getItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
         window.localStorage.removeItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
         dfr.resolveWith(that, [testResponse]);
       }, 500);
     } else {
-      dfr.resolveWith(this, [false])
+      dfr.resolveWith(this, [false]);
     }
 
     return dfr.promise();

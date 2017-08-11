@@ -141,7 +141,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var $tabStrip = $('#' + this._tabStripElementId);
     var $scrollable = $('<div />', { 'class': 'scrollable' });
     var $tabList = $('<ul />', { 'class': 'tabList' });
-    var $partialRemovedTabsContainer = $('<div />', { 'id': 'partialRemovedTabs', 'css': { 'display': 'none'} })
+    var $partialRemovedTabsContainer = $('<div />', { 'id': 'partialRemovedTabs', 'css': { 'display': 'none'} });
 
     $tabStrip.empty();
     $tabStrip.append($scrollable);
@@ -196,7 +196,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var $tabs = this.getAllTabs();
     var tabCount = $tabs.length;
     for (var tabIndex = 0; tabIndex < tabCount; tabIndex++) {
-      allTabsWidth += $tabs.eq(tabIndex).width()
+      allTabsWidth += $tabs.eq(tabIndex).width();
     }
 
     if (allTabsWidth > tabStripWidth) {
@@ -849,7 +849,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     if (this._tabMenuElement == null) {
-      var $menu = $('<div />', { 'class': 'tabMenu' })
+      var $menu = $('<div />', { 'class': 'tabMenu' });
       var $upArrow = $('<div />', { 'class': this.TAB_MENU_UP_ARROW_CLASS_NAME, 'css': { 'display': 'none'} });
       $menu.append($upArrow);
 
@@ -942,7 +942,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var tabCount = $tabs.length;
     var menuItemsHtml = new $.telerik.stringBuilder();
     for (var tabIndex = 0; tabIndex < tabCount; tabIndex++) {
-      var $tab = $tabs.eq(tabIndex)
+      var $tab = $tabs.eq(tabIndex);
       if ($tab) {
         var dataItem = {
           'TabId': this.getTabId($tab),
@@ -1149,7 +1149,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var action = $a.getBackendActionByCode(actionCode);
     var eventArgs = new Quantumart.QP8.BackendTabEventArgs();
     eventArgs.set_entityTypeCode($tab.data('entity_type_code'));
-    eventArgs.set_entityId($tab.data('entity_id'))
+    eventArgs.set_entityId($tab.data('entity_id'));
     eventArgs.set_entityName($tab.data('entity_name'));
     eventArgs.set_parentEntityId($tab.data('parent_entity_id'));
     eventArgs.set_actionCode(actionCode);

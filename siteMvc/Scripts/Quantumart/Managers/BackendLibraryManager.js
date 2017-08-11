@@ -107,7 +107,7 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 	},
 
 	refreshLibrary: function (libraryElementId, options) {
-		var library = this.getLibrary(libraryElementId)
+		var library = this.getLibrary(libraryElementId);
 		if (library) {
 			library.refreshCurrentFileList(options);
 		}
@@ -116,7 +116,7 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 	},
 
 	resetLibrary: function (libraryElementId, options) {
-		var library = this.getLibrary(libraryElementId)
+		var library = this.getLibrary(libraryElementId);
 		if (library) {
 			library.resetCurrentFileList(options);
 		}

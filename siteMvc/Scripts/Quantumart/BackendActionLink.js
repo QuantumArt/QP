@@ -131,7 +131,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
   _attachActionLinkEventHandlers: function () {
     var $link = jQuery(this._actionLinkElement);
     $link.bind("click", this._onActionExecutingHandler);
-    $link.bind("mouseup", this._onActionExecutingHandler)
+    $link.bind("mouseup", this._onActionExecutingHandler);
 
     $link = null;
   },
@@ -146,14 +146,14 @@ Quantumart.QP8.BackendActionLink.prototype = {
 
   markActionLinkAsBusy: function () {
     var $link = jQuery(this._actionLinkElement);
-    $link.find("A:first").addClass(this.ACTION_LINK_BUSY_CLASS_NAME)
+    $link.find("A:first").addClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
   },
 
   unmarkActionLinkAsBusy: function () {
     var $link = jQuery(this._actionLinkElement);
-    $link.find("A:first").removeClass(this.ACTION_LINK_BUSY_CLASS_NAME)
+    $link.find("A:first").removeClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
   },
