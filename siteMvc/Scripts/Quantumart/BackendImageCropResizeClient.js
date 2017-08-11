@@ -290,7 +290,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         // #endregion
 
         _setSize = function ($img) {
-            if (_$aside && $img ) {
+            if (_$aside && $img) {
             	var padding = 10;
             	var width = _$aside.width() + $img.outerWidth() + padding * 3;
             	var height = Math.max(_$aside.height(), $img.outerHeight() + padding) + padding * 2;

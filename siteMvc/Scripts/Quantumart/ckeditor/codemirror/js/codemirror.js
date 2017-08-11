@@ -1503,7 +1503,7 @@ function highlightLine(cm, line, state, forceToEnd) {
     lineClasses, forceToEnd);
 
   // Run overlays, adjust style array.
-  var loop = function ( o ) {
+  var loop = function (o) {
     var overlay = cm.state.overlays[o], i = 1, at = 0;
     runMode(cm, line.text, overlay.mode, true, function (end, style) {
       var start = i;
@@ -1528,7 +1528,7 @@ function highlightLine(cm, line, state, forceToEnd) {
     }, lineClasses);
   };
 
-  for (var o = 0; o < cm.state.overlays.length; ++o) loop( o );
+  for (var o = 0; o < cm.state.overlays.length; ++o) loop(o);
 
   return {styles: st, classes: lineClasses.bgClass || lineClasses.textClass ? lineClasses : null};
 }
@@ -2075,12 +2075,12 @@ function signalLater(emitter, type /* , values...*/) {
     list = orphanDelayedCallbacks = [];
     setTimeout(fireOrphanDelayed, 0);
   }
-  var loop = function ( i ) {
+  var loop = function (i) {
     list.push(function () { return arr[i].apply(null, args); });
   };
 
   for (var i = 0; i < arr.length; ++i)
-    loop( i );
+    loop(i);
 }
 
 function fireOrphanDelayed() {
@@ -4984,7 +4984,7 @@ function makeChangeFromHistory(doc, type, allowSelectionOnly) {
 
   var filter = hasHandler(doc, "beforeChange") || doc.cm && hasHandler(doc.cm, "beforeChange");
 
-  var loop = function ( i ) {
+  var loop = function (i) {
     var change = event.changes[i];
     change.origin = type;
     if (filter && !filterChange(doc, change, false)) {
@@ -5010,9 +5010,9 @@ function makeChangeFromHistory(doc, type, allowSelectionOnly) {
   };
 
   for (var i$1 = event.changes.length - 1; i$1 >= 0; --i$1) {
-    var returned = loop( i$1 );
+    var returned = loop(i$1);
 
-    if ( returned ) return returned.v;
+    if (returned) return returned.v;
   }
 }
 
@@ -5696,7 +5696,7 @@ function copySharedMarkers(doc, markers) {
 }
 
 function detachSharedMarkers(markers) {
-  var loop = function ( i ) {
+  var loop = function (i) {
     var marker = markers[i], linked = [marker.primary.doc];
     linkedDocs(marker.primary.doc, function (d) { return linked.push(d); });
     for (var j = 0; j < marker.markers.length; j++) {
@@ -5708,7 +5708,7 @@ function detachSharedMarkers(markers) {
     }
   };
 
-  for (var i = 0; i < markers.length; i++) loop( i );
+  for (var i = 0; i < markers.length; i++) loop(i);
 }
 
 var nextDocId = 0;

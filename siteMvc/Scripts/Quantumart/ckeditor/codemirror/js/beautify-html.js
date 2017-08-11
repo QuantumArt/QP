@@ -670,7 +670,7 @@
 
                 // at this point we have an  tag; is its first child something we want to remain
                 // unformatted?
-                var next_tag = this.get_tag(true /* peek. */ );
+                var next_tag = this.get_tag(true /* peek. */);
 
                 // test next_tag to see if it is just html tag (no external content)
                 var tag = (next_tag || "").match(/^\s*<\s*\/?([a-z]*)\s*[^>]*>\s*$/);

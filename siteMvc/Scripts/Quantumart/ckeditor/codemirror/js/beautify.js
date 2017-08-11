@@ -304,7 +304,7 @@
 
         var preindent_index = 0;
         if(js_source_text && js_source_text.length) {
-            while ( (js_source_text.charAt(preindent_index) === ' ' ||
+            while ((js_source_text.charAt(preindent_index) === ' ' ||
                     js_source_text.charAt(preindent_index) === '\t')) {
                 baseIndentString += js_source_text.charAt(preindent_index);
                 preindent_index += 1;
@@ -878,7 +878,7 @@
                 if (in_array(flags.last_text, ['}', ';']) || (output.just_added_newline() && !in_array(flags.last_text, ['[', '{', ':', '=', ',']))) {
                     // make sure there is a nice clean space of at least one blank line
                     // before a new function definition
-                    if ( !output.just_added_blankline() && !current_token.comments_before.length) {
+                    if (!output.just_added_blankline() && !current_token.comments_before.length) {
                         print_newline();
                         print_newline(true);
                     }
@@ -1838,7 +1838,7 @@
                         while (match) {
                             var isEndTag = !!match[1];
                             var tagName = match[2];
-                            var isSingletonTag = ( !!match[match.length - 1]) || (tagName.slice(0, 8) === "![CDATA[");
+                            var isSingletonTag = (!!match[match.length - 1]) || (tagName.slice(0, 8) === "![CDATA[");
                             if (tagName === rootTag && !isSingletonTag) {
                                 if (isEndTag) {
                                     --depth;

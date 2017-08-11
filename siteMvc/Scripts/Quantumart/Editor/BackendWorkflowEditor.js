@@ -198,7 +198,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             target = jQuery(e);
         }
         if (target.parent('div').hasClass('groupCheckbox')) {
-            target.parent('.groupCheckbox').siblings('.workflow_control_selector').find('.checkbox').each(jQuery.proxy( function (index, item) {
+            target.parent('.groupCheckbox').siblings('.workflow_control_selector').find('.checkbox').each(jQuery.proxy(function (index, item) {
                 this.manageItems(jQuery(item));
             }, this));
         }
