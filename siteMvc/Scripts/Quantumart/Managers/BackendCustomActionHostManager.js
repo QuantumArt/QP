@@ -31,7 +31,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     	var self = this;
     	jQuery(message.externalCallerContexts).each(function (i, c) {
     		var component = self._components[c.hostUID];
-    		if(component) {
+    		if (component) {
     			component.onExternalCallerContextsUnbinded({
     				reason: message.reason,
     				actionUID: c.data.actionUID,

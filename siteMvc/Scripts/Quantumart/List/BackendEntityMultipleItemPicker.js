@@ -162,7 +162,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   appendEntities: function (entityIds) {
-    if(entityIds && entityIds.length) {
+    if (entityIds && entityIds.length) {
       var selectedEntities = entityIds.map(function (i) {
         return { Id: i };
       });
@@ -173,7 +173,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   selectEntities: function (entityIds) {
     this.deselectAllListItems();
-    if(entityIds && entityIds.length) {
+    if (entityIds && entityIds.length) {
       var selectedEntities = entityIds.map(function (i) {
         return { Id: i };
       });

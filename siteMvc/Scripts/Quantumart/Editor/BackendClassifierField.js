@@ -110,7 +110,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     var rootArticleId = +this._$componentElem.data('root_article_id') || 0;
     var aggregatedContentId = +this._$contentList.find('option:selected').val() || 0;
 
-    if(aggregatedContentId) {
+    if (aggregatedContentId) {
       $q.showLoader();
       $q.getAjax(Url.Content('~/Article/GetAggregatedArticle'), {
         id: rootArticleId,

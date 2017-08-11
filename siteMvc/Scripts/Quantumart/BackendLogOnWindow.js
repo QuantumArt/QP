@@ -32,7 +32,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     _getServerContent: function (data) {
         if (data.success) {
             return data.view;
-        } else{
+        } else {
             return data.message;
         }
     },

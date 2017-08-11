@@ -174,7 +174,7 @@ Quantumart.QP8.BackendPager.prototype = {
 		if (this._currentPageNumber == 0) {
 			jQuery(this._arrowFirstElement).addClass("t-state-disabled").removeClass('t-state-hover');
 			jQuery(this._arrowPrevElement).addClass("t-state-disabled").removeClass('t-state-hover'); ;
-		} else{
+		} else {
 			jQuery(this._arrowFirstElement).removeClass("t-state-disabled");
 			jQuery(this._arrowPrevElement).removeClass("t-state-disabled");
 		}
@@ -189,7 +189,7 @@ Quantumart.QP8.BackendPager.prototype = {
 		}
 
 		// вывести статус
-		if(this._totalCount > 0) {
+		if (this._totalCount > 0) {
  jQuery(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate,
 				this._currentPageNumber * this._pageSize + 1,
 				Math.min(this._currentPageNumber * this._pageSize + this._pageSize, this._totalCount),

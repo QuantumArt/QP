@@ -78,7 +78,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
   _onFilterSelected: function () {
     var $selected = this.$filterCombo.find("option:selected");
-    if($selected.val()) {
+    if ($selected.val()) {
       this._createTile({ value: $selected.val(), text: $selected.text() });
     }
     this.$filterCombo.val("");
