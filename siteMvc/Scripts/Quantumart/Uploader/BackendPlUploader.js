@@ -134,7 +134,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     }
   },
 
-  _filesAddedHandler: function filesAddedHandler(up, files) {
+  _filesAddedHandler: function (up, files) {
     var i, file;
     var cancelledFiles = [];
     for (i = 0; i < files.length; i++) {

@@ -144,7 +144,7 @@
   };
 
   CKEDITOR.plugins.add(settings.pluginName, {
-    init: function onInit(editor) {
+    init: function (editor) {
       if (editor.contextMenu) {
         editor.addMenuGroup('qp8', 10);
         editor.addMenuItem(settings.pluginName, {
@@ -153,13 +153,13 @@
           group: 'qp8'
         });
 
-        editor.contextMenu.addListener(function contextMenuListener() {
+        editor.contextMenu.addListener(function () {
           return { typographer: CKEDITOR.TRISTATE_OFF };
         });
       }
 
       editor.addCommand(settings.pluginName, {
-        exec: function onExec(execEditor) {
+        exec: function (execEditor) {
           var html, proccessedHtml;
           if (execEditor.mode === 'source' && execEditor.textarea) {
             html = execEditor.textarea.getValue();

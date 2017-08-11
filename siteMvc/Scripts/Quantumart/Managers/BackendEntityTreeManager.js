@@ -190,7 +190,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 Quantumart.QP8.BackendEntityTreeManager._instance = null; // экземпляр класса
 
 // Возвращает экземпляр класса "Менеджер деревьев сущностей"
-Quantumart.QP8.BackendEntityTreeManager.getInstance = function Quantumart$QP8$BackendEntityTreeManager$getInstance() {
+Quantumart.QP8.BackendEntityTreeManager.getInstance = function () {
 	if (Quantumart.QP8.BackendEntityTreeManager._instance == null) {
 		Quantumart.QP8.BackendEntityTreeManager._instance = new Quantumart.QP8.BackendEntityTreeManager();
 	}
@@ -199,7 +199,7 @@ Quantumart.QP8.BackendEntityTreeManager.getInstance = function Quantumart$QP8$Ba
 };
 
 // Уничтожает экземпляр класса "Менеджер деревьев сущностей"
-Quantumart.QP8.BackendEntityTreeManager.destroyInstance = function Quantumart$QP8$BackendEntityTreeManager$destroyInstance() {
+Quantumart.QP8.BackendEntityTreeManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendEntityTreeManager._instance) {
 		Quantumart.QP8.BackendEntityTreeManager._instance.dispose();
 	}

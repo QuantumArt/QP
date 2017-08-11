@@ -210,7 +210,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 Quantumart.QP8.BackendEntityEditorManager._instance = null; // экземпляр класса
 
 // Возвращает экземпляр класса "Менеджер редакторов сущностей"
-Quantumart.QP8.BackendEntityEditorManager.getInstance = function Quantumart$QP8$BackendEntityEditorManager$getInstance() {
+Quantumart.QP8.BackendEntityEditorManager.getInstance = function () {
 	if (Quantumart.QP8.BackendEntityEditorManager._instance == null) {
 		Quantumart.QP8.BackendEntityEditorManager._instance = new Quantumart.QP8.BackendEntityEditorManager();
 	}
@@ -219,7 +219,7 @@ Quantumart.QP8.BackendEntityEditorManager.getInstance = function Quantumart$QP8$
 };
 
 // Уничтожает экземпляр класса "Менеджер редакторов сущностей"
-Quantumart.QP8.BackendEntityEditorManager.destroyInstance = function Quantumart$QP8$BackendEntityEditorManager$destroyInstance() {
+Quantumart.QP8.BackendEntityEditorManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendEntityEditorManager._instance) {
 		Quantumart.QP8.BackendEntityEditorManager._instance.dispose();
 	}

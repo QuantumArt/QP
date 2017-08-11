@@ -2,7 +2,7 @@
 Quantumart.QP8.BackendEntityType = function () {};
 
 // Возвращает тип сущности по ее коду
-Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function Quantumart$QP8$BackendEntityType$getEntityTypeByCode(entityTypeCode) {
+Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode) {
 	var cacheKey = "EntityTypeByEntityTypeCode_" + entityTypeCode;
 	var entityType = $cache.getItem(cacheKey);
 
@@ -28,7 +28,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function Quantumart$QP8$B
 };
 
 // Возвращает тип сущности по его id
-Quantumart.QP8.BackendEntityType.getEntityTypeById = function Quantumart$QP8$BackendEntityType$getEntityTypeByCode(entityTypeId) {
+Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
 	var cacheKey = "EntityTypeByEntityTypeId_" + entityTypeId;
 	var entityTypeCode = $cache.getItem(cacheKey);
 
@@ -54,7 +54,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeById = function Quantumart$QP8$Bac
 };
 
 // Возвращает код типа родительской сущности
-Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function Quantumart$QP8$BackendEntityType$getParentEntityTypeCodeByCode(entityTypeCode) {
+Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entityTypeCode) {
 	var cacheKey = "ParentEntityTypeCodeByEntityTypeCode_" + entityTypeCode;
 	var parentEntityTypeCode = $cache.getItem(cacheKey);
 
@@ -80,7 +80,7 @@ Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function Quantu
 	return parentEntityTypeCode;
 };
 
-Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = function Quantumart$QP8$BackendEntityType$getEntityTypeIdToActionListItemDictionary() {
+Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = function () {
 	var cacheKey = "EntityTypeIdToActionListItemDictionary";
 	var dictionary = $cache.getItem(cacheKey);
 	if (!dictionary) {

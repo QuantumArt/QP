@@ -4,12 +4,12 @@
 
 // #region class Cache
 // === Класс "Кэш" ===
-Quantumart.QP8.Cache = function Quantumart$QP8$Cache() {
+Quantumart.QP8.Cache = function () {
 };
 
 Quantumart.QP8.Cache._itemInfos = {};
 
-Quantumart.QP8.Cache.getItem = function Quantumart$QP8$getItem(key) {
+Quantumart.QP8.Cache.getItem = function (key) {
 	// / <summary>
 	// / Возвращает элемент из кэша
 	// / </summary>
@@ -23,7 +23,7 @@ Quantumart.QP8.Cache.getItem = function Quantumart$QP8$getItem(key) {
 	return item;
 };
 
-Quantumart.QP8.Cache.addItem = function Quantumart$QP8$addItem(key, value) {
+Quantumart.QP8.Cache.addItem = function (key, value) {
 	// / <summary>
 	// / Добавляет элемент в кэш
 	// / </summary>
@@ -34,7 +34,7 @@ Quantumart.QP8.Cache.addItem = function Quantumart$QP8$addItem(key, value) {
 	Quantumart.QP8.Cache._itemInfos[key] = itemInfo;
 };
 
-Quantumart.QP8.Cache.removeItem = function Quantumart$QP8$removeItem(key) {
+Quantumart.QP8.Cache.removeItem = function (key) {
 	// / <summary>
 	// / Удаляет элемент из кэша
 	// / </summary>
@@ -42,7 +42,7 @@ Quantumart.QP8.Cache.removeItem = function Quantumart$QP8$removeItem(key) {
 	$q.removeProperty(Quantumart.QP8.Cache._itemInfos, key);
 };
 
-Quantumart.QP8.Cache.clear = function Quantumart$QP8$clear() {
+Quantumart.QP8.Cache.clear = function () {
 	// / <summary>
 	// / Очищает кэш
 	// / </summary>
@@ -51,7 +51,7 @@ Quantumart.QP8.Cache.clear = function Quantumart$QP8$clear() {
 	}
 };
 
-Quantumart.QP8.Cache.dispose = function Quantumart$QP8$dispose() {
+Quantumart.QP8.Cache.dispose = function () {
 	// / <summary>
 	// / Уничтожает кэш
 	// / </summary>

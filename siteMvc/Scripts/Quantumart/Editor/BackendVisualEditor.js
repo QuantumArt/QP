@@ -153,7 +153,7 @@
       },
       afterCommandExec: obj._onChangeDataInDesignModeHandlerProxy,
       loadSnapshot: obj._onChangeDataInDesignModeHandlerProxy,
-      configLoaded: function onConfigLoaded(ev) {
+      configLoaded: function (ev) {
         Object.assign(ev.editor.config, {
           baseFloatZIndex: obj.getZIndex()
         });

@@ -1341,7 +1341,7 @@ $c.initWorkflow = function (editorElem) {
   workflow.initialize();
 };
 
-$c.saveDataOfAllWorkflows = function Quantumart$QP8$ControlHelper$saveDataOfAllWorkflows(editorElem) {
+$c.saveDataOfAllWorkflows = function (editorElem) {
   window.console.error('TODO: SHOULD NOT USE THIS METHOD');
   const $workflows = $c.getAllWorkflows(editorElem);
   $workflows.each(function () {
@@ -1349,7 +1349,7 @@ $c.saveDataOfAllWorkflows = function Quantumart$QP8$ControlHelper$saveDataOfAllW
   });
 };
 
-$c.saveWorkflowData = function Quantumart$QP8$ControlHelper$saveWorkflowData() {
+$c.saveWorkflowData = function () {
   window.console.error('TODO: SHOULD NOT USE THIS METHOD');
 };
 

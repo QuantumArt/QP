@@ -124,7 +124,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
 Quantumart.QP8.BackendSearchBlockManager._instance = null; // экземпляр класса
 
 // Возвращает экземпляр класса "Менеджер блоков поиска"
-Quantumart.QP8.BackendSearchBlockManager.getInstance = function Quantumart$QP8$BackendSearchBlockManager$getInstance() {
+Quantumart.QP8.BackendSearchBlockManager.getInstance = function () {
 	if (Quantumart.QP8.BackendSearchBlockManager._instance == null) {
 		Quantumart.QP8.BackendSearchBlockManager._instance = new Quantumart.QP8.BackendSearchBlockManager();
 	}
@@ -133,7 +133,7 @@ Quantumart.QP8.BackendSearchBlockManager.getInstance = function Quantumart$QP8$B
 };
 
 // Уничтожает экземпляр класса "Менеджер блоков поиска"
-Quantumart.QP8.BackendSearchBlockManager.destroyInstance = function Quantumart$QP8$BackendSearchBlockManager$destroyInstance() {
+Quantumart.QP8.BackendSearchBlockManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendSearchBlockManager._instance) {
 		Quantumart.QP8.BackendSearchBlockManager._instance.dispose();
 	}

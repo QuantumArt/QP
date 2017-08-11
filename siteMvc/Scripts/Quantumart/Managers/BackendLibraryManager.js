@@ -183,7 +183,7 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 Quantumart.QP8.BackendLibraryManager._instance = null; // экземпляр класса
 
 // Возвращает экземпляр класса "Менеджер библиотек"
-Quantumart.QP8.BackendLibraryManager.getInstance = function Quantumart$QP8$BackendLibraryManager$getInstance() {
+Quantumart.QP8.BackendLibraryManager.getInstance = function () {
 	if (Quantumart.QP8.BackendLibraryManager._instance == null) {
 		Quantumart.QP8.BackendLibraryManager._instance = new Quantumart.QP8.BackendLibraryManager();
 	}
@@ -192,7 +192,7 @@ Quantumart.QP8.BackendLibraryManager.getInstance = function Quantumart$QP8$Backe
 };
 
 // Уничтожает экземпляр класса "Менеджер библиотек"
-Quantumart.QP8.BackendLibraryManager.destroyInstance = function Quantumart$QP8$BackendLibraryManager$destroyInstance() {
+Quantumart.QP8.BackendLibraryManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendLibraryManager._instance) {
 		Quantumart.QP8.BackendLibraryManager._instance.dispose();
 	}

@@ -591,7 +591,7 @@ $q.ajaxCallbackDecorator = function ajaxCallbackDecorator(callback, settings) {
 $q.decorateDeferred = function decorateDeferred(deferred, decorator, settings) {
   const result = deferred;
   result._doneBase = deferred.done;
-  result.done = function doneCb(callback) {
+  result.done = function (callback) {
     const currentCallback = decorator(callback, settings);
     const currentDeferred = this._doneBase(currentCallback);
 
@@ -611,7 +611,7 @@ $q.toFixed = function toFixed(number, digits) {
 };
 
 if (typeof String.prototype.left !== 'function') {
-  String.prototype.left = function trimLeft(strLength) {
+  String.prototype.left = function (strLength) {
     if (!/\d+/.test(strLength)) {
       return this;
     }
@@ -621,7 +621,7 @@ if (typeof String.prototype.left !== 'function') {
 }
 
 if (typeof String.prototype.right !== 'function') {
-  String.prototype.right = function trimRight(strLength) {
+  String.prototype.right = function (strLength) {
     if (!/\d+/.test(strLength)) {
       return this;
     }

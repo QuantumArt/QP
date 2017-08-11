@@ -399,7 +399,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 Quantumart.QP8.BackendActionExecutor._instance = null; // экземпляр класса
 
 // Возвращает экземпляр класса 'Действие'
-Quantumart.QP8.BackendActionExecutor.getInstance = function Quantumart$QP8$BackendActionExecutor$getInstance() {
+Quantumart.QP8.BackendActionExecutor.getInstance = function () {
   if (Quantumart.QP8.BackendActionExecutor._instance == null) {
     Quantumart.QP8.BackendActionExecutor._instance = new Quantumart.QP8.BackendActionExecutor();
   }
@@ -408,7 +408,7 @@ Quantumart.QP8.BackendActionExecutor.getInstance = function Quantumart$QP8$Backe
 };
 
 // Уничтожает экземпляр класса 'Действие'
-Quantumart.QP8.BackendActionExecutor.destroyInstance = function Quantumart$QP8$BackendActionExecutor$destroyInstance() {
+Quantumart.QP8.BackendActionExecutor.destroyInstance = function () {
   if (Quantumart.QP8.BackendActionExecutor._instance) {
     Quantumart.QP8.BackendActionExecutor._instance.dispose();
   }
@@ -474,7 +474,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) 
   return Quantumart.QP8.BackendActionExecutor.getBackendActionByCode(actionCode);
 };
 
-Quantumart.QP8.BackendActionExecutor.getSelectedAction = function Quantumart$QP8$BackendActionExecutor$getSelectedAction(action) {
+Quantumart.QP8.BackendActionExecutor.getSelectedAction = function (action) {
   var selectedAction = null;
   if ($q.isObject(action)) {
     selectedAction = action;

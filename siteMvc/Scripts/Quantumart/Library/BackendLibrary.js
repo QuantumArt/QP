@@ -479,7 +479,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
 
 };
 
-Quantumart.QP8.BackendLibrary.generateActionUrl = function Quantumart$QP8$BackendLibrary$generateActionUrl(actionName, urlParams) {
+Quantumart.QP8.BackendLibrary.generateActionUrl = function (actionName, urlParams) {
   var result = '';
 
   if (urlParams) {

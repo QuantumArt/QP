@@ -351,7 +351,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     return popupWindowComponent;
   },
 
-  _onWindowClose: function onWindowClose() {
+  _onWindowClose: function () {
     if (this._isInProcess) {
       this._cancel();
       return false;
@@ -365,7 +365,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     this._popupWindowComponent.close();
   },
 
-  _cancel: function onCancel() {
+  _cancel: function () {
     var eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
     this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, eventArgs);
     if (eventArgs.getCancel() === true) {

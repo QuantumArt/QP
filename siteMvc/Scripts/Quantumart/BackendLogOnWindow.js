@@ -277,7 +277,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 Quantumart.QP8.BackendLogOnWindow._instance = null; // экземпляр класса
 
 // Возвращает экземпляр класса "Форма авторизации"
-Quantumart.QP8.BackendLogOnWindow.deferredExecution = function Quantumart$QP8$BackendLogOnWindow$deferredExecution(data, jqXHR, callback, settings) {
+Quantumart.QP8.BackendLogOnWindow.deferredExecution = function (data, jqXHR, callback, settings) {
     var logon = Quantumart.QP8.BackendLogOnWindow.getInstance();
 
     if (logon.needLogon(jqXHR, settings.url)) {
@@ -289,7 +289,7 @@ Quantumart.QP8.BackendLogOnWindow.deferredExecution = function Quantumart$QP8$Ba
 };
 
 // Возвращает экземпляр класса "Форма авторизации"
-Quantumart.QP8.BackendLogOnWindow.getInstance = function Quantumart$QP8$BackendLogOnWindow$getInstance() {
+Quantumart.QP8.BackendLogOnWindow.getInstance = function () {
     if (Quantumart.QP8.BackendLogOnWindow._instance == null) {
         Quantumart.QP8.BackendLogOnWindow._instance = new Quantumart.QP8.BackendLogOnWindow();
     }
@@ -298,7 +298,7 @@ Quantumart.QP8.BackendLogOnWindow.getInstance = function Quantumart$QP8$BackendL
 };
 
 // Уничтожает экземпляр класса "Форма авторизации"
-Quantumart.QP8.BackendLogOnWindow.destroyInstance = function Quantumart$QP8$BackendLogOnWindow$destroyInstance() {
+Quantumart.QP8.BackendLogOnWindow.destroyInstance = function () {
     if (Quantumart.QP8.BackendLogOnWindow._instance) {
         Quantumart.QP8.BackendLogOnWindow._instance.dispose();
     }

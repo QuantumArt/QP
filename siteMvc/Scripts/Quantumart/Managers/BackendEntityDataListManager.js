@@ -172,7 +172,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 Quantumart.QP8.BackendEntityDataListManager._instance = null; // экземпляр класса
 
 // Возвращает экземпляр класса "Менеджер упрощенных списков сущностей"
-Quantumart.QP8.BackendEntityDataListManager.getInstance = function Quantumart$QP8$BackendEntityDataListManager$getInstance() {
+Quantumart.QP8.BackendEntityDataListManager.getInstance = function () {
 	if (Quantumart.QP8.BackendEntityDataListManager._instance == null) {
 		Quantumart.QP8.BackendEntityDataListManager._instance = new Quantumart.QP8.BackendEntityDataListManager();
 	}
@@ -181,7 +181,7 @@ Quantumart.QP8.BackendEntityDataListManager.getInstance = function Quantumart$QP
 };
 
 // Уничтожает экземпляр класса "Менеджер упрощенных списков сущностей"
-Quantumart.QP8.BackendEntityDataListManager.destroyInstance = function Quantumart$QP8$BackendEntityDataListManager$destroyInstance() {
+Quantumart.QP8.BackendEntityDataListManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendEntityDataListManager._instance) {
 		Quantumart.QP8.BackendEntityDataListManager._instance.dispose();
 	}

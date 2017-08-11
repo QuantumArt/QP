@@ -1556,7 +1556,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 };
 
 Quantumart.QP8.BackendTabStrip._instance = null;
-Quantumart.QP8.BackendTabStrip.getInstance = function Quantumart$QP8$BackendTabStrip$getInstance(tabStripElementId, options) {
+Quantumart.QP8.BackendTabStrip.getInstance = function (tabStripElementId, options) {
   if (Quantumart.QP8.BackendTabStrip._instance == null) {
     var instance = new Quantumart.QP8.BackendTabStrip(tabStripElementId, options);
     Quantumart.QP8.BackendTabStrip._instance = instance;

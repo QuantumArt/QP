@@ -42,11 +42,11 @@
       if (isValidMimeType(file.type, opts.skipMimeValidation)) {
         img = new Moxie.Image();
 
-        img.onload = function onImageLoad() {
+        img.onload = function () {
           finalize(img.width * img.height < opts.imageResolution, opts.getResolutionErrorSettings());
         };
 
-        img.onerror = function onImageError() {
+        img.onerror = function () {
           finalize(false, opts.getResolutionErrorSettings());
         };
 

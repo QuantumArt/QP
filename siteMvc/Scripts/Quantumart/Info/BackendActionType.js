@@ -2,7 +2,7 @@
 Quantumart.QP8.BackendActionType = function () {};
 
 // Возвращает код типа действия по коду действия
-Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function Quantumart$QP8$BackendActionType$getActionTypeCodeByActionCode(actionCode) {
+Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actionCode) {
 	var cacheKey = "ActionTypeCodeByActionCode_" + actionCode;
 	var actionTypeCode = $cache.getItem(cacheKey);
 

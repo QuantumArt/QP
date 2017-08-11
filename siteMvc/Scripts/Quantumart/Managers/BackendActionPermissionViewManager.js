@@ -37,7 +37,7 @@ Quantumart.QP8.BackendActionPermissionViewManager.prototype = {
 
 Quantumart.QP8.BackendActionPermissionViewManager._instance = null; // экземпляр класса
 
-Quantumart.QP8.BackendActionPermissionViewManager.getInstance = function Quantumart$QP8$BackendActionPermissionViewManager$getInstance() {
+Quantumart.QP8.BackendActionPermissionViewManager.getInstance = function () {
 	if (Quantumart.QP8.BackendActionPermissionViewManager._instance == null) {
 		Quantumart.QP8.BackendActionPermissionViewManager._instance = new Quantumart.QP8.BackendActionPermissionViewManager();
 	}
@@ -46,7 +46,7 @@ Quantumart.QP8.BackendActionPermissionViewManager.getInstance = function Quantum
 };
 
 // Уничтожает экземпляр класса "Менеджер библиотек"
-Quantumart.QP8.BackendActionPermissionViewManager.destroyInstance = function Quantumart$QP8$BackendActionPermissionViewManager$destroyInstance() {
+Quantumart.QP8.BackendActionPermissionViewManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendActionPermissionViewManager._instance) {
 		Quantumart.QP8.BackendActionPermissionViewManager._instance.dispose();
 	}
