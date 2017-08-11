@@ -69,7 +69,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   get_filterData: function () {
     var filterData = {};
     for (var tileType in this._tiles) {
-      if (tileType && this._tiles.hasOwnProperty(tileType)) {
+      if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
         this._tiles[tileType].get_options().deriveFilterData(this._tiles[tileType], filterData);
       }
     }
@@ -91,7 +91,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
   _createTile: function (options) {
     var that = this;
-    if (options && options.value && !this._tiles.hasOwnProperty(options.value)) {
+    if (options && options.value && !Object.prototype.hasOwnProperty.call(this._tiles, options.value)) {
       var ft = +options.value || 0;
       var tileComponent = new Quantumart.QP8.ActionLogFilterTile(this.$tilesContainer,
         {
@@ -179,7 +179,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _destroyTile: function (tileType) {
-    if (tileType && this._tiles.hasOwnProperty(tileType)) {
+    if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
       var tileComponent = this._tiles[tileType];
       tileComponent.detachObserver(EVENT_TYPE_FILTER_TILE_CLOSE);
       tileComponent.dispose();
