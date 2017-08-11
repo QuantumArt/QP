@@ -27,7 +27,7 @@ Quantumart.QP8.ActionLogTextFilter.prototype = {
 		else {
 			return '""';
 		}
-	},
+	}
 };
 
 Quantumart.QP8.ActionLogTextFilter.registerClass("Quantumart.QP8.ActionLogTextFilter", Quantumart.QP8.ActionLogFilterBase);

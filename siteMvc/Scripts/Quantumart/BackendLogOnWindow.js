@@ -51,7 +51,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             modal: true,
             resizable: false,
             draggable: false,
-            visible: true,
+            visible: true
         }).data("tWindow").center();
 
         this._onLogonHandler = function (event) {
@@ -83,7 +83,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
                     UseAutoLogin: useAutoLogin,
                     UserName: userName,
                     Password: password,
-                    CustomerCode: customerCode,
+                    CustomerCode: customerCode
                 },
                 true,
                 false,

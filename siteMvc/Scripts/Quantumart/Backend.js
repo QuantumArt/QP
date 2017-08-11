@@ -34,7 +34,7 @@ Quantumart.QP8.Backend = function (isDebugMode, options) {
     '_onActionExecuting',
     '_onActionExecuted',
     '_onEntityReaded',
-    '_onHostExternalCallerContextsUnbinded',
+    '_onHostExternalCallerContextsUnbinded'
   ]);
 
   $(document).bind('click', function (e) {

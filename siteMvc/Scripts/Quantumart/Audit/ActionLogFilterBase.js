@@ -12,7 +12,7 @@ Quantumart.QP8.ActionLogFilterBase.prototype = {
 	get_value: function () { },
 	dispose: function () {
 		this.$container = null;
-	},
+	}
 };
 
 Quantumart.QP8.ActionLogFilterBase.registerClass("Quantumart.QP8.ActionLogFilterBase");
