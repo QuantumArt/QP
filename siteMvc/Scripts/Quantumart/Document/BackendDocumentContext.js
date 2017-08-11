@@ -145,9 +145,9 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   getHost: function () {
     if (this._isWindow) {
       return Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindow(this._hostId);
-    } 
+    }
       return this._getArea().getDocument(this._hostId);
-    
+
   },
 
   _getArea: function () {
@@ -246,7 +246,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       mainComponent.attachObserver(EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.CustomActionHost) {
       if (hostOptions.eventArgsAdditionalData) {
-        jQuery.extend(this._params, {
+        no-restricted-properties(this._params, {
           additionalParams: hostOptions.eventArgsAdditionalData.additionalParams
         });
       }

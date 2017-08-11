@@ -101,7 +101,7 @@ Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options)
       this._additionalUrlParameters = options.additionalUrlParameters;
     }
     if (eventArgs.get_context() && eventArgs.get_context().additionalUrlParameters) {
-      this._additionalUrlParameters = jQuery.extend(this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
+      this._additionalUrlParameters = Object.assign(this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
     }
 
     if (options.zIndex) {
@@ -336,10 +336,10 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     };
 
     if (this.get_isBindToExternal()) {
-      extraOptions.additionalUrlParameters = jQuery.extend(extraOptions.additionalUrlParameters, { boundToExternal: true });
+      extraOptions.additionalUrlParameters = Object.assign(extraOptions.additionalUrlParameters, { boundToExternal: true });
     }
 
-    options = !$q.isObject(options) ? extraOptions : $.extend(options, extraOptions);
+    options = !$q.isObject(options) ? extraOptions : Object.assign(options, extraOptions);
     this._documentUrl = $a.generateActionUrl(this._isMultipleEntities, entityIDs, this._parentEntityId, this._popupWindowId, this.getCurrentAction(), options);
 
     var params = {};

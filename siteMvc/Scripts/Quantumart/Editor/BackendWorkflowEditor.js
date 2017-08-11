@@ -24,7 +24,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         this._items = ko.observableArray(
             jQuery.map(workflow.data('workflow_list_data'), function (o) {
                 var r = {};
-                jQuery.extend(r, o, {
+                Object.assign(r, o, {
                     RadioChecked: ko.observable(o.RadioChecked),
                     Description: ko.observable(o.Description),
                     UserId: ko.observable(o.UserId),
@@ -155,12 +155,12 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                     var group_row = current_workflow_stage.find(':visible.workflow_group_row');
 
                     if (user_row.size() > group_row.size()) {
-                        var span = user_row.find('span.workflow_permission_message');
-                        var oldHtml = span.html();
+                        let span = user_row.find('span.workflow_permission_message');
+                        let oldHtml = span.html();
                         span.html(oldHtml + '<br>' + data[i].Message);
                     } else {
-                        var span = group_row.find('span.workflow_permission_message');
-                        var oldHtml = span.html();
+                        let span = group_row.find('span.workflow_permission_message');
+                        let oldHtml = span.html();
                         group_row.find('span.workflow_permission_message').html(oldHtml + '<br>' + data[i].Message);
                     }
           }

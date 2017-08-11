@@ -232,7 +232,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             };
 
             if (!_parameters.allowResizeCropArea) {
-                $.extend(parameters,
+                Object.assign(parameters,
                     {
                         minHeight: _parameters.crop.height,
                         minWidth: _parameters.crop.width,
@@ -514,9 +514,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
     imgCropResize.create = function (parameters) {
     	_parameters = {};
-    	$.extend(_parameters, _defaultParameters);
-    	$.extend(_parameters, parameters);
-    	$.extend(_parameters, _getFromCache());
+    	Object.assign(_parameters, _defaultParameters);
+    	Object.assign(_parameters, parameters);
+    	Object.assign(_parameters, _getFromCache());
 
         _checkPrameters();
         _createContent();
@@ -576,7 +576,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
         var select = _imgAreaSelect.getSelection();
         if (select.width || select.height) {
-            $.extend(result, {
+            Object.assign(result, {
                 left: Math.max(select.x1, 0),
                 top: Math.max(select.y1, 0),
                 width: select.width,

@@ -1,6 +1,6 @@
 // #region class Quantumart.QP8.LibraryPopupWindow
 Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
-    jQuery.extend(this._options, options);
+    Object.assign(this._options, options);
 	this._eventArgs = eventArgs;
 	this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(this._eventArgs, this._options);
 	this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this));

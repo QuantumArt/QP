@@ -172,7 +172,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     var iframe = window.document.getElementById(this._options.iframeElementId);
     if (iframe && iframe.contentWindow) {
       var args = {};
-      jQuery.extend(args, message);
+      Object.assign(args, message);
       delete args.callerCallback;
       pmrpc.call({
         destination: iframe.contentWindow,

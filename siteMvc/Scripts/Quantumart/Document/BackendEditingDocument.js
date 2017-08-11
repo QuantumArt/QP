@@ -106,10 +106,10 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     };
 
     if (this.get_isBindToExternal() === true) {
-      extraOptions.additionalUrlParameters = jQuery.extend(extraOptions.additionalUrlParameters, { boundToExternal: true });
+      extraOptions.additionalUrlParameters = Object.assign(extraOptions.additionalUrlParameters, { boundToExternal: true });
     }
 
-    options = !$q.isObject(options) ? extraOptions : jQuery.extend(options, extraOptions);
+    options = !$q.isObject(options) ? extraOptions : Object.assign(options, extraOptions);
     var url = $a.generateActionUrl(this._isMultipleEntities, entityIDs, this._parentEntityId, this._tabId, this.getCurrentAction(), options);
     this._documentUrl = url;
 

@@ -14,11 +14,11 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     var isCustom = eventArgs.get_isCustomAction();
     var additionalUrlParameters = null;
     if (eventArgs.get_context() && eventArgs.get_context().additionalUrlParameters) {
-      additionalUrlParameters = jQuery.extend(this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
+      additionalUrlParameters = Object.assign(this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
     }
 
     if (eventArgs.get_startedByExternal() === true) {
-      additionalUrlParameters = jQuery.extend(additionalUrlParameters, { boundToExternal: true });
+      additionalUrlParameters = Object.assign(additionalUrlParameters, { boundToExternal: true });
     }
 
     if (!$q.isNullOrWhiteSpace(actionCode)) {
@@ -151,7 +151,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
     var additionalUrlParameters = null;
     if (eventArgs.get_startedByExternal() === true) {
-      additionalUrlParameters = jQuery.extend(additionalUrlParameters, { boundToExternal: true });
+      additionalUrlParameters = Object.assign(additionalUrlParameters, { boundToExternal: true });
     }
 
     var actionCode = eventArgs.get_actionCode();
@@ -775,7 +775,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
 
     if (action.Code === window.ACTION_CODE_ADD_NEW_ADJACENT_FIELD) {
       this._context = this._context || {};
-      $.extend(this._context, { additionalUrlParameters: { fieldId: this._entityId } });
+      Object.assign(this._context, { additionalUrlParameters: { fieldId: this._entityId } });
       this._entityId = 0;
     }
 
@@ -786,7 +786,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
           this._parentEntityId = this._entityId;
         } else {
           this._context = this._context || {};
-          $.extend(this._context, { additionalUrlParameters: { groupId: this._entityId } });
+          Object.assign(this._context, { additionalUrlParameters: { groupId: this._entityId } });
         }
 
         this._entityId = 0;

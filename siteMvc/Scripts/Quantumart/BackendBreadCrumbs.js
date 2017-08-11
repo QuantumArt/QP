@@ -333,7 +333,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     var eventArgs = this.getItemActionEventArgs(e.currentTarget);
     if (eventArgs) {
       if (e.ctrlKey || e.shiftKey || isMiddleClick) {
-        eventArgs.set_context($.extend({
+        eventArgs.set_context(Object.assign({
           ctrlKey: e.ctrlKey || isMiddleClick
         }, eventArgs.get_context()));
         this.notify(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, eventArgs);

@@ -356,7 +356,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     if (!$q.isNullOrEmpty($item)) {
       var $list = this._getToolbarDropDownList($item);
       if (!$q.isNullOrEmpty($list)) {
-        var $listItem = $item.find("LI[code='" + listItemValue + "']");
+        $listItem = $item.find("LI[code='" + listItemValue + "']");
         if ($listItem.length == 0) {
           $listItem = null;
         }
@@ -946,7 +946,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
           this._applyClickedStyleToToolbarDropDownButton($item);
           this._hideDropDownList($item);
 
-          var eventArgs = new Quantumart.QP8.BackendToolbarDropDownListEventArgs();
+          eventArgs = new Quantumart.QP8.BackendToolbarDropDownListEventArgs();
           eventArgs.set_itemValue(itemValue);
           eventArgs.set_oldSubItemValue(oldSubItemValue);
           eventArgs.set_newSubItemValue(newSubItemValue);

@@ -21,7 +21,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
         };
 
         $filter = null;
-        return jQuery.extend(data, filter);
+        return Object.assign(data, filter);
     },
 
     _onDataBinding: function (e) {

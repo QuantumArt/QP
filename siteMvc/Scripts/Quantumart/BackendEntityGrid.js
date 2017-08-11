@@ -862,7 +862,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       this._saveRowSelectionState();
     } else {
       var url = this._gridComponent.url('selectUrl');
-      var queryData = $.extend({ page: 1, size: 0, onlyIds: true }, this._createDataQueryParams());
+      var queryData = Object.assign({ page: 1, size: 0, onlyIds: true }, this._createDataQueryParams());
       var action = this._getCurrentAction();
 
       if (action) {
@@ -950,7 +950,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   _onDataBinding: function (e) {
     var params = this._createDataQueryParams();
-    e.data = $.extend(e.data, params);
+    e.data = Object.assign(e.data, params);
     if (this._isDataLoaded) {
       var action = this._getCurrentAction();
       if (action) {

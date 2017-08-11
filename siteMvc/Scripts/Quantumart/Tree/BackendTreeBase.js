@@ -124,8 +124,8 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   _initNewToggle: function (treeComponent) {
     var oldToggle = treeComponent.nodeToggle;
 
-    treeComponent.nodeToggle = function () {
-      oldToggle.call(treeComponent, arguments[0], arguments[1], true);
+    treeComponent.nodeToggle = function (...args) {
+      oldToggle.call(treeComponent, args[0], args[1], true);
     };
   },
 

@@ -14,7 +14,7 @@ Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
 	this._popupWindowToolbarComponent = this._createToolbar();
 
 
-	options = jQuery.extend(options, {
+	options = Object.assign(options, {
 		popupWindowId: this._popupWindowId,
 		showBreadCrumbs: false,
 		saveSelectionWhenChangingView: true,

@@ -58,7 +58,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     };
 
     if (this.get_isBindToExternal() === true) {
-      queryParams = jQuery.extend(queryParams, { boundToExternal: true });
+      queryParams = Object.assign(queryParams, { boundToExternal: true });
     }
 
     $q.getJsonFromUrl('GET', CONTROLLER_URL_TOOLBAR + 'GetToolbarButtonListByActionCode', queryParams, false, false, function (data, textStatus, jqXHR) {
@@ -97,7 +97,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
 
     var queryParams = { actionCode: this._actionCode, entityId: entityId, parentEntityId: parentEntityId };
     if (this.get_isBindToExternal() === true) {
-      queryParams = jQuery.extend(queryParams, { boundToExternal: true });
+      queryParams = Object.assign(queryParams, { boundToExternal: true });
     }
 
     if (entityId != 0) {

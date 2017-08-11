@@ -1,6 +1,6 @@
 Quantumart.QP8.BackendChildEntityPermissionList = function (searchBlockElementId) {
 	function onDataBinding(e) {
-		e.data = jQuery.extend(e.data, searchBlockComponent.getSearchData());
+		e.data = Object.assign(e.data, searchBlockComponent.getSearchData());
 	}
 
 
@@ -18,7 +18,7 @@ Quantumart.QP8.BackendChildEntityPermissionList = function (searchBlockElementId
 	}
 
 	function modifyEventArgsContext(eventArgsContext) {
-		return jQuery.extend(eventArgsContext, { additionalUrlParameters: searchBlockComponent.getSearchData() });
+		return Object.assign(eventArgsContext, { additionalUrlParameters: searchBlockComponent.getSearchData() });
 	}
 
 	var searchBlockComponent = new Quantumart.QP8.BackendUserAndGroupSearchBlock(searchBlockElementId, jQuery.proxy(onApplyFilter, this));

@@ -70,26 +70,26 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 		var editorGroupCode = this.generateEditorGroupCode(entityTypeCode, entityId);
 
 		var finalOptions = {};
-		jQuery.extend(finalOptions, options);
+		Object.assign(finalOptions, options);
 		if (hostOptions) {
 		    if (hostOptions.contextQuery) {
-		        jQuery.extend(finalOptions, { contextQuery: hostOptions.contextQuery });
+		        Object.assign(finalOptions, { contextQuery: hostOptions.contextQuery });
 		    }
 			if (hostOptions.eventArgsAdditionalData) {
 				if ((entityId == 0 || hostOptions.eventArgsAdditionalData.restoring === true) && hostOptions.eventArgsAdditionalData.initFieldValues) {
-					jQuery.extend(finalOptions, {
+					Object.assign(finalOptions, {
 						initFieldValues: hostOptions.eventArgsAdditionalData.initFieldValues,
 						restoring: hostOptions.eventArgsAdditionalData.restoring
 					});
 				}
 				if (hostOptions.eventArgsAdditionalData.disabledFields) {
-					jQuery.extend(finalOptions, { disabledFields: hostOptions.eventArgsAdditionalData.disabledFields });
+					Object.assign(finalOptions, { disabledFields: hostOptions.eventArgsAdditionalData.disabledFields });
 				}
 				if (hostOptions.eventArgsAdditionalData.hideFields) {
-					jQuery.extend(finalOptions, { hideFields: hostOptions.eventArgsAdditionalData.hideFields });
+					Object.assign(finalOptions, { hideFields: hostOptions.eventArgsAdditionalData.hideFields });
 				}
 				if (hostOptions.eventArgsAdditionalData.contextQuery) {
-				    jQuery.extend(finalOptions, { contextQuery: hostOptions.eventArgsAdditionalData.contextQuery });
+				    Object.assign(finalOptions, { contextQuery: hostOptions.eventArgsAdditionalData.contextQuery });
 				}
 			}
 

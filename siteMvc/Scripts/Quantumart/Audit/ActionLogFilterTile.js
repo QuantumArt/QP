@@ -4,8 +4,7 @@ var EVENT_TYPE_FILTER_TILE_CLOSE = "Quantumart.QP8.ActionLogFilterTile.onFilterT
 Quantumart.QP8.ActionLogFilterTile = function (containerElement, options) {
 	Quantumart.QP8.ActionLogFilterTile.initializeBase(this);
 	this._containerElement = containerElement;
-	this._options = jQuery.extend(
-	{
+	this._options = Object.assign({
 		title: 'Undefined',
 		type: 0,
 		windowSize: { w: 350, h: 125 },
