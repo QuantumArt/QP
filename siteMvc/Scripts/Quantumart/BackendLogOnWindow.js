@@ -27,7 +27,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
     //#region internal
     _onLogonHandler: null,
-    _onCloseWindowHandler: null,    
+    _onCloseWindowHandler: null,
 
     _getServerContent: function(data){
         if (data.success){
@@ -52,7 +52,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             resizable: false,
             draggable: false,
             visible: true,
-        }).data("tWindow").center();        
+        }).data("tWindow").center();
 
         this._onLogonHandler = function (event) {
             that._disableWindow();
@@ -62,7 +62,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             var currentCustomerCode = that._getGurrentCustomerCode();
             var userName = $(that.USERNAME_SELECTOR).val();
             var password = $(that.PASSWORD_SELECTOR).val();
-            var customerCode = $(that.CUSTOMERCODE_SELECTOR).val();            
+            var customerCode = $(that.CUSTOMERCODE_SELECTOR).val();
             var method = "GET";
             var useAutoLogin = that._getUseAutoLogin();
             var url = that._getUrl();
@@ -73,7 +73,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             }
             else {
                 setDefaultValues = useAutoLogin;
-                useAutoLogin = !useAutoLogin;                
+                useAutoLogin = !useAutoLogin;
             }
 
             $q.getJsonFromUrl(
@@ -179,17 +179,17 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         return $("input#UseAutoLogin").val().toUpperCase() == "TRUE";
     },
 
-    _disableWindow: function () {       
+    _disableWindow: function () {
         $(this.LOADING_SELECTOR).show();
         $(this.FORM_SELECTOR).find(':input:not(:disabled)').prop('disabled', true);
     },
-    
+
     _enableWindow: function () {
         $(this.FORM_SELECTOR).find(':input:disabled').prop('disabled', false);
         $(this.LOADING_SELECTOR).hide();
     },
 
-    _closeWindow: function () {        
+    _closeWindow: function () {
         this._windowComponent.close();
     },
 
@@ -215,7 +215,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
     _addDeferredCallcack: function (callback, settings) {
         this._updateZindex();
-        $(this).on(this.AJAX_EVENT, function (e) {            
+        $(this).on(this.AJAX_EVENT, function (e) {
             var isAuthenticated = e.value;
             if (isAuthenticated) {
                 jQuery.ajax(settings).done(callback);

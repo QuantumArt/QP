@@ -175,7 +175,7 @@
 				/// </param>
 				/// <returns type="jQuery" />
 				var def = { inc: 10, group: "*" };
-				$.extend(def, opt);    
+				$.extend(def, opt);
 				var zmax = 0;
 				$(def.group).each(function() {
 					var cur = parseInt($(this).css('z-index'));

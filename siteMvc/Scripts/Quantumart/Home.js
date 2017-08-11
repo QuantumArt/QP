@@ -7,8 +7,8 @@
 		var $form = $search.parents("form");
 		$form.on("submit", onSubmit);
 		var $div = $("<div/>", {
-			id : searchElementId + '_preview', 
-			'class' : 'previewButton', 
+			id : searchElementId + '_preview',
+			'class' : 'previewButton',
 			title: $l.Home.search
 		});
 		$div.append($("<img/>", { src: '/Backend/Content/Common/0.gif' }));
