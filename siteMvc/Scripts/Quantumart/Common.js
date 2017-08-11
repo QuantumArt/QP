@@ -85,6 +85,7 @@ Quantumart.QP8.Observable.prototype = {
         try {
           isObserver = Object.getType(observer).implementsInterface(Quantumart.QP8.IObserver);
         } catch (e) {
+          $q.trace('Exception was catched', e);
         }
 
         if (isObserver) {
