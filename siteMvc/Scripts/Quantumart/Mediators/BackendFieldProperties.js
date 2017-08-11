@@ -219,8 +219,7 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
 		if (!selectedContentId) {
 			// ничего не выбрано - закрываем все панели
 			$panels.hide();
-		} else {
-			if ($q.isNullOrEmpty(selectedContentId)) {
+		} else if ($q.isNullOrEmpty(selectedContentId)) {
 				$panels.hide();
 			} else {
 				$panels.show();
@@ -233,7 +232,6 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
 					$panels.filter('[hideforcurrent]').show();
 				}
 			}
-		}
 	}
 
 

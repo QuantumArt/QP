@@ -211,13 +211,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             target.parent('.groupCheckbox').siblings('.workflow_control_selector').find('.checkbox').each(jQuery.proxy(function (index, item) {
                 this.manageItems($(item));
             }, this));
-        } else {
-            if (target.attr('checked') == 'checked') {
+        } else if (target.attr('checked') == 'checked') {
  this.addItem(target.val(), target.siblings('label').text(), target.closest('.workflow_control_selector').data('weights')[target.val()]);
 } else {
  this.removeItem(target.val());
 }
-        }
     },
 
     addItem: function (statusId, statusName, weight) {

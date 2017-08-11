@@ -570,13 +570,11 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
 
       return menu;
     }
-  } else {
-    if ($q.isFunction(successHandler)) {
+  } else if ($q.isFunction(successHandler)) {
       successHandler(contextMenuCachedData);
     } else {
       return contextMenuCachedData;
     }
-  }
 };
 
 Quantumart.QP8.BackendContextMenu.registerClass('Quantumart.QP8.BackendContextMenu', Quantumart.QP8.Observable);

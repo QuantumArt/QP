@@ -741,11 +741,9 @@ Quantumart.QP8.BackendToolbar.prototype = {
     if (!$q.isNullOrEmpty($item)) {
       if (state) {
         $item.removeClass(this.ITEM_DISABLED_CLASS_NAME);
-      } else {
-        if (!$item.data("always_enabled")) {
+      } else if (!$item.data("always_enabled")) {
           $item.addClass(this.ITEM_DISABLED_CLASS_NAME);
         }
-      }
     }
   },
 

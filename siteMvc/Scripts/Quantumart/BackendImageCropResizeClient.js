@@ -416,8 +416,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 if (!response.ok) {
                     var message = response.message || _defaultErrorMessage;
                     displayErrors([message]);
-                } else {
-                	if (typeof _parameters.onCompleteCallback == "function") {
+                } else if (typeof _parameters.onCompleteCallback == "function") {
                 		if (_getSaveMode() == _saveMode.saveAs) {
                 			_saveToCache();
                 		} else {
@@ -425,7 +424,6 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 		}
                         _parameters.onCompleteCallback();
                     }
-                }
             }).fail(function (error) {
                 displayErrors([_defaultErrorMessage]);
             });

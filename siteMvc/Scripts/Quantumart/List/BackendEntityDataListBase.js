@@ -402,13 +402,11 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       } else {
         actionLink.disableActionLink();
       }
-    } else {
-      if (state) {
+    } else if (state) {
         $linkButton.find("A:first").removeClass(this.TOOLBAR_BUTTON_DISABLED_CLASS_NAME);
       } else {
         $linkButton.find("A:first").addClass(this.TOOLBAR_BUTTON_DISABLED_CLASS_NAME);
       }
-    }
   },
 
   _createLinkButton: function (id, text, cssClassName) {
