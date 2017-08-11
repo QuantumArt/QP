@@ -339,7 +339,10 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   fillTreeViewItemFromTreeNode: function (dataItem, node) {
-    var iconUrl = node.Icon.left(7).toLowerCase() !== 'http://' ? THEME_IMAGE_FOLDER_URL_SMALL_ICONS + node.Icon : node.Icon;
+    var iconUrl = node.Icon.left(7).toLowerCase() !== 'http://'
+      ? THEME_IMAGE_FOLDER_URL_SMALL_ICONS + node.Icon
+      : node.Icon;
+
     dataItem.Value = node.NodeCode;
     dataItem.Text = node.Title;
     dataItem.ImageUrl = iconUrl;
@@ -350,9 +353,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   getTreeViewItemFromTreeNode: function (node) {
-    var dataItem = new Object();
-    this.fillTreeViewItemFromTreeNode(dataItem, node);
-    return dataItem;
+    return this.fillTreeViewItemFromTreeNode({}, node);
   },
 
   fillTreeViewItemCollectionFromTreeNodes: function (dataItems, nodes) {

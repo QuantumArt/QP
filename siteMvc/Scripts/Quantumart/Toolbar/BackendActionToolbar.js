@@ -138,27 +138,24 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   },
 
   _getToolbarItemsFromResult: function (items) {
-    var self = this;
     var dataItems = [];
     jQuery.each(items, function (index, item) {
-      var dataItem = new Object();
-      dataItem.Type = TOOLBAR_ITEM_TYPE_BUTTON;
-      dataItem.Value = item.ActionCode;
-      dataItem.Text = item.Name;
-      dataItem.Tooltip = item.Name;
-      dataItem.ItemsAffected = item.ItemsAffected;
-      dataItem.Icon = item.Icon;
-      dataItem.AlwaysEnabled = item.ItemsAffected == 0;
-      dataItem.CheckOnClick = false;
-      dataItem.Checked = false;
-      dataItem.IconChecked = null;
-
-      Array.add(dataItems, dataItem);
+      Array.add(dataItems, {
+        Type: TOOLBAR_ITEM_TYPE_BUTTON,
+        Value: item.ActionCode,
+        Text: item.Name,
+        Tooltip: item.Name,
+        ItemsAffected: item.ItemsAffected,
+        Icon: item.Icon,
+        AlwaysEnabled: item.ItemsAffected == 0,
+        CheckOnClick: false,
+        Checked: false,
+        IconChecked: null
+      });
     });
 
     return dataItems;
   },
-
 
   dispose: function () {
     this._stopDeferredOperations = true;

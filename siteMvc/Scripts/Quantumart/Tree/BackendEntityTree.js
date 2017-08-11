@@ -805,9 +805,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   },
 
   getTreeViewItemFromEntityObject: function (entity) {
-    var dataItem = new Object();
-    this.fillTreeViewItemFromEntityObject(dataItem, entity);
-    return dataItem;
+    return this.fillTreeViewItemFromEntityObject({}, entity);
   },
 
   fillTreeViewItemCollectionFromEntityObjects: function (dataItems, entities) {
