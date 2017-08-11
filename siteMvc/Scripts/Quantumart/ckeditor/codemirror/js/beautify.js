@@ -1375,7 +1375,7 @@
 
     function Output(indent_string, baseIndentString) {
         baseIndentString = baseIndentString || '';
-        this.indent_cache = [ baseIndentString ];
+        this.indent_cache = [baseIndentString];
         this.baseIndentLength = baseIndentString.length;
         this.indent_length = indent_string.length;
         this.raw = false;
