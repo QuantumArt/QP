@@ -203,9 +203,9 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 	get_IsNull: function () {
 		if (this._inverseCheckBoxElement) {
  return jQuery(this._inverseCheckBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
 	},
 
 	_isByValue: true,

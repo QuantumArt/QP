@@ -34,9 +34,9 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     _getServerContent: function (data) {
         if (data.success) {
             return data.view;
-        } else {
+        } 
             return data.message;
-        }
+        
     },
 
     _createWindow: function (serverContent) {
@@ -243,9 +243,9 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             return false;
         } else if (jqXHR.getResponseHeader("QP-Not-Authenticated")) {
             return true;
-        } else {
+        } 
             return false;
-        }
+        
     },
 
     dispose: function () {

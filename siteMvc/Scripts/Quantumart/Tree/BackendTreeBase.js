@@ -337,10 +337,10 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       $element = null;
       e.preventDefault();
       return false;
-    } else {
+    } 
       $node = null;
       $element = null;
-    }
+    
   },
 
   _onIdClicking: function (e) {

@@ -8,9 +8,9 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, 
 			return { userId: users[0].Id };
 		} else if (type == 2 && groups[0]) {
 			return { groupId: groups[0].Id };
-		} else {
+		} 
  return {};
-}
+
 	}
 
 	function dispose() {

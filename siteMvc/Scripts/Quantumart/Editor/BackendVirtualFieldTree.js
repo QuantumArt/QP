@@ -14,9 +14,9 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
     convertNodeCodeToEntityId: function (nodeCode) {
 		if (nodeCode != this.ROOT_NODE_CODE) {
 			return nodeCode;
-		} else {
+		} 
 			return null;
-		}
+		
 	},
 
     _getEntityChildList: function (entityId, returnSelf, successHandler, errorHandler) {

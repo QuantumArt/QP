@@ -105,9 +105,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			return $l.SearchBlock.isNullCheckBoxLabelText;
 		} else if (stateData.isByValue) {
 			return stateData.from ? stateData.from : "?";
-		} else {
+		} 
 			return (stateData.from ? stateData.from : "?") + " - " + (stateData.to ? stateData.to : "?");
-		}
+		
 	},
 
 	restore_blockState: function (state) {
@@ -199,9 +199,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 	get_IsNull: function () {
 		if (this._isNullCheckBoxElement) {
  return jQuery(this._isNullCheckBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
 	},
 
 	_rangeType: null, // тип: дата или время

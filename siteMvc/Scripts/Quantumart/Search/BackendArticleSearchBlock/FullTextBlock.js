@@ -46,9 +46,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
 
     if (data) {
       return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.FullText, data.fieldID, data.fieldColumn, data.contentID, data.referenceFieldID, data.text);
-    } else {
+    } 
       return null;
-    }
+    
   },
 
   get_blockState: function () {
@@ -67,12 +67,12 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
 
       if (jQuery.isEmptyObject(state)) {
         return null;
-      } else {
+      } 
         return state;
-      }
-    } else {
+      
+    } 
       return null;
-    }
+    
   },
 
   restore_blockState: function (state) {
@@ -110,12 +110,12 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
           fieldValue: fieldValue,
           text: jQuery(this._queryTextBoxElement).val()
         };
-      } else {
+      } 
  return null;
-}
-    } else {
+
+    } 
  return null;
-}
+
   },
 
   // возвращает параметры для полнотекстового поиска

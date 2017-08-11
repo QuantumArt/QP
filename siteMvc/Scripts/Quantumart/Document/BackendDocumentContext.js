@@ -145,9 +145,9 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   getHost: function () {
     if (this._isWindow) {
       return Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindow(this._hostId);
-    } else {
+    } 
       return this._getArea().getDocument(this._hostId);
-    }
+    
   },
 
   _getArea: function () {

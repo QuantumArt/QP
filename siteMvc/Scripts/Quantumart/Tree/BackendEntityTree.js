@@ -945,9 +945,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       }
 
       return icon;
-    } else {
+    } 
       return entity.IconUrl;
-    }
+    
   },
 
   executeAction: function (node, actionCode, options) {

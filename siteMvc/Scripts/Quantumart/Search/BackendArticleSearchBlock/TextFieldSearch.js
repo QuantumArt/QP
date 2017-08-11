@@ -101,9 +101,9 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     } else if (stateData.beginningStart) {
       if (stateData.inverse) {
         return  $l.SearchBlock.endText + result;
-      } else {
+      } 
         return $l.SearchBlock.fromText + result;
-      }
+      
     }
 
     if (stateData.inverse) {
@@ -171,33 +171,33 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   get_IsNull: function () {
     if (this._isNullCheckBoxElement) {
  return jQuery(this._isNullCheckBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
   },
 
   get_Inverse: function () {
     if (this._inverseCheckBoxElement) {
  return jQuery(this._inverseCheckBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
   },
 
   get_ExactMatch: function () {
     if (this._exactMatchCheckBoxElement) {
  return jQuery(this._exactMatchCheckBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
   },
 
   get_BeginningStart: function () {
     if (this._beginningStartChechBoxElement) {
  return jQuery(this._beginningStartChechBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
   },
 
 

@@ -83,9 +83,9 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 		var stateData = this.get_blockState().data;
 		if (stateData.isNull) {
 			return $l.SearchBlock.isNullCheckBoxLabelText;
-		} else {
+		} 
 			return stateData.value === true ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
-		}
+		
 	},
 
 	restore_blockState: function (state) {
@@ -142,9 +142,9 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 	get_IsNull: function () {
 		if (this._isNullCheckBoxElement) {
  return jQuery(this._isNullCheckBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
 	},
 
 	_isNullCheckBoxElement: null // dom-элемент чекбокса isNull

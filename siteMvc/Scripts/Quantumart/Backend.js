@@ -426,9 +426,9 @@ Quantumart.QP8.Backend.prototype = {
       return String.format($l.Action.selectedDocumentIsOpenedInTab, eventArgs.get_entityId());
     } else if (entityIsOpenedInWindow) {
       return String.format($l.Action.selectedDocumentIsOpenedInWindow, eventArgs.get_entityId());
-    } else {
+    } 
       return '';
-    }
+    
   },
 
   _loadHome: function () {

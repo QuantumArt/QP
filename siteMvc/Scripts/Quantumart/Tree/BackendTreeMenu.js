@@ -239,7 +239,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           var _exp = function (node) {
             if (!node || $q.isNullOrEmpty(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)))) {
               return null;
-            } else {
+            } 
               // Открыть node
               $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
               if (self._isNodeCollapsed($node)) {
@@ -249,7 +249,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
               return _exp($.grep(node.ChildNodes, function (n) {
                 return n.ChildNodes != null;
               })[0]) || node;
-            }
+            
           };
 
           _exp(data);
@@ -276,7 +276,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       var findDeepest = function (node, toExpand) {
         if (!node || $q.isNullOrEmpty(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)))) {
           return null;
-        } else {
+        } 
             // Открыть node
           if (toExpand) {
             $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
@@ -288,7 +288,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           return findDeepest($.grep(node.ChildNodes, function (n) {
             return n.ChildNodes != null;
           })[0], toExpand) || node;
-        }
+        
       };
 
       // найти дочерние node для текущего родительского
@@ -303,11 +303,11 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
         ) {
           deepestExistedNode = parent;
           return parent.ChildNodes;
-        } else {
+        } 
           return findChildren(options, $.grep(parent.ChildNodes || [], function (n) {
             return n.ChildNodes != null;
           })[0]);
-        }
+        
       };
 
       var deepestExistedNode = findDeepest(data);

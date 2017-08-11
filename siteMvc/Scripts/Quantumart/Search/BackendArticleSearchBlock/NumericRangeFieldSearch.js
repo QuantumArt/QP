@@ -232,17 +232,17 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 	get_IsNull: function () {
 		if (this._isNullCheckBoxElement) {
  return jQuery(this._isNullCheckBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
 	},
 
 	get_Inverse: function () {
 	    if (this._inverseCheckBoxElement) {
  return jQuery(this._inverseCheckBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
 	},
 
 	_isByValue: true,

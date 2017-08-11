@@ -10,9 +10,9 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   generateGridGroupCode: function (entityTypeCode, parentEntityId) {
     if (parentEntityId) {
       return String.format('{0}_{1}', entityTypeCode, parentEntityId);
-    } else {
+    } 
       return entityTypeCode;
-    }
+    
   },
 
   getGridGroup: function (gridGroupCode) {

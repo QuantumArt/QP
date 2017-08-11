@@ -63,9 +63,9 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
         return $l.SearchBlock.isNullCheckBoxLabelText;
       } else if (stateData.contentID) {
         return $q.cutShort($(this._contentElement).find("[value=" + stateData.contentID + "]").text(), 12);
-      } else {
+      } 
         return '';
-      }
+      
     },
 
     restore_blockState: function (state) {
@@ -88,9 +88,9 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     get_IsNull: function () {
       if (this._isNullCheckBoxElement) {
         return $(this._isNullCheckBoxElement).is(":checked");
-      } else {
+      } 
         return false;
-      }
+      
     },
 
     _onIsNullCheckBoxChange: function () {

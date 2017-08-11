@@ -77,9 +77,9 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
             return $l.SearchBlock.isNullCheckBoxLabelText;
         } else if (stateData.text) {
             return '"' + $q.cutShort(stateData.alias, 8) + '"';
-        } else {
+        } 
             return '""';
-        }
+        
     },
 
     restore_blockState: function (state) {
@@ -119,9 +119,9 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     get_IsNull: function () {
         if (this._isNullCheckBoxElement) {
  return jQuery(this._isNullCheckBoxElement).is(":checked");
-} else {
+} 
  return false;
-}
+
     },
 
 
