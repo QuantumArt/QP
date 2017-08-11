@@ -153,7 +153,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
         callerCallback: popupWindows.callerCallback,
         selectWindowUID: popupWindows.selectWindowUID
       });
-    };
+    }
   },
 
   get_hostUID: function () {

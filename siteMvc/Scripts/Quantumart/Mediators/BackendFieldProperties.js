@@ -130,7 +130,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 				$q.processGenericAjaxError(jqXHR);
 			});
 		}
-	};
+	}
 
 	function dispose() {
 	    jQuery(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);

@@ -270,7 +270,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                 var iterationCallback = function () {
                   if (toCancel === true) {
                     stageCounter = stageLength;
-                  };
+                  }
 
                   if (stageCounter < stageLength) {
                     if (stepCounter < stepLength) {

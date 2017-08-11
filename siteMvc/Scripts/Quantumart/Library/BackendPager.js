@@ -183,7 +183,7 @@ Quantumart.QP8.BackendPager.prototype = {
 		// если текущая страница - первая - то дизейблим соответствующие arrow
 		if (this._currentPageNumber == 0) {
 			jQuery(this._arrowFirstElement).addClass("t-state-disabled").removeClass('t-state-hover');
-			jQuery(this._arrowPrevElement).addClass("t-state-disabled").removeClass('t-state-hover'); ;
+			jQuery(this._arrowPrevElement).addClass("t-state-disabled").removeClass('t-state-hover'); 
 		} else {
 			jQuery(this._arrowFirstElement).removeClass("t-state-disabled");
 			jQuery(this._arrowPrevElement).removeClass("t-state-disabled");
@@ -191,8 +191,8 @@ Quantumart.QP8.BackendPager.prototype = {
 
 		// если текущая страница - последняя - то дизейблим соответствующие arrow
 		if (this._currentPageNumber >= this._pageCount - 1) {
-			jQuery(this._arrowLastElement).addClass("t-state-disabled").removeClass('t-state-hover'); ;
-			jQuery(this._arrowNextElement).addClass("t-state-disabled").removeClass('t-state-hover'); ;
+			jQuery(this._arrowLastElement).addClass("t-state-disabled").removeClass('t-state-hover'); 
+			jQuery(this._arrowNextElement).addClass("t-state-disabled").removeClass('t-state-hover'); 
 		} else {
 			jQuery(this._arrowLastElement).removeClass("t-state-disabled");
 			jQuery(this._arrowNextElement).removeClass("t-state-disabled");

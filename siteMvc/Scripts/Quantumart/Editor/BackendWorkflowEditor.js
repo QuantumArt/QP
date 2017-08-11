@@ -121,7 +121,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                 $(this).closest('fieldset').find('.workflow_user_row').hide();
                 $(this).closest('fieldset').find('.workflow_group_row').show();
             }
-        };
+        }
         this._componentElem.data('workflow', this);
     },
 

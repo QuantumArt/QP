@@ -25,7 +25,7 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, 
 
 		$btnSearch.off();
 		$btnSearch = null;
-	};
+	}
 
 	var $searchBlock = jQuery('#' + searchBlockElementId),
 		$btnSearch = jQuery('.pep-search-button', $searchBlock),

@@ -256,7 +256,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                         maxHeight: _parameters.crop.height,
                         maxWidth: _parameters.crop.width
                     });
-            };
+            }
 
             _imgAreaSelect = _$imgArea.imgAreaSelect(parameters);
         },

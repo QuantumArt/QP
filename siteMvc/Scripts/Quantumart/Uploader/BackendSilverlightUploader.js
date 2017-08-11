@@ -145,7 +145,7 @@ function Quantumart$QP8$BackendSilverlightUploader$uploadCallback(id, fileName) 
 
 	$element = null;
 	component = null;
-};
+}
 
 // Проверяет существование файла
 function Quantumart$QP8$BackendSilverlightUploader$checkFileExistence(longfileName) {
@@ -153,7 +153,7 @@ function Quantumart$QP8$BackendSilverlightUploader$checkFileExistence(longfileNa
 	var obj = $q.getJsonSync(url, { name: longfileName });
 
 	return obj.result;
-};
+}
 
 // Разрешает конфликт имен файлов
 function Quantumart$QP8$BackendSilverlightUploader$resolveFileName(path, fileName) {
@@ -161,14 +161,14 @@ function Quantumart$QP8$BackendSilverlightUploader$resolveFileName(path, fileNam
 	var obj = $q.getJsonSync(url, { path: path, name: fileName });
 
 	return obj.result;
-};
+}
 
 // Проверяет папку на security
 function Quantumart$QP8$BackendSilverlightUploader$checkSecurity(path) {
 	var url = APPLICATION_ROOT_URL + "Library/CheckSecurity/";
 	var obj = $q.getJsonSync(url, { path: path });
 	return obj.result;
-};
+}
 
 
 function Quantumart$QP8$BackendSilverlightUploader$returnFolderPath(id) {
@@ -184,7 +184,7 @@ function Quantumart$QP8$BackendSilverlightUploader$returnFolderPath(id) {
 	$element = null;
 	component = null;
 	return result;
-};
+}
 
 // Локализует Silverlight-uploader
 function Quantumart$QP8$BackendSilverlightUploader$localizeUpload() {
@@ -198,7 +198,7 @@ function Quantumart$QP8$BackendSilverlightUploader$localizeUpload() {
 	};
 
 	return result;
-};
+}
 
 Quantumart.QP8.BackendSilverlightUploader.registerClass("Quantumart.QP8.BackendSilverlightUploader", Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader);
 
