@@ -1,4 +1,4 @@
-//#region class BackendFilePreviewListView
+// #region class BackendFilePreviewListView
 // === Класс "Список превью файлов" ===
 Quantumart.QP8.BackendFilePreviewListView = function (fileListContentElement, contextMenuCode, selectMode, zIndex) {
     Quantumart.QP8.BackendFilePreviewListView.initializeBase(this, [fileListContentElement, contextMenuCode, selectMode, zIndex]);
@@ -88,4 +88,4 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 };
 
 Quantumart.QP8.BackendFilePreviewListView.registerClass("Quantumart.QP8.BackendFilePreviewListView", Quantumart.QP8.BackendFileNameListView);
-//#endregion
+// #endregion

@@ -1,4 +1,4 @@
-//#region class BackendSilverlightUploader
+// #region class BackendSilverlightUploader
 // === Класс "Silverlight загрузчик" ===
 Quantumart.QP8.BackendSilverlightUploader = function (parentElement, options) {
 	Quantumart.QP8.BackendSilverlightUploader.initializeBase(this);
@@ -80,8 +80,8 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 			},
 			events: {
 				onError: this._onSilverlightErrorHandler
-				//onLoad: this._onSilverlightLoadHandler
-			}, //c:\\inetpub\\wwwroot\\qp_demo_nett\\upload
+				// onLoad: this._onSilverlightLoadHandler
+			}, // c:\\inetpub\\wwwroot\\qp_demo_nett\\upload
 			initParams: $q.hashToString(params),
 			context: "context"    // context helper for onLoad handler.
 		});
@@ -116,7 +116,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 			errMsg += "MethodName: " + args.methodName + "     \n";
 		}
 
-		//throw new Error(errMsg);
+		// throw new Error(errMsg);
 	},
 
 
@@ -198,4 +198,4 @@ function Quantumart$QP8$BackendSilverlightUploader$localizeUpload() {
 };
 
 Quantumart.QP8.BackendSilverlightUploader.registerClass("Quantumart.QP8.BackendSilverlightUploader", Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader);
-//#endregion
+// #endregion

@@ -1,4 +1,4 @@
-//#region class BackendEntityType
+// #region class BackendEntityType
 Quantumart.QP8.BackendEntityType = function() {};
 
 // Возвращает тип сущности по ее коду
@@ -111,4 +111,4 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
 };
 
 Quantumart.QP8.BackendEntityType.registerClass("Quantumart.QP8.BackendEntityType");
-//#endregion
+// #endregion

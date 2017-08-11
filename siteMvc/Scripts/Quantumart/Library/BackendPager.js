@@ -1,9 +1,9 @@
-//#region event types of pager
+// #region event types of pager
 // === Типы событий пейджера ===
 var EVENT_TYPE_PAGE_NUMBER_CHANGED = "OnPageNumberChanged";
-//#endregion
+// #endregion
 
-//#region class BackendPagerEventArgs
+// #region class BackendPagerEventArgs
 // === Класс "Аргументы события, вызванного пейджером" ===
 Quantumart.QP8.BackendPagerEventArgs = function (pageNumber) {
 	Quantumart.QP8.BackendPagerEventArgs.initializeBase(this);
@@ -20,9 +20,9 @@ Quantumart.QP8.BackendPagerEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendPagerEventArgs.registerClass("Quantumart.QP8.BackendPagerEventArgs", Sys.EventArgs);
-//#endregion
+// #endregion
 
-//#region class Pager
+// #region class Pager
 // === Компонент Pager
 Quantumart.QP8.BackendPager = function (pagerElement) {
 	Quantumart.QP8.BackendPager.initializeBase(this);
@@ -277,4 +277,4 @@ Quantumart.QP8.BackendPager.getFrameEndPageNumber = function(pageFrameNumber, pa
 };
 
 Quantumart.QP8.BackendPager.registerClass("Quantumart.QP8.BackendPager", Quantumart.QP8.Observable);
-//#endregion
+// #endregion

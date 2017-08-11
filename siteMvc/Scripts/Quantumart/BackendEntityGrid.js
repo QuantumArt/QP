@@ -4,7 +4,7 @@ var EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING = 'OnEntityGridActionExecuting';
 var EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED = 'OnEntityGridEntitySelected';
 var EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK = 'OnEntityGridEntityTitleLinkClick';
 
-//#region class BackendEntityGrid
+// #region class BackendEntityGrid
 // === Класс "Список сущностей" ===
 Quantumart.QP8.BackendEntityGrid = function(gridGroupCodes, gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
   Quantumart.QP8.BackendEntityGrid.initializeBase(this);
@@ -161,7 +161,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   _linkOpenNewTab: false, // открывать ли новый таб при клике на Link
   _startingEntitiesIDs: [], // идентификаторы выбранных сущностей, которые задаются при инициализации компонента
   _selectedEntitiesIDs: [], // идентификаторы выбранных сущностей
-  _allowFilterSelectedEntities: false, //признак, разрешающий обрабатывать только те выбранные сущности, которые прошли фильтрацию
+  _allowFilterSelectedEntities: false, // признак, разрешающий обрабатывать только те выбранные сущности, которые прошли фильтрацию
   _removedIds: [],
   _allowSaveRowsSelection: true, // признак, разрешающий сохранять выделение строк грида при загрузке в него новых данных
   _stopDeferredOperations: false, // признак, отвечающий за остановку все отложенных операций
@@ -177,7 +177,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   _contextMenuActionCode: '',
   _filter: '', // фильтр сущностей
   _hostIsWindow: false,
-  _treeFieldId: 0, //Идентификатор поля по которому создаются дочерние элементы
+  _treeFieldId: 0, // Идентификатор поля по которому создаются дочерние элементы
   _isBindToExternal: false,
   _deselectAllId: '',
   _selectAllId: '',
@@ -1226,4 +1226,4 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
 Quantumart.QP8.BackendEntityGrid.registerClass('Quantumart.QP8.BackendEntityGrid', Quantumart.QP8.Observable);
 
-//#endregion
+// #endregion

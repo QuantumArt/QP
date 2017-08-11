@@ -1,4 +1,4 @@
-//#region class BackendEntityEditorManager
+// #region class BackendEntityEditorManager
 var EVENT_TYPE_ENTITY_EDITOR_IS_READY = "OnEntityEditorIsReady";
 var EVENT_TYPE_ENTITY_EDITOR_DISPOSED = "OnEntityEditorDisposed";
 var EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = "OnEntityEditorFieldChanged";
@@ -230,4 +230,4 @@ Quantumart.QP8.BackendEntityEditorManager.destroyInstance = function Quantumart$
 };
 
 Quantumart.QP8.BackendEntityEditorManager.registerClass("Quantumart.QP8.BackendEntityEditorManager", Quantumart.QP8.Observable);
-//#endregion
+// #endregion

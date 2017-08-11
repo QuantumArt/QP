@@ -87,7 +87,7 @@
                             showCursorWhenSelecting: true,
                             styleActiveLine: config.styleActiveLine,
                             viewportMargin: Infinity,
-                            //extraKeys: {"Ctrl-Space": "autocomplete"},
+                            // extraKeys: {"Ctrl-Space": "autocomplete"},
                             extraKeys: {
                                 "Ctrl-Q": function (codeMirror_Editor) {
                                     if (config.enableCodeFolding) {
@@ -109,7 +109,7 @@
                             if (config.useBeautifyOnStart) {
                                 var indent_size = 4,
                                     indent_char = ' ',
-                                    brace_style = 'collapse'; //collapse, expand, end-expand
+                                    brace_style = 'collapse'; // collapse, expand, end-expand
 
                                 var source = window["codemirror_" + editor.id].getValue();
 
@@ -207,7 +207,7 @@
 
 
                             } else {
-                                //loadCodeMirrorInline(editor, textArea);
+                                // loadCodeMirrorInline(editor, textArea);
                                 if (CodeMirror.prototype['autoFormatAll']) {
                                     loadCodeMirrorInline(editor, textArea);
                                 } else {
@@ -648,7 +648,7 @@
                 var sourceAreaElement = window["editable_" + editor.id],
                     holderElement = sourceAreaElement.getParent();
 
-                /*CodeMirror.commands.autocomplete = function(cm) {
+                /* CodeMirror.commands.autocomplete = function(cm) {
                     CodeMirror.showHint(cm, CodeMirror.htmlHint);
                 };*/
 
@@ -720,7 +720,7 @@
                     showTrailingSpace: config.showTrailingSpace,
                     showCursorWhenSelecting: true,
                     styleActiveLine: config.styleActiveLine,
-                    //extraKeys: {"Ctrl-Space": "autocomplete"},
+                    // extraKeys: {"Ctrl-Space": "autocomplete"},
                     extraKeys: extraKeys,
                     foldGutter: true,
                     gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
@@ -735,7 +735,7 @@
                     if (config.useBeautifyOnStart) {
                         var indent_size = 4;
                         var indent_char = ' ';
-                        var brace_style = 'collapse'; //collapse, expand, end-expand
+                        var brace_style = 'collapse'; // collapse, expand, end-expand
 
                         var source = window["codemirror_" + editor.id].getValue();
 
@@ -884,8 +884,8 @@
 
                     if (editor.plugins.textselection && textRange) {
 
-                        //textRange.element = new CKEDITOR.dom.element(editor._.editable.$);
-                        //textRange.select();
+                        // textRange.element = new CKEDITOR.dom.element(editor._.editable.$);
+                        // textRange.select();
 
                         var start, end;
 
@@ -1119,9 +1119,9 @@ CKEDITOR.plugins.sourcearea = {
 function LineChannelToOffSet(ed, linech) {
     var line = linech.line;
     var ch = linech.ch;
-    var n = (line + ch); //for the \n s & chars in the line
+    var n = (line + ch); // for the \n s & chars in the line
     for (i = 0; i < line; i++) {
-        n += (ed.getLine(i)).length;//for the chars in all preceeding lines
+        n += (ed.getLine(i)).length;// for the chars in all preceeding lines
     }
     return n;
 }
@@ -1136,7 +1136,7 @@ function OffSetToLineChannel(ed, n) {
             ch = n - index;
             return { line: line, ch: ch };
         }
-        len++;//for \n char
+        len++;// for \n char
         index += len;
     }
     return { line: line, ch: ch };

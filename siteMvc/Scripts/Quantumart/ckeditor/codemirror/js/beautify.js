@@ -1,4 +1,4 @@
-/*jshint curly:true, eqeqeq:true, laxbreak:true, noempty:false */
+/* jshint curly:true, eqeqeq:true, laxbreak:true, noempty:false */
 /*
 
   The MIT License (MIT)
@@ -175,10 +175,10 @@
             BlockStatement: 'BlockStatement', // 'BLOCK'
             Statement: 'Statement', // 'STATEMENT'
             ObjectLiteral: 'ObjectLiteral', // 'OBJECT',
-            ArrayLiteral: 'ArrayLiteral', //'[EXPRESSION]',
-            ForInitializer: 'ForInitializer', //'(FOR-EXPRESSION)',
-            Conditional: 'Conditional', //'(COND-EXPRESSION)',
-            Expression: 'Expression' //'(EXPRESSION)'
+            ArrayLiteral: 'ArrayLiteral', // '[EXPRESSION]',
+            ForInitializer: 'ForInitializer', // '(FOR-EXPRESSION)',
+            Conditional: 'Conditional', // '(COND-EXPRESSION)',
+            Expression: 'Expression' // '(EXPRESSION)'
         };
 
     function Beautifier(js_source_text, options) {
@@ -251,7 +251,7 @@
         opt = {};
 
         // compatibility
-        if (options.braces_on_own_line !== undefined) { //graceful handling of deprecated option
+        if (options.braces_on_own_line !== undefined) { // graceful handling of deprecated option
             opt.brace_style = options.braces_on_own_line ? "expand" : "collapse";
         }
         opt.brace_style = options.brace_style ? options.brace_style : (opt.brace_style ? opt.brace_style : "collapse");
@@ -335,7 +335,7 @@
 
         this.beautify = function() {
 
-            /*jshint onevar:true */
+            /* jshint onevar:true */
             var local_token, sweet_code;
             Tokenizer = new tokenizer(js_source_text, opt, indent_string);
             tokens = Tokenizer.tokenize();
@@ -399,7 +399,7 @@
         // we could use just string.split, but
         // IE doesn't like returning empty strings
         function split_newlines(s) {
-            //return s.split(/\x0d\x0a|\x0a/);
+            // return s.split(/\x0d\x0a|\x0a/);
 
             s = s.replace(/\x0d/g, '');
             var out = [],

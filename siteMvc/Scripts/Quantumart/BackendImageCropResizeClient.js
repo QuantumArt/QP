@@ -1,12 +1,12 @@
-/// <reference path="jquery-1.7.1.intellisense.js" />
-/// <reference path="jquery-1.7.1.js" />
+// / <reference path="jquery-1.7.1.intellisense.js" />
+// / <reference path="jquery-1.7.1.js" />
 Quantumart.QP8.ImageCropResizeClient = Quantumart.QP8.ImageCropResizeClient || {};
 Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClient.Cache || {};
 (function ($, imgCropResize) {
     'use strict';
 
     var
-        //#region control parameters
+        // #region control parameters
         _defaultParameters = {
             sourceImageUrl: "",                                         //	URL исходного изображения
             resultImageFolder: "",                                      //	URL для размещения итогового изображения (папка, при пустом значении или отсутствии размещаем там же, где исходное)
@@ -25,9 +25,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             	Sys.Debug.trace("imgCropResize: finished");
             }                                                           //	Callback, вызываемый при завершении работы
         },
-        //#endregion
+        // #endregion
 
-        //#region Content html
+        // #region Content html
         _fieldsetCropHtml = "<fieldset class='crop'>\
                 <legend>" + $l.Crop.selection + "</legend>\
                 <dl>\
@@ -109,9 +109,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 </ul>\
             </fieldset>",
 
-        //#endregion
+        // #endregion
 
-        //#region private fields
+        // #region private fields
 		_parameters = null,
          _$windowElement = null,
         _$rootElement = null,
@@ -141,7 +141,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         _imgInitWidth = 0,
         _imgInitHeight = 0,
 
-        //#endregion
+        // #endregion
 
         _ensureSelection = function (selection) {
             setTimeout(function () {
@@ -152,7 +152,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             }, 0);
         },
 
-        //#region Slider
+        // #region Slider
         _onSlide = function (resize) {
             _$sliderValueSpan.text("x" + resize);
 
@@ -182,11 +182,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         _createSlider = function () {
             _slider = _$nouislider.noUiSlider({
                 range: {
-                    //size down
+                    // size down
                     'min': _parameters.resizeRange.min,
-                    //default
+                    // default
                     '50%': 1,
-                    //size up
+                    // size up
                     'max': _parameters.resizeRange.max
                 },
                 start: 1
@@ -210,9 +210,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                     e.preventDefault();
                     var currentvalue = parseFloat($(this).val());
                     var step = 1;
-                    step *= delta < 0 //mouse down
-                        ? currentvalue < 1 ? -0.25 : -0.5 //slide left
-                        : currentvalue < 1 ? 0.25 : 0.5; //slide right
+                    step *= delta < 0 // mouse down
+                        ? currentvalue < 1 ? -0.25 : -0.5 // slide left
+                        : currentvalue < 1 ? 0.25 : 0.5; // slide right
 
                     var newValue = currentvalue + step;
                     if (newValue >= 0 && newValue <= 3.5) {
@@ -221,9 +221,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 }
             });
         },
-        //#endregion
+        // #endregion
 
-        //#region ImgAreaSelect
+        // #region ImgAreaSelect
         _createImgAreaSelect = function () {
             var parameters = {
                 persistent: !_parameters.allowResizeCropArea,
@@ -278,16 +278,16 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 }
             }, 0);
         },
-        //#endregion
+        // #endregion
 
-        //#region Create conrols
+        // #region Create conrols
         _createControls = function () {
 
             _createImgAreaSelect();
 
             _createSlider();
         },
-        //#endregion
+        // #endregion
 
         _setSize = function ($img) {
             if (_$aside && $img ) {
@@ -335,9 +335,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         _assignRootElement = function () {
             _$rootElement = _$windowElement;
         },
-        //#endregion
+        // #endregion
 
-        //#region Assign internal controls
+        // #region Assign internal controls
         _createShortlinks = function () {
             _$x = _$rootElement.find(".selection-x");
             _$y = _$rootElement.find(".selection-y");
@@ -355,9 +355,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             _$radioInputs = _$rootElement.find("input[name=overwrite]:radio");
             _$imgArea = _$rootElement.find("img.img");
         },
-        //#endregion
+        // #endregion
 
-        //#region Misc methods
+        // #region Misc methods
         _endsWith = function (suffix, str) {
             return str.indexOf(suffix, str.length - suffix.length) !== -1;
         },
@@ -404,9 +404,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 					{ crop: { top: sendData.top, left: sendData.left, width: sendData.width, height: sendData.height } };
 		},
 
-        //#endregion
+        // #endregion
 
-        //#region Ajax methods
+        // #region Ajax methods
         _serverCheckFileName = function (userInputFileName) {
             $.ajax(_parameters.checkFileNameActionUrl, {
 
@@ -460,19 +460,19 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 displayErrors([_defaultErrorMessage]);
             });
         },
-        //#endregion
+        // #endregion
 
-        //#region Create content
+        // #region Create content
 
         _createContent = function () {
 
-            //main content
+            // main content
             _$wincontent = $("<div class='imgCropResize content-container' />");
 
-            //controls
+            // controls
             _$aside = $(" <div class='aside'></div>");
 
-            //image
+            // image
             _$imageContainerDiv = $("<div class='image'/>");
             var url = _parameters.sourceImageUrl + "?t=" + new Date().getTime();
             _$img = $("<img class='img' src='" + url  + "' alt='изображение' />");
@@ -486,7 +486,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
 
 
-            //save overwrite options
+            // save overwrite options
             var $fieldsetSave = $(_fieldsetSaveHtml);
             if (_parameters.allowFileRewrite) {
                 $fieldsetSave.find(".save-items").prepend($(_saveOverwriteOrSaveAsHtml));
@@ -495,7 +495,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 $fieldsetSave.find(".save-items").prepend($(_saveOverwriteHtml));
             }
 
-            //all
+            // all
             _$wincontent.append(
                 _$aside.append(
                     $(_fieldsetCropHtml),
@@ -560,10 +560,10 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 	_$inputUserFileName.attr("disabled", "disabled");
             });
         }
-    //#endregion
+    // #endregion
     ;
 
-    //#region Create Control method
+    // #region Create Control method
     imgCropResize.create = function (parameters) {
 
     	_parameters = {};
@@ -590,9 +590,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             window: _$windowElement
         };
     };
-    //#endregion
+    // #endregion
 
-    //#region Public API
+    // #region Public API
     var displayErrors = function (errors) {
         _removeErrors();
         for (var i in errors) {
@@ -695,6 +695,6 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         delete this.parameters;
         delete this.window;
     };
-    //#endregion
+    // #endregion
 
 }(jQuery, Quantumart.QP8.ImageCropResizeClient));

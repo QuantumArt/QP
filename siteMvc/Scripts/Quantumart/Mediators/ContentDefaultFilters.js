@@ -1,4 +1,4 @@
-//#region class ContentDefaultFilters
+// #region class ContentDefaultFilters
 Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 	var $parentElement = jQuery("#" + parentElementId);
 	var $siteCombo = $parentElement.find(".qp-deffilter-site");
@@ -54,4 +54,4 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 		}
 	};
 };
-//#endregion
+// #endregion

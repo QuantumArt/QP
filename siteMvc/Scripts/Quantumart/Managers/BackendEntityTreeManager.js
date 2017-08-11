@@ -1,4 +1,4 @@
-//#region class BackendEntityTreeManager
+// #region class BackendEntityTreeManager
 // === Класс "Менеджер деревьев сущностей" ===
 Quantumart.QP8.BackendEntityTreeManager = function () {
 	Quantumart.QP8.BackendEntityTreeManager.initializeBase(this);
@@ -211,4 +211,4 @@ Quantumart.QP8.BackendEntityTreeManager.destroyInstance = function Quantumart$QP
 };
 
 Quantumart.QP8.BackendEntityTreeManager.registerClass("Quantumart.QP8.BackendEntityTreeManager", Quantumart.QP8.Observable);
-//#endregion
+// #endregion

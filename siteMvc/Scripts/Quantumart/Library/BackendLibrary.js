@@ -2,7 +2,7 @@
 // *** Компонент "Библиотека"                         ***
 // ****************************************************************************
 
-//#region event types of entity library
+// #region event types of entity library
 // === Типы событий библиотеки ===
 var EVENT_TYPE_LIBRARY_DATA_BOUND = 'OnLibraryDataBound';
 var EVENT_TYPE_LIBRARY_ACTION_EXECUTING = 'OnLibraryActionExecuting';
@@ -11,9 +11,9 @@ var EVENT_TYPE_LIBRARY_ENTITY_REMOVED = 'OnLibraryEntityRemoved';
 var EVENT_TYPE_LIBRARY_REQUEST_VIEW_TYPE_CODE = 'OnLibraryRequestViewTypeCode';
 var EVENT_TYPE_LIBRARY_RESIZED = 'OnLibraryResized';
 
-//#endregion
+// #endregion
 
-//#region class BackendLibrary
+// #region class BackendLibrary
 // === Класс "Библиотека" ===
 Quantumart.QP8.BackendLibrary = function(libraryGroupCode, libraryElementId, parentEntityId, actionCode, options, hostOptions) {
   Quantumart.QP8.BackendLibrary.initializeBase(this);
@@ -55,7 +55,7 @@ Quantumart.QP8.BackendLibrary = function(libraryGroupCode, libraryElementId, par
   this._filterResetButtonElement = jQuery('.' + this.LIBRARY_RESET_FILTER_BUTTON_CLASS_NAME, this._libraryElement);
   this._filterFormElement = jQuery('.' + this.LIBRARY_FILTER_FORM_CLASS_NAME, this._libraryElement);
 
-  //this._slUploaderContanerElement = jQuery("." + this.LIBRARY_SL_UPLOADER_CONTAINER_CLASS_NAME, this._libraryElement).get(0);
+  // this._slUploaderContanerElement = jQuery("." + this.LIBRARY_SL_UPLOADER_CONTAINER_CLASS_NAME, this._libraryElement).get(0);
 };
 
 Quantumart.QP8.BackendLibrary.prototype = {
@@ -68,7 +68,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
   _filterResetButtonElement: null, // DOM-элемент кнопки очистки фильтра
   _filterFormElement: null, // DOM-элемент формы фильтра
   _fileGridContainer: null, // DOM-элемент, содержащий grid
-  //_slUploaderContanerElement: null,
+  // _slUploaderContanerElement: null,
   _entityTypeCode: '', // код типа сущности
   _parentEntityId: 0, // идентификатор родительской сущности
   _actionCode: '', // код действия
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
   _filterFileName: '',
   _folderPath: '', // путь на диске к текущей папке
   _libraryPath: '', // путь к папке относительно корня библиотеки
-  _folderUrl: '', //URL текущей папки
+  _folderUrl: '', // URL текущей папки
   _allowMultipleSelection: true,
   _uploaderType: Quantumart.QP8.Enums.UploaderType.Silverlight, // тип компонента для загрузки файлов
 
@@ -98,7 +98,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
   LIBRARY_PHYSICAL_PATH_CLASS_NAME: 'l-physical-path',
   LIBRARY_VIRTUAL_PATH_CLASS_NAME: 'l-virtual-path',
 
-  //LIBRARY_SL_UPLOADER_CONTAINER_CLASS_NAME: "l-sl-uploader",
+  // LIBRARY_SL_UPLOADER_CONTAINER_CLASS_NAME: "l-sl-uploader",
 
   set_libraryManager: function(value) {
     this._libraryManager = value;
@@ -453,7 +453,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     this._fileContainers[VIEW_TYPE_CODE_THUMBNAILS] = null;
     this._fileContainers = null;
 
-    //this._slUploaderContanerElement = null;
+    // this._slUploaderContanerElement = null;
 
     this._libraryElement = null;
 
@@ -498,4 +498,4 @@ Quantumart.QP8.BackendLibrary.generateActionUrl = function Quantumart$QP8$Backen
 
 Quantumart.QP8.BackendLibrary.registerClass('Quantumart.QP8.BackendLibrary', Quantumart.QP8.Observable);
 
-//#endregion
+// #endregion

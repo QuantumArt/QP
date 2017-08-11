@@ -1,4 +1,4 @@
-//#region class BackendArticleSearchBlock.FieldSearchBlock
+// #region class BackendArticleSearchBlock.FieldSearchBlock
 // === Класс "Блок поиска по полям блока поиска статей" ===
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock = function (fieldSearchBlockElement, parentEntityId) {
 	this._fieldSearchBlockElement = fieldSearchBlockElement;
@@ -19,7 +19,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 	_addFieldSearchButtonElement: null, // dom-элемент "кнопки" для добавления поиска по выбранному в комбо полю
 
 	_parentEntityId: 0, // идентификатор родительской сущности;
-	_elementIdPrefix: "", //префикс идентификаторов dom-элементов
+	_elementIdPrefix: "", // префикс идентификаторов dom-элементов
 
 	_fieldSearchContainerList: null, // коллекция разделов поиска по конкретному полю
 
@@ -256,4 +256,4 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.registerClass("Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock", null, Sys.IDisposable);
-//#endregion
+// #endregion

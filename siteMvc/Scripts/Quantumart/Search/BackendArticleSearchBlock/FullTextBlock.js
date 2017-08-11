@@ -1,4 +1,4 @@
-//#region class BackendArticleSearchBlock.FullTextBlock
+// #region class BackendArticleSearchBlock.FullTextBlock
 // === Класс "Блок полнотекстового поиска блока поиска статей" ===
 Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock = function(fullTextBlockElement, parentEntityId) {
   this._fullTextBlockElement = fullTextBlockElement;
@@ -11,7 +11,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
   _textFieldsComboElement: null, // dom-элемент комбо со списком текстовых полей статьи
   _queryTextBoxElement: null, // dom-элемент текстового поля с текстом запроса
   _parentEntityId: 0, // идентификатор родительской сущности;
-  _elementIdPrefix: '', //префикс идентификаторов dom-элементов
+  _elementIdPrefix: '', // префикс идентификаторов dom-элементов
 
   initialize: function() {
     var serverContent;
@@ -150,4 +150,4 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
 // регистрация класса блока полнотекстового поиска
 Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.registerClass('Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock', null, Sys.IDisposable);
 
-//#endregion
+// #endregion

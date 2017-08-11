@@ -1,4 +1,4 @@
-//#region class BackendArticleSearchBlock.NumericRangeFieldSearch
+// #region class BackendArticleSearchBlock.NumericRangeFieldSearch
 // === Класс блока поиска по числовому полю
 Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
     Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
@@ -252,4 +252,4 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
-//#endregion
+// #endregion

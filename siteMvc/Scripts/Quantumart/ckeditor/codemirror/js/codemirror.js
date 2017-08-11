@@ -1168,7 +1168,7 @@ function off(emitter, type, f) {
   }
 }
 
-function signal(emitter, type /*, values...*/) {
+function signal(emitter, type /* , values...*/) {
   var handlers = getHandlers(emitter, type);
   if (!handlers.length) { return; }
   var args = Array.prototype.slice.call(arguments, 2);
@@ -2063,7 +2063,7 @@ var orphanDelayedCallbacks = null;
 // signalLater looks whether there are any handlers, and schedules
 // them to be executed when the last operation ends, or, if no
 // operation is active, when a timeout fires.
-function signalLater(emitter, type /*, values...*/) {
+function signalLater(emitter, type /* , values...*/) {
   var arr = getHandlers(emitter, type);
   if (!arr.length) { return; }
   var args = Array.prototype.slice.call(arguments, 2), list;
@@ -9081,7 +9081,7 @@ CodeMirror$1.inputStyles = {"textarea": TextareaInput, "contenteditable": Conten
 // Extra arguments are stored as the mode's dependencies, which is
 // used by (legacy) mechanisms like loadmode.js to automatically
 // load a mode. (Preferred mechanism is the require/define calls.)
-CodeMirror$1.defineMode = function(name/*, mode, …*/) {
+CodeMirror$1.defineMode = function(name/* , mode, …*/) {
   if (!CodeMirror$1.defaults.mode && name != "null") { CodeMirror$1.defaults.mode = name; }
   defineMode.apply(this, arguments);
 };

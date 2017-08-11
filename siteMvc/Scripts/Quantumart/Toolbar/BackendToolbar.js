@@ -2,21 +2,21 @@
 // *** Компонент "Панель инструментов"                    ***
 // ****************************************************************************
 
-//#region event types of toolbar
+// #region event types of toolbar
 // === Типы событий панели инструментов ===
 var EVENT_TYPE_TOOLBAR_BUTTON_CLICKING = "OnToolbarButtonClicking";
 var EVENT_TYPE_TOOLBAR_BUTTON_CLICKED = "OnToolbarButtonClicked";
 var EVENT_TYPE_TOOLBAR_DROPDOWN_SELECTED_INDEX_CHANGING = "OnToolbarDropDownListSelectedIndexChanging";
 var EVENT_TYPE_TOOLBAR_DROPDOWN_SELECTED_INDEX_CHANGED = "OnToolbarDropDownListSelectedIndexChanged";
-//#endregion
+// #endregion
 
-//#region item types of toolbar
+// #region item types of toolbar
 // === Типы элементов панели инструментов ===
 var TOOLBAR_ITEM_TYPE_BUTTON = "button";
 var TOOLBAR_ITEM_TYPE_DROPDOWN = "drop_down";
-//#endregion
+// #endregion
 
-//#region class BackendToolbar
+// #region class BackendToolbar
 // === Класс "Панель инструментов" ===
 Quantumart.QP8.BackendToolbar = function (toolbarElementId, options) {
   Quantumart.QP8.BackendToolbar.initializeBase(this);
@@ -1075,9 +1075,9 @@ Quantumart.QP8.BackendToolbar.prototype = {
 };
 
 Quantumart.QP8.BackendToolbar.registerClass("Quantumart.QP8.BackendToolbar", Quantumart.QP8.Observable);
-//#endregion
+// #endregion
 
-//#region class BackendToolbarButtonEventArgs
+// #region class BackendToolbarButtonEventArgs
 // === Класс "Аргументы события, вызванного кнопкой панели инструментов" ===
 Quantumart.QP8.BackendToolbarButtonEventArgs = function () {
     Quantumart.QP8.BackendToolbarButtonEventArgs.initializeBase(this);
@@ -1114,9 +1114,9 @@ Quantumart.QP8.BackendToolbarButtonEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendToolbarButtonEventArgs.registerClass("Quantumart.QP8.BackendToolbarButtonEventArgs", Sys.EventArgs);
-//#endregion
+// #endregion
 
-//#region class BackendToolbarDropDownListEventArgs
+// #region class BackendToolbarDropDownListEventArgs
 // === Класс "Аргументы события, вызванного раскрывающимся списком панели инструментов" ===
 Quantumart.QP8.BackendToolbarDropDownListEventArgs = function () {
   Quantumart.QP8.BackendToolbarDropDownListEventArgs.initializeBase(this);
@@ -1153,4 +1153,4 @@ Quantumart.QP8.BackendToolbarDropDownListEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendToolbarDropDownListEventArgs.registerClass("Quantumart.QP8.BackendToolbarDropDownListEventArgs", Sys.EventArgs);
-//#endregion
+// #endregion

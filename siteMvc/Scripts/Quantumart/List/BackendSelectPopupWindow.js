@@ -1,7 +1,7 @@
 var EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED = "OnSelectPopupWindowResultSelected";
 var EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED = "OnSelectPopupWindowClosed";
 
-//#region class BackendPopupWindow
+// #region class BackendPopupWindow
 // === Класс "Всплывающие окно выбора" ===
 Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
 	Quantumart.QP8.BackendSelectPopupWindow.initializeBase(this);
@@ -160,4 +160,4 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 };
 
 Quantumart.QP8.BackendSelectPopupWindow.registerClass("Quantumart.QP8.BackendSelectPopupWindow", Quantumart.QP8.Observable);
-//#endregion
+// #endregion

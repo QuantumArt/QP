@@ -1,4 +1,4 @@
-//#region class BackendSearchBlockManager
+// #region class BackendSearchBlockManager
 // === Класс "Менеджер блоков поиска" ===
 Quantumart.QP8.BackendSearchBlockManager = function () {
 	Quantumart.QP8.BackendSearchBlockManager.initializeBase(this);
@@ -144,4 +144,4 @@ Quantumart.QP8.BackendSearchBlockManager.destroyInstance = function Quantumart$Q
 };
 
 Quantumart.QP8.BackendSearchBlockManager.registerClass("Quantumart.QP8.BackendSearchBlockManager", Quantumart.QP8.Observable);
-//#endregion
+// #endregion

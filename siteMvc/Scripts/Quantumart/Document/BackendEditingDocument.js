@@ -2,7 +2,7 @@
 // *** Компонент "Редактируемый документ"                 ***
 // ****************************************************************************
 
-//#region class BackendEditingDocument
+// #region class BackendEditingDocument
 // === Класс "Редактируемый документ" ===
 Quantumart.QP8.BackendEditingDocument = function (tabId, editingArea, eventArgs, options) {
   if (!tabId) {
@@ -468,5 +468,5 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 };
 
 Quantumart.QP8.BackendEditingDocument.registerClass("Quantumart.QP8.BackendEditingDocument", Quantumart.QP8.BackendDocumentHost);
-//#endregion
+// #endregion
 

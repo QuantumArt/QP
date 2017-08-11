@@ -1,4 +1,4 @@
-//#region class BackendContentSearchBlock
+// #region class BackendContentSearchBlock
 // === Класс "Блок поиска статей" ===
 Quantumart.QP8.BackendContentSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
 	Quantumart.QP8.BackendContentSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
@@ -108,4 +108,4 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 };
 
 Quantumart.QP8.BackendContentSearchBlock.registerClass("Quantumart.QP8.BackendContentSearchBlock", Quantumart.QP8.BackendSearchBlockBase);
-//#endregion
+// #endregion

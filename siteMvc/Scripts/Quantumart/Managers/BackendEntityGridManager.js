@@ -1,4 +1,4 @@
-//#region class BackendEntityGridManager
+// #region class BackendEntityGridManager
 // === Класс "Менеджер списков сущностей" ===
 Quantumart.QP8.BackendEntityGridManager = function() {
   Quantumart.QP8.BackendEntityGridManager.initializeBase(this);
@@ -199,7 +199,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
         this.refreshGridGroupWithChecking(entityTypeCode, parentEntityId, entityId);
       }
 
-      //additional refreshes
+      // additional refreshes
       if (eventArgs.get_isUpdated() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE) {
         this.refreshGridGroup(ENTITY_TYPE_CODE_ARTICLE_VERSION, entityId);
       } else if ((eventArgs.get_isArchiving() || eventArgs.get_isRemoving()) && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE) {
@@ -270,5 +270,5 @@ Quantumart.QP8.BackendEntityGridManager.destroyInstance = function() {
 
 Quantumart.QP8.BackendEntityGridManager.registerClass('Quantumart.QP8.BackendEntityGridManager', Quantumart.QP8.Observable);
 
-//#endregion
+// #endregion
 

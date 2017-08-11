@@ -1,4 +1,4 @@
-//#region class BackendArticleSearchBlock.DateOrTimeRangeFieldSearch
+// #region class BackendArticleSearchBlock.DateOrTimeRangeFieldSearch
 // === Класс блока поиска по полю с датой или с временем
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, rangeType) {
     Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
@@ -213,4 +213,4 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
-//#endregion
+// #endregion

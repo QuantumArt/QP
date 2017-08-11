@@ -2,15 +2,15 @@
 // *** Компонент "Дерево сущностей"                     ***
 // ****************************************************************************
 
-//#region event types of entity tree
+// #region event types of entity tree
 // === Типы событий дерева сущностей ===
 var EVENT_TYPE_ENTITY_TREE_DATA_BINDING = 'OnEntityTreeDataBinding';
 var EVENT_TYPE_ENTITY_TREE_DATA_BOUND = 'OnEntityTreeDataBound';
 var EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING = 'OnEntityTreeActionExecuting';
 var EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED = 'OnEntityTreeEntitySelected';
-//#endregion
+// #endregion
 
-//#region class BackendEntityTree
+// #region class BackendEntityTree
 // === Класс "Дерево сущностей" ===
 Quantumart.QP8.BackendEntityTree = function(treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
   Quantumart.QP8.BackendEntityTree.initializeBase(this, [treeElementId, options]);
@@ -1131,4 +1131,4 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
 Quantumart.QP8.BackendEntityTree.registerClass('Quantumart.QP8.BackendEntityTree', Quantumart.QP8.BackendTreeBase);
 
-//#endregion
+// #endregion

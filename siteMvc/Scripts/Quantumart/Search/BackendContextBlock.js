@@ -1,4 +1,4 @@
-//#region class BackendContextBlock
+// #region class BackendContextBlock
 // === Класс "Блок переключения контекста статей" ===
 Quantumart.QP8.BackendContextBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
     Quantumart.QP8.BackendContextBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
@@ -125,4 +125,4 @@ Quantumart.QP8.BackendContextBlock.prototype =
 };
 
 Quantumart.QP8.BackendContextBlock.registerClass("Quantumart.QP8.BackendContextBlock", Quantumart.QP8.BackendSearchBlockBase);
-//#endregion
+// #endregion

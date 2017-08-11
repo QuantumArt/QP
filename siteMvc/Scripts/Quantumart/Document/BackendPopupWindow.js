@@ -2,14 +2,14 @@
 // *** Компонент "Всплывающие окно"                     ***
 // ****************************************************************************
 
-//#region event types of popup window
+// #region event types of popup window
 // === Типы событий всплывающего окна ===
 var EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING = "OnPopupWindowActionExecuting";
 var EVENT_TYPE_POPUP_WINDOW_ENTITY_READED = "OnPopupWindowEntityReaded";
 var EVENT_TYPE_POPUP_WINDOW_CLOSED = "OnPopupWindowClosed";
-//#endregion
+// #endregion
 
-//#region class BackendPopupWindow
+// #region class BackendPopupWindow
 // === Класс "Всплывающие окно" ===
 Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options) {
   Quantumart.QP8.BackendPopupWindow.initializeBase(this, [eventArgs, options]);
@@ -863,4 +863,4 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 };
 
 Quantumart.QP8.BackendPopupWindow.registerClass("Quantumart.QP8.BackendPopupWindow", Quantumart.QP8.BackendDocumentHost);
-//#endregion
+// #endregion

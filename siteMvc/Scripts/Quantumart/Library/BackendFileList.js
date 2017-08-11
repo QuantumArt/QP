@@ -2,7 +2,7 @@
 // *** Компонент "Краткий список файлов"									***
 // ****************************************************************************
 
-//#region constants of file name list
+// #region constants of file name list
 var FILE_LIST_MODE_NAME_LIST = "FILE_LIST_MODE_NAME_LIST";
 var FILE_LIST_MODE_PREVIEW_LIST = "FILE_LIST_MODE_PREVIEW_LIST";
 var FILE_LIST_SELECT_MODE_MULTIPLE = "FILE_LIST_SELECT_MODE_MULTIPLE";
@@ -10,17 +10,17 @@ var FILE_LIST_SELECT_MODE_SINGLE = "FILE_LIST_SELECT_MODE_SINGLE";
 var FILE_LIST_NAME_PAGE_SIZE = 60;
 var FILE_LIST_PREVIEW_PAGE_SIZE = 24;
 var FILE_LIST_ITEMS_PER_COLUMN = 20;
-//#endregion
+// #endregion
 
-//#region event types of file name list
+// #region event types of file name list
 // === Типы событий списка файлов ===
-//var EVENT_TYPE_FILE_LIST_DATA_BINDING = "OnFileListDataBinding"
+// var EVENT_TYPE_FILE_LIST_DATA_BINDING = "OnFileListDataBinding"
 var EVENT_TYPE_FILE_LIST_DATA_BOUND = "OnFileListDataBound";
 var EVENT_TYPE_FILE_LIST_ACTION_EXECUTING = "OnFileListActionExecuting";
 var EVENT_TYPE_FILE_LIST_SELECTED = "OnFileNameSelected";
-//#endregion
+// #endregion
 
-//#region class BackendFileList
+// #region class BackendFileList
 // === Класс "Cписок файлов" ===
 Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, actionCode, contextMenuCode, viewMode, options) {
 	Quantumart.QP8.BackendFileList.initializeBase(this);
@@ -204,7 +204,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 	},
  // нициализация
 	rebind: function (options) {
-		//this.notify(EVENT_TYPE_FILE_LIST_DATA_BINDING, {});
+		// this.notify(EVENT_TYPE_FILE_LIST_DATA_BINDING, {});
 
 		// установить новые значения параметров поиска
 		if ($q.isObject(options)) {
@@ -294,9 +294,9 @@ Quantumart.QP8.BackendFileList.prototype = {
 
 
 Quantumart.QP8.BackendFileList.registerClass("Quantumart.QP8.BackendFileList", Quantumart.QP8.Observable);
-//#endregion
+// #endregion
 
-//#region interface IBackendFileListView
+// #region interface IBackendFileListView
 Quantumart.QP8.IBackendFileListView = function () { };
 Quantumart.QP8.IBackendFileListView.prototype = {
 	initialize: function () { }, // инициализация
@@ -306,5 +306,5 @@ Quantumart.QP8.IBackendFileListView.prototype = {
 	dispose: function () { } // dispose
 };
 Quantumart.QP8.IBackendFileListView.registerInterface("Quantumart.QP8.IBackendFileListView");
-//#endregion
+// #endregion
 

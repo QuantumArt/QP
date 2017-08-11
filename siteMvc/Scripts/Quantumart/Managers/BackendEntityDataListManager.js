@@ -1,4 +1,4 @@
-//#region class BackendEntityDataListManager
+// #region class BackendEntityDataListManager
 // === Класс "Менеджер упрощенных списков сущностей" ===
 Quantumart.QP8.BackendEntityDataListManager = function () {
 	Quantumart.QP8.BackendEntityDataListManager.initializeBase(this);
@@ -194,4 +194,4 @@ Quantumart.QP8.BackendEntityDataListManager.destroyInstance = function Quantumar
 };
 
 Quantumart.QP8.BackendEntityDataListManager.registerClass("Quantumart.QP8.BackendEntityDataListManager", Quantumart.QP8.Observable);
-//#endregion
+// #endregion

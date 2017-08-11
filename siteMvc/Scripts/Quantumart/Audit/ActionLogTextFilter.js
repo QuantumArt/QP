@@ -1,4 +1,4 @@
-//#region class ActionLogTextFilter
+// #region class ActionLogTextFilter
 Quantumart.QP8.ActionLogTextFilter = function (filterContainer) {
 	Quantumart.QP8.ActionLogTextFilter.initializeBase(this, [filterContainer]);
 };
@@ -31,4 +31,4 @@ Quantumart.QP8.ActionLogTextFilter.prototype = {
 };
 
 Quantumart.QP8.ActionLogTextFilter.registerClass("Quantumart.QP8.ActionLogTextFilter", Quantumart.QP8.ActionLogFilterBase);
-//#endregion
+// #endregion

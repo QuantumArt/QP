@@ -4,7 +4,7 @@ var EVENT_TYPE_CONTEXT_MENU_HIDDEN = 'OnContextMenuHidden';
 var EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING = 'OnContextMenuItemClicking';
 var EVENT_TYPE_CONTEXT_MENU_ITEM_HOVERING = 'OnContextMenuItemHoveringHandler';
 
-//#region class BackendContextMenu
+// #region class BackendContextMenu
 Quantumart.QP8.BackendContextMenu = function(contextMenuCode, contextMenuElementId, options) {
   Quantumart.QP8.BackendContextMenu.initializeBase(this);
 
@@ -579,7 +579,7 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function(menuCode, load
 };
 
 Quantumart.QP8.BackendContextMenu.registerClass('Quantumart.QP8.BackendContextMenu', Quantumart.QP8.Observable);
-//#endregion
+// #endregion
 
 Quantumart.QP8.BackendContextMenuEventArgs = function() {
   Quantumart.QP8.BackendContextMenuEventArgs.initializeBase(this);

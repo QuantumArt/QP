@@ -1,4 +1,4 @@
-//#region class Backend
+// #region class Backend
 // === Класс "Backend" ===
 Quantumart.QP8.Backend = function(isDebugMode, options) {
   Quantumart.QP8.Backend.initializeBase(this);
@@ -392,7 +392,7 @@ Quantumart.QP8.Backend.prototype = {
     Quantumart.QP8.BackendCustomActionHostManager.getInstance().onExternalCallerContextsUnbinded(message);
   },
 
-  //#region EntityEditor Event Handlers
+  // #region EntityEditor Event Handlers
   _onEntityEditorReady: function(eventType, sender, eventArgs) {
     this._entityEditorAutoSaver.onEntityEditorReady(eventArgs.documentWrapperElementId);
   },
@@ -409,7 +409,7 @@ Quantumart.QP8.Backend.prototype = {
     this._entityEditorAutoSaver.onAllFieldInvalidate(eventArgs.documentWrapperElementId);
   },
 
-  //#endregion
+  // #endregion
 
   checkOpenDocumentByEventArgs: function(eventArgs) {
     var tabsForEntity = this._backendTabStrip.getTabsByEventArgs(eventArgs);
@@ -595,4 +595,4 @@ Quantumart.QP8.Backend.getInstance = function(isDebugMode, options) {
 };
 
 Quantumart.QP8.Backend.registerClass('Quantumart.QP8.Backend');
-//#endregion
+// #endregion

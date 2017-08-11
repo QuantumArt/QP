@@ -1,4 +1,4 @@
-//#region class ActionLogFilterTile
+// #region class ActionLogFilterTile
 var EVENT_TYPE_FILTER_TILE_CLOSE = "Quantumart.QP8.ActionLogFilterTile.onFilterTileClose";
 
 Quantumart.QP8.ActionLogFilterTile = function (containerElement, options) {
@@ -164,4 +164,4 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 };
 
 Quantumart.QP8.ActionLogFilterTile.registerClass("Quantumart.QP8.ActionLogFilterTile", Quantumart.QP8.Observable);
-//#endregion
+// #endregion

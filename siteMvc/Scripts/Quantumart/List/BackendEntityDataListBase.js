@@ -5,7 +5,7 @@
 var EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING = "OnEntityListActionExecuting";
 var EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED = "OnEntityListSelectionChanged";
 
-//#region enum DataListType
+// #region enum DataListType
 // === Типы списков ===
 Quantumart.QP8.Enums.DataListType = function () { };
 Quantumart.QP8.Enums.DataListType.prototype = {
@@ -19,9 +19,9 @@ Quantumart.QP8.Enums.DataListType.prototype = {
 };
 
 Quantumart.QP8.Enums.DataListType.registerEnum("Quantumart.QP8.Enums.DataListType");
-//#endregion
+// #endregion
 
-//#region class BackendEntityDataListBase
+// #region class BackendEntityDataListBase
 // === Класс "Базовый упрощенный список сущностей" ===
 Quantumart.QP8.BackendEntityDataListBase = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
   Quantumart.QP8.BackendEntityDataListBase.initializeBase(this);
@@ -867,4 +867,4 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 };
 
 Quantumart.QP8.BackendEntityDataListBase.registerClass("Quantumart.QP8.BackendEntityDataListBase", Quantumart.QP8.Observable);
-//#endregion
+// #endregion

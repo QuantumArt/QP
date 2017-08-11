@@ -1,4 +1,4 @@
-//#region class BackendLibraryManager
+// #region class BackendLibraryManager
 // === Класс "Менеджер библиотек" ===
 Quantumart.QP8.BackendLibraryManager = function () {
 	Quantumart.QP8.BackendLibraryManager.initializeBase(this);
@@ -199,4 +199,4 @@ Quantumart.QP8.BackendLibraryManager.destroyInstance = function Quantumart$QP8$B
 };
 
 Quantumart.QP8.BackendLibraryManager.registerClass("Quantumart.QP8.BackendLibraryManager", Quantumart.QP8.Observable);
-//#endregion
+// #endregion

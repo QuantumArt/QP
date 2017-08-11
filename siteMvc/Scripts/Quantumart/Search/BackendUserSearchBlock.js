@@ -1,4 +1,4 @@
-//#region class BackendUserSearchBlock
+// #region class BackendUserSearchBlock
 // === Класс "Блок поиска пользователей" ===
 Quantumart.QP8.BackendUserSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
 	Quantumart.QP8.BackendUserSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);

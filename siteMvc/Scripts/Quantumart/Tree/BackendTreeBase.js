@@ -2,7 +2,7 @@
 // *** Компонент "Дерево"                         ***
 // ****************************************************************************
 
-//#region class BackendTreeBase
+// #region class BackendTreeBase
 // === Класс "Дерево" ===
 Quantumart.QP8.BackendTreeBase = function(treeElementId, options) {
   Quantumart.QP8.BackendTreeBase.initializeBase(this);
@@ -493,7 +493,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     $(li, this.element).each($.proxy(function(index, item) {
       var $item = $(item).closest('.t-item'),
       $checkboxHolder = $('> div > .t-checkbox', $item),
-      arrayName = $checkboxHolder.data('array_name'); //this.element.id + '_checkedNodes',
+      arrayName = $checkboxHolder.data('array_name'); // this.element.id + '_checkedNodes',
       index = $checkboxHolder.find(':input[name="' + arrayName + '.Index"]').val();
 
       $checkboxHolder.find(':input[name="' + arrayName + '[' + index + '].Text"]').remove();
@@ -732,4 +732,4 @@ $.telerik.treeview.getGroupHtml = function(options) {
 
 Quantumart.QP8.BackendTreeBase.registerClass('Quantumart.QP8.BackendTreeBase', Quantumart.QP8.Observable);
 
-//#endregion
+// #endregion

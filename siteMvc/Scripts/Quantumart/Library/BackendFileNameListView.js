@@ -1,4 +1,4 @@
-//#region class BackendFileNameListView
+// #region class BackendFileNameListView
 // === Класс "Краткий список файлов" ===
 Quantumart.QP8.BackendFileNameListView = function (fileListContentElement, contextMenuCode, selectMode, zIndex) {
 	Quantumart.QP8.BackendFileNameListView.initializeBase(this);
@@ -218,4 +218,4 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 };
 
 Quantumart.QP8.BackendFileNameListView.registerClass("Quantumart.QP8.BackendFileNameListView", Quantumart.QP8.Observable, Quantumart.QP8.IBackendFileListView);
-//#endregion
+// #endregion

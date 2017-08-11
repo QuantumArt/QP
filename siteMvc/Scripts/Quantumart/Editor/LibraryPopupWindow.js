@@ -1,4 +1,4 @@
-//#region class Quantumart.QP8.LibraryPopupWindow
+// #region class Quantumart.QP8.LibraryPopupWindow
 Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
     jQuery.extend(this._options, options);
 	this._eventArgs = eventArgs;
@@ -78,4 +78,4 @@ Quantumart.QP8.LibraryPopupWindow.prototype =
 	}
 };
 
-//#endregion
+// #endregion

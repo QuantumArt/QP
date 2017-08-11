@@ -1,4 +1,4 @@
-//#region class BackendArticleSearchBlock.StringEnumFieldSearch
+// #region class BackendArticleSearchBlock.StringEnumFieldSearch
 // === Класс блока текстового поиска по полю
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
     Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
@@ -38,7 +38,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
             var $containerElement = jQuery(this._containerElement);
 
             // добавить разметку на страницу
-            //$containerElement.append(html.string());
+            // $containerElement.append(html.string());
             $containerElement.html(serverContent);
 
             // назначить обработчик события change чекбоксу
@@ -130,4 +130,4 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
-//#endregion
+// #endregion

@@ -2,7 +2,7 @@
 // *** Компонент "Панель инструментов"										***
 // ****************************************************************************
 
-//#region event types of view toolbar
+// #region event types of view toolbar
 // === Типы событий панели инструментов ===
 var EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGING = "OnViewToolbarViewsDropDownListSelectedIndexChanging";
 var EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED = "OnViewToolbarViewsDropDownListSelectedIndexChanged";
@@ -13,9 +13,9 @@ var EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKED = "OnViewToolbarSearchButtonCl
 var EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKING = "OnViewToolbarContextButtonClicking";
 var EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKED = "OnViewToolbarContextButtonClicked";
 
-//#endregion
+// #endregion
 
-//#region class BackendViewToolbar
+// #region class BackendViewToolbar
 // === Класс "Панель представлений" ===
 Quantumart.QP8.BackendViewToolbar = function (toolbarElementId, actionCode, options) {
 	Quantumart.QP8.BackendViewToolbar.initializeBase(this, [toolbarElementId, options]);
@@ -248,9 +248,9 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 };
 
 Quantumart.QP8.BackendViewToolbar.registerClass("Quantumart.QP8.BackendViewToolbar", Quantumart.QP8.BackendToolbar);
-//#endregion
+// #endregion
 
-//#region class BackendViewToolbarButtonEventArgs
+// #region class BackendViewToolbarButtonEventArgs
 // === Класс "Аргументы события, вызванного кнопкой панели представлений" ===
 Quantumart.QP8.BackendViewToolbarButtonEventArgs = function () {
 	Quantumart.QP8.BackendViewToolbarButtonEventArgs.initializeBase(this);
@@ -266,9 +266,9 @@ Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarButtonEventArgsFr
 };
 
 Quantumart.QP8.BackendViewToolbarButtonEventArgs.registerClass("Quantumart.QP8.BackendViewToolbarButtonEventArgs", Quantumart.QP8.BackendToolbarButtonEventArgs);
-//#endregion
+// #endregion
 
-//#region class BackendViewToolbarDropDownListEventArgs
+// #region class BackendViewToolbarDropDownListEventArgs
 // === Класс "Аргументы события, вызванного раскрывающимся списком панели представлений" ===
 Quantumart.QP8.BackendViewToolbarDropDownListEventArgs = function () {
 	Quantumart.QP8.BackendViewToolbarDropDownListEventArgs.initializeBase(this);
@@ -297,4 +297,4 @@ Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEvent
 };
 
 Quantumart.QP8.BackendViewToolbarDropDownListEventArgs.registerClass("Quantumart.QP8.BackendViewToolbarDropDownListEventArgs", Quantumart.QP8.BackendToolbarDropDownListEventArgs);
-//#endregion
+// #endregion

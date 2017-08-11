@@ -171,12 +171,12 @@ window.wordWindow.prototype = {
       d.writeln('</form>');
     }
 
-    //for ( var j = 0; j < d.forms.length; j++ ) {
+    // for ( var j = 0; j < d.forms.length; j++ ) {
     //  alert( d.forms[j].name );
     //  for( var k = 0; k < d.forms[j].elements.length; k++ ) {
     //    alert( d.forms[j].elements[k].name + ": " + d.forms[j].elements[k].value );
     //  }
-    //}
+    // }
 
     // set the _forms property
     this._forms = d.forms;

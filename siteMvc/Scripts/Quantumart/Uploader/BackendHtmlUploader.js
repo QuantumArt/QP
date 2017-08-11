@@ -1,4 +1,4 @@
-//#region class BackendHtmlUploader
+// #region class BackendHtmlUploader
 // === Класс "HTML загрузчик" ===
 Quantumart.QP8.BackendHtmlUploader = function(parentElement, options) {
   Quantumart.QP8.BackendHtmlUploader.initializeBase(this);
@@ -157,4 +157,4 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
 
 Quantumart.QP8.BackendHtmlUploader.registerClass('Quantumart.QP8.BackendHtmlUploader', Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader);
 
-//#endregion
+// #endregion

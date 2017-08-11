@@ -99,7 +99,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
   },
 
   checkHeaders: function () {
-    if (this._tableBody.children('tr').size() == 0)//its time to hide headers
+    if (this._tableBody.children('tr').size() == 0)// its time to hide headers
       this._tableHeader.hide();
     else
       this._tableHeader.show();

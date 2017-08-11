@@ -1,4 +1,4 @@
-//#region class BackendEntityCheckBoxList
+// #region class BackendEntityCheckBoxList
 // === Класс "Cписок сущностей в виде чекбоксов" ===
 Quantumart.QP8.BackendEntityCheckBoxList = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
   Quantumart.QP8.BackendEntityCheckBoxList.initializeBase(this,
@@ -116,7 +116,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
   _refreshListInner: function (dataItems, refreshOnly) {
 
-    //#region Определяем, изменились ли значения
+    // #region Определяем, изменились ли значения
     var newSelectedIDs = jQuery.map(
       jQuery.grep(dataItems, function (di) { return di.Selected === true; }),
       function (di) { return $q.toInt(di.Value); }
@@ -126,7 +126,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
       _.difference(newSelectedIDs, currentSelectedIDs),
       _.difference(currentSelectedIDs, newSelectedIDs)
     ).length > 0;
-    //#endregion
+    // #endregion
 
     var $list = jQuery(this._listElement);
 
@@ -248,4 +248,4 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 };
 
 Quantumart.QP8.BackendEntityCheckBoxList.registerClass("Quantumart.QP8.BackendEntityCheckBoxList", Quantumart.QP8.BackendEntityDataListBase);
-//#endregion
+// #endregion

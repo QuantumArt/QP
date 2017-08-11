@@ -1,4 +1,4 @@
-//#region class BackendDocumentContext
+// #region class BackendDocumentContext
 // === Cодержимое документа ===
 Quantumart.QP8.BackendDocumentContext = function(params, options) {
   Quantumart.QP8.BackendDocumentContext.initializeBase(this);
@@ -443,4 +443,4 @@ Quantumart.QP8.BackendDocumentContext.setGlobal = function(key, value) {
 
 Quantumart.QP8.BackendDocumentContext.registerClass('Quantumart.QP8.BackendDocumentContext');
 
-//#endregion
+// #endregion

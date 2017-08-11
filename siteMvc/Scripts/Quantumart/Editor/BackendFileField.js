@@ -2,7 +2,7 @@
 // *** Компонент "Файловое поле"                      ***
 // ****************************************************************************
 
-//#region class BackendFileField
+// #region class BackendFileField
 // === Класс "Файловое поле" ===
 Quantumart.QP8.BackendFileField = function(fileFieldElementId, fileWrapperElementId, options) {
   Quantumart.QP8.BackendFileField.initializeBase(this);
@@ -81,8 +81,8 @@ Quantumart.QP8.BackendFileField.prototype = {
   _renameMatched: false, // признак, разрешающий переименовывать совпадающие файлы
   _isImage: false, // признак того, что файл является рисунком
   _isVersion: false, // признак того, что сущность является версией
-  _subFolder: '', //относительный путь от корня библиотеки до папки поля
-  _useSiteLibrary: false, //признак, покзывающий используется ли библиотека сайта или контента
+  _subFolder: '', // относительный путь от корня библиотеки до папки поля
+  _useSiteLibrary: false, // признак, покзывающий используется ли библиотека сайта или контента
   _libraryEntityId: 0, // id сущности, которой принадлежит библиотека (сайта или контента)
   _libraryParentEntityId: 0, // id родительской сущности, относительно той, которой принадлежит библиотека(0 или id сайта)
   _uploaderType: Quantumart.QP8.Enums.UploaderType.Silverlight,
@@ -462,4 +462,4 @@ Quantumart.QP8.BackendFileField.prototype = {
 
 Quantumart.QP8.BackendFileField.registerClass('Quantumart.QP8.BackendFileField', null, Sys.IDisposable);
 
-//#endregion
+// #endregion

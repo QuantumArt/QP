@@ -164,16 +164,16 @@
 			},
 
 			maxZIndex: function(opt) {
-				/// <summary>
-				/// Returns the max zOrder in the document (no parameter)
-				/// Sets max zOrder by passing a non-zero number
-				/// which gets added to the highest zOrder.
-				/// </summary>    
-				/// <param name="opt" type="object">
-				/// inc: increment value, 
-				/// group: selector for zIndex elements to find max for
-				/// </param>
-				/// <returns type="jQuery" />
+				// / <summary>
+				// / Returns the max zOrder in the document (no parameter)
+				// / Sets max zOrder by passing a non-zero number
+				// / which gets added to the highest zOrder.
+				// / </summary>    
+				// / <param name="opt" type="object">
+				// / inc: increment value, 
+				// / group: selector for zIndex elements to find max for
+				// / </param>
+				// / <returns type="jQuery" />
 				var def = { inc: 10, group: "*" };
 				$.extend(def, opt);
 				var zmax = 0;

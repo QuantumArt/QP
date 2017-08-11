@@ -1,4 +1,4 @@
-//#region class BackendEntitySingleItemPicker
+// #region class BackendEntitySingleItemPicker
 // === Класс "Cписок сущностей в виде элемента управления одиночного выбора" ===
 Quantumart.QP8.BackendEntitySingleItemPicker = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
 	Quantumart.QP8.BackendEntitySingleItemPicker.initializeBase(this,
@@ -233,4 +233,4 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 };
 
 Quantumart.QP8.BackendEntitySingleItemPicker.registerClass("Quantumart.QP8.BackendEntitySingleItemPicker", Quantumart.QP8.BackendEntityDataListBase);
-//#endregion
+// #endregion

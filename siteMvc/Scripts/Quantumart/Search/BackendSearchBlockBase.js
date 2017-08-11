@@ -2,20 +2,20 @@
 // *** Компонент "Блок поиска"                        ***
 // ****************************************************************************
 
-//#region event types of search block
+// #region event types of search block
 // === Типы событий блока поиска ===
 var EVENT_TYPE_SEARCH_BLOCK_FIND_START = "OnSearchBlockFindStart";
 var EVENT_TYPE_CONTEXT_BLOCK_FIND_START = "OnContextBlockFindStart";
 var EVENT_TYPE_SEARCH_BLOCK_RESET_START = "OnSearchBlockResetStart";
 var EVENT_TYPE_SEARCH_BLOCK_RESIZED = "OnSearchBlockResized";
-//#endregion
+// #endregion
 
-//#region event types of conrete field
+// #region event types of conrete field
 // === Типы событий контейнера для блока поиска по конкрентому полю ===
 var EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE = "OnFieldSearchContainerClose";
-//#endregion
+// #endregion
 
-//#region class BackendSearchBlockBase
+// #region class BackendSearchBlockBase
 // === Класс "Блок поиска" ===
 Quantumart.QP8.BackendSearchBlockBase = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
   Quantumart.QP8.BackendSearchBlockBase.initializeBase(this);
@@ -350,9 +350,9 @@ Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function(){
 };
 
 Quantumart.QP8.BackendSearchBlockBase.registerClass("Quantumart.QP8.BackendSearchBlockBase", Quantumart.QP8.Observable);
-//#endregion
+// #endregion
 
-//#region class BackendSearchBlockEventArgs
+// #region class BackendSearchBlockEventArgs
 // === Класс "Аргументы события, вызванного блоком поиска" ===
 Quantumart.QP8.BackendSearchBlockEventArgs = function (searchBlockType, searchQuery) {
   Quantumart.QP8.BackendSearchBlockEventArgs.initializeBase(this);
@@ -410,5 +410,5 @@ Quantumart.QP8.BackendSearchBlockEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendSearchBlockEventArgs.registerClass("Quantumart.QP8.BackendSearchBlockEventArgs", Sys.EventArgs);
-//#endregion
+// #endregion
 
