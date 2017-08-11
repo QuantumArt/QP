@@ -82,7 +82,7 @@
     }
 
     function rtrim(s) {
-        return s.replace(/\s+$/g,'');
+        return s.replace(/\s+$/g, '');
     }
 
     function style_html(html_source, options, js_beautify, css_beautify) {

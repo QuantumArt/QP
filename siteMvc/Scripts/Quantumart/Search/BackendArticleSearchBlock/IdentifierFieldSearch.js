@@ -213,7 +213,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 
 	_inverseCheckBoxElement: null, // dom-элемент чекбокса inverse
 	_numberFromElement: null, // dom-элемент поля "От"
-	_numberToElement: null,// dom-элемент поля "От"
+	_numberToElement: null, // dom-элемент поля "От"
     _textAreaElement: null
 };
 

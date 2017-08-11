@@ -453,7 +453,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) 
   var actionCode = $cache.getItem(cacheKey);
 
   if (!actionCode) {
-    $q.getJsonFromUrl('GET',CONTROLLER_URL_BACKEND_ACTION + 'GetCodeById',{ 'actionId': actionId },false,false).done(function (data) {
+    $q.getJsonFromUrl('GET', CONTROLLER_URL_BACKEND_ACTION + 'GetCodeById', { 'actionId': actionId }, false, false).done(function (data) {
       if (data.success) {
         actionCode = data.actionCode;
       } else {
