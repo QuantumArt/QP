@@ -567,8 +567,20 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       $node.find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME);
       $node.find(this.NODE_CHECKBOX_SELECTORS).prop('checked', this.isNodeSelected($node));
     } else {
-      this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', false);
-      $node.find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', true);
+      this.getAllNodes()
+        .find(this.NODE_WRAPPER_SELECTOR)
+        .removeClass(this.NODE_SELECTED_CLASS_NAME)
+        .end()
+        .find(this.NODE_CHECKBOX_SELECTORS)
+        .prop('checked', false);
+
+      $node
+        .find(this.NODE_WRAPPER_SELECTOR)
+        .addClass(this.NODE_SELECTED_CLASS_NAME)
+        .end()
+        .find(this.NODE_CHECKBOX_SELECTORS)
+        .prop('checked', true);
+
       if (!this._allowMultipleNodeSelection) {
         this._resetNodeSelectionState();
       }
@@ -589,9 +601,21 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   },
 
   selectNodes: function (nodeElems) {
-    this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', false);
+    this
+      .getAllNodes()
+      .find(this.NODE_WRAPPER_SELECTOR)
+      .removeClass(this.NODE_SELECTED_CLASS_NAME)
+      .end()
+      .find(this.NODE_CHECKBOX_SELECTORS)
+      .prop('checked', false);
+
     if (!$q.isNullOrEmpty(nodeElems)) {
-      $q.toJQuery(nodeElems).find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', true);
+      $q.toJQuery(nodeElems)
+        .find(this.NODE_WRAPPER_SELECTOR)
+        .addClass(this.NODE_SELECTED_CLASS_NAME)
+        .end()
+        .find(this.NODE_CHECKBOX_SELECTORS)
+        .prop('checked', true);
     }
 
     this._saveNodeSelectionState();
@@ -599,7 +623,14 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   },
 
   selectAllNodes: function (value) {
-    this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', value);
+    this
+      .getAllNodes()
+      .find(this.NODE_WRAPPER_SELECTOR)
+      .addClass(this.NODE_SELECTED_CLASS_NAME)
+      .end()
+      .find(this.NODE_CHECKBOX_SELECTORS)
+      .prop('checked', value);
+
     this._saveNodeSelectionState();
     this._executePostSelectActions();
   },
@@ -607,7 +638,6 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   isNodeSelected: function (node) {
     var $node = this.getNode(node);
     var isSelected = false;
-
     if (!$q.isNullOrEmpty($node)) {
       isSelected = $node.find(this.NODE_WRAPPER_SELECTOR).hasClass(this.NODE_SELECTED_CLASS_NAME);
     }

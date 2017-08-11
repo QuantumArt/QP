@@ -47,8 +47,12 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
 				    var html, html2;
 					if (!$q.isNullOrEmpty(data.data)) {
 						var htmlBuilder = new $.telerik.stringBuilder();
-						jQuery(data.data).each(function () {
-						    htmlBuilder.cat('<option value="').cat(this.id).cat('">').cat(this.text).cat('</option>');
+						$(data.data).each(function () {
+						    htmlBuilder
+                  .cat('<option value="')
+                  .cat(this.id).cat('">')
+                  .cat(this.text)
+                  .cat('</option>');
 						});
 						html = htmlBuilder.string();
 						html2 = '<option value="">' + $l.EntityEditor.selectField + '</option>' + html;
@@ -75,7 +79,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
         $displayFieldSelectElement = null;
 	}
 
-	jQuery(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
+	$(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
 
 
 	return {
@@ -106,8 +110,13 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 					$classifierSelectElement.empty();
 					if (!$q.isNullOrEmpty(data.data)) {
 						var html = new $.telerik.stringBuilder();
-						jQuery(data.data).each(function () {
-							html.cat('<option value="').cat(this.id).cat('">').cat(this.text).cat('</option>');
+						$(data.data).each(function () {
+							html
+                .cat('<option value="')
+                .cat(this.id)
+                .cat('">')
+                .cat(this.text)
+                .cat('</option>');
 						});
 						$classifierSelectElement.append(html.string());
 					} else {
@@ -130,7 +139,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 		$aggregatedElement = null;
 	}
 
-	jQuery(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
+	$(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
 
 	return {
 		dispose: dispose
@@ -160,7 +169,7 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
         singleItemPickerComponent = null;
 	}
 
-	jQuery(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
+	$(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
 
 	return {
 		dispose: dispose
@@ -234,7 +243,7 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
 		$panels = null;
 	}
 
-	jQuery(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
+	$(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
 
 	return {
 		refresh: onRelatedToChanged,

@@ -44,10 +44,14 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
     if (hostParams && !$.isEmptyObject(hostParams)) {
       let key = new $.telerik.stringBuilder();
       if (this && this._keyPrefix) {
-        key.cat(this._keyPrefix).cat('.')
-           .cat(hostParams.actionCode).cat('_')
-           .cat(hostParams.entityId).cat('_')
-           .cat(hostParams.parentEntityId);
+        key
+          .cat(this._keyPrefix)
+          .cat('.')
+          .cat(hostParams.actionCode)
+          .cat('_')
+          .cat(hostParams.entityId)
+          .cat('_')
+          .cat(hostParams.parentEntityId);
       }
 
       return key.string();

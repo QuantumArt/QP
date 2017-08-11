@@ -220,7 +220,9 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
               .cat("<span class='linkButton actionLink'>")
                 .cat("<a href='javascript:void(0);'>")
                   .cat("<span class='icon expand'><img src='/Backend/Content/Common/0.gif'></span>")
-                  .cat("<span class='text'>").cat($l.EntityDataList.showListLinkButtonText).cat("</span>")
+                  .cat("<span class='text'>")
+                  .cat($l.EntityDataList.showListLinkButtonText)
+                  .cat("</span>")
                 .cat("</a>")
               .cat("</span>")
             .cat("</li>")
@@ -228,14 +230,16 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
               .cat("<span class='linkButton actionLink'>")
                 .cat("<a href='javascript:void(0);'>")
                   .cat("<span class='icon collapse'><img src='/Backend/Content/Common/0.gif'></span>")
-                  .cat("<span class='text'>").cat($l.EntityDataList.hideListLinkButtonText).cat("</span>")
+                  .cat("<span class='text'>")
+                  .cat($l.EntityDataList.hideListLinkButtonText)
+                  .cat("</span>")
                 .cat("</a>")
               .cat("</span>")
             .cat("</li>")
           .cat("</ul>")
         .cat("</div>");
-      var $collapsingToolbar = jQuery(html.string());
 
+      var $collapsingToolbar = jQuery(html.string());
       var that = this;
       this._expandLinkElement = $collapsingToolbar.find("LI.expand").click(function (e) {
         jQuery(this).hide();

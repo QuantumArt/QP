@@ -1,6 +1,6 @@
 Quantumart.QP8.BackendWorkflow = function (componentElem) {
     this._componentElem = componentElem;
-    this._containerElem = jQuery('.workflowContainer', componentElem);
+    this._containerElem = $('.workflowContainer', componentElem);
     this._checkSinglePermisssionHandler = jQuery.proxy(this.checkSinglePermission, this);
     this._checkAllPermisssionsHandler = jQuery.proxy(this.checkAllPermisssions, this);
 };
@@ -41,12 +41,25 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             contentSelector: this._contentSelector,
             checkSinglePermisssionHandler: this._checkSinglePermisssionHandler,
             initializePickers: function (dom, element, index) {
-                Quantumart.QP8.ControlHelpers.initAllEntityDataLists(jQuery(dom));
-                jQuery(dom).find('.pep-user-selector').first().data('entity_data_list_component').selectEntities([element.UserId()]);
-                jQuery(dom).find('.pep-user-selector').last().data('entity_data_list_component').selectEntities([element.GroupId()]);
-                $(dom).find('.' + CHANGED_FIELD_CLASS_NAME).removeClass(CHANGED_FIELD_CLASS_NAME);
+                Quantumart.QP8.ControlHelpers.initAllEntityDataLists($(dom));
+                $(dom)
+                  .find('.pep-user-selector')
+                  .first()
+                  .data('entity_data_list_component')
+                  .selectEntities([element.UserId()]);
+
+                $(dom)
+                  .find('.pep-user-selector')
+                  .last()
+                  .data('entity_data_list_component')
+                  .selectEntities([element.GroupId()]);
+
+                $(dom)
+                  .find('.' + CHANGED_FIELD_CLASS_NAME)
+                  .removeClass(CHANGED_FIELD_CLASS_NAME);
+
                 var activeContentsIds = this.contentSelector.find('input:checkbox:checked').map(function (index, elem) {
-                    return $(elem).val();
+                  return $(elem).val();
                 }).get().join();
 
                 if (element.UserId() != null || element.GroupId() != null) {
@@ -63,27 +76,27 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                         false,
                         function (data) {
                             if (element.UserId() != null) {
- jQuery(dom).find('span.workflow_permission_message').first().html(data);
+ $(dom).find('span.workflow_permission_message').first().html(data);
 } else {
- jQuery(dom).find('span.workflow_permission_message').last().html(data);
+ $(dom).find('span.workflow_permission_message').last().html(data);
 }
                         }
                     );
                 } else {
-                    jQuery(dom).find('.singleItemPicker').each(jQuery.proxy(function (index, element) {
-                        jQuery(element).data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this.checkSinglePermisssionHandler);
+                    $(dom).find('.singleItemPicker').each(jQuery.proxy(function (index, element) {
+                        $(element).data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this.checkSinglePermisssionHandler);
                     }, this));
                 }
             },
 
             disposePickers: function (dom, element, index) {
-                Quantumart.QP8.ControlHelpers.destroyAllEntityDataLists(jQuery(dom));
-                jQuery(dom).remove();
+                Quantumart.QP8.ControlHelpers.destroyAllEntityDataLists($(dom));
+                $(dom).remove();
             }
         };
 
         ko.applyBindingsToNode(this._containerElem.get(0), { template: { name: workflow.attr('id').replace('_workflow_control', '_template') } }, viewModel);
-        this._resultElem = jQuery('.workflowResult', this._componentElem);
+        this._resultElem = $('.workflowResult', this._componentElem);
 
         var component = this;
         this._componentElem.closest('form').find('.workflow_control_selector').parent('div').find('.checkbox')
@@ -95,18 +108,18 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         .data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler);
 
         this._containerElem.find('.singleItemPicker').each(jQuery.proxy(function (index, elem) {
-            jQuery(elem).data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
+            $(elem).data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
         }, this));
 
-        jQuery('.workflow_radio').live("click", onRadioChanged);
+        $('.workflow_radio').live("click", onRadioChanged);
 
         function onRadioChanged() {
-            if (jQuery(this).val() == 'User') {
-                jQuery(this).closest('fieldset').find('.workflow_group_row').hide();
-                jQuery(this).closest('fieldset').find('.workflow_user_row').show();
+            if ($(this).val() == 'User') {
+                $(this).closest('fieldset').find('.workflow_group_row').hide();
+                $(this).closest('fieldset').find('.workflow_user_row').show();
             } else {
-                jQuery(this).closest('fieldset').find('.workflow_user_row').hide();
-                jQuery(this).closest('fieldset').find('.workflow_group_row').show();
+                $(this).closest('fieldset').find('.workflow_user_row').hide();
+                $(this).closest('fieldset').find('.workflow_group_row').show();
             }
         };
         this._componentElem.data('workflow', this);
@@ -190,13 +203,13 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     },
 
     manageItems: function (e) {
-        var target = (jQuery(e.target));
+        var target = ($(e.target));
         if (target.size() == 0) {
-            target = jQuery(e);
+            target = $(e);
         }
         if (target.parent('div').hasClass('groupCheckbox')) {
             target.parent('.groupCheckbox').siblings('.workflow_control_selector').find('.checkbox').each(jQuery.proxy(function (index, item) {
-                this.manageItems(jQuery(item));
+                this.manageItems($(item));
             }, this));
         } else {
             if (target.attr('checked') == 'checked') {
@@ -244,7 +257,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     },
 
     _setAsChanged: function () {
-      var $field = jQuery(this._resultElem);
+      var $field = $(this._resultElem);
       $field.addClass(CHANGED_FIELD_CLASS_NAME);
       $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr("name"), value: this._items() });
       $field = null;
@@ -253,7 +266,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     destroyWorkflow: function () {
         var containerElem = this._containerElem;
         containerElem.find('.singleItemPicker').each(jQuery.proxy(function (index, elem) {
-            jQuery(elem).data('entity_data_list_component').detachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
+            $(elem).data('entity_data_list_component').detachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
         }), this);
 
         this._contentSelector

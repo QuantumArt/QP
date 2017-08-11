@@ -539,7 +539,12 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   _proceedAutoCheckDirectChildren: function (li, isChecked, suppressAutoCheck, autoCheckChildren) {
     return this._proceedAutoCheckChildren(function ($node) {
       var self = this;
-      $node.children('ul.t-group').children('li.t-item').children('div').find('.t-checkbox [type=checkbox]').each(function (index, item) {
+      $node
+        .children('ul.t-group')
+        .children('li.t-item')
+        .children('div')
+        .find('.t-checkbox [type=checkbox]')
+        .each(function (index, item) {
         var $checkbox = $(item);
         $checkbox.prop('checked', isChecked);
         self._treeComponent.nodeCheck($checkbox, isChecked, true);
@@ -592,7 +597,12 @@ $.telerik.treeview.getItemHtml = function (options) {
   groupLevel = options.groupLevel,
   itemIndex = options.itemIndex,
   itemsCount = options.itemsCount,
-  absoluteIndex = new $.telerik.stringBuilder().cat(groupLevel).catIf(':', groupLevel).cat(itemIndex).string();
+  absoluteIndex = new $.telerik.stringBuilder()
+    .cat(groupLevel)
+    .catIf(':', groupLevel)
+    .cat(itemIndex)
+    .string();
+
   html
     .cat('<li class="t-item')
     .catIf(' t-first', isFirstLevel && itemIndex == 0)
@@ -606,24 +616,34 @@ $.telerik.treeview.getItemHtml = function (options) {
     .cat('">');
 
   if ((options.isAjax && item.LoadOnDemand) || (item.Items && item.Items.length > 0)) {
- html
-    .cat('<span class="t-icon')
-    .catIf(' t-plus', item.Expanded !== true)
-    .catIf(' t-minus', item.Expanded === true)
-    .cat('"></span>');
-}
+    html
+      .cat('<span class="t-icon')
+      .catIf(' t-plus', item.Expanded !== true)
+      .catIf(' t-minus', item.Expanded === true)
+      .cat('"></span>');
+  }
 
   if (options.showCheckBoxes && item.Checkable !== false) {
     var arrayName = options.elementId; // + '_checkedNodes';
 
     html
-      .cat('<span class="t-checkbox" data-array_name="').cat(arrayName).cat('">')
-      .cat('<input type="hidden" value="').cat(absoluteIndex)
-      .cat('" name="').cat(arrayName).cat('.Index')
+      .cat('<span class="t-checkbox" data-array_name="')
+        .cat(arrayName)
+        .cat('">')
+      .cat('<input type="hidden" value="')
+        .cat(absoluteIndex)
+      .cat('" name="')
+        .cat(arrayName)
+        .cat('.Index')
       .cat('" class="t-input"/>')
-      .cat('<input type="checkbox" value="').cat(item.Checked === true ? 'True' : 'False')
+      .cat('<input type="checkbox" value="')
+        .cat(item.Checked === true ? 'True' : 'False')
       .cat('" class="t-input')
-      .cat('" name="').cat(arrayName).cat('[').cat(absoluteIndex).cat('].Checked"')
+      .cat('" name="')
+        .cat(arrayName)
+        .cat('[')
+        .cat(absoluteIndex)
+        .cat('].Checked"')
       .catIf(' disabled="disabled"', item.Enabled === false)
       .catIf(' checked="checked"', item.Checked)
       .cat('/>');
@@ -652,11 +672,17 @@ $.telerik.treeview.getItemHtml = function (options) {
   startLinkFunction(html, item);
 
   if (item.ImageUrl != null) {
-    html.cat('<img class="t-image" alt="" src="').cat(item.ImageUrl).cat('" />');
+    html
+      .cat('<img class="t-image" alt="" src="')
+      .cat(item.ImageUrl)
+      .cat('" />');
   }
 
   if (item.SpriteCssClasses != null) {
-    html.cat('<span class="t-sprite ').cat(item.SpriteCssClasses).cat('"></span>');
+    html
+      .cat('<span class="t-sprite ')
+      .cat(item.SpriteCssClasses)
+      .cat('"></span>');
   }
 
   if (options.showIds) {
@@ -669,11 +695,15 @@ $.telerik.treeview.getItemHtml = function (options) {
     html.cat(' ');
   }
 
-  html.catIf(item.Text, item.Encoded === false).catIf(item.Text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), item.Encoded !== false);
+  html.catIf(item.Text, item.Encoded === false)
+  .catIf(item.Text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), item.Encoded !== false);
   endLinkFunction(html, item);
 
   if (item.Value) {
-    html.cat('<input type="hidden" class="t-input" name="itemValue" value="').cat(item.Value).cat('" />');
+    html
+      .cat('<input type="hidden" class="t-input" name="itemValue" value="')
+      .cat(item.Value)
+      .cat('" />');
   }
 
   html.cat('</div>');
