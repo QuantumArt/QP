@@ -228,7 +228,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 
     if (!$q.isNullOrEmpty($highlightedNode)) {
       var $node = $highlightedNode;
-      if (!!eventArgs.isExpandRequested) {
+      if (eventArgs.isExpandRequested) {
         var self = this;
         Quantumart.QP8.BackendTreeMenu.getSubTreeToEntity(eventArgs.get_entityTypeCode(), eventArgs.get_parentEntityId(), eventArgs.get_entityId(), function (data) {
           if (!data) {
@@ -257,7 +257,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       }
 
       this.highlightNode($highlightedNode);
-    } else if (!!eventArgs.isExpandRequested) {
+    } else if (eventArgs.isExpandRequested) {
       this._expandToEntityNode(eventArgs.get_entityTypeCode(), eventArgs.get_parentEntityId(), eventArgs.get_entityId());
     }
   },
@@ -278,7 +278,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           return null;
         } else {
             // Открыть node
-          if (!!toExpand) {
+          if (toExpand) {
             $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
             if (self._isNodeCollapsed($node)) {
               self._treeComponent.nodeToggle(null, $node, true);
@@ -311,7 +311,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       };
 
       var deepestExistedNode = findDeepest(data);
-      if (!!deepestExistedNode) {
+      if (deepestExistedNode) {
         nodeCode = self.generateNodeCode(deepestExistedNode.Code, deepestExistedNode.Id, deepestExistedNode.ParentId, deepestExistedNode.IsFolder);
         $node = self.getNode(nodeCode);
 
