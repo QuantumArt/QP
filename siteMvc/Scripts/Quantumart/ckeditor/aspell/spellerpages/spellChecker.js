@@ -307,7 +307,7 @@ window.spellChecker.prototype = {
 						    if((i == text_idx && j >= idx) || i > text_idx) {
 							    origSpell = this.wordWin.originalSpellings[i][j];
 							    if(origSpell == preReplSpell) {
-								    this._setWordText (i, j, origSpell, undefined);
+								    this._setWordText(i, j, origSpell, undefined);
 							    }
 						    }
 					    }
@@ -331,7 +331,7 @@ window.spellChecker.prototype = {
 
 			    // replace: revert the word to its original spelling
 			    case this.replWordFlag :
-				    this._setWordText (text_idx, idx, preReplSpell, undefined);
+				    this._setWordText(text_idx, idx, preReplSpell, undefined);
 				    break;
 		    }
 
