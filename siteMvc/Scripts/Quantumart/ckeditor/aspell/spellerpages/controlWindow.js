@@ -1,7 +1,7 @@
 // //////////////////////////////////////////////////
 // controlWindow object
 // //////////////////////////////////////////////////
-window.controlWindow = function(controlForm) {
+window.controlWindow = function (controlForm) {
     // private properties
   this._form = controlForm;
 
@@ -17,13 +17,13 @@ window.controlWindow = function(controlForm) {
 };
 
 window.controlWindow.prototype = {
-  resetForm: function() {
+  resetForm: function () {
     if (this._form) {
       this._form.reset();
     }
   },
 
-  setSuggestedText: function() {
+  setSuggestedText: function () {
     var slct = this.suggestionList;
     var txt = this.replacementText;
     var str = '';
@@ -35,7 +35,7 @@ window.controlWindow.prototype = {
     txt.value = str;
   },
 
-  selectDefaultSuggestion: function() {
+  selectDefaultSuggestion: function () {
     var slct = this.suggestionList;
     var txt = this.replacementText;
 
@@ -48,7 +48,7 @@ window.controlWindow.prototype = {
     this.setSuggestedText();
   },
 
-  addSuggestion: function(sugg_text) {
+  addSuggestion: function (sugg_text) {
     var slct = this.suggestionList;
 
     if (sugg_text) {
@@ -59,7 +59,7 @@ window.controlWindow.prototype = {
     }
   },
 
-  clearSuggestions: function() {
+  clearSuggestions: function () {
     var slct = this.suggestionList;
 
     for (var j = slct.length - 1; j > -1; j--) {
@@ -69,7 +69,7 @@ window.controlWindow.prototype = {
     }
   },
 
-  enableUndo: function() {
+  enableUndo: function () {
     if (this.undoButton) {
       if (this.undoButton.disabled == true) {
         this.undoButton.disabled = false;
@@ -77,7 +77,7 @@ window.controlWindow.prototype = {
     }
   },
 
-  disableUndo: function() {
+  disableUndo: function () {
     if (this.undoButton) {
       if (this.undoButton.disabled == false) {
         this.undoButton.disabled = true;

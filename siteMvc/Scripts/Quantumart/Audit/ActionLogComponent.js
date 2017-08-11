@@ -66,7 +66,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     }
   },
 
-  get_filterData: function(){
+  get_filterData: function (){
     var filterData = {};
     for (var tileType in this._tiles) {
       if (tileType && this._tiles.hasOwnProperty(tileType)) {

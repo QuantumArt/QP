@@ -84,7 +84,7 @@
 
 */
 
-(function() {
+(function () {
 
     var acorn = {};
     (function (exports) {
@@ -123,7 +123,7 @@
 
       // Test whether a given character code starts an identifier.
 
-      var isIdentifierStart = exports.isIdentifierStart = function(code) {
+      var isIdentifierStart = exports.isIdentifierStart = function (code) {
         if (code < 65) return code === 36;
         if (code < 91) return true;
         if (code < 97) return code === 95;
@@ -133,7 +133,7 @@
 
       // Test whether a given character is part of an identifier.
 
-      var isIdentifierChar = exports.isIdentifierChar = function(code) {
+      var isIdentifierChar = exports.isIdentifierChar = function (code) {
         if (code < 48) return code === 36;
         if (code < 58) return true;
         if (code < 65) return false;
@@ -333,7 +333,7 @@
         flag_store = [];
         set_mode(MODE.BlockStatement);
 
-        this.beautify = function() {
+        this.beautify = function () {
 
             /* jshint onevar:true */
             var local_token, sweet_code;
@@ -1309,20 +1309,20 @@
         var _items = [];
         var _empty = true;
 
-        this.set_indent = function(level) {
+        this.set_indent = function (level) {
             _character_count = parent.baseIndentLength + level * parent.indent_length;
             _indent_count = level;
         };
 
-        this.get_character_count = function() {
+        this.get_character_count = function () {
             return _character_count;
         };
 
-        this.is_empty = function() {
+        this.is_empty = function () {
             return _empty;
         };
 
-        this.last = function() {
+        this.last = function () {
             if (!this._empty) {
               return _items[_items.length - 1];
             } else {
@@ -1330,13 +1330,13 @@
             }
         };
 
-        this.push = function(input) {
+        this.push = function (input) {
             _items.push(input);
             _character_count += input.length;
             _empty = false;
         };
 
-        this.pop = function() {
+        this.pop = function () {
             var item = null;
             if (!_empty) {
                 item = _items.pop();
@@ -1346,14 +1346,14 @@
             return item;
         };
 
-        this.remove_indent = function() {
+        this.remove_indent = function () {
             if (_indent_count > 0) {
                 _indent_count -= 1;
                 _character_count -= parent.indent_length;
             }
         };
 
-        this.trim = function() {
+        this.trim = function () {
             while (this.last() === ' ') {
                 var item = _items.pop();
                 _character_count -= 1;
@@ -1361,7 +1361,7 @@
             _empty = _items.length === 0;
         };
 
-        this.toString = function() {
+        this.toString = function () {
             var result = '';
             if (!this._empty) {
                 if (_indent_count >= 0) {
@@ -1387,7 +1387,7 @@
         this.current_line = null;
         this.space_before_token = false;
 
-        this.add_outputline = function() {
+        this.add_outputline = function () {
             this.previous_line = this.current_line;
             this.current_line = new OutputLine(this);
             lines.push(this.current_line);
@@ -1397,12 +1397,12 @@
         this.add_outputline();
 
 
-        this.get_line_number = function() {
+        this.get_line_number = function () {
             return lines.length;
         };
 
         // Using object instead of string to allow for later expansion of info about each line
-        this.add_new_line = function(force_newline) {
+        this.add_new_line = function (force_newline) {
             if (this.get_line_number() === 1 && this.just_added_newline()) {
                 return false; // no newline on start of file
             }
@@ -1417,12 +1417,12 @@
             return false;
         };
 
-        this.get_code = function() {
+        this.get_code = function () {
             var sweet_code = lines.join('\n').replace(/[\r\n\t ]+$/, '');
             return sweet_code;
         };
 
-        this.set_indent = function(level) {
+        this.set_indent = function (level) {
             // Never indent your first output indent at the start of the file
             if (lines.length > 1) {
                 while(level >= this.indent_cache.length) {
@@ -1436,7 +1436,7 @@
             return false;
         };
 
-        this.add_raw_token = function(token) {
+        this.add_raw_token = function (token) {
             for (var x = 0; x < token.newlines; x++) {
                 this.add_outputline();
             }
@@ -1445,12 +1445,12 @@
             this.space_before_token = false;
         };
 
-        this.add_token = function(printable_token) {
+        this.add_token = function (printable_token) {
             this.add_space_before_token();
             this.current_line.push(printable_token);
         };
 
-        this.add_space_before_token = function() {
+        this.add_space_before_token = function () {
             if (this.space_before_token && !this.just_added_newline()) {
                 this.current_line.push(' ');
             }
@@ -1480,7 +1480,7 @@
             }
         };
 
-        this.trim = function(eat_newlines) {
+        this.trim = function (eat_newlines) {
             eat_newlines = (eat_newlines === undefined) ? false : eat_newlines;
 
             this.current_line.trim(indent_string, baseIndentString);
@@ -1495,11 +1495,11 @@
             this.previous_line = lines.length > 1 ? lines[lines.length - 2] : null;
         };
 
-        this.just_added_newline = function() {
+        this.just_added_newline = function () {
             return this.current_line.is_empty();
         };
 
-        this.just_added_blankline = function() {
+        this.just_added_blankline = function () {
             if (this.just_added_newline()) {
                 if (lines.length === 1) {
                     return true; // start of the file and newline = blank
@@ -1513,7 +1513,7 @@
     }
 
 
-    var Token = function(type, text, newlines, whitespace_before, mode, parent) {
+    var Token = function (type, text, newlines, whitespace_before, mode, parent) {
         this.type = type;
         this.text = text;
         this.comments_before = [];
@@ -1552,7 +1552,7 @@
         var n_newlines, whitespace_before_token, in_html_comment, tokens, parser_pos;
         var input_length;
 
-        this.tokenize = function() {
+        this.tokenize = function () {
             // cache the source's length.
             input_length = input.length;
             parser_pos = 0;
@@ -1602,7 +1602,7 @@
             return tokens;
         };
 
-        function get_directives (text) {
+        function get_directives(text) {
             if (!text.match(directives_block_pattern)) {
                 return null;
             }
@@ -2069,7 +2069,7 @@
 
     if (typeof define === "function" && define.amd) {
         // Add support for AMD ( https://github.com/amdjs/amdjs-api/wiki/AMD#defineamd-property- )
-        define([], function() {
+        define([], function () {
             return { js_beautify: js_beautify };
         });
     } else if (typeof exports !== "undefined") {

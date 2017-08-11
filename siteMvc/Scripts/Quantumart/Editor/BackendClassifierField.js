@@ -47,7 +47,7 @@ Quantumart.QP8.BackendClassifierField = function (componentElem, editorExecuting
 };
 
 Quantumart.QP8.BackendClassifierField.componentRefDataKey = 'component_ref';
-Quantumart.QP8.BackendClassifierField.getComponent = function(componentElem){
+Quantumart.QP8.BackendClassifierField.getComponent = function (componentElem){
   return $(componentElem).data(Quantumart.QP8.BackendClassifierField.componentRefDataKey);
 };
 
@@ -86,11 +86,11 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  getSelectedContent: function() {
+  getSelectedContent: function () {
     return $q.toInt(this._$contentList.find('option:selected').val());
   },
 
-  makeReadonly: function() {
+  makeReadonly: function () {
     var selectedVal = this._$contentList.find('OPTION:selected').val();
     if (!$q.isNullOrEmpty(selectedVal)) {
       var $hidden = this._$contentList.siblings('input[name="' + this._$contentList.prop("name") + '"]:hidden');
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     this._$contentList.addClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', true);
   },
 
-  _onContentSelected: function(e) {
+  _onContentSelected: function (e) {
     var tabId = this._$componentElem.data('host_id');
     var rootContentId = +this._$componentElem.data('root_content_id') || 0;
     var rootArticleId = +this._$componentElem.data('root_article_id') || 0;
@@ -127,7 +127,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  _renderAggregatedDataView: function(articleViewData) {
+  _renderAggregatedDataView: function (articleViewData) {
     this.notify(EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING, {
       articleWrapper: this._$articleWrapper,
       toggleDisableChangeTracking: this.set_disableChangeTracking
@@ -158,7 +158,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  _executeAggregatedDataScript: function(aggregatedContentId, articleScriptData) {
+  _executeAggregatedDataScript: function (aggregatedContentId, articleScriptData) {
     var scriptId = 'aggregated_script_' + aggregatedContentId;
     if (articleScriptData) {
       var $scriptTag = $('#' + scriptId);

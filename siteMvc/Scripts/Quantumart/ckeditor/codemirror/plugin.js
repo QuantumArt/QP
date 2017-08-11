@@ -6,7 +6,7 @@
 * CodeMirror Plugin: http://codemirror.net/ (MIT License)
 */
 
-(function() {
+(function () {
     CKEDITOR.plugins.add('codemirror', {
         icons: 'searchcode,autoformat,commentselectedrange,uncommentselectedrange,autocomplete', // %REMOVE_LINE_CORE%
         lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
@@ -198,9 +198,9 @@
 
                             if (typeof (CodeMirror) == 'undefined') {
 
-                                CKEDITOR.scriptLoader.load(rootPath + 'js/codemirror.min.js', function() {
+                                CKEDITOR.scriptLoader.load(rootPath + 'js/codemirror.min.js', function () {
 
-                                    CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function() {
+                                    CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function () {
                                         loadCodeMirrorInline(editor, textArea);
                                     });
                                 });
@@ -212,7 +212,7 @@
                                     loadCodeMirrorInline(editor, textArea);
                                 } else {
                                     // loading the add-on scripts.
-                                    CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function() {
+                                    CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function () {
                                         loadCodeMirrorInline(editor, textArea);
                                     });
                                 }
@@ -284,7 +284,7 @@
                                             label: '',
                                             title: lang.searchCode,
                                             'class': 'searchCodeButton',
-                                            onClick: function() {
+                                            onClick: function () {
                                                 CodeMirror.commands.find(window["codemirror_" + editor.id]);
                                             }
                                         }, {
@@ -293,7 +293,7 @@
                                             label: '',
                                             title: lang.autoFormat,
                                             'class': 'autoFormat',
-                                            onClick: function() {
+                                            onClick: function () {
                                                 var range = {
                                                     from: window["codemirror_" + editor.id].getCursor(true),
                                                     to: window["codemirror_" + editor.id].getCursor(false)
@@ -395,7 +395,7 @@
                     source: 1
                 };
 
-                editor.commands.find.exec = function() {
+                editor.commands.find.exec = function () {
                     if (editor.mode === 'wysiwyg') {
                         editor.openDialog('find');
                     } else {
@@ -433,7 +433,7 @@
                         },
                         editorFocus: false,
                         readOnly: 1,
-                        exec: function(editorInstance) {
+                        exec: function (editorInstance) {
                             if (editorInstance.mode === 'wysiwyg') {
                                 editorInstance.fire('saveSnapshot');
                             }
@@ -539,9 +539,9 @@
 
                 if (typeof (CodeMirror) == 'undefined') {
 
-                    CKEDITOR.scriptLoader.load(rootPath + 'js/codemirror.min.js', function() {
+                    CKEDITOR.scriptLoader.load(rootPath + 'js/codemirror.min.js', function () {
 
-                        CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function() {
+                        CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function () {
                             loadCodeMirror(editor);
                             callback();
                         });
@@ -552,7 +552,7 @@
                         callback();
                     } else {
                         // loading the add-on scripts.
-                        CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function() {
+                        CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function () {
                             loadCodeMirror(editor);
                             callback();
                         });
@@ -693,7 +693,7 @@
                 }
 
                 var extraKeys = {
-                    "Ctrl-Q": function(codeMirror_Editor) {
+                    "Ctrl-Q": function (codeMirror_Editor) {
                         if (config.enableCodeFolding) {
                             window["foldFunc_" + editor.id](codeMirror_Editor, codeMirror_Editor.getCursor().line);
                         }
@@ -903,7 +903,7 @@
                 }
 
             });
-            editor.on('resize', function() {
+            editor.on('resize', function () {
                 if (window["editable_" + editor.id] && editor.mode === 'source') {
                     var holderElement = window["editable_" + editor.id].getParent();
                     var holderHeight = holderElement.$.clientHeight + 'px';
@@ -955,12 +955,12 @@
             });
 
             if (typeof (jQuery) != 'undefined' && jQuery('a[data-toggle="tab"]') && window["codemirror_" + editor.id]) {
-                jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function() {
+                jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function () {
                     window["codemirror_" + editor.id].refresh();
                 });
             }
 
-            editor.on('setData', function(data) {
+            editor.on('setData', function (data) {
 
                 if (window["editable_" + data.editor.id] && data.editor.mode === 'source') {
                     window["codemirror_" + data.editor.id].setValue(data.data.dataValue);
@@ -981,22 +981,22 @@
 
                 this.editor.fire('dataReady');
             },
-            getData: function() {
+            getData: function () {
                 return this.getValue();
             },
             // Insertions are not supported in source editable.
-            insertHtml: function() {
+            insertHtml: function () {
             },
-            insertElement: function() {
+            insertElement: function () {
             },
-            insertText: function() {
+            insertText: function () {
             },
             // Read-only support for textarea.
-            setReadOnly: function(isReadOnly) {
+            setReadOnly: function (isReadOnly) {
                 this[(isReadOnly ? 'set' : 'remove') + 'Attribute']('readOnly', 'readonly');
             },
             editorID: null,
-            detach: function() {
+            detach: function () {
                 window["codemirror_" + this.editorID].toTextArea();
 
                 // Free Memory on destroy
@@ -1020,7 +1020,7 @@ CKEDITOR.plugins.sourcearea = {
             },
             editorFocus: false,
             readOnly: 1,
-            exec: function(editor) {
+            exec: function (editor) {
                 if (editor.mode === 'wysiwyg') {
                     editor.fire('saveSnapshot');
                 }
@@ -1037,7 +1037,7 @@ CKEDITOR.plugins.sourcearea = {
             },
             editorFocus: false,
             readOnly: 1,
-            exec: function(editor) {
+            exec: function (editor) {
                 CodeMirror.commands.find(window["codemirror_" + editor.id]);
             },
             canUndo: true
@@ -1081,7 +1081,7 @@ CKEDITOR.plugins.sourcearea = {
             },
             editorFocus: false,
             readOnly: 0,
-            exec: function(editor) {
+            exec: function (editor) {
                 var range = {
                     from: window["codemirror_" + editor.id].getCursor(true),
                     to: window["codemirror_" + editor.id].getCursor(false)

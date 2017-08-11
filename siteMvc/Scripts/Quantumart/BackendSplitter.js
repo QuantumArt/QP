@@ -149,7 +149,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
 		// event.stopPropagation();
 	},
 
-	_onSplitterDragStart: function(event) {
+	_onSplitterDragStart: function (event) {
 	    this.notify(EVENT_TYPE_SPLITTER_DRAG_START, {});
 	},
 

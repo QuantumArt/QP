@@ -811,7 +811,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this.closeWindow();
   },
 
-  _isWindow: function() {
+  _isWindow: function () {
     return true;
   },
 

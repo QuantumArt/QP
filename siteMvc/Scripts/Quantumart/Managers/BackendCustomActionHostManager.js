@@ -29,7 +29,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
 
     onExternalCallerContextsUnbinded: function (message) {
     	var self = this;
-    	jQuery(message.externalCallerContexts).each(function(i, c){
+    	jQuery(message.externalCallerContexts).each(function (i, c){
     		var component = self._components[c.hostUID];
     		if(component){
     			component.onExternalCallerContextsUnbinded({
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
 
 Quantumart.QP8.BackendCustomActionHostManager._instance = null; // экземпляр класса
 
-Quantumart.QP8.BackendCustomActionHostManager.getInstance = function(){
+Quantumart.QP8.BackendCustomActionHostManager.getInstance = function (){
     if (Quantumart.QP8.BackendCustomActionHostManager._instance == null) {
         Quantumart.QP8.BackendCustomActionHostManager._instance = new Quantumart.QP8.BackendCustomActionHostManager();
     }
@@ -112,7 +112,7 @@ Quantumart.QP8.BackendCustomActionHostManager.getInstance = function(){
     return Quantumart.QP8.BackendCustomActionHostManager._instance;
 };
 
-Quantumart.QP8.BackendCustomActionHostManager.destroyInstance = function() {
+Quantumart.QP8.BackendCustomActionHostManager.destroyInstance = function () {
     if (Quantumart.QP8.BackendCustomActionHostManager._instance) {
         Quantumart.QP8.BackendCustomActionHostManager._instance.dispose();
     }

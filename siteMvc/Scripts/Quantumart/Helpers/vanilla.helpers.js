@@ -1,4 +1,4 @@
-(function(Global) {
+(function (Global) {
   'use strict';
 
   /**
@@ -10,9 +10,9 @@
    * @param  {Boolean}  isImmediate   if is passed, trigger the function on the leading edge,
    *                                  instead of the trailing
    */
-  Global.debounce = function(fn, delay, isImmediate) {
+  Global.debounce = function (fn, delay, isImmediate) {
     var timeout;
-    return function() {
+    return function () {
       var _this = this;
       var args = arguments;
       function later() {
@@ -34,7 +34,7 @@
   function getUrlHelpers() {
     var rootPath;
     return {
-      Content: function(relativeUrl) {
+      Content: function (relativeUrl) {
         if (relativeUrl.substring(0, 1) === '~') {
           relativeUrl = relativeUrl.substring(1);
         }
@@ -45,7 +45,7 @@
 
         return rootPath + relativeUrl;
       },
-      SetRootPath: function(rootUrl) {
+      SetRootPath: function (rootUrl) {
         rootPath = rootUrl;
       }
     };

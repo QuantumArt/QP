@@ -18,7 +18,7 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
 		Quantumart.QP8.BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { "searchQuery": searchQuery });
 	},
 
-	_getButton: function()
+	_getButton: function ()
 	{
 		return jQuery("#" + this._searchBlockElementId).find(".button");
 	},
@@ -29,7 +29,7 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
 		this._refreshQuery(this._initQuery);
 	},
 
-	refreshQuery: function(eventArgs)
+	refreshQuery: function (eventArgs)
 	{
 		var context = eventArgs.get_context();
 		var query = (context && context.additionalUrlParameters) ? context.additionalUrlParameters.query : "";

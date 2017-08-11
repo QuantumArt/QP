@@ -71,7 +71,7 @@
     });
 */
 
-(function() {
+(function () {
 
     function trim(s) {
         return s.replace(/^\s+|\s+$/g, '');
@@ -159,7 +159,7 @@
                 whitespace: "\n\r\t ".split(''),
                 single_token: 'br,input,link,meta,source,!doctype,basefont,base,area,hr,wbr,param,img,isindex,embed'.split(','), // all the single tags for HTML
                 extra_liners: extra_liners, // for tags that need a line of whitespace before them
-                in_array: function(what, arr) {
+                in_array: function (what, arr) {
                     for (var i = 0; i < arr.length; i++) {
                         if (what === arr[i]) {
                             return true;
@@ -170,7 +170,7 @@
             };
 
             // Return true if the given text is composed entirely of whitespace.
-            this.is_whitespace = function(text) {
+            this.is_whitespace = function (text) {
                 for (var n = 0; n < text.length; text++) {
                     if (!this.Utils.in_array(text.charAt(n), this.Utils.whitespace)) {
                         return false;
@@ -179,7 +179,7 @@
                 return true;
             };
 
-            this.traverse_whitespace = function() {
+            this.traverse_whitespace = function () {
                 var input_char = '';
 
                 input_char = this.input.charAt(this.pos);
@@ -200,7 +200,7 @@
 
             // Append a space to the given content (string array) or, if we are
             // at the wrap_line_length, append a newline/indentation.
-            this.space_or_wrap = function(content) {
+            this.space_or_wrap = function (content) {
                 if (this.line_char_count >= this.wrap_line_length) { // insert a line when the wrap_line_length is reached
                     this.print_newline(false, content);
                     this.print_indentation(content);
@@ -210,7 +210,7 @@
                 }
             };
 
-            this.get_content = function() { // function to capture regular content between tags
+            this.get_content = function () { // function to capture regular content between tags
                 var input_char = '',
                     content = [],
                     space = false; // if a space is needed
@@ -251,7 +251,7 @@
                 return content.length ? content.join('') : '';
             };
 
-            this.get_contents_to = function(name) { // get the full content of a script or style to pass to js_beautify
+            this.get_contents_to = function (name) { // get the full content of a script or style to pass to js_beautify
                 if (this.pos === this.input.length) {
                     return ['', 'TK_EOF'];
                 }
@@ -268,7 +268,7 @@
                 return content;
             };
 
-            this.record_tag = function(tag) { // function to record a tag and its parent in this.tags Object
+            this.record_tag = function (tag) { // function to record a tag and its parent in this.tags Object
                 if (this.tags[tag + 'count']) { // check for the existence of this tag type
                     this.tags[tag + 'count']++;
                     this.tags[tag + this.tags[tag + 'count']] = this.indent_level; // and record the present indent level
@@ -280,7 +280,7 @@
                 this.tags.parent = tag + this.tags[tag + 'count']; // and make this the current parent (i.e. in the case of a div 'div1')
             };
 
-            this.retrieve_tag = function(tag) { // function to retrieve the opening tag to the corresponding closer
+            this.retrieve_tag = function (tag) { // function to retrieve the opening tag to the corresponding closer
                 if (this.tags[tag + 'count']) { // if the openener is not in the Object we ignore it
                     var temp_parent = this.tags.parent; // check to see if it's a closable tag.
                     while (temp_parent) { // till we reach '' (the initial value);
@@ -303,7 +303,7 @@
                 }
             };
 
-            this.indent_to_tag = function(tag) {
+            this.indent_to_tag = function (tag) {
                 // Match the indentation level to the last use of this tag, but don't remove it.
                 if (!this.tags[tag + 'count']) {
                     return;
@@ -320,7 +320,7 @@
                 }
             };
 
-            this.get_tag = function(peek) { // function to get a full tag and parse its type
+            this.get_tag = function (peek) { // function to get a full tag and parse its type
                 var input_char = '',
                     content = [],
                     comment = '',
@@ -517,7 +517,7 @@
                 return content.join(''); // returns fully formatted tag
             };
 
-            this.get_comment = function(start_pos) { // function to return comment content in its entirety
+            this.get_comment = function (start_pos) { // function to return comment content in its entirety
                 // this is will have very poor perf, but will work for now.
                 var comment = '',
                     delimiter = '>',
@@ -569,7 +569,7 @@
                 return comment;
             };
 
-            this.get_unformatted = function(delimiter, orig_tag) { // function to return unformatted content in its entirety
+            this.get_unformatted = function (delimiter, orig_tag) { // function to return unformatted content in its entirety
 
                 if (orig_tag && orig_tag.toLowerCase().indexOf(delimiter) !== -1) {
                     return '';
@@ -618,7 +618,7 @@
                 return content;
             };
 
-            this.get_token = function() { // initial handler for token-retrieval
+            this.get_token = function () { // initial handler for token-retrieval
                 var token;
 
                 if (this.last_token === 'TK_TAG_SCRIPT' || this.last_token === 'TK_TAG_STYLE') { // check if we need to format javascript
@@ -649,7 +649,7 @@
                 }
             };
 
-            this.get_full_indent = function(level) {
+            this.get_full_indent = function (level) {
                 level = this.indent_level + level || 0;
                 if (level < 1) {
                     return '';
@@ -658,7 +658,7 @@
                 return Array(level + 1).join(this.indent_string);
             };
 
-            this.is_unformatted = function(tag_check, unformatted) {
+            this.is_unformatted = function (tag_check, unformatted) {
                 // is this an HTML5 block-level link?
                 if (!this.Utils.in_array(tag_check, unformatted)) {
                     return false;
@@ -685,7 +685,7 @@
                 }
             };
 
-            this.printer = function(js_source, indent_character, indent_size, wrap_line_length, brace_style) { // handles input/output and some other printing functions
+            this.printer = function (js_source, indent_character, indent_size, wrap_line_length, brace_style) { // handles input/output and some other printing functions
 
                 this.input = js_source || ''; // gets the input for the Parser
 
@@ -705,7 +705,7 @@
                     this.indent_string += this.indent_character;
                 }
 
-                this.print_newline = function(force, arr) {
+                this.print_newline = function (force, arr) {
                     this.line_char_count = 0;
                     if (!arr || !arr.length) {
                         return;
@@ -718,14 +718,14 @@
                     }
                 };
 
-                this.print_indentation = function(arr) {
+                this.print_indentation = function (arr) {
                     for (var i = 0; i < this.indent_level; i++) {
                         arr.push(this.indent_string);
                         this.line_char_count += this.indent_string.length;
                     }
                 };
 
-                this.print_token = function(text) {
+                this.print_token = function (text) {
                     // Avoid printing initial whitespace.
                     if (this.is_whitespace(text) && !this.output.length) {
                         return;
@@ -739,7 +739,7 @@
                     this.print_token_raw(text);
                 };
 
-                this.print_token_raw = function(text) {
+                this.print_token_raw = function (text) {
                     // If we are going to print newlines, truncate trailing
                     // whitespace, as the newlines will represent the space.
                     if (this.newlines > 0) {
@@ -762,11 +762,11 @@
                     this.newlines = 0;
                 };
 
-                this.indent = function() {
+                this.indent = function () {
                     this.indent_level++;
                 };
 
-                this.unindent = function() {
+                this.unindent = function () {
                     if (this.indent_level > 0) {
                         this.indent_level--;
                     }
@@ -869,7 +869,7 @@
                         if (_beautifier) {
 
                             // call the Beautifier if avaliable
-                            var Child_options = function() {
+                            var Child_options = function () {
                                 this.eol = '\n';
                             };
                             Child_options.prototype = options;
@@ -918,12 +918,12 @@
 
     if (typeof define === "function" && define.amd) {
         // Add support for AMD ( https://github.com/amdjs/amdjs-api/wiki/AMD#defineamd-property- )
-        define(["require", "./beautify", "./beautify-css"], function(requireamd) {
+        define(["require", "./beautify", "./beautify-css"], function (requireamd) {
             var js_beautify =  requireamd("./beautify");
             var css_beautify =  requireamd("./beautify-css");
 
             return {
-              html_beautify: function(html_source, options) {
+              html_beautify: function (html_source, options) {
                 return style_html(html_source, options, js_beautify.js_beautify, css_beautify.css_beautify);
               }
             };
@@ -934,17 +934,17 @@
         var js_beautify = require('./beautify.js');
         var css_beautify = require('./beautify-css.js');
 
-        exports.html_beautify = function(html_source, options) {
+        exports.html_beautify = function (html_source, options) {
             return style_html(html_source, options, js_beautify.js_beautify, css_beautify.css_beautify);
         };
     } else if (typeof window !== "undefined") {
         // If we're running a web page and don't have either of the above, add our one global
-        window.html_beautify = function(html_source, options) {
+        window.html_beautify = function (html_source, options) {
             return style_html(html_source, options, window.js_beautify, window.css_beautify);
         };
     } else if (typeof global !== "undefined") {
         // If we don't even have window, try global.
-        global.html_beautify = function(html_source, options) {
+        global.html_beautify = function (html_source, options) {
             return style_html(html_source, options, global.js_beautify, global.css_beautify);
         };
     }

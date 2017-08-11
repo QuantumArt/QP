@@ -268,11 +268,11 @@ Quantumart.QP8.BackendPager.prototype = {
 	} // dispose
 };
 
-Quantumart.QP8.BackendPager.getFrameStartPageNumber = function(pageFrameNumber, pageFrameSize){
+Quantumart.QP8.BackendPager.getFrameStartPageNumber = function (pageFrameNumber, pageFrameSize){
 	return pageFrameNumber * pageFrameSize;
 };
 
-Quantumart.QP8.BackendPager.getFrameEndPageNumber = function(pageFrameNumber, pageFrameSize, pageCount){
+Quantumart.QP8.BackendPager.getFrameEndPageNumber = function (pageFrameNumber, pageFrameSize, pageCount){
 	return Math.min(pageFrameNumber * pageFrameSize + (pageFrameSize == 0 ? 0 : pageFrameSize - 1), pageCount == 0 ? 0 : pageCount - 1);
 };
 

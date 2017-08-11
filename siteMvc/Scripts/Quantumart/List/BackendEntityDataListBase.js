@@ -587,7 +587,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     this._destroyPopupWindow();
   },
 
-  _loadSelectedItems: function(entities) {
+  _loadSelectedItems: function (entities) {
     var dataItems;
     if (($o.checkEntitiesForPresenceEmptyNames(entities) || this._readDataOnInsert) && entities.length <= this._countLimit) {
       var selectedEntitiesIDs = _.pluck(entities, 'Id');
@@ -643,7 +643,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     return html.string();
   },
 
-  _getCountDivHtml: function(newCount, hidden) {
+  _getCountDivHtml: function (newCount, hidden) {
     var html = new $.telerik.stringBuilder();
     var style = (hidden) ? 'style="display:none"' : "";
     var countText = String.format($l.EntityDataList.countText, "<span class=\"countItems\">" + newCount + "</span>");
@@ -719,7 +719,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     this._getOverflowSpan().html(this._getOverflowText());
   },
 
-  _getOverflowText: function() {
+  _getOverflowText: function () {
     return this._isCountOverflow() ? ". " + String.format($l.EntityDataList.overFlowText, this._countLimit) : "";
   },
 
@@ -784,11 +784,11 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _isCountOverflow: function() {
+  _isCountOverflow: function () {
     return false;
   },
 
-  setFilter: function(filter) {
+  setFilter: function (filter) {
     this._filter = filter;
   },
 

@@ -1,5 +1,5 @@
 // #region class BackendEntityType
-Quantumart.QP8.BackendEntityType = function() {};
+Quantumart.QP8.BackendEntityType = function () {};
 
 // Возвращает тип сущности по ее коду
 Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function Quantumart$QP8$BackendEntityType$getEntityTypeByCode(entityTypeCode) {

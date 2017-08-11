@@ -89,15 +89,15 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     $list = null;
   },
 
-  getListItems: function() {
+  getListItems: function () {
     return $(this._listElement).find("UL LI");
   },
 
-  getSelectedListItems: function() {
+  getSelectedListItems: function () {
     return $(this._listElement).find("UL LI:has(INPUT:checkbox:checked)");
   },
 
-  getSelectedEntities: function() {
+  getSelectedEntities: function () {
     var result;
     if (!this._isCountOverflow()) {
       var $selectedListItems = this.getSelectedListItems();
@@ -119,7 +119,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     return result;
   },
 
-  _isCountOverflow : function() {
+  _isCountOverflow : function () {
     return this._countOverflowElement != null;
   },
 
@@ -163,9 +163,9 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     }
   },
 
-  appendEntities: function(entityIds) {
+  appendEntities: function (entityIds) {
     if(entityIds && entityIds.length) {
-      var selectedEntities = entityIds.map(function(i) {
+      var selectedEntities = entityIds.map(function (i) {
         return { Id: i };
       });
 
@@ -173,10 +173,10 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     }
   },
 
-  selectEntities: function(entityIds) {
+  selectEntities: function (entityIds) {
     this.deselectAllListItems();
     if(entityIds && entityIds.length) {
-      var selectedEntities = entityIds.map(function(i) {
+      var selectedEntities = entityIds.map(function (i) {
         return { Id: i };
       });
 

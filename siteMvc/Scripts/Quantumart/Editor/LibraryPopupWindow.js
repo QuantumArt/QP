@@ -33,7 +33,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype =
 		this._selectPopupWindowComponent.closeWindow();
 	},
 
-	setSelectCallback: function(callback) {
+	setSelectCallback: function (callback) {
 		this._options.selectCallback = callback;
 	},
 

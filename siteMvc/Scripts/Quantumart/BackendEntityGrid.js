@@ -6,7 +6,7 @@ var EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK = 'OnEntityGridEntityTitleLinkClick'
 
 // #region class BackendEntityGrid
 // === Класс "Список сущностей" ===
-Quantumart.QP8.BackendEntityGrid = function(gridGroupCodes, gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
+Quantumart.QP8.BackendEntityGrid = function (gridGroupCodes, gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
   Quantumart.QP8.BackendEntityGrid.initializeBase(this);
 
   this._gridGroupCodes = gridGroupCodes;
@@ -191,28 +191,28 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   CHECKBOX_HEADER_SELECTORS: '.t-select-header input:checkbox',
   CHECKBOX_CELL_SELECTORS: '.t-select-cell input:checkbox',
 
-  get_gridGroupCodes: function() {
+  get_gridGroupCodes: function () {
     return this._gridGroupCodes;
   },
-  get_gridElementId: function() {
+  get_gridElementId: function () {
     return this._gridElementId;
   },
-  set_gridElementId: function(value) {
+  set_gridElementId: function (value) {
     this._gridElementId = value;
   },
-  get_gridElement: function() {
+  get_gridElement: function () {
     return this._gridElement;
   },
-  set_gridElement: function(value) {
+  set_gridElement: function (value) {
     this._gridElement = value;
   },
-  get_gridComponent: function() {
+  get_gridComponent: function () {
     return this._gridComponent;
   },
-  get_entityTypeCode: function() {
+  get_entityTypeCode: function () {
     return this._entityTypeCode;
   },
-  set_entityTypeFromRow: function(rowElem) {
+  set_entityTypeFromRow: function (rowElem) {
     var $row = this.getRow(rowElem);
     var dataItem = this.getDataItem($row);
 
@@ -220,7 +220,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       this._entityTypeCode = dataItem['EntityTypeCode'];
     }
   },
-  set_actionCodeFromRow: function(rowElem) {
+  set_actionCodeFromRow: function (rowElem) {
     var $row = this.getRow(rowElem);
     var dataItem = this.getDataItem($row);
 
@@ -228,87 +228,87 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       this._actionCodeForLink = dataItem['ActionCode'];
     }
   },
-  set_entityTypeCode: function(value) {
+  set_entityTypeCode: function (value) {
     this._entityTypeCode = value;
   },
-  get_parentEntityId: function() {
+  get_parentEntityId: function () {
     return this._parentEntityId;
   },
-  set_parentEntityId: function(value) {
+  set_parentEntityId: function (value) {
     this._parentEntityId = value;
   },
-  get_actionCode: function() {
+  get_actionCode: function () {
     return this._actionCode;
   },
-  set_actionCode: function(value) {
+  set_actionCode: function (value) {
     this._actionCode = value;
   },
-  get_actionCodeForLink: function() {
+  get_actionCodeForLink: function () {
     return this._actionCodeForLink;
   },
-  set_actionCodeForLink: function(value) {
+  set_actionCodeForLink: function (value) {
     this._actionCodeForLink = value;
   },
-  get_allowMultipleRowSelection: function() {
+  get_allowMultipleRowSelection: function () {
     return this._allowMultipleRowSelection;
   },
-  set_allowMultipleRowSelection: function(value) {
+  set_allowMultipleRowSelection: function (value) {
     this._allowMultipleRowSelection = value;
   },
-  get_allowGlobalSelection: function() {
+  get_allowGlobalSelection: function () {
     return this._allowGlobalSelection;
   },
-  set_allowGlobalSelection: function(value) {
+  set_allowGlobalSelection: function (value) {
     this._allowGlobalSelection = value;
   },
-  get_selectedEntitiesIDs: function() {
+  get_selectedEntitiesIDs: function () {
     return this._selectedEntitiesIDs;
   },
-  set_selectedEntitiesIDs: function(value) {
+  set_selectedEntitiesIDs: function (value) {
     this._selectedEntitiesIDs = value;
   },
-  get_contextMenuCode: function() {
+  get_contextMenuCode: function () {
     return this._contextMenuCode;
   },
-  set_contextMenuCode: function(value) {
+  set_contextMenuCode: function (value) {
     this._contextMenuCode = value;
   },
-  get_keyColumnName: function() {
+  get_keyColumnName: function () {
     return this._keyColumnName;
   },
-  set_keyColumnName: function(value) {
+  set_keyColumnName: function (value) {
     this._keyColumnName = value;
   },
-  get_titleColumnName: function() {
+  get_titleColumnName: function () {
     return this._titleColumnName;
   },
-  set_titleColumnName: function(value) {
+  set_titleColumnName: function (value) {
     this._titleColumnName = value;
   },
-  get_autoGenerateLink: function() {
+  get_autoGenerateLink: function () {
     return this._autoGenerateLink;
   },
-  set_autoGenerateLink: function(value) {
+  set_autoGenerateLink: function (value) {
     this._autoGenerateLink = value;
   },
-  get_gridManager: function() {
+  get_gridManager: function () {
     return this._gridManagerComponent;
   },
-  set_gridManager: function(value) {
+  set_gridManager: function (value) {
     this._gridManagerComponent = value;
   },
-  get_treeFieldId: function() {
+  get_treeFieldId: function () {
     return this._treeFieldId;
   },
-  set_treeFieldId: function(value) {
+  set_treeFieldId: function (value) {
     this._treeFieldId = value;
   },
-  get_currentPage: function() {
+  get_currentPage: function () {
     if (this._gridComponent) {
       return this._gridComponent.currentPage;
     }
   },
-  get_orderBy: function() {
+  get_orderBy: function () {
     if (this._gridComponent) {
       return this._gridComponent.orderBy;
     }
@@ -328,7 +328,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   _onSelectAllClickHandler: null,
   _onDeselectAllClickHandler: null,
 
-  initialize: function() {
+  initialize: function () {
     $('.fullTextBlock label').addClass('hidden');
 
     var $grid = $('#' + this._gridElementId);
@@ -406,15 +406,15 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     $grid = null;
   },
 
-  _getCurrentAction: function() {
+  _getCurrentAction: function () {
     return $a.getBackendActionByCode(this._actionCode);
   },
 
-  _getTitleLinks: function() {
+  _getTitleLinks: function () {
     return this.getRows().find(this._getLinkCellSelector() + ' > A');
   },
 
-  _addLinkToCell: function(rowElem) {
+  _addLinkToCell: function (rowElem) {
     var $row = $q.toJQuery(rowElem);
     var $titleCell = $row.find(this._getLinkCellSelector());
 
@@ -431,7 +431,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     $row = null;
   },
 
-  _getLinkCellSelector: function() {
+  _getLinkCellSelector: function () {
     var result = 'TD.' + this.ID_CELL_CLASS_NAME;
     if (this._generateLinkOnTitle) {
       result += ', TD.' + this.TITLE_CELL_CLASS_NAME;
@@ -440,7 +440,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return result;
   },
 
-  _removeLinksFromCells: function() {
+  _removeLinksFromCells: function () {
     this._getTitleLinks()
       .unbind('click', this._onTitleLinkClickHandler)
       .unbind('mouseup', this._onTitleLinkClickHandler)
@@ -448,7 +448,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       .remove();
   },
 
-  getRows: function() {
+  getRows: function () {
     var $rows = [];
     if (this._gridComponent) {
       $rows = this._gridComponent.$rows();
@@ -457,11 +457,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return $rows;
   },
 
-  getSelectedRows: function() {
+  getSelectedRows: function () {
     return this.getRows().filter('.' + this.ROW_SELECTED_CLASS_NAME);
   },
 
-  getRow: function(row) {
+  getRow: function (row) {
     var $row = null;
 
     if ($q.isObject(row)) {
@@ -474,19 +474,19 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return $row;
   },
 
-  getRowByEntityId: function(entityId) {
-    return [].find.call(this.getRows(), function(rowEl) {
+  getRowByEntityId: function (entityId) {
+    return [].find.call(this.getRows(), function (rowEl) {
       return this.getEntityId(rowEl) === +entityId;
     }, this);
   },
 
-  getRowsByEntityIds: function(entityIds) {
-    return [].filter.call(this.getRows(), function(rowEl) {
+  getRowsByEntityIds: function (entityIds) {
+    return [].filter.call(this.getRows(), function (rowEl) {
       return entityIds.includes(this.getEntityId(rowEl), this);
     }, this);
   },
 
-  selectRow: function(rowElem, saveOtherRowsSelection) {
+  selectRow: function (rowElem, saveOtherRowsSelection) {
     if (!saveOtherRowsSelection) {
       this._setRowsSelectedState(this.getRows(), false);
       if (!this._allowMultipleRowSelection && this._allowGlobalSelection) {
@@ -500,7 +500,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this._executePostSelectActions();
   },
 
-  selectRows: function(rowElems) {
+  selectRows: function (rowElems) {
     this._setRowsSelectedState(this.getRows(), false);
     if (!$q.isNullOrEmpty(rowElems)) {
       this._setRowsSelectedState($q.toJQuery(rowElems), true);
@@ -510,20 +510,20 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this._executePostSelectActions();
   },
 
-  selectAllRows: function() {
+  selectAllRows: function () {
     this._setRowsSelectedState(this.getRows(), true);
     this._saveRowAllSelectionState();
     this._executePostSelectActions();
   },
 
-  deselectAllRows: function() {
+  deselectAllRows: function () {
     this._setRowsSelectedState(this.getRows(), false);
     this._selectedEntitiesIDs = [];
     this._executePostSelectActions();
   },
 
-  toggleDirectChildRows: function(parentArticleId, rowState) {
-    this.getChildEntityIds(parentArticleId).done(function(response) {
+  toggleDirectChildRows: function (parentArticleId, rowState) {
+    this.getChildEntityIds(parentArticleId).done(function (response) {
       var $rowsToModify = $(this.getRowsByEntityIds(response.data));
       this._setRowsSelectedState($rowsToModify, rowState);
       this._selectedEntitiesIDs = $q.addRemoveToArrUniq(this._selectedEntitiesIDs, response.data, !rowState);
@@ -532,30 +532,30 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }.bind(this));
   },
 
-  selectPageRows: function(value) {
+  selectPageRows: function (value) {
     this._setRowsSelectedState(this.getRows(), value);
     this._saveRowSelectionState();
     this._executePostSelectActions();
   },
 
-  isRowSelected: function(rowElem) {
+  isRowSelected: function (rowElem) {
     return this.getRow(rowElem).hasClass(this.ROW_SELECTED_CLASS_NAME);
   },
 
-  _setRowsSelectedState: function($rows, state) {
+  _setRowsSelectedState: function ($rows, state) {
     $rows[state ? 'addClass' : 'removeClass'](this.ROW_SELECTED_CLASS_NAME);
     $rows.find(this.CHECKBOX_CELL_SELECTORS).prop('checked', state);
   },
 
-  _getHeaderCheckbox: function() {
+  _getHeaderCheckbox: function () {
     return $(this.CHECKBOX_HEADER_SELECTORS, this._gridComponent.$header);
   },
 
-  _refreshHeaderCheckbox: function() {
+  _refreshHeaderCheckbox: function () {
     this._getHeaderCheckbox().prop('checked', !!this._isAllRowsSelectedInCurrentPage());
   },
 
-  _refreshCancelSelection: function() {
+  _refreshCancelSelection: function () {
     if (this._deselectAllId) {
       var $linkButton = $('#' + this._deselectAllId);
       var actionLink = $linkButton.data('action_link_component');
@@ -570,7 +570,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  getDataItem: function(rowElem) {
+  getDataItem: function (rowElem) {
     var dataItem = null;
     var $row = this.getRow(rowElem);
 
@@ -581,7 +581,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return dataItem;
   },
 
-  getEntityId: function(rowElem) {
+  getEntityId: function (rowElem) {
     var entityId = 0;
     var $row = this.getRow(rowElem);
     var dataItem = this.getDataItem($row);
@@ -593,7 +593,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return entityId;
   },
 
-  getEntityName: function(rowElem) {
+  getEntityName: function (rowElem) {
     var entityName = '';
     var $row = this.getRow(rowElem);
     var dataItem = this.getDataItem($row);
@@ -605,7 +605,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return entityName;
   },
 
-  getParentEntityId: function(rowElem) {
+  getParentEntityId: function (rowElem) {
     var entityId = this._parentEntityId;
     var $row = this.getRow(rowElem);
     var dataItem = this.getDataItem($row);
@@ -617,7 +617,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return entityId;
   },
 
-  getChildEntityIds: function(parentArticleId) {
+  getChildEntityIds: function (parentArticleId) {
     return $q.getAjax(window.CONTROLLER_URL_ARTICLE + 'GetChildArticleIds', {
       ids: [parentArticleId],
       filter: this._filter,
@@ -625,11 +625,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     });
   },
 
-  checkExistEntityInCurrentPage: function(entityId) {
+  checkExistEntityInCurrentPage: function (entityId) {
     return !!this.getRowByEntityId(entityId);
   },
 
-  getEntitiesFromRows: function(rows) {
+  getEntitiesFromRows: function (rows) {
     var entities = [];
     var rowCount = rows.length;
 
@@ -658,18 +658,18 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return entities;
   },
 
-  getSelectedEntities: function() {
+  getSelectedEntities: function () {
     var selectedEntities = [];
 
     if (this._allowGlobalSelection) {
       var rows = this.getRowsByEntityIds(this._selectedEntitiesIDs);
       var self = this;
 
-      selectedEntities = $.map(rows, function(row) {
+      selectedEntities = $.map(rows, function (row) {
         return { Id: self.getEntityId(row), Name: self.getEntityName(row) };
       });
 
-      var notFoundIds = $.grep(this._selectedEntitiesIDs, function(elem) {
+      var notFoundIds = $.grep(this._selectedEntitiesIDs, function (elem) {
         for (var i = 0; i < selectedEntities.length; i++) {
           if (selectedEntities[i].Id === elem) {
             return false;
@@ -679,7 +679,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         return true;
       });
 
-      $.each(notFoundIds, function(i, elem) {
+      $.each(notFoundIds, function (i, elem) {
         selectedEntities.push({ Id: elem, Name: '' });
       });
     } else {
@@ -689,7 +689,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return selectedEntities;
   },
 
-  resetGrid: function(options) {
+  resetGrid: function (options) {
     if ($q.isObject(options)) {
       if (!$q.isNull(options.searchQuery)) {
         this._searchQuery = options.searchQuery;
@@ -708,7 +708,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  refreshGrid: function(options) {
+  refreshGrid: function (options) {
     if ($q.isObject(options)) {
       if (!$q.isNull(options.saveRowsSelection)) {
         this._allowSaveRowsSelection = options.saveRowsSelection;
@@ -733,19 +733,19 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  markGridAsBusy: function() {
+  markGridAsBusy: function () {
     $(this._gridElement).addClass(this.GRID_BUSY_CLASS_NAME);
   },
 
-  unmarkGridAsBusy: function() {
+  unmarkGridAsBusy: function () {
     $(this._gridElement).removeClass(this.GRID_BUSY_CLASS_NAME);
   },
 
-  isGridBusy: function() {
+  isGridBusy: function () {
     return $(this._gridElement).hasClass(this.GRID_BUSY_CLASS_NAME);
   },
 
-  executeAction: function(row, actionCode, followLink, ctrlKey) {
+  executeAction: function (row, actionCode, followLink, ctrlKey) {
     var $row = this.getRow(row);
     if (!$q.isNullOrEmpty($row)) {
       var action = $a.getBackendActionByCode(actionCode);
@@ -803,7 +803,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  _executePostSelectActions: function() {
+  _executePostSelectActions: function () {
     if (this.articlesCountId) {
       $('#' + this.articlesCountId).text(this._selectedEntitiesIDs.length);
     }
@@ -811,7 +811,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this._raiseSelectEvent();
   },
 
-  _raiseSelectEvent: function() {
+  _raiseSelectEvent: function () {
     var action = this._getCurrentAction();
     var eventArgs = $a.getEventArgsFromAction(action);
 
@@ -833,13 +833,13 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this._refreshCancelSelection();
   },
 
-  _isAllRowsSelectedInCurrentPage: function() {
+  _isAllRowsSelectedInCurrentPage: function () {
     var $rows = this.getRows();
     var $selectedRows = this.getSelectedRows();
     return ($rows.length == $selectedRows.length);
   },
 
-  _saveRowSelectionState: function() {
+  _saveRowSelectionState: function () {
     var $rows = this.getRows();
     var rowCount = $rows.length;
 
@@ -853,7 +853,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  _saveRowAllSelectionState: function() {
+  _saveRowAllSelectionState: function () {
     var rowsData = null;
     var eventArgs = null;
     var rowsOnPage = this.getRows().length;
@@ -879,7 +879,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         this.notify(window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING, eventArgs);
       }
 
-      $q.postDataToUrl(url, queryData, false, function(data) {
+      $q.postDataToUrl(url, queryData, false, function (data) {
         rowsData = data;
       }, $q.processGenericAjaxError);
 
@@ -889,20 +889,20 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
       var self = this;
       if (rowsData) {
-        this._selectedEntitiesIDs = $.map(rowsData.data, function(dataItem) {
+        this._selectedEntitiesIDs = $.map(rowsData.data, function (dataItem) {
           return dataItem[self._keyColumnName];
         });
       }
     }
   },
 
-  _restoreRowSelectionState: function() {
+  _restoreRowSelectionState: function () {
     var self = this;
     var selectedEntitiesIDs = this._selectedEntitiesIDs;
     var selectedRowElems = [];
 
     this.getRows().each(
-      function(rowIndex, rowElem) {
+      function (rowIndex, rowElem) {
         var $row = $(rowElem);
         var entityId = self.getEntityId($row);
 
@@ -915,11 +915,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this.selectRows(selectedRowElems);
   },
 
-  _resetRowSelectionState: function() {
+  _resetRowSelectionState: function () {
     $q.clearArray(this._selectedEntitiesIDs);
   },
 
-  _fixGridWidth: function() {
+  _fixGridWidth: function () {
     var gridElement = this.get_gridElement();
     var tableElement = $('table', gridElement).get(0);
 
@@ -928,7 +928,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  _createDataQueryParams: function() {
+  _createDataQueryParams: function () {
     var params = { gridParentId: this._parentEntityId };
 
     if (!$q.isNullOrEmpty(this._startingEntitiesIDs)) {
@@ -950,7 +950,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     return params;
   },
 
-  _onDataBinding: function(e) {
+  _onDataBinding: function (e) {
     var params = this._createDataQueryParams();
     e.data = $.extend(e.data, params);
     if (this._isDataLoaded) {
@@ -978,7 +978,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  _onDataBound: function() {
+  _onDataBound: function () {
     var grid = this._gridComponent;
     if (grid.currentPage > 1 && !grid.total) {
       grid.pageTo(grid.currentPage - 1);
@@ -988,7 +988,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this._fixGridWidth();
 
     var self = this;
-    this._selectedEntitiesIDs = $.grep(this._selectedEntitiesIDs, function(item) {
+    this._selectedEntitiesIDs = $.grep(this._selectedEntitiesIDs, function (item) {
       return !Array.contains(self._removedIds, item);
     });
 
@@ -1011,23 +1011,23 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  _onRowDataBound: function(e) {
+  _onRowDataBound: function (e) {
     this._applyStatusColor(e.row, e.dataItem);
     if (this._autoGenerateLink) {
       this._addLinkToCell(e.row);
     }
   },
 
-  _onDataLoadError: function(e) {
+  _onDataLoadError: function (e) {
     $q.processGenericAjaxError(e.XMLHttpRequest);
     e.preventDefault();
   },
 
-  _onHeaderCheckboxClick: function(e) {
+  _onHeaderCheckboxClick: function (e) {
     this.selectPageRows($(e.currentTarget).is(':checked'));
   },
 
-  _onTitleLinkClick: function(e) {
+  _onTitleLinkClick: function (e) {
     e.preventDefault();
     var isMiddleClick = e.type == 'mouseup' && e.which == 2;
     var isLeftClick = e.type == 'click' && (e.which == 1 || e.which == 0);
@@ -1048,7 +1048,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  _onRowCellClick: function(e) {
+  _onRowCellClick: function (e) {
     var $target = $(e.target);
     if (!$target.is(':button, A, :input, A > .t-icon')) {
       e.stopPropagation();
@@ -1060,7 +1060,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  _onRowCheckboxCellClick: function(e) {
+  _onRowCheckboxCellClick: function (e) {
     var $checkbox = $(e.target).closest('INPUT:checkbox');
     if (!$q.isNullOrEmpty($checkbox)) {
       var $row = $checkbox.parent().parent();
@@ -1068,7 +1068,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  _onContextMenu: function(e) {
+  _onContextMenu: function (e) {
     var $element = $(e.currentTarget);
     this._currentRowId = this.getEntityId($($element.closest('TR')[0]));
     if (this._contextMenuComponent) {
@@ -1078,7 +1078,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     e.preventDefault();
   },
 
-  _onRowContextMenuShowing: function(eventType, sender, args) {
+  _onRowContextMenuShowing: function (eventType, sender, args) {
     var $element = $(args.get_targetElement());
     var menuComponent = args.get_menu();
     if (menuComponent && $element.length) {
@@ -1089,29 +1089,29 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  _onRowContextMenuItemClicking: function(eventType, sender, args) {
+  _onRowContextMenuItemClicking: function (eventType, sender, args) {
     var $menuItem = $(args.get_menuItem());
     if ($menuItem.length) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
   },
 
-  _onRowContextMenuHidden: function(eventType, sender, args) {
+  _onRowContextMenuHidden: function (eventType, sender, args) {
     if (this._contextMenuActionCode) {
       this.executeAction($(args.get_targetElement()), this._contextMenuActionCode, false, false);
       this._contextMenuActionCode = '';
     }
   },
 
-  _onSelectAllClick: function() {
+  _onSelectAllClick: function () {
     this.selectAllRows();
   },
 
-  _onDeselectAllClick: function() {
+  _onDeselectAllClick: function () {
     this.deselectAllRows();
   },
 
-  _applyStatusColor: function(row, item) {
+  _applyStatusColor: function (row, item) {
     var id = item['STATUS_TYPE_COLOR'];
     if (id) {
       var $row = $(row);
@@ -1121,13 +1121,13 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
   },
 
-  onLoad: function() {
+  onLoad: function () {
     if (this._autoLoad && this._delayAutoLoad) {
       this.refreshGrid();
     }
   },
 
-  dispose: function() {
+  dispose: function () {
     this._stopDeferredOperations = true;
     Quantumart.QP8.BackendEntityGrid.callBaseMethod(this, 'dispose');
 

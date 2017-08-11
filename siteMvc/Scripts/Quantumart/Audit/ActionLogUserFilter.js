@@ -15,7 +15,7 @@ Quantumart.QP8.ActionLogUserFilter.prototype = {
 		return this.userSearch.get_filterDetails();
 	},
 
-	get_value: function(){
+	get_value: function (){
 		return this.userSearch.get_searchQuery().QueryParams[0];
 	},
 

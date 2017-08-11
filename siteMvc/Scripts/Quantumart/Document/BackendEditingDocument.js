@@ -446,7 +446,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     this._editingArea.hostExternalCallerContextsUnbinded(unbindingEventArgs);
   },
 
-  _isWindow: function() { return false; },
+  _isWindow: function () { return false; },
 
   dispose: function () {
     Quantumart.QP8.BackendEditingDocument.callBaseMethod(this, "dispose");

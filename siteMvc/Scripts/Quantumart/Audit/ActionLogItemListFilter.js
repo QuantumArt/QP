@@ -31,7 +31,7 @@ Quantumart.QP8.ActionLogItemListFilter.prototype = {
 		this.$container.find("select.dropDownList").focus();
 	},
 
-	onOpen: function(){
+	onOpen: function (){
 		this.$container.find("select.dropDownList").focus();
 	},
 

@@ -1,6 +1,6 @@
 // #region class BackendHtmlUploader
 // === Класс "HTML загрузчик" ===
-Quantumart.QP8.BackendHtmlUploader = function(parentElement, options) {
+Quantumart.QP8.BackendHtmlUploader = function (parentElement, options) {
   Quantumart.QP8.BackendHtmlUploader.initializeBase(this);
 
   this._parentElement = parentElement;
@@ -21,7 +21,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   _resolveName: false,
   _uploadedFiles: [],
 
-  initialize: function() {
+  initialize: function () {
     var $mvcUpload = jQuery(".t-upload input[type='file']", this._parentElement).data('tUpload');
 
     $mvcUpload.wrapper.unbind('upload');
@@ -39,27 +39,27 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     $mvcUpload = null;
   },
 
-  dispose: function() {
+  dispose: function () {
     this._$telerikUpload.wrapper.unbind();
     jQuery(".t-upload input[type='file']", this._parentElement).removeData('tUpload');
   },
 
-  set_folderPath: function(value) {
+  set_folderPath: function (value) {
     this._folderPath = value;
   },
 
-  get_folderPath: function() {
+  get_folderPath: function () {
     return this._folderPath;
   },
 
-  _onUploadHandler: function(e) {
+  _onUploadHandler: function (e) {
     e.data = {
       folderPath: this._folderPath,
       resolveFileName: $q.toString(this._resolveName, 'false')
     };
   },
 
-  _onUploadSuccessHandler: function(e) {
+  _onUploadSuccessHandler: function (e) {
     this._uploadedFiles = [];
     if (e.response) {
       if (!e.response.proceed) {
@@ -70,11 +70,11 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
   },
 
-  _onUploadCompleteHandler: function() {
+  _onUploadCompleteHandler: function () {
     if (this._uploadedFiles.length > 0) {
       var filenames = [];
 
-      jQuery.each(this._uploadedFiles, function(i, val) {
+      jQuery.each(this._uploadedFiles, function (i, val) {
         filenames.push(val);
       });
 
@@ -85,10 +85,10 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
   },
 
-  _onUploadSelectHandler: function(e) {
+  _onUploadSelectHandler: function (e) {
     var toPrevent = false;
 
-    jQuery.each(e.files, function() {
+    jQuery.each(e.files, function () {
       if (this.size && this.size >= MAX_UPLOAD_SIZE_BYTES) {
         toPrevent = true;
         alert(String.format(HTML_UPLOAD_MAX_SIZE_MESSAGE, this.name, Math.ceil(MAX_UPLOAD_SIZE_BYTES / 1024 / 1024 * 100) / 100));
@@ -102,11 +102,11 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
 
     // проверить на допустимость расширения
     if (this._extensions.length > 0) {
-      var extensions = jQuery.map(this._extensions.split(';'), function(val) {
+      var extensions = jQuery.map(this._extensions.split(';'), function (val) {
         return val.toLowerCase();
       });
 
-      jQuery.each(e.files, function() {
+      jQuery.each(e.files, function () {
         if (Array.indexOf(extensions, this.extension.toLowerCase()) == -1) {
           toPrevent = true;
           alert(String.format(UPLOAD_EXTENSION_MESSAGE, this.name, this.extension));
@@ -123,7 +123,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     var self = this;
 
     if (!this._resolveName) {
-      jQuery.each(e.files, function() {
+      jQuery.each(e.files, function () {
         if (self._checkFileExistence(self._folderPath, this.name)) {
           if (!confirm(String.format(UPLOAD_OVERWRITE_MESSAGE, this.name))) {
             toPrevent = true;
@@ -138,13 +138,13 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
   },
 
-  _onUploadErrorHandler: function(e) {
+  _onUploadErrorHandler: function (e) {
     alert(HTML_UPLOAD_ERROR_MESSAGE);
     e.preventDefault();
     return false;
   },
 
-  _checkFileExistence: function(folderPath, fileName) {
+  _checkFileExistence: function (folderPath, fileName) {
     var url = APPLICATION_ROOT_URL + 'Library/FileExists/';
     var obj = $q.getJsonSync(url, {
       path: folderPath,

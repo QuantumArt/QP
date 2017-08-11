@@ -100,7 +100,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     return dfr.promise();
   },
 
-  _registerInstance: function(){
+  _registerInstance: function (){
     this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, 'true');
   },
 
@@ -108,7 +108,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG);
   },
 
-  ready: function(callback) {
+  ready: function (callback) {
     this._instanceExistenceCheck().done(function (instanceExists) {
       if (!instanceExists) {
         this._imFirst = true;

@@ -52,10 +52,10 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     }
   },
 
-  getSelectedIds: function() {
+  getSelectedIds: function () {
     var result;
     if (this._isEntity) {
-      result = $.map(this._getSelectedEntities(), function(item) {
+      result = $.map(this._getSelectedEntities(), function (item) {
         return item.Id;
       });
     } else {
@@ -123,7 +123,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     return result;
   },
 
-  restore_blockState: function(state, isRestoreByClose) {
+  restore_blockState: function (state, isRestoreByClose) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -140,7 +140,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       }
 
       if (isRestoreByClose) {
-        this._selectedEntitiesIDs = $.map(state.entities, function(item) {
+        this._selectedEntitiesIDs = $.map(state.entities, function (item) {
           return item.Id;
         });
 
@@ -152,24 +152,24 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     }
   },
 
-  _onListContentChanged: function(eventArgs, data) {
+  _onListContentChanged: function (eventArgs, data) {
     this._toggleLinkVisibility(data.value);
   },
 
-  _toggleLinkVisibility: function(selectedIds) {
+  _toggleLinkVisibility: function (selectedIds) {
     $('.expandParentsButton > a, .expandChildsButton > a', $(this._containerElement)).toggleClass('disabled', !selectedIds.length);
   },
 
-  _expandHierarchy: function(url) {
+  _expandHierarchy: function (url) {
     var self = this;
-    return function() {
+    return function () {
       var selectedIds = self.getSelectedIds();
       if (selectedIds && selectedIds.length) {
         $q.getAjax(url, {
           ids: self.getSelectedIds(),
           fieldId: self._fieldID,
           filter: self._getEntityDataList()._filter
-        }, function(data) {
+        }, function (data) {
           self._selectedEntitiesIDs = $q.addRemoveToArrUniq(selectedIds, data);
           self._replaceWithSelectedEntities();
         });
@@ -177,7 +177,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     };
   },
 
-  _getEntityDataList: function() {
+  _getEntityDataList: function () {
     return $(this._entityDataListElement).data('entity_data_list_component');
   },
 
@@ -185,7 +185,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     return this._getEntityDataList().getSelectedEntities();
   },
 
-  _replaceWithSelectedEntities: function() {
+  _replaceWithSelectedEntities: function () {
     if (this._entityDataListElement) {
       this._getEntityDataList().selectEntities(this._selectedEntitiesIDs);
     }

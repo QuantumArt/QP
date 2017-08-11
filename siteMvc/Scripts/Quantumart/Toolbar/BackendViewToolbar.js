@@ -279,12 +279,12 @@ Quantumart.QP8.BackendViewToolbarDropDownListEventArgs.prototype = {
 	_preventDefaultBehavior: false, // признак, разрещающий предотвращение поведения поумолчанию
 	_code: "", // код выбранного элемента
 
-	get_controllerActionUrl: function() { return this._controllerActionUrl; },
-	set_controllerActionUrl: function(value) { this._controllerActionUrl = value; },
-	get_preventDefaultBehavior: function() { return this._preventDefaultBehavior; },
-	set_preventDefaultBehavior: function(value) { this._preventDefaultBehavior = value; },
-	get_code: function() { return this._code; },
-	set_code: function(value) { this._code = value; }
+	get_controllerActionUrl: function () { return this._controllerActionUrl; },
+	set_controllerActionUrl: function (value) { this._controllerActionUrl = value; },
+	get_preventDefaultBehavior: function () { return this._preventDefaultBehavior; },
+	set_preventDefaultBehavior: function (value) { this._preventDefaultBehavior = value; },
+	get_code: function () { return this._code; },
+	set_code: function (value) { this._code = value; }
 };
 
 Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs = function (toolbarArgs) {

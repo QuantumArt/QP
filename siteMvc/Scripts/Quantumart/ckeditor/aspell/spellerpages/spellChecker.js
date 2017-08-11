@@ -10,7 +10,7 @@
 
 
 // constructor
-window.spellChecker = function(textObject) {
+window.spellChecker = function (textObject) {
 
 	// public properties - configurable
 	this.popUpUrl = CKEDITOR.aspellSettings.spellcheckerHtmlPath;

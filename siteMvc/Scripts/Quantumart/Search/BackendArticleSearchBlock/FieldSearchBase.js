@@ -41,7 +41,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   restore_blockState: function (state) {
   },
 
-  get_filterDetails: function(){
+  get_filterDetails: function (){
     return "";
   },
 

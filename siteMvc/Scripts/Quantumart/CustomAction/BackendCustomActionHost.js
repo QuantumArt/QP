@@ -42,12 +42,12 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     }
   },
 
-  onSelect: function()
+  onSelect: function ()
   {
     var id = this._options.iframeElementId;
 
     jQuery('#' + id).css("marginLeft", "1px");
-    setTimeout(function() {
+    setTimeout(function () {
       jQuery('#' + id).css("marginLeft", "0");
     }, 0);
   },
@@ -94,7 +94,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     eventArgs = null;
   },
 
-  _onOpenSelectWindowMessageReceived: function(message){
+  _onOpenSelectWindowMessageReceived: function (message){
     var eventArgs = new Quantumart.QP8.BackendEventArgs();
     eventArgs.set_isMultipleEntities(message.data.isMultiple);
     eventArgs.set_parentEntityId(message.data.parentEntityId);
@@ -164,7 +164,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     return this._options.hostUID;
   },
 
-  onExternalCallerContextsUnbinded: function(message){
+  onExternalCallerContextsUnbinded: function (message){
     this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.HostUnbinded, message);
   },
 
@@ -172,7 +172,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.ActionExecuted, message);
   },
 
-  _invokeCallback: function(type, message){
+  _invokeCallback: function (type, message){
     var iframe = window.document.getElementById(this._options.iframeElementId);
     if (iframe && iframe.contentWindow) {
       var args = {};

@@ -345,7 +345,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   }
 };
 
-Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function(){
+Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function (){
     return "q" + $q.generateRandomString(6);
 };
 

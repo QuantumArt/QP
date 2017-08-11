@@ -163,7 +163,7 @@
 				return $._getInt($(this).css("padding-left"));
 			},
 
-			maxZIndex: function(opt) {
+			maxZIndex: function (opt) {
 				// / <summary>
 				// / Returns the max zOrder in the document (no parameter)
 				// / Sets max zOrder by passing a non-zero number
@@ -177,14 +177,14 @@
 				var def = { inc: 10, group: "*" };
 				$.extend(def, opt);
 				var zmax = 0;
-				$(def.group).each(function() {
+				$(def.group).each(function () {
 					var cur = parseInt($(this).css('z-index'));
 					zmax = cur > zmax ? cur : zmax;
 				});
 				if (!this.jquery)
 					return zmax;
 
-				return this.each(function() {
+				return this.each(function () {
 					zmax += def.inc;
 					$(this).css("z-index", zmax);
 				});

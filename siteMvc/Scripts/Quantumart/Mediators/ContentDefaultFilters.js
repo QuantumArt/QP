@@ -27,7 +27,7 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 	}, this);
 
 	return {
-		initialize: function(){
+		initialize: function (){
 			if (contentPicker.getSelectedListItemCount() === 0) {
 				articlePicker.disableList();
 				articlePicker.set_parentEntityId(0);

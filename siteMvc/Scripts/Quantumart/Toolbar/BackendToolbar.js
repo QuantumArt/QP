@@ -90,11 +90,11 @@ Quantumart.QP8.BackendToolbar.prototype = {
     this._toolbarContainerElementId = value;
   },
 
-  get_isBindToExternal: function(){
+  get_isBindToExternal: function (){
     return this._isBindToExternal;
   },
 
-  set_isBindToExternal: function(value){
+  set_isBindToExternal: function (value){
     this._isBindToExternal = value;
   },
 

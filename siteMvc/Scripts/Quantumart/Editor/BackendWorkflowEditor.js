@@ -114,7 +114,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         this._componentElem.data('workflow', this);
     },
 
-    getCheckedContentsIds: function(){
+    getCheckedContentsIds: function (){
         return this._contentSelector.find('input:checkbox:checked').map(function (index, elem) {
             return $(elem).val();
         }).get().join();

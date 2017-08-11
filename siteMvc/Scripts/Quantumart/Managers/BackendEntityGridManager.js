@@ -1,13 +1,13 @@
 // #region class BackendEntityGridManager
 // === Класс "Менеджер списков сущностей" ===
-Quantumart.QP8.BackendEntityGridManager = function() {
+Quantumart.QP8.BackendEntityGridManager = function () {
   Quantumart.QP8.BackendEntityGridManager.initializeBase(this);
 };
 
 Quantumart.QP8.BackendEntityGridManager.prototype = {
   _gridGroups: {}, // список групп гридов
 
-  generateGridGroupCode: function(entityTypeCode, parentEntityId) {
+  generateGridGroupCode: function (entityTypeCode, parentEntityId) {
     if (parentEntityId) {
       return String.format('{0}_{1}', entityTypeCode, parentEntityId);
     } else {
@@ -15,7 +15,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     }
   },
 
-  getGridGroup: function(gridGroupCode) {
+  getGridGroup: function (gridGroupCode) {
     var gridGroup = null;
 
     if (this._gridGroups[gridGroupCode]) {
@@ -25,7 +25,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     return gridGroup;
   },
 
-  createGridGroup: function(gridGroupCode) {
+  createGridGroup: function (gridGroupCode) {
     var gridGroup = this.getGridGroup(gridGroupCode);
 
     if (!gridGroup) {
@@ -36,7 +36,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     return gridGroup;
   },
 
-  refreshGridGroup: function(entityTypeCode, parentEntityId, options) {
+  refreshGridGroup: function (entityTypeCode, parentEntityId, options) {
     var gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
 
     if (gridGroup) {
@@ -48,7 +48,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     gridGroup = null;
   },
 
-  refreshGridGroupWithChecking: function(entityTypeCode, parentEntityId, entityId) {
+  refreshGridGroupWithChecking: function (entityTypeCode, parentEntityId, entityId) {
     var gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
 
     if (gridGroup) {
@@ -62,7 +62,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     }
   },
 
-  resetGridGroup: function(gridGroupCode, options) {
+  resetGridGroup: function (gridGroupCode, options) {
     var gridGroup = this.getGridGroup(gridGroupCode);
 
     if (gridGroup) {
@@ -74,11 +74,11 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     gridGroup = null;
   },
 
-  removeGridGroup: function(gridGroupCode) {
+  removeGridGroup: function (gridGroupCode) {
     $q.removeProperty(this._gridGroups, gridGroupCode);
   },
 
-  getGrid: function(gridElementId) {
+  getGrid: function (gridElementId) {
     var grid = null;
 
     for (var gridGroupCode in this._gridGroups) {
@@ -93,7 +93,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     return grid;
   },
 
-  createGrid: function(gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
+  createGrid: function (gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
     var gridGroupCode = this.generateGridGroupCode(entityTypeCode, parentEntityId);
     var actionGroupCode = this.generateGridGroupCode(actionCode, parentEntityId);
     var actionSimpleGroupCode = this.generateGridGroupCode(actionCode);
@@ -116,7 +116,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     return grid;
   },
 
-  refreshGrid: function(gridElementId, options) {
+  refreshGrid: function (gridElementId, options) {
     var grid = this.getGrid(gridElementId);
 
     if (grid) {
@@ -126,7 +126,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     grid = null;
   },
 
-  resetGrid: function(gridElementId, options) {
+  resetGrid: function (gridElementId, options) {
     var grid = this.getGrid(gridElementId);
 
     if (grid) {
@@ -136,14 +136,14 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     grid = null;
   },
 
-  removeGrid: function(gridElementId) {
+  removeGrid: function (gridElementId) {
     var grid = this.getGrid(gridElementId);
 
     if (grid) {
       var gridGroupCodes = grid.get_gridGroupCodes();
       var that = this;
 
-      jQuery.each(gridGroupCodes, function(i, gridGroupCode) {
+      jQuery.each(gridGroupCodes, function (i, gridGroupCode) {
         var gridGroup = that.getGridGroup(gridGroupCode);
 
         $q.removeProperty(gridGroup, gridElementId);
@@ -154,7 +154,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     }
   },
 
-  destroyGrid: function(gridElementId) {
+  destroyGrid: function (gridElementId) {
     var grid = this.getGrid(gridElementId);
 
     if (grid != null) {
@@ -166,7 +166,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     }
   },
 
-  onActionExecuted: function(eventArgs) {
+  onActionExecuted: function (eventArgs) {
     var entityTypeCode = eventArgs.get_entityTypeCode();
 
     if (entityTypeCode != ENTITY_TYPE_CODE_SITE_FILE && entityTypeCode != ENTITY_TYPE_CODE_CONTENT_FILE) {
@@ -231,7 +231,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     }
   },
 
-  dispose: function() {
+  dispose: function () {
     Quantumart.QP8.BackendEntityGridManager.callBaseMethod(this, 'dispose');
 
     if (this._gridGroups) {
@@ -254,7 +254,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
 
 Quantumart.QP8.BackendEntityGridManager._instance = null; // экземпляр класса
 
-Quantumart.QP8.BackendEntityGridManager.getInstance = function() {
+Quantumart.QP8.BackendEntityGridManager.getInstance = function () {
   if (Quantumart.QP8.BackendEntityGridManager._instance == null) {
     Quantumart.QP8.BackendEntityGridManager._instance = new Quantumart.QP8.BackendEntityGridManager();
   }
@@ -262,7 +262,7 @@ Quantumart.QP8.BackendEntityGridManager.getInstance = function() {
   return Quantumart.QP8.BackendEntityGridManager._instance;
 };
 
-Quantumart.QP8.BackendEntityGridManager.destroyInstance = function() {
+Quantumart.QP8.BackendEntityGridManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendEntityGridManager._instance) {
     Quantumart.QP8.BackendEntityGridManager._instance.dispose();
   }

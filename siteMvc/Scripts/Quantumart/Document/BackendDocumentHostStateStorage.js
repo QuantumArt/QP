@@ -2,7 +2,7 @@
 // *** Хранилище состояний хостов документов                        ***
 // ********************************************************************************************
 
-Quantumart.QP8.BackendDocumentHostStateStorage = function(options) {
+Quantumart.QP8.BackendDocumentHostStateStorage = function (options) {
   if (options) {
     if (options.currentCustomerCode) {
       this._currentCustomerCode = options.currentCustomerCode;
@@ -22,14 +22,14 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
   _currentUserId: '',
   _keyPrefix: '',
 
-  loadHostState: function(hostParams) {
+  loadHostState: function (hostParams) {
     let key = this._get_host_key(hostParams);
     if (key) {
       return JSON.parse(localStorage.getItem(key));
     }
   },
 
-  saveHostState: function(hostParams, hostState) {
+  saveHostState: function (hostParams, hostState) {
     let key = this._get_host_key(hostParams);
     if (key) {
       if ($.isEmptyObject(hostState)) {
@@ -40,7 +40,7 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
     }
   },
 
-  _get_host_key: function(hostParams) {
+  _get_host_key: function (hostParams) {
     if (hostParams && !$.isEmptyObject(hostParams)) {
       let key = new $.telerik.stringBuilder();
       if (this && this._keyPrefix) {

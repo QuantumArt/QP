@@ -29,7 +29,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     _onLogonHandler: null,
     _onCloseWindowHandler: null,
 
-    _getServerContent: function(data){
+    _getServerContent: function (data){
         if (data.success){
             return data.view;
         }
@@ -135,7 +135,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         this._enableWindow();
     },
 
-    _setDefaultValues: function() {
+    _setDefaultValues: function () {
         var currentUserName = this._getGurrentUserName();
         var currentCustomerCode = this._getGurrentCustomerCode();
         $(this.USERNAME_SELECTOR).val(currentUserName);
@@ -226,7 +226,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         });
     },
 
-    _clearDeferredCallcacks: function(){
+    _clearDeferredCallcacks: function (){
         $(this).off(this.AJAX_EVENT);
     },
     // #endregion
