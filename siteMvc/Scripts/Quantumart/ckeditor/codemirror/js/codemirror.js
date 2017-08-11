@@ -11,7 +11,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global.CodeMirror = factory());
-}(this, (function () { 
+}(this, (function () {
 
 // Kludges for bugs and behavior differences that can't be feature
 // detected are enabled based on userAgent etc sniffing.
@@ -2302,7 +2302,7 @@ function paddingH(display) {
   if (display.cachedPaddingH) { return display.cachedPaddingH; }
   var e = removeChildrenAndAdd(display.measure, elt("pre", "x"));
   var style = window.getComputedStyle ? window.getComputedStyle(e) : e.currentStyle;
-  var data = {left: parseInt(style.paddingLeft), right: parseInt(style.paddingRight)};
+  var data = {left: parseInt(style.paddingLeft, 10), right: parseInt(style.paddingRight, 10)};
   if (!isNaN(data.left) && !isNaN(data.right)) { display.cachedPaddingH = data; }
   return data;
 }

@@ -467,7 +467,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if ($q.isObject(row)) {
       $row = $q.toJQuery(row);
     } else if ($.isNumeric(row)) {
-      var rowIndex = parseInt(row);
+      var rowIndex = parseInt(row, 10);
       $row = this.getRows().eq(rowIndex);
     }
 

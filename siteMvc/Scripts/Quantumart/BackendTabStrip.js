@@ -309,7 +309,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var lastTabId = $lastTab.attr("id");
       var numberMatch = lastTabId.match("[0-9]+");
       if (numberMatch.length == 1) {
-        tabNumber = parseInt(numberMatch[0]) + 1;
+        tabNumber = parseInt(numberMatch[0], 10) + 1;
       } else {
         window.alert($l.TabStrip.tabIdGenerationErrorMessage);
         return null;

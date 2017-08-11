@@ -26,7 +26,7 @@
 				var processedValue = $._prepareNumber(value);
 
 				if (processedValue) {
-					number = parseInt(processedValue);
+					number = parseInt(processedValue, 10);
 					if (isNaN(number)) {
 						number = 0;
 					}
@@ -73,7 +73,7 @@
 
 				// Look for rgb(num,num,num)
 				if (result = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(color))
-					{return [parseInt(result[1]), parseInt(result[2]), parseInt(result[3])];}
+					{return [parseInt(result[1], 10), parseInt(result[2], 10), parseInt(result[3], 10)];}
 
 				// Look for #a0b1c2
 				if (result = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(color))
@@ -168,9 +168,9 @@
 				// / Returns the max zOrder in the document (no parameter)
 				// / Sets max zOrder by passing a non-zero number
 				// / which gets added to the highest zOrder.
-				// / </summary>    
+				// / </summary>
 				// / <param name="opt" type="object">
-				// / inc: increment value, 
+				// / inc: increment value,
 				// / group: selector for zIndex elements to find max for
 				// / </param>
 				// / <returns type="jQuery" />
@@ -178,7 +178,7 @@
 				$.extend(def, opt);
 				var zmax = 0;
 				$(def.group).each(function () {
-					var cur = parseInt($(this).css('z-index'));
+					var cur = parseInt($(this).css('z-index'), 10);
 					zmax = cur > zmax ? cur : zmax;
 				});
 				if (!this.jquery)
@@ -201,9 +201,9 @@
 			}
 
 			fx.elem.style[attr] = ["rgb(", [
-				Math.max(Math.min(parseInt((fx.pos * (fx.end[0] - fx.start[0])) + fx.start[0]), 255), 0),
-				Math.max(Math.min(parseInt((fx.pos * (fx.end[1] - fx.start[1])) + fx.start[1]), 255), 0),
-				Math.max(Math.min(parseInt((fx.pos * (fx.end[2] - fx.start[2])) + fx.start[2]), 255), 0)
+				Math.max(Math.min(parseInt((fx.pos * (fx.end[0] - fx.start[0])) + fx.start[0], 10), 255), 0),
+				Math.max(Math.min(parseInt((fx.pos * (fx.end[1] - fx.start[1])) + fx.start[1], 10), 255), 0),
+				Math.max(Math.min(parseInt((fx.pos * (fx.end[2] - fx.start[2])) + fx.start[2], 10), 255), 0)
 			].join(","), ")"].join("");
 		};
 	});
