@@ -45,11 +45,11 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 				html.cat(String.format('<div class="fileItem" data-file_name="{0}">', item.FullName))
 					.catIf('<input type="checkbox" />', self._selectMode == FILE_LIST_SELECT_MODE_MULTIPLE)
 					.cat(
-						String.format('<div class="preview" style="background-image:url({3});"></div>' +
-						'<h5><ul><li title="{4}">{0}</li></ul></h5>' +
-						'<span>{1}</span>' +
-						'<span>{2}</span>' +
-					'</div>', item.Name, item.Modified, item.Size, self._getThumbnailLink(item, options), item.FullName));
+						String.format('<div class="preview" style="background-image:url({3});"></div>'
+						+ '<h5><ul><li title="{4}">{0}</li></ul></h5>'
+						+ '<span>{1}</span>'
+						+ '<span>{2}</span>'
+					+ '</div>', item.Name, item.Modified, item.Size, self._getThumbnailLink(item, options), item.FullName));
 			});
 		} else {
  html.cat($l.FileList.noRecords); 

@@ -7,8 +7,8 @@ Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
 	this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._libraryClosedHandler, this));
 };
 
-Quantumart.QP8.LibraryPopupWindow.prototype =
-{
+Quantumart.QP8.LibraryPopupWindow.prototype
+= {
 	_options:
 	{
 		entityName: "",

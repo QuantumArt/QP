@@ -100,8 +100,8 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 		var errorType = args.ErrorType;
 		var iErrorCode = args.ErrorCode;
 
-		var errMsg = "Unhandled Error in Silverlight 2 Application " +
-				appSource + "\n";
+		var errMsg = "Unhandled Error in Silverlight 2 Application "
+				+ appSource + "\n";
 
 		errMsg += "Code: " + iErrorCode + "    \n";
 		errMsg += "Category: " + errorType + "       \n";

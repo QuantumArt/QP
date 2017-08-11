@@ -464,9 +464,9 @@ Quantumart.QP8.BackendToolbar.prototype = {
           .cat('<span class="outerWrapper">')
           .cat('<span class="innerWrapper">')
 
-          .catIf('<span class="icon" style="background-image: url(\'' + iconUrl + '\')"' +
-        (!$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ' title="' + $q.htmlEncode(dataItem.Tooltip) + '"' : '') + '>' +
-        '<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" /></span>', !$q.isNullOrWhiteSpace(dataItem.Icon))
+          .catIf('<span class="icon" style="background-image: url(\'' + iconUrl + '\')"'
+        + (!$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ' title="' + $q.htmlEncode(dataItem.Tooltip) + '"' : '') + '>'
+        + '<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" /></span>', !$q.isNullOrWhiteSpace(dataItem.Icon))
 
           .catIf('<span class="text' + ($q.isNullOrWhiteSpace(dataItem.Icon) ? " textOnly" : "") + '">' + $q.htmlEncode(dataItem.Text) + '</span>', !$q.isNullOrWhiteSpace(dataItem.Text))
           .cat('</span>')
@@ -495,8 +495,8 @@ Quantumart.QP8.BackendToolbar.prototype = {
         .cat('<span class="outerWrapper">')
         .cat('<span class="innerWrapper">')
         .cat('<span class="button"' + (!$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ' title="' + $q.htmlEncode(dataItem.Tooltip) + '"' : '') + '>')
-        .catIf('<span class="icon" style="background-image: url(\'' + THEME_IMAGE_FOLDER_URL_SMALL_ICONS + selectedSubItem.Icon + '\')">' +
-          '<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" /></span>', !$q.isNullOrWhiteSpace(selectedSubItem.Icon))
+        .catIf('<span class="icon" style="background-image: url(\'' + THEME_IMAGE_FOLDER_URL_SMALL_ICONS + selectedSubItem.Icon + '\')">'
+          + '<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" /></span>', !$q.isNullOrWhiteSpace(selectedSubItem.Icon))
         .catIf('<span class="text' + ($q.isNullOrWhiteSpace(selectedSubItem.Icon) ? " textOnly" : "") + '">' + $q.htmlEncode(selectedSubItem.Text) + '</span>', (!$q.isNullOrWhiteSpace(selectedSubItem.Text) && dataItem.ShowButtonText))
         .cat('</span>')
         .cat('<span class="arrow"' + (!$q.isNullOrWhiteSpace(dataItem.ArrowTooltip) ? ' title="' + $q.htmlEncode(dataItem.ArrowTooltip) + '"' : '') + '><img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" /></span>')

@@ -102,16 +102,16 @@ Quantumart.QP8.BackendPager.prototype = {
 
 		$pagerElement.addClass("t-widget t-grid");
 
-		var innerHtml = '<div class="t-grid-pager t-grid-bottom">' +
-							'<div class="t-pager t-reset">' +
-								'<a href="#" class="t-link qp-link-arrow-first qp-page-link"><span class="t-icon t-arrow-first">first</span></a>' +
-								'<a href="#" class="t-link qp-link-arrow-prev qp-page-link"><span class="t-icon t-arrow-prev">prev</span></a>' +
-								'<div class="t-numeric"></div>' +
-								'<a href="#" class="t-link qp-link-arrow-next qp-page-link"><span class="t-icon t-arrow-next">next</span></a>' +
-								'<a href="#" class="t-link qp-link-arrow-last qp-page-link"><span class="t-icon t-arrow-last">last</span></a>' +
-							'</div>' +
-							'<div class="t-status-text">' +
-						'</div>';
+		var innerHtml = '<div class="t-grid-pager t-grid-bottom">'
+							+ '<div class="t-pager t-reset">'
+								+ '<a href="#" class="t-link qp-link-arrow-first qp-page-link"><span class="t-icon t-arrow-first">first</span></a>'
+								+ '<a href="#" class="t-link qp-link-arrow-prev qp-page-link"><span class="t-icon t-arrow-prev">prev</span></a>'
+								+ '<div class="t-numeric"></div>'
+								+ '<a href="#" class="t-link qp-link-arrow-next qp-page-link"><span class="t-icon t-arrow-next">next</span></a>'
+								+ '<a href="#" class="t-link qp-link-arrow-last qp-page-link"><span class="t-icon t-arrow-last">last</span></a>'
+							+ '</div>'
+							+ '<div class="t-status-text">'
+						+ '</div>';
 		$pagerElement.html(innerHtml);
 
 		this._arrowFirstElement = $pagerElement.find('span.t-arrow-first').closest('a.t-link').get(0);

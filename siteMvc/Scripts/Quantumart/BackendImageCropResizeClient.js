@@ -406,8 +406,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 		_saveToCache = function () {
 			var sendData = readData();
 			if (sendData.width && sendData.height) {
- Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl] =
-					{ crop: { top: sendData.top, left: sendData.left, width: sendData.width, height: sendData.height } }; 
+ Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl]
+					= { crop: { top: sendData.top, left: sendData.left, width: sendData.width, height: sendData.height } }; 
 }
 		},
 
@@ -613,8 +613,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 }
 
         	if (_parameters.resultImageFolder) {
-                targetFileUrl = _endsWith("/", _parameters.resultImageFolder) ?
-                    _parameters.resultImageFolder + value : "/" + value;
+                targetFileUrl = _endsWith("/", _parameters.resultImageFolder)
+                    ? _parameters.resultImageFolder + value : "/" + value;
             } else {
                 targetFileUrl = _getFolder(_parameters.sourceImageUrl) + value;
             }

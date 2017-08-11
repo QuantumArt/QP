@@ -5,8 +5,8 @@ Quantumart.QP8.BackendContentSearchBlock = function (searchBlockGroupCode, searc
 	this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
 };
 
-Quantumart.QP8.BackendContentSearchBlock.prototype =
-{
+Quantumart.QP8.BackendContentSearchBlock.prototype
+= {
 	_minSearchBlockHeight: 80, // минимальная высота блока поиска
 	_maxSearchBlockHeight: 80, // максимальная высота блока поиска
 	_contentGroupListElement: null, // dom-элемент списка групп

@@ -107,10 +107,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
           // Совпадают ли параметра поля?
           var is = $options.is(function () {
             var $option = jQuery(this);
-            return s.fieldID == $option.data("field_id") &&
-                 s.fieldName == $option.text() &&
-                 s.searchType == $option.data("search_type") &&
-                 s.fieldColumn == $option.data("field_column");
+            return s.fieldID == $option.data("field_id")
+                 && s.fieldName == $option.text()
+                 && s.searchType == $option.data("search_type")
+                 && s.fieldColumn == $option.data("field_column");
           });
           if (is) {
               var newContainer = that._createFieldSearchContainerInner(s.fieldID, s.contentID, s.searchType, s.fieldName, s.fieldColumn, s.fieldGroup, s.referenceFieldID);

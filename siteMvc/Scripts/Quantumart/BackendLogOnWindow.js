@@ -238,8 +238,8 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
     needLogon: function (jqXHR, url) {
         if (
-            url.toUpperCase() == CONTROLLER_URL_LOGON.toUpperCase() ||
-            url.toUpperCase() == CONTROLLER_URL_WINLOGON.toUpperCase()) {
+            url.toUpperCase() == CONTROLLER_URL_LOGON.toUpperCase()
+            || url.toUpperCase() == CONTROLLER_URL_WINLOGON.toUpperCase()) {
             return false;
         } else if (jqXHR.getResponseHeader("QP-Not-Authenticated")) {
             return true;
