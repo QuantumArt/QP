@@ -49,10 +49,8 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
             var normalPreActionCallback = function (data, textStatus, jqXHR) {
               Quantumart.QP8.BackendActionExecutor.showResult(data);
               if (!data
-                || data.Type != ACTION_MESSAGE_TYPE_CONFIRM
-                && data.Type != ACTION_MESSAGE_TYPE_ERROR
-                || data.Type == ACTION_MESSAGE_TYPE_CONFIRM
-                && $q.confirmMessage(data.Text)
+                || (data.Type != ACTION_MESSAGE_TYPE_CONFIRM && data.Type != ACTION_MESSAGE_TYPE_ERROR)
+                || (data.Type == ACTION_MESSAGE_TYPE_CONFIRM && $q.confirmMessage(data.Text))
               ) {
                 runAction();
               } else {

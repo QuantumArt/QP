@@ -127,7 +127,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     var _arrayOfExtensions = LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
 
     var result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
-    if (typeof result !== 'undefined' && result.length > 0 || this._isImage) {
+    if ((typeof result !== 'undefined' && result.length > 0) || this._isImage) {
       this._previewButton.show();
     } else {
       this._previewButton.hide();

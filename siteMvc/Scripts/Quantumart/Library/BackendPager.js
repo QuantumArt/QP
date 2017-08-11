@@ -78,7 +78,6 @@ Quantumart.QP8.BackendPager.prototype = {
 
 	initialize: function () {
 		var $pagerElement = $(this._pagerElement);
-
 		$pagerElement.addClass("t-widget t-grid");
 
 		var innerHtml = '<div class="t-grid-pager t-grid-bottom">'
@@ -91,6 +90,7 @@ Quantumart.QP8.BackendPager.prototype = {
 							+ '</div>'
 							+ '<div class="t-status-text">'
 						+ '</div>';
+
 		$pagerElement.html(innerHtml);
 
 		this._arrowFirstElement = $pagerElement.find('span.t-arrow-first').closest('a.t-link').get(0);
@@ -103,9 +103,7 @@ Quantumart.QP8.BackendPager.prototype = {
 			.delegate('a.qp-page-link', 'mouseenter', this._onInHoverHandler)
 			.delegate('a.qp-page-link', 'mouseleave', this._onOutHoverHandler);
 
-
 		this._pageFrameElement = $pagerElement.find('div.t-numeric').get(0);
-
 		this._statusTextElement = $pagerElement.find('div.t-status-text').get(0);
 
 		this.set();
@@ -163,10 +161,13 @@ Quantumart.QP8.BackendPager.prototype = {
 		}
 
 		if (this._totalCount > 0) {
- $(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate,
-				this._currentPageNumber * this._pageSize + 1,
-				Math.min(this._currentPageNumber * this._pageSize + this._pageSize, this._totalCount),
-				this._totalCount));
+ $(this._statusTextElement).html(
+  String.format(
+    $l.Pager.statusTextTemplate,
+		(this._currentPageNumber * this._pageSize) + 1,
+		Math.min((this._currentPageNumber * this._pageSize) + this._pageSize, this._totalCount),
+		this._totalCount
+  ));
 } else {
  $(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate, 0, 0, 0));
 }
@@ -228,7 +229,6 @@ Quantumart.QP8.BackendPager.prototype = {
 		$selectedPage = null;
 	},
 
-
 	dispose: function () {
 		var $pagerElement = $(this._pagerElement);
 		$pagerElement.find("a.qp-page-link").undelegate();
@@ -253,7 +253,10 @@ Quantumart.QP8.BackendPager.getFrameStartPageNumber = function (pageFrameNumber,
 };
 
 Quantumart.QP8.BackendPager.getFrameEndPageNumber = function (pageFrameNumber, pageFrameSize, pageCount) {
-	return Math.min(pageFrameNumber * pageFrameSize + (pageFrameSize == 0 ? 0 : pageFrameSize - 1), pageCount == 0 ? 0 : pageCount - 1);
+	return Math.min(
+    (pageFrameNumber * pageFrameSize) + (pageFrameSize === 0 ? 0 : pageFrameSize - 1),
+    pageCount === 0 ? 0 : pageCount - 1
+  );
 };
 
 Quantumart.QP8.BackendPager.registerClass("Quantumart.QP8.BackendPager", Quantumart.QP8.Observable);

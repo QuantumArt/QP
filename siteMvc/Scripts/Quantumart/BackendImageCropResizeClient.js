@@ -245,7 +245,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         },
         _displaySelectionCoordinates = function (selection, needRedrawWidthAndHeight) {
             setTimeout(function () {
-                if (isNaN(selection.width) && isNaN(selection.height) || selection.width == 0 && selection.height == 0) {
+                if ((isNaN(selection.width) && isNaN(selection.height)) || (selection.width === 0 && selection.height === 0)) {
                     _$x.text("");
                     _$y.text("");
                     _$width.text("");
@@ -270,8 +270,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         _setSize = function ($img) {
             if (_$aside && $img) {
             	var padding = 10;
-            	var width = _$aside.width() + $img.outerWidth() + padding * 3;
-            	var height = Math.max(_$aside.height(), $img.outerHeight() + padding) + padding * 2;
+            	var width = _$aside.width() + $img.outerWidth() + (padding * 3);
+            	var height = Math.max(_$aside.height(), $img.outerHeight() + padding) + (padding * 2);
             	var winWidth = Math.min(width, $(window).width() * 0.8);
             	var winHeight = Math.min(height, $(window).height() * 0.8);
             	var imgContainerWidth = winWidth - _$aside.width() - padding;

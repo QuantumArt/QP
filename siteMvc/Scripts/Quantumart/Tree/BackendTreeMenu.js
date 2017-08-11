@@ -290,7 +290,8 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
         if (!parent || $q.isNullOrEmpty(parent.ChildNodes)) {
           return [];
         } else if (parent.Code === options.entityTypeCode
-          && (parent.IsFolder && parent.ParentId === options.parentEntityId || !parent.IsFolder && parent.Id === options.parentEntityId)
+          && ((parent.IsFolder && parent.ParentId === options.parentEntityId)
+            || (!parent.IsFolder && parent.Id === options.parentEntityId))
           && parent.IsFolder === options.isFolder
           && parent.IsGroup === options.isGroup
           && parent.GroupItemCode === options.groupItemCode
@@ -301,7 +302,6 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           return findChildren(options, $.grep(parent.ChildNodes || [], function (n) {
             return n.ChildNodes != null;
           })[0]);
-
       };
 
       var deepestExistedNode = findDeepest(data);
@@ -470,7 +470,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
         } else if (actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_REMOVE
           || actionTypeCode == ACTION_TYPE_CODE_COPY
           || eventArgs.get_isSaved()
-          || eventArgs.get_isUpdated() && (orderChanged || groupChanged)
+          || (eventArgs.get_isUpdated() && (orderChanged || groupChanged))
         ) {
           this.refreshNode(parentNodeCode);
         } else if (eventArgs.get_isUpdated() && !orderChanged) {

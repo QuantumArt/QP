@@ -816,10 +816,10 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var scrollingHeight = 0;
     if (isUpScrolling) {
       if (scrollableTopPosition > 0) {
-        scrollingHeight = scrollableTopPosition + scrollableHeight / 2;
+        scrollingHeight = scrollableTopPosition + (scrollableHeight / 2);
       }
     } else {
-      scrollingHeight = menuItemListHeight - scrollableTopPosition - scrollableHeight / 2;
+      scrollingHeight = menuItemListHeight - scrollableTopPosition - (scrollableHeight / 2);
     }
 
     if (scrollingHeight > 0) {
