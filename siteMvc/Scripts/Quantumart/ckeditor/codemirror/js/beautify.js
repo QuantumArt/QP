@@ -696,7 +696,7 @@
             }
 
             if (opt.space_in_paren) {
-                if (last_type === 'TK_START_EXPR' && ! opt.space_in_empty_paren) {
+                if (last_type === 'TK_START_EXPR' && !opt.space_in_empty_paren) {
                     // () [] no inner space in empty parens like these, ever, ref #320
                     output.trim();
                     output.space_before_token = false;
@@ -875,7 +875,7 @@
             }
 
             if (current_token.type === 'TK_RESERVED' && current_token.text === 'function') {
-                if (in_array(flags.last_text, ['}', ';']) || (output.just_added_newline() && ! in_array(flags.last_text, ['[', '{', ':', '=', ',']))) {
+                if (in_array(flags.last_text, ['}', ';']) || (output.just_added_newline() && !in_array(flags.last_text, ['[', '{', ':', '=', ',']))) {
                     // make sure there is a nice clean space of at least one blank line
                     // before a new function definition
                     if ( !output.just_added_blankline() && !current_token.comments_before.length) {
@@ -1836,9 +1836,9 @@
                         var rootTag = match[2];
                         var depth = 0;
                         while (match) {
-                            var isEndTag = !! match[1];
+                            var isEndTag = !!match[1];
                             var tagName = match[2];
-                            var isSingletonTag = ( !! match[match.length - 1]) || (tagName.slice(0, 8) === "![CDATA[");
+                            var isSingletonTag = ( !!match[match.length - 1]) || (tagName.slice(0, 8) === "![CDATA[");
                             if (tagName === rootTag && !isSingletonTag) {
                                 if (isEndTag) {
                                     --depth;

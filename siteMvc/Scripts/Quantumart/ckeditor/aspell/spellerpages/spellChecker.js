@@ -254,7 +254,7 @@ window.spellChecker.prototype = {
 		    }
 	    }
 
-	    if (typeof(this.OnFinished) === 'function') {
+	    if (typeof (this.OnFinished) === 'function') {
 		    this.OnFinished(numrepl);
       }
 
