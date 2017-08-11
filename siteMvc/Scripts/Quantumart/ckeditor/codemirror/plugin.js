@@ -1128,7 +1128,7 @@ function LineChannelToOffSet(ed, linech) {
 
 function OffSetToLineChannel(ed, n) {
     var line = 0, ch = 0, index = 0;
-    for (i = 0; i < ed.lineCount() ; i++) {
+    for (i = 0; i < ed.lineCount(); i++) {
         len = (ed.getLine(i)).length;
         if (n < index + len) {
 
@@ -1145,7 +1145,7 @@ function OffSetToLineChannel(ed, n) {
 function IsStyleSheetAlreadyLoaded(href) {
     var links = CKEDITOR.document.getHead().find('link');
 
-    for (var i = 0; i < links.count() ; i++) {
+    for (var i = 0; i < links.count(); i++) {
         if (links.getItem(i).$.href === href) {
             return true;
         }

@@ -155,7 +155,7 @@ function countColumn(string, end, tabSize, startIndex, startValue) {
     end = string.search(/[^\s\u00a0]/);
     if (end == -1) { end = string.length; }
   }
-  for (var i = startIndex || 0, n = startValue || 0;;) {
+  for (var i = startIndex || 0, n = startValue || 0; ;) {
     var nextTab = string.indexOf("\t", i);
     if (nextTab < 0 || nextTab >= end)
       { return n + (end - i); }
@@ -192,7 +192,7 @@ var sel_move = {origin: "+move"};
 // The inverse of countColumn -- find the offset that corresponds to
 // a particular column.
 function findColumn(string, goal, tabSize) {
-  for (var pos = 0, col = 0;;) {
+  for (var pos = 0, col = 0; ;) {
     var nextTab = string.indexOf("\t", pos);
     if (nextTab == -1) { nextTab = string.length; }
     var skipped = nextTab - pos;
@@ -372,7 +372,7 @@ function getLine(doc, n) {
   if (n < 0 || n >= doc.size) { throw new Error("There is no line " + (n + doc.first) + " in the document."); }
   var chunk = doc;
   while (!chunk.lines) {
-    for (var i = 0;; ++i) {
+    for (var i = 0; ; ++i) {
       var child = chunk.children[i], sz = child.chunkSize();
       if (n < sz) { chunk = child; break; }
       n -= sz;
@@ -414,7 +414,7 @@ function lineNo(line) {
   if (line.parent == null) { return null; }
   var cur = line.parent, no = indexOf(cur.lines, line);
   for (var chunk = cur.parent; chunk; cur = chunk, chunk = chunk.parent) {
-    for (var i = 0;; ++i) {
+    for (var i = 0; ; ++i) {
       if (chunk.children[i] == cur) { break; }
       no += chunk.children[i].chunkSize();
     }
@@ -535,7 +535,7 @@ function markedSpansBefore(old, startCh, isInsert) {
     var span = old[i], marker = span.marker;
     var startsBefore = span.from == null || (marker.inclusiveLeft ? span.from <= startCh : span.from < startCh);
     if (startsBefore || span.from == startCh && marker.type == "bookmark" && (!isInsert || !span.marker.insertLeft)) {
-      var endsAfter = span.to == null || (marker.inclusiveRight ? span.to >= startCh : span.to > startCh);(nw || (nw = [])).push(new MarkedSpan(marker, span.from, endsAfter ? null : span.to));
+      var endsAfter = span.to == null || (marker.inclusiveRight ? span.to >= startCh : span.to > startCh); (nw || (nw = [])).push(new MarkedSpan(marker, span.from, endsAfter ? null : span.to));
     }
   } }
   return nw;
@@ -546,7 +546,7 @@ function markedSpansAfter(old, endCh, isInsert) {
     var span = old[i], marker = span.marker;
     var endsAfter = span.to == null || (marker.inclusiveRight ? span.to >= endCh : span.to > endCh);
     if (endsAfter || span.from == endCh && marker.type == "bookmark" && (!isInsert || span.marker.insertLeft)) {
-      var startsBefore = span.from == null || (marker.inclusiveLeft ? span.from <= endCh : span.from < endCh);(nw || (nw = [])).push(new MarkedSpan(marker, startsBefore ? null : span.from - endCh,
+      var startsBefore = span.from == null || (marker.inclusiveLeft ? span.from <= endCh : span.from < endCh); (nw || (nw = [])).push(new MarkedSpan(marker, startsBefore ? null : span.from - endCh,
                                             span.to == null ? null : span.to - endCh));
     }
   } }
@@ -4084,7 +4084,7 @@ function updateDisplayIfNeeded(cm, update) {
 function postUpdateDisplay(cm, update) {
   var viewport = update.viewport;
 
-  for (var first = true;; first = false) {
+  for (var first = true; ; first = false) {
     if (!first || !cm.options.lineWrapping || update.oldDisplayWidth == displayWidth(cm)) {
       // Clip forced viewport to actual scrollable area.
       if (viewport && viewport.top != null)
@@ -5562,7 +5562,7 @@ TextMarker.prototype.attachLine = function(line) {
 TextMarker.prototype.detachLine = function(line) {
   this.lines.splice(indexOf(this.lines, line), 1);
   if (!this.lines.length && this.doc.cm) {
-    var op = this.doc.cm.curOp;(op.maybeHiddenMarkers || (op.maybeHiddenMarkers = [])).push(this);
+    var op = this.doc.cm.curOp; (op.maybeHiddenMarkers || (op.maybeHiddenMarkers = [])).push(this);
   }
 };
 
@@ -7109,7 +7109,7 @@ function defineOptions(CodeMirror) {
     if (!val) { return; }
     var newBreaks = [], lineNo = cm.doc.first;
     cm.doc.iter(function (line) {
-      for (var pos = 0;;) {
+      for (var pos = 0; ;) {
         var found = line.text.indexOf(val, pos);
         if (found == -1) { break; }
         pos = found + val.length;
@@ -8101,7 +8101,7 @@ function findPosH(doc, pos, dir, unit, visually) {
   } else if (unit == "word" || unit == "group") {
     var sawType = null, group = unit == "group";
     var helper = doc.cm && doc.cm.getHelper(pos, "wordChars");
-    for (var first = true;; first = false) {
+    for (var first = true; ; first = false) {
       if (dir < 0 && !moveOnce(!first)) { break; }
       var cur = lineObj.text.charAt(ch) || "\n";
       var type = isWordChar(cur, helper) ? "w"
@@ -8542,7 +8542,7 @@ function domToPos(cm, node, offset) {
     if (!lineNode) { return badPos(cm.clipPos(Pos(cm.display.viewTo - 1)), true); }
     node = null; offset = 0;
   } else {
-    for (lineNode = node;; lineNode = lineNode.parentNode) {
+    for (lineNode = node; ; lineNode = lineNode.parentNode) {
       if (!lineNode || lineNode == cm.display.lineDiv) { return null; }
       if (lineNode.parentNode && lineNode.parentNode == cm.display.lineDiv) { break; }
     }

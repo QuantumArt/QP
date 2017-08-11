@@ -19,7 +19,7 @@
 		var $approval = jQuery("#" + approvalElementId);
 		var temp = ' (<a class="js" href="javascript:void(0)">{0}</a>) ';
 		var listStr = String.format(temp, $l.Home.list);
-		var profileStr = String.format(temp, $l.Home.profile);;
+		var profileStr = String.format(temp, $l.Home.profile); ;
 
 		if ($locked.text().trim() != "0")
 		{

@@ -126,7 +126,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
   _showOrHidePreviewButton: function (filename, $previewButton) {
     var _arrayOfExtensions = LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
 
-    var result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename)) ;
+    var result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
     if (typeof result !== 'undefined' && result.length > 0 || this._isImage) {
       this._previewButton.show();
     }
