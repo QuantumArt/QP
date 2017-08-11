@@ -76,7 +76,6 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
     }
 
 
-
     function manageGlobalVisibility() {
         if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(",").indexOf($typeSelector.val()) != -1) {
             $globalChkbx.parent('.field').show();

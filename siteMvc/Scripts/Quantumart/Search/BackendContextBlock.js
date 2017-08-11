@@ -94,7 +94,6 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
 
-
     _onFindButtonClick: function () {
         var state = this.get_searchBlockState();
         var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, JSON.stringify(state));

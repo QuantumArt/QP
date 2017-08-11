@@ -157,8 +157,6 @@ Quantumart.QP8.BackendSplitter.prototype = {
 	},
 
 
-
-
 	resize: function () {
 		if (this._splitterComponent) {
 			var splitter = this._splitterComponent.data("tSplitter");

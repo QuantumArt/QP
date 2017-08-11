@@ -35,4 +35,3 @@ Quantumart.QP8.BackendContextMenuManager.destroyInstance = function () {
 
 Quantumart.QP8.BackendContextMenuManager.registerClass("Quantumart.QP8.BackendContextMenuManager", Quantumart.QP8.Observable);
 
-

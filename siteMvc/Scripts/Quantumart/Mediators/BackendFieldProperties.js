@@ -177,8 +177,6 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
 };
 
 
-
-
 Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId, fileFieldElementId) {
     var $fieldTypeSelectElement = jQuery("#" + fieldTypeSelectElementId),
         $fileFieldElement = jQuery("#" + fileFieldElementId),

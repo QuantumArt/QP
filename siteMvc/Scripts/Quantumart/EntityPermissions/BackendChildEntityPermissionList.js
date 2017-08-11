@@ -4,7 +4,6 @@ Quantumart.QP8.BackendChildEntityPermissionList = function (searchBlockElementId
 	}
 
 
-
 	function onApplyFilter() {
 		gridComponent.ajaxRequest();
 	}
