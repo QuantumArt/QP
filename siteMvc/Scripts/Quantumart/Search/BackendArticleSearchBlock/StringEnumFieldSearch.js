@@ -24,9 +24,9 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
             false,
             function (data, textStatus, jqXHR) {
                 if (data.success)
-                    serverContent = data.view;
+                    {serverContent = data.view;}
                 else
-                    alert(data.message);
+                    {alert(data.message);}
             },
             function (jqXHR, textStatus, errorThrown) {
                 serverContent = null;
@@ -119,9 +119,9 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     _onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
     get_IsNull: function () {
         if (this._isNullCheckBoxElement)
-            return jQuery(this._isNullCheckBoxElement).is(":checked");
+            {return jQuery(this._isNullCheckBoxElement).is(":checked");}
         else
-            return false;
+            {return false;}
     },
 
 

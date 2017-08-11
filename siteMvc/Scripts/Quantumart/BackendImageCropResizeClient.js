@@ -374,19 +374,19 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         },
         _checkPrameters = function () {
             if (!_parameters.sourceImageUrl)
-                throw new Error("imgCropResize: parameter 'sourceImageUrl' not set");
+                {throw new Error("imgCropResize: parameter 'sourceImageUrl' not set");}
 
             if (!_parameters.checkFileNameActionUrl)
-                throw new Error("imgCropResize: parameter 'checkFileNameActionUrl' not set");
+                {throw new Error("imgCropResize: parameter 'checkFileNameActionUrl' not set");}
 
             if (!_parameters.cropResizeActionUrl)
-                throw new Error("imgCropResize: parameter 'cropResizeActionUrl' not set");
+                {throw new Error("imgCropResize: parameter 'cropResizeActionUrl' not set");}
 
             if (_parameters.resizeRange.min < 0 || _parameters.resizeRange.max < 0)
-                throw new Error("imgCropResize: resize range must be positive");
+                {throw new Error("imgCropResize: resize range must be positive");}
 
             if (_parameters.resizeRange.min > _parameters.resizeRange.max)
-                throw new Error("imgCropResize: resizeRange.min must be less than resizeRange.max");
+                {throw new Error("imgCropResize: resizeRange.min must be less than resizeRange.max");}
         },
 
 		_getFromCache = function () {
@@ -400,8 +400,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 		_saveToCache = function () {
 			var sendData = readData();
 			if (sendData.width && sendData.height)
-				Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl] =
-					{ crop: { top: sendData.top, left: sendData.left, width: sendData.width, height: sendData.height } };
+				{Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl] =
+					{ crop: { top: sendData.top, left: sendData.left, width: sendData.width, height: sendData.height } };}
 		},
 
         // #endregion
@@ -555,9 +555,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
                 var saveCopy = _$radioSaveCopy.attr("checked");
                 if (saveCopy)
-                	_$inputUserFileName.removeAttr("disabled");
+                	{_$inputUserFileName.removeAttr("disabled");}
                 else
-                	_$inputUserFileName.attr("disabled", "disabled");
+                	{_$inputUserFileName.attr("disabled", "disabled");}
             });
         }
     // #endregion
@@ -612,7 +612,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         else {
         	var value = $.trim(_$inputUserFileName.val());
         	if (value != "" && value.lastIndexOf(".") == -1)
-        		value = value + _getExtension(_parameters.sourceImageUrl);
+        		{value = value + _getExtension(_parameters.sourceImageUrl);}
 
         	if (_parameters.resultImageFolder) {
                 targetFileUrl = _endsWith("/", _parameters.resultImageFolder) ?

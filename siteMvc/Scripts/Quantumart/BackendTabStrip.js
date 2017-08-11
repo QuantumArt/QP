@@ -618,7 +618,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var tabStripOffset = 0;
       tabStripOffset = -1 * (tabStripWidth - tabWidth);
       if (!this.isLastTab($tab))
-          tabStripOffset += 30;
+          {tabStripOffset += 30;}
       $scrollable.scrollTo($tab,
           {
             "duration": duration || 400,

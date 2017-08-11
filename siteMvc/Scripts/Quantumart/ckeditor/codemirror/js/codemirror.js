@@ -1528,7 +1528,7 @@ function highlightLine(cm, line, state, forceToEnd) {
     }, lineClasses);
   };
 
-  for (var o = 0; o < cm.state.overlays.length; ++o) loop(o);
+  for (var o = 0; o < cm.state.overlays.length; ++o) {loop(o);}
 
   return {styles: st, classes: lineClasses.bgClass || lineClasses.textClass ? lineClasses : null};
 }
@@ -2080,7 +2080,7 @@ function signalLater(emitter, type /* , values...*/) {
   };
 
   for (var i = 0; i < arr.length; ++i)
-    loop(i);
+    {loop(i);}
 }
 
 function fireOrphanDelayed() {
@@ -5012,7 +5012,7 @@ function makeChangeFromHistory(doc, type, allowSelectionOnly) {
   for (var i$1 = event.changes.length - 1; i$1 >= 0; --i$1) {
     var returned = loop(i$1);
 
-    if (returned) return returned.v;
+    if (returned) {return returned.v;}
   }
 }
 
@@ -5708,7 +5708,7 @@ function detachSharedMarkers(markers) {
     }
   };
 
-  for (var i = 0; i < markers.length; i++) loop(i);
+  for (var i = 0; i < markers.length; i++) {loop(i);}
 }
 
 var nextDocId = 0;

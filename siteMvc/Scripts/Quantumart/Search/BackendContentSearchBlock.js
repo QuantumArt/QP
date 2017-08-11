@@ -19,11 +19,11 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 		var contentName = null;
 
 		if (this._contentGroupListElement)
-			groupId = jQuery(this._contentGroupListElement).find("option:selected").val();
+			{groupId = jQuery(this._contentGroupListElement).find("option:selected").val();}
 		if (this._siteListElement)
-			siteId = jQuery(this._siteListElement).find("option:selected").val();
+			{siteId = jQuery(this._siteListElement).find("option:selected").val();}
 		if (this._contentNameElement)
-			contentName = jQuery(this._contentNameElement).val();
+			{contentName = jQuery(this._contentNameElement).val();}
 
 		return JSON.stringify({
 			"GroupId": groupId,
@@ -50,9 +50,9 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 			false,
 			function (data, textStatus, jqXHR) {
 				if (data.success)
-					serverContent = data.view;
+					{serverContent = data.view;}
 				else
-					alert(data.message);
+					{alert(data.message);}
 			},
 			function (jqXHR, textStatus, errorThrown) {
 				serverContent = null;

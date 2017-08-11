@@ -43,7 +43,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
   _executeAction: function (actionParams, byRequest) {
     if (actionParams) {
       if ($q.isNullOrEmpty(actionParams.customerCode))
-        actionParams.customerCode = this._currentCustomerCode;
+        {actionParams.customerCode = this._currentCustomerCode;}
       if (actionParams.customerCode.toLowerCase() == this._currentCustomerCode.toLowerCase()) {
         if (!byRequest || window.confirm($l.BackendDirectLinkExecutor.OpenDirectLinkConfirmation)) {
           var action = $a.getBackendActionByCode(actionParams.actionCode);

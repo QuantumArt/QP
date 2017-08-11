@@ -40,9 +40,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			false,
 			function (data, textStatus, jqXHR) {
 				if (data.success)
-					serverContent = data.view;
+					{serverContent = data.view;}
 				else
-					alert(data.message);
+					{alert(data.message);}
 			},
 			function (jqXHR, textStatus, errorThrown) {
 				serverContent = null;
@@ -146,7 +146,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 		else {
 			$c.enableDateTimePicker(this._dateFromElement);
 			if (!this._isByValue)
-				$c.enableDateTimePicker(this._dateToElement);
+				{$c.enableDateTimePicker(this._dateToElement);}
 		}
 	},
 
@@ -160,7 +160,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 		}
 		else {
 			if (!this.get_IsNull())
-				$c.enableDateTimePicker(this._dateToElement);
+				{$c.enableDateTimePicker(this._dateToElement);}
 			jQuery("label[for='" + jQuery(this._dateFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.fromText);
 			jQuery(this._dateToElement).closest(".row").show();
 		}
@@ -199,9 +199,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 	_onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
 	get_IsNull: function () {
 		if (this._isNullCheckBoxElement)
-			return jQuery(this._isNullCheckBoxElement).is(":checked");
+			{return jQuery(this._isNullCheckBoxElement).is(":checked");}
 		else
-			return false;
+			{return false;}
 	},
 
 	_rangeType: null, // тип: дата или время

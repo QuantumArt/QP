@@ -46,7 +46,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 					this.set_isRendered(true);
 				}
 				else
-					alert(data.message);
+					{alert(data.message);}
 			}, this))
 			.fail(function (jqXHR, textStatus, errorThrown) {
 				$q.processGenericAjaxError(jqXHR);

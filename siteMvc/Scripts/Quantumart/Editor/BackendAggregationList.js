@@ -34,7 +34,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this._addItemHandler = jQuery.proxy(this.addItem, this);
     this._removeItemHandler = jQuery.proxy(this.removeItem, this);
     if(aggrList.data('additional_names') != undefined)
-        this._additionalNames = aggrList.data('additional_names').split(',');
+        {this._additionalNames = aggrList.data('additional_names').split(',');}
     this._viewModel = {
       items: this._items,
       addItem: this._addItemHandler,
@@ -100,9 +100,9 @@ Quantumart.QP8.BackendAggregationList.prototype = {
 
   checkHeaders: function () {
     if (this._tableBody.children('tr').size() == 0)// its time to hide headers
-      this._tableHeader.hide();
+      {this._tableHeader.hide();}
     else
-      this._tableHeader.show();
+      {this._tableHeader.show();}
   },
 
   saveAggregationListData: function () {
