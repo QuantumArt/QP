@@ -72,8 +72,8 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 					html.cat('</ul></div>');
 					columnCounter = 0;
 				} else {
- columnCounter++;
-}
+          columnCounter += 1;
+        }
 			});
 			html.catIf('</ul></div>', columnCounter > 0);
 		} else {

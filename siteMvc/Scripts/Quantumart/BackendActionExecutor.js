@@ -282,10 +282,10 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                             errorHandler(stepData);
                           } else {
                             progressWindow.completeStep(stepData.ProcessedItemsCount, stepData.AdditionalInfo, actionData.ParentId || parentEntityId);
-                            stepCounter++;
+                            stepCounter += 1;
                             if (stepCounter == stepLength) {
                               progressWindow.completeStage();
-                              stageCounter++;
+                              stageCounter += 1;
                             }
 
                             iterationCallback();
@@ -295,7 +295,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                     } else {
                       if (stage && stepLength == 0) {
                         progressWindow.completeStage();
-                        stageCounter++;
+                        stageCounter += 1;
                       }
 
                       stage = actionData.Stages[stageCounter];

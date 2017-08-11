@@ -105,7 +105,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
       );
 
       if (this.restoring) {
-        this._restoringStateCount--;
+        this._restoringStateCount -= 1;
         if (this._restoringStateCount < 1) {
           this.start();
         }

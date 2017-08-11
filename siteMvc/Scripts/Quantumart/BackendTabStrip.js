@@ -774,7 +774,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var matchedTabCount = 0;
       for (var tabIndex = 0; tabIndex < tabCount; tabIndex++) {
         if ($tabs.eq(tabIndex).data("tab_type_code") == tabTypeCode) {
-          matchedTabCount++;
+          matchedTabCount += 1;
         }
       }
 

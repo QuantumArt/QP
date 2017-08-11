@@ -170,7 +170,7 @@ Quantumart.QP8.Observable.prototype = {
           if (observerInfo.times == -1) {
             this._updateObserver(eventType, eventArgs, observer);
           } else if (observerInfo.times > 0) {
-            observerInfo.times--;
+            observerInfo.times -= 1;
             if (observerInfo.times == 0) {
               this.detachObserver(eventType, observer);
             }

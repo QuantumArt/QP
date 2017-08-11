@@ -419,7 +419,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
           var parentNodeElem = $parentNode.get(0);
 
           if (parentNodeElem && parentNodeElem.tagName == 'LI') {
-            level++;
+            level += 1;
           }
 
           $parentNode = $parentNode.parent();
