@@ -216,16 +216,16 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     var $row = this.getRow(rowElem);
     var dataItem = this.getDataItem($row);
 
-    if (dataItem['EntityTypeCode']) {
-      this._entityTypeCode = dataItem['EntityTypeCode'];
+    if (dataItem.EntityTypeCode) {
+      this._entityTypeCode = dataItem.EntityTypeCode;
     }
   },
   set_actionCodeFromRow: function (rowElem) {
     var $row = this.getRow(rowElem);
     var dataItem = this.getDataItem($row);
 
-    if (dataItem['ActionCode']) {
-      this._actionCodeForLink = dataItem['ActionCode'];
+    if (dataItem.ActionCode) {
+      this._actionCodeForLink = dataItem.ActionCode;
     }
   },
   set_entityTypeCode: function (value) {
@@ -1112,7 +1112,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   },
 
   _applyStatusColor: function (row, item) {
-    var id = item['STATUS_TYPE_COLOR'];
+    var id = item.STATUS_TYPE_COLOR;
     if (id) {
       var $row = $(row);
       var isAlt = $row.hasClass('t-alt');

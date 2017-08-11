@@ -174,7 +174,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     if (iframe && iframe.contentWindow) {
       var args = {};
       jQuery.extend(args, message);
-      delete args["callerCallback"];
+      delete args.callerCallback;
       pmrpc.call({
         destination: iframe.contentWindow,
         publicProcedureName: message.callerCallback,

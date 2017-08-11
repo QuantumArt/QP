@@ -161,14 +161,14 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $(this._tabStripElement)
       .on('click', this.TAB_CLICKABLE_SELECTORS, this._onTabClickingHandler)
       .on('mouseup', this.TAB_CLICKABLE_SELECTORS, this._onTabMiddleClickHandler)
-      .on($.fn['jeegoocontext'].getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShowHandler);
+      .on($.fn.jeegoocontext.getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShowHandler);
   },
 
   _detachTabStripEventHandlers: function () {
     $(this._tabStripElement)
       .off('click', this.TAB_CLICKABLE_SELECTORS, this._onTabClickingHandler)
       .off('mouseup', this.TAB_CLICKABLE_SELECTORS, this._onTabMiddleClickHandler)
-      .off($.fn['jeegoocontext'].getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShowHandler);
+      .off($.fn.jeegoocontext.getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShowHandler);
   },
 
   fixTabStripWidth: function () {

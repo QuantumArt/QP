@@ -208,7 +208,7 @@
 
                             } else {
                                 // loadCodeMirrorInline(editor, textArea);
-                                if (CodeMirror.prototype['autoFormatAll']) {
+                                if (CodeMirror.prototype.autoFormatAll) {
                                     loadCodeMirrorInline(editor, textArea);
                                 } else {
                                     // loading the add-on scripts.
@@ -548,7 +548,7 @@
                         });
                     });
                 } else {
-                    if (CodeMirror.prototype['autoFormatAll']) {
+                    if (CodeMirror.prototype.autoFormatAll) {
                         loadCodeMirror(editor);
                         callback();
                     } else {

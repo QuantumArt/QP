@@ -38,7 +38,7 @@ Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
   },
 
   getContextMenuEventType: function () {
-    return jQuery.fn['jeegoocontext'].getContextMenuEventType();
+    return jQuery.fn.jeegoocontext.getContextMenuEventType();
   },
 
   dispose: function () {

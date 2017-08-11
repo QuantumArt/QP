@@ -76,7 +76,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     for (var i in this._fields) {
       item[this._fields[i]] = "";
     }
-    item['Invalid'] = false;
+    item.Invalid = false;
     this._items.push(item);
     this._setAsChanged();
     this.checkHeaders();

@@ -400,7 +400,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   getContextMenuEventType: function () {
-    return jQuery.fn['jeegoocontext'].getContextMenuEventType();
+    return jQuery.fn.jeegoocontext.getContextMenuEventType();
   },
 
   _onContextMenuTune: function (e, context) {
