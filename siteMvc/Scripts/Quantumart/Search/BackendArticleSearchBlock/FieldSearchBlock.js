@@ -197,7 +197,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
 	// удалить раздел поиска по конкретному полю
 	_destroyFieldSearchContainer: function (fieldID) {
-		if (this._fieldSearchContainerList[fieldID]) {// если существует раздел поиска по этому полю то удаляем его
+		if (this._fieldSearchContainerList[fieldID]) { // если существует раздел поиска по этому полю то удаляем его
 			var fieldSearchContainer = this._fieldSearchContainerList[fieldID];
 			// получить контейнер
 			var $fsContainer = jQuery(fieldSearchContainer.get_ContainerElement());

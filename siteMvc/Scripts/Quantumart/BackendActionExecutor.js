@@ -742,7 +742,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
   get_entityTypeCode: function () { return this._entityTypeCode; },
   get_context: function () { return this._context; },
   get_entities: function () { return ($q.isArray(this._entities) && this._entities.length > 0) ? this._entities : [{ Id: this._entityId, Name: this._entityName}]; },
-  get_actionCode: function () { return this._actionCode;},
+  get_actionCode: function () { return this._actionCode; },
 
   correct: function (action) {
     var currentAction = $a.getBackendAction(action);
