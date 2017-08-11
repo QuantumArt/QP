@@ -8,7 +8,9 @@ Quantumart.QP8.ActionLogFilterBase.prototype = {
 
 	initialize: function () { },
 	onOpen: function () { },
-	get_filterDetails: function () { return "?"; },
+	get_filterDetails: function () {
+ return "?"; 
+},
 	get_value: function () { },
 	dispose: function () {
 		this.$container = null;

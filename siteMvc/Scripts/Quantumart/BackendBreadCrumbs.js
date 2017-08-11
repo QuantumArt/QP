@@ -62,15 +62,33 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   _onContextMenuItemClickingHandler: null,
   _onContextMenuHiddenHandler: null,
 
-  get_contextMenuManager: function () { return this._contextMenuManager; },
-  set_contextMenuManager: function (value) { this._contextMenuManager = value; },
-  get_manager: function () { return this._manager; },
-  set_manager: function (value) { this._manager = value; },
-  get_breadCrumbsElementId: function () { return this._breadCrumbsElementId; },
-  set_breadCrumbsElementId: function (value) { this._breadCrumbsElementId = value; },
-  get_breadCrumbsElement: function () { return this._breadCrumbsElement; },
-  get_breadCrumbsContainerElementId: function () { return this._breadCrumbsContainerElementId; },
-  set_breadCrumbsContainerElementId: function (value) { this._breadCrumbsContainerElementId = value; },
+  get_contextMenuManager: function () {
+ return this._contextMenuManager; 
+},
+  set_contextMenuManager: function (value) {
+ this._contextMenuManager = value; 
+},
+  get_manager: function () {
+ return this._manager; 
+},
+  set_manager: function (value) {
+ this._manager = value; 
+},
+  get_breadCrumbsElementId: function () {
+ return this._breadCrumbsElementId; 
+},
+  set_breadCrumbsElementId: function (value) {
+ this._breadCrumbsElementId = value; 
+},
+  get_breadCrumbsElement: function () {
+ return this._breadCrumbsElement; 
+},
+  get_breadCrumbsContainerElementId: function () {
+ return this._breadCrumbsContainerElementId; 
+},
+  set_breadCrumbsContainerElementId: function (value) {
+ this._breadCrumbsContainerElementId = value; 
+},
 
   initialize: function () {
     var $breadCrumbs = $('#' + this._breadCrumbsElementId);

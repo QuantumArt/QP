@@ -234,8 +234,7 @@ Quantumart.QP8.BackendFileField.prototype = {
     var result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
     if (typeof result !== 'undefined' && result.length > 0 || this._isImage) {
       $previewButton.show();
-    }
-    else {
+    } else {
       $previewButton.hide();
     }
   },
@@ -386,10 +385,11 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _onFileUploadedHandler: function (eventType, sender, eventArgs) {
-    if (eventArgs.get_fileNames().length > 0)
-    { jQuery(this._fileFieldElement)
+    if (eventArgs.get_fileNames().length > 0) {
+ jQuery(this._fileFieldElement)
     .val(this._getFileFieldSubFolder() + eventArgs.get_fileNames()[0])
-    .trigger('change'); }
+    .trigger('change'); 
+}
   },
 
   _onPreviewButtonClick: function () {

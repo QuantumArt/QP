@@ -40,8 +40,7 @@ Quantumart.QP8.BackendActionLink = function (actionLinkElementId, options) {
 
     if (!$q.isNull(options.actionTargetType)) {
       this._actionTargetType = options.actionTargetType;
-    }
-    else {
+    } else {
       this._actionTargetType = Quantumart.QP8.Enums.ActionTargetType.NewTab;
     }
   }
@@ -225,8 +224,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
           eventArgs = null;
           params = null;
         }
-      }
-      else {
+      } else {
         alert($l.ActionLink.actionTargetTypeNotSpecified);
       }
     }

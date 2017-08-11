@@ -21,20 +21,24 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 		var listStr = String.format(temp, $l.Home.list);
 		var profileStr = String.format(temp, $l.Home.profile); ;
 
-		if ($locked.text().trim() != "0")
-		{
+		if ($locked.text().trim() != "0") {
 			$locked.append(listStr);
-			$locked.find("a").on("click", function () { executeAction('list_locked_article', 'db', 1, customerCode, 0); });
+			$locked.find("a").on("click", function () {
+ executeAction('list_locked_article', 'db', 1, customerCode, 0); 
+});
 		}
 
-		if ($approval.text().trim() != "0")
-		{
+		if ($approval.text().trim() != "0") {
 			$approval.append(listStr);
-			$approval.find("a").on("click", function () { executeAction('list_articles_for_approval', 'db', 1, customerCode, 0); });
+			$approval.find("a").on("click", function () {
+ executeAction('list_articles_for_approval', 'db', 1, customerCode, 0); 
+});
 		}
 
 		$loggedAs.append(profileStr);
-		$loggedAs.find("a").on("click", function () { executeAction('edit_profile', 'db', 1, customerCode, 0); });
+		$loggedAs.find("a").on("click", function () {
+ executeAction('edit_profile', 'db', 1, customerCode, 0); 
+});
 
 	}
 
@@ -43,16 +47,14 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 		var $site = jQuery("#" + siteElementId);
 		var siteId = $site.val();
 
-		if (siteId)
-		{
+		if (siteId) {
 			var siteName = $site.text();
 			var text = jQuery("#" + searchElementId).val();
 			executeAction('search_in_articles', 'site', siteId, siteName, 1, { query: text });
 		}
 	}
 
-	function executeAction(actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters)
-	{
+	function executeAction(actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters) {
 		var action = $a.getBackendActionByCode(actionCode);
 
 		var params = new Quantumart.QP8.BackendActionParameters({

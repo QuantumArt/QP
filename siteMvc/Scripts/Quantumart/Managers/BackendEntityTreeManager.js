@@ -117,8 +117,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 					tree.refreshTree();
 				}
 			}
-		}
-		else {
+		} else {
 			jQuery.each(ids, function (index, id) {
 				self.refreshNode(entityTypeCode, parentEntityId, id, options);
 			});
@@ -153,23 +152,19 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 
 		if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving()) {
 			this.removeNodes(entityTypeCode, parentEntityId, entityIds);
-		}
-		else if ((eventArgs.get_isUpdated()
+		} else if ((eventArgs.get_isUpdated()
       || eventArgs.get_isLoaded()
       || actionTypeCode == ACTION_TYPE_CODE_CANCEL
       || actionTypeCode == ACTION_TYPE_CODE_CHANGE_LOCK)
       && entityTypeCode != ENTITY_TYPE_CODE_VIRTUAL_ARTICLE) {
 			this.refreshNode(entityTypeCode, parentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: true });
-		}
-		else if (eventArgs.get_isSaved() || actionTypeCode == ACTION_TYPE_CODE_COPY) {
+		} else if (eventArgs.get_isSaved() || actionTypeCode == ACTION_TYPE_CODE_COPY) {
 			var parentIdsInTree = $o.getParentIdsForTree(entityTypeCode, entityIds);
 			this.refreshNodes(entityTypeCode, parentEntityId, parentIdsInTree, { loadChildNodes: true, saveNodesSelection: false });
-		}
-		else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
+		} else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
 			var parentArticlesInTree = $o.getParentIdsForTree(ENTITY_TYPE_CODE_ARTICLE, entityIds);
 			this.refreshNodes(ENTITY_TYPE_CODE_ARTICLE, parentEntityId, parentArticlesInTree, { loadChildNodes: true, saveNodesSelection: false });
-		}
-		else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+		} else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
 			var newParentEntityId = +$o.getParentEntityId(ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
 			this.refreshNode(ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: false });
 		}

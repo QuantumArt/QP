@@ -60,14 +60,18 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     		jQuery.merge(hosts, Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(eventArgs.get_callerContext().eventArgs));
     		jQuery.merge(hosts, [Quantumart.QP8.BackendEditingArea.getInstance().getDocumentByEventArgs(eventArgs.get_callerContext().eventArgs)]);
     	}
-    	hosts = jQuery.grep(hosts, function (h) { return !$q.isNull(h); });
+    	hosts = jQuery.grep(hosts, function (h) {
+ return !$q.isNull(h); 
+});
     	if (!$q.isNullOrEmpty(hosts)) {
     		jQuery.each(hosts, function (k, host) {
     			jQuery.merge(callerContexts, host.get_externalCallerContexts());
     		});
     	}
 
-    	callerContexts = jQuery.grep(callerContexts, function (c) { return !$q.isNull(c); });
+    	callerContexts = jQuery.grep(callerContexts, function (c) {
+ return !$q.isNull(c); 
+});
     	jQuery(callerContexts).each(function (i, c) {
     		var component = self._components[c.hostUID];
     		if (component) {
@@ -82,8 +86,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     			if (eventArgs.get_isMultipleEntities()) {
     				message.isMultipleAction = true;
     				message.entityIDs = $o.getEntityIDsFromEntities(eventArgs.get_entities());
-    			}
-    			else {
+    			} else {
     				message.isMultipleAction = false;
     				message.entityId = eventArgs.get_entityId();
     			}

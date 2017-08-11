@@ -20,8 +20,7 @@ Quantumart.QP8.BackendActionPermissionViewManager.prototype = {
 			if (entityTypeCode == ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION || entityTypeCode == ENTITY_TYPE_CODE_ACTION_PERMISSION) {
 				this._viewComponent.get_Tree().refreshPermissionNode(entityTypeCode, parentEntityId);
 			}
-		}
-		else if (actionCode == ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE || actionCode == ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE) {
+		} else if (actionCode == ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE || actionCode == ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE) {
 			this._viewComponent.get_Tree().refreshPermissionNode(entityTypeCode, parentEntityId);
 		}
 	},

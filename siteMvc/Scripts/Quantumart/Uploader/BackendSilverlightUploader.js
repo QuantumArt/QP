@@ -11,12 +11,15 @@ Quantumart.QP8.BackendSilverlightUploader = function (parentElement, options) {
 	$parentElement = null;
 
 	if (!$q.isNull(options)) {
-		if (!$q.isNull(options.background))
-			{ this._background = options.background; }
-		if (!$q.isNull(options.extensions))
-			{ this._extensions = options.extensions; }
-		if (!$q.isNull(options.resolveName))
-			{ this._resolveName = options.resolveName; }
+		if (!$q.isNull(options.background)) {
+ this._background = options.background; 
+}
+		if (!$q.isNull(options.extensions)) {
+ this._extensions = options.extensions; 
+}
+		if (!$q.isNull(options.resolveName)) {
+ this._resolveName = options.resolveName; 
+}
 	}
 };
 
@@ -107,8 +110,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 			errMsg += "File: " + args.xamlFile + "     \n";
 			errMsg += "Line: " + args.lineNumber + "     \n";
 			errMsg += "Position: " + args.charPosition + "     \n";
-		}
-		else if (errorType == "RuntimeError") {
+		} else if (errorType == "RuntimeError") {
 			if (args.lineNumber != 0) {
 				errMsg += "Line: " + args.lineNumber + "     \n";
 				errMsg += "Position: " + args.charPosition + "     \n";

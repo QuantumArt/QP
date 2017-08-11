@@ -68,8 +68,9 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
 			.click(this._onApplyFilterHandler);
         jQuery('.sic_reset_button', $filter)
 			.click(this._onClearFilterHandler);
-        if (jQuery('.sic_templateSelector select', $filter))
-            { jQuery('.sic_templateSelector select', $filter).change(jQuery.proxy(this._onApplyFilter, this)); }
+        if (jQuery('.sic_templateSelector select', $filter)) {
+ jQuery('.sic_templateSelector select', $filter).change(jQuery.proxy(this._onApplyFilter, this)); 
+}
         if (jQuery('.sic_pageSelector .singleItemPicker', $filter).size() > 0 && jQuery('.sic_pageSelector .singleItemPicker', $filter).data('entity_data_list_component')) {
             jQuery('.sic_pageSelector .singleItemPicker', $filter).data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, jQuery.proxy(this._onApplyFilter, this));
             gridComponent.ajaxRequest();

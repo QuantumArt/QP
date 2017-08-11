@@ -39,10 +39,11 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			false,
 			false,
 			function (data, textStatus, jqXHR) {
-				if (data.success)
-					{ serverContent = data.view; }
-				else
-					{ alert(data.message); }
+				if (data.success) {
+ serverContent = data.view; 
+} else {
+ alert(data.message); 
+}
 			},
 			function (jqXHR, textStatus, errorThrown) {
 				serverContent = null;
@@ -101,11 +102,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 		var stateData = this.get_blockState().data;
 		if (stateData.isNull) {
 			return $l.SearchBlock.isNullCheckBoxLabelText;
-		}
-		else if (stateData.isByValue) {
+		} else if (stateData.isByValue) {
 			return stateData.from ? stateData.from : "?";
-		}
-		else {
+		} else {
 			return (stateData.from ? stateData.from : "?") + " - " + (stateData.to ? stateData.to : "?");
 		}
 	},
@@ -124,8 +123,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 					jQuery(".radioButtonsList input:radio[value=0]", this._containerElement)
 						.prop("checked", true)
 						.trigger('click');
-				}
-				else if (state.isByValue === false) {
+				} else if (state.isByValue === false) {
 					jQuery(".radioButtonsList input:radio[value=1]", this._containerElement)
 						.prop("checked", true)
 						.trigger('click');
@@ -142,11 +140,11 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 		if (this.get_IsNull()) {
 			$c.disableDateTimePicker(this._dateFromElement);
 			$c.disableDateTimePicker(this._dateToElement);
-		}
-		else {
+		} else {
 			$c.enableDateTimePicker(this._dateFromElement);
-			if (!this._isByValue)
-				{ $c.enableDateTimePicker(this._dateToElement); }
+			if (!this._isByValue) {
+ $c.enableDateTimePicker(this._dateToElement); 
+}
 		}
 	},
 
@@ -157,10 +155,10 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			$c.disableDateTimePicker(this._dateToElement);
 			jQuery(this._dateToElement).closest(".row").hide();
 			jQuery("label[for='" + jQuery(this._dateFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.valueText);
-		}
-		else {
-			if (!this.get_IsNull())
-				{ $c.enableDateTimePicker(this._dateToElement); }
+		} else {
+			if (!this.get_IsNull()) {
+ $c.enableDateTimePicker(this._dateToElement); 
+}
 			jQuery("label[for='" + jQuery(this._dateFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.fromText);
 			jQuery(this._dateToElement).closest(".row").show();
 		}
@@ -198,10 +196,11 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 
 	_onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
 	get_IsNull: function () {
-		if (this._isNullCheckBoxElement)
-			{ return jQuery(this._isNullCheckBoxElement).is(":checked"); }
-		else
-			{ return false; }
+		if (this._isNullCheckBoxElement) {
+ return jQuery(this._isNullCheckBoxElement).is(":checked"); 
+} else {
+ return false; 
+}
 	},
 
 	_rangeType: null, // тип: дата или время

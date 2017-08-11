@@ -70,14 +70,14 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 				if (columnCounter == FILE_LIST_ITEMS_PER_COLUMN - 1) {
 					html.cat('</ul></div>');
 					columnCounter = 0;
-				}
-				else
-					{ columnCounter++; }
+				} else {
+ columnCounter++; 
+}
 			});
 			html.catIf('</ul></div>', columnCounter > 0);
-		}
-		else
-			{ html.cat($l.FileList.noRecords); }
+		} else {
+ html.cat($l.FileList.noRecords); 
+}
 
 		$fileListNameContainer.html(html.string());
 
@@ -159,8 +159,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 		var $chb = jQuery(event.currentTarget);
 		if ($chb.is(':checked')) {
 		    $chb.parent('.fileItem').addClass(this.SELECTED_CLASS);
-		}
-		else {
+		} else {
 		    $chb.parent('.fileItem').removeClass(this.SELECTED_CLASS);
 		}
 		this._raiseSelectEvent();

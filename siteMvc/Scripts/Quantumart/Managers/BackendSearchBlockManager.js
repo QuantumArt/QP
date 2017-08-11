@@ -56,20 +56,16 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
 		var searchBlock = null;
 		if (options.contextSearch) {
 		    searchBlock = new Quantumart.QP8.BackendContextBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
-		}
-		else if (entityTypeCode == ENTITY_TYPE_CODE_ARTICLE || entityTypeCode == ENTITY_TYPE_CODE_VIRTUAL_ARTICLE || entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
+		} else if (entityTypeCode == ENTITY_TYPE_CODE_ARTICLE || entityTypeCode == ENTITY_TYPE_CODE_VIRTUAL_ARTICLE || entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
 			if (host && host.get_documentContext() && host.get_documentContext().get_options() && host.get_documentContext().get_options().isVirtual) {
 				jQuery.extend(options, { isVirtual: true });
 			}
 			searchBlock = new Quantumart.QP8.BackendArticleSearchBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
-		}
-		else if (entityTypeCode == ENTITY_TYPE_CODE_CONTENT) {
+		} else if (entityTypeCode == ENTITY_TYPE_CODE_CONTENT) {
 			searchBlock = new Quantumart.QP8.BackendContentSearchBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
-		}
-		else if (entityTypeCode == ENTITY_TYPE_CODE_USER) {
+		} else if (entityTypeCode == ENTITY_TYPE_CODE_USER) {
 			searchBlock = new Quantumart.QP8.BackendUserSearchBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
-		}
-		else {
+		} else {
 			searchBlock = new Quantumart.QP8.BackendSearchBlockBase(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
 		}
 		searchBlock.initialize();

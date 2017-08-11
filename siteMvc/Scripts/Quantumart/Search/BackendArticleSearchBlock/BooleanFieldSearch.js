@@ -84,8 +84,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 		var stateData = this.get_blockState().data;
 		if (stateData.isNull) {
 			return $l.SearchBlock.isNullCheckBoxLabelText;
-		}
-		else {
+		} else {
 			return stateData.value === true ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
 		}
 
@@ -102,8 +101,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 			if (!$q.isNull(state.value)) {
 				if (state.value === true) {
 					jQuery("input:radio[value=true]", this._containerElement).prop("checked", true);
-				}
-				else if (state.value === false) {
+				} else if (state.value === false) {
 					jQuery("input:radio[value!=true]", this._containerElement).prop("checked", true);
 				}
 			}
@@ -113,10 +111,11 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 	_getValue: function () {
 		var result = null;
 		var val = jQuery(this._containerElement).find('input:radio:checked').val();
-		if (val == "true")
-			{ result = true; }
-		else
-			{ result = false; }
+		if (val == "true") {
+ result = true; 
+} else {
+ result = false; 
+}
 		return result;
 	},
 
@@ -143,10 +142,11 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 
 	_onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
 	get_IsNull: function () {
-		if (this._isNullCheckBoxElement)
-			{ return jQuery(this._isNullCheckBoxElement).is(":checked"); }
-		else
-			{ return false; }
+		if (this._isNullCheckBoxElement) {
+ return jQuery(this._isNullCheckBoxElement).is(":checked"); 
+} else {
+ return false; 
+}
 	},
 
 	_isNullCheckBoxElement: null // dom-элемент чекбокса isNull

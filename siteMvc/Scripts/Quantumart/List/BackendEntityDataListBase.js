@@ -204,8 +204,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
     if (this._checkAllowShowingToolbar()) {
       this._showToolbar();
-    }
-    else {
+    } else {
       this._hideToolbar();
     }
   },
@@ -269,8 +268,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
         if (this._maxListHeight > 0 && contentHeight > this._maxListHeight) {
           $list.height(this._maxListHeight);
           $list.addClass(this.OVERFLOW_LIST_CLASS_NAME);
-        }
-        else {
+        } else {
           $list.height(contentHeight);
         }
       }
@@ -548,8 +546,9 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
     for (var linkButtonIndex = 0; linkButtonIndex < linkButtonCount; linkButtonIndex++) {
       var $linkButton = $linkButtons.eq(linkButtonIndex);
-      if ($linkButton.data("action_code") !== this._readActionCode)
-        { this._changeToolbarButtonState($linkButton, false); }
+      if ($linkButton.data("action_code") !== this._readActionCode) {
+ this._changeToolbarButtonState($linkButton, false); 
+}
     }
 
     $linkButtons = null;
@@ -747,8 +746,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
         eventArgs.set_isWindow(true);
         this.notify(EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, eventArgs);
       }
-    }
-    else {
+    } else {
       eventArgs.set_context({ ctrlKey: e.ctrlKey || isMiddleClick });
       this.notify(EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, eventArgs);
     }

@@ -282,8 +282,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
       if (!$q.isNullOrEmpty($bottomHandle)) {
         searchBlockHeight += parseInt($bottomHandle.outerHeight(), 10);
       }
-    }
-    else {
+    } else {
       searchBlockHeight = parseInt($searchBlock.height(), 10);
     }
 

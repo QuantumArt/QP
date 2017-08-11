@@ -50,9 +50,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
                     $statusSelector.data('entity_data_list_component').selectEntities(newStatuses);
                     $statusSelector.data('entity_data_list_component').deselectAllListItems();
                     $statusSelector.data('entity_data_list_component').enableList();
-                }
-
-                else {
+                } else {
                     $statusSelector.data('entity_data_list_component').selectEntities([$statusSelector.data('published-id')]);
                     $statusSelector.data('entity_data_list_component').disableList();
                 }
@@ -67,11 +65,12 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
     function onParentTemplateObjectChanged() {
         if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
             var objId = $parentObjectSelector.val();
-            var targetObj = $(this.data('objects')).filter(function () { return this.Id == objId; })[0];
+            var targetObj = $(this.data('objects')).filter(function () {
+ return this.Id == objId; 
+})[0];
             $nameField.val(targetObj.Name);
             $netNameField.val(targetObj.NetName);
-        }
-        else {
+        } else {
             $nameField.val('');
             $netNameField.val('');
         }
@@ -82,9 +81,9 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
     function manageGlobalVisibility() {
         if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(",").indexOf($typeSelector.val()) != -1) {
             $globalChkbx.parent('.field').show();
-        }
-        else
-            { $globalChkbx.parent('.field').hide(); }
+        } else {
+ $globalChkbx.parent('.field').hide(); 
+}
     }
 
     function dispose() {

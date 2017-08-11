@@ -2,3 +2,5 @@ node_modules/
 **/vendor/**
 **/build/**
 *.min.js
+
+siteMvc/Scripts/Quantumart/ckeditor/codemirror/js

@@ -62,16 +62,14 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                         false,
                         false,
                         function (data) {
-                            if (element.UserId() != null)
-                                { jQuery(dom).find('span.workflow_permission_message').first().html(data); }
-
-                            else
-                                { jQuery(dom).find('span.workflow_permission_message').last().html(data); }
+                            if (element.UserId() != null) {
+ jQuery(dom).find('span.workflow_permission_message').first().html(data); 
+} else {
+ jQuery(dom).find('span.workflow_permission_message').last().html(data); 
+}
                         }
                     );
-                }
-
-                else {
+                } else {
                     jQuery(dom).find('.singleItemPicker').each(jQuery.proxy(function (index, element) {
                         jQuery(element).data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this.checkSinglePermisssionHandler);
                     }, this));
@@ -89,7 +87,9 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
         var component = this;
         this._componentElem.closest('form').find('.workflow_control_selector').parent('div').find('.checkbox')
-        .change(function (e) { component.manageItems(e); });
+        .change(function (e) {
+ component.manageItems(e); 
+});
 
         this._contentSelector
         .data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler);
@@ -104,9 +104,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             if (jQuery(this).val() == 'User') {
                 jQuery(this).closest('fieldset').find('.workflow_group_row').hide();
                 jQuery(this).closest('fieldset').find('.workflow_user_row').show();
-            }
-
-            else {
+            } else {
                 jQuery(this).closest('fieldset').find('.workflow_user_row').hide();
                 jQuery(this).closest('fieldset').find('.workflow_group_row').show();
             }
@@ -147,8 +145,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                         var span = user_row.find('span.workflow_permission_message');
                         var oldHtml = span.html();
                         span.html(oldHtml + '<br>' + data[i].Message);
-                    }
-                    else { // its user group
+                    } else { // its user group
                         var span = group_row.find('span.workflow_permission_message');
                         var oldHtml = span.html();
                         group_row.find('span.workflow_permission_message').html(oldHtml + '<br>' + data[i].Message);
@@ -163,10 +160,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         var statusName = $(eventArgs._listElement).closest('fieldset').attr('Class').replace('workflow_fieldset', '');
         var userId;
         var groupId;
-        if (eventArgs.get_entityTypeCode() == "user")
-            { userId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null; }
-        else if (eventArgs.get_entityTypeCode() == "user_group")
-            { groupId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null; }
+        if (eventArgs.get_entityTypeCode() == "user") {
+ userId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null; 
+} else if (eventArgs.get_entityTypeCode() == "user_group") {
+ groupId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null; 
+}
         $q.getJsonFromUrl(
       "GET",
       CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
@@ -184,8 +182,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
               var group_row = current_workflow_stage.find(':visible.workflow_group_row');
               if (user_row.size() > group_row.size()) { // its user
                   user_row.find('span.workflow_permission_message').html(data);
-              }
-              else { // its user group
+              } else { // its user group
                   group_row.find('span.workflow_permission_message').html(data);
               }
       }
@@ -201,12 +198,12 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             target.parent('.groupCheckbox').siblings('.workflow_control_selector').find('.checkbox').each(jQuery.proxy(function (index, item) {
                 this.manageItems(jQuery(item));
             }, this));
-        }
-        else {
-            if (target.attr('checked') == 'checked')
-                { this.addItem(target.val(), target.siblings('label').text(), target.closest('.workflow_control_selector').data('weights')[target.val()]); }
-            else
-                { this.removeItem(target.val()); }
+        } else {
+            if (target.attr('checked') == 'checked') {
+ this.addItem(target.val(), target.siblings('label').text(), target.closest('.workflow_control_selector').data('weights')[target.val()]); 
+} else {
+ this.removeItem(target.val()); 
+}
         }
     },
 
@@ -240,8 +237,9 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         var items = this._items();
         for (var i = 0; i < items.length; i++) {
             var current = items[i];
-            if (current.StId == statusId)
-                { this._items.remove(current); }
+            if (current.StId == statusId) {
+ this._items.remove(current); 
+}
         }
         this._setAsChanged();
     },

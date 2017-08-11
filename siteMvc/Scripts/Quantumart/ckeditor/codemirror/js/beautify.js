@@ -124,22 +124,42 @@
       // Test whether a given character code starts an identifier.
 
       var isIdentifierStart = exports.isIdentifierStart = function (code) {
-        if (code < 65) { return code === 36; }
-        if (code < 91) { return true; }
-        if (code < 97) { return code === 95; }
-        if (code < 123){ return true; }
+        if (code < 65) {
+ return code === 36; 
+}
+        if (code < 91) {
+ return true; 
+}
+        if (code < 97) {
+ return code === 95; 
+}
+        if (code < 123){
+ return true; 
+}
         return code >= 0xaa && nonASCIIidentifierStart.test(String.fromCharCode(code));
       };
 
       // Test whether a given character is part of an identifier.
 
       var isIdentifierChar = exports.isIdentifierChar = function (code) {
-        if (code < 48) { return code === 36; }
-        if (code < 58) { return true; }
-        if (code < 65) { return false; }
-        if (code < 91) { return true; }
-        if (code < 97) { return code === 95; }
-        if (code < 123){ return true; }
+        if (code < 48) {
+ return code === 36; 
+}
+        if (code < 58) {
+ return true; 
+}
+        if (code < 65) {
+ return false; 
+}
+        if (code < 91) {
+ return true; 
+}
+        if (code < 97) {
+ return code === 95; 
+}
+        if (code < 123){
+ return true; 
+}
         return code >= 0xaa && nonASCIIidentifier.test(String.fromCharCode(code));
       };
     }(acorn));
@@ -486,8 +506,9 @@
 
         function deindent() {
             if (flags.indentation_level > 0 &&
-                ((!flags.parent) || flags.indentation_level > flags.parent.indentation_level))
-                { flags.indentation_level -= 1; }
+                ((!flags.parent) || flags.indentation_level > flags.parent.indentation_level)) {
+ flags.indentation_level -= 1; 
+}
         }
 
         function set_mode(mode) {
@@ -1230,8 +1251,7 @@
             if (lines.length > 1) {
                 if (all_lines_start_with(lines.slice(1), '*')) {
                     javadoc = true;
-                }
-                else if (each_line_matches_indent(lines.slice(1), lastIndent)) {
+                } else if (each_line_matches_indent(lines.slice(1), lastIndent)) {
                     starless = true;
                 }
             }

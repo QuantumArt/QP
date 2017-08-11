@@ -436,8 +436,9 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     var $node = this.getNode(node);
     var nodeIndex = undefined;
 
-    if (this._treeComponent.showCheckBox === true)
-    { nodeIndex = $(".t-checkbox input[type='hidden'][name='" + this._treeElementName + ".Index']", $node).val(); }
+    if (this._treeComponent.showCheckBox === true) {
+ nodeIndex = $(".t-checkbox input[type='hidden'][name='" + this._treeElementName + ".Index']", $node).val(); 
+}
     return nodeIndex;
   },
 
@@ -604,12 +605,13 @@ $.telerik.treeview.getItemHtml = function (options) {
     .catIf('t-bot', itemIndex == itemsCount - 1)
     .cat('">');
 
-  if ((options.isAjax && item.LoadOnDemand) || (item.Items && item.Items.length > 0))
-  { html
+  if ((options.isAjax && item.LoadOnDemand) || (item.Items && item.Items.length > 0)) {
+ html
     .cat('<span class="t-icon')
     .catIf(' t-plus', item.Expanded !== true)
     .catIf(' t-minus', item.Expanded === true)
-    .cat('"></span>'); }
+    .cat('"></span>'); 
+}
 
   if (options.showCheckBoxes && item.Checkable !== false) {
     var arrayName = options.elementId; // + '_checkedNodes';
@@ -626,8 +628,9 @@ $.telerik.treeview.getItemHtml = function (options) {
       .catIf(' checked="checked"', item.Checked)
       .cat('/>');
 
-    if (item.Checked)
-    { html.cat($.telerik.treeview.getNodeInputsHtml(item.Value, item.Text, arrayName, absoluteIndex)); }
+    if (item.Checked) {
+ html.cat($.telerik.treeview.getNodeInputsHtml(item.Value, item.Text, arrayName, absoluteIndex)); 
+}
     html.cat('</span>');
   }
 

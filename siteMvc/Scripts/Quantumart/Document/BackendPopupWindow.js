@@ -50,29 +50,25 @@ Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options)
 
     if (options.width) {
       this._width = options.width;
-    }
-    else {
+    } else {
       this._width = Math.floor(currentWindowWidth * 0.8);
     }
 
     if (options.height) {
       this._height = options.height;
-    }
-    else {
+    } else {
       this._height = Math.floor(currentWindowHeight * 0.8);
     }
 
     if (options.minWidth) {
       this._minWidth = options.minWidth;
-    }
-    else {
+    } else {
       this._minWidth = Math.floor(currentWindowWidth * 0.2);
     }
 
     if (options.minHeight) {
       this._minHeight = options.minHeight;
-    }
-    else {
+    } else {
       this._minHeight = Math.floor(currentWindowHeight * 0.2);
     }
 
@@ -278,8 +274,12 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       return parseInt(jQuery(this._popupWindowElement).css("z-index"), 10);
   },
 
-  get_selectionContext: function () { return this._selectionContext; },
-  set_selectionContext: function (value) { this._selectionContext = value; },
+  get_selectionContext: function () {
+ return this._selectionContext; 
+},
+  set_selectionContext: function (value) {
+ this._selectionContext = value; 
+},
 
   _onPopupWindowResizeHandler: null,
   _onPopupWindowOpenHandler: null,
@@ -343,8 +343,12 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this._documentUrl = $a.generateActionUrl(this._isMultipleEntities, entityIDs, this._parentEntityId, this._popupWindowId, this.getCurrentAction(), options);
 
     var params = {};
-    if (this._isMultipleEntities || this._isCustomAction) { params.IDs = entityIDs; }
-    if (this._isCustomAction) { params.actionCode = this._actionCode; }
+    if (this._isMultipleEntities || this._isCustomAction) {
+ params.IDs = entityIDs; 
+}
+    if (this._isCustomAction) {
+ params.actionCode = this._actionCode; 
+}
     this._documentPostParams = params;
   },
 
@@ -461,8 +465,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   openWindow: function (options) {
     if (this._isMultiOpen && this._isContentLoaded()) {
       this._popupWindowComponent.open();
-    }
-    else {
+    } else {
       this.onDocumentChanging();
       this._popupWindowComponent.open();
       this.generateDocumentUrl(options);

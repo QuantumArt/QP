@@ -61,10 +61,11 @@ Quantumart.QP8.BackendContextBlock.prototype =
 			false,
 			false,
 			function (data, textStatus, jqXHR) {
-			    if (data.success)
-			        { serverContent = data.view; }
-			    else
-			        { alert(data.message); }
+			    if (data.success) {
+ serverContent = data.view; 
+} else {
+ alert(data.message); 
+}
 			},
 			function (jqXHR, textStatus, errorThrown) {
 			    serverContent = null;

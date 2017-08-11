@@ -123,7 +123,9 @@ window.wordWindow.prototype = {
       if (wordtxt) {
         var orig = this.originalSpellings[txtid];
 
-        if (!orig) { break; }
+        if (!orig) {
+ break; 
+}
         d.writeln('<div class="plainText">');
 
         // iterate through each occurrence of a misspelled word.
@@ -136,7 +138,9 @@ window.wordWindow.prototype = {
             end_idx = begin_idx + orig[i].length;
 
             // word not found? messed up!
-            if (begin_idx == -1) { break; }
+            if (begin_idx == -1) {
+ break; 
+}
 
             // look at the characters immediately before and after
             // the word. If they are word characters we'll keep looking.
@@ -185,10 +189,11 @@ window.wordWindow.prototype = {
 
   // return the character index in the full text after the last word we evaluated
   _lastPos: function (txtid, idx) {
-    if (idx > 0)
-        { return this.indexes[txtid][idx - 1] + this.originalSpellings[txtid][idx - 1].length; }
-    else
-        { return 0; }
+    if (idx > 0) {
+ return this.indexes[txtid][idx - 1] + this.originalSpellings[txtid][idx - 1].length; 
+} else {
+ return 0; 
+}
   },
 
   printForHtml: function (n) {

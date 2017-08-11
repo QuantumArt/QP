@@ -617,8 +617,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var tabWidth = $tab.width();
       var tabStripOffset = 0;
       tabStripOffset = -1 * (tabStripWidth - tabWidth);
-      if (!this.isLastTab($tab))
-          { tabStripOffset += 30; }
+      if (!this.isLastTab($tab)) {
+ tabStripOffset += 30; 
+}
       $scrollable.scrollTo($tab,
           {
             duration: duration || 400,
@@ -1258,8 +1259,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _onCloseButtonClicking: function (e) {
     if (!this.isTabStripBusy()) {
       this._applyClickedStyleToCloseButton(e.currentTarget);
-    }
-    else {
+    } else {
       e.preventDefault();
     }
   },
@@ -1273,8 +1273,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this._applyHoveredStyleToCloseButton(e.currentTarget);
 
       e.stopPropagation();
-    }
-    else {
+    } else {
       e.preventDefault();
     }
   },
@@ -1351,16 +1350,13 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var tabId = $menuItem.attr('code');
       if (tabId === this.TAB_MENU_CLOSE_ALL_ITEM_CODE) {
         this._closeAllTabRequest();
-      }
-      else if (tabId === this.TAB_MENU_SAVE_CLOSE_ALL_ITEM_CODE) {
+      } else if (tabId === this.TAB_MENU_SAVE_CLOSE_ALL_ITEM_CODE) {
           this._saveAndCloseAllTabRequest();
-      }
-      else {
+      } else {
         this.selectTabRequest(tabId);
       }
       this._hideTabMenu();
-    }
-    else {
+    } else {
       e.preventDefault();
     }
   },
@@ -1378,8 +1374,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this._applyClickedStyleToTabMenuButton(e.currentTarget);
 
       e.stopPropagation();
-    }
-    else {
+    } else {
       e.preventDefault();
     }
   },
@@ -1397,8 +1392,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this._toggleTabMenu();
 
       e.stopPropagation();
-    }
-    else {
+    } else {
       e.preventDefault();
     }
   },

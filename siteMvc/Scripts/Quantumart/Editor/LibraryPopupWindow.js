@@ -43,19 +43,20 @@ Quantumart.QP8.LibraryPopupWindow.prototype =
 			var entities = args.entities;
 			if (entities.length > 0) {
 				var folderUrl = args.context;
-				if (folderUrl.charAt(0) == "\\")
-				    { folderUrl = folderUrl.substring(1, folderUrl.length); }
+				if (folderUrl.charAt(0) == "\\") {
+ folderUrl = folderUrl.substring(1, folderUrl.length); 
+}
 				var imgUrl = '';
 				if (this._options.contentId != 0) {
 				    imgUrl = this._options.libraryUrl.replace('images/', '') + 'contents/' + this._options.contentId + '/' + folderUrl + entities[0].Name;
-				}
-				else {
+				} else {
 				    imgUrl = this._options.libraryUrl + folderUrl + entities[0].Name;
 				}
 				imgUrl = imgUrl.replace(new RegExp("\\\\", 'g'), "\/");
 
-				if (this._options.selectCallback)
-					{ this._options.selectCallback(imgUrl); }
+				if (this._options.selectCallback) {
+ this._options.selectCallback(imgUrl); 
+}
 			}
 		}
 	},

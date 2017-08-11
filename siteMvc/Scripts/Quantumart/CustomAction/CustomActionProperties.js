@@ -5,21 +5,19 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     setFilter();
   }
 
-  function setFilter()
-  {
+  function setFilter() {
     var id = $entityTypesElement.val();
-    if (id)
-    {
+    if (id) {
       var code = Quantumart.QP8.BackendEntityType.getEntityTypeById(id).Code;
       var testCodes = [ENTITY_TYPE_CODE_VIRTUAL_CONTENT, ENTITY_TYPE_CODE_VIRTUAL_ARTICLE, ENTITY_TYPE_CODE_VIRTUAL_FIELD];
       var filter = (jQuery.inArray(code, testCodes) > -1) ? "c.virtual_type <> 0" : "c.virtual_type = 0";
       var obj = $contents.data("entity_data_list_component");
-      if (obj)
-      {
+      if (obj) {
         var oldFilter = obj.getFilter();
         obj.setFilter(filter);
-        if (oldFilter != "" && oldFilter != filter)
-          { obj.removeAllListItems(); }
+        if (oldFilter != "" && oldFilter != filter) {
+ obj.removeAllListItems(); 
+}
       }
 
     }
@@ -33,7 +31,9 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     var html = new $.telerik.stringBuilder();
     var entityTypeId = jQuery("option:selected", $entityTypesElement).val();
     var dictionary = Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary();
-    var pair = jQuery.grep(dictionary, function (item) { return (item.EntityTypeId == entityTypeId); });
+    var pair = jQuery.grep(dictionary, function (item) {
+ return (item.EntityTypeId == entityTypeId); 
+});
     if (pair && pair[0]) {
       var listItems = pair[0].ActionItems;
       jQuery.each(listItems, function (i, item) {
@@ -76,8 +76,7 @@ Quantumart.QP8.CustomActionIsInterfaceSelectorObserver = function (isInterfaceEl
     if ($isInterface.is(':checked')) {
       $actionWindowPanel.show();
       $preActionPanel.hide();
-    }
-    else {
+    } else {
       $actionWindowPanel.hide();
       $preActionPanel.show();
     }

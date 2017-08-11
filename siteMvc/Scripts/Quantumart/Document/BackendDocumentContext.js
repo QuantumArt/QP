@@ -189,8 +189,9 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   execSelect: function (eventArgs) {
-    if (this._execSelectCallback)
-    { this._execSelectCallback(eventArgs); }
+    if (this._execSelectCallback) {
+ this._execSelectCallback(eventArgs); 
+}
   },
 
   createMainComponent: function (host) {
@@ -413,8 +414,9 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
 
   dispose: function () {
     Sys.Debug.trace('terminatePage ' + this._hostId);
-    if (!this.needUp())
-    { $q.callFunction(this._terminatingCallback, this); }
+    if (!this.needUp()) {
+ $q.callFunction(this._terminatingCallback, this); 
+}
     var host = this.getHost();
 
     if (host) {
@@ -422,8 +424,9 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       host.set_documentContext(null);
     }
 
-    if (!this.needUp())
-    { $q.callFunction(this._terminatedCallback, this); }
+    if (!this.needUp()) {
+ $q.callFunction(this._terminatedCallback, this); 
+}
   }
 };
 

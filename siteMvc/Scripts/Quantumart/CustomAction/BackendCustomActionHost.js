@@ -28,22 +28,18 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.ExecuteAction) {
       this._onExecuteActionMessageReceived(message);
       successCallback(0);
-    }
-    else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.CloseBackendHost) {
+    } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.CloseBackendHost) {
       this._onCloseHostMessageReceived(message);
       successCallback(0);
-    }
-    else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.OpenSelectWindow) {
+    } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.OpenSelectWindow) {
       this._onOpenSelectWindowMessageReceived(message);
       successCallback(0);
-    }
-    else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.CheckHost) {
+    } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.CheckHost) {
       successCallback(this._onCheckHostMessageReceived(message));
     }
   },
 
-  onSelect: function ()
-  {
+  onSelect: function () {
     var id = this._options.iframeElementId;
 
     jQuery('#' + id).css("marginLeft", "1px");
@@ -102,11 +98,12 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     eventArgs.set_actionCode(message.data.selectActionCode);
 
     if ($q.isArray(message.data.selectedEntityIDs) && !$q.isNullOrEmpty(message.data.selectedEntityIDs)) {
-      var selectedEntities = jQuery.map(message.data.selectedEntityIDs, function (id) { return { Id: id }; });
+      var selectedEntities = jQuery.map(message.data.selectedEntityIDs, function (id) {
+ return { Id: id }; 
+});
       if (message.data.isMultiple) {
         eventArgs.set_entities(selectedEntities);
-      }
-      else {
+      } else {
         eventArgs.set_entityId(selectedEntities[0].Id);
       }
     }

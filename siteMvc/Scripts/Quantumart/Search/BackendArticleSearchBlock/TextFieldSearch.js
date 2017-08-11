@@ -21,10 +21,11 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 			false,
 			false,
 			function (data, textStatus, jqXHR) {
-			  if (data.success)
-			    { serverContent = data.view; }
-			  else
-			    { alert(data.message); }
+			  if (data.success) {
+ serverContent = data.view; 
+} else {
+ alert(data.message); 
+}
 			},
 		    function (jqXHR, textStatus, errorThrown) {
 		      serverContent = null;
@@ -90,22 +91,18 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
     if (stateData.text) {
       result = '"' + $q.cutShort(stateData.text, 8) + '"';
-    }
-    else {
+    } else {
       result = '""';
     }
 
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
-    }
-    else if (stateData.exactMatch) {
+    } else if (stateData.exactMatch) {
       result = "=" + result;
-    }
-    else if (stateData.beginningStart) {
+    } else if (stateData.beginningStart) {
       if (stateData.inverse) {
         return  $l.SearchBlock.endText + result;
-      }
-      else {
+      } else {
         return $l.SearchBlock.fromText + result;
       }
     }
@@ -173,31 +170,35 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   _onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
 
   get_IsNull: function () {
-    if (this._isNullCheckBoxElement)
-      { return jQuery(this._isNullCheckBoxElement).is(":checked"); }
-    else
-      { return false; }
+    if (this._isNullCheckBoxElement) {
+ return jQuery(this._isNullCheckBoxElement).is(":checked"); 
+} else {
+ return false; 
+}
   },
 
   get_Inverse: function () {
-    if (this._inverseCheckBoxElement)
-      { return jQuery(this._inverseCheckBoxElement).is(":checked"); }
-    else
-      { return false; }
+    if (this._inverseCheckBoxElement) {
+ return jQuery(this._inverseCheckBoxElement).is(":checked"); 
+} else {
+ return false; 
+}
   },
 
   get_ExactMatch: function () {
-    if (this._exactMatchCheckBoxElement)
-      { return jQuery(this._exactMatchCheckBoxElement).is(":checked"); }
-    else
-      { return false; }
+    if (this._exactMatchCheckBoxElement) {
+ return jQuery(this._exactMatchCheckBoxElement).is(":checked"); 
+} else {
+ return false; 
+}
   },
 
   get_BeginningStart: function () {
-    if (this._beginningStartChechBoxElement)
-      { return jQuery(this._beginningStartChechBoxElement).is(":checked"); }
-    else
-      { return false; }
+    if (this._beginningStartChechBoxElement) {
+ return jQuery(this._beginningStartChechBoxElement).is(":checked"); 
+} else {
+ return false; 
+}
   },
 
 

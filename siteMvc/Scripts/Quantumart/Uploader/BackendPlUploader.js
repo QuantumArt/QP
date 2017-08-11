@@ -129,8 +129,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     var result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
     if (typeof result !== 'undefined' && result.length > 0 || this._isImage) {
       this._previewButton.show();
-    }
-    else {
+    } else {
       this._previewButton.hide();
     }
   },

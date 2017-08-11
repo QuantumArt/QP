@@ -32,8 +32,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     _getServerContent: function (data) {
         if (data.success) {
             return data.view;
-        }
-        else{
+        } else{
             return data.message;
         }
     },
@@ -70,8 +69,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
             if (event.type == "submit") {
                 method = "POST";
-            }
-            else {
+            } else {
                 setDefaultValues = useAutoLogin;
                 useAutoLogin = !useAutoLogin;
             }
@@ -91,8 +89,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
                     if (data.isAuthenticated) {
                         that._isAuthenticated = true;
                         that._userName = data.userName;
-                    }
-                    else {
+                    } else {
                         serverContent = that._getServerContent(data);
                     }
 
@@ -105,8 +102,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
                         if (needRefresh) {
                             location.reload();
                         }
-                    }
-                    else {
+                    } else {
                         that._updateWindow(serverContent);
 
                         if (setDefaultValues) {
@@ -219,8 +215,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             var isAuthenticated = e.value;
             if (isAuthenticated) {
                 jQuery.ajax(settings).done(callback);
-            }
-            else {
+            } else {
                 callback({ success: true });
             }
         });
@@ -243,11 +238,9 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             url.toUpperCase() == CONTROLLER_URL_LOGON.toUpperCase() ||
             url.toUpperCase() == CONTROLLER_URL_WINLOGON.toUpperCase()) {
             return false;
-        }
-        else if (jqXHR.getResponseHeader("QP-Not-Authenticated")) {
+        } else if (jqXHR.getResponseHeader("QP-Not-Authenticated")) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     },

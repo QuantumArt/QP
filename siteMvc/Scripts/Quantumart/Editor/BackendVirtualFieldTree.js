@@ -14,21 +14,20 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
     convertNodeCodeToEntityId: function (nodeCode) {
 		if (nodeCode != this.ROOT_NODE_CODE) {
 			return nodeCode;
-		}
-		else {
+		} else {
 			return null;
 		}
 	},
 
     _getEntityChildList: function (entityId, returnSelf, successHandler, errorHandler) {
-        if (this._parentEntityId)
-        {
+        if (this._parentEntityId) {
             var selectItemIDsParam,
                 entityIdParam,
                 alias;
 
-            if (!$q.isNullOrEmpty(this._selectedEntitiesIDs))
-                { selectItemIDsParam = this._selectedEntitiesIDs.join(';'); }
+            if (!$q.isNullOrEmpty(this._selectedEntitiesIDs)) {
+ selectItemIDsParam = this._selectedEntitiesIDs.join(';'); 
+}
             if (!$q.isNullOrWhiteSpace(entityId)) {
                 entityIdParam = entityId;
                 alias = this.getNodeText(this.getNodeByEntityId(entityId));

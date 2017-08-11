@@ -111,7 +111,9 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       var ids = this._getIds(stateData.text);
       result = this._getText(ids);
     } else if (!$q.isNullOrEmpty(stateData.entities)) {
-      result = this._getText(stateData.entities, function (e) { return $q.cutShort(e.Name, 10); });
+      result = this._getText(stateData.entities, function (e) {
+ return $q.cutShort(e.Name, 10); 
+});
     } else {
       result = '';
     }

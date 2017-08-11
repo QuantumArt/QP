@@ -44,8 +44,9 @@ Quantumart.QP8.BackendLibrary = function (libraryGroupCode, libraryElementId, pa
     this._viewTypeCode = hostOptions.viewTypeCode;
   }
 
-  if (hostOptions.zIndex)
-  { this._zIndex = hostOptions.zIndex; }
+  if (hostOptions.zIndex) {
+ this._zIndex = hostOptions.zIndex; 
+}
 
   this._allowUpload = $q.toBoolean(options.allowUpload, false);
 
@@ -222,14 +223,16 @@ Quantumart.QP8.BackendLibrary.prototype = {
     for (var code in this._fileContainers) {
       var containerToHide = this._fileContainers[code];
 
-      if (containerToHide)
-      { containerToHide.hide(); }
+      if (containerToHide) {
+ containerToHide.hide(); 
+}
     }
 
     var containerToShow = this._fileContainers[this._viewTypeCode];
 
-    if (containerToShow)
-    { containerToShow.show(); }
+    if (containerToShow) {
+ containerToShow.show(); 
+}
   },
 
   resetCurrentFileList: function () {
@@ -362,12 +365,13 @@ Quantumart.QP8.BackendLibrary.prototype = {
     var url = '';
 
     // определить url в зависимости от fileEntityTypeCode
-    if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_SITE_FILE)
-    { url = CONTROLLER_URL_SITE + '_FolderPath'; }
-    else if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE)
-    { url = CONTROLLER_URL_CONTENT + '_FolderPath'; }
-    else
-    { throw new Error('fileEntityTypeCode is unknown.'); }
+    if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_SITE_FILE) {
+ url = CONTROLLER_URL_SITE + '_FolderPath'; 
+} else if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE) {
+ url = CONTROLLER_URL_CONTENT + '_FolderPath'; 
+} else {
+ throw new Error('fileEntityTypeCode is unknown.'); 
+}
 
     var self = this;
 

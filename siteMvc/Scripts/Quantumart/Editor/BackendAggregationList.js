@@ -33,8 +33,9 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this._fields = aggrList.data('aggregation_list_item_fields').split(',');
     this._addItemHandler = jQuery.proxy(this.addItem, this);
     this._removeItemHandler = jQuery.proxy(this.removeItem, this);
-    if(aggrList.data('additional_names') != undefined)
-        { this._additionalNames = aggrList.data('additional_names').split(','); }
+    if(aggrList.data('additional_names') != undefined) {
+ this._additionalNames = aggrList.data('additional_names').split(',');
+}
     this._viewModel = {
       items: this._items,
       addItem: this._addItemHandler,
@@ -63,7 +64,9 @@ Quantumart.QP8.BackendAggregationList.prototype = {
       this._items.removeAll();
       if (!$q.isNullOrEmpty(items) && $q.isArray(items)) {
         var self = this;
-        jQuery.each(items, function () { self._items.push(jQuery.extend({}, this)); });
+        jQuery.each(items, function () {
+ self._items.push(jQuery.extend({}, this));
+});
       }
     }
   },
@@ -99,10 +102,11 @@ Quantumart.QP8.BackendAggregationList.prototype = {
   },
 
   checkHeaders: function () {
-    if (this._tableBody.children('tr').size() == 0)// its time to hide headers
-      { this._tableHeader.hide(); }
-    else
-      { this._tableHeader.show(); }
+    if (this._tableBody.children('tr').size() == 0) {
+     this._tableHeader.hide();
+    } else {
+     this._tableHeader.show();
+    }
   },
 
   saveAggregationListData: function () {

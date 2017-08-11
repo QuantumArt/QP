@@ -22,10 +22,11 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 			false,
 			false,
 			function (data, textStatus, jqXHR) {
-				if (data.success)
-					{ serverContent = data.view; }
-				else
-					{ alert(data.message); }
+				if (data.success) {
+ serverContent = data.view; 
+} else {
+ alert(data.message); 
+}
 			},
 			function (jqXHR, textStatus, errorThrown) {
 				serverContent = null;
@@ -99,11 +100,9 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 	    var result;
 		if (stateData.isNull) {
 			result = $l.SearchBlock.isNullCheckBoxLabelText;
-		}
-		else if (stateData.isByValue) {
+		} else if (stateData.isByValue) {
 		    result = $.isNumeric(stateData.from) ? stateData.from : "?";
-		}
-		else {
+		} else {
 		    result = "[" + ($.isNumeric(stateData.from) ? stateData.from : "?") + ".." + ($.isNumeric(stateData.to) ? stateData.to : "?") + "]";
 		}
 
@@ -132,8 +131,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 					jQuery(".radioButtonsList input:radio[value=0]", this._containerElement)
 						.prop("checked", true)
 						.trigger('click');
-				}
-				else if (state.isByValue === false) {
+				} else if (state.isByValue === false) {
 					jQuery(".radioButtonsList input:radio[value=1]", this._containerElement)
 						.prop("checked", true)
 						.trigger('click');
@@ -150,11 +148,11 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 		if (this.get_IsNull()) {
 			jQuery(this._numberFromElement).data("tTextBox").disable();
 			jQuery(this._numberToElement).data("tTextBox").disable();
-		}
-		else {
+		} else {
 			jQuery(this._numberFromElement).data("tTextBox").enable();
-			if (!this._isByValue)
-				{ jQuery(this._numberToElement).data("tTextBox").enable(); }
+			if (!this._isByValue) {
+ jQuery(this._numberToElement).data("tTextBox").enable(); 
+}
 		}
 	},
 
@@ -165,10 +163,10 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 			jQuery(this._numberToElement).data("tTextBox").disable();
 			jQuery(this._numberToElement).closest(".row").hide();
 			jQuery("label[for='" + jQuery(this._numberFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.valueText);
-		}
-		else {
-			if (!this.get_IsNull())
-				{ jQuery(this._numberToElement).data("tTextBox").enable(); }
+		} else {
+			if (!this.get_IsNull()) {
+ jQuery(this._numberToElement).data("tTextBox").enable(); 
+}
 			jQuery("label[for='" + jQuery(this._numberFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.fromText);
 			jQuery(this._numberToElement).closest(".row").show();
 		}
@@ -178,10 +176,11 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 	_onNumericInputFocus: function (e) {
 		var focusedNumeric = jQuery(e.currentTarget).data("tTextBox");
 		var otherNumeric = null;
-		if (e.currentTarget === this._numberFromElement)
-			{ otherInput = jQuery(this._numberToElement).data("tTextBox"); }
-		else if (e.currentTarget === this._numberToElement)
-			{ otherInput = jQuery(this._numberFromElement).data("tTextBox"); }
+		if (e.currentTarget === this._numberFromElement) {
+ otherInput = jQuery(this._numberToElement).data("tTextBox"); 
+} else if (e.currentTarget === this._numberToElement) {
+ otherInput = jQuery(this._numberFromElement).data("tTextBox"); 
+}
 
 		if (otherInput && otherInput.value() && focusedNumeric && !focusedNumeric.value()) {
 			focusedNumeric.value(otherInput.value());
@@ -200,10 +199,12 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 			$isNullCheckBoxElement = null;
 		}
 
-		if (this._numberFromElement)
-			{ jQuery(this._numberFromElement).unbind("focus", this._onNumericInputFocusHandler); }
-		if (this._numberToElement)
-			{ jQuery(this._numberToElement).unbind("focus", this._onNumericInputFocusHandler); }
+		if (this._numberFromElement) {
+ jQuery(this._numberFromElement).unbind("focus", this._onNumericInputFocusHandler); 
+}
+		if (this._numberToElement) {
+ jQuery(this._numberToElement).unbind("focus", this._onNumericInputFocusHandler); 
+}
 
 		// удаляем все NumericTextBoxes
 		$c.destroyAllNumericTextBoxes(this._containerElement);
@@ -227,17 +228,19 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 
 
 	get_IsNull: function () {
-		if (this._isNullCheckBoxElement)
-			{ return jQuery(this._isNullCheckBoxElement).is(":checked"); }
-		else
-			{ return false; }
+		if (this._isNullCheckBoxElement) {
+ return jQuery(this._isNullCheckBoxElement).is(":checked"); 
+} else {
+ return false; 
+}
 	},
 
 	get_Inverse: function () {
-	    if (this._inverseCheckBoxElement)
-	        { return jQuery(this._inverseCheckBoxElement).is(":checked"); }
-	    else
-	        { return false; }
+	    if (this._inverseCheckBoxElement) {
+ return jQuery(this._inverseCheckBoxElement).is(":checked"); 
+} else {
+ return false; 
+}
 	},
 
 	_isByValue: true,

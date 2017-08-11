@@ -144,22 +144,18 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 		var actionCode = eventArgs.get_actionCode();
 		var entityId = eventArgs.get_entityId();
 
-		if (actionCode == ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES)
-		{
+		if (actionCode == ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
 			var entityIds = (eventArgs.get_isMultipleEntities()) ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
 			var self = this;
 			jQuery.each(entityIds, function (index, id) {
 				self.refreshEditorGroup(ENTITY_TYPE_CODE_ARTICLE, id);
 			});
-		}
-		else if (actionTypeCode == ACTION_TYPE_CODE_CHANGE_LOCK) {
+		} else if (actionTypeCode == ACTION_TYPE_CODE_CHANGE_LOCK) {
 			this.refreshEditorGroup(entityTypeCode, entityId);
-		}
-		else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+		} else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
 			var confirmMessageText = String.format($l.EntityEditor.autoRefreshConfirmMessageAfterArticleRestoring, entityId);
 			this.refreshEditorGroup(ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { confirmMessageText: confirmMessageText });
-		}
-		else if (actionCode == ACTION_CODE_ENABLE_ARTICLES_PERMISSIONS && entityTypeCode == ENTITY_TYPE_CODE_CONTENT) {
+		} else if (actionCode == ACTION_CODE_ENABLE_ARTICLES_PERMISSIONS && entityTypeCode == ENTITY_TYPE_CODE_CONTENT) {
 			this.refreshEditorGroup(entityTypeCode, entityId);
 		}
 	},

@@ -36,8 +36,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
     var $list = jQuery(this._listElement);
     var countOverflowElement = $list.find("." + this.OVERFLOW_HIDDEN_CLASS);
-    if (countOverflowElement.length > 0)
-    {
+    if (countOverflowElement.length > 0) {
       this._countOverflowElement = countOverflowElement.get(0);
     }
 
@@ -108,8 +107,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
           Name : $item.find("LABEL").text()
         };
       }).get() || [];
-    }
-    else {
+    } else {
       var ids = $(this._countOverflowElement).val().split(",");
       result = $.map(ids, function (id) {
         return { Id: id, Name: '' };

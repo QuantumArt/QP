@@ -23,10 +23,11 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
             false,
             false,
             function (data, textStatus, jqXHR) {
-                if (data.success)
-                    { serverContent = data.view; }
-                else
-                    { alert(data.message); }
+                if (data.success) {
+ serverContent = data.view; 
+} else {
+ alert(data.message); 
+}
             },
             function (jqXHR, textStatus, errorThrown) {
                 serverContent = null;
@@ -74,11 +75,9 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         var stateData = this.get_blockState().data;
         if (stateData.isNull) {
             return $l.SearchBlock.isNullCheckBoxLabelText;
-        }
-        else if (stateData.text) {
+        } else if (stateData.text) {
             return '"' + $q.cutShort(stateData.alias, 8) + '"';
-        }
-        else {
+        } else {
             return '""';
         }
     },
@@ -118,10 +117,11 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
 
     _onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
     get_IsNull: function () {
-        if (this._isNullCheckBoxElement)
-            { return jQuery(this._isNullCheckBoxElement).is(":checked"); }
-        else
-            { return false; }
+        if (this._isNullCheckBoxElement) {
+ return jQuery(this._isNullCheckBoxElement).is(":checked"); 
+} else {
+ return false; 
+}
     },
 
 

@@ -35,10 +35,18 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 	_parentEntityId: 0,
     _viewTypeCode: "",
 
-	get_actionCode: function () { return this._actionCode; },
-	set_actionCode: function (value) { this._actionCode = value; },
-	get_parentEntityId: function () { return this._parentEntityId; },
-	set_parentEntityId: function (value) { this._parentEntityId = value; },
+	get_actionCode: function () {
+ return this._actionCode; 
+},
+	set_actionCode: function (value) {
+ this._actionCode = value; 
+},
+	get_parentEntityId: function () {
+ return this._parentEntityId; 
+},
+	set_parentEntityId: function (value) {
+ this._parentEntityId = value; 
+},
 
 	VIEWS_DROPDOWN_CODE: "views",
 	PREVIEW_BUTTON_CODE: "preview",
@@ -63,8 +71,9 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 	getSelectedViewTypeCode: function () {
 		var result = "";
 		var $list = this.getToolbarItem(this.VIEWS_DROPDOWN_CODE);
-		if ($list)
-			{ result = jQuery("li.selected", $list).attr("code"); }
+		if ($list) {
+ result = jQuery("li.selected", $list).attr("code"); 
+}
 		return result;
 	},
 
@@ -169,11 +178,9 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 
 		if (itemValue == this.PREVIEW_BUTTON_CODE) {
 			this.notify(EVENT_TYPE_VIEW_TOOLBAR_PREVIEW_BUTTON_CLICKING, newArgs);
-		}
-		else if (itemValue == this.SEARCH_BUTTON_CODE) {
+		} else if (itemValue == this.SEARCH_BUTTON_CODE) {
 			this.notify(EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKING, newArgs);
-		}
-		else if (itemValue == this.CONTEXT_BUTTON_CODE) {
+		} else if (itemValue == this.CONTEXT_BUTTON_CODE) {
 		    this.notify(EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKING, newArgs);
 		}
 
@@ -187,11 +194,9 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 
 		if (itemValue == this.PREVIEW_BUTTON_CODE) {
 			this.notify(EVENT_TYPE_VIEW_TOOLBAR_PREVIEW_BUTTON_CLICKED, newArgs);
-		}
-		else if (itemValue == this.SEARCH_BUTTON_CODE) {
+		} else if (itemValue == this.SEARCH_BUTTON_CODE) {
 			this.notify(EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKED, newArgs);
-		}
-		else if (itemValue == this.CONTEXT_BUTTON_CODE) {
+		} else if (itemValue == this.CONTEXT_BUTTON_CODE) {
 		    this.notify(EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKED, newArgs);
 		}
 
@@ -279,12 +284,24 @@ Quantumart.QP8.BackendViewToolbarDropDownListEventArgs.prototype = {
 	_preventDefaultBehavior: false, // признак, разрещающий предотвращение поведения поумолчанию
 	_code: "", // код выбранного элемента
 
-	get_controllerActionUrl: function () { return this._controllerActionUrl; },
-	set_controllerActionUrl: function (value) { this._controllerActionUrl = value; },
-	get_preventDefaultBehavior: function () { return this._preventDefaultBehavior; },
-	set_preventDefaultBehavior: function (value) { this._preventDefaultBehavior = value; },
-	get_code: function () { return this._code; },
-	set_code: function (value) { this._code = value; }
+	get_controllerActionUrl: function () {
+ return this._controllerActionUrl; 
+},
+	set_controllerActionUrl: function (value) {
+ this._controllerActionUrl = value; 
+},
+	get_preventDefaultBehavior: function () {
+ return this._preventDefaultBehavior; 
+},
+	set_preventDefaultBehavior: function (value) {
+ this._preventDefaultBehavior = value; 
+},
+	get_code: function () {
+ return this._code; 
+},
+	set_code: function (value) {
+ this._code = value; 
+}
 };
 
 Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs = function (toolbarArgs) {

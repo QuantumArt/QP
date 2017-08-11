@@ -64,14 +64,11 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 		var list = null;
 		if (listType == Quantumart.QP8.Enums.DataListType.DropDownList) {
 			list = new Quantumart.QP8.BackendEntityDropDownList(listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options);
-		}
-		else if (listType == Quantumart.QP8.Enums.DataListType.CheckBoxList) {
+		} else if (listType == Quantumart.QP8.Enums.DataListType.CheckBoxList) {
 			list = new Quantumart.QP8.BackendEntityCheckBoxList(listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options);
-		}
-		else if (listType == Quantumart.QP8.Enums.DataListType.SingleItemPicker) {
+		} else if (listType == Quantumart.QP8.Enums.DataListType.SingleItemPicker) {
 			list = new Quantumart.QP8.BackendEntitySingleItemPicker(listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options);
-		}
-		else if (listType == Quantumart.QP8.Enums.DataListType.MultipleItemPicker) {
+		} else if (listType == Quantumart.QP8.Enums.DataListType.MultipleItemPicker) {
 			list = new Quantumart.QP8.BackendEntityMultipleItemPicker(listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options);
 		}
 
@@ -81,8 +78,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 
 			var listGroup = this.createListGroup(listGroupCode);
 			listGroup[listElementId] = list;
-		}
-		else {
+		} else {
 			alert("Данный тип списка не поддерживается!");
 		}
 
@@ -127,8 +123,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 		var parentEntityId = eventArgs.get_parentEntityId();
 		var actionTypeCode = eventArgs.get_actionTypeCode();
 		var testEntityId = 0;
-		if (eventArgs.get_isSaved() || eventArgs.get_isUpdated())
-        {
+		if (eventArgs.get_isSaved() || eventArgs.get_isUpdated()) {
 		    testEntityId = eventArgs.get_entityId();
 		}
 
@@ -144,8 +139,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 
 		if ((eventArgs.get_isArchiving() || eventArgs.get_isRemoving()) && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE) {
 			this.refreshListGroup(ENTITY_TYPE_CODE_ARCHIVE_ARTICLE, parentEntityId);
-		}
-		else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
+		} else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
 			this.refreshListGroup(ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
 		}
 	},

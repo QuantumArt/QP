@@ -38,7 +38,9 @@ Quantumart.QP8.Backend = function (isDebugMode, options) {
   ]);
 
   $(document).bind('click', function (e) {
-    if (e.which == 2) { e.preventDefault(); }
+    if (e.which == 2) {
+ e.preventDefault(); 
+}
   });
 
   $(window).bind('load', this._loadHandler);
@@ -354,8 +356,9 @@ Quantumart.QP8.Backend.prototype = {
           this._backendActionExecutor.executeNonInterfaceAction(eventArgs, callback);
         }
       }
-    } else if (status == BACKEND_ACTION_EXECUTION_STATUS_SUCCESS)
-    { this._onActionExecuted(eventArgs); }
+    } else if (status == BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
+ this._onActionExecuted(eventArgs); 
+}
   },
 
   _onActionExecuted: function (eventArgs) {
@@ -372,8 +375,9 @@ Quantumart.QP8.Backend.prototype = {
     this._backendContextMenuManager.onActionExecuted(eventArgs);
     this._backendActionPermissionViewManager.onActionExecuted(eventArgs);
 
-    if (eventArgs.get_isUpdated() && eventArgs.get_entityTypeCode() == ENTITY_TYPE_CODE_CUSTOM_ACTION)
-    { $cache.clear(); }
+    if (eventArgs.get_isUpdated() && eventArgs.get_entityTypeCode() == ENTITY_TYPE_CODE_CUSTOM_ACTION) {
+ $cache.clear(); 
+}
   },
 
   _onEntityReaded: function (eventType, sender, eventArgs) {
@@ -571,8 +575,7 @@ Quantumart.QP8.Backend.prototype = {
       this._onActionExecutingHandler = null;
       this._onActionExecutedHandler = null;
       this._onEntityReadedHandler = null;
-    }
-    finally {
+    } finally {
       if (this._directLinkExecutor) {
         this._directLinkExecutor.detachObserver(EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING);
         this._directLinkExecutor.dispose();

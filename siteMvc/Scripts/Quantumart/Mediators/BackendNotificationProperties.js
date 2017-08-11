@@ -18,31 +18,33 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
 	$externalCheckbox.bind("click", onExternalChanged);
 
 	function onExternalChanged() {
-		if ($externalCheckbox.is(':checked'))
-			{ $externalPanel.hide(); }
-		else
-			{ $externalPanel.show(); }
+		if ($externalCheckbox.is(':checked')) {
+ $externalPanel.hide(); 
+} else {
+ $externalPanel.show(); 
+}
 	}
 
 	function onUseBackendEmailChanged() {
-		if ($backendEmailCheckbox.is(':checked'))
-			{ $senderEmailPanel.hide(); }
-		else
-			{ $senderEmailPanel.show(); }
+		if ($backendEmailCheckbox.is(':checked')) {
+ $senderEmailPanel.hide(); 
+} else {
+ $senderEmailPanel.show(); 
+}
 	}
 
 	function onUseDefaultSenderNameChanged() {
-		if ($senderNameCheckbox.is(':checked'))
-			{ $senderNamePanel.hide(); }
-		else
-			{ $senderNamePanel.show(); }
+		if ($senderNameCheckbox.is(':checked')) {
+ $senderNamePanel.hide(); 
+} else {
+ $senderNamePanel.show(); 
+}
 	}
 
 	function onStatusChanged() {
 		if ($statusCheckBoxes.filter(':checked').length != 0) {
 			$statusPanel.show();
-		}
-		else {
+		} else {
 			$statusPanel.hide();
 		}
 	}

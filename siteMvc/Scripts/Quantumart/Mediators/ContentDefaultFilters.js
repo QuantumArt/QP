@@ -15,8 +15,7 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 			articlePicker.disableList();
 			articlePicker.removeAllListItems();
 			articlePicker.set_parentEntityId(0);
-		}
-		else {
+		} else {
 			var selectedContent = contentPicker.getSelectedEntityIDs()[0];
 			articlePicker.enableList();
 			if (articlePicker.get_parentEntityId() !== selectedContent) {
@@ -31,8 +30,7 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 			if (contentPicker.getSelectedListItemCount() === 0) {
 				articlePicker.disableList();
 				articlePicker.set_parentEntityId(0);
-			}
-			else {
+			} else {
 				articlePicker.set_parentEntityId(contentPicker.getSelectedEntityIDs()[0]);
 				articlePicker.enableList();
 			}

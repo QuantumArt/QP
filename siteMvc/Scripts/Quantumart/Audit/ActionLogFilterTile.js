@@ -67,7 +67,9 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 		}
 	},
 
-	get_options: function () { return this._options; },
+	get_options: function () {
+ return this._options; 
+},
 
 	_createFilter: function () {
 	    var html = new $.telerik.stringBuilder()
@@ -108,8 +110,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 		if (this._popupWindowComponent) {
 			this._popupWindowComponent.open();
 			this._filterComponent.onOpen();
-		}
-		else {
+		} else {
 			this._createFilter();
 		}
 	},

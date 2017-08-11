@@ -1,19 +1,16 @@
-Quantumart.QP8.FieldPropertiesMediator = function (tabId)
-{
+Quantumart.QP8.FieldPropertiesMediator = function (tabId) {
 	var $root = jQuery("#" + tabId + "_editingForm");
 	$root.find("input[name='Data.IsInteger']").on("click", onIntegerClick);
 	onIntegerClick();
 
 
-	function onIntegerClick()
-	{
+	function onIntegerClick() {
 		var isInteger = $root.find("input[name='Data.IsInteger']").prop("checked");
 		$root.find("input[name='Data.IsLong']").closest("dl").toggle(isInteger);
 		$root.find("input[name='Data.IsDecimal']").closest("dl").toggle(!isInteger);
 	}
 
-	function dispose()
-	{
+	function dispose() {
 		$root.find("input[name='Data.IsInteger']").off("click", onIntegerClick);
 	}
 
@@ -56,15 +53,13 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
 						});
 						html = htmlBuilder.string();
 						html2 = '<option value="">' + $l.EntityEditor.selectField + '</option>' + html;
-					}
-					else {
+					} else {
 					    html = '<option value=""></option>';
 					    html2 = html;
 					}
 					$displayFieldSelectElement.append(html);
 					$listOrderSelectElement.append(html2);
-				}
-				else {
+				} else {
 					alert(data.message);
 				}
 			})
@@ -116,12 +111,10 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 							html.cat('<option value="').cat(this.id).cat('">').cat(this.text).cat('</option>');
 						});
 						$classifierSelectElement.append(html.string());
-					}
-					else {
+					} else {
 						$classifierSelectElement.append('<option value=""></option>');
 					}
-				}
-				else {
+				} else {
 					alert(data.message);
 				}
 			})
@@ -189,8 +182,7 @@ Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId
         var fieldType = jQuery("option:selected", $fieldTypeSelectElement).val();
         if(fieldType == FILE_FIELD_TYPE) {
             fileFieldComponent.set_isImage(false);
-        }
-        else if(fieldType == IMAGE_FIELD_TYPE) {
+        } else if(fieldType == IMAGE_FIELD_TYPE) {
             fileFieldComponent.set_isImage(true);
         }
     }
@@ -221,19 +213,16 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
 		if (!selectedContentId) {
 			// ничего не выбрано - закрываем все панели
 			$panels.hide();
-		}
-		else {
+		} else {
 			if ($q.isNullOrEmpty(selectedContentId)) {
 				$panels.hide();
-			}
-			else {
+			} else {
 				$panels.show();
 				if (selectedContentId == fieldContentID) {
 					// тот же контент
 					$panels.filter('[showforcurrent]').show();
 					$panels.filter('[hideforcurrent]').hide();
-				}
-				else {
+				} else {
 					$panels.filter('[showforcurrent]').hide();
 					$panels.filter('[hideforcurrent]').show();
 				}

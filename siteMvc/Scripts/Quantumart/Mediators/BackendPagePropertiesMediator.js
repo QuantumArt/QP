@@ -11,8 +11,7 @@ Quantumart.QP8.BackendPagePropertiesMediator = function (rootElementId) {
     function manageCacheHours() {
         if ($displayCacheHours.is(":checked")) {
             $cacheHours.show();
-        }
-        else {
+        } else {
             $cacheHours.hide();
         }
     }

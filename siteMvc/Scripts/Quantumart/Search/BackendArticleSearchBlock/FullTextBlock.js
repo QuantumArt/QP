@@ -110,10 +110,12 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
           fieldValue: fieldValue,
           text: jQuery(this._queryTextBoxElement).val()
         };
-      } else
-      { return null; }
-    } else
-    { return null; }
+      } else {
+ return null; 
+}
+    } else {
+ return null; 
+}
   },
 
   // возвращает параметры для полнотекстового поиска
@@ -122,20 +124,23 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     if (this._textFieldsComboElement) {
       var $resetElem = jQuery(this._textFieldsComboElement).find("option[data-field_is_title='True']");
 
-      if (!$resetElem.length)
-      { $resetElem = jQuery(this._textFieldsComboElement).find("option[value='']"); }
+      if (!$resetElem.length) {
+ $resetElem = jQuery(this._textFieldsComboElement).find("option[value='']"); 
+}
     }
 
     $resetElem.prop('selected', true);
 
     // очистить текстовое поле
-    if (this._queryTextBoxElement)
-    { jQuery(this._queryTextBoxElement).val(''); }
+    if (this._queryTextBoxElement) {
+ jQuery(this._queryTextBoxElement).val(''); 
+}
   },
 
   onFieldChanged: function () {
-    if (jQuery(this._queryTextBoxElement).val())
-    { jQuery(this._fullTextBlockElement).closest('form').trigger('submit'); }
+    if (jQuery(this._queryTextBoxElement).val()) {
+ jQuery(this._fullTextBlockElement).closest('form').trigger('submit'); 
+}
   },
 
   // очищает блок поиска

@@ -50,9 +50,9 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 						'<span>{2}</span>' +
 					'</div>', item.Name, item.Modified, item.Size, self._getThumbnailLink(item, options), item.FullName));
 			});
-		}
-		else
-			{ html.cat($l.FileList.noRecords); }
+		} else {
+ html.cat($l.FileList.noRecords); 
+}
 
 		$fileListPreviewContainer.html(html.string());
 
@@ -75,15 +75,16 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 		if (item.FileType == Quantumart.QP8.Enums.LibraryFileType.Image) {
 			var url = "";
 			// определить url в зависимости от fileEntityTypeCode
-			if (options.fileEntityTypeCode == ENTITY_TYPE_CODE_SITE_FILE)
-				{ url = CONTROLLER_URL_THUMBNAIL + '_SiteFileThumbnail'; }
-			else if (options.fileEntityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE)
-				{ url = CONTROLLER_URL_THUMBNAIL + '_ContentFileThumbnail'; }
+			if (options.fileEntityTypeCode == ENTITY_TYPE_CODE_SITE_FILE) {
+ url = CONTROLLER_URL_THUMBNAIL + '_SiteFileThumbnail'; 
+} else if (options.fileEntityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE) {
+ url = CONTROLLER_URL_THUMBNAIL + '_ContentFileThumbnail'; 
+}
 
 			return $q.htmlEncode(String.format("'{0}?folderId={1}&fileName={2}&{3}'", url, options.folderId, item.FullName, new Date().getTime()));
-		}
-		else
-			{ return $q.htmlEncode(String.format("'{0}{1}'", THEME_IMAGE_FOLDER_URL_BIG_FILE_TYPE_ICONS, item.BigIconLink)); }
+		} else {
+ return $q.htmlEncode(String.format("'{0}{1}'", THEME_IMAGE_FOLDER_URL_BIG_FILE_TYPE_ICONS, item.BigIconLink)); 
+}
 	} // сформировать ссылку на Thumbnail в зависимости от типа файла
 };
 

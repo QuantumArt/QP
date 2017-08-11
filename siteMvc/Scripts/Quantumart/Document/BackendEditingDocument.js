@@ -284,8 +284,9 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
   showLoadingLayer: function () {
     if (this._editingArea) {
-      if (this.isSelected())
-        { this._editingArea.showAjaxLoadingLayer(); }
+      if (this.isSelected()) {
+ this._editingArea.showAjaxLoadingLayer(); 
+}
     }
   },
 
@@ -401,8 +402,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
       if (tabId != 0) {
         this._editingArea.selectDocument(tabId);
         this._editingArea.closeDocument(this.get_tabId(), false, true);
-      }
-      else {
+      } else {
         this.changeContent(bcEventArgs, true);
       }
     }
@@ -446,7 +446,9 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     this._editingArea.hostExternalCallerContextsUnbinded(unbindingEventArgs);
   },
 
-  _isWindow: function () { return false; },
+  _isWindow: function () {
+ return false; 
+},
 
   dispose: function () {
     Quantumart.QP8.BackendEditingDocument.callBaseMethod(this, "dispose");

@@ -255,8 +255,9 @@
 
                                 // Avoid unnecessary setData. Also preserve selection
                                 // when user changed his mind and goes back to wysiwyg editing.
-                                if (newData === oldData)
-                                    { return true; }
+                                if (newData === oldData) {
+ return true; 
+}
 
                                 // Set data asynchronously to avoid errors in IE.
                                 CKEDITOR.env.ie ? CKEDITOR.tools.setTimeout(setData, 0, this, newData) : setData.call(this, newData);
@@ -938,9 +939,9 @@
                             });
                         } else {
                             var editable = editor.editable();
-                            if (editable.is('body'))
-                                { editor.document.$.execCommand('SelectAll', false, null); }
-                            else {
+                            if (editable.is('body')) {
+ editor.document.$.execCommand('SelectAll', false, null); 
+} else {
                                 var range = editor.createRange();
                                 range.selectNodeContents(editable);
                                 range.select();

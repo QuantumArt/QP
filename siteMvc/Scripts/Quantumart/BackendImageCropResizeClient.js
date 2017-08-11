@@ -167,8 +167,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
                 var selection = _imgAreaSelect.getSelection();
                 _ensureSelection(selection);
-            }
-            else {
+            } else {
             	_resizeImage(resizeWidth);
             }
         },
@@ -267,8 +266,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                     _$y.text("");
                     _$width.text("");
                     _$height.text("");
-                }
-                else {
+                } else {
                     if (needRedrawWidthAndHeight) {
                         _$width.text(selection.width);
                         _$height.text(selection.height);
@@ -373,20 +371,25 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             _$errorsContainer.hide();
         },
         _checkPrameters = function () {
-            if (!_parameters.sourceImageUrl)
-                { throw new Error("imgCropResize: parameter 'sourceImageUrl' not set"); }
+            if (!_parameters.sourceImageUrl) {
+ throw new Error("imgCropResize: parameter 'sourceImageUrl' not set"); 
+}
 
-            if (!_parameters.checkFileNameActionUrl)
-                { throw new Error("imgCropResize: parameter 'checkFileNameActionUrl' not set"); }
+            if (!_parameters.checkFileNameActionUrl) {
+ throw new Error("imgCropResize: parameter 'checkFileNameActionUrl' not set"); 
+}
 
-            if (!_parameters.cropResizeActionUrl)
-                { throw new Error("imgCropResize: parameter 'cropResizeActionUrl' not set"); }
+            if (!_parameters.cropResizeActionUrl) {
+ throw new Error("imgCropResize: parameter 'cropResizeActionUrl' not set"); 
+}
 
-            if (_parameters.resizeRange.min < 0 || _parameters.resizeRange.max < 0)
-                { throw new Error("imgCropResize: resize range must be positive"); }
+            if (_parameters.resizeRange.min < 0 || _parameters.resizeRange.max < 0) {
+ throw new Error("imgCropResize: resize range must be positive"); 
+}
 
-            if (_parameters.resizeRange.min > _parameters.resizeRange.max)
-                { throw new Error("imgCropResize: resizeRange.min must be less than resizeRange.max"); }
+            if (_parameters.resizeRange.min > _parameters.resizeRange.max) {
+ throw new Error("imgCropResize: resizeRange.min must be less than resizeRange.max"); 
+}
         },
 
 		_getFromCache = function () {
@@ -399,9 +402,10 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
 		_saveToCache = function () {
 			var sendData = readData();
-			if (sendData.width && sendData.height)
-				{ Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl] =
-					{ crop: { top: sendData.top, left: sendData.left, width: sendData.width, height: sendData.height } }; }
+			if (sendData.width && sendData.height) {
+ Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl] =
+					{ crop: { top: sendData.top, left: sendData.left, width: sendData.width, height: sendData.height } }; 
+}
 		},
 
         // #endregion
@@ -419,8 +423,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
                     var message = response.message || _defaultErrorMessage;
                     displayErrors([message]);
-                }
-                else {
+                } else {
                     _serverOperateImage();
                 }
             }).fail(function (error) {
@@ -443,14 +446,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
                     var message = response.message || _defaultErrorMessage;
                     displayErrors([message]);
-                }
-                else {
+                } else {
                 	if (typeof _parameters.onCompleteCallback == "function") {
                 		if (_getSaveMode() == _saveMode.saveAs) {
                 			_saveToCache();
-                		}
-                		else
-                		{
+                		} else {
                 			_removeFromCache();
                 		}
                         _parameters.onCompleteCallback();
@@ -490,8 +490,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             var $fieldsetSave = $(_fieldsetSaveHtml);
             if (_parameters.allowFileRewrite) {
                 $fieldsetSave.find(".save-items").prepend($(_saveOverwriteOrSaveAsHtml));
-            }
-            else {
+            } else {
                 $fieldsetSave.find(".save-items").prepend($(_saveOverwriteHtml));
             }
 
@@ -533,12 +532,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             _$btnSave.click(function () {
                 if (_validate()) {
                 	_removeErrors();
-                	if (_getSaveMode() == _saveMode.overwrite)
-                	{
+                	if (_getSaveMode() == _saveMode.overwrite) {
                 		_serverOperateImage();
-                	}
-                	else
-                	{
+                	} else {
                 		var formOptions = readData();
                 		_serverCheckFileName(formOptions.targetFileUrl);
                 	}
@@ -554,10 +550,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             _$radioInputs.change(function (radio) {
 
                 var saveCopy = _$radioSaveCopy.attr("checked");
-                if (saveCopy)
-                	{ _$inputUserFileName.removeAttr("disabled"); }
-                else
-                	{ _$inputUserFileName.attr("disabled", "disabled"); }
+                if (saveCopy) {
+ _$inputUserFileName.removeAttr("disabled"); 
+} else {
+ _$inputUserFileName.attr("disabled", "disabled"); 
+}
             });
         }
     // #endregion
@@ -608,17 +605,16 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
         if (overwriteFile) {
             targetFileUrl = _parameters.sourceImageUrl;
-        }
-        else {
+        } else {
         	var value = $.trim(_$inputUserFileName.val());
-        	if (value != "" && value.lastIndexOf(".") == -1)
-        		{ value = value + _getExtension(_parameters.sourceImageUrl); }
+        	if (value != "" && value.lastIndexOf(".") == -1) {
+ value = value + _getExtension(_parameters.sourceImageUrl); 
+}
 
         	if (_parameters.resultImageFolder) {
                 targetFileUrl = _endsWith("/", _parameters.resultImageFolder) ?
                     _parameters.resultImageFolder + value : "/" + value;
-            }
-            else {
+            } else {
                 targetFileUrl = _getFolder(_parameters.sourceImageUrl) + value;
             }
         }

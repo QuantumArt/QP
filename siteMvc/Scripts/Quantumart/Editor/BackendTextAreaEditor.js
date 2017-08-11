@@ -221,8 +221,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       }
     };
 
-    if (tArea.is('[readOnly]'))
-    {
+    if (tArea.is('[readOnly]')) {
       options.onEditable = function (node) {
         if (!node.path) {
           return false;

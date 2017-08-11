@@ -18,8 +18,7 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
 		Quantumart.QP8.BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { searchQuery: searchQuery });
 	},
 
-	_getButton: function ()
-	{
+	_getButton: function () {
 		return jQuery("#" + this._searchBlockElementId).find(".button");
 	},
 
@@ -29,19 +28,16 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
 		this._refreshQuery(this._initQuery);
 	},
 
-	refreshQuery: function (eventArgs)
-	{
+	refreshQuery: function (eventArgs) {
 		var context = eventArgs.get_context();
 		var query = (context && context.additionalUrlParameters) ? context.additionalUrlParameters.query : "";
 		this._documentContext.getHost()._additionalUrlParameters = null;
 		this._refreshQuery(query);
 	},
 
-	_refreshQuery: function (query)
-	{
+	_refreshQuery: function (query) {
 		var $button = this._getButton();
-		if (query)
-		{
+		if (query) {
 			jQuery("#" + this._searchBlockElementId + " input.textbox").val(query);
 			$button.trigger("click");
 		}
