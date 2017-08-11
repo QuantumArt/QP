@@ -991,7 +991,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .cat('>')
       .cat('<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" width="16px" height="16px" />')
       .cat('</span>\n')
-      .cat('          <span class="text">' + text  + '</span>\n')
+      .cat('          <span class="text">' + text + '</span>\n')
       .cat('      </div>\n')
       .cat('  </div>\n')
       .cat('</li>\n');

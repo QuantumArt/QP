@@ -100,7 +100,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
       result = "=" + result;
     } else if (stateData.beginningStart) {
       if (stateData.inverse) {
-        return  $l.SearchBlock.endText + result;
+        return $l.SearchBlock.endText + result;
       }
         return $l.SearchBlock.fromText + result;
 

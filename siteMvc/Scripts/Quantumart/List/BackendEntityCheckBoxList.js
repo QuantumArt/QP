@@ -91,7 +91,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     var operation = refreshOnly ? "addClass" : "removeClass";
     $list[operation](REFRESHED_FIELD_CLASS_NAME);
     var value = this.getSelectedEntityIDs();
-    $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data("list_item_name"), value: value, contentFieldName: $list.closest("dl").data("field_name")  });
+    $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data("list_item_name"), value: value, contentFieldName: $list.closest("dl").data("field_name") });
   },
 
   getSelectedEntities: function () {

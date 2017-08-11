@@ -434,7 +434,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             _$aside = $(" <div class='aside'></div>");
             _$imageContainerDiv = $("<div class='image'/>");
             var url = _parameters.sourceImageUrl + "?t=" + new Date().getTime();
-            _$img = $("<img class='img' src='" + url  + "' alt='изображение' />");
+            _$img = $("<img class='img' src='" + url + "' alt='изображение' />");
             _$img.load(function () {
             	_imgInitWidth = _$img.width();
             	_imgInitHeight = _$img.height();

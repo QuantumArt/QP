@@ -1067,7 +1067,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       $node.each(function (index, item) {
         self.deselectNode(item);
       });
-    } else  if ($checkbox.is(':checked')) {
+    } else if ($checkbox.is(':checked')) {
       $node.each(function (index, item) {
         self.selectNode(item, self._allowMultipleNodeSelection);
       });
