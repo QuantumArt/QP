@@ -1,4 +1,4 @@
-﻿/* eslint camelcase: ["off", { properties: "never"}] */
+/* eslint camelcase: ["off", { properties: "never"}] */
 
 // eslint-disable-next-line no-extra-semi
 ; (function init() {

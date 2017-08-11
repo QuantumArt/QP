@@ -1,4 +1,4 @@
-﻿// -- Компонент Search in code
+// -- Компонент Search in code
 Quantumart.QP8.SearchInCodeComponent = function (filterElementId, gridElementId) {
     this._filterElementId = filterElementId;
     this._gridElementId = gridElementId;

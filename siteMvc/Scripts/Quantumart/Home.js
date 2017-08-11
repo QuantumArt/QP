@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
+Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
 
 	function initialize() {
 		var $search = jQuery("#" + searchElementId);
