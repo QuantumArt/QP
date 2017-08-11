@@ -267,7 +267,7 @@
                                 // Don't let the dialog close before setData is over.
                                 return false;
                             };
-                        })(),
+                        }()),
 
                         contents: [{
                             id: 'main',
@@ -686,7 +686,7 @@
                                     editorExtraKeys[key] = function () {
                                         editor.execCommand(command);
                                     };
-                                })(ckeditorKeystrokes[i][1]);
+                                }(ckeditorKeystrokes[i][1]));
                             }
                         }
                     }
@@ -1010,7 +1010,7 @@
             }
         }
     });
-})();
+}());
 CKEDITOR.plugins.sourcearea = {
     commands: {
         source: {

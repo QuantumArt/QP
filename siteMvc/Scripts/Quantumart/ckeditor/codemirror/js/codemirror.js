@@ -1120,7 +1120,7 @@ var bidiOrdering = (function () {
 
     return order;
   };
-})();
+}());
 
 // Get the bidi ordering for the given line (and cache it). Returns
 // false for lines that are fully left-to-right, and an array of
@@ -1233,13 +1233,13 @@ function e_button(e) {
 }
 
 // Detect drag-and-drop
-var dragAndDrop = function () {
+var dragAndDrop = (function () {
   // There is *some* kind of drag-and-drop support in IE6-8, but I
   // couldn't get it to work yet.
   if (ie && ie_version < 9) { return false; }
   var div = elt('div');
   return "draggable" in div || "dragDrop" in div;
-}();
+}());
 
 var zwspSupported;
 function zeroWidthElement(measure) {
@@ -1303,7 +1303,7 @@ var hasCopyEvent = (function () {
   if ("oncopy" in e) { return true; }
   e.setAttribute("oncopy", "return;");
   return typeof e.oncopy == "function";
-})();
+}());
 
 var badZoomedRects = null;
 function hasBadZoomedRects(measure) {
@@ -9068,7 +9068,7 @@ var dontDelegate = "iter insert remove copy getEditor constructor".split(" ");
 for (var prop in Doc.prototype) { if (Doc.prototype.hasOwnProperty(prop) && indexOf(dontDelegate, prop) < 0)
   { CodeMirror$1.prototype[prop] = (function (method) {
     return function () { return method.apply(this.doc, arguments); };
-  })(Doc.prototype[prop]); } }
+  }(Doc.prototype[prop])); } }
 
 eventMixin(Doc);
 

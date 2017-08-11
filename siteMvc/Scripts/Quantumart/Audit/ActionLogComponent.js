@@ -112,7 +112,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
               default:
                 return { w: 350, h: 125 };
             }
-          })(),
+          }()),
           createFilter: function ($filterContainer) {
             switch (ft) {
               case $e.ActionLogFilteredColumns.EntityStringId:

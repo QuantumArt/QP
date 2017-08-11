@@ -142,7 +142,7 @@
         if (code < 123){return true;}
         return code >= 0xaa && nonASCIIidentifier.test(String.fromCharCode(code));
       };
-    })(acorn);
+    }(acorn));
 
     function in_array(what, arr) {
         for (var i = 0; i < arr.length; i += 1) {

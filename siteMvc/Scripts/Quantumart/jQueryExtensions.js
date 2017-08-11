@@ -234,4 +234,4 @@
 	};
 
 	jQuery.support.borderRadius = testPropsAll("borderRadius");
-})(jQuery);
+}(jQuery));
