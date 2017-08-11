@@ -98,7 +98,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
 					$cache.addItem(cacheKey, data.dictionary);
 				} else {
 					dictionary = null;
-					alert(data.Text);
+					$q.alertError(data.Text);
 				}
 		})
 		.fail(function (jqXHR, textStatus, errorThrown) {

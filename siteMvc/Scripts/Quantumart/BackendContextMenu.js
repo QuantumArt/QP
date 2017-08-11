@@ -16,7 +16,7 @@ Quantumart.QP8.BackendContextMenu = function (contextMenuCode, contextMenuElemen
     }
 
     if (options.zIndex) {
- this._zIndex = options.zIndex; 
+ this._zIndex = options.zIndex;
 }
 
     if (!$q.isNull(options.allowManualShowing)) {
@@ -358,7 +358,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if (!$q.isNullOrEmpty($menuItem)) {
       menuItemValue = $menuItem.attr('code');
     } else {
-      alert($l.ContextMenu.menuItemNotSpecified);
+      $q.alertFail($l.ContextMenu.menuItemNotSpecified);
       return;
     }
 

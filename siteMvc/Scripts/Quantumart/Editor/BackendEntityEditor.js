@@ -617,7 +617,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
   addCustomButton(settings, $parent) {
     if (!settings.name && !settings.onClick && !settings.suffix && !settings.title) {
-      window.alert('One of the required settings is missed: name, title, suffix, onClick');
+      $q.alertError('One of the required settings is missed: name, title, suffix, onClick');
     } else {
       const defaultSettings = {
         class: 'customButton'
@@ -629,7 +629,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
       if ($input.length === 0) {
         if (this._notifyCustomButtonExistence) {
-          window.alert(`Input ${newSettings.name} is not found`);
+          $q.alertError(`Input ${newSettings.name} is not found`);
         }
 
         return undefined;
@@ -640,7 +640,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
       if ((!et && ($input.prop('type') !== 'text' || $input.parents('.t-numerictextbox').length > 0))
         || $.inArray(et, sTypes) === -1) {
-        window.alert(`Input ${newSettings.name} type is not supported`);
+        $q.alertError(`Input ${newSettings.name} type is not supported`);
         return undefined;
       }
 
@@ -658,7 +658,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
       if ($fieldWrapper.find(`#${options.id}`).length > 0) {
         if (this._notifyCustomButtonExistence) {
-          window.alert(`Button ${options.id} already exists`);
+          $q.alertError(`Button ${options.id} already exists`);
         }
 
         return undefined;
@@ -681,7 +681,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
   addCustomLinkButton(settings, $parent) {
     if (!settings.name && !settings.onClick && !settings.suffix && !settings.title) {
-      window.alert('One of the required settings is missed: name, title, suffix, onClick');
+      $q.alertError('One of the required settings is missed: name, title, suffix, onClick');
     } else {
       const defaultSettings = {
         class: 'pick'
@@ -693,7 +693,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
       if ($input.length === 0) {
         if (this._notifyCustomButtonExistence) {
-          window.alert(`Input ${newSettings.name} is not found`);
+          $q.alertError(`Input ${newSettings.name} is not found`);
         }
 
         return undefined;
@@ -709,7 +709,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       ];
 
       if ($.inArray(et, sTypes) === -1) {
-        window.alert(`Input ${newSettings.name} type is not supported`);
+        $q.alertError(`Input ${newSettings.name} type is not supported`);
         return undefined;
       }
 
@@ -733,7 +733,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
       if ($ul.find(`#${options.id}`).length > 0) {
         if (this._notifyCustomButtonExistence) {
-          window.alert(`Button ${options.id} already exists`);
+          $q.alertError(`Button ${options.id} already exists`);
         }
 
         return undefined;
@@ -766,7 +766,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     $c.saveDataOfAllAggregationLists(this._formElement);
     if (this._entityTypeCode !== window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
       if (!this.isFieldsChanged()) {
-        window.alert($l.EntityEditor.fieldsNotChangedMessage);
+        $q.alertError($l.EntityEditor.fieldsNotChangedMessage);
         return false;
       }
     }
@@ -820,7 +820,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
   },
 
   _confirmAction(message) {
-    return !this.isFieldsChanged() || window.confirm(message);
+    return !this.isFieldsChanged() || $q.confirmMessage(message);
   },
 
   onLoad() {

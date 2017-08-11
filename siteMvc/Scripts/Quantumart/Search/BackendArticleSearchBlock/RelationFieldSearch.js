@@ -23,7 +23,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
         if (data.success) {
           serverContent = data.view;
         } else {
-          window.alert(data.message);
+          $q.alertError(data.message);
         }
       }, function (jqXHR, textStatus, errorThrown) {
         serverContent = null;
@@ -112,7 +112,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       result = this._getText(ids);
     } else if (!$q.isNullOrEmpty(stateData.entities)) {
       result = this._getText(stateData.entities, function (e) {
- return $q.cutShort(e.Name, 10); 
+ return $q.cutShort(e.Name, 10);
 });
     } else {
       result = '';

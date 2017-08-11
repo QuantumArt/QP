@@ -7,10 +7,10 @@ Quantumart.QP8.BackendHtmlUploader = function (parentElement, options) {
 
   if (!$q.isNull(options)) {
     if (!$q.isNull(options.extensions)) {
- this._extensions = options.extensions; 
+ this._extensions = options.extensions;
 }
     if (!$q.isNull(options.resolveName)) {
- this._resolveName = options.resolveName; 
+ this._resolveName = options.resolveName;
 }
   }
 };
@@ -65,7 +65,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     this._uploadedFiles = [];
     if (e.response) {
       if (!e.response.proceed) {
-        alert(e.response.msg);
+        $q.alertSuccess(e.response.msg);
       } else {
         jQuery.merge(this._uploadedFiles, e.response.fileNames);
       }
@@ -93,7 +93,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     jQuery.each(e.files, function () {
       if (this.size && this.size >= MAX_UPLOAD_SIZE_BYTES) {
         toPrevent = true;
-        alert(String.format(HTML_UPLOAD_MAX_SIZE_MESSAGE, this.name, Math.ceil(MAX_UPLOAD_SIZE_BYTES / 1024 / 1024 * 100) / 100));
+        $q.alertFail(String.format(HTML_UPLOAD_MAX_SIZE_MESSAGE, this.name, Math.ceil(MAX_UPLOAD_SIZE_BYTES / 1024 / 1024 * 100) / 100));
       }
     });
 
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
       jQuery.each(e.files, function () {
         if (Array.indexOf(extensions, this.extension.toLowerCase()) == -1) {
           toPrevent = true;
-          alert(String.format(UPLOAD_EXTENSION_MESSAGE, this.name, this.extension));
+          $q.alertFail(String.format(UPLOAD_EXTENSION_MESSAGE, this.name, this.extension));
         }
       });
     }
@@ -127,7 +127,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     if (!this._resolveName) {
       jQuery.each(e.files, function () {
         if (self._checkFileExistence(self._folderPath, this.name)) {
-          if (!confirm(String.format(UPLOAD_OVERWRITE_MESSAGE, this.name))) {
+          if (!$q.confirmMessage(String.format(UPLOAD_OVERWRITE_MESSAGE, this.name))) {
             toPrevent = true;
           }
         }
@@ -141,7 +141,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   },
 
   _onUploadErrorHandler: function (e) {
-    alert(HTML_UPLOAD_ERROR_MESSAGE);
+    $q.alertFail(HTML_UPLOAD_ERROR_MESSAGE);
     e.preventDefault();
     return false;
   },

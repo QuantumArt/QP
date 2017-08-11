@@ -58,7 +58,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     // дополнительная сортировка на предмет возможности восстановления (запрос на сервер)
     this._checkForRestoring(savedStates).done(jQuery.proxy(function (approvedStates) {
       var eventArgs, editorState, action, params;
-      if (approvedStates.length > 0 && window.confirm($l.EntityEditorAutoSaver.restoreConfirmationRequest)) {
+      if (approvedStates.length > 0 && $q.confirmMessage($l.EntityEditorAutoSaver.restoreConfirmationRequest)) {
         this._restoringStateCount = approvedStates.length;
         for (var i = 0; i < approvedStates.length; i++) {
           editorState = approvedStates[i];
@@ -228,7 +228,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
             dfr.resolve([]);
           }
         } else {
-          window.alert(data.Text);
+          $q.alertError(data.Text);
           dfr.reject();
         }
       }).fail(function (jqXHR) {

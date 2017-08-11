@@ -43,7 +43,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
         if (data.success) {
  serverContent = data.view;
 } else {
- alert(data.message);
+ $q.alertFail(data.message);
 }
       },
       function (jqXHR, textStatus, errorThrown) {

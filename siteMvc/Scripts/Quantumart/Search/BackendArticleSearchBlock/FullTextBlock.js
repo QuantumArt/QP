@@ -23,7 +23,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
       if (data.success) {
         serverContent = data.view;
       } else {
-        window.alert(data.message);
+        $q.alertError(data.message);
       }
     }, function (jqXHR) {
       serverContent = null;
@@ -111,10 +111,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
           text: jQuery(this._queryTextBoxElement).val()
         };
       } else {
- return null; 
+ return null;
 }
     } else {
- return null; 
+ return null;
 }
   },
 
@@ -125,7 +125,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
       var $resetElem = jQuery(this._textFieldsComboElement).find("option[data-field_is_title='True']");
 
       if (!$resetElem.length) {
- $resetElem = jQuery(this._textFieldsComboElement).find("option[value='']"); 
+ $resetElem = jQuery(this._textFieldsComboElement).find("option[value='']");
 }
     }
 
@@ -133,13 +133,13 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
 
     // очистить текстовое поле
     if (this._queryTextBoxElement) {
- jQuery(this._queryTextBoxElement).val(''); 
+ jQuery(this._queryTextBoxElement).val('');
 }
   },
 
   onFieldChanged: function () {
     if (jQuery(this._queryTextBoxElement).val()) {
- jQuery(this._fullTextBlockElement).closest('form').trigger('submit'); 
+ jQuery(this._fullTextBlockElement).closest('form').trigger('submit');
 }
   },
 

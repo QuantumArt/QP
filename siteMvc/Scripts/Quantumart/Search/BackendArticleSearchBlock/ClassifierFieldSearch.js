@@ -16,7 +16,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
         if (data.success) {
           serverContent = data.view;
         } else {
-          window.alert(data.message);
+          $q.alertError(data.message);
         }
       }, function (jqXHR, textStatus, errorThrown) {
         serverContent = null;

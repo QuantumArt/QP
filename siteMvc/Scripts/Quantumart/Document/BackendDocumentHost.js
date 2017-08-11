@@ -879,7 +879,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
       this.onDocumentLoaded();
     } else {
-      window.alert(data.message);
+      $q.alertError(data.message);
       this.onDocumentError();
     }
   },
@@ -1028,7 +1028,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       this.onEntityReaded(eventArgs);
       if (eventArgs.get_isRestored() && eventArgs.get_entityTypeCode() === window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
         const message = String.format($l.EntityEditor.versionSuccessfullyRestoredMessage, eventArgs.get_entityId());
-        window.alert(message);
+        $q.alertError(message);
       }
     } else if (eventArgs.get_actionTypeCode() === window.ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE) {
       this.onEntityReaded(eventArgs);
@@ -1220,7 +1220,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.selectAllRows();
     } else {
-      window.alert($l.Toolbar.selectAllIsNotAllowed);
+      $q.alertError($l.Toolbar.selectAllIsNotAllowed);
     }
   },
 
@@ -1229,7 +1229,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.deselectAllRows();
     } else {
-      window.alert($l.Toolbar.selectAllIsNotAllowed);
+      $q.alertError($l.Toolbar.selectAllIsNotAllowed);
     }
   },
 

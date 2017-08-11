@@ -311,7 +311,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       if (numberMatch.length == 1) {
         tabNumber = parseInt(numberMatch[0], 10) + 1;
       } else {
-        window.alert($l.TabStrip.tabIdGenerationErrorMessage);
+        $q.alertError($l.TabStrip.tabIdGenerationErrorMessage);
         return null;
       }
     }
@@ -397,7 +397,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   getTabId: function (tabElem) {
     if (!$q.isObject(tabElem)) {
-      window.alert($l.TabStrip.tabNotSpecified);
+      $q.alertError($l.TabStrip.tabNotSpecified);
       return;
     }
 
@@ -412,7 +412,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   getTabGroupCode: function (tabElem) {
     if (!$q.isObject(tabElem)) {
-      window.alert($l.TabStrip.tabNotSpecified);
+      $q.alertError($l.TabStrip.tabNotSpecified);
       return;
     }
 
@@ -618,7 +618,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var tabStripOffset = 0;
       tabStripOffset = -1 * (tabStripWidth - tabWidth);
       if (!this.isLastTab($tab)) {
- tabStripOffset += 30; 
+ tabStripOffset += 30;
 }
       $scrollable.scrollTo($tab,
           {

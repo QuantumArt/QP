@@ -9,16 +9,16 @@ Quantumart.QP8.IBackendUploader = function () { };
 
 Quantumart.QP8.IBackendUploader.prototype = {
   initialize: function () {
-    alert('initialize is not implemented');
+    $q.alertFail('initialize is not implemented');
   },
   dispose: function () {
-    alert('dispose is not implemented');
+    $q.alertFail('dispose is not implemented');
   },
   set_folderPath: function () {
-    alert('set_folderPath is not implemented');
+    $q.alertFail('set_folderPath is not implemented');
   },
   get_folderPath: function () {
-    alert('get_folderPath is not implemented');
+    $q.alertFail('get_folderPath is not implemented');
   }
 };
 

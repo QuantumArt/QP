@@ -193,7 +193,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     if (!$q.isNullOrEmpty($item)) {
       itemValue = $item.attr("code");
     } else {
-      alert($l.Toolbar.itemNotSpecified);
+      $q.alertFail($l.Toolbar.itemNotSpecified);
       return;
     }
 
@@ -483,7 +483,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
 
     if (subItems.length > 1) {
       var selectedSubItem = jQuery.grep(subItems, function (subItem) {
- return subItem.Value == selectedSubItemValue; 
+ return subItem.Value == selectedSubItemValue;
 })[0];
       if (!selectedSubItem) {
         selectedSubItem = subItems[0];
@@ -720,9 +720,9 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var $item = this.getToolbarItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
       if (state) {
- $item.show(); 
+ $item.show();
 } else {
- $item.hide(); 
+ $item.hide();
 }
     }
   },

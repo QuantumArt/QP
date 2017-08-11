@@ -57,7 +57,7 @@ Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function (entityTypeCod
   var entities = [];
   $q.getJsonFromUrl('POST', actionUrl, params, false, false, function (data) {
     if (data && data.ErrorMessage) {
-      window.alert(data.ErrorMessage);
+      $q.alertError(data.ErrorMessage);
     } else {
       entities = data;
     }

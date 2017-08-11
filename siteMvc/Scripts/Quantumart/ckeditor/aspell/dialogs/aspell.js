@@ -1,5 +1,5 @@
 ; (function () {
-  
+
 
   var interval;
   var number = CKEDITOR.tools.getNextNumber();
@@ -40,7 +40,7 @@
 
         oSpeller.openChecker();
       } else if (i++ === 180) {
-        window.alert('Плагин "Проверка синтаксиса" - не доступен');
+        alert('Плагин "Проверка синтаксиса" - не доступен');
         dialog.hide();
       }
     };

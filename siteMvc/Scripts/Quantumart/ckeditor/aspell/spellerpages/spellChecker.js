@@ -102,11 +102,11 @@ window.spellChecker.prototype = {
 	    var wi = this.currentWordIndex;
 	    var ti = this.currentTextIndex;
 	    if (!this.wordWin) {
-		    window.alert('Error: Word frame not available.');
+		    alert('Error: Word frame not available.');
 		    return false;
 	    }
 	    if (!this.wordWin.getTextVal(ti, wi)) {
-		    window.alert('Error: "Not in dictionary" text is missing.');
+		    alert('Error: "Not in dictionary" text is missing.');
 		    return false;
 	    }
 
@@ -123,14 +123,14 @@ window.spellChecker.prototype = {
 	    var wi = this.currentWordIndex;
 	    var ti = this.currentTextIndex;
 	    if (!this.wordWin) {
-		    window.alert('Error: Word frame not available.');
+		    alert('Error: Word frame not available.');
 		    return false;
 	    }
 
 	    // get the word that is currently being evaluated.
 	    var s_word_to_repl = this.wordWin.getTextVal(ti, wi);
 	    if (!s_word_to_repl) {
-		    window.alert('Error: "Not in dictionary" text is missing');
+		    alert('Error: "Not in dictionary" text is missing');
 		    return false;
 	    }
 
@@ -161,11 +161,11 @@ window.spellChecker.prototype = {
 	    var wi = this.currentWordIndex;
 	    var ti = this.currentTextIndex;
 	    if (!this.wordWin) {
-		    window.alert('Error: Word frame not available.');
+		    alert('Error: Word frame not available.');
 		    return false;
 	    }
 	    if (!this.wordWin.getTextVal(ti, wi)) {
-		    window.alert('Error: "Not in dictionary" text is missing');
+		    alert('Error: "Not in dictionary" text is missing');
 		    return false;
 	    }
 	    if (!this.controlWin.replacementText) {
@@ -186,17 +186,17 @@ window.spellChecker.prototype = {
 	    var ti = this.currentTextIndex;
 	    var wi = this.currentWordIndex;
 	    if (!this.wordWin) {
-		    window.alert('Error: Word frame not available.');
+		    alert('Error: Word frame not available.');
 		    return false;
 	    }
 	    var s_word_to_repl = this.wordWin.getTextVal(ti, wi);
 	    if (!s_word_to_repl) {
-		    window.alert('Error: "Not in dictionary" text is missing');
+		    alert('Error: "Not in dictionary" text is missing');
 		    return false;
 	    }
 	    var txt = this.controlWin.replacementText;
 	    if (!txt.value) {
- return false; 
+ return false;
 }
 	    var newspell = new String(txt.value);
 
@@ -245,7 +245,7 @@ window.spellChecker.prototype = {
 		    msg += 'Проверка орфографии закончена: 1% слов изменено'.replace(/%1/g, numrepl);
 	    }
 	    if (msg) {
-		    window.alert(msg);
+		    alert(msg);
 	    }
 
 	    if (numrepl > 0) {
@@ -282,7 +282,7 @@ window.spellChecker.prototype = {
 				    this.currentTextIndex--;
 				    this.currentWordIndex = this.wordWin.totalWords(this.currentTextIndex) - 1;
 				    if (this.currentWordIndex < 0) {
- this.currentWordIndex = 0; 
+ this.currentWordIndex = 0;
 }
 			    } else {
 				    if (this.currentWordIndex > 0) {

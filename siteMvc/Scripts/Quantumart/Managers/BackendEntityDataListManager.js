@@ -79,7 +79,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 			var listGroup = this.createListGroup(listGroupCode);
 			listGroup[listElementId] = list;
 		} else {
-			alert("Данный тип списка не поддерживается!");
+			$q.alertError("Данный тип списка не поддерживается!");
 		}
 
 		return list;

@@ -3,4 +3,6 @@ node_modules/
 **/build/**
 *.min.js
 
-siteMvc/Scripts/Quantumart/ckeditor/codemirror/js
+siteMvc/Scripts/Quantumart/ckeditor/aspell/**
+siteMvc/Scripts/Quantumart/ckeditor/codemirror/**
+!siteMvc/Scripts/Quantumart/ckeditor/**/plugin.js

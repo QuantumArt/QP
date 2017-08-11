@@ -59,7 +59,7 @@ Quantumart.QP8.BackendPopupWindowManager.prototype = {
     }
 
     if (this._popupWindows[popupWindowId]) {
-      window.alert($l.PopupWindow.popupWindowIdNotUniqueErrorMessage);
+      $q.alertError($l.PopupWindow.popupWindowIdNotUniqueErrorMessage);
       return null;
     }
 

@@ -45,7 +45,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 					jQuery(this._concreteSearchBlockElement).html(serverContent);
 					this.set_isRendered(true);
 				} else {
- alert(data.message); 
+ $q.alertFail(data.message);
 }
 			}, this))
 			.fail(function (jqXHR, textStatus, errorThrown) {

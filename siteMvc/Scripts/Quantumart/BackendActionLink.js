@@ -226,7 +226,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
           params = null;
         }
       } else {
-        alert($l.ActionLink.actionTargetTypeNotSpecified);
+        $q.alertFail($l.ActionLink.actionTargetTypeNotSpecified);
       }
     }
   },

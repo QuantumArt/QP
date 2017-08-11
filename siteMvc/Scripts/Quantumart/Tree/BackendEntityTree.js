@@ -979,7 +979,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         var message = Quantumart.QP8.Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
 
         if (message) {
-          window.alert(message);
+          $q.alertError(message);
         } else {
           eventArgs.set_isWindow(true);
           this.notify(window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, eventArgs);

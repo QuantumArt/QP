@@ -43,10 +43,10 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
   _executeAction: function (actionParams, byRequest) {
     if (actionParams) {
       if ($q.isNullOrEmpty(actionParams.customerCode)) {
- actionParams.customerCode = this._currentCustomerCode; 
+ actionParams.customerCode = this._currentCustomerCode;
 }
       if (actionParams.customerCode.toLowerCase() == this._currentCustomerCode.toLowerCase()) {
-        if (!byRequest || window.confirm($l.BackendDirectLinkExecutor.OpenDirectLinkConfirmation)) {
+        if (!byRequest || $q.confirmMessage($l.BackendDirectLinkExecutor.OpenDirectLinkConfirmation)) {
           var action = $a.getBackendActionByCode(actionParams.actionCode);
           if (!action) {
             $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
@@ -64,7 +64,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
           }
         }
       } else {
-        if (window.confirm($l.BackendDirectLinkExecutor.ReloginRequestConfirmation)) {
+        if ($q.confirmMessage($l.BackendDirectLinkExecutor.ReloginRequestConfirmation)) {
           window.location.href = CONTROLLER_URL_LOGON + 'LogOut/?' + jQuery.param(actionParams);
         }
       }
@@ -133,7 +133,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
       } else {
         this._imFirst = false;
         if (this._urlLinkParams) {
-          if (window.confirm($l.BackendDirectLinkExecutor.WillBeRunInFirstInstanceConfirmation)) {
+          if ($q.confirmMessage($l.BackendDirectLinkExecutor.WillBeRunInFirstInstanceConfirmation)) {
             this._send(this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM, JSON.stringify(this._urlLinkParams));
           }
         } else {

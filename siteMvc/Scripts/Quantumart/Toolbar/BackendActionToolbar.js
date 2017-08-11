@@ -26,28 +26,28 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   _disabledActionCodes: null, // список запрещенных операций
 
   get_actionCode: function () {
- return this._actionCode; 
+ return this._actionCode;
 },
   set_actionCode: function (value) {
- this._actionCode = value; 
+ this._actionCode = value;
 },
   get_entityId: function () {
- return this._entityId; 
+ return this._entityId;
 },
   set_entityId: function (value) {
- this._entityId = value; 
+ this._entityId = value;
 },
   get_parentEntityId: function () {
- return this._parentEntityId; 
+ return this._parentEntityId;
 },
   set_parentEntityId: function (value) {
- this._parentEntityId = value; 
+ this._parentEntityId = value;
 },
   get_alwaysEnabledRefreshButton: function () {
- return this._alwaysEnabledRefreshButton; 
+ return this._alwaysEnabledRefreshButton;
 },
   set_alwaysEnabledRefreshButton: function (value) {
- this._alwaysEnabledRefreshButton = value; 
+ this._alwaysEnabledRefreshButton = value;
 },
   addToolbarItemsToToolbar: function (count) {
     var self = this;
@@ -114,7 +114,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
             return;
           }
         } else {
-          window.alert(data.Text);
+          $q.alertError(data.Text);
         }
       }).fail(function (jqXHR, textStatus, errorThrown) {
         if (self._stopDeferredOperations) {

@@ -787,7 +787,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         var message = Quantumart.QP8.Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
         if (this._hostIsWindow) {
           if (message) {
-            window.alert(message);
+            $q.alertError(message);
           } else {
             eventArgs.set_isWindow(true);
             this.notify(EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
@@ -1044,7 +1044,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (!$q.isNullOrWhiteSpace(actionCodeForLink)) {
       this.executeAction($row, actionCodeForLink, !e.ctrlKey && !e.shiftKey && !isMiddleClick, e.ctrlKey || isMiddleClick);
     } else {
-      window.alert('Вы не задали код действия, которое открывает форму редактирования сущности!');
+      $q.alertError('Вы не задали код действия, которое открывает форму редактирования сущности!');
     }
   },
 

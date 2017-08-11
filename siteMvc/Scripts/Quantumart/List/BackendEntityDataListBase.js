@@ -182,7 +182,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
   initialize: function () {
     if (!this._listElementId) {
-      alert("_listElementId");
+      $q.alertFail("_listElementId");
     }
     var $list = jQuery("#" + this._listElementId);
     $list.wrap("<div />");
@@ -548,7 +548,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     for (var linkButtonIndex = 0; linkButtonIndex < linkButtonCount; linkButtonIndex++) {
       var $linkButton = $linkButtons.eq(linkButtonIndex);
       if ($linkButton.data("action_code") !== this._readActionCode) {
- this._changeToolbarButtonState($linkButton, false); 
+ this._changeToolbarButtonState($linkButton, false);
 }
     }
 
@@ -742,7 +742,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     if (this._hostIsWindow) {
       var message = Quantumart.QP8.Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
       if (message) {
-        window.alert(message);
+        $q.alertError(message);
       } else {
         eventArgs.set_isWindow(true);
         this.notify(EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, eventArgs);
@@ -772,11 +772,11 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     var storage = this._getValueStorage();
     if (storage.entities) {
       if (storage.entityTypeCode != this._entityTypeCode) {
-        window.alert($l.EntityDataList.typesDoesNotMatchMessage);
+        $q.alertError($l.EntityDataList.typesDoesNotMatchMessage);
       } else if (storage.parentEntityId != this._parentEntityId) {
-        window.alert($l.EntityDataList.parentsDoesNotMatchMessage);
+        $q.alertError($l.EntityDataList.parentsDoesNotMatchMessage);
       } else if (storage.filter != this._filter) {
-        window.alert($l.EntityDataList.filtersDoesNotMatchMessage);
+        $q.alertError($l.EntityDataList.filtersDoesNotMatchMessage);
       } else {
         this._loadSelectedItems(storage.entities);
       }

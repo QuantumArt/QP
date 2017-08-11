@@ -63,31 +63,31 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   _onContextMenuHiddenHandler: null,
 
   get_contextMenuManager: function () {
- return this._contextMenuManager; 
+ return this._contextMenuManager;
 },
   set_contextMenuManager: function (value) {
- this._contextMenuManager = value; 
+ this._contextMenuManager = value;
 },
   get_manager: function () {
- return this._manager; 
+ return this._manager;
 },
   set_manager: function (value) {
- this._manager = value; 
+ this._manager = value;
 },
   get_breadCrumbsElementId: function () {
- return this._breadCrumbsElementId; 
+ return this._breadCrumbsElementId;
 },
   set_breadCrumbsElementId: function (value) {
- this._breadCrumbsElementId = value; 
+ this._breadCrumbsElementId = value;
 },
   get_breadCrumbsElement: function () {
- return this._breadCrumbsElement; 
+ return this._breadCrumbsElement;
 },
   get_breadCrumbsContainerElementId: function () {
- return this._breadCrumbsContainerElementId; 
+ return this._breadCrumbsContainerElementId;
 },
   set_breadCrumbsContainerElementId: function (value) {
- this._breadCrumbsContainerElementId = value; 
+ this._breadCrumbsContainerElementId = value;
 },
 
   initialize: function () {
@@ -167,7 +167,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     if (!$q.isNullOrEmpty($item)) {
       itemValue = $item.attr('code');
     } else {
-      window.alert('Ошибка. Отсутствует значение.');
+      $q.alertError('Ошибка. Отсутствует значение.');
       return;
     }
 

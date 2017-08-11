@@ -60,7 +60,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
 					$displayFieldSelectElement.append(html);
 					$listOrderSelectElement.append(html2);
 				} else {
-					alert(data.message);
+					$q.alertError(data.message);
 				}
 			})
 			.fail(function (jqXHR, textStatus, errorThrown) {
@@ -115,7 +115,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 						$classifierSelectElement.append('<option value=""></option>');
 					}
 				} else {
-					alert(data.message);
+					$q.alertError(data.message);
 				}
 			})
 			.fail(function (jqXHR, textStatus, errorThrown) {
