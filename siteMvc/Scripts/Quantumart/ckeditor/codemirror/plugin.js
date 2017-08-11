@@ -177,7 +177,7 @@
                         title: editor.lang.sourcedialog.title,
                         minWidth: width,
                         minHeight: height,
-                        resizable : CKEDITOR.DIALOG_RESIZE_NONE,
+                        resizable: CKEDITOR.DIALOG_RESIZE_NONE,
                         onShow: function () {
                             // Set Elements
                             this.getContentElement('main', 'data').focus();

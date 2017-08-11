@@ -36,7 +36,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
         if (!confirmPhrase || (confirmPhrase && confirm(confirmPhrase))) {
           var entityIDs = (isMultiple) ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
-          var actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), "0", actionCode, {additionalUrlParameters:  additionalUrlParameters});
+          var actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), "0", actionCode, {additionalUrlParameters: additionalUrlParameters});
           if (actionUrl) {
             var postParams = {
               IDs: entityIDs,
@@ -184,7 +184,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
         var runAction = function (urlParams) {
           var setupUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters:  additionalUrlParameters,
+            additionalUrlParameters: additionalUrlParameters,
             isSetup: true,
             urlParams: urlParams
           });
@@ -192,7 +192,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
  params.settingsParams = urlParams; 
 }
           var tearDownUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters:  additionalUrlParameters,
+            additionalUrlParameters: additionalUrlParameters,
             isTearDown: true
           });
           var stepUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
@@ -348,7 +348,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
           });
         } else if (selectedAction.HasPreAction) {
           var preActionUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters:  additionalUrlParameters,
+            additionalUrlParameters: additionalUrlParameters,
             isPreAction: true
           });
 

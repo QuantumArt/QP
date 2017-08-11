@@ -20,7 +20,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	_options: null,
 
 	$tile: null,
-	$closeButton : null,
+	$closeButton: null,
 	$windowOpenLink: null,
 
 	_popupWindowComponent: null,

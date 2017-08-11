@@ -103,8 +103,8 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
       result = $selectedListItems.map(function (i, item) {
         var $item = $(item);
         return {
-          Id : +$item.find("INPUT:checkbox").val(),
-          Name : $item.find("LABEL").text()
+          Id: +$item.find("INPUT:checkbox").val(),
+          Name: $item.find("LABEL").text()
         };
       }).get() || [];
     } else {
@@ -117,7 +117,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     return result;
   },
 
-  _isCountOverflow : function () {
+  _isCountOverflow: function () {
     return this._countOverflowElement != null;
   },
 

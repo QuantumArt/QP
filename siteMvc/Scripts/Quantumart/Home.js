@@ -2,13 +2,13 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 
 	function initialize() {
 		var $search = jQuery("#" + searchElementId);
-		$search.wrap($("<div/>", { id : searchElementId + "_wrapper", class : "fieldWrapper group myClass" }));
+		$search.wrap($("<div/>", { id: searchElementId + "_wrapper", class: "fieldWrapper group myClass" }));
 		var $wrapper = $search.parent("div");
 		var $form = $search.parents("form");
 		$form.on("submit", onSubmit);
 		var $div = $("<div/>", {
-			id : searchElementId + '_preview',
-			class : 'previewButton',
+			id: searchElementId + '_preview',
+			class: 'previewButton',
 			title: $l.Home.search
 		});
 		$div.append($("<img/>", { src: '/Backend/Content/Common/0.gif' }));
