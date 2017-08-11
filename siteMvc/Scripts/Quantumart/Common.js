@@ -228,8 +228,8 @@ Quantumart.QP8.Mediator = function () {
 };
 
 Quantumart.QP8.Mediator.prototype = {
-  _firstComponent: null, // первый компонент
-  _secondComponent: null, // второй компонент
+  _firstComponent: null,
+  _secondComponent: null,
 
   introduce(firstComponent, secondComponent) {
     if (!$q.isObject(firstComponent)) {
@@ -283,10 +283,10 @@ Quantumart.QP8.BackendPreviousAction = function (options) {
 };
 
 Quantumart.QP8.BackendPreviousAction.prototype = {
-  _entityTypeCode: '', // код типа сущности
-  _actionTypeCode: '', // код типа действия
-  _actionCode: '', // код действия
-  _isSuccessfullyExecuted: false, // признак успешного выполнения события
+  _entityTypeCode: '',
+  _actionTypeCode: '',
+  _actionCode: '',
+  _isSuccessfullyExecuted: false,
 
   get_entityTypeCode() {
     return this._entityTypeCode;
@@ -332,27 +332,27 @@ Quantumart.QP8.BackendEventArgs = function () {
 };
 
 Quantumart.QP8.BackendEventArgs.prototype = {
-  _entityTypeCode: '', // код типа сущности
-  _entityTypeName: '', // название типа сущности
-  _parentEntityId: 0, // идентификатор родительской сущности
-  _actionTypeCode: '', // код типа действия
-  _actionCode: '', // код действия
-  _actionName: '', // название действия
-  _isInterface: false, // признак того, что для выполнения действия нужен интерфейс
-  _isCustomAction: false, // является ли действие пользовательским
-  _isMultistepAction: false, // является ли действие многошаговым
-  _isWindow: false, // признак того, что для выполнения действия требуется всплывающее окно
-  _windowWidth: null, // ширина окна
-  _windowHeight: null, // высота окна
-  _confirmPhrase: '', // текст подтверждения, которое запрашивается у пользователя перед выполнением операции
-  _previousAction: null, // информация о предыдущем событии
-  _nextSuccessfulActionCode: null, // код действия, которое должно быть произведено после успешного выполнения текущего действия
-  _nextFailedActionCode: null, // код действия, которое должно быть произведено после неуспешного выполнения текущего действия
-  _context: null, // контекст события (если необходимо)
-  _additionalData: null, // дополнительные данные (например, предустановленные значения полей)
+  _entityTypeCode: '',
+  _entityTypeName: '',
+  _parentEntityId: 0,
+  _actionTypeCode: '',
+  _actionCode: '',
+  _actionName: '',
+  _isInterface: false,
+  _isCustomAction: false,
+  _isMultistepAction: false,
+  _isWindow: false,
+  _windowWidth: null,
+  _windowHeight: null,
+  _confirmPhrase: '',
+  _previousAction: null,
+  _nextSuccessfulActionCode: null,
+  _nextFailedActionCode: null,
+  _context: null,
+  _additionalData: null,
 
-  _entityId: 0, // идентификатор сущности
-  _entityName: '', // название сущности
+  _entityId: 0,
+  _entityName: '',
   _entities: [],
   _isMultipleEntities: false,
 

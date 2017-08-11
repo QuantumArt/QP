@@ -82,20 +82,20 @@ Quantumart.QP8.BackendEntityTree = function (treeGroupCode, treeElementId, entit
 };
 
 Quantumart.QP8.BackendEntityTree.prototype = {
-  _treeGroupCode: '', // код группы, в которую входит дерево
-  _currentNodeId: -1, // идентификатор текущего узла
-  _allowMultipleNodeSelection: false, // признак, разрешающий множественный выбор узлов
-  _allowGlobalSelection: false, // признак разрешающий глобальный выбор элементов списка
-  _entityTypeCode: '', // код типа сущности
-  _parentEntityId: 0, // идентификатор родительской сущности
-  _actionCode: '', // код действия
-  _contextMenuCode: '', // код контекстного меню
-  _selectedEntitiesIDs: [], // идентификаторы выбранных сущностей
-  _allowSaveNodesSelection: true, // признак, разрешающий сохранять выделение узлов дерева при загрузке в него новых данных
-  _isDataLoaded: false, // признак того, что данные загружены в дерево
-  _contextMenuComponent: null, // компонент "Контекстное меню"
-  _treeManagerComponent: null, // менеджер деревьев сущностей
-  _rootEntityId: null, // при задании позволяет показать поддерево
+  _treeGroupCode: '',
+  _currentNodeId: -1,
+  _allowMultipleNodeSelection: false,
+  _allowGlobalSelection: false,
+  _entityTypeCode: '',
+  _parentEntityId: 0,
+  _actionCode: '',
+  _contextMenuCode: '',
+  _selectedEntitiesIDs: [],
+  _allowSaveNodesSelection: true,
+  _isDataLoaded: false,
+  _contextMenuComponent: null,
+  _treeManagerComponent: null,
+  _rootEntityId: null,
   _contextMenuActionCode: '',
   _filter: '',
   _hostFilter: '',
@@ -448,7 +448,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   addNodesToParentNode: function (parentNode, maxExpandLevel, callback) {
     let $parentNode = this.getNode(parentNode);
     var isRootNode = this.isRootNode($parentNode);
-    var level = 0; // уровень вложенности
+    var level = 0;
     var entityId;
 
     level = this.getNodeLevel($parentNode);
@@ -945,9 +945,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       }
 
       return icon;
-    } 
+    }
       return entity.IconUrl;
-    
+
   },
 
   executeAction: function (node, actionCode, options) {

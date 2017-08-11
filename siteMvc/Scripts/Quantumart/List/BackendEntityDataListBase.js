@@ -53,36 +53,36 @@ Quantumart.QP8.BackendEntityDataListBase = function (listGroupCode, listElementI
 };
 
 Quantumart.QP8.BackendEntityDataListBase.prototype = {
-  _listGroupCode: "", // код группы списков
-  _listElementId: "", // клиентский идентификатор списка
-  _listElement: null, // DOM-элемент, образующий список
-  _expandLinkElement: null, // кнопка "показать список"
-  _collapseLinkElement: null, // кнопка "скрыть список"
-  _listWrapperElement: null, // DOM-элемент, образующий контейнер для списка
-  _toolbarElement: null, // DOM-элемент, образующий панель элементов
-  _entityTypeCode: "", // код типа сущности
-  _entityId: 0, // идентификатор сущности (для статей - это идентификатор статьи, в которой используется данный список)
-  _parentEntityId: 0, // идентификатор родительской сущности
-  _listType: 0, // тип списка
-  _listId: 0, // дополнительный параметр для идентификации списка (для статей - это идентификатор поля, в котором выводится данный список)
-  _listItemName: "", // значение HTML-атрибута name у элемента списка
-  _allowMultipleItemSelection: false, // признак, разрешающий множественный выбор элементов списка
-  _selectionMode: null, // режим выделения
-  _maxListWidth: 0, // максимальная ширина списка
-  _maxListHeight: 0, // максимальная высота списка
-  _addNewActionCode: "", // код действия, которое открывает форму добавления сущности
-  _readActionCode: "", // код действия, которое открывает форму редактирования сущности
-  _selectActionCode: "", // код действия, которое открывает окно выбора сущностей
-  _addNewButtonElement: null, // DOM-элемент, образующий кнопку для добавления новой сущности
-  _readButtonElement: null, // DOM-элемент, образующий кнопку для редактирования сущности
-  _stopDeferredOperations: false, // признак, отвечающий за остановку все отложенных операций
-  _listManagerComponent: null, // менеджер упрощенных списков
-  _selectPopupWindowComponent: null, // компонент "Всплывающее окно"
-  _showIds: false, // показывать ли ID в списке сущностей
-  _filter: "", // фильтр сущностей
-  _initFilter: "", // начальный фильтр сущностей
+  _listGroupCode: "",
+  _listElementId: "",
+  _listElement: null,
+  _expandLinkElement: null,
+  _collapseLinkElement: null,
+  _listWrapperElement: null,
+  _toolbarElement: null,
+  _entityTypeCode: "",
+  _entityId: 0,
+  _parentEntityId: 0,
+  _listType: 0,
+  _listId: 0,
+  _listItemName: "",
+  _allowMultipleItemSelection: false,
+  _selectionMode: null,
+  _maxListWidth: 0,
+  _maxListHeight: 0,
+  _addNewActionCode: "",
+  _readActionCode: "",
+  _selectActionCode: "",
+  _addNewButtonElement: null,
+  _readButtonElement: null,
+  _stopDeferredOperations: false,
+  _listManagerComponent: null,
+  _selectPopupWindowComponent: null,
+  _showIds: false,
+  _filter: "",
+  _initFilter: "",
   _hostIsWindow: false,
-  _isCollapsable: false, // можно ли сварачивать список
+  _isCollapsable: false,
   _enableCopy: true,
   _readDataOnInsert: false,
 

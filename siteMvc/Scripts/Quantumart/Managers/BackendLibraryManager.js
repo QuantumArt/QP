@@ -5,7 +5,7 @@ Quantumart.QP8.BackendLibraryManager = function () {
 };
 
 Quantumart.QP8.BackendLibraryManager.prototype = {
-	_libraryGroups: {}, // список групп библиотек
+	_libraryGroups: {},
 
 	generateLibraryGroupCode: function (actionCode, parentEntityId) {
 		var libraryGroupCode = String.format("{0}_{1}", actionCode, parentEntityId);
@@ -180,7 +180,7 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendLibraryManager._instance = null; // экземпляр класса
+Quantumart.QP8.BackendLibraryManager._instance = null;
 
 // Возвращает экземпляр класса "Менеджер библиотек"
 Quantumart.QP8.BackendLibraryManager.getInstance = function () {

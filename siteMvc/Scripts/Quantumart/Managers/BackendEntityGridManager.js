@@ -5,14 +5,14 @@ Quantumart.QP8.BackendEntityGridManager = function () {
 };
 
 Quantumart.QP8.BackendEntityGridManager.prototype = {
-  _gridGroups: {}, // список групп гридов
+  _gridGroups: {},
 
   generateGridGroupCode: function (entityTypeCode, parentEntityId) {
     if (parentEntityId) {
       return String.format('{0}_{1}', entityTypeCode, parentEntityId);
-    } 
+    }
       return entityTypeCode;
-    
+
   },
 
   getGridGroup: function (gridGroupCode) {
@@ -252,7 +252,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   }
 };
 
-Quantumart.QP8.BackendEntityGridManager._instance = null; // экземпляр класса
+Quantumart.QP8.BackendEntityGridManager._instance = null;
 
 Quantumart.QP8.BackendEntityGridManager.getInstance = function () {
   if (Quantumart.QP8.BackendEntityGridManager._instance == null) {

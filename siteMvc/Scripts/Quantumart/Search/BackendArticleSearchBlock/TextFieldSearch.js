@@ -101,9 +101,9 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     } else if (stateData.beginningStart) {
       if (stateData.inverse) {
         return  $l.SearchBlock.endText + result;
-      } 
+      }
         return $l.SearchBlock.fromText + result;
-      
+
     }
 
     if (stateData.inverse) {
@@ -166,12 +166,12 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.callBaseMethod(this, "dispose");
   },
 
-  _onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
+  _onIsNullCheckBoxChangeHandler: null,
 
   get_IsNull: function () {
     if (this._isNullCheckBoxElement) {
  return jQuery(this._isNullCheckBoxElement).is(":checked");
-} 
+}
  return false;
 
   },
@@ -179,7 +179,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   get_Inverse: function () {
     if (this._inverseCheckBoxElement) {
  return jQuery(this._inverseCheckBoxElement).is(":checked");
-} 
+}
  return false;
 
   },
@@ -187,7 +187,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   get_ExactMatch: function () {
     if (this._exactMatchCheckBoxElement) {
  return jQuery(this._exactMatchCheckBoxElement).is(":checked");
-} 
+}
  return false;
 
   },
@@ -195,14 +195,14 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   get_BeginningStart: function () {
     if (this._beginningStartChechBoxElement) {
  return jQuery(this._beginningStartChechBoxElement).is(":checked");
-} 
+}
  return false;
 
   },
 
 
-  _queryTextBoxElement: null, // dom-элемент текстового поля
-  _isNullCheckBoxElement: null, // dom-элемент чекбокса isNull
+  _queryTextBoxElement: null,
+  _isNullCheckBoxElement: null,
   _inverseCheckBoxElement: null,
   _beginningStartChechBoxElement: null,
   _exactMatchCheckBoxElement: null

@@ -1,5 +1,3 @@
-// #region class BackendArticleSearchBlock.DateOrTimeRangeFieldSearch
-// === Класс блока поиска по полю с датой или с временем
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, rangeType) {
     Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
 
@@ -12,9 +10,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (
 
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = {
 	initialize: function () {
-		// получить разметку с сервера
 		var serverContent;
-
 		var url = CONTROLLER_URL_ARTICLE_SEARCH_BLOCK;
 		switch (this._rangeType) {
 			case $e.ArticleFieldSearchType.DateRange:
@@ -105,9 +101,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			return $l.SearchBlock.isNullCheckBoxLabelText;
 		} else if (stateData.isByValue) {
 			return stateData.from ? stateData.from : "?";
-		} 
+		}
 			return (stateData.from ? stateData.from : "?") + " - " + (stateData.to ? stateData.to : "?");
-		
+
 	},
 
 	restore_blockState: function (state) {
@@ -170,7 +166,6 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 	},
 
 	dispose: function () {
-		// отвязать обработчик события change чекбоксу
 		if (this._isNullCheckBoxElement) {
 			var $isNullCheckBoxElement = jQuery(this._isNullCheckBoxElement);
 			$isNullCheckBoxElement.unbind("change", this._onIsNullCheckBoxChangeHandler);
@@ -181,7 +176,6 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 		jQuery(".radioButtonsList input[type='radio']", $containerElement).unbind();
 		$containerElement = null;
 
-		// удаляем DateTimePickers
 		$c.destroyAllDateTimePickers(this._containerElement);
 
 		this._isNullCheckBoxElement = null;
@@ -195,23 +189,21 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 		Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.callBaseMethod(this, "dispose");
 	},
 
-	_onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
+	_onIsNullCheckBoxChangeHandler: null,
 	get_IsNull: function () {
 		if (this._isNullCheckBoxElement) {
  return jQuery(this._isNullCheckBoxElement).is(":checked");
-} 
+}
  return false;
 
 	},
 
-	_rangeType: null, // тип: дата или время
+	_rangeType: null,
 
 	_isByValue: true,
-	_isNullCheckBoxElement: null, // dom-элемент чекбокса isNull
-	_dateFromElement: null, // dom-элемент поля "От"
-	_dateToElement: null// dom-элемент поля "От"
+	_isNullCheckBoxElement: null,
+	_dateFromElement: null,
+	_dateToElement: null
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
-
-// #endregion

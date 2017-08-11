@@ -18,12 +18,12 @@ Quantumart.QP8.BackendActionToolbar = function (toolbarElementId, actionCode, pa
 };
 
 Quantumart.QP8.BackendActionToolbar.prototype = {
-  _actionCode: '', // код действия, для которого создается панель инструментов
-  _entityId: 0, // ID сущности, для которой создается тулбар
-  _parentEntityId: 0, // ID родительской сущности
-  _alwaysEnabledRefreshButton: true, // признак, разрешающий всегда оставлять активной кнопку 'Обновить'
-  _stopDeferredOperations: false, // признак, отвечающий за остановку все отложенных операций
-  _disabledActionCodes: null, // список запрещенных операций
+  _actionCode: '',
+  _entityId: 0,
+  _parentEntityId: 0,
+  _alwaysEnabledRefreshButton: true,
+  _stopDeferredOperations: false,
+  _disabledActionCodes: null,
 
   get_actionCode: function () {
  return this._actionCode;

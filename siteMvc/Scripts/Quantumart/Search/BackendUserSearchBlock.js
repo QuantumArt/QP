@@ -5,8 +5,8 @@ Quantumart.QP8.BackendUserSearchBlock = function (searchBlockGroupCode, searchBl
 };
 
 Quantumart.QP8.BackendUserSearchBlock.prototype = {
-	_minSearchBlockHeight: 145, // минимальная высота блока поиска
-	_maxSearchBlockHeight: 145, // максимальная высота блока поиска
+	_minSearchBlockHeight: 145,
+	_maxSearchBlockHeight: 145,
 
 	get_searchQuery: function () {
 		var $root = jQuery(this._concreteSearchBlockElement);

@@ -18,7 +18,7 @@ Quantumart.QP8.BackendHtmlUploader = function (parentElement, options) {
 Quantumart.QP8.BackendHtmlUploader.prototype = {
   _parentElement: null,
   _$telerikUpload: null,
-  _folderPath: '', // текущий путь к папке
+  _folderPath: '',
   _extensions: '',
   _resolveName: false,
   _uploadedFiles: [],

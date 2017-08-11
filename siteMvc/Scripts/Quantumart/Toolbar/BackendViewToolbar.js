@@ -30,7 +30,7 @@ Quantumart.QP8.BackendViewToolbar = function (toolbarElementId, actionCode, opti
 };
 
 Quantumart.QP8.BackendViewToolbar.prototype = {
-	_actionCode: "", // код действия, для которого создается панель инструментов
+	_actionCode: "",
 	_parentEntityId: 0,
     _viewTypeCode: "",
 
@@ -281,9 +281,9 @@ Quantumart.QP8.BackendViewToolbarDropDownListEventArgs = function () {
 };
 
 Quantumart.QP8.BackendViewToolbarDropDownListEventArgs.prototype = {
-	_controllerActionUrl: "", // URL действия контроллера
-	_preventDefaultBehavior: false, // признак, разрещающий предотвращение поведения поумолчанию
-	_code: "", // код выбранного элемента
+	_controllerActionUrl: "",
+	_preventDefaultBehavior: false,
+	_code: "",
 
 	get_controllerActionUrl: function () {
  return this._controllerActionUrl;

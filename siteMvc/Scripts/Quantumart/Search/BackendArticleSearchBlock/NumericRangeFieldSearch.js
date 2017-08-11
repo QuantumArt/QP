@@ -232,7 +232,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 	get_IsNull: function () {
 		if (this._isNullCheckBoxElement) {
  return jQuery(this._isNullCheckBoxElement).is(":checked");
-} 
+}
  return false;
 
 	},
@@ -240,19 +240,19 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 	get_Inverse: function () {
 	    if (this._inverseCheckBoxElement) {
  return jQuery(this._inverseCheckBoxElement).is(":checked");
-} 
+}
  return false;
 
 	},
 
 	_isByValue: true,
 
-	_onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
-	_onNumericInputFocusHandler: null, // обработчик потери фокуса
+	_onIsNullCheckBoxChangeHandler: null,
+	_onNumericInputFocusHandler: null,
 
-	_isNullCheckBoxElement: null, // dom-элемент чекбокса isNull
-	_numberFromElement: null, // dom-элемент поля "От"
-	_numberToElement: null, // dom-элемент поля "От"
+	_isNullCheckBoxElement: null,
+	_numberFromElement: null,
+	_numberToElement: null,
 	_inverseCheckBoxElement: null
 };
 

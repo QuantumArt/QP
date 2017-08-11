@@ -5,7 +5,7 @@ Quantumart.QP8.BackendEntityDataListManager = function () {
 };
 
 Quantumart.QP8.BackendEntityDataListManager.prototype = {
-    _listGroups: {}, // список групп упрощенных списков сущностей
+    _listGroups: {},
     _valueStorage: {},
 
 	generateListGroupCode: function (entityTypeCode, parentEntityId) {
@@ -169,7 +169,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendEntityDataListManager._instance = null; // экземпляр класса
+Quantumart.QP8.BackendEntityDataListManager._instance = null;
 
 // Возвращает экземпляр класса "Менеджер упрощенных списков сущностей"
 Quantumart.QP8.BackendEntityDataListManager.getInstance = function () {

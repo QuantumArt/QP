@@ -7,9 +7,9 @@ Quantumart.QP8.BackendContentSearchBlock = function (searchBlockGroupCode, searc
 
 Quantumart.QP8.BackendContentSearchBlock.prototype
 = {
-	_minSearchBlockHeight: 80, // минимальная высота блока поиска
-	_maxSearchBlockHeight: 80, // максимальная высота блока поиска
-	_contentGroupListElement: null, // dom-элемент списка групп
+	_minSearchBlockHeight: 80,
+	_maxSearchBlockHeight: 80,
+	_contentGroupListElement: null,
 	_siteListElement: null,
 	_contentNameElement: null,
 

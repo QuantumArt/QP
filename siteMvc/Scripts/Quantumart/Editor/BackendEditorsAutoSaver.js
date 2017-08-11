@@ -107,7 +107,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
       if (this.restoring) {
         this._restoringStateCount--;
         if (this._restoringStateCount < 1) {
-          this.start(); // запустить когда все документы восстановлены (сделано так из за ассинхронности)
+          this.start();
         }
       }
     }

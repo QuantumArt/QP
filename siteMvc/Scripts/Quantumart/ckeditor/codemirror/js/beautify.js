@@ -125,16 +125,16 @@
 
       var isIdentifierStart = exports.isIdentifierStart = function (code) {
         if (code < 65) {
- return code === 36; 
+ return code === 36;
 }
         if (code < 91) {
- return true; 
+ return true;
 }
         if (code < 97) {
- return code === 95; 
+ return code === 95;
 }
         if (code < 123){
- return true; 
+ return true;
 }
         return code >= 0xaa && nonASCIIidentifierStart.test(String.fromCharCode(code));
       };
@@ -143,22 +143,22 @@
 
       var isIdentifierChar = exports.isIdentifierChar = function (code) {
         if (code < 48) {
- return code === 36; 
+ return code === 36;
 }
         if (code < 58) {
- return true; 
+ return true;
 }
         if (code < 65) {
- return false; 
+ return false;
 }
         if (code < 91) {
- return true; 
+ return true;
 }
         if (code < 97) {
- return code === 95; 
+ return code === 95;
 }
         if (code < 123){
- return true; 
+ return true;
 }
         return code >= 0xaa && nonASCIIidentifier.test(String.fromCharCode(code));
       };
@@ -186,23 +186,23 @@
     }
 
     function js_beautify(js_source_text, options) {
-        
+
         var beautifier = new Beautifier(js_source_text, options);
         return beautifier.beautify();
     }
 
     var MODE = {
-            BlockStatement: 'BlockStatement', // 'BLOCK'
-            Statement: 'Statement', // 'STATEMENT'
-            ObjectLiteral: 'ObjectLiteral', // 'OBJECT',
-            ArrayLiteral: 'ArrayLiteral', // '[EXPRESSION]',
-            ForInitializer: 'ForInitializer', // '(FOR-EXPRESSION)',
-            Conditional: 'Conditional', // '(COND-EXPRESSION)',
+            BlockStatement: 'BlockStatement',
+            Statement: 'Statement',
+            ObjectLiteral: 'ObjectLiteral',
+            ArrayLiteral: 'ArrayLiteral',
+            ForInitializer: 'ForInitializer',
+            Conditional: 'Conditional',
             Expression: 'Expression' // '(EXPRESSION)'
         };
 
     function Beautifier(js_source_text, options) {
-        
+
         var output;
         var tokens = [], token_pos;
         var Tokenizer;
@@ -246,8 +246,8 @@
             var next_flags = {
                 mode: mode,
                 parent: flags_base,
-                last_text: flags_base ? flags_base.last_text : '', // last token text
-                last_word: flags_base ? flags_base.last_word : '', // last 'TK_WORD' passed
+                last_text: flags_base ? flags_base.last_text : '',
+                last_word: flags_base ? flags_base.last_word : '',
                 declaration_statement: false,
                 declaration_assignment: false,
                 multiline_frame: false,
@@ -255,9 +255,9 @@
                 else_block: false,
                 do_block: false,
                 do_while: false,
-                in_case_statement: false, // switch(..){ INSIDE HERE }
-                in_case: false, // we're on the exact line with "case 0:"
-                case_body: false, // the indented case-action block
+                in_case_statement: false,
+                in_case: false,
+                case_body: false,
                 indentation_level: next_indent_level,
                 line_indent_level: flags_base ? flags_base.line_indent_level : next_indent_level,
                 start_line_index: output.get_line_number(),
@@ -332,8 +332,8 @@
             js_source_text = js_source_text.substring(preindent_index);
         }
 
-        last_type = 'TK_START_BLOCK'; // last token type
-        last_last_text = ''; // pre-last token text
+        last_type = 'TK_START_BLOCK';
+        last_last_text = '';
         output = new Output(indent_string, baseIndentString);
 
         // If testing the ignore directive, start with output disable set to true
@@ -507,7 +507,7 @@
         function deindent() {
             if (flags.indentation_level > 0 &&
                 ((!flags.parent) || flags.indentation_level > flags.parent.indentation_level)) {
- flags.indentation_level -= 1; 
+ flags.indentation_level -= 1;
 }
         }
 
@@ -790,7 +790,7 @@
                             // }, { in array context
                             output.space_before_token = true;
                         } else {
-                            print_newline(); // [a, b, c, {
+                            print_newline();
                         }
                     }
                 }
@@ -1009,7 +1009,7 @@
                     print_newline();
                 }
             } else if (flags.multiline_frame && is_array(flags.mode) && flags.last_text === ',' && last_last_text === '}') {
-                print_newline(); // }, in lists get a newline treatment
+                print_newline();
             } else if (prefix === 'SPACE') {
                 output.space_before_token = true;
             }
@@ -1240,7 +1240,7 @@
             }
 
             var lines = split_newlines(current_token.text);
-            var j; // iterator for this case
+            var j;
             var javadoc = false;
             var starless = false;
             var lastIndent = current_token.whitespace_before;
@@ -1424,7 +1424,7 @@
         // Using object instead of string to allow for later expansion of info about each line
         this.add_new_line = function (force_newline) {
             if (this.get_line_number() === 1 && this.just_added_newline()) {
-                return false; // no newline on start of file
+                return false;
             }
 
             if (force_newline || !this.just_added_newline()) {
@@ -1522,7 +1522,7 @@
         this.just_added_blankline = function () {
             if (this.just_added_newline()) {
                 if (lines.length === 1) {
-                    return true; // start of the file and newline = blank
+                    return true;
                 }
 
                 var line = lines[lines.length - 2];
@@ -1551,7 +1551,7 @@
         var digit_hex = /[0123456789abcdefABCDEF]/;
 
         var punct = ('+ - * / % & ++ -- = += -= *= /= %= == === != !== > < >= <= >> << >>> >>>= >>= <<= && &= | || ! ~ , : ? ^ ^= |= :: =>'
-                + ' <%= <% %> <?= <? ?>').split(' '); // try to be a good boy and try not to break the markup language identifiers
+                + ' <%= <% %> <?= <? ?>').split(' ');
 
         // words which should always start on new line.
         this.line_starters = 'continue,try,throw,return,var,let,const,if,switch,case,default,for,while,break,function,import,export'.split(',');

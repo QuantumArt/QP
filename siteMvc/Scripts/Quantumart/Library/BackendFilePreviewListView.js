@@ -1,5 +1,3 @@
-// #region class BackendFilePreviewListView
-// === Класс "Список превью файлов" ===
 Quantumart.QP8.BackendFilePreviewListView = function (fileListContentElement, contextMenuCode, selectMode, zIndex) {
     Quantumart.QP8.BackendFilePreviewListView.initializeBase(this, [fileListContentElement, contextMenuCode, selectMode, zIndex]);
 };
@@ -9,7 +7,6 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 		var $fileListContentElement = jQuery(this._fileListContentElement);
 		$fileListContentElement.html('<div class="fileListPreviewContainer"></div>');
 
-		// привязать события
 		$fileListContentElement.delegate('.fileItem input:checkbox', "click", jQuery.proxy(this._onFileCheckBoxClickedHandler, this));
 		$fileListContentElement.delegate('.fileItem', "click", jQuery.proxy(this._onFileContainerClickedHandler, this));
 
@@ -60,25 +57,18 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 		$fileListPreviewContainer = null;
 		$fileListContentElement = null;
 		html = null;
-
-		// поднимаем deselect так как на новой странице нет выбранных элементов
 		this._raiseSelectEvent();
 	},
 
-	// перерисовать
 	dispose: function () {
 		Quantumart.QP8.BackendFilePreviewListView.callBaseMethod(this, "dispose");
 	},
 
-	// dispose
-
 	shortNameLength: 15,
-
 	_getThumbnailLink: function (item, options) {
 		if (item.FileType == Quantumart.QP8.Enums.LibraryFileType.Image) {
 			var url = "";
 
-			// определить url в зависимости от fileEntityTypeCode
 			if (options.fileEntityTypeCode == ENTITY_TYPE_CODE_SITE_FILE) {
  url = CONTROLLER_URL_THUMBNAIL + '_SiteFileThumbnail';
 } else if (options.fileEntityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE) {
@@ -86,12 +76,10 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 }
 
 			return $q.htmlEncode(String.format("'{0}?folderId={1}&fileName={2}&{3}'", url, options.folderId, item.FullName, new Date().getTime()));
-		} 
+		}
  return $q.htmlEncode(String.format("'{0}{1}'", THEME_IMAGE_FOLDER_URL_BIG_FILE_TYPE_ICONS, item.BigIconLink));
 
-	} // сформировать ссылку на Thumbnail в зависимости от типа файла
+	}
 };
 
 Quantumart.QP8.BackendFilePreviewListView.registerClass("Quantumart.QP8.BackendFilePreviewListView", Quantumart.QP8.BackendFileNameListView);
-
-// #endregion

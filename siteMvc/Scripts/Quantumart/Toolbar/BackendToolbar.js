@@ -44,10 +44,10 @@ Quantumart.QP8.BackendToolbar = function (toolbarElementId, options) {
 };
 
 Quantumart.QP8.BackendToolbar.prototype = {
-  _toolbarElementId: "", // клиентский идентификатор панели инструментов
-  _toolbarElement: null, // DOM-элемент, образующий панель инструментов
-  _toolbarItemListElement: null, // DOM-элемент, образующий список элементов панели инструментов
-  _toolbarContainerElementId: "", // клиентский идентификатор контейнера, в котором располагается панель инструментов
+  _toolbarElementId: "",
+  _toolbarElement: null,
+  _toolbarItemListElement: null,
+  _toolbarContainerElementId: "",
 
   ITEM_DISABLED_CLASS_NAME: "disabled",
   ITEM_CHECKED_CLASS_NAME: "checked",
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var $toolbar = $("#" + this._toolbarElementId);
     var $toolbarItemList = null;
 
-    var isToolbarExist = !$q.isNullOrEmpty($toolbar); // признак существования панели инструментов
+    var isToolbarExist = !$q.isNullOrEmpty($toolbar);
     if (!isToolbarExist) {
       $toolbar = $("<div />", { id: this._toolbarElementId, class: "toolbar", css: { display: "none" } });
     }
@@ -1082,9 +1082,9 @@ Quantumart.QP8.BackendToolbarButtonEventArgs = function () {
 };
 
 Quantumart.QP8.BackendToolbarButtonEventArgs.prototype = {
-  _value: "", // код кнопки панели инструментов
-  _checkOnClick: false, // признак того, что кнопка работает как чекбокс
-  _checked: false, // признак того, что кнопка отмечена (действует в чекбокс-режиме)
+  _value: "",
+  _checkOnClick: false,
+  _checked: false,
 
     get_value: function () {
     return this._value;
@@ -1122,9 +1122,9 @@ Quantumart.QP8.BackendToolbarDropDownListEventArgs = function () {
 };
 
 Quantumart.QP8.BackendToolbarDropDownListEventArgs.prototype = {
-  _itemValue: "", // код раскрывающегося списка панели инструментов
-  _oldSubItemValue: "", // код предыдущего выбранного элемента раскрывающегося списка
-  _newSubItemValue: "", // код следующего выбранного элемента раскрывающегося списка
+  _itemValue: "",
+  _oldSubItemValue: "",
+  _newSubItemValue: "",
 
   get_itemValue: function () {
     return this._itemValue;

@@ -35,15 +35,15 @@ Quantumart.QP8.BackendContextMenu = function (contextMenuCode, contextMenuElemen
 };
 
 Quantumart.QP8.BackendContextMenu.prototype = {
-  _contextMenuCode: '', // код контекстного меню
-  _contextMenuElementId: '', // идентификатор DOM-элемента, образующего контекстного меню
-  _contextMenuElement: null, // DOM-элемент, образующий контекстное меню
-  _contextMenuComponent: null, // компонент контекстное меню
-  _contextMenuContainerElementId: '', // клиентский идентификатор контейнера, в котором располагается контекстное меню
-  _targetElements: null, // список элементов, к которым привязывается контекстое меню
-  _allowManualShowing: false, // разрешает ручной запуск контекстного меню
-  _contextMenuManagerComponent: null, // менеджер контекстных меню
-  _ctorOptions: null, // параметры создания меню
+  _contextMenuCode: '',
+  _contextMenuElementId: '',
+  _contextMenuElement: null,
+  _contextMenuComponent: null,
+  _contextMenuContainerElementId: '',
+  _targetElements: null,
+  _allowManualShowing: false,
+  _contextMenuManagerComponent: null,
+  _ctorOptions: null,
 
   _onContextMenuTuneHandler: null,
   _onContextMenuHidingHandler: null,

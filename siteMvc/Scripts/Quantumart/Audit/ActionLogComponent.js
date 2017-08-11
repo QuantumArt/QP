@@ -17,7 +17,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   $tilesContainer: null,
   _actionTypes: null,
   _entityTypes: null,
-  _tiles: {}, // Все фильтры
+  _tiles: {},
 
   initialize: function () {
     var $grid = jQuery("#" + this._gridElementId);

@@ -8,8 +8,8 @@
 
 (function () {
     CKEDITOR.plugins.add('codemirror', {
-        icons: 'searchcode,autoformat,commentselectedrange,uncommentselectedrange,autocomplete', // %REMOVE_LINE_CORE%
-        lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+        icons: 'searchcode,autoformat,commentselectedrange,uncommentselectedrange,autocomplete',
+        lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh',
         version: 1.15,
         init: function (editor) {
             var rootPath = this.path,
@@ -110,7 +110,7 @@
                             if (config.useBeautifyOnStart) {
                                 var indent_size = 4,
                                     indent_char = ' ',
-                                    brace_style = 'collapse'; // collapse, expand, end-expand
+                                    brace_style = 'collapse';
 
                                 var source = window["codemirror_" + editor.id].getValue();
 
@@ -258,7 +258,7 @@
                                 // Avoid unnecessary setData. Also preserve selection
                                 // when user changed his mind and goes back to wysiwyg editing.
                                 if (newData === oldData) {
- return true; 
+ return true;
 }
 
                                 // Set data asynchronously to avoid errors in IE.
@@ -740,7 +740,7 @@
                     if (config.useBeautifyOnStart) {
                         var indent_size = 4;
                         var indent_char = ' ';
-                        var brace_style = 'collapse'; // collapse, expand, end-expand
+                        var brace_style = 'collapse';
 
                         var source = window["codemirror_" + editor.id].getValue();
 
@@ -944,7 +944,7 @@
                         } else {
                             var editable = editor.editable();
                             if (editable.is('body')) {
- editor.document.$.execCommand('SelectAll', false, null); 
+ editor.document.$.execCommand('SelectAll', false, null);
 } else {
                                 var range = editor.createRange();
                                 range.selectNodeContents(editable);
@@ -1126,7 +1126,7 @@ CKEDITOR.plugins.sourcearea = {
 function LineChannelToOffSet(ed, linech) {
     var line = linech.line;
     var ch = linech.ch;
-    var n = (line + ch); // for the \n s & chars in the line
+    var n = (line + ch);
     for (i = 0; i < line; i++) {
         n += (ed.getLine(i)).length;// for the chars in all preceeding lines
     }

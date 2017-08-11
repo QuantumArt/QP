@@ -6,10 +6,10 @@ Quantumart.QP8.BackendArticleSearchBlock = function (searchBlockGroupCode, searc
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.prototype = {
-  _fullTextBlockElement: null, // dom-элемент контейнер для блока полнотекстового поиска
-  _fullTextBlock: null, // объект-блок для полнотекстового поиска
-  _fieldSearchBlockElement: null, // dom-элемент контейнер для блока поиска по полям
-  _fieldSearchBlock: null, // объект-блок для поиска по полям
+  _fullTextBlockElement: null,
+  _fullTextBlock: null,
+  _fieldSearchBlockElement: null,
+  _fieldSearchBlock: null,
   _isVirtualArticles: false,
   _$defaultFilterButton: null,
   _defaultFieldSearchBlockState: null,

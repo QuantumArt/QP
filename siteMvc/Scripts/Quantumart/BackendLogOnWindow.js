@@ -10,7 +10,7 @@ Quantumart.QP8.BackendLogOnWindow = function () {
 
 Quantumart.QP8.BackendLogOnWindow.prototype = {
     // #region fields
-    _windowComponent: null, // компонент "Всплывающее окно"
+    _windowComponent: null,
     _isAuthenticated: null,
     _userName: null,
 
@@ -34,9 +34,9 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     _getServerContent: function (data) {
         if (data.success) {
             return data.view;
-        } 
+        }
             return data.message;
-        
+
     },
 
     _createWindow: function (serverContent) {
@@ -243,9 +243,9 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             return false;
         } else if (jqXHR.getResponseHeader("QP-Not-Authenticated")) {
             return true;
-        } 
+        }
             return false;
-        
+
     },
 
     dispose: function () {
@@ -274,7 +274,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     // #endregion
 };
 
-Quantumart.QP8.BackendLogOnWindow._instance = null; // экземпляр класса
+Quantumart.QP8.BackendLogOnWindow._instance = null;
 
 // Возвращает экземпляр класса "Форма авторизации"
 Quantumart.QP8.BackendLogOnWindow.deferredExecution = function (data, jqXHR, callback, settings) {

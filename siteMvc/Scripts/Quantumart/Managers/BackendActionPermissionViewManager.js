@@ -35,7 +35,7 @@ Quantumart.QP8.BackendActionPermissionViewManager.prototype = {
 };
 
 
-Quantumart.QP8.BackendActionPermissionViewManager._instance = null; // экземпляр класса
+Quantumart.QP8.BackendActionPermissionViewManager._instance = null;
 
 Quantumart.QP8.BackendActionPermissionViewManager.getInstance = function () {
 	if (Quantumart.QP8.BackendActionPermissionViewManager._instance == null) {

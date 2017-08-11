@@ -124,7 +124,7 @@ window.wordWindow.prototype = {
         var orig = this.originalSpellings[txtid];
 
         if (!orig) {
- break; 
+ break;
 }
         d.writeln('<div class="plainText">');
 
@@ -139,7 +139,7 @@ window.wordWindow.prototype = {
 
             // word not found? messed up!
             if (begin_idx == -1) {
- break; 
+ break;
 }
 
             // look at the characters immediately before and after
@@ -190,14 +190,14 @@ window.wordWindow.prototype = {
   // return the character index in the full text after the last word we evaluated
   _lastPos: function (txtid, idx) {
     if (idx > 0) {
- return this.indexes[txtid][idx - 1] + this.originalSpellings[txtid][idx - 1].length; 
+ return this.indexes[txtid][idx - 1] + this.originalSpellings[txtid][idx - 1].length;
 } else {
- return 0; 
+ return 0;
 }
   },
 
   printForHtml: function (n) {
-    return n; // by FredCK
+    return n;
   },
 
   _isWordChar: function (letter) {

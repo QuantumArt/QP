@@ -9,10 +9,10 @@ Quantumart.QP8.BackendEntitySingleItemPicker = function (listGroupCode, listElem
 };
 
 Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
-	_displayFieldElement: null, // DOM-элемент, образующий поле для отображения названия элемента
-	_stateFieldElement: null, // DOM-элемент, образующий поле, в котором храниться значение элемента
-	_pickButtonElement: null, // DOM-элемент, образующий кнопку выбора элементов
-	_deselectButtonElement: null, // DOM-элемент, образующий кнопку снятия выделения
+	_displayFieldElement: null,
+	_stateFieldElement: null,
+	_pickButtonElement: null,
+	_deselectButtonElement: null,
 
 	DISPLAY_FIELD_CLASS_NAME: "displayField",
 	STATE_FIELD_CLASS_NAME: "stateField",

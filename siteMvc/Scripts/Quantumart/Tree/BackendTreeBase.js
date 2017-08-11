@@ -43,17 +43,17 @@ Quantumart.QP8.BackendTreeBase = function (treeElementId, options) {
 };
 
 Quantumart.QP8.BackendTreeBase.prototype = {
-  _treeElementId: '', // клиентский идентификатор древовидного меню
-  _treeElementName: '', // имя элемента дерева
-  _treeElement: null, // DOM-элемент образующий древовидное меню
-  _treeContainerElementId: '', // клиентский идентификатор контейнера, в котором располагается древовидное меню
-  _stopDeferredOperations: false, // признак, отвечающий за остановку все отложенных операций
-  _treeComponent: null, // компонент "Древовидное меню"
-  _deferredNodeCodeToHighlight: '', // код узла для отложенной подсветки
-  _showIds: false, // показывать или нет ID для узлов дерева
-  _makeLinksFromIds: true, // делать ли из ID ссылки
-  _autoCheckChildren: false, // автовыделение дочерних элементов при выделении родителей
-  _readActionCode: '', // код действия, которое открывает форму редактирования сущности
+  _treeElementId: '',
+  _treeElementName: '',
+  _treeElement: null,
+  _treeContainerElementId: '',
+  _stopDeferredOperations: false,
+  _treeComponent: null,
+  _deferredNodeCodeToHighlight: '',
+  _showIds: false,
+  _makeLinksFromIds: true,
+  _autoCheckChildren: false,
+  _readActionCode: '',
   _hostIsWindow: false,
 
   ROOT_NODE_CODE: 'root',
@@ -90,7 +90,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   initialize: function () {
     var $tree = $('#' + this._treeElementId);
-    var treeComponent = $tree.data('tTreeView'); // древовидное меню
+    var treeComponent = $tree.data('tTreeView');
     treeComponent.isAjax = this.isAjax;
     treeComponent.ajaxRequest = this._onDataBindingHandler;
 
@@ -337,10 +337,10 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       $element = null;
       e.preventDefault();
       return false;
-    } 
+    }
       $node = null;
       $element = null;
-    
+
   },
 
   _onIdClicking: function (e) {
@@ -494,7 +494,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     $(li, this.element).each($.proxy(function (index, item) {
       var $item = $(item).closest('.t-item'),
       $checkboxHolder = $('> div > .t-checkbox', $item),
-      arrayName = $checkboxHolder.data('array_name'); // this.element.id + '_checkedNodes',
+      arrayName = $checkboxHolder.data('array_name');
       index = $checkboxHolder.find(':input[name="' + arrayName + '.Index"]').val();
 
       $checkboxHolder.find(':input[name="' + arrayName + '[' + index + '].Text"]').remove();
@@ -624,7 +624,7 @@ $.telerik.treeview.getItemHtml = function (options) {
   }
 
   if (options.showCheckBoxes && item.Checkable !== false) {
-    var arrayName = options.elementId; // + '_checkedNodes';
+    var arrayName = options.elementId;
 
     html
       .cat('<span class="t-checkbox" data-array_name="')

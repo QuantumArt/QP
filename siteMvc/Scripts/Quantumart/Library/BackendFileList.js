@@ -1,8 +1,3 @@
-// ****************************************************************************
-// *** Компонент "Краткий список файлов"									***
-// ****************************************************************************
-
-// #region constants of file name list
 var FILE_LIST_MODE_NAME_LIST = "FILE_LIST_MODE_NAME_LIST";
 var FILE_LIST_MODE_PREVIEW_LIST = "FILE_LIST_MODE_PREVIEW_LIST";
 var FILE_LIST_SELECT_MODE_MULTIPLE = "FILE_LIST_SELECT_MODE_MULTIPLE";
@@ -11,19 +6,10 @@ var FILE_LIST_NAME_PAGE_SIZE = 60;
 var FILE_LIST_PREVIEW_PAGE_SIZE = 24;
 var FILE_LIST_ITEMS_PER_COLUMN = 20;
 
-// #endregion
-
-// #region event types of file name list
-// === Типы событий списка файлов ===
-// var EVENT_TYPE_FILE_LIST_DATA_BINDING = "OnFileListDataBinding"
 var EVENT_TYPE_FILE_LIST_DATA_BOUND = "OnFileListDataBound";
 var EVENT_TYPE_FILE_LIST_ACTION_EXECUTING = "OnFileListActionExecuting";
 var EVENT_TYPE_FILE_LIST_SELECTED = "OnFileNameSelected";
 
-// #endregion
-
-// #region class BackendFileList
-// === Класс "Cписок файлов" ===
 Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, actionCode, contextMenuCode, viewMode, options) {
 	Quantumart.QP8.BackendFileList.initializeBase(this);
 
@@ -57,37 +43,34 @@ Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, ac
 };
 
 Quantumart.QP8.BackendFileList.prototype = {
-	_fileEntityTypeCode: 0, // EntityTypeCode файлов
-	_contextMenuCode: 0, // код контекстного меня
-	_viewMode: FILE_LIST_MODE_NAME_LIST, // режим отображения списка файлов
-	_selectMode: FILE_LIST_SELECT_MODE_MULTIPLE, // режим выбора элементов списка
-	_actionCode: "", // action Code
+	_fileEntityTypeCode: 0,
+	_contextMenuCode: 0,
+	_viewMode: FILE_LIST_MODE_NAME_LIST,
+	_selectMode: FILE_LIST_SELECT_MODE_MULTIPLE,
+	_actionCode: "",
 
-	_currentDataQueryOptions: null, // текущие параметры запроса списка файлов
+	_currentDataQueryOptions: null,
 
-	_listElementId: "", // id корневого элемента списка
-	_listElement: null, // корневой dom-элемент компонента
-	_allSelectorElement: null, // dom-элемент чекбокс выбора всех файлов
-	_fileListContentElement: null, // dom-элемент контейнера списка файлов
+	_listElementId: "",
+	_listElement: null,
+	_allSelectorElement: null,
+	_fileListContentElement: null,
 
-	_contextMenuComponent: null, // компонент "Контекстное меню"
-	_pagerComponent: null, // компонент пайджер
-	_listViewComponent: null, // компонент показа списка файлов
+	_contextMenuComponent: null,
+	_pagerComponent: null,
+	_listViewComponent: null,
     _zIndex: 0,
 
 	_onAllSelectorClicked: function () {
 		this._listViewComponent.selectAll(jQuery(this._allSelectorElement).is(":checked"));
 	},
 
- // обработчик клика на чекбоксе выбора всех файлов
 	_onPageNumberChanged: function (eventType, sender, args) {
 		this.rebind({ pageNumber: args.get_PageNumber() });
 	},
 
- // обработчик смены номера страницы
 	_onListViewSelected: function (eventType, sender, args) {
-		// выставить или снять чекбокс "Выбрать все" в зависимости о того, все ли выбраны
-		jQuery(this._allSelectorElement).prop('checked', this._listViewComponent.isAllSelected());
+		$(this._allSelectorElement).prop('checked', this._listViewComponent.isAllSelected());
 
 		this._raiseMultipleEventArgsEvent(EVENT_TYPE_FILE_LIST_SELECTED, args);
 
@@ -95,18 +78,13 @@ Quantumart.QP8.BackendFileList.prototype = {
 		eventArgs = null;
 	},
 
- // выбор элемента на списке
 	_onContextMenuItemClicked: function (eventType, sender, args) {
 		args.set_parentEntityId(this._currentDataQueryOptions.folderId);
 		this.notify(eventType, args);
 	},
 
- // клик на контекстном меню
-
 	_loadData: function () {
 		var url = "";
-
-		// определить url в зависимости от fileEntityTypeCode
 		if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_SITE_FILE) {
  url = CONTROLLER_URL_SITE + '_FileList';
 } else if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE) {
@@ -145,7 +123,6 @@ Quantumart.QP8.BackendFileList.prototype = {
 		return result;
 	},
 
- // получение данных с сервера
 	_raiseMultipleEventArgsEvent: function (eventType, args) {
 		var action = $a.getBackendActionByCode(this._actionCode);
 		if (action != null) {
@@ -163,8 +140,6 @@ Quantumart.QP8.BackendFileList.prototype = {
 		action = null;
 		eventArgs = null;
 	},
-
- // поднимает событие
 
 	initialize: function () {
 		var $listElement = jQuery(this._listElementId);
@@ -206,7 +181,6 @@ Quantumart.QP8.BackendFileList.prototype = {
  throw new Error('View Mode is unknown.');
 }
 
-		// -----
 		listViewComponent.initialize();
 		listViewComponent.attachObserver(EVENT_TYPE_FILE_LIST_SELECTED, jQuery.proxy(this._onListViewSelected, this));
 		listViewComponent.attachObserver(EVENT_TYPE_FILE_LIST_ACTION_EXECUTING, jQuery.proxy(this._onContextMenuItemClicked, this));
@@ -218,11 +192,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 		$listElement = null;
 	},
 
- // нициализация
 	rebind: function (options) {
-		// this.notify(EVENT_TYPE_FILE_LIST_DATA_BINDING, {});
-
-		// установить новые значения параметров поиска
 		if ($q.isObject(options)) {
 			if (!$q.isNull(options.pageSize)) {
  this._currentDataQueryOptions.pageSize = $q.toInt(options.pageSize);
@@ -241,17 +211,14 @@ Quantumart.QP8.BackendFileList.prototype = {
 }
 		}
 
-		// загрузить данные с сервера
 		var data = this._loadData();
 		if (data) {
-			// Перерисовать список файлов
 			this._listViewComponent.redraw(data,
 			{
 				folderId: this._currentDataQueryOptions.folderId,
 				fileEntityTypeCode: this._fileEntityTypeCode
 			});
 
-			// перерисовать pager
 			this._pagerComponent.set(
 			{
 				totalCount: data.TotalRecords,
@@ -259,19 +226,13 @@ Quantumart.QP8.BackendFileList.prototype = {
 				currentPageNumber: this._currentDataQueryOptions.pageNumber
 			});
 
-			// получить реальный текущий номер страницы
 			this._currentDataQueryOptions.pageNumber = this._pagerComponent.get_pageNumber();
-
-			// перерисовать пейджер
 			this._pagerComponent.redraw();
-
-			// ------------------
 		}
 
 		this._raiseMultipleEventArgsEvent(EVENT_TYPE_FILE_LIST_DATA_BOUND);
 	},
 
- // получение данных с сервера и отрисовка
 	dispose: function () {
 		if (this._pagerComponent) {
 			this._pagerComponent.detachObserver(EVENT_TYPE_PAGE_NUMBER_CHANGED);
@@ -284,9 +245,9 @@ Quantumart.QP8.BackendFileList.prototype = {
 			this._listViewComponent.dispose();
 		}
 
-		jQuery(this._allSelectorElement).unbind();
+		$(this._allSelectorElement).unbind();
 
-		jQuery(this._listElement).children().remove();
+		$(this._listElement).children().remove();
 
 		this._listElement = null;
 		this._allSelectorElement = null;
@@ -294,44 +255,18 @@ Quantumart.QP8.BackendFileList.prototype = {
 
 		this._contextMenuComponent = null;
 		this._pagerComponent = null;
-	} // dispose
+	}
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// получение данных с сервера и отрисовка
-
-
-
-
-
 
 Quantumart.QP8.BackendFileList.registerClass("Quantumart.QP8.BackendFileList", Quantumart.QP8.Observable);
-
-// #endregion
-
-// #region interface IBackendFileListView
 Quantumart.QP8.IBackendFileListView = function () { };
 Quantumart.QP8.IBackendFileListView.prototype = {
-	initialize: function () { }, // инициализация
-	redraw: function (data, options) { }, // перерисовать
-	selectAll: function (value) { }, // выбрать все
-	isAllSelected: function () { }, // позволяет определить, все ли выбраны
-	dispose: function () { } // dispose
+	initialize: function () { },
+	redraw: function (data, options) { },
+	selectAll: function (value) { },
+	isAllSelected: function () { },
+	dispose: function () { }
 };
-Quantumart.QP8.IBackendFileListView.registerInterface("Quantumart.QP8.IBackendFileListView");
 
-// #endregion
+Quantumart.QP8.IBackendFileListView.registerInterface("Quantumart.QP8.IBackendFileListView");
 

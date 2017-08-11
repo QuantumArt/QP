@@ -396,7 +396,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
   }
 };
 
-Quantumart.QP8.BackendActionExecutor._instance = null; // экземпляр класса
+Quantumart.QP8.BackendActionExecutor._instance = null;
 
 // Возвращает экземпляр класса 'Действие'
 Quantumart.QP8.BackendActionExecutor.getInstance = function () {

@@ -10,9 +10,9 @@ Quantumart.QP8.BackendFileNameListView = function (fileListContentElement, conte
 };
 
 Quantumart.QP8.BackendFileNameListView.prototype = {
-	_fileListContentElement: null, // контейнер списка файлов
-	_contextMenuComponent: null, // контекстоное меняю
-	_contextMenuCode: 0, // код контекстного меню
+	_fileListContentElement: null,
+	_contextMenuComponent: null,
+	_contextMenuCode: 0,
 	_contextMenuActionCode: "",
 	_currentContextMenuSelectedElement: null,
 	SELECTED_CLASS: "fileItem-selected",

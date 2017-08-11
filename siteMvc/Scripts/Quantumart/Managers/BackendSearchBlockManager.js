@@ -5,7 +5,7 @@ Quantumart.QP8.BackendSearchBlockManager = function () {
 };
 
 Quantumart.QP8.BackendSearchBlockManager.prototype = {
-	_searchBlockGroups: {}, // список групп блоков поиска
+	_searchBlockGroups: {},
 
 	generateSearchBlockGroupCode: function (entityTypeCode, parentEntityId) {
 		var searchBlockCode = String.format("{0}_{1}", entityTypeCode, parentEntityId);
@@ -121,7 +121,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendSearchBlockManager._instance = null; // экземпляр класса
+Quantumart.QP8.BackendSearchBlockManager._instance = null;
 
 // Возвращает экземпляр класса "Менеджер блоков поиска"
 Quantumart.QP8.BackendSearchBlockManager.getInstance = function () {

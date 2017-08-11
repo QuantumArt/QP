@@ -124,35 +124,35 @@ Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options)
 };
 
 Quantumart.QP8.BackendPopupWindow.prototype = {
-  _popupWindowId: "", // идентификатор окна
-  _popupWindowElement: null, // DOM-элемент, образующий всплывающее окно
-  _popupWindowComponent: null, // компонент "Всплывающее окно"
-  _showBreadCrumbs: false, // признак, разрешающий отображение хлебных крошек
-  _breadCrumbsWrapperElement: null, // DOM-элемент, образующий контейнер для хлебных крошек
-  _toolbarWrapperElement: null, // DOM-элемент, образующий контейнер для панелей инструментов
-  _actionToolbarWrapperElement: null, // DOM-элемент, образующий контейнер для панели инструментов действий
-  _viewToolbarWrapperElement: null, // DOM-элемент, образующий контейнер для панели инструментов представлений
-  _searchBlockWrapperElement: null, // DOM-элемент, образующий контейнер, в котором располагается блок поиска
-  _contextBlockWrapperElement: null, // DOM-элемент, образующий контейнер, в котором располагается блок контекста
-  _documentAreaElement: null, // DOM-элемент, образующий область для отображения документов
-  _loadingLayerElement: null, // DOM-элемент, образующий блокирующий слой с индикатором загрузки
-  _selectionContext: null, // контекст выбора
-  _saveSelectionWhenChangingView: false, // признак, разрешающий сохранять выделение при смене представления
-  _title: "", // заголовок окна
-  _width: 400, // ширина окна
-  _height: 300, // высота окна
-  _minWidth: 400, // минимальная ширина окна
-  _minHeight: 300, // минимальная высота окна
-  _isModal: true, // признак модального окна
-  _allowResize: true, // признак, разрешающий изменять размер окна
-  _allowDrag: true, // признак, разрешающий перемещение окна
-  _showRefreshButton: false, // признак разрешающий показывать кнопку "Обновить"
-  _showCloseButton: true, // признак, разрешающий показывать кнопку "Закрыть"
-  _showMaximizeButton: true, // признак, разрешающий показывать кнопку "Развернуть"
-  _popupWindowManagerComponent: null, // менеджер всплывающих окон
-  _additionalUrlParameters: null, // дополнительные параметры URL, которые должны использоваться при выполнении действий в окне
+  _popupWindowId: "",
+  _popupWindowElement: null,
+  _popupWindowComponent: null,
+  _showBreadCrumbs: false,
+  _breadCrumbsWrapperElement: null,
+  _toolbarWrapperElement: null,
+  _actionToolbarWrapperElement: null,
+  _viewToolbarWrapperElement: null,
+  _searchBlockWrapperElement: null,
+  _contextBlockWrapperElement: null,
+  _documentAreaElement: null,
+  _loadingLayerElement: null,
+  _selectionContext: null,
+  _saveSelectionWhenChangingView: false,
+  _title: "",
+  _width: 400,
+  _height: 300,
+  _minWidth: 400,
+  _minHeight: 300,
+  _isModal: true,
+  _allowResize: true,
+  _allowDrag: true,
+  _showRefreshButton: false,
+  _showCloseButton: true,
+  _showMaximizeButton: true,
+  _popupWindowManagerComponent: null,
+  _additionalUrlParameters: null,
   _zIndex: 0,
-  _isMultiOpen: false, // окно не уничтожается при закрытии
+  _isMultiOpen: false,
 
   get_popupWindowId: function () {
     return this._popupWindowId;
@@ -729,7 +729,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   showErrorMessageInDocumentWrapper: function (status) {
-    var $documentWrapper = $(this._documentWrapperElement); // скрытый документ
+    var $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.html($q.generateErrorMessageText());
 
     $documentWrapper = null;

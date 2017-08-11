@@ -69,28 +69,28 @@ Quantumart.QP8.BackendSearchBlockBase = function (searchBlockGroupCode, searchBl
 };
 
 Quantumart.QP8.BackendSearchBlockBase.prototype = {
-  _searchBlockGroupCode: "", // код группы, в которую входит блок поиска
-  _searchBlockElementId: "", // клиентский идентификатор блока поиска
-  _searchBlockElement: null, // DOM-элемент, образующий блок поиска
-  _searchBlockContainerElementId: "", // клиентский идентификатор контейнера, в котором располагается блок поиска
-  _tabId: "", // ID таба
-  _popupWindowId: "", // ID всплывающего окна
-  _hostId: "", // ID хоста
+  _searchBlockGroupCode: "",
+  _searchBlockElementId: "",
+  _searchBlockElement: null,
+  _searchBlockContainerElementId: "",
+  _tabId: "",
+  _popupWindowId: "",
+  _hostId: "",
   _actionCode: null,
-  _concreteSearchBlockElement: null, // DOM-элемент, образующий блок конкретного поиска
-  _buttonsWrapperElement: null, // DOM-элемент, контейнер кнопок
-  _findButtonElement: null, // DOM-элемент, образующий кнопку "Найти"
-  _resetButtonElement: null, // DOM-элемент, образующий кнопку "Очистить"
-  _entityTypeCode: "", // код типа сущности
-  _parentEntityId: 0, // идентификатор родительской сущности;
-  _minSearchBlockHeight: 180, // минимальная высота блока поиска
-  _maxSearchBlockHeight: 500, // максимальная высота блока поиска
-  _lastSearchBlockHeight: 500, // последнее значение высоты блока поиска
-  _isVisible: false, // признак того, что блок поиск находится в режиме отображения
-  _isRendered: false, // был ли выполнен рендеринг
-  _verticalResizerComponent: null, // компонент, реализующий вертикальное масштабирование
-  _hideButtons: false, // прятать ли стандартные кнопки поиска
-  _searchBlockState: null, // сохраняемое состояние блока поиска
+  _concreteSearchBlockElement: null,
+  _buttonsWrapperElement: null,
+  _findButtonElement: null,
+  _resetButtonElement: null,
+  _entityTypeCode: "",
+  _parentEntityId: 0,
+  _minSearchBlockHeight: 180,
+  _maxSearchBlockHeight: 500,
+  _lastSearchBlockHeight: 500,
+  _isVisible: false,
+  _isRendered: false,
+  _verticalResizerComponent: null,
+  _hideButtons: false,
+  _searchBlockState: null,
 
   _onSearchBlockResizedHandler: null,
   _onFindButtonClickHandler: null,
@@ -364,11 +364,11 @@ Quantumart.QP8.BackendSearchBlockEventArgs = function (searchBlockType, searchQu
 };
 
 Quantumart.QP8.BackendSearchBlockEventArgs.prototype = {
-  _searchBlockType: 0, // тип поискового блока
-  _searchQuery: null, // поисковый запрос
-  _searchBlockWidth: 0, // ширина поискового блока
-  _searchBlockHeight: 0, // высота поискового блока
-  _searchBlockState: null, // сохраняемое состояние
+  _searchBlockType: 0,
+  _searchQuery: null,
+  _searchBlockWidth: 0,
+  _searchBlockHeight: 0,
+  _searchBlockState: null,
 
   get_searchQuery: function () {
     return this._searchQuery;

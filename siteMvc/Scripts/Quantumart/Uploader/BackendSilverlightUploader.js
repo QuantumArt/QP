@@ -24,10 +24,10 @@ Quantumart.QP8.BackendSilverlightUploader = function (parentElement, options) {
 };
 
 Quantumart.QP8.BackendSilverlightUploader.prototype = {
-	_parentElementId: "", // ID элемента контейнера
-	_parentElement: null, // DOM-элемент контейнер
+	_parentElementId: "",
+	_parentElement: null,
 
-	_folderPath: "", // текущий путь к папке
+	_folderPath: "",
 	_background: "#EBF5FB",
 	_extensions: "",
 	_resolveName: false,
@@ -83,11 +83,9 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 			},
 			events: {
 				onError: this._onSilverlightErrorHandler
-
-				// onLoad: this._onSilverlightLoadHandler
-			}, // c:\\inetpub\\wwwroot\\qp_demo_nett\\upload
+			},
 			initParams: $q.hashToString(params),
-			context: "context"    // context helper for onLoad handler.
+			context: "context"
 		});
 	},
 
@@ -97,11 +95,11 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 		if (sender != null && sender != 0) {
 			appSource = sender.getHost().Source;
 		}
+
 		var errorType = args.ErrorType;
 		var iErrorCode = args.ErrorCode;
 
-		var errMsg = "Unhandled Error in Silverlight 2 Application "
-				+ appSource + "\n";
+		var errMsg = "Unhandled Error in Silverlight 2 Application " + appSource + "\n";
 
 		errMsg += "Code: " + iErrorCode + "    \n";
 		errMsg += "Category: " + errorType + "       \n";

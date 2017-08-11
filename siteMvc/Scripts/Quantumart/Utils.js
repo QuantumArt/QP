@@ -736,7 +736,7 @@ $q.hashToString = function hashToString(obj) {
 };
 
 $q.getHashKeysCount = function getHashKeysCount(hash) {
-  let key; // eslint-disable-line no-unused-vars
+  let key;
   let keysCount = 0;
   if (hash) {
     // eslint-disable-next-line guard-for-in, no-restricted-syntax

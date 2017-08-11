@@ -203,7 +203,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 	get_IsNull: function () {
 		if (this._inverseCheckBoxElement) {
  return jQuery(this._inverseCheckBoxElement).is(":checked");
-} 
+}
  return false;
 
 	},
@@ -211,11 +211,11 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 	_isByValue: true,
     _isByText: false,
 
-	_onNumericInputFocusHandler: null, // обработчик потери фокуса
+	_onNumericInputFocusHandler: null,
 
-	_inverseCheckBoxElement: null, // dom-элемент чекбокса inverse
-	_numberFromElement: null, // dom-элемент поля "От"
-	_numberToElement: null, // dom-элемент поля "От"
+	_inverseCheckBoxElement: null,
+	_numberFromElement: null,
+	_numberToElement: null,
     _textAreaElement: null
 };
 

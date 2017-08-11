@@ -5,7 +5,7 @@ Quantumart.QP8.BackendEntityTreeManager = function () {
 };
 
 Quantumart.QP8.BackendEntityTreeManager.prototype = {
-	_treeGroups: {}, // список групп деревьев
+	_treeGroups: {},
 
 	initialize: function () {
 	},
@@ -187,7 +187,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendEntityTreeManager._instance = null; // экземпляр класса
+Quantumart.QP8.BackendEntityTreeManager._instance = null;
 
 // Возвращает экземпляр класса "Менеджер деревьев сущностей"
 Quantumart.QP8.BackendEntityTreeManager.getInstance = function () {

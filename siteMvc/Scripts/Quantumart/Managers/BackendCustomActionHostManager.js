@@ -104,7 +104,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     }
 };
 
-Quantumart.QP8.BackendCustomActionHostManager._instance = null; // экземпляр класса
+Quantumart.QP8.BackendCustomActionHostManager._instance = null;
 
 Quantumart.QP8.BackendCustomActionHostManager.getInstance = function () {
     if (Quantumart.QP8.BackendCustomActionHostManager._instance == null) {

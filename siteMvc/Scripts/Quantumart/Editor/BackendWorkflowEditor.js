@@ -154,11 +154,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                     var user_row = current_workflow_stage.find(':visible.workflow_user_row');
                     var group_row = current_workflow_stage.find(':visible.workflow_group_row');
 
-                    if (user_row.size() > group_row.size()) { // its user
+                    if (user_row.size() > group_row.size()) {
                         var span = user_row.find('span.workflow_permission_message');
                         var oldHtml = span.html();
                         span.html(oldHtml + '<br>' + data[i].Message);
-                    } else { // its user group
+                    } else {
                         var span = group_row.find('span.workflow_permission_message');
                         var oldHtml = span.html();
                         group_row.find('span.workflow_permission_message').html(oldHtml + '<br>' + data[i].Message);
@@ -193,9 +193,9 @@ Quantumart.QP8.BackendWorkflow.prototype = {
               var current_workflow_stage = $(eventArgs._listElement).closest('fieldset');
               var user_row = current_workflow_stage.find(':visible.workflow_user_row');
               var group_row = current_workflow_stage.find(':visible.workflow_group_row');
-              if (user_row.size() > group_row.size()) { // its user
+              if (user_row.size() > group_row.size()) {
                   user_row.find('span.workflow_permission_message').html(data);
-              } else { // its user group
+              } else {
                   group_row.find('span.workflow_permission_message').html(data);
               }
       }

@@ -143,41 +143,41 @@ Quantumart.QP8.BackendEntityGrid = function (gridGroupCodes, gridElementId, enti
 };
 
 Quantumart.QP8.BackendEntityGrid.prototype = {
-  _gridGroupCodes: null, // код групп, в которую входит грид
-  _gridElementId: '', // клиентский идентификатор грида
-  _gridElement: null, // DOM-элемент, образующий грид
-  _gridComponent: null, // компонент "Грид"
-  _currentRowId: -1, // идентификатор текущей строки
-  _allowMultipleRowSelection: false, // признак, разрешающий множественный выбор строк
-  _allowGlobalSelection: false, // признак разрешающий глобальный выбор элементов списка
-  _entityTypeCode: '', // код типа сущности
-  _parentEntityId: 0, // идентификатор родительской сущности
-  _actionCode: '', // код действия
-  _actionCodeForLink: '', // код действия, которое запускается при щелчке на гиперссылке
-  _contextMenuCode: '', // код контекстного меню
-  _keyColumnName: 'Id', // название столбца, содержащего первичный ключ сущности
-  _titleColumnName: 'Name', // название столбца, содержащего название сущности
-  _parentKeyColumnName: 'ParentId', // название столбца, содержащего id родителя
-  _linkOpenNewTab: false, // открывать ли новый таб при клике на Link
-  _startingEntitiesIDs: [], // идентификаторы выбранных сущностей, которые задаются при инициализации компонента
-  _selectedEntitiesIDs: [], // идентификаторы выбранных сущностей
-  _allowFilterSelectedEntities: false, // признак, разрешающий обрабатывать только те выбранные сущности, которые прошли фильтрацию
+  _gridGroupCodes: null,
+  _gridElementId: '',
+  _gridElement: null,
+  _gridComponent: null,
+  _currentRowId: -1,
+  _allowMultipleRowSelection: false,
+  _allowGlobalSelection: false,
+  _entityTypeCode: '',
+  _parentEntityId: 0,
+  _actionCode: '',
+  _actionCodeForLink: '',
+  _contextMenuCode: '',
+  _keyColumnName: 'Id',
+  _titleColumnName: 'Name',
+  _parentKeyColumnName: 'ParentId',
+  _linkOpenNewTab: false,
+  _startingEntitiesIDs: [],
+  _selectedEntitiesIDs: [],
+  _allowFilterSelectedEntities: false,
   _removedIds: [],
-  _allowSaveRowsSelection: true, // признак, разрешающий сохранять выделение строк грида при загрузке в него новых данных
-  _stopDeferredOperations: false, // признак, отвечающий за остановку все отложенных операций
-  _isDataLoaded: false, // признак того, что данные загружены в грид
-  _searchQuery: null, // поисковый запрос
-  _contextQuery: null, // запрос для переключения контекста
-  _autoGenerateLink: false, // признак, разрешающий автоматическую генерацию ссылок
-  _generateLinkOnTitle: false, // признак, показывающий, где генерировать ссылку: на Title или на ID
-  _contextMenuComponent: null, // компонент "Контекстное меню"
-  _gridManagerComponent: null, // менеджер списков сущностей
-  _autoLoad: true, // признак, отвечающий за загрузку данных в Grid при его создании
-  _delayAutoLoad: false, // признак, отвечающий за откладывание загрузки Grid до вызова onLoad
+  _allowSaveRowsSelection: true,
+  _stopDeferredOperations: false,
+  _isDataLoaded: false,
+  _searchQuery: null,
+  _contextQuery: null,
+  _autoGenerateLink: false,
+  _generateLinkOnTitle: false,
+  _contextMenuComponent: null,
+  _gridManagerComponent: null,
+  _autoLoad: true,
+  _delayAutoLoad: false,
   _contextMenuActionCode: '',
-  _filter: '', // фильтр сущностей
+  _filter: '',
   _hostIsWindow: false,
-  _treeFieldId: 0, // Идентификатор поля по которому создаются дочерние элементы
+  _treeFieldId: 0,
   _isBindToExternal: false,
   _deselectAllId: '',
   _selectAllId: '',

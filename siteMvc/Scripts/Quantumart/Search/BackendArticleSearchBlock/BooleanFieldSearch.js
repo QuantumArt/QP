@@ -1,9 +1,7 @@
-// #region class BackendArticleSearchBlock.BooleanFieldSearch
-// === Класс блока поиска по числовому полю
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
     Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
 
-	this._onIsNullCheckBoxChangeHandler = jQuery.proxy(this._onIsNullCheckBoxChange, this);
+	this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
@@ -51,7 +49,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 			;
 
 		// добавить разметку на страницу
-		var $containerElement = jQuery(this._containerElement);
+		var $containerElement = $(this._containerElement);
 		$containerElement.append(html.string());
 
 		// назначить обработчик события change чекбоксу
@@ -83,24 +81,24 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 		var stateData = this.get_blockState().data;
 		if (stateData.isNull) {
 			return $l.SearchBlock.isNullCheckBoxLabelText;
-		} 
+		}
 			return stateData.value === true ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
-		
+
 	},
 
 	restore_blockState: function (state) {
 		if (state) {
 			if (this._isNullCheckBoxElement) {
-				var $isNullCheckBoxElement = jQuery(this._isNullCheckBoxElement);
+				var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
 				$isNullCheckBoxElement.prop("checked", state.isNull);
 				$isNullCheckBoxElement.trigger("change");
 				$isNullCheckBoxElement = null;
 			}
 			if (!$q.isNull(state.value)) {
 				if (state.value === true) {
-					jQuery("input:radio[value=true]", this._containerElement).prop("checked", true);
+					$("input:radio[value=true]", this._containerElement).prop("checked", true);
 				} else if (state.value === false) {
-					jQuery("input:radio[value!=true]", this._containerElement).prop("checked", true);
+					$("input:radio[value!=true]", this._containerElement).prop("checked", true);
 				}
 			}
 		}
@@ -108,7 +106,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 
 	_getValue: function () {
 		var result = null;
-		var val = jQuery(this._containerElement).find('input:radio:checked').val();
+		var val = $(this._containerElement).find('input:radio:checked').val();
 		if (val == "true") {
  result = true;
 } else {
@@ -118,16 +116,14 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 	},
 
 	_onIsNullCheckBoxChange: function () {
-		// дизейблим текст бокс если пользователь выбрал IS NULL
-		jQuery(this._containerElement)
+		$(this._containerElement)
 			.find("#" + this._elementIdPrefix + "_disablingContainer *")
 			.prop("disabled", this.get_IsNull());
 	},
 
 	dispose: function () {
-		// отвязать обработчик события change чекбоксу
 		if (this._isNullCheckBoxElement) {
-			var $isNullCheckBoxElement = jQuery(this._isNullCheckBoxElement);
+			var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
 			$isNullCheckBoxElement.unbind("change", this._onIsNullCheckBoxChangeHandler);
 			$isNullCheckBoxElement = null;
 		}
@@ -138,18 +134,16 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 		Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.callBaseMethod(this, "dispose");
 	},
 
-	_onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
+	_onIsNullCheckBoxChangeHandler: null,
 	get_IsNull: function () {
 		if (this._isNullCheckBoxElement) {
- return jQuery(this._isNullCheckBoxElement).is(":checked");
-} 
+ return $(this._isNullCheckBoxElement).is(":checked");
+}
  return false;
 
 	},
 
-	_isNullCheckBoxElement: null // dom-элемент чекбокса isNull
+	_isNullCheckBoxElement: null
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
-
-// #endregion

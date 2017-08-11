@@ -46,27 +46,27 @@ Quantumart.QP8.BackendTabStrip = function (tabStripElementId, options) {
 };
 
 Quantumart.QP8.BackendTabStrip.prototype = {
-  _tabGroups: {}, // список групп табов
-  _tabTypeCounters: {}, // счетчики табов
+  _tabGroups: {},
+  _tabTypeCounters: {},
 
-  _tabStripElementId: '', // клиентский идентификатор группы табов
-  _tabStripElement: null, // DOM-элемент 'Группа табов'
+  _tabStripElementId: '',
+  _tabStripElement: null,
   _tabStripScrollableElement: null,
-  _tabListElement: '', // DOM-элемент, в котором находится список табов
-  _partialRemovedTabsContainerElement: null, // DOM-элемент, в котором хранятся удаленные табы
-  _selectedTabId: '', // идентификатор выбранного таба
-  _previousSelectedTabId: '', // идентификатор предыдущего выбранного таба
-  _leftSplitterPaneWidth: 0, // ширина левой панели разделителя
-  _maxTabTextLength: 35, // максимальная длина текста таба
-  _tabMenuElement: null, // DOM-элемент, образующий меню табов
+  _tabListElement: '',
+  _partialRemovedTabsContainerElement: null,
+  _selectedTabId: '',
+  _previousSelectedTabId: '',
+  _leftSplitterPaneWidth: 0,
+  _maxTabTextLength: 35,
+  _tabMenuElement: null,
   _tabMenuScrollableElement: null,
-  _tabMenuItemListElement: null, // DOM-элемент, в котором располагаются элементы меню табов
+  _tabMenuItemListElement: null,
   _tabMenuUpArrowButtonElement: null,
   _tabMenuDownArrowButtonElement: null,
-  _tabMenuButtonContainerElement: null, // DOM-элемент, образующий контейнер, в котором храниться кнопка для вызова меню табов
-  _tabMenuButtonElement: null, // DOM-элемент, образующий кнопку для вызова меню табов
-  _maxTabMenuHeight: 400, // максимальная высота меню
-  _maxTabMenuItemTextLength: 35, // максимальная длина текста элемента меню табов
+  _tabMenuButtonContainerElement: null,
+  _tabMenuButtonElement: null,
+  _maxTabMenuHeight: 400,
+  _maxTabMenuItemTextLength: 35,
   _tabContextMenuComponent: null,
 
   TAB_STRIP_BUSY_CLASS_NAME: 'busy',
@@ -493,11 +493,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   addNewTab: function (eventArgs) {
     var associatedAction = $a.getBackendAction(eventArgs.get_actionCode());
     var actionTypeCode = associatedAction.ActionType.Code;
-    var tabTypeCode = associatedAction.Code; // код типа таба
-    var tabNumber = actionTypeCode == ACTION_TYPE_CODE_ADD_NEW ? this._getTabTypeCounter(tabTypeCode) + 1 : 0; // номер таба
+    var tabTypeCode = associatedAction.Code;
+    var tabNumber = actionTypeCode == ACTION_TYPE_CODE_ADD_NEW ? this._getTabTypeCounter(tabTypeCode) + 1 : 0;
     var tabId = this.generateTabId();
-    var tabGroupCode = this.generateTabGroupCode(eventArgs, tabNumber); // код таба
-    var tabText = this.generateTabText(eventArgs, tabNumber); // текст таба
+    var tabGroupCode = this.generateTabGroupCode(eventArgs, tabNumber);
+    var tabText = this.generateTabText(eventArgs, tabNumber);
 
     var $tabList = jQuery(this._tabListElement);
     $tabList.append(this._getTabHtml(tabId, tabGroupCode));
@@ -531,13 +531,13 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   updateTab: function (tab, eventArgs) {
-    var $tab = this.getTab(tab); // обновляемый таб
+    var $tab = this.getTab(tab);
 
     var oldAction = $a.getBackendActionByCode($tab.data("action_code"));
     var oldActionTypeCode = oldAction.ActionType.Code;
     var oldActionCode = oldAction.Code;
     var oldTabGroupCode = this.getTabGroupCode($tab);
-    var oldTabText = this.getTabText($tab); // старый текст таба
+    var oldTabText = this.getTabText($tab);
     var oldTabTypeCode = oldActionCode;
     var oldTabNumber = $tab.data("tab_number");
     if (oldActionTypeCode == ACTION_TYPE_CODE_ADD_NEW) {
@@ -552,7 +552,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
     var newTabNumber = this._getTabTypeCounter(newActionCode);
     var newTabGroupCode = this.generateTabGroupCode(eventArgs, newTabNumber);
-    var newTabText = this.generateTabText(eventArgs, newTabNumber); // новый текст таба
+    var newTabText = this.generateTabText(eventArgs, newTabNumber);
 
     $tab.attr("groupCode", newTabGroupCode);
     this._extendTabElement($tab, eventArgs, { TabGroupCode: newTabGroupCode, TabText: newTabText, TabTypeCode: newActionCode, TabNumber: newTabNumber });
@@ -567,7 +567,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   selectTab: function (tab) {
-    var $tab = this.getTab(tab); // выбираемый таб
+    var $tab = this.getTab(tab);
 
     // Запоминаем код выбранного таба
     this._previousSelectedTabId = this._selectedTabId.valueOf();
@@ -634,11 +634,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   closeTab: function (tab) {
-    var $tab = this.getTab(tab); // удаляемый таб
+    var $tab = this.getTab(tab);
     if (!$q.isNullOrEmpty($tab)) {
-      var tabId = this.getTabId($tab); // идентификатор таба
-      var tabTypeCode = $tab.data("tab_type_code"); // код типа удаляемого таба
-      var tabNumber = $tab.data("tab_number"); // номер удаляемого таба
+      var tabId = this.getTabId($tab);
+      var tabTypeCode = $tab.data("tab_type_code");
+      var tabNumber = $tab.data("tab_number");
 
       // Производим частичное удаление таба
       this._partialRemoveTab($tab);
@@ -663,14 +663,14 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _partialRemoveTab: function (tab) {
-    var $tab = this.getTab(tab); // удаляемый таб
-    var $partialRemovedTabsContainer = jQuery(this._partialRemovedTabsContainerElement); // контейнер для удаляемых табов
+    var $tab = this.getTab(tab);
+    var $partialRemovedTabsContainer = jQuery(this._partialRemovedTabsContainerElement);
 
     $tab.appendTo($partialRemovedTabsContainer);
   },
 
   _removeTab: function (tab) {
-    var $tab = this.getTab(tab); // удаляемый таб
+    var $tab = this.getTab(tab);
     $tab
       .removeData()
       .empty()
@@ -1144,7 +1144,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   getEventArgsFromTab: function (tab) {
-    var $tab = this.getTab(tab); // обновляемый таб
+    var $tab = this.getTab(tab);
     var actionCode = $tab.data('action_code');
     var action = $a.getBackendActionByCode(actionCode);
     var eventArgs = new Quantumart.QP8.BackendTabEventArgs();

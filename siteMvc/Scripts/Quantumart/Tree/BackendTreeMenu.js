@@ -235,12 +235,11 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
             return;
           }
 
-          // найти самый нижний node из уже существующих в дереве
           var _exp = function (node) {
             if (!node || $q.isNullOrEmpty(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)))) {
               return null;
-            } 
-              // Открыть node
+            }
+
               $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
               if (self._isNodeCollapsed($node)) {
                 self._treeComponent.nodeToggle(null, $node, true);
@@ -249,7 +248,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
               return _exp($.grep(node.ChildNodes, function (n) {
                 return n.ChildNodes != null;
               })[0]) || node;
-            
+
           };
 
           _exp(data);
@@ -262,22 +261,18 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
     }
   },
 
-  // подгрузить поддерево до ближайшего существующего нода к запрашиваемому
   _expandToEntityNode: function (entityTypeCode, parentEntityId, entityId) {
     var self = this;
-
-    // загрузить структуру поддерева
     Quantumart.QP8.BackendTreeMenu.getSubTreeToEntity(entityTypeCode, parentEntityId, entityId, function (data) {
       if (data) {
         return;
       }
 
-      // найти самый нижний node из уже существующих в дереве
       var findDeepest = function (node, toExpand) {
         if (!node || $q.isNullOrEmpty(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)))) {
           return null;
-        } 
-            // Открыть node
+        }
+
           if (toExpand) {
             $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
             if (self._isNodeCollapsed($node)) {
@@ -288,10 +283,9 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           return findDeepest($.grep(node.ChildNodes, function (n) {
             return n.ChildNodes != null;
           })[0], toExpand) || node;
-        
+
       };
 
-      // найти дочерние node для текущего родительского
       var findChildren = function (options, parent) {
         if (!parent || $q.isNullOrEmpty(parent.ChildNodes)) {
           return [];
@@ -303,11 +297,11 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
         ) {
           deepestExistedNode = parent;
           return parent.ChildNodes;
-        } 
+        }
           return findChildren(options, $.grep(parent.ChildNodes || [], function (n) {
             return n.ChildNodes != null;
           })[0]);
-        
+
       };
 
       var deepestExistedNode = findDeepest(data);
@@ -315,9 +309,8 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
         nodeCode = self.generateNodeCode(deepestExistedNode.Code, deepestExistedNode.Id, deepestExistedNode.ParentId, deepestExistedNode.IsFolder);
         $node = self.getNode(nodeCode);
 
-        // подгрузить поддерево в дерево
         self._addNodesToParentNode($node, 100, function (options, successHandler) {
-          successHandler(findChildren(options, deepestExistedNode).slice(0)); // Важно, так как _addNodesToParentNode модифицирует аргумент
+          successHandler(findChildren(options, deepestExistedNode).slice(0));
         }, function () {});
 
         deepestExistedNode = findDeepest(data, true);

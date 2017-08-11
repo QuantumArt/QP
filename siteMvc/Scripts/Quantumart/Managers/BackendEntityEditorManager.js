@@ -10,7 +10,7 @@ Quantumart.QP8.BackendEntityEditorManager = function () {
 };
 
 Quantumart.QP8.BackendEntityEditorManager.prototype = {
-	_editorGroups: {}, // список групп редакторов сущностей
+	_editorGroups: {},
 
 	generateEditorGroupCode: function (entityTypeCode, entityId) {
 		var editorGroupCode = String.format("{0}_{1}", entityTypeCode, entityId);
@@ -207,7 +207,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendEntityEditorManager._instance = null; // экземпляр класса
+Quantumart.QP8.BackendEntityEditorManager._instance = null;
 
 // Возвращает экземпляр класса "Менеджер редакторов сущностей"
 Quantumart.QP8.BackendEntityEditorManager.getInstance = function () {

@@ -29,10 +29,10 @@ Quantumart.QP8.BackendEditingDocument = function (tabId, editingArea, eventArgs,
 };
 
 Quantumart.QP8.BackendEditingDocument.prototype = {
-  _id: '', // идентификатор редактируемого объекта
-  _tabId: '', // идентификатор таба
-  _editingArea: null, // область редактирования
-  _additionalUrlParameters: null, // дополнительные параметры URL
+  _id: '',
+  _tabId: '',
+  _editingArea: null,
+  _additionalUrlParameters: null,
 
   get_id: function () {
     return this._id;
@@ -130,7 +130,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   showErrorMessageInDocumentWrapper: function (status) {
-    var $documentWrapper = jQuery(this._documentWrapperElement); // скрытый документ
+    var $documentWrapper = jQuery(this._documentWrapperElement);
     $documentWrapper.html($q.generateErrorMessageText());
   },
 

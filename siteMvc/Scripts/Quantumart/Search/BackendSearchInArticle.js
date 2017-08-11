@@ -8,8 +8,8 @@ Quantumart.QP8.BackendSearchInArticle = function (gridElementId, searchBlockElem
 };
 
 Quantumart.QP8.BackendSearchInArticle.prototype = {
-	_gridElementId: "", // клиентский идентификатор грида
-	_searchBlockElementId: "", // клиентский идентификатор блока поиска
+	_gridElementId: "",
+	_searchBlockElementId: "",
 	_initQuery: "",
 	_documentContext: null,
 

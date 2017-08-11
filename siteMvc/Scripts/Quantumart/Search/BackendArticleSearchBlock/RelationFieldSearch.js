@@ -247,7 +247,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.callBaseMethod(this, 'dispose');
   },
 
-  _searchType: 0, // тип поиска (Many2Nany или One2Many)
+  _searchType: 0,
   _isEntity: true,
 
   _onIsNullCheckBoxChangeHandler: null,

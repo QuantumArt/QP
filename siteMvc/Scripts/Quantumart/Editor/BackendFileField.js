@@ -65,30 +65,30 @@ Quantumart.QP8.BackendFileField = function (fileFieldElementId, fileWrapperEleme
 };
 
 Quantumart.QP8.BackendFileField.prototype = {
-  _fileFieldElementId: '', // клиентский идентификатор файлового поля
-  _fileFieldElement: null, // DOM-элемент, образующий файловое поле
-  _fileWrapperElementId: '', // клиентский идентификатор контейнера, в котором располагается файловое поле
-  _fileWrapperElement: null, // DOM-элемент, образующий контейнер, в котором располагается файловое поле
-  _browseButtonElement: null, // DOM-элемент, образующий кнопку для загрузки файла
-  _previewButtonElement: null, // DOM-элемент, образующий кнопку для предварительного просмотра рисунка
-  _libraryButtonElement: null, // DOM-элемент, образующий кнопку для библиотеки
-  _previewWindowComponent: null, // компонент, образующий окно для предварительного просмотра
-  _downloadButtonElement: null, // DOM-элемент, образующий кнопку для загрузки файла
-  _entityId: 0, // идентификатор сущности
-  _allowFileUpload: false, // признак, разрешающий загрузку файлов на сервер
-  _libraryPath: '', // путь к библиотеке контента
-  _libraryUrl: '', // URL библиотеки контента
-  _renameMatched: false, // признак, разрешающий переименовывать совпадающие файлы
-  _isImage: false, // признак того, что файл является рисунком
-  _isVersion: false, // признак того, что сущность является версией
-  _subFolder: '', // относительный путь от корня библиотеки до папки поля
-  _useSiteLibrary: false, // признак, покзывающий используется ли библиотека сайта или контента
-  _libraryEntityId: 0, // id сущности, которой принадлежит библиотека (сайта или контента)
-  _libraryParentEntityId: 0, // id родительской сущности, относительно той, которой принадлежит библиотека(0 или id сайта)
+  _fileFieldElementId: '',
+  _fileFieldElement: null,
+  _fileWrapperElementId: '',
+  _fileWrapperElement: null,
+  _browseButtonElement: null,
+  _previewButtonElement: null,
+  _libraryButtonElement: null,
+  _previewWindowComponent: null,
+  _downloadButtonElement: null,
+  _entityId: 0,
+  _allowFileUpload: false,
+  _libraryPath: '',
+  _libraryUrl: '',
+  _renameMatched: false,
+  _isImage: false,
+  _isVersion: false,
+  _subFolder: '',
+  _useSiteLibrary: false,
+  _libraryEntityId: 0,
+  _libraryParentEntityId: 0,
   _uploaderType: Quantumart.QP8.Enums.UploaderType.Silverlight,
-  _selectPopupWindowComponent: null, // окно выбора файла в библиотеке
-  _uploaderComponent: null, // компонент аплоадер
-  _uploaderSubFolder: '', // относительный путь для аплоадера
+  _selectPopupWindowComponent: null,
+  _uploaderComponent: null,
+  _uploaderSubFolder: '',
 
   PREVIEW_BUTTON_CLASS_NAME: 'previewButton',
   BROWSE_BUTTON_CLASS_NAME: 'browseButton',

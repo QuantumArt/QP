@@ -45,14 +45,14 @@ Quantumart.QP8.BackendSplitter = function (splitterElementId, options) {
 };
 
 Quantumart.QP8.BackendSplitter.prototype = {
-	_splitterElementId: "", // клиентский идентификатор разделителя
-	_splitterComponent: null, // компонент разделитель
-	_firstPaneElement: null, // первая панель
-	_firstPaneWidth: 250, // ширина первой панели
-	_minFirstPaneWidth: 50, // минимальная ширина первой панели
-	_maxFirstPaneWidth: 400, // максимальная ширина первой панели
-	_stateCookieName: "leftMenuSize", // название Cookie, в котором храниться состояние разделителя	
-	_toWindowResize: false, // выполнять ли jQuery(window).trigger("resize") при инициализации
+	_splitterElementId: "",
+	_splitterComponent: null,
+	_firstPaneElement: null,
+	_firstPaneWidth: 250,
+	_minFirstPaneWidth: 50,
+	_maxFirstPaneWidth: 400,
+	_stateCookieName: "leftMenuSize",
+	_toWindowResize: false,
 
 	get_splitterElementId: function () {
 		return this._splitterElementId;
@@ -198,9 +198,9 @@ Quantumart.QP8.BackendSplitterEventArgs = function () {
 };
 
 Quantumart.QP8.BackendSplitterEventArgs.prototype = {
-	_firstPaneElement: null, // первая панель
-	_firstPaneWidth: 0, // ширина первой панели
-	_firstPaneHeight: 0, // высота первой панели
+	_firstPaneElement: null,
+	_firstPaneWidth: 0,
+	_firstPaneHeight: 0,
 
 	get_firstPane: function () {
 		return this._firstPaneElement;

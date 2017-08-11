@@ -1,5 +1,3 @@
-// #region class BackendArticleSearchBlock.FullTextBlock
-// === Класс "Блок полнотекстового поиска блока поиска статей" ===
 Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock = function (fullTextBlockElement, parentEntityId) {
   this._fullTextBlockElement = fullTextBlockElement;
   this._parentEntityId = parentEntityId;
@@ -7,11 +5,11 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock = function (fullTextBlock
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
-  _fullTextBlockElement: null, // dom-элемент контейнер для блока полнотекстового поиска
-  _textFieldsComboElement: null, // dom-элемент комбо со списком текстовых полей статьи
-  _queryTextBoxElement: null, // dom-элемент текстового поля с текстом запроса
-  _parentEntityId: 0, // идентификатор родительской сущности;
-  _elementIdPrefix: '', // префикс идентификаторов dom-элементов
+  _fullTextBlockElement: null,
+  _textFieldsComboElement: null,
+  _queryTextBoxElement: null,
+  _parentEntityId: 0,
+  _elementIdPrefix: '',
 
   initialize: function () {
     var serverContent;
@@ -46,9 +44,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
 
     if (data) {
       return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.FullText, data.fieldID, data.fieldColumn, data.contentID, data.referenceFieldID, data.text);
-    } 
+    }
       return null;
-    
+
   },
 
   get_blockState: function () {
@@ -67,12 +65,12 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
 
       if (jQuery.isEmptyObject(state)) {
         return null;
-      } 
+      }
         return state;
-      
-    } 
+
+    }
       return null;
-    
+
   },
 
   restore_blockState: function (state) {
@@ -110,17 +108,14 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
           fieldValue: fieldValue,
           text: jQuery(this._queryTextBoxElement).val()
         };
-      } 
+      }
  return null;
 
-    } 
+    }
  return null;
 
   },
-
-  // возвращает параметры для полнотекстового поиска
   clear: function () {
-  // Выбрать элемент "Все поля" в комбо со списком полей
     if (this._textFieldsComboElement) {
       var $resetElem = jQuery(this._textFieldsComboElement).find("option[data-field_is_title='True']");
 
@@ -143,16 +138,12 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
 }
   },
 
-  // очищает блок поиска
   dispose: function () {
     jQuery(this._textFieldsComboElement).unbind('change');
     this._fullTextBlockElement = null;
     this._queryTextBoxElement = null;
     this._textFieldsComboElement = null;
-  } // dispose
+  }
 };
 
-// регистрация класса блока полнотекстового поиска
 Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.registerClass('Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock', null, Sys.IDisposable);
-
-// #endregion

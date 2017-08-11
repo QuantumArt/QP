@@ -1,15 +1,6 @@
-// ****************************************************************************
-// *** Компонент "Активная гиперссылка"                   ***
-// ****************************************************************************
-// #region event types of action link
-// === Типы событий активных ссылок ===
 var EVENT_TYPE_ACTION_LINK_CLICK = "OnActionLinkClick";
 var EVENT_TYPE_ACTION_LINK_SELF_CLICK = "OnActionLinkSelfClick";
 
-// #endregion
-
-// #region class BackendActionLink
-// === Класс "Активная гиперссылка" ===
 Quantumart.QP8.BackendActionLink = function (actionLinkElementId, options) {
   Quantumart.QP8.BackendActionLink.initializeBase(this);
 
@@ -50,16 +41,16 @@ Quantumart.QP8.BackendActionLink = function (actionLinkElementId, options) {
 };
 
 Quantumart.QP8.BackendActionLink.prototype = {
-    _actionLinkElementId: "", // клиентский идентификатор активной гиперссылки
-    _actionLinkElement: null, // DOM-элемент, образующий гиперссылку
-    _iconWrapperElement: null, // DOM-элемент, образующий контейнер для пиктограммы
-    _captionElement: null, // DOM-элемент, образующий текст гиперссылки
-    _entityId: 0, // идентификатор сущности
-    _entityName: "", // название сущности
-    _parentEntityId: 0, // идентификатор родительской сущности
-    _actionTypeCode: "", // код типа действия
-    _actionCode: "", // код действия
-    _actionTargetType: null, // тип цели для отображения интерфейсного действия
+    _actionLinkElementId: "",
+    _actionLinkElement: null,
+    _iconWrapperElement: null,
+    _captionElement: null,
+    _entityId: 0,
+    _entityName: "",
+    _parentEntityId: 0,
+    _actionTypeCode: "",
+    _actionCode: "",
+    _actionTargetType: null,
   _context: null,
 
     ACTION_LINK_DISABLED_CLASS_NAME: "disabled",
@@ -250,78 +241,4 @@ Quantumart.QP8.BackendActionLink.prototype = {
   }
 };
 
-
-// Возвращает идентификатор сущности
-
-
-// Задает идентификатор сущности
-
-
-// Возвращает название сущности
-
-
-// Задает название сущности
-
-
-// Возвращает идентификатор родительской сущности
-
-
-// Задает идентификатор родительской сущности
-
-
-// Возвращает код типа действия
-
-
-// Задает код типа действия
-
-
-// Задает код действия
-
-
-// Задает код действия
-
-
-// Задает тип цели для отображения интерфейсного действия
-
-
-// Задает тип цели для отображения интерфейсного действия
-
-
-
-// Инициализирует гиперссылку
-
-
-// Привязывает события к гиперссылке
-
-
-// Отвязывает события от гиперссылке
-
-
-// Помечает активную ссылку как занятую
-
-
-// Снимает с активной ссылки пометку "занято"
-
-
-// Проверяет помечена ли активная ссылка как занятая
-
-
-// Делает ссылку активной
-
-
-// Делает ссылку неактивной
-
-
-// Проверяет является ли ссылка неактивной
-
-
-
-
-
-
-// Уничтожает объект
-
-
 Quantumart.QP8.BackendActionLink.registerClass("Quantumart.QP8.BackendActionLink", Quantumart.QP8.Observable);
-
-// #endregion

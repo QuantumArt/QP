@@ -1,5 +1,3 @@
-// #region class BackendArticleSearchBlock.StringEnumFieldSearch
-// === Класс блока текстового поиска по полю
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
     Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
     this._onIsNullCheckBoxChangeHandler = jQuery.proxy(this._onIsNullCheckBoxChange, this);
@@ -36,19 +34,10 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
 
         if (!$q.isNullOrWhiteSpace(serverContent)) {
             var $containerElement = jQuery(this._containerElement);
-
-            // добавить разметку на страницу
-            // $containerElement.append(html.string());
             $containerElement.html(serverContent);
-
-            // назначить обработчик события change чекбоксу
             var $isNullCheckBoxElement = $containerElement.find("#" + isNullCheckBoxID);
             $isNullCheckBoxElement.bind("change", this._onIsNullCheckBoxChangeHandler);
-
-            // запомнить ссылку на dom-элемент чекбокса
             this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
-
-            // запомнить ссылку на dom-элемент текстового поля
             this._queryDropDownListElement = $containerElement.find('#' + queryDropDownListID).get(0);
 
             $containerElement = null;
@@ -77,9 +66,9 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
             return $l.SearchBlock.isNullCheckBoxLabelText;
         } else if (stateData.text) {
             return '"' + $q.cutShort(stateData.alias, 8) + '"';
-        } 
+        }
             return '""';
-        
+
     },
 
     restore_blockState: function (state) {
@@ -115,20 +104,16 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.callBaseMethod(this, "dispose");
     },
 
-    _onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
+    _onIsNullCheckBoxChangeHandler: null,
     get_IsNull: function () {
         if (this._isNullCheckBoxElement) {
  return jQuery(this._isNullCheckBoxElement).is(":checked");
-} 
+}
  return false;
 
     },
-
-
-    _queryDropDownListElement: null, // dom-элемент текстового поля
-    _isNullCheckBoxElement: null // dom-элемент чекбокса isNull
+    _queryDropDownListElement: null,
+    _isNullCheckBoxElement: null
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
-
-// #endregion

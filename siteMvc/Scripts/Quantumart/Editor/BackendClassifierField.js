@@ -52,13 +52,13 @@ Quantumart.QP8.BackendClassifierField.getComponent = function (componentElem) {
 };
 
 Quantumart.QP8.BackendClassifierField.prototype = {
-  _$componentElem: null, // главный элемент компонента
-  _$articleWrapper: null, // контейнер содержимого агрегированной статьи
-  _$contentList: null, // список контентов
+  _$componentElem: null,
+  _$articleWrapper: null,
+  _$contentList: null,
   _hostIsWindow: false,
-  _initFieldValues: null, // значения для инициализации полей
-  _disabledFields: null, // идентификаторы полей которые должны быть disable (массив имен полей)
-  _hideFields: null,  // идентификаторы полей которые должны быть скрыты (массив имен полей)
+  _initFieldValues: null,
+  _disabledFields: null,
+  _hideFields: null,
   _disableChangeTracking: false,
   _parentEditor: null,
   _customInit: null,
