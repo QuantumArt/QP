@@ -137,7 +137,7 @@ else if (ie) // Suppress mysterious IE10 errors
 
 function bind(f) {
   var args = Array.prototype.slice.call(arguments, 1);
-  return function (){return f.apply(null, args);};
+  return function () {return f.apply(null, args);};
 }
 
 function copyObj(obj, target, overwrite) {
@@ -182,7 +182,7 @@ var scrollerGap = 30;
 
 // Returned or thrown by various protocols to signal 'I'm not
 // handling this'.
-var Pass = {toString: function (){return "CodeMirror.Pass";}};
+var Pass = {toString: function () {return "CodeMirror.Pass";}};
 
 // Reused option objects for setSelection & friends
 var sel_dontScroll = {scroll: false};
@@ -1440,7 +1440,7 @@ StringStream.prototype = {
   },
   eatWhile: function (match) {
     var start = this.pos;
-    while (this.eat(match)){}
+    while (this.eat(match)) {}
     return this.pos > start;
   },
   eatSpace: function () {
@@ -1482,7 +1482,7 @@ StringStream.prototype = {
       return match;
     }
   },
-  current: function (){return this.string.slice(this.start, this.pos);},
+  current: function () {return this.string.slice(this.start, this.pos);},
   hideFirstChars: function (n, inner) {
     this.lineStart += n;
     try { return inner(); }
@@ -6185,7 +6185,7 @@ function onDrop(e) {
         cm.display.input.focus();
       }
     }
-    catch(e){}
+    catch(e) {}
   }
 }
 
@@ -7069,7 +7069,7 @@ function themeChanged(cm) {
   clearCaches(cm);
 }
 
-var Init = {toString: function (){return "CodeMirror.Init";}};
+var Init = {toString: function () {return "CodeMirror.Init";}};
 
 var defaults = {};
 var optionHandlers = {};
@@ -7632,7 +7632,7 @@ var addEditorMethods = function (CodeMirror) {
 
   CodeMirror.prototype = {
     constructor: CodeMirror,
-    focus: function (){window.focus(); this.display.input.focus();},
+    focus: function () {window.focus(); this.display.input.focus();},
 
     setOption: function (option, value) {
       var options = this.options, old = options[option];
@@ -8022,7 +8022,7 @@ var addEditorMethods = function (CodeMirror) {
       signal(this, "refresh", this);
     }),
 
-    operation: function (f){return runInOp(this, f);},
+    operation: function (f) {return runInOp(this, f);},
 
     refresh: methodOp(function () {
       var oldHeight = this.display.cachedTextHeight;
@@ -8048,10 +8048,10 @@ var addEditorMethods = function (CodeMirror) {
       return old;
     }),
 
-    getInputField: function (){return this.display.input.getField();},
-    getWrapperElement: function (){return this.display.wrapper;},
-    getScrollerElement: function (){return this.display.scroller;},
-    getGutterElement: function (){return this.display.gutters;}
+    getInputField: function () {return this.display.input.getField();},
+    getWrapperElement: function () {return this.display.wrapper;},
+    getScrollerElement: function () {return this.display.scroller;},
+    getGutterElement: function () {return this.display.gutters;}
   };
   eventMixin(CodeMirror);
 

@@ -100,7 +100,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     return dfr.promise();
   },
 
-  _registerInstance: function (){
+  _registerInstance: function () {
     this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, 'true');
   },
 
@@ -145,7 +145,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 
   dispose: function () {
     if (this._imFirst) {
-      if (!('onstorage' in document)){
+      if (!('onstorage' in document)) {
         this._unregisterInstance();
       }
 

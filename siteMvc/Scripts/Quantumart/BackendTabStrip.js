@@ -1279,7 +1279,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
   },
 
-  _closeTabRequest: function (tab){
+  _closeTabRequest: function (tab) {
     if (!this.isTabStripBusy()) {
       var eventArgs = this.getEventArgsFromTab(tab);
       if ($q.isObject(eventArgs)) {
@@ -1289,7 +1289,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
   },
 
-  _closeAllTabRequest: function (){
+  _closeAllTabRequest: function () {
     if (!this.isTabStripBusy()) {
         jQuery(this._tabStripElement)
                 .find(this.TAB_CLICKABLE_SELECTORS)
@@ -1317,7 +1317,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       }
   },
 
-  _closeButThisTabRequest: function ($tab){
+  _closeButThisTabRequest: function ($tab) {
       if (!this.isTabStripBusy()) {
         jQuery(this._tabStripElement)
                 .find(this.TAB_CLICKABLE_SELECTORS)

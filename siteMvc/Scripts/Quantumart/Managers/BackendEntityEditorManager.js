@@ -176,7 +176,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 		this.notify(EVENT_TYPE_ENTITY_EDITOR_DISPOSED, eventArgs);
 	},
 
-	onFieldValueChanged: function (args){
+	onFieldValueChanged: function (args) {
 		var eventArgs = new Sys.EventArgs();
 		eventArgs.fieldChangeInfo = args;
 		this.notify(EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED, eventArgs);

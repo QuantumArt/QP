@@ -29,8 +29,8 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     _onLogonHandler: null,
     _onCloseWindowHandler: null,
 
-    _getServerContent: function (data){
-        if (data.success){
+    _getServerContent: function (data) {
+        if (data.success) {
             return data.view;
         }
         else{
@@ -143,7 +143,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     },
 
     _showWindow: function (data) {
-        if (!this._windowComponent){
+        if (!this._windowComponent) {
             this._createWindow(this._getServerContent(data));
             this._attachEvents();
             this._setDefaultValues();
@@ -226,7 +226,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         });
     },
 
-    _clearDeferredCallcacks: function (){
+    _clearDeferredCallcacks: function () {
         $(this).off(this.AJAX_EVENT);
     },
     // #endregion

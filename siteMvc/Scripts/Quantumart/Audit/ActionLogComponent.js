@@ -66,7 +66,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     }
   },
 
-  get_filterData: function (){
+  get_filterData: function () {
     var filterData = {};
     for (var tileType in this._tiles) {
       if (tileType && this._tiles.hasOwnProperty(tileType)) {
@@ -78,7 +78,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
   _onFilterSelected: function () {
     var $selected = this.$filterCombo.find("option:selected");
-    if($selected.val()){
+    if($selected.val()) {
       this._createTile({ value: $selected.val(), text: $selected.text() });
     }
     this.$filterCombo.val("");

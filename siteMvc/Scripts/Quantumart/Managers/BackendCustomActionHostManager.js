@@ -29,9 +29,9 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
 
     onExternalCallerContextsUnbinded: function (message) {
     	var self = this;
-    	jQuery(message.externalCallerContexts).each(function (i, c){
+    	jQuery(message.externalCallerContexts).each(function (i, c) {
     		var component = self._components[c.hostUID];
-    		if(component){
+    		if(component) {
     			component.onExternalCallerContextsUnbinded({
     				reason: message.reason,
     				actionUID: c.data.actionUID,
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
 
 Quantumart.QP8.BackendCustomActionHostManager._instance = null; // экземпляр класса
 
-Quantumart.QP8.BackendCustomActionHostManager.getInstance = function (){
+Quantumart.QP8.BackendCustomActionHostManager.getInstance = function () {
     if (Quantumart.QP8.BackendCustomActionHostManager._instance == null) {
         Quantumart.QP8.BackendCustomActionHostManager._instance = new Quantumart.QP8.BackendCustomActionHostManager();
     }

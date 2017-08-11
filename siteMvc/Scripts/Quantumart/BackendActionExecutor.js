@@ -429,7 +429,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCo
   var action = $cache.getItem(cacheKey);
 
   if (!action) {
-    $q.getJsonFromUrl('GET', CONTROLLER_URL_BACKEND_ACTION + 'GetByCode', { 'actionCode': actionCode }, false, false) .done(function (data){
+    $q.getJsonFromUrl('GET', CONTROLLER_URL_BACKEND_ACTION + 'GetByCode', { 'actionCode': actionCode }, false, false) .done(function (data) {
       if (data.success) {
         action = data.action;
       } else {
@@ -453,7 +453,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) 
   var actionCode = $cache.getItem(cacheKey);
 
   if (!actionCode) {
-    $q.getJsonFromUrl('GET',CONTROLLER_URL_BACKEND_ACTION + 'GetCodeById',{ 'actionId': actionId },false,false).done(function (data){
+    $q.getJsonFromUrl('GET',CONTROLLER_URL_BACKEND_ACTION + 'GetCodeById',{ 'actionId': actionId },false,false).done(function (data) {
       if (data.success) {
         actionCode = data.actionCode;
       } else {
@@ -742,7 +742,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
   get_entityTypeCode: function () { return this._entityTypeCode; },
   get_context: function () { return this._context; },
   get_entities: function () { return ($q.isArray(this._entities) && this._entities.length > 0) ? this._entities : [{ Id: this._entityId, Name: this._entityName}]; },
-  get_actionCode: function (){ return this._actionCode;},
+  get_actionCode: function () { return this._actionCode;},
 
   correct: function (action) {
     var currentAction = $a.getBackendAction(action);

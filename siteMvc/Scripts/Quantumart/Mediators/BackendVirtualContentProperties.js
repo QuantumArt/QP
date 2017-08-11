@@ -27,7 +27,7 @@ Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (unionSourcePa
         $buildParamsPanelElement = jQuery("#" + buildParamsPanelElementId),
         unionSourcesComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(unionSourcesElementId + "_list");
 
-    function onUnionTypeSelected(){
+    function onUnionTypeSelected() {
             unionSourcesComponent._fixListOverflow();
     }
 

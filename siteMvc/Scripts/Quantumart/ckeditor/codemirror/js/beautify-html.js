@@ -133,7 +133,7 @@
             options.extra_liners.split(',') : 'head,body,/html'.split(',');
         eol = options.eol ? options.eol : '\n';
 
-        if(options.indent_with_tabs){
+        if(options.indent_with_tabs) {
             indent_character = '\t';
             indent_size = 1;
         }

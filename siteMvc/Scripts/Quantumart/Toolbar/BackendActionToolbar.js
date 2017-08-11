@@ -52,7 +52,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
 
         var actionToolbarItems = data;
         if (!$q.isNullOrEmpty(self.getDisabledActionCodes())) {
-          actionToolbarItems = jQuery.grep(actionToolbarItems, function (itm){
+          actionToolbarItems = jQuery.grep(actionToolbarItems, function (itm) {
             return (self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1);
           });
         }
@@ -114,7 +114,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     this.notify(EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, eventArgs);
   },
 
-  setDisabledActionCodes: function (value){
+  setDisabledActionCodes: function (value) {
     this._disabledActionCodes = value;
   },
   getDisabledActionCodes: function () {

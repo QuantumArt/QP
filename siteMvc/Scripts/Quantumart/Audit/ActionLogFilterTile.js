@@ -135,7 +135,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	dispose: function () {
 		Quantumart.QP8.ActionLogFilterTile.callBaseMethod(this, "dispose");
 
-		if(this.$closeButton){
+		if(this.$closeButton) {
 			this.$closeButton.off("click");
 			this.$closeButton = null;
 		}

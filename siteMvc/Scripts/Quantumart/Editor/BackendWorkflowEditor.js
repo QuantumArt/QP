@@ -89,7 +89,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
         var component = this;
         this._componentElem.closest('form').find('.workflow_control_selector').parent('div').find('.checkbox')
-        .change(function (e){ component.manageItems(e); });
+        .change(function (e) { component.manageItems(e); });
 
         this._contentSelector
         .data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler);
@@ -114,7 +114,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         this._componentElem.data('workflow', this);
     },
 
-    getCheckedContentsIds: function (){
+    getCheckedContentsIds: function () {
         return this._contentSelector.find('input:checkbox:checked').map(function (index, elem) {
             return $(elem).val();
         }).get().join();

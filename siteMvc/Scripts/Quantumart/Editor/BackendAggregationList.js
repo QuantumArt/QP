@@ -5,7 +5,7 @@ Quantumart.QP8.BackendAggregationList = function (componentElem) {
 };
 
 Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT = "aggregation_list_component";
-Quantumart.QP8.BackendAggregationList.getComponent = function (componentElem){
+Quantumart.QP8.BackendAggregationList.getComponent = function (componentElem) {
   if (componentElem) {
     return $q.toJQuery(componentElem).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT);
   }
@@ -85,7 +85,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this.checkHeaders();
   },
 
-  _onItemChanged: function (){
+  _onItemChanged: function () {
     this._setAsChanged();
     return true;
   },

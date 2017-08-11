@@ -110,7 +110,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		return entities;
 	},
 
-	getStateFieldElement: function (){
+	getStateFieldElement: function () {
 		return this._stateFieldElement;
 	},
 

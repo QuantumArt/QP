@@ -20,7 +20,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
 		}
 	},
 
-    _getEntityChildList: function (entityId, returnSelf, successHandler, errorHandler){
+    _getEntityChildList: function (entityId, returnSelf, successHandler, errorHandler) {
         if (this._parentEntityId)
         {
             var selectItemIDsParam,
@@ -55,7 +55,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
         }
 	},
 
-    _getIcon: function (entity){
+    _getIcon: function (entity) {
 	    var icon = entity.IconUrl;
 	    return icon;
 	},

@@ -288,7 +288,7 @@
             opt.space_after_anon_function = true;
         }
 
-        if(options.indent_with_tabs){
+        if(options.indent_with_tabs) {
             opt.indent_char = '\t';
             opt.indent_size = 1;
         }
@@ -659,7 +659,7 @@
             }
 
             // Should be a space between await and an IIFE
-            if(current_token.text === '(' && last_type === 'TK_RESERVED' && flags.last_word === 'await'){
+            if(current_token.text === '(' && last_type === 'TK_RESERVED' && flags.last_word === 'await') {
                 output.space_before_token = true;
             }
 

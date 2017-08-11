@@ -47,7 +47,7 @@ Quantumart.QP8.BackendClassifierField = function (componentElem, editorExecuting
 };
 
 Quantumart.QP8.BackendClassifierField.componentRefDataKey = 'component_ref';
-Quantumart.QP8.BackendClassifierField.getComponent = function (componentElem){
+Quantumart.QP8.BackendClassifierField.getComponent = function (componentElem) {
   return $(componentElem).data(Quantumart.QP8.BackendClassifierField.componentRefDataKey);
 };
 

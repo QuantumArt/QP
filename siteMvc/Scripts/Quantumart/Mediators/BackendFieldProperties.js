@@ -33,7 +33,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
 	function onRelatedToChanged() {
 	    var selectedContentId = jQuery(contentPicker.getStateFieldElement()).val();
 
-        if(!$q.isNullOrEmpty(selectedContentId)){
+        if(!$q.isNullOrEmpty(selectedContentId)) {
         	$q.getJsonFromUrl(
                 "GET",
                 relateableFieldsUrl,
@@ -179,23 +179,23 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
 
 
 
-Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId, fileFieldElementId){
+Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId, fileFieldElementId) {
 
     var $fieldTypeSelectElement = jQuery("#" + fieldTypeSelectElementId),
         $fileFieldElement = jQuery("#" + fileFieldElementId),
         fileFieldComponent = $fileFieldElement.data("file_field");
 
-    function onFieldTypeChanged(){
+    function onFieldTypeChanged() {
         var fieldType = jQuery("option:selected", $fieldTypeSelectElement).val();
-        if(fieldType == FILE_FIELD_TYPE){
+        if(fieldType == FILE_FIELD_TYPE) {
             fileFieldComponent.set_isImage(false);
         }
-        else if(fieldType == IMAGE_FIELD_TYPE){
+        else if(fieldType == IMAGE_FIELD_TYPE) {
             fileFieldComponent.set_isImage(true);
         }
     }
 
-    function dispose(){
+    function dispose() {
         $fieldTypeSelectElement.unbind();
         $fieldTypeSelectElement = null;
         $fileFieldElement = null;

@@ -424,7 +424,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     if (this._isCloseForced) {
       this._isCloseForced = false;
       var context = this.get_documentContext();
-      if (context && context.get_mainComponentType() == $e.MainComponentType.Editor && !context.get_mainComponent()._formHasErrors){
+      if (context && context.get_mainComponentType() == $e.MainComponentType.Editor && !context.get_mainComponent()._formHasErrors) {
         this._editingArea.closeDocument(this.get_tabId(), true);
       }
     }
