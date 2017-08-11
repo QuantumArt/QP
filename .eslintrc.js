@@ -6,6 +6,7 @@ module.exports = {
     './.eslint/.eslintrc'
   ].map(require.resolve),
   globals: {
+    _: false,
     $a: false,
     $c: false,
     $e: false,

@@ -124,7 +124,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
       if (args.entityTypeCode && args.parentEntityId) {
         var dataItems = $o.getSimpleEntityList(args.entityTypeCode, args.parentEntityId, 0, 0, window.$e.ListSelectionMode.OnlySelectedItems, selectedEntityIDs);
         selectedEntities = $c.getEntitiesFromListItemCollection(dataItems);
-        selectedEntityIDs: _.pluck(selectedEntities, 'Id');
+        selectedEntityIDs = _.pluck(selectedEntities, 'Id');
       }
     }
 
