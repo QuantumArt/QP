@@ -41,9 +41,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 			false,
 			function (data, textStatus, jqXHR) {
 				if (data.success)
-					{serverContent = data.view;}
+					{ serverContent = data.view; }
 				else
-					{alert(data.message);}
+					{ alert(data.message); }
 			},
 			function (jqXHR, textStatus, errorThrown) {
 				serverContent = null;
@@ -72,14 +72,14 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 			if (fieldID && this._fieldSearchContainerList[fieldID]) {
 				var fscsq = this._fieldSearchContainerList[fieldID].get_searchQuery();
 				if (fscsq)
-					{result.push(fscsq);}
+					{ result.push(fscsq); }
 			}
 		}
 
 		if (result.length > 0)
-			{return result;}
+			{ return result; }
 		else
-			{return null;}
+			{ return null; }
 	},
 
 	get_blockState: function () {
@@ -123,7 +123,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 	clear: function () {
 		// Выбрать первое поле в списке полей
 		if (this._fieldsComboElement)
-			{jQuery(this._fieldsComboElement).find("option:first").prop("selected", true);}
+			{ jQuery(this._fieldsComboElement).find("option:first").prop("selected", true); }
 
 		// Удалить контейнеры поиска по конкретным полям
 		this._destroyAllFieldSearchContainers();
@@ -220,7 +220,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 	// удалить все контейнеры поиска
 	_destroyAllFieldSearchContainers: function () {
 		for (var fieldID in this._fieldSearchContainerList)
-			{this._destroyFieldSearchContainer(fieldID);}
+			{ this._destroyFieldSearchContainer(fieldID); }
 	},
 
 

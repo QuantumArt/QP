@@ -192,7 +192,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
             urlParams: urlParams
           });
           if (urlParams)
-              {params.settingsParams = urlParams;}
+              { params.settingsParams = urlParams; }
           var tearDownUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
             additionalUrlParameters:  additionalUrlParameters,
             isTearDown: true

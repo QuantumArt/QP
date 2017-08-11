@@ -84,7 +84,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
             $globalChkbx.parent('.field').show();
         }
         else
-            {$globalChkbx.parent('.field').hide();}
+            { $globalChkbx.parent('.field').hide(); }
     }
 
     function dispose() {

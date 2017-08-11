@@ -191,7 +191,7 @@ window.spellChecker.prototype = {
 		    return false;
 	    }
 	    var txt = this.controlWin.replacementText;
-	    if(!txt.value) {return false;}
+	    if(!txt.value) { return false; }
 	    var newspell = new String(txt.value);
 
 	    // set this word as a "replace all" word.
@@ -275,7 +275,7 @@ window.spellChecker.prototype = {
 			    if(this.currentWordIndex == 0 && this.currentTextIndex > 0) {
 				    this.currentTextIndex--;
 				    this.currentWordIndex = this.wordWin.totalWords(this.currentTextIndex) - 1;
-				    if(this.currentWordIndex < 0) {this.currentWordIndex = 0;}
+				    if(this.currentWordIndex < 0) { this.currentWordIndex = 0; }
 			    } else {
 				    if(this.currentWordIndex > 0) {
 					    this.currentWordIndex--;

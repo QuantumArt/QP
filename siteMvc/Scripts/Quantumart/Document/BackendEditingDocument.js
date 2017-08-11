@@ -285,7 +285,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   showLoadingLayer: function () {
     if (this._editingArea) {
       if (this.isSelected())
-        {this._editingArea.showAjaxLoadingLayer();}
+        { this._editingArea.showAjaxLoadingLayer(); }
     }
   },
 

@@ -387,9 +387,9 @@ Quantumart.QP8.BackendFileField.prototype = {
 
   _onFileUploadedHandler: function (eventType, sender, eventArgs) {
     if (eventArgs.get_fileNames().length > 0)
-    {jQuery(this._fileFieldElement)
+    { jQuery(this._fileFieldElement)
     .val(this._getFileFieldSubFolder() + eventArgs.get_fileNames()[0])
-    .trigger('change');}
+    .trigger('change'); }
   },
 
   _onPreviewButtonClick: function () {

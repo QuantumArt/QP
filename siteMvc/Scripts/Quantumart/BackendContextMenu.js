@@ -16,7 +16,7 @@ Quantumart.QP8.BackendContextMenu = function (contextMenuCode, contextMenuElemen
     }
 
     if (options.zIndex)
-    {this._zIndex = options.zIndex;}
+    { this._zIndex = options.zIndex; }
 
     if (!$q.isNull(options.allowManualShowing)) {
       this._allowManualShowing = options.allowManualShowing;

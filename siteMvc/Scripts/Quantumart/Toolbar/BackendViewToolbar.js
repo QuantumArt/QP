@@ -64,7 +64,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 		var result = "";
 		var $list = this.getToolbarItem(this.VIEWS_DROPDOWN_CODE);
 		if ($list)
-			{result = jQuery("li.selected", $list).attr("code");}
+			{ result = jQuery("li.selected", $list).attr("code"); }
 		return result;
 	},
 

@@ -721,9 +721,9 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var $item = this.getToolbarItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
       if (state)
-        {$item.show();}
+        { $item.show(); }
       else
-        {$item.hide();}
+        { $item.hide(); }
     }
   },
 

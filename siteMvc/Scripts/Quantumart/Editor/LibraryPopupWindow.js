@@ -44,7 +44,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype =
 			if (entities.length > 0) {
 				var folderUrl = args.context;
 				if (folderUrl.charAt(0) == "\\")
-				    {folderUrl = folderUrl.substring(1, folderUrl.length);}
+				    { folderUrl = folderUrl.substring(1, folderUrl.length); }
 				var imgUrl = '';
 				if (this._options.contentId != 0) {
 				    imgUrl = this._options.libraryUrl.replace('images/', '') + 'contents/' + this._options.contentId + '/' + folderUrl + entities[0].Name;
@@ -55,7 +55,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype =
 				imgUrl = imgUrl.replace(new RegExp("\\\\", 'g'), "\/");
 
 				if (this._options.selectCallback)
-					{this._options.selectCallback(imgUrl);}
+					{ this._options.selectCallback(imgUrl); }
 			}
 		}
 	},

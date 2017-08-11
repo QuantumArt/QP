@@ -19,7 +19,7 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
         var oldFilter = obj.getFilter();
         obj.setFilter(filter);
         if (oldFilter != "" && oldFilter != filter)
-          {obj.removeAllListItems();}
+          { obj.removeAllListItems(); }
       }
 
     }

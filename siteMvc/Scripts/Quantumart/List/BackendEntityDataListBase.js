@@ -549,7 +549,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     for (var linkButtonIndex = 0; linkButtonIndex < linkButtonCount; linkButtonIndex++) {
       var $linkButton = $linkButtons.eq(linkButtonIndex);
       if ($linkButton.data("action_code") !== this._readActionCode)
-        {this._changeToolbarButtonState($linkButton, false);}
+        { this._changeToolbarButtonState($linkButton, false); }
     }
 
     $linkButtons = null;

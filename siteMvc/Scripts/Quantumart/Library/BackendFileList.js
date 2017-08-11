@@ -33,9 +33,9 @@ Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, ac
 
 	if (!$q.isNull(options)) {
 		if (!$q.isNull(options.selectMode))
-		    {this._selectMode = options.selectMode;}
+		    { this._selectMode = options.selectMode; }
 		if (options.zIndex)
-		    {this._zIndex = options.zIndex;}
+		    { this._zIndex = options.zIndex; }
 	}
 
 	this._currentDataQueryOptions = {
@@ -46,9 +46,9 @@ Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, ac
 		fileNameFilter: ""
 	};
 	if (this._viewMode == FILE_LIST_MODE_NAME_LIST)
-		{this._currentDataQueryOptions.pageSize = FILE_LIST_NAME_PAGE_SIZE;}
+		{ this._currentDataQueryOptions.pageSize = FILE_LIST_NAME_PAGE_SIZE; }
 	else if (this._viewMode == FILE_LIST_MODE_PREVIEW_LIST)
-		{this._currentDataQueryOptions.pageSize = FILE_LIST_PREVIEW_PAGE_SIZE;}
+		{ this._currentDataQueryOptions.pageSize = FILE_LIST_PREVIEW_PAGE_SIZE; }
 };
 
 Quantumart.QP8.BackendFileList.prototype = {
@@ -98,11 +98,11 @@ Quantumart.QP8.BackendFileList.prototype = {
 		var url = "";
 		// определить url в зависимости от fileEntityTypeCode
 		if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_SITE_FILE)
-			{url = CONTROLLER_URL_SITE + '_FileList';}
+			{ url = CONTROLLER_URL_SITE + '_FileList'; }
 		else if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE)
-			{url = CONTROLLER_URL_CONTENT + '_FileList';}
+			{ url = CONTROLLER_URL_CONTENT + '_FileList'; }
 		else
-			{throw new Error('fileEntityTypeCode is unknown.');}
+			{ throw new Error('fileEntityTypeCode is unknown.'); }
 
 		var result;
 		$q.getJsonFromUrl(
@@ -120,7 +120,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 			false,
 			function (data, textStatus, jqXHR) {
 				if (data.success)
-					{result = data.data;}
+					{ result = data.data; }
 				else {
 					alert(data.message);
 				}
@@ -140,7 +140,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 			var eventArgs = $a.getEventArgsFromAction(action);
 			eventArgs.set_isMultipleEntities(true);
 			if (args)
-				{eventArgs.set_entities(args.get_entities());}
+				{ eventArgs.set_entities(args.get_entities()); }
 			eventArgs.set_entityTypeCode(this._fileEntityTypeCode);
 			eventArgs.set_parentEntityId(this._currentDataQueryOptions.folderId);
 
@@ -185,11 +185,11 @@ Quantumart.QP8.BackendFileList.prototype = {
 		this._fileListContentElement = $listElement.find('.fileListContent').get(0);
 		var listViewComponent = null;
 		if (this._viewMode == FILE_LIST_MODE_NAME_LIST)
-			{listViewComponent = new Quantumart.QP8.BackendFileNameListView(this._fileListContentElement, this._contextMenuCode, this._selectMode, this._zIndex);}
+			{ listViewComponent = new Quantumart.QP8.BackendFileNameListView(this._fileListContentElement, this._contextMenuCode, this._selectMode, this._zIndex); }
 		else if (this._viewMode == FILE_LIST_MODE_PREVIEW_LIST)
-		    {listViewComponent = new Quantumart.QP8.BackendFilePreviewListView(this._fileListContentElement, this._contextMenuCode, this._selectMode, this._zIndex);}
+		    { listViewComponent = new Quantumart.QP8.BackendFilePreviewListView(this._fileListContentElement, this._contextMenuCode, this._selectMode, this._zIndex); }
 		else
-			{throw new Error('View Mode is unknown.');}
+			{ throw new Error('View Mode is unknown.'); }
 
 		// -----
 		listViewComponent.initialize();
@@ -209,15 +209,15 @@ Quantumart.QP8.BackendFileList.prototype = {
 		// установить новые значения параметров поиска
 		if ($q.isObject(options)) {
 			if (!$q.isNull(options.pageSize))
-				{this._currentDataQueryOptions.pageSize = $q.toInt(options.pageSize);}
+				{ this._currentDataQueryOptions.pageSize = $q.toInt(options.pageSize); }
 			if (!$q.isNull(options.pageNumber))
-				{this._currentDataQueryOptions.pageNumber = $q.toInt(options.pageNumber);}
+				{ this._currentDataQueryOptions.pageNumber = $q.toInt(options.pageNumber); }
 			if (!$q.isNull(options.folderId))
-				{this._currentDataQueryOptions.folderId = $q.toInt(options.folderId);}
+				{ this._currentDataQueryOptions.folderId = $q.toInt(options.folderId); }
 			if (!$q.isNull(options.fileTypeId))
-				{this._currentDataQueryOptions.fileTypeId = options.fileTypeId;}
+				{ this._currentDataQueryOptions.fileTypeId = options.fileTypeId; }
 			if (!$q.isNull(options.fileNameFilter))
-				{this._currentDataQueryOptions.fileNameFilter = options.fileNameFilter;}
+				{ this._currentDataQueryOptions.fileNameFilter = options.fileNameFilter; }
 		}
 
 		// загрузить данные с сервера

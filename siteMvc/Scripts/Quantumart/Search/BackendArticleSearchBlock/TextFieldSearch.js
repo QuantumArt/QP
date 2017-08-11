@@ -22,9 +22,9 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 			false,
 			function (data, textStatus, jqXHR) {
 			  if (data.success)
-			    {serverContent = data.view;}
+			    { serverContent = data.view; }
 			  else
-			    {alert(data.message);}
+			    { alert(data.message); }
 			},
 		    function (jqXHR, textStatus, errorThrown) {
 		      serverContent = null;
@@ -174,30 +174,30 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
   get_IsNull: function () {
     if (this._isNullCheckBoxElement)
-      {return jQuery(this._isNullCheckBoxElement).is(":checked");}
+      { return jQuery(this._isNullCheckBoxElement).is(":checked"); }
     else
-      {return false;}
+      { return false; }
   },
 
   get_Inverse: function () {
     if (this._inverseCheckBoxElement)
-      {return jQuery(this._inverseCheckBoxElement).is(":checked");}
+      { return jQuery(this._inverseCheckBoxElement).is(":checked"); }
     else
-      {return false;}
+      { return false; }
   },
 
   get_ExactMatch: function () {
     if (this._exactMatchCheckBoxElement)
-      {return jQuery(this._exactMatchCheckBoxElement).is(":checked");}
+      { return jQuery(this._exactMatchCheckBoxElement).is(":checked"); }
     else
-      {return false;}
+      { return false; }
   },
 
   get_BeginningStart: function () {
     if (this._beginningStartChechBoxElement)
-      {return jQuery(this._beginningStartChechBoxElement).is(":checked");}
+      { return jQuery(this._beginningStartChechBoxElement).is(":checked"); }
     else
-      {return false;}
+      { return false; }
   },
 
 
