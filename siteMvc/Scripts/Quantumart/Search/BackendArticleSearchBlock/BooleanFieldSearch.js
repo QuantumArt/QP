@@ -110,9 +110,9 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 		var result = null;
 		var val = jQuery(this._containerElement).find('input:radio:checked').val();
 		if (val == "true") {
- result = true; 
+ result = true;
 } else {
- result = false; 
+ result = false;
 }
 		return result;
 	},
@@ -141,9 +141,9 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 	_onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
 	get_IsNull: function () {
 		if (this._isNullCheckBoxElement) {
- return jQuery(this._isNullCheckBoxElement).is(":checked"); 
+ return jQuery(this._isNullCheckBoxElement).is(":checked");
 } else {
- return false; 
+ return false;
 }
 	},
 

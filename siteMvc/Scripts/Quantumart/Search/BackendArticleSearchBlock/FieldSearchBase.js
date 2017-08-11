@@ -71,10 +71,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   _getIds: function (text) {
     var ids = text.replace(/\r?\n|\r|;/g, ",").split(",");
     ids = ids.map(function (e) {
- return parseInt(e, 10); 
+ return parseInt(e, 10);
 });
     ids = $.grep(ids, function (e) {
- return (e); 
+ return (e);
 });
     ids = _.uniq(ids);
     return ids;

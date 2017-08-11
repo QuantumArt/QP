@@ -65,7 +65,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
         if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
             var objId = $parentObjectSelector.val();
             var targetObj = $(this.data('objects')).filter(function () {
- return this.Id == objId; 
+ return this.Id == objId;
 })[0];
             $nameField.val(targetObj.Name);
             $netNameField.val(targetObj.NetName);
@@ -81,7 +81,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
         if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(",").indexOf($typeSelector.val()) != -1) {
             $globalChkbx.parent('.field').show();
         } else {
- $globalChkbx.parent('.field').hide(); 
+ $globalChkbx.parent('.field').hide();
 }
     }
 

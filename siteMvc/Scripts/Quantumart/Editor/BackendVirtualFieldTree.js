@@ -26,7 +26,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
                 alias;
 
             if (!$q.isNullOrEmpty(this._selectedEntitiesIDs)) {
- selectItemIDsParam = this._selectedEntitiesIDs.join(';'); 
+ selectItemIDsParam = this._selectedEntitiesIDs.join(';');
 }
             if (!$q.isNullOrWhiteSpace(entityId)) {
                 entityIdParam = entityId;

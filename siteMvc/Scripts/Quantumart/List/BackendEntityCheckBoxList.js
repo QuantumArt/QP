@@ -118,10 +118,10 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     // #region Определяем, изменились ли значения
     var newSelectedIDs = jQuery.map(
       jQuery.grep(dataItems, function (di) {
- return di.Selected === true; 
+ return di.Selected === true;
 }),
       function (di) {
- return $q.toInt(di.Value); 
+ return $q.toInt(di.Value);
 }
     );
     var currentSelectedIDs = this.getSelectedEntityIDs();

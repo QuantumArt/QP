@@ -69,17 +69,17 @@
 
 				// Check if we're already dealing with an array of colors
 				if (color && color.constructor == Array && color.length == 3) {
- return color; 
+ return color;
 }
 
 				// Look for rgb(num,num,num)
 				if (result = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(color)) {
- return [parseInt(result[1], 10), parseInt(result[2], 10), parseInt(result[3], 10)]; 
+ return [parseInt(result[1], 10), parseInt(result[2], 10), parseInt(result[3], 10)];
 }
 
 				// Look for #a0b1c2
 				if (result = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(color)) {
- return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)]; 
+ return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)];
 }
 
 				// Otherwise, we're most likely dealing with a named color
@@ -94,7 +94,7 @@
 
 					// Keep going until we find an element that has color, or we hit the body
 					if (color != '' && color != 'transparent' || $.nodeName(elem, "body")) {
- break; 
+ break;
 }
 
 					attr = "backgroundColor";
@@ -186,7 +186,7 @@
 					zmax = cur > zmax ? cur : zmax;
 				});
 				if (!this.jquery) {
- return zmax; 
+ return zmax;
 }
 
 				return this.each(function () {

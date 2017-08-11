@@ -9,7 +9,7 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, 
 		} else if (type == 2 && groups[0]) {
 			return { groupId: groups[0].Id };
 		} else {
- return {}; 
+ return {};
 }
 	}
 

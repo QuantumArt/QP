@@ -67,7 +67,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	},
 
 	get_options: function () {
- return this._options; 
+ return this._options;
 },
 
 	_createFilter: function () {

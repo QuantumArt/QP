@@ -35,16 +35,16 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
     _viewTypeCode: "",
 
 	get_actionCode: function () {
- return this._actionCode; 
+ return this._actionCode;
 },
 	set_actionCode: function (value) {
- this._actionCode = value; 
+ this._actionCode = value;
 },
 	get_parentEntityId: function () {
- return this._parentEntityId; 
+ return this._parentEntityId;
 },
 	set_parentEntityId: function (value) {
- this._parentEntityId = value; 
+ this._parentEntityId = value;
 },
 
 	VIEWS_DROPDOWN_CODE: "views",
@@ -71,7 +71,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 		var result = "";
 		var $list = this.getToolbarItem(this.VIEWS_DROPDOWN_CODE);
 		if ($list) {
- result = jQuery("li.selected", $list).attr("code"); 
+ result = jQuery("li.selected", $list).attr("code");
 }
 		return result;
 	},
@@ -286,22 +286,22 @@ Quantumart.QP8.BackendViewToolbarDropDownListEventArgs.prototype = {
 	_code: "", // код выбранного элемента
 
 	get_controllerActionUrl: function () {
- return this._controllerActionUrl; 
+ return this._controllerActionUrl;
 },
 	set_controllerActionUrl: function (value) {
- this._controllerActionUrl = value; 
+ this._controllerActionUrl = value;
 },
 	get_preventDefaultBehavior: function () {
- return this._preventDefaultBehavior; 
+ return this._preventDefaultBehavior;
 },
 	set_preventDefaultBehavior: function (value) {
- this._preventDefaultBehavior = value; 
+ this._preventDefaultBehavior = value;
 },
 	get_code: function () {
- return this._code; 
+ return this._code;
 },
 	set_code: function (value) {
- this._code = value; 
+ this._code = value;
 }
 };
 

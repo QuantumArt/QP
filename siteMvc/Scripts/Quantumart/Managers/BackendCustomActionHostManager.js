@@ -60,7 +60,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     		jQuery.merge(hosts, [Quantumart.QP8.BackendEditingArea.getInstance().getDocumentByEventArgs(eventArgs.get_callerContext().eventArgs)]);
     	}
     	hosts = jQuery.grep(hosts, function (h) {
- return !$q.isNull(h); 
+ return !$q.isNull(h);
 });
     	if (!$q.isNullOrEmpty(hosts)) {
     		jQuery.each(hosts, function (k, host) {
@@ -69,7 +69,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     	}
 
     	callerContexts = jQuery.grep(callerContexts, function (c) {
- return !$q.isNull(c); 
+ return !$q.isNull(c);
 });
     	jQuery(callerContexts).each(function (i, c) {
     		var component = self._components[c.hostUID];

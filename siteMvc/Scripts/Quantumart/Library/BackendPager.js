@@ -71,9 +71,9 @@ Quantumart.QP8.BackendPager.prototype = {
 		if (this._totalCount > 0) {
 			for (var pn = this._currentFrameStartPageNumber; pn <= this._currentFrameEndPageNumber; pn++) {
 				if (pn != this._currentPageNumber) {
- html.cat('<a class="t-link qp-page-link">').cat((pn + 1)).cat('</a>'); 
+ html.cat('<a class="t-link qp-page-link">').cat((pn + 1)).cat('</a>');
 } else {
- html.cat('<span class="t-state-active">').cat((pn + 1)).cat('</span>'); 
+ html.cat('<span class="t-state-active">').cat((pn + 1)).cat('</span>');
 }
 			}
 		}
@@ -141,16 +141,16 @@ Quantumart.QP8.BackendPager.prototype = {
 		if ($q.isObject(options)) {
 			// установитьновые значения свойств
 			if (!$q.isNull(options.totalCount)) {
- this._totalCount = $q.toInt(options.totalCount < 0 ? 0 : options.totalCount); 
+ this._totalCount = $q.toInt(options.totalCount < 0 ? 0 : options.totalCount);
 }
 			if (!$q.isNull(options.pageSize)) {
- this._pageSize = $q.toInt(options.pageSize < 1 ? 1 : options.pageSize); 
+ this._pageSize = $q.toInt(options.pageSize < 1 ? 1 : options.pageSize);
 }
 			if (!$q.isNull(options.pageFrameSize)) {
- this._pageFrameSize = $q.toInt(options.pageFrameSize < 1 ? 1 : options.pageFrameSize); 
+ this._pageFrameSize = $q.toInt(options.pageFrameSize < 1 ? 1 : options.pageFrameSize);
 }
 			if (!$q.isNull(options.currentPageNumber)) {
- this._currentPageNumber = $q.toInt(options.currentPageNumber < 0 ? 0 : options.currentPageNumber); 
+ this._currentPageNumber = $q.toInt(options.currentPageNumber < 0 ? 0 : options.currentPageNumber);
 }
 		}
 
@@ -159,10 +159,10 @@ Quantumart.QP8.BackendPager.prototype = {
 
 		// нормализовать номер текущей страницы
 		if (this._currentPageNumber >= this._pageCount) {
- this._currentPageNumber = this._pageCount - 1; 
+ this._currentPageNumber = this._pageCount - 1;
 }
 		if (this._currentPageNumber < 0) {
- this._currentPageNumber = 0; 
+ this._currentPageNumber = 0;
 }
 
 		// посчитать количество фреймов
@@ -203,9 +203,9 @@ Quantumart.QP8.BackendPager.prototype = {
  jQuery(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate,
 				this._currentPageNumber * this._pageSize + 1,
 				Math.min(this._currentPageNumber * this._pageSize + this._pageSize, this._totalCount),
-				this._totalCount)); 
+				this._totalCount));
 } else {
- jQuery(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate, 0, 0, 0)); 
+ jQuery(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate, 0, 0, 0));
 }
 
 		// нарисовать фрейм страниц
@@ -229,7 +229,7 @@ Quantumart.QP8.BackendPager.prototype = {
 	_onInHover: function (e) {
 		var $e = jQuery(e.currentTarget);
 		if (!$e.hasClass('t-state-disabled')) {
- $e.addClass("t-state-hover"); 
+ $e.addClass("t-state-hover");
 }
 	},
 
@@ -244,19 +244,19 @@ Quantumart.QP8.BackendPager.prototype = {
 			var newPageNumber = 0;
 
 			if ($selectedPage.hasClass("qp-link-arrow-first")) {
- newPageNumber = 0; 
+ newPageNumber = 0;
 } else if ($selectedPage.hasClass("qp-link-arrow-prev")) {
- newPageNumber = this._currentPageNumber - 1; 
+ newPageNumber = this._currentPageNumber - 1;
 } else if ($selectedPage.hasClass("qp-link-arrow-next")) {
- newPageNumber = this._currentPageNumber + 1; 
+ newPageNumber = this._currentPageNumber + 1;
 } else if ($selectedPage.hasClass("qp-link-arrow-last")) {
- newPageNumber = this._pageCount - 1; 
+ newPageNumber = this._pageCount - 1;
 } else if ($selectedPage.hasClass("qp-link-prev-frame")) {
- newPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(this._currentPageFrameNumber - 1, this._pageFrameSize, this._pageCount); 
+ newPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(this._currentPageFrameNumber - 1, this._pageFrameSize, this._pageCount);
 } else if ($selectedPage.hasClass("qp-link-next-frame")) {
- newPageNumber = Quantumart.QP8.BackendPager.getFrameStartPageNumber(this._currentPageFrameNumber + 1, this._pageFrameSize); 
+ newPageNumber = Quantumart.QP8.BackendPager.getFrameStartPageNumber(this._currentPageFrameNumber + 1, this._pageFrameSize);
 } else {
- newPageNumber = $q.toInt($selectedPage.html()) - 1; 
+ newPageNumber = $q.toInt($selectedPage.html()) - 1;
 }
 
 			var eventArgs = new Quantumart.QP8.BackendPagerEventArgs(newPageNumber);

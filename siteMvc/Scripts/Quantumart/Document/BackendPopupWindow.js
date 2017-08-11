@@ -275,10 +275,10 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   get_selectionContext: function () {
- return this._selectionContext; 
+ return this._selectionContext;
 },
   set_selectionContext: function (value) {
- this._selectionContext = value; 
+ this._selectionContext = value;
 },
 
   _onPopupWindowResizeHandler: null,
@@ -344,10 +344,10 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
     var params = {};
     if (this._isMultipleEntities || this._isCustomAction) {
- params.IDs = entityIDs; 
+ params.IDs = entityIDs;
 }
     if (this._isCustomAction) {
- params.actionCode = this._actionCode; 
+ params.actionCode = this._actionCode;
 }
     this._documentPostParams = params;
   },

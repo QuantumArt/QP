@@ -63,9 +63,9 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                         false,
                         function (data) {
                             if (element.UserId() != null) {
- jQuery(dom).find('span.workflow_permission_message').first().html(data); 
+ jQuery(dom).find('span.workflow_permission_message').first().html(data);
 } else {
- jQuery(dom).find('span.workflow_permission_message').last().html(data); 
+ jQuery(dom).find('span.workflow_permission_message').last().html(data);
 }
                         }
                     );
@@ -88,7 +88,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         var component = this;
         this._componentElem.closest('form').find('.workflow_control_selector').parent('div').find('.checkbox')
         .change(function (e) {
- component.manageItems(e); 
+ component.manageItems(e);
 });
 
         this._contentSelector
@@ -161,9 +161,9 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         var userId;
         var groupId;
         if (eventArgs.get_entityTypeCode() == "user") {
- userId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null; 
+ userId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null;
 } else if (eventArgs.get_entityTypeCode() == "user_group") {
- groupId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null; 
+ groupId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null;
 }
         $q.getJsonFromUrl(
       "GET",
@@ -200,9 +200,9 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             }, this));
         } else {
             if (target.attr('checked') == 'checked') {
- this.addItem(target.val(), target.siblings('label').text(), target.closest('.workflow_control_selector').data('weights')[target.val()]); 
+ this.addItem(target.val(), target.siblings('label').text(), target.closest('.workflow_control_selector').data('weights')[target.val()]);
 } else {
- this.removeItem(target.val()); 
+ this.removeItem(target.val());
 }
         }
     },
@@ -237,7 +237,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         for (var i = 0; i < items.length; i++) {
             var current = items[i];
             if (current.StId == statusId) {
- this._items.remove(current); 
+ this._items.remove(current);
 }
         }
         this._setAsChanged();
