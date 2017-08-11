@@ -609,7 +609,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         } else {
         	var value = $.trim(_$inputUserFileName.val());
         	if (value != "" && value.lastIndexOf(".") == -1) {
- value = value + _getExtension(_parameters.sourceImageUrl); 
+ value += _getExtension(_parameters.sourceImageUrl); 
 }
 
         	if (_parameters.resultImageFolder) {

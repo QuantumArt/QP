@@ -61,7 +61,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 
   fixTreeHeight: function (leftSplitterPaneHeight) {
     if (!$q.isNull(leftSplitterPaneHeight)) {
-      leftSplitterPaneHeight = leftSplitterPaneHeight - 46;
+      leftSplitterPaneHeight -= 46;
       if (leftSplitterPaneHeight > 0) {
         $('#tree').css('height', leftSplitterPaneHeight + 'px');
         $('#menuContainer').show();
