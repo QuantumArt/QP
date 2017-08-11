@@ -1,5 +1,4 @@
 Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
-
 	function initialize() {
 		var $search = jQuery("#" + searchElementId);
 		$search.wrap($("<div/>", { id: searchElementId + "_wrapper", class: "fieldWrapper group myClass" }));
@@ -39,7 +38,6 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 		$loggedAs.find("a").on("click", function () {
  executeAction('edit_profile', 'db', 1, customerCode, 0); 
 });
-
 	}
 
 	function onSubmit(e) {

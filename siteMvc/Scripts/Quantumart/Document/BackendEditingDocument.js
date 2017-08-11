@@ -186,7 +186,6 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   showPanels: function (callback) {
-
     var $breadCrumbsContainer = jQuery(this._editingArea.get_breadCrumbsContainerElement());
     $breadCrumbsContainer.find("> *.breadCrumbs:visible").hide(0);
     this._breadCrumbsComponent.showBreadCrumbs();

@@ -1,7 +1,6 @@
 // #region class ActionLogUserFilter
 Quantumart.QP8.ActionLogUserFilter = function (filterContainer) {
 	Quantumart.QP8.ActionLogUserFilter.initializeBase(this, [filterContainer]);
-
 };
 
 Quantumart.QP8.ActionLogUserFilter.prototype = {

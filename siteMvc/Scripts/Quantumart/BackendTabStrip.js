@@ -590,7 +590,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this.notify(EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST, eventArgs);
     }
     eventArgs = null;
-
   },
 
   highlightTab: function (tab) {
@@ -1219,7 +1218,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     if (!$tab.hasClass(this.TAB_DISABLED_CLASS_NAME)
       && !this.isTabSelected($tab)
       && !this.isTabStripBusy()) {
-
       this.selectTabRequest($tab);
     } else {
       e.preventDefault();

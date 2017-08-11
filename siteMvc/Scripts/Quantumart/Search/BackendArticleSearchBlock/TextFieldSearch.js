@@ -7,7 +7,6 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch = function (containerEl
 
 Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   initialize: function () {
-
     // получить разметку с сервера
     var serverContent;
 
@@ -33,7 +32,6 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 		    }
 		);
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-
       var queryTextBoxID = this._elementIdPrefix + '_textBox';
       var inverseCheckBoxID = this._elementIdPrefix + '_inverseCheckBox';
       var isNullCheckBoxID = this._elementIdPrefix + '_isNullCheckBox';

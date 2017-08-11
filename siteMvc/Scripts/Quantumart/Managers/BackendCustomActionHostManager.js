@@ -39,7 +39,6 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     			});
     		}
     	});
-
     },
 
     onActionExecuted: function (eventArgs) {

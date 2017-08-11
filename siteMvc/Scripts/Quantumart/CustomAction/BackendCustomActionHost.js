@@ -118,7 +118,6 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   },
 
   _popupWindowSelectedHandler: function (eventType, sender, args) {
-
     var selectedEntities = args.entities;
     var selectedEntityIDs = _.pluck(selectedEntities, 'Id');
     if ($o.checkEntitiesForPresenceEmptyNames(selectedEntities)) {

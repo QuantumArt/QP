@@ -7,7 +7,6 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (conta
 
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     initialize: function () {
-
         var queryDropDownListID = this._elementIdPrefix + '_queryDropDownList';
         var isNullCheckBoxID = this._elementIdPrefix + '_isNullCheckBox';
         var serverContent;

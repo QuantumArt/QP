@@ -9,7 +9,6 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock = function (fieldSearc
 
   this._onAddFieldClickHandler = jQuery.proxy(this._onAddFieldClick, this);
   this._onFieldSearchContainerCloseHandler = jQuery.proxy(this._onFieldSearchContainerClose, this);
-
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
@@ -246,7 +245,6 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   // dispose
   dispose: function () {
-
     this._detachFieldSearchBlockEventHandlers();
 
     this._destroyAllFieldSearchContainers();

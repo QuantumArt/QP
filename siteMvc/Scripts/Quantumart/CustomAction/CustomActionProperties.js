@@ -1,5 +1,4 @@
 Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId, actionsElementId, contentsElementId) {
-
   function onEntityTypeChanged() {
     updateActionList();
     setFilter();
@@ -19,7 +18,6 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
  obj.removeAllListItems(); 
 }
       }
-
     }
   }
 
@@ -48,7 +46,6 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
 
     $list.html(html.string());
     $list.show();
-
   }
 
   var $entityTypesElement = jQuery("#" + entityTypesElementId),
@@ -70,8 +67,6 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
 };
 
 Quantumart.QP8.CustomActionIsInterfaceSelectorObserver = function (isInterfaceElementId, actionWindowPanelElementId, preActionPanelElementId) {
-
-
   function onIsInterfaceClicked() {
     if ($isInterface.is(':checked')) {
       $actionWindowPanel.show();

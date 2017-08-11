@@ -29,7 +29,6 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	_currentValue: null,
 
 	initialize: function () {
-
 		// создать заголовок контейнера
 		var containerHeaderHtml = new $.telerik.stringBuilder();
 		containerHeaderHtml

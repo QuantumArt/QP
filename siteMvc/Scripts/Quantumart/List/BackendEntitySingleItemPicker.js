@@ -51,13 +51,11 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		$displayField.delegate("A", "mouseup", jQuery.proxy(this._onItemClickHandler, this));
 
 		if (this._enableCopy) {
-
 			this._copyButtonElement = $copyButton.get(0);
 			$copyButton.bind("click", jQuery.proxy(this._onCopyButtonClickHandler, this));
 
 			this._pasteButtonElement = $pasteButton.get(0);
 			$pasteButton.bind("click", jQuery.proxy(this._onPasteButtonClickHandler, this));
-
 		}
 
 		if (!this._showIds) {

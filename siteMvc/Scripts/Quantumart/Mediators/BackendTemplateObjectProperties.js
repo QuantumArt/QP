@@ -1,5 +1,4 @@
 Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId) {
-
     var $componentElem = jQuery('#' + rootElementId);
     var CONTENT_CHANGE_TRACK_SELECTORS = ".containerContentSelector .singleItemPicker";
     var $parentObjectSelector = $componentElem.find('.parentTemplateObjectsSelector');

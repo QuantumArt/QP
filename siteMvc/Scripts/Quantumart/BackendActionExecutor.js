@@ -268,7 +268,6 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                 }
 
                 var iterationCallback = function () {
-
                   if (toCancel === true) {
                     stageCounter = stageLength;
                   };
@@ -600,7 +599,6 @@ Quantumart.QP8.BackendActionExecutor.showResult = function (data) {
     } else if (messageType == ACTION_MESSAGE_TYPE_INFO
                 || messageType == ACTION_MESSAGE_TYPE_WARNING
                 || messageType == ACTION_MESSAGE_TYPE_ERROR) {
-
       var messageText = data.Text;
       if (!$q.isNullOrWhiteSpace(messageText)) {
         $q.alertFail(messageText);

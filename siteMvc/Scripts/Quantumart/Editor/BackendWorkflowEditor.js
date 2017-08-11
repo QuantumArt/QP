@@ -208,7 +208,6 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     },
 
     addItem: function (statusId, statusName, weight) {
-
         var existingItem = ko.utils.arrayFirst(this._items(), function (item) {
             return item.StId == statusId;
         });

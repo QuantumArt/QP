@@ -220,8 +220,6 @@
 	var domPrefixes = "Webkit Moz O ms Khtml".split(" ");
 
 	function testProps(props, prefixed) {
-
-
 		for (var i in props) {
 			if (mStyle[props[i]] !== undefined) {
 				return prefixed == "pfx" ? props[i] : true;
@@ -231,7 +229,6 @@
 	};
 
 	function testPropsAll(prop, prefixed) {
-
 		var ucProp = prop.charAt(0).toUpperCase() + prop.substr(1),
             props = (prop + " " + domPrefixes.join(ucProp + " ") + ucProp).split(" ");
 

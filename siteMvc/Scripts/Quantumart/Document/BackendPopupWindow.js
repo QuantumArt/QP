@@ -121,7 +121,6 @@ Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options)
   this._onPopupWindowOpenHandler = jQuery.proxy(this._onPopupWindowOpen, this);
   this._onPopupWindowCloseHandler = jQuery.proxy(this._onPopupWindowClose, this);
   this._onPopupWindowActivatedHandler = jQuery.proxy(this._onPopupWindowActivated, this);
-
 };
 
 Quantumart.QP8.BackendPopupWindow.prototype = {

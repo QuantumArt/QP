@@ -1,5 +1,4 @@
 Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) {
-
 	var $root = jQuery('#' + rootElementId);
 
 	var $statusPanel = jQuery('.nfp-status-panel', $root);

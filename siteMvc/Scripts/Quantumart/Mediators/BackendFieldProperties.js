@@ -17,7 +17,6 @@ Quantumart.QP8.FieldPropertiesMediator = function (tabId) {
 	return 	{
 		dispose: dispose
 	};
-
 };
 
 Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElementId, displayFieldSelectElementId, currentFieldIdHiddenElementId, listOrderSelectElementId) {
@@ -140,7 +139,6 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 
 
 Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId, O2MPickerListElementId, M2MPickerListElementId) {
-
     var contentPicker = jQuery("#" + relateToSelectElementId).data("entity_data_list_component"),
         singleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(O2MPickerListElementId),
         multipleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(M2MPickerListElementId + '_list');
@@ -173,7 +171,6 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
 
 
 Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId, fileFieldElementId) {
-
     var $fieldTypeSelectElement = jQuery("#" + fieldTypeSelectElementId),
         $fileFieldElement = jQuery("#" + fileFieldElementId),
         fileFieldComponent = $fileFieldElement.data("file_field");

@@ -8,7 +8,6 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (containe
 
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 	initialize: function () {
-
 		var isNullCheckBoxID = this._elementIdPrefix + '_isNullCheckBox';
 		var radioGroupName = this._elementIdPrefix + '_radioGroup';
 		var disablingContainerID = this._elementIdPrefix + "_disablingContainer";
@@ -87,7 +86,6 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 		} else {
 			return stateData.value === true ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
 		}
-
 	},
 
 	restore_blockState: function (state) {

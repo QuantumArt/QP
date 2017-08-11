@@ -46,9 +46,7 @@ Quantumart.QP8.BackendContextBlock.prototype =
     },
 
     renderSearchBlock: function () {
-
         if (!this._isRendered) {
-
             // получить разметку с сервера
             var serverContent;
             $q.getJsonFromUrl(
@@ -72,7 +70,6 @@ Quantumart.QP8.BackendContextBlock.prototype =
 			    $q.processGenericAjaxError(jqXHR);
 			});
             if (!$q.isNullOrWhiteSpace(serverContent)) {
-
                 jQuery(this._concreteSearchBlockElement).html(serverContent);
 
                 $c.initAllEntityDataLists(this._searchBlockElement);
@@ -84,7 +81,6 @@ Quantumart.QP8.BackendContextBlock.prototype =
                     var component = $(this).data("entity_data_list_component");
                     component.attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
                 });
-
             }
 
             this._isRendered = true;
@@ -112,7 +108,6 @@ Quantumart.QP8.BackendContextBlock.prototype =
     },
 
     dispose: function () {
-
         var self = this;
         jQuery('.contextSwitcher').each(function () {
             var component = $(this).data("entity_data_list_component");

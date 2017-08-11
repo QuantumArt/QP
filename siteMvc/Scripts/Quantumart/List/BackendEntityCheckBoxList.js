@@ -115,7 +115,6 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   },
 
   _refreshListInner: function (dataItems, refreshOnly) {
-
     // #region Определяем, изменились ли значения
     var newSelectedIDs = jQuery.map(
       jQuery.grep(dataItems, function (di) {

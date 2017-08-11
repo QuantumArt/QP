@@ -96,7 +96,6 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
                     }
 
                     if (that._isAuthenticated) {
-
                         that._closeWindow();
 
                         var needRefresh = that._userName != currentUserName || customerCode != currentCustomerCode;

@@ -34,7 +34,6 @@ Quantumart.QP8.BackendPager = function (pagerElement) {
 	this._onPageClickHandler = jQuery.proxy(this._onPageClick, this);
 	this._onInHoverHandler = jQuery.proxy(this._onInHover, this);
 	this._onOutHoverHandler = jQuery.proxy(this._onOutHover, this);
-
 };
 
 Quantumart.QP8.BackendPager.prototype = {
@@ -177,7 +176,6 @@ Quantumart.QP8.BackendPager.prototype = {
 
 		// последняя страница текущего фрейма
 		this._currentFrameEndPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(this._currentPageFrameNumber, this._pageFrameSize, this._pageCount);
-
 	},
 
  // устанавливает новое состояние пейджера

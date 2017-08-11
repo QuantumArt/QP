@@ -42,7 +42,6 @@ Quantumart.QP8.BackendSplitter = function (splitterElementId, options) {
 	this._onSplitterResizedHandler = jQuery.proxy(this._onSplitterResized, this);
 	this._onSplitterDragStartHandler = jQuery.proxy(this._onSplitterDragStart, this);
 	this._onSplitterDropHandler = jQuery.proxy(this._onSplitterDrop, this);
-
 };
 
 Quantumart.QP8.BackendSplitter.prototype = {

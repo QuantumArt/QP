@@ -27,7 +27,6 @@ Quantumart.QP8.BackendViewToolbar = function (toolbarElementId, actionCode, opti
 	        this._viewTypeCode = options.viewTypeCode;
 	    }
 	}
-
 };
 
 Quantumart.QP8.BackendViewToolbar.prototype = {

@@ -38,9 +38,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 	// возвращает параметры поиска
 
 	renderSearchBlock: function () {
-
 		if (this.get_isRendered() !== true) {
-
 			// получить разметку с сервера
 			var serverContent;
 			$q.getJsonFromUrl(
@@ -64,7 +62,6 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 				$q.processGenericAjaxError(jqXHR);
 			});
 			if (!$q.isNullOrWhiteSpace(serverContent)) {
-
 			    jQuery(this._concreteSearchBlockElement).html(serverContent);
 
 			    // получить список групп
@@ -90,7 +87,6 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 	},
 
 	_onResetButtonClick: function () {
-
 		// очистить блоки поиска
 		jQuery(".csFilterCombo", this._searchBlockElement).find("option[value='']").prop("selected", true);
 		jQuery(".csFilterTextbox", this._searchBlockElement).val('');
