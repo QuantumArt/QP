@@ -517,12 +517,12 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if (this._contextMenuElement) {
       var $contextMenu = jQuery(this._contextMenuElement);
 
-      $contextMenu .empty() .remove();
+      $contextMenu.empty().remove();
       $contextMenu = null;
       this._contextMenuElement = null;
     }
 
-    Quantumart.QP8.BackendContextMenuManager.getInstance() .detachObserver(window.EVENT_TYPE_CUSTOM_ACTION_CHANGED, this._onCustomActionChangedHandler);
+    Quantumart.QP8.BackendContextMenuManager.getInstance().detachObserver(window.EVENT_TYPE_CUSTOM_ACTION_CHANGED, this._onCustomActionChangedHandler);
 
     this._onContextMenuTuneHandler = null;
     this._onContextMenuHidingHandler = null;
