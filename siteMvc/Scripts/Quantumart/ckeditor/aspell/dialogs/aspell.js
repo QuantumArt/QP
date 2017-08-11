@@ -1,5 +1,5 @@
 ; (function () {
-  'use strict';
+  
 
   var interval;
   var number = CKEDITOR.tools.getNextNumber();
