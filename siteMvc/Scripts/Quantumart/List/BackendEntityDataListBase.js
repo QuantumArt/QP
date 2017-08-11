@@ -625,7 +625,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     var itemElementName = String.format(idFormat, idPrefix, this._listItemName);
     var itemElementId = String.format(idFormat, idPrefix, this._listElementId);
     var itemText = $l.EntityDataList.selectDeselectAllText;
-    var style = (hidden) ? 'style="display:none"': "";
+    var style = (hidden) ? 'style="display:none"' : "";
 
     var html = new $.telerik.stringBuilder();
     html

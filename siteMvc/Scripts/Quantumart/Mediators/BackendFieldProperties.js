@@ -150,7 +150,7 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
 
     var contentPicker = jQuery("#" + relateToSelectElementId).data("entity_data_list_component"),
         singleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(O2MPickerListElementId),
-        multipleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(M2MPickerListElementId+'_list');
+        multipleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(M2MPickerListElementId + '_list');
 
 
 	function onRelatedToChanged() {

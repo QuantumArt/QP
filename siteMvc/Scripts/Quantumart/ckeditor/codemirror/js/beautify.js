@@ -1380,7 +1380,7 @@
         this.indent_length = indent_string.length;
         this.raw = false;
 
-        var lines =[];
+        var lines = [];
         this.baseIndentString = baseIndentString;
         this.indent_string = indent_string;
         this.previous_line = null;
@@ -1531,7 +1531,7 @@
         var digit_hex = /[0123456789abcdefABCDEF]/;
 
         var punct = ('+ - * / % & ++ -- = += -= *= /= %= == === != !== > < >= <= >> << >>> >>>= >>= <<= && &= | || ! ~ , : ? ^ ^= |= :: =>'
-                +' <%= <% %> <?= <? ?>').split(' '); // try to be a good boy and try not to break the markup language identifiers
+                + ' <%= <% %> <?= <? ?>').split(' '); // try to be a good boy and try not to break the markup language identifiers
 
         // words which should always start on new line.
         this.line_starters = 'continue,try,throw,return,var,let,const,if,switch,case,default,for,while,break,function,import,export'.split(',');
@@ -1632,7 +1632,7 @@
 
             var last_token;
             if (tokens.length) {
-                last_token = tokens[tokens.length-1];
+                last_token = tokens[tokens.length - 1];
             } else {
                 // For the sake of tokenizing we can pretend that there was on open brace to start
                 last_token = new Token('TK_START_BLOCK', '{');
@@ -1645,7 +1645,7 @@
             while (in_array(c, whitespace)) {
 
                 if (acorn.newline.test(c)) {
-                    if (!(c === '\n' && input.charAt(parser_pos-2) === '\r')) {
+                    if (!(c === '\n' && input.charAt(parser_pos - 2) === '\r')) {
                         n_newlines += 1;
                         whitespace_on_this_line = [];
                     }
@@ -1711,7 +1711,7 @@
                 return [c, 'TK_WORD'];
             }
 
-            if (acorn.isIdentifierStart(input.charCodeAt(parser_pos-1))) {
+            if (acorn.isIdentifierStart(input.charCodeAt(parser_pos - 1))) {
                 if (parser_pos < input_length) {
                     while (acorn.isIdentifierChar(input.charCodeAt(parser_pos))) {
                         c += input.charAt(parser_pos);

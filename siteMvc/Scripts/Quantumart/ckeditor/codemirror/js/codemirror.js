@@ -212,7 +212,7 @@ function spaceStr(n) {
   return spaceStrs[n];
 }
 
-function lst(arr) { return arr[arr.length-1]; }
+function lst(arr) { return arr[arr.length - 1]; }
 
 function map(array, f) {
   var out = [];
@@ -1030,8 +1030,8 @@ var bidiOrdering = (function() {
     // two numbers of the same type changes to that type.
     for (var i$3 = 1, prev$1 = types[0]; i$3 < len - 1; ++i$3) {
       var type$2 = types[i$3];
-      if (type$2 == "+" && prev$1 == "1" && types[i$3+1] == "1") { types[i$3] = "1"; }
-      else if (type$2 == "," && prev$1 == types[i$3+1] &&
+      if (type$2 == "+" && prev$1 == "1" && types[i$3 + 1] == "1") { types[i$3] = "1"; }
+      else if (type$2 == "," && prev$1 == types[i$3 + 1] &&
                (prev$1 == "1" || prev$1 == "n")) { types[i$3] = prev$1; }
       prev$1 = type$2;
     }
@@ -1046,7 +1046,7 @@ var bidiOrdering = (function() {
       else if (type$3 == "%") {
         var end = void 0;
         for (end = i$4 + 1; end < len && types[end] == "%"; ++end) {}
-        var replace = (i$4 && types[i$4-1] == "!") || (end < len && types[end] == "1") ? "1" : "N";
+        var replace = (i$4 && types[i$4 - 1] == "!") || (end < len && types[end] == "1") ? "1" : "N";
         for (var j = i$4; j < end; ++j) { types[j] = replace; }
         i$4 = end - 1;
       }
@@ -1071,7 +1071,7 @@ var bidiOrdering = (function() {
       if (isNeutral.test(types[i$6])) {
         var end$1 = void 0;
         for (end$1 = i$6 + 1; end$1 < len && isNeutral.test(types[end$1]); ++end$1) {}
-        var before = (i$6 ? types[i$6-1] : outerType) == "L";
+        var before = (i$6 ? types[i$6 - 1] : outerType) == "L";
         var after = (end$1 < len ? types[end$1] : outerType) == "L";
         var replace$1 = before || after ? "L" : "R";
         for (var j$1 = i$6; j$1 < end$1; ++j$1) { types[j$1] = replace$1; }
@@ -1511,7 +1511,7 @@ function highlightLine(cm, line, state, forceToEnd) {
       while (at < end) {
         var i_end = st[i];
         if (i_end > end)
-          { st.splice(i, 1, end, st[i+1], i_end); }
+          { st.splice(i, 1, end, st[i + 1], i_end); }
         i += 2;
         at = Math.min(end, i_end);
       }
@@ -1521,8 +1521,8 @@ function highlightLine(cm, line, state, forceToEnd) {
         i = start + 2;
       } else {
         for (; start < i; start += 2) {
-          var cur = st[start+1];
-          st[start+1] = (cur ? cur + " " : "") + "overlay " + style;
+          var cur = st[start + 1];
+          st[start + 1] = (cur ? cur + " " : "") + "overlay " + style;
         }
       }
     }, lineClasses);
@@ -1549,7 +1549,7 @@ function getLineStyles(cm, line, updateFrontier) {
 function getStateBefore(cm, n, precise) {
   var doc = cm.doc, display = cm.display;
   if (!doc.mode.startState) { return true; }
-  var pos = findStartLine(cm, n, precise), state = pos > doc.first && getLine(doc, pos-1).stateAfter;
+  var pos = findStartLine(cm, n, precise), state = pos > doc.first && getLine(doc, pos - 1).stateAfter;
   if (!state) { state = startState(doc.mode); }
   else { state = copyState(doc.mode, state); }
   doc.iter(pos, n, function (line) {
@@ -1923,8 +1923,8 @@ function buildCollapsedSpan(builder, size, marker, ignoreWidget) {
 function insertLineContent(line, builder, styles) {
   var spans = line.markedSpans, allText = line.text, at = 0;
   if (!spans) {
-    for (var i$1 = 1; i$1 < styles.length; i$1+=2)
-      { builder.addToken(builder, allText.slice(at, at = styles[i$1]), interpretTokenStyle(styles[i$1+1], builder.cm.options)); }
+    for (var i$1 = 1; i$1 < styles.length; i$1 += 2)
+      { builder.addToken(builder, allText.slice(at, at = styles[i$1]), interpretTokenStyle(styles[i$1 + 1], builder.cm.options)); }
     return;
   }
 
@@ -3178,7 +3178,7 @@ var wheelPixelsPerUnit = null;
 if (ie) { wheelPixelsPerUnit = -.53; }
 else if (gecko) { wheelPixelsPerUnit = 15; }
 else if (chrome) { wheelPixelsPerUnit = -.7; }
-else if (safari) { wheelPixelsPerUnit = -1/3; }
+else if (safari) { wheelPixelsPerUnit = -1 / 3; }
 
 function wheelEventDelta(e) {
   var dx = e.wheelDeltaX, dy = e.wheelDeltaY;
@@ -7460,7 +7460,7 @@ function indentLine(cm, n, how, aggressive) {
     }
   }
   if (how == "prev") {
-    if (n > doc.first) { indentation = countColumn(getLine(doc, n-1).text, null, tabSize); }
+    if (n > doc.first) { indentation = countColumn(getLine(doc, n - 1).text, null, tabSize); }
     else { indentation = 0; }
   } else if (how == "add") {
     indentation = curSpace + cm.options.indentUnit;
@@ -7777,7 +7777,7 @@ var addEditorMethods = function(CodeMirror) {
 
     getStateAfter: function(line, precise) {
       var doc = this.doc;
-      line = clipLine(doc, line == null ? doc.first + doc.size - 1: line);
+      line = clipLine(doc, line == null ? doc.first + doc.size - 1 : line);
       return getStateBefore(this, line + 1, precise);
     },
 

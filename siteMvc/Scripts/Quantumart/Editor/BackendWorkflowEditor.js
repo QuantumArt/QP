@@ -146,7 +146,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                     if (user_row.size() > group_row.size()) {// its user
                         var span = user_row.find('span.workflow_permission_message');
                         var oldHtml = span.html();
-                        span.html(oldHtml +'<br>' + data[i].Message);
+                        span.html(oldHtml + '<br>' + data[i].Message);
                     }
                     else {// its user group
                         var span = group_row.find('span.workflow_permission_message');
@@ -164,7 +164,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         var userId;
         var groupId;
         if (eventArgs.get_entityTypeCode() == "user")
-            userId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id: null;
+            userId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null;
         else if (eventArgs.get_entityTypeCode() == "user_group")
             groupId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null;
         $q.getJsonFromUrl(

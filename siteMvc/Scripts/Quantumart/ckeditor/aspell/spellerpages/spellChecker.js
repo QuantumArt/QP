@@ -85,7 +85,7 @@ window.spellChecker.prototype = {
 	    // initialize the flags to an array - one element for each text input
 	    this.wordFlags = new Array(this.wordWin.textInputs.length);
 	    // each element will be an array that keeps track of each word in the text
-	    for(var i=0; i<this.wordFlags.length; i++) {
+	    for(var i = 0; i < this.wordFlags.length; i++) {
 		    this.wordFlags[i] = [];
 	    }
 
@@ -274,7 +274,7 @@ window.spellChecker.prototype = {
 			    // if the current word index is zero then reset the seed
 			    if(this.currentWordIndex == 0 && this.currentTextIndex > 0) {
 				    this.currentTextIndex--;
-				    this.currentWordIndex = this.wordWin.totalWords(this.currentTextIndex)-1;
+				    this.currentWordIndex = this.wordWin.totalWords(this.currentTextIndex) - 1;
 				    if(this.currentWordIndex < 0) this.currentWordIndex = 0;
 			    } else {
 				    if(this.currentWordIndex > 0) {
