@@ -36,10 +36,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
       false,
       function (data, textStatus, jqXHR) {
         if (data.success) {
- serverContent = data.view;
-} else {
- $q.alertFail(data.message);
-}
+          serverContent = data.view;
+        } else {
+          $q.alertFail(data.message);
+        }
       },
       function (jqXHR, textStatus, errorThrown) {
         serverContent = null;
@@ -65,15 +65,15 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
       if (fieldID && this._fieldSearchContainerList[fieldID]) {
         var fscsq = this._fieldSearchContainerList[fieldID].get_searchQuery();
         if (fscsq) {
- result.push(fscsq);
-}
+          result.push(fscsq);
+        }
       }
     }
 
     if (result.length > 0) {
- return result;
-}
- return null;
+      return result;
+    }
+    return null;
 
   },
 
@@ -83,8 +83,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
         return fsc ? fsc.get_blockState() : null;
       }),
       function (fsc) {
- return fsc;
-}
+        return fsc;
+      }
     );
     if (r && r.length > 0) {
       return r;
@@ -105,7 +105,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
                  && s.fieldColumn == $option.data('field_column');
           });
           if (is) {
-              var newContainer = that._createFieldSearchContainerInner(s.fieldID, s.contentID, s.searchType, s.fieldName, s.fieldColumn, s.fieldGroup, s.referenceFieldID);
+            var newContainer = that._createFieldSearchContainerInner(s.fieldID, s.contentID, s.searchType, s.fieldName, s.fieldColumn, s.fieldGroup, s.referenceFieldID);
             if (s.data) {
               newContainer.restore_blockState(s.data);
             }
@@ -117,8 +117,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   clear: function () {
     if (this._fieldsComboElement) {
- jQuery(this._fieldsComboElement).find('option:first').prop('selected', true);
-}
+      jQuery(this._fieldsComboElement).find('option:first').prop('selected', true);
+    }
 
     this._destroyAllFieldSearchContainers();
   },
@@ -186,8 +186,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   _destroyAllFieldSearchContainers: function () {
     for (var fieldID in this._fieldSearchContainerList) {
- this._destroyFieldSearchContainer(fieldID);
-}
+      this._destroyFieldSearchContainer(fieldID);
+    }
   },
 
   _onAddFieldClick: function () {

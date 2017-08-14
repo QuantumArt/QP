@@ -65,8 +65,8 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
           }
         }
       } else if ($q.confirmMessage($l.BackendDirectLinkExecutor.ReloginRequestConfirmation)) {
-          window.location.href = `${window.CONTROLLER_URL_LOGON  }LogOut/?${  jQuery.param(actionParams)}`;
-        }
+        window.location.href = `${window.CONTROLLER_URL_LOGON  }LogOut/?${  jQuery.param(actionParams)}`;
+      }
 
       if (byRequest) {
         window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM);

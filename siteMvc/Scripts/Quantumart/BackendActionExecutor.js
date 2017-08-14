@@ -140,7 +140,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
       $c.crop(Quantumart.QP8.BackendLibrary.generateActionUrl('GetLibraryImageProperties', urlParams), urlParams);
       status = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
     } else if ((actionTypeCode == window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED || actionTypeCode == window.ACTION_TYPE_CODE_FILE_CROPPED) && (entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE || entityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE)) {
-        status = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
+      status = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
     }
     return status;
   },
@@ -164,8 +164,8 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
       var confirmPhrase = selectedAction.ConfirmPhrase;
 
       if (confirmPhrase) {
-          var nameString = isMultiple ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
-          nameString = `"${  nameString  }"`;
+        var nameString = isMultiple ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
+        nameString = `"${  nameString  }"`;
         confirmPhrase = String.format(confirmPhrase, nameString);
       }
 
@@ -192,8 +192,8 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
             urlParams: urlParams
           });
           if (urlParams) {
- params.settingsParams = urlParams;
-}
+            params.settingsParams = urlParams;
+          }
           var tearDownUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
             additionalUrlParameters: additionalUrlParameters,
             isTearDown: true
@@ -218,8 +218,8 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
             }
           });
           progressWindow.attachObserver(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, function () {
- toCancel = true;
-});
+            toCancel = true;
+          });
           progressWindow.attachObserver(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED, disposeProgressWindow);
           progressWindow.initialize();
 
@@ -232,14 +232,14 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
           var errorCallback2 = function (jqXHR, textStatus, errorThrown) {
             $q.postDataToUrl(tearDownUrl, { isError: true }, true)
               .done(function () {
- errorCallback1(jqXHR, textStatus, errorThrown);
-})
+                errorCallback1(jqXHR, textStatus, errorThrown);
+              })
               .fail(errorCallback1);
           };
 
           var errorHandler = function (msgResult) {
             Quantumart.QP8.BackendActionExecutor.showResult(msgResult);
-              $q.postDataToUrl(tearDownUrl, { isError: true }, true)
+            $q.postDataToUrl(tearDownUrl, { isError: true }, true)
               .done(function () {
                 progressWindow.setError();
                 dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
@@ -256,9 +256,9 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
                 // Счетчики
                 var stageCounter = 0,
-                stageLength = 0,
-                stepCounter = 0,
-                stepLength = 0;
+                  stageLength = 0,
+                  stepCounter = 0,
+                  stepLength = 0;
                 var stage = null;
 
                 if (actionData.Stages && actionData.Stages.length) {
@@ -273,10 +273,10 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                   if (stageCounter < stageLength) {
                     if (stepCounter < stepLength) {
                       $q.getJsonFromUrl('POST', stepUrl,
-                      {
-                        stage: stageCounter,
-                        step: stepCounter
-                      }, true, false).done(function (stepData) {
+                        {
+                          stage: stageCounter,
+                          step: stepCounter
+                        }, true, false).done(function (stepData) {
                         if (stepData) {
                           if (stepData.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
                             errorHandler(stepData);
@@ -330,9 +330,9 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
         if (selectedAction.HasSettings && !eventArgs.isSettingsSet) {
           var settingsActionUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-              additionalUrlParameters: additionalUrlParameters,
-              hasSettings: true,
-              isSettingsSet: eventArgs.isSettingsSet
+            additionalUrlParameters: additionalUrlParameters,
+            hasSettings: true,
+            isSettingsSet: eventArgs.isSettingsSet
           });
 
           var settingsResult = null;
@@ -541,20 +541,20 @@ Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl = function (sele
   var extraQueryString = options && options.additionalUrlParameters ? $q.hashToQueryString(options.additionalUrlParameters) : '';
 
   if (!$q.isNull(selectedAction)) {
-      if (!(selectedAction.IsMultistep || $q.isNullOrEmpty(selectedAction.AdditionalControllerActionUrl))) {
-          url = selectedAction.AdditionalControllerActionUrl;
-      } else {
-          url = selectedAction.ControllerActionUrl;
-      }
+    if (!(selectedAction.IsMultistep || $q.isNullOrEmpty(selectedAction.AdditionalControllerActionUrl))) {
+      url = selectedAction.AdditionalControllerActionUrl;
+    } else {
+      url = selectedAction.ControllerActionUrl;
+    }
     if (options) {
       if (options.isPreAction) {
         url = url.replace(/\/$/, '/PreAction/');
       } else if (options.isSetup) {
-              url = url.replace(/\/$/, '/Setup/');
+        url = url.replace(/\/$/, '/Setup/');
       } else if (options.isTearDown) {
         url = url.replace(/\/$/, '/TearDown/');
       } else if (options && options.hasSettings && !options.isSettingsSet) {
-          url = url.replace(/\/$/, '/Settings/');
+        url = url.replace(/\/$/, '/Settings/');
       } else {
         url = url.replace(/\/$/, '/Step/');
       }
@@ -565,12 +565,12 @@ Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl = function (sele
     url = url.replace(/^~\//, window.APPLICATION_ROOT_URL);
 
     if (url) {
-            if (selectedAction.ActionType.IsMultiple) {
-            url += String.format('{0}/{1}/', '0', parentEntityId);
-        } else {
-            var entityId = entityIDs.length > 0 ? entityIDs[0] : 0;
-            url += String.format('{0}/{1}/{2}/', '0', parentEntityId, entityId);
-        }
+      if (selectedAction.ActionType.IsMultiple) {
+        url += String.format('{0}/{1}/', '0', parentEntityId);
+      } else {
+        var entityId = entityIDs.length > 0 ? entityIDs[0] : 0;
+        url += String.format('{0}/{1}/{2}/', '0', parentEntityId, entityId);
+      }
 
       if (extraQueryString.length > 0) {
         url += `?${  extraQueryString}`;
@@ -647,16 +647,16 @@ Quantumart.QP8.BackendActionExecutor.getEventArgsFromActionWithParams = function
 };
 
 Quantumart.QP8.BackendActionExecutor.getActionViewByViewTypeCode = function (action, viewTypeCode) {
-    var actionViews = action.Views;
-    var actionView = null;
+  var actionViews = action.Views;
+  var actionView = null;
 
-    if (!$q.isNullOrEmpty(actionViews)) {
-        actionView = jQuery.grep(actionViews, function (actionView) {
- return actionView.ViewType.Code == viewTypeCode;
-})[0];
-    }
+  if (!$q.isNullOrEmpty(actionViews)) {
+    actionView = jQuery.grep(actionViews, function (actionView) {
+      return actionView.ViewType.Code == viewTypeCode;
+    })[0];
+  }
 
-    return actionView;
+  return actionView;
 };
 
 
@@ -722,26 +722,26 @@ Quantumart.QP8.BackendActionParameters.prototype = {
   _isGroup: false,
 
   get_entityId: function () {
- return this._entityId;
-},
+    return this._entityId;
+  },
   get_entityName: function () {
- return this._entityName;
-},
+    return this._entityName;
+  },
   get_parentEntityId: function () {
- return this._parentEntityId;
-},
+    return this._parentEntityId;
+  },
   get_entityTypeCode: function () {
- return this._entityTypeCode;
-},
+    return this._entityTypeCode;
+  },
   get_context: function () {
- return this._context;
-},
+    return this._context;
+  },
   get_entities: function () {
- return $q.isArray(this._entities) && this._entities.length > 0 ? this._entities : [{ Id: this._entityId, Name: this._entityName}];
-},
+    return $q.isArray(this._entities) && this._entities.length > 0 ? this._entities : [{ Id: this._entityId, Name: this._entityName}];
+  },
   get_actionCode: function () {
- return this._actionCode;
-},
+    return this._actionCode;
+  },
 
   correct: function (action) {
     var currentAction = $a.getBackendAction(action);

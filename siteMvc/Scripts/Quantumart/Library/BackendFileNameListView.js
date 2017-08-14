@@ -14,7 +14,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   _contextMenuActionCode: '',
   _currentContextMenuSelectedElement: null,
   SELECTED_CLASS: 'fileItem-selected',
-    _zIndex: 0,
+  _zIndex: 0,
 
   _selectMode: '',
 
@@ -69,8 +69,8 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
       });
       html.catIf('</ul></div>', columnCounter > 0);
     } else {
- html.cat($l.FileList.noRecords);
-}
+      html.cat($l.FileList.noRecords);
+    }
 
     $fileListNameContainer.html(html.string());
     this._raiseSelectEvent();
@@ -136,9 +136,9 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     event.stopPropagation();
     var $chb = $(event.currentTarget);
     if ($chb.is(':checked')) {
-        $chb.parent('.fileItem').addClass(this.SELECTED_CLASS);
+      $chb.parent('.fileItem').addClass(this.SELECTED_CLASS);
     } else {
-        $chb.parent('.fileItem').removeClass(this.SELECTED_CLASS);
+      $chb.parent('.fileItem').removeClass(this.SELECTED_CLASS);
     }
     this._raiseSelectEvent();
     $chb = null;
@@ -149,7 +149,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     var $fileListContentElement = $(this._fileListContentElement);
 
     if (!event.ctrlKey || this._selectMode == window.FILE_LIST_SELECT_MODE_SINGLE) {
-        $fileListContentElement.find(`.${  this.SELECTED_CLASS}`).removeClass(this.SELECTED_CLASS);
+      $fileListContentElement.find(`.${  this.SELECTED_CLASS}`).removeClass(this.SELECTED_CLASS);
       $fileListContentElement.find('.fileItem input:checkbox:checked').prop('checked', false);
     }
 

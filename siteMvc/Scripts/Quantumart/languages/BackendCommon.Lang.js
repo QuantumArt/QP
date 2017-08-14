@@ -24,7 +24,7 @@ window.Backend.Lang.Common = {
   sourceEventArgsIvalidType: 'Source-event arguments has an invalid type!',
   untitledTabText: 'Untitled Tab',
   untitledWindowTitle: 'Untitled Window',
-    nextTitleForSettings: 'Next step'
+  nextTitleForSettings: 'Next step'
 };
 
 window.$l = window.Backend.Lang;

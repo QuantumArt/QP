@@ -5,11 +5,11 @@ Quantumart.QP8.BackendHtmlUploader = function (parentElement, options) {
 
   if (!$q.isNull(options)) {
     if (!$q.isNull(options.extensions)) {
- this._extensions = options.extensions;
-}
+      this._extensions = options.extensions;
+    }
     if (!$q.isNull(options.resolveName)) {
- this._resolveName = options.resolveName;
-}
+      this._resolveName = options.resolveName;
+    }
   }
 };
 

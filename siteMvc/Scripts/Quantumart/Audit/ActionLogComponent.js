@@ -24,7 +24,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     var $filter = $(`#${  this._filterElementId}`);
 
     $grid.unbind('dataBinding', gridComponent.onDataBinding)
-       .bind('dataBinding', this._onDataBindingHandler);
+      .bind('dataBinding', this._onDataBindingHandler);
 
     $('.alSearchButton', $filter).click(this._onApplyFilterHandler);
     $('.alResetButton', $filter).click(this._onClearFilterHandler);

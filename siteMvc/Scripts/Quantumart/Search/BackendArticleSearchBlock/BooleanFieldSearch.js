@@ -1,5 +1,5 @@
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
-    Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
+  Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
 
   this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
 };
@@ -46,7 +46,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
       .cat(`    <label for="${  $q.htmlEncode(isNullCheckBoxID)  }">${  $l.SearchBlock.isNullCheckBoxLabelText  }</label>`)
       .cat('  </span>')
       .cat('</div>')
-      ;
+    ;
 
     // добавить разметку на страницу
     var $containerElement = $(this._containerElement);
@@ -65,16 +65,16 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   },
 
   get_searchQuery: function () {
-      return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
-                  this.get_IsNull(), this._getValue());
+    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
+      this.get_IsNull(), this._getValue());
   },
 
   get_blockState: function () {
-      return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
-    {
-      isNull: this.get_IsNull(),
-      value: this._getValue()
-    });
+    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
+      {
+        isNull: this.get_IsNull(),
+        value: this._getValue()
+      });
   },
 
   get_filterDetails: function () {
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     }
-      return stateData.value === true ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
+    return stateData.value === true ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
 
   },
 
@@ -108,10 +108,10 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     var result = null;
     var val = $(this._containerElement).find('input:radio:checked').val();
     if (val == 'true') {
- result = true;
-} else {
- result = false;
-}
+      result = true;
+    } else {
+      result = false;
+    }
     return result;
   },
 
@@ -137,9 +137,9 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   _onIsNullCheckBoxChangeHandler: null,
   get_IsNull: function () {
     if (this._isNullCheckBoxElement) {
- return $(this._isNullCheckBoxElement).is(':checked');
-}
- return false;
+      return $(this._isNullCheckBoxElement).is(':checked');
+    }
+    return false;
 
   },
 

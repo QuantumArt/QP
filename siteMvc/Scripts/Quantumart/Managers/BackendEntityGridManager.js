@@ -9,7 +9,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     if (parentEntityId) {
       return String.format('{0}_{1}', entityTypeCode, parentEntityId);
     }
-      return entityTypeCode;
+    return entityTypeCode;
 
   },
 

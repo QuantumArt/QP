@@ -105,11 +105,11 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   _refreshListInner: function (dataItems, refreshOnly) {
     var newSelectedIDs = $.map(
       $.grep(dataItems, function (di) {
- return di.Selected === true;
-}),
+        return di.Selected === true;
+      }),
       function (di) {
- return $q.toInt(di.Value);
-}
+        return $q.toInt(di.Value);
+      }
     );
     var currentSelectedIDs = this.getSelectedEntityIDs();
     var selectedItemsIsChanged = _.union(
@@ -132,7 +132,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     this._syncCountSpan(dataItems.length);
 
     if (selectedItemsIsChanged === true) {
-        this._setAsChanged(refreshOnly);
+      this._setAsChanged(refreshOnly);
     }
   },
 
@@ -209,8 +209,8 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   },
 
   _onSelectedItemChangeHandler: function () {
-      this._syncGroupCheckbox();
-      this._syncCountSpan();
+    this._syncGroupCheckbox();
+    this._syncCountSpan();
     this._setAsChanged();
   },
 

@@ -87,20 +87,20 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
       false,
       false
     )
-    .done(
-      function (data) {
-        if (data.success) {
-          dictionary = data.dictionary;
-          Quantumart.QP8.Cache.addItem(cacheKey, data.dictionary);
-        } else {
-          dictionary = null;
-          $q.alertError(data.Text);
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-      dictionary = null;
-      $q.processGenericAjaxError(jqXHR);
-    });
+      .done(
+        function (data) {
+          if (data.success) {
+            dictionary = data.dictionary;
+            Quantumart.QP8.Cache.addItem(cacheKey, data.dictionary);
+          } else {
+            dictionary = null;
+            $q.alertError(data.Text);
+          }
+        })
+      .fail(function (jqXHR, textStatus, errorThrown) {
+        dictionary = null;
+        $q.processGenericAjaxError(jqXHR);
+      });
   }
 
   return dictionary;

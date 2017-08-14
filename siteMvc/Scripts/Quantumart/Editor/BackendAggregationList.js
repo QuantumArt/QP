@@ -34,8 +34,8 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this._addItemHandler = jQuery.proxy(this.addItem, this);
     this._removeItemHandler = jQuery.proxy(this.removeItem, this);
     if (aggrList.data('additional_names') != undefined) {
- this._additionalNames = aggrList.data('additional_names').split(',');
-}
+      this._additionalNames = aggrList.data('additional_names').split(',');
+    }
     this._viewModel = {
       items: this._items,
       addItem: this._addItemHandler,
@@ -44,8 +44,8 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     };
 
     for (var i in this._additionalNames) {
-        var curName = this._additionalNames[i];
-        this._viewModel[curName] = ko.observableArray(aggrList.data(`additional_${  curName}`).split(','));
+      var curName = this._additionalNames[i];
+      this._viewModel[curName] = ko.observableArray(aggrList.data(`additional_${  curName}`).split(','));
     }
 
     ko.applyBindingsToNode(this._containerElem.get(0), { template: { name: aggrList.attr('id').replace('_aggregationlist', '_template') } }, this._viewModel);
@@ -65,8 +65,8 @@ Quantumart.QP8.BackendAggregationList.prototype = {
       if (!$q.isNullOrEmpty(items) && $q.isArray(items)) {
         var self = this;
         jQuery.each(items, function () {
- self._items.push(Object.assign({}, this));
-});
+          self._items.push(Object.assign({}, this));
+        });
       }
     }
   },
@@ -103,9 +103,9 @@ Quantumart.QP8.BackendAggregationList.prototype = {
 
   checkHeaders: function () {
     if (this._tableBody.children('tr').size() == 0) {
-     this._tableHeader.hide();
+      this._tableHeader.hide();
     } else {
-     this._tableHeader.show();
+      this._tableHeader.show();
     }
   },
 

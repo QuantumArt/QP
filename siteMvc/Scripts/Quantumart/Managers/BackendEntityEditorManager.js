@@ -70,9 +70,9 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     var finalOptions = {};
     Object.assign(finalOptions, options);
     if (hostOptions) {
-        if (hostOptions.contextQuery) {
-            Object.assign(finalOptions, { contextQuery: hostOptions.contextQuery });
-        }
+      if (hostOptions.contextQuery) {
+        Object.assign(finalOptions, { contextQuery: hostOptions.contextQuery });
+      }
       if (hostOptions.eventArgsAdditionalData) {
         if ((entityId == 0 || hostOptions.eventArgsAdditionalData.restoring === true) && hostOptions.eventArgsAdditionalData.initFieldValues) {
           Object.assign(finalOptions, {
@@ -87,7 +87,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
           Object.assign(finalOptions, { hideFields: hostOptions.eventArgsAdditionalData.hideFields });
         }
         if (hostOptions.eventArgsAdditionalData.contextQuery) {
-            Object.assign(finalOptions, { contextQuery: hostOptions.eventArgsAdditionalData.contextQuery });
+          Object.assign(finalOptions, { contextQuery: hostOptions.eventArgsAdditionalData.contextQuery });
         }
       }
 

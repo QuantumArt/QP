@@ -1,5 +1,5 @@
 Quantumart.QP8.BackendFilePreviewListView = function (fileListContentElement, contextMenuCode, selectMode, zIndex) {
-    Quantumart.QP8.BackendFilePreviewListView.initializeBase(this, [fileListContentElement, contextMenuCode, selectMode, zIndex]);
+  Quantumart.QP8.BackendFilePreviewListView.initializeBase(this, [fileListContentElement, contextMenuCode, selectMode, zIndex]);
 };
 
 Quantumart.QP8.BackendFilePreviewListView.prototype = {
@@ -44,8 +44,8 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
           + '</div>', item.Name, item.Modified, item.Size, self._getThumbnailLink(item, options), item.FullName));
       });
     } else {
- html.cat($l.FileList.noRecords);
-}
+      html.cat($l.FileList.noRecords);
+    }
 
     $fileListPreviewContainer.html(html.string());
 
@@ -65,14 +65,14 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
       var url = '';
 
       if (options.fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
- url = `${window.CONTROLLER_URL_THUMBNAIL  }_SiteFileThumbnail`;
-} else if (options.fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
- url = `${window.CONTROLLER_URL_THUMBNAIL  }_ContentFileThumbnail`;
-}
+        url = `${window.CONTROLLER_URL_THUMBNAIL  }_SiteFileThumbnail`;
+      } else if (options.fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
+        url = `${window.CONTROLLER_URL_THUMBNAIL  }_ContentFileThumbnail`;
+      }
 
       return $q.htmlEncode(String.format("'{0}?folderId={1}&fileName={2}&{3}'", url, options.folderId, item.FullName, new Date().getTime()));
     }
- return $q.htmlEncode(String.format("'{0}{1}'", window.THEME_IMAGE_FOLDER_URL_BIG_FILE_TYPE_ICONS, item.BigIconLink));
+    return $q.htmlEncode(String.format("'{0}{1}'", window.THEME_IMAGE_FOLDER_URL_BIG_FILE_TYPE_ICONS, item.BigIconLink));
 
   }
 };

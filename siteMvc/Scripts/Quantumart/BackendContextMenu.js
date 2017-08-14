@@ -15,7 +15,7 @@ Quantumart.QP8.BackendContextMenu = function (contextMenuCode, contextMenuElemen
     }
 
     if (options.zIndex) {
-     this._zIndex = options.zIndex;
+      this._zIndex = options.zIndex;
     }
 
     if (!$q.isNull(options.allowManualShowing)) {
@@ -221,28 +221,28 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
 
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_CONTEXT_MENU  }GetStatusesList`, params, false, false, function (data) {
-        var statuses = data;
-        if (statuses) {
-          var statusCount = statuses.length;
-          if (statusCount > 0) {
-            for (var statusIndex = 0; statusIndex < statusCount; statusIndex++) {
-              var status = statuses[statusIndex];
-              var $menuItem = self.getMenuItem(status.Code);
-              if (!$q.isNullOrEmpty($menuItem)) {
-                self.setVisibleState($menuItem, status.Visible);
-              }
+      var statuses = data;
+      if (statuses) {
+        var statusCount = statuses.length;
+        if (statusCount > 0) {
+          for (var statusIndex = 0; statusIndex < statusCount; statusIndex++) {
+            var status = statuses[statusIndex];
+            var $menuItem = self.getMenuItem(status.Code);
+            if (!$q.isNullOrEmpty($menuItem)) {
+              self.setVisibleState($menuItem, status.Visible);
             }
           }
-
-          $q.clearArray(statuses);
         }
 
-        self._tuneMenuSeparators();
-        $q.callFunction(callback);
-      }, function (jqXHR) {
-        $q.processGenericAjaxError(jqXHR);
-        $q.callFunction(callback);
+        $q.clearArray(statuses);
       }
+
+      self._tuneMenuSeparators();
+      $q.callFunction(callback);
+    }, function (jqXHR) {
+      $q.processGenericAjaxError(jqXHR);
+      $q.callFunction(callback);
+    }
     );
   },
 
@@ -271,9 +271,9 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     });
 
     var $firstVisibleSeparator = $('li.separator', this._contextMenuComponent._menuElement)
-    .filter(function () {
-      return $(this).css('display') != 'none';
-    }).first();
+      .filter(function () {
+        return $(this).css('display') != 'none';
+      }).first();
 
     var toHideFirstVisibleSeparator = $firstVisibleSeparator.prevAll('li.item').filter(function () {
       return $(this).css('display') != 'none';
@@ -318,9 +318,9 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   _extendMenuItemElements: function (menuItems) {
     var self = this;
     $.each(menuItems, function (index, menuItem) {
-        var $menuItem = self.getMenuItem(menuItem.ActionCode);
-        self._extendMenuItemElement($menuItem, menuItem);
-      }
+      var $menuItem = self.getMenuItem(menuItem.ActionCode);
+      self._extendMenuItemElement($menuItem, menuItem);
+    }
     );
   },
 
@@ -545,10 +545,10 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
       return menu;
     }
   } else if ($q.isFunction(successHandler)) {
-      successHandler(contextMenuCachedData);
-    } else {
-      return contextMenuCachedData;
-    }
+    successHandler(contextMenuCachedData);
+  } else {
+    return contextMenuCachedData;
+  }
 };
 
 Quantumart.QP8.BackendContextMenu.registerClass('Quantumart.QP8.BackendContextMenu', Quantumart.QP8.Observable);

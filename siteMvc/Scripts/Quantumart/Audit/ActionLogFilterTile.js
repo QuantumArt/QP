@@ -30,17 +30,17 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     var containerHeaderHtml = new $.telerik.stringBuilder();
     containerHeaderHtml
       .cat('<div class="filterTile">')
-        .cat('<div class="filterTileContent group">')
-          .cat('<div class="title"><a href="javascript:void(0)" class="open-link js">')
-            .cat(this._options.title)
-            .cat('<span class="filter-details"></span>')
-          .cat('</a></div>')
-          .cat('<div ')
-            .cat(' class="closeButton"')
-            .cat(` title="${  $q.htmlEncode($l.SearchBlock.closeFieldSearchContainerButtonText)  }"`)
-          .cat('>')
-          .cat('</div>')
-        .cat('</div>')
+      .cat('<div class="filterTileContent group">')
+      .cat('<div class="title"><a href="javascript:void(0)" class="open-link js">')
+      .cat(this._options.title)
+      .cat('<span class="filter-details"></span>')
+      .cat('</a></div>')
+      .cat('<div ')
+      .cat(' class="closeButton"')
+      .cat(` title="${  $q.htmlEncode($l.SearchBlock.closeFieldSearchContainerButtonText)  }"`)
+      .cat('>')
+      .cat('</div>')
+      .cat('</div>')
       .cat('</div>');
 
     this.$tile = $(containerHeaderHtml.string());
@@ -60,19 +60,19 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
   },
 
   get_options: function () {
- return this._options;
-},
+    return this._options;
+  },
 
   _createFilter: function () {
-      var html = new $.telerik.stringBuilder()
-        .cat('<form class="formLayout alFilter">')
-        .cat('<div class="filterContainer"></div>')
-                .cat('<div>')
-          .cat(`<input class="button closeAndApplyFilter" type="button" value="${  $l.SearchBlock.closeAndApplyWndButtonText  }">`)
-              .cat(`<input class="button closeFilter" type="button" value="${  $l.SearchBlock.closeWndButtonText  }">`)
-          .cat('</div>')
-        .cat('</form>')
-        .string();
+    var html = new $.telerik.stringBuilder()
+      .cat('<form class="formLayout alFilter">')
+      .cat('<div class="filterContainer"></div>')
+      .cat('<div>')
+      .cat(`<input class="button closeAndApplyFilter" type="button" value="${  $l.SearchBlock.closeAndApplyWndButtonText  }">`)
+      .cat(`<input class="button closeFilter" type="button" value="${  $l.SearchBlock.closeWndButtonText  }">`)
+      .cat('</div>')
+      .cat('</form>')
+      .string();
 
     this._popupWindowComponent = $.telerik.window.create({
       title: $l.SearchBlock.filterSettings + this._options.title,
@@ -114,14 +114,14 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
   },
 
   _onCloseAndApplyFilterWndClick: function () {
-      this._onCloseFilterWndClick();
-      $(this._containerElement).closest('form').find('.alSearchButton').trigger('click');
+    this._onCloseFilterWndClick();
+    $(this._containerElement).closest('form').find('.alSearchButton').trigger('click');
   },
 
   _onFilterFormSubmitted: function (e) {
-      e.preventDefault();
-      $('.closeAndApplyFilter', this._popupWindowComponent.element).trigger('click');
-      return false;
+    e.preventDefault();
+    $('.closeAndApplyFilter', this._popupWindowComponent.element).trigger('click');
+    return false;
   },
 
   dispose: function () {
@@ -140,10 +140,10 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     }
 
     if (this._popupWindowComponent) {
-        $('.closeFilter', this._popupWindowComponent.element).off('click');
-        $('.closeAndApplyFilter', this._popupWindowComponent.element).off('click');
-        $('form', this._popupWindowComponent.element).off('submit');
-        $c.destroyPopupWindow(this._popupWindowComponent);
+      $('.closeFilter', this._popupWindowComponent.element).off('click');
+      $('.closeAndApplyFilter', this._popupWindowComponent.element).off('click');
+      $('form', this._popupWindowComponent.element).off('submit');
+      $c.destroyPopupWindow(this._popupWindowComponent);
     }
 
     this.$tile.empty().remove();

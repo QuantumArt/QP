@@ -15,8 +15,8 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
         var oldFilter = obj.getFilter();
         obj.setFilter(filter);
         if (oldFilter != '' && oldFilter != filter) {
- obj.removeAllListItems();
-}
+          obj.removeAllListItems();
+        }
       }
     }
   }
@@ -30,8 +30,8 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     var entityTypeId = $('option:selected', $entityTypesElement).val();
     var dictionary = Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary();
     var pair = $.grep(dictionary, function (item) {
- return item.EntityTypeId == entityTypeId;
-});
+      return item.EntityTypeId == entityTypeId;
+    });
     if (pair && pair[0]) {
       var listItems = pair[0].ActionItems;
       $.each(listItems, function (i, item) {
@@ -49,7 +49,7 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
   }
 
   var $entityTypesElement = $(`#${  entityTypesElementId}`),
-        $actionsElement = $(`#${  actionsElementId}`),
+    $actionsElement = $(`#${  actionsElementId}`),
     $contents = $(`#${  contentsElementId  }_list`);
 
   $entityTypesElement.bind('change keyup', onEntityTypeChanged);
@@ -78,8 +78,8 @@ Quantumart.QP8.CustomActionIsInterfaceSelectorObserver = function (isInterfaceEl
   }
 
   var $isInterface = $(`#${  isInterfaceElementId}`),
-  $actionWindowPanel = $(`#${  actionWindowPanelElementId}`),
-  $preActionPanel = $(`#${  preActionPanelElementId}`);
+    $actionWindowPanel = $(`#${  actionWindowPanelElementId}`),
+    $preActionPanel = $(`#${  preActionPanelElementId}`);
 
   $isInterface.click(onIsInterfaceClicked);
 

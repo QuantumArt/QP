@@ -45,7 +45,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     if (data) {
       return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.FullText, data.fieldID, data.fieldColumn, data.contentID, data.referenceFieldID, data.text);
     }
-      return null;
+    return null;
 
   },
 
@@ -66,10 +66,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
       if (jQuery.isEmptyObject(state)) {
         return null;
       }
-        return state;
+      return state;
 
     }
-      return null;
+    return null;
 
   },
 
@@ -109,10 +109,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
           text: jQuery(this._queryTextBoxElement).val()
         };
       }
- return null;
+      return null;
 
     }
- return null;
+    return null;
 
   },
   clear: function () {
@@ -120,22 +120,22 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
       var $resetElem = jQuery(this._textFieldsComboElement).find("option[data-field_is_title='True']");
 
       if (!$resetElem.length) {
- $resetElem = jQuery(this._textFieldsComboElement).find("option[value='']");
-}
+        $resetElem = jQuery(this._textFieldsComboElement).find("option[value='']");
+      }
     }
 
     $resetElem.prop('selected', true);
 
     // очистить текстовое поле
     if (this._queryTextBoxElement) {
- jQuery(this._queryTextBoxElement).val('');
-}
+      jQuery(this._queryTextBoxElement).val('');
+    }
   },
 
   onFieldChanged: function () {
     if (jQuery(this._queryTextBoxElement).val()) {
- jQuery(this._fullTextBlockElement).closest('form').trigger('submit');
-}
+      jQuery(this._fullTextBlockElement).closest('form').trigger('submit');
+    }
   },
 
   dispose: function () {

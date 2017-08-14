@@ -544,7 +544,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       || actionTypeCode === window.ACTION_TYPE_CODE_UPDATE_AND_UP
       || (actionTypeCode === window.ACTION_TYPE_CODE_RESTORE
         && action.EntityType.Code === window.ENTITY_TYPE_CODE_ARTICLE_VERSION)
-      )
+    )
     ) {
       const main = this.get_mainComponent();
       if (main && Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {

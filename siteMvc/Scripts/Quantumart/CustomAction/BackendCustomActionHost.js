@@ -77,7 +77,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     }
 
     if (message.data.options && message.data.options.currentContext) {
-        message.data.options.contextQuery = JSON.stringify($o.getContextQuery(message.data.parentEntityId, message.data.options.currentContext));
+      message.data.options.contextQuery = JSON.stringify($o.getContextQuery(message.data.parentEntityId, message.data.options.currentContext));
     }
     eventArgs.set_additionalData(message.data.options);
     eventArgs.set_startedByExternal(true);
@@ -98,8 +98,8 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
 
     if ($q.isArray(message.data.selectedEntityIDs) && !$q.isNullOrEmpty(message.data.selectedEntityIDs)) {
       var selectedEntities = jQuery.map(message.data.selectedEntityIDs, function (id) {
- return { Id: id };
-});
+        return { Id: id };
+      });
       if (message.data.isMultiple) {
         eventArgs.set_entities(selectedEntities);
       } else {

@@ -1,27 +1,27 @@
 Quantumart.QP8.BackendPagePropertiesMediator = function (rootElementId) {
-    var $componentElem = $(`#${  rootElementId}`);
-    var $cacheHours = $componentElem.find('.cache-hours-container');
-    var $displayCacheHours = $componentElem.find('.display-cache-hours');
+  var $componentElem = $(`#${  rootElementId}`);
+  var $cacheHours = $componentElem.find('.cache-hours-container');
+  var $displayCacheHours = $componentElem.find('.display-cache-hours');
 
-    manageCacheHours();
+  manageCacheHours();
 
-    $displayCacheHours.change(manageCacheHours);
+  $displayCacheHours.change(manageCacheHours);
 
-    function manageCacheHours() {
-        if ($displayCacheHours.is(':checked')) {
-            $cacheHours.show();
-        } else {
-            $cacheHours.hide();
-        }
+  function manageCacheHours() {
+    if ($displayCacheHours.is(':checked')) {
+      $cacheHours.show();
+    } else {
+      $cacheHours.hide();
     }
+  }
 
-    function dispose() {
-        $componentElem = null;
-        $cacheHours = null;
-        $displayCacheHours = null;
-    }
+  function dispose() {
+    $componentElem = null;
+    $cacheHours = null;
+    $displayCacheHours = null;
+  }
 
-    return {
-        dispose: dispose
-    };
+  return {
+    dispose: dispose
+  };
 };

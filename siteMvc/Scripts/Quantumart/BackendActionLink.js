@@ -41,50 +41,50 @@ Quantumart.QP8.BackendActionLink = function (actionLinkElementId, options) {
 };
 
 Quantumart.QP8.BackendActionLink.prototype = {
-    _actionLinkElementId: '',
-    _actionLinkElement: null,
-    _iconWrapperElement: null,
-    _captionElement: null,
-    _entityId: 0,
-    _entityName: '',
-    _parentEntityId: 0,
-    _actionTypeCode: '',
-    _actionCode: '',
-    _actionTargetType: null,
+  _actionLinkElementId: '',
+  _actionLinkElement: null,
+  _iconWrapperElement: null,
+  _captionElement: null,
+  _entityId: 0,
+  _entityName: '',
+  _parentEntityId: 0,
+  _actionTypeCode: '',
+  _actionCode: '',
+  _actionTargetType: null,
   _context: null,
 
-    ACTION_LINK_DISABLED_CLASS_NAME: 'disabled',
-    ACTION_LINK_BUSY_CLASS_NAME: 'busy',
+  ACTION_LINK_DISABLED_CLASS_NAME: 'disabled',
+  ACTION_LINK_BUSY_CLASS_NAME: 'busy',
 
-    get_entityId: function () {
+  get_entityId: function () {
     return this._entityId;
   },
 
-    set_entityId: function (value) {
+  set_entityId: function (value) {
     this._entityId = value;
   },
 
-    get_entityName: function () {
+  get_entityName: function () {
     return this._entityName;
   },
 
-    set_entityName: function (value) {
+  set_entityName: function (value) {
     this._entityName = value;
   },
 
-    get_parentEntityId: function () {
+  get_parentEntityId: function () {
     return this._parentEntityId;
   },
 
-    set_parentEntityId: function (value) {
+  set_parentEntityId: function (value) {
     this._parentEntityId = value;
   },
 
-    get_actionTypeCode: function () {
+  get_actionTypeCode: function () {
     return this._actionTypeCode;
   },
 
-    set_actionTypeCode: function (value) {
+  set_actionTypeCode: function (value) {
     this._actionTypeCode = value;
   },
 

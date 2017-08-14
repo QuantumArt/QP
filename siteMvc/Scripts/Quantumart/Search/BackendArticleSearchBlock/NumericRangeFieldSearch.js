@@ -19,10 +19,10 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       false,
       function (data, textStatus, jqXHR) {
         if (data.success) {
- serverContent = data.view;
-} else {
- $q.alertFail(data.message);
-}
+          serverContent = data.view;
+        } else {
+          $q.alertFail(data.message);
+        }
       },
       function (jqXHR, textStatus, errorThrown) {
         serverContent = null;
@@ -68,39 +68,39 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   get_searchQuery: function () {
-      return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
-                  this.get_IsNull(),
-                  $(this._numberFromElement).data('tTextBox').value(),
-                  $(this._numberToElement).data('tTextBox').value(),
-          this._isByValue,
-                    this.get_Inverse()
-                );
+    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
+      this.get_IsNull(),
+      $(this._numberFromElement).data('tTextBox').value(),
+      $(this._numberToElement).data('tTextBox').value(),
+      this._isByValue,
+      this.get_Inverse()
+    );
   },
 
   get_blockState: function () {
-      return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
-    {
+    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
+      {
         isNull: this.get_IsNull(),
-      from: $(this._numberFromElement).data('tTextBox').value(),
-      to: $(this._numberToElement).data('tTextBox').value(),
-      isByValue: this._isByValue,
-      inverse: this.get_Inverse()
-    });
+        from: $(this._numberFromElement).data('tTextBox').value(),
+        to: $(this._numberToElement).data('tTextBox').value(),
+        isByValue: this._isByValue,
+        inverse: this.get_Inverse()
+      });
   },
 
   get_filterDetails: function () {
-      var stateData = this.get_blockState().data;
-      var result;
+    var stateData = this.get_blockState().data;
+    var result;
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.isByValue) {
-        result = $.isNumeric(stateData.from) ? stateData.from : '?';
+      result = $.isNumeric(stateData.from) ? stateData.from : '?';
     } else {
-        result = `[${  $.isNumeric(stateData.from) ? stateData.from : '?'  }..${  $.isNumeric(stateData.to) ? stateData.to : '?'  }]`;
+      result = `[${  $.isNumeric(stateData.from) ? stateData.from : '?'  }..${  $.isNumeric(stateData.to) ? stateData.to : '?'  }]`;
     }
 
     if (stateData.inverse) {
-        result = `${$l.SearchBlock.notText  }(${  result  })`;
+      result = `${$l.SearchBlock.notText  }(${  result  })`;
     }
     return result;
   },
@@ -115,8 +115,8 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       }
 
       if (this._inverseCheckBoxElement) {
-          var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
-          $inverseCheckBoxElement.prop('checked', state.inverse);
+        var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
+        $inverseCheckBoxElement.prop('checked', state.inverse);
       }
 
       if (!$q.isNull(state.isByValue)) {
@@ -143,8 +143,8 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
     } else {
       $(this._numberFromElement).data('tTextBox').enable();
       if (!this._isByValue) {
- $(this._numberToElement).data('tTextBox').enable();
-}
+        $(this._numberToElement).data('tTextBox').enable();
+      }
     }
   },
 
@@ -157,8 +157,8 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       $(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.valueText);
     } else {
       if (!this.get_IsNull()) {
- $(this._numberToElement).data('tTextBox').enable();
-}
+        $(this._numberToElement).data('tTextBox').enable();
+      }
       $(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.fromText);
       $(this._numberToElement).closest('.row').show();
     }
@@ -168,10 +168,10 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
     var focusedNumeric = $(e.currentTarget).data('tTextBox');
     let otherInput;
     if (e.currentTarget === this._numberFromElement) {
- otherInput = $(this._numberToElement).data('tTextBox');
-} else if (e.currentTarget === this._numberToElement) {
- otherInput = $(this._numberFromElement).data('tTextBox');
-}
+      otherInput = $(this._numberToElement).data('tTextBox');
+    } else if (e.currentTarget === this._numberToElement) {
+      otherInput = $(this._numberFromElement).data('tTextBox');
+    }
 
     if (otherInput && otherInput.value() && focusedNumeric && !focusedNumeric.value()) {
       focusedNumeric.value(otherInput.value());
@@ -190,11 +190,11 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
     }
 
     if (this._numberFromElement) {
- $(this._numberFromElement).unbind('focus', this._onNumericInputFocusHandler);
-}
+      $(this._numberFromElement).unbind('focus', this._onNumericInputFocusHandler);
+    }
     if (this._numberToElement) {
- $(this._numberToElement).unbind('focus', this._onNumericInputFocusHandler);
-}
+      $(this._numberToElement).unbind('focus', this._onNumericInputFocusHandler);
+    }
 
     $c.destroyAllNumericTextBoxes(this._containerElement);
 
@@ -218,17 +218,17 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 
   get_IsNull: function () {
     if (this._isNullCheckBoxElement) {
- return $(this._isNullCheckBoxElement).is(':checked');
-}
- return false;
+      return $(this._isNullCheckBoxElement).is(':checked');
+    }
+    return false;
 
   },
 
   get_Inverse: function () {
-      if (this._inverseCheckBoxElement) {
- return $(this._inverseCheckBoxElement).is(':checked');
-}
- return false;
+    if (this._inverseCheckBoxElement) {
+      return $(this._inverseCheckBoxElement).is(':checked');
+    }
+    return false;
 
   },
 

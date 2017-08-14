@@ -53,7 +53,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
 
     var searchBlock = null;
     if (options.contextSearch) {
-        searchBlock = new Quantumart.QP8.BackendContextBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
+      searchBlock = new Quantumart.QP8.BackendContextBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
     } else if (entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE || entityTypeCode == window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE || entityTypeCode == window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
       if (host && host.get_documentContext() && host.get_documentContext().get_options() && host.get_documentContext().get_options().isVirtual) {
         Object.assign(options, { isVirtual: true });

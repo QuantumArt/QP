@@ -18,26 +18,26 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
 
   function onExternalChanged() {
     if ($externalCheckbox.is(':checked')) {
- $externalPanel.hide();
-} else {
- $externalPanel.show();
-}
+      $externalPanel.hide();
+    } else {
+      $externalPanel.show();
+    }
   }
 
   function onUseBackendEmailChanged() {
     if ($backendEmailCheckbox.is(':checked')) {
- $senderEmailPanel.hide();
-} else {
- $senderEmailPanel.show();
-}
+      $senderEmailPanel.hide();
+    } else {
+      $senderEmailPanel.show();
+    }
   }
 
   function onUseDefaultSenderNameChanged() {
     if ($senderNameCheckbox.is(':checked')) {
- $senderNamePanel.hide();
-} else {
- $senderNamePanel.show();
-}
+      $senderNamePanel.hide();
+    } else {
+      $senderNamePanel.show();
+    }
   }
 
   function onStatusChanged() {

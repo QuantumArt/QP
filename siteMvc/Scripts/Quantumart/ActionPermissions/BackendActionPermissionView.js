@@ -34,9 +34,9 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
       || actionCode == window.ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE || actionCode == window.ACTION_CODE_REMOVE_ACTION_PERMISSION_NODE) {
       var eventArgsContext = eventArgs.get_context();
       eventArgs.set_context(Object.assign({}, eventArgsContext,
-      {
-        additionalUrlParameters: this._searchBlockComponent.getSearchData()
-      }));
+        {
+          additionalUrlParameters: this._searchBlockComponent.getSearchData()
+        }));
     }
 
     var action = $a.getBackendActionByCode(eventArgs.get_actionCode());

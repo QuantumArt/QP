@@ -244,7 +244,7 @@ $c._switchPanel = function ($selectedSwitcher, panelIDs) {
           .each(function () {
             $c._setPanelControlsDisabledState($(this), true);
           }
-        );
+          );
       }
     }
   }
@@ -274,8 +274,8 @@ $c.setValidator = function (input, errors) {
   }
 
   const html = message
-      ? `<span id="${input.prop('id')}_validator" class="field-validation-error" >${message}</span>`
-      : '';
+    ? `<span id="${input.prop('id')}_validator" class="field-validation-error" >${message}</span>`
+    : '';
 
   const $container = $input.closest('dl.row');
   $container.find('em.validators').html(html);
@@ -1003,7 +1003,7 @@ $c.initNumericTextBox = function (textBoxElement) {
       'line-height': '',
       'text-decoration': ''
     }
-  );
+    );
 };
 
 $c.destroyAllNumericTextBoxes = function (parentElement) {
@@ -1412,8 +1412,8 @@ $c.openCropWindow = function (url, folderUrl, urlParams) {
       newEventArgs.set_entityTypeCode(urlParams.entityTypeCode);
       newEventArgs.set_actionTypeCode(window.ACTION_TYPE_CODE_FILE_CROPPED);
       const actionCode = urlParams.entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE
-          ? window.ACTION_CODE_UPDATE_SITE_FILE
-          : window.ACTION_CODE_UPDATE_CONTENT_FILE;
+        ? window.ACTION_CODE_UPDATE_SITE_FILE
+        : window.ACTION_CODE_UPDATE_CONTENT_FILE;
 
       newEventArgs.set_actionCode(actionCode);
       newEventArgs.set_parentEntityId(urlParams.id);
@@ -1691,8 +1691,8 @@ $c.initEntityDataTree = function (dataTreeElem) {
     };
 
     const entityDataTree = Quantumart.QP8.BackendEntityTreeManager
-        .getInstance()
-        .createTree(treeElementId, entityTypeCode, parentEntityId, actionCode, options);
+      .getInstance()
+      .createTree(treeElementId, entityTypeCode, parentEntityId, actionCode, options);
 
     entityDataTree.initialize();
     $dataTree.data('entity_data_tree_component', entityDataTree);

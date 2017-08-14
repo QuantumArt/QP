@@ -1,15 +1,15 @@
 Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, onApplyFilter) {
   function getSearchData() {
     var users = userPicker.getSelectedEntities(),
-    groups = groupPicker.getSelectedEntities(),
-    type = jQuery('li input:checked', $radioGroup).val();
+      groups = groupPicker.getSelectedEntities(),
+      type = jQuery('li input:checked', $radioGroup).val();
 
     if (type == 1 && users[0]) {
       return { userId: users[0].Id };
     } else if (type == 2 && groups[0]) {
       return { groupId: groups[0].Id };
     }
- return {};
+    return {};
 
   }
 

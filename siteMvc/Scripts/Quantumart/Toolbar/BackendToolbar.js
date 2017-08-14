@@ -109,12 +109,12 @@ Quantumart.QP8.BackendToolbar.prototype = {
       }
     }
 
-      this._toolbarElement = $toolbar.get(0);
-      this._toolbarItemListElement = $toolbarItemList.get(0);
+    this._toolbarElement = $toolbar.get(0);
+    this._toolbarItemListElement = $toolbarItemList.get(0);
 
-      if (!isToolbarExist) {
-        this._attachToolbarEventHandlers();
-      }
+    if (!isToolbarExist) {
+      this._attachToolbarEventHandlers();
+    }
   },
 
   showToolbar: function (callback) {
@@ -217,9 +217,9 @@ Quantumart.QP8.BackendToolbar.prototype = {
   addToolbarItemsToToolbar: function (items, count) {
     if (!$q.isNull(items)) {
       $(this._toolbarItemListElement).html(this._getToolbarItemsHtml(items));
-          this._extendToolbarItemElements(items);
-          this.refreshToolbarItems(count);
-      }
+      this._extendToolbarItemElements(items);
+      this.refreshToolbarItems(count);
+    }
   },
 
   tuneToolbarItems: function (statuses) {
@@ -234,12 +234,12 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-    removeToolbarItemsFromToolbar: function () {
-      var $toolbarItemList = $(this._toolbarItemListElement);
-      $toolbarItemList.empty();
+  removeToolbarItemsFromToolbar: function () {
+    var $toolbarItemList = $(this._toolbarItemListElement);
+    $toolbarItemList.empty();
   },
 
-    refreshToolbarItems: function (selectedEntitiesCount) {
+  refreshToolbarItems: function (selectedEntitiesCount) {
     if (selectedEntitiesCount == null) {
       selectedEntitiesCount = 0;
     }
@@ -258,7 +258,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     $items = null;
   },
 
-    _getToolbarDropDownList: function (item) {
+  _getToolbarDropDownList: function (item) {
     var $item = this.getToolbarItem(item);
 
     if (!$q.isNullOrEmpty($item)) {
@@ -271,7 +271,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return $list;
   },
 
-    _updateDropDownListButton: function (item, listItemElem) {
+  _updateDropDownListButton: function (item, listItemElem) {
     var $item = this.getToolbarItem(item);
     var $listItem = this._getToolbarDropDownListItem(listItemElem);
 
@@ -286,7 +286,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       $listItem
         .siblings().removeClass(this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME).end()
         .addClass(this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME)
-        ;
+      ;
       $item.data('selected_sub_item_value', this._getToolbarDropDownListItemValue($listItem));
       $icon.css('backgroundImage', String.format("url('{0}')", window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon));
       if (!$q.isNullOrWhiteSpace(text) && showButtonText) {
@@ -298,7 +298,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-    _getToolbarDropDownListItem: function (listItemElem) {
+  _getToolbarDropDownListItem: function (listItemElem) {
     var $listItem = null;
 
     if ($q.isObject(listItemElem)) {
@@ -319,8 +319,8 @@ Quantumart.QP8.BackendToolbar.prototype = {
       $nextListItem = $listItem.next();
       if ($q.isNullOrEmpty($nextListItem)) {
         $nextListItem = $listItem
-        .siblings()
-        .first()
+          .siblings()
+          .first()
         ;
       }
 
@@ -442,21 +442,21 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var iconUrl = dataItem.Icon.left(7).toLowerCase() !== 'http://' ? window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon : dataItem.Icon;
 
     html
-          .cat(`<li code="${  $q.htmlEncode(dataItem.Value)  }" class="item button">\n`)
-          .cat(`  <a href="javascript:void(0);" class="link${  dataItem.Checked ? ` ${  this.ITEM_CHECKED_CLASS_NAME}` : ''  }">`)
-          .cat('<span class="outerWrapper">')
-          .cat('<span class="innerWrapper">')
+      .cat(`<li code="${  $q.htmlEncode(dataItem.Value)  }" class="item button">\n`)
+      .cat(`  <a href="javascript:void(0);" class="link${  dataItem.Checked ? ` ${  this.ITEM_CHECKED_CLASS_NAME}` : ''  }">`)
+      .cat('<span class="outerWrapper">')
+      .cat('<span class="innerWrapper">')
 
-          .catIf(`<span class="icon" style="background-image: url('${  iconUrl  }')"${
-         !$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ` title="${  $q.htmlEncode(dataItem.Tooltip)  }"` : ''  }>`
+      .catIf(`<span class="icon" style="background-image: url('${  iconUrl  }')"${
+        !$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ` title="${  $q.htmlEncode(dataItem.Tooltip)  }"` : ''  }>`
         + `<img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }/0.gif" /></span>`, !$q.isNullOrWhiteSpace(dataItem.Icon))
 
-          .catIf(`<span class="text${  $q.isNullOrWhiteSpace(dataItem.Icon) ? ' textOnly' : ''  }">${  $q.htmlEncode(dataItem.Text)  }</span>`, !$q.isNullOrWhiteSpace(dataItem.Text))
-          .cat('</span>')
-          .cat('</span>')
-          .cat('</a>\n')
-          .cat('</li>\n')
-          ;
+      .catIf(`<span class="text${  $q.isNullOrWhiteSpace(dataItem.Icon) ? ' textOnly' : ''  }">${  $q.htmlEncode(dataItem.Text)  }</span>`, !$q.isNullOrWhiteSpace(dataItem.Text))
+      .cat('</span>')
+      .cat('</span>')
+      .cat('</a>\n')
+      .cat('</li>\n')
+    ;
   },
 
   _getToolbarDropDownHtml: function (html, dataItem) {
@@ -466,8 +466,8 @@ Quantumart.QP8.BackendToolbar.prototype = {
 
     if (subItems.length > 1) {
       var selectedSubItem = jQuery.grep(subItems, function (subItem) {
- return subItem.Value == selectedSubItemValue;
-})[0];
+        return subItem.Value == selectedSubItemValue;
+      })[0];
       if (!selectedSubItem) {
         selectedSubItem = subItems[0];
       }
@@ -486,7 +486,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
         .cat('</span>')
         .cat('</span>')
         .cat('</a>\n')
-        ;
+      ;
       html.cat('<div class="list">\n');
       html.cat('<ul>\n');
       jQuery.each(subItems,
@@ -504,19 +504,19 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var isSelected = dataItem.Value == selectedSubItemValue;
 
     html
-          .cat(`<li code="${  $q.htmlEncode(dataItem.Value)  }" class="item${  isSelected ? ` ${  this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME}` : ''  }">\n`)
-          .cat('  <div class="outerWrapper">\n')
-          .cat('      <div class="innerWrapper">\n')
-          .cat('          <span class="icon"')
-          .catIf(` style="background-image: url('${  window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS  }${dataItem.Icon  }')"`, !$q.isNullOrWhiteSpace(dataItem.Icon))
-          .cat('>')
-          .cat(`<img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }0.gif" width="16px" height="16px" />`)
-          .cat('</span>\n')
-          .cat(`          <span class="text">${  $q.htmlEncode(dataItem.Text)  }</span>\n`)
-          .cat('      </div>\n')
-          .cat('  </div>\n')
-          .cat('</li>\n')
-          ;
+      .cat(`<li code="${  $q.htmlEncode(dataItem.Value)  }" class="item${  isSelected ? ` ${  this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME}` : ''  }">\n`)
+      .cat('  <div class="outerWrapper">\n')
+      .cat('      <div class="innerWrapper">\n')
+      .cat('          <span class="icon"')
+      .catIf(` style="background-image: url('${  window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS  }${dataItem.Icon  }')"`, !$q.isNullOrWhiteSpace(dataItem.Icon))
+      .cat('>')
+      .cat(`<img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }0.gif" width="16px" height="16px" />`)
+      .cat('</span>\n')
+      .cat(`          <span class="text">${  $q.htmlEncode(dataItem.Text)  }</span>\n`)
+      .cat('      </div>\n')
+      .cat('  </div>\n')
+      .cat('</li>\n')
+    ;
   },
 
   _getSeparatorHtml: function (html) {
@@ -543,10 +543,10 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-    _extendToolbarItemElements: function (items) {
-      var self = this;
+  _extendToolbarItemElements: function (items) {
+    var self = this;
 
-      jQuery.each(items,
+    jQuery.each(items,
       function (index, item) {
         var $item = self.getToolbarItem(item.Value);
         if (!$q.isNullOrEmpty($item)) {
@@ -663,7 +663,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       $link
         .removeClass('arrowClicked')
         .removeClass('buttonClicked')
-        ;
+      ;
     }
   },
 
@@ -696,10 +696,10 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var $item = this.getToolbarItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
       if (state) {
- $item.show();
-} else {
- $item.hide();
-}
+        $item.show();
+      } else {
+        $item.hide();
+      }
     }
   },
 
@@ -718,8 +718,8 @@ Quantumart.QP8.BackendToolbar.prototype = {
       if (state) {
         $item.removeClass(this.ITEM_DISABLED_CLASS_NAME);
       } else if (!$item.data('always_enabled')) {
-          $item.addClass(this.ITEM_DISABLED_CLASS_NAME);
-        }
+        $item.addClass(this.ITEM_DISABLED_CLASS_NAME);
+      }
     }
   },
 
@@ -988,24 +988,24 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   dispose: function () {
-  Quantumart.QP8.BackendToolbar.callBaseMethod(this, 'dispose');
+    Quantumart.QP8.BackendToolbar.callBaseMethod(this, 'dispose');
 
     this._detachToolbarEventHandlers();
 
     if (this._toolbarItemListElement) {
-        var $toolbarItemList = $(this._toolbarItemListElement);
-        $toolbarItemList
-      .empty()
-      .remove()
+      var $toolbarItemList = $(this._toolbarItemListElement);
+      $toolbarItemList
+        .empty()
+        .remove()
       ;
 
-        this._toolbarItemListElement = null;
+      this._toolbarItemListElement = null;
     }
 
     if (this._toolbarElement) {
       var $toolbar = $(this._toolbarElement);
       $toolbar
-      .empty()
+        .empty()
         .remove();
 
       this._toolbarElement = null;
@@ -1029,7 +1029,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
 
 Quantumart.QP8.BackendToolbar.registerClass('Quantumart.QP8.BackendToolbar', Quantumart.QP8.Observable);
 Quantumart.QP8.BackendToolbarButtonEventArgs = function () {
-    Quantumart.QP8.BackendToolbarButtonEventArgs.initializeBase(this);
+  Quantumart.QP8.BackendToolbarButtonEventArgs.initializeBase(this);
 };
 
 Quantumart.QP8.BackendToolbarButtonEventArgs.prototype = {
@@ -1037,23 +1037,23 @@ Quantumart.QP8.BackendToolbarButtonEventArgs.prototype = {
   _checkOnClick: false,
   _checked: false,
 
-    get_value: function () {
+  get_value: function () {
     return this._value;
   },
 
-    set_value: function (value) {
+  set_value: function (value) {
     this._value = value;
   },
 
-    get_checkOnClick: function () {
+  get_checkOnClick: function () {
     return this._checkOnClick;
   },
 
-    set_checkOnClick: function (value) {
+  set_checkOnClick: function (value) {
     this._checkOnClick = value;
   },
 
-    get_checked: function () {
+  get_checked: function () {
     return this._checked;
   },
 

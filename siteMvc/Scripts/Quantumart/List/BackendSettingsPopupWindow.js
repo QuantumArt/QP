@@ -80,10 +80,10 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
         className = 'disabled';
         options.isSettingsSet = true;
         prms = $(`#${
-           this._popupWindowComponent._documentWrapperElementId
-           } form input, #${
-           this._popupWindowComponent._documentWrapperElementId
-           } form select`).serialize();
+          this._popupWindowComponent._documentWrapperElementId
+        } form input, #${
+          this._popupWindowComponent._documentWrapperElementId
+        } form select`).serialize();
 
         that = this;
         $.ajax({

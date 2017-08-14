@@ -934,7 +934,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
       return icon;
     }
-      return entity.IconUrl;
+    return entity.IconUrl;
 
   },
 

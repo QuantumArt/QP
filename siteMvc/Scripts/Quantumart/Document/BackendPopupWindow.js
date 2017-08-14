@@ -13,8 +13,8 @@ Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options)
   this._popupWindowId = popupWindowId;
 
   if ($q.isObject(eventArgs)) {
-      this._applyEventArgs(eventArgs, true);
-      this.bindExternalCallerContext(eventArgs);
+    this._applyEventArgs(eventArgs, true);
+    this.bindExternalCallerContext(eventArgs);
   }
 
   this._loadDefaultSearchBlockState();
@@ -261,15 +261,15 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   get_zIndex: function () {
-      return parseInt(jQuery(this._popupWindowElement).css('z-index'), 10);
+    return parseInt(jQuery(this._popupWindowElement).css('z-index'), 10);
   },
 
   get_selectionContext: function () {
- return this._selectionContext;
-},
+    return this._selectionContext;
+  },
   set_selectionContext: function (value) {
- this._selectionContext = value;
-},
+    this._selectionContext = value;
+  },
 
   _onPopupWindowResizeHandler: null,
   _onPopupWindowOpenHandler: null,
@@ -334,11 +334,11 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
     var params = {};
     if (this._isMultipleEntities || this._isCustomAction) {
- params.IDs = entityIDs;
-}
+      params.IDs = entityIDs;
+    }
     if (this._isCustomAction) {
- params.actionCode = this._actionCode;
-}
+      params.actionCode = this._actionCode;
+    }
     this._documentPostParams = params;
   },
 
@@ -369,19 +369,19 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     var windowContentHtml = new $.telerik.stringBuilder();
     windowContentHtml
       .catIf(`<div id="${  breadCrumbsWrapperId  }" class="breadCrumbsWrapper"></div>`, this._showBreadCrumbs)
-          .cat(`<div id="${  toolbarWrapperId  }" class="toolbarWrapper">\n`)
-          .cat(`  <div id="${  actionToolbarWrapperId  }" class="actionToolbarWrapper"></div>\n`)
-          .cat(`  <div id="${  viewToolbarWrapperId  }" class="viewToolbarWrapper"></div>\n`)
-          .cat('</div>\n')
-          .cat(`<div id="${  documentAreaId  }" class="area">`)
+      .cat(`<div id="${  toolbarWrapperId  }" class="toolbarWrapper">\n`)
+      .cat(`  <div id="${  actionToolbarWrapperId  }" class="actionToolbarWrapper"></div>\n`)
+      .cat(`  <div id="${  viewToolbarWrapperId  }" class="viewToolbarWrapper"></div>\n`)
+      .cat('</div>\n')
+      .cat(`<div id="${  documentAreaId  }" class="area">`)
       .cat(`  <div id="${  searchBlockWrapperId  }" class="searchWrapper"></div>`)
-            .cat(`  <div id="${  contextBlockWrapperId  }" class="contextWrapper"></div>`)
-          .cat(`  <div id="${  documentWrapperId  }" class="documentWrapper"></div>`)
-          .cat('</div>\n')
-          ;
+      .cat(`  <div id="${  contextBlockWrapperId  }" class="contextWrapper"></div>`)
+      .cat(`  <div id="${  documentWrapperId  }" class="documentWrapper"></div>`)
+      .cat('</div>\n')
+    ;
 
     var popupWindowComponent = $.telerik.window.create({
-        title: $('<div/>').text(this._title).html(),
+      title: $('<div/>').text(this._title).html(),
       html: windowContentHtml.string(),
       width: this._width,
       height: this._height,
@@ -574,11 +574,11 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       this._actionToolbarComponent = actionToolbarComponent;
     }
 
-      // Создаем панель инструментов для представлений
+    // Создаем панель инструментов для представлений
     var viewToolbarOptions = {};
     var state = this.loadHostState();
     if (state && state.viewTypeCode) {
-        viewToolbarOptions.viewTypeCode = state.viewTypeCode;
+      viewToolbarOptions.viewTypeCode = state.viewTypeCode;
     }
 
     var viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar(`viewToolbar_${  this._popupWindowId}`, this._actionCode, viewToolbarOptions);
@@ -670,21 +670,21 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   createContextBlock: function () {
-      var contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
+    var contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
       .createSearchBlock(`contextBlock_${  this._popupWindowId}`, this._entityTypeCode, this._parentEntityId, this,
         {
-            searchBlockContainerElementId: $(this._searchBlockWrapperElement).attr('id'),
-            popupWindowId: this._popupWindowId,
-            actionCode: this._actionCode,
-            contextSearch: true,
-            hideButtons: true,
-            searchBlockState: this.get_contextState()
+          searchBlockContainerElementId: $(this._searchBlockWrapperElement).attr('id'),
+          popupWindowId: this._popupWindowId,
+          actionCode: this._actionCode,
+          contextSearch: true,
+          hideButtons: true,
+          searchBlockState: this.get_contextState()
         });
-      contextBlockComponent.initialize();
+    contextBlockComponent.initialize();
 
-      contextBlockComponent.attachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
+    contextBlockComponent.attachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
 
-      this._contextBlockComponent = contextBlockComponent;
+    this._contextBlockComponent = contextBlockComponent;
   },
 
   destroySearchBlock: function () {
@@ -704,19 +704,19 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   destroyContextBlock: function () {
-      var searchBlockComponent = this._searchBlockComponent;
-      var contextBlockComponent = this._contextBlockComponent;
+    var searchBlockComponent = this._searchBlockComponent;
+    var contextBlockComponent = this._contextBlockComponent;
 
-      if (contextBlockComponent) {
-          contextBlockComponent.hideSearchBlock();
-          contextBlockComponent.detachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
+    if (contextBlockComponent) {
+      contextBlockComponent.hideSearchBlock();
+      contextBlockComponent.detachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
 
-          var searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
-          Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
+      var searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
+      Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
 
-          this._contextBlockComponent = null;
-          this._isContextBlockVisible = false;
-      }
+      this._contextBlockComponent = null;
+      this._isContextBlockVisible = false;
+    }
   },
 
   showErrorMessageInDocumentWrapper: function (status) {
@@ -737,7 +737,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   onActionExecuting: function (eventArgs) {
-      this._copyCurrentContextToEventArgs(eventArgs);
+    this._copyCurrentContextToEventArgs(eventArgs);
     return this._popupWindowManagerComponent.notify(window.EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING, eventArgs);
   },
 

@@ -204,28 +204,28 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       var html = new $.telerik.stringBuilder();
       html
         .cat("<div class='collapsingToolbar'>")
-          .cat("<ul class='linkButtons group'>")
-            .cat("<li style='display: block;' class='expand'>")
-              .cat("<span class='linkButton actionLink'>")
-                .cat("<a href='javascript:void(0);'>")
-                  .cat("<span class='icon expand'><img src='/Backend/Content/Common/0.gif'></span>")
-                  .cat("<span class='text'>")
-                  .cat($l.EntityDataList.showListLinkButtonText)
-                  .cat('</span>')
-                .cat('</a>')
-              .cat('</span>')
-            .cat('</li>')
-            .cat("<li style='display: none;' class='collapse'>")
-              .cat("<span class='linkButton actionLink'>")
-                .cat("<a href='javascript:void(0);'>")
-                  .cat("<span class='icon collapse'><img src='/Backend/Content/Common/0.gif'></span>")
-                  .cat("<span class='text'>")
-                  .cat($l.EntityDataList.hideListLinkButtonText)
-                  .cat('</span>')
-                .cat('</a>')
-              .cat('</span>')
-            .cat('</li>')
-          .cat('</ul>')
+        .cat("<ul class='linkButtons group'>")
+        .cat("<li style='display: block;' class='expand'>")
+        .cat("<span class='linkButton actionLink'>")
+        .cat("<a href='javascript:void(0);'>")
+        .cat("<span class='icon expand'><img src='/Backend/Content/Common/0.gif'></span>")
+        .cat("<span class='text'>")
+        .cat($l.EntityDataList.showListLinkButtonText)
+        .cat('</span>')
+        .cat('</a>')
+        .cat('</span>')
+        .cat('</li>')
+        .cat("<li style='display: none;' class='collapse'>")
+        .cat("<span class='linkButton actionLink'>")
+        .cat("<a href='javascript:void(0);'>")
+        .cat("<span class='icon collapse'><img src='/Backend/Content/Common/0.gif'></span>")
+        .cat("<span class='text'>")
+        .cat($l.EntityDataList.hideListLinkButtonText)
+        .cat('</span>')
+        .cat('</a>')
+        .cat('</span>')
+        .cat('</li>')
+        .cat('</ul>')
         .cat('</div>');
 
       var $collapsingToolbar = $(html.string());
@@ -392,10 +392,10 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
         actionLink.disableActionLink();
       }
     } else if (state) {
-        $linkButton.find('A:first').removeClass(this.TOOLBAR_BUTTON_DISABLED_CLASS_NAME);
-      } else {
-        $linkButton.find('A:first').addClass(this.TOOLBAR_BUTTON_DISABLED_CLASS_NAME);
-      }
+      $linkButton.find('A:first').removeClass(this.TOOLBAR_BUTTON_DISABLED_CLASS_NAME);
+    } else {
+      $linkButton.find('A:first').addClass(this.TOOLBAR_BUTTON_DISABLED_CLASS_NAME);
+    }
   },
 
   _createLinkButton: function (id, text, cssClassName) {
@@ -539,8 +539,8 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     for (var linkButtonIndex = 0; linkButtonIndex < linkButtonCount; linkButtonIndex++) {
       var $linkButton = $linkButtons.eq(linkButtonIndex);
       if ($linkButton.data('action_code') !== this._readActionCode) {
- this._changeToolbarButtonState($linkButton, false);
-}
+        this._changeToolbarButtonState($linkButton, false);
+      }
     }
 
     $linkButtons = null;
@@ -702,7 +702,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _syncGroupCheckbox: function () {
-      this._getGroupCheckbox().prop('checked', this.getListItemCount() == this.getSelectedListItemCount());
+    this._getGroupCheckbox().prop('checked', this.getListItemCount() == this.getSelectedListItemCount());
   },
 
   _syncCountSpan: function (count) {
@@ -749,7 +749,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _getValueStorage: function () {
-      return this._listManagerComponent.getValueStorage();
+    return this._listManagerComponent.getValueStorage();
   },
 
   _onCopyButtonClickHandler: function () {
@@ -818,7 +818,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       $toolbar
         .empty()
         .remove()
-        ;
+      ;
 
       $toolbar = null;
       this._toolbarElement = null;

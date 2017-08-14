@@ -35,8 +35,8 @@ Quantumart.QP8.BackendLibrary = function (libraryGroupCode, libraryElementId, pa
   }
 
   if (hostOptions.zIndex) {
- this._zIndex = hostOptions.zIndex;
-}
+    this._zIndex = hostOptions.zIndex;
+  }
 
   this._allowUpload = $q.toBoolean(options.allowUpload, false);
 
@@ -120,7 +120,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     this._folderTree.initialize();
 
     this._splitter = new Quantumart.QP8.BackendSplitter(this._splitterId,
-    { firstPaneWidth: 250, minFirstPaneWidth: 50, maxFirstPaneWidth: 250, stateCookieName: 'FolderTreeSize' }
+      { firstPaneWidth: 250, minFirstPaneWidth: 50, maxFirstPaneWidth: 250, stateCookieName: 'FolderTreeSize' }
     );
     this._splitter.attachObserver(window.EVENT_TYPE_SPLITTER_RESIZED, $.proxy(this._onSplitterResized, this));
     this._splitter.attachObserver(window.EVENT_TYPE_SPLITTER_INITIALIZED, $.proxy(this._onSplitterResized, this));
@@ -208,15 +208,15 @@ Quantumart.QP8.BackendLibrary.prototype = {
       var containerToHide = this._fileContainers[code];
 
       if (containerToHide) {
- containerToHide.hide();
-}
+        containerToHide.hide();
+      }
     }
 
     var containerToShow = this._fileContainers[this._viewTypeCode];
 
     if (containerToShow) {
- containerToShow.show();
-}
+      containerToShow.show();
+    }
   },
 
   resetCurrentFileList: function () {
@@ -231,20 +231,20 @@ Quantumart.QP8.BackendLibrary.prototype = {
       });
     } else if (this._viewTypeCode == window.VIEW_TYPE_CODE_LIST) {
       this._fileList.rebind(
-      {
-        pageNumber: 0,
-        folderId: this._folderId,
-        fileTypeId: this._filterFileTypeId,
-        fileNameFilter: this._filterFileName
-      });
+        {
+          pageNumber: 0,
+          folderId: this._folderId,
+          fileTypeId: this._filterFileTypeId,
+          fileNameFilter: this._filterFileName
+        });
     } else if (this._viewTypeCode == window.VIEW_TYPE_CODE_THUMBNAILS) {
       this._filePreviewList.rebind(
-      {
-        pageNumber: 0,
-        folderId: this._folderId,
-        fileTypeId: this._filterFileTypeId,
-        fileNameFilter: this._filterFileName
-      });
+        {
+          pageNumber: 0,
+          folderId: this._folderId,
+          fileTypeId: this._filterFileTypeId,
+          fileNameFilter: this._filterFileName
+        });
     }
   },
 
@@ -348,18 +348,18 @@ Quantumart.QP8.BackendLibrary.prototype = {
   _loadFolderPath: function () {
     var url = '';
     if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
- url = `${window.CONTROLLER_URL_SITE  }_FolderPath`;
-} else if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
- url = `${window.CONTROLLER_URL_CONTENT  }_FolderPath`;
-} else {
- throw new Error('fileEntityTypeCode is unknown.');
-}
+      url = `${window.CONTROLLER_URL_SITE  }_FolderPath`;
+    } else if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
+      url = `${window.CONTROLLER_URL_CONTENT  }_FolderPath`;
+    } else {
+      throw new Error('fileEntityTypeCode is unknown.');
+    }
 
     var self = this;
 
     $q.getJsonFromUrl(
-    'GET',
-    url,
+      'GET',
+      url,
       {
         folderId: this._folderId
       },

@@ -15,20 +15,20 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   initialize: function () {
     var serverContent;
     $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }RelationSearch`, {
-        elementIdPrefix: this._elementIdPrefix,
-        fieldID: this._fieldID,
-        parentEntityId: this._parentEntityId,
-        IDs: this._selectedEntitiesIDs
-      }, false, false, function (data, textStatus, jqXHR) {
-        if (data.success) {
-          serverContent = data.view;
-        } else {
-          $q.alertError(data.message);
-        }
-      }, function (jqXHR, textStatus, errorThrown) {
-        serverContent = null;
-        $q.processGenericAjaxError(jqXHR);
+      elementIdPrefix: this._elementIdPrefix,
+      fieldID: this._fieldID,
+      parentEntityId: this._parentEntityId,
+      IDs: this._selectedEntitiesIDs
+    }, false, false, function (data, textStatus, jqXHR) {
+      if (data.success) {
+        serverContent = data.view;
+      } else {
+        $q.alertError(data.message);
       }
+    }, function (jqXHR, textStatus, errorThrown) {
+      serverContent = null;
+      $q.processGenericAjaxError(jqXHR);
+    }
     );
 
     if (serverContent) {
@@ -112,8 +112,8 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       result = this._getText(ids);
     } else if (!$q.isNullOrEmpty(stateData.entities)) {
       result = this._getText(stateData.entities, function (e) {
- return $q.cutShort(e.Name, 10);
-});
+        return $q.cutShort(e.Name, 10);
+      });
     } else {
       result = '';
     }

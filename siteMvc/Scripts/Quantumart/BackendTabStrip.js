@@ -577,7 +577,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       // Оповещаем о начале выбора компоненты-наблюдатели
 
       // Выделяем таб
-        this.highlightTab($tab);
+      this.highlightTab($tab);
 
       // Устанавливаем ширину группы табов
       this.fixTabStripWidth();
@@ -617,15 +617,15 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var tabStripOffset = 0;
       tabStripOffset = -1 * (tabStripWidth - tabWidth);
       if (!this.isLastTab($tab)) {
- tabStripOffset += 30;
-}
+        tabStripOffset += 30;
+      }
       $scrollable.scrollTo($tab,
-          {
-            duration: duration || 400,
-            axis: 'x',
-            offset: tabStripOffset
-          }
-        );
+        {
+          duration: duration || 400,
+          axis: 'x',
+          offset: tabStripOffset
+        }
+      );
 
       $scrollable = null;
     }
@@ -672,7 +672,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .removeData()
       .empty()
       .remove()
-      ;
+    ;
 
     this._removeTabFromGroup($tab);
   },
@@ -1285,54 +1285,54 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   _closeAllTabRequest: function () {
     if (!this.isTabStripBusy()) {
-        $(this._tabStripElement)
-                .find(this.TAB_CLICKABLE_SELECTORS)
-                .each($.proxy(
-            function (i, tab) {
-              this._closeTabRequest(tab);
-            }, this)
-          );
+      $(this._tabStripElement)
+        .find(this.TAB_CLICKABLE_SELECTORS)
+        .each($.proxy(
+          function (i, tab) {
+            this._closeTabRequest(tab);
+          }, this)
+        );
     }
   },
 
   _saveAndCloseAllTabRequest: function () {
-      if (!this.isTabStripBusy()) {
-          $(this._tabStripElement)
-                .find(this.TAB_CLICKABLE_SELECTORS)
-                .each($.proxy(
-            function (i, tab) {
-                var eventArgs = this.getEventArgsFromTab(tab);
-                if ($q.isObject(eventArgs)) {
-                    this.notify(window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST, eventArgs);
-                }
-                eventArgs = null;
-            }, this)
-          );
-      }
+    if (!this.isTabStripBusy()) {
+      $(this._tabStripElement)
+        .find(this.TAB_CLICKABLE_SELECTORS)
+        .each($.proxy(
+          function (i, tab) {
+            var eventArgs = this.getEventArgsFromTab(tab);
+            if ($q.isObject(eventArgs)) {
+              this.notify(window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST, eventArgs);
+            }
+            eventArgs = null;
+          }, this)
+        );
+    }
   },
 
   _closeButThisTabRequest: function ($tab) {
-      if (!this.isTabStripBusy()) {
-        $(this._tabStripElement)
-                .find(this.TAB_CLICKABLE_SELECTORS)
+    if (!this.isTabStripBusy()) {
+      $(this._tabStripElement)
+        .find(this.TAB_CLICKABLE_SELECTORS)
         .not($tab)
         .each($.proxy(
           function (i, tab) {
-              this._closeTabRequest(tab);
+            this._closeTabRequest(tab);
           }, this)
         );
-        this.scrollToTab($tab, 1);
-        this.fixTabStripWidth();
+      this.scrollToTab($tab, 1);
+      this.fixTabStripWidth();
     }
   },
 
   _findInTreeRequest: function (tab) {
-      var eventArgs = this.getEventArgsFromTab(tab);
-      if ($q.isObject(eventArgs)) {
-          eventArgs.isExpandRequested = true;
-          this.notify(window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST, eventArgs);
-      }
-      eventArgs = null;
+    var eventArgs = this.getEventArgsFromTab(tab);
+    if ($q.isObject(eventArgs)) {
+      eventArgs.isExpandRequested = true;
+      this.notify(window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST, eventArgs);
+    }
+    eventArgs = null;
   },
 
   _onCloseButtonUnhovering: function (e) {
@@ -1346,7 +1346,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       if (tabId === this.TAB_MENU_CLOSE_ALL_ITEM_CODE) {
         this._closeAllTabRequest();
       } else if (tabId === this.TAB_MENU_SAVE_CLOSE_ALL_ITEM_CODE) {
-          this._saveAndCloseAllTabRequest();
+        this._saveAndCloseAllTabRequest();
       } else {
         this.selectTabRequest(tabId);
       }
@@ -1380,7 +1380,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       $menuButton
         .unbind('mouseover', this._onTabMenuButtonHoveredHandler)
         .unbind('mouseout', this._onTabMenuButtonUnhoveredHandler)
-        ;
+      ;
 
       $menuButton = null;
 
@@ -1397,7 +1397,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $upArrow
       .removeClass(this.TAB_MENU_UP_ARROW_CLASS_NAME)
       .addClass(this.TAB_MENU_UP_ARROW_HOVER_CLASS_NAME)
-      ;
+    ;
 
     this._scrollTabMenuToFirstItem();
 
@@ -1409,7 +1409,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $upArrow
       .removeClass(this.TAB_MENU_UP_ARROW_HOVER_CLASS_NAME)
       .addClass(this.TAB_MENU_UP_ARROW_CLASS_NAME)
-      ;
+    ;
 
     this._stopTabMenuScrolling();
 
@@ -1421,7 +1421,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $downArrow
       .removeClass(this.TAB_MENU_DOWN_ARROW_CLASS_NAME)
       .addClass(this.TAB_MENU_DOWN_ARROW_HOVER_CLASS_NAME)
-      ;
+    ;
 
     this._scrollTabMenuToLastItem();
 
@@ -1433,7 +1433,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $downArrow
       .removeClass(this.TAB_MENU_DOWN_ARROW_HOVER_CLASS_NAME)
       .addClass(this.TAB_MENU_DOWN_ARROW_CLASS_NAME)
-      ;
+    ;
 
     this._stopTabMenuScrolling();
 

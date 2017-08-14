@@ -35,18 +35,18 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
         false,
         false
       )
-      .done($.proxy(function (data) {
-        if (data.success) {
-          var serverContent = data.view;
-          $(this._concreteSearchBlockElement).html(serverContent);
-          this.set_isRendered(true);
-        } else {
- $q.alertFail(data.message);
-}
-      }, this))
-      .fail(function (jqXHR, textStatus, errorThrown) {
-        $q.processGenericAjaxError(jqXHR);
-      });
+        .done($.proxy(function (data) {
+          if (data.success) {
+            var serverContent = data.view;
+            $(this._concreteSearchBlockElement).html(serverContent);
+            this.set_isRendered(true);
+          } else {
+            $q.alertFail(data.message);
+          }
+        }, this))
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          $q.processGenericAjaxError(jqXHR);
+        });
     }
   },
 

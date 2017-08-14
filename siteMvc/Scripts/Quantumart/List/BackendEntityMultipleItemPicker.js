@@ -72,11 +72,11 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     this._refreshClearButton();
 
     if (this._enableCopy) {
-        this._copyButtonElement = $copyButton.get(0);
-        $copyButton.bind('click', jQuery.proxy(this._onCopyButtonClickHandler, this));
+      this._copyButtonElement = $copyButton.get(0);
+      $copyButton.bind('click', jQuery.proxy(this._onCopyButtonClickHandler, this));
 
-        this._pasteButtonElement = $pasteButton.get(0);
-        $pasteButton.bind('click', jQuery.proxy(this._onPasteButtonClickHandler, this));
+      this._pasteButtonElement = $pasteButton.get(0);
+      $pasteButton.bind('click', jQuery.proxy(this._onPasteButtonClickHandler, this));
     }
 
     $list.delegate('LI INPUT:checkbox', 'change', jQuery.proxy(this._onSelectedItemChangeHandler, this));

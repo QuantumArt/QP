@@ -22,7 +22,7 @@ Quantumart.QP8.ActionLogTextFilter.prototype = {
     if (val) {
       return `"${  $q.cutShort(val, 8)  }"`;
     }
-      return '""';
+    return '""';
 
   }
 };

@@ -132,11 +132,11 @@ Quantumart.QP8.BackendSplitter.prototype = {
   },
 
   _onSplitterDragStart: function (event) {
-      this.notify(window.EVENT_TYPE_SPLITTER_DRAG_START, {});
+    this.notify(window.EVENT_TYPE_SPLITTER_DRAG_START, {});
   },
 
   _onSplitterDrop: function (event) {
-      this.notify(window.EVENT_TYPE_SPLITTER_DROP, {});
+    this.notify(window.EVENT_TYPE_SPLITTER_DROP, {});
   },
 
 

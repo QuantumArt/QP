@@ -791,10 +791,10 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
             this.notify(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
           }
         } else if (followLink && !this._linkOpenNewTab && !message) {
-            this.notify(window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK, eventArgs);
-          } else {
-            this.notify(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
-          }
+          this.notify(window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK, eventArgs);
+        } else {
+          this.notify(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
+        }
       }
     }
   },

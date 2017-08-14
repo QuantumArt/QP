@@ -17,15 +17,15 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
       false,
       function (data, textStatus, jqXHR) {
         if (data.success) {
- serverContent = data.view;
-} else {
- $q.alertFail(data.message);
-}
-      },
-        function (jqXHR, textStatus, errorThrown) {
-          serverContent = null;
-          $q.processGenericAjaxError(jqXHR);
+          serverContent = data.view;
+        } else {
+          $q.alertFail(data.message);
         }
+      },
+      function (jqXHR, textStatus, errorThrown) {
+        serverContent = null;
+        $q.processGenericAjaxError(jqXHR);
+      }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
       var queryTextBoxID = `${this._elementIdPrefix  }_textBox`;
@@ -56,19 +56,19 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
   get_searchQuery: function () {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Text,
-          this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
-          $(this._queryTextBoxElement).val(), this.get_Inverse(), this.get_ExactMatch(), this.get_BeginningStart());
+      this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
+      $(this._queryTextBoxElement).val(), this.get_Inverse(), this.get_ExactMatch(), this.get_BeginningStart());
   },
 
   get_blockState: function () {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Text, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
-  {
-    isNull: this.get_IsNull(),
-    text: $(this._queryTextBoxElement).val(),
-    inverse: this.get_Inverse(),
-    exactMatch: this.get_ExactMatch(),
-    beginningStart: this.get_BeginningStart()
-  });
+      {
+        isNull: this.get_IsNull(),
+        text: $(this._queryTextBoxElement).val(),
+        inverse: this.get_Inverse(),
+        exactMatch: this.get_ExactMatch(),
+        beginningStart: this.get_BeginningStart()
+      });
   },
 
   get_filterDetails: function () {
@@ -90,7 +90,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
         return $l.SearchBlock.endText + result;
       }
 
-        return $l.SearchBlock.fromText + result;
+      return $l.SearchBlock.fromText + result;
     }
 
     if (stateData.inverse) {
@@ -155,34 +155,34 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
   get_IsNull: function () {
     if (this._isNullCheckBoxElement) {
- return $(this._isNullCheckBoxElement).is(':checked');
-}
+      return $(this._isNullCheckBoxElement).is(':checked');
+    }
 
- return false;
+    return false;
   },
 
   get_Inverse: function () {
     if (this._inverseCheckBoxElement) {
- return $(this._inverseCheckBoxElement).is(':checked');
-}
+      return $(this._inverseCheckBoxElement).is(':checked');
+    }
 
- return false;
+    return false;
   },
 
   get_ExactMatch: function () {
     if (this._exactMatchCheckBoxElement) {
- return $(this._exactMatchCheckBoxElement).is(':checked');
-}
+      return $(this._exactMatchCheckBoxElement).is(':checked');
+    }
 
- return false;
+    return false;
   },
 
   get_BeginningStart: function () {
     if (this._beginningStartChechBoxElement) {
- return $(this._beginningStartChechBoxElement).is(':checked');
-}
+      return $(this._beginningStartChechBoxElement).is(':checked');
+    }
 
- return false;
+    return false;
   },
 
   _queryTextBoxElement: null,

@@ -53,10 +53,10 @@ Quantumart.QP8.BackendPager.prototype = {
     if (this._totalCount > 0) {
       for (var pn = this._currentFrameStartPageNumber; pn <= this._currentFrameEndPageNumber; pn++) {
         if (pn != this._currentPageNumber) {
- html.cat('<a class="t-link qp-page-link">').cat(pn + 1).cat('</a>');
-} else {
- html.cat('<span class="t-state-active">').cat(pn + 1).cat('</span>');
-}
+          html.cat('<a class="t-link qp-page-link">').cat(pn + 1).cat('</a>');
+        } else {
+          html.cat('<span class="t-state-active">').cat(pn + 1).cat('</span>');
+        }
       }
     }
 
@@ -112,27 +112,27 @@ Quantumart.QP8.BackendPager.prototype = {
   set: function (options) {
     if ($q.isObject(options)) {
       if (!$q.isNull(options.totalCount)) {
- this._totalCount = $q.toInt(options.totalCount < 0 ? 0 : options.totalCount);
-}
+        this._totalCount = $q.toInt(options.totalCount < 0 ? 0 : options.totalCount);
+      }
       if (!$q.isNull(options.pageSize)) {
- this._pageSize = $q.toInt(options.pageSize < 1 ? 1 : options.pageSize);
-}
+        this._pageSize = $q.toInt(options.pageSize < 1 ? 1 : options.pageSize);
+      }
       if (!$q.isNull(options.pageFrameSize)) {
- this._pageFrameSize = $q.toInt(options.pageFrameSize < 1 ? 1 : options.pageFrameSize);
-}
+        this._pageFrameSize = $q.toInt(options.pageFrameSize < 1 ? 1 : options.pageFrameSize);
+      }
       if (!$q.isNull(options.currentPageNumber)) {
- this._currentPageNumber = $q.toInt(options.currentPageNumber < 0 ? 0 : options.currentPageNumber);
-}
+        this._currentPageNumber = $q.toInt(options.currentPageNumber < 0 ? 0 : options.currentPageNumber);
+      }
     }
 
     this._pageCount = Math.floor(this._totalCount / this._pageSize) + (this._totalCount % this._pageSize == 0 ? 0 : 1);
 
     if (this._currentPageNumber >= this._pageCount) {
- this._currentPageNumber = this._pageCount - 1;
-}
+      this._currentPageNumber = this._pageCount - 1;
+    }
     if (this._currentPageNumber < 0) {
- this._currentPageNumber = 0;
-}
+      this._currentPageNumber = 0;
+    }
 
     this._pageFrameCount = Math.floor(this._pageCount / this._pageFrameSize) + (this._pageCount % this._pageFrameSize == 0 ? 0 : 1);
     this._currentPageFrameNumber = Math.floor(this._currentPageNumber / this._pageFrameSize);
@@ -158,16 +158,16 @@ Quantumart.QP8.BackendPager.prototype = {
     }
 
     if (this._totalCount > 0) {
- $(this._statusTextElement).html(
-  String.format(
-    $l.Pager.statusTextTemplate,
-    (this._currentPageNumber * this._pageSize) + 1,
-    Math.min((this._currentPageNumber * this._pageSize) + this._pageSize, this._totalCount),
-    this._totalCount
-  ));
-} else {
- $(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate, 0, 0, 0));
-}
+      $(this._statusTextElement).html(
+        String.format(
+          $l.Pager.statusTextTemplate,
+          (this._currentPageNumber * this._pageSize) + 1,
+          Math.min((this._currentPageNumber * this._pageSize) + this._pageSize, this._totalCount),
+          this._totalCount
+        ));
+    } else {
+      $(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate, 0, 0, 0));
+    }
 
     this._pageFrameRedraw();
   },
@@ -188,8 +188,8 @@ Quantumart.QP8.BackendPager.prototype = {
   _onInHover: function (e) {
     var $e = $(e.currentTarget);
     if (!$e.hasClass('t-state-disabled')) {
- $e.addClass('t-state-hover');
-}
+      $e.addClass('t-state-hover');
+    }
   },
 
   _onOutHover: function (e) {
@@ -203,20 +203,20 @@ Quantumart.QP8.BackendPager.prototype = {
       var newPageNumber = 0;
 
       if ($selectedPage.hasClass('qp-link-arrow-first')) {
- newPageNumber = 0;
-} else if ($selectedPage.hasClass('qp-link-arrow-prev')) {
- newPageNumber = this._currentPageNumber - 1;
-} else if ($selectedPage.hasClass('qp-link-arrow-next')) {
- newPageNumber = this._currentPageNumber + 1;
-} else if ($selectedPage.hasClass('qp-link-arrow-last')) {
- newPageNumber = this._pageCount - 1;
-} else if ($selectedPage.hasClass('qp-link-prev-frame')) {
- newPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(this._currentPageFrameNumber - 1, this._pageFrameSize, this._pageCount);
-} else if ($selectedPage.hasClass('qp-link-next-frame')) {
- newPageNumber = Quantumart.QP8.BackendPager.getFrameStartPageNumber(this._currentPageFrameNumber + 1, this._pageFrameSize);
-} else {
- newPageNumber = $q.toInt($selectedPage.html()) - 1;
-}
+        newPageNumber = 0;
+      } else if ($selectedPage.hasClass('qp-link-arrow-prev')) {
+        newPageNumber = this._currentPageNumber - 1;
+      } else if ($selectedPage.hasClass('qp-link-arrow-next')) {
+        newPageNumber = this._currentPageNumber + 1;
+      } else if ($selectedPage.hasClass('qp-link-arrow-last')) {
+        newPageNumber = this._pageCount - 1;
+      } else if ($selectedPage.hasClass('qp-link-prev-frame')) {
+        newPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(this._currentPageFrameNumber - 1, this._pageFrameSize, this._pageCount);
+      } else if ($selectedPage.hasClass('qp-link-next-frame')) {
+        newPageNumber = Quantumart.QP8.BackendPager.getFrameStartPageNumber(this._currentPageFrameNumber + 1, this._pageFrameSize);
+      } else {
+        newPageNumber = $q.toInt($selectedPage.html()) - 1;
+      }
 
       var eventArgs = new Quantumart.QP8.BackendPagerEventArgs(newPageNumber);
       this.notify(window.EVENT_TYPE_PAGE_NUMBER_CHANGED, eventArgs);

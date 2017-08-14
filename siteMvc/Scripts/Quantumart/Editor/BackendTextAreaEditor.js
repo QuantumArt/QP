@@ -323,11 +323,11 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     if (netLanguage === '') {
       strIns = `<%=${  fieldName  }%>`;
     } else
-      if (isCodeBehind === '0') {
-        strIns = `<%# ${  fieldName  }%>`;
-      } else if (netLanguage === '1') {
-        strIns = fieldName;
-      }
+    if (isCodeBehind === '0') {
+      strIns = `<%# ${  fieldName  }%>`;
+    } else if (netLanguage === '1') {
+      strIns = fieldName;
+    }
 
     this._insertCallText(strIns);
   },

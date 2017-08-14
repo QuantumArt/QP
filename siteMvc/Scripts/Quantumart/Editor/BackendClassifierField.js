@@ -218,23 +218,23 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     var self = this;
     if (this._customButtonsSettings) {
       $.each(this._customButtonsSettings, function (index, item) {
- self._parentEditor.addCustomButton(item, $form);
-});
+        self._parentEditor.addCustomButton(item, $form);
+      });
     }
 
     if (this._customLinkButtonsSettings) {
       $.each(this._customLinkButtonsSettings, function (index, item) {
- self._parentEditor.addCustomLinkButton(item, $form);
-});
+        self._parentEditor.addCustomLinkButton(item, $form);
+      });
     }
   },
 
   set_initFieldValues: function (value) {
-      this._initFieldValues = value;
+    this._initFieldValues = value;
   },
 
   set_disableChangeTracking: function (value) {
-      this._disableChangeTracking = value;
+    this._disableChangeTracking = value;
   },
 
   _disposeAggregatedFields: function () {

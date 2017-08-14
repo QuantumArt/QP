@@ -19,10 +19,10 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       false,
       function (data, textStatus, jqXHR) {
         if (data.success) {
- serverContent = data.view;
-} else {
- $q.alertFail(data.message);
-}
+          serverContent = data.view;
+        } else {
+          $q.alertFail(data.message);
+        }
       },
       function (jqXHR, textStatus, errorThrown) {
         serverContent = null;
@@ -30,7 +30,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-        var inverseCheckBoxID = `${this._elementIdPrefix  }_inverseCheckBox`;
+      var inverseCheckBoxID = `${this._elementIdPrefix  }_inverseCheckBox`;
       var numberFromID = `${this._elementIdPrefix  }_numberFrom`;
       var numberToID = `${this._elementIdPrefix  }_numberTo`;
 
@@ -61,42 +61,42 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   get_searchQuery: function () {
-      return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
-                  this.get_IsNull(),
-                  $(this._numberFromElement).data('tTextBox').value(),
-                  $(this._numberToElement).data('tTextBox').value(),
-          this._isByValue,
-                    this._getIds(jQuery(this._textAreaElement).val()),
-                    this._isByText);
+    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
+      this.get_IsNull(),
+      $(this._numberFromElement).data('tTextBox').value(),
+      $(this._numberToElement).data('tTextBox').value(),
+      this._isByValue,
+      this._getIds(jQuery(this._textAreaElement).val()),
+      this._isByText);
   },
 
   get_blockState: function () {
-      return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
-    {
-      inverse: this.get_IsNull(),
-      from: $(this._numberFromElement).data('tTextBox').value(),
-      to: $(this._numberToElement).data('tTextBox').value(),
-      text: $(this._textAreaElement).val(),
-      isByValue: this._isByValue,
-      isByText: this._isByText
-    });
+    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
+      {
+        inverse: this.get_IsNull(),
+        from: $(this._numberFromElement).data('tTextBox').value(),
+        to: $(this._numberToElement).data('tTextBox').value(),
+        text: $(this._textAreaElement).val(),
+        isByValue: this._isByValue,
+        isByText: this._isByText
+      });
   },
 
   get_filterDetails: function () {
-      var stateData = this.get_blockState().data;
-      var result;
+    var stateData = this.get_blockState().data;
+    var result;
 
     if (stateData.isByText) {
-        var ids = this._getIds(stateData.text);
-        result = ids.length == 0 ? '?' : this._getText(ids);
+      var ids = this._getIds(stateData.text);
+      result = ids.length == 0 ? '?' : this._getText(ids);
     } else if (stateData.isByValue) {
-        result = stateData.from ? stateData.from : '?';
+      result = stateData.from ? stateData.from : '?';
     } else {
-        result = `[${  stateData.from ? stateData.from : '?'  }..${  stateData.to ? stateData.to : '?'  }]`;
+      result = `[${  stateData.from ? stateData.from : '?'  }..${  stateData.to ? stateData.to : '?'  }]`;
     }
 
     if (stateData.inverse) {
-        result = `${$l.SearchBlock.notText  }(${  result  })`;
+      result = `${$l.SearchBlock.notText  }(${  result  })`;
     }
 
     return result;
@@ -105,14 +105,14 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   restore_blockState: function (state) {
     if (state) {
       if (this._inverseCheckBoxElement) {
-          var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
-          $inverseCheckBoxElement.prop('checked', state.inverse);
-          $inverseCheckBoxElement = null;
+        var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
+        $inverseCheckBoxElement.prop('checked', state.inverse);
+        $inverseCheckBoxElement = null;
       }
 
       if (!$q.isNull(state.isByValue) && !$q.isNull(state.isByText)) {
-          var value = state.isByText ? 2 : state.isByValue ? 0 : 1;
-          $(`.radioButtonsList input:radio[value=${  value  }]`, this._containerElement).prop('checked', true).trigger('click');
+        var value = state.isByText ? 2 : state.isByValue ? 0 : 1;
+        $(`.radioButtonsList input:radio[value=${  value  }]`, this._containerElement).prop('checked', true).trigger('click');
       }
 
       $(this._numberFromElement).data('tTextBox').value(state.from);
@@ -122,14 +122,14 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   _onByValueSelectorChanged: function (e) {
-      this._isByValue = $(e.currentTarget).val() == 0;
-      this._isByText = $(e.currentTarget).val() == 2;
+    this._isByValue = $(e.currentTarget).val() == 0;
+    this._isByText = $(e.currentTarget).val() == 2;
 
-      if (this._isByText) {
-          $(this._textAreaElement).closest('.row').show();
-          $(this._numberFromElement).closest('.row').hide();
-          $(this._numberToElement).closest('.row').hide();
-      } else if (this._isByValue) {
+    if (this._isByText) {
+      $(this._textAreaElement).closest('.row').show();
+      $(this._numberFromElement).closest('.row').hide();
+      $(this._numberToElement).closest('.row').hide();
+    } else if (this._isByValue) {
       $(this._numberToElement).data('tTextBox').disable();
       $(this._textAreaElement).closest('.row').hide();
       $(this._numberFromElement).closest('.row').show();
@@ -141,7 +141,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       $(this._textAreaElement).closest('.row').hide();
       $(this._numberFromElement).closest('.row').show();
       $(this._numberToElement).closest('.row').show();
-        }
+    }
   },
 
   // перенести значение из одного numeric textbox в другой если другой - пустой
@@ -149,10 +149,10 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
     var focusedNumeric = $(e.currentTarget).data('tTextBox');
     let otherInput;
     if (e.currentTarget === this._numberFromElement) {
- otherInput = $(this._numberToElement).data('tTextBox');
-} else if (e.currentTarget === this._numberToElement) {
- otherInput = $(this._numberFromElement).data('tTextBox');
-}
+      otherInput = $(this._numberToElement).data('tTextBox');
+    } else if (e.currentTarget === this._numberToElement) {
+      otherInput = $(this._numberFromElement).data('tTextBox');
+    }
 
     if (otherInput && otherInput.value() && focusedNumeric && !focusedNumeric.value()) {
       focusedNumeric.value(otherInput.value());
@@ -165,11 +165,11 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 
   dispose: function () {
     if (this._numberFromElement) {
- $(this._numberFromElement).unbind('focus', this._onNumericInputFocusHandler);
-}
+      $(this._numberFromElement).unbind('focus', this._onNumericInputFocusHandler);
+    }
     if (this._numberToElement) {
- $(this._numberToElement).unbind('focus', this._onNumericInputFocusHandler);
-}
+      $(this._numberToElement).unbind('focus', this._onNumericInputFocusHandler);
+    }
 
     $c.destroyAllNumericTextBoxes(this._containerElement);
 
@@ -192,21 +192,21 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 
   get_IsNull: function () {
     if (this._inverseCheckBoxElement) {
- return $(this._inverseCheckBoxElement).is(':checked');
-}
- return false;
+      return $(this._inverseCheckBoxElement).is(':checked');
+    }
+    return false;
 
   },
 
   _isByValue: true,
-    _isByText: false,
+  _isByText: false,
 
   _onNumericInputFocusHandler: null,
 
   _inverseCheckBoxElement: null,
   _numberFromElement: null,
   _numberToElement: null,
-    _textAreaElement: null
+  _textAreaElement: null
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);

@@ -144,7 +144,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     if (this._isWindow) {
       return Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindow(this._hostId);
     }
-      return this._getArea().getDocument(this._hostId);
+    return this._getArea().getDocument(this._hostId);
 
   },
 
@@ -188,8 +188,8 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
 
   execSelect: function (eventArgs) {
     if (this._execSelectCallback) {
- this._execSelectCallback(eventArgs);
-}
+      this._execSelectCallback(eventArgs);
+    }
   },
 
   createMainComponent: function (host) {
@@ -333,7 +333,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   get_params: function () {
-      return this._params;
+    return this._params;
   },
 
   needUp: function () {
@@ -413,8 +413,8 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   dispose: function () {
     Sys.Debug.trace(`terminatePage ${  this._hostId}`);
     if (!this.needUp()) {
- $q.callFunction(this._terminatingCallback, this);
-}
+      $q.callFunction(this._terminatingCallback, this);
+    }
     var host = this.getHost();
 
     if (host) {
@@ -423,8 +423,8 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     if (!this.needUp()) {
- $q.callFunction(this._terminatedCallback, this);
-}
+      $q.callFunction(this._terminatedCallback, this);
+    }
   }
 };
 

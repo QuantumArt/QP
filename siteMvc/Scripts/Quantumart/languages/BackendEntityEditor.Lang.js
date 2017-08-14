@@ -13,5 +13,5 @@ window.Backend.Lang.EntityEditor = {
   variationNotExists: 'There is no variation for the selected context, but it will be created after any field changing',
   baseArticle: 'None of the contexts is selected so the base article is shown',
   selectField: 'Select field',
-    fieldDescriptionWndCaption: 'Field Description'
+  fieldDescriptionWndCaption: 'Field Description'
 };

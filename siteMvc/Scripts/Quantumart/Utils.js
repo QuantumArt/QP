@@ -545,8 +545,8 @@ $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
     if (httpStatus === 500) {
       html.cat(
         `          <td style="width: 110px;"><img src="${
-         window.COMMON_IMAGE_FOLDER_URL_ROOT
-         }/errors/bug.gif" width="100" height="118" border="0" style="margin: 0 5px;" /></td>`);
+          window.COMMON_IMAGE_FOLDER_URL_ROOT
+        }/errors/bug.gif" width="100" height="118" border="0" style="margin: 0 5px;" /></td>`);
 
       html.cat('          <td style="padding: 0 10px;">');
       html.cat(`            <h1>${$l.EditingArea.error500Title}</h1>`);
@@ -555,8 +555,8 @@ $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
     } else if (httpStatus === 404) {
       html.cat(
         `          <td style="width: 110px;"><img src="${
-         window.COMMON_IMAGE_FOLDER_URL_ROOT
-         }/errors/compass.png" width="100" height="115" border="0" alt="Компас" style="margin: 0 5px;" /></td>`);
+          window.COMMON_IMAGE_FOLDER_URL_ROOT
+        }/errors/compass.png" width="100" height="115" border="0" alt="Компас" style="margin: 0 5px;" /></td>`);
 
       html.cat('          <td style="padding: 0 10px;">');
       html.cat(`            <h1>${$l.EditingArea.error404Title}</h1>`);
@@ -658,7 +658,7 @@ $q.htmlEncode = function htmlEncode(htmlContent, allowFormatText) {
     if (!$q.isNull(allowFormatText) || allowFormatText) {
       processedContent = processedContent
         .replace(/\n/igm, '<br />\n')
-      .replace(/\t/igm, '&nbsp;&nbsp;&nbsp;&nbsp;');
+        .replace(/\t/igm, '&nbsp;&nbsp;&nbsp;&nbsp;');
     }
   }
 

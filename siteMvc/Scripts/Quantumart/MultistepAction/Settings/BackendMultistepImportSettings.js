@@ -53,7 +53,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     this._uploaderComponent.attachObserver(
       window.EVENT_TYPE_LIBRARY_FILE_UPLOADED,
       $.proxy(this._onFileUploadedHandler, this
-    ));
+      ));
   },
 
   _onFileUploadedHandler: function (eventType, sender, eventArgs) {
@@ -300,7 +300,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       .on('change', function onChange() {
         that.loadFromFile(options);
       }
-    );
+      );
 
     if (!isNaN(delim)) {
       that.loadFromFile(options);
@@ -310,10 +310,10 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   loadFromFile: function (options) {
     var that = this;
     var paramsSelector = `#${
-       options._popupWindowComponent._documentWrapperElementId
-       } form input, #${
-       options._popupWindowComponent._documentWrapperElementId
-       } form select`;
+      options._popupWindowComponent._documentWrapperElementId
+    } form input, #${
+      options._popupWindowComponent._documentWrapperElementId
+    } form select`;
 
     // eslint-disable-next-line new-cap
     var act = new Quantumart.QP8.BackendActionExecutor.getBackendActionByCode(options._actionCode);

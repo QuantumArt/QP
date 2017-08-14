@@ -125,7 +125,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
   },
 
   openWindow: function () {
-      if (this._popupWindowComponent) {
+    if (this._popupWindowComponent) {
       this._popupWindowComponent.openWindow();
     }
   },
@@ -136,7 +136,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
     }
   },
   _popupWindowClosedHandler: function () {
-      this.dispose();
+    this.dispose();
   },
   dispose: function () {
     if (this._popupWindowToolbarComponent) {

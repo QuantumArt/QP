@@ -21,9 +21,9 @@ Quantumart.QP8.ActionLogDatetimeFilter.prototype = {
         to: sq.QueryParams[2]
       };
     }
-      return {
-        from: sq.QueryParams[1]
-      };
+    return {
+      from: sq.QueryParams[1]
+    };
 
   },
 

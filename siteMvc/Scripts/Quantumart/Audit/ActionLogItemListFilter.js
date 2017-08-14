@@ -9,19 +9,19 @@ Quantumart.QP8.ActionLogItemListFilter.prototype = {
     var html = new $.telerik.stringBuilder();
 
     html
-    .cat('<div class="row">')
+      .cat('<div class="row">')
       .cat('<select class="dropDownList">');
 
     for (var i = 0; i < this._items.length; i++) {
       var item = this._items[i];
       html.cat('<option value="').cat(item.value).cat('">')
         .cat(item.text)
-      .cat('</option>');
+        .cat('</option>');
     }
 
     html
       .cat('</select>')
-    .cat('</div>');
+      .cat('</div>');
 
     this.$container.append(html.string());
 

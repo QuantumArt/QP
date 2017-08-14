@@ -311,7 +311,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
         .noVerticalResizer()
         .empty()
         .remove()
-        ;
+      ;
 
       $searchBlock = null;
       this._searchBlockElement = null;
@@ -324,7 +324,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 };
 
 Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function () {
-    return `q${  $q.generateRandomString(6)}`;
+  return `q${  $q.generateRandomString(6)}`;
 };
 
 Quantumart.QP8.BackendSearchBlockBase.registerClass('Quantumart.QP8.BackendSearchBlockBase', Quantumart.QP8.Observable);

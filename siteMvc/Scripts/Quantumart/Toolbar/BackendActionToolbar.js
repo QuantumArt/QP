@@ -26,29 +26,29 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   _disabledActionCodes: null,
 
   get_actionCode: function () {
- return this._actionCode;
-},
+    return this._actionCode;
+  },
   set_actionCode: function (value) {
- this._actionCode = value;
-},
+    this._actionCode = value;
+  },
   get_entityId: function () {
- return this._entityId;
-},
+    return this._entityId;
+  },
   set_entityId: function (value) {
- this._entityId = value;
-},
+    this._entityId = value;
+  },
   get_parentEntityId: function () {
- return this._parentEntityId;
-},
+    return this._parentEntityId;
+  },
   set_parentEntityId: function (value) {
- this._parentEntityId = value;
-},
+    this._parentEntityId = value;
+  },
   get_alwaysEnabledRefreshButton: function () {
- return this._alwaysEnabledRefreshButton;
-},
+    return this._alwaysEnabledRefreshButton;
+  },
   set_alwaysEnabledRefreshButton: function (value) {
- this._alwaysEnabledRefreshButton = value;
-},
+    this._alwaysEnabledRefreshButton = value;
+  },
   addToolbarItemsToToolbar: function (count) {
     var self = this;
     var queryParams = {
@@ -62,33 +62,33 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     }
 
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_TOOLBAR  }GetToolbarButtonListByActionCode`, queryParams, false, false, function (data, textStatus, jqXHR) {
-        if (self._stopDeferredOperations) {
-          return;
-        }
-
-        var actionToolbarItems = data;
-        if (!$q.isNullOrEmpty(self.getDisabledActionCodes())) {
-          actionToolbarItems = jQuery.grep(actionToolbarItems, function (itm) {
-            return self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1;
-          });
-        }
-
-        var items = self._getToolbarItemsFromResult(actionToolbarItems);
-        Quantumart.QP8.BackendActionToolbar.callBaseMethod(self, 'addToolbarItemsToToolbar', [items, count]);
-
-        $q.clearArray(items);
-        $q.clearArray(actionToolbarItems);
-
+      if (self._stopDeferredOperations) {
         return;
-      },
-
-      function (jqXHR, textStatus, errorThrown) {
-        if (self._stopDeferredOperations) {
-          return;
-        }
-
-        $q.processGenericAjaxError(jqXHR);
       }
+
+      var actionToolbarItems = data;
+      if (!$q.isNullOrEmpty(self.getDisabledActionCodes())) {
+        actionToolbarItems = jQuery.grep(actionToolbarItems, function (itm) {
+          return self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1;
+        });
+      }
+
+      var items = self._getToolbarItemsFromResult(actionToolbarItems);
+      Quantumart.QP8.BackendActionToolbar.callBaseMethod(self, 'addToolbarItemsToToolbar', [items, count]);
+
+      $q.clearArray(items);
+      $q.clearArray(actionToolbarItems);
+
+      return;
+    },
+
+    function (jqXHR, textStatus, errorThrown) {
+      if (self._stopDeferredOperations) {
+        return;
+      }
+
+      $q.processGenericAjaxError(jqXHR);
+    }
     );
   },
 

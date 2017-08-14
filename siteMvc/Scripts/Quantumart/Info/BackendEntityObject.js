@@ -279,7 +279,7 @@ Quantumart.QP8.BackendEntityObject.isTreeViewTypeAllowed = function (entityTypeC
 
     if (treeViewTypeExist) {
       result = Quantumart.QP8.BackendEntityObject.checkEntityForPresenceSelfRelations(
-      entityTypeCode, parentEntityId);
+        entityTypeCode, parentEntityId);
     }
   }
 

@@ -240,14 +240,14 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
               return null;
             }
 
-              $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
-              if (self._isNodeCollapsed($node)) {
-                self._treeComponent.nodeToggle(null, $node, true);
-              }
+            $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
+            if (self._isNodeCollapsed($node)) {
+              self._treeComponent.nodeToggle(null, $node, true);
+            }
 
-              return _exp($.grep(node.ChildNodes, function (n) {
-                return n.ChildNodes != null;
-              })[0]) || node;
+            return _exp($.grep(node.ChildNodes, function (n) {
+              return n.ChildNodes != null;
+            })[0]) || node;
 
           };
 
@@ -273,16 +273,16 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           return null;
         }
 
-          if (toExpand) {
-            let $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
-            if (self._isNodeCollapsed($node)) {
-              self._treeComponent.nodeToggle(null, $node, true);
-            }
+        if (toExpand) {
+          let $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
+          if (self._isNodeCollapsed($node)) {
+            self._treeComponent.nodeToggle(null, $node, true);
           }
+        }
 
-          return findDeepest($.grep(node.ChildNodes, function (n) {
-            return n.ChildNodes != null;
-          })[0], toExpand) || node;
+        return findDeepest($.grep(node.ChildNodes, function (n) {
+          return n.ChildNodes != null;
+        })[0], toExpand) || node;
 
       };
 
@@ -299,9 +299,9 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           deepestExistedNode = parent;
           return parent.ChildNodes;
         }
-          return findChildren(options, $.grep(parent.ChildNodes || [], function (n) {
-            return n.ChildNodes != null;
-          })[0]);
+        return findChildren(options, $.grep(parent.ChildNodes || [], function (n) {
+          return n.ChildNodes != null;
+        })[0]);
       };
 
       var deepestExistedNode = findDeepest(data);

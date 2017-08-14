@@ -3,8 +3,8 @@ Quantumart.QP8.BackendEntityDataListManager = function () {
 };
 
 Quantumart.QP8.BackendEntityDataListManager.prototype = {
-    _listGroups: {},
-    _valueStorage: {},
+  _listGroups: {},
+  _valueStorage: {},
 
   generateListGroupCode: function (entityTypeCode, parentEntityId) {
     var listGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
@@ -35,7 +35,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     var listGroup = this.getListGroup(this.generateListGroupCode(entityTypeCode, parentEntityId));
     if (listGroup) {
       for (var listElementId in listGroup) {
-          this.refreshList(listElementId, testEntityId);
+        this.refreshList(listElementId, testEntityId);
       }
     }
   },
@@ -118,7 +118,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     var actionTypeCode = eventArgs.get_actionTypeCode();
     var testEntityId = 0;
     if (eventArgs.get_isSaved() || eventArgs.get_isUpdated()) {
-        testEntityId = eventArgs.get_entityId();
+      testEntityId = eventArgs.get_entityId();
     }
 
     if (eventArgs.get_isSaved()
@@ -139,7 +139,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   getValueStorage: function () {
-      return this._valueStorage;
+    return this._valueStorage;
   },
 
   dispose: function () {

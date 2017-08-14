@@ -37,8 +37,8 @@ Quantumart.QP8.Backend = function (isDebugMode, options) {
 
   $(document).bind('click', function (e) {
     if (e.which == 2) {
- e.preventDefault();
-}
+      e.preventDefault();
+    }
   });
 
   $(window).bind('load', this._loadHandler);
@@ -94,12 +94,12 @@ Quantumart.QP8.Backend.prototype = {
       this._backendActionExecutor = Quantumart.QP8.BackendActionExecutor.getInstance();
       this._backendActionExecutor.attachObserver(window.EVENT_TYPE_BACKEND_ACTION_EXECUTED, this._onActionExecutedHandler);
       this._backendSplitter = new Quantumart.QP8.BackendSplitter('splitter', {
-          firstPaneWidth: 270,
-          minFirstPaneWidth: 50,
-          maxFirstPaneWidth: 400,
-          stateCookieName: 'leftMenuSize',
-          toWindowResize: true
-        });
+        firstPaneWidth: 270,
+        minFirstPaneWidth: 50,
+        maxFirstPaneWidth: 400,
+        stateCookieName: 'leftMenuSize',
+        toWindowResize: true
+      });
 
       this._backendTreeMenuContextMenuManager = Quantumart.QP8.BackendTreeMenuContextMenuManager.getInstance();
       this._backendContextMenuManager = Quantumart.QP8.BackendContextMenuManager.getInstance();
@@ -322,7 +322,7 @@ Quantumart.QP8.Backend.prototype = {
 
   _onActionExecuting: function (eventType, sender, eventArgs) {
     var status = this._backendActionExecutor.executeSpecialAction(eventArgs),
-    that = this;
+      that = this;
 
     if (status == window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING) {
       var actionCode = eventArgs.get_actionCode();
@@ -355,8 +355,8 @@ Quantumart.QP8.Backend.prototype = {
         }
       }
     } else if (status == window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
- this._onActionExecuted(eventArgs);
-}
+      this._onActionExecuted(eventArgs);
+    }
   },
 
   _onActionExecuted: function (eventArgs) {
@@ -374,8 +374,8 @@ Quantumart.QP8.Backend.prototype = {
     this._backendActionPermissionViewManager.onActionExecuted(eventArgs);
 
     if (eventArgs.get_isUpdated() && eventArgs.get_entityTypeCode() == window.ENTITY_TYPE_CODE_CUSTOM_ACTION) {
- Quantumart.QP8.Cache.clear();
-}
+      Quantumart.QP8.Cache.clear();
+    }
   },
 
   _onEntityReaded: function (eventType, sender, eventArgs) {
@@ -423,7 +423,7 @@ Quantumart.QP8.Backend.prototype = {
       return String.format($l.Action.selectedDocumentIsOpenedInWindow, eventArgs.get_entityId());
     }
 
-      return '';
+    return '';
   },
 
   _loadHome: function () {
