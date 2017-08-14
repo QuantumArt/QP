@@ -1,18 +1,8 @@
-// ****************************************************************************
-// *** Компонент "Разделитель"												***
-// ****************************************************************************
+window.EVENT_TYPE_SPLITTER_INITIALIZED = "OnSplitterInitialized";
+window.EVENT_TYPE_SPLITTER_RESIZED = "OnSplitterResized";
+window.EVENT_TYPE_SPLITTER_DRAG_START = "OnSplitterDragStart";
+window.EVENT_TYPE_SPLITTER_DROP = "OnSplitterDrop";
 
-// #region event types of splitter
-// === Типы событий разделителя ===
-var EVENT_TYPE_SPLITTER_INITIALIZED = "OnSplitterInitialized";
-var EVENT_TYPE_SPLITTER_RESIZED = "OnSplitterResized";
-var EVENT_TYPE_SPLITTER_DRAG_START = "OnSplitterDragStart";
-var EVENT_TYPE_SPLITTER_DROP = "OnSplitterDrop";
-
-// #endregion
-
-// #region class BackendSplitter
-// === Класс "Разделитель" ===
 Quantumart.QP8.BackendSplitter = function (splitterElementId, options) {
 	Quantumart.QP8.BackendSplitter.initializeBase(this);
 
@@ -120,7 +110,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
 		eventArgs.set_firstPaneHeight(firstPaneHeight);
 
 
-		this.notify(EVENT_TYPE_SPLITTER_INITIALIZED, eventArgs);
+		this.notify(window.EVENT_TYPE_SPLITTER_INITIALIZED, eventArgs);
 
 
 		eventArgs = null;
@@ -128,32 +118,25 @@ Quantumart.QP8.BackendSplitter.prototype = {
 		splitter = null;
 	},
 
-
 	_onSplitterResized: function (event) {
 		var $firstPane = jQuery(this._firstPaneElement);
 		var firstPaneWidth = $firstPane.width();
 		var firstPaneHeight = $firstPane.height();
-
-		$firstPane = null;
-
 		var eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
+
 		eventArgs.set_firstPane(this._firstPaneElement);
 		eventArgs.set_firstPaneWidth(firstPaneWidth);
 		eventArgs.set_firstPaneHeight(firstPaneHeight);
 
-		this.notify(EVENT_TYPE_SPLITTER_RESIZED, eventArgs);
-
-		eventArgs = null;
-
-		// event.stopPropagation();
+		this.notify(window.EVENT_TYPE_SPLITTER_RESIZED, eventArgs);
 	},
 
 	_onSplitterDragStart: function (event) {
-	    this.notify(EVENT_TYPE_SPLITTER_DRAG_START, {});
+	    this.notify(window.EVENT_TYPE_SPLITTER_DRAG_START, {});
 	},
 
 	_onSplitterDrop: function (event) {
-	    this.notify(EVENT_TYPE_SPLITTER_DROP, {});
+	    this.notify(window.EVENT_TYPE_SPLITTER_DROP, {});
 	},
 
 
@@ -186,11 +169,6 @@ Quantumart.QP8.BackendSplitter.prototype = {
 };
 
 Quantumart.QP8.BackendSplitter.registerClass("Quantumart.QP8.BackendSplitter", Quantumart.QP8.Observable);
-
-// #endregion
-
-// #region class BackendSplitterEventArgs
-// === Класс "Аргументы события, вызванного разделителем" ===
 Quantumart.QP8.BackendSplitterEventArgs = function () {
 	Quantumart.QP8.BackendSplitterEventArgs.initializeBase(this);
 };
@@ -226,5 +204,3 @@ Quantumart.QP8.BackendSplitterEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendSplitterEventArgs.registerClass("Quantumart.QP8.BackendSplitterEventArgs", Sys.EventArgs);
-
-// #endregion

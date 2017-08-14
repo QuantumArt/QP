@@ -43,8 +43,9 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
   _executeAction: function (actionParams, byRequest) {
     if (actionParams) {
       if ($q.isNullOrEmpty(actionParams.customerCode)) {
- actionParams.customerCode = this._currentCustomerCode;
-}
+        actionParams.customerCode = this._currentCustomerCode;
+      }
+
       if (actionParams.customerCode.toLowerCase() == this._currentCustomerCode.toLowerCase()) {
         if (!byRequest || $q.confirmMessage($l.BackendDirectLinkExecutor.OpenDirectLinkConfirmation)) {
           var action = $a.getBackendActionByCode(actionParams.actionCode);
@@ -60,11 +61,11 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 
             params.correct(action);
             var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
-            this.notify(EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, eventArgs);
+            this.notify(window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, eventArgs);
           }
         }
       } else if ($q.confirmMessage($l.BackendDirectLinkExecutor.ReloginRequestConfirmation)) {
-          window.location.href = CONTROLLER_URL_LOGON + 'LogOut/?' + jQuery.param(actionParams);
+          window.location.href = window.CONTROLLER_URL_LOGON + 'LogOut/?' + jQuery.param(actionParams);
         }
 
       if (byRequest) {
@@ -158,4 +159,3 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 };
 
 Quantumart.QP8.DirectLinkExecutor.registerClass('Quantumart.QP8.DirectLinkExecutor', Quantumart.QP8.Observable);
-

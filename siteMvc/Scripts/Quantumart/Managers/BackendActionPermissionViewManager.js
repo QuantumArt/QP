@@ -17,10 +17,10 @@ Quantumart.QP8.BackendActionPermissionViewManager.prototype = {
 		var parentEntityId = eventArgs.get_parentEntityId();
 		var actionCode = eventArgs.get_actionCode();
 		if (eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving()) {
-			if (entityTypeCode == ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION || entityTypeCode == ENTITY_TYPE_CODE_ACTION_PERMISSION) {
+			if (entityTypeCode == window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION || entityTypeCode == window.ENTITY_TYPE_CODE_ACTION_PERMISSION) {
 				this._viewComponent.get_Tree().refreshPermissionNode(entityTypeCode, parentEntityId);
 			}
-		} else if (actionCode == ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE || actionCode == ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE) {
+		} else if (actionCode == window.ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE || actionCode == window.ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE) {
 			this._viewComponent.get_Tree().refreshPermissionNode(entityTypeCode, parentEntityId);
 		}
 	},
@@ -51,6 +51,5 @@ Quantumart.QP8.BackendActionPermissionViewManager.destroyInstance = function () 
 		Quantumart.QP8.BackendActionPermissionViewManager._instance.dispose();
 	}
 };
-
 
 Quantumart.QP8.BackendActionPermissionViewManager.registerClass("Quantumart.QP8.BackendActionPermissionViewManager", Quantumart.QP8.Observable);

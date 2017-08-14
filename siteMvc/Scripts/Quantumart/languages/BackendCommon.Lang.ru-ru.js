@@ -1,12 +1,6 @@
-if (typeof Backend == 'undefined') {
-	Backend = {};
-}
-
-if (typeof Backend.Lang == 'undefined') {
-	Backend.Lang = {};
-}
-
-Backend.Lang.Common = {
+window.Backend = window.Backend || {};
+window.Backend.Lang = window.Backend.Lang || {};
+window.Backend.Lang.Common = {
 	ajaxGenericErrorMessage: "Произошла ошибка {0}!",
 	ajaxDataReceivingErrorMessage: "При получении данных произошла ошибка!",
 	ajaxUserSessionExpiredErrorMessage: "Ваша пользовательская сессия истекла!\nПройдите повторную аутентификацию.",
@@ -33,4 +27,4 @@ Backend.Lang.Common = {
 	nextTitleForSettings: "Далее"
 };
 
-window.$l = Backend.Lang;
+window.$l = window.Backend.Lang;

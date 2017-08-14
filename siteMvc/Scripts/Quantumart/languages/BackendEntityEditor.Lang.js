@@ -1,4 +1,4 @@
-Backend.Lang.EntityEditor = {
+window.Backend.Lang.EntityEditor = {
 	refreshConfirmMessage: "Form fields has been changed.\nDo you really want to refresh document?",
 	changeConfirmMessage: "Form fields has been changed.\nDo you really want to change document?",
 	closeConfirmMessage: "Form fields has been changed.\nDo you really want to close document?",

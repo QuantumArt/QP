@@ -1,6 +1,6 @@
-var EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK = "OnBreadCrumbsItemClick";
-var EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK = "OnBreadCrumbsItemCtrlClick";
-var EVENT_TYPE_BREAD_CRUMBS_ITEM_CONTEXT_CLICK = "OnBreadCrumbsContextMenuItemClick";
+window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK = "OnBreadCrumbsItemClick";
+window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK = "OnBreadCrumbsItemCtrlClick";
+window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CONTEXT_CLICK = "OnBreadCrumbsContextMenuItemClick";
 
 Quantumart.QP8.BackendBreadCrumbs = function (breadCrumbsElementId, options) {
   Quantumart.QP8.BackendBreadCrumbs.initializeBase(this);
@@ -444,7 +444,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 };
 
 Quantumart.QP8.BackendBreadCrumbs.getBreadCrumbsList = function (entityTypeCode, entityId, parentEntityId, actionCode, successHandler, errorHandler) {
-  var actionUrl = CONTROLLER_URL_ENTITY_OBJECT + 'GetBreadCrumbsList';
+  var actionUrl = window.CONTROLLER_URL_ENTITY_OBJECT + 'GetBreadCrumbsList';
   var params = {
     entityTypeCode: entityTypeCode,
     entityId: entityId,

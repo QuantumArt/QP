@@ -1,11 +1,9 @@
-// #region class ActionLogTextFilter
+
 Quantumart.QP8.ActionLogTextFilter = function (filterContainer) {
 	Quantumart.QP8.ActionLogTextFilter.initializeBase(this, [filterContainer]);
 };
 
 Quantumart.QP8.ActionLogTextFilter.prototype = {
-
-
 	initialize: function () {
 		this.$container.append('<div class="row"><input type="text" class="textbox" value="" /></div>');
 		this.$container.find("input.textbox").focus();
@@ -23,12 +21,10 @@ Quantumart.QP8.ActionLogTextFilter.prototype = {
 		var val = this.get_value();
 		if (val) {
 			return '"' + $q.cutShort(val, 8) + '"';
-		} 
+		}
 			return '""';
-		
+
 	}
 };
 
 Quantumart.QP8.ActionLogTextFilter.registerClass("Quantumart.QP8.ActionLogTextFilter", Quantumart.QP8.ActionLogFilterBase);
-
-// #endregion

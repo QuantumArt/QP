@@ -1,4 +1,3 @@
-// #region class ActionLogDatetimeFilter
 Quantumart.QP8.ActionLogDatetimeFilter = function (filterContainer) {
 	Quantumart.QP8.ActionLogDatetimeFilter.initializeBase(this, [filterContainer]);
 };
@@ -21,11 +20,11 @@ Quantumart.QP8.ActionLogDatetimeFilter.prototype = {
 				from: sq.QueryParams[1],
 				to: sq.QueryParams[2]
 			};
-		} 
+		}
 			return {
 				from: sq.QueryParams[1]
 			};
-		
+
 	},
 
 
@@ -37,5 +36,3 @@ Quantumart.QP8.ActionLogDatetimeFilter.prototype = {
 };
 
 Quantumart.QP8.ActionLogDatetimeFilter.registerClass("Quantumart.QP8.ActionLogDatetimeFilter", Quantumart.QP8.ActionLogFilterBase);
-
-// #endregion

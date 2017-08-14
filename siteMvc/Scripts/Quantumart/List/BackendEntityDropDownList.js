@@ -1,4 +1,3 @@
-// === Класс "Список сущностей в виде раскрывающегося списка" ===
 Quantumart.QP8.BackendEntityDropDownList = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
   Quantumart.QP8.BackendEntityDropDownList.initializeBase(this, [listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]);
   this._allowMultipleItemSelection = false;
@@ -64,7 +63,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
   },
 
   _checkAllowShowingToolbar: function () {
-    return this._addNewActionCode != ACTION_CODE_NONE || this._readActionCode != ACTION_CODE_NONE;
+    return this._addNewActionCode != window.ACTION_CODE_NONE || this._readActionCode != window.ACTION_CODE_NONE;
   },
 
   _refreshListInner: function (dataItems, refreshOnly) {
@@ -84,10 +83,10 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
     $list.append(listItemHtml.string());
     var value = $list.val();
     if (oldValue != value) {
-      $list.addClass(CHANGED_FIELD_CLASS_NAME);
+      $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
       var operation = refreshOnly ? 'addClass' : 'removeClass';
-      $list[operation](REFRESHED_FIELD_CLASS_NAME);
-      $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value: value, contentFieldName: $list.data('content_field_name') });
+      $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
+      $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value: value, contentFieldName: $list.data('content_field_name') });
     }
   },
 
@@ -140,7 +139,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
   },
 
   isListChanged: function () {
-    return $(this._listElement).hasClass(CHANGED_FIELD_CLASS_NAME);
+    return $(this._listElement).hasClass(window.CHANGED_FIELD_CLASS_NAME);
   },
 
   _onSelectedItemChangeHandler: function () {

@@ -1,4 +1,4 @@
-var EVENT_TYPE_TREE_MENU_ACTION_EXECUTING = 'OnTreeMenuActionExecuting';
+window.EVENT_TYPE_TREE_MENU_ACTION_EXECUTING = 'OnTreeMenuActionExecuting';
 
 Quantumart.QP8.BackendTreeMenu = function (treeElementId, options) {
   Quantumart.QP8.BackendTreeMenu.initializeBase(this, [treeElementId, options]);
@@ -89,7 +89,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   generateNodeCodeToHighlight: function (eventArgs) {
-    var isFolder = eventArgs.get_actionTypeCode() == ACTION_TYPE_CODE_LIST;
+    var isFolder = eventArgs.get_actionTypeCode() == window.ACTION_TYPE_CODE_LIST;
     var entityId = !isFolder ? eventArgs.get_entityId() : Quantumart.QP8.BackendEntityType.getEntityTypeByCode(eventArgs.get_entityTypeCode()).Id;
     return this.generateNodeCode(eventArgs.get_entityTypeCode(), entityId, eventArgs.get_parentEntityId(), isFolder);
   },
@@ -274,7 +274,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
         }
 
           if (toExpand) {
-            $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
+            let $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
             if (self._isNodeCollapsed($node)) {
               self._treeComponent.nodeToggle(null, $node, true);
             }
@@ -306,16 +306,21 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 
       var deepestExistedNode = findDeepest(data);
       if (deepestExistedNode) {
-        nodeCode = self.generateNodeCode(deepestExistedNode.Code, deepestExistedNode.Id, deepestExistedNode.ParentId, deepestExistedNode.IsFolder);
-        $node = self.getNode(nodeCode);
+        let nodeCode = self.generateNodeCode(deepestExistedNode.Code, deepestExistedNode.Id, deepestExistedNode.ParentId, deepestExistedNode.IsFolder);
 
-        self._addNodesToParentNode($node, 100, function (options, successHandler) {
+        self._addNodesToParentNode(self.getNode(nodeCode), 100, function (options, successHandler) {
           successHandler(findChildren(options, deepestExistedNode).slice(0));
         }, function () {});
 
         deepestExistedNode = findDeepest(data, true);
-        nodeCode = self.generateNodeCode(deepestExistedNode.Code, deepestExistedNode.Id, deepestExistedNode.ParentId, deepestExistedNode.IsFolder);
-        $node = self.getNode(nodeCode);
+        nodeCode = self.generateNodeCode(
+          deepestExistedNode.Code,
+          deepestExistedNode.Id,
+          deepestExistedNode.ParentId,
+          deepestExistedNode.IsFolder
+        );
+
+        let $node = self.getNode(nodeCode);
         self._deferredNodeCodeToHighlight = nodeCode;
         self.highlightNode($node);
       }
@@ -334,13 +339,11 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
     if (!$q.isNullOrEmpty($node)) {
       $('#' + this._treeContainerElementId).scrollTo($node, { offset: -100, duration: 300, axis: 'y' });
     }
-
-    $node = null;
   },
 
   fillTreeViewItemFromTreeNode: function (dataItem, node) {
     var iconUrl = node.Icon.left(7).toLowerCase() !== 'http://'
-      ? THEME_IMAGE_FOLDER_URL_SMALL_ICONS + node.Icon
+      ? window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + node.Icon
       : node.Icon;
 
     dataItem.Value = node.NodeCode;
@@ -455,7 +458,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
     var parentEntityId = eventArgs.get_parentEntityId();
     var entityId = eventArgs.get_entityId();
 
-    if (eventArgs.get_isRemoving() || actionTypeCode == ACTION_TYPE_CODE_COPY || eventArgs.get_isSaved() || eventArgs.get_isUpdated()) {
+    if (eventArgs.get_isRemoving() || actionTypeCode == window.ACTION_TYPE_CODE_COPY || eventArgs.get_isSaved() || eventArgs.get_isUpdated()) {
       var entityType = Quantumart.QP8.BackendEntityType.getEntityTypeByCode(entityTypeCode);
       if (!entityType) {
         $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
@@ -466,10 +469,10 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
         var groupChanged = eventArgs.get_context() && eventArgs.get_context().groupChanged;
         var options = { loadChildNodes: true };
 
-        if (actionTypeCode == ACTION_TYPE_CODE_REMOVE) {
+        if (actionTypeCode == window.ACTION_TYPE_CODE_REMOVE) {
           this.removeNodeOrRefreshParent(nodeCode, parentNodeCode, options);
-        } else if (actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_REMOVE
-          || actionTypeCode == ACTION_TYPE_CODE_COPY
+        } else if (actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_REMOVE
+          || actionTypeCode == window.ACTION_TYPE_CODE_COPY
           || eventArgs.get_isSaved()
           || (eventArgs.get_isUpdated() && (orderChanged || groupChanged))
         ) {
@@ -601,7 +604,6 @@ Quantumart.QP8.BackendTreeMenu.getSubTreeToEntity = function (entityTypeCode, pa
     parentEntityId: parentEntityId,
     entityId: entityId
   }, false, false, successHandler, function (jqXHR) {
-    result = null;
     $q.processGenericAjaxError(jqXHR);
   });
 };

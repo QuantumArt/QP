@@ -11,7 +11,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = {
 	initialize: function () {
 		var serverContent;
-		var url = CONTROLLER_URL_ARTICLE_SEARCH_BLOCK;
+		var url = window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK;
 		switch (this._rangeType) {
 			case $e.ArticleFieldSearchType.DateRange:
 				url += "DateRange";
@@ -52,7 +52,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			var dateToID = this._elementIdPrefix + '_dateTo';
 
 			// полученную с сервера разметку добавить на страницу
-			var $containerElement = jQuery(this._containerElement);
+			var $containerElement = $(this._containerElement);
 			$containerElement.html(serverContent);
 
 			// получить ссылки на dom-элеметы со значениями
@@ -68,9 +68,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
 
 
-			jQuery(".radioButtonsList input[type='radio']", $containerElement).click(this._onByValueSelectorChangedHandler);
+			$(".radioButtonsList input[type='radio']", $containerElement).click(this._onByValueSelectorChangedHandler);
 
-			jQuery(document).ready(this._onLoadHandler);
+			$(document).ready(this._onLoadHandler);
 
 			$isNullCheckBoxElement = null;
 			$containerElement = null;
@@ -109,7 +109,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 	restore_blockState: function (state) {
 		if (state) {
 			if (this._isNullCheckBoxElement) {
-				var $isNullCheckBoxElement = jQuery(this._isNullCheckBoxElement);
+				var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
 				$isNullCheckBoxElement.prop("checked", state.isNull);
 				$isNullCheckBoxElement.trigger("change");
 				$isNullCheckBoxElement = null;
@@ -117,11 +117,11 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 
 			if (!$q.isNull(state.isByValue)) {
 				if (state.isByValue === true) {
-					jQuery(".radioButtonsList input:radio[value=0]", this._containerElement)
+					$(".radioButtonsList input:radio[value=0]", this._containerElement)
 						.prop("checked", true)
 						.trigger('click');
 				} else if (state.isByValue === false) {
-					jQuery(".radioButtonsList input:radio[value=1]", this._containerElement)
+					$(".radioButtonsList input:radio[value=1]", this._containerElement)
 						.prop("checked", true)
 						.trigger('click');
 				}
@@ -146,18 +146,18 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 	},
 
 	_onByValueSelectorChanged: function (e) {
-		this._isByValue = jQuery(e.currentTarget).val() == 0;
+		this._isByValue = $(e.currentTarget).val() == 0;
 
 		if (this._isByValue == true) {
 			$c.disableDateTimePicker(this._dateToElement);
-			jQuery(this._dateToElement).closest(".row").hide();
-			jQuery("label[for='" + jQuery(this._dateFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.valueText);
+			$(this._dateToElement).closest(".row").hide();
+			$("label[for='" + $(this._dateFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.valueText);
 		} else {
 			if (!this.get_IsNull()) {
  $c.enableDateTimePicker(this._dateToElement);
 }
-			jQuery("label[for='" + jQuery(this._dateFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.fromText);
-			jQuery(this._dateToElement).closest(".row").show();
+			$("label[for='" + $(this._dateFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.fromText);
+			$(this._dateToElement).closest(".row").show();
 		}
 	},
 
@@ -167,13 +167,13 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 
 	dispose: function () {
 		if (this._isNullCheckBoxElement) {
-			var $isNullCheckBoxElement = jQuery(this._isNullCheckBoxElement);
+			var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
 			$isNullCheckBoxElement.unbind("change", this._onIsNullCheckBoxChangeHandler);
 			$isNullCheckBoxElement = null;
 		}
 
-		var $containerElement = jQuery(this._containerElement);
-		jQuery(".radioButtonsList input[type='radio']", $containerElement).unbind();
+		var $containerElement = $(this._containerElement);
+		$(".radioButtonsList input[type='radio']", $containerElement).unbind();
 		$containerElement = null;
 
 		$c.destroyAllDateTimePickers(this._containerElement);
@@ -192,7 +192,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 	_onIsNullCheckBoxChangeHandler: null,
 	get_IsNull: function () {
 		if (this._isNullCheckBoxElement) {
- return jQuery(this._isNullCheckBoxElement).is(":checked");
+ return $(this._isNullCheckBoxElement).is(":checked");
 }
  return false;
 

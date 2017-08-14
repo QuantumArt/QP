@@ -1,39 +1,15 @@
-// ****************************************************************************************
-// *** Объявляем пространства имен                            ***
-// ****************************************************************************************
+window.Quantumart = window.Quantumart || {};
+window.Quantumart.QP8 = window.Quantumart.QP8 || {};
+window.Quantumart.QP8.Constants = window.Quantumart.QP8.Constants || {};
 
-if (typeof Quantumart === 'undefined') {
-  Type.registerNamespace('Quantumart');
-}
-
-if (typeof Quantumart.QP8 === 'undefined') {
-  Type.registerNamespace('Quantumart.QP8');
-}
-
-if (typeof Quantumart.QP8.Constants === 'undefined') {
-  Type.registerNamespace('Quantumart.QP8.Constants');
-}
-
-// ********************************************************************************************
-// *** Интерфейсы и классы для реализации паттернов "Наблюдатель" и "Посредник"       ***
-// ********************************************************************************************
-
-// #region interface IObserver
-// === Интерфейс "Наблюдатель" ===
 Quantumart.QP8.IObserver = function () { };
-
 Quantumart.QP8.IObserver.prototype = {
   update() { }
 };
 
 Quantumart.QP8.IObserver.registerInterface('Quantumart.QP8.IObserver');
 
-// #endregion
-
-// #region interface IObservable
-// === Интерфейс "Наблюдаемый" ===
 Quantumart.QP8.IObservable = function () { };
-
 Quantumart.QP8.IObservable.prototype = {
   attachObserver() { },
   detachObserver() { },
@@ -42,10 +18,6 @@ Quantumart.QP8.IObservable.prototype = {
 
 Quantumart.QP8.IObservable.registerInterface('Quantumart.QP8.IObservable');
 
-// #endregion
-
-// #region class Observable
-// === Класс "Наблюдаемый" ===
 Quantumart.QP8.Observable = function () {
   this._observerInfos = [];
 };
@@ -252,17 +224,14 @@ Quantumart.QP8.Mediator.prototype = {
   }
 };
 
-Quantumart.QP8.Mediator.registerClass('Quantumart.QP8.Mediator', null,
-  Quantumart.QP8.IMediator, Quantumart.QP8.IObserver, Sys.IDisposable);
+Quantumart.QP8.Mediator.registerClass(
+  'Quantumart.QP8.Mediator',
+  null,
+  Quantumart.QP8.IMediator,
+  Quantumart.QP8.IObserver,
+  Sys.IDisposable
+);
 
-// #endregion
-
-// ********************************************************************************************
-// *** Классы аргументов событий                              ***
-// ********************************************************************************************
-
-// #region class BackendPreviousAction
-// === Класс "Предыдущее действие" ===
 Quantumart.QP8.BackendPreviousAction = function (options) {
   if ($q.isObject(options)) {
     if (options.entityTypeCode) {
@@ -324,10 +293,6 @@ Quantumart.QP8.BackendPreviousAction.prototype = {
 
 Quantumart.QP8.BackendPreviousAction.registerClass('Quantumart.QP8.BackendPreviousAction');
 
-// #endregion
-
-// #region class BackendEventArgs
-// === Класс "Аргументы события сущности" ===
 Quantumart.QP8.BackendEventArgs = function () {
   Quantumart.QP8.BackendEventArgs.initializeBase(this);
 };
@@ -364,27 +329,35 @@ Quantumart.QP8.BackendEventArgs.prototype = {
   get_entityId() {
     return this._entityId;
   },
+
   set_entityId(value) {
     this._entityId = value;
   },
+
   get_entityName() {
     return this._entityName;
   },
+
   set_entityName(value) {
     this._entityName = value;
   },
+
   get_entities() {
     return this._entities;
   },
+
   set_entities(value) {
     this._entities = value;
   },
+
   get_isMultipleEntities() {
     return this._isMultipleEntities;
   },
+
   set_isMultipleEntities(value) {
     this._isMultipleEntities = value;
   },
+
   get_entityTypeCode() {
     return this._entityTypeCode;
   },
@@ -521,39 +494,39 @@ Quantumart.QP8.BackendEventArgs.prototype = {
   },
 
   get_isLoaded() {
-    return this._actionTypeCode == ACTION_TYPE_CODE_READ && this.get_previousActionTypeCode() == ACTION_TYPE_CODE_NONE;
+    return this._actionTypeCode == window.ACTION_TYPE_CODE_READ && this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_NONE;
   },
 
   get_isSaved() {
-    return this._actionTypeCode == ACTION_TYPE_CODE_READ && (this.get_previousActionTypeCode() == ACTION_TYPE_CODE_SAVE || this.get_previousActionTypeCode() == ACTION_TYPE_CODE_SAVE_AND_UP);
+    return this._actionTypeCode == window.ACTION_TYPE_CODE_READ && (this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_SAVE || this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_SAVE_AND_UP);
   },
 
   get_isUpdated() {
-    return this._actionTypeCode == ACTION_TYPE_CODE_READ && (this.get_previousActionTypeCode() == ACTION_TYPE_CODE_UPDATE || this.get_previousActionTypeCode() == ACTION_TYPE_CODE_UPDATE_AND_UP);
+    return this._actionTypeCode == window.ACTION_TYPE_CODE_READ && (this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_UPDATE || this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_UPDATE_AND_UP);
   },
 
   get_isRestored() {
-    return this._actionTypeCode == ACTION_TYPE_CODE_READ && this.get_previousActionTypeCode() == ACTION_TYPE_CODE_RESTORE;
+    return this._actionTypeCode == window.ACTION_TYPE_CODE_READ && this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_RESTORE;
   },
 
   get_needUp() {
-    return this.get_previousActionTypeCode() == ACTION_TYPE_CODE_SAVE_AND_UP || this.get_previousActionTypeCode() == ACTION_TYPE_CODE_UPDATE_AND_UP;
+    return this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_SAVE_AND_UP || this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_UPDATE_AND_UP;
   },
 
   get_previousActionTypeCode() {
-    return this._previousAction && this._previousAction.get_isSuccessfullyExecuted() ? this._previousAction.get_actionTypeCode() : ACTION_TYPE_CODE_NONE;
+    return this._previousAction && this._previousAction.get_isSuccessfullyExecuted() ? this._previousAction.get_actionTypeCode() : window.ACTION_TYPE_CODE_NONE;
   },
 
   get_isArchiving() {
-    return this._actionTypeCode == ACTION_TYPE_CODE_ARCHIVE || this._actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_ARCHIVE;
+    return this._actionTypeCode == window.ACTION_TYPE_CODE_ARCHIVE || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_ARCHIVE;
   },
 
   get_isRemoving() {
-    return this._actionTypeCode == ACTION_TYPE_CODE_REMOVE || this._actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_REMOVE;
+    return this._actionTypeCode == window.ACTION_TYPE_CODE_REMOVE || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_REMOVE;
   },
 
   get_isRestoring() {
-    return this._actionTypeCode == ACTION_TYPE_CODE_RESTORE || this._actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_RESTORE;
+    return this._actionTypeCode == window.ACTION_TYPE_CODE_RESTORE || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_RESTORE;
   },
 
   get_callerContext() {
@@ -575,6 +548,7 @@ Quantumart.QP8.BackendEventArgs.prototype = {
   get_additionalData() {
     return this._additionalData;
   },
+
   set_additionalData(value) {
     this._additionalData = value;
   },
@@ -582,6 +556,7 @@ Quantumart.QP8.BackendEventArgs.prototype = {
   get_startedByExternal() {
     return this._startedByExternal;
   },
+
   set_startedByExternal(value) {
     this._startedByExternal = value;
   },
@@ -614,7 +589,6 @@ Quantumart.QP8.BackendEventArgs.prototype = {
   }
 };
 
-// Возвращает агрументы события на основе агрументов другого события
 Quantumart.QP8.BackendEventArgs.getEventArgsFromOtherEventArgs = function (sourceArgs) {
   if (!$q.isObject(sourceArgs)) {
     throw new Error($l.Common.sourceEventArgsNotSpecified);
@@ -627,7 +601,6 @@ Quantumart.QP8.BackendEventArgs.getEventArgsFromOtherEventArgs = function (sourc
   return targetArgs;
 };
 
-// Заполняет агрументы события на основе агрументов другого события
 Quantumart.QP8.BackendEventArgs.fillEventArgsFromOtherEventArgs = function (targetArgs, sourceArgs) {
   if (!$q.isObject(targetArgs)) {
     throw new Error($l.Common.targetEventArgsNotSpecified);
@@ -664,6 +637,3 @@ Quantumart.QP8.BackendEventArgs.fillEventArgsFromOtherEventArgs = function (targ
 };
 
 Quantumart.QP8.BackendEventArgs.registerClass('Quantumart.QP8.BackendEventArgs');
-
-// #endregion
-

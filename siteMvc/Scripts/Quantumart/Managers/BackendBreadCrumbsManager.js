@@ -111,16 +111,16 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
     var entityId = eventArgs.get_entityId();
     var entities = eventArgs.get_entities();
 
-    if (actionTypeCode == ACTION_TYPE_CODE_RESTORE || eventArgs.get_isUpdated()) {
+    if (actionTypeCode == window.ACTION_TYPE_CODE_RESTORE || eventArgs.get_isUpdated()) {
       this.refreshBreadCrumbsList(entityTypeCode, parentEntityId, entityId);
-    } else if (actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_RESTORE) {
+    } else if (actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_RESTORE) {
       for (var entityIndex = 0, entityCount = entities.length; entityIndex < entityCount; entityIndex++) {
         this.refreshBreadCrumbsList(entityTypeCode, parentEntityId, entities[entityIndex].Id);
       }
     }
 
-    if (actionTypeCode == ACTION_TYPE_CODE_RESTORE && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-      var newEntityTypeCode = ENTITY_TYPE_CODE_ARTICLE;
+    if (actionTypeCode == window.ACTION_TYPE_CODE_RESTORE && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+      var newEntityTypeCode = window.ENTITY_TYPE_CODE_ARTICLE;
       var newParentEntityId = +$o.getParentEntityId(newEntityTypeCode, parentEntityId) || 0;
       this.refreshBreadCrumbsList(newEntityTypeCode, newParentEntityId, parentEntityId);
     }
@@ -128,13 +128,8 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
 
   dispose: function () {
     Quantumart.QP8.BackendBreadCrumbsManager.callBaseMethod(this, 'dispose');
-
     if (this._breadCrumbs) {
-      for (breadCrumbsElementId in this._breadCrumbs) {
-        this.destroyBreadCrumbs(breadCrumbsElementId);
-      }
-
-      this._breadCrumbs = null;
+      Object.keys(this._breadCrumbs).forEach(this.destroyBreadCrumbs);
     }
 
     Quantumart.QP8.BackendBreadCrumbsManager._instance = null;

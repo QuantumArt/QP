@@ -1,4 +1,4 @@
-Backend.Lang.MultistepAction = {
+window.Backend.Lang.MultistepAction = {
 	progressWindowTitle: "Multistep Operation",
 	stageRemainingLabel: "Stage remaining:",
 	stageRemainingTemplate: "{0} of {1}",

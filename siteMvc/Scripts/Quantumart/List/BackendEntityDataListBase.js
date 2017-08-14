@@ -1,12 +1,6 @@
-// ****************************************************************************
-// *** Компонент "Упрощенный список сущностей"                ***
-// ****************************************************************************
+window.EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING = "OnEntityListActionExecuting";
+window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED = "OnEntityListSelectionChanged";
 
-var EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING = "OnEntityListActionExecuting";
-var EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED = "OnEntityListSelectionChanged";
-
-// #region enum DataListType
-// === Типы списков ===
 Quantumart.QP8.Enums.DataListType = function () { };
 Quantumart.QP8.Enums.DataListType.prototype = {
   None: 0,
@@ -19,11 +13,6 @@ Quantumart.QP8.Enums.DataListType.prototype = {
 };
 
 Quantumart.QP8.Enums.DataListType.registerEnum("Quantumart.QP8.Enums.DataListType");
-
-// #endregion
-
-// #region class BackendEntityDataListBase
-// === Класс "Базовый упрощенный список сущностей" ===
 Quantumart.QP8.BackendEntityDataListBase = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
   Quantumart.QP8.BackendEntityDataListBase.initializeBase(this);
   this._listGroupCode = listGroupCode;
@@ -184,13 +173,13 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     if (!this._listElementId) {
       $q.alertFail("_listElementId");
     }
-    var $list = jQuery("#" + this._listElementId);
+    var $list = $("#" + this._listElementId);
     $list.wrap("<div />");
 
     var $listWrapper = $list.parent();
     $listWrapper.addClass(this.LIST_WRAPPER_CLASS_NAME);
 
-    var $toolbar = jQuery("<ul />", { class: this.LINK_BUTTON_LIST_CLASS_NAME });
+    var $toolbar = $("<ul />", { class: this.LINK_BUTTON_LIST_CLASS_NAME });
     $toolbar.addClass(this.SELF_CLEAR_FLOATS_CLASS_NAME);
     $toolbar.prependTo($listWrapper);
 
@@ -239,33 +228,33 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
           .cat("</ul>")
         .cat("</div>");
 
-      var $collapsingToolbar = jQuery(html.string());
+      var $collapsingToolbar = $(html.string());
       var that = this;
       this._expandLinkElement = $collapsingToolbar.find("LI.expand").click(function (e) {
-        jQuery(this).hide();
-        jQuery(that._listWrapperElement).show();
+        $(this).hide();
+        $(that._listWrapperElement).show();
         that._fixListOverflow();
-        jQuery(that._collapseLinkElement).show();
+        $(that._collapseLinkElement).show();
         e.preventDefault();
       }).get(0);
 
       this._collapseLinkElement = $collapsingToolbar.find("LI.collapse").click(function (e) {
-        jQuery(this).hide();
-        jQuery(that._listWrapperElement).hide();
-        jQuery(that._expandLinkElement).show();
+        $(this).hide();
+        $(that._listWrapperElement).hide();
+        $(that._expandLinkElement).show();
         e.preventDefault();
       }).get(0);
 
-      jQuery(mainWrapperElement).prepend($collapsingToolbar).find('.' + this.LIST_WRAPPER_CLASS_NAME).hide();
+      $(mainWrapperElement).prepend($collapsingToolbar).find('.' + this.LIST_WRAPPER_CLASS_NAME).hide();
       $collapsingToolbar = null;
     }
   },
 
   _fixListOverflow: function () {
-    var $list = jQuery(this._listElement);
+    var $list = $(this._listElement);
     $list.removeClass(this.OVERFLOW_LIST_CLASS_NAME);
 
-    var $ul = jQuery("UL", $list);
+    var $ul = $("UL", $list);
     if ($ul.length > 0) {
       $list.height($ul.height());
       var contentHeight = $list.get(0).scrollHeight;
@@ -410,13 +399,13 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _createLinkButton: function (id, text, cssClassName) {
-    var $linkButton = jQuery("<span />", { id: id, class: this.LINK_BUTTON_CLASS_NAME + " " + this.ACTION_LINK_CLASS_NAME });
+    var $linkButton = $("<span />", { id: id, class: this.LINK_BUTTON_CLASS_NAME + " " + this.ACTION_LINK_CLASS_NAME });
     var linkContentHtml = new $.telerik.stringBuilder();
 
     linkContentHtml
       .cat('<a href="javascript:void(0);">')
       .cat('<span class="icon' + (!$q.isNullOrWhiteSpace(cssClassName) ? ' ' + $q.htmlEncode(cssClassName) : '') + '">')
-      .cat('<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif" />')
+      .cat('<img src="' + window.COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif" />')
       .cat('</span>')
       .cat('<span class="text">' + text + '</span>')
       .cat('</a>');
@@ -432,7 +421,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       var entityName = "";
       var parentEntityId = this._parentEntityId;
       var actionTypeCode = Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode(actionCode);
-      if (actionTypeCode == ACTION_TYPE_CODE_READ) {
+      if (actionTypeCode == window.ACTION_TYPE_CODE_READ) {
         var entities = this.getSelectedEntities();
         if (entities.length > 0) {
           var entity = entities[0];
@@ -477,7 +466,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _addNewButtonToToolbar: function () {
-    if (this._addNewActionCode != ACTION_CODE_NONE) {
+    if (this._addNewActionCode != window.ACTION_CODE_NONE) {
       var $addNewButton = this._createToolbarButton(this._listElementId + "_AddNewButton", $l.EntityDataList.addNewActionLinkButtonText, "add");
       this._addLinkToToolbar($addNewButton, this._addNewActionCode);
       this._addNewButtonElement = $addNewButton.get(0);
@@ -485,7 +474,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _addReadButtonToToolbar: function () {
-    if (this._readActionCode != ACTION_CODE_NONE) {
+    if (this._readActionCode != window.ACTION_CODE_NONE) {
       var $readActionButton = this._createToolbarButton(this._listElementId + "_ReadButton", $l.EntityDataList.readActionLinkButtonText, "edit");
       this._changeToolbarButtonState($readActionButton, this.getSelectedListItemCount() > 0);
       this._addLinkToToolbar($readActionButton, this._readActionCode);
@@ -499,7 +488,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
 
     if (this._readButtonElement) {
-      var $readActionButton = jQuery(this._readButtonElement);
+      var $readActionButton = $(this._readButtonElement);
       this._changeToolbarButtonState($readActionButton, this.getSelectedListItemCount() > 0);
 
       if (refreshActionLinkProperties) {
@@ -577,8 +566,8 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       filter: this._filter
     });
 
-    this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._popupWindowSelectedHandler, this));
-    this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._popupWindowClosedHandler, this));
+    this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, $.proxy(this._popupWindowSelectedHandler, this));
+    this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, $.proxy(this._popupWindowClosedHandler, this));
     this._selectPopupWindowComponent.openWindow();
 
     eventArgs = null;
@@ -613,8 +602,8 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
   _destroyPopupWindow: function () {
     if (this._selectPopupWindowComponent) {
-      this._selectPopupWindowComponent.detachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
-      this._selectPopupWindowComponent.detachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
+      this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
+      this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
       this._selectPopupWindowComponent.closeWindow();
       this._selectPopupWindowComponent.dispose();
       this._selectPopupWindowComponent = null;
@@ -666,8 +655,8 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _addGroupCheckbox: function (hidden) {
-    jQuery(this._toolbarElement).after(this._getGroupCheckboxHtml(hidden));
-    this._getGroupCheckbox().bind("click", jQuery.proxy(this._groupCheckboxClickHandler, this));
+    $(this._toolbarElement).after(this._getGroupCheckboxHtml(hidden));
+    this._getGroupCheckbox().bind("click", $.proxy(this._groupCheckboxClickHandler, this));
   },
 
   _showGroupCheckbox: function () {
@@ -683,7 +672,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _addCountDiv: function (count, hidden) {
-    jQuery(this._toolbarElement).after(this._getCountDivHtml(count, hidden));
+    $(this._toolbarElement).after(this._getCountDivHtml(count, hidden));
   },
 
   _destroyCountDiv: function () {
@@ -691,15 +680,15 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _getGroupCheckbox: function () {
-    return jQuery(this._listWrapperElement).find(".groupCheckbox INPUT:checkbox");
+    return $(this._listWrapperElement).find(".groupCheckbox INPUT:checkbox");
   },
 
   _getCountSpan: function () {
-    return jQuery(this._listWrapperElement).find(".countItems");
+    return $(this._listWrapperElement).find(".countItems");
   },
 
   _getOverflowSpan: function () {
-    return jQuery(this._listWrapperElement).find(".overflowText");
+    return $(this._listWrapperElement).find(".overflowText");
   },
 
   _groupCheckboxClickHandler: function () {
@@ -733,7 +722,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       return false;
     }
 
-    var $obj = jQuery(e.target);
+    var $obj = $(e.target);
     var eventArgs = new Quantumart.QP8.BackendEventArgs();
     eventArgs.set_actionCode(this._readActionCode);
     eventArgs.set_entityId($obj.html());
@@ -747,11 +736,11 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
         $q.alertError(message);
       } else {
         eventArgs.set_isWindow(true);
-        this.notify(EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, eventArgs);
+        this.notify(window.EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, eventArgs);
       }
     } else {
       eventArgs.set_context({ ctrlKey: e.ctrlKey || isMiddleClick });
-      this.notify(EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, eventArgs);
+      this.notify(window.EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, eventArgs);
     }
   },
 
@@ -825,7 +814,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
 
     if (this._toolbarElement) {
-      var $toolbar = jQuery(this._toolbarElement);
+      var $toolbar = $(this._toolbarElement);
       $toolbar
         .empty()
         .remove()
@@ -839,7 +828,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     this._destroyCountDiv();
 
     if (this._listWrapperElement) {
-      jQuery(this._listElement).unwrap(this._listWrapperElement);
+      $(this._listElement).unwrap(this._listWrapperElement);
       this._listWrapperElement = null;
     }
 
@@ -853,20 +842,17 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
 
     if (this._expandLinkElement) {
-      jQuery(this._expandLinkElement).off();
+      $(this._expandLinkElement).off();
       this._expandLinkElement = null;
     }
     if (this._collapseLinkElement) {
-      jQuery(this._collapseLinkElement).off();
+      $(this._collapseLinkElement).off();
       this._collapseLinkElement = null;
     }
 
     this._listElement = null;
-
     $q.collectGarbageInIE();
   }
 };
 
 Quantumart.QP8.BackendEntityDataListBase.registerClass("Quantumart.QP8.BackendEntityDataListBase", Quantumart.QP8.Observable);
-
-// #endregion

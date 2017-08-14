@@ -1,4 +1,4 @@
-Quantumart.QP8.MultistepActionCopySiteSettings = function MultistepActionCopySiteSettings() {
+Quantumart.QP8.MultistepActionCopySiteSettings = function () {
   // ctor
 };
 

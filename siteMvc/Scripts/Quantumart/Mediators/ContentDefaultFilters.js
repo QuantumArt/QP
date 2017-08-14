@@ -1,4 +1,3 @@
-// #region class ContentDefaultFilters
 Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 	var $parentElement = jQuery("#" + parentElementId);
 	var $siteCombo = $parentElement.find(".qp-deffilter-site");
@@ -34,12 +33,12 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 				articlePicker.set_parentEntityId(contentPicker.getSelectedEntityIDs()[0]);
 				articlePicker.enableList();
 			}
-			contentPicker.attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, onContentSelectedHandler);
+			contentPicker.attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, onContentSelectedHandler);
 		},
 
 		dispose: function () {
 			if (contentPicker) {
-				contentPicker.detachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, onContentSelectedHandler);
+				contentPicker.detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, onContentSelectedHandler);
 				contentPicker = null;
 			}
 			if ($siteCombo) {
@@ -52,5 +51,3 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 		}
 	};
 };
-
-// #endregion

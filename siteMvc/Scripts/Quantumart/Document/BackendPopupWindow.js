@@ -1,17 +1,7 @@
-// ****************************************************************************
-// *** Компонент "Всплывающие окно"                     ***
-// ****************************************************************************
+window.EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING = "OnPopupWindowActionExecuting";
+window.EVENT_TYPE_POPUP_WINDOW_ENTITY_READED = "OnPopupWindowEntityReaded";
+window.EVENT_TYPE_POPUP_WINDOW_CLOSED = "OnPopupWindowClosed";
 
-// #region event types of popup window
-// === Типы событий всплывающего окна ===
-var EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING = "OnPopupWindowActionExecuting";
-var EVENT_TYPE_POPUP_WINDOW_ENTITY_READED = "OnPopupWindowEntityReaded";
-var EVENT_TYPE_POPUP_WINDOW_CLOSED = "OnPopupWindowClosed";
-
-// #endregion
-
-// #region class BackendPopupWindow
-// === Класс "Всплывающие окно" ===
 Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options) {
   Quantumart.QP8.BackendPopupWindow.initializeBase(this, [eventArgs, options]);
 
@@ -267,7 +257,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   get_hostType: function () {
-    return DOCUMENT_HOST_TYPE_POPUP_WINDOW;
+    return window.DOCUMENT_HOST_TYPE_POPUP_WINDOW;
   },
 
   get_zIndex: function () {
@@ -328,7 +318,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   generateDocumentUrl: function (options) {
-    var isSelectAction = this._actionTypeCode == ACTION_TYPE_CODE_SELECT || this._actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_SELECT;
+    var isSelectAction = this._actionTypeCode == window.ACTION_TYPE_CODE_SELECT || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_SELECT;
     var entityIDs = this._isMultipleEntities ? $o.getEntityIDsFromEntities(isSelectAction ? this._selectedEntities : this._entities) : [this._entityId];
     var extraOptions = {
       additionalUrlParameters: this._additionalUrlParameters,
@@ -487,7 +477,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       this.unbindExternalCallerContexts("closed");
 
       var eventArgs = new Quantumart.QP8.BackendEventArgs();
-      this.notify(EVENT_TYPE_POPUP_WINDOW_CLOSED, eventArgs);
+      this.notify(window.EVENT_TYPE_POPUP_WINDOW_CLOSED, eventArgs);
       this.dispose();
     }
   },
@@ -565,8 +555,8 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
         documentHost: this
       });
 
-      breadCrumbsComponent.attachObserver(EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
-      breadCrumbsComponent.attachObserver(EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
+      breadCrumbsComponent.attachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
+      breadCrumbsComponent.attachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
 
       this._breadCrumbsComponent = breadCrumbsComponent;
     }
@@ -580,7 +570,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       }
       var actionToolbarComponent = new Quantumart.QP8.BackendActionToolbar("actionToolbar_" + this._popupWindowId, this._actionCode, this._parentEntityId, actionToolbarOptions);
       actionToolbarComponent.initialize();
-      actionToolbarComponent.attachObserver(EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
+      actionToolbarComponent.attachObserver(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
       this._actionToolbarComponent = actionToolbarComponent;
     }
 
@@ -594,9 +584,9 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     var viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar("viewToolbar_" + this._popupWindowId, this._actionCode, viewToolbarOptions);
     viewToolbarComponent.initialize();
 
-    viewToolbarComponent.attachObserver(EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, this._onGeneralEventHandler);
-    viewToolbarComponent.attachObserver(EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKED, this._onGeneralEventHandler);
-    viewToolbarComponent.attachObserver(EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKED, this._onGeneralEventHandler);
+    viewToolbarComponent.attachObserver(window.EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, this._onGeneralEventHandler);
+    viewToolbarComponent.attachObserver(window.EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKED, this._onGeneralEventHandler);
+    viewToolbarComponent.attachObserver(window.EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKED, this._onGeneralEventHandler);
 
     this._viewToolbarComponent = viewToolbarComponent;
   },
@@ -638,8 +628,8 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
   destroyPanels: function () {
     if (this._breadCrumbsComponent) {
-      this._breadCrumbsComponent.detachObserver(EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
-      this._breadCrumbsComponent.detachObserver(EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
+      this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
+      this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
       var breadCrumbsElementId = this._breadCrumbsComponent.get_breadCrumbsElementId();
       Quantumart.QP8.BackendBreadCrumbsManager.getInstance().destroyBreadCrumbs(breadCrumbsElementId);
       this._breadCrumbsComponent = null;
@@ -647,16 +637,16 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
     if (this._actionToolbarComponent) {
       if (!this._useCustomActionToolbar) {
-        this._actionToolbarComponent.detachObserver(EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
+        this._actionToolbarComponent.detachObserver(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
       }
       this._actionToolbarComponent.dispose();
       this._actionToolbarComponent = null;
     }
 
     if (this._viewToolbarComponent) {
-      this._viewToolbarComponent.detachObserver(EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, this._onGeneralEventHandler);
-      this._viewToolbarComponent.detachObserver(EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKED, this._onGeneralEventHandler);
-      this._viewToolbarComponent.detachObserver(EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKED, this._onGeneralEventHandler);
+      this._viewToolbarComponent.detachObserver(window.EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, this._onGeneralEventHandler);
+      this._viewToolbarComponent.detachObserver(window.EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKED, this._onGeneralEventHandler);
+      this._viewToolbarComponent.detachObserver(window.EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKED, this._onGeneralEventHandler);
       this._viewToolbarComponent.dispose();
       this._viewToolbarComponent = null;
     }
@@ -672,9 +662,9 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
           searchBlockState: this.getHostStateProp("searchBlockState")
         });
 
-    searchBlockComponent.attachObserver(EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
-    searchBlockComponent.attachObserver(EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
-    searchBlockComponent.attachObserver(EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
+    searchBlockComponent.attachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
+    searchBlockComponent.attachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
+    searchBlockComponent.attachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
 
     this._searchBlockComponent = searchBlockComponent;
   },
@@ -692,7 +682,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
         });
       contextBlockComponent.initialize();
 
-      contextBlockComponent.attachObserver(EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
+      contextBlockComponent.attachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
 
       this._contextBlockComponent = contextBlockComponent;
   },
@@ -702,9 +692,9 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
     if (searchBlockComponent) {
       searchBlockComponent.hideSearchBlock();
-      searchBlockComponent.detachObserver(EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
-      searchBlockComponent.detachObserver(EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
-      searchBlockComponent.detachObserver(EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
+      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
+      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
+      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
 
       var searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
       Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
@@ -714,11 +704,12 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   destroyContextBlock: function () {
+      var searchBlockComponent = this._searchBlockComponent;
       var contextBlockComponent = this._contextBlockComponent;
 
       if (contextBlockComponent) {
           contextBlockComponent.hideSearchBlock();
-          contextBlockComponent.detachObserver(EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
+          contextBlockComponent.detachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
 
           var searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
           Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
@@ -731,8 +722,6 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   showErrorMessageInDocumentWrapper: function (status) {
     var $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.html($q.generateErrorMessageText());
-
-    $documentWrapper = null;
   },
 
   updateTitle: function (eventArgs) {
@@ -749,11 +738,11 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
   onActionExecuting: function (eventArgs) {
       this._copyCurrentContextToEventArgs(eventArgs);
-    return this._popupWindowManagerComponent.notify(EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING, eventArgs);
+    return this._popupWindowManagerComponent.notify(window.EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING, eventArgs);
   },
 
   onEntityReaded: function (eventArgs) {
-    return this._popupWindowManagerComponent.notify(EVENT_TYPE_POPUP_WINDOW_ENTITY_READED, eventArgs);
+    return this._popupWindowManagerComponent.notify(window.EVENT_TYPE_POPUP_WINDOW_ENTITY_READED, eventArgs);
   },
 
   onDocumentChanging: function (isLocal) {
@@ -866,5 +855,3 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 };
 
 Quantumart.QP8.BackendPopupWindow.registerClass("Quantumart.QP8.BackendPopupWindow", Quantumart.QP8.BackendDocumentHost);
-
-// #endregion

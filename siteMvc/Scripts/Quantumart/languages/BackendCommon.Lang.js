@@ -1,12 +1,6 @@
-if (typeof Backend == 'undefined') {
-	Backend = {};
-}
-
-if (typeof Backend.Lang == 'undefined') {
-	Backend.Lang = {};
-}
-
-Backend.Lang.Common = {
+window.Backend = window.Backend || {};
+window.Backend.Lang = window.Backend.Lang || {};
+window.Backend.Lang.Common = {
 	ajaxGenericErrorMessage: "An error {0} has occurred!",
 	ajaxDataReceivingErrorMessage: "When data recieving error occurred!",
 	ajaxUserSessionExpiredErrorMessage: "Your user session has expired!\nNeed to be re-authenticated.",
@@ -33,4 +27,4 @@ Backend.Lang.Common = {
     nextTitleForSettings: "Next step"
 };
 
-window.$l = Backend.Lang;
+window.$l = window.Backend.Lang;

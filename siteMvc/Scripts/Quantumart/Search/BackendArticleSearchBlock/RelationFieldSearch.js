@@ -14,7 +14,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (contain
 Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   initialize: function () {
     var serverContent;
-    $q.getJsonFromUrl('POST', CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'RelationSearch', {
+    $q.getJsonFromUrl('POST', window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'RelationSearch', {
         elementIdPrefix: this._elementIdPrefix,
         fieldID: this._fieldID,
         parentEntityId: this._parentEntityId,

@@ -1,9 +1,3 @@
-// ****************************************************************************
-// *** Компонент "Редактируемый документ"                 ***
-// ****************************************************************************
-
-// #region class BackendEditingDocument
-// === Класс "Редактируемый документ" ===
 Quantumart.QP8.BackendEditingDocument = function (tabId, editingArea, eventArgs, options) {
   if (!tabId) {
     throw new Error($l.EditingArea.tabIdNotSpecifiedInConstructor);
@@ -51,7 +45,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   get_hostType: function () {
-    return DOCUMENT_HOST_TYPE_EDITING_DOCUMENT;
+    return window.DOCUMENT_HOST_TYPE_EDITING_DOCUMENT;
   },
 
   get_zIndex: function () {
@@ -81,20 +75,17 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
       documentWrapperElementId = this.generateDocumentWrapperId();
     }
 
-    var $documentWrapper = jQuery('#' + documentWrapperElementId);
+    var $documentWrapper = $('#' + documentWrapperElementId);
     if ($q.isNullOrEmpty($documentWrapper)) {
-      $documentWrapper = jQuery('<div />', { id: documentWrapperElementId, class: 'documentWrapper' });
+      $documentWrapper = $('<div />', { id: documentWrapperElementId, class: 'documentWrapper' });
 
-      var $documentsContainer = jQuery(this._editingArea.get_documentsContainerElement());
+      var $documentsContainer = $(this._editingArea.get_documentsContainerElement());
       $documentsContainer.append($documentWrapper);
-
-      $documentsContainer = null;
     }
 
     this._documentWrapperElementId = documentWrapperElementId;
     this._documentWrapperElement = $documentWrapper.get(0);
 
-    $documentWrapper = null;
     return documentWrapperElementId;
   },
 
@@ -130,12 +121,12 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   showErrorMessageInDocumentWrapper: function (status) {
-    var $documentWrapper = jQuery(this._documentWrapperElement);
+    var $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.html($q.generateErrorMessageText());
   },
 
   removeDocumentWrapper: function (callback) {
-    var $documentWrapper = jQuery(this._documentWrapperElement);
+    var $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.empty().remove();
     $q.callFunction(callback);
   },
@@ -186,27 +177,27 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   showPanels: function (callback) {
-    var $breadCrumbsContainer = jQuery(this._editingArea.get_breadCrumbsContainerElement());
+    var $breadCrumbsContainer = $(this._editingArea.get_breadCrumbsContainerElement());
     $breadCrumbsContainer.find("> *.breadCrumbs:visible").hide(0);
     this._breadCrumbsComponent.showBreadCrumbs();
 
-    var $actionToolbarContainer = jQuery(this._editingArea.get_actionToolbarContainerElement());
+    var $actionToolbarContainer = $(this._editingArea.get_actionToolbarContainerElement());
     $actionToolbarContainer.find("> *.toolbar:visible").hide(0);
     this._actionToolbarComponent.showToolbar(callback);
 
-    var $viewToolbarContainer = jQuery(this._editingArea.get_viewToolbarContainerElement());
+    var $viewToolbarContainer = $(this._editingArea.get_viewToolbarContainerElement());
     $viewToolbarContainer.find("> *.toolbar:visible").hide(0);
     this._viewToolbarComponent.showToolbar();
     this.fixActionToolbarWidth();
 
     if (this.get_isSearchBlockVisible() && this._searchBlockComponent) {
-      var $searchBlockContainer = jQuery(this._editingArea.get_searchBlockContainerElement());
+      var $searchBlockContainer = $(this._editingArea.get_searchBlockContainerElement());
       $searchBlockContainer.find("> *.searchBlock:visible").hide(0);
       this._searchBlockComponent.showSearchBlock();
     }
 
     if (this._isContextBlockVisible && this._contextBlockComponent) {
-        var $contextBlockContainer = jQuery(this._editingArea.get_contextBlockContainerElement());
+        var $contextBlockContainer = $(this._editingArea.get_contextBlockContainerElement());
         $contextBlockContainer.find("> *.contextBlock:visible").hide(0);
         this._contextBlockComponent.showSearchBlock();
     }
@@ -434,8 +425,8 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   _onLibraryResized: function () {
-    var $docContainer = jQuery(this._editingArea.get_documentsContainerElement());
-    var $docWrp = jQuery(this._documentWrapperElement);
+    var $docContainer = $(this._editingArea.get_documentsContainerElement());
+    var $docWrp = $(this._documentWrapperElement);
     $docWrp.height($docContainer.height());
     $docContainer = null;
     $docWrp = null;
@@ -469,6 +460,3 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 };
 
 Quantumart.QP8.BackendEditingDocument.registerClass("Quantumart.QP8.BackendEditingDocument", Quantumart.QP8.BackendDocumentHost);
-
-// #endregion
-

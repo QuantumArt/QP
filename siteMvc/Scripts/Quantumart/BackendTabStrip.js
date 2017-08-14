@@ -1,7 +1,7 @@
-var EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST = "OnTabSelectRequest";
-var EVENT_TYPE_TAB_STRIP_TAB_CLOSE_REQUEST = "OnTabCloseRequest";
-var EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST = "OnTabSaveAndCloseRequest";
-var EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST = "OnFindTabInTreeRequest";
+window.EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST = "OnTabSelectRequest";
+window.EVENT_TYPE_TAB_STRIP_TAB_CLOSE_REQUEST = "OnTabCloseRequest";
+window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST = "OnTabSaveAndCloseRequest";
+window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST = "OnFindTabInTreeRequest";
 
 Quantumart.QP8.BackendTabStrip = function (tabStripElementId, options) {
   Quantumart.QP8.BackendTabStrip.initializeBase(this);
@@ -215,7 +215,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var tabGroupCode = String.format(
       '{0}_{1}',
       associatedAction.Code,
-      associatedAction.ActionType.Code === ACTION_TYPE_CODE_ADD_NEW ? tabNumber : this._getTabEntityId(eventArgs));
+      associatedAction.ActionType.Code === window.ACTION_TYPE_CODE_ADD_NEW ? tabNumber : this._getTabEntityId(eventArgs));
 
     return tabGroupCode;
   },
@@ -364,11 +364,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       }
     }
 
-    return jQuery(foundTabElems);
+    return $(foundTabElems);
   },
 
   getFirstTabByGroupCode: function (tabGroupCode) {
-    var $tab = jQuery("> LI[groupCode='" + tabGroupCode + "'].tab:first", this._tabListElement).eq(0);
+    var $tab = $("> LI[groupCode='" + tabGroupCode + "'].tab:first", this._tabListElement).eq(0);
     if ($tab.length == 0) {
       $tab = null;
     }
@@ -381,7 +381,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     if ($q.isObject(tab)) {
       return $q.toJQuery(tab);
     } else if ($q.isString(tab)) {
-      $tab = jQuery(this._tabListElement).find("#" + tab);
+      $tab = $(this._tabListElement).find("#" + tab);
       if ($tab.length == 0) {
         $tab = null;
       }
@@ -454,7 +454,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _getTabEntityTypeCode: function (eventArgs) {
     let result;
     var actionTypeCode = eventArgs.get_actionTypeCode();
-    if (actionTypeCode == ACTION_TYPE_CODE_LIST) {
+    if (actionTypeCode == window.ACTION_TYPE_CODE_LIST) {
       result = Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(eventArgs.get_entityTypeCode());
     } else {
       result = eventArgs.get_entityTypeCode();
@@ -466,7 +466,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _getTabEntityId: function (eventArgs) {
     let result;
     var actionTypeCode = eventArgs.get_actionTypeCode();
-    if (actionTypeCode == ACTION_TYPE_CODE_LIST) {
+    if (actionTypeCode == window.ACTION_TYPE_CODE_LIST) {
       result = eventArgs.get_parentEntityId();
     } else if (eventArgs.get_isMultipleEntities()) {
       var entityIDs = $o.getEntityIDsFromEntities(eventArgs.get_entities());
@@ -480,7 +480,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   getExistingTabId: function (eventArgs) {
     let result = 0;
-    if (eventArgs.get_actionTypeCode() != ACTION_TYPE_CODE_ADD_NEW) {
+    if (eventArgs.get_actionTypeCode() != window.ACTION_TYPE_CODE_ADD_NEW) {
       var $tab = this.getFirstTabByGroupCode(this.generateTabGroupCode(eventArgs, 0));
       if ($q.isObject($tab)) {
         result = this.getTabId($tab);
@@ -494,12 +494,12 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var associatedAction = $a.getBackendAction(eventArgs.get_actionCode());
     var actionTypeCode = associatedAction.ActionType.Code;
     var tabTypeCode = associatedAction.Code;
-    var tabNumber = actionTypeCode == ACTION_TYPE_CODE_ADD_NEW ? this._getTabTypeCounter(tabTypeCode) + 1 : 0;
+    var tabNumber = actionTypeCode == window.ACTION_TYPE_CODE_ADD_NEW ? this._getTabTypeCounter(tabTypeCode) + 1 : 0;
     var tabId = this.generateTabId();
     var tabGroupCode = this.generateTabGroupCode(eventArgs, tabNumber);
     var tabText = this.generateTabText(eventArgs, tabNumber);
 
-    var $tabList = jQuery(this._tabListElement);
+    var $tabList = $(this._tabListElement);
     $tabList.append(this._getTabHtml(tabId, tabGroupCode));
     var $tab = this.getTab(tabId);
     this._extendTabElement($tab, eventArgs, { TabGroupCode: tabGroupCode, TabText: tabText, TabTypeCode: tabTypeCode, TabNumber: tabNumber });
@@ -507,14 +507,14 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $tabList = null;
 
     if (this.getAllTabsCount() == 1) {
-      jQuery(window).resize(this._onWindowResizedHandler);
+      $(window).resize(this._onWindowResizedHandler);
       this._addTabMenuToTabStrip();
     }
 
     this._previousSelectedTabId = this._selectedTabId.valueOf();
     this._selectedTabId = tabId;
 
-    if (actionTypeCode == ACTION_TYPE_CODE_ADD_NEW) {
+    if (actionTypeCode == window.ACTION_TYPE_CODE_ADD_NEW) {
       this._increaseTabTypeCounter(tabTypeCode);
     }
 
@@ -540,14 +540,14 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var oldTabText = this.getTabText($tab);
     var oldTabTypeCode = oldActionCode;
     var oldTabNumber = $tab.data("tab_number");
-    if (oldActionTypeCode == ACTION_TYPE_CODE_ADD_NEW) {
+    if (oldActionTypeCode == window.ACTION_TYPE_CODE_ADD_NEW) {
       this._decreaseTabTypeCounter(oldTabTypeCode, oldTabNumber);
     }
 
     var newActionCode = eventArgs.get_actionCode();
     var newAction = $a.getBackendAction(newActionCode);
     var newActionTypeCode = newAction.ActionType.Code;
-    if (newActionTypeCode == ACTION_TYPE_CODE_ADD_NEW) {
+    if (newActionTypeCode == window.ACTION_TYPE_CODE_ADD_NEW) {
       this._increaseTabTypeCounter(newActionCode);
     }
     var newTabNumber = this._getTabTypeCounter(newActionCode);
@@ -587,7 +587,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   selectTabRequest: function (tab) {
     var eventArgs = this.getEventArgsFromTab(tab);
     if ($q.isObject(eventArgs)) {
-      this.notify(EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST, eventArgs);
+      this.notify(window.EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST, eventArgs);
     }
     eventArgs = null;
   },
@@ -611,7 +611,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
     var $tab = this.getTab(tab);
     if ($tab) {
-      var $scrollable = jQuery(this._tabStripScrollableElement);
+      var $scrollable = $(this._tabStripScrollableElement);
       var tabStripWidth = $scrollable.width();
       var tabWidth = $tab.width();
       var tabStripOffset = 0;
@@ -640,22 +640,19 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var tabTypeCode = $tab.data("tab_type_code");
       var tabNumber = $tab.data("tab_number");
 
-      // Производим частичное удаление таба
       this._partialRemoveTab($tab);
 
       if (!this.isTabStripOverflow()) {
         this._onTabStripOverflowPrecludedHandler(this, null);
       }
 
-      // Если удаляется таб максимальным номером, то уменьшаем значение счетчика табов
       this._decreaseTabTypeCounter(tabTypeCode, tabNumber);
       if (this.getAllTabsCount() == 0) {
         this._hideTabMenu();
         this._removeTabMenuFromTabStrip();
-        jQuery(window).unbind("resize", this._onWindowResizedHandler);
+        $(window).unbind("resize", this._onWindowResizedHandler);
       }
 
-      // Окончательно удаляем таб из HTML-документа
       this._removeTab($tab);
     }
 
@@ -664,7 +661,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   _partialRemoveTab: function (tab) {
     var $tab = this.getTab(tab);
-    var $partialRemovedTabsContainer = jQuery(this._partialRemovedTabsContainerElement);
+    var $partialRemovedTabsContainer = $(this._partialRemovedTabsContainerElement);
 
     $tab.appendTo($partialRemovedTabsContainer);
   },
@@ -687,7 +684,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .cat('  <a class="tabLink" href="javascript:void(0);">')
       .cat('<span class="wrapper">')
       .cat('<span class="text"></span>')
-      .cat('<span class="closeButton"><img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif" /></span>')
+      .cat('<span class="closeButton"><img src="' + window.COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif" /></span>')
       .cat('</span>')
       .cat('</a>')
       .cat('</li>\n');
@@ -835,7 +832,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       let $menuButtonContainer = $('<div />', { class: 'tabMenuButton' });
       var $menuButton = $('<span />');
       var $menuButtonImage = $('<img />', {
-        src: COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif',
+        src: window.COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif',
         css: { border: 'none' }
       });
 
@@ -987,9 +984,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .cat('  <div class="outerWrapper">\n')
       .cat('      <div class="innerWrapper">\n')
       .cat('          <span class="icon"')
-      .catIf(' style="background-image: url(' + THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon + ')"', !$q.isNullOrWhiteSpace(dataItem.Icon))
+      .catIf(' style="background-image: url(' + window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon + ')"', !$q.isNullOrWhiteSpace(dataItem.Icon))
       .cat('>')
-      .cat('<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" width="16px" height="16px" />')
+      .cat('<img src="' + window.COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" width="16px" height="16px" />')
       .cat('</span>\n')
       .cat('          <span class="text">' + text + '</span>\n')
       .cat('      </div>\n')
@@ -1171,7 +1168,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   tabEntityExists: function ($tab) {
     let result = true;
     var actionTypeCode = $tab.data('action_type_code');
-    if (actionTypeCode != ACTION_TYPE_CODE_ADD_NEW && actionTypeCode != ACTION_TYPE_CODE_MULTIPLE_SELECT) {
+    if (actionTypeCode != window.ACTION_TYPE_CODE_ADD_NEW && actionTypeCode != window.ACTION_TYPE_CODE_MULTIPLE_SELECT) {
       var eventArgs = this.getEventArgsFromTab($tab);
       var tabEntityTypeCode = this._getTabEntityTypeCode(eventArgs);
       if ($q.toBoolean($tab.data('is_multiple_entities'), false)) {
@@ -1266,7 +1263,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     if (!this.isTabStripBusy()) {
       this._tabContextMenuComponent.hide(e);
 
-      var $tab = jQuery(e.currentTarget).parent().parent().parent();
+      var $tab = $(e.currentTarget).parent().parent().parent();
       this._closeTabRequest($tab);
       this._applyHoveredStyleToCloseButton(e.currentTarget);
 
@@ -1280,7 +1277,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     if (!this.isTabStripBusy()) {
       var eventArgs = this.getEventArgsFromTab(tab);
       if ($q.isObject(eventArgs)) {
-        this.notify(EVENT_TYPE_TAB_STRIP_TAB_CLOSE_REQUEST, eventArgs);
+        this.notify(window.EVENT_TYPE_TAB_STRIP_TAB_CLOSE_REQUEST, eventArgs);
       }
       eventArgs = null;
     }
@@ -1288,9 +1285,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   _closeAllTabRequest: function () {
     if (!this.isTabStripBusy()) {
-        jQuery(this._tabStripElement)
+        $(this._tabStripElement)
                 .find(this.TAB_CLICKABLE_SELECTORS)
-                .each(jQuery.proxy(
+                .each($.proxy(
             function (i, tab) {
               this._closeTabRequest(tab);
             }, this)
@@ -1300,13 +1297,13 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   _saveAndCloseAllTabRequest: function () {
       if (!this.isTabStripBusy()) {
-          jQuery(this._tabStripElement)
+          $(this._tabStripElement)
                 .find(this.TAB_CLICKABLE_SELECTORS)
-                .each(jQuery.proxy(
+                .each($.proxy(
             function (i, tab) {
                 var eventArgs = this.getEventArgsFromTab(tab);
                 if ($q.isObject(eventArgs)) {
-                    this.notify(EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST, eventArgs);
+                    this.notify(window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST, eventArgs);
                 }
                 eventArgs = null;
             }, this)
@@ -1316,10 +1313,10 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   _closeButThisTabRequest: function ($tab) {
       if (!this.isTabStripBusy()) {
-        jQuery(this._tabStripElement)
+        $(this._tabStripElement)
                 .find(this.TAB_CLICKABLE_SELECTORS)
         .not($tab)
-        .each(jQuery.proxy(
+        .each($.proxy(
           function (i, tab) {
               this._closeTabRequest(tab);
           }, this)
@@ -1333,7 +1330,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var eventArgs = this.getEventArgsFromTab(tab);
       if ($q.isObject(eventArgs)) {
           eventArgs.isExpandRequested = true;
-          this.notify(EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST, eventArgs);
+          this.notify(window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST, eventArgs);
       }
       eventArgs = null;
   },
@@ -1344,7 +1341,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   _onTabMenuItemClicking: function (e) {
     if (!this.isTabMenuBusy()) {
-      var $menuItem = jQuery(e.currentTarget);
+      var $menuItem = $(e.currentTarget);
       var tabId = $menuItem.attr('code');
       if (tabId === this.TAB_MENU_CLOSE_ALL_ITEM_CODE) {
         this._closeAllTabRequest();
@@ -1379,7 +1376,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   _onTabMenuButtonClicked: function (e) {
     if (!this.isTabMenuBusy()) {
-      var $menuButton = jQuery(e.currentTarget);
+      var $menuButton = $(e.currentTarget);
       $menuButton
         .unbind('mouseover', this._onTabMenuButtonHoveredHandler)
         .unbind('mouseout', this._onTabMenuButtonUnhoveredHandler)
@@ -1396,7 +1393,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _onTabMenuUpArrowHovered: function (e) {
-    var $upArrow = jQuery(e.currentTarget);
+    var $upArrow = $(e.currentTarget);
     $upArrow
       .removeClass(this.TAB_MENU_UP_ARROW_CLASS_NAME)
       .addClass(this.TAB_MENU_UP_ARROW_HOVER_CLASS_NAME)
@@ -1408,7 +1405,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _onTabMenuUpArrowUnhovered: function (e) {
-    var $upArrow = jQuery(e.currentTarget);
+    var $upArrow = $(e.currentTarget);
     $upArrow
       .removeClass(this.TAB_MENU_UP_ARROW_HOVER_CLASS_NAME)
       .addClass(this.TAB_MENU_UP_ARROW_CLASS_NAME)
@@ -1420,7 +1417,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _onTabMenuDownArrowHovered: function (e) {
-    var $downArrow = jQuery(e.currentTarget);
+    var $downArrow = $(e.currentTarget);
     $downArrow
       .removeClass(this.TAB_MENU_DOWN_ARROW_CLASS_NAME)
       .addClass(this.TAB_MENU_DOWN_ARROW_HOVER_CLASS_NAME)
@@ -1432,7 +1429,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _onTabMenuDownArrowUnhovered: function (e) {
-    var $downArrow = jQuery(e.currentTarget);
+    var $downArrow = $(e.currentTarget);
     $downArrow
       .removeClass(this.TAB_MENU_DOWN_ARROW_HOVER_CLASS_NAME)
       .addClass(this.TAB_MENU_DOWN_ARROW_CLASS_NAME)

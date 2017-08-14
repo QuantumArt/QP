@@ -1,7 +1,7 @@
 Quantumart.QP8.BackendAggregationList = function (componentElem) {
   this._componentElem = componentElem;
-  this._containerElem = jQuery('.aggregationListContainer', componentElem);
-  this._resultElem = jQuery('.aggregationListResult', componentElem);
+  this._containerElem = $('.aggregationListContainer', componentElem);
+  this._resultElem = $('.aggregationListResult', componentElem);
 };
 
 Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT = "aggregation_list_component";
@@ -26,7 +26,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
 
   initialize: function () {
     var aggrList = this._componentElem;
-    jQuery(aggrList).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT, this);
+    $(aggrList).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT, this);
     var result = this._resultElem;
     var containerElem = this._containerElem;
     this._items = ko.observableArray(aggrList.data('aggregation_list_data'));
@@ -49,8 +49,8 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     }
 
     ko.applyBindingsToNode(this._containerElem.get(0), { template: { name: aggrList.attr('id').replace('_aggregationlist', '_template') } }, this._viewModel);
-    this._tableHeader = jQuery('thead', this._componentElem);
-    this._tableBody = jQuery('tbody', this._componentElem);
+    this._tableHeader = $('thead', this._componentElem);
+    this._tableBody = $('tbody', this._componentElem);
     this.checkHeaders();
     this._componentElem.data('component', this);
   },
@@ -94,10 +94,10 @@ Quantumart.QP8.BackendAggregationList.prototype = {
   },
 
   _setAsChanged: function () {
-    var $field = jQuery(this._resultElem);
-    $field.addClass(CHANGED_FIELD_CLASS_NAME);
-    var fieldName = jQuery(this._componentElem).data("field_name");
-    $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: fieldName, value: this._items(), contentFieldName: $field.closest("dl").data("field_name") });
+    var $field = $(this._resultElem);
+    $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
+    var fieldName = $(this._componentElem).data("field_name");
+    $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: fieldName, value: this._items(), contentFieldName: $field.closest("dl").data("field_name") });
     $field = null;
   },
 
@@ -119,7 +119,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     ko.cleanNode(containerElem.get(0));
 
     if (this._componentElem) {
-      jQuery(this._componentElem).removeData(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT);
+      $(this._componentElem).removeData(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT);
       this._componentElem = null;
     }
     this._containerElem = null;

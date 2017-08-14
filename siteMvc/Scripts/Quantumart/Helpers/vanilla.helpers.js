@@ -24,3 +24,5 @@ class UrlHelpers {
 window.Global = window.Global || {};
 window.Global.UrlHelpers = new UrlHelpers();
 window.Url = window.Global.UrlHelpers;
+
+export default UrlHelpers;

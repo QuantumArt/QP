@@ -1,4 +1,3 @@
-// === Класс "Блок поиска статей" ===
 Quantumart.QP8.BackendArticleSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
   Quantumart.QP8.BackendArticleSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
   this.isVirtual = options.isVirtual;
@@ -70,7 +69,6 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
     }
   },
 
-  // возвращает параметры поиска
   get_searchQuery: function () {
     var result = [];
     if (this._fullTextBlock) {
@@ -90,7 +88,6 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
     return JSON.stringify(result);
   },
 
-  // Возвращает состояние блока поиска
   get_searchBlockState: function () {
     var bs = null;
 
@@ -124,7 +121,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
     var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
 
     eventArgs.set_searchBlockState(this.get_searchBlockState());
-    this.notify(EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
+    this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
     eventArgs = null;
   },
 
@@ -182,7 +179,6 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
   }
 };
 
-// Создать параметр поискового запроса для конкретного поля
 Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (searchType, fieldID, fieldColumn, contentId, referenceFieldId) {
   return {
     SearchType: searchType,

@@ -1,5 +1,3 @@
-// #region class BackendEntityDataListManager
-// === Класс "Менеджер упрощенных списков сущностей" ===
 Quantumart.QP8.BackendEntityDataListManager = function () {
 	Quantumart.QP8.BackendEntityDataListManager.initializeBase(this);
 };
@@ -35,14 +33,11 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 
 	refreshListGroup: function (entityTypeCode, parentEntityId, testEntityId) {
 		var listGroup = this.getListGroup(this.generateListGroupCode(entityTypeCode, parentEntityId));
-
 		if (listGroup) {
 			for (var listElementId in listGroup) {
 			    this.refreshList(listElementId, testEntityId);
 			}
 		}
-
-		listGroup = null;
 	},
 
 	getList: function (listElementId) {
@@ -114,7 +109,6 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 			if (list.dispose) {
 				list.dispose();
 			}
-			list = null;
 		}
 	},
 
@@ -129,7 +123,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 
 		if (eventArgs.get_isSaved()
 			|| eventArgs.get_isUpdated()
-			|| actionTypeCode == ACTION_TYPE_CODE_COPY
+			|| actionTypeCode == window.ACTION_TYPE_CODE_COPY
 			|| eventArgs.get_isRemoving()
 			|| eventArgs.get_isArchiving()
 			|| eventArgs.get_isRestoring()
@@ -137,10 +131,10 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 			this.refreshListGroup(entityTypeCode, parentEntityId, testEntityId);
 		}
 
-		if ((eventArgs.get_isArchiving() || eventArgs.get_isRemoving()) && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE) {
-			this.refreshListGroup(ENTITY_TYPE_CODE_ARCHIVE_ARTICLE, parentEntityId);
-		} else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
-			this.refreshListGroup(ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
+		if ((eventArgs.get_isArchiving() || eventArgs.get_isRemoving()) && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE) {
+			this.refreshListGroup(window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE, parentEntityId);
+		} else if (eventArgs.get_isRestoring() && entityTypeCode == window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
+			this.refreshListGroup(window.ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
 		}
 	},
 
@@ -152,17 +146,11 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 		Quantumart.QP8.BackendEntityDataListManager.callBaseMethod(this, "dispose");
 
 		if (this._listGroups) {
-			for (listGroupCode in this._listGroups) {
+			for (let listGroupCode in this._listGroups) {
 				var listGroup = this._listGroups[listGroupCode];
-
-				for (listElementId in listGroup) {
-					this.destroyList(listElementId);
-				}
-
+        Object.keys(listGroup).forEach(this.destroyList);
 				delete this._listGroups[listGroupCode];
 			}
-
-			this._listGroups = null;
 		}
 
 		$q.collectGarbageInIE();
@@ -170,8 +158,6 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 };
 
 Quantumart.QP8.BackendEntityDataListManager._instance = null;
-
-// Возвращает экземпляр класса "Менеджер упрощенных списков сущностей"
 Quantumart.QP8.BackendEntityDataListManager.getInstance = function () {
 	if (Quantumart.QP8.BackendEntityDataListManager._instance == null) {
 		Quantumart.QP8.BackendEntityDataListManager._instance = new Quantumart.QP8.BackendEntityDataListManager();
@@ -180,7 +166,6 @@ Quantumart.QP8.BackendEntityDataListManager.getInstance = function () {
 	return Quantumart.QP8.BackendEntityDataListManager._instance;
 };
 
-// Уничтожает экземпляр класса "Менеджер упрощенных списков сущностей"
 Quantumart.QP8.BackendEntityDataListManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendEntityDataListManager._instance) {
 		Quantumart.QP8.BackendEntityDataListManager._instance.dispose();
@@ -188,5 +173,3 @@ Quantumart.QP8.BackendEntityDataListManager.destroyInstance = function () {
 };
 
 Quantumart.QP8.BackendEntityDataListManager.registerClass("Quantumart.QP8.BackendEntityDataListManager", Quantumart.QP8.Observable);
-
-// #endregion

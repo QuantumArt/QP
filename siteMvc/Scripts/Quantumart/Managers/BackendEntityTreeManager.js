@@ -1,5 +1,3 @@
-// #region class BackendEntityTreeManager
-// === Класс "Менеджер деревьев сущностей" ===
 Quantumart.QP8.BackendEntityTreeManager = function () {
 	Quantumart.QP8.BackendEntityTreeManager.initializeBase(this);
 };
@@ -154,19 +152,19 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 			this.removeNodes(entityTypeCode, parentEntityId, entityIds);
 		} else if ((eventArgs.get_isUpdated()
       || eventArgs.get_isLoaded()
-      || actionTypeCode == ACTION_TYPE_CODE_CANCEL
-      || actionTypeCode == ACTION_TYPE_CODE_CHANGE_LOCK)
-      && entityTypeCode != ENTITY_TYPE_CODE_VIRTUAL_ARTICLE) {
+      || actionTypeCode == window.ACTION_TYPE_CODE_CANCEL
+      || actionTypeCode == window.ACTION_TYPE_CODE_CHANGE_LOCK)
+      && entityTypeCode != window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE) {
 			this.refreshNode(entityTypeCode, parentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: true });
-		} else if (eventArgs.get_isSaved() || actionTypeCode == ACTION_TYPE_CODE_COPY) {
+		} else if (eventArgs.get_isSaved() || actionTypeCode == window.ACTION_TYPE_CODE_COPY) {
 			var parentIdsInTree = $o.getParentIdsForTree(entityTypeCode, entityIds);
 			this.refreshNodes(entityTypeCode, parentEntityId, parentIdsInTree, { loadChildNodes: true, saveNodesSelection: false });
-		} else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
-			var parentArticlesInTree = $o.getParentIdsForTree(ENTITY_TYPE_CODE_ARTICLE, entityIds);
-			this.refreshNodes(ENTITY_TYPE_CODE_ARTICLE, parentEntityId, parentArticlesInTree, { loadChildNodes: true, saveNodesSelection: false });
-		} else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-			var newParentEntityId = +$o.getParentEntityId(ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
-			this.refreshNode(ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: false });
+		} else if (eventArgs.get_isRestoring() && entityTypeCode == window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
+			var parentArticlesInTree = $o.getParentIdsForTree(window.ENTITY_TYPE_CODE_ARTICLE, entityIds);
+			this.refreshNodes(window.ENTITY_TYPE_CODE_ARTICLE, parentEntityId, parentArticlesInTree, { loadChildNodes: true, saveNodesSelection: false });
+		} else if (eventArgs.get_isRestored() && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+			var newParentEntityId = +$o.getParentEntityId(window.ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
+			this.refreshNode(window.ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: false });
 		}
 	},
 
@@ -174,22 +172,15 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 		Quantumart.QP8.BackendEntityTreeManager.callBaseMethod(this, "dispose");
 
 		if (this._trees) {
-			for (treeCode in this._trees) {
-				this.destroyTree(treeCode);
-			}
-
-			this._trees = null;
+      Object.keys(this._trees).forEach(this.destroyTree);
 		}
 
 		Quantumart.QP8.BackendEntityTreeManager._instance = null;
-
 		$q.collectGarbageInIE();
 	}
 };
 
 Quantumart.QP8.BackendEntityTreeManager._instance = null;
-
-// Возвращает экземпляр класса "Менеджер деревьев сущностей"
 Quantumart.QP8.BackendEntityTreeManager.getInstance = function () {
 	if (Quantumart.QP8.BackendEntityTreeManager._instance == null) {
 		Quantumart.QP8.BackendEntityTreeManager._instance = new Quantumart.QP8.BackendEntityTreeManager();
@@ -198,7 +189,6 @@ Quantumart.QP8.BackendEntityTreeManager.getInstance = function () {
 	return Quantumart.QP8.BackendEntityTreeManager._instance;
 };
 
-// Уничтожает экземпляр класса "Менеджер деревьев сущностей"
 Quantumart.QP8.BackendEntityTreeManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendEntityTreeManager._instance) {
 		Quantumart.QP8.BackendEntityTreeManager._instance.dispose();
@@ -206,5 +196,3 @@ Quantumart.QP8.BackendEntityTreeManager.destroyInstance = function () {
 };
 
 Quantumart.QP8.BackendEntityTreeManager.registerClass("Quantumart.QP8.BackendEntityTreeManager", Quantumart.QP8.Observable);
-
-// #endregion

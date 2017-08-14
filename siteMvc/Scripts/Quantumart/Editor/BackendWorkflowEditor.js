@@ -1,8 +1,8 @@
 Quantumart.QP8.BackendWorkflow = function (componentElem) {
     this._componentElem = componentElem;
     this._containerElem = $('.workflowContainer', componentElem);
-    this._checkSinglePermisssionHandler = jQuery.proxy(this.checkSinglePermission, this);
-    this._checkAllPermisssionsHandler = jQuery.proxy(this.checkAllPermisssions, this);
+    this._checkSinglePermisssionHandler = $.proxy(this.checkSinglePermission, this);
+    this._checkAllPermisssionsHandler = $.proxy(this.checkAllPermisssions, this);
 };
 
 Quantumart.QP8.BackendWorkflow.prototype = {
@@ -22,7 +22,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         var workflow = this._componentElem;
         var contentSelector = this._contentSelector;
         this._items = ko.observableArray(
-            jQuery.map(workflow.data('workflow_list_data'), function (o) {
+            $.map(workflow.data('workflow_list_data'), function (o) {
                 var r = {};
                 Object.assign(r, o, {
                     RadioChecked: ko.observable(o.RadioChecked),
@@ -55,8 +55,8 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                   .selectEntities([element.GroupId()]);
 
                 $(dom)
-                  .find('.' + CHANGED_FIELD_CLASS_NAME)
-                  .removeClass(CHANGED_FIELD_CLASS_NAME);
+                  .find('.' + window.CHANGED_FIELD_CLASS_NAME)
+                  .removeClass(window.CHANGED_FIELD_CLASS_NAME);
 
                 var activeContentsIds = this.contentSelector.find('input:checkbox:checked').map(function (index, elem) {
                   return $(elem).val();
@@ -65,7 +65,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                 if (element.UserId() != null || element.GroupId() != null) {
                     $q.getJsonFromUrl(
                         "GET",
-                        CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
+                        window.CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
                         {
                             contentIdsString: activeContentsIds,
                             statusName: element.StName,
@@ -84,7 +84,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                     );
                 } else {
                     $(dom).find('.singleItemPicker').each(jQuery.proxy(function (index, element) {
-                        $(element).data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this.checkSinglePermisssionHandler);
+                        $(element).data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this.checkSinglePermisssionHandler);
                     }, this));
                 }
             },
@@ -105,10 +105,10 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 });
 
         this._contentSelector
-        .data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler);
+        .data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler);
 
         this._containerElem.find('.singleItemPicker').each(jQuery.proxy(function (index, elem) {
-            $(elem).data('entity_data_list_component').attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
+            $(elem).data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
         }, this));
 
         $('.workflow_radio').live("click", onRadioChanged);
@@ -134,20 +134,20 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     checkAllPermisssions: function () {
         var activeContentsIds = this.getCheckedContentsIds();
 
-        var usersAndGroups = jQuery.map(this._items(), function (elem, index) {
+        var usersAndGroups = $.map(this._items(), function (elem, index) {
             return { StName: elem.StName, UserId: elem.UserId(), GroupId: elem.GroupId() };
         });
 
         $q.getJsonFromUrl(
       "GET",
-      CONTROLLER_URL_WORKFLOW + "CheckAllAccessOnContents",
+      window.CONTROLLER_URL_WORKFLOW + "CheckAllAccessOnContents",
       {
           contentIdsString: activeContentsIds,
           modelString: JSON.stringify(usersAndGroups)
       },
       false,
       false,
-      jQuery.proxy(function (data) {
+      $.proxy(function (data) {
           this._containerElem.find('span.workflow_permission_message').html('');
           for (var i in data) {
               var current_workflow_stage = this._containerElem.find('.' + data[i].StName);
@@ -180,7 +180,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 }
         $q.getJsonFromUrl(
       "GET",
-      CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
+      window.CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
       {
           contentIdsString: activeContentsIds,
           statusName: statusName,
@@ -256,23 +256,20 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
     _setAsChanged: function () {
       var $field = $(this._resultElem);
-      $field.addClass(CHANGED_FIELD_CLASS_NAME);
-      $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr("name"), value: this._items() });
-      $field = null;
+      $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
+      $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr("name"), value: this._items() });
     },
 
     destroyWorkflow: function () {
         var containerElem = this._containerElem;
         containerElem.find('.singleItemPicker').each(jQuery.proxy(function (index, elem) {
-            $(elem).data('entity_data_list_component').detachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
+            $(elem).data('entity_data_list_component').detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
         }), this);
 
         this._contentSelector
-        .data('entity_data_list_component').detachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler);
+          .data('entity_data_list_component')
+          .detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler);
 
         ko.cleanNode(containerElem.get(0));
-        this._componentElem = null;
-        this._containerElem = null;
-        this._resultElem = null;
     }
 };

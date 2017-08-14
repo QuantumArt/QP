@@ -1,6 +1,6 @@
 Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
 	function initialize() {
-		var $search = jQuery("#" + searchElementId);
+		var $search = $("#" + searchElementId);
 		$search.wrap($("<div/>", { id: searchElementId + "_wrapper", class: "fieldWrapper group myClass" }));
 		var $wrapper = $search.parent("div");
 		var $form = $search.parents("form");
@@ -13,12 +13,12 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 		$div.append($("<img/>", { src: '/Backend/Content/Common/0.gif' }));
 		$wrapper.append($div);
 		$div.on("click", onSubmit);
-		var $locked = jQuery("#" + lockedElementId);
-		var $loggedAs = jQuery("#" + loggedAsElementId);
-		var $approval = jQuery("#" + approvalElementId);
+		var $locked = $("#" + lockedElementId);
+		var $loggedAs = $("#" + loggedAsElementId);
+		var $approval = $("#" + approvalElementId);
 		var temp = ' (<a class="js" href="javascript:void(0)">{0}</a>) ';
 		var listStr = String.format(temp, $l.Home.list);
-		var profileStr = String.format(temp, $l.Home.profile); 
+		var profileStr = String.format(temp, $l.Home.profile);
 
 		if ($locked.text().trim() != "0") {
 			$locked.append(listStr);
@@ -42,12 +42,12 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 
 	function onSubmit(e) {
 		e.preventDefault();
-		var $site = jQuery("#" + siteElementId);
+		var $site = $("#" + siteElementId);
 		var siteId = $site.val();
 
 		if (siteId) {
 			var siteName = $site.text();
-			var text = jQuery("#" + searchElementId).val();
+			var text = $("#" + searchElementId).val();
 			executeAction('search_in_articles', 'site', siteId, siteName, 1, { query: text });
 		}
 	}
@@ -69,11 +69,11 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 
 
 	function dispose() {
-		jQuery("#" + searchElementId).siblings(".previewButton").off("click");
-		jQuery("#" + searchElementId).parents("form").off("sumbit");
-		jQuery("#" + lockedElementId).find("a").off("click");
-		jQuery("#" + loggedAsElementId).find("a").off("click");
-		jQuery("#" + approvalElementId).find("a").off("click");
+		$("#" + searchElementId).siblings(".previewButton").off("click");
+		$("#" + searchElementId).parents("form").off("sumbit");
+		$("#" + lockedElementId).find("a").off("click");
+		$("#" + loggedAsElementId).find("a").off("click");
+		$("#" + approvalElementId).find("a").off("click");
 	}
 
 	return {

@@ -1,4 +1,4 @@
-Backend.Lang.EntityDataList = {
+window.Backend.Lang.EntityDataList = {
 	pickLinkButtonText: "Выбрать больше",
 	pickSingleLinkButtonText: "Выбрать другое значение",
 	deselectLinkButtonText: "Очистить",

@@ -1,5 +1,3 @@
-// #region class BackendUserSearchBlock
-// === Класс "Блок поиска пользователей" ===
 Quantumart.QP8.BackendUserSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
 	Quantumart.QP8.BackendUserSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
 };
@@ -9,12 +7,12 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 	_maxSearchBlockHeight: 145,
 
 	get_searchQuery: function () {
-		var $root = jQuery(this._concreteSearchBlockElement);
+		var $root = $(this._concreteSearchBlockElement);
 
-		var login = jQuery('.login', $root).val();
-		var email = jQuery('.email', $root).val();
-		var firstName = jQuery('.firstName', $root).val();
-		var lastName = jQuery('.lastName', $root).val();
+		var login = $('.login', $root).val();
+		var email = $('.email', $root).val();
+		var firstName = $('.firstName', $root).val();
+		var lastName = $('.lastName', $root).val();
 
 		var query = JSON.stringify({
 			Login: login,
@@ -23,8 +21,6 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 			LastName: lastName
 		});
 
-		$root = null;
-
 		return query;
 	},
 
@@ -32,17 +28,17 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 		if (this.get_isRendered() !== true) {
 			$q.getJsonFromUrl(
 				"GET",
-				CONTROLLER_URL_USER + "SearchBlock/" + this._parentEntityId,
+				window.CONTROLLER_URL_USER + "SearchBlock/" + this._parentEntityId,
 				{
 					hostId: this._hostId
 				},
 				false,
 				false
 			)
-			.done(jQuery.proxy(function (data) {
+			.done($.proxy(function (data) {
 				if (data.success) {
 					var serverContent = data.view;
-					jQuery(this._concreteSearchBlockElement).html(serverContent);
+					$(this._concreteSearchBlockElement).html(serverContent);
 					this.set_isRendered(true);
 				} else {
  $q.alertFail(data.message);
@@ -56,17 +52,13 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 
 	_onFindButtonClick: function () {
 		var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
-		this.notify(EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
-		eventArgs = null;
+		this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
 	},
 
 	_onResetButtonClick: function () {
-		// очистить блоки поиска
-		jQuery(".csFilterTextbox", this._concreteSearchBlockElement).val('');
-
+		$(".csFilterTextbox", this._concreteSearchBlockElement).val('');
 		var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
-		this.notify(EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
-		eventArgs = null;
+		this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
 	},
 
 	dispose: function () {

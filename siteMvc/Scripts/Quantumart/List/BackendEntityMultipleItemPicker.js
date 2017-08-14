@@ -292,7 +292,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _checkAllowShowingToolbar: function () {
-    return this._selectActionCode != ACTION_CODE_NONE;
+    return this._selectActionCode != window.ACTION_CODE_NONE;
   },
 
   _onSelectedItemChangeHandler: function () {

@@ -9,10 +9,9 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         var isNullCheckBoxID = this._elementIdPrefix + '_isNullCheckBox';
         var serverContent;
 
-        // получить разметку с сервера
         $q.getJsonFromUrl(
             "GET",
-            CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "StringEnum",
+            window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "StringEnum",
             {
                 elementIdPrefix: this._elementIdPrefix,
                 fieldID: this._fieldID
@@ -33,7 +32,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         );
 
         if (!$q.isNullOrWhiteSpace(serverContent)) {
-            var $containerElement = jQuery(this._containerElement);
+            var $containerElement = $(this._containerElement);
             $containerElement.html(serverContent);
             var $isNullCheckBoxElement = $containerElement.find("#" + isNullCheckBoxID);
             $isNullCheckBoxElement.bind("change", this._onIsNullCheckBoxChangeHandler);
@@ -48,15 +47,15 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     get_searchQuery: function () {
         return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
 	        this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
-	        jQuery(this._queryDropDownListElement).val());
+	        $(this._queryDropDownListElement).val());
     },
 
     get_blockState: function () {
         return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
 		{
 		    isNull: this.get_IsNull(),
-		    text: jQuery(this._queryDropDownListElement).val(),
-		    alias: jQuery(this._queryDropDownListElement).find("option:selected").text()
+		    text: $(this._queryDropDownListElement).val(),
+		    alias: $(this._queryDropDownListElement).find("option:selected").text()
 		});
     },
 
@@ -74,25 +73,23 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     restore_blockState: function (state) {
         if (state) {
             if (this._isNullCheckBoxElement) {
-                var $isNullCheckBoxElement = jQuery(this._isNullCheckBoxElement);
+                var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
                 $isNullCheckBoxElement.prop("checked", state.isNull);
                 $isNullCheckBoxElement.trigger("change");
                 $isNullCheckBoxElement = null;
             }
 
-            jQuery(this._queryDropDownListElement).val(state.text);
+            $(this._queryDropDownListElement).val(state.text);
         }
     },
 
     _onIsNullCheckBoxChange: function () {
-        // дизейблим текст бокс если пользователь выбрал IS NULL
-        jQuery(this._queryDropDownListElement).prop("disabled", this.get_IsNull());
+        $(this._queryDropDownListElement).prop("disabled", this.get_IsNull());
     },
 
     dispose: function () {
-        // отвязать обработчик события change чекбоксу
         if (this._isNullCheckBoxElement) {
-            var $isNullCheckBoxElement = jQuery(this._isNullCheckBoxElement);
+            var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
             $isNullCheckBoxElement.unbind("change", this._onIsNullCheckBoxChangeHandler);
             $isNullCheckBoxElement = null;
         }
@@ -107,7 +104,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     _onIsNullCheckBoxChangeHandler: null,
     get_IsNull: function () {
         if (this._isNullCheckBoxElement) {
- return jQuery(this._isNullCheckBoxElement).is(":checked");
+ return $(this._isNullCheckBoxElement).is(":checked");
 }
  return false;
 

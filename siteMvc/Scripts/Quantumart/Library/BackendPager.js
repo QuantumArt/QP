@@ -1,13 +1,11 @@
-var EVENT_TYPE_PAGE_NUMBER_CHANGED = "OnPageNumberChanged";
+window.EVENT_TYPE_PAGE_NUMBER_CHANGED = "OnPageNumberChanged";
 Quantumart.QP8.BackendPagerEventArgs = function (pageNumber) {
 	Quantumart.QP8.BackendPagerEventArgs.initializeBase(this);
-
 	this._pageNumber = pageNumber;
 };
 
 Quantumart.QP8.BackendPagerEventArgs.prototype = {
 	_pageNumber: 0,
-
 	get_PageNumber: function () {
 		return this._pageNumber;
 	}
@@ -18,10 +16,9 @@ Quantumart.QP8.BackendPager = function (pagerElement) {
 	Quantumart.QP8.BackendPager.initializeBase(this);
 
 	this._pagerElement = pagerElement;
-
-	this._onPageClickHandler = jQuery.proxy(this._onPageClick, this);
-	this._onInHoverHandler = jQuery.proxy(this._onInHover, this);
-	this._onOutHoverHandler = jQuery.proxy(this._onOutHover, this);
+	this._onPageClickHandler = $.proxy(this._onPageClick, this);
+	this._onInHoverHandler = $.proxy(this._onInHover, this);
+	this._onOutHoverHandler = $.proxy(this._onOutHover, this);
 };
 
 Quantumart.QP8.BackendPager.prototype = {
@@ -222,7 +219,7 @@ Quantumart.QP8.BackendPager.prototype = {
 }
 
 			var eventArgs = new Quantumart.QP8.BackendPagerEventArgs(newPageNumber);
-			this.notify(EVENT_TYPE_PAGE_NUMBER_CHANGED, eventArgs);
+			this.notify(window.EVENT_TYPE_PAGE_NUMBER_CHANGED, eventArgs);
 			eventArgs = null;
 		}
 

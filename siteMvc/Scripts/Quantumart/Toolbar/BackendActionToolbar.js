@@ -1,5 +1,5 @@
-var EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKING = 'OnActionToolbarButtonClicking';
-var EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED = 'OnActionToolbarButtonClicked';
+window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKING = 'OnActionToolbarButtonClicking';
+window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED = 'OnActionToolbarButtonClicked';
 
 Quantumart.QP8.BackendActionToolbar = function (toolbarElementId, actionCode, parentEntityId, options) {
   Quantumart.QP8.BackendActionToolbar.initializeBase(this, [toolbarElementId, options]);
@@ -61,7 +61,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
       queryParams = Object.assign(queryParams, { boundToExternal: true });
     }
 
-    $q.getJsonFromUrl('GET', CONTROLLER_URL_TOOLBAR + 'GetToolbarButtonListByActionCode', queryParams, false, false, function (data, textStatus, jqXHR) {
+    $q.getJsonFromUrl('GET', window.CONTROLLER_URL_TOOLBAR + 'GetToolbarButtonListByActionCode', queryParams, false, false, function (data, textStatus, jqXHR) {
         if (self._stopDeferredOperations) {
           return;
         }
@@ -101,7 +101,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     }
 
     if (entityId != 0) {
-      $q.getJsonFromUrl('GET', CONTROLLER_URL_BACKEND_ACTION + 'GetStatusesList', queryParams, true, false).done(function (data) {
+      $q.getJsonFromUrl('GET', window.CONTROLLER_URL_BACKEND_ACTION + 'GetStatusesList', queryParams, true, false).done(function (data) {
         if (self._stopDeferredOperations) {
           return;
         }
@@ -127,7 +127,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   },
 
   notifyToolbarButtonClicked: function (eventArgs) {
-    this.notify(EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, eventArgs);
+    this.notify(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, eventArgs);
   },
 
   setDisabledActionCodes: function (value) {
@@ -141,7 +141,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     var dataItems = [];
     jQuery.each(items, function (index, item) {
       Array.add(dataItems, {
-        Type: TOOLBAR_ITEM_TYPE_BUTTON,
+        Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
         Value: item.ActionCode,
         Text: item.Name,
         Tooltip: item.Name,

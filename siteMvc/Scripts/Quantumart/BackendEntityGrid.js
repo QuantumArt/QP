@@ -1,11 +1,9 @@
-var EVENT_TYPE_ENTITY_GRID_DATA_BINDING = 'OnEntityGridDataBinding';
-var EVENT_TYPE_ENTITY_GRID_DATA_BOUND = 'OnEntityGridDataBound';
-var EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING = 'OnEntityGridActionExecuting';
-var EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED = 'OnEntityGridEntitySelected';
-var EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK = 'OnEntityGridEntityTitleLinkClick';
+window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING = 'OnEntityGridDataBinding';
+window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND = 'OnEntityGridDataBound';
+window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING = 'OnEntityGridActionExecuting';
+window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED = 'OnEntityGridEntitySelected';
+window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK = 'OnEntityGridEntityTitleLinkClick';
 
-// #region class BackendEntityGrid
-// === Класс "Список сущностей" ===
 Quantumart.QP8.BackendEntityGrid = function (gridGroupCodes, gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
   Quantumart.QP8.BackendEntityGrid.initializeBase(this);
 
@@ -754,7 +752,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       } else {
         var entityId = this.getEntityId($row);
         var context = { ctrlKey: ctrlKey };
-        if (actionCode == ACTION_CODE_ADD_NEW_CHILD_ARTICLE) {
+        if (actionCode == window.ACTION_CODE_ADD_NEW_CHILD_ARTICLE) {
           context.additionalUrlParameters = {
             fieldId: this._treeFieldId,
             articleId: entityId,
@@ -790,12 +788,12 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
             $q.alertError(message);
           } else {
             eventArgs.set_isWindow(true);
-            this.notify(EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
+            this.notify(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
           }
         } else if (followLink && !this._linkOpenNewTab && !message) {
-            this.notify(EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK, eventArgs);
+            this.notify(window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK, eventArgs);
           } else {
-            this.notify(EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
+            this.notify(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
           }
       }
     }
@@ -960,7 +958,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         eventArgs.set_entities(this.getSelectedEntities());
         eventArgs.set_parentEntityId(this._parentEntityId);
 
-        this.notify(EVENT_TYPE_ENTITY_GRID_DATA_BINDING, eventArgs);
+        this.notify(window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING, eventArgs);
       }
 
       if (this._allowSaveRowsSelection) {
@@ -1223,5 +1221,3 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 };
 
 Quantumart.QP8.BackendEntityGrid.registerClass('Quantumart.QP8.BackendEntityGrid', Quantumart.QP8.Observable);
-
-// #endregion

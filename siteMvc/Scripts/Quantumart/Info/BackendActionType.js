@@ -1,15 +1,12 @@
-// #region class BackendActionType
 Quantumart.QP8.BackendActionType = function () {};
-
-// Возвращает код типа действия по коду действия
 Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actionCode) {
 	var cacheKey = "ActionTypeCodeByActionCode_" + actionCode;
-	var actionTypeCode = $cache.getItem(cacheKey);
+	var actionTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
 	if (!actionTypeCode) {
 		$q.getJsonFromUrl(
 			"GET",
-			CONTROLLER_URL_BACKEND_ACTION_TYPE + "/GetCodeByActionCode",
+			window.CONTROLLER_URL_BACKEND_ACTION_TYPE + "/GetCodeByActionCode",
 			{ actionCode: actionCode },
 			false,
 			false,
@@ -22,12 +19,10 @@ Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actio
 			}
 		);
 
-		$cache.addItem(cacheKey, actionTypeCode);
+		Quantumart.QP8.Cache.addItem(cacheKey, actionTypeCode);
 	}
 
 	return actionTypeCode;
 };
 
 Quantumart.QP8.BackendActionType.registerClass("Quantumart.QP8.BackendActionType");
-
-// #endregion

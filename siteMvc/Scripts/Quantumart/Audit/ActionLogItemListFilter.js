@@ -1,13 +1,10 @@
-// #region class ActionLogItemListFilter
 Quantumart.QP8.ActionLogItemListFilter = function (filterContainer, items) {
 	Quantumart.QP8.ActionLogItemListFilter.initializeBase(this, [filterContainer]);
 	this._items = items;
 };
 
 Quantumart.QP8.ActionLogItemListFilter.prototype = {
-
 	_items: null,
-
 	initialize: function () {
 		var html = new $.telerik.stringBuilder();
 
@@ -45,5 +42,3 @@ Quantumart.QP8.ActionLogItemListFilter.prototype = {
 };
 
 Quantumart.QP8.ActionLogItemListFilter.registerClass("Quantumart.QP8.ActionLogItemListFilter", Quantumart.QP8.ActionLogFilterBase);
-
-// #endregion

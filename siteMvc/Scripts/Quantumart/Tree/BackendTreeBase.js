@@ -1,9 +1,3 @@
-// ****************************************************************************
-// *** Компонент "Дерево"                         ***
-// ****************************************************************************
-
-// #region class BackendTreeBase
-// === Класс "Дерево" ===
 Quantumart.QP8.BackendTreeBase = function (treeElementId, options) {
   Quantumart.QP8.BackendTreeBase.initializeBase(this);
 
@@ -764,5 +758,3 @@ $.telerik.treeview.getGroupHtml = function (options) {
 };
 
 Quantumart.QP8.BackendTreeBase.registerClass('Quantumart.QP8.BackendTreeBase', Quantumart.QP8.Observable);
-
-// #endregion

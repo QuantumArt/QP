@@ -1,22 +1,13 @@
-// ****************************************************************************
-// *** Компонент "Форма авторизации"										***
-// ****************************************************************************
 
-// #region class BackendLogOnWindow
-// === Класс "Форма авторизации" ===
 Quantumart.QP8.BackendLogOnWindow = function () {
     Quantumart.QP8.BackendLogOnWindow.initializeBase(this);
 };
 
 Quantumart.QP8.BackendLogOnWindow.prototype = {
-    // #region fields
     _windowComponent: null,
     _isAuthenticated: null,
     _userName: null,
 
-    // #endregion
-
-    // #region constants
     FORM_SELECTOR: "form#auth",
     LOADING_SELECTOR: "#authLoading",
     USERNAME_SELECTOR: "#UserName",
@@ -25,9 +16,6 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     Z_INDEX: 50000,
     AJAX_EVENT: "AjaxEvent",
 
-    // #endregion
-
-    // #region internal
     _onLogonHandler: null,
     _onCloseWindowHandler: null,
 
@@ -35,8 +23,8 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         if (data.success) {
             return data.view;
         }
-            return data.message;
 
+        return data.message;
     },
 
     _createWindow: function (serverContent) {
@@ -190,7 +178,6 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         this._windowComponent.close();
     },
 
-    // #region window enents
     _attachEvents: function () {
         $(this.FORM_SELECTOR).submit(this._onLogonHandler);
         $(this.FORM_SELECTOR).find("a").click(this._onLogonHandler);
@@ -201,9 +188,6 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         $(this.FORM_SELECTOR).find("a").off();
     },
 
-    // #endregion
-
-    // #region object enents
     _triggerDeferredCallcacks: function (isAuthenticated) {
         $(this).triggerHandler({
             type: this.AJAX_EVENT,
@@ -227,10 +211,6 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         $(this).off(this.AJAX_EVENT);
     },
 
-    // #endregion
-    // #endregion
-
-    // #region public
     showLogonForm: function (data, callback, settings) {
         this._addDeferredCallcack(callback, settings);
         this._showWindow(data);
@@ -238,8 +218,8 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
     needLogon: function (jqXHR, url) {
         if (
-            url.toUpperCase() == CONTROLLER_URL_LOGON.toUpperCase()
-            || url.toUpperCase() == CONTROLLER_URL_WINLOGON.toUpperCase()) {
+            url.toUpperCase() == window.CONTROLLER_URL_LOGON.toUpperCase()
+            || url.toUpperCase() == window.CONTROLLER_URL_WINLOGON.toUpperCase()) {
             return false;
         } else if (jqXHR.getResponseHeader("QP-Not-Authenticated")) {
             return true;
@@ -270,13 +250,9 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
         $q.collectGarbageInIE();
     }
-
-    // #endregion
 };
 
 Quantumart.QP8.BackendLogOnWindow._instance = null;
-
-// Возвращает экземпляр класса "Форма авторизации"
 Quantumart.QP8.BackendLogOnWindow.deferredExecution = function (data, jqXHR, callback, settings) {
     var logon = Quantumart.QP8.BackendLogOnWindow.getInstance();
 
@@ -288,7 +264,6 @@ Quantumart.QP8.BackendLogOnWindow.deferredExecution = function (data, jqXHR, cal
     return false;
 };
 
-// Возвращает экземпляр класса "Форма авторизации"
 Quantumart.QP8.BackendLogOnWindow.getInstance = function () {
     if (Quantumart.QP8.BackendLogOnWindow._instance == null) {
         Quantumart.QP8.BackendLogOnWindow._instance = new Quantumart.QP8.BackendLogOnWindow();
@@ -297,7 +272,6 @@ Quantumart.QP8.BackendLogOnWindow.getInstance = function () {
     return Quantumart.QP8.BackendLogOnWindow._instance;
 };
 
-// Уничтожает экземпляр класса "Форма авторизации"
 Quantumart.QP8.BackendLogOnWindow.destroyInstance = function () {
     if (Quantumart.QP8.BackendLogOnWindow._instance) {
         Quantumart.QP8.BackendLogOnWindow._instance.dispose();
@@ -305,5 +279,3 @@ Quantumart.QP8.BackendLogOnWindow.destroyInstance = function () {
 };
 
 Quantumart.QP8.BackendLogOnWindow.registerClass("Quantumart.QP8.BackendLogOnWindow", Quantumart.QP8.Observable);
-
-// #endregion

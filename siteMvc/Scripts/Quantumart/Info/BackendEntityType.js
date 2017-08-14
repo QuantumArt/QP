@@ -1,15 +1,12 @@
-// #region class BackendEntityType
 Quantumart.QP8.BackendEntityType = function () {};
-
-// Возвращает тип сущности по ее коду
 Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode) {
 	var cacheKey = "EntityTypeByEntityTypeCode_" + entityTypeCode;
-	var entityType = $cache.getItem(cacheKey);
+	var entityType = Quantumart.QP8.Cache.getItem(cacheKey);
 
 	if (!entityType) {
 		$q.getJsonFromUrl(
 			"GET",
-			CONTROLLER_URL_ENTITY_TYPE + "/GetByCode",
+			window.CONTROLLER_URL_ENTITY_TYPE + "/GetByCode",
 			{ entityTypeCode: entityTypeCode },
 			false,
 			false,
@@ -21,21 +18,20 @@ Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode)
 			}
 		);
 
-		$cache.addItem(cacheKey, entityType);
+		Quantumart.QP8.Cache.addItem(cacheKey, entityType);
 	}
 
 	return entityType;
 };
 
-// Возвращает тип сущности по его id
 Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
 	var cacheKey = "EntityTypeByEntityTypeId_" + entityTypeId;
-	var entityTypeCode = $cache.getItem(cacheKey);
+	var entityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
 	if (!entityTypeCode) {
 		$q.getJsonFromUrl(
 			"GET",
-			CONTROLLER_URL_ENTITY_TYPE + "/GetCodeById",
+			window.CONTROLLER_URL_ENTITY_TYPE + "/GetCodeById",
 			{ entityTypeId: entityTypeId },
 			false,
 			false,
@@ -47,21 +43,20 @@ Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
 			}
 		);
 
-		$cache.addItem(cacheKey, entityTypeCode);
+		Quantumart.QP8.Cache.addItem(cacheKey, entityTypeCode);
 	}
 
 	return Quantumart.QP8.BackendEntityType.getEntityTypeByCode(entityTypeCode);
 };
 
-// Возвращает код типа родительской сущности
 Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entityTypeCode) {
 	var cacheKey = "ParentEntityTypeCodeByEntityTypeCode_" + entityTypeCode;
-	var parentEntityTypeCode = $cache.getItem(cacheKey);
+	var parentEntityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
 	if (!parentEntityTypeCode) {
 		$q.getJsonFromUrl(
 			"GET",
-			CONTROLLER_URL_ENTITY_TYPE + "/GetParentCodeByCode",
+			window.CONTROLLER_URL_ENTITY_TYPE + "/GetParentCodeByCode",
 			{ entityTypeCode: entityTypeCode },
 			false,
 			false,
@@ -74,7 +69,7 @@ Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entit
 			}
 		);
 
-		$cache.addItem(cacheKey, parentEntityTypeCode);
+		Quantumart.QP8.Cache.addItem(cacheKey, parentEntityTypeCode);
 	}
 
 	return parentEntityTypeCode;
@@ -82,11 +77,12 @@ Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entit
 
 Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = function () {
 	var cacheKey = "EntityTypeIdToActionListItemDictionary";
-	var dictionary = $cache.getItem(cacheKey);
+	var dictionary = Quantumart.QP8.Cache.getItem(cacheKey);
+
 	if (!dictionary) {
 		$q.getJsonFromUrl(
 			"GET",
-			CONTROLLER_URL_BACKEND_ACTION + "GetEntityTypeIdToActionListItemsDictionary",
+			window.CONTROLLER_URL_BACKEND_ACTION + "GetEntityTypeIdToActionListItemsDictionary",
 			null,
 			false,
 			false
@@ -95,7 +91,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
 			function (data) {
 				if (data.success) {
 					dictionary = data.dictionary;
-					$cache.addItem(cacheKey, data.dictionary);
+					Quantumart.QP8.Cache.addItem(cacheKey, data.dictionary);
 				} else {
 					dictionary = null;
 					$q.alertError(data.Text);
@@ -106,9 +102,8 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
 			$q.processGenericAjaxError(jqXHR);
 		});
 	}
+
 	return dictionary;
 };
 
 Quantumart.QP8.BackendEntityType.registerClass("Quantumart.QP8.BackendEntityType");
-
-// #endregion

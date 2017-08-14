@@ -1,3 +1,4 @@
+/* global CKEDITOR */
 /* eslint camelcase: ["off", { properties: "never"}] */
 
 // eslint-disable-next-line no-extra-semi
@@ -74,15 +75,15 @@
       li: 1
     });
 
-    window.CKEDITOR.on('instanceCreated', function onInstanceCreated() {
+    CKEDITOR.on('instanceCreated', function onInstanceCreated() {
       Object.keys(Object.assign({},
         config.listItems
       )).forEach(function setListAutoWrapping(key) {
         if (config.disableListAutoWrap) {
-          delete window.CKEDITOR.dtd.$listItem[key];
-          delete window.CKEDITOR.dtd.$intermediate[key];
+          delete CKEDITOR.dtd.$listItem[key];
+          delete CKEDITOR.dtd.$intermediate[key];
         } else {
-          window.CKEDITOR.dtd.$listItem[key] = 1;
+          CKEDITOR.dtd.$listItem[key] = 1;
           window.CKEDITOR.dtd.$intermediate[key] = 1;
         }
       });

@@ -1,4 +1,4 @@
-Backend.Lang.SearchBlock = {
+window.Backend.Lang.SearchBlock = {
   findButtonText: "Find",
   resetButtonText: "Reset",
   defaultFilterButtonText: "Default",

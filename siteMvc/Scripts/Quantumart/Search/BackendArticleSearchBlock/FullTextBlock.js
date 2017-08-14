@@ -14,7 +14,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
   initialize: function () {
     var serverContent;
 
-    $q.getJsonFromUrl('GET', CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'FullTextBlock', {
+    $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'FullTextBlock', {
       parentEntityId: this._parentEntityId,
       elementIdPrefix: this._elementIdPrefix
     }, false, false, function (data) {

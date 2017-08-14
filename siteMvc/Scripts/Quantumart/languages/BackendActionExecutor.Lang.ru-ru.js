@@ -1,4 +1,4 @@
-Backend.Lang.Action = {
+window.Backend.Lang.Action = {
 	actionExecutingErrorMessage: "При выполнении операции произошла ошибка!",
 	currentActionNotSpecified: "Не указано текущее действие!",
 	actionExecutingTimeoutMessage: "Истекло допустимоев время выполнения операции!",

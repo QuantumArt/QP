@@ -1,4 +1,3 @@
-// === Класс блока поиска по числовому полю
 Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType) {
   Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType]);
   this._searchType = searchType;
@@ -9,7 +8,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     _contentElement: null,
     initialize: function () {
       var serverContent;
-      $q.getJsonFromUrl('GET', CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'ContentsListForClassifier', {
+      $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'ContentsListForClassifier', {
         elementIdPrefix: this._elementIdPrefix,
         fieldID: this._fieldID
       }, false, false, function (data, textStatus, jqXHR) {
@@ -63,9 +62,9 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
         return $l.SearchBlock.isNullCheckBoxLabelText;
       } else if (stateData.contentID) {
         return $q.cutShort($(this._contentElement).find("[value=" + stateData.contentID + "]").text(), 12);
-      } 
+      }
         return '';
-      
+
     },
 
     restore_blockState: function (state) {
@@ -88,9 +87,9 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     get_IsNull: function () {
       if (this._isNullCheckBoxElement) {
         return $(this._isNullCheckBoxElement).is(":checked");
-      } 
+      }
         return false;
-      
+
     },
 
     _onIsNullCheckBoxChange: function () {
@@ -108,7 +107,6 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
         }
 
         $c.destroyAllNumericTextBoxes(this._contentElement);
-        $containerElement = null;
         this._isNullCheckBoxElement = null;
         this._onIsNullCheckBoxChangeHandler = null;
         this._contentElement = null;

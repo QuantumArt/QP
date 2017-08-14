@@ -1,10 +1,9 @@
-var EVENT_TYPE_CONTEXT_MENU_SHOWING = 'OnContextMenuShowing';
-var EVENT_TYPE_CONTEXT_MENU_HIDING = 'OnContextMenuHiding';
-var EVENT_TYPE_CONTEXT_MENU_HIDDEN = 'OnContextMenuHidden';
-var EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING = 'OnContextMenuItemClicking';
-var EVENT_TYPE_CONTEXT_MENU_ITEM_HOVERING = 'OnContextMenuItemHoveringHandler';
+window.EVENT_TYPE_CONTEXT_MENU_SHOWING = 'OnContextMenuShowing';
+window.EVENT_TYPE_CONTEXT_MENU_HIDING = 'OnContextMenuHiding';
+window.EVENT_TYPE_CONTEXT_MENU_HIDDEN = 'OnContextMenuHidden';
+window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING = 'OnContextMenuItemClicking';
+window.EVENT_TYPE_CONTEXT_MENU_ITEM_HOVERING = 'OnContextMenuItemHoveringHandler';
 
-// #region class BackendContextMenu
 Quantumart.QP8.BackendContextMenu = function (contextMenuCode, contextMenuElementId, options) {
   Quantumart.QP8.BackendContextMenu.initializeBase(this);
 
@@ -16,8 +15,8 @@ Quantumart.QP8.BackendContextMenu = function (contextMenuCode, contextMenuElemen
     }
 
     if (options.zIndex) {
- this._zIndex = options.zIndex;
-}
+     this._zIndex = options.zIndex;
+    }
 
     if (!$q.isNull(options.allowManualShowing)) {
       this._allowManualShowing = options.allowManualShowing;
@@ -26,12 +25,12 @@ Quantumart.QP8.BackendContextMenu = function (contextMenuCode, contextMenuElemen
     this._isBindToExternal = $q.toBoolean(options.isBindToExternal, false);
   }
 
-  this._onContextMenuTuneHandler = jQuery.proxy(this._onContextMenuTune, this);
-  this._onContextMenuHidingHandler = jQuery.proxy(this._onContextMenuHiding, this);
-  this._onContextMenuHiddenHandler = jQuery.proxy(this._onContextMenuHidden, this);
-  this._onContextMenuItemHoveringHandler = jQuery.proxy(this._onContextMenuItemHovering, this);
-  this._onContextMenuItemClickingHandler = jQuery.proxy(this._onContextMenuItemClicking, this);
-  this._onCustomActionChangedHandler = jQuery.proxy(this._onCustomActionChanged, this);
+  this._onContextMenuTuneHandler = $.proxy(this._onContextMenuTune, this);
+  this._onContextMenuHidingHandler = $.proxy(this._onContextMenuHiding, this);
+  this._onContextMenuHiddenHandler = $.proxy(this._onContextMenuHidden, this);
+  this._onContextMenuItemHoveringHandler = $.proxy(this._onContextMenuItemHovering, this);
+  this._onContextMenuItemClickingHandler = $.proxy(this._onContextMenuItemClicking, this);
+  this._onCustomActionChangedHandler = $.proxy(this._onCustomActionChanged, this);
 };
 
 Quantumart.QP8.BackendContextMenu.prototype = {
@@ -162,7 +161,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 
   refresh: function (hideRefreshMenuItem, successHandler, errorHandler) {
     var cacheKey = Quantumart.QP8.BackendContextMenu.getCacheKey(this._contextMenuCode, true, this._isBindToExternal);
-    var contextMenuCachedData = $cache.removeItem(cacheKey);
+    var contextMenuCachedData = Quantumart.QP8.Cache.removeItem(cacheKey);
     this.addMenuItemsToMenu(hideRefreshMenuItem, successHandler, errorHandler);
   },
 
@@ -179,7 +178,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
         var menuItemCount = 0;
         if (menuItems != null) {
           menuItems = $.grep(menuItems, function (menuItem) {
-            return !hideRefreshMenuItem || menuItem.ActionTypeCode != ACTION_TYPE_CODE_REFRESH;
+            return !hideRefreshMenuItem || menuItem.ActionTypeCode != window.ACTION_TYPE_CODE_REFRESH;
           });
 
           menuItemCount = menuItems.length;
@@ -221,7 +220,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       params = Object.assign(params, { boundToExternal: true });
     }
 
-    $q.getJsonFromUrl('GET', CONTROLLER_URL_CONTEXT_MENU + 'GetStatusesList', params, false, false, function (data) {
+    $q.getJsonFromUrl('GET', window.CONTROLLER_URL_CONTEXT_MENU + 'GetStatusesList', params, false, false, function (data) {
         var statuses = data;
         if (statuses) {
           var statusCount = statuses.length;
@@ -271,8 +270,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       }
     });
 
-    // Проверить, есть ли перед первым показываемым сепаратором показываемые элементы меню
-    // если нет - то скрыть такой сепаратор
     var $firstVisibleSeparator = $('li.separator', this._contextMenuComponent._menuElement)
     .filter(function () {
       return $(this).css('display') != 'none';
@@ -293,12 +290,12 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       .cat('  <div class="outerWrapper">\n')
       .cat('      <div class="innerWrapper">\n')
       .cat('          <span class="icon"')
-      .catIf(' style="background-image: url(\'' + THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon + '\')"',
+      .catIf(' style="background-image: url(\'' + window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon + '\')"',
         !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() !== 'http://')
       .catIf(' style="background-image: url(\'' + dataItem.Icon + '\')"',
         !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() === 'http://')
       .cat('>')
-      .cat('<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif" width="16px" height="16px" />')
+      .cat('<img src="' + window.COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif" width="16px" height="16px" />')
       .cat('</span>\n')
       .cat('          <span class="text">' + $q.htmlEncode(dataItem.Name) + '</span>\n')
       .cat('      </div>\n')
@@ -312,7 +309,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 
   _extendMenuItemElement: function (menuItemElem, menuItem) {
     var $menuItem = this.getMenuItem(menuItemElem);
-
     if (!$q.isNullOrEmpty($menuItem)) {
       $menuItem.data('action_code', menuItem.ActionCode);
       $menuItem.data('action_type_code', menuItem.ActionTypeCode);
@@ -321,28 +317,24 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 
   _extendMenuItemElements: function (menuItems) {
     var self = this;
-
-    jQuery.each(menuItems, function (index, menuItem) {
+    $.each(menuItems, function (index, menuItem) {
         var $menuItem = self.getMenuItem(menuItem.ActionCode);
-
         self._extendMenuItemElement($menuItem, menuItem);
       }
     );
   },
 
   getMenuItemCount: function () {
-    var menuItemCount = jQuery('> LI', this._contextMenuElement).length;
-
-    return menuItemCount;
+    return $('> LI', this._contextMenuElement).length;
   },
 
   getMenuItem: function (menuItem) {
     var $menuItem = null;
 
     if ($q.isObject(menuItem)) {
-      return $q.toJQuery(menuItem);
+      return $q.to$(menuItem);
     } else if ($q.isString(menuItem)) {
-      $menuItem = jQuery("LI[code='" + menuItem + "']", this._contextMenuElement);
+      $menuItem = $("LI[code='" + menuItem + "']", this._contextMenuElement);
       if ($menuItem.length == 0) {
         $menuItem = null;
       }
@@ -362,7 +354,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       return;
     }
 
-    $menuItem = null;
     return menuItemValue;
   },
 
@@ -371,17 +362,14 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     var menuItemText = '';
 
     if (!$q.isNullOrEmpty($menuItem)) {
-      menuItemText = jQuery('SPAN.text', $menuItem).text();
+      menuItemText = $('SPAN.text', $menuItem).text();
     }
-
-    $menuItem = null;
 
     return menuItemText;
   },
 
   setVisibleState: function (menuItem, state) {
     var $menuItem = this.getMenuItem(menuItem);
-
     if (state) {
       $menuItem.show();
     } else {
@@ -391,7 +379,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 
   setEnableState: function (menuItem, state) {
     var $menuItem = this.getMenuItem(menuItem);
-
     if (state) {
       $menuItem.removeClass('disabled');
     } else {
@@ -400,12 +387,11 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   getContextMenuEventType: function () {
-    return jQuery.fn.jeegoocontext.getContextMenuEventType();
+    return $.fn.jeegoocontext.getContextMenuEventType();
   },
 
   _onContextMenuTune: function (e, context) {
     var eventArgs = new Quantumart.QP8.BackendContextMenuEventArgs();
-
     eventArgs.set_menu(this);
     eventArgs.set_targetElement(context);
 
@@ -414,10 +400,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       this.get_contextMenuManager().notify(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, eventArgs);
     }
 
-    eventArgs = null;
-
-    // Если нет не одного показываемого элемента, то не показывать меню (return false)
-    if (jQuery('LI.item', this._contextMenuElement).filter(function () {
+    if ($('LI.item', this._contextMenuElement).filter(function () {
       return $(this).css('display') != 'none';
     }).length == 0) {
       return false;
@@ -438,8 +421,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if (this.get_contextMenuManager()) {
       this.get_contextMenuManager().notify(window.EVENT_TYPE_CONTEXT_MENU_HIDING, eventArgs);
     }
-
-    eventArgs = null;
   },
 
   _onContextMenuHidden: function (e, context) {
@@ -452,8 +433,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if (this.get_contextMenuManager()) {
       this.get_contextMenuManager().notify(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, eventArgs);
     }
-
-    eventArgs = null;
   },
 
   _onContextMenuItemHovering: function (e, context) {
@@ -467,8 +446,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if (this.get_contextMenuManager()) {
       this.get_contextMenuManager().notify(window.EVENT_TYPE_CONTEXT_MENU_ITEM_HOVERING, eventArgs);
     }
-
-    eventArgs = null;
   },
 
   _onContextMenuItemClicking: function (e, context) {
@@ -482,8 +459,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if (this.get_contextMenuManager()) {
       this.get_contextMenuManager().notify(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, eventArgs);
     }
-
-    eventArgs = null;
   },
 
   dispose: function () {
@@ -507,15 +482,15 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if (this._targetElements) {
       var contextMenuComponentName = this._getMenuComponentName();
 
-      jQuery(this._targetElements).each(function (index, targetElem) {
-        jQuery(targetElem).removeData(contextMenuComponentName);
+      $(this._targetElements).each(function (index, targetElem) {
+        $(targetElem).removeData(contextMenuComponentName);
       });
 
       this._targetElements = null;
     }
 
     if (this._contextMenuElement) {
-      var $contextMenu = jQuery(this._contextMenuElement);
+      var $contextMenu = $(this._contextMenuElement);
 
       $contextMenu.empty().remove();
       $contextMenu = null;
@@ -539,13 +514,12 @@ Quantumart.QP8.BackendContextMenu.getCacheKey = function (menuCode, loadItems, i
   return 'contextMenuCachedData' + menuCode + loadItems + isBindToExternal;
 };
 
-// Возвращает контекстное меню по его коду
 Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loadItems, isBindToExternal, successHandler, errorHandler) {
   var cacheKey = Quantumart.QP8.BackendContextMenu.getCacheKey(menuCode, loadItems, isBindToExternal);
-  var contextMenuCachedData = $cache.getItem(cacheKey);
+  var contextMenuCachedData = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!contextMenuCachedData) {
-    var actionUrl = CONTROLLER_URL_CONTEXT_MENU + 'GetByCode';
+    var actionUrl = window.CONTROLLER_URL_CONTEXT_MENU + 'GetByCode';
     var params = { menuCode: menuCode, loadItems: loadItems };
 
     if (isBindToExternal === true) {
@@ -554,14 +528,14 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
 
     if ($q.isFunction(successHandler)) {
       $q.getJsonFromUrl('GET', actionUrl, params, false, false, function (data, textStatus, jqXHR) {
-        $cache.addItem(cacheKey, data);
+        Quantumart.QP8.Cache.addItem(cacheKey, data);
         successHandler(data, textStatus, jqXHR);
       }, errorHandler);
     } else {
       var menu = null;
 
       $q.getJsonFromUrl('GET', actionUrl, params, false, false, function (data) {
-        $cache.addItem(cacheKey, data);
+        Quantumart.QP8.Cache.addItem(cacheKey, data);
         menu = data;
       }, function (jqXHR) {
         menu = null;
@@ -578,8 +552,6 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
 };
 
 Quantumart.QP8.BackendContextMenu.registerClass('Quantumart.QP8.BackendContextMenu', Quantumart.QP8.Observable);
-
-// #endregion
 
 Quantumart.QP8.BackendContextMenuEventArgs = function () {
   Quantumart.QP8.BackendContextMenuEventArgs.initializeBase(this);

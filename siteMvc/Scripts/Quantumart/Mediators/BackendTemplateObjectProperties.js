@@ -1,6 +1,6 @@
+window.CONTENT_CHANGE_TRACK_SELECTORS = ".containerContentSelector .singleItemPicker";
 Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId) {
     var $componentElem = jQuery('#' + rootElementId);
-    var CONTENT_CHANGE_TRACK_SELECTORS = ".containerContentSelector .singleItemPicker";
     var $parentObjectSelector = $componentElem.find('.parentTemplateObjectsSelector');
     var $nameField = $componentElem.find('.name');
     var $netNameField = $componentElem.find('.netName');
@@ -11,9 +11,9 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
     var $selectionIsStarting = $componentElem.find('.selection-is-starting .radioButtonsList');
     var $selectionIncludes = $componentElem.find('.selection-includes .radioButtonsList');
 
-    $componentElem.on(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
-    $parentObjectSelector.change(jQuery.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
-    $overrideChkbx.click(jQuery.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
+    $componentElem.on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, window.CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
+    $parentObjectSelector.change($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
+    $overrideChkbx.click($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
     $typeSelector.change(manageGlobalVisibility);
 
     checkPublished();
@@ -25,7 +25,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
 
     function onContentValueChanged(e, data) {
         if (data.value) {
-            $q.getJsonFromUrl('POST', CONTROLLER_URL_PAGE_TEMPLATE + "GetFieldsByContentId",
+            $q.getJsonFromUrl('POST', window.CONTROLLER_URL_PAGE_TEMPLATE + "GetFieldsByContentId",
             {
                 contentId: data.value
             },
@@ -89,7 +89,6 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
         $parentObjectSelector.unbind();
 
         $componentElem = null;
-        CONTENT_CHANGE_TRACK_SELECTORS = null;
         $parentObjectSelector = null;
         $statusSelector = null;
         $selectionIsStarting = null;

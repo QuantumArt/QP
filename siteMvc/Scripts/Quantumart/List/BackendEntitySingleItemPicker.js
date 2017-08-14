@@ -1,5 +1,3 @@
-// #region class BackendEntitySingleItemPicker
-// === Класс "Cписок сущностей в виде элемента управления одиночного выбора" ===
 Quantumart.QP8.BackendEntitySingleItemPicker = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
 	Quantumart.QP8.BackendEntitySingleItemPicker.initializeBase(this,
 		[listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]);
@@ -20,7 +18,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 	initialize: function () {
 		Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, "initialize");
 
-		var $list = jQuery(this._listElement);
+		var $list = $(this._listElement);
 		var $displayField = $list.find("." + this.DISPLAY_FIELD_CLASS_NAME);
 		var $stateField = $list.find("INPUT." + this.STATE_FIELD_CLASS_NAME + ":first");
 		$stateField.addClass("qp-notChangeTrack");
@@ -120,18 +118,18 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 			html = this._getIdLinkCode(value) + "<span class=\"title\">" + dataItems[0].Text + "</span>";
 		}
 
-		var $displayField = jQuery(this._displayFieldElement);
-		var $stateField = jQuery(this._stateFieldElement);
+		var $displayField = $(this._displayFieldElement);
+		var $stateField = $(this._stateFieldElement);
 
 		$displayField.html(html);
 		var oldValue = $stateField.val();
 		$stateField.val(value);
 
 		if (oldValue != value) {
-		    $stateField.addClass(CHANGED_FIELD_CLASS_NAME);
+		    $stateField.addClass(window.CHANGED_FIELD_CLASS_NAME);
 		    var operation = refreshOnly ? "addClass" : "removeClass";
-		    $stateField[operation](REFRESHED_FIELD_CLASS_NAME);
-		    $stateField.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $stateField.attr("name"), value: value, contentFieldName: $stateField.data('content_field_name') });
+		    $stateField[operation](window.REFRESHED_FIELD_CLASS_NAME);
+		    $stateField.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $stateField.attr("name"), value: value, contentFieldName: $stateField.data('content_field_name') });
 		    $stateField.change();
 		}
 
@@ -142,7 +140,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 	deselectAllListItems: function () {
 	    this._refreshListInner([]);
 	    var eventArgs = new Quantumart.QP8.BackendEventArgs();
-	    this.notify(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, eventArgs);
+	    this.notify(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, eventArgs);
 	},
 
 	selectEntities: function (entityId) {
@@ -161,25 +159,25 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 	},
 
 	enableList: function () {
-		jQuery(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
-		jQuery(this._stateFieldElement).prop("disabled", false);
+		$(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
+		$(this._stateFieldElement).prop("disabled", false);
 		this._enableAllToolbarButtons();
 	},
 
 	disableList: function () {
-		jQuery(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
-		jQuery(this._stateFieldElement).prop("disabled", true);
+		$(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
+		$(this._stateFieldElement).prop("disabled", true);
 		this._disableAllToolbarButtons();
 	},
 
 	makeReadonly: function () {
 		this.disableList();
-		jQuery(this._stateFieldElement).prop("disabled", false);
+		$(this._stateFieldElement).prop("disabled", false);
 	},
 
 	isListChanged: function () {
-		var $stateField = jQuery(this._stateFieldElement);
-		var result = $stateField.hasClass(CHANGED_FIELD_CLASS_NAME);
+		var $stateField = $(this._stateFieldElement);
+		var result = $stateField.hasClass(window.CHANGED_FIELD_CLASS_NAME);
 		$stateField = null;
 		return result;
 	},
@@ -207,15 +205,15 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 	dispose: function () {
 		this._stopDeferredOperations = true;
 
-		jQuery(this._stateFieldElement).unbind("change");
-		jQuery(this._pickButtonElement).unbind("click");
-		jQuery(this._deselectButtonElement).unbind("click");
-		jQuery(this._displayFieldElement).undelegate("click");
-		jQuery(this._displayFieldElement).undelegate("mouseup");
+		$(this._stateFieldElement).unbind("change");
+		$(this._pickButtonElement).unbind("click");
+		$(this._deselectButtonElement).unbind("click");
+		$(this._displayFieldElement).undelegate("click");
+		$(this._displayFieldElement).undelegate("mouseup");
 
 		if (this._enableCopy) {
-			jQuery(this._copyButtonElement).unbind("click");
-			jQuery(this._pasteButtonElement).unbind("click");
+			$(this._copyButtonElement).unbind("click");
+			$(this._pasteButtonElement).unbind("click");
 		}
 
 		this._stateFieldElement = null;
@@ -225,11 +223,8 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		this._copyButtonElement = null;
 		this._pasteButtonElement = null;
 
-
 		Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, "dispose");
 	}
 };
 
 Quantumart.QP8.BackendEntitySingleItemPicker.registerClass("Quantumart.QP8.BackendEntitySingleItemPicker", Quantumart.QP8.BackendEntityDataListBase);
-
-// #endregion

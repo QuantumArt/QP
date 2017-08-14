@@ -1,9 +1,7 @@
-// #region class BackendSilverlightUploader
-// === Класс "Silverlight загрузчик" ===
 Quantumart.QP8.BackendSilverlightUploader = function (parentElement, options) {
 	Quantumart.QP8.BackendSilverlightUploader.initializeBase(this);
 
-	var $parentElement = jQuery(".l-sl-uploader", parentElement);
+	var $parentElement = $(".l-sl-uploader", parentElement);
 
 	this._parentElement = $parentElement.get(0);
 	this._parentElementId = $parentElement.attr('id');
@@ -33,7 +31,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 	_resolveName: false,
 
 	initialize: function () {
-		var $parentElement = jQuery(this._parentElement);
+		var $parentElement = $(this._parentElement);
 		$parentElement.data('qp_sl_uploader', this);
 
 		this._createFileUploader();
@@ -42,7 +40,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 	},
 
 	dispose: function () {
-		var $parentElement = jQuery(this._parentElement);
+		var $parentElement = $(this._parentElement);
 		$parentElement.removeData();
 
 		$parentElement = null;
@@ -52,7 +50,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 
 	_createFileUploader: function () {
 		var functionPrefix = "Quantumart$QP8$BackendSilverlightUploader$";
-		var uploadUrl = APPLICATION_ROOT_URL + "Upload/";
+		var uploadUrl = window.APPLICATION_ROOT_URL + "Upload/";
 		var resolveNameFuction = this._resolveName ? functionPrefix + "resolveFileName" : "";
 		var params = {
 			path: "",
@@ -116,10 +114,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 			}
 			errMsg += "MethodName: " + args.methodName + "     \n";
 		}
-
-		// throw new Error(errMsg);
 	},
-
 
 	set_folderPath: function (value) {
 		this._folderPath = value;
@@ -130,47 +125,38 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 	}
 };
 
-// Обработчик окончания загрузки файла на сервер
 function Quantumart$QP8$BackendSilverlightUploader$uploadCallback(id, fileName) {
-	var $element = jQuery('#' + id);
+	var $element = $('#' + id);
 	if ($element) {
 		var component = $element.data('qp_sl_uploader');
 		if (component) {
 			var eventArgs = new Quantumart.QP8.BackendUploaderEventArgs([fileName]);
-			component.notify(EVENT_TYPE_LIBRARY_FILE_UPLOADED, eventArgs);
+			component.notify(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, eventArgs);
 		}
 	}
-
-	$element = null;
-	component = null;
 }
 
-// Проверяет существование файла
 function Quantumart$QP8$BackendSilverlightUploader$checkFileExistence(longfileName) {
-	var url = APPLICATION_ROOT_URL + "Library/FullNameFileExists/";
+	var url = window.APPLICATION_ROOT_URL + "Library/FullNameFileExists/";
 	var obj = $q.getJsonSync(url, { name: longfileName });
-
 	return obj.result;
 }
 
-// Разрешает конфликт имен файлов
 function Quantumart$QP8$BackendSilverlightUploader$resolveFileName(path, fileName) {
-	var url = APPLICATION_ROOT_URL + "Library/ResolveFileName/";
+	var url = window.APPLICATION_ROOT_URL + "Library/ResolveFileName/";
 	var obj = $q.getJsonSync(url, { path: path, name: fileName });
-
 	return obj.result;
 }
 
-// Проверяет папку на security
 function Quantumart$QP8$BackendSilverlightUploader$checkSecurity(path) {
-	var url = APPLICATION_ROOT_URL + "Library/CheckSecurity/";
+	var url = window.APPLICATION_ROOT_URL + "Library/CheckSecurity/";
 	var obj = $q.getJsonSync(url, { path: path });
 	return obj.result;
 }
 
 
 function Quantumart$QP8$BackendSilverlightUploader$returnFolderPath(id) {
-	var $element = jQuery('#' + id);
+	var $element = $('#' + id);
 	var result = "";
 	if ($element) {
 		var component = $element.data('qp_sl_uploader');
@@ -179,25 +165,20 @@ function Quantumart$QP8$BackendSilverlightUploader$returnFolderPath(id) {
 		}
 	}
 
-	$element = null;
-	component = null;
 	return result;
 }
 
-// Локализует Silverlight-uploader
 function Quantumart$QP8$BackendSilverlightUploader$localizeUpload() {
 	var result = {
-		UploadBrowse: UPLOAD_BROWSE_BUTTON_NAME,
-		UploadTotal: UPLOAD_TOTAL_LABEL,
-		ExtensionMessage: UPLOAD_EXTENSION_MESSAGE,
-		OverwriteMessage: UPLOAD_OVERWRITE_MESSAGE,
-		MaxSizeMessage: UPLOAD_MAX_SIZE_MESSAGE,
-		SecurityMessage: UPLOAD_SECURITY_MESSAGE
+		UploadBrowse: window.UPLOAD_BROWSE_BUTTON_NAME,
+		UploadTotal: window.UPLOAD_TOTAL_LABEL,
+		ExtensionMessage: window.UPLOAD_EXTENSION_MESSAGE,
+		OverwriteMessage: window.UPLOAD_OVERWRITE_MESSAGE,
+		MaxSizeMessage: window.UPLOAD_MAX_SIZE_MESSAGE,
+		SecurityMessage: window.UPLOAD_SECURITY_MESSAGE
 	};
 
 	return result;
 }
 
 Quantumart.QP8.BackendSilverlightUploader.registerClass("Quantumart.QP8.BackendSilverlightUploader", Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader);
-
-// #endregion

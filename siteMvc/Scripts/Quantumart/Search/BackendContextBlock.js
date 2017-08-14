@@ -1,5 +1,3 @@
-// #region class BackendContextBlock
-// === Класс "Блок переключения контекста статей" ===
 Quantumart.QP8.BackendContextBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
     Quantumart.QP8.BackendContextBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
     this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
@@ -29,8 +27,8 @@ Quantumart.QP8.BackendContextBlock.prototype
 
     _compute_searchBlockState: function () {
         var result = [];
-        jQuery('.contextSwitcher .stateField', this._searchBlockElement).each(function () {
-            var $item = jQuery(this);
+        $('.contextSwitcher .stateField', this._searchBlockElement).each(function () {
+            var $item = $(this);
             result.push({
                 Name: $item.prop("name"),
                 Value: $item.prop("value"),
@@ -51,7 +49,7 @@ Quantumart.QP8.BackendContextBlock.prototype
             var serverContent;
             $q.getJsonFromUrl(
 			"GET",
-			CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "ContextBlock/" + this._parentEntityId,
+			window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "ContextBlock/" + this._parentEntityId,
 			{
 			    actionCode: this._actionCode,
 			    hostId: this._hostId
@@ -70,16 +68,16 @@ Quantumart.QP8.BackendContextBlock.prototype
 			    $q.processGenericAjaxError(jqXHR);
 			});
             if (!$q.isNullOrWhiteSpace(serverContent)) {
-                jQuery(this._concreteSearchBlockElement).html(serverContent);
+                $(this._concreteSearchBlockElement).html(serverContent);
 
                 $c.initAllEntityDataLists(this._searchBlockElement);
 
                 this._restore_searchBlockState();
 
                 var self = this;
-                jQuery('.contextSwitcher').each(function () {
+                $('.contextSwitcher').each(function () {
                     var component = $(this).data("entity_data_list_component");
-                    component.attachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
+                    component.attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
                 });
             }
 
@@ -90,7 +88,7 @@ Quantumart.QP8.BackendContextBlock.prototype
 
     _onChangeCombo: function () {
         this._searchBlockState = this._compute_searchBlockState();
-        jQuery(this._findButtonElement).trigger("click");
+        $(this._findButtonElement).trigger("click");
     },
 
 
@@ -98,7 +96,7 @@ Quantumart.QP8.BackendContextBlock.prototype
         var state = this.get_searchBlockState();
         var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, JSON.stringify(state));
         eventArgs.set_searchBlockState(state);
-        this.notify(EVENT_TYPE_CONTEXT_BLOCK_FIND_START, eventArgs);
+        this.notify(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, eventArgs);
         eventArgs = null;
     },
 
@@ -108,17 +106,14 @@ Quantumart.QP8.BackendContextBlock.prototype
 
     dispose: function () {
         var self = this;
-        jQuery('.contextSwitcher').each(function () {
+        $('.contextSwitcher').each(function () {
             var component = $(this).data("entity_data_list_component");
-            component.detachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
+            component.detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
         });
 
         $c.destroyAllEntityDataLists(this._searchBlockElement);
-
         Quantumart.QP8.BackendContextBlock.callBaseMethod(this, "dispose");
     }
 };
 
 Quantumart.QP8.BackendContextBlock.registerClass("Quantumart.QP8.BackendContextBlock", Quantumart.QP8.BackendSearchBlockBase);
-
-// #endregion

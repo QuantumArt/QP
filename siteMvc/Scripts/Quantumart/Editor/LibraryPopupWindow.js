@@ -1,10 +1,10 @@
-// #region class Quantumart.QP8.LibraryPopupWindow
+
 Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
     Object.assign(this._options, options);
 	this._eventArgs = eventArgs;
 	this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(this._eventArgs, this._options);
-	this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this));
-	this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._libraryClosedHandler, this));
+	this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this));
+	this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._libraryClosedHandler, this));
 };
 
 Quantumart.QP8.LibraryPopupWindow.prototype
@@ -68,15 +68,14 @@ Quantumart.QP8.LibraryPopupWindow.prototype
 
 	dispose: function () {
 		if (this._selectPopupWindowComponent) {
-			this._selectPopupWindowComponent.detachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
-			this._selectPopupWindowComponent.detachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
+			this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
+			this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
 			this._selectPopupWindowComponent.closeWindow();
 			this._selectPopupWindowComponent.dispose();
 			this._selectPopupWindowComponent = null;
 		}
+
 		this._eventArgs = null;
 		this._options = null;
 	}
 };
-
-// #endregion

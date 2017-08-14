@@ -1,12 +1,7 @@
-// #region event types of IBackendUploader
-var EVENT_TYPE_LIBRARY_FILE_UPLOADED = 'OnLibraryFileUploaded';
-var EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED = 'OnLibraryAllFilesUploaded';
+window.EVENT_TYPE_LIBRARY_FILE_UPLOADED = 'OnLibraryFileUploaded';
+window.EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED = 'OnLibraryAllFilesUploaded';
 
-// #endregion
-
-// #region interface IBackendUploader
 Quantumart.QP8.IBackendUploader = function () { };
-
 Quantumart.QP8.IBackendUploader.prototype = {
   initialize: function () {
     $q.alertFail('initialize is not implemented');
@@ -23,10 +18,6 @@ Quantumart.QP8.IBackendUploader.prototype = {
 };
 
 Quantumart.QP8.IBackendUploader.registerInterface('Quantumart.QP8.IBackendUploader');
-
-// #endregion
-
-// #region class BackendUploaderEventArgs
 Quantumart.QP8.BackendUploaderEventArgs = function (fileNames) {
   Quantumart.QP8.BackendUploaderEventArgs.initializeBase(this);
 
@@ -42,6 +33,3 @@ Quantumart.QP8.BackendUploaderEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendUploaderEventArgs.registerClass('Quantumart.QP8.BackendUploaderEventArgs', Sys.EventArgs);
-
-// #endregion
-

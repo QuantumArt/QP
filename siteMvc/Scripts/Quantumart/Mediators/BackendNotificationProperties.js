@@ -1,15 +1,15 @@
 Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) {
-	var $root = jQuery('#' + rootElementId);
+	var $root = $('#' + rootElementId);
 
-	var $statusPanel = jQuery('.nfp-status-panel', $root);
-	var $senderNamePanel = jQuery('.nfp-senderNamePanel', $root);
-	var $senderEmailPanel = jQuery('.nfp-senderEmailPanel', $root);
-	var $externalPanel = jQuery('.nfp-externalPanel', $root);
+	var $statusPanel = $('.nfp-status-panel', $root);
+	var $senderNamePanel = $('.nfp-senderNamePanel', $root);
+	var $senderEmailPanel = $('.nfp-senderEmailPanel', $root);
+	var $externalPanel = $('.nfp-externalPanel', $root);
 
-	var $statusCheckBoxes = jQuery('.nfp-status', $root);
-	var $senderNameCheckbox = jQuery('.nfp-useDefaultSenderNameCheckbox', $root);
-	var $backendEmailCheckbox = jQuery('.nfp-useBackendEmailCheckbox', $root);
-	var $externalCheckbox = jQuery('.nfp-external', $root);
+	var $statusCheckBoxes = $('.nfp-status', $root);
+	var $senderNameCheckbox = $('.nfp-useDefaultSenderNameCheckbox', $root);
+	var $backendEmailCheckbox = $('.nfp-useBackendEmailCheckbox', $root);
+	var $externalCheckbox = $('.nfp-external', $root);
 
 	$statusCheckBoxes.bind("click", onStatusChanged);
 	$senderNameCheckbox.bind("click", onUseDefaultSenderNameChanged);

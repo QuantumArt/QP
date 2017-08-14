@@ -1,5 +1,3 @@
-// #region class BackendEntityGridManager
-// === Класс "Менеджер списков сущностей" ===
 Quantumart.QP8.BackendEntityGridManager = function () {
   Quantumart.QP8.BackendEntityGridManager.initializeBase(this);
 };
@@ -118,22 +116,16 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
 
   refreshGrid: function (gridElementId, options) {
     var grid = this.getGrid(gridElementId);
-
     if (grid) {
       grid.refreshGrid(options);
     }
-
-    grid = null;
   },
 
   resetGrid: function (gridElementId, options) {
     var grid = this.getGrid(gridElementId);
-
     if (grid) {
       grid.resetGrid(options);
     }
-
-    grid = null;
   },
 
   removeGrid: function (gridElementId) {
@@ -156,36 +148,32 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
 
   destroyGrid: function (gridElementId) {
     var grid = this.getGrid(gridElementId);
-
     if (grid != null) {
       if (grid.dispose) {
         grid.dispose();
       }
-
-      grid = null;
     }
   },
 
   onActionExecuted: function (eventArgs) {
     var entityTypeCode = eventArgs.get_entityTypeCode();
 
-    if (entityTypeCode != ENTITY_TYPE_CODE_SITE_FILE && entityTypeCode != ENTITY_TYPE_CODE_CONTENT_FILE) {
+    if (entityTypeCode != window.ENTITY_TYPE_CODE_SITE_FILE && entityTypeCode != window.ENTITY_TYPE_CODE_CONTENT_FILE) {
       var parentEntityId = eventArgs.get_parentEntityId();
       var actionTypeCode = eventArgs.get_actionTypeCode();
       var actionCode = eventArgs.get_actionCode();
       var entityId = eventArgs.get_entityId();
 
-      // main refresh
       if (eventArgs.get_isSaved()
-        || actionTypeCode == ACTION_TYPE_CODE_COPY
-        || actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_UNLOCK
+        || actionTypeCode == window.ACTION_TYPE_CODE_COPY
+        || actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_UNLOCK
         || eventArgs.get_isRemoving()
         || eventArgs.get_isArchiving()
         || eventArgs.get_isRestoring()
-        || actionCode == ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
+        || actionCode == window.ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
         var options = null;
 
-        if (eventArgs.get_isArchiving() || eventArgs.get_isRestoring() || eventArgs.get_isRemoving() || actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_UNLOCK) {
+        if (eventArgs.get_isArchiving() || eventArgs.get_isRestoring() || eventArgs.get_isRemoving() || actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_UNLOCK) {
           var removedIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [eventArgs.get_entityId()];
 
           options = { removedIds: removedIds };
@@ -194,38 +182,38 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
         this.refreshGridGroup(entityTypeCode, parentEntityId, options);
       } else if (eventArgs.get_isUpdated()
         || eventArgs.get_isLoaded()
-        || actionTypeCode == ACTION_TYPE_CODE_CANCEL
-        || actionTypeCode == ACTION_TYPE_CODE_CHANGE_LOCK) {
+        || actionTypeCode == window.ACTION_TYPE_CODE_CANCEL
+        || actionTypeCode == window.ACTION_TYPE_CODE_CHANGE_LOCK) {
         this.refreshGridGroupWithChecking(entityTypeCode, parentEntityId, entityId);
       }
 
       // additional refreshes
-      if (eventArgs.get_isUpdated() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE) {
-        this.refreshGridGroup(ENTITY_TYPE_CODE_ARTICLE_VERSION, entityId);
-      } else if ((eventArgs.get_isArchiving() || eventArgs.get_isRemoving()) && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE) {
-        this.refreshGridGroup(ENTITY_TYPE_CODE_ARCHIVE_ARTICLE, parentEntityId);
-      } else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
-        this.refreshGridGroup(ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
-      } else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-        parentEntityId = +$o.getParentEntityId(ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
-        this.refreshGridGroup(ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
-      } else if (actionTypeCode == ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE
-        || actionTypeCode == ACTION_TYPE_CHILD_ENTITY_MULTIPLE_REMOVE
-        || actionTypeCode == ACTION_TYPE_CHILD_ENTITY_REMOVE_ALL
-        || actionTypeCode == ACTION_TYPE_CHILD_ENTITY_REMOVE
+      if (eventArgs.get_isUpdated() && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE) {
+        this.refreshGridGroup(window.ENTITY_TYPE_CODE_ARTICLE_VERSION, entityId);
+      } else if ((eventArgs.get_isArchiving() || eventArgs.get_isRemoving()) && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE) {
+        this.refreshGridGroup(window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE, parentEntityId);
+      } else if (eventArgs.get_isRestoring() && entityTypeCode == window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
+        this.refreshGridGroup(window.ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
+      } else if (eventArgs.get_isRestored() && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+        parentEntityId = +$o.getParentEntityId(window.ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
+        this.refreshGridGroup(window.ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
+      } else if (actionTypeCode == window.ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE
+        || actionTypeCode == window.ACTION_TYPE_CHILD_ENTITY_MULTIPLE_REMOVE
+        || actionTypeCode == window.ACTION_TYPE_CHILD_ENTITY_REMOVE_ALL
+        || actionTypeCode == window.ACTION_TYPE_CHILD_ENTITY_REMOVE
       ) {
-        if (entityTypeCode == ENTITY_TYPE_CODE_CONTENT_PERMISSION) {
-          this.refreshGridGroup(ACTION_CODE_CHILD_CONTENT_PERMISSIONS, parentEntityId);
-          this.refreshGridGroup(ACTION_CODE_CONTENT_PERMISSIONS);
-        } else if (entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
-          this.refreshGridGroup(ACTION_CODE_CHILD_ARTICLE_PERMISSIONS, parentEntityId);
-          this.refreshGridGroup(ACTION_CODE_ARTICLE_PERMISSIONS);
+        if (entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_PERMISSION) {
+          this.refreshGridGroup(window.ACTION_CODE_CHILD_CONTENT_PERMISSIONS, parentEntityId);
+          this.refreshGridGroup(window.ACTION_CODE_CONTENT_PERMISSIONS);
+        } else if (entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
+          this.refreshGridGroup(window.ACTION_CODE_CHILD_ARTICLE_PERMISSIONS, parentEntityId);
+          this.refreshGridGroup(window.ACTION_CODE_ARTICLE_PERMISSIONS);
         }
       } else if (eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving()) {
-        if (entityTypeCode == ENTITY_TYPE_CODE_CONTENT_PERMISSION) {
-          this.refreshGridGroup(ACTION_CODE_CHILD_CONTENT_PERMISSIONS);
-        } else if (entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
-          this.refreshGridGroup(ACTION_CODE_CHILD_ARTICLE_PERMISSIONS);
+        if (entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_PERMISSION) {
+          this.refreshGridGroup(window.ACTION_CODE_CHILD_CONTENT_PERMISSIONS);
+        } else if (entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
+          this.refreshGridGroup(window.ACTION_CODE_CHILD_ARTICLE_PERMISSIONS);
         }
       }
     }
@@ -235,19 +223,13 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     Quantumart.QP8.BackendEntityGridManager.callBaseMethod(this, 'dispose');
 
     if (this._gridGroups) {
-      for (gridGroupCode in this._gridGroups) {
+      for (let gridGroupCode in this._gridGroups) {
         var gridGroup = this._gridGroups[gridGroupCode];
-
-        for (gridElementId in gridGroup) {
-          this.destroyGrid(gridElementId);
-        }
+        Object.keys(gridGroup).forEach(this.destroyGrid);
       }
-
-      this._gridGroups = null;
     }
 
     Quantumart.QP8.BackendEntityGridManager._instance = null;
-
     $q.collectGarbageInIE();
   }
 };
@@ -269,6 +251,4 @@ Quantumart.QP8.BackendEntityGridManager.destroyInstance = function () {
 };
 
 Quantumart.QP8.BackendEntityGridManager.registerClass('Quantumart.QP8.BackendEntityGridManager', Quantumart.QP8.Observable);
-
-// #endregion
 

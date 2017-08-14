@@ -7,14 +7,19 @@ module.exports = {
   ].map(require.resolve),
   globals: {
     _: false,
+    ko: false,
     $a: false,
     $c: false,
     $e: false,
     $l: false,
     $o: false,
     $q: false,
+    Sys: false,
+    Url: false,
     $ctx: false,
-    Quantumart: false
+    pmrpc: false,
+    Quantumart: false,
+    Silverlight: false
   },
   rules: {
     // 'func-name-matching': 'off',

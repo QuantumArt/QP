@@ -12,8 +12,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             },
             allowResizeCropArea: true,
             allowFileRewrite: true,
-            checkFileNameActionUrl: APPLICATION_ROOT_URL + "Library/CheckForCrop/",
-            cropResizeActionUrl: APPLICATION_ROOT_URL + "Library/Crop/",
+            checkFileNameActionUrl: window.APPLICATION_ROOT_URL + "Library/CheckForCrop/",
+            cropResizeActionUrl: window.APPLICATION_ROOT_URL + "Library/Crop/",
             resizeRange: { max: 3.0, min: 0.1 },
             onCompleteCallback: function () {
             	Sys.Debug.trace("imgCropResize: finished");
@@ -167,13 +167,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         _createSlider = function () {
             _slider = _$nouislider.noUiSlider({
                 range: {
-                    // size down
                     min: _parameters.resizeRange.min,
-
-                    // default
                     '50%': 1,
-
-                    // size up
                     max: _parameters.resizeRange.max
                 },
                 start: 1

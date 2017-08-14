@@ -1,4 +1,4 @@
-var EVENT_TYPE_CUSTOM_ACTION_CHANGED = "OnCustomActionChanged";
+window.EVENT_TYPE_CUSTOM_ACTION_CHANGED = "OnCustomActionChanged";
 
 Quantumart.QP8.BackendContextMenuManager = function () {
   Quantumart.QP8.BackendContextMenuManager.initializeBase(this);
@@ -12,7 +12,7 @@ Quantumart.QP8.BackendContextMenuManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    if (eventArgs && eventArgs.get_entityTypeCode() === ENTITY_TYPE_CODE_CUSTOM_ACTION && (eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving())) {
+    if (eventArgs && eventArgs.get_entityTypeCode() === window.ENTITY_TYPE_CODE_CUSTOM_ACTION && (eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving())) {
       this.notify(window.EVENT_TYPE_CUSTOM_ACTION_CHANGED, {});
     }
   }
@@ -34,4 +34,3 @@ Quantumart.QP8.BackendContextMenuManager.destroyInstance = function () {
 };
 
 Quantumart.QP8.BackendContextMenuManager.registerClass("Quantumart.QP8.BackendContextMenuManager", Quantumart.QP8.Observable);
-

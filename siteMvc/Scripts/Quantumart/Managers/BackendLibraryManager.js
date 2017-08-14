@@ -1,5 +1,3 @@
-// #region class BackendLibraryManager
-// === Класс "Менеджер библиотек" ===
 Quantumart.QP8.BackendLibraryManager = function () {
 	Quantumart.QP8.BackendLibraryManager.initializeBase(this);
 };
@@ -14,8 +12,8 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 	},
 
 	getLibraryGroupCode: function (fileTypeCode, folderId) {
-		var folderTypeCode = fileTypeCode == ENTITY_TYPE_CODE_SITE_FILE ? ENTITY_TYPE_CODE_SITE_FOLDER : ENTITY_TYPE_CODE_CONTENT_FOLDER;
-		var libraryActionCode = fileTypeCode == ENTITY_TYPE_CODE_SITE_FILE ? ACTION_CODE_SITE_LIBRARY : ACTION_CODE_CONTENT_LIBRARY;
+		var folderTypeCode = fileTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE ? window.ENTITY_TYPE_CODE_SITE_FOLDER : window.ENTITY_TYPE_CODE_CONTENT_FOLDER;
+		var libraryActionCode = fileTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE ? window.ACTION_CODE_SITE_LIBRARY : window.ACTION_CODE_CONTENT_LIBRARY;
 		var parentEntityId = $o.getParentEntityId(folderTypeCode, folderId);
 		return this.generateLibraryGroupCode(libraryActionCode, parentEntityId);
 	},
@@ -152,8 +150,8 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 		var entityTypeCode = eventArgs.get_entityTypeCode();
 		var actionTypeCode = eventArgs.get_actionTypeCode();
 		if (
-			(entityTypeCode == ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE)
-			&& ((eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving()) || actionTypeCode == ACTION_TYPE_CODE_ALL_FILES_UPLOADED || actionTypeCode == ACTION_TYPE_CODE_FILE_CROPPED)
+			(entityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE)
+			&& ((eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving()) || actionTypeCode == window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED || actionTypeCode == window.ACTION_TYPE_CODE_FILE_CROPPED)
 		) {
 			this.refreshLibraryGroup(entityTypeCode, eventArgs.get_parentEntityId());
 		}
@@ -163,26 +161,18 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 		Quantumart.QP8.BackendLibraryManager.callBaseMethod(this, "dispose");
 
 		if (this._libraryGroups) {
-			for (libraryGroupCode in this._libraryGroups) {
+			for (let libraryGroupCode in this._libraryGroups) {
 				var libraryGroup = this._libraryGroups[libraryGroupCode];
-
-				for (libraryElementId in libraryGroup) {
-					this.destroyLibrary(libraryElementId);
-				}
+        Object.keys(libraryGroup).forEach(this.destroyLibrary);
 			}
-
-			this._libraryGroups = null;
 		}
 
 		Quantumart.QP8.BackendLibraryManager._instance = null;
-
 		$q.collectGarbageInIE();
 	}
 };
 
 Quantumart.QP8.BackendLibraryManager._instance = null;
-
-// Возвращает экземпляр класса "Менеджер библиотек"
 Quantumart.QP8.BackendLibraryManager.getInstance = function () {
 	if (Quantumart.QP8.BackendLibraryManager._instance == null) {
 		Quantumart.QP8.BackendLibraryManager._instance = new Quantumart.QP8.BackendLibraryManager();
@@ -191,7 +181,6 @@ Quantumart.QP8.BackendLibraryManager.getInstance = function () {
 	return Quantumart.QP8.BackendLibraryManager._instance;
 };
 
-// Уничтожает экземпляр класса "Менеджер библиотек"
 Quantumart.QP8.BackendLibraryManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendLibraryManager._instance) {
 		Quantumart.QP8.BackendLibraryManager._instance.dispose();
@@ -199,5 +188,3 @@ Quantumart.QP8.BackendLibraryManager.destroyInstance = function () {
 };
 
 Quantumart.QP8.BackendLibraryManager.registerClass("Quantumart.QP8.BackendLibraryManager", Quantumart.QP8.Observable);
-
-// #endregion

@@ -1,5 +1,5 @@
-var EVENT_TYPE_ACTION_LINK_CLICK = "OnActionLinkClick";
-var EVENT_TYPE_ACTION_LINK_SELF_CLICK = "OnActionLinkSelfClick";
+window.EVENT_TYPE_ACTION_LINK_CLICK = "OnActionLinkClick";
+window.EVENT_TYPE_ACTION_LINK_SELF_CLICK = "OnActionLinkSelfClick";
 
 Quantumart.QP8.BackendActionLink = function (actionLinkElementId, options) {
   Quantumart.QP8.BackendActionLink.initializeBase(this);
@@ -203,14 +203,14 @@ Quantumart.QP8.BackendActionLink.prototype = {
           params.correct(action);
           var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
 
-          if (action.ActionType.Code === ACTION_TYPE_CODE_ADD_NEW) {
+          if (action.ActionType.Code === window.ACTION_TYPE_CODE_ADD_NEW) {
             eventArgs.set_context(Object.assign({ ctrlKey: e.ctrlKey || isMiddleClick }, eventArgs.get_context()));
           }
 
           if (action.IsInterface && actionTargetType == Quantumart.QP8.Enums.ActionTargetType.Self) {
-            this.notify(EVENT_TYPE_ACTION_LINK_SELF_CLICK, eventArgs);
+            this.notify(window.EVENT_TYPE_ACTION_LINK_SELF_CLICK, eventArgs);
           } else {
-            this.notify(EVENT_TYPE_ACTION_LINK_CLICK, eventArgs);
+            this.notify(window.EVENT_TYPE_ACTION_LINK_CLICK, eventArgs);
           }
 
           eventArgs = null;

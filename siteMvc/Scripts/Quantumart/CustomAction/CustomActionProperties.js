@@ -8,8 +8,8 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     var id = $entityTypesElement.val();
     if (id) {
       var code = Quantumart.QP8.BackendEntityType.getEntityTypeById(id).Code;
-      var testCodes = [ENTITY_TYPE_CODE_VIRTUAL_CONTENT, ENTITY_TYPE_CODE_VIRTUAL_ARTICLE, ENTITY_TYPE_CODE_VIRTUAL_FIELD];
-      var filter = jQuery.inArray(code, testCodes) > -1 ? "c.virtual_type <> 0" : "c.virtual_type = 0";
+      var testCodes = [window.ENTITY_TYPE_CODE_VIRTUAL_CONTENT, window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE, window.ENTITY_TYPE_CODE_VIRTUAL_FIELD];
+      var filter = $.inArray(code, testCodes) > -1 ? "c.virtual_type <> 0" : "c.virtual_type = 0";
       var obj = $contents.data("entity_data_list_component");
       if (obj) {
         var oldFilter = obj.getFilter();
@@ -22,19 +22,19 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
   }
 
   function updateActionList(selectedActions) {
-    var $list = jQuery('ul', $actionsElement);
+    var $list = $('ul', $actionsElement);
     $list.empty();
     var actions = selectedActions ? selectedActions.split(",") : null;
 
     var html = new $.telerik.stringBuilder();
-    var entityTypeId = jQuery("option:selected", $entityTypesElement).val();
+    var entityTypeId = $("option:selected", $entityTypesElement).val();
     var dictionary = Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary();
-    var pair = jQuery.grep(dictionary, function (item) {
+    var pair = $.grep(dictionary, function (item) {
  return item.EntityTypeId == entityTypeId;
 });
     if (pair && pair[0]) {
       var listItems = pair[0].ActionItems;
-      jQuery.each(listItems, function (i, item) {
+      $.each(listItems, function (i, item) {
         html.cat(String.format('<li><input id="SelectedActions[{0}]" class="checkbox chb-list-item qp-notChangeTrack" type="checkbox" value="{1}" name="SelectedActions[{0}]" ', i, item.Value))
           .catIf(' checked="checked" ', actions && actions.indexOf(item.Value) != -1)
           .cat('/> ')
@@ -48,9 +48,9 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     $list.show();
   }
 
-  var $entityTypesElement = jQuery("#" + entityTypesElementId),
-        $actionsElement = jQuery("#" + actionsElementId),
-    $contents = jQuery("#" + contentsElementId + "_list");
+  var $entityTypesElement = $("#" + entityTypesElementId),
+        $actionsElement = $("#" + actionsElementId),
+    $contents = $("#" + contentsElementId + "_list");
 
   $entityTypesElement.bind("change keyup", onEntityTypeChanged);
   setFilter();
@@ -77,9 +77,9 @@ Quantumart.QP8.CustomActionIsInterfaceSelectorObserver = function (isInterfaceEl
     }
   }
 
-  var $isInterface = jQuery('#' + isInterfaceElementId),
-  $actionWindowPanel = jQuery('#' + actionWindowPanelElementId),
-  $preActionPanel = jQuery('#' + preActionPanelElementId);
+  var $isInterface = $('#' + isInterfaceElementId),
+  $actionWindowPanel = $('#' + actionWindowPanelElementId),
+  $preActionPanel = $('#' + preActionPanelElementId);
 
   $isInterface.click(onIsInterfaceClicked);
 

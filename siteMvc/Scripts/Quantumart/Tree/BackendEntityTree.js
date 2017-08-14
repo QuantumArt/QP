@@ -1,18 +1,8 @@
-// ****************************************************************************
-// *** Компонент "Дерево сущностей"                     ***
-// ****************************************************************************
+window.EVENT_TYPE_ENTITY_TREE_DATA_BINDING = 'OnEntityTreeDataBinding';
+window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND = 'OnEntityTreeDataBound';
+window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING = 'OnEntityTreeActionExecuting';
+window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED = 'OnEntityTreeEntitySelected';
 
-// #region event types of entity tree
-// === Типы событий дерева сущностей ===
-var EVENT_TYPE_ENTITY_TREE_DATA_BINDING = 'OnEntityTreeDataBinding';
-var EVENT_TYPE_ENTITY_TREE_DATA_BOUND = 'OnEntityTreeDataBound';
-var EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING = 'OnEntityTreeActionExecuting';
-var EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED = 'OnEntityTreeEntitySelected';
-
-// #endregion
-
-// #region class BackendEntityTree
-// === Класс "Дерево сущностей" ===
 Quantumart.QP8.BackendEntityTree = function (treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
   Quantumart.QP8.BackendEntityTree.initializeBase(this, [treeElementId, options]);
   this._treeGroupCode = treeGroupCode;
@@ -208,9 +198,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
       $tree.delegate(this.NODE_NEW_CLICKABLE_SELECTORS, contextMenuEventType, this._onContextMenuHandler);
 
-      contextMenuComponent.attachObserver(EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onNodeContextMenuShowingHandler);
-      contextMenuComponent.attachObserver(EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onNodeContextMenuItemClickingHandler);
-      contextMenuComponent.attachObserver(EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onNodeContextMenuHiddenHandler);
+      contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onNodeContextMenuShowingHandler);
+      contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onNodeContextMenuItemClickingHandler);
+      contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onNodeContextMenuHiddenHandler);
 
       this._contextMenuComponent = contextMenuComponent;
     }
@@ -863,7 +853,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       eventArgs.set_entities(this.getSelectedEntities());
       eventArgs.set_parentEntityId(this._parentEntityId);
 
-      this.notify(EVENT_TYPE_ENTITY_TREE_DATA_BINDING, eventArgs);
+      this.notify(window.EVENT_TYPE_ENTITY_TREE_DATA_BINDING, eventArgs);
     }
 
     if (this._isDataLoaded) {
@@ -1159,5 +1149,3 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 };
 
 Quantumart.QP8.BackendEntityTree.registerClass('Quantumart.QP8.BackendEntityTree', Quantumart.QP8.BackendTreeBase);
-
-// #endregion

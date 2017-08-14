@@ -1,14 +1,14 @@
-var FILE_LIST_MODE_NAME_LIST = "FILE_LIST_MODE_NAME_LIST";
-var FILE_LIST_MODE_PREVIEW_LIST = "FILE_LIST_MODE_PREVIEW_LIST";
-var FILE_LIST_SELECT_MODE_MULTIPLE = "FILE_LIST_SELECT_MODE_MULTIPLE";
-var FILE_LIST_SELECT_MODE_SINGLE = "FILE_LIST_SELECT_MODE_SINGLE";
-var FILE_LIST_NAME_PAGE_SIZE = 60;
-var FILE_LIST_PREVIEW_PAGE_SIZE = 24;
-var FILE_LIST_ITEMS_PER_COLUMN = 20;
+window.FILE_LIST_MODE_NAME_LIST = "FILE_LIST_MODE_NAME_LIST";
+window.FILE_LIST_MODE_PREVIEW_LIST = "FILE_LIST_MODE_PREVIEW_LIST";
+window.FILE_LIST_SELECT_MODE_MULTIPLE = "FILE_LIST_SELECT_MODE_MULTIPLE";
+window.FILE_LIST_SELECT_MODE_SINGLE = "FILE_LIST_SELECT_MODE_SINGLE";
+window.FILE_LIST_NAME_PAGE_SIZE = 60;
+window.FILE_LIST_PREVIEW_PAGE_SIZE = 24;
+window.FILE_LIST_ITEMS_PER_COLUMN = 20;
 
-var EVENT_TYPE_FILE_LIST_DATA_BOUND = "OnFileListDataBound";
-var EVENT_TYPE_FILE_LIST_ACTION_EXECUTING = "OnFileListActionExecuting";
-var EVENT_TYPE_FILE_LIST_SELECTED = "OnFileNameSelected";
+window.EVENT_TYPE_FILE_LIST_DATA_BOUND = "OnFileListDataBound";
+window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING = "OnFileListActionExecuting";
+window.EVENT_TYPE_FILE_LIST_SELECTED = "OnFileNameSelected";
 
 Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, actionCode, contextMenuCode, viewMode, options) {
 	Quantumart.QP8.BackendFileList.initializeBase(this);
@@ -35,18 +35,18 @@ Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, ac
 		fileTypeId: "",
 		fileNameFilter: ""
 	};
-	if (this._viewMode == FILE_LIST_MODE_NAME_LIST) {
- this._currentDataQueryOptions.pageSize = FILE_LIST_NAME_PAGE_SIZE;
-} else if (this._viewMode == FILE_LIST_MODE_PREVIEW_LIST) {
- this._currentDataQueryOptions.pageSize = FILE_LIST_PREVIEW_PAGE_SIZE;
+	if (this._viewMode == window.FILE_LIST_MODE_NAME_LIST) {
+ this._currentDataQueryOptions.pageSize = window.FILE_LIST_NAME_PAGE_SIZE;
+} else if (this._viewMode == window.FILE_LIST_MODE_PREVIEW_LIST) {
+ this._currentDataQueryOptions.pageSize = window.FILE_LIST_PREVIEW_PAGE_SIZE;
 }
 };
 
 Quantumart.QP8.BackendFileList.prototype = {
 	_fileEntityTypeCode: 0,
 	_contextMenuCode: 0,
-	_viewMode: FILE_LIST_MODE_NAME_LIST,
-	_selectMode: FILE_LIST_SELECT_MODE_MULTIPLE,
+	_viewMode: window.FILE_LIST_MODE_NAME_LIST,
+	_selectMode: window.FILE_LIST_SELECT_MODE_MULTIPLE,
 	_actionCode: "",
 
 	_currentDataQueryOptions: null,
@@ -71,11 +71,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 
 	_onListViewSelected: function (eventType, sender, args) {
 		$(this._allSelectorElement).prop('checked', this._listViewComponent.isAllSelected());
-
-		this._raiseMultipleEventArgsEvent(EVENT_TYPE_FILE_LIST_SELECTED, args);
-
-		action = null;
-		eventArgs = null;
+		this._raiseMultipleEventArgsEvent(window.EVENT_TYPE_FILE_LIST_SELECTED, args);
 	},
 
 	_onContextMenuItemClicked: function (eventType, sender, args) {
@@ -85,10 +81,10 @@ Quantumart.QP8.BackendFileList.prototype = {
 
 	_loadData: function () {
 		var url = "";
-		if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_SITE_FILE) {
- url = CONTROLLER_URL_SITE + '_FileList';
-} else if (this._fileEntityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE) {
- url = CONTROLLER_URL_CONTENT + '_FileList';
+		if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
+ url = window.CONTROLLER_URL_SITE + '_FileList';
+} else if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
+ url = window.CONTROLLER_URL_CONTENT + '_FileList';
 } else {
  throw new Error('fileEntityTypeCode is unknown.');
 }
@@ -136,9 +132,6 @@ Quantumart.QP8.BackendFileList.prototype = {
 
 			this.notify(eventType, eventArgs);
 		}
-
-		action = null;
-		eventArgs = null;
 	},
 
 	initialize: function () {
@@ -150,8 +143,8 @@ Quantumart.QP8.BackendFileList.prototype = {
 		html.cat('<div class="fileList">')
 						.cat('<div class="fileListArea">')
 							.cat('<div class="fileListHeader">')
-								.catIf('<input type="checkbox" class="fileListAllSelector" />', this._selectMode == FILE_LIST_SELECT_MODE_MULTIPLE)
-								.catIf('<br />', this._selectMode == FILE_LIST_SELECT_MODE_SINGLE)
+								.catIf('<input type="checkbox" class="fileListAllSelector" />', this._selectMode == window.FILE_LIST_SELECT_MODE_MULTIPLE)
+								.catIf('<br />', this._selectMode == window.FILE_LIST_SELECT_MODE_SINGLE)
 							.cat('</div>')
 							.cat(String.format('<div class="fileListContent" id="{0}_fileListContent">{1}</div>', $listElement.attr('id'), $l.FileList.noRecords))
 						.cat('</div>')
@@ -159,31 +152,28 @@ Quantumart.QP8.BackendFileList.prototype = {
 					 .cat('</div>');
 		$listElement.html(html.string());
 
-		// пейджер
 		var pagerComponent = new Quantumart.QP8.BackendPager($listElement.find('.fileListPager').get(0));
 		pagerComponent.initialize();
-		pagerComponent.attachObserver(EVENT_TYPE_PAGE_NUMBER_CHANGED, jQuery.proxy(this._onPageNumberChanged, this));
+		pagerComponent.attachObserver(window.EVENT_TYPE_PAGE_NUMBER_CHANGED, $.proxy(this._onPageNumberChanged, this));
 		this._pagerComponent = pagerComponent;
 
-		// checkbox выбора всех файлов
 		var $allSelectorElement = $listElement.find('.fileListAllSelector');
-		$allSelectorElement.click(jQuery.proxy(this._onAllSelectorClicked, this));
+		$allSelectorElement.click($.proxy(this._onAllSelectorClicked, this));
 		this._allSelectorElement = $allSelectorElement.get(0);
 
-		// область view списка файлов
 		this._fileListContentElement = $listElement.find('.fileListContent').get(0);
 		var listViewComponent = null;
-		if (this._viewMode == FILE_LIST_MODE_NAME_LIST) {
+		if (this._viewMode == window.FILE_LIST_MODE_NAME_LIST) {
  listViewComponent = new Quantumart.QP8.BackendFileNameListView(this._fileListContentElement, this._contextMenuCode, this._selectMode, this._zIndex);
-} else if (this._viewMode == FILE_LIST_MODE_PREVIEW_LIST) {
+} else if (this._viewMode == window.FILE_LIST_MODE_PREVIEW_LIST) {
  listViewComponent = new Quantumart.QP8.BackendFilePreviewListView(this._fileListContentElement, this._contextMenuCode, this._selectMode, this._zIndex);
 } else {
  throw new Error('View Mode is unknown.');
 }
 
 		listViewComponent.initialize();
-		listViewComponent.attachObserver(EVENT_TYPE_FILE_LIST_SELECTED, jQuery.proxy(this._onListViewSelected, this));
-		listViewComponent.attachObserver(EVENT_TYPE_FILE_LIST_ACTION_EXECUTING, jQuery.proxy(this._onContextMenuItemClicked, this));
+		listViewComponent.attachObserver(window.EVENT_TYPE_FILE_LIST_SELECTED, $.proxy(this._onListViewSelected, this));
+		listViewComponent.attachObserver(window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING, $.proxy(this._onContextMenuItemClicked, this));
 		this._listViewComponent = listViewComponent;
 
 		pagerComponent = null;
@@ -230,18 +220,18 @@ Quantumart.QP8.BackendFileList.prototype = {
 			this._pagerComponent.redraw();
 		}
 
-		this._raiseMultipleEventArgsEvent(EVENT_TYPE_FILE_LIST_DATA_BOUND);
+		this._raiseMultipleEventArgsEvent(window.EVENT_TYPE_FILE_LIST_DATA_BOUND);
 	},
 
 	dispose: function () {
 		if (this._pagerComponent) {
-			this._pagerComponent.detachObserver(EVENT_TYPE_PAGE_NUMBER_CHANGED);
+			this._pagerComponent.detachObserver(window.EVENT_TYPE_PAGE_NUMBER_CHANGED);
 			this._pagerComponent.dispose();
 		}
 
 		if (this._listViewComponent) {
-			this._listViewComponent.detachObserver(EVENT_TYPE_FILE_LIST_SELECTED);
-			this._listViewComponent.detachObserver(EVENT_TYPE_FILE_LIST_ACTION_EXECUTING);
+			this._listViewComponent.detachObserver(window.EVENT_TYPE_FILE_LIST_SELECTED);
+			this._listViewComponent.detachObserver(window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING);
 			this._listViewComponent.dispose();
 		}
 
@@ -269,4 +259,3 @@ Quantumart.QP8.IBackendFileListView.prototype = {
 };
 
 Quantumart.QP8.IBackendFileListView.registerInterface("Quantumart.QP8.IBackendFileListView");
-

@@ -38,7 +38,6 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     this.isRun = false;
     this.restoring = true;
 
-    // определить ключи AutoSaver'а
     keyRegExp = new RegExp('^' + this._keyPrefix);
     autoSaverKeys = [];
     savedStates = [];
@@ -50,12 +49,10 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
       }
     }
 
-    // удалить из localStorage
     for (i = 0; i < autoSaverKeys.length; i++) {
       localStorage.removeItem(autoSaverKeys[i]);
     }
 
-    // дополнительная сортировка на предмет возможности восстановления (запрос на сервер)
     this._checkForRestoring(savedStates).done(jQuery.proxy(function (approvedStates) {
       var eventArgs, editorState, action, params;
       if (approvedStates.length > 0 && $q.confirmMessage($l.EntityEditorAutoSaver.restoreConfirmationRequest)) {
@@ -81,7 +78,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
           params = null;
           action = null;
           eventArgs._isWindow = false;
-          this.notify(EVENT_TYPE_AUTO_SAVER_ACTION_EXECUTING, eventArgs);
+          this.notify(window.EVENT_TYPE_AUTO_SAVER_ACTION_EXECUTING, eventArgs);
           eventArgs = null;
         }
       } else {
@@ -94,9 +91,8 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     }, this));
   },
 
-  // Обработчик события готовности инстанса редактора сущностей
   onEntityEditorReady: function (documentWrapperElementId) {
-    var editor = Quantumart.QP8.BackendEntityEditor.getComponent(jQuery('#' + documentWrapperElementId));
+    var editor = Quantumart.QP8.BackendEntityEditor.getComponent($('#' + documentWrapperElementId));
 
     if (editor && editor.allowAutoSave() && (this.restoring === true || editor.isFieldsValid() !== true)) {
       localStorage.setItem(
@@ -113,17 +109,15 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     }
   },
 
-  // Обработчик события закрытия инстанса редактора сущностей
   onEntityEditorDisposed: function (documentWrapperElementId) {
     if (this.isRun === true) {
       localStorage.removeItem(this._createKey(documentWrapperElementId));
     }
   },
 
-  // Обработчик события изменения значения поля
   onFieldChanged: function (fieldChangeInfo) {
     if (this.isRun === true) {
-      var editor = Quantumart.QP8.BackendEntityEditor.getComponent(jQuery('#' + fieldChangeInfo.documentWrapperElementId));
+      var editor = Quantumart.QP8.BackendEntityEditor.getComponent($('#' + fieldChangeInfo.documentWrapperElementId));
 
       if (editor && editor.allowAutoSave()) {
         var key = this._createKey(fieldChangeInfo.documentWrapperElementId);
@@ -155,7 +149,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
   // Обработчик события изменения состояния редактора, при котором необходимо полностью перечитать состояние
   onAllFieldInvalidate: function (documentWrapperElementId) {
     if (this.isRun === true) {
-      var editor = Quantumart.QP8.BackendEntityEditor.getComponent(jQuery('#' + documentWrapperElementId));
+      var editor = Quantumart.QP8.BackendEntityEditor.getComponent($('#' + documentWrapperElementId));
 
       if (editor && editor.allowAutoSave()) {
         var key = this._createKey(documentWrapperElementId);
@@ -170,9 +164,8 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     }
   },
 
-  // Возвращает состояние компонента EntityEditor
   _getEditorComponentState: function (documentWrapperElementId) {
-    var editor = Quantumart.QP8.BackendEntityEditor.getComponent(jQuery('#' + documentWrapperElementId));
+    var editor = Quantumart.QP8.BackendEntityEditor.getComponent($('#' + documentWrapperElementId));
 
     if (editor) {
       return {
@@ -242,7 +235,6 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     return dfr.promise();
   },
 
-  // Создает ключ
   _createKey: function (documentWrapperElementId) {
     return this._keyPrefix + '.' + documentWrapperElementId;
   },

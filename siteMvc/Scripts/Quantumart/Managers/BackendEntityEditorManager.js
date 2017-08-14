@@ -1,10 +1,8 @@
-// #region class BackendEntityEditorManager
-var EVENT_TYPE_ENTITY_EDITOR_IS_READY = "OnEntityEditorIsReady";
-var EVENT_TYPE_ENTITY_EDITOR_DISPOSED = "OnEntityEditorDisposed";
-var EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = "OnEntityEditorFieldChanged";
-var EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE = "OnEntityEditorAllFieldInvalidate";
+window.EVENT_TYPE_ENTITY_EDITOR_IS_READY = "OnEntityEditorIsReady";
+window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED = "OnEntityEditorDisposed";
+window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = "OnEntityEditorFieldChanged";
+window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE = "OnEntityEditorAllFieldInvalidate";
 
-// === Класс "Менеджер редакторов сущностей" ===
 Quantumart.QP8.BackendEntityEditorManager = function () {
 	Quantumart.QP8.BackendEntityEditorManager.initializeBase(this);
 };
@@ -144,18 +142,18 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 		var actionCode = eventArgs.get_actionCode();
 		var entityId = eventArgs.get_entityId();
 
-		if (actionCode == ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
+		if (actionCode == window.ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
 			var entityIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
 			var self = this;
 			jQuery.each(entityIds, function (index, id) {
-				self.refreshEditorGroup(ENTITY_TYPE_CODE_ARTICLE, id);
+				self.refreshEditorGroup(window.ENTITY_TYPE_CODE_ARTICLE, id);
 			});
-		} else if (actionTypeCode == ACTION_TYPE_CODE_CHANGE_LOCK) {
+		} else if (actionTypeCode == window.ACTION_TYPE_CODE_CHANGE_LOCK) {
 			this.refreshEditorGroup(entityTypeCode, entityId);
-		} else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+		} else if (eventArgs.get_isRestored() && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
 			var confirmMessageText = String.format($l.EntityEditor.autoRefreshConfirmMessageAfterArticleRestoring, entityId);
-			this.refreshEditorGroup(ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { confirmMessageText: confirmMessageText });
-		} else if (actionCode == ACTION_CODE_ENABLE_ARTICLES_PERMISSIONS && entityTypeCode == ENTITY_TYPE_CODE_CONTENT) {
+			this.refreshEditorGroup(window.ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { confirmMessageText: confirmMessageText });
+		} else if (actionCode == window.ACTION_CODE_ENABLE_ARTICLES_PERMISSIONS && entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT) {
 			this.refreshEditorGroup(entityTypeCode, entityId);
 		}
 	},
@@ -163,53 +161,45 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 	onEntityEditorReady: function (documentWrapperElementId) {
 		var eventArgs = new Sys.EventArgs();
 		eventArgs.documentWrapperElementId = documentWrapperElementId;
-		this.notify(EVENT_TYPE_ENTITY_EDITOR_IS_READY, eventArgs);
+		this.notify(window.EVENT_TYPE_ENTITY_EDITOR_IS_READY, eventArgs);
 	},
 
 	onEntityEditorDisposed: function (documentWrapperElementId) {
 		var eventArgs = new Sys.EventArgs();
 		eventArgs.documentWrapperElementId = documentWrapperElementId;
-		this.notify(EVENT_TYPE_ENTITY_EDITOR_DISPOSED, eventArgs);
+		this.notify(window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED, eventArgs);
 	},
 
 	onFieldValueChanged: function (args) {
 		var eventArgs = new Sys.EventArgs();
 		eventArgs.fieldChangeInfo = args;
-		this.notify(EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED, eventArgs);
+		this.notify(window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED, eventArgs);
 	},
 
 	onAllFieldInvalidate: function (documentWrapperElementId) {
 		var eventArgs = new Sys.EventArgs();
 		eventArgs.documentWrapperElementId = documentWrapperElementId;
-		this.notify(EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE, eventArgs);
+		this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE, eventArgs);
 	},
 
 	dispose: function () {
 		Quantumart.QP8.BackendEntityEditorManager.callBaseMethod(this, "dispose");
 
 		if (this._editorGroups) {
-			for (editorGroupCode in this._editorGroups) {
+			for (let editorGroupCode in this._editorGroups) {
 				var editorGroup = this._editorGroups[editorGroupCode];
-
-				for (documentWrapperElementId in editorGroup) {
-					this.destroyEditor(documentWrapperElementId);
-				}
-
+        Object.keys(editorGroup).forEach(this.destroyEditor);
 				delete this._editorGroups[editorGroupCode];
 			}
-
-			this._editorGroups = null;
 		}
 
 		Quantumart.QP8.BackendEntityEditorManager._instance = null;
-
 		$q.collectGarbageInIE();
 	}
 };
 
 Quantumart.QP8.BackendEntityEditorManager._instance = null;
 
-// Возвращает экземпляр класса "Менеджер редакторов сущностей"
 Quantumart.QP8.BackendEntityEditorManager.getInstance = function () {
 	if (Quantumart.QP8.BackendEntityEditorManager._instance == null) {
 		Quantumart.QP8.BackendEntityEditorManager._instance = new Quantumart.QP8.BackendEntityEditorManager();
@@ -218,7 +208,6 @@ Quantumart.QP8.BackendEntityEditorManager.getInstance = function () {
 	return Quantumart.QP8.BackendEntityEditorManager._instance;
 };
 
-// Уничтожает экземпляр класса "Менеджер редакторов сущностей"
 Quantumart.QP8.BackendEntityEditorManager.destroyInstance = function () {
 	if (Quantumart.QP8.BackendEntityEditorManager._instance) {
 		Quantumart.QP8.BackendEntityEditorManager._instance.dispose();
@@ -226,5 +215,3 @@ Quantumart.QP8.BackendEntityEditorManager.destroyInstance = function () {
 };
 
 Quantumart.QP8.BackendEntityEditorManager.registerClass("Quantumart.QP8.BackendEntityEditorManager", Quantumart.QP8.Observable);
-
-// #endregion

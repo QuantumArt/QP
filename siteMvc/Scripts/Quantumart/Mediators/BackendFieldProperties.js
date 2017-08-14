@@ -1,8 +1,7 @@
 Quantumart.QP8.FieldPropertiesMediator = function (tabId) {
-	var $root = jQuery("#" + tabId + "_editingForm");
+	var $root = $("#" + tabId + "_editingForm");
 	$root.find("input[name='Data.IsInteger']").on("click", onIntegerClick);
 	onIntegerClick();
-
 
 	function onIntegerClick() {
 		var isInteger = $root.find("input[name='Data.IsInteger']").prop("checked");
@@ -20,14 +19,14 @@ Quantumart.QP8.FieldPropertiesMediator = function (tabId) {
 };
 
 Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElementId, displayFieldSelectElementId, currentFieldIdHiddenElementId, listOrderSelectElementId) {
-    var contentPicker = jQuery("#" + relateToSelectElementId).data("entity_data_list_component"),
-        $displayFieldSelectElement = jQuery("#" + displayFieldSelectElementId),
-        $listOrderSelectElement = jQuery("#" + listOrderSelectElementId),
-        currentFieldId = jQuery("#" + currentFieldIdHiddenElementId).val(),
-        relateableFieldsUrl = CONTROLLER_URL_CONTENT + '_RelateableFields';
+    var contentPicker = $("#" + relateToSelectElementId).data("entity_data_list_component"),
+        $displayFieldSelectElement = $("#" + displayFieldSelectElementId),
+        $listOrderSelectElement = $("#" + listOrderSelectElementId),
+        currentFieldId = $("#" + currentFieldIdHiddenElementId).val(),
+        relateableFieldsUrl = window.CONTROLLER_URL_CONTENT + '_RelateableFields';
 
 	function onRelatedToChanged() {
-	    var selectedContentId = jQuery(contentPicker.getStateFieldElement()).val();
+	    var selectedContentId = $(contentPicker.getStateFieldElement()).val();
 
         if (!$q.isNullOrEmpty(selectedContentId)) {
         	$q.getJsonFromUrl(
@@ -74,7 +73,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
 
 
 	function dispose() {
-	    jQuery(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
+	    $(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
 	    contentPicker = null;
         $displayFieldSelectElement = null;
 	}
@@ -88,13 +87,13 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
 };
 
 Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElementId, classifierSelectElementId, aggregatedElementId, multiplePickerId) {
-    var contentPicker = jQuery("#" + relateToSelectElementId).data("entity_data_list_component"),
-        $classifierSelectElement = jQuery("#" + classifierSelectElementId),
-        $aggregatedElement = jQuery("#" + aggregatedElementId),
-		classifierFieldsUrl = CONTROLLER_URL_CONTENT + '_ClassifierFields';
+    var contentPicker = $("#" + relateToSelectElementId).data("entity_data_list_component"),
+        $classifierSelectElement = $("#" + classifierSelectElementId),
+        $aggregatedElement = $("#" + aggregatedElementId),
+		classifierFieldsUrl = window.CONTROLLER_URL_CONTENT + '_ClassifierFields';
 
     function onRelatedToChanged() {
-	    var selectedContentId = jQuery(contentPicker.getStateFieldElement()).val();
+	    var selectedContentId = $(contentPicker.getStateFieldElement()).val();
 		if (!$q.isNullOrEmpty(selectedContentId)) {
 			$q.getJsonFromUrl(
                 "GET",
@@ -133,7 +132,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 	}
 
 	function dispose() {
-	    jQuery(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
+	    $(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
 	    contentPicker = null;
 		$classifierSelectElement = null;
 		$aggregatedElement = null;
@@ -148,14 +147,13 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 
 
 Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId, O2MPickerListElementId, M2MPickerListElementId) {
-    var contentPicker = jQuery("#" + relateToSelectElementId).data("entity_data_list_component"),
+    var contentPicker = $("#" + relateToSelectElementId).data("entity_data_list_component"),
         singleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(O2MPickerListElementId),
         multipleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(M2MPickerListElementId + '_list');
 
 
 	function onRelatedToChanged() {
-        // Получить список полей контена
-	    var selectedContentId = jQuery(contentPicker.getStateFieldElement()).val();
+	    var selectedContentId = $(contentPicker.getStateFieldElement()).val();
 	    multipleItemPickerComponent.removeAllListItems();
 	    multipleItemPickerComponent.set_parentEntityId(selectedContentId);
         singleItemPickerComponent.set_parentEntityId(selectedContentId);
@@ -164,7 +162,7 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
 
 
 	function dispose() {
-	    jQuery(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
+	    $(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
 	    contentPicker = null;
         singleItemPickerComponent = null;
 	}
@@ -178,15 +176,15 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
 
 
 Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId, fileFieldElementId) {
-    var $fieldTypeSelectElement = jQuery("#" + fieldTypeSelectElementId),
-        $fileFieldElement = jQuery("#" + fileFieldElementId),
+    var $fieldTypeSelectElement = $("#" + fieldTypeSelectElementId),
+        $fileFieldElement = $("#" + fileFieldElementId),
         fileFieldComponent = $fileFieldElement.data("file_field");
 
     function onFieldTypeChanged() {
-        var fieldType = jQuery("option:selected", $fieldTypeSelectElement).val();
-        if (fieldType == FILE_FIELD_TYPE) {
+        var fieldType = $("option:selected", $fieldTypeSelectElement).val();
+        if (fieldType == window.FILE_FIELD_TYPE) {
             fileFieldComponent.set_isImage(false);
-        } else if (fieldType == IMAGE_FIELD_TYPE) {
+        } else if (fieldType == window.IMAGE_FIELD_TYPE) {
             fileFieldComponent.set_isImage(true);
         }
     }
@@ -207,22 +205,19 @@ Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId
 
 // Показывает/скрывает панели при выборе контента на который ссылается поле
 Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, panelsSelector, fieldContentID) {
-    var contentPicker = jQuery("#" + relateToSelectElementId).data("entity_data_list_component"),
-		$panels = jQuery(panelsSelector);
+    var contentPicker = $("#" + relateToSelectElementId).data("entity_data_list_component"),
+		$panels = $(panelsSelector);
 
 	function onRelatedToChanged() {
-		// Получить список полей контена
-	    var selectedContentId = jQuery(contentPicker.getStateFieldElement()).val();
+	    var selectedContentId = $(contentPicker.getStateFieldElement()).val();
 
 		if (!selectedContentId) {
-			// ничего не выбрано - закрываем все панели
 			$panels.hide();
 		} else if ($q.isNullOrEmpty(selectedContentId)) {
 				$panels.hide();
 			} else {
 				$panels.show();
 				if (selectedContentId == fieldContentID) {
-					// тот же контент
 					$panels.filter('[showforcurrent]').show();
 					$panels.filter('[hideforcurrent]').hide();
 				} else {
@@ -234,7 +229,7 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
 
 
 	function dispose() {
-	    jQuery(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
+	    $(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
 	    contentPicker = null;
 		$panels = null;
 	}

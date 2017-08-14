@@ -1,4 +1,3 @@
-// -- Компонент Action Log + Filter
 Quantumart.QP8.ActionLogComponent = function (filterElementId, gridElementId, actionTypes, entityTypes, actions) {
   this._filterElementId = filterElementId;
   this._gridElementId = gridElementId;
@@ -20,15 +19,15 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   _tiles: {},
 
   initialize: function () {
-    var $grid = jQuery("#" + this._gridElementId);
+    var $grid = $("#" + this._gridElementId);
     var gridComponent = $grid.data("tGrid");
-    var $filter = jQuery('#' + this._filterElementId);
+    var $filter = $('#' + this._filterElementId);
 
     $grid.unbind("dataBinding", gridComponent.onDataBinding)
        .bind("dataBinding", this._onDataBindingHandler);
 
-    jQuery('.alSearchButton', $filter).click(this._onApplyFilterHandler);
-    jQuery('.alResetButton', $filter).click(this._onClearFilterHandler);
+    $('.alSearchButton', $filter).click(this._onApplyFilterHandler);
+    $('.alResetButton', $filter).click(this._onClearFilterHandler);
 
 
     this.$filterCombo = $filter.find(".alFilterCombo")
@@ -46,15 +45,15 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
 
   _onApplyFilter: function () {
-    jQuery("#" + this._gridElementId)
+    $("#" + this._gridElementId)
       .data("tGrid")
       .ajaxRequest();
   },
 
   _onClearFilter: function () {
-    var $filter = jQuery('#' + this._filterElementId);
+    var $filter = $('#' + this._filterElementId);
     this._destroyAllTiles();
-    jQuery(".alSearchButton", this.$filter).trigger('click');
+    $(".alSearchButton", this.$filter).trigger('click');
 
     $filter = null;
   },
@@ -171,7 +170,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
           }
         }
       );
-      tileComponent.attachObserver(EVENT_TYPE_FILTER_TILE_CLOSE, jQuery.proxy(this._onTileClose, this));
+      tileComponent.attachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE, jQuery.proxy(this._onTileClose, this));
       tileComponent.initialize();
       this._tiles[options.value] = tileComponent;
       tileComponent = null;
@@ -181,7 +180,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   _destroyTile: function (tileType) {
     if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
       var tileComponent = this._tiles[tileType];
-      tileComponent.detachObserver(EVENT_TYPE_FILTER_TILE_CLOSE);
+      tileComponent.detachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE);
       tileComponent.dispose();
       $q.removeProperty(this._tiles, tileType);
       tileComponent = null;
@@ -197,14 +196,14 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   dispose: function () {
     this._destroyAllTiles();
 
-    var $grid = jQuery("#" + this._gridElementId);
-    var $filter = jQuery('#' + this._filterElementId);
+    var $grid = $("#" + this._gridElementId);
+    var $filter = $('#' + this._filterElementId);
 
     $grid.unbind("dataBinding");
     this._onDataBindingHandler = null;
 
-    jQuery('.alSearchButton', $filter).unbind();
-    jQuery('.alResetButton', $filter).unbind();
+    $('.alSearchButton', $filter).unbind();
+    $('.alResetButton', $filter).unbind();
     this._onApplyFilterHandler = null;
     this._onDataBindingHandler = null;
 

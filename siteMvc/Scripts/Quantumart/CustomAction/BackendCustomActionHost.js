@@ -1,6 +1,5 @@
-var EVENT_TYPE_EXTERNAL_ACTION_EXECUTING = "OnExternalActionExecuting";
+window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING = "OnExternalActionExecuting";
 
-// Компонент-хост. Обеспечивает взаимодействие с внешними системами (Custom Action)
 Quantumart.QP8.BackendCustomActionHost = function (hostId, options, manager) {
   Quantumart.QP8.BackendCustomActionHost.initializeBase(this);
 
@@ -21,7 +20,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
       isAsynchronous: true
     });
 
-    jQuery('#' + this._options.iframeElementId).attr("src", this._generateActionUrl());
+    $('#' + this._options.iframeElementId).attr("src", this._generateActionUrl());
   },
 
   _onExternalMessageReceived: function (message, successCallback) {
@@ -42,9 +41,9 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   onSelect: function () {
     var id = this._options.iframeElementId;
 
-    jQuery('#' + id).css("marginLeft", "1px");
+    $('#' + id).css("marginLeft", "1px");
     setTimeout(function () {
-      jQuery('#' + id).css("marginLeft", "0");
+      $('#' + id).css("marginLeft", "0");
     }, 0);
   },
 
@@ -86,7 +85,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     params = null;
     action = null;
 
-    this.notify(EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, eventArgs);
+    this.notify(window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, eventArgs);
     eventArgs = null;
   },
 
@@ -114,7 +113,6 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._popupWindowSelectedHandler, this));
     selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._popupWindowClosedHandler, this));
     selectPopupWindowComponent.openWindow();
-    eventArgs = null;
   },
 
   _popupWindowSelectedHandler: function (eventType, sender, args) {

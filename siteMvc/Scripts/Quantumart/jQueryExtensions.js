@@ -237,5 +237,5 @@
 		return testProps(props, prefixed);
 	};
 
-	jQuery.support.borderRadius = testPropsAll("borderRadius");
+	$.support.borderRadius = testPropsAll("borderRadius");
 }(jQuery));
