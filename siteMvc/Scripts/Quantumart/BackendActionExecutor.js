@@ -61,6 +61,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
               callback(window.BACKEND_ACTION_EXECUTION_STATUS_FAILED, eventArgs);
             };
 
+            let customData;
             let runAction = function () {
               if (isCustom) {
                 $q.getCustomActionJson(customData.Url, postParams, normalCallback, errorCallback);
@@ -94,7 +95,6 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
               }
             };
 
-            let customData;
             let getCustomUrlCallback = function (data) {
               if (data && data.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
                 $a.showResult(data);

@@ -1,19 +1,19 @@
 Quantumart.QP8.FieldPropertiesMediator = function (tabId) {
   let $root = $(`#${tabId}_editingForm`);
-  $root.find("input[name='Data.IsInteger']").on('click', onIntegerClick);
-  onIntegerClick();
-
-  function onIntegerClick() {
+  let onIntegerClick = function () {
     let isInteger = $root.find("input[name='Data.IsInteger']").prop('checked');
     $root.find("input[name='Data.IsLong']").closest('dl').toggle(isInteger);
     $root.find("input[name='Data.IsDecimal']").closest('dl').toggle(!isInteger);
-  }
+  };
 
-  function dispose() {
+  let dispose = function () {
     $root.find("input[name='Data.IsInteger']").off('click', onIntegerClick);
-  }
+  };
 
-  return  {
+  $root.find("input[name='Data.IsInteger']").on('click', onIntegerClick);
+  onIntegerClick();
+
+  return {
     dispose: dispose
   };
 };
@@ -101,26 +101,26 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
         true,
         false
       ).done((data) => {
-          if (data.success) {
-            $classifierSelectElement.empty();
-            if (!$q.isNullOrEmpty(data.data)) {
-              let html = new $.telerik.stringBuilder();
-              $(data.data).each(function () {
-                html
-                  .cat('<option value="')
-                  .cat(this.id)
-                  .cat('">')
-                  .cat(this.text)
-                  .cat('</option>');
-              });
-              $classifierSelectElement.append(html.string());
-            } else {
-              $classifierSelectElement.append('<option value=""></option>');
-            }
+        if (data.success) {
+          $classifierSelectElement.empty();
+          if (!$q.isNullOrEmpty(data.data)) {
+            let html = new $.telerik.stringBuilder();
+            $(data.data).each(function () {
+              html
+                .cat('<option value="')
+                .cat(this.id)
+                .cat('">')
+                .cat(this.text)
+                .cat('</option>');
+            });
+            $classifierSelectElement.append(html.string());
           } else {
-            $q.alertError(data.message);
+            $classifierSelectElement.append('<option value=""></option>');
           }
-        })
+        } else {
+          $q.alertError(data.message);
+        }
+      })
         .fail((jqXHR, textStatus, errorThrown) => {
           $q.processGenericAjaxError(jqXHR);
         });

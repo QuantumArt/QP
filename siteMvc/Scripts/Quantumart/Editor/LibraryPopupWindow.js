@@ -1,4 +1,3 @@
-
 Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
   Object.assign(this._options, options);
   this._eventArgs = eventArgs;

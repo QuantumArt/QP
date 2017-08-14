@@ -1,4 +1,3 @@
-
 Quantumart.QP8.BackendLogOnWindow = function () {
   Quantumart.QP8.BackendLogOnWindow.initializeBase(this);
 };

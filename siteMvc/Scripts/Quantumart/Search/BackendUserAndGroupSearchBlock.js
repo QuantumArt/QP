@@ -1,10 +1,11 @@
 Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, onApplyFilter) {
-  let userPicker = $('.pep-user-selector', $searchBlock).data('entity_data_list_component');
-  let groupPicker = $('.pep-group-selector', $searchBlock).data('entity_data_list_component');
 
   let $searchBlock = $(`#${searchBlockElementId}`);
   let $btnSearch = $('.pep-search-button', $searchBlock);
   let $radioGroup = $('.radioButtonsList', $searchBlock);
+
+  let userPicker = $('.pep-user-selector', $searchBlock).data('entity_data_list_component');
+  let groupPicker = $('.pep-group-selector', $searchBlock).data('entity_data_list_component');
 
   let getSearchData = function () {
     let users = userPicker.getSelectedEntities();
@@ -18,14 +19,14 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, 
     }
 
     return {};
-  }
+  };
 
   let dispose = function () {
     $(userPicker.getStateFieldElement()).off('change', onApplyFilter);
     $(groupPicker.getStateFieldElement()).off('change', onApplyFilter);
     $('li input', $radioGroup).off();
     $btnSearch.off();
-  }
+  };
 
   $c.initAllSwitcherLists($searchBlock);
   $c.initAllEntityDataLists($searchBlock);

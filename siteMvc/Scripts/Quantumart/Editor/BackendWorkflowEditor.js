@@ -111,9 +111,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       $(elem).data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
     }, this));
 
-    $('.workflow_radio').live('click', onRadioChanged);
-
-    function onRadioChanged() {
+    let onRadioChanged = function () {
       if ($(this).val() == 'User') {
         $(this).closest('fieldset').find('.workflow_group_row').hide();
         $(this).closest('fieldset').find('.workflow_user_row').show();
@@ -121,7 +119,9 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         $(this).closest('fieldset').find('.workflow_user_row').hide();
         $(this).closest('fieldset').find('.workflow_group_row').show();
       }
-    }
+    };
+
+    $('.workflow_radio').live('click', onRadioChanged);
     this._componentElem.data('workflow', this);
   },
 

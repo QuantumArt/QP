@@ -11,65 +11,53 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
   let $backendEmailCheckbox = $('.nfp-useBackendEmailCheckbox', $root);
   let $externalCheckbox = $('.nfp-external', $root);
 
-  $statusCheckBoxes.bind('click', onStatusChanged);
-  $senderNameCheckbox.bind('click', onUseDefaultSenderNameChanged);
-  $backendEmailCheckbox.bind('click', onUseBackendEmailChanged);
-  $externalCheckbox.bind('click', onExternalChanged);
-
-  function onExternalChanged() {
+  let onExternalChanged = function () {
     if ($externalCheckbox.is(':checked')) {
       $externalPanel.hide();
     } else {
       $externalPanel.show();
     }
-  }
+  };
 
-  function onUseBackendEmailChanged() {
+  let onUseBackendEmailChanged = function () {
     if ($backendEmailCheckbox.is(':checked')) {
       $senderEmailPanel.hide();
     } else {
       $senderEmailPanel.show();
     }
-  }
+  };
 
-  function onUseDefaultSenderNameChanged() {
+  let onUseDefaultSenderNameChanged = function () {
     if ($senderNameCheckbox.is(':checked')) {
       $senderNamePanel.hide();
     } else {
       $senderNamePanel.show();
     }
-  }
+  };
 
-  function onStatusChanged() {
+  let onStatusChanged = function () {
     if ($statusCheckBoxes.filter(':checked').length != 0) {
       $statusPanel.show();
     } else {
       $statusPanel.hide();
     }
-  }
+  };
 
-  function dispose() {
+  let dispose = function () {
     $statusCheckBoxes.unbind();
     $senderNameCheckbox.unbind();
     $backendEmailCheckbox.unbind();
-
-    $root = null;
-
-    $statusPanel = null;
-    $senderNamePanel = null;
-    $senderEmailPanel = null;
-    $externalPanel = null;
-
-    $statusCheckBoxes = null;
-    $senderNameCheckbox = null;
-    $backendEmailCheckbox = null;
-    $externalCheckbox = null;
-  }
+  };
 
   onStatusChanged();
   onUseDefaultSenderNameChanged();
   onUseBackendEmailChanged();
   onExternalChanged();
+
+  $statusCheckBoxes.bind('click', onStatusChanged);
+  $senderNameCheckbox.bind('click', onUseDefaultSenderNameChanged);
+  $backendEmailCheckbox.bind('click', onUseBackendEmailChanged);
+  $externalCheckbox.bind('click', onExternalChanged);
 
   return {
     dispose: dispose

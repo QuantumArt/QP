@@ -3,11 +3,6 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
   let $actionsElement = $(`#${actionsElementId}`);
   let $contents = $(`#${contentsElementId}_list`);
 
-  let onEntityTypeChanged = function () {
-    updateActionList();
-    setFilter();
-  };
-
   let setFilter = function () {
     let id = $entityTypesElement.val();
     if (id) {
@@ -50,6 +45,11 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
 
     $list.html(html.string());
     $list.show();
+  };
+
+  let onEntityTypeChanged = function () {
+    updateActionList();
+    setFilter();
   };
 
   $entityTypesElement.bind('change keyup', onEntityTypeChanged);

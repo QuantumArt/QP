@@ -11,19 +11,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   let $selectionIsStarting = $componentElem.find('.selection-is-starting .radioButtonsList');
   let $selectionIncludes = $componentElem.find('.selection-includes .radioButtonsList');
 
-  $componentElem.on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, window.CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
-  $parentObjectSelector.change($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
-  $overrideChkbx.click($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
-  $typeSelector.change(manageGlobalVisibility);
-
-  checkPublished();
-  if ($statusSelector.data('has-workflow') == 'False') {
-    $statusSelector.data('entity_data_list_component').disableList();
-  }
-
-  manageGlobalVisibility();
-
-  function onContentValueChanged(e, data) {
+  let onContentValueChanged = function (e, data) {
     if (data.value) {
       $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetFieldsByContentId`,
         {
@@ -55,13 +43,17 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
           }
         });
     }
-  }
+  };
 
-  function checkPublished() {
-    $statusSelector.find(`.multi-picker-item[value="${$statusSelector.data('published-id')}"]`).attr('checked', true);
-  }
+  let manageGlobalVisibility = function () {
+    if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(',').indexOf($typeSelector.val()) != -1) {
+      $globalChkbx.parent('.field').show();
+    } else {
+      $globalChkbx.parent('.field').hide();
+    }
+  };
 
-  function onParentTemplateObjectChanged() {
+  let onParentTemplateObjectChanged = function () {
     if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
       let objId = $parentObjectSelector.val();
       let targetObj = $(this.data('objects')).filter(function () {
@@ -73,27 +65,24 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
       $nameField.val('');
       $netNameField.val('');
     }
+  };
+
+  $componentElem.on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, window.CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
+  $parentObjectSelector.change($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
+  $overrideChkbx.click($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
+
+  $typeSelector.change(manageGlobalVisibility);
+  $statusSelector.find(`.multi-picker-item[value="${$statusSelector.data('published-id')}"]`).attr('checked', true);
+  if ($statusSelector.data('has-workflow') == 'False') {
+    $statusSelector.data('entity_data_list_component').disableList();
   }
 
+  manageGlobalVisibility();
 
-  function manageGlobalVisibility() {
-    if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(',').indexOf($typeSelector.val()) != -1) {
-      $globalChkbx.parent('.field').show();
-    } else {
-      $globalChkbx.parent('.field').hide();
-    }
-  }
-
-  function dispose() {
+  let dispose = function () {
     $componentElem.unbind();
     $parentObjectSelector.unbind();
-
-    $componentElem = null;
-    $parentObjectSelector = null;
-    $statusSelector = null;
-    $selectionIsStarting = null;
-    $selectionIncludes = null;
-  }
+  };
 
   return {
     dispose: dispose

@@ -3,22 +3,18 @@ Quantumart.QP8.BackendPagePropertiesMediator = function (rootElementId) {
   let $cacheHours = $componentElem.find('.cache-hours-container');
   let $displayCacheHours = $componentElem.find('.display-cache-hours');
 
-  manageCacheHours();
-
-  $displayCacheHours.change(manageCacheHours);
-
-  function manageCacheHours() {
+  let manageCacheHours = function () {
     if ($displayCacheHours.is(':checked')) {
       $cacheHours.show();
     } else {
       $cacheHours.hide();
     }
-  }
+  };
+
+  manageCacheHours();
+  $displayCacheHours.change(manageCacheHours);
 
   function dispose() {
-    $componentElem = null;
-    $cacheHours = null;
-    $displayCacheHours = null;
   }
 
   return {

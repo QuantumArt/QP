@@ -1,18 +1,48 @@
 Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
   function initialize() {
+    let executeAction = function (actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters) {
+      let action = $a.getBackendActionByCode(actionCode);
+      let params = new Quantumart.QP8.BackendActionParameters({
+        entityTypeCode: entityTypeCode,
+        entityId: entityId,
+        entityName: entityName,
+        parentEntityId: parentEntityId
+      });
+
+      let eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+      eventArgs.set_context({ additionalUrlParameters: additionalUrlParameters });
+      documentContext.getHost().onActionExecuting(eventArgs);
+    };
+
+    let onSubmit = function (e) {
+      e.preventDefault();
+      let $site = $(`#${siteElementId}`);
+      let siteId = $site.val();
+
+      if (siteId) {
+        let siteName = $site.text();
+        let text = $(`#${searchElementId}`).val();
+        executeAction('search_in_articles', 'site', siteId, siteName, 1, { query: text });
+      }
+    };
+
     let $search = $(`#${searchElementId}`);
     $search.wrap($('<div/>', { id: `${searchElementId}_wrapper`, class: 'fieldWrapper group myClass' }));
+
     let $wrapper = $search.parent('div');
     let $form = $search.parents('form');
     $form.on('submit', onSubmit);
+
     let $div = $('<div/>', {
       id: `${searchElementId}_preview`,
       class: 'previewButton',
       title: $l.Home.search
     });
+
     $div.append($('<img/>', { src: '/Backend/Content/Common/0.gif' }));
     $wrapper.append($div);
     $div.on('click', onSubmit);
+
     let $locked = $(`#${lockedElementId}`);
     let $loggedAs = $(`#${loggedAsElementId}`);
     let $approval = $(`#${approvalElementId}`);
@@ -40,41 +70,13 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
     });
   }
 
-  function onSubmit(e) {
-    e.preventDefault();
-    let $site = $(`#${siteElementId}`);
-    let siteId = $site.val();
-
-    if (siteId) {
-      let siteName = $site.text();
-      let text = $(`#${searchElementId}`).val();
-      executeAction('search_in_articles', 'site', siteId, siteName, 1, { query: text });
-    }
-  }
-
-  function executeAction(actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters) {
-    let action = $a.getBackendActionByCode(actionCode);
-
-    let params = new Quantumart.QP8.BackendActionParameters({
-      entityTypeCode: entityTypeCode,
-      entityId: entityId,
-      entityName: entityName,
-      parentEntityId: parentEntityId
-    });
-
-    let eventArgs = $a.getEventArgsFromActionWithParams(action, params);
-    eventArgs.set_context({ additionalUrlParameters: additionalUrlParameters });
-    documentContext.getHost().onActionExecuting(eventArgs);
-  }
-
-
-  function dispose() {
+  let dispose = function () {
     $(`#${searchElementId}`).siblings('.previewButton').off('click');
     $(`#${searchElementId}`).parents('form').off('sumbit');
     $(`#${lockedElementId}`).find('a').off('click');
     $(`#${loggedAsElementId}`).find('a').off('click');
     $(`#${approvalElementId}`).find('a').off('click');
-  }
+  };
 
   return {
     dispose: dispose,

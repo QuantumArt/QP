@@ -1,4 +1,3 @@
-
 window.EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGING = 'OnViewToolbarViewsDropDownListSelectedIndexChanging';
 window.EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED = 'OnViewToolbarViewsDropDownListSelectedIndexChanged';
 window.EVENT_TYPE_VIEW_TOOLBAR_PREVIEW_BUTTON_CLICKING = 'OnViewToolbarPreviewButtonClicking';

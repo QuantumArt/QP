@@ -584,17 +584,17 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 };
 
 $.telerik.treeview.getItemHtml = function (options) {
-    let item = options.item;
-    let html = options.html;
-    let isFirstLevel = options.isFirstLevel;
-    let groupLevel = options.groupLevel;
-    let itemIndex = options.itemIndex;
-    let itemsCount = options.itemsCount;
-    let absoluteIndex = new $.telerik.stringBuilder()
-      .cat(groupLevel)
-      .catIf(':', groupLevel)
-      .cat(itemIndex)
-      .string();
+  let item = options.item;
+  let html = options.html;
+  let isFirstLevel = options.isFirstLevel;
+  let groupLevel = options.groupLevel;
+  let itemIndex = options.itemIndex;
+  let itemsCount = options.itemsCount;
+  let absoluteIndex = new $.telerik.stringBuilder()
+    .cat(groupLevel)
+    .catIf(':', groupLevel)
+    .cat(itemIndex)
+    .string();
 
   html
     .cat('<li class="t-item')

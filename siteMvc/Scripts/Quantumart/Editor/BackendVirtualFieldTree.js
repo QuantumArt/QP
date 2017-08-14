@@ -32,12 +32,12 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
 
       let actionUrl = `${window.CONTROLLER_URL_VIRTUAL_CONTENT}GetChildFieldList`;
       let params = {
-          virtualContentId: this._virtualContentId,
-          joinedContentId: this._parentEntityId,
-          entityId: entityIdParam,
-          selectItemIDs: selectItemIDsParam,
-          parentAlias: alias
-        };
+        virtualContentId: this._virtualContentId,
+        joinedContentId: this._parentEntityId,
+        entityId: entityIdParam,
+        selectItemIDs: selectItemIDsParam,
+        parentAlias: alias
+      };
 
       $q.getJsonFromUrl(
         'POST',
