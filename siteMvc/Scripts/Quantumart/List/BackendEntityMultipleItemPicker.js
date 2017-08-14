@@ -123,11 +123,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _refreshListInner: function (dataItems, refreshOnly) {
-    let newSelectedIDs = $.map($.grep(dataItems, (di) => {
-      return di.Value;
-    }), (di) => {
-      return $q.toInt(di.Value);
-    });
+    let newSelectedIDs = $.map($.grep(dataItems, (di) => di.Value), (di) => $q.toInt(di.Value));
 
     let currentSelectedIDs = this.getSelectedEntityIDs();
     let selectedItemsIsChanged = newSelectedIDs.length != currentSelectedIDs.length || newSelectedIDs.length != _.union(newSelectedIDs, currentSelectedIDs).length;

@@ -101,9 +101,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
 
     if (this._extensions.length > 0) {
-      let extensions = $.map(this._extensions.split(';'), (val) => {
-        return val.toLowerCase();
-      });
+      let extensions = $.map(this._extensions.split(';'), (val) => val.toLowerCase());
 
       $.each(e.files, function () {
         if (Array.indexOf(extensions, this.extension.toLowerCase()) == -1) {

@@ -53,9 +53,7 @@
       protectedSource: [/<a[^>]*><\/a>/g, /<i[^>]*><\/i>/g, /<b[^>]*><\/b>/g, /<span[^>]*><\/span>/g],
       extraPlugins: 'Spellchecker,Typographer,codemirror',
       removePlugins: 'save,newpage,scayt,spellchecker,forms,language,smiley,iframe,about',
-      format_tags: opts.formatsSet.map((fs) => {
-        return fs.element;
-      }).join(';')
+      format_tags: opts.formatsSet.map((fs) => fs.element).join(';')
     };
 
     opts.extraPlugins.forEach((pl) => {

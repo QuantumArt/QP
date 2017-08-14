@@ -312,14 +312,10 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     if (levelCount > 1) {
       for (let levelIndex = levelCount - 2; levelIndex >= 0; levelIndex--) {
         let level = levels[levelIndex];
-        let nodeInfos = $.grep(parentNodeInfos, (parentNodeInfo) => {
-          return parentNodeInfo.level == level;
-        });
+        let nodeInfos = $.grep(parentNodeInfos, (parentNodeInfo) => parentNodeInfo.level == level);
 
         let nodeInfoCount = nodeInfos.length;
-        let childNodeInfos = $.grep(parentNodeInfos, (parentNodeInfo) => {
-          return parentNodeInfo.level > level;
-        });
+        let childNodeInfos = $.grep(parentNodeInfos, (parentNodeInfo) => parentNodeInfo.level > level);
 
         let childNodeInfoCount = childNodeInfos.length;
 
@@ -347,9 +343,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     $q.clearArray(levels);
 
     let self = this;
-    let parentNodeElems = $.map(parentNodeInfos, (parentNodeInfo) => {
-      return self.getNode(parentNodeInfo.nodeCode).get(0);
-    });
+    let parentNodeElems = $.map(parentNodeInfos, (parentNodeInfo) => self.getNode(parentNodeInfo.nodeCode).get(0));
 
     $q.clearArray(parentNodeInfos);
     return $q.toJQuery(parentNodeElems);

@@ -462,9 +462,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     let subItems = dataItem.Items;
 
     if (subItems.length > 1) {
-      let selectedSubItem = jQuery.grep(subItems, (subItem) => {
-        return subItem.Value == selectedSubItemValue;
-      })[0];
+      let selectedSubItem = jQuery.grep(subItems, (subItem) => subItem.Value == selectedSubItemValue)[0];
       if (!selectedSubItem) {
         selectedSubItem = subItems[0];
       }

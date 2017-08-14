@@ -885,9 +885,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
       let self = this;
       if (rowsData) {
-        this._selectedEntitiesIDs = $.map(rowsData.data, (dataItem) => {
-          return dataItem[self._keyColumnName];
-        });
+        this._selectedEntitiesIDs = $.map(rowsData.data, (dataItem) => dataItem[self._keyColumnName]);
       }
     }
   },
@@ -984,9 +982,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this._fixGridWidth();
 
     let self = this;
-    this._selectedEntitiesIDs = $.grep(this._selectedEntitiesIDs, (item) => {
-      return !Array.contains(self._removedIds, item);
-    });
+    this._selectedEntitiesIDs = $.grep(this._selectedEntitiesIDs, (item) => !Array.contains(self._removedIds, item));
 
     this._removedIds = [];
     let action = this._getCurrentAction();

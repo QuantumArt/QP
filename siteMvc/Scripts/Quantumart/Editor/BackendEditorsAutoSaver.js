@@ -126,9 +126,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
         if (!editorState) {
           editorState = this._getEditorComponentState(fieldChangeInfo.documentWrapperElementId);
         } else {
-          let fieldState = jQuery.grep(editorState.fieldValues, (v) => {
-            return v.fieldName === fieldChangeInfo.fieldName;
-          })[0];
+          let fieldState = jQuery.grep(editorState.fieldValues, (v) => v.fieldName === fieldChangeInfo.fieldName)[0];
 
           if (fieldState) {
             fieldState.value = fieldChangeInfo.value;
@@ -213,9 +211,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
             dfr.resolve(
 
               // Оставить только те записи, которые прошли проверку на сервере
-              jQuery.grep(stateRecords, (r) => {
-                return _.indexOf(data.approvedRecordIDs, r.recordId) > -1;
-              })
+              jQuery.grep(stateRecords, (r) => _.indexOf(data.approvedRecordIDs, r.recordId) > -1)
             );
           } else {
             dfr.resolve([]);

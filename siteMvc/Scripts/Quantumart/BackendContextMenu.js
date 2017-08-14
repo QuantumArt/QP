@@ -177,9 +177,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
         let menuItems = menu.Items;
         let menuItemCount = 0;
         if (menuItems != null) {
-          menuItems = $.grep(menuItems, (menuItem) => {
-            return !hideRefreshMenuItem || menuItem.ActionTypeCode != window.ACTION_TYPE_CODE_REFRESH;
-          });
+          menuItems = $.grep(menuItems, (menuItem) => !hideRefreshMenuItem || menuItem.ActionTypeCode != window.ACTION_TYPE_CODE_REFRESH);
 
           menuItemCount = menuItems.length;
         }

@@ -650,9 +650,7 @@ Quantumart.QP8.BackendActionExecutor.getActionViewByViewTypeCode = function (act
   let actionView = null;
 
   if (!$q.isNullOrEmpty(actionViews)) {
-    actionView = $.grep(actionViews, (actionView) => {
-      return actionView.ViewType.Code == viewTypeCode;
-    })[0];
+    actionView = $.grep(actionViews, (actionView) => actionView.ViewType.Code == viewTypeCode)[0];
   }
 
   return actionView;

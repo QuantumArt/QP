@@ -245,9 +245,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
               self._treeComponent.nodeToggle(null, $node, true);
             }
 
-            return _exp($.grep(node.ChildNodes, (n) => {
-              return n.ChildNodes != null;
-            })[0]) || node;
+            return _exp($.grep(node.ChildNodes, (n) => n.ChildNodes != null)[0]) || node;
           };
 
           _exp(data);
@@ -279,9 +277,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           }
         }
 
-        return findDeepest($.grep(node.ChildNodes, (n) => {
-          return n.ChildNodes != null;
-        })[0], toExpand) || node;
+        return findDeepest($.grep(node.ChildNodes, (n) => n.ChildNodes != null)[0], toExpand) || node;
 
       };
 
@@ -300,9 +296,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           return parent.ChildNodes;
         }
 
-        return findChildren(options, $.grep(parent.ChildNodes || [], (n) => {
-          return n.ChildNodes != null;
-        })[0]);
+        return findChildren(options, $.grep(parent.ChildNodes || [], (n) => n.ChildNodes != null)[0]);
       };
 
       if (deepestExistedNode) {
