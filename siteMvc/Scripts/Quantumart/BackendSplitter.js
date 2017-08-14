@@ -88,7 +88,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
 	onSplitterResizedHandler: null,
 
 	initialize: function () {
-		this._splitterComponent = jQuery('#' + this._splitterElementId);
+		this._splitterComponent = jQuery(`#${  this._splitterElementId}`);
 		var splitter = this._splitterComponent.data('tSplitter');
 		if (this._toWindowResize) {
 			jQuery(window).trigger('resize');

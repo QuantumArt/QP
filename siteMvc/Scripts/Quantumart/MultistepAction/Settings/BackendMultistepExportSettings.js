@@ -20,7 +20,7 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
   initActions: function () {
     var fieldValues = this.options._popupWindowComponent.loadHostState();
     var id = this.options._popupWindowId;
-    var $root = $('#' + id + '_editingForm');
+    var $root = $(`#${  id  }_editingForm`);
     $c.setAllBooleanValues($root, fieldValues);
     $c.setAllRadioListValues($root, fieldValues);
     $c.initAllCheckboxToggles($root);
@@ -30,7 +30,7 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
 
   validate: function () {
     var id = this.options._popupWindowId;
-    var $root = $('#' + id + '_editingForm');
+    var $root = $(`#${  id  }_editingForm`);
     var fieldValues = $c.getAllFieldValues($root);
     this.options._popupWindowComponent.saveHostState(fieldValues);
     return '';
@@ -38,7 +38,7 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
 
   dispose: function () {
     var id = this.options._popupWindowId;
-    var $root = $('#' + id + '_editingForm');
+    var $root = $(`#${  id  }_editingForm`);
     $c.destroyAllEntityDataLists($root);
     $c.destroyAllCheckboxToggles($root);
   }

@@ -63,7 +63,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
     if (!$q.isNull(leftSplitterPaneHeight)) {
       leftSplitterPaneHeight -= 46;
       if (leftSplitterPaneHeight > 0) {
-        $('#tree').css('height', leftSplitterPaneHeight + 'px');
+        $('#tree').css('height', `${leftSplitterPaneHeight  }px`);
         $('#menuContainer').show();
       }
     }
@@ -337,7 +337,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   scrollToNode: function (node) {
     var $node = this.getNode(node);
     if (!$q.isNullOrEmpty($node)) {
-      $('#' + this._treeContainerElementId).scrollTo($node, { offset: -100, duration: 300, axis: 'y' });
+      $(`#${  this._treeContainerElementId}`).scrollTo($node, { offset: -100, duration: 300, axis: 'y' });
     }
   },
 
@@ -551,7 +551,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   dispose: function () {
-    var $tree = $('#' + this._treeElementId);
+    var $tree = $(`#${  this._treeElementId}`);
     $tree.off('click', this.NODE_NEW_CLICKABLE_SELECTORS, this._onNodeClickingHandler);
 
     if (this._contextMenuManagerComponent != null) {
@@ -577,7 +577,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 };
 
 Quantumart.QP8.BackendTreeMenu.getTreeMenuNode = function (entityTypeCode, entityId, parentEntityId, isFolder, isGroup, groupItemCode, loadChildNodes, successHandler, errorHandler) {
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_TREE_MENU + 'GetNode', {
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_TREE_MENU  }GetNode`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId,
     parentEntityId: parentEntityId,
@@ -589,7 +589,7 @@ Quantumart.QP8.BackendTreeMenu.getTreeMenuNode = function (entityTypeCode, entit
 };
 
 Quantumart.QP8.BackendTreeMenu.getTreeMenuChildNodesList = function (options, successHandler, errorHandler) {
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_TREE_MENU + 'GetChildNodesList', {
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_TREE_MENU  }GetChildNodesList`, {
     entityTypeCode: options.entityTypeCode,
     parentEntityId: options.parentEntityId,
     isFolder: options.isFolder,
@@ -599,7 +599,7 @@ Quantumart.QP8.BackendTreeMenu.getTreeMenuChildNodesList = function (options, su
 };
 
 Quantumart.QP8.BackendTreeMenu.getSubTreeToEntity = function (entityTypeCode, parentEntityId, entityId, successHandler) {
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_TREE_MENU + 'GetSubTreeToEntity', {
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_TREE_MENU  }GetSubTreeToEntity`, {
     entityTypeCode: entityTypeCode,
     parentEntityId: parentEntityId,
     entityId: entityId

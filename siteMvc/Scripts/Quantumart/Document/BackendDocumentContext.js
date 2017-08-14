@@ -137,7 +137,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       $q.callFunction(this._initializedCallback, this);
     }
 
-    $q.trace('Created document context: ' + this._hostId, this);
+    $q.trace(`Created document context: ${  this._hostId}`, this);
   },
 
   getHost: function () {
@@ -411,7 +411,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   dispose: function () {
-    Sys.Debug.trace('terminatePage ' + this._hostId);
+    Sys.Debug.trace(`terminatePage ${  this._hostId}`);
     if (!this.needUp()) {
  $q.callFunction(this._terminatingCallback, this);
 }

@@ -1,5 +1,5 @@
 Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
-	var $parentElement = jQuery('#' + parentElementId);
+	var $parentElement = jQuery(`#${  parentElementId}`);
 	var $siteCombo = $parentElement.find('.qp-deffilter-site');
 	var contentPicker = $parentElement.find('.qp-deffilter-content').data('entity_data_list_component');
 	var articlePicker = $parentElement.find('.qp-deffilter-articles').data('entity_data_list_component');

@@ -35,7 +35,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     Quantumart.QP8.BackendEntityMultipleItemPicker.callBaseMethod(this, 'initialize');
 
     var $list = jQuery(this._listElement);
-    var countOverflowElement = $list.find('.' + this.OVERFLOW_HIDDEN_CLASS);
+    var countOverflowElement = $list.find(`.${  this.OVERFLOW_HIDDEN_CLASS}`);
     if (countOverflowElement.length > 0) {
       this._countOverflowElement = countOverflowElement.get(0);
     }
@@ -48,17 +48,17 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     this._addGroupCheckbox(hidden);
     this._syncGroupCheckbox();
 
-    var $pickButton = this._createToolbarButton(this._listElementId + '_PickButton', $l.EntityDataList.pickLinkButtonText, 'pick');
+    var $pickButton = this._createToolbarButton(`${this._listElementId  }_PickButton`, $l.EntityDataList.pickLinkButtonText, 'pick');
     this._addButtonToToolbar($pickButton);
 
-    var $clearButton = this._createToolbarButton(this._listElementId + '_ClearButton', $l.EntityDataList.clearUnmarkedLinkButtonText, 'deselectAll');
+    var $clearButton = this._createToolbarButton(`${this._listElementId  }_ClearButton`, $l.EntityDataList.clearUnmarkedLinkButtonText, 'deselectAll');
     this._addButtonToToolbar($clearButton);
 
     if (this._enableCopy) {
-      var $copyButton = this._createToolbarButton(this._listElementId + '_CopyButton', $l.EntityDataList.copyLinkButtonText, 'copy');
+      var $copyButton = this._createToolbarButton(`${this._listElementId  }_CopyButton`, $l.EntityDataList.copyLinkButtonText, 'copy');
       this._addButtonToToolbar($copyButton);
 
-      var $pasteButton = this._createToolbarButton(this._listElementId + '_PasteButton', $l.EntityDataList.pasteLinkButtonText, 'paste');
+      var $pasteButton = this._createToolbarButton(`${this._listElementId  }_PasteButton`, $l.EntityDataList.pasteLinkButtonText, 'paste');
       this._addButtonToToolbar($pasteButton);
     }
 
@@ -147,10 +147,10 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
           $(this._countOverflowElement).val(value);
         } else {
           var name = $list.data('list_item_name');
-          var html = '<input type="hidden" class="' + this.OVERFLOW_HIDDEN_CLASS + '" name="' + name + '" value = "' + value + '" />';
+          var html = `<input type="hidden" class="${  this.OVERFLOW_HIDDEN_CLASS  }" name="${  name  }" value = "${  value  }" />`;
           $ul.before(html);
 
-          this._countOverflowElement = $list.find('.' + this.OVERFLOW_HIDDEN_CLASS).get(0);
+          this._countOverflowElement = $list.find(`.${  this.OVERFLOW_HIDDEN_CLASS}`).get(0);
         }
       }
 
@@ -224,7 +224,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     var $checked = this.getListItems().find('INPUT:checkbox:checked');
     $checked.each(function (i, cb) {
       var $cb = $(cb);
-      $cb.siblings('input[name="' + $cb.prop('name') + '"]:hidden').val($cb.val());
+      $cb.siblings(`input[name="${  $cb.prop('name')  }"]:hidden`).val($cb.val());
     });
   },
 
@@ -262,16 +262,16 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     html
       .cat('<li>')
       .cat('<input type="checkbox"')
-      .cat(' name="' + $q.htmlEncode(itemElementName) + '"')
-      .cat(' id="' + $q.htmlEncode(itemElementId) + '"')
-      .cat(' value="' + $q.htmlEncode(itemValue) + '"')
+      .cat(` name="${  $q.htmlEncode(itemElementName)  }"`)
+      .cat(` id="${  $q.htmlEncode(itemElementId)  }"`)
+      .cat(` value="${  $q.htmlEncode(itemValue)  }"`)
       .cat(' class="checkbox multi-picker-item qp-notChangeTrack"')
       .cat(' checked="checked"')
       .catIf(' disabled ', this.isListDisabled())
       .cat('/> ')
-      .cat('<input type="hidden" value="false" name="' + $q.htmlEncode(itemElementName) + '"/>')
+      .cat(`<input type="hidden" value="false" name="${  $q.htmlEncode(itemElementName)  }"/>`)
       .cat(this._getIdLinkCode(itemValue))
-      .cat('<label for="' + $q.htmlEncode(itemElementId) + '">' + itemText + '</label>')
+      .cat(`<label for="${  $q.htmlEncode(itemElementId)  }">${  itemText  }</label>`)
       .cat('</li>');
   },
 

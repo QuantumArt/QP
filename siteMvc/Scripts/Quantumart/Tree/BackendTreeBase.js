@@ -83,7 +83,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   _onNodeCheckboxClickHandler: null,
 
   initialize: function () {
-    var $tree = $('#' + this._treeElementId);
+    var $tree = $(`#${  this._treeElementId}`);
     var treeComponent = $tree.data('tTreeView');
     treeComponent.isAjax = this.isAjax;
     treeComponent.ajaxRequest = this._onDataBindingHandler;
@@ -142,7 +142,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   getSelectedNodes: function () {
-    return this.getAllNodes().filter(':has(> DIV > SPAN.' + this.NODE_SELECTED_CLASS_NAME + ')');
+    return this.getAllNodes().filter(`:has(> DIV > SPAN.${  this.NODE_SELECTED_CLASS_NAME  })`);
   },
 
   getNode: function (node, parentNodeElem) {
@@ -151,14 +151,14 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     } else if ($q.isString(node) || $.isNumeric(node)) {
       let $parentNode = $(parentNodeElem);
       if ($q.isNullOrEmpty($parentNode)) {
-        $parentNode = $('#' + this._treeElementId);
+        $parentNode = $(`#${  this._treeElementId}`);
       }
 
       var $node = null;
       if (node == this.ROOT_NODE_CODE) {
-        $node = $('#' + this._treeElementId);
+        $node = $(`#${  this._treeElementId}`);
       } else {
-        $node = $("LI DIV INPUT:hidden[value='" + node + "']", $parentNode).parent().parent().filter('.t-item');
+        $node = $(`LI DIV INPUT:hidden[value='${  node  }']`, $parentNode).parent().parent().filter('.t-item');
         if ($node.length == 0) {
           $node = null;
         }
@@ -431,7 +431,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     var nodeIndex;
 
     if (this._treeComponent.showCheckBox === true) {
- nodeIndex = $(".t-checkbox input[type='hidden'][name='" + this._treeElementName + ".Index']", $node).val();
+ nodeIndex = $(`.t-checkbox input[type='hidden'][name='${  this._treeElementName  }.Index']`, $node).val();
 }
     return nodeIndex;
   },
@@ -489,10 +489,10 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       var $item = $(item).closest('.t-item'),
       $checkboxHolder = $('> div > .t-checkbox', $item),
       arrayName = $checkboxHolder.data('array_name');
-      index = $checkboxHolder.find(':input[name="' + arrayName + '.Index"]').val();
+      index = $checkboxHolder.find(`:input[name="${  arrayName  }.Index"]`).val();
 
-      $checkboxHolder.find(':input[name="' + arrayName + '[' + index + '].Text"]').remove();
-      $checkboxHolder.find(':input[name="' + arrayName + '[' + index + '].Value"]').remove();
+      $checkboxHolder.find(`:input[name="${  arrayName  }[${  index  }].Text"]`).remove();
+      $checkboxHolder.find(`:input[name="${  arrayName  }[${  index  }].Value"]`).remove();
 
       $checkboxHolder.find(':checkbox').attr({
         checked: isChecked ? true : false,
@@ -652,7 +652,7 @@ $.telerik.treeview.getItemHtml = function (options) {
     var navigateUrl = item.NavigateUrl || item.Url;
 
     html
-      .cat(navigateUrl ? '<a href="' + navigateUrl + '" class="t-link ' : '<span class="')
+      .cat(navigateUrl ? `<a href="${  navigateUrl  }" class="t-link ` : '<span class="')
       .cat('t-in')
       .catIf(' t-state-selected', item.Selected === true)
       .cat('">');
@@ -681,9 +681,9 @@ $.telerik.treeview.getItemHtml = function (options) {
 
   if (options.showIds) {
     if (options.makeLinksFromIds) {
-      html.cat('<span class="idLink">(<a class="js" href="javascript:void(0)">' + $q.htmlEncode(item.Value) + '</a>)</span>');
+      html.cat(`<span class="idLink">(<a class="js" href="javascript:void(0)">${  $q.htmlEncode(item.Value)  }</a>)</span>`);
     } else {
-      html.cat('<span class="idLink">(' + $q.htmlEncode(item.Value) + ')</span>');
+      html.cat(`<span class="idLink">(${  $q.htmlEncode(item.Value)  })</span>`);
     }
 
     html.cat(' ');

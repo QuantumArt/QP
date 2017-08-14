@@ -175,7 +175,7 @@ Quantumart.QP8.BackendFileField.prototype = {
     var path = this._libraryPath;
 
     if (this._uploaderSubFolder) {
-      path += '\\' + this._uploaderSubFolder;
+      path += `\\${  this._uploaderSubFolder}`;
     }
 
     if (this._uploaderComponent) {
@@ -205,7 +205,7 @@ Quantumart.QP8.BackendFileField.prototype = {
           url = '';
         }
 
-        url = url.replace(this._subFolder + '\\', '').replace(/\\/g, '\/');
+        url = url.replace(`${this._subFolder  }\\`, '').replace(/\\/g, '\/');
         $(this._fileFieldElement).val(url + entities[0].Name).trigger('change');
       }
     }
@@ -233,19 +233,19 @@ Quantumart.QP8.BackendFileField.prototype = {
     }
   },
   initialize: function () {
-    var $fileField = $('#' + this._fileFieldElementId);
+    var $fileField = $(`#${  this._fileFieldElementId}`);
 
     $fileField.data('file_field', this);
-    var $fileWrapper = $('#' + this._fileWrapperElementId);
-    var $browseButton = $fileWrapper.find('.' + this.BROWSE_BUTTON_CLASS_NAME + ':first');
-    var $previewButton = $fileWrapper.find('.' + this.PREVIEW_BUTTON_CLASS_NAME + ':first');
+    var $fileWrapper = $(`#${  this._fileWrapperElementId}`);
+    var $browseButton = $fileWrapper.find(`.${  this.BROWSE_BUTTON_CLASS_NAME  }:first`);
+    var $previewButton = $fileWrapper.find(`.${  this.PREVIEW_BUTTON_CLASS_NAME  }:first`);
 
     $previewButton.bind('click', this._onPreviewButtonClickHandler);
     this._showOrHidePreviewButton($fileField.val(), $previewButton);
-    var $libraryButton = $fileWrapper.find('.' + this.LIBRARY_BUTTON_CLASS_NAME + ':first');
+    var $libraryButton = $fileWrapper.find(`.${  this.LIBRARY_BUTTON_CLASS_NAME  }:first`);
 
     $libraryButton.bind('click', this._onLibraryButtonClickHandler);
-    var $downloadButton = $fileWrapper.find('.' + this.DOWNLOAD_BUTTON_CLASS_NAME + ':first');
+    var $downloadButton = $fileWrapper.find(`.${  this.DOWNLOAD_BUTTON_CLASS_NAME  }:first`);
 
     $downloadButton.bind('click', this._onDownloadButtonClickHandler);
 

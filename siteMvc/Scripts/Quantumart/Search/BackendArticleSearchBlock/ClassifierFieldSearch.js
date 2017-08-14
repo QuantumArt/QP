@@ -8,7 +8,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     _contentElement: null,
     initialize: function () {
       var serverContent;
-      $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'ContentsListForClassifier', {
+      $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }ContentsListForClassifier`, {
         elementIdPrefix: this._elementIdPrefix,
         fieldID: this._fieldID
       }, false, false, function (data, textStatus, jqXHR) {
@@ -23,17 +23,17 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
       });
 
       if (!$q.isNullOrWhiteSpace(serverContent)) {
-        var isNullCheckBoxID = this._elementIdPrefix + '_isNullCheckBox';
-        var contentID = this._elementIdPrefix + '_contentID';
+        var isNullCheckBoxID = `${this._elementIdPrefix  }_isNullCheckBox`;
+        var contentID = `${this._elementIdPrefix  }_contentID`;
 
         // полученную с сервера разметку добавить на страницу
         var $containerElement = $(this._containerElement);
         $containerElement.html(serverContent);
 
-        var $content = $containerElement.find('#' + contentID);
+        var $content = $containerElement.find(`#${  contentID}`);
 
         // назначить обработчик события change чекбоксу
-        var $isNullCheckBoxElement = $containerElement.find('#' + isNullCheckBoxID);
+        var $isNullCheckBoxElement = $containerElement.find(`#${  isNullCheckBoxID}`);
         $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
         // запомнить ссылку на dom-элементы
@@ -61,7 +61,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
       if (stateData.isNull) {
         return $l.SearchBlock.isNullCheckBoxLabelText;
       } else if (stateData.contentID) {
-        return $q.cutShort($(this._contentElement).find('[value=' + stateData.contentID + ']').text(), 12);
+        return $q.cutShort($(this._contentElement).find(`[value=${  stateData.contentID  }]`).text(), 12);
       }
         return '';
 

@@ -37,7 +37,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 					.cat('</a></div>')
 					.cat('<div ')
 						.cat(' class="closeButton"')
-						.cat(' title="' + $q.htmlEncode($l.SearchBlock.closeFieldSearchContainerButtonText) + '"')
+						.cat(` title="${  $q.htmlEncode($l.SearchBlock.closeFieldSearchContainerButtonText)  }"`)
 					.cat('>')
 					.cat('</div>')
 				.cat('</div>')
@@ -68,8 +68,8 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 				.cat('<form class="formLayout alFilter">')
 				.cat('<div class="filterContainer"></div>')
                 .cat('<div>')
-		    	.cat('<input class="button closeAndApplyFilter" type="button" value="' + $l.SearchBlock.closeAndApplyWndButtonText + '">')
-	            .cat('<input class="button closeFilter" type="button" value="' + $l.SearchBlock.closeWndButtonText + '">')
+		    	.cat(`<input class="button closeAndApplyFilter" type="button" value="${  $l.SearchBlock.closeAndApplyWndButtonText  }">`)
+	            .cat(`<input class="button closeFilter" type="button" value="${  $l.SearchBlock.closeWndButtonText  }">`)
 		    	.cat('</div>')
 				.cat('</form>')
 				.string();
@@ -109,7 +109,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 
 	_onCloseFilterWndClick: function () {
 		this._currentValue = this._filterComponent.get_value();
-		this.$filterDetailsSpanElement.html(': ' + this._filterComponent.get_filterDetails());
+		this.$filterDetailsSpanElement.html(`: ${  this._filterComponent.get_filterDetails()}`);
 		this._popupWindowComponent.close();
 	},
 

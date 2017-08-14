@@ -11,7 +11,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 
 		$q.getJsonFromUrl(
 			'GET',
-			window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'Identifier',
+			`${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }Identifier`,
 			{
 				elementIdPrefix: this._elementIdPrefix
 			},
@@ -30,23 +30,23 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 			}
 		);
 		if (!$q.isNullOrWhiteSpace(serverContent)) {
-		    var inverseCheckBoxID = this._elementIdPrefix + '_inverseCheckBox';
-			var numberFromID = this._elementIdPrefix + '_numberFrom';
-			var numberToID = this._elementIdPrefix + '_numberTo';
+		    var inverseCheckBoxID = `${this._elementIdPrefix  }_inverseCheckBox`;
+			var numberFromID = `${this._elementIdPrefix  }_numberFrom`;
+			var numberToID = `${this._elementIdPrefix  }_numberTo`;
 
 			var $containerElement = $(this._containerElement);
 			$containerElement.html(serverContent);
 
-			var $numberFrom = $containerElement.find('#' + numberFromID);
-			var $numberTo = $containerElement.find('#' + numberToID);
+			var $numberFrom = $containerElement.find(`#${  numberFromID}`);
+			var $numberTo = $containerElement.find(`#${  numberToID}`);
 			$numberFrom.focus(this._onNumericInputFocusHandler);
 			$numberTo.focus(this._onNumericInputFocusHandler);
 
 			this._numberFromElement = $numberFrom.get(0);
 			this._numberToElement = $numberTo.get(0);
-			this._textAreaElement = $containerElement.find('#' + this._elementIdPrefix + '_text').get(0);
+			this._textAreaElement = $containerElement.find(`#${  this._elementIdPrefix  }_text`).get(0);
 
-			var $inverseCheckBoxElement = $containerElement.find('#' + inverseCheckBoxID);
+			var $inverseCheckBoxElement = $containerElement.find(`#${  inverseCheckBoxID}`);
 			this._inverseCheckBoxElement = $inverseCheckBoxElement.get(0);
 
 			$(".radioButtonsList input[type='radio']", $containerElement).click(this._onByValueSelectorChangedHandler);
@@ -92,11 +92,11 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 		} else if (stateData.isByValue) {
 		    result = stateData.from ? stateData.from : '?';
 		} else {
-		    result = '[' + (stateData.from ? stateData.from : '?') + '..' + (stateData.to ? stateData.to : '?') + ']';
+		    result = `[${  stateData.from ? stateData.from : '?'  }..${  stateData.to ? stateData.to : '?'  }]`;
 		}
 
 		if (stateData.inverse) {
-		    result = $l.SearchBlock.notText + '(' + result + ')';
+		    result = `${$l.SearchBlock.notText  }(${  result  })`;
 		}
 
 		return result;
@@ -112,7 +112,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 
 			if (!$q.isNull(state.isByValue) && !$q.isNull(state.isByText)) {
 			    var value = state.isByText ? 2 : state.isByValue ? 0 : 1;
-			    $('.radioButtonsList input:radio[value=' + value + ']', this._containerElement).prop('checked', true).trigger('click');
+			    $(`.radioButtonsList input:radio[value=${  value  }]`, this._containerElement).prop('checked', true).trigger('click');
 			}
 
 			$(this._numberFromElement).data('tTextBox').value(state.from);
@@ -134,10 +134,10 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 			$(this._textAreaElement).closest('.row').hide();
 			$(this._numberFromElement).closest('.row').show();
 			$(this._numberToElement).closest('.row').hide();
-			$("label[for='" + $(this._numberFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.valueText);
+			$(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.valueText);
 		} else {
 			$(this._numberToElement).data('tTextBox').enable();
-			$("label[for='" + $(this._numberFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.fromText);
+			$(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.fromText);
 			$(this._textAreaElement).closest('.row').hide();
 			$(this._numberFromElement).closest('.row').show();
 			$(this._numberToElement).closest('.row').show();

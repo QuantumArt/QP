@@ -138,7 +138,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   initialize: function () {
-    var $tabStrip = $('#' + this._tabStripElementId);
+    var $tabStrip = $(`#${  this._tabStripElementId}`);
     var $scrollable = $('<div />', { class: 'scrollable' });
     var $tabList = $('<ul />', { class: 'tabList' });
     var $partialRemovedTabsContainer = $('<div />', { id: 'partialRemovedTabs', css: { display: 'none'} });
@@ -175,7 +175,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var $tabStrip = $(this._tabStripElement);
     let $menuButtonContainer = $(this._tabMenuButtonContainerElement);
     var newScrollableWidth = $tabStrip.width() - $menuButtonContainer.width();
-    $(this._tabStripScrollableElement).css('width', newScrollableWidth + 'px');
+    $(this._tabStripScrollableElement).css('width', `${newScrollableWidth  }px`);
   },
 
   markAsBusy: function () {
@@ -332,7 +332,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   getTabsByGroupCode: function (tabGroupCode) {
-    return $("> LI[groupCode='" + tabGroupCode + "'].tab", this._tabListElement);
+    return $(`> LI[groupCode='${  tabGroupCode  }'].tab`, this._tabListElement);
   },
 
   getTabsCountByGroupCode: function (tabGroupCode) {
@@ -368,7 +368,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   getFirstTabByGroupCode: function (tabGroupCode) {
-    var $tab = $("> LI[groupCode='" + tabGroupCode + "'].tab:first", this._tabListElement).eq(0);
+    var $tab = $(`> LI[groupCode='${  tabGroupCode  }'].tab:first`, this._tabListElement).eq(0);
     if ($tab.length == 0) {
       $tab = null;
     }
@@ -381,7 +381,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     if ($q.isObject(tab)) {
       return $q.toJQuery(tab);
     } else if ($q.isString(tab)) {
-      $tab = $(this._tabListElement).find('#' + tab);
+      $tab = $(this._tabListElement).find(`#${  tab}`);
       if ($tab.length == 0) {
         $tab = null;
       }
@@ -680,11 +680,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _getTabHtml: function (tabId, tabGroupCode) {
     var html = new $.telerik.stringBuilder();
     html
-      .cat('<li id="' + $q.htmlEncode(tabId) + '" groupCode="' + $q.htmlEncode(tabGroupCode) + '" class="tab">\n')
+      .cat(`<li id="${  $q.htmlEncode(tabId)  }" groupCode="${  $q.htmlEncode(tabGroupCode)  }" class="tab">\n`)
       .cat('  <a class="tabLink" href="javascript:void(0);">')
       .cat('<span class="wrapper">')
       .cat('<span class="text"></span>')
-      .cat('<span class="closeButton"><img src="' + window.COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif" /></span>')
+      .cat(`<span class="closeButton"><img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }0.gif" /></span>`)
       .cat('</span>')
       .cat('</a>')
       .cat('</li>\n');
@@ -832,7 +832,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       let $menuButtonContainer = $('<div />', { class: 'tabMenuButton' });
       var $menuButton = $('<span />');
       var $menuButtonImage = $('<img />', {
-        src: window.COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif',
+        src: `${window.COMMON_IMAGE_FOLDER_URL_ROOT  }0.gif`,
         css: { border: 'none' }
       });
 
@@ -974,21 +974,21 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var isTabTextTooLong = processedTabText.length > truncatedTabText.length;
     var text = $q.htmlEncode(truncatedTabText);
     if (dataItem.Selected) {
-      text = '<b>' + text + '</b>';
+      text = `<b>${  text  }</b>`;
     }
 
     html
-      .cat('<li code="' + $q.htmlEncode(dataItem.TabId) + '" class="item"')
-      .catIf(' title="' + $q.htmlEncode(processedTabText) + '"', isTabTextTooLong)
+      .cat(`<li code="${  $q.htmlEncode(dataItem.TabId)  }" class="item"`)
+      .catIf(` title="${  $q.htmlEncode(processedTabText)  }"`, isTabTextTooLong)
       .cat('>\n')
       .cat('  <div class="outerWrapper">\n')
       .cat('      <div class="innerWrapper">\n')
       .cat('          <span class="icon"')
-      .catIf(' style="background-image: url(' + window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon + ')"', !$q.isNullOrWhiteSpace(dataItem.Icon))
+      .catIf(` style="background-image: url(${  window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS  }${dataItem.Icon  })"`, !$q.isNullOrWhiteSpace(dataItem.Icon))
       .cat('>')
-      .cat('<img src="' + window.COMMON_IMAGE_FOLDER_URL_ROOT + '/0.gif" width="16px" height="16px" />')
+      .cat(`<img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }/0.gif" width="16px" height="16px" />`)
       .cat('</span>\n')
-      .cat('          <span class="text">' + text + '</span>\n')
+      .cat(`          <span class="text">${  text  }</span>\n`)
       .cat('      </div>\n')
       .cat('  </div>\n')
       .cat('</li>\n');
@@ -1022,13 +1022,13 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
     var $scrollable = $(this._tabMenuScrollableElement);
     if (menuHeight > this._maxTabMenuHeight) {
-      $scrollable.css({ height: this._maxTabMenuHeight + 'px', overflow: 'hidden' });
+      $scrollable.css({ height: `${this._maxTabMenuHeight  }px`, overflow: 'hidden' });
     } else {
       $scrollable.css({ height: 'auto', overflow: 'visible' });
     }
 
-    $menu.css('top', menuTop + 'px');
-    $menu.css('right', menuRight + 'px');
+    $menu.css('top', `${menuTop  }px`);
+    $menu.css('right', `${menuRight  }px`);
 
     $menu.fadeIn(200, function () {
       this._refreshTabMenuArrowButtons();
@@ -1446,7 +1446,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var CLOSE_ALL_CODE = 'close_all';
     var FIND_IN_TREE_CODE = 'find_in_tree';
 
-    var tabContextMenuElementId = this._tabStripElementId + '_tabContextMenu';
+    var tabContextMenuElementId = `${this._tabStripElementId  }_tabContextMenu`;
     var $menu = $('<ul />', { id: tabContextMenuElementId, class: 'contextMenu' });
     var menuItemsHtml = new $.telerik.stringBuilder();
     this._getTabMenuItemHtml(menuItemsHtml, {
@@ -1494,7 +1494,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
           this._findInTreeRequest($tab);
         }
       }, this)
-    }).data('jeegoocontext_' + tabContextMenuElementId);
+    }).data(`jeegoocontext_${  tabContextMenuElementId}`);
   },
 
   dispose: function () {

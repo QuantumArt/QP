@@ -150,7 +150,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   },
 
   initialize: function () {
-    var $searchBlock = $('#' + this._searchBlockElementId);
+    var $searchBlock = $(`#${  this._searchBlockElementId}`);
     var searchBlockExist = !$q.isNullOrEmpty($searchBlock);
     var searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
 
@@ -188,7 +188,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 
     if (!searchBlockExist) {
       if (!$q.isNullOrWhiteSpace(this._searchBlockContainerElementId)) {
-        $('#' + this._searchBlockContainerElementId).append($searchBlock);
+        $(`#${  this._searchBlockContainerElementId}`).append($searchBlock);
       } else {
         $('body:first').append($searchBlock);
       }
@@ -324,7 +324,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 };
 
 Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function () {
-    return 'q' + $q.generateRandomString(6);
+    return `q${  $q.generateRandomString(6)}`;
 };
 
 Quantumart.QP8.BackendSearchBlockBase.registerClass('Quantumart.QP8.BackendSearchBlockBase', Quantumart.QP8.Observable);

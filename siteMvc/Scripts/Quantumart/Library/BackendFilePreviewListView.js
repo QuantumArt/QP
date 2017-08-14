@@ -65,9 +65,9 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 			var url = '';
 
 			if (options.fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
- url = window.CONTROLLER_URL_THUMBNAIL + '_SiteFileThumbnail';
+ url = `${window.CONTROLLER_URL_THUMBNAIL  }_SiteFileThumbnail`;
 } else if (options.fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
- url = window.CONTROLLER_URL_THUMBNAIL + '_ContentFileThumbnail';
+ url = `${window.CONTROLLER_URL_THUMBNAIL  }_ContentFileThumbnail`;
 }
 
 			return $q.htmlEncode(String.format("'{0}?folderId={1}&fileName={2}&{3}'", url, options.folderId, item.FullName, new Date().getTime()));

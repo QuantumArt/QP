@@ -50,12 +50,12 @@ Quantumart.QP8.BackendPlUploader.prototype = {
   },
 
   _checkFileExistence: function _checkFileExistence(folderPath, fileName) {
-    var url = window.APPLICATION_ROOT_URL + 'Library/FileExists/';
+    var url = `${window.APPLICATION_ROOT_URL  }Library/FileExists/`;
     return $q.getJsonSync(url, { path: folderPath, name: fileName }).result;
   },
 
   _resolveFileName: function (path, fileName) {
-    var url = window.APPLICATION_ROOT_URL + 'Library/ResolveFileName/';
+    var url = `${window.APPLICATION_ROOT_URL  }Library/ResolveFileName/`;
     return $q.getJsonSync(url, { path: path, name: fileName }).result;
   },
 
@@ -81,7 +81,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
   _uploadProgressHandler: function (up, file) {
     this._progress.value(file.percent);
     this._progress.refresh();
-    this._progress.setText(file.name + ' ' + this._progress.value() + '%');
+    this._progress.setText(`${file.name  } ${  this._progress.value()  }%`);
     up.refresh();
   },
 
@@ -167,7 +167,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
       runtimes: 'html5,flash,html4,silverlight',
       browse_button: this._pickupButton.attr('id'),
       container: this._container.attr('id'),
-      max_file_size: window.MAX_UPLOAD_SIZE_BYTES + 'b',
+      max_file_size: `${window.MAX_UPLOAD_SIZE_BYTES  }b`,
       chunk_size: '1mb',
       debug: false,
       url: '/Backend/Upload/UploadChunk',

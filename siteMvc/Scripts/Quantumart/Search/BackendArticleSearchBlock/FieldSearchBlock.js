@@ -27,7 +27,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     var serverContent;
     $q.getJsonFromUrl(
       'GET',
-      window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'FieldSearchBlock',
+      `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }FieldSearchBlock`,
       {
         parentEntityId: this._parentEntityId,
         elementIdPrefix: this._elementIdPrefix
@@ -50,9 +50,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
       var $fieldSearchBlockElement = jQuery(this._fieldSearchBlockElement);
       $fieldSearchBlockElement.html(serverContent);
 
-      this._fieldSearchListElement = $fieldSearchBlockElement.find('#' + this._elementIdPrefix + '_FieldSearchList').get(0);
-      this._fieldsComboElement = $fieldSearchBlockElement.find('#' + this._elementIdPrefix + '_FieldsCombo').get(0);
-      this._addFieldSearchButtonElement = $fieldSearchBlockElement.find('#' + this._elementIdPrefix + '_AddFieldSearchButton').get(0);
+      this._fieldSearchListElement = $fieldSearchBlockElement.find(`#${  this._elementIdPrefix  }_FieldSearchList`).get(0);
+      this._fieldsComboElement = $fieldSearchBlockElement.find(`#${  this._elementIdPrefix  }_FieldsCombo`).get(0);
+      this._addFieldSearchButtonElement = $fieldSearchBlockElement.find(`#${  this._elementIdPrefix  }_AddFieldSearchButton`).get(0);
       this._attachFieldSearchBlockEventHandlers();
 
       $fieldSearchBlockElement = null;

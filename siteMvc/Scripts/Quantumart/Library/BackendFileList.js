@@ -82,9 +82,9 @@ Quantumart.QP8.BackendFileList.prototype = {
 	_loadData: function () {
 		var url = '';
 		if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
- url = window.CONTROLLER_URL_SITE + '_FileList';
+ url = `${window.CONTROLLER_URL_SITE  }_FileList`;
 } else if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
- url = window.CONTROLLER_URL_CONTENT + '_FileList';
+ url = `${window.CONTROLLER_URL_CONTENT  }_FileList`;
 } else {
  throw new Error('fileEntityTypeCode is unknown.');
 }

@@ -886,7 +886,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
   _executePostSelectActions: function () {
     if (this.articlesCountId) {
-      $('#' + this.articlesCountId).text(this._selectedEntitiesIDs.length);
+      $(`#${  this.articlesCountId}`).text(this._selectedEntitiesIDs.length);
     }
 
     this._raiseSelectEvent();

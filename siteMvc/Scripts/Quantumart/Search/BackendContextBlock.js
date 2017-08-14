@@ -49,7 +49,7 @@ Quantumart.QP8.BackendContextBlock.prototype
             var serverContent;
             $q.getJsonFromUrl(
 			'GET',
-			window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'ContextBlock/' + this._parentEntityId,
+			`${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }ContextBlock/${  this._parentEntityId}`,
 			{
 			    actionCode: this._actionCode,
 			    hostId: this._hostId

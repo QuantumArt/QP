@@ -22,7 +22,7 @@ Quantumart.QP8.BackendChildEntityPermissionList = function (searchBlockElementId
 	}
 
 	var searchBlockComponent = new Quantumart.QP8.BackendUserAndGroupSearchBlock(searchBlockElementId, jQuery.proxy(onApplyFilter, this));
-	var $searchBlock = jQuery('#' + searchBlockElementId);
+	var $searchBlock = jQuery(`#${  searchBlockElementId}`);
 	var $grid = jQuery('.pep-grid', $searchBlock);
 	var gridComponent = $grid.data('tGrid');
 

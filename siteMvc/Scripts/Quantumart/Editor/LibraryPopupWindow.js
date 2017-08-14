@@ -48,7 +48,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype
 }
 				var imgUrl = '';
 				if (this._options.contentId != 0) {
-				    imgUrl = this._options.libraryUrl.replace('images/', '') + 'contents/' + this._options.contentId + '/' + folderUrl + entities[0].Name;
+				    imgUrl = `${this._options.libraryUrl.replace('images/', '')  }contents/${  this._options.contentId  }/${  folderUrl  }${entities[0].Name}`;
 				} else {
 				    imgUrl = this._options.libraryUrl + folderUrl + entities[0].Name;
 				}

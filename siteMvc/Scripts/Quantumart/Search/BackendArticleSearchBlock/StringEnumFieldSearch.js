@@ -5,13 +5,13 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (conta
 
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     initialize: function () {
-        var queryDropDownListID = this._elementIdPrefix + '_queryDropDownList';
-        var isNullCheckBoxID = this._elementIdPrefix + '_isNullCheckBox';
+        var queryDropDownListID = `${this._elementIdPrefix  }_queryDropDownList`;
+        var isNullCheckBoxID = `${this._elementIdPrefix  }_isNullCheckBox`;
         var serverContent;
 
         $q.getJsonFromUrl(
             'GET',
-            window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'StringEnum',
+            `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }StringEnum`,
             {
                 elementIdPrefix: this._elementIdPrefix,
                 fieldID: this._fieldID
@@ -34,10 +34,10 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         if (!$q.isNullOrWhiteSpace(serverContent)) {
             var $containerElement = $(this._containerElement);
             $containerElement.html(serverContent);
-            var $isNullCheckBoxElement = $containerElement.find('#' + isNullCheckBoxID);
+            var $isNullCheckBoxElement = $containerElement.find(`#${  isNullCheckBoxID}`);
             $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
             this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
-            this._queryDropDownListElement = $containerElement.find('#' + queryDropDownListID).get(0);
+            this._queryDropDownListElement = $containerElement.find(`#${  queryDropDownListID}`).get(0);
 
             $containerElement = null;
             $isNullCheckBoxElement = null;
@@ -64,7 +64,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         if (stateData.isNull) {
             return $l.SearchBlock.isNullCheckBoxLabelText;
         } else if (stateData.text) {
-            return '"' + $q.cutShort(stateData.alias, 8) + '"';
+            return `"${  $q.cutShort(stateData.alias, 8)  }"`;
         }
             return '""';
 

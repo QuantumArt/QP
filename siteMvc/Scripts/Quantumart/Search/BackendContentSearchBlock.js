@@ -38,7 +38,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
 			var serverContent;
 			$q.getJsonFromUrl(
 			'GET',
-			window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK + 'SearchBlock/' + this._parentEntityId,
+			`${window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK  }SearchBlock/${  this._parentEntityId}`,
 			{
 				actionCode: this._actionCode,
 				hostId: this._hostId

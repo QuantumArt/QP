@@ -39,7 +39,7 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
           .catIf(' checked="checked" ', actions && actions.indexOf(item.Value) != -1)
           .cat('/> ')
           .cat(String.format('<input type="hidden" value="false" name="SelectedActions[{0}]" />', i))
-          .cat(String.format('<label for="SelectedActions[{0}]">', item.Value) + item.Text + '</label>')
+          .cat(`${String.format('<label for="SelectedActions[{0}]">', item.Value) + item.Text  }</label>`)
           .cat('</li>');
       });
     }
@@ -48,9 +48,9 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     $list.show();
   }
 
-  var $entityTypesElement = $('#' + entityTypesElementId),
-        $actionsElement = $('#' + actionsElementId),
-    $contents = $('#' + contentsElementId + '_list');
+  var $entityTypesElement = $(`#${  entityTypesElementId}`),
+        $actionsElement = $(`#${  actionsElementId}`),
+    $contents = $(`#${  contentsElementId  }_list`);
 
   $entityTypesElement.bind('change keyup', onEntityTypeChanged);
   setFilter();
@@ -77,9 +77,9 @@ Quantumart.QP8.CustomActionIsInterfaceSelectorObserver = function (isInterfaceEl
     }
   }
 
-  var $isInterface = $('#' + isInterfaceElementId),
-  $actionWindowPanel = $('#' + actionWindowPanelElementId),
-  $preActionPanel = $('#' + preActionPanelElementId);
+  var $isInterface = $(`#${  isInterfaceElementId}`),
+  $actionWindowPanel = $(`#${  actionWindowPanelElementId}`),
+  $preActionPanel = $(`#${  preActionPanelElementId}`);
 
   $isInterface.click(onIsInterfaceClicked);
 

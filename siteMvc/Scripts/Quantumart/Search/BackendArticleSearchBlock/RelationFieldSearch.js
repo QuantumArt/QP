@@ -14,7 +14,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (contain
 Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   initialize: function () {
     var serverContent;
-    $q.getJsonFromUrl('POST', window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'RelationSearch', {
+    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }RelationSearch`, {
         elementIdPrefix: this._elementIdPrefix,
         fieldID: this._fieldID,
         parentEntityId: this._parentEntityId,
@@ -35,17 +35,17 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       var $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
-      this._isNullCheckBoxElement = document.getElementById(this._elementIdPrefix + '_isNullCheckBox');
-      this._inverseCheckBoxElement = document.getElementById(this._elementIdPrefix + '_inverseCheckBox');
-      this._unionAllCheckBoxElement = document.getElementById(this._elementIdPrefix + '_unionAllCheckBox');
-      this._textAreaElement = document.getElementById(this._elementIdPrefix + '_relationTextArea');
+      this._isNullCheckBoxElement = document.getElementById(`${this._elementIdPrefix  }_isNullCheckBox`);
+      this._inverseCheckBoxElement = document.getElementById(`${this._elementIdPrefix  }_inverseCheckBox`);
+      this._unionAllCheckBoxElement = document.getElementById(`${this._elementIdPrefix  }_unionAllCheckBox`);
+      this._textAreaElement = document.getElementById(`${this._elementIdPrefix  }_relationTextArea`);
       this._entityContainerElement = $containerElement.find('#EntityContainer').get(0);
       this._textAreaContainerElement = $containerElement.find('#TextAreaContainer').get(0);
 
       $(this._isNullCheckBoxElement).on('change', this._onIsNullCheckBoxChangeHandler);
       $('.radioButtonsList input[type="radio"]', $containerElement).on('click', this._onSelectorChangeHandler);
-      $('.expandParentsButton', $containerElement).on('click', this._expandHierarchy(window.CONTROLLER_URL_ARTICLE + 'GetParentIds'));
-      $('.expandChildsButton', $containerElement).on('click', this._expandHierarchy(window.CONTROLLER_URL_ARTICLE + 'GetChildArticleIds'));
+      $('.expandParentsButton', $containerElement).on('click', this._expandHierarchy(`${window.CONTROLLER_URL_ARTICLE  }GetParentIds`));
+      $('.expandChildsButton', $containerElement).on('click', this._expandHierarchy(`${window.CONTROLLER_URL_ARTICLE  }GetChildArticleIds`));
       $containerElement.on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, this._onListContentChangedHandler);
 
       $(document).ready(this._onLoadHandler);
@@ -119,7 +119,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     }
 
     if (stateData.inverse && result != '') {
-      result = $l.SearchBlock.notText + '(' + result + ')';
+      result = `${$l.SearchBlock.notText  }(${  result  })`;
     }
 
     return result;
@@ -150,7 +150,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       }
 
       $(this._textAreaElement).val(state.text);
-      $('.radioButtonsList input:radio[value=' + (state.isEntity ? 0 : 1) + ']', this._containerElement).prop('checked', true).trigger('click');
+      $(`.radioButtonsList input:radio[value=${  state.isEntity ? 0 : 1  }]`, this._containerElement).prop('checked', true).trigger('click');
     }
   },
 

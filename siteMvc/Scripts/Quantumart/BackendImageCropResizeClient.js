@@ -12,94 +12,94 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             },
             allowResizeCropArea: true,
             allowFileRewrite: true,
-            checkFileNameActionUrl: window.APPLICATION_ROOT_URL + 'Library/CheckForCrop/',
-            cropResizeActionUrl: window.APPLICATION_ROOT_URL + 'Library/Crop/',
+            checkFileNameActionUrl: `${window.APPLICATION_ROOT_URL  }Library/CheckForCrop/`,
+            cropResizeActionUrl: `${window.APPLICATION_ROOT_URL  }Library/Crop/`,
             resizeRange: { max: 3.0, min: 0.1 },
             onCompleteCallback: function () {
             	Sys.Debug.trace('imgCropResize: finished');
             }
         },
 
-        _fieldsetCropHtml = "<fieldset class='crop'>\
-                <legend>" + $l.Crop.selection + '</legend>\
+        _fieldsetCropHtml = `<fieldset class='crop'>\
+                <legend>${  $l.Crop.selection  }</legend>\
                 <dl>\
-                    <dt>' + $l.Crop.left + "</dt>\
+                    <dt>${  $l.Crop.left  }</dt>\
                     <dd>\
                         <span class='selection-x'></span>\
                     </dd>\
                 </dl>\
                 <dl>\
 				<dl>\
-                    <dt>" + $l.Crop.top + "</dt>\
+                    <dt>${  $l.Crop.top  }</dt>\
                     <dd>\
                         <span class='selection-y' />\
                     </dd>\
                 </dl>\
                 <dl>\
-                    <dt>" + $l.Crop.width + "</dt>\
+                    <dt>${  $l.Crop.width  }</dt>\
                     <dd>\
                         <span class='selection-width' />\
                     </dd>\
                 </dl>\
                 <dl>\
-                    <dt>" + $l.Crop.height + "</dt>\
+                    <dt>${  $l.Crop.height  }</dt>\
                     <dd>\
                         <span class='selection-height' />\
                     </dd>\
                 </dl>\
-            </fieldset>",
+            </fieldset>`,
 
-        _fieldsetSliderHtml = "<fieldset class='slider'>\
-                <legend>" + $l.Crop.changeSize + "</legend>\
+        _fieldsetSliderHtml = `<fieldset class='slider'>\
+                <legend>${  $l.Crop.changeSize  }</legend>\
                 <div>\
                     <span class='slider-value'>x1</span>\
                     <div class='right'>\
                         <div class='nouislider' />\
                     </div>\
                 </div>\
-            </fieldset>",
+            </fieldset>`,
 
-        _fieldsetSaveHtml = "<form class='saveForm'><fieldset class='save'>\
-                <legend>" + $l.Crop.save + "</legend>\
+        _fieldsetSaveHtml = `<form class='saveForm'><fieldset class='save'>\
+                <legend>${  $l.Crop.save  }</legend>\
                 <dl class='row'>\
                     <dd class='save-items'>\
-                        <input class='button-save' type='button' value='" + $l.Crop.save + "' />\
+                        <input class='button-save' type='button' value='${  $l.Crop.save  }' />\
                     </dd>\
                 </dl>\
-            </fieldset></form>",
+            </fieldset></form>`,
 
-        _saveOverwriteOrSaveAsHtml = "<div class='save-overwrite'>\
+        _saveOverwriteOrSaveAsHtml = `<div class='save-overwrite'>\
                             <ul class='formItem'>\
                                 <li>\
                                     <input id='overwrite_0' class='image-overwrite' name='overwrite' checked='checked' type='radio' value='true' />\
-                                    <label for='overwrite_0'>" + $l.Crop.overwrite + "</label>\
+                                    <label for='overwrite_0'>${  $l.Crop.overwrite  }</label>\
                                 </li>\
                                 <li>\
                                     <input id='overwrite_1' class='image-save-copy' name='overwrite' type='radio' value='false' />\
-                                    <label for='overwrite_1'>" + $l.Crop.saveAs + "</label>\
+                                    <label for='overwrite_1'>${  $l.Crop.saveAs  }</label>\
                                 </li>\
                                 <li>\
                                     <input class='filename-input' type='text' disabled='disabled' />\
                                 </li>\
                             </ul>\
-                        </div>",
+                        </div>`,
 
-         _saveOverwriteHtml = "<div class='save-overwrite'>\
+         _saveOverwriteHtml = `<div class='save-overwrite'>\
                             <ul class='formItem'>\
                                 <li>\
-                                    <label>" + $l.Crop.saveAs + "</label>\
+                                    <label>${  $l.Crop.saveAs  }</label>\
                                 </li>\
                                 <li>\
                                     <input class='filename-input' type='text' />\
                                 </li>\
                             </ul>\
-                        </div>",
+                        </div>`,
 
-        _fieldsetErrorsContainerHtml = "<fieldset class='errorsContainer' style='display: none;'>\
-                <legend>" + $l.Crop.errors + "</legend>\
+        _fieldsetErrorsContainerHtml = `<fieldset class='errorsContainer' style='display: none;'>\
+                <legend>${  $l.Crop.errors  }</legend>\
                 <ul class='errors'>\
                 </ul>\
-            </fieldset>",
+            </fieldset>`,
 
 		_parameters = null,
          _$windowElement = null,
@@ -140,7 +140,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         },
 
         _onSlide = function (resize) {
-            _$sliderValueSpan.text('x' + resize);
+            _$sliderValueSpan.text(`x${  resize}`);
 
             var resizeWidth = _imgInitWidth * resize;
             var resizeHeight = _imgInitHeight * resize;
@@ -159,7 +159,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         },
 
         _resizeImage = function (resizeWidth) {
-        	_$img[0].style.width = Math.floor(resizeWidth) + 'px';
+        	_$img[0].style.width = `${Math.floor(resizeWidth)  }px`;
         	_setSize(_$img);
         	setTimeout(_imgAreaSelect.update(), 0);
         },
@@ -179,7 +179,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                     _onSlide(val);
                 },
                 set: function (slider, val) {
-                    _$sliderValueSpan.text('x' + val);
+                    _$sliderValueSpan.text(`x${  val}`);
                     _onSlide(val);
                 }
             });
@@ -271,10 +271,10 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             	var winHeight = Math.min(height, $(window).height() * 0.8);
             	var imgContainerWidth = winWidth - _$aside.width() - padding;
             	var imgContainerHeight = winHeight - padding;
-            	_$windowElement.find('.t-content').css('width', winWidth + 'px');
-            	_$windowElement.find('.t-content').css('height', winHeight + 'px');
-            	_$windowElement.find('.image').css('width', imgContainerWidth + 'px');
-            	_$windowElement.find('.image').css('height', imgContainerHeight + 'px');
+            	_$windowElement.find('.t-content').css('width', `${winWidth  }px`);
+            	_$windowElement.find('.t-content').css('height', `${winHeight  }px`);
+            	_$windowElement.find('.image').css('width', `${imgContainerWidth  }px`);
+            	_$windowElement.find('.image').css('height', `${imgContainerHeight  }px`);
             }
         },
         _createWindow = function () {
@@ -428,8 +428,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             _$wincontent = $("<div class='imgCropResize content-container' />");
             _$aside = $(" <div class='aside'></div>");
             _$imageContainerDiv = $("<div class='image'/>");
-            var url = _parameters.sourceImageUrl + '?t=' + new Date().getTime();
-            _$img = $("<img class='img' src='" + url + "' alt='изображение' />");
+            var url = `${_parameters.sourceImageUrl  }?t=${  new Date().getTime()}`;
+            _$img = $(`<img class='img' src='${  url  }' alt='изображение' />`);
             _$img.load(function () {
             	_imgInitWidth = _$img.width();
             	_imgInitHeight = _$img.height();
@@ -536,7 +536,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     var displayErrors = function (errors) {
         _removeErrors();
         for (var i in errors) {
-            _$errors.append($('<li>' + errors[i] + '</li>'));
+            _$errors.append($(`<li>${  errors[i]  }</li>`));
         }
 
         _$errorsContainer.show();
@@ -556,7 +556,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
         	if (_parameters.resultImageFolder) {
                 targetFileUrl = _endsWith('/', _parameters.resultImageFolder)
-                    ? _parameters.resultImageFolder + value : '/' + value;
+                    ? _parameters.resultImageFolder + value : `/${  value}`;
             } else {
                 targetFileUrl = _getFolder(_parameters.sourceImageUrl) + value;
             }

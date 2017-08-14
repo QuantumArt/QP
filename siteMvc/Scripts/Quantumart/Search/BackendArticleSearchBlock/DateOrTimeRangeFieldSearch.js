@@ -47,21 +47,21 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 			}
 		);
 		if (!$q.isNullOrWhiteSpace(serverContent)) {
-			var isNullCheckBoxID = this._elementIdPrefix + '_isNullCheckBox';
-			var dateFromID = this._elementIdPrefix + '_dateFrom';
-			var dateToID = this._elementIdPrefix + '_dateTo';
+			var isNullCheckBoxID = `${this._elementIdPrefix  }_isNullCheckBox`;
+			var dateFromID = `${this._elementIdPrefix  }_dateFrom`;
+			var dateToID = `${this._elementIdPrefix  }_dateTo`;
 
 			// полученную с сервера разметку добавить на страницу
 			var $containerElement = $(this._containerElement);
 			$containerElement.html(serverContent);
 
 			// получить ссылки на dom-элеметы со значениями
-			this._dateFromElement = $containerElement.find('#' + dateFromID).get(0);
-			this._dateToElement = $containerElement.find('#' + dateToID).get(0);
+			this._dateFromElement = $containerElement.find(`#${  dateFromID}`).get(0);
+			this._dateToElement = $containerElement.find(`#${  dateToID}`).get(0);
 			$c.disableDateTimePicker(this._dateToElement);
 
 			// назначить обработчик события change чекбоксу
-			var $isNullCheckBoxElement = $containerElement.find('#' + isNullCheckBoxID);
+			var $isNullCheckBoxElement = $containerElement.find(`#${  isNullCheckBoxID}`);
 			$isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
 			// запомнить ссылку на dom-элемент чекбокса
@@ -102,7 +102,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 		} else if (stateData.isByValue) {
 			return stateData.from ? stateData.from : '?';
 		}
-			return (stateData.from ? stateData.from : '?') + ' - ' + (stateData.to ? stateData.to : '?');
+			return `${stateData.from ? stateData.from : '?'  } - ${  stateData.to ? stateData.to : '?'}`;
 
 	},
 
@@ -151,12 +151,12 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 		if (this._isByValue == true) {
 			$c.disableDateTimePicker(this._dateToElement);
 			$(this._dateToElement).closest('.row').hide();
-			$("label[for='" + $(this._dateFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.valueText);
+			$(`label[for='${  $(this._dateFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.valueText);
 		} else {
 			if (!this.get_IsNull()) {
  $c.enableDateTimePicker(this._dateToElement);
 }
-			$("label[for='" + $(this._dateFromElement).attr('id') + "']", this._containerElement).text($l.SearchBlock.fromText);
+			$(`label[for='${  $(this._dateFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.fromText);
 			$(this._dateToElement).closest('.row').show();
 		}
 	},

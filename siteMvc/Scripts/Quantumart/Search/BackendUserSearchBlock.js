@@ -28,7 +28,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 		if (this.get_isRendered() !== true) {
 			$q.getJsonFromUrl(
 				'GET',
-				window.CONTROLLER_URL_USER + 'SearchBlock/' + this._parentEntityId,
+				`${window.CONTROLLER_URL_USER  }SearchBlock/${  this._parentEntityId}`,
 				{
 					hostId: this._hostId
 				},

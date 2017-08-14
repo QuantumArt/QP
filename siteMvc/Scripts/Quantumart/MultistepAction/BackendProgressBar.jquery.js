@@ -81,8 +81,8 @@
     };
 
     var refresh = function refresh() {
-      $wrapElement.find('.progressbar-value').css({ width: $q.toFixed(currentWidth, settings.digits) + '%' });
-      setText($q.toFixed(currentWidth, settings.digits) + '%');
+      $wrapElement.find('.progressbar-value').css({ width: `${$q.toFixed(currentWidth, settings.digits)  }%` });
+      setText(`${$q.toFixed(currentWidth, settings.digits)  }%`);
     };
 
     var setColor = function setColor(color) {
@@ -156,7 +156,7 @@
       return methods.init.apply(this, arguments);
     }
 
-    $.error('Method ' + method + ' does not exist on backendProgressBar');
+    $.error(`Method ${  method  } does not exist on backendProgressBar`);
     return this;
   };
 }());

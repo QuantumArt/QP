@@ -19,21 +19,21 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, 'initialize');
 
 		var $list = $(this._listElement);
-		var $displayField = $list.find('.' + this.DISPLAY_FIELD_CLASS_NAME);
-		var $stateField = $list.find('INPUT.' + this.STATE_FIELD_CLASS_NAME + ':first');
+		var $displayField = $list.find(`.${  this.DISPLAY_FIELD_CLASS_NAME}`);
+		var $stateField = $list.find(`INPUT.${  this.STATE_FIELD_CLASS_NAME  }:first`);
 		$stateField.addClass('qp-notChangeTrack');
 
-		var $pickButton = this._createToolbarButton(this._listElementId + '_PickButton', $l.EntityDataList.pickSingleLinkButtonText, 'pick');
+		var $pickButton = this._createToolbarButton(`${this._listElementId  }_PickButton`, $l.EntityDataList.pickSingleLinkButtonText, 'pick');
 		this._addButtonToToolbar($pickButton);
 
-		var $deselectButton = this._createToolbarButton(this._listElementId + '_DeselectButton', $l.EntityDataList.deselectLinkButtonText, 'deselectAll');
+		var $deselectButton = this._createToolbarButton(`${this._listElementId  }_DeselectButton`, $l.EntityDataList.deselectLinkButtonText, 'deselectAll');
 		this._addButtonToToolbar($deselectButton);
 
 		if (this._enableCopy) {
-			var $copyButton = this._createToolbarButton(this._listElementId + '_CopyButton', $l.EntityDataList.copyLinkButtonText, 'copy');
+			var $copyButton = this._createToolbarButton(`${this._listElementId  }_CopyButton`, $l.EntityDataList.copyLinkButtonText, 'copy');
 			this._addButtonToToolbar($copyButton);
 
-			var $pasteButton = this._createToolbarButton(this._listElementId + '_PasteButton', $l.EntityDataList.pasteLinkButtonText, 'paste');
+			var $pasteButton = this._createToolbarButton(`${this._listElementId  }_PasteButton`, $l.EntityDataList.pasteLinkButtonText, 'paste');
 			this._addButtonToToolbar($pasteButton);
 		}
 
@@ -115,7 +115,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		var value = '';
 		if (!$q.isNullOrEmpty(dataItems)) {
 			value = dataItems[0].Value;
-			html = this._getIdLinkCode(value) + '<span class="title">' + dataItems[0].Text + '</span>';
+			html = `${this._getIdLinkCode(value)  }<span class="title">${  dataItems[0].Text  }</span>`;
 		}
 
 		var $displayField = $(this._displayFieldElement);

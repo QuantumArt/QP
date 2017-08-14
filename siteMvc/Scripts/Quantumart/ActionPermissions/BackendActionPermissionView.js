@@ -12,7 +12,7 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
 	_searchBlockComponent: null,
 
 	initialize: function () {
-		var $view = $('#' + this._viewElementId);
+		var $view = $(`#${  this._viewElementId}`);
 		var treeElementId = $('.treeContainer .t-treeview').attr('id');
 
 		this._treeComponent = new Quantumart.QP8.BackendActionPermissionTree(treeElementId);
