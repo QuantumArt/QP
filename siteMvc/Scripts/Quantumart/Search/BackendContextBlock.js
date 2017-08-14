@@ -48,25 +48,25 @@ Quantumart.QP8.BackendContextBlock.prototype
             // получить разметку с сервера
             var serverContent;
             $q.getJsonFromUrl(
-			'GET',
-			`${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }ContextBlock/${  this._parentEntityId}`,
-			{
-			    actionCode: this._actionCode,
-			    hostId: this._hostId
-			},
-			false,
-			false,
-			function (data, textStatus, jqXHR) {
-			    if (data.success) {
+      'GET',
+      `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }ContextBlock/${  this._parentEntityId}`,
+      {
+          actionCode: this._actionCode,
+          hostId: this._hostId
+      },
+      false,
+      false,
+      function (data, textStatus, jqXHR) {
+          if (data.success) {
  serverContent = data.view;
 } else {
  $q.alertFail(data.message);
 }
-			},
-			function (jqXHR, textStatus, errorThrown) {
-			    serverContent = null;
-			    $q.processGenericAjaxError(jqXHR);
-			});
+      },
+      function (jqXHR, textStatus, errorThrown) {
+          serverContent = null;
+          $q.processGenericAjaxError(jqXHR);
+      });
             if (!$q.isNullOrWhiteSpace(serverContent)) {
                 $(this._concreteSearchBlockElement).html(serverContent);
 

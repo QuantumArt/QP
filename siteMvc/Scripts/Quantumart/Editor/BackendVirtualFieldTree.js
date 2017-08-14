@@ -1,20 +1,20 @@
 Quantumart.QP8.BackendVirtualFieldTree = function (treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options) {
-	Quantumart.QP8.BackendVirtualFieldTree.initializeBase(this, [treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options]);
+  Quantumart.QP8.BackendVirtualFieldTree.initializeBase(this, [treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options]);
     if ($q.isObject(options)) {
-		  if (!$q.isNullOrEmpty(options.virtualContentId)) {
+      if (!$q.isNullOrEmpty(options.virtualContentId)) {
         this._virtualContentId = options.virtualContentId;
-		  }
+      }
     }
 };
 
 Quantumart.QP8.BackendVirtualFieldTree.prototype = {
     convertNodeCodeToEntityId: function (nodeCode) {
-		if (nodeCode != this.ROOT_NODE_CODE) {
-			return nodeCode;
-		}
-			return null;
+    if (nodeCode != this.ROOT_NODE_CODE) {
+      return nodeCode;
+    }
+      return null;
 
-	},
+  },
 
     _getEntityChildList: function (entityId, returnSelf, successHandler, errorHandler) {
         if (this._parentEntityId) {
@@ -49,12 +49,12 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
                 errorHandler
             );
         }
-	},
+  },
 
     _getIcon: function (entity) {
-	    var icon = entity.IconUrl;
-	    return icon;
-	},
+      var icon = entity.IconUrl;
+      return icon;
+  },
 
     _virtualContentId: null
 };

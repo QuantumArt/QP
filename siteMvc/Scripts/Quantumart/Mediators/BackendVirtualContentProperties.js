@@ -2,28 +2,28 @@ Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectEle
     var contentPicker = $(`#${  joinContentSelectElementId}`).data('entity_data_list_component'),
         entityTreeComponent = Quantumart.QP8.BackendEntityTreeManager.getInstance().getTree(joinFieldsTreeElementId);
 
-	function onRelatedToChanged() {
-	    var selectedContentId = contentPicker.getSelectedEntityIDs()[0];
-	    entityTreeComponent.set_parentEntityId(selectedContentId);
-	    entityTreeComponent.set_selectedEntitiesIDs([]);
-	    entityTreeComponent.refreshTree();
-	}
+  function onRelatedToChanged() {
+      var selectedContentId = contentPicker.getSelectedEntityIDs()[0];
+      entityTreeComponent.set_parentEntityId(selectedContentId);
+      entityTreeComponent.set_selectedEntitiesIDs([]);
+      entityTreeComponent.refreshTree();
+  }
 
-	function dispose() {
-	    $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
-	    contentPicker = null;
+  function dispose() {
+      $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
+      contentPicker = null;
         entityTreeComponent = null;
-	}
+  }
 
-	$(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
+  $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
-	return {
-		dispose: dispose
-	};
+  return {
+    dispose: dispose
+  };
 };
 
 Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (unionSourcePanelElementId, buildParamsPanelElementId, unionSourcesElementId) {
-	var $unionSourcePanelElement = $(`#${  unionSourcePanelElementId}`),
+  var $unionSourcePanelElement = $(`#${  unionSourcePanelElementId}`),
         $buildParamsPanelElement = $(`#${  buildParamsPanelElementId}`),
         unionSourcesComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(`${unionSourcesElementId  }_list`);
 
@@ -35,15 +35,15 @@ Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (unionSourcePa
         $unionSourcePanelElement.unbind();
         $buildParamsPanelElement.unbind();
 
-		$unionSourcePanelElement = null;
+    $unionSourcePanelElement = null;
         $buildParamsPanelElement = null;
         unionSourcesComponent = null;
-	}
+  }
 
     $unionSourcePanelElement.bind('show', onUnionTypeSelected);
     $buildParamsPanelElement.bind('show', onUnionTypeSelected);
 
     return {
-		dispose: dispose
-	};
+    dispose: dispose
+  };
 };

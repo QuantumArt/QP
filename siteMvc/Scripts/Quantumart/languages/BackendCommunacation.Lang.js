@@ -1,4 +1,4 @@
 window.Backend.Lang.Communacation = {
-	singleUserModeMessage: 'Single editor mode',
-	singleUserModeMessageFor: 'Single editor mode for '
+  singleUserModeMessage: 'Single editor mode',
+  singleUserModeMessageFor: 'Single editor mode for '
 };

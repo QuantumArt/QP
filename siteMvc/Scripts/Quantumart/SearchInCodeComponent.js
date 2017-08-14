@@ -51,13 +51,13 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
         Quantumart.QP8.ControlHelpers.initAllEntityDataLists($filter);
 
         $grid
-			.unbind('dataBinding', gridComponent.onDataBinding)
-			.bind('dataBinding', this._onDataBindingHandler);
+      .unbind('dataBinding', gridComponent.onDataBinding)
+      .bind('dataBinding', this._onDataBindingHandler);
 
         $('.sic_search_button', $filter)
-			.click(this._onApplyFilterHandler);
+      .click(this._onApplyFilterHandler);
         $('.sic_reset_button', $filter)
-			.click(this._onClearFilterHandler);
+      .click(this._onClearFilterHandler);
         if ($('.sic_templateSelector select', $filter)) {
  $('.sic_templateSelector select', $filter).change($.proxy(this._onApplyFilter, this));
 }

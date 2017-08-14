@@ -46,17 +46,17 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
 
     get_searchQuery: function () {
         return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
-	        this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
-	        $(this._queryDropDownListElement).val());
+          this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
+          $(this._queryDropDownListElement).val());
     },
 
     get_blockState: function () {
         return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
-		{
-		    isNull: this.get_IsNull(),
-		    text: $(this._queryDropDownListElement).val(),
-		    alias: $(this._queryDropDownListElement).find('option:selected').text()
-		});
+    {
+        isNull: this.get_IsNull(),
+        text: $(this._queryDropDownListElement).val(),
+        alias: $(this._queryDropDownListElement).find('option:selected').text()
+    });
     },
 
     get_filterDetails: function () {

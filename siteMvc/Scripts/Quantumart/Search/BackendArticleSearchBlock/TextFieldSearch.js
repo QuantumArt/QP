@@ -7,26 +7,26 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   initialize: function () {
     var serverContent;
     $q.getJsonFromUrl(
-			'GET',
-			`${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }TextSearch`,
-			{
-			  elementIdPrefix: this._elementIdPrefix,
-			  fieldID: this._fieldID
-			},
-			false,
-			false,
-			function (data, textStatus, jqXHR) {
-			  if (data.success) {
+      'GET',
+      `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }TextSearch`,
+      {
+        elementIdPrefix: this._elementIdPrefix,
+        fieldID: this._fieldID
+      },
+      false,
+      false,
+      function (data, textStatus, jqXHR) {
+        if (data.success) {
  serverContent = data.view;
 } else {
  $q.alertFail(data.message);
 }
-			},
-		    function (jqXHR, textStatus, errorThrown) {
-		      serverContent = null;
-		      $q.processGenericAjaxError(jqXHR);
-		    }
-		);
+      },
+        function (jqXHR, textStatus, errorThrown) {
+          serverContent = null;
+          $q.processGenericAjaxError(jqXHR);
+        }
+    );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
       var queryTextBoxID = `${this._elementIdPrefix  }_textBox`;
       var inverseCheckBoxID = `${this._elementIdPrefix  }_inverseCheckBox`;
@@ -56,8 +56,8 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
   get_searchQuery: function () {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Text,
-	        this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
-	        $(this._queryTextBoxElement).val(), this.get_Inverse(), this.get_ExactMatch(), this.get_BeginningStart());
+          this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
+          $(this._queryTextBoxElement).val(), this.get_Inverse(), this.get_ExactMatch(), this.get_BeginningStart());
   },
 
   get_blockState: function () {

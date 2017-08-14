@@ -43,7 +43,6 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     $filter = null;
   },
 
-
   _onApplyFilter: function () {
     $(`#${  this._gridElementId}`)
       .data('tGrid')

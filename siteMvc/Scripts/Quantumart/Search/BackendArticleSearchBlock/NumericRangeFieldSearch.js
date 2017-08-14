@@ -1,246 +1,246 @@
 Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
   Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
-	this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
-	this._onByValueSelectorChangedHandler = $.proxy(this._onByValueSelectorChanged, this);
-	this._onNumericInputFocusHandler = $.proxy(this._onNumericInputFocus, this);
-	this._onLoadHandler = $.proxy(this._onLoad, this);
+  this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
+  this._onByValueSelectorChangedHandler = $.proxy(this._onByValueSelectorChanged, this);
+  this._onNumericInputFocusHandler = $.proxy(this._onNumericInputFocus, this);
+  this._onLoadHandler = $.proxy(this._onLoad, this);
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
-	initialize: function () {
-		var serverContent;
-		$q.getJsonFromUrl(
-			'GET',
-			`${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }NumericRange`,
-			{
-				elementIdPrefix: this._elementIdPrefix
-			},
-			false,
-			false,
-			function (data, textStatus, jqXHR) {
-				if (data.success) {
+  initialize: function () {
+    var serverContent;
+    $q.getJsonFromUrl(
+      'GET',
+      `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }NumericRange`,
+      {
+        elementIdPrefix: this._elementIdPrefix
+      },
+      false,
+      false,
+      function (data, textStatus, jqXHR) {
+        if (data.success) {
  serverContent = data.view;
 } else {
  $q.alertFail(data.message);
 }
-			},
-			function (jqXHR, textStatus, errorThrown) {
-				serverContent = null;
-				$q.processGenericAjaxError(jqXHR);
-			}
-		);
-		if (!$q.isNullOrWhiteSpace(serverContent)) {
-			var isNullCheckBoxID = `${this._elementIdPrefix  }_isNullCheckBox`;
-			var numberFromID = `${this._elementIdPrefix  }_numberFrom`;
-			var numberToID = `${this._elementIdPrefix  }_numberTo`;
-			var inverseCheckBoxID = `${this._elementIdPrefix  }_inverseCheckBox`;
+      },
+      function (jqXHR, textStatus, errorThrown) {
+        serverContent = null;
+        $q.processGenericAjaxError(jqXHR);
+      }
+    );
+    if (!$q.isNullOrWhiteSpace(serverContent)) {
+      var isNullCheckBoxID = `${this._elementIdPrefix  }_isNullCheckBox`;
+      var numberFromID = `${this._elementIdPrefix  }_numberFrom`;
+      var numberToID = `${this._elementIdPrefix  }_numberTo`;
+      var inverseCheckBoxID = `${this._elementIdPrefix  }_inverseCheckBox`;
 
-			var $containerElement = $(this._containerElement);
-			$containerElement.html(serverContent);
+      var $containerElement = $(this._containerElement);
+      $containerElement.html(serverContent);
 
-			var $numberFrom = $containerElement.find(`#${  numberFromID}`);
-			var $numberTo = $containerElement.find(`#${  numberToID}`);
-			$numberFrom.focus(this._onNumericInputFocusHandler);
-			$numberTo.focus(this._onNumericInputFocusHandler);
+      var $numberFrom = $containerElement.find(`#${  numberFromID}`);
+      var $numberTo = $containerElement.find(`#${  numberToID}`);
+      $numberFrom.focus(this._onNumericInputFocusHandler);
+      $numberTo.focus(this._onNumericInputFocusHandler);
 
-			this._numberFromElement = $numberFrom.get(0);
-			this._numberToElement = $numberTo.get(0);
+      this._numberFromElement = $numberFrom.get(0);
+      this._numberToElement = $numberTo.get(0);
 
-			var $isNullCheckBoxElement = $containerElement.find(`#${  isNullCheckBoxID}`);
-			$isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
+      var $isNullCheckBoxElement = $containerElement.find(`#${  isNullCheckBoxID}`);
+      $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
-			this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
+      this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
 
-			var $inverseCheckBoxElement = $containerElement.find(`#${  inverseCheckBoxID}`);
-			this._inverseCheckBoxElement = $inverseCheckBoxElement.get(0);
+      var $inverseCheckBoxElement = $containerElement.find(`#${  inverseCheckBoxID}`);
+      this._inverseCheckBoxElement = $inverseCheckBoxElement.get(0);
 
-			$(".radioButtonsList input[type='radio']", $containerElement).click(this._onByValueSelectorChangedHandler);
+      $(".radioButtonsList input[type='radio']", $containerElement).click(this._onByValueSelectorChangedHandler);
 
-			$(document).ready(this._onLoadHandler);
+      $(document).ready(this._onLoadHandler);
 
-			$numberTo.data('tTextBox').disable();
+      $numberTo.data('tTextBox').disable();
 
-			$numberFrom = null;
-			$numberTo = null;
-			$isNullCheckBoxElement = null;
-			$containerElement = null;
-		}
-	},
+      $numberFrom = null;
+      $numberTo = null;
+      $isNullCheckBoxElement = null;
+      $containerElement = null;
+    }
+  },
 
-	get_searchQuery: function () {
-	    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
-	                this.get_IsNull(),
-	                $(this._numberFromElement).data('tTextBox').value(),
-	                $(this._numberToElement).data('tTextBox').value(),
-					this._isByValue,
+  get_searchQuery: function () {
+      return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
+                  this.get_IsNull(),
+                  $(this._numberFromElement).data('tTextBox').value(),
+                  $(this._numberToElement).data('tTextBox').value(),
+          this._isByValue,
                     this.get_Inverse()
                 );
-	},
+  },
 
-	get_blockState: function () {
-	    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
-		{
-		    isNull: this.get_IsNull(),
-			from: $(this._numberFromElement).data('tTextBox').value(),
-			to: $(this._numberToElement).data('tTextBox').value(),
-			isByValue: this._isByValue,
-			inverse: this.get_Inverse()
-		});
-	},
+  get_blockState: function () {
+      return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
+    {
+        isNull: this.get_IsNull(),
+      from: $(this._numberFromElement).data('tTextBox').value(),
+      to: $(this._numberToElement).data('tTextBox').value(),
+      isByValue: this._isByValue,
+      inverse: this.get_Inverse()
+    });
+  },
 
-	get_filterDetails: function () {
-	    var stateData = this.get_blockState().data;
-	    var result;
-		if (stateData.isNull) {
-			result = $l.SearchBlock.isNullCheckBoxLabelText;
-		} else if (stateData.isByValue) {
-		    result = $.isNumeric(stateData.from) ? stateData.from : '?';
-		} else {
-		    result = `[${  $.isNumeric(stateData.from) ? stateData.from : '?'  }..${  $.isNumeric(stateData.to) ? stateData.to : '?'  }]`;
-		}
+  get_filterDetails: function () {
+      var stateData = this.get_blockState().data;
+      var result;
+    if (stateData.isNull) {
+      result = $l.SearchBlock.isNullCheckBoxLabelText;
+    } else if (stateData.isByValue) {
+        result = $.isNumeric(stateData.from) ? stateData.from : '?';
+    } else {
+        result = `[${  $.isNumeric(stateData.from) ? stateData.from : '?'  }..${  $.isNumeric(stateData.to) ? stateData.to : '?'  }]`;
+    }
 
-		if (stateData.inverse) {
-		    result = `${$l.SearchBlock.notText  }(${  result  })`;
-		}
-		return result;
-	},
+    if (stateData.inverse) {
+        result = `${$l.SearchBlock.notText  }(${  result  })`;
+    }
+    return result;
+  },
 
-	restore_blockState: function (state) {
-		if (state) {
-			if (this._isNullCheckBoxElement) {
-				var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
-				$isNullCheckBoxElement.prop('checked', state.isNull);
-				$isNullCheckBoxElement.trigger('change');
-				$isNullCheckBoxElement = null;
-			}
+  restore_blockState: function (state) {
+    if (state) {
+      if (this._isNullCheckBoxElement) {
+        var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+        $isNullCheckBoxElement.prop('checked', state.isNull);
+        $isNullCheckBoxElement.trigger('change');
+        $isNullCheckBoxElement = null;
+      }
 
-			if (this._inverseCheckBoxElement) {
-			    var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
-			    $inverseCheckBoxElement.prop('checked', state.inverse);
-			}
+      if (this._inverseCheckBoxElement) {
+          var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
+          $inverseCheckBoxElement.prop('checked', state.inverse);
+      }
 
-			if (!$q.isNull(state.isByValue)) {
-				if (state.isByValue === true) {
-					$('.radioButtonsList input:radio[value=0]', this._containerElement)
-						.prop('checked', true)
-						.trigger('click');
-				} else if (state.isByValue === false) {
-					$('.radioButtonsList input:radio[value=1]', this._containerElement)
-						.prop('checked', true)
-						.trigger('click');
-				}
-			}
+      if (!$q.isNull(state.isByValue)) {
+        if (state.isByValue === true) {
+          $('.radioButtonsList input:radio[value=0]', this._containerElement)
+            .prop('checked', true)
+            .trigger('click');
+        } else if (state.isByValue === false) {
+          $('.radioButtonsList input:radio[value=1]', this._containerElement)
+            .prop('checked', true)
+            .trigger('click');
+        }
+      }
 
-			$(this._numberFromElement).data('tTextBox').value(state.from);
-			$(this._numberToElement).data('tTextBox').value(state.to);
-		}
-	},
+      $(this._numberFromElement).data('tTextBox').value(state.from);
+      $(this._numberToElement).data('tTextBox').value(state.to);
+    }
+  },
 
-	_onIsNullCheckBoxChange: function () {
-		if (this.get_IsNull()) {
-			$(this._numberFromElement).data('tTextBox').disable();
-			$(this._numberToElement).data('tTextBox').disable();
-		} else {
-			$(this._numberFromElement).data('tTextBox').enable();
-			if (!this._isByValue) {
+  _onIsNullCheckBoxChange: function () {
+    if (this.get_IsNull()) {
+      $(this._numberFromElement).data('tTextBox').disable();
+      $(this._numberToElement).data('tTextBox').disable();
+    } else {
+      $(this._numberFromElement).data('tTextBox').enable();
+      if (!this._isByValue) {
  $(this._numberToElement).data('tTextBox').enable();
 }
-		}
-	},
+    }
+  },
 
-	_onByValueSelectorChanged: function (e) {
-		this._isByValue = $(e.currentTarget).val() == 0;
+  _onByValueSelectorChanged: function (e) {
+    this._isByValue = $(e.currentTarget).val() == 0;
 
-		if (this._isByValue == true) {
-			$(this._numberToElement).data('tTextBox').disable();
-			$(this._numberToElement).closest('.row').hide();
-			$(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.valueText);
-		} else {
-			if (!this.get_IsNull()) {
+    if (this._isByValue == true) {
+      $(this._numberToElement).data('tTextBox').disable();
+      $(this._numberToElement).closest('.row').hide();
+      $(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.valueText);
+    } else {
+      if (!this.get_IsNull()) {
  $(this._numberToElement).data('tTextBox').enable();
 }
-			$(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.fromText);
-			$(this._numberToElement).closest('.row').show();
-		}
-	},
+      $(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.fromText);
+      $(this._numberToElement).closest('.row').show();
+    }
+  },
 
-	_onNumericInputFocus: function (e) {
-		var focusedNumeric = $(e.currentTarget).data('tTextBox');
-		let otherInput;
-		if (e.currentTarget === this._numberFromElement) {
+  _onNumericInputFocus: function (e) {
+    var focusedNumeric = $(e.currentTarget).data('tTextBox');
+    let otherInput;
+    if (e.currentTarget === this._numberFromElement) {
  otherInput = $(this._numberToElement).data('tTextBox');
 } else if (e.currentTarget === this._numberToElement) {
  otherInput = $(this._numberFromElement).data('tTextBox');
 }
 
-		if (otherInput && otherInput.value() && focusedNumeric && !focusedNumeric.value()) {
-			focusedNumeric.value(otherInput.value());
-		}
-	},
+    if (otherInput && otherInput.value() && focusedNumeric && !focusedNumeric.value()) {
+      focusedNumeric.value(otherInput.value());
+    }
+  },
 
-	_onLoad: function () {
-		$c.initAllNumericTextBoxes(this._containerElement);
-	},
+  _onLoad: function () {
+    $c.initAllNumericTextBoxes(this._containerElement);
+  },
 
-	dispose: function () {
-		if (this._isNullCheckBoxElement) {
-			var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
-			$isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
-			$isNullCheckBoxElement = null;
-		}
+  dispose: function () {
+    if (this._isNullCheckBoxElement) {
+      var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+      $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
+      $isNullCheckBoxElement = null;
+    }
 
-		if (this._numberFromElement) {
+    if (this._numberFromElement) {
  $(this._numberFromElement).unbind('focus', this._onNumericInputFocusHandler);
 }
-		if (this._numberToElement) {
+    if (this._numberToElement) {
  $(this._numberToElement).unbind('focus', this._onNumericInputFocusHandler);
 }
 
-		$c.destroyAllNumericTextBoxes(this._containerElement);
+    $c.destroyAllNumericTextBoxes(this._containerElement);
 
-		var $containerElement = $(this._containerElement);
-		$(".radioButtonsList input[type='radio']", $containerElement).unbind();
-		$containerElement = null;
+    var $containerElement = $(this._containerElement);
+    $(".radioButtonsList input[type='radio']", $containerElement).unbind();
+    $containerElement = null;
 
-		this._isNullCheckBoxElement = null;
-		this._inverseCheckBoxElement = null;
-		this._numberFromElement = null;
-		this._numberToElement = null;
+    this._isNullCheckBoxElement = null;
+    this._inverseCheckBoxElement = null;
+    this._numberFromElement = null;
+    this._numberToElement = null;
 
-		this._onIsNullCheckBoxChangeHandler = null;
-		this._onByValueSelectorChangedHandler = null;
-		this._onNumericInputFocusHandler = null;
-		this._onLoadHandler = null;
+    this._onIsNullCheckBoxChangeHandler = null;
+    this._onByValueSelectorChangedHandler = null;
+    this._onNumericInputFocusHandler = null;
+    this._onLoadHandler = null;
 
-		Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.callBaseMethod(this, 'dispose');
-	},
+    Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.callBaseMethod(this, 'dispose');
+  },
 
 
-	get_IsNull: function () {
-		if (this._isNullCheckBoxElement) {
+  get_IsNull: function () {
+    if (this._isNullCheckBoxElement) {
  return $(this._isNullCheckBoxElement).is(':checked');
 }
  return false;
 
-	},
+  },
 
-	get_Inverse: function () {
-	    if (this._inverseCheckBoxElement) {
+  get_Inverse: function () {
+      if (this._inverseCheckBoxElement) {
  return $(this._inverseCheckBoxElement).is(':checked');
 }
  return false;
 
-	},
+  },
 
-	_isByValue: true,
+  _isByValue: true,
 
-	_onIsNullCheckBoxChangeHandler: null,
-	_onNumericInputFocusHandler: null,
+  _onIsNullCheckBoxChangeHandler: null,
+  _onNumericInputFocusHandler: null,
 
-	_isNullCheckBoxElement: null,
-	_numberFromElement: null,
-	_numberToElement: null,
-	_inverseCheckBoxElement: null
+  _isNullCheckBoxElement: null,
+  _numberFromElement: null,
+  _numberToElement: null,
+  _inverseCheckBoxElement: null
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);

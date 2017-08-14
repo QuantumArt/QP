@@ -237,7 +237,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             var windowComponent = this._windowComponent;
             var $window = jQuery(windowComponent.element);
             $window
-				.unbind('close', this._onCloseWindowHandler)
+        .unbind('close', this._onCloseWindowHandler)
             ;
 
             $window = null;
