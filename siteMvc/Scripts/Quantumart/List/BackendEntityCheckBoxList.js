@@ -104,8 +104,8 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
   _refreshListInner: function (dataItems, refreshOnly) {
     let newSelectedIDs = $.map(
-      $.grep(dataItems, (di) => di.Selected === true),
-      (di) => $q.toInt(di.Value)
+      $.grep(dataItems, di => di.Selected === true),
+      di => $q.toInt(di.Value)
     );
     let currentSelectedIDs = this.getSelectedEntityIDs();
     let selectedItemsIsChanged = _.union(

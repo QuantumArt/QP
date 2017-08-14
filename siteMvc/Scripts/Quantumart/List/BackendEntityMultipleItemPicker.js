@@ -110,7 +110,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
       }).get() || [];
     } else {
       let ids = $(this._countOverflowElement).val().split(',');
-      result = $.map(ids, (id) => {
+      result = $.map(ids, id => {
         return { Id: id, Name: '' };
       }) || [];
     }
@@ -123,7 +123,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _refreshListInner: function (dataItems, refreshOnly) {
-    let newSelectedIDs = $.map($.grep(dataItems, (di) => di.Value), (di) => $q.toInt(di.Value));
+    let newSelectedIDs = $.map($.grep(dataItems, di => di.Value), di => $q.toInt(di.Value));
 
     let currentSelectedIDs = this.getSelectedEntityIDs();
     let selectedItemsIsChanged = newSelectedIDs.length != currentSelectedIDs.length || newSelectedIDs.length != _.union(newSelectedIDs, currentSelectedIDs).length;
@@ -160,7 +160,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   appendEntities: function (entityIds) {
     if (entityIds && entityIds.length) {
-      let selectedEntities = entityIds.map((i) => {
+      let selectedEntities = entityIds.map(i => {
         return { Id: i };
       });
 
@@ -171,7 +171,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   selectEntities: function (entityIds) {
     this.deselectAllListItems();
     if (entityIds && entityIds.length) {
-      let selectedEntities = entityIds.map((i) => {
+      let selectedEntities = entityIds.map(i => {
         return { Id: i };
       });
 

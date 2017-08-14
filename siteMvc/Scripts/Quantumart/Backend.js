@@ -35,7 +35,7 @@ Quantumart.QP8.Backend = function (isDebugMode, options) {
     '_onHostExternalCallerContextsUnbinded'
   ]);
 
-  $(document).bind('click', (e) => {
+  $(document).bind('click', e => {
     if (e.which == 2) {
       e.preventDefault();
     }
@@ -336,7 +336,7 @@ Quantumart.QP8.Backend.prototype = {
             this._backendEditingArea.addDocument(eventArgs);
           }
         } else if (this._isMultistep(action, eventArgs)) {
-          jQuery.when(this._backendActionExecutor.executeMultistepAction(eventArgs)).done((status) => {
+          jQuery.when(this._backendActionExecutor.executeMultistepAction(eventArgs)).done(status => {
             if (status == window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
               that._onActionExecuted(eventArgs);
             }

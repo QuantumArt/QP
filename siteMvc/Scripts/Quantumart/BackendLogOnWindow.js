@@ -196,7 +196,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
   _addDeferredCallcack: function (callback, settings) {
     this._updateZindex();
-    $(this).on(this.AJAX_EVENT, (e) => {
+    $(this).on(this.AJAX_EVENT, e => {
       let isAuthenticated = e.value;
       if (isAuthenticated) {
         jQuery.ajax(settings).done(callback);

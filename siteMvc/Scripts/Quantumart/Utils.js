@@ -140,14 +140,14 @@ $q.postAjax = function postAjax(url, data, jsendSuccess, jsendFail, jsendError) 
 };
 
 $q.showLoader = function showLoader() {
-  if ($ctx) {
-    $ctx.getArea().showAjaxLoadingLayer();
+  if (Quantumart.QP8.BackendDocumentContext) {
+    Quantumart.QP8.BackendDocumentContext.getArea().showAjaxLoadingLayer();
   }
 };
 
 $q.hideLoader = function hideLoader() {
-  if ($ctx) {
-    $ctx.getArea().hideAjaxLoadingLayer();
+  if (Quantumart.QP8.BackendDocumentContext) {
+    Quantumart.QP8.BackendDocumentContext.getArea().hideAjaxLoadingLayer();
   }
 };
 

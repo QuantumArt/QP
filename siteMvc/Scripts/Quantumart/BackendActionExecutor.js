@@ -247,7 +247,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
               .fail(errorCallback1);
           };
 
-          $q.getJsonFromUrl('POST', setupUrl, params, true, false).done((actionData) => {
+          $q.getJsonFromUrl('POST', setupUrl, params, true, false).done(actionData => {
             if (actionData) {
               if (actionData.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
                 errorHandler(actionData);
@@ -275,7 +275,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                         {
                           stage: stageCounter,
                           step: stepCounter
-                        }, true, false).done((stepData) => {
+                        }, true, false).done(stepData => {
                         if (stepData) {
                           if (stepData.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
                             errorHandler(stepData);
@@ -335,7 +335,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
           });
 
           let settingsResult = null;
-          $q.getJsonFromUrl('POST', settingsActionUrl.replace('Settings', 'PreSettings'), params, true, false).done((settingsResult) => {
+          $q.getJsonFromUrl('POST', settingsActionUrl.replace('Settings', 'PreSettings'), params, true, false).done(settingsResult => {
             if (settingsResult && settingsResult.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
               Quantumart.QP8.BackendActionExecutor.showResult(settingsResult);
               dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
@@ -354,7 +354,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
           });
 
           let preActionResult = null;
-          $q.getJsonFromUrl('POST', preActionUrl, params, true, false).done((preActionResult) => {
+          $q.getJsonFromUrl('POST', preActionUrl, params, true, false).done(preActionResult => {
             if (preActionResult) {
               if (preActionResult.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
                 Quantumart.QP8.BackendActionExecutor.showResult(preActionResult);
@@ -425,7 +425,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCo
   let action = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!action) {
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetByCode`, { actionCode: actionCode }, false, false).done((data) => {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetByCode`, { actionCode: actionCode }, false, false).done(data => {
       if (data.success) {
         action = data.action;
       } else {
@@ -448,7 +448,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) 
   let actionCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!actionCode) {
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetCodeById`, { actionId: actionId }, false, false).done((data) => {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetCodeById`, { actionId: actionId }, false, false).done(data => {
       if (data.success) {
         actionCode = data.actionCode;
       } else {
@@ -650,7 +650,7 @@ Quantumart.QP8.BackendActionExecutor.getActionViewByViewTypeCode = function (act
   let actionView = null;
 
   if (!$q.isNullOrEmpty(actionViews)) {
-    actionView = $.grep(actionViews, (actionView) => actionView.ViewType.Code == viewTypeCode)[0];
+    actionView = $.grep(actionViews, actionView => actionView.ViewType.Code == viewTypeCode)[0];
   }
 
   return actionView;

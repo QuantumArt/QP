@@ -312,10 +312,10 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     if (levelCount > 1) {
       for (let levelIndex = levelCount - 2; levelIndex >= 0; levelIndex--) {
         let level = levels[levelIndex];
-        let nodeInfos = $.grep(parentNodeInfos, (parentNodeInfo) => parentNodeInfo.level == level);
+        let nodeInfos = $.grep(parentNodeInfos, parentNodeInfo => parentNodeInfo.level == level);
 
         let nodeInfoCount = nodeInfos.length;
-        let childNodeInfos = $.grep(parentNodeInfos, (parentNodeInfo) => parentNodeInfo.level > level);
+        let childNodeInfos = $.grep(parentNodeInfos, parentNodeInfo => parentNodeInfo.level > level);
 
         let childNodeInfoCount = childNodeInfos.length;
 
@@ -343,7 +343,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     $q.clearArray(levels);
 
     let self = this;
-    let parentNodeElems = $.map(parentNodeInfos, (parentNodeInfo) => self.getNode(parentNodeInfo.nodeCode).get(0));
+    let parentNodeElems = $.map(parentNodeInfos, parentNodeInfo => self.getNode(parentNodeInfo.nodeCode).get(0));
 
     $q.clearArray(parentNodeInfos);
     return $q.toJQuery(parentNodeElems);
@@ -476,7 +476,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     } else {
       let self = this;
 
-      $o.getEntityByTypeAndIdForTree(this._entityTypeCode, this.getEntityId($node), loadChildNodes, this._filter, (data) => {
+      $o.getEntityByTypeAndIdForTree(this._entityTypeCode, this.getEntityId($node), loadChildNodes, this._filter, data => {
         if (self._stopDeferredOperations) {
           return;
         }
@@ -506,7 +506,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         self._hideAjaxLoadingIndicatorForNode($node);
         self._raiseDataBoundEvent();
         $q.callFunction(callback);
-      }, (jqXHR) => {
+      }, jqXHR => {
         if (self._stopDeferredOperations) {
           return;
         }
@@ -684,7 +684,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     let self = this;
 
     $nodes.each(
-      (index) => {
+      index => {
         let $node = $nodes.eq(index);
         let entityId = self.getEntityId($node);
         let entityName = self.getEntityName($node);
@@ -732,7 +732,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     let self = this;
     let $nodes = this.getAllNodes();
 
-    $nodes.each((index) => {
+    $nodes.each(index => {
       let $node = $nodes.eq(index);
       let isSelected = self.isNodeSelected($node);
       let entityId = self.getEntityId($node);

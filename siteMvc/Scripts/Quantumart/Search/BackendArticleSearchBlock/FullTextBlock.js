@@ -17,13 +17,13 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}FullTextBlock`, {
       parentEntityId: this._parentEntityId,
       elementIdPrefix: this._elementIdPrefix
-    }, false, false, (data) => {
+    }, false, false, data => {
       if (data.success) {
         serverContent = data.view;
       } else {
         $q.alertError(data.message);
       }
-    }, (jqXHR) => {
+    }, jqXHR => {
       serverContent = null;
       $q.processGenericAjaxError(jqXHR);
     });

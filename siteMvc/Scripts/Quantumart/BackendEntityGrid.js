@@ -521,7 +521,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   },
 
   toggleDirectChildRows: function (parentArticleId, rowState) {
-    this.getChildEntityIds(parentArticleId).done((response) => {
+    this.getChildEntityIds(parentArticleId).done(response => {
       let $rowsToModify = $(this.getRowsByEntityIds(response.data));
       this._setRowsSelectedState($rowsToModify, rowState);
       this._selectedEntitiesIDs = $q.addRemoveToArrUniq(this._selectedEntitiesIDs, response.data, !rowState);
@@ -663,11 +663,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       let rows = this.getRowsByEntityIds(this._selectedEntitiesIDs);
       let self = this;
 
-      selectedEntities = $.map(rows, (row) => {
+      selectedEntities = $.map(rows, row => {
         return { Id: self.getEntityId(row), Name: self.getEntityName(row) };
       });
 
-      let notFoundIds = $.grep(this._selectedEntitiesIDs, (elem) => {
+      let notFoundIds = $.grep(this._selectedEntitiesIDs, elem => {
         for (let i = 0; i < selectedEntities.length; i++) {
           if (selectedEntities[i].Id === elem) {
             return false;
@@ -875,7 +875,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         this.notify(window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING, eventArgs);
       }
 
-      $q.postDataToUrl(url, queryData, false, (data) => {
+      $q.postDataToUrl(url, queryData, false, data => {
         rowsData = data;
       }, $q.processGenericAjaxError);
 
@@ -885,7 +885,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
       let self = this;
       if (rowsData) {
-        this._selectedEntitiesIDs = $.map(rowsData.data, (dataItem) => dataItem[self._keyColumnName]);
+        this._selectedEntitiesIDs = $.map(rowsData.data, dataItem => dataItem[self._keyColumnName]);
       }
     }
   },
@@ -982,7 +982,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this._fixGridWidth();
 
     let self = this;
-    this._selectedEntitiesIDs = $.grep(this._selectedEntitiesIDs, (item) => !Array.contains(self._removedIds, item));
+    this._selectedEntitiesIDs = $.grep(this._selectedEntitiesIDs, item => !Array.contains(self._removedIds, item));
 
     this._removedIds = [];
     let action = this._getCurrentAction();

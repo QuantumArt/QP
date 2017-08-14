@@ -6,9 +6,9 @@ Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function (entit
     $q.getJsonFromUrl('GET', actionUrl, params, false, false, successHandler, errorHandler);
   } else {
     let entity = null;
-    $q.getJsonFromUrl('GET', actionUrl, params, false, false, (data) => {
+    $q.getJsonFromUrl('GET', actionUrl, params, false, false, data => {
       entity = data;
-    }, (jqXHR) => {
+    }, jqXHR => {
       entity = null;
       $q.processGenericAjaxError(jqXHR);
     });
@@ -28,9 +28,9 @@ Quantumart.QP8.BackendEntityObject.getEntityChildList = function (ajaxParams, su
   } else {
     let entities = null;
 
-    $q.getJsonFromUrl('POST', actionUrl, ajaxParams, false, false, (data) => {
+    $q.getJsonFromUrl('POST', actionUrl, ajaxParams, false, false, data => {
       entities = data;
-    }, (jqXHR) => {
+    }, jqXHR => {
       entities = null;
       $q.processGenericAjaxError(jqXHR);
     });
@@ -53,13 +53,13 @@ Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function (entityTypeCod
   };
 
   let entities = [];
-  $q.getJsonFromUrl('POST', actionUrl, params, false, false, (data) => {
+  $q.getJsonFromUrl('POST', actionUrl, params, false, false, data => {
     if (data && data.ErrorMessage) {
       $q.alertError(data.ErrorMessage);
     } else {
       entities = data;
     }
-  }, (jqXHR) => {
+  }, jqXHR => {
     entities = [];
     $q.processGenericAjaxError(jqXHR);
   });
@@ -69,9 +69,9 @@ Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function (entityTypeCod
 
 Quantumart.QP8.BackendEntityObject.makeSimpleCall = function (verb, method, params) {
   let result = null;
-  $q.getJsonFromUrl(verb, method, params, false, false, (data) => {
+  $q.getJsonFromUrl(verb, method, params, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -84,9 +84,9 @@ Quantumart.QP8.BackendEntityObject.checkEntityExistence = function (entityTypeCo
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}CheckExistence`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId
-  }, false, false, (data) => {
+  }, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -99,9 +99,9 @@ Quantumart.QP8.BackendEntityObject.checkEntityForPresenceSelfRelations = functio
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}CheckPresenceSelfRelations`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId
-  }, false, false, (data) => {
+  }, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -114,9 +114,9 @@ Quantumart.QP8.BackendEntityObject.checkEntityForVariations = function (entityTy
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}CheckForVariations`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId
-  }, false, false, (data) => {
+  }, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -130,9 +130,9 @@ Quantumart.QP8.BackendEntityObject.getEntityName = function (entityTypeCode, ent
     entityTypeCode: entityTypeCode,
     entityId: entityId,
     parentEntityId: parentEntityId
-  }, false, false, (data) => {
+  }, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -145,9 +145,9 @@ Quantumart.QP8.BackendEntityObject.getParentEntityId = function (entityTypeCode,
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentId`, {
     entityTypeCode: entityTypeCode,
     entityId: +entityId || 0
-  }, false, false, (data) => {
+  }, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -160,9 +160,9 @@ Quantumart.QP8.BackendEntityObject.getParentIdsForTree = function (entityTypeCod
   $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentIdsForTree`, {
     entityTypeCode: entityTypeCode,
     ids: ids
-  }, false, false, (data) => {
+  }, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -176,9 +176,9 @@ Quantumart.QP8.BackendEntityObject.getParentInfo = function (entityTypeCode, ent
     entityTypeCode: entityTypeCode,
     entityId: entityId,
     parentEntityId: parentEntityId
-  }, false, false, (data) => {
+  }, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -214,9 +214,9 @@ Quantumart.QP8.BackendEntityObject.getParentsChain = function (entityTypeCode, e
     entityTypeCode: entityTypeCode,
     entityId: entityId,
     parentEntityId: parentEntityId
-  }, false, false, (data) => {
+  }, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -237,11 +237,11 @@ Quantumart.QP8.BackendEntityObject.checkEntitiesForPresenceEmptyNames = function
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityIDsFromEntities = function (entities) {
-  return $.map(entities, (elem) => elem.Id);
+  return $.map(entities, elem => elem.Id);
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityNamesFromEntities = function (entities) {
-  return $.map(entities, (elem) => elem.Name);
+  return $.map(entities, elem => elem.Name);
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function (entities) {
@@ -287,9 +287,9 @@ Quantumart.QP8.BackendEntityObject.getContextQuery = function (contentId, curren
   $q.getJsonFromUrl('GET', 'Article/GetContextQuery', {
     id: contentId,
     currentContext: currentContext
-  }, false, false, (data) => {
+  }, false, false, data => {
     result = data;
-  }, (jqXHR) => {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });

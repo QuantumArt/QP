@@ -98,7 +98,7 @@
   };
 
   CKEDITOR.dtd.a.div = true;
-  ['a', 'i', 'b', 'span'].forEach((tag) => {
+  ['a', 'i', 'b', 'span'].forEach(tag => {
     CKEDITOR.dtd.$removeEmpty[tag] = false;
   });
 

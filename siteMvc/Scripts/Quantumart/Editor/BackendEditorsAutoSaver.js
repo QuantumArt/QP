@@ -126,7 +126,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
         if (!editorState) {
           editorState = this._getEditorComponentState(fieldChangeInfo.documentWrapperElementId);
         } else {
-          let fieldState = jQuery.grep(editorState.fieldValues, (v) => v.fieldName === fieldChangeInfo.fieldName)[0];
+          let fieldState = jQuery.grep(editorState.fieldValues, v => v.fieldName === fieldChangeInfo.fieldName)[0];
 
           if (fieldState) {
             fieldState.value = fieldChangeInfo.value;
@@ -187,7 +187,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     let dfr = new jQuery.Deferred();
     if ($q.isArray(stateRecords) && !$q.isNullOrEmpty(stateRecords)) {
       let requestData = {
-        recordHeaders: JSON.stringify(jQuery.map(stateRecords, (r) => {
+        recordHeaders: JSON.stringify(jQuery.map(stateRecords, r => {
           return {
             RecordId: r.recordId,
             ActionCode: r.actionCode,
@@ -205,13 +205,13 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
         requestData,
         true,
         false
-      ).done((data) => {
+      ).done(data => {
         if (data.success) {
           if (!$q.isNullOrEmpty(data.approvedRecordIDs)) {
             dfr.resolve(
 
               // Оставить только те записи, которые прошли проверку на сервере
-              jQuery.grep(stateRecords, (r) => _.indexOf(data.approvedRecordIDs, r.recordId) > -1)
+              jQuery.grep(stateRecords, r => _.indexOf(data.approvedRecordIDs, r.recordId) > -1)
             );
           } else {
             dfr.resolve([]);
@@ -220,7 +220,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
           $q.alertError(data.Text);
           dfr.reject();
         }
-      }).fail((jqXHR) => {
+      }).fail(jqXHR => {
         $q.processGenericAjaxError(jqXHR);
         dfr.reject();
       });

@@ -97,7 +97,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     eventArgs.set_actionCode(message.data.selectActionCode);
 
     if ($q.isArray(message.data.selectedEntityIDs) && !$q.isNullOrEmpty(message.data.selectedEntityIDs)) {
-      let selectedEntities = jQuery.map(message.data.selectedEntityIDs, (id) => {
+      let selectedEntities = jQuery.map(message.data.selectedEntityIDs, id => {
         return { Id: id };
       });
       if (message.data.isMultiple) {

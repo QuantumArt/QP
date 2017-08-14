@@ -55,7 +55,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   getSelectedIds: function () {
     let result;
     if (this._isEntity) {
-      result = $.map(this._getSelectedEntities(), (item) => item.Id);
+      result = $.map(this._getSelectedEntities(), item => item.Id);
     } else {
       result = this._getIds($(this._textAreaElement).val());
     }
@@ -92,7 +92,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
 
   set_blockState: function (state) {
     if (state && !$q.isNullOrEmpty(state.entities)) {
-      this._selectedEntitiesIDs = $.map(state.entities, (item) => item.Id);
+      this._selectedEntitiesIDs = $.map(state.entities, item => item.Id);
     } else {
       this._selectedEntitiesIDs = null;
     }
@@ -107,7 +107,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       let ids = this._getIds(stateData.text);
       result = this._getText(ids);
     } else if (!$q.isNullOrEmpty(stateData.entities)) {
-      result = this._getText(stateData.entities, (e) => $q.cutShort(e.Name, 10));
+      result = this._getText(stateData.entities, e => $q.cutShort(e.Name, 10));
     } else {
       result = '';
     }
@@ -136,7 +136,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       }
 
       if (isRestoreByClose) {
-        this._selectedEntitiesIDs = $.map(state.entities, (item) => item.Id);
+        this._selectedEntitiesIDs = $.map(state.entities, item => item.Id);
 
         this._replaceWithSelectedEntities();
       }
@@ -163,7 +163,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
           ids: self.getSelectedIds(),
           fieldId: self._fieldID,
           filter: self._getEntityDataList()._filter
-        }, (data) => {
+        }, data => {
           self._selectedEntitiesIDs = $q.addRemoveToArrUniq(selectedIds, data);
           self._replaceWithSelectedEntities();
         });

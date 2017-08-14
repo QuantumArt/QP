@@ -39,7 +39,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
         true,
         false
       )
-        .done((data) => {
+        .done(data => {
           if (data.success) {
             $displayFieldSelectElement.empty();
             $listOrderSelectElement.empty();
@@ -100,7 +100,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
         },
         true,
         false
-      ).done((data) => {
+      ).done(data => {
         if (data.success) {
           $classifierSelectElement.empty();
           if (!$q.isNullOrEmpty(data.data)) {

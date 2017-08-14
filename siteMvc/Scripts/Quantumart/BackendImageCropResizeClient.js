@@ -482,7 +482,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       type: 'POST',
       dataType: 'json'
 
-    }).success((response) => {
+    }).success(response => {
       if (!response.ok) {
         let message = response.message || _defaultErrorMessage;
         displayErrors([message]);
@@ -495,7 +495,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
         _parameters.onCompleteCallback();
       }
-    }).fail((error) => {
+    }).fail(error => {
       displayErrors([_defaultErrorMessage]);
     });
   };
@@ -505,14 +505,14 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       data: { targetFileUrl: userInputFileName },
       type: 'POST',
       dataType: 'json'
-    }).success((response) => {
+    }).success(response => {
       if (!response.ok) {
         let message = response.message || _defaultErrorMessage;
         displayErrors([message]);
       } else {
         _serverOperateImage();
       }
-    }).fail((error) => {
+    }).fail(error => {
       displayErrors([_defaultErrorMessage]);
     });
   };
@@ -572,13 +572,13 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       }
     });
 
-    _$saveForm.submit((e) => {
+    _$saveForm.submit(e => {
       e.preventDefault();
       _$btnSave.trigger('click');
       return false;
     });
 
-    _$radioInputs.change((radio) => {
+    _$radioInputs.change(radio => {
       let saveCopy = _$radioSaveCopy.attr('checked');
       if (saveCopy) {
         _$inputUserFileName.removeAttr('disabled');

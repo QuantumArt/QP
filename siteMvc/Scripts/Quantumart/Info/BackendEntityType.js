@@ -88,7 +88,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
       false
     )
       .done(
-        (data) => {
+        data => {
           if (data.success) {
             dictionary = data.dictionary;
             Quantumart.QP8.Cache.addItem(cacheKey, data.dictionary);

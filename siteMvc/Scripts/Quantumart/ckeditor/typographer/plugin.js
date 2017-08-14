@@ -34,7 +34,7 @@
       '”'
     ];
 
-    quotesToReplace.forEach((quote) => {
+    quotesToReplace.forEach(quote => {
       result = result.replace(new RegExp(quote, 'g'), '"');
     });
 

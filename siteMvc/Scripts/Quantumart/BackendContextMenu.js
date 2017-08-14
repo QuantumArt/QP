@@ -171,13 +171,13 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     let $menu = $(this._contextMenuElement);
     $menu.empty();
 
-    Quantumart.QP8.BackendContextMenu.getContextMenuByCode(this._contextMenuCode, true, this._isBindToExternal, (data) => {
+    Quantumart.QP8.BackendContextMenu.getContextMenuByCode(this._contextMenuCode, true, this._isBindToExternal, data => {
       let menu = data;
       if (menu != null) {
         let menuItems = menu.Items;
         let menuItemCount = 0;
         if (menuItems != null) {
-          menuItems = $.grep(menuItems, (menuItem) => !hideRefreshMenuItem || menuItem.ActionTypeCode != window.ACTION_TYPE_CODE_REFRESH);
+          menuItems = $.grep(menuItems, menuItem => !hideRefreshMenuItem || menuItem.ActionTypeCode != window.ACTION_TYPE_CODE_REFRESH);
 
           menuItemCount = menuItems.length;
         }
@@ -200,7 +200,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       }
 
       $q.callFunction(successHandler);
-    }, (jqXHR) => {
+    }, jqXHR => {
       $q.processGenericAjaxError(jqXHR);
       $q.callFunction(errorHandler);
     });
@@ -218,7 +218,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       params = Object.assign({}, params, { boundToExternal: true });
     }
 
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_CONTEXT_MENU}GetStatusesList`, params, false, false, (data) => {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_CONTEXT_MENU}GetStatusesList`, params, false, false, data => {
       let statuses = data;
       if (statuses) {
         let statusCount = statuses.length;
@@ -237,7 +237,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 
       self._tuneMenuSeparators();
       $q.callFunction(callback);
-    }, (jqXHR) => {
+    }, jqXHR => {
       $q.processGenericAjaxError(jqXHR);
       $q.callFunction(callback);
     }
@@ -532,10 +532,10 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
     } else {
       let menu = null;
 
-      $q.getJsonFromUrl('GET', actionUrl, params, false, false, (data) => {
+      $q.getJsonFromUrl('GET', actionUrl, params, false, false, data => {
         Quantumart.QP8.Cache.addItem(cacheKey, data);
         menu = data;
-      }, (jqXHR) => {
+      }, jqXHR => {
         menu = null;
         $q.processGenericAjaxError(jqXHR);
       });

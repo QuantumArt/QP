@@ -53,17 +53,17 @@
       protectedSource: [/<a[^>]*><\/a>/g, /<i[^>]*><\/i>/g, /<b[^>]*><\/b>/g, /<span[^>]*><\/span>/g],
       extraPlugins: 'Spellchecker,Typographer,codemirror',
       removePlugins: 'save,newpage,scayt,spellchecker,forms,language,smiley,iframe,about',
-      format_tags: opts.formatsSet.map((fs) => fs.element).join(';')
+      format_tags: opts.formatsSet.map(fs => fs.element).join(';')
     };
 
-    opts.extraPlugins.forEach((pl) => {
+    opts.extraPlugins.forEach(pl => {
       config.extraPlugins += `,${pl.name}`;
       if (pl.url) {
         window.CKEDITOR.plugins.addExternal(pl.name, pl.url, 'plugin.js');
       }
     });
 
-    opts.formatsSet.forEach((fs) => {
+    opts.formatsSet.forEach(fs => {
       config[`format_${fs.element}`] = fs;
     });
 
@@ -76,7 +76,7 @@
     CKEDITOR.on('instanceCreated', () => {
       Object.keys(Object.assign({},
         config.listItems
-      )).forEach((key) => {
+      )).forEach(key => {
         if (config.disableListAutoWrap) {
           delete CKEDITOR.dtd.$listItem[key];
           delete CKEDITOR.dtd.$intermediate[key];
@@ -89,7 +89,7 @@
 
     config.on = {
       instanceReady: function (ev) {
-        ev.editor.filter.addElementCallback((el) => {
+        ev.editor.filter.addElementCallback(el => {
           if (el.name === 'table' || el.name === 'img') {
             return window.CKEDITOR.FILTER_SKIP_TREE;
           }
@@ -211,13 +211,13 @@
       this._isTextEditor = $q.toBoolean($(this._editorElem).data('is_texteditor'));
 
       $editorLink = this._isTextEditor ? this._$visualEditorLink : this._$expandLink;
-      $editorLink.off('click').on('click', (e) => {
+      $editorLink.off('click').on('click', e => {
         if (!that._isInitialized) {
           that._isInitialized = true;
           $q.getAjax('/Backend/VisualEditorConfig/LoadVeConfig', {
             siteId: that._siteId,
             fieldId: that._fieldId
-          }, (data) => {
+          }, data => {
             let instance = that.getCkEditor();
             if (instance) {
               that.disposeCKEditor(false);
@@ -230,7 +230,7 @@
       });
 
       if (this._isTextEditor) {
-        this._$textEditorLink.off('click').on('click', (e) => {
+        this._$textEditorLink.off('click').on('click', e => {
           that.disposeCKEditor(false);
           that._$containerElem.show();
           that._$visualEditorLink.show();

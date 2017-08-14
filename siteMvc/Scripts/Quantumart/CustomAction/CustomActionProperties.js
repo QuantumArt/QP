@@ -28,7 +28,7 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     let html = new $.telerik.stringBuilder();
     let entityTypeId = $('option:selected', $entityTypesElement).val();
     let dictionary = Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary();
-    let pair = $.grep(dictionary, (item) => item.EntityTypeId == entityTypeId);
+    let pair = $.grep(dictionary, item => item.EntityTypeId == entityTypeId);
     if (pair && pair[0]) {
       let listItems = pair[0].ActionItems;
       $.each(listItems, (i, item) => {

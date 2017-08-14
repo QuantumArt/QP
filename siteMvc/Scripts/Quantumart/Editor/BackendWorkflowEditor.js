@@ -22,7 +22,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     let workflow = this._componentElem;
     let contentSelector = this._contentSelector;
     this._items = ko.observableArray(
-      $.map(workflow.data('workflow_list_data'), (o) => {
+      $.map(workflow.data('workflow_list_data'), o => {
         let r = {};
         Object.assign(r, o || {}, {
           RadioChecked: ko.observable(o.RadioChecked),
@@ -72,7 +72,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             },
             false,
             false,
-            (data) => {
+            data => {
               if (element.UserId() != null) {
                 $(dom).find('span.workflow_permission_message').first().html(data);
               } else {
@@ -98,7 +98,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
     let component = this;
     this._componentElem.closest('form').find('.workflow_control_selector').parent('div').find('.checkbox')
-      .change((e) => {
+      .change(e => {
         component.manageItems(e);
       });
 
@@ -185,7 +185,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       },
       false,
       false,
-      (data) => {
+      data => {
         let current_workflow_stage = $(eventArgs._listElement).closest('fieldset');
         let user_row = current_workflow_stage.find(':visible.workflow_user_row');
         let group_row = current_workflow_stage.find(':visible.workflow_group_row');
@@ -215,7 +215,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   },
 
   addItem: function (statusId, statusName, weight) {
-    let existingItem = ko.utils.arrayFirst(this._items(), (item) => item.StId == statusId);
+    let existingItem = ko.utils.arrayFirst(this._items(), item => item.StId == statusId);
 
     if (existingItem == null) {
       let item = {

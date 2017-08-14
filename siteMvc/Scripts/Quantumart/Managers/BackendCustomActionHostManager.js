@@ -59,14 +59,14 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
       $.merge(hosts, Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(eventArgs.get_callerContext().eventArgs));
       $.merge(hosts, [Quantumart.QP8.BackendEditingArea.getInstance().getDocumentByEventArgs(eventArgs.get_callerContext().eventArgs)]);
     }
-    hosts = $.grep(hosts, (h) => !$q.isNull(h));
+    hosts = $.grep(hosts, h => !$q.isNull(h));
     if (!$q.isNullOrEmpty(hosts)) {
       $.each(hosts, (k, host) => {
         $.merge(callerContexts, host.get_externalCallerContexts());
       });
     }
 
-    callerContexts = $.grep(callerContexts, (c) => !$q.isNull(c));
+    callerContexts = $.grep(callerContexts, c => !$q.isNull(c));
     $(callerContexts).each((i, c) => {
       let component = self._components[c.hostUID];
       if (component) {
