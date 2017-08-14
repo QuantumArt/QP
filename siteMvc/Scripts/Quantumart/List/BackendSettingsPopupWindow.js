@@ -71,7 +71,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   _onPopupWindowToolbarButtonClicked: function (eventType, sender) {
     var options, errors, btn, className, prms, that;
     if (this._popupWindowComponent) {
-      options = Object.assign(this._eventsArgs, sender);
+      options = Object.assign({}, this._eventsArgs, sender);
       errors = this._settingsWindow.validate();
       if (errors.length) {
         $q.alertError(errors);

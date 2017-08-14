@@ -1,4 +1,4 @@
-window.EVENT_TYPE_CUSTOM_ACTION_CHANGED = "OnCustomActionChanged";
+window.EVENT_TYPE_CUSTOM_ACTION_CHANGED = 'OnCustomActionChanged';
 
 Quantumart.QP8.BackendContextMenuManager = function () {
   Quantumart.QP8.BackendContextMenuManager.initializeBase(this);
@@ -6,7 +6,7 @@ Quantumart.QP8.BackendContextMenuManager = function () {
 
 Quantumart.QP8.BackendContextMenuManager.prototype = {
   dispose: function () {
-    Quantumart.QP8.BackendContextMenuManager.callBaseMethod(this, "dispose");
+    Quantumart.QP8.BackendContextMenuManager.callBaseMethod(this, 'dispose');
     Quantumart.QP8.BackendContextMenuManager._instance = null;
     $q.collectGarbageInIE();
   },
@@ -33,4 +33,4 @@ Quantumart.QP8.BackendContextMenuManager.destroyInstance = function () {
   }
 };
 
-Quantumart.QP8.BackendContextMenuManager.registerClass("Quantumart.QP8.BackendContextMenuManager", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendContextMenuManager.registerClass('Quantumart.QP8.BackendContextMenuManager', Quantumart.QP8.Observable);

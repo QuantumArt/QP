@@ -1,7 +1,7 @@
-window.EVENT_TYPE_SPLITTER_INITIALIZED = "OnSplitterInitialized";
-window.EVENT_TYPE_SPLITTER_RESIZED = "OnSplitterResized";
-window.EVENT_TYPE_SPLITTER_DRAG_START = "OnSplitterDragStart";
-window.EVENT_TYPE_SPLITTER_DROP = "OnSplitterDrop";
+window.EVENT_TYPE_SPLITTER_INITIALIZED = 'OnSplitterInitialized';
+window.EVENT_TYPE_SPLITTER_RESIZED = 'OnSplitterResized';
+window.EVENT_TYPE_SPLITTER_DRAG_START = 'OnSplitterDragStart';
+window.EVENT_TYPE_SPLITTER_DROP = 'OnSplitterDrop';
 
 Quantumart.QP8.BackendSplitter = function (splitterElementId, options) {
 	Quantumart.QP8.BackendSplitter.initializeBase(this);
@@ -35,13 +35,13 @@ Quantumart.QP8.BackendSplitter = function (splitterElementId, options) {
 };
 
 Quantumart.QP8.BackendSplitter.prototype = {
-	_splitterElementId: "",
+	_splitterElementId: '',
 	_splitterComponent: null,
 	_firstPaneElement: null,
 	_firstPaneWidth: 250,
 	_minFirstPaneWidth: 50,
 	_maxFirstPaneWidth: 400,
-	_stateCookieName: "leftMenuSize",
+	_stateCookieName: 'leftMenuSize',
 	_toWindowResize: false,
 
 	get_splitterElementId: function () {
@@ -88,13 +88,13 @@ Quantumart.QP8.BackendSplitter.prototype = {
 	onSplitterResizedHandler: null,
 
 	initialize: function () {
-		this._splitterComponent = jQuery("#" + this._splitterElementId);
-		var splitter = this._splitterComponent.data("tSplitter");
+		this._splitterComponent = jQuery('#' + this._splitterElementId);
+		var splitter = this._splitterComponent.data('tSplitter');
 		if (this._toWindowResize) {
-			jQuery(window).trigger("resize");
+			jQuery(window).trigger('resize');
 		}
 
-		var $firstPane = jQuery(".t-pane:first", this._splitterComponent);
+		var $firstPane = jQuery('.t-pane:first', this._splitterComponent);
 		this._firstPaneElement = $firstPane.get(0);
 
 		splitter.onResize = this._onSplitterResizedHandler;
@@ -142,17 +142,17 @@ Quantumart.QP8.BackendSplitter.prototype = {
 
 	resize: function () {
 		if (this._splitterComponent) {
-			var splitter = this._splitterComponent.data("tSplitter");
+			var splitter = this._splitterComponent.data('tSplitter');
 			splitter.resize();
 			splitter = null;
 		}
 	},
 
 	dispose: function () {
-		Quantumart.QP8.BackendSplitter.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendSplitter.callBaseMethod(this, 'dispose');
 
 		if (this._splitterComponent != null) {
-			var splitter = this._splitterComponent.data("tSplitter");
+			var splitter = this._splitterComponent.data('tSplitter');
 			splitter.onResize = null;
 			splitter = null;
 			this._splitterComponent = null;
@@ -168,7 +168,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendSplitter.registerClass("Quantumart.QP8.BackendSplitter", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendSplitter.registerClass('Quantumart.QP8.BackendSplitter', Quantumart.QP8.Observable);
 Quantumart.QP8.BackendSplitterEventArgs = function () {
 	Quantumart.QP8.BackendSplitterEventArgs.initializeBase(this);
 };
@@ -203,4 +203,4 @@ Quantumart.QP8.BackendSplitterEventArgs.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendSplitterEventArgs.registerClass("Quantumart.QP8.BackendSplitterEventArgs", Sys.EventArgs);
+Quantumart.QP8.BackendSplitterEventArgs.registerClass('Quantumart.QP8.BackendSplitterEventArgs', Sys.EventArgs);

@@ -7,11 +7,11 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 		var $fileListContentElement = jQuery(this._fileListContentElement);
 		$fileListContentElement.html('<div class="fileListPreviewContainer"></div>');
 
-		$fileListContentElement.delegate('.fileItem input:checkbox', "click", $.proxy(this._onFileCheckBoxClickedHandler, this));
-		$fileListContentElement.delegate('.fileItem', "click", $.proxy(this._onFileContainerClickedHandler, this));
+		$fileListContentElement.delegate('.fileItem input:checkbox', 'click', $.proxy(this._onFileCheckBoxClickedHandler, this));
+		$fileListContentElement.delegate('.fileItem', 'click', $.proxy(this._onFileContainerClickedHandler, this));
 
 		if (!$q.isNullOrWhiteSpace(this._contextMenuCode)) {
-			var contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format("{0}_ContextMenu", $fileListContentElement.attr("id")),
+			var contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format('{0}_ContextMenu', $fileListContentElement.attr('id')),
 				{ targetElements: this._fileListContentElement, allowManualShowing: true, zIndex: this._zIndex});
 			contextMenuComponent.initialize();
 
@@ -56,13 +56,13 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 	},
 
 	dispose: function () {
-		Quantumart.QP8.BackendFilePreviewListView.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendFilePreviewListView.callBaseMethod(this, 'dispose');
 	},
 
 	shortNameLength: 15,
 	_getThumbnailLink: function (item, options) {
 		if (item.FileType == Quantumart.QP8.Enums.LibraryFileType.Image) {
-			var url = "";
+			var url = '';
 
 			if (options.fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
  url = window.CONTROLLER_URL_THUMBNAIL + '_SiteFileThumbnail';
@@ -77,4 +77,4 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendFilePreviewListView.registerClass("Quantumart.QP8.BackendFilePreviewListView", Quantumart.QP8.BackendFileNameListView);
+Quantumart.QP8.BackendFilePreviewListView.registerClass('Quantumart.QP8.BackendFilePreviewListView', Quantumart.QP8.BackendFileNameListView);

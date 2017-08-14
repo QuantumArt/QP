@@ -1,4 +1,4 @@
-window.CONTENT_CHANGE_TRACK_SELECTORS = ".containerContentSelector .singleItemPicker";
+window.CONTENT_CHANGE_TRACK_SELECTORS = '.containerContentSelector .singleItemPicker';
 Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId) {
     var $componentElem = jQuery('#' + rootElementId);
     var $parentObjectSelector = $componentElem.find('.parentTemplateObjectsSelector');
@@ -17,7 +17,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
     $typeSelector.change(manageGlobalVisibility);
 
     checkPublished();
-    if ($statusSelector.data('has-workflow') == "False") {
+    if ($statusSelector.data('has-workflow') == 'False') {
         $statusSelector.data('entity_data_list_component').disableList();
     }
 
@@ -25,13 +25,13 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
 
     function onContentValueChanged(e, data) {
         if (data.value) {
-            $q.getJsonFromUrl('POST', window.CONTROLLER_URL_PAGE_TEMPLATE + "GetFieldsByContentId",
+            $q.getJsonFromUrl('POST', window.CONTROLLER_URL_PAGE_TEMPLATE + 'GetFieldsByContentId',
             {
                 contentId: data.value
             },
             true, false).done(
             function (data) {
-                var newFields = data.fields.split(",");
+                var newFields = data.fields.split(',');
                 var newStatuses = data.statuses;
                 var publishedStatusId = $statusSelector.data('published-id');
                 var vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
@@ -77,7 +77,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
 
 
     function manageGlobalVisibility() {
-        if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(",").indexOf($typeSelector.val()) != -1) {
+        if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(',').indexOf($typeSelector.val()) != -1) {
             $globalChkbx.parent('.field').show();
         } else {
  $globalChkbx.parent('.field').hide();

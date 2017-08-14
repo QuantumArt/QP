@@ -1,8 +1,8 @@
-window.EVENT_TYPE_SEARCH_BLOCK_FIND_START = "OnSearchBlockFindStart";
-window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START = "OnContextBlockFindStart";
-window.EVENT_TYPE_SEARCH_BLOCK_RESET_START = "OnSearchBlockResetStart";
-window.EVENT_TYPE_SEARCH_BLOCK_RESIZED = "OnSearchBlockResized";
-window.EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE = "OnFieldSearchContainerClose";
+window.EVENT_TYPE_SEARCH_BLOCK_FIND_START = 'OnSearchBlockFindStart';
+window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START = 'OnContextBlockFindStart';
+window.EVENT_TYPE_SEARCH_BLOCK_RESET_START = 'OnSearchBlockResetStart';
+window.EVENT_TYPE_SEARCH_BLOCK_RESIZED = 'OnSearchBlockResized';
+window.EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE = 'OnFieldSearchContainerClose';
 
 Quantumart.QP8.BackendSearchBlockBase = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
   Quantumart.QP8.BackendSearchBlockBase.initializeBase(this);
@@ -54,19 +54,19 @@ Quantumart.QP8.BackendSearchBlockBase = function (searchBlockGroupCode, searchBl
 };
 
 Quantumart.QP8.BackendSearchBlockBase.prototype = {
-  _searchBlockGroupCode: "",
-  _searchBlockElementId: "",
+  _searchBlockGroupCode: '',
+  _searchBlockElementId: '',
   _searchBlockElement: null,
-  _searchBlockContainerElementId: "",
-  _tabId: "",
-  _popupWindowId: "",
-  _hostId: "",
+  _searchBlockContainerElementId: '',
+  _tabId: '',
+  _popupWindowId: '',
+  _hostId: '',
   _actionCode: null,
   _concreteSearchBlockElement: null,
   _buttonsWrapperElement: null,
   _findButtonElement: null,
   _resetButtonElement: null,
-  _entityTypeCode: "",
+  _entityTypeCode: '',
   _parentEntityId: 0,
   _minSearchBlockHeight: 180,
   _maxSearchBlockHeight: 500,
@@ -273,30 +273,30 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
       searchBlockHeight = parseInt($searchBlock.height(), 10);
     }
 
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, "");
+    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     eventArgs.set_searchBlockWidth(searchBlockWidth);
     eventArgs.set_searchBlockHeight(searchBlockHeight);
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, eventArgs);
   },
 
   _onFindButtonClick: function () {
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, "");
+    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 
   _onResetButtonClick: function () {
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, "");
+    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
   },
 
   _onSearchFormSubmitted: function (e) {
     e.preventDefault();
-    jQuery(this._findButtonElement).trigger("click");
+    jQuery(this._findButtonElement).trigger('click');
     return false;
   },
 
   dispose: function () {
-    Quantumart.QP8.BackendSearchBlockBase.callBaseMethod(this, "dispose");
+    Quantumart.QP8.BackendSearchBlockBase.callBaseMethod(this, 'dispose');
 
     this._detachSearchBlockEventHandlers();
 
@@ -324,10 +324,10 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 };
 
 Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function () {
-    return "q" + $q.generateRandomString(6);
+    return 'q' + $q.generateRandomString(6);
 };
 
-Quantumart.QP8.BackendSearchBlockBase.registerClass("Quantumart.QP8.BackendSearchBlockBase", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendSearchBlockBase.registerClass('Quantumart.QP8.BackendSearchBlockBase', Quantumart.QP8.Observable);
 Quantumart.QP8.BackendSearchBlockEventArgs = function (searchBlockType, searchQuery) {
   Quantumart.QP8.BackendSearchBlockEventArgs.initializeBase(this);
 
@@ -383,4 +383,4 @@ Quantumart.QP8.BackendSearchBlockEventArgs.prototype = {
   }
 };
 
-Quantumart.QP8.BackendSearchBlockEventArgs.registerClass("Quantumart.QP8.BackendSearchBlockEventArgs", Sys.EventArgs);
+Quantumart.QP8.BackendSearchBlockEventArgs.registerClass('Quantumart.QP8.BackendSearchBlockEventArgs', Sys.EventArgs);

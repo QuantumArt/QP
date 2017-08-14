@@ -1,3 +1,3 @@
 window.Backend.Lang.FileField = {
-	previewWindowTitle: "Preview"
+	previewWindowTitle: 'Preview'
 };

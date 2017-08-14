@@ -418,7 +418,7 @@ $q.getCustomActionJson = function getCustomActionJson(url, params, callbackSucce
   $q.getJsonFromUrl(
     'POST',
     `${window.CONTROLLER_URL_CUSTOM_ACTION}Proxy`,
-    Object.assign(params, { url }),
+    Object.assign({}, params, { url }),
     false,
     false,
     callbackSuccess,
@@ -715,7 +715,7 @@ $q.setPropertyValue = function setPropertyValue(object, propertyName, value) {
 $q.removeProperty = function removeProperty(object, propertyName) {
   if (object && object[propertyName]) {
     if ($.browser.msie && $.browser.version < 8) {
-      jQuery(object).removeAttr(propertyName);
+      $(object).removeAttr(propertyName);
     } else {
       // eslint-disable-next-line no-param-reassign
       delete object[propertyName];

@@ -1023,7 +1023,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   },
 
   _onDataBinding: function (sender) {
-    sender.data = Object.assign(sender.data, this._createDataQueryParams());
+    sender.data = Object.assign({}, sender.data, this._createDataQueryParams());
     this.addNodesToParentNode(sender, 0);
   },
 

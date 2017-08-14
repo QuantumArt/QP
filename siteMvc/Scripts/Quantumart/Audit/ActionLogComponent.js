@@ -19,22 +19,22 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   _tiles: {},
 
   initialize: function () {
-    var $grid = $("#" + this._gridElementId);
-    var gridComponent = $grid.data("tGrid");
+    var $grid = $('#' + this._gridElementId);
+    var gridComponent = $grid.data('tGrid');
     var $filter = $('#' + this._filterElementId);
 
-    $grid.unbind("dataBinding", gridComponent.onDataBinding)
-       .bind("dataBinding", this._onDataBindingHandler);
+    $grid.unbind('dataBinding', gridComponent.onDataBinding)
+       .bind('dataBinding', this._onDataBindingHandler);
 
     $('.alSearchButton', $filter).click(this._onApplyFilterHandler);
     $('.alResetButton', $filter).click(this._onClearFilterHandler);
 
 
-    this.$filterCombo = $filter.find(".alFilterCombo")
+    this.$filterCombo = $filter.find('.alFilterCombo')
       .change(
         jQuery.proxy(this._onFilterSelected, this)
       );
-    this.$tilesContainer = $filter.find(".alTilesContainer");
+    this.$tilesContainer = $filter.find('.alTilesContainer');
 
     gridComponent.ajaxRequest();
 
@@ -45,15 +45,15 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
 
   _onApplyFilter: function () {
-    $("#" + this._gridElementId)
-      .data("tGrid")
+    $('#' + this._gridElementId)
+      .data('tGrid')
       .ajaxRequest();
   },
 
   _onClearFilter: function () {
     var $filter = $('#' + this._filterElementId);
     this._destroyAllTiles();
-    $(".alSearchButton", this.$filter).trigger('click');
+    $('.alSearchButton', this.$filter).trigger('click');
 
     $filter = null;
   },
@@ -61,7 +61,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   _onDataBinding: function (e) {
     var filterData = this.get_filterData();
     if (!jQuery.isEmptyObject(filterData)) {
-      e.data = Object.assign(e.data, { searchQuery: JSON.stringify(filterData) });
+      e.data = Object.assign({}, e.data, { searchQuery: JSON.stringify(filterData) });
     }
   },
 
@@ -76,11 +76,11 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _onFilterSelected: function () {
-    var $selected = this.$filterCombo.find("option:selected");
+    var $selected = this.$filterCombo.find('option:selected');
     if ($selected.val()) {
       this._createTile({ value: $selected.val(), text: $selected.text() });
     }
-    this.$filterCombo.val("");
+    this.$filterCombo.val('');
     $selected = null;
   },
 
@@ -196,10 +196,10 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   dispose: function () {
     this._destroyAllTiles();
 
-    var $grid = $("#" + this._gridElementId);
+    var $grid = $('#' + this._gridElementId);
     var $filter = $('#' + this._filterElementId);
 
-    $grid.unbind("dataBinding");
+    $grid.unbind('dataBinding');
     this._onDataBindingHandler = null;
 
     $('.alSearchButton', $filter).unbind();
@@ -207,7 +207,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     this._onApplyFilterHandler = null;
     this._onDataBindingHandler = null;
 
-    this.$filterCombo.off("change");
+    this.$filterCombo.off('change');
     this.$filterCombo = null;
 
     this.$tilesContainer = null;
@@ -217,4 +217,4 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     $q.collectGarbageInIE();
   }
 };
-Quantumart.QP8.ActionLogComponent.registerClass("Quantumart.QP8.ActionLogComponent");
+Quantumart.QP8.ActionLogComponent.registerClass('Quantumart.QP8.ActionLogComponent');

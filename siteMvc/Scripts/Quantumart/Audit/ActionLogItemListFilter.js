@@ -25,20 +25,20 @@ Quantumart.QP8.ActionLogItemListFilter.prototype = {
 
 		this.$container.append(html.string());
 
-		this.$container.find("select.dropDownList").focus();
+		this.$container.find('select.dropDownList').focus();
 	},
 
 	onOpen: function () {
-		this.$container.find("select.dropDownList").focus();
+		this.$container.find('select.dropDownList').focus();
 	},
 
 	get_value: function () {
-		return this.$container.find("select.dropDownList option:selected").val();
+		return this.$container.find('select.dropDownList option:selected').val();
 	},
 
 	get_filterDetails: function () {
-		return this.$container.find("select.dropDownList option:selected").text();
+		return this.$container.find('select.dropDownList option:selected').text();
 	}
 };
 
-Quantumart.QP8.ActionLogItemListFilter.registerClass("Quantumart.QP8.ActionLogItemListFilter", Quantumart.QP8.ActionLogFilterBase);
+Quantumart.QP8.ActionLogItemListFilter.registerClass('Quantumart.QP8.ActionLogItemListFilter', Quantumart.QP8.ActionLogFilterBase);

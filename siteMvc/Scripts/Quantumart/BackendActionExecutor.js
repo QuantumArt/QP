@@ -14,11 +14,11 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     var isCustom = eventArgs.get_isCustomAction();
     var additionalUrlParameters = null;
     if (eventArgs.get_context() && eventArgs.get_context().additionalUrlParameters) {
-      additionalUrlParameters = Object.assign(this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
+      additionalUrlParameters = Object.assign({}, this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
     }
 
     if (eventArgs.get_startedByExternal() === true) {
-      additionalUrlParameters = Object.assign(additionalUrlParameters, { boundToExternal: true });
+      additionalUrlParameters = Object.assign({}, additionalUrlParameters, { boundToExternal: true });
     }
 
     if (!$q.isNullOrWhiteSpace(actionCode)) {
@@ -36,7 +36,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
         if (!confirmPhrase || (confirmPhrase && $q.confirmMessage(confirmPhrase))) {
           var entityIDs = isMultiple ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
-          var actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), "0", actionCode, {additionalUrlParameters: additionalUrlParameters});
+          var actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, {additionalUrlParameters: additionalUrlParameters});
           if (actionUrl) {
             var postParams = {
               IDs: entityIDs,
@@ -84,7 +84,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
             var preAction = function () {
               if (selectedAction.HasPreAction) {
                 if (!isCustom) {
-                  var preActionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), "0", actionCode, { isPreAction: true, additionalUrlParameters: additionalUrlParameters });
+                  var preActionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, { isPreAction: true, additionalUrlParameters: additionalUrlParameters });
                   $q.getJsonFromUrl('POST', preActionUrl, postParams, false, false, normalPreActionCallback, errorCallback);
                 } else {
                   $q.getCustomActionJson(customData.PreActionUrl, postParams, normalPreActionCallback, errorCallback);
@@ -151,7 +151,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
     var additionalUrlParameters = null;
     if (eventArgs.get_startedByExternal() === true) {
-      additionalUrlParameters = Object.assign(additionalUrlParameters, { boundToExternal: true });
+      additionalUrlParameters = Object.assign({}, additionalUrlParameters, { boundToExternal: true });
     }
 
     var actionCode = eventArgs.get_actionCode();

@@ -1,7 +1,7 @@
-window.EVENT_TYPE_ENTITY_EDITOR_IS_READY = "OnEntityEditorIsReady";
-window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED = "OnEntityEditorDisposed";
-window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = "OnEntityEditorFieldChanged";
-window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE = "OnEntityEditorAllFieldInvalidate";
+window.EVENT_TYPE_ENTITY_EDITOR_IS_READY = 'OnEntityEditorIsReady';
+window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED = 'OnEntityEditorDisposed';
+window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = 'OnEntityEditorFieldChanged';
+window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE = 'OnEntityEditorAllFieldInvalidate';
 
 Quantumart.QP8.BackendEntityEditorManager = function () {
 	Quantumart.QP8.BackendEntityEditorManager.initializeBase(this);
@@ -11,7 +11,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 	_editorGroups: {},
 
 	generateEditorGroupCode: function (entityTypeCode, entityId) {
-		var editorGroupCode = String.format("{0}_{1}", entityTypeCode, entityId);
+		var editorGroupCode = String.format('{0}_{1}', entityTypeCode, entityId);
 
 		return editorGroupCode;
 	},
@@ -183,7 +183,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 	},
 
 	dispose: function () {
-		Quantumart.QP8.BackendEntityEditorManager.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendEntityEditorManager.callBaseMethod(this, 'dispose');
 
 		if (this._editorGroups) {
 			for (let editorGroupCode in this._editorGroups) {
@@ -214,4 +214,4 @@ Quantumart.QP8.BackendEntityEditorManager.destroyInstance = function () {
 	}
 };
 
-Quantumart.QP8.BackendEntityEditorManager.registerClass("Quantumart.QP8.BackendEntityEditorManager", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendEntityEditorManager.registerClass('Quantumart.QP8.BackendEntityEditorManager', Quantumart.QP8.Observable);

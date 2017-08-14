@@ -1,7 +1,7 @@
 Quantumart.QP8.BackendSilverlightUploader = function (parentElement, options) {
 	Quantumart.QP8.BackendSilverlightUploader.initializeBase(this);
 
-	var $parentElement = $(".l-sl-uploader", parentElement);
+	var $parentElement = $('.l-sl-uploader', parentElement);
 
 	this._parentElement = $parentElement.get(0);
 	this._parentElementId = $parentElement.attr('id');
@@ -22,12 +22,12 @@ Quantumart.QP8.BackendSilverlightUploader = function (parentElement, options) {
 };
 
 Quantumart.QP8.BackendSilverlightUploader.prototype = {
-	_parentElementId: "",
+	_parentElementId: '',
 	_parentElement: null,
 
-	_folderPath: "",
-	_background: "#EBF5FB",
-	_extensions: "",
+	_folderPath: '',
+	_background: '#EBF5FB',
+	_extensions: '',
 	_resolveName: false,
 
 	initialize: function () {
@@ -49,47 +49,47 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 
 
 	_createFileUploader: function () {
-		var functionPrefix = "Quantumart$QP8$BackendSilverlightUploader$";
-		var uploadUrl = window.APPLICATION_ROOT_URL + "Upload/";
-		var resolveNameFuction = this._resolveName ? functionPrefix + "resolveFileName" : "";
+		var functionPrefix = 'Quantumart$QP8$BackendSilverlightUploader$';
+		var uploadUrl = window.APPLICATION_ROOT_URL + 'Upload/';
+		var resolveNameFuction = this._resolveName ? functionPrefix + 'resolveFileName' : '';
 		var params = {
-			path: "",
-			f_callback: functionPrefix + "uploadCallback",
-			f_check: functionPrefix + "checkFileExistence",
+			path: '',
+			f_callback: functionPrefix + 'uploadCallback',
+			f_check: functionPrefix + 'checkFileExistence',
 			f_resolve: resolveNameFuction,
-			f_localize: functionPrefix + "localizeUpload",
-			f_path: functionPrefix + "returnFolderPath",
-			f_security: functionPrefix + "checkSecurity",
+			f_localize: functionPrefix + 'localizeUpload',
+			f_path: functionPrefix + 'returnFolderPath',
+			f_security: functionPrefix + 'checkSecurity',
 			return_id: this._parentElementId,
 			extensions: this._extensions,
-			url: uploadUrl + "RadUploadHandler.ashx"
+			url: uploadUrl + 'RadUploadHandler.ashx'
 		};
 
-		var objId = this._parentElementId + "_object";
+		var objId = this._parentElementId + '_object';
 
 		Silverlight.createObjectEx({
-			source: uploadUrl + "SilverlightUpload.xap",
+			source: uploadUrl + 'SilverlightUpload.xap',
 			parentElement: this._parentElement,
 			id: objId,
 			properties: {
-				width: "250",
-				height: "20",
-				isWindowless: "true",
-				background: "transparent",
-				alt: "",
-				version: "2.0.31005.0"
+				width: '250',
+				height: '20',
+				isWindowless: 'true',
+				background: 'transparent',
+				alt: '',
+				version: '2.0.31005.0'
 			},
 			events: {
 				onError: this._onSilverlightErrorHandler
 			},
 			initParams: $q.hashToString(params),
-			context: "context"
+			context: 'context'
 		});
 	},
 
 
 	_onSilverlightErrorHandler: function (sender, args) {
-		var appSource = "";
+		var appSource = '';
 		if (sender != null && sender != 0) {
 			appSource = sender.getHost().Source;
 		}
@@ -97,22 +97,22 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
 		var errorType = args.ErrorType;
 		var iErrorCode = args.ErrorCode;
 
-		var errMsg = "Unhandled Error in Silverlight 2 Application " + appSource + "\n";
+		var errMsg = 'Unhandled Error in Silverlight 2 Application ' + appSource + '\n';
 
-		errMsg += "Code: " + iErrorCode + "    \n";
-		errMsg += "Category: " + errorType + "       \n";
-		errMsg += "Message: " + args.ErrorMessage + "     \n";
+		errMsg += 'Code: ' + iErrorCode + '    \n';
+		errMsg += 'Category: ' + errorType + '       \n';
+		errMsg += 'Message: ' + args.ErrorMessage + '     \n';
 
-		if (errorType == "ParserError") {
-			errMsg += "File: " + args.xamlFile + "     \n";
-			errMsg += "Line: " + args.lineNumber + "     \n";
-			errMsg += "Position: " + args.charPosition + "     \n";
-		} else if (errorType == "RuntimeError") {
+		if (errorType == 'ParserError') {
+			errMsg += 'File: ' + args.xamlFile + '     \n';
+			errMsg += 'Line: ' + args.lineNumber + '     \n';
+			errMsg += 'Position: ' + args.charPosition + '     \n';
+		} else if (errorType == 'RuntimeError') {
 			if (args.lineNumber != 0) {
-				errMsg += "Line: " + args.lineNumber + "     \n";
-				errMsg += "Position: " + args.charPosition + "     \n";
+				errMsg += 'Line: ' + args.lineNumber + '     \n';
+				errMsg += 'Position: ' + args.charPosition + '     \n';
 			}
-			errMsg += "MethodName: " + args.methodName + "     \n";
+			errMsg += 'MethodName: ' + args.methodName + '     \n';
 		}
 	},
 
@@ -137,19 +137,19 @@ function Quantumart$QP8$BackendSilverlightUploader$uploadCallback(id, fileName) 
 }
 
 function Quantumart$QP8$BackendSilverlightUploader$checkFileExistence(longfileName) {
-	var url = window.APPLICATION_ROOT_URL + "Library/FullNameFileExists/";
+	var url = window.APPLICATION_ROOT_URL + 'Library/FullNameFileExists/';
 	var obj = $q.getJsonSync(url, { name: longfileName });
 	return obj.result;
 }
 
 function Quantumart$QP8$BackendSilverlightUploader$resolveFileName(path, fileName) {
-	var url = window.APPLICATION_ROOT_URL + "Library/ResolveFileName/";
+	var url = window.APPLICATION_ROOT_URL + 'Library/ResolveFileName/';
 	var obj = $q.getJsonSync(url, { path: path, name: fileName });
 	return obj.result;
 }
 
 function Quantumart$QP8$BackendSilverlightUploader$checkSecurity(path) {
-	var url = window.APPLICATION_ROOT_URL + "Library/CheckSecurity/";
+	var url = window.APPLICATION_ROOT_URL + 'Library/CheckSecurity/';
 	var obj = $q.getJsonSync(url, { path: path });
 	return obj.result;
 }
@@ -157,7 +157,7 @@ function Quantumart$QP8$BackendSilverlightUploader$checkSecurity(path) {
 
 function Quantumart$QP8$BackendSilverlightUploader$returnFolderPath(id) {
 	var $element = $('#' + id);
-	var result = "";
+	var result = '';
 	if ($element) {
 		var component = $element.data('qp_sl_uploader');
 		if (component) {
@@ -181,4 +181,4 @@ function Quantumart$QP8$BackendSilverlightUploader$localizeUpload() {
 	return result;
 }
 
-Quantumart.QP8.BackendSilverlightUploader.registerClass("Quantumart.QP8.BackendSilverlightUploader", Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader);
+Quantumart.QP8.BackendSilverlightUploader.registerClass('Quantumart.QP8.BackendSilverlightUploader', Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader);

@@ -1,4 +1,4 @@
-window.EVENT_TYPE_PAGE_NUMBER_CHANGED = "OnPageNumberChanged";
+window.EVENT_TYPE_PAGE_NUMBER_CHANGED = 'OnPageNumberChanged';
 Quantumart.QP8.BackendPagerEventArgs = function (pageNumber) {
 	Quantumart.QP8.BackendPagerEventArgs.initializeBase(this);
 	this._pageNumber = pageNumber;
@@ -11,7 +11,7 @@ Quantumart.QP8.BackendPagerEventArgs.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendPagerEventArgs.registerClass("Quantumart.QP8.BackendPagerEventArgs", Sys.EventArgs);
+Quantumart.QP8.BackendPagerEventArgs.registerClass('Quantumart.QP8.BackendPagerEventArgs', Sys.EventArgs);
 Quantumart.QP8.BackendPager = function (pagerElement) {
 	Quantumart.QP8.BackendPager.initializeBase(this);
 
@@ -75,7 +75,7 @@ Quantumart.QP8.BackendPager.prototype = {
 
 	initialize: function () {
 		var $pagerElement = $(this._pagerElement);
-		$pagerElement.addClass("t-widget t-grid");
+		$pagerElement.addClass('t-widget t-grid');
 
 		var innerHtml = '<div class="t-grid-pager t-grid-bottom">'
 							+ '<div class="t-pager t-reset">'
@@ -142,19 +142,19 @@ Quantumart.QP8.BackendPager.prototype = {
 
 	redraw: function () {
 		if (this._currentPageNumber == 0) {
-			$(this._arrowFirstElement).addClass("t-state-disabled").removeClass('t-state-hover');
-			$(this._arrowPrevElement).addClass("t-state-disabled").removeClass('t-state-hover');
+			$(this._arrowFirstElement).addClass('t-state-disabled').removeClass('t-state-hover');
+			$(this._arrowPrevElement).addClass('t-state-disabled').removeClass('t-state-hover');
 		} else {
-			$(this._arrowFirstElement).removeClass("t-state-disabled");
-			$(this._arrowPrevElement).removeClass("t-state-disabled");
+			$(this._arrowFirstElement).removeClass('t-state-disabled');
+			$(this._arrowPrevElement).removeClass('t-state-disabled');
 		}
 
 		if (this._currentPageNumber >= this._pageCount - 1) {
-			$(this._arrowLastElement).addClass("t-state-disabled").removeClass('t-state-hover');
-			$(this._arrowNextElement).addClass("t-state-disabled").removeClass('t-state-hover');
+			$(this._arrowLastElement).addClass('t-state-disabled').removeClass('t-state-hover');
+			$(this._arrowNextElement).addClass('t-state-disabled').removeClass('t-state-hover');
 		} else {
-			$(this._arrowLastElement).removeClass("t-state-disabled");
-			$(this._arrowNextElement).removeClass("t-state-disabled");
+			$(this._arrowLastElement).removeClass('t-state-disabled');
+			$(this._arrowNextElement).removeClass('t-state-disabled');
 		}
 
 		if (this._totalCount > 0) {
@@ -188,12 +188,12 @@ Quantumart.QP8.BackendPager.prototype = {
 	_onInHover: function (e) {
 		var $e = $(e.currentTarget);
 		if (!$e.hasClass('t-state-disabled')) {
- $e.addClass("t-state-hover");
+ $e.addClass('t-state-hover');
 }
 	},
 
 	_onOutHover: function (e) {
-		$(e.currentTarget).removeClass("t-state-hover");
+		$(e.currentTarget).removeClass('t-state-hover');
 	},
 
 	_onPageClick: function (e) {
@@ -202,17 +202,17 @@ Quantumart.QP8.BackendPager.prototype = {
 		if (!$selectedPage.hasClass('t-state-disabled')) {
 			var newPageNumber = 0;
 
-			if ($selectedPage.hasClass("qp-link-arrow-first")) {
+			if ($selectedPage.hasClass('qp-link-arrow-first')) {
  newPageNumber = 0;
-} else if ($selectedPage.hasClass("qp-link-arrow-prev")) {
+} else if ($selectedPage.hasClass('qp-link-arrow-prev')) {
  newPageNumber = this._currentPageNumber - 1;
-} else if ($selectedPage.hasClass("qp-link-arrow-next")) {
+} else if ($selectedPage.hasClass('qp-link-arrow-next')) {
  newPageNumber = this._currentPageNumber + 1;
-} else if ($selectedPage.hasClass("qp-link-arrow-last")) {
+} else if ($selectedPage.hasClass('qp-link-arrow-last')) {
  newPageNumber = this._pageCount - 1;
-} else if ($selectedPage.hasClass("qp-link-prev-frame")) {
+} else if ($selectedPage.hasClass('qp-link-prev-frame')) {
  newPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(this._currentPageFrameNumber - 1, this._pageFrameSize, this._pageCount);
-} else if ($selectedPage.hasClass("qp-link-next-frame")) {
+} else if ($selectedPage.hasClass('qp-link-next-frame')) {
  newPageNumber = Quantumart.QP8.BackendPager.getFrameStartPageNumber(this._currentPageFrameNumber + 1, this._pageFrameSize);
 } else {
  newPageNumber = $q.toInt($selectedPage.html()) - 1;
@@ -228,7 +228,7 @@ Quantumart.QP8.BackendPager.prototype = {
 
 	dispose: function () {
 		var $pagerElement = $(this._pagerElement);
-		$pagerElement.find("a.qp-page-link").undelegate();
+		$pagerElement.find('a.qp-page-link').undelegate();
 
 		$pagerElement = null;
 		this._arrowFirstElement = null;
@@ -256,4 +256,4 @@ Quantumart.QP8.BackendPager.getFrameEndPageNumber = function (pageFrameNumber, p
   );
 };
 
-Quantumart.QP8.BackendPager.registerClass("Quantumart.QP8.BackendPager", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendPager.registerClass('Quantumart.QP8.BackendPager', Quantumart.QP8.Observable);

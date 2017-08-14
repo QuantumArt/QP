@@ -14,8 +14,8 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, 
 	}
 
 	function dispose() {
-		jQuery(userPicker.getStateFieldElement()).off("change", onApplyFilter);
-		jQuery(groupPicker.getStateFieldElement()).off("change", onApplyFilter);
+		jQuery(userPicker.getStateFieldElement()).off('change', onApplyFilter);
+		jQuery(groupPicker.getStateFieldElement()).off('change', onApplyFilter);
 		jQuery('li input', $radioGroup).off();
 
 		$searchBlock = null;
@@ -37,10 +37,10 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, 
 	var userPicker = jQuery('.pep-user-selector', $searchBlock).data('entity_data_list_component'),
 		groupPicker = jQuery('.pep-group-selector', $searchBlock).data('entity_data_list_component');
 
-	jQuery(userPicker.getStateFieldElement()).on("change", onApplyFilter);
-	jQuery(groupPicker.getStateFieldElement()).on("change", onApplyFilter);
-	jQuery('li input', $radioGroup).on("change", onApplyFilter);
-	$btnSearch.on("click", onApplyFilter);
+	jQuery(userPicker.getStateFieldElement()).on('change', onApplyFilter);
+	jQuery(groupPicker.getStateFieldElement()).on('change', onApplyFilter);
+	jQuery('li input', $radioGroup).on('change', onApplyFilter);
+	$btnSearch.on('click', onApplyFilter);
 
 	return {
 		getSearchData: getSearchData,

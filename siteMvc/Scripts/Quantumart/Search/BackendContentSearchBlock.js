@@ -17,10 +17,10 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
 		var contentName = null;
 
 		if (this._contentGroupListElement) {
- groupId = $(this._contentGroupListElement).find("option:selected").val();
+ groupId = $(this._contentGroupListElement).find('option:selected').val();
 }
 		if (this._siteListElement) {
- siteId = $(this._siteListElement).find("option:selected").val();
+ siteId = $(this._siteListElement).find('option:selected').val();
 }
 		if (this._contentNameElement) {
  contentName = $(this._contentNameElement).val();
@@ -37,8 +37,8 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
 		if (this.get_isRendered() !== true) {
 			var serverContent;
 			$q.getJsonFromUrl(
-			"GET",
-			window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK + "SearchBlock/" + this._parentEntityId,
+			'GET',
+			window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK + 'SearchBlock/' + this._parentEntityId,
 			{
 				actionCode: this._actionCode,
 				hostId: this._hostId
@@ -59,10 +59,10 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
 			if (!$q.isNullOrWhiteSpace(serverContent)) {
 			    $(this._concreteSearchBlockElement).html(serverContent);
 
-				this._contentGroupListElement = $(".contentGroupList", this._searchBlockElement).get(0);
-				this._siteListElement = $(".siteList", this._searchBlockElement).get(0);
-				this._contentNameElement = $(".contentNameText", this._searchBlockElement).get(0);
-				$(".csFilterCombo", this._searchBlockElement).bind("change", this._onChangeComboHandler);
+				this._contentGroupListElement = $('.contentGroupList', this._searchBlockElement).get(0);
+				this._siteListElement = $('.siteList', this._searchBlockElement).get(0);
+				this._contentNameElement = $('.contentNameText', this._searchBlockElement).get(0);
+				$('.csFilterCombo', this._searchBlockElement).bind('change', this._onChangeComboHandler);
 			}
 
 			this.set_isRendered(true);
@@ -70,7 +70,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
 	},
 
 	_onChangeCombo: function () {
-		$(this._findButtonElement).trigger("click");
+		$(this._findButtonElement).trigger('click');
 	},
 
 	_onFindButtonClick: function () {
@@ -80,8 +80,8 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
 	},
 
 	_onResetButtonClick: function () {
-		$(".csFilterCombo", this._searchBlockElement).find("option[value='']").prop("selected", true);
-		$(".csFilterTextbox", this._searchBlockElement).val('');
+		$('.csFilterCombo', this._searchBlockElement).find("option[value='']").prop('selected', true);
+		$('.csFilterTextbox', this._searchBlockElement).val('');
 
 		var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
 		this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
@@ -89,15 +89,15 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
 	},
 
 	dispose: function () {
-	    $(".csFilterCombo", this._searchBlockElement).unbind();
+	    $('.csFilterCombo', this._searchBlockElement).unbind();
 
 		this._contentGroupListElement = null;
 		this._siteListElement = null;
 		this._contentNameElement = null;
 		this._onChangeComboHandler = null;
 
-		Quantumart.QP8.BackendContentSearchBlock.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendContentSearchBlock.callBaseMethod(this, 'dispose');
 	}
 };
 
-Quantumart.QP8.BackendContentSearchBlock.registerClass("Quantumart.QP8.BackendContentSearchBlock", Quantumart.QP8.BackendSearchBlockBase);
+Quantumart.QP8.BackendContentSearchBlock.registerClass('Quantumart.QP8.BackendContentSearchBlock', Quantumart.QP8.BackendSearchBlockBase);

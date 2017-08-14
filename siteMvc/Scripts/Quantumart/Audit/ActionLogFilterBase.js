@@ -8,7 +8,7 @@ Quantumart.QP8.ActionLogFilterBase.prototype = {
 	initialize: function () { },
 	onOpen: function () { },
 	get_filterDetails: function () {
-    return "?";
+    return '?';
   },
 	get_value: function () { },
 	dispose: function () {
@@ -16,4 +16,4 @@ Quantumart.QP8.ActionLogFilterBase.prototype = {
 	}
 };
 
-Quantumart.QP8.ActionLogFilterBase.registerClass("Quantumart.QP8.ActionLogFilterBase");
+Quantumart.QP8.ActionLogFilterBase.registerClass('Quantumart.QP8.ActionLogFilterBase');

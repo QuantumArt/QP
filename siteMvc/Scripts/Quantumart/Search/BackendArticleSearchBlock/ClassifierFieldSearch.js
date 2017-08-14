@@ -61,7 +61,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
       if (stateData.isNull) {
         return $l.SearchBlock.isNullCheckBoxLabelText;
       } else if (stateData.contentID) {
-        return $q.cutShort($(this._contentElement).find("[value=" + stateData.contentID + "]").text(), 12);
+        return $q.cutShort($(this._contentElement).find('[value=' + stateData.contentID + ']').text(), 12);
       }
         return '';
 
@@ -71,8 +71,8 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
       if (state) {
         if (this._isNullCheckBoxElement) {
           var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
-          $isNullCheckBoxElement.prop("checked", state.isNull);
-          $isNullCheckBoxElement.trigger("change");
+          $isNullCheckBoxElement.prop('checked', state.isNull);
+          $isNullCheckBoxElement.trigger('change');
           $isNullCheckBoxElement = null;
         }
 
@@ -86,7 +86,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     _onIsNullCheckBoxChangeHandler: null,
     get_IsNull: function () {
       if (this._isNullCheckBoxElement) {
-        return $(this._isNullCheckBoxElement).is(":checked");
+        return $(this._isNullCheckBoxElement).is(':checked');
       }
         return false;
 
@@ -94,16 +94,16 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
 
     _onIsNullCheckBoxChange: function () {
       if (this.get_IsNull()) {
-        $(this._contentElement).prop("disabled", true);
+        $(this._contentElement).prop('disabled', true);
       } else {
-        $(this._contentElement).prop("disabled", false);
+        $(this._contentElement).prop('disabled', false);
       }
     },
 
     dispose: function () {
         if (this._isNullCheckBoxElement) {
           var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
-          $isNullCheckBoxElement.unbind("change", this._onIsNullCheckBoxChangeHandler);
+          $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
         }
 
         $c.destroyAllNumericTextBoxes(this._contentElement);
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
         this._onIsNullCheckBoxChangeHandler = null;
         this._contentElement = null;
 
-        Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.callBaseMethod(this, "dispose");
+        Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.callBaseMethod(this, 'dispose');
     },
 
     _searchType: 0,
@@ -119,4 +119,4 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     _contentID: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);

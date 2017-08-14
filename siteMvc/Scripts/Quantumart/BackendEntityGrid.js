@@ -948,7 +948,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   _onDataBinding: function (e) {
     var params = this._createDataQueryParams();
-    e.data = Object.assign(e.data, params);
+    e.data = Object.assign({}, e.data, params);
     if (this._isDataLoaded) {
       var action = this._getCurrentAction();
       if (action) {

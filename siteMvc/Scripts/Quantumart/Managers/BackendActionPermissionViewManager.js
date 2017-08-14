@@ -52,4 +52,4 @@ Quantumart.QP8.BackendActionPermissionViewManager.destroyInstance = function () 
 	}
 };
 
-Quantumart.QP8.BackendActionPermissionViewManager.registerClass("Quantumart.QP8.BackendActionPermissionViewManager", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendActionPermissionViewManager.registerClass('Quantumart.QP8.BackendActionPermissionViewManager', Quantumart.QP8.Observable);

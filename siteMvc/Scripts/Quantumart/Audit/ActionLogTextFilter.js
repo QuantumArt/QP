@@ -6,15 +6,15 @@ Quantumart.QP8.ActionLogTextFilter = function (filterContainer) {
 Quantumart.QP8.ActionLogTextFilter.prototype = {
 	initialize: function () {
 		this.$container.append('<div class="row"><input type="text" class="textbox" value="" /></div>');
-		this.$container.find("input.textbox").focus();
+		this.$container.find('input.textbox').focus();
 	},
 
 	onOpen: function () {
-		this.$container.find("input.textbox").focus();
+		this.$container.find('input.textbox').focus();
 	},
 
 	get_value: function () {
-		return this.$container.find("input.textbox").val();
+		return this.$container.find('input.textbox').val();
 	},
 
 	get_filterDetails: function () {
@@ -27,4 +27,4 @@ Quantumart.QP8.ActionLogTextFilter.prototype = {
 	}
 };
 
-Quantumart.QP8.ActionLogTextFilter.registerClass("Quantumart.QP8.ActionLogTextFilter", Quantumart.QP8.ActionLogFilterBase);
+Quantumart.QP8.ActionLogTextFilter.registerClass('Quantumart.QP8.ActionLogTextFilter', Quantumart.QP8.ActionLogFilterBase);

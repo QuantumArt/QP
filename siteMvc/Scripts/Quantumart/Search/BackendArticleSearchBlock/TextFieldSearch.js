@@ -7,8 +7,8 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   initialize: function () {
     var serverContent;
     $q.getJsonFromUrl(
-			"GET",
-			window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "TextSearch",
+			'GET',
+			window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'TextSearch',
 			{
 			  elementIdPrefix: this._elementIdPrefix,
 			  fieldID: this._fieldID
@@ -37,18 +37,18 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
       var $containerElement = $(this._containerElement);
       $containerElement.append(serverContent);
 
-      var $isNullCheckBoxElement = $containerElement.find("#" + isNullCheckBoxID);
-      $isNullCheckBoxElement.bind("change", this._onIsNullCheckBoxChangeHandler);
+      var $isNullCheckBoxElement = $containerElement.find('#' + isNullCheckBoxID);
+      $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
       this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
 
-      var $inverseCheckBoxElement = $containerElement.find("#" + inverseCheckBoxID);
+      var $inverseCheckBoxElement = $containerElement.find('#' + inverseCheckBoxID);
       this._inverseCheckBoxElement = $inverseCheckBoxElement.get(0);
 
-      var $exactMatchCheckBoxElement = $containerElement.find("#" + exactMatchCheckBoxID);
+      var $exactMatchCheckBoxElement = $containerElement.find('#' + exactMatchCheckBoxID);
       this._exactMatchCheckBoxElement = $exactMatchCheckBoxElement.get(0);
 
-      var $beginningStartCheckBoxElement = $containerElement.find("#" + beginningCheckBoxID);
+      var $beginningStartCheckBoxElement = $containerElement.find('#' + beginningCheckBoxID);
       this._beginningStartChechBoxElement = $beginningStartCheckBoxElement.get(0);
       this._queryTextBoxElement = $containerElement.find('#' + queryTextBoxID).get(0);
     }
@@ -84,7 +84,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.exactMatch) {
-      result = "=" + result;
+      result = '=' + result;
     } else if (stateData.beginningStart) {
       if (stateData.inverse) {
         return $l.SearchBlock.endText + result;
@@ -94,7 +94,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     }
 
     if (stateData.inverse) {
-      result = $l.SearchBlock.notText + "(" + result + ")";
+      result = $l.SearchBlock.notText + '(' + result + ')';
     }
 
     return result;
@@ -104,24 +104,24 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     if (state) {
       if (this._isNullCheckBoxElement) {
         var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
-        $isNullCheckBoxElement.prop("checked", state.isNull);
-        $isNullCheckBoxElement.trigger("change");
+        $isNullCheckBoxElement.prop('checked', state.isNull);
+        $isNullCheckBoxElement.trigger('change');
         $isNullCheckBoxElement = null;
       }
 
       if (this._inverseCheckBoxElement) {
         var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
-        $inverseCheckBoxElement.prop("checked", state.inverse);
+        $inverseCheckBoxElement.prop('checked', state.inverse);
       }
 
       if (this._beginningStartChechBoxElement) {
         var $beginningStartCheckBoxElement = $(this._beginningStartChechBoxElement);
-        $beginningStartCheckBoxElement.prop("checked", state.beginningStart);
+        $beginningStartCheckBoxElement.prop('checked', state.beginningStart);
       }
 
       if (this._exactMatchCheckBoxElement) {
         var $exactMatchCheckBoxElement = $(this._exactMatchCheckBoxElement);
-        $exactMatchCheckBoxElement.prop("checked", state.exactMatch);
+        $exactMatchCheckBoxElement.prop('checked', state.exactMatch);
       }
 
       $(this._queryTextBoxElement).val(state.text);
@@ -129,15 +129,15 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChange: function () {
-    $(this._queryTextBoxElement).prop("disabled", this.get_IsNull());
-    $(this._exactMatchCheckBoxElement).prop("disabled", this.get_IsNull());
-    $(this._beginningStartChechBoxElement).prop("disabled", this.get_IsNull());
+    $(this._queryTextBoxElement).prop('disabled', this.get_IsNull());
+    $(this._exactMatchCheckBoxElement).prop('disabled', this.get_IsNull());
+    $(this._beginningStartChechBoxElement).prop('disabled', this.get_IsNull());
   },
 
   dispose: function () {
     if (this._isNullCheckBoxElement) {
       var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
-      $isNullCheckBoxElement.unbind("change", this._onIsNullCheckBoxChangeHandler);
+      $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
       $isNullCheckBoxElement = null;
     }
 
@@ -148,14 +148,14 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     this._exactMatchCheckBoxElement = null;
     this._onIsNullCheckBoxChangeHandler = null;
 
-    Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.callBaseMethod(this, "dispose");
+    Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.callBaseMethod(this, 'dispose');
   },
 
   _onIsNullCheckBoxChangeHandler: null,
 
   get_IsNull: function () {
     if (this._isNullCheckBoxElement) {
- return $(this._isNullCheckBoxElement).is(":checked");
+ return $(this._isNullCheckBoxElement).is(':checked');
 }
 
  return false;
@@ -163,7 +163,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
   get_Inverse: function () {
     if (this._inverseCheckBoxElement) {
- return $(this._inverseCheckBoxElement).is(":checked");
+ return $(this._inverseCheckBoxElement).is(':checked');
 }
 
  return false;
@@ -171,7 +171,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
   get_ExactMatch: function () {
     if (this._exactMatchCheckBoxElement) {
- return $(this._exactMatchCheckBoxElement).is(":checked");
+ return $(this._exactMatchCheckBoxElement).is(':checked');
 }
 
  return false;
@@ -179,7 +179,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
   get_BeginningStart: function () {
     if (this._beginningStartChechBoxElement) {
- return $(this._beginningStartChechBoxElement).is(":checked");
+ return $(this._beginningStartChechBoxElement).is(':checked');
 }
 
  return false;
@@ -192,4 +192,4 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   _exactMatchCheckBoxElement: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);

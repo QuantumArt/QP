@@ -10,8 +10,8 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         var serverContent;
 
         $q.getJsonFromUrl(
-            "GET",
-            window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "StringEnum",
+            'GET',
+            window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'StringEnum',
             {
                 elementIdPrefix: this._elementIdPrefix,
                 fieldID: this._fieldID
@@ -34,8 +34,8 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         if (!$q.isNullOrWhiteSpace(serverContent)) {
             var $containerElement = $(this._containerElement);
             $containerElement.html(serverContent);
-            var $isNullCheckBoxElement = $containerElement.find("#" + isNullCheckBoxID);
-            $isNullCheckBoxElement.bind("change", this._onIsNullCheckBoxChangeHandler);
+            var $isNullCheckBoxElement = $containerElement.find('#' + isNullCheckBoxID);
+            $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
             this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
             this._queryDropDownListElement = $containerElement.find('#' + queryDropDownListID).get(0);
 
@@ -55,7 +55,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
 		{
 		    isNull: this.get_IsNull(),
 		    text: $(this._queryDropDownListElement).val(),
-		    alias: $(this._queryDropDownListElement).find("option:selected").text()
+		    alias: $(this._queryDropDownListElement).find('option:selected').text()
 		});
     },
 
@@ -74,8 +74,8 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         if (state) {
             if (this._isNullCheckBoxElement) {
                 var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
-                $isNullCheckBoxElement.prop("checked", state.isNull);
-                $isNullCheckBoxElement.trigger("change");
+                $isNullCheckBoxElement.prop('checked', state.isNull);
+                $isNullCheckBoxElement.trigger('change');
                 $isNullCheckBoxElement = null;
             }
 
@@ -84,13 +84,13 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     },
 
     _onIsNullCheckBoxChange: function () {
-        $(this._queryDropDownListElement).prop("disabled", this.get_IsNull());
+        $(this._queryDropDownListElement).prop('disabled', this.get_IsNull());
     },
 
     dispose: function () {
         if (this._isNullCheckBoxElement) {
             var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
-            $isNullCheckBoxElement.unbind("change", this._onIsNullCheckBoxChangeHandler);
+            $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
             $isNullCheckBoxElement = null;
         }
 
@@ -98,13 +98,13 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         this._queryDropDownListElement = null;
         this._onIsNullCheckBoxChangeHandler = null;
 
-        Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.callBaseMethod(this, "dispose");
+        Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.callBaseMethod(this, 'dispose');
     },
 
     _onIsNullCheckBoxChangeHandler: null,
     get_IsNull: function () {
         if (this._isNullCheckBoxElement) {
- return $(this._isNullCheckBoxElement).is(":checked");
+ return $(this._isNullCheckBoxElement).is(':checked');
 }
  return false;
 
@@ -113,4 +113,4 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     _isNullCheckBoxElement: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);

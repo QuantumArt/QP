@@ -1,7 +1,7 @@
-window.EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST = "OnTabSelectRequest";
-window.EVENT_TYPE_TAB_STRIP_TAB_CLOSE_REQUEST = "OnTabCloseRequest";
-window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST = "OnTabSaveAndCloseRequest";
-window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST = "OnFindTabInTreeRequest";
+window.EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST = 'OnTabSelectRequest';
+window.EVENT_TYPE_TAB_STRIP_TAB_CLOSE_REQUEST = 'OnTabCloseRequest';
+window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST = 'OnTabSaveAndCloseRequest';
+window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST = 'OnFindTabInTreeRequest';
 
 Quantumart.QP8.BackendTabStrip = function (tabStripElementId, options) {
   Quantumart.QP8.BackendTabStrip.initializeBase(this);
@@ -306,8 +306,8 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var $tabs = this.getAllTabs();
     if ($tabs.length > 0) {
       var $lastTab = $tabs.last();
-      var lastTabId = $lastTab.attr("id");
-      var numberMatch = lastTabId.match("[0-9]+");
+      var lastTabId = $lastTab.attr('id');
+      var numberMatch = lastTabId.match('[0-9]+');
       if (numberMatch.length == 1) {
         tabNumber = parseInt(numberMatch[0], 10) + 1;
       } else {
@@ -316,7 +316,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       }
     }
 
-    return String.format("tab{0}", tabNumber);
+    return String.format('tab{0}', tabNumber);
   },
 
   generateTabText: function (eventArgs, tabNumber) {
@@ -324,7 +324,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   getAllTabs: function () {
-    return $("> LI.tab", this._tabListElement);
+    return $('> LI.tab', this._tabListElement);
   },
 
   getAllTabsCount: function () {
@@ -344,7 +344,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var $tabs = this.getAllTabs();
     for (var tabIndex = 0, tabCount = $tabs.length; tabIndex < tabCount; tabIndex++) {
       var $tab = $tabs.eq(tabIndex);
-      if ($tab.data("parent_entity_type_code") == parentEntityTypeCode && $tab.data("parent_entity_id") == parentEntityId) {
+      if ($tab.data('parent_entity_type_code') == parentEntityTypeCode && $tab.data('parent_entity_id') == parentEntityId) {
         Array.add(foundTabElems, $tab.get(0));
       }
     }
@@ -357,9 +357,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var $tabs = this.getAllTabs();
     for (var tabIndex = 0, tabCount = $tabs.length; tabIndex < tabCount; tabIndex++) {
       var $tab = $tabs.eq(tabIndex);
-      if ($tab.data("entity_type_code") == eventArgs.get_entityTypeCode()
-          && $tab.data("entity_id") == eventArgs.get_entityId()
-          && $tab.data("action_code") == eventArgs.get_actionCode()) {
+      if ($tab.data('entity_type_code') == eventArgs.get_entityTypeCode()
+          && $tab.data('entity_id') == eventArgs.get_entityId()
+          && $tab.data('action_code') == eventArgs.get_actionCode()) {
         Array.add(foundTabElems, $tab.get(0));
       }
     }
@@ -381,7 +381,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     if ($q.isObject(tab)) {
       return $q.toJQuery(tab);
     } else if ($q.isString(tab)) {
-      $tab = $(this._tabListElement).find("#" + tab);
+      $tab = $(this._tabListElement).find('#' + tab);
       if ($tab.length == 0) {
         $tab = null;
       }
@@ -392,7 +392,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   isLastTab: function (tab) {
     var $tab = this.getTab(tab);
-    return $tab.next("LI").length == 0;
+    return $tab.next('LI').length == 0;
   },
 
   getTabId: function (tabElem) {
@@ -402,9 +402,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     var $tab = $q.toJQuery(tabElem);
-    var tabId = "";
+    var tabId = '';
     if (!$q.isNullOrEmpty($tab)) {
-      tabId = $tab.attr("id");
+      tabId = $tab.attr('id');
     }
 
     return tabId;
@@ -417,9 +417,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     var $tab = $q.toJQuery(tabElem);
-    var tabValue = "";
+    var tabValue = '';
     if (!$q.isNullOrEmpty($tab)) {
-      tabValue = $tab.attr("groupCode");
+      tabValue = $tab.attr('groupCode');
     }
 
     return tabValue;
@@ -427,9 +427,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   getTabText: function (tab) {
     var $tab = this.getTab(tab);
-    var tabText = "";
+    var tabText = '';
     if (!$q.isNullOrEmpty($tab)) {
-      tabText = $q.toString($tab.data("tab_text"), "");
+      tabText = $q.toString($tab.data('tab_text'), '');
     }
 
     return tabText;
@@ -438,16 +438,16 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   setTabText: function (tab, tabText) {
     var $tab = this.getTab(tab);
     if (!$q.isNullOrEmpty($tab)) {
-      var processedTabText = $q.toString(tabText, "").trim();
+      var processedTabText = $q.toString(tabText, '').trim();
       var truncatedTabText = $q.middleCutShort(processedTabText, this._maxTabTextLength);
       var isTabTextTooLong = processedTabText.length > truncatedTabText.length;
       if (isTabTextTooLong) {
-        $tab.attr("title", processedTabText);
+        $tab.attr('title', processedTabText);
       } else {
-        $tab.removeAttr("title");
+        $tab.removeAttr('title');
       }
 
-      $tab.data("tab_text", processedTabText).find("SPAN.text").text(truncatedTabText);
+      $tab.data('tab_text', processedTabText).find('SPAN.text').text(truncatedTabText);
     }
   },
 
@@ -470,7 +470,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       result = eventArgs.get_parentEntityId();
     } else if (eventArgs.get_isMultipleEntities()) {
       var entityIDs = $o.getEntityIDsFromEntities(eventArgs.get_entities());
-      result = String.format("{0}_{1}", eventArgs.get_parentEntityId(), entityIDs.join("_and_"));
+      result = String.format('{0}_{1}', eventArgs.get_parentEntityId(), entityIDs.join('_and_'));
     } else {
       result = eventArgs.get_entityId();
     }
@@ -533,13 +533,13 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   updateTab: function (tab, eventArgs) {
     var $tab = this.getTab(tab);
 
-    var oldAction = $a.getBackendActionByCode($tab.data("action_code"));
+    var oldAction = $a.getBackendActionByCode($tab.data('action_code'));
     var oldActionTypeCode = oldAction.ActionType.Code;
     var oldActionCode = oldAction.Code;
     var oldTabGroupCode = this.getTabGroupCode($tab);
     var oldTabText = this.getTabText($tab);
     var oldTabTypeCode = oldActionCode;
-    var oldTabNumber = $tab.data("tab_number");
+    var oldTabNumber = $tab.data('tab_number');
     if (oldActionTypeCode == window.ACTION_TYPE_CODE_ADD_NEW) {
       this._decreaseTabTypeCounter(oldTabTypeCode, oldTabNumber);
     }
@@ -554,7 +554,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var newTabGroupCode = this.generateTabGroupCode(eventArgs, newTabNumber);
     var newTabText = this.generateTabText(eventArgs, newTabNumber);
 
-    $tab.attr("groupCode", newTabGroupCode);
+    $tab.attr('groupCode', newTabGroupCode);
     this._extendTabElement($tab, eventArgs, { TabGroupCode: newTabGroupCode, TabText: newTabText, TabTypeCode: newActionCode, TabNumber: newTabNumber });
 
     if (newTabGroupCode != oldTabGroupCode) {
@@ -622,7 +622,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       $scrollable.scrollTo($tab,
           {
             duration: duration || 400,
-            axis: "x",
+            axis: 'x',
             offset: tabStripOffset
           }
         );
@@ -637,8 +637,8 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     var $tab = this.getTab(tab);
     if (!$q.isNullOrEmpty($tab)) {
       var tabId = this.getTabId($tab);
-      var tabTypeCode = $tab.data("tab_type_code");
-      var tabNumber = $tab.data("tab_number");
+      var tabTypeCode = $tab.data('tab_type_code');
+      var tabNumber = $tab.data('tab_number');
 
       this._partialRemoveTab($tab);
 
@@ -650,7 +650,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       if (this.getAllTabsCount() == 0) {
         this._hideTabMenu();
         this._removeTabMenuFromTabStrip();
-        $(window).unbind("resize", this._onWindowResizedHandler);
+        $(window).unbind('resize', this._onWindowResizedHandler);
       }
 
       this._removeTab($tab);
@@ -770,7 +770,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       var tabCount = $tabs.length;
       var matchedTabCount = 0;
       for (var tabIndex = 0; tabIndex < tabCount; tabIndex++) {
-        if ($tabs.eq(tabIndex).data("tab_type_code") == tabTypeCode) {
+        if ($tabs.eq(tabIndex).data('tab_type_code') == tabTypeCode) {
           matchedTabCount += 1;
         }
       }
@@ -1562,7 +1562,7 @@ Quantumart.QP8.BackendTabStrip.getInstance = function (tabStripElementId, option
   return Quantumart.QP8.BackendTabStrip._instance;
 };
 
-Quantumart.QP8.BackendTabStrip.registerClass("Quantumart.QP8.BackendTabStrip", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendTabStrip.registerClass('Quantumart.QP8.BackendTabStrip', Quantumart.QP8.Observable);
 Quantumart.QP8.BackendTabEventArgs = function () {
   Quantumart.QP8.BackendTabEventArgs.initializeBase(this);
 };
@@ -1577,4 +1577,4 @@ Quantumart.QP8.BackendTabEventArgs.prototype = {
   }
 };
 
-Quantumart.QP8.BackendTabEventArgs.registerClass("Quantumart.QP8.BackendTabEventArgs", Quantumart.QP8.BackendEventArgs);
+Quantumart.QP8.BackendTabEventArgs.registerClass('Quantumart.QP8.BackendTabEventArgs', Quantumart.QP8.BackendEventArgs);

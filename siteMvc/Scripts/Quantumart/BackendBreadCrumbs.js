@@ -1,6 +1,6 @@
-window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK = "OnBreadCrumbsItemClick";
-window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK = "OnBreadCrumbsItemCtrlClick";
-window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CONTEXT_CLICK = "OnBreadCrumbsContextMenuItemClick";
+window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK = 'OnBreadCrumbsItemClick';
+window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK = 'OnBreadCrumbsItemCtrlClick';
+window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CONTEXT_CLICK = 'OnBreadCrumbsContextMenuItemClick';
 
 Quantumart.QP8.BackendBreadCrumbs = function (breadCrumbsElementId, options) {
   Quantumart.QP8.BackendBreadCrumbs.initializeBase(this);
@@ -280,7 +280,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
         .cat("'")
       .cat('>')
       .cat(dataItem.EntityTypeName)
-      .cat(" \"")
+      .cat(' "')
       .cat($q.middleCutShort($q.htmlEncode(dataItem.Title), this._maxTitleLength))
       .cat('\"</span>')
       .catIf('</a>', !isSelectedItem);

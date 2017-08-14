@@ -1,4 +1,4 @@
-window.EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED = "onCloseHostMessageReceived";
+window.EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED = 'onCloseHostMessageReceived';
 
 Quantumart.QP8.BackendCustomActionHostManager = function () {
 	Quantumart.QP8.BackendCustomActionHostManager.initializeBase(this);
@@ -96,7 +96,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     },
 
     dispose: function () {
-        Quantumart.QP8.BackendCustomActionHostManager.callBaseMethod(this, "dispose");
+        Quantumart.QP8.BackendCustomActionHostManager.callBaseMethod(this, 'dispose');
 
         Quantumart.QP8.BackendCustomActionHostManager._instance = null;
 
@@ -120,4 +120,4 @@ Quantumart.QP8.BackendCustomActionHostManager.destroyInstance = function () {
     }
 };
 
-Quantumart.QP8.BackendCustomActionHostManager.registerClass("Quantumart.QP8.BackendCustomActionHostManager", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendCustomActionHostManager.registerClass('Quantumart.QP8.BackendCustomActionHostManager', Quantumart.QP8.Observable);

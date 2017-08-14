@@ -11,10 +11,10 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
 	var $backendEmailCheckbox = $('.nfp-useBackendEmailCheckbox', $root);
 	var $externalCheckbox = $('.nfp-external', $root);
 
-	$statusCheckBoxes.bind("click", onStatusChanged);
-	$senderNameCheckbox.bind("click", onUseDefaultSenderNameChanged);
-	$backendEmailCheckbox.bind("click", onUseBackendEmailChanged);
-	$externalCheckbox.bind("click", onExternalChanged);
+	$statusCheckBoxes.bind('click', onStatusChanged);
+	$senderNameCheckbox.bind('click', onUseDefaultSenderNameChanged);
+	$backendEmailCheckbox.bind('click', onUseBackendEmailChanged);
+	$externalCheckbox.bind('click', onExternalChanged);
 
 	function onExternalChanged() {
 		if ($externalCheckbox.is(':checked')) {

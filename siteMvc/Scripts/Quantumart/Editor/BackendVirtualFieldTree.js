@@ -30,7 +30,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
                 alias = this.getNodeText(this.getNodeByEntityId(entityId));
             }
 
-            var actionUrl = window.CONTROLLER_URL_VIRTUAL_CONTENT + "GetChildFieldList",
+            var actionUrl = window.CONTROLLER_URL_VIRTUAL_CONTENT + 'GetChildFieldList',
                 params = {
                     virtualContentId: this._virtualContentId,
                     joinedContentId: this._parentEntityId,
@@ -40,7 +40,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
                 };
 
             $q.getJsonFromUrl(
-                "POST",
+                'POST',
                 actionUrl,
                 params,
                 true,
@@ -59,4 +59,4 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
     _virtualContentId: null
 };
 
-Quantumart.QP8.BackendVirtualFieldTree.registerClass("Quantumart.QP8.BackendVirtualFieldTree", Quantumart.QP8.BackendEntityTree);
+Quantumart.QP8.BackendVirtualFieldTree.registerClass('Quantumart.QP8.BackendVirtualFieldTree', Quantumart.QP8.BackendEntityTree);

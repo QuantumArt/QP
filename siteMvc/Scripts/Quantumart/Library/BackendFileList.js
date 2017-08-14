@@ -1,14 +1,14 @@
-window.FILE_LIST_MODE_NAME_LIST = "FILE_LIST_MODE_NAME_LIST";
-window.FILE_LIST_MODE_PREVIEW_LIST = "FILE_LIST_MODE_PREVIEW_LIST";
-window.FILE_LIST_SELECT_MODE_MULTIPLE = "FILE_LIST_SELECT_MODE_MULTIPLE";
-window.FILE_LIST_SELECT_MODE_SINGLE = "FILE_LIST_SELECT_MODE_SINGLE";
+window.FILE_LIST_MODE_NAME_LIST = 'FILE_LIST_MODE_NAME_LIST';
+window.FILE_LIST_MODE_PREVIEW_LIST = 'FILE_LIST_MODE_PREVIEW_LIST';
+window.FILE_LIST_SELECT_MODE_MULTIPLE = 'FILE_LIST_SELECT_MODE_MULTIPLE';
+window.FILE_LIST_SELECT_MODE_SINGLE = 'FILE_LIST_SELECT_MODE_SINGLE';
 window.FILE_LIST_NAME_PAGE_SIZE = 60;
 window.FILE_LIST_PREVIEW_PAGE_SIZE = 24;
 window.FILE_LIST_ITEMS_PER_COLUMN = 20;
 
-window.EVENT_TYPE_FILE_LIST_DATA_BOUND = "OnFileListDataBound";
-window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING = "OnFileListActionExecuting";
-window.EVENT_TYPE_FILE_LIST_SELECTED = "OnFileNameSelected";
+window.EVENT_TYPE_FILE_LIST_DATA_BOUND = 'OnFileListDataBound';
+window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING = 'OnFileListActionExecuting';
+window.EVENT_TYPE_FILE_LIST_SELECTED = 'OnFileNameSelected';
 
 Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, actionCode, contextMenuCode, viewMode, options) {
 	Quantumart.QP8.BackendFileList.initializeBase(this);
@@ -32,8 +32,8 @@ Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, ac
 		pageNumber: 0,
 		pageSize: 0,
 		folderId: 0,
-		fileTypeId: "",
-		fileNameFilter: ""
+		fileTypeId: '',
+		fileNameFilter: ''
 	};
 	if (this._viewMode == window.FILE_LIST_MODE_NAME_LIST) {
  this._currentDataQueryOptions.pageSize = window.FILE_LIST_NAME_PAGE_SIZE;
@@ -47,11 +47,11 @@ Quantumart.QP8.BackendFileList.prototype = {
 	_contextMenuCode: 0,
 	_viewMode: window.FILE_LIST_MODE_NAME_LIST,
 	_selectMode: window.FILE_LIST_SELECT_MODE_MULTIPLE,
-	_actionCode: "",
+	_actionCode: '',
 
 	_currentDataQueryOptions: null,
 
-	_listElementId: "",
+	_listElementId: '',
 	_listElement: null,
 	_allSelectorElement: null,
 	_fileListContentElement: null,
@@ -62,7 +62,7 @@ Quantumart.QP8.BackendFileList.prototype = {
     _zIndex: 0,
 
 	_onAllSelectorClicked: function () {
-		this._listViewComponent.selectAll(jQuery(this._allSelectorElement).is(":checked"));
+		this._listViewComponent.selectAll(jQuery(this._allSelectorElement).is(':checked'));
 	},
 
 	_onPageNumberChanged: function (eventType, sender, args) {
@@ -80,7 +80,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 	},
 
 	_loadData: function () {
-		var url = "";
+		var url = '';
 		if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
  url = window.CONTROLLER_URL_SITE + '_FileList';
 } else if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
@@ -91,7 +91,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 
 		var result;
 		$q.getJsonFromUrl(
-			"GET",
+			'GET',
 			url,
 			{
 				folderId: this._currentDataQueryOptions.folderId,
@@ -248,7 +248,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 	}
 };
 
-Quantumart.QP8.BackendFileList.registerClass("Quantumart.QP8.BackendFileList", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendFileList.registerClass('Quantumart.QP8.BackendFileList', Quantumart.QP8.Observable);
 Quantumart.QP8.IBackendFileListView = function () { };
 Quantumart.QP8.IBackendFileListView.prototype = {
 	initialize: function () { },
@@ -258,4 +258,4 @@ Quantumart.QP8.IBackendFileListView.prototype = {
 	dispose: function () { }
 };
 
-Quantumart.QP8.IBackendFileListView.registerInterface("Quantumart.QP8.IBackendFileListView");
+Quantumart.QP8.IBackendFileListView.registerInterface('Quantumart.QP8.IBackendFileListView');

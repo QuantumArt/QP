@@ -9,7 +9,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 	},
 
 	generateTreeGroupCode: function (entityTypeCode, parentEntityId) {
-		var treeGroupCode = String.format("{0}_{1}", entityTypeCode, parentEntityId);
+		var treeGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
 		return treeGroupCode;
 	},
@@ -169,7 +169,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 	},
 
 	dispose: function () {
-		Quantumart.QP8.BackendEntityTreeManager.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendEntityTreeManager.callBaseMethod(this, 'dispose');
 
 		if (this._trees) {
       Object.keys(this._trees).forEach(this.destroyTree);
@@ -195,4 +195,4 @@ Quantumart.QP8.BackendEntityTreeManager.destroyInstance = function () {
 	}
 };
 
-Quantumart.QP8.BackendEntityTreeManager.registerClass("Quantumart.QP8.BackendEntityTreeManager", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendEntityTreeManager.registerClass('Quantumart.QP8.BackendEntityTreeManager', Quantumart.QP8.Observable);

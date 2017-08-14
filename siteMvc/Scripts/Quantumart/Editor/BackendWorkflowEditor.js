@@ -24,7 +24,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         this._items = ko.observableArray(
             $.map(workflow.data('workflow_list_data'), function (o) {
                 var r = {};
-                Object.assign(r, o, {
+                Object.assign(r, o || {}, {
                     RadioChecked: ko.observable(o.RadioChecked),
                     Description: ko.observable(o.Description),
                     UserId: ko.observable(o.UserId),
@@ -64,8 +64,8 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
                 if (element.UserId() != null || element.GroupId() != null) {
                     $q.getJsonFromUrl(
-                        "GET",
-                        window.CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
+                        'GET',
+                        window.CONTROLLER_URL_WORKFLOW + 'CheckUserOrGroupAccessOnContents',
                         {
                             contentIdsString: activeContentsIds,
                             statusName: element.StName,
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             $(elem).data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
         }, this));
 
-        $('.workflow_radio').live("click", onRadioChanged);
+        $('.workflow_radio').live('click', onRadioChanged);
 
         function onRadioChanged() {
             if ($(this).val() == 'User') {
@@ -139,8 +139,8 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         });
 
         $q.getJsonFromUrl(
-      "GET",
-      window.CONTROLLER_URL_WORKFLOW + "CheckAllAccessOnContents",
+      'GET',
+      window.CONTROLLER_URL_WORKFLOW + 'CheckAllAccessOnContents',
       {
           contentIdsString: activeContentsIds,
           modelString: JSON.stringify(usersAndGroups)
@@ -173,14 +173,14 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         var statusName = $(eventArgs._listElement).closest('fieldset').attr('Class').replace('workflow_fieldset', '');
         var userId;
         var groupId;
-        if (eventArgs.get_entityTypeCode() == "user") {
+        if (eventArgs.get_entityTypeCode() == 'user') {
  userId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null;
-} else if (eventArgs.get_entityTypeCode() == "user_group") {
+} else if (eventArgs.get_entityTypeCode() == 'user_group') {
  groupId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null;
 }
         $q.getJsonFromUrl(
-      "GET",
-      window.CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
+      'GET',
+      window.CONTROLLER_URL_WORKFLOW + 'CheckUserOrGroupAccessOnContents',
       {
           contentIdsString: activeContentsIds,
           statusName: statusName,
@@ -227,10 +227,10 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             var item = {
                 StName: statusName,
                 StId: statusId,
-                RadioChecked: ko.observable("User"),
+                RadioChecked: ko.observable('User'),
                 UserId: ko.observable(null),
                 GroupId: ko.observable(null),
-                Description: ko.observable("(no comments)"),
+                Description: ko.observable('(no comments)'),
                 Weight: weight,
                 Invalid: false
             };
@@ -257,7 +257,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     _setAsChanged: function () {
       var $field = $(this._resultElem);
       $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
-      $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr("name"), value: this._items() });
+      $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr('name'), value: this._items() });
     },
 
     destroyWorkflow: function () {

@@ -34,4 +34,4 @@ Quantumart.QP8.Cache.dispose = function () {
 	Quantumart.QP8.Cache._itemInfos = null;
 };
 
-Quantumart.QP8.Cache.registerClass("Quantumart.QP8.Cache");
+Quantumart.QP8.Cache.registerClass('Quantumart.QP8.Cache');

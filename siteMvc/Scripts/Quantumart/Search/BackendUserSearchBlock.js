@@ -27,8 +27,8 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 	renderSearchBlock: function () {
 		if (this.get_isRendered() !== true) {
 			$q.getJsonFromUrl(
-				"GET",
-				window.CONTROLLER_URL_USER + "SearchBlock/" + this._parentEntityId,
+				'GET',
+				window.CONTROLLER_URL_USER + 'SearchBlock/' + this._parentEntityId,
 				{
 					hostId: this._hostId
 				},
@@ -56,14 +56,14 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 	},
 
 	_onResetButtonClick: function () {
-		$(".csFilterTextbox", this._concreteSearchBlockElement).val('');
+		$('.csFilterTextbox', this._concreteSearchBlockElement).val('');
 		var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
 		this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
 	},
 
 	dispose: function () {
-		Quantumart.QP8.BackendUserSearchBlock.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendUserSearchBlock.callBaseMethod(this, 'dispose');
 	}
 };
 
-Quantumart.QP8.BackendUserSearchBlock.registerClass("Quantumart.QP8.BackendUserSearchBlock", Quantumart.QP8.BackendSearchBlockBase);
+Quantumart.QP8.BackendUserSearchBlock.registerClass('Quantumart.QP8.BackendUserSearchBlock', Quantumart.QP8.BackendSearchBlockBase);

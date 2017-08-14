@@ -1,4 +1,4 @@
-window.EVENT_TYPE_FILTER_TILE_CLOSE = "Quantumart.QP8.ActionLogFilterTile.onFilterTileClose";
+window.EVENT_TYPE_FILTER_TILE_CLOSE = 'Quantumart.QP8.ActionLogFilterTile.onFilterTileClose';
 
 Quantumart.QP8.ActionLogFilterTile = function (containerElement, options) {
 	Quantumart.QP8.ActionLogFilterTile.initializeBase(this);
@@ -40,15 +40,15 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 						.cat(' title="' + $q.htmlEncode($l.SearchBlock.closeFieldSearchContainerButtonText) + '"')
 					.cat('>')
 					.cat('</div>')
-				.cat("</div>")
-			.cat("</div>");
+				.cat('</div>')
+			.cat('</div>');
 
 		this.$tile = $(containerHeaderHtml.string());
-		this.$closeButton = this.$tile.find(".closeButton");
-		this.$closeButton.on("click", $.proxy(this._onCloseTileClick, this));
-		this.$windowOpenLink = $(".open-link", this.$tile);
-		this.$windowOpenLink.on("click", $.proxy(this._onOpenFilterWndClick, this));
-		this.$filterDetailsSpanElement = $(".filter-details", this.$tile);
+		this.$closeButton = this.$tile.find('.closeButton');
+		this.$closeButton.on('click', $.proxy(this._onCloseTileClick, this));
+		this.$windowOpenLink = $('.open-link', this.$tile);
+		this.$windowOpenLink.on('click', $.proxy(this._onOpenFilterWndClick, this));
+		this.$filterDetailsSpanElement = $('.filter-details', this.$tile);
 
 		$(this._containerElement).append(this.$tile);
 	},
@@ -83,14 +83,14 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 			resizable: false,
 			draggable: false,
 			visible: true
-		}).data("tWindow").center();
+		}).data('tWindow').center();
 
-		$(".closeFilter", this._popupWindowComponent.element).click($.proxy(this._onCloseFilterWndClick, this));
-		$(".closeAndApplyFilter", this._popupWindowComponent.element).click($.proxy(this._onCloseAndApplyFilterWndClick, this));
-		$("form", this._popupWindowComponent.element).submit($.proxy(this._onFilterFormSubmitted, this));
+		$('.closeFilter', this._popupWindowComponent.element).click($.proxy(this._onCloseFilterWndClick, this));
+		$('.closeAndApplyFilter', this._popupWindowComponent.element).click($.proxy(this._onCloseAndApplyFilterWndClick, this));
+		$('form', this._popupWindowComponent.element).submit($.proxy(this._onFilterFormSubmitted, this));
 
 
-		this._filterComponent = this._options.createFilter($(".filterContainer", this._popupWindowComponent.element));
+		this._filterComponent = this._options.createFilter($('.filterContainer', this._popupWindowComponent.element));
 		this._filterComponent.initialize();
 	},
 
@@ -109,30 +109,30 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 
 	_onCloseFilterWndClick: function () {
 		this._currentValue = this._filterComponent.get_value();
-		this.$filterDetailsSpanElement.html(": " + this._filterComponent.get_filterDetails());
+		this.$filterDetailsSpanElement.html(': ' + this._filterComponent.get_filterDetails());
 		this._popupWindowComponent.close();
 	},
 
 	_onCloseAndApplyFilterWndClick: function () {
 	    this._onCloseFilterWndClick();
-	    $(this._containerElement).closest('form').find(".alSearchButton").trigger("click");
+	    $(this._containerElement).closest('form').find('.alSearchButton').trigger('click');
 	},
 
 	_onFilterFormSubmitted: function (e) {
 	    e.preventDefault();
-	    $(".closeAndApplyFilter", this._popupWindowComponent.element).trigger("click");
+	    $('.closeAndApplyFilter', this._popupWindowComponent.element).trigger('click');
 	    return false;
 	},
 
 	dispose: function () {
-		Quantumart.QP8.ActionLogFilterTile.callBaseMethod(this, "dispose");
+		Quantumart.QP8.ActionLogFilterTile.callBaseMethod(this, 'dispose');
 
 		if (this.$closeButton) {
-			this.$closeButton.off("click");
+			this.$closeButton.off('click');
 		}
 
 		if (this.$windowOpenLink) {
-			this.$windowOpenLink.off("click");
+			this.$windowOpenLink.off('click');
 		}
 
 		if (this._filterComponent) {
@@ -140,9 +140,9 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 		}
 
 		if (this._popupWindowComponent) {
-		    $(".closeFilter", this._popupWindowComponent.element).off("click");
-		    $(".closeAndApplyFilter", this._popupWindowComponent.element).off("click");
-		    $("form", this._popupWindowComponent.element).off("submit");
+		    $('.closeFilter', this._popupWindowComponent.element).off('click');
+		    $('.closeAndApplyFilter', this._popupWindowComponent.element).off('click');
+		    $('form', this._popupWindowComponent.element).off('submit');
         $c.destroyPopupWindow(this._popupWindowComponent);
 		}
 
@@ -150,4 +150,4 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	}
 };
 
-Quantumart.QP8.ActionLogFilterTile.registerClass("Quantumart.QP8.ActionLogFilterTile", Quantumart.QP8.Observable);
+Quantumart.QP8.ActionLogFilterTile.registerClass('Quantumart.QP8.ActionLogFilterTile', Quantumart.QP8.Observable);

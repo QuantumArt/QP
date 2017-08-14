@@ -18,7 +18,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
             filterVal: $('.sic_filter input', $filter).val()
         };
 
-        return Object.assign(data, filter);
+        return Object.assign({}, data, filter);
     },
 
     _onDataBinding: function (e) {
@@ -27,8 +27,8 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     },
 
     _onApplyFilter: function () {
-        var $grid = $("#" + this._gridElementId);
-        var gridComponent = $grid.data("tGrid");
+        var $grid = $('#' + this._gridElementId);
+        var gridComponent = $grid.data('tGrid');
         gridComponent.ajaxRequest();
     },
 
@@ -40,19 +40,19 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
         }
 
         $filter.find('.sic_filter input').val('');
-        $(".sic_search_button", this.$filter).trigger('click');
+        $('.sic_search_button', this.$filter).trigger('click');
     },
 
     initialize: function () {
-        var $grid = $("#" + this._gridElementId);
-        var gridComponent = $grid.data("tGrid");
+        var $grid = $('#' + this._gridElementId);
+        var gridComponent = $grid.data('tGrid');
         var $filter = $('#' + this._filterElementId);
 
         Quantumart.QP8.ControlHelpers.initAllEntityDataLists($filter);
 
         $grid
-			.unbind("dataBinding", gridComponent.onDataBinding)
-			.bind("dataBinding", this._onDataBindingHandler);
+			.unbind('dataBinding', gridComponent.onDataBinding)
+			.bind('dataBinding', this._onDataBindingHandler);
 
         $('.sic_search_button', $filter)
 			.click(this._onApplyFilterHandler);
@@ -68,10 +68,10 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     },
 
     dispose: function () {
-        var $grid = $("#" + this._gridElementId);
+        var $grid = $('#' + this._gridElementId);
         var $filter = $('#' + this._filterElementId);
 
-        $grid.unbind("dataBinding");
+        $grid.unbind('dataBinding');
         this._onDataBindingHandler = null;
 
         $('.sic_search_button', $filter).unbind();

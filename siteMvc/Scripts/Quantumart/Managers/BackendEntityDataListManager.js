@@ -7,7 +7,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     _valueStorage: {},
 
 	generateListGroupCode: function (entityTypeCode, parentEntityId) {
-		var listGroupCode = String.format("{0}_{1}", entityTypeCode, parentEntityId);
+		var listGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
 		return listGroupCode;
 	},
@@ -74,7 +74,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 			var listGroup = this.createListGroup(listGroupCode);
 			listGroup[listElementId] = list;
 		} else {
-			$q.alertError("Данный тип списка не поддерживается!");
+			$q.alertError('Данный тип списка не поддерживается!');
 		}
 
 		return list;
@@ -143,7 +143,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 	},
 
 	dispose: function () {
-		Quantumart.QP8.BackendEntityDataListManager.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendEntityDataListManager.callBaseMethod(this, 'dispose');
 
 		if (this._listGroups) {
 			for (let listGroupCode in this._listGroups) {
@@ -172,4 +172,4 @@ Quantumart.QP8.BackendEntityDataListManager.destroyInstance = function () {
 	}
 };
 
-Quantumart.QP8.BackendEntityDataListManager.registerClass("Quantumart.QP8.BackendEntityDataListManager", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendEntityDataListManager.registerClass('Quantumart.QP8.BackendEntityDataListManager', Quantumart.QP8.Observable);

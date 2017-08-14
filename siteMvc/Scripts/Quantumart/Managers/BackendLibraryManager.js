@@ -6,7 +6,7 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 	_libraryGroups: {},
 
 	generateLibraryGroupCode: function (actionCode, parentEntityId) {
-		var libraryGroupCode = String.format("{0}_{1}", actionCode, parentEntityId);
+		var libraryGroupCode = String.format('{0}_{1}', actionCode, parentEntityId);
 
 		return libraryGroupCode;
 	},
@@ -158,7 +158,7 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 	},
 
 	dispose: function () {
-		Quantumart.QP8.BackendLibraryManager.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendLibraryManager.callBaseMethod(this, 'dispose');
 
 		if (this._libraryGroups) {
 			for (let libraryGroupCode in this._libraryGroups) {
@@ -187,4 +187,4 @@ Quantumart.QP8.BackendLibraryManager.destroyInstance = function () {
 	}
 };
 
-Quantumart.QP8.BackendLibraryManager.registerClass("Quantumart.QP8.BackendLibraryManager", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendLibraryManager.registerClass('Quantumart.QP8.BackendLibraryManager', Quantumart.QP8.Observable);

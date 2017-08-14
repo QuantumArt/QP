@@ -21,10 +21,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   _fieldName: null,
   _fieldGroup: null,
   _referenceFieldID: null,
-  _elementIdPrefix: "",
+  _elementIdPrefix: '',
 
   initialize: function () {
-    $(this._containerElement).append("Не реализовано");
+    $(this._containerElement).append('Не реализовано');
   },
 
   get_searchQuery: function () {
@@ -42,7 +42,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   },
 
   get_filterDetails: function () {
-    return "";
+    return '';
   },
 
   onOpen: function () {
@@ -60,16 +60,16 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
       ids = ids.map(callback);
     }
 
-    var result = ids.join("; ");
+    var result = ids.join('; ');
     if (length > count) {
-      result += "; " + $l.SearchBlock.etcText + ", " + $l.SearchBlock.totalText + ": " + length;
+      result += '; ' + $l.SearchBlock.etcText + ', ' + $l.SearchBlock.totalText + ': ' + length;
     }
 
     return result;
   },
 
   _getIds: function (text) {
-    var ids = text.replace(/\r?\n|\r|;/g, ",").split(",");
+    var ids = text.replace(/\r?\n|\r|;/g, ',').split(',');
     ids = ids.map(function (e) {
  return parseInt(e, 10);
 });
@@ -81,7 +81,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   }
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.registerClass("Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase", null, Sys.IDisposable);
+Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.registerClass('Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase', null, Sys.IDisposable);
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState = function (searchType, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, data) {
   this.searchType = searchType;
   this.fieldID = fieldID;
@@ -104,4 +104,4 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState.prototype = {
   data: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState.registerClass("Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState");
+Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState.registerClass('Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState');

@@ -6,7 +6,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
 	_searchBlockGroups: {},
 
 	generateSearchBlockGroupCode: function (entityTypeCode, parentEntityId) {
-		var searchBlockCode = String.format("{0}_{1}", entityTypeCode, parentEntityId);
+		var searchBlockCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
 		return searchBlockCode;
 	},
@@ -99,7 +99,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
 	},
 
 	dispose: function () {
-		Quantumart.QP8.BackendSearchBlockManager.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendSearchBlockManager.callBaseMethod(this, 'dispose');
 		if (this._searchBlockGroups) {
 			for (var searchBlockGroupCode in this._searchBlockGroups) {
 				var searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
@@ -126,4 +126,4 @@ Quantumart.QP8.BackendSearchBlockManager.destroyInstance = function () {
 	}
 };
 
-Quantumart.QP8.BackendSearchBlockManager.registerClass("Quantumart.QP8.BackendSearchBlockManager", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendSearchBlockManager.registerClass('Quantumart.QP8.BackendSearchBlockManager', Quantumart.QP8.Observable);

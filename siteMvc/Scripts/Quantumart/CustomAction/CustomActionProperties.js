@@ -9,12 +9,12 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     if (id) {
       var code = Quantumart.QP8.BackendEntityType.getEntityTypeById(id).Code;
       var testCodes = [window.ENTITY_TYPE_CODE_VIRTUAL_CONTENT, window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE, window.ENTITY_TYPE_CODE_VIRTUAL_FIELD];
-      var filter = $.inArray(code, testCodes) > -1 ? "c.virtual_type <> 0" : "c.virtual_type = 0";
-      var obj = $contents.data("entity_data_list_component");
+      var filter = $.inArray(code, testCodes) > -1 ? 'c.virtual_type <> 0' : 'c.virtual_type = 0';
+      var obj = $contents.data('entity_data_list_component');
       if (obj) {
         var oldFilter = obj.getFilter();
         obj.setFilter(filter);
-        if (oldFilter != "" && oldFilter != filter) {
+        if (oldFilter != '' && oldFilter != filter) {
  obj.removeAllListItems();
 }
       }
@@ -24,10 +24,10 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
   function updateActionList(selectedActions) {
     var $list = $('ul', $actionsElement);
     $list.empty();
-    var actions = selectedActions ? selectedActions.split(",") : null;
+    var actions = selectedActions ? selectedActions.split(',') : null;
 
     var html = new $.telerik.stringBuilder();
-    var entityTypeId = $("option:selected", $entityTypesElement).val();
+    var entityTypeId = $('option:selected', $entityTypesElement).val();
     var dictionary = Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary();
     var pair = $.grep(dictionary, function (item) {
  return item.EntityTypeId == entityTypeId;
@@ -39,7 +39,7 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
           .catIf(' checked="checked" ', actions && actions.indexOf(item.Value) != -1)
           .cat('/> ')
           .cat(String.format('<input type="hidden" value="false" name="SelectedActions[{0}]" />', i))
-          .cat(String.format('<label for="SelectedActions[{0}]">', item.Value) + item.Text + "</label>")
+          .cat(String.format('<label for="SelectedActions[{0}]">', item.Value) + item.Text + '</label>')
           .cat('</li>');
       });
     }
@@ -48,11 +48,11 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     $list.show();
   }
 
-  var $entityTypesElement = $("#" + entityTypesElementId),
-        $actionsElement = $("#" + actionsElementId),
-    $contents = $("#" + contentsElementId + "_list");
+  var $entityTypesElement = $('#' + entityTypesElementId),
+        $actionsElement = $('#' + actionsElementId),
+    $contents = $('#' + contentsElementId + '_list');
 
-  $entityTypesElement.bind("change keyup", onEntityTypeChanged);
+  $entityTypesElement.bind('change keyup', onEntityTypeChanged);
   setFilter();
 
   return {

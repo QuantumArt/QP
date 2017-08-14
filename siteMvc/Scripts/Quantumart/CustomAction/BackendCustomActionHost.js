@@ -1,4 +1,4 @@
-window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING = "OnExternalActionExecuting";
+window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING = 'OnExternalActionExecuting';
 
 Quantumart.QP8.BackendCustomActionHost = function (hostId, options, manager) {
   Quantumart.QP8.BackendCustomActionHost.initializeBase(this);
@@ -10,7 +10,7 @@ Quantumart.QP8.BackendCustomActionHost = function (hostId, options, manager) {
 
 Quantumart.QP8.BackendCustomActionHost.prototype = {
   _options: null,
-  _hostId: "",
+  _hostId: '',
   _manager: null,
 
   initialize: function () {
@@ -20,7 +20,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
       isAsynchronous: true
     });
 
-    $('#' + this._options.iframeElementId).attr("src", this._generateActionUrl());
+    $('#' + this._options.iframeElementId).attr('src', this._generateActionUrl());
   },
 
   _onExternalMessageReceived: function (message, successCallback) {
@@ -41,9 +41,9 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   onSelect: function () {
     var id = this._options.iframeElementId;
 
-    $('#' + id).css("marginLeft", "1px");
+    $('#' + id).css('marginLeft', '1px');
     setTimeout(function () {
-      $('#' + id).css("marginLeft", "0");
+      $('#' + id).css('marginLeft', '0');
     }, 0);
   },
 
@@ -186,7 +186,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   },
 
   _generateActionUrl: function () {
-    var resultUrl = $q.updateQueryStringParameter(this._options.actionBaseUrl, "hostUID", this._options.hostUID);
+    var resultUrl = $q.updateQueryStringParameter(this._options.actionBaseUrl, 'hostUID', this._options.hostUID);
     if (this._options.additionalParams) {
       resultUrl += '&' + jQuery.param(this._options.additionalParams);
     }
@@ -199,4 +199,4 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   }
 };
 
-Quantumart.QP8.BackendCustomActionHost.registerClass("Quantumart.QP8.BackendCustomActionHost", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendCustomActionHost.registerClass('Quantumart.QP8.BackendCustomActionHost', Quantumart.QP8.Observable);

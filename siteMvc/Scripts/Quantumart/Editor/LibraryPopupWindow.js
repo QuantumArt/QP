@@ -1,6 +1,6 @@
 
 Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
-    Object.assign(this._options, options);
+  Object.assign(this._options, options);
 	this._eventArgs = eventArgs;
 	this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(this._eventArgs, this._options);
 	this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this));
@@ -11,7 +11,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype
 = {
 	_options:
 	{
-		entityName: "",
+		entityName: '',
 		isMultipleEntities: false,
 		entities: [],
 		isMultiOpen: true,
@@ -43,7 +43,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype
 			var entities = args.entities;
 			if (entities.length > 0) {
 				var folderUrl = args.context;
-				if (folderUrl.charAt(0) == "\\") {
+				if (folderUrl.charAt(0) == '\\') {
  folderUrl = folderUrl.substring(1, folderUrl.length);
 }
 				var imgUrl = '';
@@ -52,7 +52,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype
 				} else {
 				    imgUrl = this._options.libraryUrl + folderUrl + entities[0].Name;
 				}
-				imgUrl = imgUrl.replace(new RegExp("\\\\", 'g'), "\/");
+				imgUrl = imgUrl.replace(new RegExp('\\\\', 'g'), '\/');
 
 				if (this._options.selectCallback) {
  this._options.selectCallback(imgUrl);

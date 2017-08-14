@@ -1,16 +1,16 @@
 Quantumart.QP8.FieldPropertiesMediator = function (tabId) {
-	var $root = $("#" + tabId + "_editingForm");
-	$root.find("input[name='Data.IsInteger']").on("click", onIntegerClick);
+	var $root = $('#' + tabId + '_editingForm');
+	$root.find("input[name='Data.IsInteger']").on('click', onIntegerClick);
 	onIntegerClick();
 
 	function onIntegerClick() {
-		var isInteger = $root.find("input[name='Data.IsInteger']").prop("checked");
-		$root.find("input[name='Data.IsLong']").closest("dl").toggle(isInteger);
-		$root.find("input[name='Data.IsDecimal']").closest("dl").toggle(!isInteger);
+		var isInteger = $root.find("input[name='Data.IsInteger']").prop('checked');
+		$root.find("input[name='Data.IsLong']").closest('dl').toggle(isInteger);
+		$root.find("input[name='Data.IsDecimal']").closest('dl').toggle(!isInteger);
 	}
 
 	function dispose() {
-		$root.find("input[name='Data.IsInteger']").off("click", onIntegerClick);
+		$root.find("input[name='Data.IsInteger']").off('click', onIntegerClick);
 	}
 
 	return 	{
@@ -19,10 +19,10 @@ Quantumart.QP8.FieldPropertiesMediator = function (tabId) {
 };
 
 Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElementId, displayFieldSelectElementId, currentFieldIdHiddenElementId, listOrderSelectElementId) {
-    var contentPicker = $("#" + relateToSelectElementId).data("entity_data_list_component"),
-        $displayFieldSelectElement = $("#" + displayFieldSelectElementId),
-        $listOrderSelectElement = $("#" + listOrderSelectElementId),
-        currentFieldId = $("#" + currentFieldIdHiddenElementId).val(),
+    var contentPicker = $('#' + relateToSelectElementId).data('entity_data_list_component'),
+        $displayFieldSelectElement = $('#' + displayFieldSelectElementId),
+        $listOrderSelectElement = $('#' + listOrderSelectElementId),
+        currentFieldId = $('#' + currentFieldIdHiddenElementId).val(),
         relateableFieldsUrl = window.CONTROLLER_URL_CONTENT + '_RelateableFields';
 
 	function onRelatedToChanged() {
@@ -30,7 +30,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
 
         if (!$q.isNullOrEmpty(selectedContentId)) {
         	$q.getJsonFromUrl(
-                "GET",
+                'GET',
                 relateableFieldsUrl,
                 {
                 	contentId: selectedContentId,
@@ -73,12 +73,12 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
 
 
 	function dispose() {
-	    $(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
+	    $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
 	    contentPicker = null;
         $displayFieldSelectElement = null;
 	}
 
-	$(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
+	$(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
 
 	return {
@@ -87,16 +87,16 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
 };
 
 Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElementId, classifierSelectElementId, aggregatedElementId, multiplePickerId) {
-    var contentPicker = $("#" + relateToSelectElementId).data("entity_data_list_component"),
-        $classifierSelectElement = $("#" + classifierSelectElementId),
-        $aggregatedElement = $("#" + aggregatedElementId),
+    var contentPicker = $('#' + relateToSelectElementId).data('entity_data_list_component'),
+        $classifierSelectElement = $('#' + classifierSelectElementId),
+        $aggregatedElement = $('#' + aggregatedElementId),
 		classifierFieldsUrl = window.CONTROLLER_URL_CONTENT + '_ClassifierFields';
 
     function onRelatedToChanged() {
 	    var selectedContentId = $(contentPicker.getStateFieldElement()).val();
 		if (!$q.isNullOrEmpty(selectedContentId)) {
 			$q.getJsonFromUrl(
-                "GET",
+                'GET',
 				classifierFieldsUrl,
 				{
 					contentId: selectedContentId
@@ -132,13 +132,13 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 	}
 
 	function dispose() {
-	    $(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
+	    $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
 	    contentPicker = null;
 		$classifierSelectElement = null;
 		$aggregatedElement = null;
 	}
 
-	$(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
+	$(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
 	return {
 		dispose: dispose
@@ -147,7 +147,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 
 
 Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId, O2MPickerListElementId, M2MPickerListElementId) {
-    var contentPicker = $("#" + relateToSelectElementId).data("entity_data_list_component"),
+    var contentPicker = $('#' + relateToSelectElementId).data('entity_data_list_component'),
         singleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(O2MPickerListElementId),
         multipleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(M2MPickerListElementId + '_list');
 
@@ -162,12 +162,12 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
 
 
 	function dispose() {
-	    $(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
+	    $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
 	    contentPicker = null;
         singleItemPickerComponent = null;
 	}
 
-	$(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
+	$(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
 	return {
 		dispose: dispose
@@ -176,12 +176,12 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
 
 
 Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId, fileFieldElementId) {
-    var $fieldTypeSelectElement = $("#" + fieldTypeSelectElementId),
-        $fileFieldElement = $("#" + fileFieldElementId),
-        fileFieldComponent = $fileFieldElement.data("file_field");
+    var $fieldTypeSelectElement = $('#' + fieldTypeSelectElementId),
+        $fileFieldElement = $('#' + fileFieldElementId),
+        fileFieldComponent = $fileFieldElement.data('file_field');
 
     function onFieldTypeChanged() {
-        var fieldType = $("option:selected", $fieldTypeSelectElement).val();
+        var fieldType = $('option:selected', $fieldTypeSelectElement).val();
         if (fieldType == window.FILE_FIELD_TYPE) {
             fileFieldComponent.set_isImage(false);
         } else if (fieldType == window.IMAGE_FIELD_TYPE) {
@@ -196,7 +196,7 @@ Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId
         fileFieldComponent = null;
     }
 
-    $fieldTypeSelectElement.bind("change keyup", onFieldTypeChanged);
+    $fieldTypeSelectElement.bind('change keyup', onFieldTypeChanged);
 
     return {
         dispose: dispose
@@ -205,7 +205,7 @@ Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId
 
 // Показывает/скрывает панели при выборе контента на который ссылается поле
 Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, panelsSelector, fieldContentID) {
-    var contentPicker = $("#" + relateToSelectElementId).data("entity_data_list_component"),
+    var contentPicker = $('#' + relateToSelectElementId).data('entity_data_list_component'),
 		$panels = $(panelsSelector);
 
 	function onRelatedToChanged() {
@@ -229,12 +229,12 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
 
 
 	function dispose() {
-	    $(contentPicker.getStateFieldElement()).off("change", onRelatedToChanged);
+	    $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
 	    contentPicker = null;
 		$panels = null;
 	}
 
-	$(contentPicker.getStateFieldElement()).on("change", onRelatedToChanged);
+	$(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
 	return {
 		refresh: onRelatedToChanged,

@@ -217,7 +217,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     };
 
     if (this._isBindToExternal === true) {
-      params = Object.assign(params, { boundToExternal: true });
+      params = Object.assign({}, params, { boundToExternal: true });
     }
 
     $q.getJsonFromUrl('GET', window.CONTROLLER_URL_CONTEXT_MENU + 'GetStatusesList', params, false, false, function (data) {
@@ -332,7 +332,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     var $menuItem = null;
 
     if ($q.isObject(menuItem)) {
-      return $q.to$(menuItem);
+      return $q.toJQuery(menuItem);
     } else if ($q.isString(menuItem)) {
       $menuItem = $("LI[code='" + menuItem + "']", this._contextMenuElement);
       if ($menuItem.length == 0) {
@@ -523,7 +523,7 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
     var params = { menuCode: menuCode, loadItems: loadItems };
 
     if (isBindToExternal === true) {
-      params = Object.assign(params, { boundToExternal: true });
+      params = Object.assign({}, params, { boundToExternal: true });
     }
 
     if ($q.isFunction(successHandler)) {

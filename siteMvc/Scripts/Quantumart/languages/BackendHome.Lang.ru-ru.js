@@ -1,5 +1,5 @@
 window.Backend.Lang.Home = {
-	list: "Список",
-	search: "Поиск",
-	profile: "Редактировать профиль"
+	list: 'Список',
+	search: 'Поиск',
+	profile: 'Редактировать профиль'
 };

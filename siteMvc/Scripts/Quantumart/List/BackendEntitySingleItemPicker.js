@@ -12,28 +12,28 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 	_pickButtonElement: null,
 	_deselectButtonElement: null,
 
-	DISPLAY_FIELD_CLASS_NAME: "displayField",
-	STATE_FIELD_CLASS_NAME: "stateField",
+	DISPLAY_FIELD_CLASS_NAME: 'displayField',
+	STATE_FIELD_CLASS_NAME: 'stateField',
 
 	initialize: function () {
-		Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, "initialize");
+		Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, 'initialize');
 
 		var $list = $(this._listElement);
-		var $displayField = $list.find("." + this.DISPLAY_FIELD_CLASS_NAME);
-		var $stateField = $list.find("INPUT." + this.STATE_FIELD_CLASS_NAME + ":first");
-		$stateField.addClass("qp-notChangeTrack");
+		var $displayField = $list.find('.' + this.DISPLAY_FIELD_CLASS_NAME);
+		var $stateField = $list.find('INPUT.' + this.STATE_FIELD_CLASS_NAME + ':first');
+		$stateField.addClass('qp-notChangeTrack');
 
-		var $pickButton = this._createToolbarButton(this._listElementId + "_PickButton", $l.EntityDataList.pickSingleLinkButtonText, "pick");
+		var $pickButton = this._createToolbarButton(this._listElementId + '_PickButton', $l.EntityDataList.pickSingleLinkButtonText, 'pick');
 		this._addButtonToToolbar($pickButton);
 
-		var $deselectButton = this._createToolbarButton(this._listElementId + "_DeselectButton", $l.EntityDataList.deselectLinkButtonText, "deselectAll");
+		var $deselectButton = this._createToolbarButton(this._listElementId + '_DeselectButton', $l.EntityDataList.deselectLinkButtonText, 'deselectAll');
 		this._addButtonToToolbar($deselectButton);
 
 		if (this._enableCopy) {
-			var $copyButton = this._createToolbarButton(this._listElementId + "_CopyButton", $l.EntityDataList.copyLinkButtonText, "copy");
+			var $copyButton = this._createToolbarButton(this._listElementId + '_CopyButton', $l.EntityDataList.copyLinkButtonText, 'copy');
 			this._addButtonToToolbar($copyButton);
 
-			var $pasteButton = this._createToolbarButton(this._listElementId + "_PasteButton", $l.EntityDataList.pasteLinkButtonText, "paste");
+			var $pasteButton = this._createToolbarButton(this._listElementId + '_PasteButton', $l.EntityDataList.pasteLinkButtonText, 'paste');
 			this._addButtonToToolbar($pasteButton);
 		}
 
@@ -42,18 +42,18 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		this._pickButtonElement = $pickButton.get(0);
 		this._deselectButtonElement = $deselectButton.get(0);
 
-		$stateField.bind("change", jQuery.proxy(this._onSelectedItemChangeHandler, this));
-		$pickButton.bind("click", jQuery.proxy(this._onPickButtonClickHandler, this));
-		$deselectButton.bind("click", jQuery.proxy(this._onDeselectButtonClickHandler, this));
-		$displayField.delegate("A", "click", jQuery.proxy(this._onItemClickHandler, this));
-		$displayField.delegate("A", "mouseup", jQuery.proxy(this._onItemClickHandler, this));
+		$stateField.bind('change', jQuery.proxy(this._onSelectedItemChangeHandler, this));
+		$pickButton.bind('click', jQuery.proxy(this._onPickButtonClickHandler, this));
+		$deselectButton.bind('click', jQuery.proxy(this._onDeselectButtonClickHandler, this));
+		$displayField.delegate('A', 'click', jQuery.proxy(this._onItemClickHandler, this));
+		$displayField.delegate('A', 'mouseup', jQuery.proxy(this._onItemClickHandler, this));
 
 		if (this._enableCopy) {
 			this._copyButtonElement = $copyButton.get(0);
-			$copyButton.bind("click", jQuery.proxy(this._onCopyButtonClickHandler, this));
+			$copyButton.bind('click', jQuery.proxy(this._onCopyButtonClickHandler, this));
 
 			this._pasteButtonElement = $pasteButton.get(0);
-			$pasteButton.bind("click", jQuery.proxy(this._onPasteButtonClickHandler, this));
+			$pasteButton.bind('click', jQuery.proxy(this._onPasteButtonClickHandler, this));
 		}
 
 		if (!this._showIds) {
@@ -111,11 +111,11 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 	},
 
 	_refreshListInner: function (dataItems, refreshOnly) {
-		var html = "";
-		var value = "";
+		var html = '';
+		var value = '';
 		if (!$q.isNullOrEmpty(dataItems)) {
 			value = dataItems[0].Value;
-			html = this._getIdLinkCode(value) + "<span class=\"title\">" + dataItems[0].Text + "</span>";
+			html = this._getIdLinkCode(value) + '<span class="title">' + dataItems[0].Text + '</span>';
 		}
 
 		var $displayField = $(this._displayFieldElement);
@@ -127,9 +127,9 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 
 		if (oldValue != value) {
 		    $stateField.addClass(window.CHANGED_FIELD_CLASS_NAME);
-		    var operation = refreshOnly ? "addClass" : "removeClass";
+		    var operation = refreshOnly ? 'addClass' : 'removeClass';
 		    $stateField[operation](window.REFRESHED_FIELD_CLASS_NAME);
-		    $stateField.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $stateField.attr("name"), value: value, contentFieldName: $stateField.data('content_field_name') });
+		    $stateField.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $stateField.attr('name'), value: value, contentFieldName: $stateField.data('content_field_name') });
 		    $stateField.change();
 		}
 
@@ -160,19 +160,19 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 
 	enableList: function () {
 		$(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
-		$(this._stateFieldElement).prop("disabled", false);
+		$(this._stateFieldElement).prop('disabled', false);
 		this._enableAllToolbarButtons();
 	},
 
 	disableList: function () {
 		$(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
-		$(this._stateFieldElement).prop("disabled", true);
+		$(this._stateFieldElement).prop('disabled', true);
 		this._disableAllToolbarButtons();
 	},
 
 	makeReadonly: function () {
 		this.disableList();
-		$(this._stateFieldElement).prop("disabled", false);
+		$(this._stateFieldElement).prop('disabled', false);
 	},
 
 	isListChanged: function () {
@@ -205,15 +205,15 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 	dispose: function () {
 		this._stopDeferredOperations = true;
 
-		$(this._stateFieldElement).unbind("change");
-		$(this._pickButtonElement).unbind("click");
-		$(this._deselectButtonElement).unbind("click");
-		$(this._displayFieldElement).undelegate("click");
-		$(this._displayFieldElement).undelegate("mouseup");
+		$(this._stateFieldElement).unbind('change');
+		$(this._pickButtonElement).unbind('click');
+		$(this._deselectButtonElement).unbind('click');
+		$(this._displayFieldElement).undelegate('click');
+		$(this._displayFieldElement).undelegate('mouseup');
 
 		if (this._enableCopy) {
-			$(this._copyButtonElement).unbind("click");
-			$(this._pasteButtonElement).unbind("click");
+			$(this._copyButtonElement).unbind('click');
+			$(this._pasteButtonElement).unbind('click');
 		}
 
 		this._stateFieldElement = null;
@@ -223,8 +223,8 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		this._copyButtonElement = null;
 		this._pasteButtonElement = null;
 
-		Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, "dispose");
+		Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, 'dispose');
 	}
 };
 
-Quantumart.QP8.BackendEntitySingleItemPicker.registerClass("Quantumart.QP8.BackendEntitySingleItemPicker", Quantumart.QP8.BackendEntityDataListBase);
+Quantumart.QP8.BackendEntitySingleItemPicker.registerClass('Quantumart.QP8.BackendEntitySingleItemPicker', Quantumart.QP8.BackendEntityDataListBase);

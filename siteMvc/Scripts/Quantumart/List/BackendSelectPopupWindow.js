@@ -1,5 +1,5 @@
-window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED = "OnSelectPopupWindowResultSelected";
-window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED = "OnSelectPopupWindowClosed";
+window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED = 'OnSelectPopupWindowResultSelected';
+window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED = 'OnSelectPopupWindowClosed';
 
 Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
 	Quantumart.QP8.BackendSelectPopupWindow.initializeBase(this);
@@ -12,7 +12,7 @@ Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
 	this._popupWindowToolbarComponent = this._createToolbar();
 
 
-	options = Object.assign(options, {
+	options = Object.assign({}, options, {
 		popupWindowId: this._popupWindowId,
 		showBreadCrumbs: false,
 		saveSelectionWhenChangingView: true,
@@ -30,15 +30,15 @@ Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
 
 Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 	_isMultipleEntities: false,
-	_popupWindowId: "",
+	_popupWindowId: '',
 	_popupWindowToolbarComponent: null,
 	_popupWindowComponent: null,
 	_allowMultipleItemSelection: false,
 
-	SELECT_BUTTON_CODE: "select",
-	SELECT_ALL_BUTTON_CODE: "select_all",
-	DESELECT_ALL_BUTTON_CODE: "deselect_all",
-	REFRESH_BUTTON_CODE: "refresh",
+	SELECT_BUTTON_CODE: 'select',
+	SELECT_ALL_BUTTON_CODE: 'select_all',
+	DESELECT_ALL_BUTTON_CODE: 'deselect_all',
+	REFRESH_BUTTON_CODE: 'refresh',
 
 	_onPopupWindowToolbarButtonClicked: function (eventType, sender, args) {
 		if (this._popupWindowComponent) {
@@ -66,7 +66,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 
 	_createToolbar: function () {
 		var toolbar = new Quantumart.QP8.BackendToolbar();
-		toolbar.set_toolbarElementId("popupWindowToolbar_" + this._popupWindowId);
+		toolbar.set_toolbarElementId('popupWindowToolbar_' + this._popupWindowId);
 		toolbar.initialize();
 		toolbar.attachObserver(window.EVENT_TYPE_TOOLBAR_BUTTON_CLICKED, $.proxy(this._onPopupWindowToolbarButtonClicked, this));
 		toolbar.addToolbarItemsToToolbar(this._getToolbarItems());
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 			Text: $l.EntityDataList.selectPopupWindowButtonText,
 			Tooltip: $l.EntityDataList.selectPopupWindowButtonText,
 			AlwaysEnabled: true,
-			Icon: "multiple_pick.gif"
+			Icon: 'multiple_pick.gif'
 		};
 
 		Array.add(dataItems, selectButton);
@@ -94,7 +94,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 				Text: $l.EntityDataList.selectAllPopupWindowButtonText,
 				Tooltip: $l.EntityDataList.selectAllPopupWindowButtonText,
 				AlwaysEnabled: true,
-				Icon: "select_all.gif"
+				Icon: 'select_all.gif'
 			};
 
 			Array.add(dataItems, selectAllButton);
@@ -105,7 +105,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 				Text: $l.EntityDataList.deselectAllPopupWindowButtonText,
 				Tooltip: $l.EntityDataList.deselectAllPopupWindowButtonText,
 				AlwaysEnabled: true,
-				Icon: "deselect_all.gif"
+				Icon: 'deselect_all.gif'
 			};
 
 			Array.add(dataItems, deselectAllButton);
@@ -117,7 +117,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 			Text: $l.EntityDataList.refreshPopupWindowButtonText,
 			Tooltip: $l.EntityDataList.refreshPopupWindowButtonText,
 			AlwaysEnabled: true,
-			Icon: "refresh.gif"
+			Icon: 'refresh.gif'
 		};
 
 		Array.add(dataItems, refreshButton);
@@ -154,4 +154,4 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 
 };
 
-Quantumart.QP8.BackendSelectPopupWindow.registerClass("Quantumart.QP8.BackendSelectPopupWindow", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendSelectPopupWindow.registerClass('Quantumart.QP8.BackendSelectPopupWindow', Quantumart.QP8.Observable);

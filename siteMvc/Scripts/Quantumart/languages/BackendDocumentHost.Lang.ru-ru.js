@@ -1,3 +1,3 @@
 window.Backend.Lang.DocumentHost = {
-    noEntitiesToExecuteActionErrorMessage: "Для этого действия объекты не найдены!"
+    noEntitiesToExecuteActionErrorMessage: 'Для этого действия объекты не найдены!'
 };
