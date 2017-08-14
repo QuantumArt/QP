@@ -117,7 +117,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     });
 
     this._$fieldGroup.on('change', "select[data-required='True']", this._validateSelect(this._fieldsPredicate));
-    this._$fieldGroup.on('change', 'select[data-required]', function onChange() {
+    this._$fieldGroup.on('change', 'select[data-required]', () => {
       var $identifiers = that._$identifiers;
       that._showValidationSigns($identifiers, that._identifiersPredicate);
       $identifiers.each(function each() {
@@ -126,16 +126,16 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     });
 
     if (this._$uniqueContentFieldId.length === 1) {
-      this._$uniqueContentFieldId.on('change', function onChange() {
+      this._$uniqueContentFieldId.on('change', () => {
         that._updateMappingOptions();
       });
 
-      this._$uniqueFieldToUpdate.on('change', function onChange() {
+      this._$uniqueFieldToUpdate.on('change', () => {
         that._updateMappingOptions();
       });
     }
 
-    this._$importAction.on('change', function onChange() {
+    this._$importAction.on('change', () => {
       that._showValidationSigns(that._$fields, that._fieldsPredicate);
       that._$fields.trigger('change');
       that._$uniqueFieldToUpdate.trigger('change');
@@ -297,7 +297,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     });
 
     $(`#${  options._popupWindowId  }_Encoding, #${  options._popupWindowId  }_LineSeparator`)
-      .on('change', function onChange() {
+      .on('change', () => {
         that.loadFromFile(options);
       }
       );
@@ -344,14 +344,14 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   _fillOptionsFromFile: function (fields) {
     var fieldsClass = ' .dropDownList.dataList.fields';
     var documentId = `#${  this.options._popupWindowComponent._documentWrapperElementId  } `;
-    $.each($(documentId + fieldsClass), function each(index, item) {
+    $.each($(documentId + fieldsClass), (index, item) => {
       $(item).html('');
       $(item).append($('<option>', {
         value: -1,
         text: ''
       }));
 
-      $.each(fields, function eachField(i, entry) {
+      $.each(fields, (i, entry) => {
         $(item).append($('<option>', {
           value: entry,
           text: entry,

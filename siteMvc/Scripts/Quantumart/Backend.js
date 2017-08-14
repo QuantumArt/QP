@@ -35,7 +35,7 @@ Quantumart.QP8.Backend = function (isDebugMode, options) {
     '_onHostExternalCallerContextsUnbinded'
   ]);
 
-  $(document).bind('click', function (e) {
+  $(document).bind('click', (e) => {
     if (e.which == 2) {
       e.preventDefault();
     }
@@ -192,7 +192,7 @@ Quantumart.QP8.Backend.prototype = {
   _error: function () { },
 
   _initializeSignOut: function () {
-    $('.signOut').bind('click', function () {
+    $('.signOut').bind('click', () => {
       Quantumart.QP8.BackendLogin.removeCustomerCode();
     });
   },
@@ -213,7 +213,7 @@ Quantumart.QP8.Backend.prototype = {
     };
 
     $.connection.singleUserMode.client.send = this._updateSingleUserMode;
-    $.connection.hub.start().done(function () {
+    $.connection.hub.start().done(() => {
       var hash = $('body').data('dbhash');
       $.connection.communication.server.addHash(hash);
     });
@@ -336,11 +336,11 @@ Quantumart.QP8.Backend.prototype = {
             this._backendEditingArea.addDocument(eventArgs);
           }
         } else if (this._isMultistep(action, eventArgs)) {
-          jQuery.when(this._backendActionExecutor.executeMultistepAction(eventArgs)).done(function (status) {
+          jQuery.when(this._backendActionExecutor.executeMultistepAction(eventArgs)).done((status) => {
             if (status == window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
               that._onActionExecuted(eventArgs);
             }
-          }).fail(function () { });
+          }).fail(() => { });
         } else {
           this._markAsBusy();
           var callback = $.proxy(function (status, eventArgs) {

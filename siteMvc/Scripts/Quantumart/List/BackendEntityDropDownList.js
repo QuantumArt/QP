@@ -39,9 +39,9 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
 
   getSelectedEntityIDs: function () {
     return $.grep(
-      $.map(this.getSelectedEntities(), function (item) {
+      $.map(this.getSelectedEntities(), (item) => {
         return $q.toString(item.Id);
-      }), function (item) {
+      }), (item) => {
         return item;
       }
     );

@@ -19,13 +19,13 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       fieldID: this._fieldID,
       parentEntityId: this._parentEntityId,
       IDs: this._selectedEntitiesIDs
-    }, false, false, function (data, textStatus, jqXHR) {
+    }, false, false, (data, textStatus, jqXHR) => {
       if (data.success) {
         serverContent = data.view;
       } else {
         $q.alertError(data.message);
       }
-    }, function (jqXHR, textStatus, errorThrown) {
+    }, (jqXHR, textStatus, errorThrown) => {
       serverContent = null;
       $q.processGenericAjaxError(jqXHR);
     }
@@ -55,7 +55,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   getSelectedIds: function () {
     var result;
     if (this._isEntity) {
-      result = $.map(this._getSelectedEntities(), function (item) {
+      result = $.map(this._getSelectedEntities(), (item) => {
         return item.Id;
       });
     } else {
@@ -94,7 +94,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
 
   set_blockState: function (state) {
     if (state && !$q.isNullOrEmpty(state.entities)) {
-      this._selectedEntitiesIDs = $.map(state.entities, function (item) {
+      this._selectedEntitiesIDs = $.map(state.entities, (item) => {
         return item.Id;
       });
     } else {
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       var ids = this._getIds(stateData.text);
       result = this._getText(ids);
     } else if (!$q.isNullOrEmpty(stateData.entities)) {
-      result = this._getText(stateData.entities, function (e) {
+      result = this._getText(stateData.entities, (e) => {
         return $q.cutShort(e.Name, 10);
       });
     } else {
@@ -142,7 +142,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       }
 
       if (isRestoreByClose) {
-        this._selectedEntitiesIDs = $.map(state.entities, function (item) {
+        this._selectedEntitiesIDs = $.map(state.entities, (item) => {
           return item.Id;
         });
 
@@ -171,7 +171,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
           ids: self.getSelectedIds(),
           fieldId: self._fieldID,
           filter: self._getEntityDataList()._filter
-        }, function (data) {
+        }, (data) => {
           self._selectedEntitiesIDs = $q.addRemoveToArrUniq(selectedIds, data);
           self._replaceWithSelectedEntities();
         });

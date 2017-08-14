@@ -10,10 +10,10 @@ Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode)
       { entityTypeCode: entityTypeCode },
       false,
       false,
-      function (data, textStatus, jqXHR) {
+      (data, textStatus, jqXHR) => {
         entityType = data;
       },
-      function (jqXHR, textStatus, errorThrown) {
+      (jqXHR, textStatus, errorThrown) => {
         entityType = null;
       }
     );
@@ -35,10 +35,10 @@ Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
       { entityTypeId: entityTypeId },
       false,
       false,
-      function (data, textStatus, jqXHR) {
+      (data, textStatus, jqXHR) => {
         entityTypeCode = data;
       },
-      function (jqXHR, textStatus, errorThrown) {
+      (jqXHR, textStatus, errorThrown) => {
         entityTypeCode = null;
       }
     );
@@ -60,10 +60,10 @@ Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entit
       { entityTypeCode: entityTypeCode },
       false,
       false,
-      function (data, textStatus, jqXHR) {
+      (data, textStatus, jqXHR) => {
         parentEntityTypeCode = data;
       },
-      function (jqXHR, textStatus, errorThrown) {
+      (jqXHR, textStatus, errorThrown) => {
         parentEntityTypeCode = null;
         $q.processGenericAjaxError(jqXHR);
       }
@@ -88,7 +88,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
       false
     )
       .done(
-        function (data) {
+        (data) => {
           if (data.success) {
             dictionary = data.dictionary;
             Quantumart.QP8.Cache.addItem(cacheKey, data.dictionary);
@@ -97,7 +97,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
             $q.alertError(data.Text);
           }
         })
-      .fail(function (jqXHR, textStatus, errorThrown) {
+      .fail((jqXHR, textStatus, errorThrown) => {
         dictionary = null;
         $q.processGenericAjaxError(jqXHR);
       });

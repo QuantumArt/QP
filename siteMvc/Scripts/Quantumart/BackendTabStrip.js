@@ -1030,12 +1030,12 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $menu.css('top', `${menuTop  }px`);
     $menu.css('right', `${menuRight  }px`);
 
-    $menu.fadeIn(200, function () {
+    $menu.fadeIn(200, () => {
       this._refreshTabMenuArrowButtons();
-      $menu.everyTime(30, this.TAB_MENU_TIMER_ID, function () {
+      $menu.everyTime(30, this.TAB_MENU_TIMER_ID, () => {
         this._refreshTabMenuArrowButtons();
-      }.bind(this));
-    }.bind(this));
+      });
+    });
   },
 
   _hideTabMenu: function () {
@@ -1047,11 +1047,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $upArrow.fadeOut(50);
     $downArrow.fadeOut(50);
 
-    $menu.fadeOut(200, function () {
+    $menu.fadeOut(200, () => {
       if (this._isTabMenuOverflow()) {
         this._scrollTabMenuToFirstItem(0);
       }
-    }.bind(this));
+    });
 
     var $menuButton = $(this._tabMenuButtonElement);
     this._cancelAllStylesForTabMenuButton($menuButton);

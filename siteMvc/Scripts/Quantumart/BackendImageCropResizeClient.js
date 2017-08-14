@@ -131,7 +131,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     _imgInitHeight = 0,
 
     _ensureSelection = function (selection) {
-      setTimeout(function () {
+      setTimeout(() => {
         if (_imgAreaSelect != null && (selection.width != _parameters.crop.width || selection.height != _parameters.crop.height)) {
           _imgAreaSelect.setSelection(selection.x1, selection.y1, selection.x1 + _parameters.crop.width, selection.y2 + _parameters.crop.height);
           _imgAreaSelect.update();
@@ -239,7 +239,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       _imgAreaSelect = _$imgArea.imgAreaSelect(parameters);
     },
     _displaySelectionCoordinates = function (selection, needRedrawWidthAndHeight) {
-      setTimeout(function () {
+      setTimeout(() => {
         if ((isNaN(selection.width) && isNaN(selection.height)) || (selection.width === 0 && selection.height === 0)) {
           _$x.text('');
           _$y.text('');
@@ -385,14 +385,14 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         type: 'POST',
         dataType: 'json'
 
-      }).success(function (response) {
+      }).success((response) => {
         if (!response.ok) {
           var message = response.message || _defaultErrorMessage;
           displayErrors([message]);
         } else {
           _serverOperateImage();
         }
-      }).fail(function (error) {
+      }).fail((error) => {
         displayErrors([_defaultErrorMessage]);
       });
     },
@@ -407,7 +407,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         type: 'POST',
         dataType: 'json'
 
-      }).success(function (response) {
+      }).success((response) => {
         if (!response.ok) {
           var message = response.message || _defaultErrorMessage;
           displayErrors([message]);
@@ -419,7 +419,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
           }
           _parameters.onCompleteCallback();
         }
-      }).fail(function (error) {
+      }).fail((error) => {
         displayErrors([_defaultErrorMessage]);
       });
     },
@@ -479,7 +479,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     },
 
     _attachHandlers = function () {
-      _$btnSave.click(function () {
+      _$btnSave.click(() => {
         if (_validate()) {
           _removeErrors();
           if (_getSaveMode() == _saveMode.overwrite) {
@@ -491,13 +491,13 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         }
       });
 
-      _$saveForm.submit(function (e) {
+      _$saveForm.submit((e) => {
         e.preventDefault();
         _$btnSave.trigger('click');
         return false;
       });
 
-      _$radioInputs.change(function (radio) {
+      _$radioInputs.change((radio) => {
         var saveCopy = _$radioSaveCopy.attr('checked');
         if (saveCopy) {
           _$inputUserFileName.removeAttr('disabled');

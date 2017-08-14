@@ -456,9 +456,9 @@ Quantumart.QP8.BackendBreadCrumbs.getBreadCrumbsList = function (entityTypeCode,
     $q.getJsonFromUrl('GET', actionUrl, params, false, false, successHandler, errorHandler);
   } else {
     var breadCrumbs = null;
-    $q.getJsonFromUrl('GET', actionUrl, params, false, false, function (data, textStatus, jqXHR) {
+    $q.getJsonFromUrl('GET', actionUrl, params, false, false, (data, textStatus, jqXHR) => {
       breadCrumbs = data;
-    }, function (jqXHR, textStatus, errorThrown) {
+    }, (jqXHR, textStatus, errorThrown) => {
       breadCrumbs = null;
       $q.processGenericAjaxError(jqXHR);
     });

@@ -60,7 +60,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     var isChanged = false;
     this.deselectAllListItems();
     if (!$q.isNullOrEmpty(entityIDs) && $q.isArray(entityIDs)) {
-      $(this._listElement).find('LI INPUT:checkbox').each(function (index, chb) {
+      $(this._listElement).find('LI INPUT:checkbox').each((index, chb) => {
         var $chb = $(chb);
         if (entityIDs.indexOf($q.toInt($chb.val())) != -1) {
           $chb.prop('checked', true);
@@ -87,7 +87,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     var $selectedListItems = this.getSelectedListItems();
 
     $selectedListItems.each(
-      function (i, listItemElem) {
+      (i, listItemElem) => {
         var $listItem = $(listItemElem);
         var $checkbox = $listItem.find('INPUT:checkbox');
         var $label = $listItem.find('LABEL');
@@ -104,10 +104,10 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
   _refreshListInner: function (dataItems, refreshOnly) {
     var newSelectedIDs = $.map(
-      $.grep(dataItems, function (di) {
+      $.grep(dataItems, (di) => {
         return di.Selected === true;
       }),
-      function (di) {
+      (di) => {
         return $q.toInt(di.Value);
       }
     );
@@ -172,7 +172,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   makeReadonly: function () {
     this.disableList();
     var $checked = this.getListItems().find('INPUT:checkbox:checked');
-    $checked.each(function (i, cb) {
+    $checked.each((i, cb) => {
       var $cb = $(cb);
       $cb.siblings(`input[name="${  $cb.prop('name')  }"]:hidden`).val($cb.val());
     });

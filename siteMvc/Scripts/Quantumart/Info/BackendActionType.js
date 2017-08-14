@@ -10,10 +10,10 @@ Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actio
       { actionCode: actionCode },
       false,
       false,
-      function (data, textStatus, jqXHR) {
+      (data, textStatus, jqXHR) => {
         actionTypeCode = data;
       },
-      function (jqXHR, textStatus, errorThrown) {
+      (jqXHR, textStatus, errorThrown) => {
         actionTypeCode = null;
         $q.processGenericAjaxError(jqXHR);
       }

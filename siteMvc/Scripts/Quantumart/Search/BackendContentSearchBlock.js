@@ -45,14 +45,14 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
           },
           false,
           false,
-          function (data, textStatus, jqXHR) {
+          (data, textStatus, jqXHR) => {
             if (data.success) {
               serverContent = data.view;
             } else {
               $q.alertFail(data.message);
             }
           },
-          function (jqXHR, textStatus, errorThrown) {
+          (jqXHR, textStatus, errorThrown) => {
             serverContent = null;
             $q.processGenericAjaxError(jqXHR);
           });

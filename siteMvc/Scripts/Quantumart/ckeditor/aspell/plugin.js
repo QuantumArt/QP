@@ -21,7 +21,7 @@
           group: 'qp8'
         });
 
-        editor.contextMenu.addListener(function () {
+        editor.contextMenu.addListener(() => {
           return { typographer: CKEDITOR.TRISTATE_OFF };
         });
       }

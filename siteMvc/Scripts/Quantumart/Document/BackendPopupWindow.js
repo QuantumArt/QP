@@ -461,7 +461,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       this.generateDocumentUrl(options);
       this.renderPanels();
       var self = this;
-      this.loadHtmlContentToDocumentWrapper(function () {
+      this.loadHtmlContentToDocumentWrapper(() => {
         self.onDocumentChanged();
       }, options);
     }

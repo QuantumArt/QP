@@ -247,7 +247,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var self = this;
     var $items = this.getToolbarItems();
     $items.each(
-      function (index, elem) {
+      (index, elem) => {
         var $item = $(elem);
         var itemsAffected = +$item.data('items_affected') || 0;
         var state = selectedEntitiesCount == itemsAffected || (itemsAffected == window.MAX_ITEMS_AFFECTED_NUMBER && selectedEntitiesCount >= 1);
@@ -465,7 +465,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var subItems = dataItem.Items;
 
     if (subItems.length > 1) {
-      var selectedSubItem = jQuery.grep(subItems, function (subItem) {
+      var selectedSubItem = jQuery.grep(subItems, (subItem) => {
         return subItem.Value == selectedSubItemValue;
       })[0];
       if (!selectedSubItem) {
@@ -490,7 +490,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       html.cat('<div class="list">\n');
       html.cat('<ul>\n');
       jQuery.each(subItems,
-        function (index, subItem) {
+        (index, subItem) => {
           self._getToolbarDropDownItemHtml(html, subItem, selectedSubItemValue);
         }
       );
@@ -547,7 +547,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var self = this;
 
     jQuery.each(items,
-      function (index, item) {
+      (index, item) => {
         var $item = self.getToolbarItem(item.Value);
         if (!$q.isNullOrEmpty($item)) {
           self._extendToolbarItemElement($item, item);
@@ -571,7 +571,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
 
       if (!$q.isNullOrEmpty($item)) {
         jQuery.each(subItems,
-          function (index, subItem) {
+          (index, subItem) => {
             var $listItem = self._getToolbarDropDownListItemByValue($item, subItem.Value);
             if (!$q.isNullOrEmpty($listItem)) {
               self._extendToolbarDropDownListItemElement($listItem, subItem);
@@ -706,7 +706,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
   setVisibleStateForAll: function (state) {
     var self = this;
     this.getToolbarItems().each(
-      function (index, elem) {
+      (index, elem) => {
         self.setVisibleState(elem, state);
       }
     );
@@ -726,7 +726,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
   setEnableStateForAll: function (state) {
     var self = this;
     this.getToolbarItems().each(
-      function (index, elem) {
+      (index, elem) => {
         self.setEnableState(elem, state);
       }
     );

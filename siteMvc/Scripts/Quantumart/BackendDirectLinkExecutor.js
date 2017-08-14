@@ -87,7 +87,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     if (window.localStorage.getItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG)) {
       this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, this._uid);
       var that = this;
-      setTimeout(function () {
+      setTimeout(() => {
         var testResponse = !!window.localStorage.getItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
         window.localStorage.removeItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
         dfr.resolveWith(that, [testResponse]);

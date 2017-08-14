@@ -30,7 +30,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
           contentId: data.value
         },
         true, false).done(
-        function (data) {
+        (data) => {
           var newFields = data.fields.split(',');
           var newStatuses = data.statuses;
           var publishedStatusId = $statusSelector.data('published-id');

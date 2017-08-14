@@ -22,7 +22,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     var workflow = this._componentElem;
     var contentSelector = this._contentSelector;
     this._items = ko.observableArray(
-      $.map(workflow.data('workflow_list_data'), function (o) {
+      $.map(workflow.data('workflow_list_data'), (o) => {
         var r = {};
         Object.assign(r, o || {}, {
           RadioChecked: ko.observable(o.RadioChecked),
@@ -58,7 +58,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
           .find(`.${  window.CHANGED_FIELD_CLASS_NAME}`)
           .removeClass(window.CHANGED_FIELD_CLASS_NAME);
 
-        var activeContentsIds = this.contentSelector.find('input:checkbox:checked').map(function (index, elem) {
+        var activeContentsIds = this.contentSelector.find('input:checkbox:checked').map((index, elem) => {
           return $(elem).val();
         }).get().join();
 
@@ -74,7 +74,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             },
             false,
             false,
-            function (data) {
+            (data) => {
               if (element.UserId() != null) {
                 $(dom).find('span.workflow_permission_message').first().html(data);
               } else {
@@ -100,7 +100,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
     var component = this;
     this._componentElem.closest('form').find('.workflow_control_selector').parent('div').find('.checkbox')
-      .change(function (e) {
+      .change((e) => {
         component.manageItems(e);
       });
 
@@ -126,7 +126,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   },
 
   getCheckedContentsIds: function () {
-    return this._contentSelector.find('input:checkbox:checked').map(function (index, elem) {
+    return this._contentSelector.find('input:checkbox:checked').map((index, elem) => {
       return $(elem).val();
     }).get().join();
   },
@@ -134,7 +134,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   checkAllPermisssions: function () {
     var activeContentsIds = this.getCheckedContentsIds();
 
-    var usersAndGroups = $.map(this._items(), function (elem, index) {
+    var usersAndGroups = $.map(this._items(), (elem, index) => {
       return { StName: elem.StName, UserId: elem.UserId(), GroupId: elem.GroupId() };
     });
 
@@ -189,7 +189,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       },
       false,
       false,
-      function (data) {
+      (data) => {
         var current_workflow_stage = $(eventArgs._listElement).closest('fieldset');
         var user_row = current_workflow_stage.find(':visible.workflow_user_row');
         var group_row = current_workflow_stage.find(':visible.workflow_group_row');
@@ -219,7 +219,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   },
 
   addItem: function (statusId, statusName, weight) {
-    var existingItem = ko.utils.arrayFirst(this._items(), function (item) {
+    var existingItem = ko.utils.arrayFirst(this._items(), (item) => {
       return item.StId == statusId;
     });
 
@@ -236,7 +236,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       };
 
       this._items.push(item);
-      this._items.sort(function (left, right) {
+      this._items.sort((left, right) => {
         return left.Weight == right.Weight ? 0 : left.Weight > right.Weight ? 1 : -1;
       });
       this._setAsChanged();

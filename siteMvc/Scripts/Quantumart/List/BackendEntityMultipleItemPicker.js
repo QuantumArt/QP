@@ -100,7 +100,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     var result;
     if (!this._isCountOverflow()) {
       var $selectedListItems = this.getSelectedListItems();
-      result = $selectedListItems.map(function (i, item) {
+      result = $selectedListItems.map((i, item) => {
         var $item = $(item);
         return {
           Id: +$item.find('INPUT:checkbox').val(),
@@ -109,7 +109,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
       }).get() || [];
     } else {
       var ids = $(this._countOverflowElement).val().split(',');
-      result = $.map(ids, function (id) {
+      result = $.map(ids, (id) => {
         return { Id: id, Name: '' };
       }) || [];
     }
@@ -122,9 +122,9 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _refreshListInner: function (dataItems, refreshOnly) {
-    var newSelectedIDs = $.map($.grep(dataItems, function (di) {
+    var newSelectedIDs = $.map($.grep(dataItems, (di) => {
       return di.Value;
-    }), function (di) {
+    }), (di) => {
       return $q.toInt(di.Value);
     });
 
@@ -163,7 +163,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   appendEntities: function (entityIds) {
     if (entityIds && entityIds.length) {
-      var selectedEntities = entityIds.map(function (i) {
+      var selectedEntities = entityIds.map((i) => {
         return { Id: i };
       });
 
@@ -174,7 +174,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   selectEntities: function (entityIds) {
     this.deselectAllListItems();
     if (entityIds && entityIds.length) {
-      var selectedEntities = entityIds.map(function (i) {
+      var selectedEntities = entityIds.map((i) => {
         return { Id: i };
       });
 
@@ -222,7 +222,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   makeReadonly: function () {
     this.disableList();
     var $checked = this.getListItems().find('INPUT:checkbox:checked');
-    $checked.each(function (i, cb) {
+    $checked.each((i, cb) => {
       var $cb = $(cb);
       $cb.siblings(`input[name="${  $cb.prop('name')  }"]:hidden`).val($cb.val());
     });

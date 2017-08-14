@@ -103,14 +103,14 @@ Quantumart.QP8.BackendFileList.prototype = {
       },
       false,
       false,
-      function (data, textStatus, jqXHR) {
+      (data, textStatus, jqXHR) => {
         if (data.success) {
           result = data.data;
         } else {
           $q.alertError(data.message);
         }
       },
-      function (jqXHR, textStatus, errorThrown) {
+      (jqXHR, textStatus, errorThrown) => {
         result = null;
         $q.processGenericAjaxError(jqXHR);
       }

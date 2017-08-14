@@ -154,7 +154,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     this._showAjaxLoadingIndicatorForNode($parentNode);
     var self = this;
 
-    this._loadChildNodes(entityTypeId).done(function (data, textStatus, jqXHR) {
+    this._loadChildNodes(entityTypeId).done((data, textStatus, jqXHR) => {
       if (self._stopDeferredOperations) {
         return;
       }
@@ -173,7 +173,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
           $q.callFunction(callback);
         }
       }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
+    }).fail((jqXHR, textStatus, errorThrown) => {
       if (self._stopDeferredOperations) {
         return;
       }
@@ -201,7 +201,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
       var self = this;
 
       this._loadNode(entityTypeId, actionId)
-        .done(function (data, textStatus, jqXHR) {
+        .done((data, textStatus, jqXHR) => {
           if (self._stopDeferredOperations) {
             return;
           }
@@ -224,7 +224,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
             $q.callFunction(callback);
           }
         })
-        .fail(function (jqXHR, textStatus, errorThrown) {
+        .fail((jqXHR, textStatus, errorThrown) => {
           if (self._stopDeferredOperations) {
             return;
           }
@@ -298,7 +298,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
   _extendNodeElements: function (parentNodeElem, items) {
     var self = this;
     let $parentNode = $q.toJQuery(parentNodeElem);
-    $.each(items, function (index, item) {
+    $.each(items, (index, item) => {
       var $node = self.getNode(self._converToItemValue(item), $parentNode);
       self._extendNodeElement($node, item);
     });

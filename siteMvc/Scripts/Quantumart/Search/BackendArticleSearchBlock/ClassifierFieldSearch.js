@@ -11,13 +11,13 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }ContentsListForClassifier`, {
       elementIdPrefix: this._elementIdPrefix,
       fieldID: this._fieldID
-    }, false, false, function (data, textStatus, jqXHR) {
+    }, false, false, (data, textStatus, jqXHR) => {
       if (data.success) {
         serverContent = data.view;
       } else {
         $q.alertError(data.message);
       }
-    }, function (jqXHR, textStatus, errorThrown) {
+    }, (jqXHR, textStatus, errorThrown) => {
       serverContent = null;
       $q.processGenericAjaxError(jqXHR);
     });

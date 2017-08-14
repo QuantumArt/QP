@@ -53,7 +53,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     var self = this;
     if (data.TotalRecords > 0) {
       var columnCounter = 0;
-      jQuery.each(data.Data, function (index, item) {
+      jQuery.each(data.Data, (index, item) => {
         html
           .catIf('<div class="column"><ul>', columnCounter == 0)
           .cat(String.format('<li title="{0}"><div class="fileItem" data-file_name="{0}">', item.FullName))
@@ -123,7 +123,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 
     $fileListContentElement
       .find(`.fileItem.${  this.SELECTED_CLASS}`)
-      .each(function (index, item) {
+      .each((index, item) => {
         var name = $(item).data('file_name');
         Array.add(selectedEntities, { Id: name, Name: name });
       });

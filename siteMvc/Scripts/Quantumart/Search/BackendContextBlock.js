@@ -18,7 +18,7 @@ Quantumart.QP8.BackendContextBlock.prototype
 
     _restore_searchBlockState: function () {
       if (this._searchBlockState) {
-        var fieldValues = jQuery.map(this._searchBlockState, function (elem) {
+        var fieldValues = jQuery.map(this._searchBlockState, (elem) => {
           return { fieldName: elem.Name, value: elem.Value };
         });
         $c.setAllEntityDataListValues(this._searchBlockElement, fieldValues);
@@ -56,14 +56,14 @@ Quantumart.QP8.BackendContextBlock.prototype
           },
           false,
           false,
-          function (data, textStatus, jqXHR) {
+          (data, textStatus, jqXHR) => {
             if (data.success) {
               serverContent = data.view;
             } else {
               $q.alertFail(data.message);
             }
           },
-          function (jqXHR, textStatus, errorThrown) {
+          (jqXHR, textStatus, errorThrown) => {
             serverContent = null;
             $q.processGenericAjaxError(jqXHR);
           });

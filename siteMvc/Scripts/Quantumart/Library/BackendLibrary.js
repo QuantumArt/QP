@@ -365,7 +365,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
       },
       false,
       false,
-      function (data) {
+      (data) => {
         if (data.success) {
           self._folderPath = data.path;
           self._folderUrl = data.url;
@@ -375,7 +375,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
           $q.alertFail(data.message);
         }
       },
-      function (jqXHR) {
+      (jqXHR) => {
         $q.processGenericAjaxError(jqXHR);
       }
     );

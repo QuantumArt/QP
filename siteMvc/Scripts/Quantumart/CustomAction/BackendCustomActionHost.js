@@ -42,7 +42,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     var id = this._options.iframeElementId;
 
     $(`#${  id}`).css('marginLeft', '1px');
-    setTimeout(function () {
+    setTimeout(() => {
       $(`#${  id}`).css('marginLeft', '0');
     }, 0);
   },
@@ -97,7 +97,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     eventArgs.set_actionCode(message.data.selectActionCode);
 
     if ($q.isArray(message.data.selectedEntityIDs) && !$q.isNullOrEmpty(message.data.selectedEntityIDs)) {
-      var selectedEntities = jQuery.map(message.data.selectedEntityIDs, function (id) {
+      var selectedEntities = jQuery.map(message.data.selectedEntityIDs, (id) => {
         return { Id: id };
       });
       if (message.data.isMultiple) {

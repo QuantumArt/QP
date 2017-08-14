@@ -245,7 +245,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     var $nodes = $q.toJQuery(nodes);
 
     if (!$q.isNullOrEmpty($nodes)) {
-      $nodes.each(function (index, nodeElem) {
+      $nodes.each((index, nodeElem) => {
         var $node = $(nodeElem);
         self.refreshNode($node, options);
       });
@@ -374,7 +374,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     var $node = this.getNode(node);
 
     if (!$q.isNullOrEmpty($node)) {
-      $node.hide(100, function () {
+      $node.hide(100, () => {
         $node.removeData().empty().remove();
       });
     }
@@ -455,7 +455,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     var self = this;
     var $node = this.getNode(node);
 
-    $node.data('loading_icon_timeout', setTimeout(function () {
+    $node.data('loading_icon_timeout', setTimeout(() => {
       if (self._stopDeferredOperations) {
         clearTimeout($node.data('loading_icon_timeout'));
         return;
@@ -520,7 +520,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   _proceedAutoCheckAllChildren: function (li, isChecked, suppressAutoCheck, autoCheckChildren) {
     return this._proceedAutoCheckChildren(function ($node) {
       var self = this;
-      $node.find('ul.t-group .t-checkbox [type=checkbox]').each(function (index, item) {
+      $node.find('ul.t-group .t-checkbox [type=checkbox]').each((index, item) => {
         var $checkbox = $(item);
         $checkbox.prop('checked', isChecked);
         self._treeComponent.nodeCheck($checkbox, isChecked, true);
@@ -538,7 +538,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
         .children('li.t-item')
         .children('div')
         .find('.t-checkbox [type=checkbox]')
-        .each(function (index, item) {
+        .each((index, item) => {
           var $checkbox = $(item);
           $checkbox.prop('checked', isChecked);
           self._treeComponent.nodeCheck($checkbox, isChecked, true);

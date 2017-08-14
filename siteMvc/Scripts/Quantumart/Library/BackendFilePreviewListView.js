@@ -32,7 +32,7 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 
     var self = this;
     if (data.TotalRecords > 0) {
-      jQuery.each(data.Data, function (index, item) {
+      jQuery.each(data.Data, (index, item) => {
         var ss = self._getThumbnailLink(item, options);
         html.cat(String.format('<div class="fileItem" data-file_name="{0}">', item.FullName))
           .catIf('<input type="checkbox" />', self._selectMode == window.FILE_LIST_SELECT_MODE_MULTIPLE)

@@ -106,7 +106,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 
     if (!$q.isNullOrEmpty(action.Views)) {
       jQuery.each(action.Views,
-        function (index, actionView) {
+        (index, actionView) => {
           var parentEntityTypeCode = Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(action.EntityType.Code);
           var view = actionView.ViewType;
           if (view.Code != window.VIEW_TYPE_CODE_TREE || $o.checkEntityForPresenceSelfRelations(parentEntityTypeCode, self.get_parentEntityId())) {

@@ -34,7 +34,7 @@
       '”'
     ];
 
-    quotesToReplace.forEach(function foreach(quote) {
+    quotesToReplace.forEach((quote) => {
       result = result.replace(new RegExp(quote, 'g'), '"');
     });
 
@@ -78,7 +78,7 @@
     result = fixToMdashFn(result, '&ndash;');
 
     result = result.replace(/\b(\d+)-(\d+)\b/g, '<nobr>$1&ndash;$2</nobr>');
-    result = result.replace(/(\S+)-(\S+)/g, function replacer(match, p1, p2) {
+    result = result.replace(/(\S+)-(\S+)/g, (match, p1, p2) => {
       if (p1.length <= 3 || p2.length <= 3) {
         return `<nobr>${  p1  }-${  p2  }</nobr>`;
       }
@@ -153,7 +153,7 @@
           group: 'qp8'
         });
 
-        editor.contextMenu.addListener(function () {
+        editor.contextMenu.addListener(() => {
           return { typographer: CKEDITOR.TRISTATE_OFF };
         });
       }
@@ -179,7 +179,7 @@
         icon: settings.iconPath
       });
 
-      editor.on('mode', function onMode() {
+      editor.on('mode', () => {
         if (editor.readOnly === false) {
           editor.getCommand(settings.pluginName).enable();
         }

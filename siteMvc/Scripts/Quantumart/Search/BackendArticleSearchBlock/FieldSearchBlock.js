@@ -34,14 +34,14 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
       },
       false,
       false,
-      function (data, textStatus, jqXHR) {
+      (data, textStatus, jqXHR) => {
         if (data.success) {
           serverContent = data.view;
         } else {
           $q.alertFail(data.message);
         }
       },
-      function (jqXHR, textStatus, errorThrown) {
+      (jqXHR, textStatus, errorThrown) => {
         serverContent = null;
         $q.processGenericAjaxError(jqXHR);
       }
@@ -79,10 +79,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   get_blockState: function () {
     var r = jQuery.grep(
-      jQuery.map(this._fieldSearchContainerList, function (fsc) {
+      jQuery.map(this._fieldSearchContainerList, (fsc) => {
         return fsc ? fsc.get_blockState() : null;
       }),
-      function (fsc) {
+      (fsc) => {
         return fsc;
       }
     );
@@ -95,7 +95,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     if (state) {
       var that = this;
       var $options = jQuery('option', this._fieldsComboElement);
-      jQuery.each(state, function (index, s) {
+      jQuery.each(state, (index, s) => {
         if (s.fieldID && !that._fieldSearchContainerList[s.fieldID]) {
           var is = $options.is(function () {
             var $option = jQuery(this);

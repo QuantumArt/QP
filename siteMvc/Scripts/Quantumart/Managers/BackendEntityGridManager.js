@@ -135,7 +135,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
       var gridGroupCodes = grid.get_gridGroupCodes();
       var that = this;
 
-      jQuery.each(gridGroupCodes, function (i, gridGroupCode) {
+      jQuery.each(gridGroupCodes, (i, gridGroupCode) => {
         var gridGroup = that.getGridGroup(gridGroupCode);
 
         $q.removeProperty(gridGroup, gridElementId);

@@ -61,14 +61,14 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
       queryParams = Object.assign({}, queryParams, { boundToExternal: true });
     }
 
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_TOOLBAR  }GetToolbarButtonListByActionCode`, queryParams, false, false, function (data, textStatus, jqXHR) {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_TOOLBAR  }GetToolbarButtonListByActionCode`, queryParams, false, false, (data, textStatus, jqXHR) => {
       if (self._stopDeferredOperations) {
         return;
       }
 
       var actionToolbarItems = data;
       if (!$q.isNullOrEmpty(self.getDisabledActionCodes())) {
-        actionToolbarItems = jQuery.grep(actionToolbarItems, function (itm) {
+        actionToolbarItems = jQuery.grep(actionToolbarItems, (itm) => {
           return self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1;
         });
       }
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
       return;
     },
 
-    function (jqXHR, textStatus, errorThrown) {
+    (jqXHR, textStatus, errorThrown) => {
       if (self._stopDeferredOperations) {
         return;
       }
@@ -101,7 +101,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     }
 
     if (entityId != 0) {
-      $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION  }GetStatusesList`, queryParams, true, false).done(function (data) {
+      $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION  }GetStatusesList`, queryParams, true, false).done((data) => {
         if (self._stopDeferredOperations) {
           return;
         }
@@ -116,7 +116,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         } else {
           $q.alertError(data.Text);
         }
-      }).fail(function (jqXHR, textStatus, errorThrown) {
+      }).fail((jqXHR, textStatus, errorThrown) => {
         if (self._stopDeferredOperations) {
           return;
         }
@@ -139,7 +139,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
 
   _getToolbarItemsFromResult: function (items) {
     var dataItems = [];
-    jQuery.each(items, function (index, item) {
+    jQuery.each(items, (index, item) => {
       Array.add(dataItems, {
         Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
         Value: item.ActionCode,

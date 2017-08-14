@@ -29,12 +29,12 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
     var html = new $.telerik.stringBuilder();
     var entityTypeId = $('option:selected', $entityTypesElement).val();
     var dictionary = Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary();
-    var pair = $.grep(dictionary, function (item) {
+    var pair = $.grep(dictionary, (item) => {
       return item.EntityTypeId == entityTypeId;
     });
     if (pair && pair[0]) {
       var listItems = pair[0].ActionItems;
-      $.each(listItems, function (i, item) {
+      $.each(listItems, (i, item) => {
         html.cat(String.format('<li><input id="SelectedActions[{0}]" class="checkbox chb-list-item qp-notChangeTrack" type="checkbox" value="{1}" name="SelectedActions[{0}]" ', i, item.Value))
           .catIf(' checked="checked" ', actions && actions.indexOf(item.Value) != -1)
           .cat('/> ')

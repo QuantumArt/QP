@@ -74,7 +74,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     if (this._uploadedFiles.length > 0) {
       var filenames = [];
 
-      $.each(this._uploadedFiles, function (i, val) {
+      $.each(this._uploadedFiles, (i, val) => {
         filenames.push(val);
       });
 
@@ -101,7 +101,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
 
     if (this._extensions.length > 0) {
-      var extensions = $.map(this._extensions.split(';'), function (val) {
+      var extensions = $.map(this._extensions.split(';'), (val) => {
         return val.toLowerCase();
       });
 

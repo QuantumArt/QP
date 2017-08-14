@@ -4,12 +4,12 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
   var contentPicker = $parentElement.find('.qp-deffilter-content').data('entity_data_list_component');
   var articlePicker = $parentElement.find('.qp-deffilter-articles').data('entity_data_list_component');
 
-  $siteCombo.change(jQuery.proxy(function () {
+  $siteCombo.change(jQuery.proxy(() => {
     contentPicker.deselectAllListItems();
     contentPicker.set_parentEntityId(+$siteCombo.val() || 0);
   }, this));
 
-  var onContentSelectedHandler = jQuery.proxy(function () {
+  var onContentSelectedHandler = jQuery.proxy(() => {
     if (contentPicker.getSelectedListItemCount() === 0) {
       articlePicker.disableList();
       articlePicker.removeAllListItems();

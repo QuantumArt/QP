@@ -22,20 +22,20 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
 
     if ($locked.text().trim() != '0') {
       $locked.append(listStr);
-      $locked.find('a').on('click', function () {
+      $locked.find('a').on('click', () => {
         executeAction('list_locked_article', 'db', 1, customerCode, 0);
       });
     }
 
     if ($approval.text().trim() != '0') {
       $approval.append(listStr);
-      $approval.find('a').on('click', function () {
+      $approval.find('a').on('click', () => {
         executeAction('list_articles_for_approval', 'db', 1, customerCode, 0);
       });
     }
 
     $loggedAs.append(profileStr);
-    $loggedAs.find('a').on('click', function () {
+    $loggedAs.find('a').on('click', () => {
       executeAction('edit_profile', 'db', 1, customerCode, 0);
     });
   }

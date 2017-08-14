@@ -39,7 +39,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
         true,
         false
       )
-        .done(function (data) {
+        .done((data) => {
           if (data.success) {
             $displayFieldSelectElement.empty();
             $listOrderSelectElement.empty();
@@ -65,7 +65,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
             $q.alertError(data.message);
           }
         })
-        .fail(function (jqXHR, textStatus, errorThrown) {
+        .fail((jqXHR, textStatus, errorThrown) => {
           $q.processGenericAjaxError(jqXHR);
         });
     }
@@ -104,7 +104,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
         true,
         false
       )
-        .done(function (data) {
+        .done((data) => {
           if (data.success) {
             $classifierSelectElement.empty();
             if (!$q.isNullOrEmpty(data.data)) {
@@ -125,7 +125,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
             $q.alertError(data.message);
           }
         })
-        .fail(function (jqXHR, textStatus, errorThrown) {
+        .fail((jqXHR, textStatus, errorThrown) => {
           $q.processGenericAjaxError(jqXHR);
         });
     }

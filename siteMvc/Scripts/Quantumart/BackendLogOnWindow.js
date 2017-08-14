@@ -75,7 +75,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         },
         true,
         false,
-        function (data, textStatus, jqXHR) {
+        (data, textStatus, jqXHR) => {
           if (data.isAuthenticated) {
             that._isAuthenticated = true;
             that._userName = data.userName;
@@ -99,7 +99,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
             }
           }
         },
-        function (jqXHR, textStatus, errorThrown) {
+        (jqXHR, textStatus, errorThrown) => {
           that._updateWindow(errorThrown);
         }
       );
@@ -197,7 +197,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
   _addDeferredCallcack: function (callback, settings) {
     this._updateZindex();
-    $(this).on(this.AJAX_EVENT, function (e) {
+    $(this).on(this.AJAX_EVENT, (e) => {
       var isAuthenticated = e.value;
       if (isAuthenticated) {
         jQuery.ajax(settings).done(callback);

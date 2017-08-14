@@ -293,9 +293,9 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   getSelectedEntityIDs: function () {
-    return $.grep($.map(this.getSelectedEntities(), function (item) {
+    return $.grep($.map(this.getSelectedEntities(), (item) => {
       return $q.toInt(item.Id);
-    }), function (item) {
+    }), (item) => {
       return item;
     });
   },

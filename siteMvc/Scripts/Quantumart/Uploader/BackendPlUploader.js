@@ -199,7 +199,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     this._uploader.bind('FilesAdded', $.proxy(this._filesAddedHandler, this));
     this._uploader.bind('UploadProgress', $.proxy(this._uploadProgressHandler, this));
     this._uploader.bind('FileUploaded', $.proxy(this._fileUploadedHandler, this));
-    this._uploader.bind('Error', function errorHandler(up, err) {
+    this._uploader.bind('Error', (up, err) => {
       if (+err.code === -600) {
         $q.alertError(String.format(
           window.HTML_UPLOAD_MAX_SIZE_MESSAGE,

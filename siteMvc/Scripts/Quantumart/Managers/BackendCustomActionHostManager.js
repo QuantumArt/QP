@@ -29,7 +29,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
 
   onExternalCallerContextsUnbinded: function (message) {
     var self = this;
-    $(message.externalCallerContexts).each(function (i, c) {
+    $(message.externalCallerContexts).each((i, c) => {
       var component = self._components[c.hostUID];
       if (component) {
         component.onExternalCallerContextsUnbinded({
@@ -59,19 +59,19 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
       $.merge(hosts, Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(eventArgs.get_callerContext().eventArgs));
       $.merge(hosts, [Quantumart.QP8.BackendEditingArea.getInstance().getDocumentByEventArgs(eventArgs.get_callerContext().eventArgs)]);
     }
-    hosts = $.grep(hosts, function (h) {
+    hosts = $.grep(hosts, (h) => {
       return !$q.isNull(h);
     });
     if (!$q.isNullOrEmpty(hosts)) {
-      $.each(hosts, function (k, host) {
+      $.each(hosts, (k, host) => {
         $.merge(callerContexts, host.get_externalCallerContexts());
       });
     }
 
-    callerContexts = $.grep(callerContexts, function (c) {
+    callerContexts = $.grep(callerContexts, (c) => {
       return !$q.isNull(c);
     });
-    $(callerContexts).each(function (i, c) {
+    $(callerContexts).each((i, c) => {
       var component = self._components[c.hostUID];
       if (component) {
         var message = {

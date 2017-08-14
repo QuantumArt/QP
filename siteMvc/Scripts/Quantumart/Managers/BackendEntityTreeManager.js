@@ -116,7 +116,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
         }
       }
     } else {
-      jQuery.each(ids, function (index, id) {
+      jQuery.each(ids, (index, id) => {
         self.refreshNode(entityTypeCode, parentEntityId, id, options);
       });
     }
@@ -136,7 +136,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 
   removeNodes: function (entityTypeCode, parentEntityId, ids) {
     var self = this;
-    jQuery.each(ids, function (index, id) {
+    jQuery.each(ids, (index, id) => {
       self.removeNode(entityTypeCode, parentEntityId, id);
     });
   },
