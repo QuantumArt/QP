@@ -117,7 +117,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
 
     if (!$q.isNullOrWhiteSpace(this._contextMenuContainerElementId)) {
-      $(`#${  this._contextMenuContainerElementId}`).append($menu);
+      $(`#${this._contextMenuContainerElementId}`).append($menu);
     } else {
       $('body:first').append($menu);
     }
@@ -140,7 +140,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   _getMenuComponentName: function () {
-    return `jeegoocontext_${  this._contextMenuElementId}`;
+    return `jeegoocontext_${this._contextMenuElementId}`;
   },
 
   showMenu: function (e, targetElem) {
@@ -220,7 +220,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       params = Object.assign({}, params, { boundToExternal: true });
     }
 
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_CONTEXT_MENU  }GetStatusesList`, params, false, false, (data) => {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_CONTEXT_MENU}GetStatusesList`, params, false, false, (data) => {
       var statuses = data;
       if (statuses) {
         var statusCount = statuses.length;
@@ -286,18 +286,18 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 
   _getMenuItemHtml: function (html, dataItem) {
     html
-      .cat(`<li code="${  $q.htmlEncode(dataItem.ActionCode)  }" class="item">\n`)
+      .cat(`<li code="${$q.htmlEncode(dataItem.ActionCode)}" class="item">\n`)
       .cat('  <div class="outerWrapper">\n')
       .cat('      <div class="innerWrapper">\n')
       .cat('          <span class="icon"')
-      .catIf(` style="background-image: url('${  window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS  }${dataItem.Icon  }')"`,
+      .catIf(` style="background-image: url('${window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS}${dataItem.Icon}')"`,
         !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() !== 'http://')
-      .catIf(` style="background-image: url('${  dataItem.Icon  }')"`,
+      .catIf(` style="background-image: url('${dataItem.Icon}')"`,
         !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() === 'http://')
       .cat('>')
-      .cat(`<img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }0.gif" width="16px" height="16px" />`)
+      .cat(`<img src="${window.COMMON_IMAGE_FOLDER_URL_ROOT}0.gif" width="16px" height="16px" />`)
       .cat('</span>\n')
-      .cat(`          <span class="text">${  $q.htmlEncode(dataItem.Name)  }</span>\n`)
+      .cat(`          <span class="text">${$q.htmlEncode(dataItem.Name)}</span>\n`)
       .cat('      </div>\n')
       .cat('  </div>\n')
       .cat('</li>\n');
@@ -334,7 +334,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if ($q.isObject(menuItem)) {
       return $q.toJQuery(menuItem);
     } else if ($q.isString(menuItem)) {
-      $menuItem = $(`LI[code='${  menuItem  }']`, this._contextMenuElement);
+      $menuItem = $(`LI[code='${menuItem}']`, this._contextMenuElement);
       if ($menuItem.length == 0) {
         $menuItem = null;
       }
@@ -511,7 +511,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 };
 
 Quantumart.QP8.BackendContextMenu.getCacheKey = function (menuCode, loadItems, isBindToExternal) {
-  return `contextMenuCachedData${  menuCode  }${loadItems  }${isBindToExternal}`;
+  return `contextMenuCachedData${menuCode}${loadItems}${isBindToExternal}`;
 };
 
 Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loadItems, isBindToExternal, successHandler, errorHandler) {
@@ -519,7 +519,7 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
   var contextMenuCachedData = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!contextMenuCachedData) {
-    var actionUrl = `${window.CONTROLLER_URL_CONTEXT_MENU  }GetByCode`;
+    var actionUrl = `${window.CONTROLLER_URL_CONTEXT_MENU}GetByCode`;
     var params = { menuCode: menuCode, loadItems: loadItems };
 
     if (isBindToExternal === true) {

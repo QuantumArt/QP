@@ -283,7 +283,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
 
   _converToItemValue: function (item) {
     if (item) {
-      return `${item.NodeType  }-${  item.Id}`;
+      return `${item.NodeType}-${item.Id}`;
     }
   },
 
@@ -305,7 +305,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
   },
 
   _loadChildNodes: function (entityTypeId) {
-    return $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ACTION_PERMISSION_TREE  }GetTreeNodes`,
+    return $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ACTION_PERMISSION_TREE}GetTreeNodes`,
       {
         entityTypeId: entityTypeId,
         userId: this._userId,
@@ -315,7 +315,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
   },
 
   _loadNode: function (entityTypeId, actionId) {
-    return $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ACTION_PERMISSION_TREE  }GetTreeNode`,
+    return $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ACTION_PERMISSION_TREE}GetTreeNode`,
       {
         entityTypeId: entityTypeId,
         actionId: actionId,

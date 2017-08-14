@@ -66,7 +66,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 
   _createToolbar: function () {
     var toolbar = new Quantumart.QP8.BackendToolbar();
-    toolbar.set_toolbarElementId(`popupWindowToolbar_${  this._popupWindowId}`);
+    toolbar.set_toolbarElementId(`popupWindowToolbar_${this._popupWindowId}`);
     toolbar.initialize();
     toolbar.attachObserver(window.EVENT_TYPE_TOOLBAR_BUTTON_CLICKED, $.proxy(this._onPopupWindowToolbarButtonClicked, this));
     toolbar.addToolbarItemsToToolbar(this._getToolbarItems());

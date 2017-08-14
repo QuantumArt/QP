@@ -174,7 +174,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     var $checked = this.getListItems().find('INPUT:checkbox:checked');
     $checked.each((i, cb) => {
       var $cb = $(cb);
-      $cb.siblings(`input[name="${  $cb.prop('name')  }"]:hidden`).val($cb.val());
+      $cb.siblings(`input[name="${$cb.prop('name')}"]:hidden`).val($cb.val());
     });
   },
 
@@ -187,16 +187,16 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     html
       .cat('<li>')
       .cat('<input type="checkbox" ')
-      .cat(` name="${  $q.htmlEncode(itemElementName)  }"`)
-      .cat(` id="${  $q.htmlEncode(itemElementId)  }"`)
-      .cat(` value="${  $q.htmlEncode(itemValue)  }"`)
+      .cat(` name="${$q.htmlEncode(itemElementName)}"`)
+      .cat(` id="${$q.htmlEncode(itemElementId)}"`)
+      .cat(` value="${$q.htmlEncode(itemValue)}"`)
       .cat(' class="checkbox chb-list-item qp-notChangeTrack"')
       .catIf(' checked="checked"', isChecked)
       .catIf(' disabled ', this.isListDisabled())
       .cat('/> ')
-      .cat(`<input type="hidden" value="false" name="${  $q.htmlEncode(itemElementName)  }"/>`)
+      .cat(`<input type="hidden" value="false" name="${$q.htmlEncode(itemElementName)}"/>`)
       .cat(this._getIdLinkCode(itemValue))
-      .cat(`<label for="${  $q.htmlEncode(itemElementId)  }">${  itemText  }</label>`)
+      .cat(`<label for="${$q.htmlEncode(itemElementId)}">${itemText}</label>`)
       .cat('</li>');
   },
 

@@ -75,7 +75,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
       documentWrapperElementId = this.generateDocumentWrapperId();
     }
 
-    var $documentWrapper = $(`#${  documentWrapperElementId}`);
+    var $documentWrapper = $(`#${documentWrapperElementId}`);
     if ($q.isNullOrEmpty($documentWrapper)) {
       $documentWrapper = $('<div />', { id: documentWrapperElementId, class: 'documentWrapper' });
 
@@ -133,7 +133,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
   createPanels: function () {
     var action = this.getCurrentAction();
-    var breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(`breadCrumbs_${  this._tabId}`, {
+    var breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(`breadCrumbs_${this._tabId}`, {
       documentHost: this,
       breadCrumbsContainerElementId: this._editingArea.get_breadCrumbsContainerElementId(),
       contextMenuManager: new Quantumart.QP8.BackendBreadMenuContextMenuManager()
@@ -153,7 +153,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
       actionToolbarOptions.disabledActionCodes = eventArgsAdditionalData.disabledActionCodes;
     }
 
-    var actionToolbarComponent = new Quantumart.QP8.BackendActionToolbar(`actionToolbar_${  this._tabId}`, this._actionCode, this._parentEntityId, actionToolbarOptions);
+    var actionToolbarComponent = new Quantumart.QP8.BackendActionToolbar(`actionToolbar_${this._tabId}`, this._actionCode, this._parentEntityId, actionToolbarOptions);
     actionToolbarComponent.initialize();
     actionToolbarComponent.attachObserver(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
     this._actionToolbarComponent = actionToolbarComponent;
@@ -166,7 +166,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
       viewToolbarOptions.viewTypeCode = state.viewTypeCode;
     }
 
-    var viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar(`viewToolbar_${  this._tabId}`, this._actionCode, viewToolbarOptions);
+    var viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar(`viewToolbar_${this._tabId}`, this._actionCode, viewToolbarOptions);
     viewToolbarComponent.initialize();
 
     viewToolbarComponent.attachObserver(window.EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, this._onGeneralEventHandler);
@@ -217,7 +217,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   createSearchBlock: function () {
-    var searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`searchBlock_${  this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
+    var searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`searchBlock_${this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
       searchBlockContainerElementId: this._editingArea.get_searchBlockContainerElementId(),
       tabId: this._tabId,
       actionCode: this._actionCode,
@@ -231,7 +231,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   createContextBlock: function () {
-    var contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`contextBlock_${  this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
+    var contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`contextBlock_${this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
       searchBlockContainerElementId: this._editingArea.get_contextBlockContainerElementId(),
       tabId: this._tabId,
       actionCode: this._actionCode,
@@ -399,7 +399,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   saveAndCloseRequest: function (eventArgs) {
-    Sys.Debug.trace(`saveAndCloseRequest: ${  eventArgs._tabId}`);
+    Sys.Debug.trace(`saveAndCloseRequest: ${eventArgs._tabId}`);
     var context = this.get_documentContext();
     if (context && context._options.saveAndCloseActionCode) {
       var main = this.get_mainComponent();

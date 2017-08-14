@@ -86,7 +86,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   initialize: function () {
-    var $toolbar = $(`#${  this._toolbarElementId}`);
+    var $toolbar = $(`#${this._toolbarElementId}`);
     var $toolbarItemList = null;
 
     var isToolbarExist = !$q.isNullOrEmpty($toolbar);
@@ -103,7 +103,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       $toolbar.append($toolbarItemList);
 
       if (!$q.isNullOrWhiteSpace(this._toolbarContainerElementId)) {
-        $(`#${  this._toolbarContainerElementId}`).append($toolbar);
+        $(`#${this._toolbarContainerElementId}`).append($toolbar);
       } else {
         $('BODY:first').append($toolbar);
       }
@@ -148,7 +148,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     if ($q.isObject(item)) {
       return $q.toJQuery(item);
     } else if ($q.isString(item)) {
-      $item = $(`LI[code='${  item  }']`, this._toolbarItemListElement);
+      $item = $(`LI[code='${item}']`, this._toolbarItemListElement);
       if ($item.length == 0) {
         $item = null;
       }
@@ -339,7 +339,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     if (!$q.isNullOrEmpty($item)) {
       var $list = this._getToolbarDropDownList($item);
       if (!$q.isNullOrEmpty($list)) {
-        $listItem = $item.find(`LI[code='${  listItemValue  }']`);
+        $listItem = $item.find(`LI[code='${listItemValue}']`);
         if ($listItem.length == 0) {
           $listItem = null;
         }
@@ -400,8 +400,8 @@ Quantumart.QP8.BackendToolbar.prototype = {
           listLeft = windowWidth - listWidth;
         }
 
-        $list.css('top', `${listTop  }px`);
-        $list.css('left', `${listLeft  }px`);
+        $list.css('top', `${listTop}px`);
+        $list.css('left', `${listLeft}px`);
         $list.show();
       }
 
@@ -442,16 +442,16 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var iconUrl = dataItem.Icon.left(7).toLowerCase() !== 'http://' ? window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon : dataItem.Icon;
 
     html
-      .cat(`<li code="${  $q.htmlEncode(dataItem.Value)  }" class="item button">\n`)
-      .cat(`  <a href="javascript:void(0);" class="link${  dataItem.Checked ? ` ${  this.ITEM_CHECKED_CLASS_NAME}` : ''  }">`)
+      .cat(`<li code="${$q.htmlEncode(dataItem.Value)}" class="item button">\n`)
+      .cat(`  <a href="javascript:void(0);" class="link${dataItem.Checked ? ` ${this.ITEM_CHECKED_CLASS_NAME}` : ''}">`)
       .cat('<span class="outerWrapper">')
       .cat('<span class="innerWrapper">')
 
-      .catIf(`<span class="icon" style="background-image: url('${  iconUrl  }')"${
-        !$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ` title="${  $q.htmlEncode(dataItem.Tooltip)  }"` : ''  }>`
-        + `<img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }/0.gif" /></span>`, !$q.isNullOrWhiteSpace(dataItem.Icon))
+      .catIf(`<span class="icon" style="background-image: url('${iconUrl}')"${
+        !$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ` title="${$q.htmlEncode(dataItem.Tooltip)}"` : ''}>`
+        + `<img src="${window.COMMON_IMAGE_FOLDER_URL_ROOT}/0.gif" /></span>`, !$q.isNullOrWhiteSpace(dataItem.Icon))
 
-      .catIf(`<span class="text${  $q.isNullOrWhiteSpace(dataItem.Icon) ? ' textOnly' : ''  }">${  $q.htmlEncode(dataItem.Text)  }</span>`, !$q.isNullOrWhiteSpace(dataItem.Text))
+      .catIf(`<span class="text${$q.isNullOrWhiteSpace(dataItem.Icon) ? ' textOnly' : ''}">${$q.htmlEncode(dataItem.Text)}</span>`, !$q.isNullOrWhiteSpace(dataItem.Text))
       .cat('</span>')
       .cat('</span>')
       .cat('</a>\n')
@@ -473,16 +473,16 @@ Quantumart.QP8.BackendToolbar.prototype = {
       }
 
       html
-        .cat(`<li code="${  $q.htmlEncode(dataItem.Value)  }" class="item dropDown">\n`)
+        .cat(`<li code="${$q.htmlEncode(dataItem.Value)}" class="item dropDown">\n`)
         .cat('  <a href="javascript:void(0);" class="link">')
         .cat('<span class="outerWrapper">')
         .cat('<span class="innerWrapper">')
-        .cat(`<span class="button"${  !$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ` title="${  $q.htmlEncode(dataItem.Tooltip)  }"` : ''  }>`)
-        .catIf(`<span class="icon" style="background-image: url('${  window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS  }${selectedSubItem.Icon  }')">`
-          + `<img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }/0.gif" /></span>`, !$q.isNullOrWhiteSpace(selectedSubItem.Icon))
-        .catIf(`<span class="text${  $q.isNullOrWhiteSpace(selectedSubItem.Icon) ? ' textOnly' : ''  }">${  $q.htmlEncode(selectedSubItem.Text)  }</span>`, !$q.isNullOrWhiteSpace(selectedSubItem.Text) && dataItem.ShowButtonText)
+        .cat(`<span class="button"${!$q.isNullOrWhiteSpace(dataItem.Tooltip) ? ` title="${$q.htmlEncode(dataItem.Tooltip)}"` : ''}>`)
+        .catIf(`<span class="icon" style="background-image: url('${window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS}${selectedSubItem.Icon}')">`
+          + `<img src="${window.COMMON_IMAGE_FOLDER_URL_ROOT}/0.gif" /></span>`, !$q.isNullOrWhiteSpace(selectedSubItem.Icon))
+        .catIf(`<span class="text${$q.isNullOrWhiteSpace(selectedSubItem.Icon) ? ' textOnly' : ''}">${$q.htmlEncode(selectedSubItem.Text)}</span>`, !$q.isNullOrWhiteSpace(selectedSubItem.Text) && dataItem.ShowButtonText)
         .cat('</span>')
-        .cat(`<span class="arrow"${  !$q.isNullOrWhiteSpace(dataItem.ArrowTooltip) ? ` title="${  $q.htmlEncode(dataItem.ArrowTooltip)  }"` : ''  }><img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }/0.gif" /></span>`)
+        .cat(`<span class="arrow"${!$q.isNullOrWhiteSpace(dataItem.ArrowTooltip) ? ` title="${$q.htmlEncode(dataItem.ArrowTooltip)}"` : ''}><img src="${window.COMMON_IMAGE_FOLDER_URL_ROOT}/0.gif" /></span>`)
         .cat('</span>')
         .cat('</span>')
         .cat('</a>\n')
@@ -504,15 +504,15 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var isSelected = dataItem.Value == selectedSubItemValue;
 
     html
-      .cat(`<li code="${  $q.htmlEncode(dataItem.Value)  }" class="item${  isSelected ? ` ${  this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME}` : ''  }">\n`)
+      .cat(`<li code="${$q.htmlEncode(dataItem.Value)}" class="item${isSelected ? ` ${this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME}` : ''}">\n`)
       .cat('  <div class="outerWrapper">\n')
       .cat('      <div class="innerWrapper">\n')
       .cat('          <span class="icon"')
-      .catIf(` style="background-image: url('${  window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS  }${dataItem.Icon  }')"`, !$q.isNullOrWhiteSpace(dataItem.Icon))
+      .catIf(` style="background-image: url('${window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS}${dataItem.Icon}')"`, !$q.isNullOrWhiteSpace(dataItem.Icon))
       .cat('>')
-      .cat(`<img src="${  window.COMMON_IMAGE_FOLDER_URL_ROOT  }0.gif" width="16px" height="16px" />`)
+      .cat(`<img src="${window.COMMON_IMAGE_FOLDER_URL_ROOT}0.gif" width="16px" height="16px" />`)
       .cat('</span>\n')
-      .cat(`          <span class="text">${  $q.htmlEncode(dataItem.Text)  }</span>\n`)
+      .cat(`          <span class="text">${$q.htmlEncode(dataItem.Text)}</span>\n`)
       .cat('      </div>\n')
       .cat('  </div>\n')
       .cat('</li>\n')

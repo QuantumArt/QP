@@ -13,13 +13,13 @@
       getResolutionErrorSettings: function (imgRes) {
         return {
           code: PL.IMAGE_DIMENSIONS_ERROR,
-          message: `Resolution exceeds the allowed limit of ${  imgRes  } pixels.`
+          message: `Resolution exceeds the allowed limit of ${imgRes} pixels.`
         };
       },
       getNotAnImgErrorSettings: function () {
         return {
           code: PL.IMAGE_FORMAT_ERROR,
-          message: `Checking file mime type failed for file: "${  file.name  }".`
+          message: `Checking file mime type failed for file: "${file.name}".`
         };
       }
     }, options);

@@ -13,12 +13,12 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
   _documentContext: null,
 
   _onSearchButtonClick: function () {
-    var searchQuery = $(`#${  this._searchBlockElementId  } input.textbox`).val();
+    var searchQuery = $(`#${this._searchBlockElementId} input.textbox`).val();
     Quantumart.QP8.BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { searchQuery: searchQuery });
   },
 
   _getButton: function () {
-    return $(`#${  this._searchBlockElementId}`).find('.button');
+    return $(`#${this._searchBlockElementId}`).find('.button');
   },
 
   initialize: function () {
@@ -37,13 +37,13 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
   _refreshQuery: function (query) {
     var $button = this._getButton();
     if (query) {
-      $(`#${  this._searchBlockElementId  } input.textbox`).val(query);
+      $(`#${this._searchBlockElementId} input.textbox`).val(query);
       $button.trigger('click');
     }
   },
 
   dispose: function () {
-    $(`#${  this._searchBlockElementId}`).find('.button').unbind('click');
+    $(`#${this._searchBlockElementId}`).find('.button').unbind('click');
     this._onSearchButtonClickHandler = null;
   }
 };

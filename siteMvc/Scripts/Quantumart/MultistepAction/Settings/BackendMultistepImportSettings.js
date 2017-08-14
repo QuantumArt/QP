@@ -26,7 +26,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   _noHeadersId: 'NoHeaders',
 
   _initFileUploader: function (context, uploadPath) {
-    this._fileWrapperElementId = `${context._popupWindowId  }_upload_pl_cont_import`;
+    this._fileWrapperElementId = `${context._popupWindowId}_upload_pl_cont_import`;
     this._fileWrapperElement = document.getElementById(this._fileWrapperElementId);
     $(this._fileWrapperElement).closest('.documentWrapper').addClass('ImportWrapper');
     if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
@@ -59,9 +59,9 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   _onFileUploadedHandler: function (eventType, sender, eventArgs) {
     this.fileName = eventArgs.get_fileNames()[0];
 
-    $(`#${  this.options._popupWindowId  }_${  this._fileNameId}`).val(this.fileName);
-    $(`#${  this._fileNameId}`).val(this.fileName);
-    $(`#${  this.options._popupWindowId  }_${  this._noHeadersId}`).prop('disabled', true);
+    $(`#${this.options._popupWindowId}_${this._fileNameId}`).val(this.fileName);
+    $(`#${this._fileNameId}`).val(this.fileName);
+    $(`#${this.options._popupWindowId}_${this._noHeadersId}`).prop('disabled', true);
 
     this._loadFileFields(this.options);
   },
@@ -70,10 +70,10 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     var that = this;
     var id = this.options._popupWindowId;
 
-    this._$importAction = $(`#${  id  }_ImportAction`);
-    this._$uniqueFieldToUpdate = $(`#${  id  }_UniqueFieldToUpdate`);
-    this._$uniqueContentFieldId = $(`#${  id  }_UniqueContentFieldId`);
-    this._$fieldGroup = $(`#${  this.options._popupWindowId  }_mapping_fields_selects`);
+    this._$importAction = $(`#${id}_ImportAction`);
+    this._$uniqueFieldToUpdate = $(`#${id}_UniqueFieldToUpdate`);
+    this._$uniqueContentFieldId = $(`#${id}_UniqueContentFieldId`);
+    this._$fieldGroup = $(`#${this.options._popupWindowId}_mapping_fields_selects`);
     this._$fields = $("select[data-required='True']");
     this._$identifiers = $("select[data-identifier='True']");
     this._uniqueFieldToUpdatePredicate = function _uniqueFieldToUpdatePredicate() {
@@ -162,7 +162,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       $fieldDescription.addClass('mapped');
       $select = $fieldDescription.prev().prev();
       $select.addClass('mapped');
-      $select.find(`option[value!='-1']option[value!='${  this._$uniqueFieldToUpdate.val()  }']`).hide();
+      $select.find(`option[value!='-1']option[value!='${this._$uniqueFieldToUpdate.val()}']`).hide();
 
       if (this._$uniqueFieldToUpdate.val() !== $select.val()) {
         $select.val('-1');
@@ -224,7 +224,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   _addMessageLine: function (message) {
     var result = message;
     if (message.length > 0) {
-      result = `${message  }\n`;
+      result = `${message}\n`;
     }
 
     return result;
@@ -265,7 +265,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
         if (that._identifiersPredicate($(this))) {
           content = $(this).parents('fieldset:first').find('legend').text();
           errorMessage = that._addMessageLine(errorMessage);
-          errorMessage += `${$l.MultistepAction.UniqueExtensionFieldToUpdate  } ${  content}`;
+          errorMessage += `${$l.MultistepAction.UniqueExtensionFieldToUpdate} ${content}`;
         }
       });
     });
@@ -288,15 +288,15 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   },
 
   _loadFileFields: function (options) {
-    var documentId = `#${  options._popupWindowComponent._documentWrapperElementId  } `;
-    var delim = $(`${documentId  }input[name="Delimiter"]:radio:checked`).val();
+    var documentId = `#${options._popupWindowComponent._documentWrapperElementId} `;
+    var delim = $(`${documentId}input[name="Delimiter"]:radio:checked`).val();
     var that = this;
 
-    $(`${documentId  }input[name="Delimiter"]`).on('click', function onClick() {
+    $(`${documentId}input[name="Delimiter"]`).on('click', function onClick() {
       that.loadFromFile(options, this.value);
     });
 
-    $(`#${  options._popupWindowId  }_Encoding, #${  options._popupWindowId  }_LineSeparator`)
+    $(`#${options._popupWindowId}_Encoding, #${options._popupWindowId}_LineSeparator`)
       .on('change', () => {
         that.loadFromFile(options);
       }
@@ -331,7 +331,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       type: 'POST',
       success: function (fieldsFromFile) {
         if (fieldsFromFile.Type === 'Error') {
-          $(`#${  that.options._popupWindowId  }_mapping_fields_selects`).hide();
+          $(`#${that.options._popupWindowId}_mapping_fields_selects`).hide();
           $q.alert(fieldsFromFile.Text);
         } else if (fieldsFromFile) {
           that._fillOptionsFromFile(fieldsFromFile);
@@ -343,7 +343,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
 
   _fillOptionsFromFile: function (fields) {
     var fieldsClass = ' .dropDownList.dataList.fields';
-    var documentId = `#${  this.options._popupWindowComponent._documentWrapperElementId  } `;
+    var documentId = `#${this.options._popupWindowComponent._documentWrapperElementId} `;
     $.each($(documentId + fieldsClass), (index, item) => {
       $(item).html('');
       $(item).append($('<option>', {

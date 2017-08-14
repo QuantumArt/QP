@@ -59,14 +59,14 @@
     };
 
     opts.extraPlugins.forEach((pl) => {
-      config.extraPlugins += `,${  pl.name}`;
+      config.extraPlugins += `,${pl.name}`;
       if (pl.url) {
         window.CKEDITOR.plugins.addExternal(pl.name, pl.url, 'plugin.js');
       }
     });
 
     opts.formatsSet.forEach((fs) => {
-      config[`format_${  fs.element}`] = fs;
+      config[`format_${fs.element}`] = fs;
     });
 
     config.listItems = Object.assign({}, window.CKEDITOR.dtd.$listItem, {
@@ -349,12 +349,12 @@
           editor.textarea.off('paste').on('paste', this._onChangeDataInSourceModeHandler, this);
         }
 
-        $(`#${  editor.name}`).addClass(window.CHANGED_FIELD_CLASS_NAME);
+        $(`#${editor.name}`).addClass(window.CHANGED_FIELD_CLASS_NAME);
       }
     },
 
     _onChangeDataInSourceModeHandler: function () {
-      $(`#${  this.getCkEditor().name}`).addClass(window.CHANGED_FIELD_CLASS_NAME);
+      $(`#${this.getCkEditor().name}`).addClass(window.CHANGED_FIELD_CLASS_NAME);
     },
 
     _destroyVisualEditorWindow: function ($editor, dataName) {

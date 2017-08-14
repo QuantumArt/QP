@@ -208,7 +208,7 @@ Quantumart.QP8.Backend.prototype = {
       if (key === 'singleusermode') {
         that._updateSingleUserMode(data);
       } else {
-        $(`.${  key}`).text(data);
+        $(`.${key}`).text(data);
       }
     };
 
@@ -383,7 +383,7 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _unlockAllEntities: function () {
-    $q.postDataToUrl(`${window.CONTROLLER_URL_ENTITY_OBJECT  }UnlockAllEntities`, null, false);
+    $q.postDataToUrl(`${window.CONTROLLER_URL_ENTITY_OBJECT}UnlockAllEntities`, null, false);
   },
 
   _onCloseHostMessageReceived: function (eventType, sender, message) {

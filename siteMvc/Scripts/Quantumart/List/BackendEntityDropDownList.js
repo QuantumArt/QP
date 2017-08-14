@@ -53,7 +53,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
       if ($q.isArray(entityID) && entityID.length > 0) {
         this.selectEntities(entityID[0]);
       } else {
-        $(this._listElement).find(`OPTION[value="${  $q.toString(entityID, '')  }"]`).prop('selected', true).change();
+        $(this._listElement).find(`OPTION[value="${$q.toString(entityID, '')}"]`).prop('selected', true).change();
       }
     }
   },
@@ -104,11 +104,11 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
     var $listElement = $(this._listElement);
     var selectedVal = $listElement.find('OPTION:selected').val();
     if (!$q.isNullOrEmpty(selectedVal)) {
-      var $hidden = $listElement.siblings(`input[name="${  $listElement.prop('name')  }"]:hidden`);
+      var $hidden = $listElement.siblings(`input[name="${$listElement.prop('name')}"]:hidden`);
       if ($hidden.length > 0) {
         $hidden.val(selectedVal);
       } else {
-        $listElement.after(`<input type="hidden" name="${  $listElement.prop('name')  }" value="${  selectedVal  }" />`);
+        $listElement.after(`<input type="hidden" name="${$listElement.prop('name')}" value="${selectedVal}" />`);
       }
     }
 
@@ -119,7 +119,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
     var itemValue = dataItem.Value;
     var itemText = dataItem.Text;
     if (this._showIds) {
-      itemText = `(#${  itemValue  }) - ${  itemText}`;
+      itemText = `(#${itemValue}) - ${itemText}`;
     }
 
     var isSelected = false;
@@ -131,7 +131,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
 
     html
       .cat('<option')
-      .cat(` value="${  $q.htmlEncode(itemValue)  }"`)
+      .cat(` value="${$q.htmlEncode(itemValue)}"`)
       .catIf(' selected="selected"', isSelected)
       .cat('>')
       .cat(itemText)

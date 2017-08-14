@@ -45,7 +45,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
 
     for (var i in this._additionalNames) {
       var curName = this._additionalNames[i];
-      this._viewModel[curName] = ko.observableArray(aggrList.data(`additional_${  curName}`).split(','));
+      this._viewModel[curName] = ko.observableArray(aggrList.data(`additional_${curName}`).split(','));
     }
 
     ko.applyBindingsToNode(this._containerElem.get(0), { template: { name: aggrList.attr('id').replace('_aggregationlist', '_template') } }, this._viewModel);

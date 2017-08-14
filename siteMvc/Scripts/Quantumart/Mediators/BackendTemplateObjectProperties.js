@@ -1,6 +1,6 @@
 window.CONTENT_CHANGE_TRACK_SELECTORS = '.containerContentSelector .singleItemPicker';
 Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId) {
-  var $componentElem = jQuery(`#${  rootElementId}`);
+  var $componentElem = jQuery(`#${rootElementId}`);
   var $parentObjectSelector = $componentElem.find('.parentTemplateObjectsSelector');
   var $nameField = $componentElem.find('.name');
   var $netNameField = $componentElem.find('.netName');
@@ -25,7 +25,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
 
   function onContentValueChanged(e, data) {
     if (data.value) {
-      $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE  }GetFieldsByContentId`,
+      $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetFieldsByContentId`,
         {
           contentId: data.value
         },
@@ -58,7 +58,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   }
 
   function checkPublished() {
-    $statusSelector.find(`.multi-picker-item[value="${  $statusSelector.data('published-id')  }"]`).attr('checked', true);
+    $statusSelector.find(`.multi-picker-item[value="${$statusSelector.data('published-id')}"]`).attr('checked', true);
   }
 
   function onParentTemplateObjectChanged() {

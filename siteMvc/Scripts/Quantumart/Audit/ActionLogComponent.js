@@ -19,9 +19,9 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   _tiles: {},
 
   initialize: function () {
-    var $grid = $(`#${  this._gridElementId}`);
+    var $grid = $(`#${this._gridElementId}`);
     var gridComponent = $grid.data('tGrid');
-    var $filter = $(`#${  this._filterElementId}`);
+    var $filter = $(`#${this._filterElementId}`);
 
     $grid.unbind('dataBinding', gridComponent.onDataBinding)
       .bind('dataBinding', this._onDataBindingHandler);
@@ -44,13 +44,13 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _onApplyFilter: function () {
-    $(`#${  this._gridElementId}`)
+    $(`#${this._gridElementId}`)
       .data('tGrid')
       .ajaxRequest();
   },
 
   _onClearFilter: function () {
-    var $filter = $(`#${  this._filterElementId}`);
+    var $filter = $(`#${this._filterElementId}`);
     this._destroyAllTiles();
     $('.alSearchButton', this.$filter).trigger('click');
 
@@ -195,8 +195,8 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   dispose: function () {
     this._destroyAllTiles();
 
-    var $grid = $(`#${  this._gridElementId}`);
-    var $filter = $(`#${  this._filterElementId}`);
+    var $grid = $(`#${this._gridElementId}`);
+    var $filter = $(`#${this._filterElementId}`);
 
     $grid.unbind('dataBinding');
     this._onDataBindingHandler = null;

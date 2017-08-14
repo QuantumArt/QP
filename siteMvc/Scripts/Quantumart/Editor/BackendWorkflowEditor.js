@@ -55,7 +55,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
           .selectEntities([element.GroupId()]);
 
         $(dom)
-          .find(`.${  window.CHANGED_FIELD_CLASS_NAME}`)
+          .find(`.${window.CHANGED_FIELD_CLASS_NAME}`)
           .removeClass(window.CHANGED_FIELD_CLASS_NAME);
 
         var activeContentsIds = this.contentSelector.find('input:checkbox:checked').map((index, elem) => {
@@ -65,7 +65,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         if (element.UserId() != null || element.GroupId() != null) {
           $q.getJsonFromUrl(
             'GET',
-            `${window.CONTROLLER_URL_WORKFLOW  }CheckUserOrGroupAccessOnContents`,
+            `${window.CONTROLLER_URL_WORKFLOW}CheckUserOrGroupAccessOnContents`,
             {
               contentIdsString: activeContentsIds,
               statusName: element.StName,
@@ -140,7 +140,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_WORKFLOW  }CheckAllAccessOnContents`,
+      `${window.CONTROLLER_URL_WORKFLOW}CheckAllAccessOnContents`,
       {
         contentIdsString: activeContentsIds,
         modelString: JSON.stringify(usersAndGroups)
@@ -150,18 +150,18 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       $.proxy(function (data) {
         this._containerElem.find('span.workflow_permission_message').html('');
         for (var i in data) {
-          var current_workflow_stage = this._containerElem.find(`.${  data[i].StName}`);
+          var current_workflow_stage = this._containerElem.find(`.${data[i].StName}`);
           var user_row = current_workflow_stage.find(':visible.workflow_user_row');
           var group_row = current_workflow_stage.find(':visible.workflow_group_row');
 
           if (user_row.size() > group_row.size()) {
             let span = user_row.find('span.workflow_permission_message');
             let oldHtml = span.html();
-            span.html(`${oldHtml  }<br>${  data[i].Message}`);
+            span.html(`${oldHtml}<br>${data[i].Message}`);
           } else {
             let span = group_row.find('span.workflow_permission_message');
             let oldHtml = span.html();
-            group_row.find('span.workflow_permission_message').html(`${oldHtml  }<br>${  data[i].Message}`);
+            group_row.find('span.workflow_permission_message').html(`${oldHtml}<br>${data[i].Message}`);
           }
         }
       }, this)
@@ -180,7 +180,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     }
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_WORKFLOW  }CheckUserOrGroupAccessOnContents`,
+      `${window.CONTROLLER_URL_WORKFLOW}CheckUserOrGroupAccessOnContents`,
       {
         contentIdsString: activeContentsIds,
         statusName: statusName,

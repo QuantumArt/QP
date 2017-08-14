@@ -6,34 +6,34 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (containe
 
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   initialize: function () {
-    var isNullCheckBoxID = `${this._elementIdPrefix  }_isNullCheckBox`;
-    var radioGroupName = `${this._elementIdPrefix  }_radioGroup`;
-    var disablingContainerID = `${this._elementIdPrefix  }_disablingContainer`;
-    var radioTrueID = `${this._elementIdPrefix  }_radioTrue`;
-    var radioFalseID = `${this._elementIdPrefix  }_radioFalse`;
+    var isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+    var radioGroupName = `${this._elementIdPrefix}_radioGroup`;
+    var disablingContainerID = `${this._elementIdPrefix}_disablingContainer`;
+    var radioTrueID = `${this._elementIdPrefix}_radioTrue`;
+    var radioFalseID = `${this._elementIdPrefix}_radioFalse`;
 
     var html = new $.telerik.stringBuilder();
     html
       .cat('<div class="row">')
       .cat('  <div ')
-      .cat(` id="${  $q.htmlEncode(disablingContainerID)  }"`)
+      .cat(` id="${$q.htmlEncode(disablingContainerID)}"`)
       .cat(' class="radioButtonsList horizontalDirection"')
       .cat('>\n')
       .cat('    <ul>\n')
       .cat('      <li>\n')
       .cat('        <input type="radio" ')
-      .cat(` id="${  $q.htmlEncode(radioTrueID)  }"`)
-      .cat(` name="${  $q.htmlEncode(radioGroupName)  }"`)
+      .cat(` id="${$q.htmlEncode(radioTrueID)}"`)
+      .cat(` name="${$q.htmlEncode(radioGroupName)}"`)
       .cat(' value="true" checked="checked"')
       .cat(' />\n')
-      .cat(`        <label for="${  $q.htmlEncode(radioTrueID)  }">${  $l.SearchBlock.trueText  }</label>\n`)
+      .cat(`        <label for="${$q.htmlEncode(radioTrueID)}">${$l.SearchBlock.trueText}</label>\n`)
       .cat('      </li>\n')
       .cat('      <li>\n')
       .cat('        <input type="radio"')
-      .cat(` id="${  $q.htmlEncode(radioFalseID)  }"`)
-      .cat(` name="${  $q.htmlEncode(radioGroupName)  }"`)
+      .cat(` id="${$q.htmlEncode(radioFalseID)}"`)
+      .cat(` name="${$q.htmlEncode(radioGroupName)}"`)
       .cat(' />\n')
-      .cat(`        <label for="${  $q.htmlEncode(radioFalseID)  }">${  $l.SearchBlock.falseText  }</label>`)
+      .cat(`        <label for="${$q.htmlEncode(radioFalseID)}">${$l.SearchBlock.falseText}</label>`)
       .cat('      </li>\n')
       .cat('    </ul>\n')
       .cat('  </div>\n')
@@ -41,9 +41,9 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
       .cat('<div class="row">')
       .cat('  <span class="checkbox">\n')
       .cat('    <input type="checkbox"')
-      .cat(` id="${  $q.htmlEncode(isNullCheckBoxID)  }"`)
+      .cat(` id="${$q.htmlEncode(isNullCheckBoxID)}"`)
       .cat(' />\n')
-      .cat(`    <label for="${  $q.htmlEncode(isNullCheckBoxID)  }">${  $l.SearchBlock.isNullCheckBoxLabelText  }</label>`)
+      .cat(`    <label for="${$q.htmlEncode(isNullCheckBoxID)}">${$l.SearchBlock.isNullCheckBoxLabelText}</label>`)
       .cat('  </span>')
       .cat('</div>')
     ;
@@ -53,7 +53,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     $containerElement.append(html.string());
 
     // назначить обработчик события change чекбоксу
-    var $isNullCheckBoxElement = $containerElement.find(`#${  isNullCheckBoxID}`);
+    var $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
     $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
     // запомнить ссылку на dom-элементы
@@ -117,7 +117,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 
   _onIsNullCheckBoxChange: function () {
     $(this._containerElement)
-      .find(`#${  this._elementIdPrefix  }_disablingContainer *`)
+      .find(`#${this._elementIdPrefix}_disablingContainer *`)
       .prop('disabled', this.get_IsNull());
   },
 

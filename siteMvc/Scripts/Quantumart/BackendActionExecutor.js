@@ -30,7 +30,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
         if (confirmPhrase) {
           var nameString = isMultiple ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
-          nameString = `"${  nameString  }"`;
+          nameString = `"${nameString}"`;
           confirmPhrase = String.format(confirmPhrase, nameString);
         }
 
@@ -165,7 +165,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
       if (confirmPhrase) {
         var nameString = isMultiple ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
-        nameString = `"${  nameString  }"`;
+        nameString = `"${nameString}"`;
         confirmPhrase = String.format(confirmPhrase, nameString);
       }
 
@@ -422,11 +422,11 @@ Quantumart.QP8.BackendActionExecutor.getBackendAction = function (action) {
 };
 
 Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCode) {
-  var cacheKey = `ActionByActionCode_${  actionCode}`;
+  var cacheKey = `ActionByActionCode_${actionCode}`;
   var action = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!action) {
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION  }GetByCode`, { actionCode: actionCode }, false, false).done((data) => {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetByCode`, { actionCode: actionCode }, false, false).done((data) => {
       if (data.success) {
         action = data.action;
       } else {
@@ -445,11 +445,11 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCo
 };
 
 Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) {
-  var cacheKey = `ActionByActionId_${  actionId}`;
+  var cacheKey = `ActionByActionId_${actionId}`;
   var actionCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!actionCode) {
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION  }GetCodeById`, { actionId: actionId }, false, false).done((data) => {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetCodeById`, { actionId: actionId }, false, false).done((data) => {
       if (data.success) {
         actionCode = data.actionCode;
       } else {
@@ -516,7 +516,7 @@ Quantumart.QP8.BackendActionExecutor.generateActionUrl = function (isMultiple, e
       }
 
       if (extraQueryString.length > 0) {
-        url += `?${  extraQueryString}`;
+        url += `?${extraQueryString}`;
       }
     }
   }
@@ -573,7 +573,7 @@ Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl = function (sele
       }
 
       if (extraQueryString.length > 0) {
-        url += `?${  extraQueryString}`;
+        url += `?${extraQueryString}`;
       }
     }
   }

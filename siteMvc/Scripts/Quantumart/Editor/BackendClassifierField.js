@@ -67,10 +67,10 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   initialize: function () {
     var selectedContentId = this._$componentElem.data('aggregated_content_id') || '';
 
-    this._$articleWrapper = $(`.articleWrapper_${  selectedContentId}`);
+    this._$articleWrapper = $(`.articleWrapper_${selectedContentId}`);
     this._$contentList = this._$componentElem.find('select.classifierContentList');
 
-    this._$contentList.find(`option[value=${  selectedContentId  }]`).prop('selected', true);
+    this._$contentList.find(`option[value=${selectedContentId}]`).prop('selected', true);
     this._$contentList.on('change', this._onContentSelected.bind(this));
 
     if ($q.toBoolean(this._$componentElem.data('is_not_changeable'))) {
@@ -80,7 +80,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
 
   selectContent: function (contentId) {
     if (!$q.isNull(contentId) && $.isNumeric(contentId)) {
-      this._$contentList.find(`OPTION[value="${  contentId  }"]`).prop('selected', true).change();
+      this._$contentList.find(`OPTION[value="${contentId}"]`).prop('selected', true).change();
     } else {
       this._$contentList.find('OPTION:selected').prop('selected', false).change();
     }
@@ -93,11 +93,11 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   makeReadonly: function () {
     var selectedVal = this._$contentList.find('OPTION:selected').val();
     if (!$q.isNullOrEmpty(selectedVal)) {
-      var $hidden = this._$contentList.siblings(`input[name="${  this._$contentList.prop('name')  }"]:hidden`);
+      var $hidden = this._$contentList.siblings(`input[name="${this._$contentList.prop('name')}"]:hidden`);
       if ($hidden.length) {
         $hidden.val(selectedVal);
       } else {
-        this._$contentList.after(`<input type="hidden" name="${  this._$contentList.prop('name')  }" value="${  selectedVal  }" />`);
+        this._$contentList.after(`<input type="hidden" name="${this._$contentList.prop('name')}" value="${selectedVal}" />`);
       }
     }
 
@@ -153,22 +153,22 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
 
     if (this._disableChangeTracking) {
-      this._$articleWrapper.find(`.${  window.CHANGED_FIELD_CLASS_NAME}`).removeClass(window.CHANGED_FIELD_CLASS_NAME);
+      this._$articleWrapper.find(`.${window.CHANGED_FIELD_CLASS_NAME}`).removeClass(window.CHANGED_FIELD_CLASS_NAME);
       this._disableChangeTracking = false;
     }
   },
 
   _executeAggregatedDataScript: function (aggregatedContentId, articleScriptData) {
-    var scriptId = `aggregated_script_${  aggregatedContentId}`;
+    var scriptId = `aggregated_script_${aggregatedContentId}`;
     if (articleScriptData) {
-      var $scriptTag = $(`#${  scriptId}`);
+      var $scriptTag = $(`#${scriptId}`);
       if ($scriptTag.length) {
         $scriptTag.remove();
       }
 
       var script = window.document.createElement('script');
-      script.id = `aggregated_script_${  aggregatedContentId}`;
-      script.src = `data:text/javascript,${  window.encodeURIComponent(articleScriptData)}`;
+      script.id = `aggregated_script_${aggregatedContentId}`;
+      script.src = `data:text/javascript,${window.encodeURIComponent(articleScriptData)}`;
       window.document.body.appendChild(script);
     }
   },

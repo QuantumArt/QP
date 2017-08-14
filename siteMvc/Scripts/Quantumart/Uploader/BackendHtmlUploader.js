@@ -142,7 +142,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   },
 
   _checkFileExistence: function (folderPath, fileName) {
-    var url = `${window.APPLICATION_ROOT_URL  }Library/FileExists/`;
+    var url = `${window.APPLICATION_ROOT_URL}Library/FileExists/`;
     var obj = $q.getJsonSync(url, {
       path: folderPath,
       name: fileName

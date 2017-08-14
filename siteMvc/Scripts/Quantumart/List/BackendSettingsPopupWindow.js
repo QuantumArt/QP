@@ -47,7 +47,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
 
   _createToolbar: function () {
     var backendToolbar = new Quantumart.QP8.BackendToolbar();
-    backendToolbar.set_toolbarElementId(`popupWindowToolbar_${  this._popupWindowId}`);
+    backendToolbar.set_toolbarElementId(`popupWindowToolbar_${this._popupWindowId}`);
     backendToolbar.initialize();
     backendToolbar.attachObserver(
       window.EVENT_TYPE_TOOLBAR_BUTTON_CLICKED,
@@ -76,7 +76,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
       if (errors.length) {
         $q.alertError(errors);
       } else {
-        btn = $(`#${  sender._toolbarElementId  }> ul > li`);
+        btn = $(`#${sender._toolbarElementId}> ul > li`);
         className = 'disabled';
         options.isSettingsSet = true;
         prms = $(`#${
@@ -98,7 +98,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
           },
           success: function (data) {
             if (data.view) {
-              $(`#${  that._popupWindowComponent._documentWrapperElementId}`).html(data.view);
+              $(`#${that._popupWindowComponent._documentWrapperElementId}`).html(data.view);
             } else {
               that._popupWindowComponent.closeWindow();
               $('.t-overlay').remove();

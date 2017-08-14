@@ -14,7 +14,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
   initialize: function () {
     var serverContent;
 
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }FullTextBlock`, {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}FullTextBlock`, {
       parentEntityId: this._parentEntityId,
       elementIdPrefix: this._elementIdPrefix
     }, false, false, (data) => {
@@ -32,9 +32,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
       var $fullTextBlockElement = jQuery(this._fullTextBlockElement);
 
       $fullTextBlockElement.html(serverContent);
-      this._textFieldsComboElement = $fullTextBlockElement.find(`#${  this._elementIdPrefix  }_TextFieldsCombo`).get(0);
+      this._textFieldsComboElement = $fullTextBlockElement.find(`#${this._elementIdPrefix}_TextFieldsCombo`).get(0);
       jQuery(this._textFieldsComboElement).bind('change', jQuery.proxy(this.onFieldChanged, this));
-      this._queryTextBoxElement = $fullTextBlockElement.find(`#${  this._elementIdPrefix  }_QueryTextBox`).get(0);
+      this._queryTextBoxElement = $fullTextBlockElement.find(`#${this._elementIdPrefix}_QueryTextBox`).get(0);
       $fullTextBlockElement = null;
     }
   },
@@ -80,7 +80,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
       var $selectedField = null;
 
       if (state.fieldID) {
-        $selectedField = jQuery(`option[data-field_id='${  state.fieldID  }']`, this._textFieldsComboElement);
+        $selectedField = jQuery(`option[data-field_id='${state.fieldID}']`, this._textFieldsComboElement);
       } else {
         $selectedField = jQuery('option[data-field_id=]', this._textFieldsComboElement);
       }

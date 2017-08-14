@@ -82,7 +82,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     if (args) {
       entities = args.entities;
       if (entities.length > 0) {
-        url = $(`#${  this._selectPopupWindowComponent._popupWindowId  }_Library`).find('.l-virtual-path').text();
+        url = $(`#${this._selectPopupWindowComponent._popupWindowId}_Library`).find('.l-virtual-path').text();
         url += entities[0].Name;
         $.proxy(this._insertLibraryTag(url), this);
       }
@@ -306,13 +306,13 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   _insertObjectFunc: function (objectName, netLanguage, isCodeBehind) {
     var strIns;
     if (netLanguage === '') {
-      strIns = `<%Object("${  objectName  }")%>`;
+      strIns = `<%Object("${objectName}")%>`;
     } else if (isCodeBehind) {
       strIns = netLanguage === '2'
-        ? `ShowObject("${  objectName  }", Me)`
-        : `ShowObject("${  objectName  }", this);`;
+        ? `ShowObject("${objectName}", Me)`
+        : `ShowObject("${objectName}", this);`;
     } else {
-      strIns = `<qp:placeholder calls="${  objectName  }" runat="server"  />`;
+      strIns = `<qp:placeholder calls="${objectName}" runat="server"  />`;
     }
 
     this._insertCallText(strIns);
@@ -321,10 +321,10 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   _insertFunc: function (fieldName, netLanguage, isCodeBehind) {
     var strIns;
     if (netLanguage === '') {
-      strIns = `<%=${  fieldName  }%>`;
+      strIns = `<%=${fieldName}%>`;
     } else
     if (isCodeBehind === '0') {
-      strIns = `<%# ${  fieldName  }%>`;
+      strIns = `<%# ${fieldName}%>`;
     } else if (netLanguage === '1') {
       strIns = fieldName;
     }
@@ -333,19 +333,19 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _insertFieldFunc: function (fieldName, netLanguage, isCodeBehind) {
-    var strIns = `Field("${  fieldName  }")`;
+    var strIns = `Field("${fieldName}")`;
     if (netLanguage === '1') {
       if (isCodeBehind === '0') {
-        strIns = `Field(((DataRowView)(Container.DataItem)), "${  fieldName  }")`;
+        strIns = `Field(((DataRowView)(Container.DataItem)), "${fieldName}")`;
       } else {
-        strIns = `Field(Data.Rows[e.Item.ItemIndex], "${  fieldName  }")`;
+        strIns = `Field(Data.Rows[e.Item.ItemIndex], "${fieldName}")`;
       }
     }
     if (netLanguage === '2') {
       if (isCodeBehind === '0') {
-        strIns = `Field(CType(Container.DataItem, DataRowView), "${  fieldName  }")`;
+        strIns = `Field(CType(Container.DataItem, DataRowView), "${fieldName}")`;
       } else {
-        strIns = `Field(Data.Rows(e.Item.ItemIndex), "${  fieldName  }")`;
+        strIns = `Field(Data.Rows(e.Item.ItemIndex), "${fieldName}")`;
       }
     }
     this._insertFunc(strIns, netLanguage, isCodeBehind);
@@ -353,7 +353,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
 
   createInsertPopupWindow: function () {
     this._insertWindowHtml = '';
-    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE  }GetInsertPopUpMarkUp`, {
+    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetInsertPopUpMarkUp`, {
       presentationOrCodeBehind: this._presentationOrCodeBehind,
       formatId: this._formatId,
       templateId: this._templateId
@@ -447,7 +447,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   initTemplateToolbar: function () {
-    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE  }GetHTAToolbarMarkUp`, {
+    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetHTAToolbarMarkUp`, {
       presentationOrCodeBehind: this._presentationOrCodeBehind,
       formatId: this._formatId,
       templateId: this._templateId

@@ -122,7 +122,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     var $fileListContentElement = $(this._fileListContentElement);
 
     $fileListContentElement
-      .find(`.fileItem.${  this.SELECTED_CLASS}`)
+      .find(`.fileItem.${this.SELECTED_CLASS}`)
       .each((index, item) => {
         var name = $(item).data('file_name');
         Array.add(selectedEntities, { Id: name, Name: name });
@@ -149,7 +149,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     var $fileListContentElement = $(this._fileListContentElement);
 
     if (!event.ctrlKey || this._selectMode == window.FILE_LIST_SELECT_MODE_SINGLE) {
-      $fileListContentElement.find(`.${  this.SELECTED_CLASS}`).removeClass(this.SELECTED_CLASS);
+      $fileListContentElement.find(`.${this.SELECTED_CLASS}`).removeClass(this.SELECTED_CLASS);
       $fileListContentElement.find('.fileItem input:checkbox:checked').prop('checked', false);
     }
 

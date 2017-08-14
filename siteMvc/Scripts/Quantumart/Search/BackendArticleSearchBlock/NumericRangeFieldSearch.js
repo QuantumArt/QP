@@ -11,7 +11,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
     var serverContent;
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK  }NumericRange`,
+      `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}NumericRange`,
       {
         elementIdPrefix: this._elementIdPrefix
       },
@@ -30,28 +30,28 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      var isNullCheckBoxID = `${this._elementIdPrefix  }_isNullCheckBox`;
-      var numberFromID = `${this._elementIdPrefix  }_numberFrom`;
-      var numberToID = `${this._elementIdPrefix  }_numberTo`;
-      var inverseCheckBoxID = `${this._elementIdPrefix  }_inverseCheckBox`;
+      var isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+      var numberFromID = `${this._elementIdPrefix}_numberFrom`;
+      var numberToID = `${this._elementIdPrefix}_numberTo`;
+      var inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
 
       var $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
-      var $numberFrom = $containerElement.find(`#${  numberFromID}`);
-      var $numberTo = $containerElement.find(`#${  numberToID}`);
+      var $numberFrom = $containerElement.find(`#${numberFromID}`);
+      var $numberTo = $containerElement.find(`#${numberToID}`);
       $numberFrom.focus(this._onNumericInputFocusHandler);
       $numberTo.focus(this._onNumericInputFocusHandler);
 
       this._numberFromElement = $numberFrom.get(0);
       this._numberToElement = $numberTo.get(0);
 
-      var $isNullCheckBoxElement = $containerElement.find(`#${  isNullCheckBoxID}`);
+      var $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
       $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
       this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
 
-      var $inverseCheckBoxElement = $containerElement.find(`#${  inverseCheckBoxID}`);
+      var $inverseCheckBoxElement = $containerElement.find(`#${inverseCheckBoxID}`);
       this._inverseCheckBoxElement = $inverseCheckBoxElement.get(0);
 
       $(".radioButtonsList input[type='radio']", $containerElement).click(this._onByValueSelectorChangedHandler);
@@ -96,11 +96,11 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
     } else if (stateData.isByValue) {
       result = $.isNumeric(stateData.from) ? stateData.from : '?';
     } else {
-      result = `[${  $.isNumeric(stateData.from) ? stateData.from : '?'  }..${  $.isNumeric(stateData.to) ? stateData.to : '?'  }]`;
+      result = `[${$.isNumeric(stateData.from) ? stateData.from : '?'}..${$.isNumeric(stateData.to) ? stateData.to : '?'}]`;
     }
 
     if (stateData.inverse) {
-      result = `${$l.SearchBlock.notText  }(${  result  })`;
+      result = `${$l.SearchBlock.notText}(${result})`;
     }
     return result;
   },
@@ -154,12 +154,12 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
     if (this._isByValue == true) {
       $(this._numberToElement).data('tTextBox').disable();
       $(this._numberToElement).closest('.row').hide();
-      $(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.valueText);
+      $(`label[for='${$(this._numberFromElement).attr('id')}']`, this._containerElement).text($l.SearchBlock.valueText);
     } else {
       if (!this.get_IsNull()) {
         $(this._numberToElement).data('tTextBox').enable();
       }
-      $(`label[for='${  $(this._numberFromElement).attr('id')  }']`, this._containerElement).text($l.SearchBlock.fromText);
+      $(`label[for='${$(this._numberFromElement).attr('id')}']`, this._containerElement).text($l.SearchBlock.fromText);
       $(this._numberToElement).closest('.row').show();
     }
   },

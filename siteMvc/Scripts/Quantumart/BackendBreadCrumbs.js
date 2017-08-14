@@ -91,14 +91,14 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   initialize: function () {
-    var $breadCrumbs = $(`#${  this._breadCrumbsElementId}`);
+    var $breadCrumbs = $(`#${this._breadCrumbsElementId}`);
     var $breadCrumbsItemList = $breadCrumbs.find('ul:first');
     if (!$breadCrumbs.length) {
       $breadCrumbs = $('<div />', { id: this._breadCrumbsElementId, class: 'breadCrumbs', css: { display: 'none' } });
       $breadCrumbsItemList = $('<ul />');
       $breadCrumbs.append($breadCrumbsItemList);
       if (!$q.isNullOrWhiteSpace(this._breadCrumbsContainerElementId)) {
-        $(`#${  this._breadCrumbsContainerElementId}`).append($breadCrumbs);
+        $(`#${this._breadCrumbsContainerElementId}`).append($breadCrumbs);
       } else {
         $('body:first').append($breadCrumbs);
       }
@@ -151,7 +151,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     if ($q.isObject(item)) {
       return $q.toJQuery(item);
     } else if ($q.isString(item)) {
-      $item = $(`li[code='${  item  }']`, this._breadCrumbsItemListElement);
+      $item = $(`li[code='${item}']`, this._breadCrumbsItemListElement);
       if ($item.length === 0) {
         $item = null;
       }
@@ -260,7 +260,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 
   _getItemHtml: function (html, dataItem, isSelectedItem) {
     var itemCode = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().generateItemCode(dataItem.Code, dataItem.ParentId, dataItem.Id);
-    html.cat(`<li code="${  $q.htmlEncode(itemCode)  }" class="${  this.ITEM_CLASS_NAME  }"></li>\n`);
+    html.cat(`<li code="${$q.htmlEncode(itemCode)}" class="${this.ITEM_CLASS_NAME}"></li>\n`);
   },
 
   _extendItemElement: function (itemElem, dataItem, isSelectedItem) {
@@ -444,7 +444,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 };
 
 Quantumart.QP8.BackendBreadCrumbs.getBreadCrumbsList = function (entityTypeCode, entityId, parentEntityId, actionCode, successHandler, errorHandler) {
-  var actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT  }GetBreadCrumbsList`;
+  var actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetBreadCrumbsList`;
   var params = {
     entityTypeCode: entityTypeCode,
     entityId: entityId,

@@ -108,7 +108,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
   _onActionExecutingHandler: null,
 
   initialize: function () {
-    var $actionLink = jQuery(`#${  this._actionLinkElementId}`);
+    var $actionLink = jQuery(`#${this._actionLinkElementId}`);
     var $iconWrapper = $actionLink.find('SPAN.icon:first');
     var $caption = $actionLink.find('SPAN.text:first');
 

@@ -30,7 +30,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
         alias = this.getNodeText(this.getNodeByEntityId(entityId));
       }
 
-      var actionUrl = `${window.CONTROLLER_URL_VIRTUAL_CONTENT  }GetChildFieldList`,
+      var actionUrl = `${window.CONTROLLER_URL_VIRTUAL_CONTENT}GetChildFieldList`,
         params = {
           virtualContentId: this._virtualContentId,
           joinedContentId: this._parentEntityId,

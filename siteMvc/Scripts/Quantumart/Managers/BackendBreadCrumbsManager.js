@@ -75,7 +75,7 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   getItems: function (itemCode) {
-    return $(`#${  this._breadCrumbsContainerElementId}`).find(`LI[code = '${  itemCode  }'].${  this.ITEM_CLASS_NAME}`);
+    return $(`#${this._breadCrumbsContainerElementId}`).find(`LI[code = '${itemCode}'].${this.ITEM_CLASS_NAME}`);
   },
 
   getBreadCrumbsListByItemCode: function (itemCode) {

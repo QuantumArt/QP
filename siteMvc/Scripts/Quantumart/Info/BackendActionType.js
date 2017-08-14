@@ -1,12 +1,12 @@
 Quantumart.QP8.BackendActionType = function () {};
 Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actionCode) {
-  var cacheKey = `ActionTypeCodeByActionCode_${  actionCode}`;
+  var cacheKey = `ActionTypeCodeByActionCode_${actionCode}`;
   var actionTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!actionTypeCode) {
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_BACKEND_ACTION_TYPE  }/GetCodeByActionCode`,
+      `${window.CONTROLLER_URL_BACKEND_ACTION_TYPE}/GetCodeByActionCode`,
       { actionCode: actionCode },
       false,
       false,

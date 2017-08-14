@@ -20,7 +20,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
       isAsynchronous: true
     });
 
-    $(`#${  this._options.iframeElementId}`).attr('src', this._generateActionUrl());
+    $(`#${this._options.iframeElementId}`).attr('src', this._generateActionUrl());
   },
 
   _onExternalMessageReceived: function (message, successCallback) {
@@ -41,9 +41,9 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   onSelect: function () {
     var id = this._options.iframeElementId;
 
-    $(`#${  id}`).css('marginLeft', '1px');
+    $(`#${id}`).css('marginLeft', '1px');
     setTimeout(() => {
-      $(`#${  id}`).css('marginLeft', '0');
+      $(`#${id}`).css('marginLeft', '0');
     }, 0);
   },
 
@@ -188,7 +188,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   _generateActionUrl: function () {
     var resultUrl = $q.updateQueryStringParameter(this._options.actionBaseUrl, 'hostUID', this._options.hostUID);
     if (this._options.additionalParams) {
-      resultUrl += `&${  jQuery.param(this._options.additionalParams)}`;
+      resultUrl += `&${jQuery.param(this._options.additionalParams)}`;
     }
     return resultUrl;
   },

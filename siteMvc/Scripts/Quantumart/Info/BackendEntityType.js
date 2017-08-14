@@ -1,12 +1,12 @@
 Quantumart.QP8.BackendEntityType = function () {};
 Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode) {
-  var cacheKey = `EntityTypeByEntityTypeCode_${  entityTypeCode}`;
+  var cacheKey = `EntityTypeByEntityTypeCode_${entityTypeCode}`;
   var entityType = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!entityType) {
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_ENTITY_TYPE  }/GetByCode`,
+      `${window.CONTROLLER_URL_ENTITY_TYPE}/GetByCode`,
       { entityTypeCode: entityTypeCode },
       false,
       false,
@@ -25,13 +25,13 @@ Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode)
 };
 
 Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
-  var cacheKey = `EntityTypeByEntityTypeId_${  entityTypeId}`;
+  var cacheKey = `EntityTypeByEntityTypeId_${entityTypeId}`;
   var entityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!entityTypeCode) {
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_ENTITY_TYPE  }/GetCodeById`,
+      `${window.CONTROLLER_URL_ENTITY_TYPE}/GetCodeById`,
       { entityTypeId: entityTypeId },
       false,
       false,
@@ -50,13 +50,13 @@ Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
 };
 
 Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entityTypeCode) {
-  var cacheKey = `ParentEntityTypeCodeByEntityTypeCode_${  entityTypeCode}`;
+  var cacheKey = `ParentEntityTypeCodeByEntityTypeCode_${entityTypeCode}`;
   var parentEntityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!parentEntityTypeCode) {
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_ENTITY_TYPE  }/GetParentCodeByCode`,
+      `${window.CONTROLLER_URL_ENTITY_TYPE}/GetParentCodeByCode`,
       { entityTypeCode: entityTypeCode },
       false,
       false,
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
   if (!dictionary) {
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_BACKEND_ACTION  }GetEntityTypeIdToActionListItemsDictionary`,
+      `${window.CONTROLLER_URL_BACKEND_ACTION}GetEntityTypeIdToActionListItemsDictionary`,
       null,
       false,
       false

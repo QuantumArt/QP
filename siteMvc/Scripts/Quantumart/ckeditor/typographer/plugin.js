@@ -56,15 +56,15 @@
       // eslint-disable-next-line no-control-regex
       result = result.replace(/([\x01(\s"])(")([^"]{1,})([^\s"(])(")/g, '$1«$3$4»');
       while (/(«)([^»]*)(«)/.test(result)) {
-        result = result.replace(/(«)([^»]*)(«)([^»]*)(»)/g, `$1$2${  intLeft  }$4${  intRight}`);
+        result = result.replace(/(«)([^»]*)(«)([^»]*)(»)/g, `$1$2${intLeft}$4${intRight}`);
       }
     }
 
     fixToMdashFn = function (input, symbol) {
       var tempResult = input;
-      tempResult = tempResult.replace(new RegExp(` (${  symbol  }){1,2} `, 'g'), '&nbsp;&mdash; ');
-      tempResult = tempResult.replace(new RegExp(`([>|\\s])${  symbol  } `, 'g'), '$1&mdash; ');
-      tempResult = tempResult.replace(new RegExp(`^${  symbol  } `, 'g'), '&mdash; ');
+      tempResult = tempResult.replace(new RegExp(` (${symbol}){1,2} `, 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp(`([>|\\s])${symbol} `, 'g'), '$1&mdash; ');
+      tempResult = tempResult.replace(new RegExp(`^${symbol} `, 'g'), '&mdash; ');
       return tempResult;
     };
 
@@ -80,7 +80,7 @@
     result = result.replace(/\b(\d+)-(\d+)\b/g, '<nobr>$1&ndash;$2</nobr>');
     result = result.replace(/(\S+)-(\S+)/g, (match, p1, p2) => {
       if (p1.length <= 3 || p2.length <= 3) {
-        return `<nobr>${  p1  }-${  p2  }</nobr>`;
+        return `<nobr>${p1}-${p2}</nobr>`;
       }
 
       return match;
@@ -115,7 +115,7 @@
     result = result.replace(/\(c\)/gi, '&copy;');
     result = result.replace(/\(r\)/gi, '&reg;');
     result = result.replace(/\(tm\)/gi, '&trade;');
-    result = result.replace(/№ /gi, `${numericHtmlCode  }&nbsp;`);
+    result = result.replace(/№ /gi, `${numericHtmlCode}&nbsp;`);
 
     return result;
   };
@@ -127,7 +127,7 @@
     var matches = result.match(/<([^>]*)>/g);
     while (regexp.test(result)) {
       i += 1;
-      result = result.replace(regexp, `\x01${  i  }\x02`);
+      result = result.replace(regexp, `\x01${i}\x02`);
     }
 
     result = fixWithRegexps(result, shouldUseEng);

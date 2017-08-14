@@ -62,7 +62,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
 
     var result = ids.join('; ');
     if (length > count) {
-      result += `; ${  $l.SearchBlock.etcText  }, ${  $l.SearchBlock.totalText  }: ${  length}`;
+      result += `; ${$l.SearchBlock.etcText}, ${$l.SearchBlock.totalText}: ${length}`;
     }
 
     return result;
