@@ -428,7 +428,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   getCheckedNodeIndex: function (node) {
     var $node = this.getNode(node);
-    var nodeIndex = undefined;
+    var nodeIndex;
 
     if (this._treeComponent.showCheckBox === true) {
  nodeIndex = $(".t-checkbox input[type='hidden'][name='" + this._treeElementName + ".Index']", $node).val();
