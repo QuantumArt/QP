@@ -3,7 +3,7 @@ window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED = 'OnSelectPopupWindowClosed';
 
 Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
   Quantumart.QP8.BackendSelectPopupWindow.initializeBase(this);
-  var manager = Quantumart.QP8.BackendPopupWindowManager.getInstance();
+  let manager = Quantumart.QP8.BackendPopupWindowManager.getInstance();
   this._popupWindowId = manager.generatePopupWindowId();
   this._isMultipleEntities = eventArgs.get_isMultipleEntities();
   this._actionCode = eventArgs.get_actionCode();
@@ -42,10 +42,10 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 
   _onPopupWindowToolbarButtonClicked: function (eventType, sender, args) {
     if (this._popupWindowComponent) {
-      var value = args.get_value();
+      let value = args.get_value();
       if (value == this.SELECT_BUTTON_CODE) {
-        var selectedEntities = this._popupWindowComponent.get_selectedEntities();
-        var context = this._popupWindowComponent.get_selectionContext();
+        let selectedEntities = this._popupWindowComponent.get_selectedEntities();
+        let context = this._popupWindowComponent.get_selectionContext();
         this.notify(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, { entities: selectedEntities, context: context, entityTypeCode: this._entityTypeCode, parentEntityId: this._parentEntityId });
       } else if (value == this.SELECT_ALL_BUTTON_CODE) {
         this._popupWindowComponent.selectAllEntities();
@@ -59,13 +59,13 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 
   _onClosed: function (eventType, sender, args) {
     this._popupWindowComponent = null;
-    var eventArgs = new Quantumart.QP8.BackendEventArgs();
+    let eventArgs = new Quantumart.QP8.BackendEventArgs();
     this.notify(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, eventArgs);
     eventArgs = null;
   },
 
   _createToolbar: function () {
-    var toolbar = new Quantumart.QP8.BackendToolbar();
+    let toolbar = new Quantumart.QP8.BackendToolbar();
     toolbar.set_toolbarElementId(`popupWindowToolbar_${this._popupWindowId}`);
     toolbar.initialize();
     toolbar.attachObserver(window.EVENT_TYPE_TOOLBAR_BUTTON_CLICKED, $.proxy(this._onPopupWindowToolbarButtonClicked, this));
@@ -74,9 +74,9 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
   },
 
   _getToolbarItems: function () {
-    var dataItems = [];
+    let dataItems = [];
 
-    var selectButton = {
+    let selectButton = {
       Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
       Value: this.SELECT_BUTTON_CODE,
       Text: $l.EntityDataList.selectPopupWindowButtonText,
@@ -88,7 +88,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
     Array.add(dataItems, selectButton);
 
     if (this._isMultipleEntities) {
-      var selectAllButton = {
+      let selectAllButton = {
         Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
         Value: this.SELECT_ALL_BUTTON_CODE,
         Text: $l.EntityDataList.selectAllPopupWindowButtonText,
@@ -99,7 +99,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 
       Array.add(dataItems, selectAllButton);
 
-      var deselectAllButton = {
+      let deselectAllButton = {
         Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
         Value: this.DESELECT_ALL_BUTTON_CODE,
         Text: $l.EntityDataList.deselectAllPopupWindowButtonText,
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
       Array.add(dataItems, deselectAllButton);
     }
 
-    var refreshButton = {
+    let refreshButton = {
       Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
       Value: this.REFRESH_BUTTON_CODE,
       Text: $l.EntityDataList.refreshPopupWindowButtonText,

@@ -33,7 +33,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
   },
 
   restore: function () {
-    var keyRegExp, autoSaverKeys, savedStates, key, i;
+    let keyRegExp, autoSaverKeys, savedStates, key, i;
 
     this.isRun = false;
     this.restoring = true;
@@ -54,10 +54,10 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     }
 
     this._checkForRestoring(savedStates).done(jQuery.proxy(function (approvedStates) {
-      var eventArgs, editorState, action, params;
+      let eventArgs, editorState, action, params;
       if (approvedStates.length > 0 && $q.confirmMessage($l.EntityEditorAutoSaver.restoreConfirmationRequest)) {
         this._restoringStateCount = approvedStates.length;
-        for (var i = 0; i < approvedStates.length; i++) {
+        for (let i = 0; i < approvedStates.length; i++) {
           editorState = approvedStates[i];
           action = $a.getBackendActionByCode(editorState.actionCode);
           params = new Quantumart.QP8.BackendActionParameters({
@@ -92,7 +92,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
   },
 
   onEntityEditorReady: function (documentWrapperElementId) {
-    var editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${documentWrapperElementId}`));
+    let editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${documentWrapperElementId}`));
 
     if (editor && editor.allowAutoSave() && (this.restoring === true || editor.isFieldsValid() !== true)) {
       localStorage.setItem(
@@ -117,16 +117,16 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
 
   onFieldChanged: function (fieldChangeInfo) {
     if (this.isRun === true) {
-      var editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${fieldChangeInfo.documentWrapperElementId}`));
+      let editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${fieldChangeInfo.documentWrapperElementId}`));
 
       if (editor && editor.allowAutoSave()) {
-        var key = this._createKey(fieldChangeInfo.documentWrapperElementId);
-        var editorState = jQuery.parseJSON(localStorage.getItem(key));
+        let key = this._createKey(fieldChangeInfo.documentWrapperElementId);
+        let editorState = jQuery.parseJSON(localStorage.getItem(key));
 
         if (!editorState) {
           editorState = this._getEditorComponentState(fieldChangeInfo.documentWrapperElementId);
         } else {
-          var fieldState = jQuery.grep(editorState.fieldValues, (v) => {
+          let fieldState = jQuery.grep(editorState.fieldValues, (v) => {
             return v.fieldName === fieldChangeInfo.fieldName;
           })[0];
 
@@ -149,11 +149,11 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
   // Обработчик события изменения состояния редактора, при котором необходимо полностью перечитать состояние
   onAllFieldInvalidate: function (documentWrapperElementId) {
     if (this.isRun === true) {
-      var editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${documentWrapperElementId}`));
+      let editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${documentWrapperElementId}`));
 
       if (editor && editor.allowAutoSave()) {
-        var key = this._createKey(documentWrapperElementId);
-        var editorState = jQuery.parseJSON(localStorage.getItem(key));
+        let key = this._createKey(documentWrapperElementId);
+        let editorState = jQuery.parseJSON(localStorage.getItem(key));
 
         if (editorState) {
           localStorage.setItem(key, JSON.stringify(this._getEditorComponentState(documentWrapperElementId)));
@@ -165,7 +165,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
   },
 
   _getEditorComponentState: function (documentWrapperElementId) {
-    var editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${documentWrapperElementId}`));
+    let editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${documentWrapperElementId}`));
 
     if (editor) {
       return {
@@ -186,9 +186,9 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
 
   // сортировка на предмет возможности восстановления
   _checkForRestoring: function (stateRecords) {
-    var dfr = new jQuery.Deferred();
+    let dfr = new jQuery.Deferred();
     if ($q.isArray(stateRecords) && !$q.isNullOrEmpty(stateRecords)) {
-      var requestData = {
+      let requestData = {
         recordHeaders: JSON.stringify(jQuery.map(stateRecords, (r) => {
           return {
             RecordId: r.recordId,

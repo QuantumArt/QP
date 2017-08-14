@@ -66,7 +66,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   _parentId: null,
 
   initialize: function () {
-    var $mainContainer, $stageNameElement, $progressBarElement;
+    let $mainContainer, $stageNameElement, $progressBarElement;
 
     this._popupWindowComponent = this._createWindow();
     this._popupWindowElement = this._popupWindowComponent.element;
@@ -101,7 +101,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   _refreshView: function () {
-    var elapsedTime, timeRemaining;
+    let elapsedTime, timeRemaining;
 
     this._progressBarComponent.total(this._stageItemsCount);
     this._progressBarComponent.value(this._stageItemsCount - this._stageItemsRemaining);
@@ -157,10 +157,10 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   _formatTimeRange: function (milliseconds) {
-    var secondsSpan = Math.floor(milliseconds / 1000);
-    var hours = Math.floor(secondsSpan / 3600);
-    var minutes = Math.floor((secondsSpan - (hours * 3600)) / 60);
-    var seconds = Math.round(secondsSpan - (hours * 3600) - (minutes * 60));
+    let secondsSpan = Math.floor(milliseconds / 1000);
+    let hours = Math.floor(secondsSpan / 3600);
+    let minutes = Math.floor((secondsSpan - (hours * 3600)) / 60);
+    let seconds = Math.round(secondsSpan - (hours * 3600) - (minutes * 60));
     if (minutes < 10) {
       minutes = `0${minutes}`;
     }
@@ -207,7 +207,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     this._refreshView();
   },
   _createDownloadLink: function () {
-    var url, urlParams;
+    let url, urlParams;
     if (!$q.isNullOrWhiteSpace(this._additionalInfo)) {
       urlParams = { id: this._parentId, fileName: encodeURIComponent(this._additionalInfo) };
       url = Quantumart.QP8.BackendLibrary.generateActionUrl('ExportFileDownload', urlParams);
@@ -270,8 +270,8 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   _createWindow: function () {
-    var popupWindowComponent, $popupWindow, $content, bottomPaddingFix;
-    var windowContentHtml = new $.telerik.stringBuilder();
+    let popupWindowComponent, $popupWindow, $content, bottomPaddingFix;
+    let windowContentHtml = new $.telerik.stringBuilder();
 
     windowContentHtml
       .cat('<div class="lop-main">')
@@ -366,7 +366,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   _cancel: function () {
-    var eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
+    let eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
     this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, eventArgs);
     if (eventArgs.getCancel() === true) {
       this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, eventArgs);
@@ -378,7 +378,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   dispose: function () {
-    var popupWindowComponent;
+    let popupWindowComponent;
     this._progressBarComponent = null;
     if (this._progressBarElement) {
       $(this._progressBarElement).backendProgressBar('dispose');

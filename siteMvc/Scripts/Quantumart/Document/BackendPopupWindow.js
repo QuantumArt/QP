@@ -5,9 +5,9 @@ window.EVENT_TYPE_POPUP_WINDOW_CLOSED = 'OnPopupWindowClosed';
 Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options) {
   Quantumart.QP8.BackendPopupWindow.initializeBase(this, [eventArgs, options]);
 
-  var $currentWindow = $(window);
-  var currentWindowWidth = $currentWindow.width();
-  var currentWindowHeight = $currentWindow.height();
+  let $currentWindow = $(window);
+  let currentWindowWidth = $currentWindow.width();
+  let currentWindowHeight = $currentWindow.height();
   $currentWindow = null;
 
   this._popupWindowId = popupWindowId;
@@ -279,9 +279,9 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   initialize: function () {
     this._initSelectedEntities();
 
-    var action = this.getCurrentAction();
+    let action = this.getCurrentAction();
     if ($q.isNullOrWhiteSpace(this._title) && this._popupWindowManagerComponent && action) {
-      var eventArgs = new Quantumart.QP8.BackendEventArgs();
+      let eventArgs = new Quantumart.QP8.BackendEventArgs();
       eventArgs.set_entityTypeCode(this._entityTypeCode);
       eventArgs.set_entityId(this._entityId);
       eventArgs.set_entityName(this._entityName);
@@ -292,11 +292,11 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
     this.createPanels();
 
-    var popupWindowComponent = this._createWindow();
+    let popupWindowComponent = this._createWindow();
     popupWindowComponent.close = function () {
       $.telerik.trigger(popupWindowComponent.element, 'close');
     };
-    var $popupWindow = $(popupWindowComponent.element);
+    let $popupWindow = $(popupWindowComponent.element);
 
     this._popupWindowElement = $popupWindow.get(0);
     this._popupWindowComponent = popupWindowComponent;
@@ -305,7 +305,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _initSelectedEntities: function () {
-    var actionTypeCode = this._actionTypeCode;
+    let actionTypeCode = this._actionTypeCode;
     if (actionTypeCode === window.ACTION_TYPE_CODE_SELECT || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT) {
       if (this._isMultipleEntities) {
         this._selectedEntities = Array.clone(this._entities);
@@ -318,9 +318,9 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   generateDocumentUrl: function (options) {
-    var isSelectAction = this._actionTypeCode == window.ACTION_TYPE_CODE_SELECT || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_SELECT;
-    var entityIDs = this._isMultipleEntities ? $o.getEntityIDsFromEntities(isSelectAction ? this._selectedEntities : this._entities) : [this._entityId];
-    var extraOptions = {
+    let isSelectAction = this._actionTypeCode == window.ACTION_TYPE_CODE_SELECT || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_SELECT;
+    let entityIDs = this._isMultipleEntities ? $o.getEntityIDsFromEntities(isSelectAction ? this._selectedEntities : this._entities) : [this._entityId];
+    let extraOptions = {
       additionalUrlParameters: this._additionalUrlParameters,
       controllerActionUrl: this.getCurrentViewActionUrl()
     };
@@ -332,7 +332,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     options = !$q.isObject(options) ? extraOptions : Object.assign({}, options, extraOptions);
     this._documentUrl = $a.generateActionUrl(this._isMultipleEntities, entityIDs, this._parentEntityId, this._popupWindowId, this.getCurrentAction(), options);
 
-    var params = {};
+    let params = {};
     if (this._isMultipleEntities || this._isCustomAction) {
       params.IDs = entityIDs;
     }
@@ -343,8 +343,8 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _createWindow: function () {
-    var popupWindowId = this._popupWindowId;
-    var actions = [];
+    let popupWindowId = this._popupWindowId;
+    let actions = [];
     if (this._showRefreshButton) {
       Array.add(actions, 'Refresh');
     }
@@ -357,16 +357,16 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       Array.add(actions, 'Close');
     }
 
-    var breadCrumbsWrapperId = `breadCrumbsWrapper_${popupWindowId}`;
-    var toolbarWrapperId = `toolbarWrapper_${popupWindowId}`;
-    var actionToolbarWrapperId = `actionToolbarWrapper_${popupWindowId}`;
-    var viewToolbarWrapperId = `viewToolbarWrapper_${popupWindowId}`;
-    var searchBlockWrapperId = `searchBlockWrapper_${popupWindowId}`;
-    var contextBlockWrapperId = `contextBlockWrapper_${popupWindowId}`;
-    var documentAreaId = `documentArea_${popupWindowId}`;
-    var documentWrapperId = `document_${popupWindowId}`;
+    let breadCrumbsWrapperId = `breadCrumbsWrapper_${popupWindowId}`;
+    let toolbarWrapperId = `toolbarWrapper_${popupWindowId}`;
+    let actionToolbarWrapperId = `actionToolbarWrapper_${popupWindowId}`;
+    let viewToolbarWrapperId = `viewToolbarWrapper_${popupWindowId}`;
+    let searchBlockWrapperId = `searchBlockWrapper_${popupWindowId}`;
+    let contextBlockWrapperId = `contextBlockWrapper_${popupWindowId}`;
+    let documentAreaId = `documentArea_${popupWindowId}`;
+    let documentWrapperId = `document_${popupWindowId}`;
 
-    var windowContentHtml = new $.telerik.stringBuilder();
+    let windowContentHtml = new $.telerik.stringBuilder();
     windowContentHtml
       .catIf(`<div id="${breadCrumbsWrapperId}" class="breadCrumbsWrapper"></div>`, this._showBreadCrumbs)
       .cat(`<div id="${toolbarWrapperId}" class="toolbarWrapper">\n`)
@@ -380,7 +380,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       .cat('</div>\n')
     ;
 
-    var popupWindowComponent = $.telerik.window.create({
+    let popupWindowComponent = $.telerik.window.create({
       title: $('<div/>').text(this._title).html(),
       html: windowContentHtml.string(),
       width: this._width,
@@ -393,15 +393,15 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       draggable: this._allowDrag
     }).data('tWindow').center();
 
-    var $popupWindow = $(popupWindowComponent.element);
+    let $popupWindow = $(popupWindowComponent.element);
     $popupWindow.addClass('popupWindow').css('display', 'none');
 
     if (this._zIndex) {
       $popupWindow.css('z-index', this._zIndex);
     }
 
-    var $content = $popupWindow.find('DIV.t-window-content:first');
-    var bottomPaddingFix = 0;
+    let $content = $popupWindow.find('DIV.t-window-content:first');
+    let bottomPaddingFix = 0;
     if (jQuery.support.borderRadius) {
       bottomPaddingFix = 15;
     } else {
@@ -410,31 +410,31 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
     $content.css('padding-bottom', `${bottomPaddingFix}px`);
 
-    var $breadCrumbsWrapper = null;
+    let $breadCrumbsWrapper = null;
     if (this._breadCrumbsComponent) {
-      var $breadCrumbs = $(this._breadCrumbsComponent.get_breadCrumbsElement());
+      let $breadCrumbs = $(this._breadCrumbsComponent.get_breadCrumbsElement());
       $breadCrumbsWrapper = $popupWindow.find(`#${breadCrumbsWrapperId}`);
       $breadCrumbsWrapper.append($breadCrumbs);
     }
 
-    var $actionToolbar = $(this._actionToolbarComponent.get_toolbarElement());
-    var $viewToolbar = $(this._viewToolbarComponent.get_toolbarElement());
-    var $toolbarWrapper = $popupWindow.find(`#${toolbarWrapperId}`);
+    let $actionToolbar = $(this._actionToolbarComponent.get_toolbarElement());
+    let $viewToolbar = $(this._viewToolbarComponent.get_toolbarElement());
+    let $toolbarWrapper = $popupWindow.find(`#${toolbarWrapperId}`);
 
-    var $actionToolbarWrapper = $popupWindow.find(`#${actionToolbarWrapperId}`);
+    let $actionToolbarWrapper = $popupWindow.find(`#${actionToolbarWrapperId}`);
     $actionToolbarWrapper.append($actionToolbar);
 
-    var $viewToolbarWrapper = $popupWindow.find(`#${viewToolbarWrapperId}`);
+    let $viewToolbarWrapper = $popupWindow.find(`#${viewToolbarWrapperId}`);
     $viewToolbarWrapper.append($viewToolbar);
 
-    var $searchBlockWrapper = $popupWindow.find(`#${searchBlockWrapperId}`);
-    var $contextBlockWrapper = $popupWindow.find(`#${contextBlockWrapperId}`);
-    var $documentArea = $popupWindow.find(`#${documentAreaId}`);
+    let $searchBlockWrapper = $popupWindow.find(`#${searchBlockWrapperId}`);
+    let $contextBlockWrapper = $popupWindow.find(`#${contextBlockWrapperId}`);
+    let $documentArea = $popupWindow.find(`#${documentAreaId}`);
 
-    var $loadingLayer = $('<div />', { class: 'loadingLayer', css: { display: 'none'} });
+    let $loadingLayer = $('<div />', { class: 'loadingLayer', css: { display: 'none'} });
     $documentArea.prepend($loadingLayer);
 
-    var $documentWrapper = $popupWindow.find(`#${documentWrapperId}`);
+    let $documentWrapper = $popupWindow.find(`#${documentWrapperId}`);
 
     if (!$q.isNullOrEmpty($breadCrumbsWrapper)) {
       this._breadCrumbsWrapperElement = $breadCrumbsWrapper.get(0);
@@ -460,7 +460,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       this._popupWindowComponent.open();
       this.generateDocumentUrl(options);
       this.renderPanels();
-      var self = this;
+      let self = this;
       this.loadHtmlContentToDocumentWrapper(() => {
         self.onDocumentChanged();
       }, options);
@@ -476,7 +476,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       this.onDocumentUnloaded();
       this.unbindExternalCallerContexts('closed');
 
-      var eventArgs = new Quantumart.QP8.BackendEventArgs();
+      let eventArgs = new Quantumart.QP8.BackendEventArgs();
       this.notify(window.EVENT_TYPE_POPUP_WINDOW_CLOSED, eventArgs);
       this.dispose();
     }
@@ -488,7 +488,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _attachPopupWindowEventHandlers: function () {
-    var $popupWindow = $(this._popupWindowElement);
+    let $popupWindow = $(this._popupWindowElement);
     $popupWindow
       .bind('open', this._onPopupWindowOpenHandler)
       .bind('resize', this._onPopupWindowResizeHandler)
@@ -497,7 +497,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _detachPopupWindowEventHandlers: function () {
-    var $popupWindow = $(this._popupWindowElement);
+    let $popupWindow = $(this._popupWindowElement);
     $popupWindow
       .unbind('open', this._onPopupWindowOpenHandler)
       .unbind('resize', this._onPopupWindowResizeHandler)
@@ -506,39 +506,39 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _fixDocumentAreaHeight: function () {
-    var $popupWindow = $(this._popupWindowElement);
-    var $content = $popupWindow.find('DIV.t-window-content:first');
-    var $breadCrumbsWrapper = null;
+    let $popupWindow = $(this._popupWindowElement);
+    let $content = $popupWindow.find('DIV.t-window-content:first');
+    let $breadCrumbsWrapper = null;
     if (this._breadCrumbsWrapperElement) {
       $breadCrumbsWrapper = $(this._breadCrumbsWrapperElement);
     }
 
-    var $toolbarWrapper = $(this._toolbarWrapperElement);
-    var $area = $(this._documentAreaElement);
+    let $toolbarWrapper = $(this._toolbarWrapperElement);
+    let $area = $(this._documentAreaElement);
 
-    var contentHeight = parseInt($content.height(), 10);
-    var breadCrumbsWrapperHeight = 0;
+    let contentHeight = parseInt($content.height(), 10);
+    let breadCrumbsWrapperHeight = 0;
     if (!$q.isNullOrEmpty($breadCrumbsWrapper)) {
       breadCrumbsWrapperHeight = parseInt($breadCrumbsWrapper.outerHeight(), 10);
     }
 
-    var toolbarWrapperHeight = parseInt($toolbarWrapper.outerHeight(), 10);
-    var areaHeight = contentHeight - breadCrumbsWrapperHeight - toolbarWrapperHeight;
+    let toolbarWrapperHeight = parseInt($toolbarWrapper.outerHeight(), 10);
+    let areaHeight = contentHeight - breadCrumbsWrapperHeight - toolbarWrapperHeight;
     $area.height(areaHeight);
 
-    var main = this.get_mainComponent();
+    let main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.resize();
     }
   },
 
   showLoadingLayer: function () {
-    var $loadingLayer = $(this._loadingLayerElement);
+    let $loadingLayer = $(this._loadingLayerElement);
     $loadingLayer.show();
   },
 
   hideLoadingLayer: function () {
-    var $loadingLayer = $(this._loadingLayerElement);
+    let $loadingLayer = $(this._loadingLayerElement);
     $loadingLayer.hide();
   },
 
@@ -547,11 +547,11 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   createPanels: function () {
-    var action = this.getCurrentAction();
+    let action = this.getCurrentAction();
 
     // Создаем хлебные крошки
     if (this._showBreadCrumbs) {
-      var breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(`breadCrumbs_${this._popupWindowId}`, {
+      let breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(`breadCrumbs_${this._popupWindowId}`, {
         documentHost: this
       });
 
@@ -563,25 +563,25 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
     // Создаем панель инструментов для действий
     if (!this._useCustomActionToolbar) {
-      var actionToolbarOptions;
-      var eventArgsAdditionalData = this.get_eventArgsAdditionalData();
+      let actionToolbarOptions;
+      let eventArgsAdditionalData = this.get_eventArgsAdditionalData();
       if (eventArgsAdditionalData && eventArgsAdditionalData.disabledActionCodes) {
         actionToolbarOptions = { disabledActionCodes: eventArgsAdditionalData.disabledActionCodes };
       }
-      var actionToolbarComponent = new Quantumart.QP8.BackendActionToolbar(`actionToolbar_${this._popupWindowId}`, this._actionCode, this._parentEntityId, actionToolbarOptions);
+      let actionToolbarComponent = new Quantumart.QP8.BackendActionToolbar(`actionToolbar_${this._popupWindowId}`, this._actionCode, this._parentEntityId, actionToolbarOptions);
       actionToolbarComponent.initialize();
       actionToolbarComponent.attachObserver(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
       this._actionToolbarComponent = actionToolbarComponent;
     }
 
     // Создаем панель инструментов для представлений
-    var viewToolbarOptions = {};
-    var state = this.loadHostState();
+    let viewToolbarOptions = {};
+    let state = this.loadHostState();
     if (state && state.viewTypeCode) {
       viewToolbarOptions.viewTypeCode = state.viewTypeCode;
     }
 
-    var viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar(`viewToolbar_${this._popupWindowId}`, this._actionCode, viewToolbarOptions);
+    let viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar(`viewToolbar_${this._popupWindowId}`, this._actionCode, viewToolbarOptions);
     viewToolbarComponent.initialize();
 
     viewToolbarComponent.attachObserver(window.EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, this._onGeneralEventHandler);
@@ -630,7 +630,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     if (this._breadCrumbsComponent) {
       this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
       this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
-      var breadCrumbsElementId = this._breadCrumbsComponent.get_breadCrumbsElementId();
+      let breadCrumbsElementId = this._breadCrumbsComponent.get_breadCrumbsElementId();
       Quantumart.QP8.BackendBreadCrumbsManager.getInstance().destroyBreadCrumbs(breadCrumbsElementId);
       this._breadCrumbsComponent = null;
     }
@@ -653,7 +653,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   createSearchBlock: function () {
-    var searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
+    let searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
       .createSearchBlock(`searchBlock_${this._popupWindowId}`, this._entityTypeCode, this._parentEntityId, this,
         {
           searchBlockContainerElementId: $(this._searchBlockWrapperElement).attr('id'),
@@ -670,7 +670,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   createContextBlock: function () {
-    var contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
+    let contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
       .createSearchBlock(`contextBlock_${this._popupWindowId}`, this._entityTypeCode, this._parentEntityId, this,
         {
           searchBlockContainerElementId: $(this._searchBlockWrapperElement).attr('id'),
@@ -688,7 +688,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   destroySearchBlock: function () {
-    var searchBlockComponent = this._searchBlockComponent;
+    let searchBlockComponent = this._searchBlockComponent;
 
     if (searchBlockComponent) {
       searchBlockComponent.hideSearchBlock();
@@ -696,7 +696,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
 
-      var searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
+      let searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
       Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
 
       this._searchBlockComponent = null;
@@ -704,14 +704,14 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   destroyContextBlock: function () {
-    var searchBlockComponent = this._searchBlockComponent;
-    var contextBlockComponent = this._contextBlockComponent;
+    let searchBlockComponent = this._searchBlockComponent;
+    let contextBlockComponent = this._contextBlockComponent;
 
     if (contextBlockComponent) {
       contextBlockComponent.hideSearchBlock();
       contextBlockComponent.detachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
 
-      var searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
+      let searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
       Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
 
       this._contextBlockComponent = null;
@@ -720,7 +720,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   showErrorMessageInDocumentWrapper: function (status) {
-    var $documentWrapper = $(this._documentWrapperElement);
+    let $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.html($q.generateErrorMessageText());
   },
 
@@ -762,7 +762,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _onLibraryResized: function (eventType, sender) {
-    var elHeight = $(this._documentAreaElement).height();
+    let elHeight = $(this._documentAreaElement).height();
     $(sender._libraryElement).height(elHeight + 8);
   },
 
@@ -775,7 +775,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _onPopupWindowClose: function () {
-    var $active = $(document.activeElement);
+    let $active = $(document.activeElement);
     if ($active) {
       $active.blur();
     }
@@ -784,7 +784,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _onPopupWindowActivated: function () {
-    var main = this.get_mainComponent();
+    let main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.resize();
     }
@@ -795,7 +795,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _isContentLoaded: function () {
-    var $wrapper = $(this._documentWrapperElement);
+    let $wrapper = $(this._documentWrapperElement);
     return $wrapper && $wrapper.html() != '';
   },
 
@@ -822,7 +822,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this._documentWrapperElement = null;
 
     if (this._loadingLayerElement) {
-      var $loadingLayer = $(this._loadingLayerElement);
+      let $loadingLayer = $(this._loadingLayerElement);
       $loadingLayer.empty();
       $loadingLayer.remove();
       this._loadingLayerElement = null;
@@ -833,7 +833,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this.destroyContextBlock();
 
     if (this._popupWindowManagerComponent) {
-      var popupWindowId = this._popupWindowId;
+      let popupWindowId = this._popupWindowId;
       if (!$q.isNullOrWhiteSpace(popupWindowId)) {
         this._popupWindowManagerComponent.removePopupWindow(popupWindowId);
       }

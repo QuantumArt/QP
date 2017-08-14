@@ -11,8 +11,8 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
   _gridElementId: '',
 
   _extendGridData: function (data) {
-    var $filter = $(`#${this._filterElementId}`);
-    var filter = {
+    let $filter = $(`#${this._filterElementId}`);
+    let filter = {
       templateId: $('.sic_templateSelector', $filter).find('select').val(),
       pageId: $('.sic_pageSelector', $filter).find('.stateField').val(),
       filterVal: $('.sic_filter input', $filter).val()
@@ -22,18 +22,18 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
   },
 
   _onDataBinding: function (e) {
-    var $grid = $(`#${this._gridElementId}`);
+    let $grid = $(`#${this._gridElementId}`);
     e.data = this._extendGridData(e.data);
   },
 
   _onApplyFilter: function () {
-    var $grid = $(`#${this._gridElementId}`);
-    var gridComponent = $grid.data('tGrid');
+    let $grid = $(`#${this._gridElementId}`);
+    let gridComponent = $grid.data('tGrid');
     gridComponent.ajaxRequest();
   },
 
   _onClearFilter: function () {
-    var $filter = $(`#${this._filterElementId}`);
+    let $filter = $(`#${this._filterElementId}`);
     $filter.find('.sic_templateSelector select').val('0');
     if ($filter.find('.singleItemPicker').size() > 0) {
       $filter.find('.singleItemPicker').data('entity_data_list_component').deselectAllListItems();
@@ -44,9 +44,9 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
   },
 
   initialize: function () {
-    var $grid = $(`#${this._gridElementId}`);
-    var gridComponent = $grid.data('tGrid');
-    var $filter = $(`#${this._filterElementId}`);
+    let $grid = $(`#${this._gridElementId}`);
+    let gridComponent = $grid.data('tGrid');
+    let $filter = $(`#${this._filterElementId}`);
 
     Quantumart.QP8.ControlHelpers.initAllEntityDataLists($filter);
 
@@ -68,8 +68,8 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
   },
 
   dispose: function () {
-    var $grid = $(`#${this._gridElementId}`);
-    var $filter = $(`#${this._filterElementId}`);
+    let $grid = $(`#${this._gridElementId}`);
+    let $filter = $(`#${this._filterElementId}`);
 
     $grid.unbind('dataBinding');
     this._onDataBindingHandler = null;

@@ -21,7 +21,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 
   _onDirectLinkOpenRequested: function (e) {
     if ($q.isNullOrEmpty(e.key)) {
-      var key = window.localStorage.getItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
+      let key = window.localStorage.getItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
       if (key) {
         e.key = key;
         e.newValue = window.localStorage.getItem(key);
@@ -29,7 +29,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     }
 
     if (e.key == this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM && $q.isString(e.newValue)) {
-      var actionParams = jQuery.parseJSON(e.newValue);
+      let actionParams = jQuery.parseJSON(e.newValue);
       this._executeAction(actionParams, true);
     } else if (e.key == this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG && $.isNumeric(e.newValue)) {
       if (e.newValue != this._uid) {
@@ -48,19 +48,19 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 
       if (actionParams.customerCode.toLowerCase() == this._currentCustomerCode.toLowerCase()) {
         if (!byRequest || $q.confirmMessage($l.BackendDirectLinkExecutor.OpenDirectLinkConfirmation)) {
-          var action = $a.getBackendActionByCode(actionParams.actionCode);
+          let action = $a.getBackendActionByCode(actionParams.actionCode);
           if (!action) {
             $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
           } else {
-            var actionTypeCode = action.ActionType.Code;
-            var params = new Quantumart.QP8.BackendActionParameters({
+            let actionTypeCode = action.ActionType.Code;
+            let params = new Quantumart.QP8.BackendActionParameters({
               entityTypeCode: actionParams.entityTypeCode,
               entityId: actionParams.entityId,
               parentEntityId: actionParams.parentEntityId
             });
 
             params.correct(action);
-            var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+            let eventArgs = $a.getEventArgsFromActionWithParams(action, params);
             this.notify(window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, eventArgs);
           }
         }
@@ -83,12 +83,12 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
   },
 
   _instanceExistenceCheck: function () {
-    var dfr = new jQuery.Deferred();
+    let dfr = new jQuery.Deferred();
     if (window.localStorage.getItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG)) {
       this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, this._uid);
-      var that = this;
+      let that = this;
       setTimeout(() => {
-        var testResponse = !!window.localStorage.getItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
+        let testResponse = !!window.localStorage.getItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
         window.localStorage.removeItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
         dfr.resolveWith(that, [testResponse]);
       }, 500);
@@ -121,7 +121,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
           document.attachEvent('onstorage', this._onDirectLinkOpenRequestedHandler);
         }
 
-        var openByDirectLink = !!this._urlLinkParams;
+        let openByDirectLink = !!this._urlLinkParams;
         if ($q.isFunction(callback)) {
           callback(openByDirectLink);
         }

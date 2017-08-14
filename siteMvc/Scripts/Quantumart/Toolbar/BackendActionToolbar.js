@@ -50,8 +50,8 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     this._alwaysEnabledRefreshButton = value;
   },
   addToolbarItemsToToolbar: function (count) {
-    var self = this;
-    var queryParams = {
+    let self = this;
+    let queryParams = {
       actionCode: this._actionCode,
       entityId: this._entityId,
       parentEntityId: this._parentEntityId
@@ -66,14 +66,14 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         return;
       }
 
-      var actionToolbarItems = data;
+      let actionToolbarItems = data;
       if (!$q.isNullOrEmpty(self.getDisabledActionCodes())) {
         actionToolbarItems = jQuery.grep(actionToolbarItems, (itm) => {
           return self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1;
         });
       }
 
-      var items = self._getToolbarItemsFromResult(actionToolbarItems);
+      let items = self._getToolbarItemsFromResult(actionToolbarItems);
       Quantumart.QP8.BackendActionToolbar.callBaseMethod(self, 'addToolbarItemsToToolbar', [items, count]);
 
       $q.clearArray(items);
@@ -93,9 +93,9 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   },
 
   tuneToolbarItems: function (entityId, parentEntityId) {
-    var self = this;
+    let self = this;
 
-    var queryParams = { actionCode: this._actionCode, entityId: entityId, parentEntityId: parentEntityId };
+    let queryParams = { actionCode: this._actionCode, entityId: entityId, parentEntityId: parentEntityId };
     if (this.get_isBindToExternal() === true) {
       queryParams = Object.assign({}, queryParams, { boundToExternal: true });
     }
@@ -107,7 +107,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         }
 
         if (data.success) {
-          var actionStatuses = data.actionStatuses;
+          let actionStatuses = data.actionStatuses;
           if (!$q.isNullOrEmpty(actionStatuses)) {
             Quantumart.QP8.BackendActionToolbar.callBaseMethod(self, 'tuneToolbarItems', [actionStatuses]);
             $q.clearArray(actionStatuses);
@@ -138,7 +138,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   },
 
   _getToolbarItemsFromResult: function (items) {
-    var dataItems = [];
+    let dataItems = [];
     jQuery.each(items, (index, item) => {
       Array.add(dataItems, {
         Type: window.TOOLBAR_ITEM_TYPE_BUTTON,

@@ -5,7 +5,7 @@ Quantumart.QP8.MultistepActionExportSettings = function MultistepActionExportSet
 Quantumart.QP8.MultistepActionExportSettings.prototype = {
   EXPORT_BUTTON: 'Export',
   addButtons: function (dataItems) {
-    var exportButton = {
+    let exportButton = {
       Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
       Value: this.EXPORT_BUTTON,
       Text: $l.MultistepAction.exportTitle,
@@ -18,9 +18,9 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
   },
 
   initActions: function () {
-    var fieldValues = this.options._popupWindowComponent.loadHostState();
-    var id = this.options._popupWindowId;
-    var $root = $(`#${id}_editingForm`);
+    let fieldValues = this.options._popupWindowComponent.loadHostState();
+    let id = this.options._popupWindowId;
+    let $root = $(`#${id}_editingForm`);
     $c.setAllBooleanValues($root, fieldValues);
     $c.setAllRadioListValues($root, fieldValues);
     $c.initAllCheckboxToggles($root);
@@ -29,16 +29,16 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
   },
 
   validate: function () {
-    var id = this.options._popupWindowId;
-    var $root = $(`#${id}_editingForm`);
-    var fieldValues = $c.getAllFieldValues($root);
+    let id = this.options._popupWindowId;
+    let $root = $(`#${id}_editingForm`);
+    let fieldValues = $c.getAllFieldValues($root);
     this.options._popupWindowComponent.saveHostState(fieldValues);
     return '';
   },
 
   dispose: function () {
-    var id = this.options._popupWindowId;
-    var $root = $(`#${id}_editingForm`);
+    let id = this.options._popupWindowId;
+    let $root = $(`#${id}_editingForm`);
     $c.destroyAllEntityDataLists($root);
     $c.destroyAllCheckboxToggles($root);
   }

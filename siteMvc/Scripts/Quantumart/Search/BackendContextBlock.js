@@ -18,7 +18,7 @@ Quantumart.QP8.BackendContextBlock.prototype
 
     _restore_searchBlockState: function () {
       if (this._searchBlockState) {
-        var fieldValues = jQuery.map(this._searchBlockState, (elem) => {
+        let fieldValues = jQuery.map(this._searchBlockState, (elem) => {
           return { fieldName: elem.Name, value: elem.Value };
         });
         $c.setAllEntityDataListValues(this._searchBlockElement, fieldValues);
@@ -26,9 +26,9 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
     _compute_searchBlockState: function () {
-      var result = [];
+      let result = [];
       $('.contextSwitcher .stateField', this._searchBlockElement).each(function () {
-        var $item = $(this);
+        let $item = $(this);
         result.push({
           Name: $item.prop('name'),
           Value: $item.prop('value'),
@@ -46,7 +46,7 @@ Quantumart.QP8.BackendContextBlock.prototype
     renderSearchBlock: function () {
       if (!this._isRendered) {
         // получить разметку с сервера
-        var serverContent;
+        let serverContent;
         $q.getJsonFromUrl(
           'GET',
           `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}ContextBlock/${this._parentEntityId}`,
@@ -74,9 +74,9 @@ Quantumart.QP8.BackendContextBlock.prototype
 
           this._restore_searchBlockState();
 
-          var self = this;
+          let self = this;
           $('.contextSwitcher').each(function () {
-            var component = $(this).data('entity_data_list_component');
+            let component = $(this).data('entity_data_list_component');
             component.attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
           });
         }
@@ -93,8 +93,8 @@ Quantumart.QP8.BackendContextBlock.prototype
 
 
     _onFindButtonClick: function () {
-      var state = this.get_searchBlockState();
-      var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, JSON.stringify(state));
+      let state = this.get_searchBlockState();
+      let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, JSON.stringify(state));
       eventArgs.set_searchBlockState(state);
       this.notify(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, eventArgs);
       eventArgs = null;
@@ -105,9 +105,9 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
     dispose: function () {
-      var self = this;
+      let self = this;
       $('.contextSwitcher').each(function () {
-        var component = $(this).data('entity_data_list_component');
+        let component = $(this).data('entity_data_list_component');
         component.detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
       });
 

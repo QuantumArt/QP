@@ -22,7 +22,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   _uploadedFiles: [],
 
   initialize: function () {
-    var $mvcUpload = $(".t-upload input[type='file']", this._parentElement).data('tUpload');
+    let $mvcUpload = $(".t-upload input[type='file']", this._parentElement).data('tUpload');
 
     $mvcUpload.wrapper.unbind('upload');
     $mvcUpload.wrapper.unbind('success');
@@ -72,13 +72,13 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
 
   _onUploadCompleteHandler: function () {
     if (this._uploadedFiles.length > 0) {
-      var filenames = [];
+      let filenames = [];
 
       $.each(this._uploadedFiles, (i, val) => {
         filenames.push(val);
       });
 
-      var eventArgs = new Quantumart.QP8.BackendUploaderEventArgs(filenames);
+      let eventArgs = new Quantumart.QP8.BackendUploaderEventArgs(filenames);
 
       this.notify(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, eventArgs);
       this._uploadedFiles = [];
@@ -86,7 +86,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   },
 
   _onUploadSelectHandler: function (e) {
-    var toPrevent = false;
+    let toPrevent = false;
 
     $.each(e.files, function () {
       if (this.size && this.size >= window.MAX_UPLOAD_SIZE_BYTES) {
@@ -101,7 +101,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
 
     if (this._extensions.length > 0) {
-      var extensions = $.map(this._extensions.split(';'), (val) => {
+      let extensions = $.map(this._extensions.split(';'), (val) => {
         return val.toLowerCase();
       });
 
@@ -118,7 +118,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
       return false;
     }
 
-    var self = this;
+    let self = this;
     if (!this._resolveName) {
       $.each(e.files, function () {
         if (self._checkFileExistence(self._folderPath, this.name)) {
@@ -142,8 +142,8 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   },
 
   _checkFileExistence: function (folderPath, fileName) {
-    var url = `${window.APPLICATION_ROOT_URL}Library/FileExists/`;
-    var obj = $q.getJsonSync(url, {
+    let url = `${window.APPLICATION_ROOT_URL}Library/FileExists/`;
+    let obj = $q.getJsonSync(url, {
       path: folderPath,
       name: fileName
     });

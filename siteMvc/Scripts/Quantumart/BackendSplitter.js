@@ -89,22 +89,22 @@ Quantumart.QP8.BackendSplitter.prototype = {
 
   initialize: function () {
     this._splitterComponent = jQuery(`#${this._splitterElementId}`);
-    var splitter = this._splitterComponent.data('tSplitter');
+    let splitter = this._splitterComponent.data('tSplitter');
     if (this._toWindowResize) {
       jQuery(window).trigger('resize');
     }
 
-    var $firstPane = jQuery('.t-pane:first', this._splitterComponent);
+    let $firstPane = jQuery('.t-pane:first', this._splitterComponent);
     this._firstPaneElement = $firstPane.get(0);
 
     splitter.onResize = this._onSplitterResizedHandler;
     splitter.onDragStart = this._onSplitterDragStartHandler;
     splitter.onDrop = this._onSplitterDropHandler;
 
-    var firstPaneWidth = $firstPane.width();
-    var firstPaneHeight = $firstPane.height();
+    let firstPaneWidth = $firstPane.width();
+    let firstPaneHeight = $firstPane.height();
 
-    var eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
+    let eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
     eventArgs.set_firstPane(this._firstPaneElement);
     eventArgs.set_firstPaneWidth(firstPaneWidth);
     eventArgs.set_firstPaneHeight(firstPaneHeight);
@@ -119,10 +119,10 @@ Quantumart.QP8.BackendSplitter.prototype = {
   },
 
   _onSplitterResized: function (event) {
-    var $firstPane = jQuery(this._firstPaneElement);
-    var firstPaneWidth = $firstPane.width();
-    var firstPaneHeight = $firstPane.height();
-    var eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
+    let $firstPane = jQuery(this._firstPaneElement);
+    let firstPaneWidth = $firstPane.width();
+    let firstPaneHeight = $firstPane.height();
+    let eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
 
     eventArgs.set_firstPane(this._firstPaneElement);
     eventArgs.set_firstPaneWidth(firstPaneWidth);
@@ -142,7 +142,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
 
   resize: function () {
     if (this._splitterComponent) {
-      var splitter = this._splitterComponent.data('tSplitter');
+      let splitter = this._splitterComponent.data('tSplitter');
       splitter.resize();
       splitter = null;
     }
@@ -152,7 +152,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
     Quantumart.QP8.BackendSplitter.callBaseMethod(this, 'dispose');
 
     if (this._splitterComponent != null) {
-      var splitter = this._splitterComponent.data('tSplitter');
+      let splitter = this._splitterComponent.data('tSplitter');
       splitter.onResize = null;
       splitter = null;
       this._splitterComponent = null;

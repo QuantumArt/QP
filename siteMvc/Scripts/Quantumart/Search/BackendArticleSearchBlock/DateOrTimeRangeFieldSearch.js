@@ -10,8 +10,8 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (
 
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = {
   initialize: function () {
-    var serverContent;
-    var url = window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK;
+    let serverContent;
+    let url = window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK;
     switch (this._rangeType) {
       case $e.ArticleFieldSearchType.DateRange:
         url += 'DateRange';
@@ -47,12 +47,12 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
       }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      var isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
-      var dateFromID = `${this._elementIdPrefix}_dateFrom`;
-      var dateToID = `${this._elementIdPrefix}_dateTo`;
+      let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+      let dateFromID = `${this._elementIdPrefix}_dateFrom`;
+      let dateToID = `${this._elementIdPrefix}_dateTo`;
 
       // полученную с сервера разметку добавить на страницу
-      var $containerElement = $(this._containerElement);
+      let $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
       // получить ссылки на dom-элеметы со значениями
@@ -61,7 +61,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
       $c.disableDateTimePicker(this._dateToElement);
 
       // назначить обработчик события change чекбоксу
-      var $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
+      let $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
       $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
       // запомнить ссылку на dom-элемент чекбокса
@@ -96,7 +96,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
   },
 
   get_filterDetails: function () {
-    var stateData = this.get_blockState().data;
+    let stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.isByValue) {
@@ -109,7 +109,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
   restore_blockState: function (state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
-        var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+        let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
         $isNullCheckBoxElement.prop('checked', state.isNull);
         $isNullCheckBoxElement.trigger('change');
         $isNullCheckBoxElement = null;
@@ -167,12 +167,12 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 
   dispose: function () {
     if (this._isNullCheckBoxElement) {
-      var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+      let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
       $isNullCheckBoxElement = null;
     }
 
-    var $containerElement = $(this._containerElement);
+    let $containerElement = $(this._containerElement);
     $(".radioButtonsList input[type='radio']", $containerElement).unbind();
     $containerElement = null;
 

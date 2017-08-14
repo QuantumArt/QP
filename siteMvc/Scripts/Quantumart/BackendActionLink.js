@@ -108,9 +108,9 @@ Quantumart.QP8.BackendActionLink.prototype = {
   _onActionExecutingHandler: null,
 
   initialize: function () {
-    var $actionLink = jQuery(`#${this._actionLinkElementId}`);
-    var $iconWrapper = $actionLink.find('SPAN.icon:first');
-    var $caption = $actionLink.find('SPAN.text:first');
+    let $actionLink = jQuery(`#${this._actionLinkElementId}`);
+    let $iconWrapper = $actionLink.find('SPAN.icon:first');
+    let $caption = $actionLink.find('SPAN.text:first');
 
     this._actionLinkElement = $actionLink.get(0);
     this._iconWrapperElement = $iconWrapper.get(0);
@@ -120,7 +120,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
   },
 
   _attachActionLinkEventHandlers: function () {
-    var $link = jQuery(this._actionLinkElement);
+    let $link = jQuery(this._actionLinkElement);
     $link.bind('click', this._onActionExecutingHandler);
     $link.bind('mouseup', this._onActionExecutingHandler);
 
@@ -128,7 +128,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
   },
 
   _detachActionLinkEventHandlers: function () {
-    var $link = jQuery(this._actionLinkElement);
+    let $link = jQuery(this._actionLinkElement);
     $link.unbind('click', this._onActionExecutingHandler);
     $link.unbind('mouseup', this._onActionExecutingHandler);
 
@@ -136,22 +136,22 @@ Quantumart.QP8.BackendActionLink.prototype = {
   },
 
   markActionLinkAsBusy: function () {
-    var $link = jQuery(this._actionLinkElement);
+    let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').addClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
   },
 
   unmarkActionLinkAsBusy: function () {
-    var $link = jQuery(this._actionLinkElement);
+    let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').removeClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
   },
 
   isActionLinkBusy: function () {
-    var $link = jQuery(this._actionLinkElement);
-    var isBusy = $link.find('A:first').hasClass(this.ACTION_LINK_BUSY_CLASS_NAME);
+    let $link = jQuery(this._actionLinkElement);
+    let isBusy = $link.find('A:first').hasClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
 
@@ -159,22 +159,22 @@ Quantumart.QP8.BackendActionLink.prototype = {
   },
 
   enableActionLink: function () {
-    var $link = jQuery(this._actionLinkElement);
+    let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').removeClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
 
     $link = null;
   },
 
   disableActionLink: function () {
-    var $link = jQuery(this._actionLinkElement);
+    let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').addClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
 
     $link = null;
   },
 
   isActionLinkDisabled: function () {
-    var $link = jQuery(this._actionLinkElement);
-    var isDisabled = $link.find('A:first').hasClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
+    let $link = jQuery(this._actionLinkElement);
+    let isDisabled = $link.find('A:first').hasClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
 
     $link = null;
 
@@ -183,15 +183,15 @@ Quantumart.QP8.BackendActionLink.prototype = {
 
   onActionExecuting: function (e) {
     e.preventDefault();
-    var isLeftClick = e.type == 'click' && (e.which == 1 || e.which == 0);
-    var isMiddleClick = e.type == 'mouseup' && e.which == 2;
+    let isLeftClick = e.type == 'click' && (e.which == 1 || e.which == 0);
+    let isMiddleClick = e.type == 'mouseup' && e.which == 2;
     if (!this.isActionLinkDisabled() && !this.isActionLinkBusy() && (isLeftClick || isMiddleClick)) {
-      var actionTargetType = this._actionTargetType;
+      let actionTargetType = this._actionTargetType;
       if (!$q.isNull(actionTargetType)) {
-        var actionCode = this._actionCode;
-        var action = $a.getBackendActionByCode(actionCode);
+        let actionCode = this._actionCode;
+        let action = $a.getBackendActionByCode(actionCode);
         if (action) {
-          var params = new Quantumart.QP8.BackendActionParameters({
+          let params = new Quantumart.QP8.BackendActionParameters({
             entityId: this._entityId,
             entityName: this._entityName,
             parentEntityId: this._parentEntityId,
@@ -201,7 +201,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
           });
 
           params.correct(action);
-          var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+          let eventArgs = $a.getEventArgsFromActionWithParams(action, params);
 
           if (action.ActionType.Code === window.ACTION_TYPE_CODE_ADD_NEW) {
             eventArgs.set_context(Object.assign({ ctrlKey: e.ctrlKey || isMiddleClick }, eventArgs.get_context()));

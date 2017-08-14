@@ -13,9 +13,9 @@ Quantumart.QP8.BackendActionPermissionViewManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    var entityTypeCode = eventArgs.get_entityTypeCode();
-    var parentEntityId = eventArgs.get_parentEntityId();
-    var actionCode = eventArgs.get_actionCode();
+    let entityTypeCode = eventArgs.get_entityTypeCode();
+    let parentEntityId = eventArgs.get_parentEntityId();
+    let actionCode = eventArgs.get_actionCode();
     if (eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving()) {
       if (entityTypeCode == window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION || entityTypeCode == window.ENTITY_TYPE_CODE_ACTION_PERMISSION) {
         this._viewComponent.get_Tree().refreshPermissionNode(entityTypeCode, parentEntityId);

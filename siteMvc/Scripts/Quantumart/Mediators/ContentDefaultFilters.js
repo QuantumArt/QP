@@ -1,21 +1,21 @@
 Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
-  var $parentElement = jQuery(`#${parentElementId}`);
-  var $siteCombo = $parentElement.find('.qp-deffilter-site');
-  var contentPicker = $parentElement.find('.qp-deffilter-content').data('entity_data_list_component');
-  var articlePicker = $parentElement.find('.qp-deffilter-articles').data('entity_data_list_component');
+  let $parentElement = jQuery(`#${parentElementId}`);
+  let $siteCombo = $parentElement.find('.qp-deffilter-site');
+  let contentPicker = $parentElement.find('.qp-deffilter-content').data('entity_data_list_component');
+  let articlePicker = $parentElement.find('.qp-deffilter-articles').data('entity_data_list_component');
 
   $siteCombo.change(jQuery.proxy(() => {
     contentPicker.deselectAllListItems();
     contentPicker.set_parentEntityId(+$siteCombo.val() || 0);
   }, this));
 
-  var onContentSelectedHandler = jQuery.proxy(() => {
+  let onContentSelectedHandler = jQuery.proxy(() => {
     if (contentPicker.getSelectedListItemCount() === 0) {
       articlePicker.disableList();
       articlePicker.removeAllListItems();
       articlePicker.set_parentEntityId(0);
     } else {
-      var selectedContent = contentPicker.getSelectedEntityIDs()[0];
+      let selectedContent = contentPicker.getSelectedEntityIDs()[0];
       articlePicker.enableList();
       if (articlePicker.get_parentEntityId() !== selectedContent) {
         articlePicker.removeAllListItems();

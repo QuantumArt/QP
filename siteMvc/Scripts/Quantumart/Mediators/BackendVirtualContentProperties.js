@@ -1,9 +1,9 @@
 Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectElementId, joinFieldsTreeElementId) {
-  var contentPicker = $(`#${joinContentSelectElementId}`).data('entity_data_list_component'),
-    entityTreeComponent = Quantumart.QP8.BackendEntityTreeManager.getInstance().getTree(joinFieldsTreeElementId);
+  let contentPicker = $(`#${joinContentSelectElementId}`).data('entity_data_list_component');
+  let entityTreeComponent = Quantumart.QP8.BackendEntityTreeManager.getInstance().getTree(joinFieldsTreeElementId);
 
   function onRelatedToChanged() {
-    var selectedContentId = contentPicker.getSelectedEntityIDs()[0];
+    let selectedContentId = contentPicker.getSelectedEntityIDs()[0];
     entityTreeComponent.set_parentEntityId(selectedContentId);
     entityTreeComponent.set_selectedEntitiesIDs([]);
     entityTreeComponent.refreshTree();
@@ -23,9 +23,9 @@ Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectEle
 };
 
 Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (unionSourcePanelElementId, buildParamsPanelElementId, unionSourcesElementId) {
-  var $unionSourcePanelElement = $(`#${unionSourcePanelElementId}`),
-    $buildParamsPanelElement = $(`#${buildParamsPanelElementId}`),
-    unionSourcesComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(`${unionSourcesElementId}_list`);
+  let $unionSourcePanelElement = $(`#${unionSourcePanelElementId}`);
+  let $buildParamsPanelElement = $(`#${buildParamsPanelElementId}`);
+  let unionSourcesComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(`${unionSourcesElementId}_list`);
 
   function onUnionTypeSelected() {
     unionSourcesComponent._fixListOverflow();

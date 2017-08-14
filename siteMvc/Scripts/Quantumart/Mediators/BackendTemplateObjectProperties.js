@@ -1,15 +1,15 @@
 window.CONTENT_CHANGE_TRACK_SELECTORS = '.containerContentSelector .singleItemPicker';
 Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId) {
-  var $componentElem = jQuery(`#${rootElementId}`);
-  var $parentObjectSelector = $componentElem.find('.parentTemplateObjectsSelector');
-  var $nameField = $componentElem.find('.name');
-  var $netNameField = $componentElem.find('.netName');
-  var $overrideChkbx = $componentElem.find('.overrideChkbx');
-  var $globalChkbx = $componentElem.find('.globalChkbx');
-  var $typeSelector = $componentElem.find('.typeDlist');
-  var $statusSelector = $componentElem.find('.multipleItemPicker');
-  var $selectionIsStarting = $componentElem.find('.selection-is-starting .radioButtonsList');
-  var $selectionIncludes = $componentElem.find('.selection-includes .radioButtonsList');
+  let $componentElem = jQuery(`#${rootElementId}`);
+  let $parentObjectSelector = $componentElem.find('.parentTemplateObjectsSelector');
+  let $nameField = $componentElem.find('.name');
+  let $netNameField = $componentElem.find('.netName');
+  let $overrideChkbx = $componentElem.find('.overrideChkbx');
+  let $globalChkbx = $componentElem.find('.globalChkbx');
+  let $typeSelector = $componentElem.find('.typeDlist');
+  let $statusSelector = $componentElem.find('.multipleItemPicker');
+  let $selectionIsStarting = $componentElem.find('.selection-is-starting .radioButtonsList');
+  let $selectionIncludes = $componentElem.find('.selection-includes .radioButtonsList');
 
   $componentElem.on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, window.CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
   $parentObjectSelector.change($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
@@ -31,14 +31,14 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
         },
         true, false).done(
         (data) => {
-          var newFields = data.fields.split(',');
-          var newStatuses = data.statuses;
-          var publishedStatusId = $statusSelector.data('published-id');
-          var vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
+          let newFields = data.fields.split(',');
+          let newStatuses = data.statuses;
+          let publishedStatusId = $statusSelector.data('published-id');
+          let vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
 
           if (vm.fields) {
             vm.fields.removeAll();
-            for (var i in newFields) {
+            for (let i in newFields) {
               vm.fields.push(newFields[i]);
             }
           }
@@ -63,8 +63,8 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
 
   function onParentTemplateObjectChanged() {
     if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
-      var objId = $parentObjectSelector.val();
-      var targetObj = $(this.data('objects')).filter(function () {
+      let objId = $parentObjectSelector.val();
+      let targetObj = $(this.data('objects')).filter(function () {
         return this.Id == objId;
       })[0];
       $nameField.val(targetObj.Name);

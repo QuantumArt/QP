@@ -1,11 +1,11 @@
 Quantumart.QP8.BackendEntityObject = function () {};
 Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function (entityTypeCode, entityId, loadChilds, filter, successHandler, errorHandler) {
-  var actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetByTypeAndIdForTree`;
-  var params = { entityTypeCode: entityTypeCode, entityId: entityId, loadChilds: loadChilds, filter: filter };
+  let actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetByTypeAndIdForTree`;
+  let params = { entityTypeCode: entityTypeCode, entityId: entityId, loadChilds: loadChilds, filter: filter };
   if ($q.isFunction(successHandler)) {
     $q.getJsonFromUrl('GET', actionUrl, params, false, false, successHandler, errorHandler);
   } else {
-    var entity = null;
+    let entity = null;
     $q.getJsonFromUrl('GET', actionUrl, params, false, false, (data) => {
       entity = data;
     }, (jqXHR) => {
@@ -18,7 +18,7 @@ Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function (entit
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityChildList = function (ajaxParams, successHandler, errorHandler) {
-  var actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetChildList`;
+  let actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetChildList`;
   if (!$q.isNullOrEmpty(ajaxParams.selectItemIDs)) {
     ajaxParams.selectItemIDs = ajaxParams.selectItemIDs.join(',');
   }
@@ -26,7 +26,7 @@ Quantumart.QP8.BackendEntityObject.getEntityChildList = function (ajaxParams, su
   if ($q.isFunction(successHandler)) {
     $q.getJsonFromUrl('POST', actionUrl, ajaxParams, false, false, successHandler, errorHandler);
   } else {
-    var entities = null;
+    let entities = null;
 
     $q.getJsonFromUrl('POST', actionUrl, ajaxParams, false, false, (data) => {
       entities = data;
@@ -40,8 +40,8 @@ Quantumart.QP8.BackendEntityObject.getEntityChildList = function (ajaxParams, su
 };
 
 Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function (entityTypeCode, parentEntityId, entityId, listId, selectionMode, selectedEntitiesIDs, filter, testEntityId) {
-  var actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetSimpleList`;
-  var params = {
+  let actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetSimpleList`;
+  let params = {
     entityTypeCode: entityTypeCode,
     parentEntityId: parentEntityId,
     entityId: entityId,
@@ -52,7 +52,7 @@ Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function (entityTypeCod
     testEntityId: testEntityId
   };
 
-  var entities = [];
+  let entities = [];
   $q.getJsonFromUrl('POST', actionUrl, params, false, false, (data) => {
     if (data && data.ErrorMessage) {
       $q.alertError(data.ErrorMessage);
@@ -68,7 +68,7 @@ Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function (entityTypeCod
 };
 
 Quantumart.QP8.BackendEntityObject.makeSimpleCall = function (verb, method, params) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl(verb, method, params, false, false, (data) => {
     result = data;
   }, (jqXHR) => {
@@ -80,7 +80,7 @@ Quantumart.QP8.BackendEntityObject.makeSimpleCall = function (verb, method, para
 };
 
 Quantumart.QP8.BackendEntityObject.checkEntityExistence = function (entityTypeCode, entityId) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}CheckExistence`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId
@@ -95,7 +95,7 @@ Quantumart.QP8.BackendEntityObject.checkEntityExistence = function (entityTypeCo
 };
 
 Quantumart.QP8.BackendEntityObject.checkEntityForPresenceSelfRelations = function (entityTypeCode, entityId) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}CheckPresenceSelfRelations`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId
@@ -110,7 +110,7 @@ Quantumart.QP8.BackendEntityObject.checkEntityForPresenceSelfRelations = functio
 };
 
 Quantumart.QP8.BackendEntityObject.checkEntityForVariations = function (entityTypeCode, entityId) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}CheckForVariations`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId
@@ -125,7 +125,7 @@ Quantumart.QP8.BackendEntityObject.checkEntityForVariations = function (entityTy
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityName = function (entityTypeCode, entityId, parentEntityId) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetName`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId,
@@ -141,7 +141,7 @@ Quantumart.QP8.BackendEntityObject.getEntityName = function (entityTypeCode, ent
 };
 
 Quantumart.QP8.BackendEntityObject.getParentEntityId = function (entityTypeCode, entityId) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentId`, {
     entityTypeCode: entityTypeCode,
     entityId: +entityId || 0
@@ -156,7 +156,7 @@ Quantumart.QP8.BackendEntityObject.getParentEntityId = function (entityTypeCode,
 };
 
 Quantumart.QP8.BackendEntityObject.getParentIdsForTree = function (entityTypeCode, ids) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentIdsForTree`, {
     entityTypeCode: entityTypeCode,
     ids: ids
@@ -171,7 +171,7 @@ Quantumart.QP8.BackendEntityObject.getParentIdsForTree = function (entityTypeCod
 };
 
 Quantumart.QP8.BackendEntityObject.getParentInfo = function (entityTypeCode, entityId, parentEntityId) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentInfo`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId,
@@ -209,7 +209,7 @@ Quantumart.QP8.BackendEntityObject.getArticleIdByFieldValue = function (contentI
 };
 
 Quantumart.QP8.BackendEntityObject.getParentsChain = function (entityTypeCode, entityId, parentEntityId) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentsChain`, {
     entityTypeCode: entityTypeCode,
     entityId: entityId,
@@ -225,7 +225,7 @@ Quantumart.QP8.BackendEntityObject.getParentsChain = function (entityTypeCode, e
 };
 
 Quantumart.QP8.BackendEntityObject.checkEntitiesForPresenceEmptyNames = function (entities) {
-  var isEmpty = false;
+  let isEmpty = false;
   $.each(entities, (index, entity) => {
     if ($q.isNullOrWhiteSpace(entity.Name)) {
       isEmpty = true;
@@ -249,9 +249,9 @@ Quantumart.QP8.BackendEntityObject.getEntityNamesFromEntities = function (entiti
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function (entities) {
-  var count = entities.length;
+  let count = entities.length;
   return $.map(entities, (elem, index) => {
-    var prefix = '';
+    let prefix = '';
     if (index > 0) {
       if (index == (count - 1)) {
         prefix = ` ${$l.Common.andUnion.toLowerCase()} `;
@@ -265,12 +265,12 @@ Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function (
 };
 
 Quantumart.QP8.BackendEntityObject.isTreeViewTypeAllowed = function (entityTypeCode, parentEntityId, action) {
-  var result = false;
+  let result = false;
   if (action && !$q.isNullOrEmpty(action.Views)) {
-    var views = action.Views;
-    var treeViewTypeExist = false;
-    for (var viewIndex = 0; viewIndex < views.length; viewIndex++) {
-      var view = views[viewIndex];
+    let views = action.Views;
+    let treeViewTypeExist = false;
+    for (let viewIndex = 0; viewIndex < views.length; viewIndex++) {
+      let view = views[viewIndex];
       if (view.ViewType.Code == window.VIEW_TYPE_CODE_TREE) {
         treeViewTypeExist = true;
         break;
@@ -287,7 +287,7 @@ Quantumart.QP8.BackendEntityObject.isTreeViewTypeAllowed = function (entityTypeC
 };
 
 Quantumart.QP8.BackendEntityObject.getContextQuery = function (contentId, currentContext) {
-  var result = null;
+  let result = null;
   $q.getJsonFromUrl('GET', 'Article/GetContextQuery', {
     id: contentId,
     currentContext: currentContext

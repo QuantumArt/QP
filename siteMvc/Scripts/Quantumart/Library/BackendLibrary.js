@@ -140,7 +140,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     this._fileGrid.attachObserver(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, $.proxy(this._onActionExecutingHandler, this));
     this._fileGrid.initialize();
 
-    var options = { selectMode: this._allowMultipleSelection ? window.FILE_LIST_SELECT_MODE_MULTIPLE : window.FILE_LIST_SELECT_MODE_SINGLE, zIndex: this._zIndex };
+    let options = { selectMode: this._allowMultipleSelection ? window.FILE_LIST_SELECT_MODE_MULTIPLE : window.FILE_LIST_SELECT_MODE_SINGLE, zIndex: this._zIndex };
 
     this._fileList = new Quantumart.QP8.BackendFileList(`#${this._fileContainers[window.VIEW_TYPE_CODE_LIST].attr('id')}`, this._fileEntityTypeCode, this._actionCode, this._fileEntityTypeCode, window.FILE_LIST_MODE_NAME_LIST, options);
     this._fileList.attachObserver(window.EVENT_TYPE_FILE_LIST_SELECTED, $.proxy(this._onFileSelectedHandler, this));
@@ -154,7 +154,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     this._filePreviewList.attachObserver(window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING, $.proxy(this._onActionExecutingHandler, this));
     this._filePreviewList.initialize();
 
-    var fileExtensions = '';
+    let fileExtensions = '';
 
     if (this._isFilterFileTypeIdDefined === true) {
       fileExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[`${this._filterFileTypeId}`];
@@ -204,15 +204,15 @@ Quantumart.QP8.BackendLibrary.prototype = {
   },
 
   showCurrentFileList: function () {
-    for (var code in this._fileContainers) {
-      var containerToHide = this._fileContainers[code];
+    for (let code in this._fileContainers) {
+      let containerToHide = this._fileContainers[code];
 
       if (containerToHide) {
         containerToHide.hide();
       }
     }
 
-    var containerToShow = this._fileContainers[this._viewTypeCode];
+    let containerToShow = this._fileContainers[this._viewTypeCode];
 
     if (containerToShow) {
       containerToShow.show();
@@ -271,10 +271,10 @@ Quantumart.QP8.BackendLibrary.prototype = {
   },
 
   _onFolderSelectedHandler: function (eventType, sender, eventArgs) {
-    var entities = eventArgs.get_entities();
+    let entities = eventArgs.get_entities();
 
     if (entities.length > 0) {
-      var id = entities[0].Id;
+      let id = entities[0].Id;
 
       if (this._folderId != id) {
         this._folderId = id;
@@ -326,13 +326,13 @@ Quantumart.QP8.BackendLibrary.prototype = {
   },
 
   _onActionExecutingHandler: function (eventType, sender, eventArgs) {
-    var action = $a.getBackendActionByCode(eventArgs.get_actionCode());
+    let action = $a.getBackendActionByCode(eventArgs.get_actionCode());
 
     if (action) {
-      var params = new Quantumart.QP8.BackendActionParameters({ eventArgs: eventArgs });
+      let params = new Quantumart.QP8.BackendActionParameters({ eventArgs: eventArgs });
 
       params.correct(action);
-      var newEventArgs = $a.getEventArgsFromActionWithParams(action, params);
+      let newEventArgs = $a.getEventArgsFromActionWithParams(action, params);
 
       newEventArgs.set_context(this._libraryPath);
       this.notify(window.EVENT_TYPE_LIBRARY_ACTION_EXECUTING, newEventArgs);
@@ -346,7 +346,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
   },
 
   _loadFolderPath: function () {
-    var url = '';
+    let url = '';
     if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
       url = `${window.CONTROLLER_URL_SITE}_FolderPath`;
     } else if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
@@ -355,7 +355,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
       throw new Error('fileEntityTypeCode is unknown.');
     }
 
-    var self = this;
+    let self = this;
 
     $q.getJsonFromUrl(
       'GET',
@@ -458,10 +458,10 @@ Quantumart.QP8.BackendLibrary.prototype = {
 };
 
 Quantumart.QP8.BackendLibrary.generateActionUrl = function (actionName, urlParams) {
-  var result = '';
+  let result = '';
 
   if (urlParams) {
-    var html = new $.telerik.stringBuilder();
+    let html = new $.telerik.stringBuilder();
 
     html.cat(window.APPLICATION_ROOT_URL);
     html.cat('/Library/');

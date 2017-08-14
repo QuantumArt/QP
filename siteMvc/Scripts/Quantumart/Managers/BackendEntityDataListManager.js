@@ -7,13 +7,13 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   _valueStorage: {},
 
   generateListGroupCode: function (entityTypeCode, parentEntityId) {
-    var listGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
+    let listGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
     return listGroupCode;
   },
 
   getListGroup: function (listGroupCode) {
-    var listGroup = null;
+    let listGroup = null;
     if (this._listGroups[listGroupCode]) {
       listGroup = this._listGroups[listGroupCode];
     }
@@ -22,7 +22,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   createListGroup: function (listGroupCode) {
-    var listGroup = this.getListGroup(listGroupCode);
+    let listGroup = this.getListGroup(listGroupCode);
     if (!listGroup) {
       listGroup = {};
       this._listGroups[listGroupCode] = listGroup;
@@ -32,19 +32,19 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   refreshListGroup: function (entityTypeCode, parentEntityId, testEntityId) {
-    var listGroup = this.getListGroup(this.generateListGroupCode(entityTypeCode, parentEntityId));
+    let listGroup = this.getListGroup(this.generateListGroupCode(entityTypeCode, parentEntityId));
     if (listGroup) {
-      for (var listElementId in listGroup) {
+      for (let listElementId in listGroup) {
         this.refreshList(listElementId, testEntityId);
       }
     }
   },
 
   getList: function (listElementId) {
-    var list = null;
+    let list = null;
 
-    for (var listGroupCode in this._listGroups) {
-      var listGroup = this._listGroups[listGroupCode];
+    for (let listGroupCode in this._listGroups) {
+      let listGroup = this._listGroups[listGroupCode];
       if (listGroup[listElementId]) {
         list = listGroup[listElementId];
       }
@@ -54,9 +54,9 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   createList: function (listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
-    var listGroupCode = this.generateListGroupCode(entityTypeCode, parentEntityId);
+    let listGroupCode = this.generateListGroupCode(entityTypeCode, parentEntityId);
 
-    var list = null;
+    let list = null;
     if (listType == Quantumart.QP8.Enums.DataListType.DropDownList) {
       list = new Quantumart.QP8.BackendEntityDropDownList(listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options);
     } else if (listType == Quantumart.QP8.Enums.DataListType.CheckBoxList) {
@@ -71,7 +71,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
       list.set_listManagerComponent(this);
       list.initialize();
 
-      var listGroup = this.createListGroup(listGroupCode);
+      let listGroup = this.createListGroup(listGroupCode);
       listGroup[listElementId] = list;
     } else {
       $q.alertError('Данный тип списка не поддерживается!');
@@ -81,7 +81,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   refreshList: function (listElementId, testEntityId) {
-    var list = this.getList(listElementId);
+    let list = this.getList(listElementId);
     if (list) {
       list.refreshList(testEntityId);
     }
@@ -90,10 +90,10 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   removeList: function (listElementId) {
-    var list = this.getList(listElementId);
+    let list = this.getList(listElementId);
     if (list) {
-      var listGroupCode = list.get_listGroupCode();
-      var listGroup = this.getListGroup(listGroupCode);
+      let listGroupCode = list.get_listGroupCode();
+      let listGroup = this.getListGroup(listGroupCode);
 
       delete this._listGroups[listGroupCode][listElementId];
 
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   destroyList: function (listElementId) {
-    var list = this.getList(listElementId);
+    let list = this.getList(listElementId);
     if (list != null) {
       if (list.dispose) {
         list.dispose();
@@ -113,10 +113,10 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    var entityTypeCode = eventArgs.get_entityTypeCode();
-    var parentEntityId = eventArgs.get_parentEntityId();
-    var actionTypeCode = eventArgs.get_actionTypeCode();
-    var testEntityId = 0;
+    let entityTypeCode = eventArgs.get_entityTypeCode();
+    let parentEntityId = eventArgs.get_parentEntityId();
+    let actionTypeCode = eventArgs.get_actionTypeCode();
+    let testEntityId = 0;
     if (eventArgs.get_isSaved() || eventArgs.get_isUpdated()) {
       testEntityId = eventArgs.get_entityId();
     }
@@ -147,7 +147,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
 
     if (this._listGroups) {
       for (let listGroupCode in this._listGroups) {
-        var listGroup = this._listGroups[listGroupCode];
+        let listGroup = this._listGroups[listGroupCode];
         Object.keys(listGroup).forEach(this.destroyList);
         delete this._listGroups[listGroupCode];
       }

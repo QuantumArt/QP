@@ -23,13 +23,13 @@ Quantumart.QP8.BackendLogin.prototype = {
     jQuery('#IsSilverlightInstalled').val(Silverlight.isInstalled(null) == true ? 'True' : 'False');
 
     if (this._useSavedCustomerCode) {
-      var isValid = jQuery('.validation-summary-errors').length == 0;
+      let isValid = jQuery('.validation-summary-errors').length == 0;
 
       if (!isValid) {
         this.removeCustomerCode();
       } else {
-        var value = localStorage.getItem(this.storageKey);
-        var isIntegratedLogin = jQuery('#UserName').length == 0;
+        let value = localStorage.getItem(this.storageKey);
+        let isIntegratedLogin = jQuery('#UserName').length == 0;
 
         if (isIntegratedLogin) {
           if (!value) {

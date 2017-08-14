@@ -40,13 +40,13 @@ Quantumart.QP8.LibraryPopupWindow.prototype
     _librarySelectedHandler: function (eventType, sender, args) {
       this.closeWindow();
       if (args) {
-        var entities = args.entities;
+        let entities = args.entities;
         if (entities.length > 0) {
-          var folderUrl = args.context;
+          let folderUrl = args.context;
           if (folderUrl.charAt(0) == '\\') {
             folderUrl = folderUrl.substring(1, folderUrl.length);
           }
-          var imgUrl = '';
+          let imgUrl = '';
           if (this._options.contentId != 0) {
             imgUrl = `${this._options.libraryUrl.replace('images/', '')}contents/${this._options.contentId}/${folderUrl}${entities[0].Name}`;
           } else {

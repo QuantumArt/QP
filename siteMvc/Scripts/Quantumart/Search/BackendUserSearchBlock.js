@@ -7,14 +7,14 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
   _maxSearchBlockHeight: 145,
 
   get_searchQuery: function () {
-    var $root = $(this._concreteSearchBlockElement);
+    let $root = $(this._concreteSearchBlockElement);
 
-    var login = $('.login', $root).val();
-    var email = $('.email', $root).val();
-    var firstName = $('.firstName', $root).val();
-    var lastName = $('.lastName', $root).val();
+    let login = $('.login', $root).val();
+    let email = $('.email', $root).val();
+    let firstName = $('.firstName', $root).val();
+    let lastName = $('.lastName', $root).val();
 
-    var query = JSON.stringify({
+    let query = JSON.stringify({
       Login: login,
       Email: email,
       FirstName: firstName,
@@ -37,7 +37,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
       )
         .done($.proxy(function (data) {
           if (data.success) {
-            var serverContent = data.view;
+            let serverContent = data.view;
             $(this._concreteSearchBlockElement).html(serverContent);
             this.set_isRendered(true);
           } else {
@@ -51,13 +51,13 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
   },
 
   _onFindButtonClick: function () {
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
+    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 
   _onResetButtonClick: function () {
     $('.csFilterTextbox', this._concreteSearchBlockElement).val('');
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
+    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
   },
 

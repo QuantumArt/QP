@@ -14,7 +14,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   getGridGroup: function (gridGroupCode) {
-    var gridGroup = null;
+    let gridGroup = null;
 
     if (this._gridGroups[gridGroupCode]) {
       gridGroup = this._gridGroups[gridGroupCode];
@@ -24,7 +24,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   createGridGroup: function (gridGroupCode) {
-    var gridGroup = this.getGridGroup(gridGroupCode);
+    let gridGroup = this.getGridGroup(gridGroupCode);
 
     if (!gridGroup) {
       gridGroup = {};
@@ -35,10 +35,10 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   refreshGridGroup: function (entityTypeCode, parentEntityId, options) {
-    var gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
+    let gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
 
     if (gridGroup) {
-      for (var gridElementId in gridGroup) {
+      for (let gridElementId in gridGroup) {
         this.refreshGrid(gridElementId, options);
       }
     }
@@ -47,11 +47,11 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   refreshGridGroupWithChecking: function (entityTypeCode, parentEntityId, entityId) {
-    var gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
+    let gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
 
     if (gridGroup) {
-      for (var gridElementId in gridGroup) {
-        var grid = this.getGrid(gridElementId);
+      for (let gridElementId in gridGroup) {
+        let grid = this.getGrid(gridElementId);
 
         if (grid && grid.checkExistEntityInCurrentPage(entityId)) {
           grid.refreshGrid();
@@ -61,10 +61,10 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   resetGridGroup: function (gridGroupCode, options) {
-    var gridGroup = this.getGridGroup(gridGroupCode);
+    let gridGroup = this.getGridGroup(gridGroupCode);
 
     if (gridGroup) {
-      for (var gridElementId in gridGroup) {
+      for (let gridElementId in gridGroup) {
         this.resetGrid(gridElementId, options);
       }
     }
@@ -77,10 +77,10 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   getGrid: function (gridElementId) {
-    var grid = null;
+    let grid = null;
 
-    for (var gridGroupCode in this._gridGroups) {
-      var gridGroup = this._gridGroups[gridGroupCode];
+    for (let gridGroupCode in this._gridGroups) {
+      let gridGroup = this._gridGroups[gridGroupCode];
 
       if (gridGroup[gridElementId]) {
         grid = gridGroup[gridElementId];
@@ -92,18 +92,18 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   createGrid: function (gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
-    var gridGroupCode = this.generateGridGroupCode(entityTypeCode, parentEntityId);
-    var actionGroupCode = this.generateGridGroupCode(actionCode, parentEntityId);
-    var actionSimpleGroupCode = this.generateGridGroupCode(actionCode);
+    let gridGroupCode = this.generateGridGroupCode(entityTypeCode, parentEntityId);
+    let actionGroupCode = this.generateGridGroupCode(actionCode, parentEntityId);
+    let actionSimpleGroupCode = this.generateGridGroupCode(actionCode);
 
-    var grid = new Quantumart.QP8.BackendEntityGrid([
+    let grid = new Quantumart.QP8.BackendEntityGrid([
       gridGroupCode,
       actionGroupCode,
       actionSimpleGroupCode
     ], gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions);
 
     grid.set_gridManager(this);
-    var gridGroup = this.createGridGroup(gridGroupCode);
+    let gridGroup = this.createGridGroup(gridGroupCode);
 
     gridGroup[gridElementId] = grid;
     gridGroup = this.createGridGroup(actionGroupCode);
@@ -115,28 +115,28 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   refreshGrid: function (gridElementId, options) {
-    var grid = this.getGrid(gridElementId);
+    let grid = this.getGrid(gridElementId);
     if (grid) {
       grid.refreshGrid(options);
     }
   },
 
   resetGrid: function (gridElementId, options) {
-    var grid = this.getGrid(gridElementId);
+    let grid = this.getGrid(gridElementId);
     if (grid) {
       grid.resetGrid(options);
     }
   },
 
   removeGrid: function (gridElementId) {
-    var grid = this.getGrid(gridElementId);
+    let grid = this.getGrid(gridElementId);
 
     if (grid) {
-      var gridGroupCodes = grid.get_gridGroupCodes();
-      var that = this;
+      let gridGroupCodes = grid.get_gridGroupCodes();
+      let that = this;
 
       jQuery.each(gridGroupCodes, (i, gridGroupCode) => {
-        var gridGroup = that.getGridGroup(gridGroupCode);
+        let gridGroup = that.getGridGroup(gridGroupCode);
 
         $q.removeProperty(gridGroup, gridElementId);
         if ($q.getHashKeysCount(gridGroup) == 0) {
@@ -147,7 +147,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   destroyGrid: function (gridElementId) {
-    var grid = this.getGrid(gridElementId);
+    let grid = this.getGrid(gridElementId);
     if (grid != null) {
       if (grid.dispose) {
         grid.dispose();
@@ -156,13 +156,13 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    var entityTypeCode = eventArgs.get_entityTypeCode();
+    let entityTypeCode = eventArgs.get_entityTypeCode();
 
     if (entityTypeCode != window.ENTITY_TYPE_CODE_SITE_FILE && entityTypeCode != window.ENTITY_TYPE_CODE_CONTENT_FILE) {
-      var parentEntityId = eventArgs.get_parentEntityId();
-      var actionTypeCode = eventArgs.get_actionTypeCode();
-      var actionCode = eventArgs.get_actionCode();
-      var entityId = eventArgs.get_entityId();
+      let parentEntityId = eventArgs.get_parentEntityId();
+      let actionTypeCode = eventArgs.get_actionTypeCode();
+      let actionCode = eventArgs.get_actionCode();
+      let entityId = eventArgs.get_entityId();
 
       if (eventArgs.get_isSaved()
         || actionTypeCode == window.ACTION_TYPE_CODE_COPY
@@ -171,10 +171,10 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
         || eventArgs.get_isArchiving()
         || eventArgs.get_isRestoring()
         || actionCode == window.ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
-        var options = null;
+        let options = null;
 
         if (eventArgs.get_isArchiving() || eventArgs.get_isRestoring() || eventArgs.get_isRemoving() || actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_UNLOCK) {
-          var removedIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [eventArgs.get_entityId()];
+          let removedIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [eventArgs.get_entityId()];
 
           options = { removedIds: removedIds };
         }
@@ -224,7 +224,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
 
     if (this._gridGroups) {
       for (let gridGroupCode in this._gridGroups) {
-        var gridGroup = this._gridGroups[gridGroupCode];
+        let gridGroup = this._gridGroups[gridGroupCode];
         Object.keys(gridGroup).forEach(this.destroyGrid);
       }
     }

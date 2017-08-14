@@ -7,7 +7,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (conta
 Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
   _contentElement: null,
   initialize: function () {
-    var serverContent;
+    let serverContent;
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}ContentsListForClassifier`, {
       elementIdPrefix: this._elementIdPrefix,
       fieldID: this._fieldID
@@ -23,17 +23,17 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     });
 
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      var isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
-      var contentID = `${this._elementIdPrefix}_contentID`;
+      let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+      let contentID = `${this._elementIdPrefix}_contentID`;
 
       // полученную с сервера разметку добавить на страницу
-      var $containerElement = $(this._containerElement);
+      let $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
-      var $content = $containerElement.find(`#${contentID}`);
+      let $content = $containerElement.find(`#${contentID}`);
 
       // назначить обработчик события change чекбоксу
-      var $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
+      let $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
       $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
       // запомнить ссылку на dom-элементы
@@ -45,7 +45,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
   },
 
   get_searchQuery: function () {
-    var contentObj = new Array($(this._contentElement).val());
+    let contentObj = new Array($(this._contentElement).val());
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(this._searchType, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, contentObj, this.get_IsNull(), false);
   },
 
@@ -57,7 +57,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    var stateData = this.get_blockState().data;
+    let stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.contentID) {
@@ -70,7 +70,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
   restore_blockState: function (state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
-        var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+        let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
         $isNullCheckBoxElement.prop('checked', state.isNull);
         $isNullCheckBoxElement.trigger('change');
         $isNullCheckBoxElement = null;
@@ -102,7 +102,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
 
   dispose: function () {
     if (this._isNullCheckBoxElement) {
-      var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+      let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
     }
 

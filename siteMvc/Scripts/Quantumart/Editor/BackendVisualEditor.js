@@ -3,8 +3,8 @@
 
 // eslint-disable-next-line no-extra-semi
 ; (function init() {
-  var getCkEditorConfig = function getCkEditorConfig(obj, opts) {
-    var defaultConfig = {
+  let getCkEditorConfig = function getCkEditorConfig(obj, opts) {
+    let defaultConfig = {
       language: 'ru',
       docType: '<!doctype html>',
       height: 340,
@@ -12,7 +12,7 @@
       shiftEnterMode: 1
     };
 
-    var config = {
+    let config = {
       language: opts.language || defaultConfig.language,
       defaultLanguage: opts.language || defaultConfig.language,
       contentsLanguage: opts.language || defaultConfig.language,
@@ -165,7 +165,7 @@
   };
 
   Quantumart.QP8.BackendVisualEditor = function BackendVisualEditor(componentElem) {
-    var $componentElem = $(componentElem);
+    let $componentElem = $(componentElem);
     this._$containerElem = $('.visualEditorContainer', $componentElem);
     this._componentElem = $componentElem.get(0);
     this._editorElem = $('.visualEditor', $componentElem).get(0);
@@ -198,8 +198,8 @@
     _checkIntervalID: null,
 
     initialize: function () {
-      var that = this;
-      var $editorLink;
+      let that = this;
+      let $editorLink;
       $(this._componentElem).data(Quantumart.QP8.BackendVisualEditor.DATA_KEY_COMPONENT, this);
       this._onChangeDataInDesignModeHandlerProxy = this._onChangeDataInDesignModeHandler.bind(this);
 
@@ -220,7 +220,7 @@
             siteId: that._siteId,
             fieldId: that._fieldId
           }, (data) => {
-            var instance = that.getCkEditor();
+            let instance = that.getCkEditor();
             if (instance) {
               that.disposeCKEditor(false);
             }
@@ -254,7 +254,7 @@
     },
 
     saveVisualEditorData: function () {
-      var editor = this.getCkEditor();
+      let editor = this.getCkEditor();
 
       if (editor) {
         editor.updateElement();
@@ -262,8 +262,8 @@
     },
 
     getZIndex: function () {
-      var $window = $(this._componentElem).closest('.t-window');
-      var zIndex = $window.length > 0 ? parseInt($window.css('zIndex'), 10) : 0;
+      let $window = $(this._componentElem).closest('.t-window');
+      let zIndex = $window.length > 0 ? parseInt($window.css('zIndex'), 10) : 0;
       return zIndex + 10000;
     },
 
@@ -289,7 +289,7 @@
     },
 
     disposeCKEditor: function (noUpdate) {
-      var editor, $editor, windowsToDipose, listenersToRemove;
+      let editor, $editor, windowsToDipose, listenersToRemove;
 
       if (this._checkIntervalID) {
         clearInterval(this._checkIntervalID);
@@ -323,8 +323,8 @@
     },
 
     _onCheckChangesIntervalHandler: function () {
-      var $field;
-      var editor = this.getCkEditor();
+      let $field;
+      let editor = this.getCkEditor();
 
       if (editor) {
         if (this._storedTempValue !== editor.getData()) {
@@ -342,7 +342,7 @@
     },
 
     _onChangeDataInDesignModeHandler: function () {
-      var editor = this.getCkEditor();
+      let editor = this.getCkEditor();
       if (editor) {
         if (editor.textarea) {
           editor.textarea.off('keyup').on('keyup', this._onChangeDataInSourceModeHandler, this);
@@ -364,7 +364,7 @@
     },
 
     _onCKEEditorInitialized: function (sender) {
-      var that = this;
+      let that = this;
       if (sender) {
         this._storedTempValue = sender.getData();
       }

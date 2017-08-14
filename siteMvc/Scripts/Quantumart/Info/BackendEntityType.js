@@ -1,7 +1,7 @@
 Quantumart.QP8.BackendEntityType = function () {};
 Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode) {
-  var cacheKey = `EntityTypeByEntityTypeCode_${entityTypeCode}`;
-  var entityType = Quantumart.QP8.Cache.getItem(cacheKey);
+  let cacheKey = `EntityTypeByEntityTypeCode_${entityTypeCode}`;
+  let entityType = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!entityType) {
     $q.getJsonFromUrl(
@@ -25,8 +25,8 @@ Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode)
 };
 
 Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
-  var cacheKey = `EntityTypeByEntityTypeId_${entityTypeId}`;
-  var entityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
+  let cacheKey = `EntityTypeByEntityTypeId_${entityTypeId}`;
+  let entityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!entityTypeCode) {
     $q.getJsonFromUrl(
@@ -50,8 +50,8 @@ Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
 };
 
 Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entityTypeCode) {
-  var cacheKey = `ParentEntityTypeCodeByEntityTypeCode_${entityTypeCode}`;
-  var parentEntityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
+  let cacheKey = `ParentEntityTypeCodeByEntityTypeCode_${entityTypeCode}`;
+  let parentEntityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!parentEntityTypeCode) {
     $q.getJsonFromUrl(
@@ -76,8 +76,8 @@ Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entit
 };
 
 Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = function () {
-  var cacheKey = 'EntityTypeIdToActionListItemDictionary';
-  var dictionary = Quantumart.QP8.Cache.getItem(cacheKey);
+  let cacheKey = 'EntityTypeIdToActionListItemDictionary';
+  let dictionary = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!dictionary) {
     $q.getJsonFromUrl(

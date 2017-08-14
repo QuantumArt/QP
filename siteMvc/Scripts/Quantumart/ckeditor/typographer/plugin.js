@@ -2,24 +2,24 @@
 
 // eslint-disable-next-line no-extra-semi
 ; (function init() {
-  var settings = {
+  let settings = {
     pluginName: 'Typographer',
     pluginDesc: 'Типографер',
     iconPath: '/Backend/Scripts/Quantumart/ckeditor/typographer/images/typographer.gif'
   };
 
   // eslint-disable-next-line max-statements
-  var fixWithRegexps = function fixWithRegexps(str, shouldUseEng) {
-    var fixToMdashFn;
-    var result = str;
-    var apostropheHtmlCode = '&#146;';
-    var numericHtmlCode = '&#8470;';
-    var extLeft = shouldUseEng ? '&ldquo;' : '&laquo;';
-    var extRight = shouldUseEng ? '&rdquo;' : '&raquo;';
-    var intLeft = shouldUseEng ? '&lsquo;' : '&bdquo;';
-    var intRight = shouldUseEng ? '&rsquo;' : '&ldquo;';
+  let fixWithRegexps = function fixWithRegexps(str, shouldUseEng) {
+    let fixToMdashFn;
+    let result = str;
+    let apostropheHtmlCode = '&#146;';
+    let numericHtmlCode = '&#8470;';
+    let extLeft = shouldUseEng ? '&ldquo;' : '&laquo;';
+    let extRight = shouldUseEng ? '&rdquo;' : '&raquo;';
+    let intLeft = shouldUseEng ? '&lsquo;' : '&bdquo;';
+    let intRight = shouldUseEng ? '&rsquo;' : '&ldquo;';
 
-    var quotesToReplace = [
+    let quotesToReplace = [
       '&quot;',
       '&ldquo;',
       '&rdquo;',
@@ -61,7 +61,7 @@
     }
 
     fixToMdashFn = function (input, symbol) {
-      var tempResult = input;
+      let tempResult = input;
       tempResult = tempResult.replace(new RegExp(` (${symbol}){1,2} `, 'g'), '&nbsp;&mdash; ');
       tempResult = tempResult.replace(new RegExp(`([>|\\s])${symbol} `, 'g'), '$1&mdash; ');
       tempResult = tempResult.replace(new RegExp(`^${symbol} `, 'g'), '&mdash; ');
@@ -120,11 +120,11 @@
     return result;
   };
 
-  var processHtml = function processHtml(str, shouldUseEng) {
-    var i = 0;
-    var result = str;
-    var regexp = /<([^>]*)>/;
-    var matches = result.match(/<([^>]*)>/g);
+  let processHtml = function processHtml(str, shouldUseEng) {
+    let i = 0;
+    let result = str;
+    let regexp = /<([^>]*)>/;
+    let matches = result.match(/<([^>]*)>/g);
     while (regexp.test(result)) {
       i += 1;
       result = result.replace(regexp, `\x01${i}\x02`);
@@ -160,7 +160,7 @@
 
       editor.addCommand(settings.pluginName, {
         exec: function (execEditor) {
-          var html, proccessedHtml;
+          let html, proccessedHtml;
           if (execEditor.mode === 'source' && execEditor.textarea) {
             html = execEditor.textarea.getValue();
             proccessedHtml = processHtml(html, execEditor.config.useEnglishQuotes);

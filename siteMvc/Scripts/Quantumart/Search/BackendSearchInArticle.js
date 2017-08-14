@@ -13,7 +13,7 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
   _documentContext: null,
 
   _onSearchButtonClick: function () {
-    var searchQuery = $(`#${this._searchBlockElementId} input.textbox`).val();
+    let searchQuery = $(`#${this._searchBlockElementId} input.textbox`).val();
     Quantumart.QP8.BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { searchQuery: searchQuery });
   },
 
@@ -22,20 +22,20 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
   },
 
   initialize: function () {
-    var $button = this._getButton();
+    let $button = this._getButton();
     $button.bind('click', this._onSearchButtonClickHandler);
     this._refreshQuery(this._initQuery);
   },
 
   refreshQuery: function (eventArgs) {
-    var context = eventArgs.get_context();
-    var query = context && context.additionalUrlParameters ? context.additionalUrlParameters.query : '';
+    let context = eventArgs.get_context();
+    let query = context && context.additionalUrlParameters ? context.additionalUrlParameters.query : '';
     this._documentContext.getHost()._additionalUrlParameters = null;
     this._refreshQuery(query);
   },
 
   _refreshQuery: function (query) {
-    var $button = this._getButton();
+    let $button = this._getButton();
     if (query) {
       $(`#${this._searchBlockElementId} input.textbox`).val(query);
       $button.trigger('click');

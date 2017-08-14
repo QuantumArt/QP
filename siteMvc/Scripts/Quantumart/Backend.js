@@ -214,15 +214,15 @@ Quantumart.QP8.Backend.prototype = {
 
     $.connection.singleUserMode.client.send = this._updateSingleUserMode;
     $.connection.hub.start().done(() => {
-      var hash = $('body').data('dbhash');
+      let hash = $('body').data('dbhash');
       $.connection.communication.server.addHash(hash);
     });
   },
 
   _updateSingleUserMode: function (data) {
-    var $elem = $('.singleusermode');
-    var userId = $('.userName').data('userid');
-    var message = '';
+    let $elem = $('.singleusermode');
+    let userId = $('.userName').data('userid');
+    let message = '';
 
     if (data == null) {
       $('form :input').prop('disabled', false);
@@ -270,7 +270,7 @@ Quantumart.QP8.Backend.prototype = {
     this._backendTreeMenu.fixTreeHeight(eventArgs.get_firstPaneHeight());
     this._backendEditingArea.get_tabStrip().fixTabStripWidth(eventArgs.get_firstPaneWidth());
 
-    var selDoc = this._backendEditingArea.getSelectedDocument();
+    let selDoc = this._backendEditingArea.getSelectedDocument();
     if (selDoc) {
       selDoc.fixActionToolbarWidth();
     }
@@ -311,8 +311,8 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _isMultistep: function (action, eventArgs) {
-    var entities = eventArgs.get_entities();
-    var limit = 1;
+    let entities = eventArgs.get_entities();
+    let limit = 1;
     if (action.EntityLimit) {
       limit = action.EntityLimit;
     }
@@ -321,12 +321,12 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _onActionExecuting: function (eventType, sender, eventArgs) {
-    var status = this._backendActionExecutor.executeSpecialAction(eventArgs),
-      that = this;
+    let status = this._backendActionExecutor.executeSpecialAction(eventArgs);
+    let that = this;
 
     if (status == window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING) {
-      var actionCode = eventArgs.get_actionCode();
-      var action = $a.getSelectedAction(actionCode);
+      let actionCode = eventArgs.get_actionCode();
+      let action = $a.getSelectedAction(actionCode);
 
       if ($q.isObject(action)) {
         if (action.IsInterface) {
@@ -343,7 +343,7 @@ Quantumart.QP8.Backend.prototype = {
           }).fail(() => { });
         } else {
           this._markAsBusy();
-          var callback = $.proxy(function (status, eventArgs) {
+          let callback = $.proxy(function (status, eventArgs) {
             if (status == window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
               this._onActionExecuted(eventArgs);
             }
@@ -411,11 +411,11 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   checkOpenDocumentByEventArgs: function (eventArgs) {
-    var tabsForEntity = this._backendTabStrip.getTabsByEventArgs(eventArgs);
-    var entityIsOpenedInTab = tabsForEntity && tabsForEntity.length > 0;
+    let tabsForEntity = this._backendTabStrip.getTabsByEventArgs(eventArgs);
+    let entityIsOpenedInTab = tabsForEntity && tabsForEntity.length > 0;
 
-    var windowsForEntity = this._backendPopupWindowManager.getPopupWindowByEventArgs(eventArgs);
-    var entityIsOpenedInWindow = windowsForEntity && windowsForEntity.length > 0;
+    let windowsForEntity = this._backendPopupWindowManager.getPopupWindowByEventArgs(eventArgs);
+    let entityIsOpenedInWindow = windowsForEntity && windowsForEntity.length > 0;
 
     if (entityIsOpenedInTab) {
       return String.format($l.Action.selectedDocumentIsOpenedInTab, eventArgs.get_entityId());
@@ -427,15 +427,15 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _loadHome: function () {
-    var action = $a.getBackendActionByCode('home');
-    var params = new Quantumart.QP8.BackendActionParameters({
+    let action = $a.getBackendActionByCode('home');
+    let params = new Quantumart.QP8.BackendActionParameters({
       entityTypeCode: 'db',
       entityId: 1,
       entityName: this._currentCustomerCode,
       parentEntityId: 0
     });
 
-    var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+    let eventArgs = $a.getEventArgsFromActionWithParams(action, params);
     this._onActionExecuting(null, this, eventArgs);
   },
 
@@ -581,7 +581,7 @@ Quantumart.QP8.Backend.prototype = {
 Quantumart.QP8.Backend._instance = null;
 
 Quantumart.QP8.Backend.getInstance = function (isDebugMode, options) {
-  var instance = Quantumart.QP8.Backend._instance;
+  let instance = Quantumart.QP8.Backend._instance;
   if (instance == null) {
     instance = new Quantumart.QP8.Backend(isDebugMode, options);
     Quantumart.QP8.Backend._instance = instance;

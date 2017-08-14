@@ -12,9 +12,9 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
     _contentNameElement: null,
 
     get_searchQuery: function () {
-      var groupId = null;
-      var siteId = null;
-      var contentName = null;
+      let groupId = null;
+      let siteId = null;
+      let contentName = null;
 
       if (this._contentGroupListElement) {
         groupId = $(this._contentGroupListElement).find('option:selected').val();
@@ -35,7 +35,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
 
     renderSearchBlock: function () {
       if (this.get_isRendered() !== true) {
-        var serverContent;
+        let serverContent;
         $q.getJsonFromUrl(
           'GET',
           `${window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK}SearchBlock/${this._parentEntityId}`,
@@ -74,7 +74,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
     },
 
     _onFindButtonClick: function () {
-      var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
+      let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
       this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
       eventArgs = null;
     },
@@ -83,7 +83,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
       $('.csFilterCombo', this._searchBlockElement).find("option[value='']").prop('selected', true);
       $('.csFilterTextbox', this._searchBlockElement).val('');
 
-      var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
+      let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
       this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
       eventArgs = null;
     },

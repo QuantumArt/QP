@@ -5,7 +5,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch = function (containerEl
 
 Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   initialize: function () {
-    var serverContent;
+    let serverContent;
     $q.getJsonFromUrl(
       'GET',
       `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}TextSearch`,
@@ -28,27 +28,27 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
       }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      var queryTextBoxID = `${this._elementIdPrefix}_textBox`;
-      var inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
-      var isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
-      var exactMatchCheckBoxID = `${this._elementIdPrefix}_exactCheckBox`;
-      var beginningCheckBoxID = `${this._elementIdPrefix}_beginningCheckBox`;
+      let queryTextBoxID = `${this._elementIdPrefix}_textBox`;
+      let inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
+      let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+      let exactMatchCheckBoxID = `${this._elementIdPrefix}_exactCheckBox`;
+      let beginningCheckBoxID = `${this._elementIdPrefix}_beginningCheckBox`;
 
-      var $containerElement = $(this._containerElement);
+      let $containerElement = $(this._containerElement);
       $containerElement.append(serverContent);
 
-      var $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
+      let $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
       $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
       this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
 
-      var $inverseCheckBoxElement = $containerElement.find(`#${inverseCheckBoxID}`);
+      let $inverseCheckBoxElement = $containerElement.find(`#${inverseCheckBoxID}`);
       this._inverseCheckBoxElement = $inverseCheckBoxElement.get(0);
 
-      var $exactMatchCheckBoxElement = $containerElement.find(`#${exactMatchCheckBoxID}`);
+      let $exactMatchCheckBoxElement = $containerElement.find(`#${exactMatchCheckBoxID}`);
       this._exactMatchCheckBoxElement = $exactMatchCheckBoxElement.get(0);
 
-      var $beginningStartCheckBoxElement = $containerElement.find(`#${beginningCheckBoxID}`);
+      let $beginningStartCheckBoxElement = $containerElement.find(`#${beginningCheckBoxID}`);
       this._beginningStartChechBoxElement = $beginningStartCheckBoxElement.get(0);
       this._queryTextBoxElement = $containerElement.find(`#${queryTextBoxID}`).get(0);
     }
@@ -72,8 +72,8 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    var stateData = this.get_blockState().data;
-    var result;
+    let stateData = this.get_blockState().data;
+    let result;
 
     if (stateData.text) {
       result = `"${$q.cutShort(stateData.text, 8)}"`;
@@ -103,24 +103,24 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   restore_blockState: function (state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
-        var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+        let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
         $isNullCheckBoxElement.prop('checked', state.isNull);
         $isNullCheckBoxElement.trigger('change');
         $isNullCheckBoxElement = null;
       }
 
       if (this._inverseCheckBoxElement) {
-        var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
+        let $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
         $inverseCheckBoxElement.prop('checked', state.inverse);
       }
 
       if (this._beginningStartChechBoxElement) {
-        var $beginningStartCheckBoxElement = $(this._beginningStartChechBoxElement);
+        let $beginningStartCheckBoxElement = $(this._beginningStartChechBoxElement);
         $beginningStartCheckBoxElement.prop('checked', state.beginningStart);
       }
 
       if (this._exactMatchCheckBoxElement) {
-        var $exactMatchCheckBoxElement = $(this._exactMatchCheckBoxElement);
+        let $exactMatchCheckBoxElement = $(this._exactMatchCheckBoxElement);
         $exactMatchCheckBoxElement.prop('checked', state.exactMatch);
       }
 
@@ -136,7 +136,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
   dispose: function () {
     if (this._isNullCheckBoxElement) {
-      var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+      let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
       $isNullCheckBoxElement = null;
     }

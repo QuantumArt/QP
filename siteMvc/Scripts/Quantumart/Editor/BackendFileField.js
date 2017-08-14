@@ -163,7 +163,7 @@ Quantumart.QP8.BackendFileField.prototype = {
 
   updateUploader: function (value) {
     this._uploaderSubFolder = value;
-    var $fileField = $(this._fileFieldElement);
+    let $fileField = $(this._fileFieldElement);
 
     if (this._uploaderSubFolder) {
       $fileField.attr('placeholder', this._getFileFieldSubFolder());
@@ -172,7 +172,7 @@ Quantumart.QP8.BackendFileField.prototype = {
       this._uploaderSubFolder = '';
     }
 
-    var path = this._libraryPath;
+    let path = this._libraryPath;
 
     if (this._uploaderSubFolder) {
       path += `\\${this._uploaderSubFolder}`;
@@ -184,7 +184,7 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _getFileFieldSubFolder: function () {
-    var subFolder = this._uploaderSubFolder;
+    let subFolder = this._uploaderSubFolder;
 
     if (subFolder && !subFolder.match(/\/$/)) {
       subFolder += '/';
@@ -196,10 +196,10 @@ Quantumart.QP8.BackendFileField.prototype = {
   _librarySelectedHandler: function (eventType, sender, args) {
     this._closeLibrary();
     if (args) {
-      var entities = args.entities;
+      let entities = args.entities;
 
       if (entities.length > 0) {
-        var url = args.context;
+        let url = args.context;
 
         if (url === '\\') {
           url = '';
@@ -224,8 +224,8 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _showOrHidePreviewButton: function (filename, $previewButton) {
-    var _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
-    var result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
+    let _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
+    let result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
     if ((typeof result !== 'undefined' && result.length > 0) || this._isImage) {
       $previewButton.show();
     } else {
@@ -233,19 +233,19 @@ Quantumart.QP8.BackendFileField.prototype = {
     }
   },
   initialize: function () {
-    var $fileField = $(`#${this._fileFieldElementId}`);
+    let $fileField = $(`#${this._fileFieldElementId}`);
 
     $fileField.data('file_field', this);
-    var $fileWrapper = $(`#${this._fileWrapperElementId}`);
-    var $browseButton = $fileWrapper.find(`.${this.BROWSE_BUTTON_CLASS_NAME}:first`);
-    var $previewButton = $fileWrapper.find(`.${this.PREVIEW_BUTTON_CLASS_NAME}:first`);
+    let $fileWrapper = $(`#${this._fileWrapperElementId}`);
+    let $browseButton = $fileWrapper.find(`.${this.BROWSE_BUTTON_CLASS_NAME}:first`);
+    let $previewButton = $fileWrapper.find(`.${this.PREVIEW_BUTTON_CLASS_NAME}:first`);
 
     $previewButton.bind('click', this._onPreviewButtonClickHandler);
     this._showOrHidePreviewButton($fileField.val(), $previewButton);
-    var $libraryButton = $fileWrapper.find(`.${this.LIBRARY_BUTTON_CLASS_NAME}:first`);
+    let $libraryButton = $fileWrapper.find(`.${this.LIBRARY_BUTTON_CLASS_NAME}:first`);
 
     $libraryButton.bind('click', this._onLibraryButtonClickHandler);
-    var $downloadButton = $fileWrapper.find(`.${this.DOWNLOAD_BUTTON_CLASS_NAME}:first`);
+    let $downloadButton = $fileWrapper.find(`.${this.DOWNLOAD_BUTTON_CLASS_NAME}:first`);
 
     $downloadButton.bind('click', this._onDownloadButtonClickHandler);
 
@@ -269,7 +269,7 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _initFileUploader: function () {
-    var extensions = this._isImage ? window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
+    let extensions = this._isImage ? window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
 
     if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
       this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
@@ -303,16 +303,16 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _previewImage: function () {
-    var $fileField = $(this._fileFieldElement);
+    let $fileField = $(this._fileFieldElement);
 
     if (!$q.isNullOrEmpty($fileField)) {
-      var fieldName = $fileField.attr('name');
-      var fieldValue = $fileField.val();
+      let fieldName = $fileField.attr('name');
+      let fieldValue = $fileField.val();
 
       if (!$q.isNullOrWhiteSpace(fieldValue)) {
         $c.destroyPopupWindow(this._previewWindowComponent);
-        var urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId, parentEntityId: this._libraryParentEntityId };
-        var testUrl = Quantumart.QP8.BackendLibrary.generateActionUrl('GetImageProperties', urlParams);
+        let urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId, parentEntityId: this._libraryParentEntityId };
+        let testUrl = Quantumart.QP8.BackendLibrary.generateActionUrl('GetImageProperties', urlParams);
 
         this._previewWindowComponent = $c.preview(testUrl);
       }
@@ -320,15 +320,15 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _downloadFieldFile: function () {
-    var $fileField = $(this._fileFieldElement);
+    let $fileField = $(this._fileFieldElement);
 
     if (!$q.isNullOrEmpty($fileField)) {
-      var fieldName = $fileField.attr('name');
-      var fieldValue = $fileField.val();
+      let fieldName = $fileField.attr('name');
+      let fieldValue = $fileField.val();
 
       if (!$q.isNullOrWhiteSpace(fieldValue)) {
-        var urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId };
-        var url = Quantumart.QP8.BackendLibrary.generateActionUrl('TestFieldValueDownload', urlParams);
+        let urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId };
+        let url = Quantumart.QP8.BackendLibrary.generateActionUrl('TestFieldValueDownload', urlParams);
 
         $c.downloadFileWithChecking(url, fieldValue);
       }
@@ -344,15 +344,15 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _openLibrary: function () {
-    var filterFileTypeId = this._isImage ? Quantumart.QP8.Enums.LibraryFileType.Image : '';
-    var eventArgs = new Quantumart.QP8.BackendEventArgs();
+    let filterFileTypeId = this._isImage ? Quantumart.QP8.Enums.LibraryFileType.Image : '';
+    let eventArgs = new Quantumart.QP8.BackendEventArgs();
 
     eventArgs.set_entityId(this._libraryEntityId);
     eventArgs.set_parentEntityId(this._libraryParentEntityId);
     eventArgs.set_entityName('');
     eventArgs.set_entityTypeCode(this._useSiteLibrary ? window.ENTITY_TYPE_CODE_SITE : window.ENTITY_TYPE_CODE_CONTENT);
     eventArgs.set_actionCode(this._useSiteLibrary ? window.ACTION_CODE_POPUP_SITE_LIBRARY : window.ACTION_CODE_POPUP_CONTENT_LIBRARY);
-    var options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId: filterFileTypeId, subFolder: this._subFolder, allowUpload: this._allowFileUpload } };
+    let options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId: filterFileTypeId, subFolder: this._subFolder, allowUpload: this._allowFileUpload } };
 
     if (!this._selectPopupWindowComponent) {
       this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, options);
@@ -401,13 +401,13 @@ Quantumart.QP8.BackendFileField.prototype = {
   dispose: function () {
     this._destroyLibrary();
 
-    var $fileFieldElement = $(this._fileFieldElement);
+    let $fileFieldElement = $(this._fileFieldElement);
 
     $fileFieldElement.removeData();
     $fileFieldElement = null;
 
     if (this._downloadButtonElement) {
-      var $downloadButton = $(this._downloadButtonElement);
+      let $downloadButton = $(this._downloadButtonElement);
 
       $downloadButton.unbind('click', this._onDownloadButtonClickHandler);
 
@@ -421,7 +421,7 @@ Quantumart.QP8.BackendFileField.prototype = {
     }
 
     if (this._previewButtonElement) {
-      var $previewButton = $(this._previewButtonElement);
+      let $previewButton = $(this._previewButtonElement);
 
       $previewButton.unbind('click', this._onPreviewButtonClickHandler);
 
@@ -430,7 +430,7 @@ Quantumart.QP8.BackendFileField.prototype = {
     }
 
     if (this._libraryButtonElement) {
-      var $libraryButton = $(this._libraryButtonElement);
+      let $libraryButton = $(this._libraryButtonElement);
 
       $libraryButton.unbind('click', this._onLibraryButtonClickHandler);
 

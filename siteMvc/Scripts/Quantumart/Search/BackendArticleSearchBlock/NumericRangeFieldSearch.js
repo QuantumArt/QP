@@ -8,7 +8,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch = function (con
 
 Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   initialize: function () {
-    var serverContent;
+    let serverContent;
     $q.getJsonFromUrl(
       'GET',
       `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}NumericRange`,
@@ -30,28 +30,28 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      var isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
-      var numberFromID = `${this._elementIdPrefix}_numberFrom`;
-      var numberToID = `${this._elementIdPrefix}_numberTo`;
-      var inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
+      let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+      let numberFromID = `${this._elementIdPrefix}_numberFrom`;
+      let numberToID = `${this._elementIdPrefix}_numberTo`;
+      let inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
 
-      var $containerElement = $(this._containerElement);
+      let $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
-      var $numberFrom = $containerElement.find(`#${numberFromID}`);
-      var $numberTo = $containerElement.find(`#${numberToID}`);
+      let $numberFrom = $containerElement.find(`#${numberFromID}`);
+      let $numberTo = $containerElement.find(`#${numberToID}`);
       $numberFrom.focus(this._onNumericInputFocusHandler);
       $numberTo.focus(this._onNumericInputFocusHandler);
 
       this._numberFromElement = $numberFrom.get(0);
       this._numberToElement = $numberTo.get(0);
 
-      var $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
+      let $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
       $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
       this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
 
-      var $inverseCheckBoxElement = $containerElement.find(`#${inverseCheckBoxID}`);
+      let $inverseCheckBoxElement = $containerElement.find(`#${inverseCheckBoxID}`);
       this._inverseCheckBoxElement = $inverseCheckBoxElement.get(0);
 
       $(".radioButtonsList input[type='radio']", $containerElement).click(this._onByValueSelectorChangedHandler);
@@ -89,8 +89,8 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    var stateData = this.get_blockState().data;
-    var result;
+    let stateData = this.get_blockState().data;
+    let result;
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.isByValue) {
@@ -108,14 +108,14 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   restore_blockState: function (state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
-        var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+        let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
         $isNullCheckBoxElement.prop('checked', state.isNull);
         $isNullCheckBoxElement.trigger('change');
         $isNullCheckBoxElement = null;
       }
 
       if (this._inverseCheckBoxElement) {
-        var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
+        let $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
         $inverseCheckBoxElement.prop('checked', state.inverse);
       }
 
@@ -165,7 +165,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   _onNumericInputFocus: function (e) {
-    var focusedNumeric = $(e.currentTarget).data('tTextBox');
+    let focusedNumeric = $(e.currentTarget).data('tTextBox');
     let otherInput;
     if (e.currentTarget === this._numberFromElement) {
       otherInput = $(this._numberToElement).data('tTextBox');
@@ -184,7 +184,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 
   dispose: function () {
     if (this._isNullCheckBoxElement) {
-      var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+      let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
       $isNullCheckBoxElement = null;
     }
@@ -198,7 +198,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 
     $c.destroyAllNumericTextBoxes(this._containerElement);
 
-    var $containerElement = $(this._containerElement);
+    let $containerElement = $(this._containerElement);
     $(".radioButtonsList input[type='radio']", $containerElement).unbind();
     $containerElement = null;
 

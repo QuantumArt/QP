@@ -53,14 +53,14 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   },
 
   _getText: function (entities, callback) {
-    var count = 3;
-    var length = entities.length;
-    var ids = entities.slice(0, count);
+    let count = 3;
+    let length = entities.length;
+    let ids = entities.slice(0, count);
     if (callback) {
       ids = ids.map(callback);
     }
 
-    var result = ids.join('; ');
+    let result = ids.join('; ');
     if (length > count) {
       result += `; ${$l.SearchBlock.etcText}, ${$l.SearchBlock.totalText}: ${length}`;
     }
@@ -69,7 +69,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   },
 
   _getIds: function (text) {
-    var ids = text.replace(/\r?\n|\r|;/g, ',').split(',');
+    let ids = text.replace(/\r?\n|\r|;/g, ',').split(',');
     ids = ids.map((e) => {
       return parseInt(e, 10);
     });

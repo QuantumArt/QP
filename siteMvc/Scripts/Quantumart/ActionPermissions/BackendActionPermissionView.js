@@ -12,8 +12,8 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
   _searchBlockComponent: null,
 
   initialize: function () {
-    var $view = $(`#${this._viewElementId}`);
-    var treeElementId = $('.treeContainer .t-treeview').attr('id');
+    let $view = $(`#${this._viewElementId}`);
+    let treeElementId = $('.treeContainer .t-treeview').attr('id');
 
     this._treeComponent = new Quantumart.QP8.BackendActionPermissionTree(treeElementId);
     this._treeComponent.attachObserver(window.EVENT_TYPE_ACTION_PERMISSIONS_TREE_EXECUTING, jQuery.proxy(this._onActionExecuting, this));
@@ -22,24 +22,24 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
   },
 
   _onApplyFilter: function () {
-    var searchData = this._searchBlockComponent.getSearchData();
+    let searchData = this._searchBlockComponent.getSearchData();
     this._treeComponent.set_userId(searchData.userId);
     this._treeComponent.set_groupId(searchData.groupId);
     this._treeComponent.refreshTree();
   },
 
   _onActionExecuting: function (eventType, sender, eventArgs) {
-    var actionCode = eventArgs.get_actionCode();
+    let actionCode = eventArgs.get_actionCode();
     if (actionCode == window.ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE || actionCode == window.ACTION_CODE_REMOVE_ENTITY_TYPE_PERMISSION_NODE
       || actionCode == window.ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE || actionCode == window.ACTION_CODE_REMOVE_ACTION_PERMISSION_NODE) {
-      var eventArgsContext = eventArgs.get_context();
+      let eventArgsContext = eventArgs.get_context();
       eventArgs.set_context(Object.assign({}, eventArgsContext,
         {
           additionalUrlParameters: this._searchBlockComponent.getSearchData()
         }));
     }
 
-    var action = $a.getBackendActionByCode(eventArgs.get_actionCode());
+    let action = $a.getBackendActionByCode(eventArgs.get_actionCode());
     if (action) {
       this.notify(window.EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING, eventArgs);
     }

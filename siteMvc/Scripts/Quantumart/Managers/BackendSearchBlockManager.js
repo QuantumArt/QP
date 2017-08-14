@@ -6,13 +6,13 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
   _searchBlockGroups: {},
 
   generateSearchBlockGroupCode: function (entityTypeCode, parentEntityId) {
-    var searchBlockCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
+    let searchBlockCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
     return searchBlockCode;
   },
 
   getSearchBlockGroup: function (searchBlockGroupCode) {
-    var searchBlockGroup = null;
+    let searchBlockGroup = null;
     if (this._searchBlockGroups[searchBlockGroupCode]) {
       searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
     }
@@ -21,7 +21,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
   },
 
   createSearchBlockGroup: function (searchBlockGroupCode) {
-    var searchBlockGroup = this.getSearchBlockGroup(searchBlockGroupCode);
+    let searchBlockGroup = this.getSearchBlockGroup(searchBlockGroupCode);
     if (!searchBlockGroup) {
       searchBlockGroup = {};
       this._searchBlockGroups[searchBlockGroupCode] = searchBlockGroup;
@@ -35,10 +35,10 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
   },
 
   getSearchBlock: function (searchBlockElementId) {
-    var searchBlock = null;
+    let searchBlock = null;
 
-    for (var searchBlockGroupCode in this._searchBlockGroups) {
-      var searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
+    for (let searchBlockGroupCode in this._searchBlockGroups) {
+      let searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
       if (searchBlockGroup[searchBlockElementId]) {
         searchBlock = searchBlockGroup[searchBlockElementId];
         break;
@@ -49,9 +49,9 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
   },
 
   createSearchBlock: function (searchBlockElementId, entityTypeCode, parentEntityId, host, options) {
-    var searchBlockGroupCode = this.generateSearchBlockGroupCode(entityTypeCode, parentEntityId);
+    let searchBlockGroupCode = this.generateSearchBlockGroupCode(entityTypeCode, parentEntityId);
 
-    var searchBlock = null;
+    let searchBlock = null;
     if (options.contextSearch) {
       searchBlock = new Quantumart.QP8.BackendContextBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
     } else if (entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE || entityTypeCode == window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE || entityTypeCode == window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
@@ -68,17 +68,17 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
     }
     searchBlock.initialize();
 
-    var searchBlockGroup = this.createSearchBlockGroup(searchBlockGroupCode);
+    let searchBlockGroup = this.createSearchBlockGroup(searchBlockGroupCode);
     searchBlockGroup[searchBlockElementId] = searchBlock;
 
     return searchBlock;
   },
 
   removeSearchBlock: function (searchBlockElementId) {
-    var searchBlock = this.getSearchBlock(searchBlockElementId);
+    let searchBlock = this.getSearchBlock(searchBlockElementId);
     if (searchBlock) {
-      var searchBlockGroupCode = searchBlock.get_searchBlockGroupCode();
-      var searchBlockGroup = this.getSearchBlockGroup(searchBlockGroupCode);
+      let searchBlockGroupCode = searchBlock.get_searchBlockGroupCode();
+      let searchBlockGroup = this.getSearchBlockGroup(searchBlockGroupCode);
 
       $q.removeProperty(searchBlockGroup, searchBlockElementId);
 
@@ -89,7 +89,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
   },
 
   destroySearchBlock: function (searchBlockElementId) {
-    var searchBlock = this.getSearchBlock(searchBlockElementId);
+    let searchBlock = this.getSearchBlock(searchBlockElementId);
     if (searchBlock) {
       this.removeSearchBlock(searchBlockElementId);
       if (searchBlock.dispose) {
@@ -101,8 +101,8 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
   dispose: function () {
     Quantumart.QP8.BackendSearchBlockManager.callBaseMethod(this, 'dispose');
     if (this._searchBlockGroups) {
-      for (var searchBlockGroupCode in this._searchBlockGroups) {
-        var searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
+      for (let searchBlockGroupCode in this._searchBlockGroups) {
+        let searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
         Object.keys(searchBlockGroup).forEach(this.destroySearchBlock);
       }
     }

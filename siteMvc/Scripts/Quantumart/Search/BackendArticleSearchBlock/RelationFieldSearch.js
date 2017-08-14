@@ -13,7 +13,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (contain
 
 Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   initialize: function () {
-    var serverContent;
+    let serverContent;
     $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}RelationSearch`, {
       elementIdPrefix: this._elementIdPrefix,
       fieldID: this._fieldID,
@@ -32,7 +32,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     );
 
     if (serverContent) {
-      var $containerElement = $(this._containerElement);
+      let $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
       this._isNullCheckBoxElement = document.getElementById(`${this._elementIdPrefix}_isNullCheckBox`);
@@ -53,7 +53,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   getSelectedIds: function () {
-    var result;
+    let result;
     if (this._isEntity) {
       result = $.map(this._getSelectedEntities(), (item) => {
         return item.Id;
@@ -103,12 +103,12 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    var stateData = this.get_blockState().data;
-    var result, builder;
+    let stateData = this.get_blockState().data;
+    let result, builder;
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (!stateData.isEntity) {
-      var ids = this._getIds(stateData.text);
+      let ids = this._getIds(stateData.text);
       result = this._getText(ids);
     } else if (!$q.isNullOrEmpty(stateData.entities)) {
       result = this._getText(stateData.entities, (e) => {
@@ -128,7 +128,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   restore_blockState: function (state, isRestoreByClose) {
     if (state) {
       if (this._isNullCheckBoxElement) {
-        var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+        let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
         $isNullCheckBoxElement.prop('checked', state.isNull);
         $isNullCheckBoxElement.trigger('change');
       }
@@ -163,9 +163,9 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   _expandHierarchy: function (url) {
-    var self = this;
+    let self = this;
     return function () {
-      var selectedIds = self.getSelectedIds();
+      let selectedIds = self.getSelectedIds();
       if (selectedIds && selectedIds.length) {
         $q.getAjax(url, {
           ids: self.getSelectedIds(),
@@ -194,7 +194,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChange: function () {
-    var edlComponent = this._getEntityDataList();
+    let edlComponent = this._getEntityDataList();
     if ($(this._isNullCheckBoxElement).is(':checked')) {
       edlComponent.disableList();
       $(this._textAreaElement).prop('disabled', true);

@@ -6,13 +6,13 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (containe
 
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   initialize: function () {
-    var isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
-    var radioGroupName = `${this._elementIdPrefix}_radioGroup`;
-    var disablingContainerID = `${this._elementIdPrefix}_disablingContainer`;
-    var radioTrueID = `${this._elementIdPrefix}_radioTrue`;
-    var radioFalseID = `${this._elementIdPrefix}_radioFalse`;
+    let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+    let radioGroupName = `${this._elementIdPrefix}_radioGroup`;
+    let disablingContainerID = `${this._elementIdPrefix}_disablingContainer`;
+    let radioTrueID = `${this._elementIdPrefix}_radioTrue`;
+    let radioFalseID = `${this._elementIdPrefix}_radioFalse`;
 
-    var html = new $.telerik.stringBuilder();
+    let html = new $.telerik.stringBuilder();
     html
       .cat('<div class="row">')
       .cat('  <div ')
@@ -49,11 +49,11 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     ;
 
     // добавить разметку на страницу
-    var $containerElement = $(this._containerElement);
+    let $containerElement = $(this._containerElement);
     $containerElement.append(html.string());
 
     // назначить обработчик события change чекбоксу
-    var $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
+    let $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
     $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
     // запомнить ссылку на dom-элементы
@@ -78,7 +78,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    var stateData = this.get_blockState().data;
+    let stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     }
@@ -89,7 +89,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   restore_blockState: function (state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
-        var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+        let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
         $isNullCheckBoxElement.prop('checked', state.isNull);
         $isNullCheckBoxElement.trigger('change');
         $isNullCheckBoxElement = null;
@@ -105,8 +105,8 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   },
 
   _getValue: function () {
-    var result = null;
-    var val = $(this._containerElement).find('input:radio:checked').val();
+    let result = null;
+    let val = $(this._containerElement).find('input:radio:checked').val();
     if (val == 'true') {
       result = true;
     } else {
@@ -123,7 +123,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 
   dispose: function () {
     if (this._isNullCheckBoxElement) {
-      var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+      let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
       $isNullCheckBoxElement = null;
     }

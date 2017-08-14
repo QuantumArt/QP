@@ -48,9 +48,9 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   },
 
   addToolbarItemsToToolbar: function (count) {
-    var action = this._getCurrentAction();
+    let action = this._getCurrentAction();
 
-    var items = this._getToolbarItemCollectionFromAction(action);
+    let items = this._getToolbarItemCollectionFromAction(action);
     Quantumart.QP8.BackendViewToolbar.callBaseMethod(this, 'addToolbarItemsToToolbar', [items, count]);
 
     $q.clearArray(items);
@@ -59,8 +59,8 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   },
 
   getSelectedViewTypeCode: function () {
-    var result = '';
-    var $list = this.getToolbarItem(this.VIEWS_DROPDOWN_CODE);
+    let result = '';
+    let $list = this.getToolbarItem(this.VIEWS_DROPDOWN_CODE);
     if ($list) {
       result = jQuery('li.selected', $list).attr('code');
     }
@@ -68,11 +68,11 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   },
 
   _getToolbarItemCollectionFromAction: function (action) {
-    var self = this;
-    var dataItems = [];
+    let self = this;
+    let dataItems = [];
 
     if ($o.checkEntityForVariations(action.EntityType.Code, self.get_parentEntityId())) {
-      var variationButton = {
+      let variationButton = {
         Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
         Value: this.CONTEXT_BUTTON_CODE,
         Text: '',
@@ -89,10 +89,10 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
       Array.add(dataItems, variationButton);
     }
 
-    var defaultViewTypeCode = action.DefaultViewType ? action.DefaultViewType.Code : '';
-    var selectedViewTypeCode = this._viewTypeCode ? this._viewTypeCode : defaultViewTypeCode;
+    let defaultViewTypeCode = action.DefaultViewType ? action.DefaultViewType.Code : '';
+    let selectedViewTypeCode = this._viewTypeCode ? this._viewTypeCode : defaultViewTypeCode;
 
-    var viewsDropDown = {
+    let viewsDropDown = {
       Type: window.TOOLBAR_ITEM_TYPE_DROPDOWN,
       Value: this.VIEWS_DROPDOWN_CODE,
       Tooltip: $l.Toolbar.viewsDropDownTooltip,
@@ -107,10 +107,10 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
     if (!$q.isNullOrEmpty(action.Views)) {
       jQuery.each(action.Views,
         (index, actionView) => {
-          var parentEntityTypeCode = Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(action.EntityType.Code);
-          var view = actionView.ViewType;
+          let parentEntityTypeCode = Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(action.EntityType.Code);
+          let view = actionView.ViewType;
           if (view.Code != window.VIEW_TYPE_CODE_TREE || $o.checkEntityForPresenceSelfRelations(parentEntityTypeCode, self.get_parentEntityId())) {
-            var dataItem = { Value: view.Code, Text: view.Name, Tooltip: view.Name, Icon: view.Icon };
+            let dataItem = { Value: view.Code, Text: view.Name, Tooltip: view.Name, Icon: view.Icon };
             Array.add(viewsDropDown.Items, dataItem);
           }
         }
@@ -120,7 +120,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
     Array.add(dataItems, viewsDropDown);
 
     if (action.AllowPreview) {
-      var previewButton = {
+      let previewButton = {
         Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
         Value: this.PREVIEW_BUTTON_CODE,
         Text: '',
@@ -138,7 +138,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
     }
 
     if (action.AllowSearch) {
-      var searchButton = {
+      let searchButton = {
         Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
         Value: this.SEARCH_BUTTON_CODE,
         Text: '',
@@ -159,8 +159,8 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   },
 
   notifyToolbarButtonClicking: function (eventArgs) {
-    var itemValue = eventArgs.get_value();
-    var newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarButtonEventArgsFromToolbarButtonEventArgs(eventArgs);
+    let itemValue = eventArgs.get_value();
+    let newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarButtonEventArgsFromToolbarButtonEventArgs(eventArgs);
 
     if (itemValue == this.PREVIEW_BUTTON_CODE) {
       this.notify(window.EVENT_TYPE_VIEW_TOOLBAR_PREVIEW_BUTTON_CLICKING, newArgs);
@@ -175,8 +175,8 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   },
 
   notifyToolbarButtonClicked: function (eventArgs) {
-    var itemValue = eventArgs.get_value();
-    var newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarButtonEventArgsFromToolbarButtonEventArgs(eventArgs);
+    let itemValue = eventArgs.get_value();
+    let newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarButtonEventArgsFromToolbarButtonEventArgs(eventArgs);
 
     if (itemValue == this.PREVIEW_BUTTON_CODE) {
       this.notify(window.EVENT_TYPE_VIEW_TOOLBAR_PREVIEW_BUTTON_CLICKED, newArgs);
@@ -190,11 +190,11 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   },
 
   notifyDropDownSelectedIndexChanging: function (eventArgs) {
-    var itemValue = eventArgs.get_itemValue();
-    var subItemValue = eventArgs.get_newSubItemValue();
+    let itemValue = eventArgs.get_itemValue();
+    let subItemValue = eventArgs.get_newSubItemValue();
 
-    var newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
-    var actionView = $a.getActionViewByViewTypeCode(this._getCurrentAction(), subItemValue);
+    let newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
+    let actionView = $a.getActionViewByViewTypeCode(this._getCurrentAction(), subItemValue);
     if (actionView) {
       newArgs.set_controllerActionUrl(actionView.ControllerActionUrl);
       newArgs.set_preventDefaultBehavior(actionView.PreventDefaultBehavior);
@@ -211,11 +211,11 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   },
 
   notifyDropDownSelectedIndexChanged: function (eventArgs) {
-    var itemValue = eventArgs.get_itemValue();
-    var subItemValue = eventArgs.get_newSubItemValue();
+    let itemValue = eventArgs.get_itemValue();
+    let subItemValue = eventArgs.get_newSubItemValue();
 
-    var newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
-    var actionView = $a.getActionViewByViewTypeCode(this._getCurrentAction(), subItemValue);
+    let newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
+    let actionView = $a.getActionViewByViewTypeCode(this._getCurrentAction(), subItemValue);
     if (actionView) {
       newArgs.set_controllerActionUrl(actionView.ControllerActionUrl);
       newArgs.set_preventDefaultBehavior(actionView.PreventDefaultBehavior);
@@ -245,7 +245,7 @@ Quantumart.QP8.BackendViewToolbarButtonEventArgs = function () {
 };
 
 Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarButtonEventArgsFromToolbarButtonEventArgs = function (toolbarArgs) {
-  var viewToolbarArgs = new Quantumart.QP8.BackendViewToolbarButtonEventArgs();
+  let viewToolbarArgs = new Quantumart.QP8.BackendViewToolbarButtonEventArgs();
   viewToolbarArgs.set_value(toolbarArgs.get_value());
   viewToolbarArgs.set_checkOnClick(toolbarArgs.get_checkOnClick());
   viewToolbarArgs.set_checked(toolbarArgs.get_checked());
@@ -285,7 +285,7 @@ Quantumart.QP8.BackendViewToolbarDropDownListEventArgs.prototype = {
 };
 
 Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs = function (toolbarArgs) {
-  var viewToolbarArgs = new Quantumart.QP8.BackendViewToolbarDropDownListEventArgs();
+  let viewToolbarArgs = new Quantumart.QP8.BackendViewToolbarDropDownListEventArgs();
   viewToolbarArgs.set_itemValue(toolbarArgs.get_itemValue());
   viewToolbarArgs.set_oldSubItemValue(toolbarArgs.get_oldSubItemValue());
   viewToolbarArgs.set_newSubItemValue(toolbarArgs.get_newSubItemValue());

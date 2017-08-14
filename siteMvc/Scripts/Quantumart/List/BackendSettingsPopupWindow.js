@@ -46,7 +46,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   },
 
   _createToolbar: function () {
-    var backendToolbar = new Quantumart.QP8.BackendToolbar();
+    let backendToolbar = new Quantumart.QP8.BackendToolbar();
     backendToolbar.set_toolbarElementId(`popupWindowToolbar_${this._popupWindowId}`);
     backendToolbar.initialize();
     backendToolbar.attachObserver(
@@ -69,7 +69,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   },
 
   _onPopupWindowToolbarButtonClicked: function (eventType, sender) {
-    var options, errors, btn, className, prms, that;
+    let options, errors, btn, className, prms, that;
     if (this._popupWindowComponent) {
       options = Object.assign({}, this._eventsArgs, sender);
       errors = this._settingsWindow.validate();

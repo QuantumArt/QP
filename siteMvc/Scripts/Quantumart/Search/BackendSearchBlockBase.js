@@ -150,30 +150,30 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   },
 
   initialize: function () {
-    var $searchBlock = $(`#${this._searchBlockElementId}`);
-    var searchBlockExist = !$q.isNullOrEmpty($searchBlock);
-    var searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
+    let $searchBlock = $(`#${this._searchBlockElementId}`);
+    let searchBlockExist = !$q.isNullOrEmpty($searchBlock);
+    let searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
 
     if (!searchBlockExist) {
       $searchBlock = $('<div />', { id: this._searchBlockElementId, class: 'searchBlock', css: { display: 'none'} });
     }
 
     if (!searchFormExist) {
-      var $searchForm = $('<form />', { class: 'formLayout' });
+      let $searchForm = $('<form />', { class: 'formLayout' });
       $searchBlock.append($searchForm);
 
-      var $concreteSearchBlock = $('<div />');
+      let $concreteSearchBlock = $('<div />');
       $searchForm.append($concreteSearchBlock);
 
-      var $buttonsWrapper = $('<div />');
+      let $buttonsWrapper = $('<div />');
       if (this._hideButtons) {
         $buttonsWrapper.hide();
       }
 
       $searchForm.append($buttonsWrapper);
 
-      var $findButton = $('<input />', { type: 'button', value: $l.SearchBlock.findButtonText, class: 'button' });
-      var $resetButton = $('<input />', { type: 'button', value: $l.SearchBlock.resetButtonText, class: 'button' });
+      let $findButton = $('<input />', { type: 'button', value: $l.SearchBlock.findButtonText, class: 'button' });
+      let $resetButton = $('<input />', { type: 'button', value: $l.SearchBlock.resetButtonText, class: 'button' });
 
       $buttonsWrapper.append($findButton);
       $buttonsWrapper.append('&nbsp;');
@@ -221,9 +221,9 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 
   showSearchBlock: function () {
     this._isVisible = true;
-    var $searchBlock = $(this._searchBlockElement);
+    let $searchBlock = $(this._searchBlockElement);
     if ($searchBlock.is(':hidden')) {
-      var verticalResizerComponent = this._verticalResizerComponent;
+      let verticalResizerComponent = this._verticalResizerComponent;
       if (verticalResizerComponent) {
         verticalResizerComponent.showPanelWrapper();
         verticalResizerComponent.showBottomHandle();
@@ -235,9 +235,9 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 
   hideSearchBlock: function () {
     this._isVisible = false;
-    var $searchBlock = $(this._searchBlockElement);
+    let $searchBlock = $(this._searchBlockElement);
     if ($searchBlock.is(':visible')) {
-      var verticalResizerComponent = this._verticalResizerComponent;
+      let verticalResizerComponent = this._verticalResizerComponent;
       if (verticalResizerComponent) {
         verticalResizerComponent.hideBottomHandle();
       }
@@ -256,14 +256,14 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   },
 
   _onSearchBlockResized: function () {
-    var $searchBlock = jQuery(this._searchBlockElement);
-    var $bottomHandle = null;
+    let $searchBlock = jQuery(this._searchBlockElement);
+    let $bottomHandle = null;
     if (this._verticalResizerComponent) {
       $bottomHandle = jQuery(this._verticalResizerComponent.get_bottomHandleElement());
     }
 
-    var searchBlockWidth = parseInt($searchBlock.width(), 10);
-    var searchBlockHeight = 0;
+    let searchBlockWidth = parseInt($searchBlock.width(), 10);
+    let searchBlockHeight = 0;
     if (this._isVisible) {
       searchBlockHeight = parseInt($searchBlock.outerHeight(), 10);
       if (!$q.isNullOrEmpty($bottomHandle)) {
@@ -273,19 +273,19 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
       searchBlockHeight = parseInt($searchBlock.height(), 10);
     }
 
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
+    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     eventArgs.set_searchBlockWidth(searchBlockWidth);
     eventArgs.set_searchBlockHeight(searchBlockHeight);
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, eventArgs);
   },
 
   _onFindButtonClick: function () {
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
+    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 
   _onResetButtonClick: function () {
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
+    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
   },
 
@@ -306,7 +306,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     this._resetButtonElement = null;
     this._buttonsWrapperElement = null;
     if (this._searchBlockElement) {
-      var $searchBlock = jQuery(this._searchBlockElement);
+      let $searchBlock = jQuery(this._searchBlockElement);
       $searchBlock
         .noVerticalResizer()
         .empty()

@@ -80,7 +80,7 @@ Quantumart.QP8.BackendFileList.prototype = {
   },
 
   _loadData: function () {
-    var url = '';
+    let url = '';
     if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
       url = `${window.CONTROLLER_URL_SITE}_FileList`;
     } else if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE) {
@@ -89,7 +89,7 @@ Quantumart.QP8.BackendFileList.prototype = {
       throw new Error('fileEntityTypeCode is unknown.');
     }
 
-    var result;
+    let result;
     $q.getJsonFromUrl(
       'GET',
       url,
@@ -120,9 +120,9 @@ Quantumart.QP8.BackendFileList.prototype = {
   },
 
   _raiseMultipleEventArgsEvent: function (eventType, args) {
-    var action = $a.getBackendActionByCode(this._actionCode);
+    let action = $a.getBackendActionByCode(this._actionCode);
     if (action != null) {
-      var eventArgs = $a.getEventArgsFromAction(action);
+      let eventArgs = $a.getEventArgsFromAction(action);
       eventArgs.set_isMultipleEntities(true);
       if (args) {
         eventArgs.set_entities(args.get_entities());
@@ -135,10 +135,10 @@ Quantumart.QP8.BackendFileList.prototype = {
   },
 
   initialize: function () {
-    var $listElement = jQuery(this._listElementId);
+    let $listElement = jQuery(this._listElementId);
     this._listElement = $listElement.get(0);
 
-    var html = new $.telerik.stringBuilder();
+    let html = new $.telerik.stringBuilder();
 
     html.cat('<div class="fileList">')
       .cat('<div class="fileListArea">')
@@ -152,17 +152,17 @@ Quantumart.QP8.BackendFileList.prototype = {
       .cat('</div>');
     $listElement.html(html.string());
 
-    var pagerComponent = new Quantumart.QP8.BackendPager($listElement.find('.fileListPager').get(0));
+    let pagerComponent = new Quantumart.QP8.BackendPager($listElement.find('.fileListPager').get(0));
     pagerComponent.initialize();
     pagerComponent.attachObserver(window.EVENT_TYPE_PAGE_NUMBER_CHANGED, $.proxy(this._onPageNumberChanged, this));
     this._pagerComponent = pagerComponent;
 
-    var $allSelectorElement = $listElement.find('.fileListAllSelector');
+    let $allSelectorElement = $listElement.find('.fileListAllSelector');
     $allSelectorElement.click($.proxy(this._onAllSelectorClicked, this));
     this._allSelectorElement = $allSelectorElement.get(0);
 
     this._fileListContentElement = $listElement.find('.fileListContent').get(0);
-    var listViewComponent = null;
+    let listViewComponent = null;
     if (this._viewMode == window.FILE_LIST_MODE_NAME_LIST) {
       listViewComponent = new Quantumart.QP8.BackendFileNameListView(this._fileListContentElement, this._contextMenuCode, this._selectMode, this._zIndex);
     } else if (this._viewMode == window.FILE_LIST_MODE_PREVIEW_LIST) {
@@ -201,7 +201,7 @@ Quantumart.QP8.BackendFileList.prototype = {
       }
     }
 
-    var data = this._loadData();
+    let data = this._loadData();
     if (data) {
       this._listViewComponent.redraw(data,
         {

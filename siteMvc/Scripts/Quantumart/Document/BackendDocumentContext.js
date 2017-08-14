@@ -127,7 +127,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       $q.callFunction(this._initializingCallback, this);
     }
 
-    var host = this.getHost();
+    let host = this.getHost();
     if (host) {
       this._mainComponent = this.createMainComponent(host);
       host.set_documentContext(this);
@@ -153,11 +153,11 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   setGlobal: function (key, value) {
-    $ctx.setGlobal(key, value);
+    Quantumart.QP8.BackendDocumentContext.setGlobal(key, value);
   },
 
   getGlobal: function (key) {
-    return $ctx.getGlobal(key);
+    return Quantumart.QP8.BackendDocumentContext.getGlobal(key);
   },
 
   loadScript: function (url, key) {
@@ -166,7 +166,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     if (!this._getArea().getCustomScriptState(key)) {
-      var result = $.ajax({
+      let result = $.ajax({
         type: 'get',
         dataType: 'script',
         url: url,
@@ -193,7 +193,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   createMainComponent: function (host) {
-    var hostOptions = {
+    let hostOptions = {
       viewTypeCode: host.get_viewTypeCode(),
       searchQuery: host.get_searchQuery(),
       contextQuery: host.get_contextQuery(),
@@ -206,8 +206,8 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       zIndex: host.get_zIndex()
     };
 
-    var hostHandler = host._onGeneralEventHandler;
-    var mainComponent = null;
+    let hostHandler = host._onGeneralEventHandler;
+    let mainComponent = null;
 
     if (this._mainComponentType == $e.MainComponentType.Grid) {
       mainComponent = Quantumart.QP8.BackendEntityGridManager.getInstance().createGrid(this._mainComponentId, this._entityTypeCode, this._parentEntityId, this._actionCode, this._options, hostOptions);
@@ -271,8 +271,8 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
 
   get_eventArgs: function () {
     if (!this._eventArgs) {
-      var action = $a.getBackendAction(this._actionCode);
-      var eventArgs = $a.getEventArgsFromAction(action);
+      let action = $a.getBackendAction(this._actionCode);
+      let eventArgs = $a.getEventArgsFromAction(action);
 
       eventArgs.set_entityId(this._entityId);
       eventArgs.set_entityName(this._entityName);
@@ -288,7 +288,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   getEventArgsContext: function () {
-    var context = { orderChanged: false, groupChanged: false, viewInListAffected: false };
+    let context = { orderChanged: false, groupChanged: false, viewInListAffected: false };
 
     if ($q.isBoolean(this._options.orderChanged)) {
       context.orderChanged = this._options.orderChanged;
@@ -310,10 +310,10 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   getPreviousAction: function () {
-    var previousAction = null;
+    let previousAction = null;
 
     if (this._previousActionCode) {
-      var action = $a.getBackendAction(this._previousActionCode);
+      let action = $a.getBackendAction(this._previousActionCode);
 
       if (action) {
         previousAction = new Quantumart.QP8.BackendPreviousAction({
@@ -337,10 +337,10 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   needUp: function () {
-    var result = false;
+    let result = false;
 
     if (this._mainComponentType == $e.MainComponentType.Editor && this._state != $e.DocumentContextState.Error) {
-      var eventArgs = this.get_eventArgs();
+      let eventArgs = this.get_eventArgs();
 
       if (eventArgs.get_needUp() && !$q.isNull(eventArgs.get_previousAction())) {
         result = true;
@@ -351,7 +351,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   disposeMainComponent: function (host) {
-    var hostHandler = host._onGeneralEventHandler;
+    let hostHandler = host._onGeneralEventHandler;
 
     if (this._mainComponentType == $e.MainComponentType.Grid) {
       this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING, hostHandler);
@@ -385,7 +385,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   getCustomHandlers: function () {
-    var result = {};
+    let result = {};
 
     if (this.initHandler) {
       result.init = jQuery.proxy(this.initHandler, this);
@@ -415,7 +415,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     if (!this.needUp()) {
       $q.callFunction(this._terminatingCallback, this);
     }
-    var host = this.getHost();
+    let host = this.getHost();
 
     if (host) {
       this.disposeMainComponent(host);
@@ -428,17 +428,16 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   }
 };
 
-var $ctx = Quantumart.QP8.BackendDocumentContext;
 Quantumart.QP8.BackendDocumentContext.getArea = function () {
   return Quantumart.QP8.BackendEditingArea.getInstance();
 };
 
 Quantumart.QP8.BackendDocumentContext.getGlobal = function (key) {
-  return $ctx.getArea().getGlobal(key);
+  return Quantumart.QP8.BackendDocumentContext.getArea().getGlobal(key);
 };
 
 Quantumart.QP8.BackendDocumentContext.setGlobal = function (key, value) {
-  return $ctx.getArea().setGlobal(key, value);
+  return Quantumart.QP8.BackendDocumentContext.getArea().setGlobal(key, value);
 };
 
 Quantumart.QP8.BackendDocumentContext.registerClass('Quantumart.QP8.BackendDocumentContext');

@@ -28,9 +28,9 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
   },
 
   onExternalCallerContextsUnbinded: function (message) {
-    var self = this;
+    let self = this;
     $(message.externalCallerContexts).each((i, c) => {
-      var component = self._components[c.hostUID];
+      let component = self._components[c.hostUID];
       if (component) {
         component.onExternalCallerContextsUnbinded({
           reason: message.reason,
@@ -42,17 +42,17 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    var actionInfo = eventArgs;
+    let actionInfo = eventArgs;
     if (eventArgs.get_previousAction()) {
       actionInfo = eventArgs.get_previousAction();
     }
 
-    var self = this;
-    var callerContexts = [];
+    let self = this;
+    let callerContexts = [];
 
     $.merge(callerContexts, [eventArgs.get_externalCallerContext()]);
 
-    var hosts = [];
+    let hosts = [];
     $.merge(hosts, Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(eventArgs));
     $.merge(hosts, [Quantumart.QP8.BackendEditingArea.getInstance().getDocumentByEventArgs(eventArgs)]);
     if (eventArgs.get_callerContext()) {
@@ -72,9 +72,9 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
       return !$q.isNull(c);
     });
     $(callerContexts).each((i, c) => {
-      var component = self._components[c.hostUID];
+      let component = self._components[c.hostUID];
       if (component) {
-        var message = {
+        let message = {
           actionCode: actionInfo.get_actionCode(),
           actionTypeCode: actionInfo.get_actionTypeCode(),
           entityTypeCode: actionInfo.get_entityTypeCode(),

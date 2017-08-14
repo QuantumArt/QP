@@ -3,7 +3,7 @@ Quantumart.QP8.Cache = function () {
 
 Quantumart.QP8.Cache._itemInfos = {};
 Quantumart.QP8.Cache.getItem = function (key) {
-  var item = null;
+  let item = null;
   if (Quantumart.QP8.Cache._itemInfos[key]) {
     item = Quantumart.QP8.Cache._itemInfos[key].Value;
   }
@@ -12,7 +12,7 @@ Quantumart.QP8.Cache.getItem = function (key) {
 };
 
 Quantumart.QP8.Cache.addItem = function (key, value) {
-  var itemInfo = { Value: value };
+  let itemInfo = { Value: value };
   Quantumart.QP8.Cache._itemInfos[key] = itemInfo;
 };
 
@@ -21,7 +21,7 @@ Quantumart.QP8.Cache.removeItem = function (key) {
 };
 
 Quantumart.QP8.Cache.clear = function () {
-  for (var key in Quantumart.QP8.Cache._itemInfos) {
+  for (let key in Quantumart.QP8.Cache._itemInfos) {
     Quantumart.QP8.Cache.removeItem(key);
   }
 };

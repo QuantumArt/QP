@@ -65,7 +65,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   _customDispose: null,
 
   initialize: function () {
-    var selectedContentId = this._$componentElem.data('aggregated_content_id') || '';
+    let selectedContentId = this._$componentElem.data('aggregated_content_id') || '';
 
     this._$articleWrapper = $(`.articleWrapper_${selectedContentId}`);
     this._$contentList = this._$componentElem.find('select.classifierContentList');
@@ -91,9 +91,9 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   },
 
   makeReadonly: function () {
-    var selectedVal = this._$contentList.find('OPTION:selected').val();
+    let selectedVal = this._$contentList.find('OPTION:selected').val();
     if (!$q.isNullOrEmpty(selectedVal)) {
-      var $hidden = this._$contentList.siblings(`input[name="${this._$contentList.prop('name')}"]:hidden`);
+      let $hidden = this._$contentList.siblings(`input[name="${this._$contentList.prop('name')}"]:hidden`);
       if ($hidden.length) {
         $hidden.val(selectedVal);
       } else {
@@ -105,10 +105,10 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   },
 
   _onContentSelected: function (e) {
-    var tabId = this._$componentElem.data('host_id');
-    var rootContentId = +this._$componentElem.data('root_content_id') || 0;
-    var rootArticleId = +this._$componentElem.data('root_article_id') || 0;
-    var aggregatedContentId = +this._$contentList.find('option:selected').val() || 0;
+    let tabId = this._$componentElem.data('host_id');
+    let rootContentId = +this._$componentElem.data('root_content_id') || 0;
+    let rootArticleId = +this._$componentElem.data('root_article_id') || 0;
+    let aggregatedContentId = +this._$contentList.find('option:selected').val() || 0;
 
     if (aggregatedContentId) {
       $q.showLoader();
@@ -159,14 +159,14 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   },
 
   _executeAggregatedDataScript: function (aggregatedContentId, articleScriptData) {
-    var scriptId = `aggregated_script_${aggregatedContentId}`;
+    let scriptId = `aggregated_script_${aggregatedContentId}`;
     if (articleScriptData) {
-      var $scriptTag = $(`#${scriptId}`);
+      let $scriptTag = $(`#${scriptId}`);
       if ($scriptTag.length) {
         $scriptTag.remove();
       }
 
-      var script = window.document.createElement('script');
+      let script = window.document.createElement('script');
       script.id = `aggregated_script_${aggregatedContentId}`;
       script.src = `data:text/javascript,${window.encodeURIComponent(articleScriptData)}`;
       window.document.body.appendChild(script);
@@ -174,7 +174,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   },
 
   _initAllFields: function () {
-    var $form = this._$articleWrapper;
+    let $form = this._$articleWrapper;
 
     $c.setAllVisualEditorValues($form, this._initFieldValues);
     $c.makeReadonlyVisualEditors($form, this._disabledFields);
@@ -215,7 +215,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
       this._customInit(this._parentEditor, $form);
     }
 
-    var self = this;
+    let self = this;
     if (this._customButtonsSettings) {
       $.each(this._customButtonsSettings, (index, item) => {
         self._parentEditor.addCustomButton(item, $form);
@@ -238,7 +238,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   },
 
   _disposeAggregatedFields: function () {
-    var $form = this._$articleWrapper;
+    let $form = this._$articleWrapper;
     if (this._customDispose) {
       this._customDispose(this._parentEditor, $form);
     }

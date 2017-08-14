@@ -14,7 +14,7 @@ Quantumart.QP8.ActionLogDatetimeFilter.prototype = {
   },
 
   get_value: function () {
-    var sq = this.dtFieldSearch.get_searchQuery();
+    let sq = this.dtFieldSearch.get_searchQuery();
     if (!sq.QueryParams[3]) {
       return {
         from: sq.QueryParams[1],

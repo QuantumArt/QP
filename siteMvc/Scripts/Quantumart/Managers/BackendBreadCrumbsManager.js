@@ -18,7 +18,7 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   ITEM_CLASS_NAME: 'item',
 
   getBreadCrumbs: function (breadCrumbsElementId) {
-    var breadCrumbs = null;
+    let breadCrumbs = null;
     if (this._breadCrumbs[breadCrumbsElementId]) {
       breadCrumbs = this._breadCrumbs[breadCrumbsElementId];
     }
@@ -27,7 +27,7 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   createBreadCrumbs: function (breadCrumbsElementId, options) {
-    var breadCrumbs = new Quantumart.QP8.BackendBreadCrumbs(breadCrumbsElementId, options);
+    let breadCrumbs = new Quantumart.QP8.BackendBreadCrumbs(breadCrumbsElementId, options);
     breadCrumbs.set_manager(this);
     breadCrumbs.initialize();
 
@@ -36,21 +36,21 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   refreshBreadCrumbs: function (breadCrumbsElementId, callback) {
-    var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    let breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
     if (breadCrumbs) {
       breadCrumbs.addItemsToBreadCrumbs(callback);
     }
   },
 
   removeBreadCrumbs: function (breadCrumbsElementId) {
-    var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    let breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
     if (breadCrumbs) {
       $q.removeProperty(this._breadCrumbs, breadCrumbsElementId);
     }
   },
 
   destroyBreadCrumbs: function (breadCrumbsElementId) {
-    var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    let breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
     if (breadCrumbs) {
       this.removeBreadCrumbs(breadCrumbsElementId);
       if (breadCrumbs.dispose) {
@@ -64,8 +64,8 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   _getBreadCrumbsElementIdByItem: function (itemElem) {
-    var breadCrumbsElementId = '';
-    var $breadCrumbs = $q.toJQuery(itemElem).parent().parent();
+    let breadCrumbsElementId = '';
+    let $breadCrumbs = $q.toJQuery(itemElem).parent().parent();
     if (!$q.isNullOrEmpty($breadCrumbs)) {
       breadCrumbsElementId = $breadCrumbs.attr('id');
     }
@@ -79,12 +79,12 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   getBreadCrumbsListByItemCode: function (itemCode) {
-    var breadCrumbsList = [];
-    var $items = this.getItems(itemCode);
+    let breadCrumbsList = [];
+    let $items = this.getItems(itemCode);
 
-    for (var itemIndex = 0, itemCount = $items.length; itemIndex < itemCount; itemIndex++) {
-      var breadCrumbsElementId = this._getBreadCrumbsElementIdByItem($items.eq(itemIndex));
-      var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    for (let itemIndex = 0, itemCount = $items.length; itemIndex < itemCount; itemIndex++) {
+      let breadCrumbsElementId = this._getBreadCrumbsElementIdByItem($items.eq(itemIndex));
+      let breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
       if (breadCrumbs) {
         Array.add(breadCrumbsList, breadCrumbs);
       }
@@ -94,10 +94,10 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   refreshBreadCrumbsList: function (entityTypeCode, parentEntityId, entityId) {
-    var breadCrumbsList = this.getBreadCrumbsListByItemCode(this.generateItemCode(entityTypeCode, parentEntityId, entityId));
+    let breadCrumbsList = this.getBreadCrumbsListByItemCode(this.generateItemCode(entityTypeCode, parentEntityId, entityId));
 
-    for (var breadCrumbsIndex = 0, breadCrumbsCount = breadCrumbsList.length; breadCrumbsIndex < breadCrumbsCount; breadCrumbsIndex++) {
-      var breadCrumbs = breadCrumbsList[breadCrumbsIndex];
+    for (let breadCrumbsIndex = 0, breadCrumbsCount = breadCrumbsList.length; breadCrumbsIndex < breadCrumbsCount; breadCrumbsIndex++) {
+      let breadCrumbs = breadCrumbsList[breadCrumbsIndex];
       if (breadCrumbs) {
         breadCrumbs.addItemsToBreadCrumbs();
       }
@@ -105,23 +105,23 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    var entityTypeCode = eventArgs.get_entityTypeCode();
-    var parentEntityId = eventArgs.get_parentEntityId();
-    var actionTypeCode = eventArgs.get_actionTypeCode();
-    var entityId = eventArgs.get_entityId();
-    var entities = eventArgs.get_entities();
+    let entityTypeCode = eventArgs.get_entityTypeCode();
+    let parentEntityId = eventArgs.get_parentEntityId();
+    let actionTypeCode = eventArgs.get_actionTypeCode();
+    let entityId = eventArgs.get_entityId();
+    let entities = eventArgs.get_entities();
 
     if (actionTypeCode == window.ACTION_TYPE_CODE_RESTORE || eventArgs.get_isUpdated()) {
       this.refreshBreadCrumbsList(entityTypeCode, parentEntityId, entityId);
     } else if (actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_RESTORE) {
-      for (var entityIndex = 0, entityCount = entities.length; entityIndex < entityCount; entityIndex++) {
+      for (let entityIndex = 0, entityCount = entities.length; entityIndex < entityCount; entityIndex++) {
         this.refreshBreadCrumbsList(entityTypeCode, parentEntityId, entities[entityIndex].Id);
       }
     }
 
     if (actionTypeCode == window.ACTION_TYPE_CODE_RESTORE && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-      var newEntityTypeCode = window.ENTITY_TYPE_CODE_ARTICLE;
-      var newParentEntityId = +$o.getParentEntityId(newEntityTypeCode, parentEntityId) || 0;
+      let newEntityTypeCode = window.ENTITY_TYPE_CODE_ARTICLE;
+      let newParentEntityId = +$o.getParentEntityId(newEntityTypeCode, parentEntityId) || 0;
       this.refreshBreadCrumbsList(newEntityTypeCode, newParentEntityId, parentEntityId);
     }
   },

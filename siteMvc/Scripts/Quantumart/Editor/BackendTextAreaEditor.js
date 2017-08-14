@@ -34,8 +34,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   _minJsonEditorHeight: 190,
 
   _openLibrary: function () {
-    var eventArgs = new Quantumart.QP8.BackendEventArgs();
-    var options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId: '', allowUpload: true } };
+    let eventArgs = new Quantumart.QP8.BackendEventArgs();
+    let options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId: '', allowUpload: true } };
     eventArgs.set_entityId(this._libraryEntityId);
     eventArgs.set_parentEntityId(this._libraryParentEntityId);
     eventArgs.set_entityName('');
@@ -77,7 +77,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _librarySelectedHandler: function (eventType, sender, args) {
-    var url, entities;
+    let url, entities;
     this._closeLibrary();
     if (args) {
       entities = args.entities;
@@ -90,7 +90,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _onCheckChangesIntervalHandler: function () {
-    var curVal;
+    let curVal;
     if (this._componentElem.data('codeMirror')) {
       curVal = this._componentElem.data('codeMirror').getValue();
       if (this._storedTempValue !== curVal) {
@@ -117,8 +117,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _insertLibraryTag: function (url) {
-    var sCurs = this._componentElem.data('codeMirror').getCursor('start');
-    var eCurs = this._componentElem.data('codeMirror').getCursor('end');
+    let sCurs = this._componentElem.data('codeMirror').getCursor('start');
+    let eCurs = this._componentElem.data('codeMirror').getCursor('end');
     if ((eCurs.line === sCurs.line) && (eCurs.ch === sCurs.ch)) {
       this._componentElem.data('codeMirror').replaceRange(this._generateTag(url), sCurs);
     } else {
@@ -129,8 +129,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _insertCallText: function (callText) {
-    var sCurs = this._componentElem.data('codeMirror').getCursor('start');
-    var eCurs = this._componentElem.data('codeMirror').getCursor('end');
+    let sCurs = this._componentElem.data('codeMirror').getCursor('start');
+    let eCurs = this._componentElem.data('codeMirror').getCursor('end');
     if ((eCurs.line === sCurs.line) && (eCurs.ch === sCurs.ch)) {
       this._componentElem.data('codeMirror').replaceRange(callText, sCurs);
     } else {
@@ -161,7 +161,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   initialize: function () {
-    var tArea = this._componentElem;
+    let tArea = this._componentElem;
     this._presentationOrCodeBehind = tArea.data('is_presentation') === 'True';
     this._templateId = tArea.data('template_id');
     this._formatId = tArea.data('format_id');
@@ -179,7 +179,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   initCodeMirrorTArea: function (tArea) {
-    var cm;
+    let cm;
     tArea.wrap('<div class="CodemirrorContainer">');
     cm = CodeMirror.fromTextArea(tArea.get(0), {
       lineNumbers: $q.toBoolean(tArea.data('hta_lineNumbers'), true),
@@ -208,7 +208,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   initJsonEditor: function (tArea) {
-    var options, height, je, json;
+    let options, height, je, json;
     tArea.hide();
 
     tArea.wrap('<div id="jsonEditor">');
@@ -250,7 +250,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _onRestoreButtonClick: function () {
-    var actionName = this._presentationOrCodeBehind ? 'GetDefaultPresentation' : 'GetDefaultCode';
+    let actionName = this._presentationOrCodeBehind ? 'GetDefaultPresentation' : 'GetDefaultCode';
     $q.getJsonFromUrl('POST', window.CONTROLLER_URL_PAGE_TEMPLATE + actionName, {
       formatId: this._formatId
     }, true, false).done($.proxy(function ajaxDone(data) {
@@ -304,7 +304,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _insertObjectFunc: function (objectName, netLanguage, isCodeBehind) {
-    var strIns;
+    let strIns;
     if (netLanguage === '') {
       strIns = `<%Object("${objectName}")%>`;
     } else if (isCodeBehind) {
@@ -319,7 +319,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _insertFunc: function (fieldName, netLanguage, isCodeBehind) {
-    var strIns;
+    let strIns;
     if (netLanguage === '') {
       strIns = `<%=${fieldName}%>`;
     } else
@@ -333,7 +333,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _insertFieldFunc: function (fieldName, netLanguage, isCodeBehind) {
-    var strIns = `Field("${fieldName}")`;
+    let strIns = `Field("${fieldName}")`;
     if (netLanguage === '1') {
       if (isCodeBehind === '0') {
         strIns = `Field(((DataRowView)(Container.DataItem)), "${fieldName}")`;
@@ -393,7 +393,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   computeInsertType: function (elem) {
-    var $elem = $(elem);
+    let $elem = $(elem);
     if ($elem.hasClass('ht-toolbar-container-selector') || $elem.hasClass('ht-toolbar-function-selector')) {
       return 'function';
     } else if ($elem.hasClass('ht-toolbar-template-obj-selector') || $elem.hasClass('ht-toolbar-page-obj-selector')) {
@@ -406,8 +406,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   saveData: function () {
-    var jsonEditor;
-    var codeMirror = this._componentElem.data('codeMirror');
+    let jsonEditor;
+    let codeMirror = this._componentElem.data('codeMirror');
     if (codeMirror) {
       if (this._componentElem.val() !== codeMirror.getValue()) {
         this._componentElem.change();
@@ -426,7 +426,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   getMode: function () {
-    var tArea = this._componentElem;
+    let tArea = this._componentElem;
     if (tArea.hasClass('hta-htmlTextArea')) {
       return 'application/x-aspx';
     } else if (tArea.hasClass('hta-cSharpTextArea')) {

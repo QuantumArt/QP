@@ -2,13 +2,13 @@ window.Quantumart = window.Quantumart || {};
 window.Quantumart.QP8 = window.Quantumart.QP8 || {};
 window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || {};
 window.Quantumart.QP8.Interaction = (function Interaction() {
-  var BackendEventObserver;
+  let BackendEventObserver;
 
   /* eslint-disable no-empty-function */
-  var ArticleFormState = function () {};
-  var ExecuteActionOptions = function () {};
-  var BackendExternalMessage = function () {};
-  var OpenSelectWindowOptions = function () {};
+  let ArticleFormState = function () {};
+  let ExecuteActionOptions = function () {};
+  let BackendExternalMessage = function () {};
+  let OpenSelectWindowOptions = function () {};
 
   /* eslint-enable no-empty-function */
   BackendExternalMessage.prototype = {
@@ -102,7 +102,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
     ExternalMessageTypes: BackendExternalMessage.Types,
     BackendEventTypes: BackendEventObserver.EventType,
     executeBackendAction: function (executeOtions, hostUID, destination) {
-      var message = new BackendExternalMessage();
+      let message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.ExecuteAction;
       message.hostUID = hostUID;
       message.data = executeOtions;
@@ -114,7 +114,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
     },
 
     closeBackendHost: function (actionUID, hostUID, destination) {
-      var message = new BackendExternalMessage();
+      let message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CloseBackendHost;
       message.hostUID = hostUID;
       message.data = { actionUID: actionUID };
@@ -126,7 +126,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
     },
 
     openSelectWindow: function (openSelectWindowOptions, hostUID, destination) {
-      var message = new BackendExternalMessage();
+      let message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.OpenSelectWindow;
       message.hostUID = hostUID;
       message.data = openSelectWindowOptions;
@@ -138,9 +138,9 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
     },
 
     checkHost: function (hostUID, destination, callback) {
-      var prmpcObject;
-      var callbackIsCalled = false;
-      var message = new BackendExternalMessage();
+      let prmpcObject;
+      let callbackIsCalled = false;
+      let message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CheckHost;
       message.hostUID = hostUID;
 

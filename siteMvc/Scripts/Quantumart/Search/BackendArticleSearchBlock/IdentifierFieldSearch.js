@@ -7,7 +7,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch = function (conta
 
 Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   initialize: function () {
-    var serverContent;
+    let serverContent;
 
     $q.getJsonFromUrl(
       'GET',
@@ -30,15 +30,15 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      var inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
-      var numberFromID = `${this._elementIdPrefix}_numberFrom`;
-      var numberToID = `${this._elementIdPrefix}_numberTo`;
+      let inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
+      let numberFromID = `${this._elementIdPrefix}_numberFrom`;
+      let numberToID = `${this._elementIdPrefix}_numberTo`;
 
-      var $containerElement = $(this._containerElement);
+      let $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
-      var $numberFrom = $containerElement.find(`#${numberFromID}`);
-      var $numberTo = $containerElement.find(`#${numberToID}`);
+      let $numberFrom = $containerElement.find(`#${numberFromID}`);
+      let $numberTo = $containerElement.find(`#${numberToID}`);
       $numberFrom.focus(this._onNumericInputFocusHandler);
       $numberTo.focus(this._onNumericInputFocusHandler);
 
@@ -46,7 +46,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       this._numberToElement = $numberTo.get(0);
       this._textAreaElement = $containerElement.find(`#${this._elementIdPrefix}_text`).get(0);
 
-      var $inverseCheckBoxElement = $containerElement.find(`#${inverseCheckBoxID}`);
+      let $inverseCheckBoxElement = $containerElement.find(`#${inverseCheckBoxID}`);
       this._inverseCheckBoxElement = $inverseCheckBoxElement.get(0);
 
       $(".radioButtonsList input[type='radio']", $containerElement).click(this._onByValueSelectorChangedHandler);
@@ -83,11 +83,11 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    var stateData = this.get_blockState().data;
-    var result;
+    let stateData = this.get_blockState().data;
+    let result;
 
     if (stateData.isByText) {
-      var ids = this._getIds(stateData.text);
+      let ids = this._getIds(stateData.text);
       result = ids.length == 0 ? '?' : this._getText(ids);
     } else if (stateData.isByValue) {
       result = stateData.from ? stateData.from : '?';
@@ -105,13 +105,13 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   restore_blockState: function (state) {
     if (state) {
       if (this._inverseCheckBoxElement) {
-        var $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
+        let $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
         $inverseCheckBoxElement.prop('checked', state.inverse);
         $inverseCheckBoxElement = null;
       }
 
       if (!$q.isNull(state.isByValue) && !$q.isNull(state.isByText)) {
-        var value = state.isByText ? 2 : state.isByValue ? 0 : 1;
+        let value = state.isByText ? 2 : state.isByValue ? 0 : 1;
         $(`.radioButtonsList input:radio[value=${value}]`, this._containerElement).prop('checked', true).trigger('click');
       }
 
@@ -146,7 +146,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 
   // перенести значение из одного numeric textbox в другой если другой - пустой
   _onNumericInputFocus: function (e) {
-    var focusedNumeric = $(e.currentTarget).data('tTextBox');
+    let focusedNumeric = $(e.currentTarget).data('tTextBox');
     let otherInput;
     if (e.currentTarget === this._numberFromElement) {
       otherInput = $(this._numberToElement).data('tTextBox');
@@ -173,7 +173,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 
     $c.destroyAllNumericTextBoxes(this._containerElement);
 
-    var $containerElement = $(this._containerElement);
+    let $containerElement = $(this._containerElement);
     $(".radioButtonsList input[type='radio']", $containerElement).unbind();
     $containerElement = null;
 
