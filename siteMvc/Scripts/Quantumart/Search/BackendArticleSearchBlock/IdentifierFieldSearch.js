@@ -195,7 +195,6 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       return $(this._inverseCheckBoxElement).is(':checked');
     }
     return false;
-
   },
 
   _isByValue: true,

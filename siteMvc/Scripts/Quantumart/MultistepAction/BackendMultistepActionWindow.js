@@ -11,7 +11,7 @@ Quantumart.QP8.BackendMultistepActionWindow = function BackendMultistepActionWin
 };
 
 Quantumart.QP8.BackendMultistepActionWindow.prototype = {
-  //  название действия
+  // название действия
   _actionName: '',
 
   // краткое название действия
@@ -209,7 +209,6 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     return false;
   },
 
-  // Закончить шаг этапа
   completeStep(processedItemsCount, additionalInfo, parentId) {
     this._stageItemsRemaining -= processedItemsCount;
     this._additionalInfo = additionalInfo;

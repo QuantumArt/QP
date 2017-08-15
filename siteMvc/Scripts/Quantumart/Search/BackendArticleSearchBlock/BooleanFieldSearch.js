@@ -83,7 +83,6 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     }
     return stateData.value === true ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
-
   },
 
   restore_blockState(state) {
@@ -140,7 +139,6 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
     return false;
-
   },
 
   _isNullCheckBoxElement: null

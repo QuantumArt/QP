@@ -67,7 +67,6 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
       return `"${$q.cutShort(stateData.alias, 8)}"`;
     }
     return '""';
-
   },
 
   restore_blockState(state) {
@@ -107,7 +106,6 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
     return false;
-
   },
   _queryDropDownListElement: null,
   _isNullCheckBoxElement: null

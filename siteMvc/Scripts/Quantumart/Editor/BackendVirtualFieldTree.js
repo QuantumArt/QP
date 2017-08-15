@@ -13,7 +13,6 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
       return nodeCode;
     }
     return null;
-
   },
 
   _getEntityChildList(entityId, returnSelf, successHandler, errorHandler) {

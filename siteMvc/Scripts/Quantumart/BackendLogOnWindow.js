@@ -224,7 +224,6 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       return true;
     }
     return false;
-
   },
 
   dispose() {

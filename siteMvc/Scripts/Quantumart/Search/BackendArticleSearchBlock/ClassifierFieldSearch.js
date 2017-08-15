@@ -64,7 +64,6 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
       return $q.cutShort($(this._contentElement).find(`[value=${stateData.contentID}]`).text(), 12);
     }
     return '';
-
   },
 
   restore_blockState(state) {
@@ -89,7 +88,6 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
     return false;
-
   },
 
   _onIsNullCheckBoxChange() {

@@ -66,7 +66,6 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
       }
 
       return state;
-
     }
 
     return null;
@@ -109,10 +108,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
         };
       }
       return null;
-
     }
     return null;
-
   },
   clear() {
     let $resetElem;

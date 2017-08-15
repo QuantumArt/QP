@@ -74,7 +74,6 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
       return result;
     }
     return null;
-
   },
 
   get_blockState() {

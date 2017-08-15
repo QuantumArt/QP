@@ -1,5 +1,4 @@
 Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, onApplyFilter) {
-
   const $searchBlock = $(`#${searchBlockElementId}`);
   const $btnSearch = $('.pep-search-button', $searchBlock);
   const $radioGroup = $('.radioButtonsList', $searchBlock);

@@ -73,7 +73,6 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
       return $q.htmlEncode(String.format("'{0}?folderId={1}&fileName={2}&{3}'", url, options.folderId, item.FullName, new Date().getTime()));
     }
     return $q.htmlEncode(String.format("'{0}{1}'", window.THEME_IMAGE_FOLDER_URL_BIG_FILE_TYPE_ICONS, item.BigIconLink));
-
   }
 };
 

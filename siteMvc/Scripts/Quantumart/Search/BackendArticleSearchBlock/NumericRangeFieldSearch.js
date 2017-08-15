@@ -221,7 +221,6 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
     return false;
-
   },
 
   get_Inverse() {
@@ -229,7 +228,6 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       return $(this._inverseCheckBoxElement).is(':checked');
     }
     return false;
-
   },
 
   _isByValue: true,

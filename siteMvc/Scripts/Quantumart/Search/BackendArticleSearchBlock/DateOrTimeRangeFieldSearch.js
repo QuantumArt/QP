@@ -103,7 +103,6 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
       return stateData.from ? stateData.from : '?';
     }
     return `${stateData.from ? stateData.from : '?'} - ${stateData.to ? stateData.to : '?'}`;
-
   },
 
   restore_blockState(state) {
@@ -195,7 +194,6 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
       return $(this._isNullCheckBoxElement).is(':checked');
     }
     return false;
-
   },
 
   _rangeType: null,

@@ -278,7 +278,6 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
         }
 
         return findDeepest($.grep(node.ChildNodes, n => n.ChildNodes != null)[0], toExpand) || node;
-
       };
 
       let deepestExistedNode = findDeepest(data);
