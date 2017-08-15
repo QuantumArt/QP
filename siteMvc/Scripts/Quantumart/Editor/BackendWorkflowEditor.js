@@ -230,7 +230,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       };
 
       this._items.push(item);
-      this._items.sort((left, right) => left.Weight == right.Weight ? 0 : left.Weight > right.Weight ? 1 : -1);
+      this._items.sort((left, right) => (left.Weight == right.Weight ? 0 : left.Weight > right.Weight ? 1 : -1));
       this._setAsChanged();
     }
   },
