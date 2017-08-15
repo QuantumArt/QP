@@ -25,7 +25,7 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
   }, this);
 
   return {
-    initialize () {
+    initialize() {
       if (contentPicker.getSelectedListItemCount() === 0) {
         articlePicker.disableList();
         articlePicker.set_parentEntityId(0);
@@ -36,7 +36,7 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
       contentPicker.attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, onContentSelectedHandler);
     },
 
-    dispose () {
+    dispose() {
       if (contentPicker) {
         contentPicker.detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, onContentSelectedHandler);
         contentPicker = null;

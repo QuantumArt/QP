@@ -23,21 +23,21 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
   _onNodeContextMenuHiddenHandler: null,
   _onNodeContextMenuShowingHandler: null,
 
-  set_userId (val) {
+  set_userId(val) {
     this._userId = val;
   },
-  get_userId () {
+  get_userId() {
     return this._userId;
   },
 
-  set_groupId (val) {
+  set_groupId(val) {
     this._groupId = val;
   },
-  get_groupId () {
+  get_groupId() {
     return this._groupId;
   },
 
-  initialize () {
+  initialize() {
     Quantumart.QP8.BackendActionPermissionTree.callBaseMethod(this, 'initialize');
     const createContextMenu = $.proxy(function (contextMenuCode) {
       const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(contextMenuCode, String.format('{0}_{1}_ContextMenu', this._treeElementId, contextMenuCode), {
@@ -60,7 +60,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     $(this._treeElement).on(contextMenuEventType, this.NODE_NEW_CLICKABLE_SELECTORS, this._onContextMenuHandler);
   },
 
-  executeAction ($node, actionCode) {
+  executeAction($node, actionCode) {
     if (!$q.isNullOrEmpty($node)) {
       const action = $a.getBackendActionByCode(actionCode);
       if (!action) {
@@ -78,7 +78,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     }
   },
 
-  refreshPermissionNode (entityTypeCode, nodeValueId) {
+  refreshPermissionNode(entityTypeCode, nodeValueId) {
     let nodeType = '';
     if (entityTypeCode == window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION) {
       nodeType = Quantumart.QP8.Enums.ActionPermissionTreeNodeType.EntityTypeNode;
@@ -93,11 +93,11 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     }
   },
 
-  _onDataBinding (sender) {
+  _onDataBinding(sender) {
     this.addNodesToParentNode(sender, 0);
   },
 
-  _onContextMenu (e) {
+  _onContextMenu(e) {
     let $element = $(e.currentTarget);
     let $node = $($element.closest('.t-item')[0]);
 
@@ -117,7 +117,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     e.preventDefault();
   },
 
-  _onNodeContextMenuShowing (eventType, sender, args) {
+  _onNodeContextMenuShowing(eventType, sender, args) {
     const menuComponent = args.get_menu();
     const $node = $(args.get_targetElement());
 
@@ -126,21 +126,21 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     }
   },
 
-  _onNodeContextMenuItemClicking (eventType, sender, args) {
+  _onNodeContextMenuItemClicking(eventType, sender, args) {
     const $menuItem = $(args.get_menuItem());
     if (!$q.isNullOrEmpty($menuItem)) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
   },
 
-  _onNodeContextMenuHidden (eventType, sender, args) {
+  _onNodeContextMenuHidden(eventType, sender, args) {
     const $node = this.getNode(this._currentNodeId);
     if (!$q.isNullOrEmpty(this._contextMenuActionCode)) {
       this.executeAction($node, this._contextMenuActionCode);
     }
   },
 
-  addNodesToParentNode (parentNode, maxExpandLevel, callback) {
+  addNodesToParentNode(parentNode, maxExpandLevel, callback) {
     const $parentNode = this.getNode(parentNode);
     const isRootNode = this.isRootNode($parentNode);
     const nodeType = this._getNodeType($parentNode);
@@ -183,7 +183,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     });
   },
 
-  _refreshNodeInner ($node, loadChildNodes, callback) {
+  _refreshNodeInner($node, loadChildNodes, callback) {
     const isRootNode = this.isRootNode($node);
     if (isRootNode) {
       this.addNodesToParentNode($node, 0, callback);
@@ -235,7 +235,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     }
   },
 
-  _getNodeId ($node) {
+  _getNodeId($node) {
     let entityTypeId = null;
     if (!$q.isNullOrEmpty($node)) {
       const nodeCode = this.getNodeValue($node);
@@ -247,7 +247,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     return entityTypeId;
   },
 
-  _getNodeType ($node) {
+  _getNodeType($node) {
     let nodeType = null;
     if (!$q.isNullOrEmpty($node)) {
       const nodeCode = this.getNodeValue($node);
@@ -259,13 +259,13 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     return nodeType;
   },
 
-  _convertToTreeViewItems (items) {
+  _convertToTreeViewItems(items) {
     if (jQuery.isArray(items)) {
       return jQuery.map(items, $.proxy(this._convertToTreeViewItem, this));
     }
   },
 
-  _convertToTreeViewItem (item) {
+  _convertToTreeViewItem(item) {
     let iconUrl = '';
     iconUrl = item.IconUrl.left(7).toLowerCase() !== 'http://'
       ? window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + item.IconUrl
@@ -281,13 +281,13 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     };
   },
 
-  _converToItemValue (item) {
+  _converToItemValue(item) {
     if (item) {
       return `${item.NodeType}-${item.Id}`;
     }
   },
 
-  _extendNodeElement (nodeElem, item) {
+  _extendNodeElement(nodeElem, item) {
     const $node = this.getNode(nodeElem);
     if (!$q.isNullOrEmpty($node)) {
       $node.data('node_type', item.NodeType);
@@ -295,7 +295,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     }
   },
 
-  _extendNodeElements (parentNodeElem, items) {
+  _extendNodeElements(parentNodeElem, items) {
     const self = this;
     const $parentNode = $q.toJQuery(parentNodeElem);
     $.each(items, (index, item) => {
@@ -304,7 +304,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     });
   },
 
-  _loadChildNodes (entityTypeId) {
+  _loadChildNodes(entityTypeId) {
     return $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ACTION_PERMISSION_TREE}GetTreeNodes`,
       {
         entityTypeId,
@@ -314,7 +314,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
       true, false);
   },
 
-  _loadNode (entityTypeId, actionId) {
+  _loadNode(entityTypeId, actionId) {
     return $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ACTION_PERMISSION_TREE}GetTreeNode`,
       {
         entityTypeId,
@@ -325,7 +325,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
       true, false);
   },
 
-  dispose () {
+  dispose() {
     const disposeContextMenu = $.proxy(
       function (contextMenuComponent) {
         if (contextMenuComponent) {

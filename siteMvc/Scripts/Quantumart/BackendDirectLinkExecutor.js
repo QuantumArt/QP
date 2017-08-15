@@ -19,7 +19,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
   _imFirst: false,
   _uid: null,
 
-  _onDirectLinkOpenRequested (e) {
+  _onDirectLinkOpenRequested(e) {
     if ($q.isNullOrEmpty(e.key)) {
       const key = window.localStorage.getItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
       if (key) {
@@ -40,7 +40,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 
   _onDirectLinkOpenRequestedHandler: null,
 
-  _executeAction (actionParams, byRequest) {
+  _executeAction(actionParams, byRequest) {
     if (actionParams) {
       if ($q.isNullOrEmpty(actionParams.customerCode)) {
         actionParams.customerCode = this._currentCustomerCode;
@@ -74,7 +74,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     }
   },
 
-  _send (type, message) {
+  _send(type, message) {
     window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
     window.localStorage.setItem(type, message);
     if ('onstorage' in document) {
@@ -82,7 +82,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     }
   },
 
-  _instanceExistenceCheck () {
+  _instanceExistenceCheck() {
     const dfr = new jQuery.Deferred();
     if (window.localStorage.getItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG)) {
       this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, this._uid);
@@ -99,15 +99,15 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     return dfr.promise();
   },
 
-  _registerInstance () {
+  _registerInstance() {
     this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, 'true');
   },
 
-  _unregisterInstance () {
+  _unregisterInstance() {
     window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG);
   },
 
-  ready (callback) {
+  ready(callback) {
     this._instanceExistenceCheck().done(function (instanceExists) {
       if (!instanceExists) {
         this._imFirst = true;
@@ -142,7 +142,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     });
   },
 
-  dispose () {
+  dispose() {
     if (this._imFirst) {
       if (!('onstorage' in document)) {
         this._unregisterInstance();

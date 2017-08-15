@@ -4,7 +4,7 @@ Quantumart.QP8.BackendBreadMenuContextMenuManager = function () {
 
 Quantumart.QP8.BackendBreadMenuContextMenuManager.prototype = {
   _сontextMenus: {},
-  getContextMenu (contextMenuCode) {
+  getContextMenu(contextMenuCode) {
     let contextMenu = null;
     if (this._сontextMenus[contextMenuCode]) {
       contextMenu = this._сontextMenus[contextMenuCode];
@@ -13,7 +13,7 @@ Quantumart.QP8.BackendBreadMenuContextMenuManager.prototype = {
     return contextMenu;
   },
 
-  createContextMenu (contextMenuCode, contextMenuElementId, options) {
+  createContextMenu(contextMenuCode, contextMenuElementId, options) {
     const contextMenu = new Quantumart.QP8.BackendContextMenu(contextMenuCode, contextMenuElementId, options);
     contextMenu.set_contextMenuManager(this);
     contextMenu.initialize();
@@ -22,11 +22,11 @@ Quantumart.QP8.BackendBreadMenuContextMenuManager.prototype = {
     return contextMenu;
   },
 
-  removeContextMenu (contextMenuCode) {
+  removeContextMenu(contextMenuCode) {
     $q.removeProperty(this._сontextMenus, contextMenuCode);
   },
 
-  destroyContextMenu (contextMenuCode) {
+  destroyContextMenu(contextMenuCode) {
     let contextMenu = this._сontextMenus[contextMenuCode];
     if (contextMenu != null) {
       if (contextMenu.dispose) {
@@ -37,11 +37,11 @@ Quantumart.QP8.BackendBreadMenuContextMenuManager.prototype = {
     }
   },
 
-  getContextMenuEventType () {
+  getContextMenuEventType() {
     return jQuery.fn.jeegoocontext.getContextMenuEventType();
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendBreadMenuContextMenuManager.callBaseMethod(this, 'dispose');
     if (this._сontextMenus) {
       for (const contextMenuCode in this._сontextMenus) {

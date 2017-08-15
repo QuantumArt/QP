@@ -19,7 +19,7 @@ Quantumart.QP8.BackendLogin.prototype = {
   storageKey: Quantumart.QP8.BackendLogin.storageKey,
   _useSavedCustomerCode: false,
 
-  _initialize () {
+  _initialize() {
     jQuery('#IsSilverlightInstalled').val(Silverlight.isInstalled(null) == true ? 'True' : 'False');
 
     if (this._useSavedCustomerCode) {
@@ -43,7 +43,7 @@ Quantumart.QP8.BackendLogin.prototype = {
     }
   },
 
-  _loginClick () {
+  _loginClick() {
     localStorage.setItem(this.storageKey, jQuery('#CustomerCode').val());
   },
 

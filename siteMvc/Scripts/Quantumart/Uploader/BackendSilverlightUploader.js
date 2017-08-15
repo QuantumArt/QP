@@ -30,7 +30,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
   _extensions: '',
   _resolveName: false,
 
-  initialize () {
+  initialize() {
     let $parentElement = $(this._parentElement);
     $parentElement.data('qp_sl_uploader', this);
 
@@ -39,7 +39,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
     $parentElement = null;
   },
 
-  dispose () {
+  dispose() {
     let $parentElement = $(this._parentElement);
     $parentElement.removeData();
 
@@ -48,7 +48,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
   },
 
 
-  _createFileUploader () {
+  _createFileUploader() {
     const functionPrefix = 'Quantumart$QP8$BackendSilverlightUploader$';
     const uploadUrl = `${window.APPLICATION_ROOT_URL}Upload/`;
     const resolveNameFuction = this._resolveName ? `${functionPrefix}resolveFileName` : '';
@@ -88,7 +88,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
   },
 
 
-  _onSilverlightErrorHandler (sender, args) {
+  _onSilverlightErrorHandler(sender, args) {
     let appSource = '';
     if (sender != null && sender != 0) {
       appSource = sender.getHost().Source;
@@ -116,11 +116,11 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
     }
   },
 
-  set_folderPath (value) {
+  set_folderPath(value) {
     this._folderPath = value;
   },
 
-  get_folderPath () {
+  get_folderPath() {
     return this._folderPath;
   }
 };

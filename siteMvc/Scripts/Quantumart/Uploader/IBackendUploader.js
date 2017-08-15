@@ -3,16 +3,16 @@ window.EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED = 'OnLibraryAllFilesUploaded';
 
 Quantumart.QP8.IBackendUploader = function () { };
 Quantumart.QP8.IBackendUploader.prototype = {
-  initialize () {
+  initialize() {
     $q.alertFail('initialize is not implemented');
   },
-  dispose () {
+  dispose() {
     $q.alertFail('dispose is not implemented');
   },
-  set_folderPath () {
+  set_folderPath() {
     $q.alertFail('set_folderPath is not implemented');
   },
-  get_folderPath () {
+  get_folderPath() {
     $q.alertFail('get_folderPath is not implemented');
   }
 };
@@ -27,7 +27,7 @@ Quantumart.QP8.BackendUploaderEventArgs = function (fileNames) {
 Quantumart.QP8.BackendUploaderEventArgs.prototype = {
   _fileNames: [],
 
-  get_fileNames () {
+  get_fileNames() {
     return this._fileNames;
   }
 };

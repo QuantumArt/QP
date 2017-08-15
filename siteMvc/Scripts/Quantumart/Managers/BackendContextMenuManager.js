@@ -5,13 +5,13 @@ Quantumart.QP8.BackendContextMenuManager = function () {
 };
 
 Quantumart.QP8.BackendContextMenuManager.prototype = {
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendContextMenuManager.callBaseMethod(this, 'dispose');
     Quantumart.QP8.BackendContextMenuManager._instance = null;
     $q.collectGarbageInIE();
   },
 
-  onActionExecuted (eventArgs) {
+  onActionExecuted(eventArgs) {
     if (eventArgs && eventArgs.get_entityTypeCode() === window.ENTITY_TYPE_CODE_CUSTOM_ACTION && (eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving())) {
       this.notify(window.EVENT_TYPE_CUSTOM_ACTION_CHANGED, {});
     }

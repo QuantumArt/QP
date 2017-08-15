@@ -81,75 +81,75 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   _onFindButtonClickHandler: null,
   _onResetButtonClickHandler: null,
 
-  get_searchBlockGroupCode () {
+  get_searchBlockGroupCode() {
     return this._searchBlockGroupCode;
   },
 
-  set_searchBlockGroupCode (value) {
+  set_searchBlockGroupCode(value) {
     this._searchBlockGroupCode = value;
   },
 
-  get_searchBlockElementId () {
+  get_searchBlockElementId() {
     return this._searchBlockElementId;
   },
 
-  set_searchBlockElementId (value) {
+  set_searchBlockElementId(value) {
     this._searchBlockElementId = value;
   },
 
-  get_searchBlockElement () {
+  get_searchBlockElement() {
     return this._searchBlockElement;
   },
 
-  get_searchBlockContainerElementId () {
+  get_searchBlockContainerElementId() {
     return this._searchBlockContainerElementId;
   },
 
-  set_searchBlockContainerElementId (value) {
+  set_searchBlockContainerElementId(value) {
     this._searchBlockContainerElementId = value;
   },
 
-  get_entityTypeCode () {
+  get_entityTypeCode() {
     return this._entityTypeCode;
   },
 
-  set_entityTypeCode (value) {
+  set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
 
-  get_parentEntityId () {
+  get_parentEntityId() {
     return this._parentEntityId;
   },
 
-  set_parentEntityId (value) {
+  set_parentEntityId(value) {
     this._parentEntityId = value;
   },
 
-  get_minSearchBlockHeight () {
+  get_minSearchBlockHeight() {
     return this._minSearchBlockHeight;
   },
 
-  set_minSearchBlockHeight (value) {
+  set_minSearchBlockHeight(value) {
     this._minSearchBlockHeight = value;
   },
 
-  get_maxSearchBlockHeight () {
+  get_maxSearchBlockHeight() {
     return this._maxSearchBlockHeight;
   },
 
-  set_maxSearchBlockHeight (value) {
+  set_maxSearchBlockHeight(value) {
     this._maxSearchBlockHeight = value;
   },
 
-  get_isRendered () {
+  get_isRendered() {
     return this._isRendered;
   },
 
-  set_isRendered (value) {
+  set_isRendered(value) {
     this._isRendered = value;
   },
 
-  initialize () {
+  initialize() {
     let $searchBlock = $(`#${this._searchBlockElementId}`);
     const searchBlockExist = !$q.isNullOrEmpty($searchBlock);
     const searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
@@ -205,21 +205,21 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     }
   },
 
-  _attachSearchBlockEventHandlers () {
+  _attachSearchBlockEventHandlers() {
     $(this._searchBlockElement).bind('resize', this._onSearchBlockResizedHandler);
     $(this._findButtonElement).bind('click', this._onFindButtonClickHandler);
     $(this._resetButtonElement).bind('click', this._onResetButtonClickHandler);
     $(this._searchForm).bind('submit', this._onSearchFormSubmittedHandler);
   },
 
-  _detachSearchBlockEventHandlers () {
+  _detachSearchBlockEventHandlers() {
     $(this._searchBlockElement).unbind('resize', this._onSearchBlockResizedHandler);
     $(this._findButtonElement).unbind('click', this._onFindButtonClickHandler);
     $(this._resetButtonElement).unbind('click', this._onResetButtonClickHandler);
     $(this._searchForm).unbind('submit');
   },
 
-  showSearchBlock () {
+  showSearchBlock() {
     this._isVisible = true;
     const $searchBlock = $(this._searchBlockElement);
     if ($searchBlock.is(':hidden')) {
@@ -233,7 +233,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     }
   },
 
-  hideSearchBlock () {
+  hideSearchBlock() {
     this._isVisible = false;
     const $searchBlock = $(this._searchBlockElement);
     if ($searchBlock.is(':visible')) {
@@ -251,11 +251,11 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     }
   },
 
-  renderSearchBlock () {
+  renderSearchBlock() {
     this.set_isRendered(true);
   },
 
-  _onSearchBlockResized () {
+  _onSearchBlockResized() {
     const $searchBlock = jQuery(this._searchBlockElement);
     let $bottomHandle = null;
     if (this._verticalResizerComponent) {
@@ -279,23 +279,23 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, eventArgs);
   },
 
-  _onFindButtonClick () {
+  _onFindButtonClick() {
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 
-  _onResetButtonClick () {
+  _onResetButtonClick() {
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
   },
 
-  _onSearchFormSubmitted (e) {
+  _onSearchFormSubmitted(e) {
     e.preventDefault();
     jQuery(this._findButtonElement).trigger('click');
     return false;
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendSearchBlockBase.callBaseMethod(this, 'dispose');
 
     this._detachSearchBlockEventHandlers();
@@ -342,43 +342,43 @@ Quantumart.QP8.BackendSearchBlockEventArgs.prototype = {
   _searchBlockHeight: 0,
   _searchBlockState: null,
 
-  get_searchQuery () {
+  get_searchQuery() {
     return this._searchQuery;
   },
 
-  set_searchQuery (value) {
+  set_searchQuery(value) {
     this._searchQuery = value;
   },
 
-  get_searchBlockType () {
+  get_searchBlockType() {
     return this._searchBlockType;
   },
 
-  set_searchBlockType (value) {
+  set_searchBlockType(value) {
     this._searchBlockType = value;
   },
 
-  get_searchBlockWidth () {
+  get_searchBlockWidth() {
     return this._searchBlockWidth;
   },
 
-  set_searchBlockWidth (value) {
+  set_searchBlockWidth(value) {
     this._searchBlockWidth = value;
   },
 
-  get_searchBlockHeight () {
+  get_searchBlockHeight() {
     return this._searchBlockHeight;
   },
 
-  set_searchBlockHeight (value) {
+  set_searchBlockHeight(value) {
     this._searchBlockHeight = value;
   },
 
-  set_searchBlockState (value) {
+  set_searchBlockState(value) {
     this._searchBlockState = value;
   },
 
-  get_searchBlockState () {
+  get_searchBlockState() {
     return this._searchBlockState;
   }
 };

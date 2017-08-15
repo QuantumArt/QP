@@ -84,92 +84,92 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   LIST_DISABLED_CLASS_NAME: 'disabled',
   SELF_CLEAR_FLOATS_CLASS_NAME: 'group',
 
-  get_listElementId () {
+  get_listElementId() {
     return this._listElementId;
   },
 
-  set_listElementId (value) {
+  set_listElementId(value) {
     this._listElementId = value;
   },
 
-  get_entityTypeCode () {
+  get_entityTypeCode() {
     return this._entityTypeCode;
   },
 
-  set_entityTypeCode (value) {
+  set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
 
-  get_parentEntityId () {
+  get_parentEntityId() {
     return this._parentEntityId;
   },
 
-  set_parentEntityId (value) {
+  set_parentEntityId(value) {
     this._parentEntityId = value;
   },
 
-  get_entityId () {
+  get_entityId() {
     return this._entityId;
   },
 
-  set_entityId (value) {
+  set_entityId(value) {
     this._entityId = value;
   },
 
-  get_listType () {
+  get_listType() {
     return this._listType;
   },
 
-  set_listType (value) {
+  set_listType(value) {
     this._listType = value;
   },
 
-  get_listId () {
+  get_listId() {
     return this._listId;
   },
 
-  set_listId (value) {
+  set_listId(value) {
     this._listId = value;
   },
 
-  get_addNewActionCode () {
+  get_addNewActionCode() {
     return this._addNewActionCode;
   },
 
-  set_addNewActionCode (value) {
+  set_addNewActionCode(value) {
     this._addNewActionCode = value;
   },
 
-  get_readActionCode () {
+  get_readActionCode() {
     return this._readActionCode;
   },
 
-  set_readActionCode (value) {
+  set_readActionCode(value) {
     this._readActionCode = value;
   },
 
-  get_selectActionCode () {
+  get_selectActionCode() {
     return this._selectActionCode;
   },
 
-  set_selectActionCode (value) {
+  set_selectActionCode(value) {
     this._selectActionCode = value;
   },
 
-  get_listGroupCode () {
+  get_listGroupCode() {
     return this._listGroupCode;
   },
 
-  get_listManagerComponent () {
+  get_listManagerComponent() {
     return this._listManagerComponent;
   },
 
-  set_listManagerComponent (value) {
+  set_listManagerComponent(value) {
     this._listManagerComponent = value;
   },
 
 
-  initialize () {
+  initialize() {
     if (!this._listElementId) {
       $q.alertFail('_listElementId');
     }
@@ -199,7 +199,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _createCollapsingToolbar (mainWrapperElement) {
+  _createCollapsingToolbar(mainWrapperElement) {
     if (mainWrapperElement) {
       const html = new $.telerik.stringBuilder();
       html
@@ -250,7 +250,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _fixListOverflow () {
+  _fixListOverflow() {
     let $list = $(this._listElement);
     $list.removeClass(this.OVERFLOW_LIST_CLASS_NAME);
 
@@ -272,35 +272,35 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     $list = null;
   },
 
-  getListItems () {
+  getListItems() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  getListItemCount () {
+  getListItemCount() {
     return this.getListItems().length;
   },
 
-  getSelectedListItems () {
+  getSelectedListItems() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  getSelectedListItemCount () {
+  getSelectedListItemCount() {
     return this.getSelectedListItems().length;
   },
 
-  getSelectedEntities () {
+  getSelectedEntities() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  getSelectedEntityIDs () {
+  getSelectedEntityIDs() {
     return $.grep($.map(this.getSelectedEntities(), item => $q.toInt(item.Id)), item => item);
   },
 
-  selectEntities (entityIDs) {
+  selectEntities(entityIDs) {
     Sys.Debug.trace(entityIDs);
   },
 
-  refreshList (testEntityId) {
+  refreshList(testEntityId) {
     const selectedEntitiesIDs = _.pluck(this.getSelectedEntities(), 'Id');
     const dataItems = $o.getSimpleEntityList(this._entityTypeCode, this._parentEntityId, this._entityId, this._listId, this._selectionMode, selectedEntitiesIDs, this._filter, testEntityId);
     if (dataItems) {
@@ -309,61 +309,61 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _refreshListInner () {
+  _refreshListInner() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  selectAllListItems () {
+  selectAllListItems() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  deselectAllListItems () {
+  deselectAllListItems() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  enableList () {
+  enableList() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  disableList () {
+  disableList() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  makeReadonly () {},
+  makeReadonly() {},
 
-  isListChanged () {
+  isListChanged() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  isListOverflow () {
+  isListOverflow() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  isListDisabled () {
+  isListDisabled() {
     return $(this._listElement).hasClass(this.LIST_DISABLED_CLASS_NAME);
   },
 
-  _showToolbar () {
+  _showToolbar() {
     $(this._toolbarElement).css('display', 'block');
   },
 
-  _hideToolbar () {
+  _hideToolbar() {
     $(this._toolbarElement).css('display', 'none');
   },
 
-  _checkAllowShowingToolbar () {
+  _checkAllowShowingToolbar() {
     return true;
   },
 
-  _getToolbarButtons () {
+  _getToolbarButtons() {
     return $(`.${this.LINK_BUTTON_CLASS_NAME}`, this._toolbarElement);
   },
 
-  _createToolbarButton (id, text, cssClassName) {
+  _createToolbarButton(id, text, cssClassName) {
     return this._createLinkButton(id, text, cssClassName);
   },
 
-  _isToolbarButtonDisabled (buttonElem) {
+  _isToolbarButtonDisabled(buttonElem) {
     let isDisabled;
     const $linkButton = $q.toJQuery(buttonElem);
     const actionLink = $linkButton.data('action_link_component');
@@ -377,7 +377,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     return isDisabled;
   },
 
-  _changeToolbarButtonState (buttonElem, state) {
+  _changeToolbarButtonState(buttonElem, state) {
     const $linkButton = $q.toJQuery(buttonElem);
     const actionLink = $linkButton.data('action_link_component');
 
@@ -394,7 +394,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _createLinkButton (id, text, cssClassName) {
+  _createLinkButton(id, text, cssClassName) {
     const $linkButton = $('<span />', { id, class: `${this.LINK_BUTTON_CLASS_NAME} ${this.ACTION_LINK_CLASS_NAME}` });
     const linkContentHtml = new $.telerik.stringBuilder();
 
@@ -410,7 +410,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     return $linkButton;
   },
 
-  _extendLink ($linkButton, actionCode) {
+  _extendLink($linkButton, actionCode) {
     if (!$q.isNullOrEmpty($linkButton)) {
       const entityTypeCode = this._entityTypeCode;
       let entityId = 0;
@@ -449,19 +449,19 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _addButtonToToolbar (buttonElem) {
+  _addButtonToToolbar(buttonElem) {
     const $button = $q.toJQuery(buttonElem);
     $(this._toolbarElement).append($button);
     $button.wrap('<li />');
   },
 
-  _addLinkToToolbar (linkElem, actionCode) {
+  _addLinkToToolbar(linkElem, actionCode) {
     const $link = $q.toJQuery(linkElem);
     this._addButtonToToolbar($link);
     this._extendLink($link, actionCode);
   },
 
-  _addNewButtonToToolbar () {
+  _addNewButtonToToolbar() {
     if (this._addNewActionCode != window.ACTION_CODE_NONE) {
       const $addNewButton = this._createToolbarButton(`${this._listElementId}_AddNewButton`, $l.EntityDataList.addNewActionLinkButtonText, 'add');
       this._addLinkToToolbar($addNewButton, this._addNewActionCode);
@@ -469,7 +469,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _addReadButtonToToolbar () {
+  _addReadButtonToToolbar() {
     if (this._readActionCode != window.ACTION_CODE_NONE) {
       const $readActionButton = this._createToolbarButton(`${this._listElementId}_ReadButton`, $l.EntityDataList.readActionLinkButtonText, 'edit');
       this._changeToolbarButtonState($readActionButton, this.getSelectedListItemCount() > 0);
@@ -478,7 +478,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _refreshReadToolbarButton (refreshActionLinkProperties) {
+  _refreshReadToolbarButton(refreshActionLinkProperties) {
     if ($q.isNull(refreshActionLinkProperties)) {
       refreshActionLinkProperties = false;
     }
@@ -514,7 +514,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _enableAllToolbarButtons () {
+  _enableAllToolbarButtons() {
     let $linkButtons = this._getToolbarButtons();
     const linkButtonCount = $linkButtons.length;
 
@@ -528,7 +528,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     this._refreshReadToolbarButton();
   },
 
-  _disableAllToolbarButtons () {
+  _disableAllToolbarButtons() {
     let $linkButtons = this._getToolbarButtons();
     const linkButtonCount = $linkButtons.length;
 
@@ -542,7 +542,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     $linkButtons = null;
   },
 
-  _openPopupWindow () {
+  _openPopupWindow() {
     let eventArgs = new Quantumart.QP8.BackendEventArgs();
     eventArgs.set_isMultipleEntities(this._allowMultipleItemSelection);
     eventArgs.set_parentEntityId(this._parentEntityId);
@@ -569,12 +569,12 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     eventArgs = null;
   },
 
-  _popupWindowSelectedHandler (eventType, sender, args) {
+  _popupWindowSelectedHandler(eventType, sender, args) {
     this._loadSelectedItems(args.entities);
     this._destroyPopupWindow();
   },
 
-  _loadSelectedItems (entities) {
+  _loadSelectedItems(entities) {
     let dataItems;
     if (($o.checkEntitiesForPresenceEmptyNames(entities) || this._readDataOnInsert) && entities.length <= this._countLimit) {
       const selectedEntitiesIDs = _.pluck(entities, 'Id');
@@ -592,11 +592,11 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     this.notify(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, new Quantumart.QP8.BackendEventArgs());
   },
 
-  _popupWindowClosedHandler () {
+  _popupWindowClosedHandler() {
     this._destroyPopupWindow();
   },
 
-  _destroyPopupWindow () {
+  _destroyPopupWindow() {
     if (this._selectPopupWindowComponent) {
       this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
       this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
@@ -606,7 +606,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _getGroupCheckboxHtml (hidden) {
+  _getGroupCheckboxHtml(hidden) {
     const idFormat = '{0}_{1}';
     const idPrefix = 'group';
     const itemElementName = String.format(idFormat, idPrefix, this._listItemName);
@@ -630,7 +630,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     return html.string();
   },
 
-  _getCountDivHtml (newCount, hidden) {
+  _getCountDivHtml(newCount, hidden) {
     const html = new $.telerik.stringBuilder();
     const style = hidden ? 'style="display:none"' : '';
     const countText = String.format($l.EntityDataList.countText, `<span class="countItems">${newCount}</span>`);
@@ -640,7 +640,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     return html.string();
   },
 
-  _refreshGroupCheckbox (newCount) {
+  _refreshGroupCheckbox(newCount) {
     if (newCount > 1 && !this._isCountOverflow()) {
       this._showGroupCheckbox();
     } else {
@@ -650,44 +650,44 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     this._syncGroupCheckbox();
   },
 
-  _addGroupCheckbox (hidden) {
+  _addGroupCheckbox(hidden) {
     $(this._toolbarElement).after(this._getGroupCheckboxHtml(hidden));
     this._getGroupCheckbox().bind('click', $.proxy(this._groupCheckboxClickHandler, this));
   },
 
-  _showGroupCheckbox () {
+  _showGroupCheckbox() {
     this._getGroupCheckbox().parent().show();
   },
 
-  _hideGroupCheckbox (newCount) {
+  _hideGroupCheckbox(newCount) {
     this._getGroupCheckbox().parent().hide();
   },
 
-  _destroyGroupCheckbox () {
+  _destroyGroupCheckbox() {
     this._getGroupCheckbox().unbind('click').parent().remove();
   },
 
-  _addCountDiv (count, hidden) {
+  _addCountDiv(count, hidden) {
     $(this._toolbarElement).after(this._getCountDivHtml(count, hidden));
   },
 
-  _destroyCountDiv () {
+  _destroyCountDiv() {
     this._getCountSpan().parent().remove();
   },
 
-  _getGroupCheckbox () {
+  _getGroupCheckbox() {
     return $(this._listWrapperElement).find('.groupCheckbox INPUT:checkbox');
   },
 
-  _getCountSpan () {
+  _getCountSpan() {
     return $(this._listWrapperElement).find('.countItems');
   },
 
-  _getOverflowSpan () {
+  _getOverflowSpan() {
     return $(this._listWrapperElement).find('.overflowText');
   },
 
-  _groupCheckboxClickHandler () {
+  _groupCheckboxClickHandler() {
     if (this._getGroupCheckbox().is(':checked')) {
       this.selectAllListItems();
     } else {
@@ -697,20 +697,20 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     this._syncCountSpan();
   },
 
-  _syncGroupCheckbox () {
+  _syncGroupCheckbox() {
     this._getGroupCheckbox().prop('checked', this.getListItemCount() == this.getSelectedListItemCount());
   },
 
-  _syncCountSpan (count) {
+  _syncCountSpan(count) {
     this._getCountSpan().html(`${count || this.getSelectedEntities().length}`);
     this._getOverflowSpan().html(this._getOverflowText());
   },
 
-  _getOverflowText () {
+  _getOverflowText() {
     return this._isCountOverflow() ? `. ${String.format($l.EntityDataList.overFlowText, this._countLimit)}` : '';
   },
 
-  _onItemClickHandler (e) {
+  _onItemClickHandler(e) {
     e.preventDefault();
     const isLeftClick = e.type == 'click' && (e.which == 1 || e.which == 0);
     const isMiddleClick = e.type == 'mouseup' && e.which == 2;
@@ -740,22 +740,22 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _getIdLinkCode (value) {
+  _getIdLinkCode(value) {
     return !this._showIds ? '' : `<span class="idLink">(<a class="js" href="javascript:void(0)">${$q.htmlEncode(value)}</a>)</span>`;
   },
 
-  _getValueStorage () {
+  _getValueStorage() {
     return this._listManagerComponent.getValueStorage();
   },
 
-  _onCopyButtonClickHandler () {
+  _onCopyButtonClickHandler() {
     const storage = this._getValueStorage();
     storage.parentEntityId = this._parentEntityId;
     storage.entityTypeCode = this._entityTypeCode;
     storage.filter = this._filter;
     storage.entities = this.getSelectedEntities();
   },
-  _onPasteButtonClickHandler () {
+  _onPasteButtonClickHandler() {
     const storage = this._getValueStorage();
     if (storage.entities) {
       if (storage.entityTypeCode != this._entityTypeCode) {
@@ -770,15 +770,15 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _isCountOverflow () {
+  _isCountOverflow() {
     return false;
   },
 
-  setFilter (filter) {
+  setFilter(filter) {
     this._filter = filter;
   },
 
-  applyFilter (filter) {
+  applyFilter(filter) {
     let result = this._initFilter;
     if (filter) {
       result = result && result.trim() ? `${result} and ${filter}` : filter;
@@ -792,11 +792,11 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  getFilter () {
+  getFilter() {
     return this._filter;
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendEntityDataListBase.callBaseMethod(this, 'dispose');
 
     this._destroyPopupWindow();

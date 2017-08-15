@@ -8,7 +8,7 @@ Quantumart.QP8.BackendCustomActionHostManager = function () {
 Quantumart.QP8.BackendCustomActionHostManager.prototype = {
   _components: null,
 
-  createComponent (hostId, options) {
+  createComponent(hostId, options) {
     if (options && options.hostUID) {
       if ($q.isNull(this._components[options.hostUID])) {
         this._components[options.hostUID] = new Quantumart.QP8.BackendCustomActionHost(hostId, options, this);
@@ -17,17 +17,17 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     }
   },
 
-  removeComponent (component) {
+  removeComponent(component) {
     if (component) {
       $q.removeProperty(this._components, component.get_hostUID());
     }
   },
 
-  onCloseHostMessageReceived (message) {
+  onCloseHostMessageReceived(message) {
     this.notify(window.EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED, message);
   },
 
-  onExternalCallerContextsUnbinded (message) {
+  onExternalCallerContextsUnbinded(message) {
     const self = this;
     $(message.externalCallerContexts).each((i, c) => {
       const component = self._components[c.hostUID];
@@ -41,7 +41,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     });
   },
 
-  onActionExecuted (eventArgs) {
+  onActionExecuted(eventArgs) {
     let actionInfo = eventArgs;
     if (eventArgs.get_previousAction()) {
       actionInfo = eventArgs.get_previousAction();
@@ -91,7 +91,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     });
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendCustomActionHostManager.callBaseMethod(this, 'dispose');
 
     Quantumart.QP8.BackendCustomActionHostManager._instance = null;

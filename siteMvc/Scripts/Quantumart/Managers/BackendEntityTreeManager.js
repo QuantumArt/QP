@@ -5,16 +5,16 @@ Quantumart.QP8.BackendEntityTreeManager = function () {
 Quantumart.QP8.BackendEntityTreeManager.prototype = {
   _treeGroups: {},
 
-  initialize () {
+  initialize() {
   },
 
-  generateTreeGroupCode (entityTypeCode, parentEntityId) {
+  generateTreeGroupCode(entityTypeCode, parentEntityId) {
     const treeGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
     return treeGroupCode;
   },
 
-  getTreeGroup (treeGroupCode) {
+  getTreeGroup(treeGroupCode) {
     let treeGroup = null;
     if (this._treeGroups[treeGroupCode]) {
       treeGroup = this._treeGroups[treeGroupCode];
@@ -23,7 +23,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     return treeGroup;
   },
 
-  createTreeGroup (treeGroupCode) {
+  createTreeGroup(treeGroupCode) {
     let treeGroup = this.getTreeGroup(treeGroupCode);
     if (!treeGroup) {
       treeGroup = {};
@@ -33,11 +33,11 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     return treeGroup;
   },
 
-  removeTreeGroup (treeGroupCode) {
+  removeTreeGroup(treeGroupCode) {
     $q.removeProperty(this._treeGroups, treeGroupCode);
   },
 
-  getTree (treeElementId) {
+  getTree(treeElementId) {
     let tree = null;
 
     for (const treeGroupCode in this._treeGroups) {
@@ -51,7 +51,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     return tree;
   },
 
-  createTree (treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
+  createTree(treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
     const treeGroupCode = this.generateTreeGroupCode(entityTypeCode, parentEntityId);
 
     let tree = null;
@@ -68,7 +68,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     return tree;
   },
 
-  removeTree (treeElementId) {
+  removeTree(treeElementId) {
     const tree = this.getTree(treeElementId);
     if (tree) {
       const treeGroupCode = tree.get_treeGroupCode();
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     }
   },
 
-  destroyTree (treeElementId) {
+  destroyTree(treeElementId) {
     let tree = this.getTree(treeElementId);
     if (tree != null) {
       this.removeTree(treeElementId);
@@ -93,7 +93,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     }
   },
 
-  refreshNode (entityTypeCode, parentEntityId, entityId, options) {
+  refreshNode(entityTypeCode, parentEntityId, entityId, options) {
     const treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
     if (treeGroup) {
       for (const treeElementId in treeGroup) {
@@ -105,7 +105,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     }
   },
 
-  refreshNodes (entityTypeCode, parentEntityId, ids, options) {
+  refreshNodes(entityTypeCode, parentEntityId, ids, options) {
     const self = this;
     if ($q.isNullOrEmpty(ids)) {
       const treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
@@ -122,7 +122,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     }
   },
 
-  removeNode (entityTypeCode, parentEntityId, entityId) {
+  removeNode(entityTypeCode, parentEntityId, entityId) {
     const treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
     if (treeGroup) {
       for (const treeElementId in treeGroup) {
@@ -134,14 +134,14 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     }
   },
 
-  removeNodes (entityTypeCode, parentEntityId, ids) {
+  removeNodes(entityTypeCode, parentEntityId, ids) {
     const self = this;
     jQuery.each(ids, (index, id) => {
       self.removeNode(entityTypeCode, parentEntityId, id);
     });
   },
 
-  onActionExecuted (eventArgs) {
+  onActionExecuted(eventArgs) {
     const entityTypeCode = eventArgs.get_entityTypeCode();
     const parentEntityId = eventArgs.get_parentEntityId();
     const actionTypeCode = eventArgs.get_actionTypeCode();
@@ -168,7 +168,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
     }
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendEntityTreeManager.callBaseMethod(this, 'dispose');
 
     if (this._trees) {

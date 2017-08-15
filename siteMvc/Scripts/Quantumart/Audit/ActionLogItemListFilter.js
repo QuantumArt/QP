@@ -5,7 +5,7 @@ Quantumart.QP8.ActionLogItemListFilter = function (filterContainer, items) {
 
 Quantumart.QP8.ActionLogItemListFilter.prototype = {
   _items: null,
-  initialize () {
+  initialize() {
     const html = new $.telerik.stringBuilder();
 
     html
@@ -28,15 +28,15 @@ Quantumart.QP8.ActionLogItemListFilter.prototype = {
     this.$container.find('select.dropDownList').focus();
   },
 
-  onOpen () {
+  onOpen() {
     this.$container.find('select.dropDownList').focus();
   },
 
-  get_value () {
+  get_value() {
     return this.$container.find('select.dropDownList option:selected').val();
   },
 
-  get_filterDetails () {
+  get_filterDetails() {
     return this.$container.find('select.dropDownList option:selected').text();
   }
 };

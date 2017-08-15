@@ -26,7 +26,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   _settingsActionUrl: null,
   NEXT_BUTTON: 'Next',
 
-  _initializeSettingsWindow () {
+  _initializeSettingsWindow() {
     switch (this._actionCode) {
       case 'import_articles':
         this._settingsWindow = new Quantumart.QP8.MultistepActionImportSettings(this);
@@ -45,7 +45,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
     }
   },
 
-  _createToolbar () {
+  _createToolbar() {
     const backendToolbar = new Quantumart.QP8.BackendToolbar();
     backendToolbar.set_toolbarElementId(`popupWindowToolbar_${this._popupWindowId}`);
     backendToolbar.initialize();
@@ -58,17 +58,17 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
     return backendToolbar;
   },
 
-  openWindow () {
+  openWindow() {
     if (this._popupWindowComponent) {
       this._popupWindowComponent.openWindow({ hasSettings: true, isSettingsSet: this._isSettingsSet, asyncReq: false });
     }
   },
 
-  _getToolbarItems () {
+  _getToolbarItems() {
     return this._settingsWindow.addButtons([]);
   },
 
-  _onPopupWindowToolbarButtonClicked (eventType, sender) {
+  _onPopupWindowToolbarButtonClicked(eventType, sender) {
     let options, errors, btn, className, prms, that;
     if (this._popupWindowComponent) {
       options = Object.assign({}, this._eventsArgs, sender);
@@ -90,13 +90,13 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
           url: that._settingsActionUrl.replace('Settings', 'SetupWithParams'),
           data: prms,
           type: 'POST',
-          beforeSend () {
+          beforeSend() {
             btn.addClass(className);
           },
-          complete () {
+          complete() {
             btn.removeClass(className);
           },
-          success (data) {
+          success(data) {
             if (data.view) {
               $(`#${that._popupWindowComponent._documentWrapperElementId}`).html(data.view);
             } else {
@@ -110,7 +110,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
     }
   },
 
-  _popupWindowClosedHandler () {
+  _popupWindowClosedHandler() {
     this._settingsWindow.dispose();
     Quantumart.QP8.BackendSettingsPopupWindow.callBaseMethod(this, 'dispose');
   }

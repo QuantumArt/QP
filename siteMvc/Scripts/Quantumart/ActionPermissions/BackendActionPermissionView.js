@@ -11,7 +11,7 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
   _treeComponent: null,
   _searchBlockComponent: null,
 
-  initialize () {
+  initialize() {
     const $view = $(`#${this._viewElementId}`);
     const treeElementId = $('.treeContainer .t-treeview').attr('id');
 
@@ -21,14 +21,14 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
     this._searchBlockComponent = new Quantumart.QP8.BackendUserAndGroupSearchBlock(this._viewElementId, jQuery.proxy(this._onApplyFilter, this));
   },
 
-  _onApplyFilter () {
+  _onApplyFilter() {
     const searchData = this._searchBlockComponent.getSearchData();
     this._treeComponent.set_userId(searchData.userId);
     this._treeComponent.set_groupId(searchData.groupId);
     this._treeComponent.refreshTree();
   },
 
-  _onActionExecuting (eventType, sender, eventArgs) {
+  _onActionExecuting(eventType, sender, eventArgs) {
     const actionCode = eventArgs.get_actionCode();
     if (actionCode == window.ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE || actionCode == window.ACTION_CODE_REMOVE_ENTITY_TYPE_PERMISSION_NODE
       || actionCode == window.ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE || actionCode == window.ACTION_CODE_REMOVE_ACTION_PERMISSION_NODE) {
@@ -45,11 +45,11 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
     }
   },
 
-  get_Tree () {
+  get_Tree() {
     return this._treeComponent;
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendActionPermissionViewManager.getInstance().destroyView();
 
     if (this._searchBlockComponent) {

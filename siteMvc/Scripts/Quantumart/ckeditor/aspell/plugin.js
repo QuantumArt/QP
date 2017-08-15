@@ -12,7 +12,7 @@
   };
 
   CKEDITOR.plugins.add(CKEDITOR.aspellSettings.pluginName, {
-    init (editor) {
+    init(editor) {
       if (editor.contextMenu) {
         editor.addMenuGroup('qp8', 10);
         editor.addMenuItem(CKEDITOR.aspellSettings.pluginName, {

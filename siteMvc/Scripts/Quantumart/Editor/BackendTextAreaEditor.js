@@ -33,7 +33,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
 
   _minJsonEditorHeight: 190,
 
-  _openLibrary () {
+  _openLibrary() {
     let eventArgs = new Quantumart.QP8.BackendEventArgs();
     let options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId: '', allowUpload: true } };
     eventArgs.set_entityId(this._libraryEntityId);
@@ -59,11 +59,11 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     options = null;
   },
 
-  _closeLibrary () {
+  _closeLibrary() {
     this._selectPopupWindowComponent.closeWindow();
   },
 
-  _destroyLibrary () {
+  _destroyLibrary() {
     if (this._selectPopupWindowComponent) {
       this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
       this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
@@ -72,11 +72,11 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  _libraryClosedHandler () {
+  _libraryClosedHandler() {
     this._closeLibrary();
   },
 
-  _librarySelectedHandler (eventType, sender, args) {
+  _librarySelectedHandler(eventType, sender, args) {
     let url, entities;
     this._closeLibrary();
     if (args) {
@@ -89,7 +89,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  _onCheckChangesIntervalHandler () {
+  _onCheckChangesIntervalHandler() {
     let curVal;
     if (this._componentElem.data('codeMirror')) {
       curVal = this._componentElem.data('codeMirror').getValue();
@@ -116,7 +116,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  _insertLibraryTag (url) {
+  _insertLibraryTag(url) {
     const sCurs = this._componentElem.data('codeMirror').getCursor('start');
     const eCurs = this._componentElem.data('codeMirror').getCursor('end');
     if ((eCurs.line === sCurs.line) && (eCurs.ch === sCurs.ch)) {
@@ -128,7 +128,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._componentElem.addClass(window.CHANGED_FIELD_CLASS_NAME);
   },
 
-  _insertCallText (callText) {
+  _insertCallText(callText) {
     const sCurs = this._componentElem.data('codeMirror').getCursor('start');
     const eCurs = this._componentElem.data('codeMirror').getCursor('end');
     if ((eCurs.line === sCurs.line) && (eCurs.ch === sCurs.ch)) {
@@ -140,7 +140,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._insertWindowComponent.close();
   },
 
-  _generateTag (url) {
+  _generateTag(url) {
     if (url.endsWith('.gif')
       || url.endsWith('.jpg')
       || url.endsWith('.jpeg')
@@ -160,7 +160,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     return $.telerik.formatString('<a  href="{0}">', url);
   },
 
-  initialize () {
+  initialize() {
     const tArea = this._componentElem;
     this._presentationOrCodeBehind = tArea.data('is_presentation') === 'True';
     this._templateId = tArea.data('template_id');
@@ -178,7 +178,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._checkIntervalID = setInterval($.proxy(this._onCheckChangesIntervalHandler, this), 10000);
   },
 
-  initCodeMirrorTArea (tArea) {
+  initCodeMirrorTArea(tArea) {
     let cm;
     tArea.wrap('<div class="CodemirrorContainer">');
     cm = CodeMirror.fromTextArea(tArea.get(0), {
@@ -207,7 +207,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     cm = null;
   },
 
-  initJsonEditor (tArea) {
+  initJsonEditor(tArea) {
     let json;
     tArea.hide();
     tArea.wrap('<div id="jsonEditor">');
@@ -215,7 +215,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     const options = {
       mode: 'code',
       modes: ['text', 'code', 'tree'],
-      onError () {
+      onError() {
         $q.alertError($l.TextArea.forbiddenJsonMode);
       }
     };
@@ -244,11 +244,11 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     tArea.data('jsonEditor', je);
   },
 
-  _onLibraryButtonClick () {
+  _onLibraryButtonClick() {
     this._openLibrary();
   },
 
-  _onRestoreButtonClick () {
+  _onRestoreButtonClick() {
     const actionName = this._presentationOrCodeBehind ? 'GetDefaultPresentation' : 'GetDefaultCode';
     $q.getJsonFromUrl('POST', window.CONTROLLER_URL_PAGE_TEMPLATE + actionName, {
       formatId: this._formatId
@@ -267,7 +267,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }, this));
   },
 
-  _onInsertButtonClick () {
+  _onInsertButtonClick() {
     if (this._insertWindowInitialized) {
       this._insertWindowComponent.open();
     } else {
@@ -276,7 +276,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  _onInsertCall () {
+  _onInsertCall() {
     if (!this._insertPopUp.data('valToInsert') === '') {
       if (this._insertPopUp.data('valType') === 'object') {
         this._insertObjectFunc(
@@ -302,7 +302,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  _insertObjectFunc (objectName, netLanguage, isCodeBehind) {
+  _insertObjectFunc(objectName, netLanguage, isCodeBehind) {
     let strIns;
     if (netLanguage === '') {
       strIns = `<%Object("${objectName}")%>`;
@@ -317,7 +317,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._insertCallText(strIns);
   },
 
-  _insertFunc (fieldName, netLanguage, isCodeBehind) {
+  _insertFunc(fieldName, netLanguage, isCodeBehind) {
     let strIns;
     if (netLanguage === '') {
       strIns = `<%=${fieldName}%>`;
@@ -331,7 +331,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._insertCallText(strIns);
   },
 
-  _insertFieldFunc (fieldName, netLanguage, isCodeBehind) {
+  _insertFieldFunc(fieldName, netLanguage, isCodeBehind) {
     let strIns = `Field("${fieldName}")`;
     if (netLanguage === '1') {
       if (isCodeBehind === '0') {
@@ -350,7 +350,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._insertFunc(strIns, netLanguage, isCodeBehind);
   },
 
-  createInsertPopupWindow () {
+  createInsertPopupWindow() {
     this._insertWindowHtml = '';
     $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetInsertPopUpMarkUp`, {
       presentationOrCodeBehind: this._presentationOrCodeBehind,
@@ -391,7 +391,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }, this));
   },
 
-  computeInsertType (elem) {
+  computeInsertType(elem) {
     const $elem = $(elem);
     if ($elem.hasClass('ht-toolbar-container-selector') || $elem.hasClass('ht-toolbar-function-selector')) {
       return 'function';
@@ -404,7 +404,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     return undefined;
   },
 
-  saveData () {
+  saveData() {
     let jsonEditor;
     const codeMirror = this._componentElem.data('codeMirror');
     if (codeMirror) {
@@ -424,7 +424,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  getMode () {
+  getMode() {
     const tArea = this._componentElem;
     if (tArea.hasClass('hta-htmlTextArea')) {
       return 'application/x-aspx';
@@ -445,7 +445,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     return null;
   },
 
-  initTemplateToolbar () {
+  initTemplateToolbar() {
     $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetHTAToolbarMarkUp`, {
       presentationOrCodeBehind: this._presentationOrCodeBehind,
       formatId: this._formatId,
@@ -472,7 +472,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }, this));
   },
 
-  destroy () {
+  destroy() {
     if (this._checkIntervalID) {
       clearInterval(this._checkIntervalID);
     }

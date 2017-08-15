@@ -8,7 +8,7 @@ Quantumart.QP8.BackendVirtualFieldTree = function (treeGroupCode, treeElementId,
 };
 
 Quantumart.QP8.BackendVirtualFieldTree.prototype = {
-  convertNodeCodeToEntityId (nodeCode) {
+  convertNodeCodeToEntityId(nodeCode) {
     if (nodeCode != this.ROOT_NODE_CODE) {
       return nodeCode;
     }
@@ -16,7 +16,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
 
   },
 
-  _getEntityChildList (entityId, returnSelf, successHandler, errorHandler) {
+  _getEntityChildList(entityId, returnSelf, successHandler, errorHandler) {
     if (this._parentEntityId) {
       let selectItemIDsParam,
         entityIdParam,
@@ -51,7 +51,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
     }
   },
 
-  _getIcon (entity) {
+  _getIcon(entity) {
     const icon = entity.IconUrl;
     return icon;
   },

@@ -20,23 +20,23 @@ Quantumart.QP8.LibraryPopupWindow.prototype
 
     _selectPopupWindowComponent: null,
 
-    setContentId (_contentId) {
+    setContentId(_contentId) {
       this._options.contentId = _contentId;
     },
 
-    openWindow () {
+    openWindow() {
       this._selectPopupWindowComponent.openWindow();
     },
 
-    closeWindow () {
+    closeWindow() {
       this._selectPopupWindowComponent.closeWindow();
     },
 
-    setSelectCallback (callback) {
+    setSelectCallback(callback) {
       this._options.selectCallback = callback;
     },
 
-    _librarySelectedHandler (eventType, sender, args) {
+    _librarySelectedHandler(eventType, sender, args) {
       this.closeWindow();
       if (args) {
         const entities = args.entities;
@@ -60,12 +60,12 @@ Quantumart.QP8.LibraryPopupWindow.prototype
       }
     },
 
-    _libraryClosedHandler (eventType, sender, args) {
+    _libraryClosedHandler(eventType, sender, args) {
       this.closeWindow();
     },
 
 
-    dispose () {
+    dispose() {
       if (this._selectPopupWindowComponent) {
         this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
         this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);

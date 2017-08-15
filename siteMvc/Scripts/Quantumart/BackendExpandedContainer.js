@@ -2,7 +2,7 @@ Quantumart.QP8.BackendExpandedContainer = function () { };
 Quantumart.QP8.BackendExpandedContainer.prototype = {
   $content: null,
 
-  initialize (element) {
+  initialize(element) {
     this.$content = $q.toJQuery(element);
     if (this.$content.data(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY)) {
       return;
@@ -69,7 +69,7 @@ Quantumart.QP8.BackendExpandedContainer.prototype = {
     $component = null;
   },
 
-  dispose () {
+  dispose() {
     if (this.$content) {
       this.$content.removeData(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY);
       this.$content = null;

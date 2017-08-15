@@ -6,13 +6,13 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   _listGroups: {},
   _valueStorage: {},
 
-  generateListGroupCode (entityTypeCode, parentEntityId) {
+  generateListGroupCode(entityTypeCode, parentEntityId) {
     const listGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
     return listGroupCode;
   },
 
-  getListGroup (listGroupCode) {
+  getListGroup(listGroupCode) {
     let listGroup = null;
     if (this._listGroups[listGroupCode]) {
       listGroup = this._listGroups[listGroupCode];
@@ -21,7 +21,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     return listGroup;
   },
 
-  createListGroup (listGroupCode) {
+  createListGroup(listGroupCode) {
     let listGroup = this.getListGroup(listGroupCode);
     if (!listGroup) {
       listGroup = {};
@@ -31,7 +31,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     return listGroup;
   },
 
-  refreshListGroup (entityTypeCode, parentEntityId, testEntityId) {
+  refreshListGroup(entityTypeCode, parentEntityId, testEntityId) {
     const listGroup = this.getListGroup(this.generateListGroupCode(entityTypeCode, parentEntityId));
     if (listGroup) {
       for (const listElementId in listGroup) {
@@ -40,7 +40,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     }
   },
 
-  getList (listElementId) {
+  getList(listElementId) {
     let list = null;
 
     for (const listGroupCode in this._listGroups) {
@@ -53,7 +53,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     return list;
   },
 
-  createList (listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
+  createList(listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
     const listGroupCode = this.generateListGroupCode(entityTypeCode, parentEntityId);
 
     let list = null;
@@ -80,7 +80,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     return list;
   },
 
-  refreshList (listElementId, testEntityId) {
+  refreshList(listElementId, testEntityId) {
     let list = this.getList(listElementId);
     if (list) {
       list.refreshList(testEntityId);
@@ -89,7 +89,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     list = null;
   },
 
-  removeList (listElementId) {
+  removeList(listElementId) {
     const list = this.getList(listElementId);
     if (list) {
       const listGroupCode = list.get_listGroupCode();
@@ -103,7 +103,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     }
   },
 
-  destroyList (listElementId) {
+  destroyList(listElementId) {
     const list = this.getList(listElementId);
     if (list != null) {
       if (list.dispose) {
@@ -112,7 +112,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     }
   },
 
-  onActionExecuted (eventArgs) {
+  onActionExecuted(eventArgs) {
     const entityTypeCode = eventArgs.get_entityTypeCode();
     const parentEntityId = eventArgs.get_parentEntityId();
     const actionTypeCode = eventArgs.get_actionTypeCode();
@@ -138,11 +138,11 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     }
   },
 
-  getValueStorage () {
+  getValueStorage() {
     return this._valueStorage;
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendEntityDataListManager.callBaseMethod(this, 'dispose');
 
     if (this._listGroups) {

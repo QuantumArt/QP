@@ -25,31 +25,31 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   _stopDeferredOperations: false,
   _disabledActionCodes: null,
 
-  get_actionCode () {
+  get_actionCode() {
     return this._actionCode;
   },
-  set_actionCode (value) {
+  set_actionCode(value) {
     this._actionCode = value;
   },
-  get_entityId () {
+  get_entityId() {
     return this._entityId;
   },
-  set_entityId (value) {
+  set_entityId(value) {
     this._entityId = value;
   },
-  get_parentEntityId () {
+  get_parentEntityId() {
     return this._parentEntityId;
   },
-  set_parentEntityId (value) {
+  set_parentEntityId(value) {
     this._parentEntityId = value;
   },
-  get_alwaysEnabledRefreshButton () {
+  get_alwaysEnabledRefreshButton() {
     return this._alwaysEnabledRefreshButton;
   },
-  set_alwaysEnabledRefreshButton (value) {
+  set_alwaysEnabledRefreshButton(value) {
     this._alwaysEnabledRefreshButton = value;
   },
-  addToolbarItemsToToolbar (count) {
+  addToolbarItemsToToolbar(count) {
     const self = this;
     let queryParams = {
       actionCode: this._actionCode,
@@ -90,7 +90,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     );
   },
 
-  tuneToolbarItems (entityId, parentEntityId) {
+  tuneToolbarItems(entityId, parentEntityId) {
     const self = this;
 
     let queryParams = { actionCode: this._actionCode, entityId, parentEntityId };
@@ -124,18 +124,18 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     }
   },
 
-  notifyToolbarButtonClicked (eventArgs) {
+  notifyToolbarButtonClicked(eventArgs) {
     this.notify(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, eventArgs);
   },
 
-  setDisabledActionCodes (value) {
+  setDisabledActionCodes(value) {
     this._disabledActionCodes = value;
   },
-  getDisabledActionCodes () {
+  getDisabledActionCodes() {
     return this._disabledActionCodes;
   },
 
-  _getToolbarItemsFromResult (items) {
+  _getToolbarItemsFromResult(items) {
     const dataItems = [];
     jQuery.each(items, (index, item) => {
       Array.add(dataItems, {
@@ -155,7 +155,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     return dataItems;
   },
 
-  dispose () {
+  dispose() {
     this._stopDeferredOperations = true;
     Quantumart.QP8.BackendActionToolbar.callBaseMethod(this, 'dispose');
     $q.collectGarbageInIE();

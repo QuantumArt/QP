@@ -9,7 +9,7 @@ Quantumart.QP8.BackendActionExecutor = function () {
 };
 
 Quantumart.QP8.BackendActionExecutor.prototype = {
-  executeNonInterfaceAction (eventArgs, callback) {
+  executeNonInterfaceAction(eventArgs, callback) {
     const actionCode = eventArgs.get_actionCode();
     const isCustom = eventArgs.get_isCustomAction();
     let additionalUrlParameters = null;
@@ -123,7 +123,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     }
   },
 
-  executeSpecialAction (eventArgs) {
+  executeSpecialAction(eventArgs) {
     let status = window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING;
     const entityTypeCode = eventArgs.get_entityTypeCode();
     const actionTypeCode = eventArgs.get_actionTypeCode();
@@ -145,7 +145,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     return status;
   },
 
-  executeMultistepAction (eventArgs) {
+  executeMultistepAction(eventArgs) {
     const dfr = new $.Deferred();
     const that = this;
 
@@ -386,7 +386,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     return dfr.promise();
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendActionExecutor.callBaseMethod(this, 'dispose');
     Quantumart.QP8.BackendActionExecutor._instance = null;
     $q.collectGarbageInIE();
@@ -718,29 +718,29 @@ Quantumart.QP8.BackendActionParameters.prototype = {
   _actionCode: null,
   _isGroup: false,
 
-  get_entityId () {
+  get_entityId() {
     return this._entityId;
   },
-  get_entityName () {
+  get_entityName() {
     return this._entityName;
   },
-  get_parentEntityId () {
+  get_parentEntityId() {
     return this._parentEntityId;
   },
-  get_entityTypeCode () {
+  get_entityTypeCode() {
     return this._entityTypeCode;
   },
-  get_context () {
+  get_context() {
     return this._context;
   },
-  get_entities () {
+  get_entities() {
     return $q.isArray(this._entities) && this._entities.length > 0 ? this._entities : [{ Id: this._entityId, Name: this._entityName }];
   },
-  get_actionCode () {
+  get_actionCode() {
     return this._actionCode;
   },
 
-  correct (action) {
+  correct(action) {
     const currentAction = $a.getBackendAction(action);
 
     if (currentAction.IsWindow) {
@@ -784,7 +784,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
     }
   },
 
-  get_options () {
+  get_options() {
     return {
       previousAction: this._previousAction,
       forceOpenWindow: this._forceOpenWindow,

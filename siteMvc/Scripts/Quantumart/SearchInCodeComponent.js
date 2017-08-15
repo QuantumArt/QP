@@ -10,7 +10,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
   _filterElementId: '',
   _gridElementId: '',
 
-  _extendGridData (data) {
+  _extendGridData(data) {
     const $filter = $(`#${this._filterElementId}`);
     const filter = {
       templateId: $('.sic_templateSelector', $filter).find('select').val(),
@@ -21,18 +21,18 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     return Object.assign({}, data, filter);
   },
 
-  _onDataBinding (e) {
+  _onDataBinding(e) {
     const $grid = $(`#${this._gridElementId}`);
     e.data = this._extendGridData(e.data);
   },
 
-  _onApplyFilter () {
+  _onApplyFilter() {
     const $grid = $(`#${this._gridElementId}`);
     const gridComponent = $grid.data('tGrid');
     gridComponent.ajaxRequest();
   },
 
-  _onClearFilter () {
+  _onClearFilter() {
     const $filter = $(`#${this._filterElementId}`);
     $filter.find('.sic_templateSelector select').val('0');
     if ($filter.find('.singleItemPicker').size() > 0) {
@@ -43,7 +43,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     $('.sic_search_button', this.$filter).trigger('click');
   },
 
-  initialize () {
+  initialize() {
     const $grid = $(`#${this._gridElementId}`);
     const gridComponent = $grid.data('tGrid');
     const $filter = $(`#${this._filterElementId}`);
@@ -67,7 +67,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     }
   },
 
-  dispose () {
+  dispose() {
     const $grid = $(`#${this._gridElementId}`);
     const $filter = $(`#${this._filterElementId}`);
 

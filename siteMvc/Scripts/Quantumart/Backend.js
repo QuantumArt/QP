@@ -87,7 +87,7 @@ Quantumart.QP8.Backend.prototype = {
   _onEntityReadedHandler: null,
   _onHostExternalCallerContextsUnbindedHandler: null,
 
-  _initialize () {
+  _initialize() {
     this._directLinkExecutor = new Quantumart.QP8.DirectLinkExecutor(this._currentCustomerCode, this._directLinkOptions);
     this._directLinkExecutor.ready($.proxy(function (openByDirectLink) {
       this._directLinkExecutor.attachObserver(window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, this._onActionExecutingHandler);
@@ -189,19 +189,19 @@ Quantumart.QP8.Backend.prototype = {
     this._initializeSignalrHubs();
   },
 
-  _error () { },
+  _error() { },
 
-  _initializeSignOut () {
+  _initializeSignOut() {
     $('.signOut').bind('click', () => {
       Quantumart.QP8.BackendLogin.removeCustomerCode();
     });
   },
 
-  _terminateSignOut () {
+  _terminateSignOut() {
     $('.signOut').unbind('click');
   },
 
-  _initializeSignalrHubs () {
+  _initializeSignalrHubs() {
     const that = this;
     $.connection.hub.logging = false;
     $.connection.communication.client.send = function (key, data) {
@@ -219,7 +219,7 @@ Quantumart.QP8.Backend.prototype = {
     });
   },
 
-  _updateSingleUserMode (data) {
+  _updateSingleUserMode(data) {
     const $elem = $('.singleusermode');
     const userId = $('.userName').data('userid');
     let message = '';
@@ -244,7 +244,7 @@ Quantumart.QP8.Backend.prototype = {
     $elem.text(message);
   },
 
-  _markAsBusy () {
+  _markAsBusy() {
     this._busy = true;
     if (this._backendTreeMenu) {
       this._backendTreeMenu.markTreeAsBusy();
@@ -255,7 +255,7 @@ Quantumart.QP8.Backend.prototype = {
     }
   },
 
-  _unmarkAsBusy () {
+  _unmarkAsBusy() {
     this._busy = false;
     if (this._backendTreeMenu) {
       this._backendTreeMenu.unmarkTreeAsBusy();
@@ -266,7 +266,7 @@ Quantumart.QP8.Backend.prototype = {
     }
   },
 
-  _onResizeSplitter (eventType, sender, eventArgs) {
+  _onResizeSplitter(eventType, sender, eventArgs) {
     this._backendTreeMenu.fixTreeHeight(eventArgs.get_firstPaneHeight());
     this._backendEditingArea.get_tabStrip().fixTabStripWidth(eventArgs.get_firstPaneWidth());
 
@@ -276,19 +276,19 @@ Quantumart.QP8.Backend.prototype = {
     }
   },
 
-  _onDragStartSplitter () {
+  _onDragStartSplitter() {
     if (!this._busy) {
       this._backendEditingArea.showAjaxLoadingLayer();
     }
   },
 
-  _onDropSplitter () {
+  _onDropSplitter() {
     if (!this._busy) {
       this._backendEditingArea.hideAjaxLoadingLayer();
     }
   },
 
-  _onEditingAreaEvent (eventType, sender, eventArgs) {
+  _onEditingAreaEvent(eventType, sender, eventArgs) {
     if (eventType == window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADING) {
       this._backendTreeMenu.markTreeAsBusy();
     } else if (eventType == window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADED) {
@@ -310,7 +310,7 @@ Quantumart.QP8.Backend.prototype = {
     }
   },
 
-  _isMultistep (action, eventArgs) {
+  _isMultistep(action, eventArgs) {
     const entities = eventArgs.get_entities();
     let limit = 1;
     if (action.EntityLimit) {
@@ -320,7 +320,7 @@ Quantumart.QP8.Backend.prototype = {
     return action.IsMultistep || (action.AdditionalControllerActionUrl && entities.length > limit);
   },
 
-  _onActionExecuting (eventType, sender, eventArgs) {
+  _onActionExecuting(eventType, sender, eventArgs) {
     const status = this._backendActionExecutor.executeSpecialAction(eventArgs);
     const that = this;
 
@@ -359,7 +359,7 @@ Quantumart.QP8.Backend.prototype = {
     }
   },
 
-  _onActionExecuted (eventArgs) {
+  _onActionExecuted(eventArgs) {
     this._backendCustomActionHostManager.onActionExecuted(eventArgs);
     this._backendBreadCrumbsManager.onActionExecuted(eventArgs);
     this._backendTreeMenu.onActionExecuted(eventArgs);
@@ -378,39 +378,39 @@ Quantumart.QP8.Backend.prototype = {
     }
   },
 
-  _onEntityReaded (eventType, sender, eventArgs) {
+  _onEntityReaded(eventType, sender, eventArgs) {
     this._onActionExecuted(eventArgs);
   },
 
-  _unlockAllEntities () {
+  _unlockAllEntities() {
     $q.postDataToUrl(`${window.CONTROLLER_URL_ENTITY_OBJECT}UnlockAllEntities`, null, false);
   },
 
-  _onCloseHostMessageReceived (eventType, sender, message) {
+  _onCloseHostMessageReceived(eventType, sender, message) {
     this._backendEditingArea.onCloseHostMessageReceived(message);
   },
 
-  _onHostExternalCallerContextsUnbinded (eventType, sender, message) {
+  _onHostExternalCallerContextsUnbinded(eventType, sender, message) {
     Quantumart.QP8.BackendCustomActionHostManager.getInstance().onExternalCallerContextsUnbinded(message);
   },
 
-  _onEntityEditorReady (eventType, sender, eventArgs) {
+  _onEntityEditorReady(eventType, sender, eventArgs) {
     this._entityEditorAutoSaver.onEntityEditorReady(eventArgs.documentWrapperElementId);
   },
 
-  _onEntityEditorDisposed (eventType, sender, eventArgs) {
+  _onEntityEditorDisposed(eventType, sender, eventArgs) {
     this._entityEditorAutoSaver.onEntityEditorDisposed(eventArgs.documentWrapperElementId);
   },
 
-  _onEntityEditorFieldChanged (eventType, sender, eventArgs) {
+  _onEntityEditorFieldChanged(eventType, sender, eventArgs) {
     this._entityEditorAutoSaver.onFieldChanged(eventArgs.fieldChangeInfo);
   },
 
-  _onEntityEditorAllFieldInvalidate (eventType, sender, eventArgs) {
+  _onEntityEditorAllFieldInvalidate(eventType, sender, eventArgs) {
     this._entityEditorAutoSaver.onAllFieldInvalidate(eventArgs.documentWrapperElementId);
   },
 
-  checkOpenDocumentByEventArgs (eventArgs) {
+  checkOpenDocumentByEventArgs(eventArgs) {
     const tabsForEntity = this._backendTabStrip.getTabsByEventArgs(eventArgs);
     const entityIsOpenedInTab = tabsForEntity && tabsForEntity.length > 0;
 
@@ -426,7 +426,7 @@ Quantumart.QP8.Backend.prototype = {
     return '';
   },
 
-  _loadHome () {
+  _loadHome() {
     const action = $a.getBackendActionByCode('home');
     const params = new Quantumart.QP8.BackendActionParameters({
       entityTypeCode: 'db',
@@ -439,7 +439,7 @@ Quantumart.QP8.Backend.prototype = {
     this._onActionExecuting(null, this, eventArgs);
   },
 
-  _dispose () {
+  _dispose() {
     try {
       this._unlockAllEntities();
 

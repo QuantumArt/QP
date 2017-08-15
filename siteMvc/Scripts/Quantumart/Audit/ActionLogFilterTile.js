@@ -7,7 +7,7 @@ Quantumart.QP8.ActionLogFilterTile = function (containerElement, options) {
     title: 'Undefined',
     type: 0,
     windowSize: { w: 350, h: 125 },
-    createFilter ($filterContainer) {
+    createFilter($filterContainer) {
       return new Quantumart.QP8.ActionLogFilterBase($filterContainer);
     }
   }, options);
@@ -26,7 +26,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 
   _currentValue: null,
 
-  initialize () {
+  initialize() {
     const containerHeaderHtml = new $.telerik.stringBuilder();
     containerHeaderHtml
       .cat('<div class="filterTile">')
@@ -53,17 +53,17 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     $(this._containerElement).append(this.$tile);
   },
 
-  get_value () {
+  get_value() {
     if (this._currentValue) {
       return this._currentValue;
     }
   },
 
-  get_options () {
+  get_options() {
     return this._options;
   },
 
-  _createFilter () {
+  _createFilter() {
     const html = new $.telerik.stringBuilder()
       .cat('<form class="formLayout alFilter">')
       .cat('<div class="filterContainer"></div>')
@@ -94,11 +94,11 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     this._filterComponent.initialize();
   },
 
-  _onCloseTileClick () {
+  _onCloseTileClick() {
     this.notify(window.EVENT_TYPE_FILTER_TILE_CLOSE, { type: this._options.type });
   },
 
-  _onOpenFilterWndClick () {
+  _onOpenFilterWndClick() {
     if (this._popupWindowComponent) {
       this._popupWindowComponent.open();
       this._filterComponent.onOpen();
@@ -107,24 +107,24 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     }
   },
 
-  _onCloseFilterWndClick () {
+  _onCloseFilterWndClick() {
     this._currentValue = this._filterComponent.get_value();
     this.$filterDetailsSpanElement.html(`: ${this._filterComponent.get_filterDetails()}`);
     this._popupWindowComponent.close();
   },
 
-  _onCloseAndApplyFilterWndClick () {
+  _onCloseAndApplyFilterWndClick() {
     this._onCloseFilterWndClick();
     $(this._containerElement).closest('form').find('.alSearchButton').trigger('click');
   },
 
-  _onFilterFormSubmitted (e) {
+  _onFilterFormSubmitted(e) {
     e.preventDefault();
     $('.closeAndApplyFilter', this._popupWindowComponent.element).trigger('click');
     return false;
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.ActionLogFilterTile.callBaseMethod(this, 'dispose');
 
     if (this.$closeButton) {

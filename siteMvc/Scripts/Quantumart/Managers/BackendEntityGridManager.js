@@ -5,7 +5,7 @@ Quantumart.QP8.BackendEntityGridManager = function () {
 Quantumart.QP8.BackendEntityGridManager.prototype = {
   _gridGroups: {},
 
-  generateGridGroupCode (entityTypeCode, parentEntityId) {
+  generateGridGroupCode(entityTypeCode, parentEntityId) {
     if (parentEntityId) {
       return String.format('{0}_{1}', entityTypeCode, parentEntityId);
     }
@@ -13,7 +13,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
 
   },
 
-  getGridGroup (gridGroupCode) {
+  getGridGroup(gridGroupCode) {
     let gridGroup = null;
 
     if (this._gridGroups[gridGroupCode]) {
@@ -23,7 +23,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     return gridGroup;
   },
 
-  createGridGroup (gridGroupCode) {
+  createGridGroup(gridGroupCode) {
     let gridGroup = this.getGridGroup(gridGroupCode);
 
     if (!gridGroup) {
@@ -34,7 +34,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     return gridGroup;
   },
 
-  refreshGridGroup (entityTypeCode, parentEntityId, options) {
+  refreshGridGroup(entityTypeCode, parentEntityId, options) {
     let gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
 
     if (gridGroup) {
@@ -46,7 +46,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     gridGroup = null;
   },
 
-  refreshGridGroupWithChecking (entityTypeCode, parentEntityId, entityId) {
+  refreshGridGroupWithChecking(entityTypeCode, parentEntityId, entityId) {
     const gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
 
     if (gridGroup) {
@@ -60,7 +60,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     }
   },
 
-  resetGridGroup (gridGroupCode, options) {
+  resetGridGroup(gridGroupCode, options) {
     let gridGroup = this.getGridGroup(gridGroupCode);
 
     if (gridGroup) {
@@ -72,11 +72,11 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     gridGroup = null;
   },
 
-  removeGridGroup (gridGroupCode) {
+  removeGridGroup(gridGroupCode) {
     $q.removeProperty(this._gridGroups, gridGroupCode);
   },
 
-  getGrid (gridElementId) {
+  getGrid(gridElementId) {
     let grid = null;
 
     for (const gridGroupCode in this._gridGroups) {
@@ -91,7 +91,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     return grid;
   },
 
-  createGrid (gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
+  createGrid(gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
     const gridGroupCode = this.generateGridGroupCode(entityTypeCode, parentEntityId);
     const actionGroupCode = this.generateGridGroupCode(actionCode, parentEntityId);
     const actionSimpleGroupCode = this.generateGridGroupCode(actionCode);
@@ -114,21 +114,21 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     return grid;
   },
 
-  refreshGrid (gridElementId, options) {
+  refreshGrid(gridElementId, options) {
     const grid = this.getGrid(gridElementId);
     if (grid) {
       grid.refreshGrid(options);
     }
   },
 
-  resetGrid (gridElementId, options) {
+  resetGrid(gridElementId, options) {
     const grid = this.getGrid(gridElementId);
     if (grid) {
       grid.resetGrid(options);
     }
   },
 
-  removeGrid (gridElementId) {
+  removeGrid(gridElementId) {
     const grid = this.getGrid(gridElementId);
 
     if (grid) {
@@ -146,7 +146,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     }
   },
 
-  destroyGrid (gridElementId) {
+  destroyGrid(gridElementId) {
     const grid = this.getGrid(gridElementId);
     if (grid != null) {
       if (grid.dispose) {
@@ -155,7 +155,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     }
   },
 
-  onActionExecuted (eventArgs) {
+  onActionExecuted(eventArgs) {
     const entityTypeCode = eventArgs.get_entityTypeCode();
 
     if (entityTypeCode != window.ENTITY_TYPE_CODE_SITE_FILE && entityTypeCode != window.ENTITY_TYPE_CODE_CONTENT_FILE) {
@@ -219,7 +219,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     }
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendEntityGridManager.callBaseMethod(this, 'dispose');
 
     if (this._gridGroups) {

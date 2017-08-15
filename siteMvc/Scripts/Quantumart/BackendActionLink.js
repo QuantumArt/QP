@@ -56,58 +56,58 @@ Quantumart.QP8.BackendActionLink.prototype = {
   ACTION_LINK_DISABLED_CLASS_NAME: 'disabled',
   ACTION_LINK_BUSY_CLASS_NAME: 'busy',
 
-  get_entityId () {
+  get_entityId() {
     return this._entityId;
   },
 
-  set_entityId (value) {
+  set_entityId(value) {
     this._entityId = value;
   },
 
-  get_entityName () {
+  get_entityName() {
     return this._entityName;
   },
 
-  set_entityName (value) {
+  set_entityName(value) {
     this._entityName = value;
   },
 
-  get_parentEntityId () {
+  get_parentEntityId() {
     return this._parentEntityId;
   },
 
-  set_parentEntityId (value) {
+  set_parentEntityId(value) {
     this._parentEntityId = value;
   },
 
-  get_actionTypeCode () {
+  get_actionTypeCode() {
     return this._actionTypeCode;
   },
 
-  set_actionTypeCode (value) {
+  set_actionTypeCode(value) {
     this._actionTypeCode = value;
   },
 
-  get_actionCode () {
+  get_actionCode() {
     return this._actionCode;
   },
 
-  set_actionCode (value) {
+  set_actionCode(value) {
     this._actionCode = value;
   },
 
-  get_actionTargetType () {
+  get_actionTargetType() {
     return this._actionTargetType;
   },
 
-  set_actionTargetType (value) {
+  set_actionTargetType(value) {
     this._actionTargetType = value;
   },
 
 
   _onActionExecutingHandler: null,
 
-  initialize () {
+  initialize() {
     const $actionLink = jQuery(`#${this._actionLinkElementId}`);
     const $iconWrapper = $actionLink.find('SPAN.icon:first');
     const $caption = $actionLink.find('SPAN.text:first');
@@ -119,7 +119,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
     this._attachActionLinkEventHandlers();
   },
 
-  _attachActionLinkEventHandlers () {
+  _attachActionLinkEventHandlers() {
     let $link = jQuery(this._actionLinkElement);
     $link.bind('click', this._onActionExecutingHandler);
     $link.bind('mouseup', this._onActionExecutingHandler);
@@ -127,7 +127,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
     $link = null;
   },
 
-  _detachActionLinkEventHandlers () {
+  _detachActionLinkEventHandlers() {
     let $link = jQuery(this._actionLinkElement);
     $link.unbind('click', this._onActionExecutingHandler);
     $link.unbind('mouseup', this._onActionExecutingHandler);
@@ -135,21 +135,21 @@ Quantumart.QP8.BackendActionLink.prototype = {
     $link = null;
   },
 
-  markActionLinkAsBusy () {
+  markActionLinkAsBusy() {
     let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').addClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
   },
 
-  unmarkActionLinkAsBusy () {
+  unmarkActionLinkAsBusy() {
     let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').removeClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
   },
 
-  isActionLinkBusy () {
+  isActionLinkBusy() {
     let $link = jQuery(this._actionLinkElement);
     const isBusy = $link.find('A:first').hasClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
@@ -158,21 +158,21 @@ Quantumart.QP8.BackendActionLink.prototype = {
     return isBusy;
   },
 
-  enableActionLink () {
+  enableActionLink() {
     let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').removeClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
 
     $link = null;
   },
 
-  disableActionLink () {
+  disableActionLink() {
     let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').addClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
 
     $link = null;
   },
 
-  isActionLinkDisabled () {
+  isActionLinkDisabled() {
     let $link = jQuery(this._actionLinkElement);
     const isDisabled = $link.find('A:first').hasClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
 
@@ -181,7 +181,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
     return isDisabled;
   },
 
-  onActionExecuting (e) {
+  onActionExecuting(e) {
     e.preventDefault();
     const isLeftClick = e.type == 'click' && (e.which == 1 || e.which == 0);
     const isMiddleClick = e.type == 'mouseup' && e.which == 2;
@@ -222,7 +222,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
     }
   },
 
-  dispose () {
+  dispose() {
     Quantumart.QP8.BackendActionLink.callBaseMethod(this, 'dispose');
 
     this._detachActionLinkEventHandlers();

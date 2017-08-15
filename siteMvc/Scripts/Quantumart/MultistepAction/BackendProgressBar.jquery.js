@@ -98,7 +98,7 @@
     setValue(settings.value);
 
     return {
-      value (val) {
+      value(val) {
         if ($.isNumeric(val)) {
           return setValue(val);
         }
@@ -106,7 +106,7 @@
         return getValue();
       },
 
-      total (val) {
+      total(val) {
         if ($.isNumeric(val)) {
           return setTotal(val);
         }
@@ -126,7 +126,7 @@
   };
 
   const methods = {
-    init (options) {
+    init(options) {
       return this.filter('div').each(function each() {
         let $this = $(this);
         let component = new BackendProgressBarComponent($this, options);
@@ -136,7 +136,7 @@
       });
     },
 
-    dispose () {
+    dispose() {
       return this.each(function each() {
         const $this = $(this);
         let component = $this.data('backendProgressBar');

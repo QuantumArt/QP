@@ -15,23 +15,23 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   OVERFLOW_HIDDEN_CLASS: 'overflowHiddenValue',
 
-  get_maxListWidth () {
+  get_maxListWidth() {
     return this._maxListWidth;
   },
 
-  set_maxListWidth (value) {
+  set_maxListWidth(value) {
     this._maxListWidth = value;
   },
 
-  get_maxListHeight () {
+  get_maxListHeight() {
     return this._maxListHeight;
   },
 
-  set_maxListHeight (value) {
+  set_maxListHeight(value) {
     this._maxListHeight = value;
   },
 
-  initialize () {
+  initialize() {
     Quantumart.QP8.BackendEntityMultipleItemPicker.callBaseMethod(this, 'initialize');
 
     let $copyButton, $pasteButton;
@@ -89,15 +89,15 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     $list = null;
   },
 
-  getListItems () {
+  getListItems() {
     return $(this._listElement).find('UL LI');
   },
 
-  getSelectedListItems () {
+  getSelectedListItems() {
     return $(this._listElement).find('UL LI:has(INPUT:checkbox:checked)');
   },
 
-  getSelectedEntities () {
+  getSelectedEntities() {
     let result;
     if (!this._isCountOverflow()) {
       const $selectedListItems = this.getSelectedListItems();
@@ -118,11 +118,11 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     return result;
   },
 
-  _isCountOverflow () {
+  _isCountOverflow() {
     return this._countOverflowElement != null;
   },
 
-  _refreshListInner (dataItems, refreshOnly) {
+  _refreshListInner(dataItems, refreshOnly) {
     const newSelectedIDs = $.map($.grep(dataItems, di => di.Value), di => $q.toInt(di.Value));
 
     const currentSelectedIDs = this.getSelectedEntityIDs();
@@ -158,7 +158,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     }
   },
 
-  appendEntities (entityIds) {
+  appendEntities(entityIds) {
     if (entityIds && entityIds.length) {
       const selectedEntities = entityIds.map(i => {
         return { Id: i };
@@ -168,7 +168,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     }
   },
 
-  selectEntities (entityIds) {
+  selectEntities(entityIds) {
     this.deselectAllListItems();
     if (entityIds && entityIds.length) {
       const selectedEntities = entityIds.map(i => {
@@ -179,27 +179,27 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     }
   },
 
-  selectAllListItems () {
+  selectAllListItems() {
     this._changeAllListItemsSelection(true);
     this._refreshClearButton();
   },
 
-  deselectAllListItems () {
+  deselectAllListItems() {
     this._changeAllListItemsSelection(false);
     this._refreshClearButton();
   },
 
-  removeAllListItems () {
+  removeAllListItems() {
     this.deselectAllListItems();
     this._onClearButtonClickHandler();
   },
 
-  _changeAllListItemsSelection (isSelect) {
+  _changeAllListItemsSelection(isSelect) {
     this.getListItems().find('INPUT:checkbox').prop('checked', isSelect);
     this._setAsChanged();
   },
 
-  enableList () {
+  enableList() {
     $(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
 
     this.getListItems().find('INPUT:checkbox').prop('disabled', false);
@@ -208,7 +208,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     this._refreshClearButton();
   },
 
-  disableList () {
+  disableList() {
     $(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
 
     this.getListItems().find('INPUT:checkbox').prop('disabled', true);
@@ -216,7 +216,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     this._disableAllToolbarButtons();
   },
 
-  makeReadonly () {
+  makeReadonly() {
     this.disableList();
     const $checked = this.getListItems().find('INPUT:checkbox:checked');
     $checked.each((i, cb) => {
@@ -225,11 +225,11 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     });
   },
 
-  isListChanged () {
+  isListChanged() {
     return $(this._listElement).hasClass(window.CHANGED_FIELD_CLASS_NAME);
   },
 
-  _setAsChanged (refreshOnly) {
+  _setAsChanged(refreshOnly) {
     const $list = $(this._listElement);
     $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
 
@@ -240,7 +240,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value, contentFieldName: $list.closest('dl').data('field_name') });
   },
 
-  _getCheckBoxListHtml (dataItems) {
+  _getCheckBoxListHtml(dataItems) {
     const html = new $.telerik.stringBuilder();
     for (let dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
       const dataItem = dataItems[dataItemIndex];
@@ -250,7 +250,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     return html.string();
   },
 
-  _getCheckBoxListItemHtml (html, dataItem, dataItemIndex) {
+  _getCheckBoxListItemHtml(html, dataItem, dataItemIndex) {
     const itemElementName = this._listItemName;
     const itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
     const itemValue = dataItem.Value;
@@ -272,13 +272,13 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
       .cat('</li>');
   },
 
-  _onPickButtonClickHandler () {
+  _onPickButtonClickHandler() {
     if (!this.isListDisabled()) {
       this._openPopupWindow();
     }
   },
 
-  _onClearButtonClickHandler () {
+  _onClearButtonClickHandler() {
     $(this._listElement).find('LI:has(INPUT:checkbox:not(:checked))').remove();
 
     const newCount = this.getListItemCount();
@@ -288,11 +288,11 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     this._fixListOverflow();
   },
 
-  _checkAllowShowingToolbar () {
+  _checkAllowShowingToolbar() {
     return this._selectActionCode != window.ACTION_CODE_NONE;
   },
 
-  _onSelectedItemChangeHandler () {
+  _onSelectedItemChangeHandler() {
     this._syncGroupCheckbox();
     this._syncCountSpan();
     this._refreshClearButton();
@@ -300,13 +300,13 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     this.notify(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, new Quantumart.QP8.BackendEventArgs());
   },
 
-  _refreshClearButton () {
+  _refreshClearButton() {
     if (this._clearButtonElement) {
       this._changeToolbarButtonState($(this._clearButtonElement), !this._isCountOverflow() && this.getSelectedListItemCount() != this.getListItemCount());
     }
   },
 
-  dispose () {
+  dispose() {
     this._stopDeferredOperations = true;
 
     $(this._pickButtonElement).unbind('click');

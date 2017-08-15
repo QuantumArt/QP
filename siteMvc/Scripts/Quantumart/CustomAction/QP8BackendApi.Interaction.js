@@ -74,7 +74,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
   BackendEventObserver.prototype = {
     callbackProcName: '',
     callback: null,
-    dispose () {
+    dispose() {
       pmrpc.unregister(this.callback);
     }
   };
@@ -99,7 +99,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
     OpenSelectWindowOptions,
     ExternalMessageTypes: BackendExternalMessage.Types,
     BackendEventTypes: BackendEventObserver.EventType,
-    executeBackendAction (executeOtions, hostUID, destination) {
+    executeBackendAction(executeOtions, hostUID, destination) {
       const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.ExecuteAction;
       message.hostUID = hostUID;
@@ -111,7 +111,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
       });
     },
 
-    closeBackendHost (actionUID, hostUID, destination) {
+    closeBackendHost(actionUID, hostUID, destination) {
       const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CloseBackendHost;
       message.hostUID = hostUID;
@@ -123,7 +123,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
       });
     },
 
-    openSelectWindow (openSelectWindowOptions, hostUID, destination) {
+    openSelectWindow(openSelectWindowOptions, hostUID, destination) {
       const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.OpenSelectWindow;
       message.hostUID = hostUID;
@@ -135,7 +135,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
       });
     },
 
-    checkHost (hostUID, destination, callback) {
+    checkHost(hostUID, destination, callback) {
       let callbackIsCalled = false;
       const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CheckHost;
@@ -145,13 +145,13 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
         destination,
         publicProcedureName: message.hostUID,
         params: [message],
-        onSuccess (args) {
+        onSuccess(args) {
           if (callbackIsCalled === false) {
             callbackIsCalled = true;
             callback({ success: true, hostVersion: args.returnValue });
           }
         },
-        onError (args) {
+        onError(args) {
           if (callbackIsCalled === false) {
             callbackIsCalled = true;
             callback({ success: false, error: args.description });

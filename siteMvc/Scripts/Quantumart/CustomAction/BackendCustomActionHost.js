@@ -13,7 +13,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   _hostId: '',
   _manager: null,
 
-  initialize () {
+  initialize() {
     pmrpc.register({
       publicProcedureName: this._getExecuteActionProcedureName(),
       procedure: jQuery.proxy(this._onExternalMessageReceived, this),
@@ -23,7 +23,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     $(`#${this._options.iframeElementId}`).attr('src', this._generateActionUrl());
   },
 
-  _onExternalMessageReceived (message, successCallback) {
+  _onExternalMessageReceived(message, successCallback) {
     if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.ExecuteAction) {
       this._onExecuteActionMessageReceived(message);
       successCallback(0);
@@ -38,7 +38,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     }
   },
 
-  onSelect () {
+  onSelect() {
     const id = this._options.iframeElementId;
 
     $(`#${id}`).css('marginLeft', '1px');
@@ -47,15 +47,15 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     }, 0);
   },
 
-  _onCheckHostMessageReceived () {
+  _onCheckHostMessageReceived() {
     return window.BACKEND_VERSION;
   },
 
-  _onCloseHostMessageReceived (message) {
+  _onCloseHostMessageReceived(message) {
     this._manager.onCloseHostMessageReceived(message);
   },
 
-  _onExecuteActionMessageReceived (message) {
+  _onExecuteActionMessageReceived(message) {
     let action = $a.getBackendActionByCode(message.data.actionCode);
     let params = new Quantumart.QP8.BackendActionParameters({
       entityTypeCode: message.data.entityTypeCode,
@@ -89,7 +89,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     eventArgs = null;
   },
 
-  _onOpenSelectWindowMessageReceived (message) {
+  _onOpenSelectWindowMessageReceived(message) {
     const eventArgs = new Quantumart.QP8.BackendEventArgs();
     eventArgs.set_isMultipleEntities(message.data.isMultiple);
     eventArgs.set_parentEntityId(message.data.parentEntityId);
@@ -115,7 +115,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     selectPopupWindowComponent.openWindow();
   },
 
-  _popupWindowSelectedHandler (eventType, sender, args) {
+  _popupWindowSelectedHandler(eventType, sender, args) {
     let selectedEntities = args.entities;
     let selectedEntityIDs = _.pluck(selectedEntities, 'Id');
     if ($o.checkEntitiesForPresenceEmptyNames(selectedEntities)) {
@@ -136,11 +136,11 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     this._destroySelectPopupWindow(sender);
   },
 
-  _popupWindowClosedHandler (eventType, sender) {
+  _popupWindowClosedHandler(eventType, sender) {
     this._destroySelectPopupWindow(sender);
   },
 
-  _destroySelectPopupWindow (popupWindows) {
+  _destroySelectPopupWindow(popupWindows) {
     if (!$q.isNull(popupWindows)) {
       popupWindows.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
       popupWindows.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
@@ -154,19 +154,19 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     }
   },
 
-  get_hostUID () {
+  get_hostUID() {
     return this._options.hostUID;
   },
 
-  onExternalCallerContextsUnbinded (message) {
+  onExternalCallerContextsUnbinded(message) {
     this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.HostUnbinded, message);
   },
 
-  onChildHostActionExecuted (message) {
+  onChildHostActionExecuted(message) {
     this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.ActionExecuted, message);
   },
 
-  _invokeCallback (type, message) {
+  _invokeCallback(type, message) {
     let iframe = window.document.getElementById(this._options.iframeElementId);
     if (iframe && iframe.contentWindow) {
       const args = {};
@@ -181,11 +181,11 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     iframe = null;
   },
 
-  _getExecuteActionProcedureName () {
+  _getExecuteActionProcedureName() {
     return this._options.hostUID;
   },
 
-  _generateActionUrl () {
+  _generateActionUrl() {
     let resultUrl = $q.updateQueryStringParameter(this._options.actionBaseUrl, 'hostUID', this._options.hostUID);
     if (this._options.additionalParams) {
       resultUrl += `&${jQuery.param(this._options.additionalParams)}`;
@@ -193,7 +193,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     return resultUrl;
   },
 
-  dispose () {
+  dispose() {
     pmrpc.unregister(this._getExecuteActionProcedureName());
     this._manager.removeComponent(this);
   }

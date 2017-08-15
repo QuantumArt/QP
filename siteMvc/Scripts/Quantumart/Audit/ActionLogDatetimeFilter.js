@@ -3,17 +3,17 @@ Quantumart.QP8.ActionLogDatetimeFilter = function (filterContainer) {
 };
 
 Quantumart.QP8.ActionLogDatetimeFilter.prototype = {
-  initialize () {
+  initialize() {
     this.$container.addClass('fieldSearchContainerContent');
     this.dtFieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch(this.$container, 0, 0, '', '', $e.ArticleFieldSearchType.DateTimeRange);
     this.dtFieldSearch.initialize();
   },
 
-  get_filterDetails () {
+  get_filterDetails() {
     return this.dtFieldSearch.get_filterDetails();
   },
 
-  get_value () {
+  get_value() {
     const sq = this.dtFieldSearch.get_searchQuery();
     if (!sq.QueryParams[3]) {
       return {
@@ -28,7 +28,7 @@ Quantumart.QP8.ActionLogDatetimeFilter.prototype = {
   },
 
 
-  dispose () {
+  dispose() {
     this.dtFieldSearch.dispose();
     this.dtFieldSearch = null;
     Quantumart.QP8.ActionLogDatetimeFilter.callBaseMethod(this, 'dispose');

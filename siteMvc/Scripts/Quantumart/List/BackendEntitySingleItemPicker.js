@@ -15,7 +15,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
   DISPLAY_FIELD_CLASS_NAME: 'displayField',
   STATE_FIELD_CLASS_NAME: 'stateField',
 
-  initialize () {
+  initialize() {
     Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, 'initialize');
 
     let $copyButton, $pasteButton;
@@ -70,13 +70,13 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     $deselectButton = null;
   },
 
-  getListItemCount () {
+  getListItemCount() {
     const listItemCount = 1;
 
     return listItemCount;
   },
 
-  getSelectedListItemCount () {
+  getSelectedListItemCount() {
     let selectedListItemCount = 0;
     const $stateField = $(this._stateFieldElement);
 
@@ -90,7 +90,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     return selectedListItemCount;
   },
 
-  getSelectedEntities () {
+  getSelectedEntities() {
     const entities = [];
     const $stateField = $(this._stateFieldElement);
     const $displayField = $(this._displayFieldElement);
@@ -107,11 +107,11 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     return entities;
   },
 
-  getStateFieldElement () {
+  getStateFieldElement() {
     return this._stateFieldElement;
   },
 
-  _refreshListInner (dataItems, refreshOnly) {
+  _refreshListInner(dataItems, refreshOnly) {
     let html = '';
     let value = '';
     if (!$q.isNullOrEmpty(dataItems)) {
@@ -138,13 +138,13 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     $stateField = null;
   },
 
-  deselectAllListItems () {
+  deselectAllListItems() {
     this._refreshListInner([]);
     const eventArgs = new Quantumart.QP8.BackendEventArgs();
     this.notify(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, eventArgs);
   },
 
-  selectEntities (entityId) {
+  selectEntities(entityId) {
     this.deselectAllListItems();
     if (!$q.isNullOrEmpty(entityId)) {
       if ($q.isArray(entityId) && entityId.length > 0) {
@@ -159,51 +159,51 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     }
   },
 
-  enableList () {
+  enableList() {
     $(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
     $(this._stateFieldElement).prop('disabled', false);
     this._enableAllToolbarButtons();
   },
 
-  disableList () {
+  disableList() {
     $(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
     $(this._stateFieldElement).prop('disabled', true);
     this._disableAllToolbarButtons();
   },
 
-  makeReadonly () {
+  makeReadonly() {
     this.disableList();
     $(this._stateFieldElement).prop('disabled', false);
   },
 
-  isListChanged () {
+  isListChanged() {
     let $stateField = $(this._stateFieldElement);
     const result = $stateField.hasClass(window.CHANGED_FIELD_CLASS_NAME);
     $stateField = null;
     return result;
   },
 
-  _onSelectedItemChangeHandler () {
+  _onSelectedItemChangeHandler() {
     if (!this.isListDisabled()) {
       this._refreshReadToolbarButton(true);
     }
   },
 
-  _onPickButtonClickHandler (event) {
+  _onPickButtonClickHandler(event) {
     if (!this.isListDisabled()) {
       this._openPopupWindow();
     }
     event.stopImmediatePropagation();
   },
 
-  _onDeselectButtonClickHandler (event) {
+  _onDeselectButtonClickHandler(event) {
     if (!this.isListDisabled()) {
       this.deselectAllListItems();
     }
     event.stopImmediatePropagation();
   },
 
-  dispose () {
+  dispose() {
     this._stopDeferredOperations = true;
 
     $(this._stateFieldElement).unbind('change');
