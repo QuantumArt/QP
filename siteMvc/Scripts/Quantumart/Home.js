@@ -1,39 +1,39 @@
 Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
   function initialize() {
-    let executeAction = function (actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters) {
-      let action = $a.getBackendActionByCode(actionCode);
-      let params = new Quantumart.QP8.BackendActionParameters({
+    const executeAction = function (actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters) {
+      const action = $a.getBackendActionByCode(actionCode);
+      const params = new Quantumart.QP8.BackendActionParameters({
         entityTypeCode: entityTypeCode,
         entityId: entityId,
         entityName: entityName,
         parentEntityId: parentEntityId
       });
 
-      let eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+      const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
       eventArgs.set_context({ additionalUrlParameters: additionalUrlParameters });
       documentContext.getHost().onActionExecuting(eventArgs);
     };
 
-    let onSubmit = function (e) {
+    const onSubmit = function (e) {
       e.preventDefault();
-      let $site = $(`#${siteElementId}`);
-      let siteId = $site.val();
+      const $site = $(`#${siteElementId}`);
+      const siteId = $site.val();
 
       if (siteId) {
-        let siteName = $site.text();
-        let text = $(`#${searchElementId}`).val();
+        const siteName = $site.text();
+        const text = $(`#${searchElementId}`).val();
         executeAction('search_in_articles', 'site', siteId, siteName, 1, { query: text });
       }
     };
 
-    let $search = $(`#${searchElementId}`);
+    const $search = $(`#${searchElementId}`);
     $search.wrap($('<div/>', { id: `${searchElementId}_wrapper`, class: 'fieldWrapper group myClass' }));
 
-    let $wrapper = $search.parent('div');
-    let $form = $search.parents('form');
+    const $wrapper = $search.parent('div');
+    const $form = $search.parents('form');
     $form.on('submit', onSubmit);
 
-    let $div = $('<div/>', {
+    const $div = $('<div/>', {
       id: `${searchElementId}_preview`,
       class: 'previewButton',
       title: $l.Home.search
@@ -43,12 +43,12 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
     $wrapper.append($div);
     $div.on('click', onSubmit);
 
-    let $locked = $(`#${lockedElementId}`);
-    let $loggedAs = $(`#${loggedAsElementId}`);
-    let $approval = $(`#${approvalElementId}`);
-    let temp = ' (<a class="js" href="javascript:void(0)">{0}</a>) ';
-    let listStr = String.format(temp, $l.Home.list);
-    let profileStr = String.format(temp, $l.Home.profile);
+    const $locked = $(`#${lockedElementId}`);
+    const $loggedAs = $(`#${loggedAsElementId}`);
+    const $approval = $(`#${approvalElementId}`);
+    const temp = ' (<a class="js" href="javascript:void(0)">{0}</a>) ';
+    const listStr = String.format(temp, $l.Home.list);
+    const profileStr = String.format(temp, $l.Home.profile);
 
     if ($locked.text().trim() != '0') {
       $locked.append(listStr);
@@ -70,7 +70,7 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
     });
   }
 
-  let dispose = function () {
+  const dispose = function () {
     $(`#${searchElementId}`).siblings('.previewButton').off('click');
     $(`#${searchElementId}`).parents('form').off('sumbit');
     $(`#${lockedElementId}`).find('a').off('click');

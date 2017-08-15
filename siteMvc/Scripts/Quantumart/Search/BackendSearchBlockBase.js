@@ -151,29 +151,29 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 
   initialize: function () {
     let $searchBlock = $(`#${this._searchBlockElementId}`);
-    let searchBlockExist = !$q.isNullOrEmpty($searchBlock);
-    let searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
+    const searchBlockExist = !$q.isNullOrEmpty($searchBlock);
+    const searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
 
     if (!searchBlockExist) {
       $searchBlock = $('<div />', { id: this._searchBlockElementId, class: 'searchBlock', css: { display: 'none'} });
     }
 
     if (!searchFormExist) {
-      let $searchForm = $('<form />', { class: 'formLayout' });
+      const $searchForm = $('<form />', { class: 'formLayout' });
       $searchBlock.append($searchForm);
 
-      let $concreteSearchBlock = $('<div />');
+      const $concreteSearchBlock = $('<div />');
       $searchForm.append($concreteSearchBlock);
 
-      let $buttonsWrapper = $('<div />');
+      const $buttonsWrapper = $('<div />');
       if (this._hideButtons) {
         $buttonsWrapper.hide();
       }
 
       $searchForm.append($buttonsWrapper);
 
-      let $findButton = $('<input />', { type: 'button', value: $l.SearchBlock.findButtonText, class: 'button' });
-      let $resetButton = $('<input />', { type: 'button', value: $l.SearchBlock.resetButtonText, class: 'button' });
+      const $findButton = $('<input />', { type: 'button', value: $l.SearchBlock.findButtonText, class: 'button' });
+      const $resetButton = $('<input />', { type: 'button', value: $l.SearchBlock.resetButtonText, class: 'button' });
 
       $buttonsWrapper.append($findButton);
       $buttonsWrapper.append('&nbsp;');
@@ -221,9 +221,9 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 
   showSearchBlock: function () {
     this._isVisible = true;
-    let $searchBlock = $(this._searchBlockElement);
+    const $searchBlock = $(this._searchBlockElement);
     if ($searchBlock.is(':hidden')) {
-      let verticalResizerComponent = this._verticalResizerComponent;
+      const verticalResizerComponent = this._verticalResizerComponent;
       if (verticalResizerComponent) {
         verticalResizerComponent.showPanelWrapper();
         verticalResizerComponent.showBottomHandle();
@@ -235,9 +235,9 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 
   hideSearchBlock: function () {
     this._isVisible = false;
-    let $searchBlock = $(this._searchBlockElement);
+    const $searchBlock = $(this._searchBlockElement);
     if ($searchBlock.is(':visible')) {
-      let verticalResizerComponent = this._verticalResizerComponent;
+      const verticalResizerComponent = this._verticalResizerComponent;
       if (verticalResizerComponent) {
         verticalResizerComponent.hideBottomHandle();
       }
@@ -256,13 +256,13 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   },
 
   _onSearchBlockResized: function () {
-    let $searchBlock = jQuery(this._searchBlockElement);
+    const $searchBlock = jQuery(this._searchBlockElement);
     let $bottomHandle = null;
     if (this._verticalResizerComponent) {
       $bottomHandle = jQuery(this._verticalResizerComponent.get_bottomHandleElement());
     }
 
-    let searchBlockWidth = parseInt($searchBlock.width(), 10);
+    const searchBlockWidth = parseInt($searchBlock.width(), 10);
     let searchBlockHeight = 0;
     if (this._isVisible) {
       searchBlockHeight = parseInt($searchBlock.outerHeight(), 10);
@@ -273,19 +273,19 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
       searchBlockHeight = parseInt($searchBlock.height(), 10);
     }
 
-    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
+    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     eventArgs.set_searchBlockWidth(searchBlockWidth);
     eventArgs.set_searchBlockHeight(searchBlockHeight);
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, eventArgs);
   },
 
   _onFindButtonClick: function () {
-    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
+    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 
   _onResetButtonClick: function () {
-    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
+    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
   },
 

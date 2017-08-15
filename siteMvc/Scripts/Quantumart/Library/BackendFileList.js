@@ -120,9 +120,9 @@ Quantumart.QP8.BackendFileList.prototype = {
   },
 
   _raiseMultipleEventArgsEvent: function (eventType, args) {
-    let action = $a.getBackendActionByCode(this._actionCode);
+    const action = $a.getBackendActionByCode(this._actionCode);
     if (action != null) {
-      let eventArgs = $a.getEventArgsFromAction(action);
+      const eventArgs = $a.getEventArgsFromAction(action);
       eventArgs.set_isMultipleEntities(true);
       if (args) {
         eventArgs.set_entities(args.get_entities());
@@ -138,7 +138,7 @@ Quantumart.QP8.BackendFileList.prototype = {
     let $listElement = jQuery(this._listElementId);
     this._listElement = $listElement.get(0);
 
-    let html = new $.telerik.stringBuilder();
+    const html = new $.telerik.stringBuilder();
 
     html.cat('<div class="fileList">')
       .cat('<div class="fileListArea">')
@@ -201,7 +201,7 @@ Quantumart.QP8.BackendFileList.prototype = {
       }
     }
 
-    let data = this._loadData();
+    const data = this._loadData();
     if (data) {
       this._listViewComponent.redraw(data,
         {

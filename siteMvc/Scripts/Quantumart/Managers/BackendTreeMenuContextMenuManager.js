@@ -14,7 +14,7 @@ Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
   },
 
   createContextMenu: function (contextMenuCode, contextMenuElementId, options) {
-    let contextMenu = new Quantumart.QP8.BackendContextMenu(contextMenuCode, contextMenuElementId, options);
+    const contextMenu = new Quantumart.QP8.BackendContextMenu(contextMenuCode, contextMenuElementId, options);
     contextMenu.set_contextMenuManager(this);
     contextMenu.initialize();
 
@@ -44,7 +44,7 @@ Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
   dispose: function () {
     Quantumart.QP8.BackendTreeMenuContextMenuManager.callBaseMethod(this, 'dispose');
     if (this._сontextMenus) {
-      for (let contextMenuCode in this._сontextMenus) {
+      for (const contextMenuCode in this._сontextMenus) {
         this.destroyContextMenu(contextMenuCode);
       }
 

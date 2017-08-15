@@ -101,8 +101,8 @@ Quantumart.QP8.BackendSplitter.prototype = {
     splitter.onDragStart = this._onSplitterDragStartHandler;
     splitter.onDrop = this._onSplitterDropHandler;
 
-    let firstPaneWidth = $firstPane.width();
-    let firstPaneHeight = $firstPane.height();
+    const firstPaneWidth = $firstPane.width();
+    const firstPaneHeight = $firstPane.height();
 
     let eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
     eventArgs.set_firstPane(this._firstPaneElement);
@@ -119,10 +119,10 @@ Quantumart.QP8.BackendSplitter.prototype = {
   },
 
   _onSplitterResized: function (event) {
-    let $firstPane = jQuery(this._firstPaneElement);
-    let firstPaneWidth = $firstPane.width();
-    let firstPaneHeight = $firstPane.height();
-    let eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
+    const $firstPane = jQuery(this._firstPaneElement);
+    const firstPaneWidth = $firstPane.width();
+    const firstPaneHeight = $firstPane.height();
+    const eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
 
     eventArgs.set_firstPane(this._firstPaneElement);
     eventArgs.set_firstPaneWidth(firstPaneWidth);

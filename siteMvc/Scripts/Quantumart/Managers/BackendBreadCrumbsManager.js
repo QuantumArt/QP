@@ -27,7 +27,7 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   createBreadCrumbs: function (breadCrumbsElementId, options) {
-    let breadCrumbs = new Quantumart.QP8.BackendBreadCrumbs(breadCrumbsElementId, options);
+    const breadCrumbs = new Quantumart.QP8.BackendBreadCrumbs(breadCrumbsElementId, options);
     breadCrumbs.set_manager(this);
     breadCrumbs.initialize();
 
@@ -36,21 +36,21 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   refreshBreadCrumbs: function (breadCrumbsElementId, callback) {
-    let breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    const breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
     if (breadCrumbs) {
       breadCrumbs.addItemsToBreadCrumbs(callback);
     }
   },
 
   removeBreadCrumbs: function (breadCrumbsElementId) {
-    let breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    const breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
     if (breadCrumbs) {
       $q.removeProperty(this._breadCrumbs, breadCrumbsElementId);
     }
   },
 
   destroyBreadCrumbs: function (breadCrumbsElementId) {
-    let breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    const breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
     if (breadCrumbs) {
       this.removeBreadCrumbs(breadCrumbsElementId);
       if (breadCrumbs.dispose) {
@@ -79,12 +79,12 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   getBreadCrumbsListByItemCode: function (itemCode) {
-    let breadCrumbsList = [];
-    let $items = this.getItems(itemCode);
+    const breadCrumbsList = [];
+    const $items = this.getItems(itemCode);
 
     for (let itemIndex = 0, itemCount = $items.length; itemIndex < itemCount; itemIndex++) {
-      let breadCrumbsElementId = this._getBreadCrumbsElementIdByItem($items.eq(itemIndex));
-      let breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+      const breadCrumbsElementId = this._getBreadCrumbsElementIdByItem($items.eq(itemIndex));
+      const breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
       if (breadCrumbs) {
         Array.add(breadCrumbsList, breadCrumbs);
       }
@@ -94,10 +94,10 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   refreshBreadCrumbsList: function (entityTypeCode, parentEntityId, entityId) {
-    let breadCrumbsList = this.getBreadCrumbsListByItemCode(this.generateItemCode(entityTypeCode, parentEntityId, entityId));
+    const breadCrumbsList = this.getBreadCrumbsListByItemCode(this.generateItemCode(entityTypeCode, parentEntityId, entityId));
 
     for (let breadCrumbsIndex = 0, breadCrumbsCount = breadCrumbsList.length; breadCrumbsIndex < breadCrumbsCount; breadCrumbsIndex++) {
-      let breadCrumbs = breadCrumbsList[breadCrumbsIndex];
+      const breadCrumbs = breadCrumbsList[breadCrumbsIndex];
       if (breadCrumbs) {
         breadCrumbs.addItemsToBreadCrumbs();
       }
@@ -105,11 +105,11 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    let entityTypeCode = eventArgs.get_entityTypeCode();
-    let parentEntityId = eventArgs.get_parentEntityId();
-    let actionTypeCode = eventArgs.get_actionTypeCode();
-    let entityId = eventArgs.get_entityId();
-    let entities = eventArgs.get_entities();
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const parentEntityId = eventArgs.get_parentEntityId();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
+    const entityId = eventArgs.get_entityId();
+    const entities = eventArgs.get_entities();
 
     if (actionTypeCode == window.ACTION_TYPE_CODE_RESTORE || eventArgs.get_isUpdated()) {
       this.refreshBreadCrumbsList(entityTypeCode, parentEntityId, entityId);
@@ -120,8 +120,8 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
     }
 
     if (actionTypeCode == window.ACTION_TYPE_CODE_RESTORE && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-      let newEntityTypeCode = window.ENTITY_TYPE_CODE_ARTICLE;
-      let newParentEntityId = +$o.getParentEntityId(newEntityTypeCode, parentEntityId) || 0;
+      const newEntityTypeCode = window.ENTITY_TYPE_CODE_ARTICLE;
+      const newParentEntityId = +$o.getParentEntityId(newEntityTypeCode, parentEntityId) || 0;
       this.refreshBreadCrumbsList(newEntityTypeCode, newParentEntityId, parentEntityId);
     }
   },

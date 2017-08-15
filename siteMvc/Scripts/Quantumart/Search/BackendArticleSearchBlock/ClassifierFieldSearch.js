@@ -23,17 +23,17 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     });
 
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
-      let contentID = `${this._elementIdPrefix}_contentID`;
+      const isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+      const contentID = `${this._elementIdPrefix}_contentID`;
 
       // полученную с сервера разметку добавить на страницу
-      let $containerElement = $(this._containerElement);
+      const $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
-      let $content = $containerElement.find(`#${contentID}`);
+      const $content = $containerElement.find(`#${contentID}`);
 
       // назначить обработчик события change чекбоксу
-      let $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
+      const $isNullCheckBoxElement = $containerElement.find(`#${isNullCheckBoxID}`);
       $isNullCheckBoxElement.bind('change', this._onIsNullCheckBoxChangeHandler);
 
       // запомнить ссылку на dom-элементы
@@ -45,7 +45,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
   },
 
   get_searchQuery: function () {
-    let contentObj = new Array($(this._contentElement).val());
+    const contentObj = new Array($(this._contentElement).val());
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(this._searchType, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, contentObj, this.get_IsNull(), false);
   },
 
@@ -57,7 +57,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    let stateData = this.get_blockState().data;
+    const stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.contentID) {
@@ -102,7 +102,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
 
   dispose: function () {
     if (this._isNullCheckBoxElement) {
-      let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+      const $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
     }
 

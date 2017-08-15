@@ -30,8 +30,8 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
         alias = this.getNodeText(this.getNodeByEntityId(entityId));
       }
 
-      let actionUrl = `${window.CONTROLLER_URL_VIRTUAL_CONTENT}GetChildFieldList`;
-      let params = {
+      const actionUrl = `${window.CONTROLLER_URL_VIRTUAL_CONTENT}GetChildFieldList`;
+      const params = {
         virtualContentId: this._virtualContentId,
         joinedContentId: this._parentEntityId,
         entityId: entityIdParam,
@@ -52,7 +52,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
   },
 
   _getIcon: function (entity) {
-    let icon = entity.IconUrl;
+    const icon = entity.IconUrl;
     return icon;
   },
 

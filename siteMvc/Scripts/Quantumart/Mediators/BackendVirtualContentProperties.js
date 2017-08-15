@@ -3,7 +3,7 @@ Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectEle
   let entityTreeComponent = Quantumart.QP8.BackendEntityTreeManager.getInstance().getTree(joinFieldsTreeElementId);
 
   function onRelatedToChanged() {
-    let selectedContentId = contentPicker.getSelectedEntityIDs()[0];
+    const selectedContentId = contentPicker.getSelectedEntityIDs()[0];
     entityTreeComponent.set_parentEntityId(selectedContentId);
     entityTreeComponent.set_selectedEntitiesIDs([]);
     entityTreeComponent.refreshTree();

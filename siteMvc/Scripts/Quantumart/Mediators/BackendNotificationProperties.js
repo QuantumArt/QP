@@ -1,17 +1,17 @@
 Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) {
-  let $root = $(`#${rootElementId}`);
+  const $root = $(`#${rootElementId}`);
 
-  let $statusPanel = $('.nfp-status-panel', $root);
-  let $senderNamePanel = $('.nfp-senderNamePanel', $root);
-  let $senderEmailPanel = $('.nfp-senderEmailPanel', $root);
-  let $externalPanel = $('.nfp-externalPanel', $root);
+  const $statusPanel = $('.nfp-status-panel', $root);
+  const $senderNamePanel = $('.nfp-senderNamePanel', $root);
+  const $senderEmailPanel = $('.nfp-senderEmailPanel', $root);
+  const $externalPanel = $('.nfp-externalPanel', $root);
 
-  let $statusCheckBoxes = $('.nfp-status', $root);
-  let $senderNameCheckbox = $('.nfp-useDefaultSenderNameCheckbox', $root);
-  let $backendEmailCheckbox = $('.nfp-useBackendEmailCheckbox', $root);
-  let $externalCheckbox = $('.nfp-external', $root);
+  const $statusCheckBoxes = $('.nfp-status', $root);
+  const $senderNameCheckbox = $('.nfp-useDefaultSenderNameCheckbox', $root);
+  const $backendEmailCheckbox = $('.nfp-useBackendEmailCheckbox', $root);
+  const $externalCheckbox = $('.nfp-external', $root);
 
-  let onExternalChanged = function () {
+  const onExternalChanged = function () {
     if ($externalCheckbox.is(':checked')) {
       $externalPanel.hide();
     } else {
@@ -19,7 +19,7 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
     }
   };
 
-  let onUseBackendEmailChanged = function () {
+  const onUseBackendEmailChanged = function () {
     if ($backendEmailCheckbox.is(':checked')) {
       $senderEmailPanel.hide();
     } else {
@@ -27,7 +27,7 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
     }
   };
 
-  let onUseDefaultSenderNameChanged = function () {
+  const onUseDefaultSenderNameChanged = function () {
     if ($senderNameCheckbox.is(':checked')) {
       $senderNamePanel.hide();
     } else {
@@ -35,7 +35,7 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
     }
   };
 
-  let onStatusChanged = function () {
+  const onStatusChanged = function () {
     if ($statusCheckBoxes.filter(':checked').length != 0) {
       $statusPanel.show();
     } else {
@@ -43,7 +43,7 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
     }
   };
 
-  let dispose = function () {
+  const dispose = function () {
     $statusCheckBoxes.unbind();
     $senderNameCheckbox.unbind();
     $backendEmailCheckbox.unbind();

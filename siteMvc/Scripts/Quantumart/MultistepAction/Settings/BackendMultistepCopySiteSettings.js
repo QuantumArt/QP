@@ -5,7 +5,7 @@ Quantumart.QP8.MultistepActionCopySiteSettings = function () {
 Quantumart.QP8.MultistepActionCopySiteSettings.prototype = {
   COPY_BUTTON: 'Create like site',
   addButtons: function (dataItems) {
-    let exportButton = {
+    const exportButton = {
       Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
       Value: this.COPY_BUTTON,
       Text: $l.MultistepAction.createLikeSite,

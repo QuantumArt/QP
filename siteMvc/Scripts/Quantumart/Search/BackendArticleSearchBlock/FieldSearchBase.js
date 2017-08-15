@@ -53,8 +53,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   },
 
   _getText: function (entities, callback) {
-    let count = 3;
-    let length = entities.length;
+    const count = 3;
+    const length = entities.length;
     let ids = entities.slice(0, count);
     if (callback) {
       ids = ids.map(callback);

@@ -39,7 +39,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype
     _librarySelectedHandler: function (eventType, sender, args) {
       this.closeWindow();
       if (args) {
-        let entities = args.entities;
+        const entities = args.entities;
         if (entities.length > 0) {
           let folderUrl = args.context;
           if (folderUrl.charAt(0) == '\\') {

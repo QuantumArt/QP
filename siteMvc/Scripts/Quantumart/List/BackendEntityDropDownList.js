@@ -25,12 +25,12 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
   },
 
   getSelectedEntities: function () {
-    let entities = [];
-    let $selectedListItems = this.getSelectedListItems();
+    const entities = [];
+    const $selectedListItems = this.getSelectedListItems();
     if ($selectedListItems.length > 0) {
-      let $selectedListItem = $selectedListItems.eq(0);
-      let entityId = $q.toString($selectedListItem.val());
-      let entityName = $q.toString($selectedListItem.text(), '');
+      const $selectedListItem = $selectedListItems.eq(0);
+      const entityId = $q.toString($selectedListItem.val());
+      const entityName = $q.toString($selectedListItem.text(), '');
       Array.add(entities, { Id: entityId, Name: entityName });
     }
 
@@ -63,24 +63,24 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
   },
 
   _refreshListInner: function (dataItems, refreshOnly) {
-    let $list = $(this._listElement);
-    let oldValue = $list.val();
-    let markChanged = !refreshOnly;
-    let selectedValue = markChanged ? oldValue : '';
-    let listState = { selectedValue: selectedValue, isChanged: markChanged };
+    const $list = $(this._listElement);
+    const oldValue = $list.val();
+    const markChanged = !refreshOnly;
+    const selectedValue = markChanged ? oldValue : '';
+    const listState = { selectedValue: selectedValue, isChanged: markChanged };
     $list.find("OPTION[value!='']").remove();
 
-    let listItemHtml = new $.telerik.stringBuilder();
+    const listItemHtml = new $.telerik.stringBuilder();
     for (let dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
-      let dataItem = dataItems[dataItemIndex];
+      const dataItem = dataItems[dataItemIndex];
       this._getDropDownListItemHtml(listItemHtml, dataItem, markChanged, listState);
     }
 
     $list.append(listItemHtml.string());
-    let value = $list.val();
+    const value = $list.val();
     if (oldValue != value) {
       $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
-      let operation = refreshOnly ? 'addClass' : 'removeClass';
+      const operation = refreshOnly ? 'addClass' : 'removeClass';
       $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
       $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value: value, contentFieldName: $list.data('content_field_name') });
     }
@@ -97,10 +97,10 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
   },
 
   makeReadonly: function () {
-    let $listElement = $(this._listElement);
-    let selectedVal = $listElement.find('OPTION:selected').val();
+    const $listElement = $(this._listElement);
+    const selectedVal = $listElement.find('OPTION:selected').val();
     if (!$q.isNullOrEmpty(selectedVal)) {
-      let $hidden = $listElement.siblings(`input[name="${$listElement.prop('name')}"]:hidden`);
+      const $hidden = $listElement.siblings(`input[name="${$listElement.prop('name')}"]:hidden`);
       if ($hidden.length > 0) {
         $hidden.val(selectedVal);
       } else {
@@ -112,7 +112,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
   },
 
   _getDropDownListItemHtml: function (html, dataItem, saveChanges, listState) {
-    let itemValue = dataItem.Value;
+    const itemValue = dataItem.Value;
     let itemText = dataItem.Text;
     if (this._showIds) {
       itemText = `(#${itemValue}) - ${itemText}`;

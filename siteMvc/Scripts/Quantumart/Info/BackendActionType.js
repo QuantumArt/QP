@@ -1,6 +1,6 @@
 Quantumart.QP8.BackendActionType = function () {};
 Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actionCode) {
-  let cacheKey = `ActionTypeCodeByActionCode_${actionCode}`;
+  const cacheKey = `ActionTypeCodeByActionCode_${actionCode}`;
   let actionTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!actionTypeCode) {

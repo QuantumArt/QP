@@ -28,9 +28,9 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
   },
 
   onExternalCallerContextsUnbinded: function (message) {
-    let self = this;
+    const self = this;
     $(message.externalCallerContexts).each((i, c) => {
-      let component = self._components[c.hostUID];
+      const component = self._components[c.hostUID];
       if (component) {
         component.onExternalCallerContextsUnbinded({
           reason: message.reason,
@@ -47,7 +47,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
       actionInfo = eventArgs.get_previousAction();
     }
 
-    let self = this;
+    const self = this;
     let callerContexts = [];
 
     $.merge(callerContexts, [eventArgs.get_externalCallerContext()]);
@@ -68,9 +68,9 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
 
     callerContexts = $.grep(callerContexts, c => !$q.isNull(c));
     $(callerContexts).each((i, c) => {
-      let component = self._components[c.hostUID];
+      const component = self._components[c.hostUID];
       if (component) {
-        let message = {
+        const message = {
           actionCode: actionInfo.get_actionCode(),
           actionTypeCode: actionInfo.get_actionTypeCode(),
           entityTypeCode: actionInfo.get_entityTypeCode(),

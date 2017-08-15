@@ -71,17 +71,17 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
   },
 
   getListItemCount: function () {
-    let listItemCount = 1;
+    const listItemCount = 1;
 
     return listItemCount;
   },
 
   getSelectedListItemCount: function () {
     let selectedListItemCount = 0;
-    let $stateField = $(this._stateFieldElement);
+    const $stateField = $(this._stateFieldElement);
 
     if (!$q.isNullOrEmpty($stateField)) {
-      let itemValue = +$stateField.val() || 0;
+      const itemValue = +$stateField.val() || 0;
       if (itemValue != 0) {
         selectedListItemCount = 1;
       }
@@ -91,13 +91,13 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
   },
 
   getSelectedEntities: function () {
-    let entities = [];
-    let $stateField = $(this._stateFieldElement);
-    let $displayField = $(this._displayFieldElement);
+    const entities = [];
+    const $stateField = $(this._stateFieldElement);
+    const $displayField = $(this._displayFieldElement);
 
     if (!$q.isNullOrEmpty($stateField) && !$q.isNullOrEmpty($displayField)) {
-      let entityId = +$stateField.val() || 0;
-      let entityName = $q.toString($displayField.find('.title').html(), '');
+      const entityId = +$stateField.val() || 0;
+      const entityName = $q.toString($displayField.find('.title').html(), '');
 
       if (entityId != 0) {
         Array.add(entities, { Id: entityId, Name: entityName });
@@ -123,12 +123,12 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     let $stateField = $(this._stateFieldElement);
 
     $displayField.html(html);
-    let oldValue = $stateField.val();
+    const oldValue = $stateField.val();
     $stateField.val(value);
 
     if (oldValue != value) {
       $stateField.addClass(window.CHANGED_FIELD_CLASS_NAME);
-      let operation = refreshOnly ? 'addClass' : 'removeClass';
+      const operation = refreshOnly ? 'addClass' : 'removeClass';
       $stateField[operation](window.REFRESHED_FIELD_CLASS_NAME);
       $stateField.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $stateField.attr('name'), value: value, contentFieldName: $stateField.data('content_field_name') });
       $stateField.change();
@@ -140,7 +140,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 
   deselectAllListItems: function () {
     this._refreshListInner([]);
-    let eventArgs = new Quantumart.QP8.BackendEventArgs();
+    const eventArgs = new Quantumart.QP8.BackendEventArgs();
     this.notify(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, eventArgs);
   },
 
@@ -150,7 +150,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
       if ($q.isArray(entityId) && entityId.length > 0) {
         this.selectEntities(entityId[0]);
       } else if ($.isNumeric(entityId)) {
-        let selectedEntityIds = $.map([entityId], id => {
+        const selectedEntityIds = $.map([entityId], id => {
           return { Id: id };
         });
 
@@ -178,7 +178,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 
   isListChanged: function () {
     let $stateField = $(this._stateFieldElement);
-    let result = $stateField.hasClass(window.CHANGED_FIELD_CLASS_NAME);
+    const result = $stateField.hasClass(window.CHANGED_FIELD_CLASS_NAME);
     $stateField = null;
     return result;
   },

@@ -30,10 +30,10 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
-      let numberFromID = `${this._elementIdPrefix}_numberFrom`;
-      let numberToID = `${this._elementIdPrefix}_numberTo`;
-      let inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
+      const isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+      const numberFromID = `${this._elementIdPrefix}_numberFrom`;
+      const numberToID = `${this._elementIdPrefix}_numberTo`;
+      const inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
 
       let $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
@@ -51,7 +51,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 
       this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
 
-      let $inverseCheckBoxElement = $containerElement.find(`#${inverseCheckBoxID}`);
+      const $inverseCheckBoxElement = $containerElement.find(`#${inverseCheckBoxID}`);
       this._inverseCheckBoxElement = $inverseCheckBoxElement.get(0);
 
       $(".radioButtonsList input[type='radio']", $containerElement).click(this._onByValueSelectorChangedHandler);
@@ -89,7 +89,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    let stateData = this.get_blockState().data;
+    const stateData = this.get_blockState().data;
     let result;
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
@@ -115,7 +115,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       }
 
       if (this._inverseCheckBoxElement) {
-        let $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
+        const $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
         $inverseCheckBoxElement.prop('checked', state.inverse);
       }
 
@@ -165,7 +165,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   _onNumericInputFocus: function (e) {
-    let focusedNumeric = $(e.currentTarget).data('tTextBox');
+    const focusedNumeric = $(e.currentTarget).data('tTextBox');
     let otherInput;
     if (e.currentTarget === this._numberFromElement) {
       otherInput = $(this._numberToElement).data('tTextBox');

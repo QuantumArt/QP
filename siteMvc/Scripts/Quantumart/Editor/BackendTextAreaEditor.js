@@ -117,8 +117,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _insertLibraryTag: function (url) {
-    let sCurs = this._componentElem.data('codeMirror').getCursor('start');
-    let eCurs = this._componentElem.data('codeMirror').getCursor('end');
+    const sCurs = this._componentElem.data('codeMirror').getCursor('start');
+    const eCurs = this._componentElem.data('codeMirror').getCursor('end');
     if ((eCurs.line === sCurs.line) && (eCurs.ch === sCurs.ch)) {
       this._componentElem.data('codeMirror').replaceRange(this._generateTag(url), sCurs);
     } else {
@@ -129,8 +129,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _insertCallText: function (callText) {
-    let sCurs = this._componentElem.data('codeMirror').getCursor('start');
-    let eCurs = this._componentElem.data('codeMirror').getCursor('end');
+    const sCurs = this._componentElem.data('codeMirror').getCursor('start');
+    const eCurs = this._componentElem.data('codeMirror').getCursor('end');
     if ((eCurs.line === sCurs.line) && (eCurs.ch === sCurs.ch)) {
       this._componentElem.data('codeMirror').replaceRange(callText, sCurs);
     } else {
@@ -161,7 +161,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   initialize: function () {
-    let tArea = this._componentElem;
+    const tArea = this._componentElem;
     this._presentationOrCodeBehind = tArea.data('is_presentation') === 'True';
     this._templateId = tArea.data('template_id');
     this._formatId = tArea.data('format_id');
@@ -208,12 +208,11 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   initJsonEditor: function (tArea) {
-    let options, height, je, json;
+    let json;
     tArea.hide();
-
     tArea.wrap('<div id="jsonEditor">');
 
-    options = {
+    const options = {
       mode: 'code',
       modes: ['text', 'code', 'tree'],
       onError: function () {
@@ -229,12 +228,12 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       };
     }
 
-    height = parseInt(tArea.css('height'), 10);
+    const height = parseInt(tArea.css('height'), 10);
     this._editorHeight = !height || height < this._minJsonEditorHeight ? this._minJsonEditorHeight : height;
 
     tArea.parent().css('height', this._editorHeight);
 
-    je = new JSONEditor(tArea.parent().get(0), options);
+    const je = new JSONEditor(tArea.parent().get(0), options);
     json = '';
     if (tArea.val()) {
       json = tArea.val();
@@ -250,7 +249,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _onRestoreButtonClick: function () {
-    let actionName = this._presentationOrCodeBehind ? 'GetDefaultPresentation' : 'GetDefaultCode';
+    const actionName = this._presentationOrCodeBehind ? 'GetDefaultPresentation' : 'GetDefaultCode';
     $q.getJsonFromUrl('POST', window.CONTROLLER_URL_PAGE_TEMPLATE + actionName, {
       formatId: this._formatId
     }, true, false).done($.proxy(function ajaxDone(data) {
@@ -393,7 +392,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   computeInsertType: function (elem) {
-    let $elem = $(elem);
+    const $elem = $(elem);
     if ($elem.hasClass('ht-toolbar-container-selector') || $elem.hasClass('ht-toolbar-function-selector')) {
       return 'function';
     } else if ($elem.hasClass('ht-toolbar-template-obj-selector') || $elem.hasClass('ht-toolbar-page-obj-selector')) {
@@ -407,7 +406,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
 
   saveData: function () {
     let jsonEditor;
-    let codeMirror = this._componentElem.data('codeMirror');
+    const codeMirror = this._componentElem.data('codeMirror');
     if (codeMirror) {
       if (this._componentElem.val() !== codeMirror.getValue()) {
         this._componentElem.change();
@@ -426,7 +425,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   getMode: function () {
-    let tArea = this._componentElem;
+    const tArea = this._componentElem;
     if (tArea.hasClass('hta-htmlTextArea')) {
       return 'application/x-aspx';
     } else if (tArea.hasClass('hta-cSharpTextArea')) {

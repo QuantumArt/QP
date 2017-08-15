@@ -140,7 +140,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     this._fileGrid.attachObserver(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, $.proxy(this._onActionExecutingHandler, this));
     this._fileGrid.initialize();
 
-    let options = { selectMode: this._allowMultipleSelection ? window.FILE_LIST_SELECT_MODE_MULTIPLE : window.FILE_LIST_SELECT_MODE_SINGLE, zIndex: this._zIndex };
+    const options = { selectMode: this._allowMultipleSelection ? window.FILE_LIST_SELECT_MODE_MULTIPLE : window.FILE_LIST_SELECT_MODE_SINGLE, zIndex: this._zIndex };
 
     this._fileList = new Quantumart.QP8.BackendFileList(`#${this._fileContainers[window.VIEW_TYPE_CODE_LIST].attr('id')}`, this._fileEntityTypeCode, this._actionCode, this._fileEntityTypeCode, window.FILE_LIST_MODE_NAME_LIST, options);
     this._fileList.attachObserver(window.EVENT_TYPE_FILE_LIST_SELECTED, $.proxy(this._onFileSelectedHandler, this));
@@ -204,15 +204,15 @@ Quantumart.QP8.BackendLibrary.prototype = {
   },
 
   showCurrentFileList: function () {
-    for (let code in this._fileContainers) {
-      let containerToHide = this._fileContainers[code];
+    for (const code in this._fileContainers) {
+      const containerToHide = this._fileContainers[code];
 
       if (containerToHide) {
         containerToHide.hide();
       }
     }
 
-    let containerToShow = this._fileContainers[this._viewTypeCode];
+    const containerToShow = this._fileContainers[this._viewTypeCode];
 
     if (containerToShow) {
       containerToShow.show();
@@ -271,10 +271,10 @@ Quantumart.QP8.BackendLibrary.prototype = {
   },
 
   _onFolderSelectedHandler: function (eventType, sender, eventArgs) {
-    let entities = eventArgs.get_entities();
+    const entities = eventArgs.get_entities();
 
     if (entities.length > 0) {
-      let id = entities[0].Id;
+      const id = entities[0].Id;
 
       if (this._folderId != id) {
         this._folderId = id;
@@ -326,7 +326,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
   },
 
   _onActionExecutingHandler: function (eventType, sender, eventArgs) {
-    let action = $a.getBackendActionByCode(eventArgs.get_actionCode());
+    const action = $a.getBackendActionByCode(eventArgs.get_actionCode());
 
     if (action) {
       let params = new Quantumart.QP8.BackendActionParameters({ eventArgs: eventArgs });
@@ -355,7 +355,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
       throw new Error('fileEntityTypeCode is unknown.');
     }
 
-    let self = this;
+    const self = this;
 
     $q.getJsonFromUrl(
       'GET',
@@ -461,7 +461,7 @@ Quantumart.QP8.BackendLibrary.generateActionUrl = function (actionName, urlParam
   let result = '';
 
   if (urlParams) {
-    let html = new $.telerik.stringBuilder();
+    const html = new $.telerik.stringBuilder();
 
     html.cat(window.APPLICATION_ROOT_URL);
     html.cat('/Library/');

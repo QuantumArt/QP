@@ -11,7 +11,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
   _editorGroups: {},
 
   generateEditorGroupCode: function (entityTypeCode, entityId) {
-    let editorGroupCode = String.format('{0}_{1}', entityTypeCode, entityId);
+    const editorGroupCode = String.format('{0}_{1}', entityTypeCode, entityId);
 
     return editorGroupCode;
   },
@@ -38,7 +38,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
   refreshEditorGroup: function (entityTypeCode, entityId, options) {
     let editorGroup = this.getEditorGroup(this.generateEditorGroupCode(entityTypeCode, entityId));
     if (editorGroup) {
-      for (let documentWrapperElementId in editorGroup) {
+      for (const documentWrapperElementId in editorGroup) {
         this.refreshEditor(documentWrapperElementId, options);
       }
     }
@@ -53,8 +53,8 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
   getEditor: function (editorCode) {
     let editor = null;
 
-    for (let editorGroupCode in this._editorGroups) {
-      let editorGroup = this._editorGroups[editorGroupCode];
+    for (const editorGroupCode in this._editorGroups) {
+      const editorGroup = this._editorGroups[editorGroupCode];
       if (editorGroup[editorCode]) {
         editor = editorGroup[editorCode];
         break;
@@ -65,9 +65,9 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
   },
 
   createEditor: function (documentWrapperElementId, entityTypeCode, entityId, actionTypeCode, options, hostOptions) {
-    let editorGroupCode = this.generateEditorGroupCode(entityTypeCode, entityId);
+    const editorGroupCode = this.generateEditorGroupCode(entityTypeCode, entityId);
 
-    let finalOptions = {};
+    const finalOptions = {};
     Object.assign(finalOptions, options);
     if (hostOptions) {
       if (hostOptions.contextQuery) {
@@ -94,10 +94,10 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
       finalOptions.isBindToExternal = hostOptions.isBindToExternal;
     }
 
-    let editor = new Quantumart.QP8.BackendEntityEditor(editorGroupCode, documentWrapperElementId, entityTypeCode, entityId, actionTypeCode, finalOptions);
+    const editor = new Quantumart.QP8.BackendEntityEditor(editorGroupCode, documentWrapperElementId, entityTypeCode, entityId, actionTypeCode, finalOptions);
     editor.set_editorManagerComponent(this);
 
-    let editorGroup = this.createEditorGroup(editorGroupCode);
+    const editorGroup = this.createEditorGroup(editorGroupCode);
     editorGroup[editorGroupCode] = editor;
 
     return editor;
@@ -113,10 +113,10 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
   },
 
   removeEditor: function (documentWrapperElementId) {
-    let editor = this.getEditor(documentWrapperElementId);
+    const editor = this.getEditor(documentWrapperElementId);
     if (editor) {
-      let editorGroupCode = editor.get_editorGroupCode();
-      let editorGroup = this.getEditorGroup(editorGroupCode);
+      const editorGroupCode = editor.get_editorGroupCode();
+      const editorGroup = this.getEditorGroup(editorGroupCode);
 
       $q.removeProperty(editorGroup, documentWrapperElementId);
 
@@ -137,21 +137,21 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    let entityTypeCode = eventArgs.get_entityTypeCode();
-    let actionTypeCode = eventArgs.get_actionTypeCode();
-    let actionCode = eventArgs.get_actionCode();
-    let entityId = eventArgs.get_entityId();
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
+    const actionCode = eventArgs.get_actionCode();
+    const entityId = eventArgs.get_entityId();
 
     if (actionCode == window.ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
-      let entityIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
-      let self = this;
+      const entityIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
+      const self = this;
       jQuery.each(entityIds, (index, id) => {
         self.refreshEditorGroup(window.ENTITY_TYPE_CODE_ARTICLE, id);
       });
     } else if (actionTypeCode == window.ACTION_TYPE_CODE_CHANGE_LOCK) {
       this.refreshEditorGroup(entityTypeCode, entityId);
     } else if (eventArgs.get_isRestored() && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-      let confirmMessageText = String.format($l.EntityEditor.autoRefreshConfirmMessageAfterArticleRestoring, entityId);
+      const confirmMessageText = String.format($l.EntityEditor.autoRefreshConfirmMessageAfterArticleRestoring, entityId);
       this.refreshEditorGroup(window.ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { confirmMessageText: confirmMessageText });
     } else if (actionCode == window.ACTION_CODE_ENABLE_ARTICLES_PERMISSIONS && entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT) {
       this.refreshEditorGroup(entityTypeCode, entityId);
@@ -159,25 +159,25 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
   },
 
   onEntityEditorReady: function (documentWrapperElementId) {
-    let eventArgs = new Sys.EventArgs();
+    const eventArgs = new Sys.EventArgs();
     eventArgs.documentWrapperElementId = documentWrapperElementId;
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_IS_READY, eventArgs);
   },
 
   onEntityEditorDisposed: function (documentWrapperElementId) {
-    let eventArgs = new Sys.EventArgs();
+    const eventArgs = new Sys.EventArgs();
     eventArgs.documentWrapperElementId = documentWrapperElementId;
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED, eventArgs);
   },
 
   onFieldValueChanged: function (args) {
-    let eventArgs = new Sys.EventArgs();
+    const eventArgs = new Sys.EventArgs();
     eventArgs.fieldChangeInfo = args;
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED, eventArgs);
   },
 
   onAllFieldInvalidate: function (documentWrapperElementId) {
-    let eventArgs = new Sys.EventArgs();
+    const eventArgs = new Sys.EventArgs();
     eventArgs.documentWrapperElementId = documentWrapperElementId;
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE, eventArgs);
   },
@@ -186,8 +186,8 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     Quantumart.QP8.BackendEntityEditorManager.callBaseMethod(this, 'dispose');
 
     if (this._editorGroups) {
-      for (let editorGroupCode in this._editorGroups) {
-        let editorGroup = this._editorGroups[editorGroupCode];
+      for (const editorGroupCode in this._editorGroups) {
+        const editorGroup = this._editorGroups[editorGroupCode];
         Object.keys(editorGroup).forEach(this.destroyEditor);
         delete this._editorGroups[editorGroupCode];
       }

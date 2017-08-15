@@ -36,15 +36,15 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
     let $copyButton, $pasteButton;
     let $list = $(this._listElement);
-    let countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`);
+    const countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`);
     if (countOverflowElement.length > 0) {
       this._countOverflowElement = countOverflowElement.get(0);
     }
 
     this._fixListOverflow();
 
-    let count = this.getSelectedEntities().length;
-    let hidden = count <= 1 || this._isCountOverflow();
+    const count = this.getSelectedEntities().length;
+    const hidden = count <= 1 || this._isCountOverflow();
     this._addCountDiv(count, false);
     this._addGroupCheckbox(hidden);
     this._syncGroupCheckbox();
@@ -100,16 +100,16 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   getSelectedEntities: function () {
     let result;
     if (!this._isCountOverflow()) {
-      let $selectedListItems = this.getSelectedListItems();
+      const $selectedListItems = this.getSelectedListItems();
       result = $selectedListItems.map((i, item) => {
-        let $item = $(item);
+        const $item = $(item);
         return {
           Id: +$item.find('INPUT:checkbox').val(),
           Name: $item.find('LABEL').text()
         };
       }).get() || [];
     } else {
-      let ids = $(this._countOverflowElement).val().split(',');
+      const ids = $(this._countOverflowElement).val().split(',');
       result = $.map(ids, id => {
         return { Id: id, Name: '' };
       }) || [];
@@ -123,15 +123,15 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _refreshListInner: function (dataItems, refreshOnly) {
-    let newSelectedIDs = $.map($.grep(dataItems, di => di.Value), di => $q.toInt(di.Value));
+    const newSelectedIDs = $.map($.grep(dataItems, di => di.Value), di => $q.toInt(di.Value));
 
-    let currentSelectedIDs = this.getSelectedEntityIDs();
-    let selectedItemsIsChanged = newSelectedIDs.length != currentSelectedIDs.length || newSelectedIDs.length != _.union(newSelectedIDs, currentSelectedIDs).length;
+    const currentSelectedIDs = this.getSelectedEntityIDs();
+    const selectedItemsIsChanged = newSelectedIDs.length != currentSelectedIDs.length || newSelectedIDs.length != _.union(newSelectedIDs, currentSelectedIDs).length;
 
     if (selectedItemsIsChanged) {
-      let oldCount = this.getSelectedEntities().length;
-      let $list = $(this._listElement);
-      let $ul = $list.find('UL');
+      const oldCount = this.getSelectedEntities().length;
+      const $list = $(this._listElement);
+      const $ul = $list.find('UL');
 
       if (newSelectedIDs.length < this._countLimit) {
         $ul.empty().html(this._getCheckBoxListHtml(dataItems));
@@ -139,12 +139,12 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
         this._countOverflowElement = null;
       } else {
         $ul.empty();
-        let value = newSelectedIDs.join();
+        const value = newSelectedIDs.join();
         if (this._countOverflowElement) {
           $(this._countOverflowElement).val(value);
         } else {
-          let name = $list.data('list_item_name');
-          let html = `<input type="hidden" class="${this.OVERFLOW_HIDDEN_CLASS}" name="${name}" value = "${value}" />`;
+          const name = $list.data('list_item_name');
+          const html = `<input type="hidden" class="${this.OVERFLOW_HIDDEN_CLASS}" name="${name}" value = "${value}" />`;
           $ul.before(html);
 
           this._countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`).get(0);
@@ -160,7 +160,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   appendEntities: function (entityIds) {
     if (entityIds && entityIds.length) {
-      let selectedEntities = entityIds.map(i => {
+      const selectedEntities = entityIds.map(i => {
         return { Id: i };
       });
 
@@ -171,7 +171,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   selectEntities: function (entityIds) {
     this.deselectAllListItems();
     if (entityIds && entityIds.length) {
-      let selectedEntities = entityIds.map(i => {
+      const selectedEntities = entityIds.map(i => {
         return { Id: i };
       });
 
@@ -218,9 +218,9 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   makeReadonly: function () {
     this.disableList();
-    let $checked = this.getListItems().find('INPUT:checkbox:checked');
+    const $checked = this.getListItems().find('INPUT:checkbox:checked');
     $checked.each((i, cb) => {
-      let $cb = $(cb);
+      const $cb = $(cb);
       $cb.siblings(`input[name="${$cb.prop('name')}"]:hidden`).val($cb.val());
     });
   },
@@ -230,20 +230,20 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _setAsChanged: function (refreshOnly) {
-    let $list = $(this._listElement);
+    const $list = $(this._listElement);
     $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
 
-    let operation = refreshOnly ? 'addClass' : 'removeClass';
+    const operation = refreshOnly ? 'addClass' : 'removeClass';
     $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
 
-    let value = this.getSelectedEntityIDs();
+    const value = this.getSelectedEntityIDs();
     $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value: value, contentFieldName: $list.closest('dl').data('field_name')});
   },
 
   _getCheckBoxListHtml: function (dataItems) {
-    let html = new $.telerik.stringBuilder();
+    const html = new $.telerik.stringBuilder();
     for (let dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
-      let dataItem = dataItems[dataItemIndex];
+      const dataItem = dataItems[dataItemIndex];
       this._getCheckBoxListItemHtml(html, dataItem, dataItemIndex);
     }
 
@@ -251,10 +251,10 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _getCheckBoxListItemHtml: function (html, dataItem, dataItemIndex) {
-    let itemElementName = this._listItemName;
-    let itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
-    let itemValue = dataItem.Value;
-    let itemText = dataItem.Text;
+    const itemElementName = this._listItemName;
+    const itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
+    const itemValue = dataItem.Value;
+    const itemText = dataItem.Text;
 
     html
       .cat('<li>')
@@ -281,7 +281,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   _onClearButtonClickHandler: function () {
     $(this._listElement).find('LI:has(INPUT:checkbox:not(:checked))').remove();
 
-    let newCount = this.getListItemCount();
+    const newCount = this.getListItemCount();
     this._refreshGroupCheckbox(newCount);
     this._syncCountSpan(newCount);
     this._refreshClearButton();

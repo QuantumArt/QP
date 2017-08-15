@@ -108,9 +108,9 @@ Quantumart.QP8.BackendActionLink.prototype = {
   _onActionExecutingHandler: null,
 
   initialize: function () {
-    let $actionLink = jQuery(`#${this._actionLinkElementId}`);
-    let $iconWrapper = $actionLink.find('SPAN.icon:first');
-    let $caption = $actionLink.find('SPAN.text:first');
+    const $actionLink = jQuery(`#${this._actionLinkElementId}`);
+    const $iconWrapper = $actionLink.find('SPAN.icon:first');
+    const $caption = $actionLink.find('SPAN.text:first');
 
     this._actionLinkElement = $actionLink.get(0);
     this._iconWrapperElement = $iconWrapper.get(0);
@@ -151,7 +151,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
 
   isActionLinkBusy: function () {
     let $link = jQuery(this._actionLinkElement);
-    let isBusy = $link.find('A:first').hasClass(this.ACTION_LINK_BUSY_CLASS_NAME);
+    const isBusy = $link.find('A:first').hasClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
 
@@ -174,7 +174,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
 
   isActionLinkDisabled: function () {
     let $link = jQuery(this._actionLinkElement);
-    let isDisabled = $link.find('A:first').hasClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
+    const isDisabled = $link.find('A:first').hasClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
 
     $link = null;
 
@@ -183,13 +183,13 @@ Quantumart.QP8.BackendActionLink.prototype = {
 
   onActionExecuting: function (e) {
     e.preventDefault();
-    let isLeftClick = e.type == 'click' && (e.which == 1 || e.which == 0);
-    let isMiddleClick = e.type == 'mouseup' && e.which == 2;
+    const isLeftClick = e.type == 'click' && (e.which == 1 || e.which == 0);
+    const isMiddleClick = e.type == 'mouseup' && e.which == 2;
     if (!this.isActionLinkDisabled() && !this.isActionLinkBusy() && (isLeftClick || isMiddleClick)) {
-      let actionTargetType = this._actionTargetType;
+      const actionTargetType = this._actionTargetType;
       if (!$q.isNull(actionTargetType)) {
-        let actionCode = this._actionCode;
-        let action = $a.getBackendActionByCode(actionCode);
+        const actionCode = this._actionCode;
+        const action = $a.getBackendActionByCode(actionCode);
         if (action) {
           let params = new Quantumart.QP8.BackendActionParameters({
             entityId: this._entityId,

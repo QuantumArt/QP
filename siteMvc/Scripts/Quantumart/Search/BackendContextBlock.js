@@ -18,7 +18,7 @@ Quantumart.QP8.BackendContextBlock.prototype
 
     _restore_searchBlockState: function () {
       if (this._searchBlockState) {
-        let fieldValues = jQuery.map(this._searchBlockState, elem => {
+        const fieldValues = jQuery.map(this._searchBlockState, elem => {
           return { fieldName: elem.Name, value: elem.Value };
         });
         $c.setAllEntityDataListValues(this._searchBlockElement, fieldValues);
@@ -26,9 +26,9 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
     _compute_searchBlockState: function () {
-      let result = [];
+      const result = [];
       $('.contextSwitcher .stateField', this._searchBlockElement).each(function () {
-        let $item = $(this);
+        const $item = $(this);
         result.push({
           Name: $item.prop('name'),
           Value: $item.prop('value'),
@@ -74,9 +74,9 @@ Quantumart.QP8.BackendContextBlock.prototype
 
           this._restore_searchBlockState();
 
-          let self = this;
+          const self = this;
           $('.contextSwitcher').each(function () {
-            let component = $(this).data('entity_data_list_component');
+            const component = $(this).data('entity_data_list_component');
             component.attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
           });
         }
@@ -93,7 +93,7 @@ Quantumart.QP8.BackendContextBlock.prototype
 
 
     _onFindButtonClick: function () {
-      let state = this.get_searchBlockState();
+      const state = this.get_searchBlockState();
       let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, JSON.stringify(state));
       eventArgs.set_searchBlockState(state);
       this.notify(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, eventArgs);
@@ -105,9 +105,9 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
     dispose: function () {
-      let self = this;
+      const self = this;
       $('.contextSwitcher').each(function () {
-        let component = $(this).data('entity_data_list_component');
+        const component = $(this).data('entity_data_list_component');
         component.detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
       });
 

@@ -32,7 +32,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     );
 
     if (serverContent) {
-      let $containerElement = $(this._containerElement);
+      const $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
       this._isNullCheckBoxElement = document.getElementById(`${this._elementIdPrefix}_isNullCheckBox`);
@@ -99,12 +99,12 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    let stateData = this.get_blockState().data;
+    const stateData = this.get_blockState().data;
     let result, builder;
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (!stateData.isEntity) {
-      let ids = this._getIds(stateData.text);
+      const ids = this._getIds(stateData.text);
       result = this._getText(ids);
     } else if (!$q.isNullOrEmpty(stateData.entities)) {
       result = this._getText(stateData.entities, e => $q.cutShort(e.Name, 10));
@@ -122,7 +122,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   restore_blockState: function (state, isRestoreByClose) {
     if (state) {
       if (this._isNullCheckBoxElement) {
-        let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+        const $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
         $isNullCheckBoxElement.prop('checked', state.isNull);
         $isNullCheckBoxElement.trigger('change');
       }
@@ -155,9 +155,9 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   _expandHierarchy: function (url) {
-    let self = this;
+    const self = this;
     return function () {
-      let selectedIds = self.getSelectedIds();
+      const selectedIds = self.getSelectedIds();
       if (selectedIds && selectedIds.length) {
         $q.getAjax(url, {
           ids: self.getSelectedIds(),
@@ -186,7 +186,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChange: function () {
-    let edlComponent = this._getEntityDataList();
+    const edlComponent = this._getEntityDataList();
     if ($(this._isNullCheckBoxElement).is(':checked')) {
       edlComponent.disableList();
       $(this._textAreaElement).prop('disabled', true);

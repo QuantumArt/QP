@@ -50,7 +50,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     this._alwaysEnabledRefreshButton = value;
   },
   addToolbarItemsToToolbar: function (count) {
-    let self = this;
+    const self = this;
     let queryParams = {
       actionCode: this._actionCode,
       entityId: this._entityId,
@@ -71,7 +71,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         actionToolbarItems = jQuery.grep(actionToolbarItems, itm => self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1);
       }
 
-      let items = self._getToolbarItemsFromResult(actionToolbarItems);
+      const items = self._getToolbarItemsFromResult(actionToolbarItems);
       Quantumart.QP8.BackendActionToolbar.callBaseMethod(self, 'addToolbarItemsToToolbar', [items, count]);
 
       $q.clearArray(items);
@@ -91,7 +91,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   },
 
   tuneToolbarItems: function (entityId, parentEntityId) {
-    let self = this;
+    const self = this;
 
     let queryParams = { actionCode: this._actionCode, entityId: entityId, parentEntityId: parentEntityId };
     if (this.get_isBindToExternal() === true) {
@@ -105,7 +105,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         }
 
         if (data.success) {
-          let actionStatuses = data.actionStatuses;
+          const actionStatuses = data.actionStatuses;
           if (!$q.isNullOrEmpty(actionStatuses)) {
             Quantumart.QP8.BackendActionToolbar.callBaseMethod(self, 'tuneToolbarItems', [actionStatuses]);
             $q.clearArray(actionStatuses);
@@ -136,7 +136,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   },
 
   _getToolbarItemsFromResult: function (items) {
-    let dataItems = [];
+    const dataItems = [];
     jQuery.each(items, (index, item) => {
       Array.add(dataItems, {
         Type: window.TOOLBAR_ITEM_TYPE_BUTTON,

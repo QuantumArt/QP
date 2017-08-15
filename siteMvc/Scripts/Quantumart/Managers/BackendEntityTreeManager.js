@@ -9,7 +9,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
   },
 
   generateTreeGroupCode: function (entityTypeCode, parentEntityId) {
-    let treeGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
+    const treeGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
     return treeGroupCode;
   },
@@ -40,8 +40,8 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
   getTree: function (treeElementId) {
     let tree = null;
 
-    for (let treeGroupCode in this._treeGroups) {
-      let treeGroup = this._treeGroups[treeGroupCode];
+    for (const treeGroupCode in this._treeGroups) {
+      const treeGroup = this._treeGroups[treeGroupCode];
       if (treeGroup[treeElementId]) {
         tree = treeGroup[treeElementId];
         break;
@@ -52,7 +52,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
   },
 
   createTree: function (treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
-    let treeGroupCode = this.generateTreeGroupCode(entityTypeCode, parentEntityId);
+    const treeGroupCode = this.generateTreeGroupCode(entityTypeCode, parentEntityId);
 
     let tree = null;
     if ($q.isNullOrEmpty(options.virtualContentId)) {
@@ -63,16 +63,16 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 
     tree.set_treeManager(this);
 
-    let treeGroup = this.createTreeGroup(treeGroupCode);
+    const treeGroup = this.createTreeGroup(treeGroupCode);
     treeGroup[treeElementId] = tree;
     return tree;
   },
 
   removeTree: function (treeElementId) {
-    let tree = this.getTree(treeElementId);
+    const tree = this.getTree(treeElementId);
     if (tree) {
-      let treeGroupCode = tree.get_treeGroupCode();
-      let treeGroup = this.getTreeGroup(treeGroupCode);
+      const treeGroupCode = tree.get_treeGroupCode();
+      const treeGroup = this.getTreeGroup(treeGroupCode);
 
       $q.removeProperty(treeGroup, treeElementId);
 
@@ -94,11 +94,11 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
   },
 
   refreshNode: function (entityTypeCode, parentEntityId, entityId, options) {
-    let treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
+    const treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
     if (treeGroup) {
-      for (let treeElementId in treeGroup) {
-        let tree = this.getTree(treeElementId);
-        let nodeCode = tree.convertEntityIdToNodeCode(entityId);
+      for (const treeElementId in treeGroup) {
+        const tree = this.getTree(treeElementId);
+        const nodeCode = tree.convertEntityIdToNodeCode(entityId);
 
         tree.refreshNode(nodeCode, options);
       }
@@ -106,12 +106,12 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
   },
 
   refreshNodes: function (entityTypeCode, parentEntityId, ids, options) {
-    let self = this;
+    const self = this;
     if ($q.isNullOrEmpty(ids)) {
-      let treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
+      const treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
       if (treeGroup) {
-        for (let treeElementId in treeGroup) {
-          let tree = this.getTree(treeElementId);
+        for (const treeElementId in treeGroup) {
+          const tree = this.getTree(treeElementId);
           tree.refreshTree();
         }
       }
@@ -123,11 +123,11 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
   },
 
   removeNode: function (entityTypeCode, parentEntityId, entityId) {
-    let treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
+    const treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
     if (treeGroup) {
-      for (let treeElementId in treeGroup) {
-        let tree = this.getTree(treeElementId);
-        let nodeCode = tree.convertEntityIdToNodeCode(entityId);
+      for (const treeElementId in treeGroup) {
+        const tree = this.getTree(treeElementId);
+        const nodeCode = tree.convertEntityIdToNodeCode(entityId);
 
         tree.removeNode(nodeCode);
       }
@@ -135,18 +135,18 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
   },
 
   removeNodes: function (entityTypeCode, parentEntityId, ids) {
-    let self = this;
+    const self = this;
     jQuery.each(ids, (index, id) => {
       self.removeNode(entityTypeCode, parentEntityId, id);
     });
   },
 
   onActionExecuted: function (eventArgs) {
-    let entityTypeCode = eventArgs.get_entityTypeCode();
-    let parentEntityId = eventArgs.get_parentEntityId();
-    let actionTypeCode = eventArgs.get_actionTypeCode();
-    let entityId = eventArgs.get_entityId();
-    let entityIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const parentEntityId = eventArgs.get_parentEntityId();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
+    const entityId = eventArgs.get_entityId();
+    const entityIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
 
     if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving()) {
       this.removeNodes(entityTypeCode, parentEntityId, entityIds);
@@ -157,13 +157,13 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
       && entityTypeCode != window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE) {
       this.refreshNode(entityTypeCode, parentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: true });
     } else if (eventArgs.get_isSaved() || actionTypeCode == window.ACTION_TYPE_CODE_COPY) {
-      let parentIdsInTree = $o.getParentIdsForTree(entityTypeCode, entityIds);
+      const parentIdsInTree = $o.getParentIdsForTree(entityTypeCode, entityIds);
       this.refreshNodes(entityTypeCode, parentEntityId, parentIdsInTree, { loadChildNodes: true, saveNodesSelection: false });
     } else if (eventArgs.get_isRestoring() && entityTypeCode == window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
-      let parentArticlesInTree = $o.getParentIdsForTree(window.ENTITY_TYPE_CODE_ARTICLE, entityIds);
+      const parentArticlesInTree = $o.getParentIdsForTree(window.ENTITY_TYPE_CODE_ARTICLE, entityIds);
       this.refreshNodes(window.ENTITY_TYPE_CODE_ARTICLE, parentEntityId, parentArticlesInTree, { loadChildNodes: true, saveNodesSelection: false });
     } else if (eventArgs.get_isRestored() && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-      let newParentEntityId = +$o.getParentEntityId(window.ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
+      const newParentEntityId = +$o.getParentEntityId(window.ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
       this.refreshNode(window.ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: false });
     }
   },

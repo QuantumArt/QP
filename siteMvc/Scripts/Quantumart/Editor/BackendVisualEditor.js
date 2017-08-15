@@ -3,8 +3,8 @@
 
 // eslint-disable-next-line no-extra-semi
 ; (function init() {
-  let getCkEditorConfig = function getCkEditorConfig(obj, opts) {
-    let defaultConfig = {
+  const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
+    const defaultConfig = {
       language: 'ru',
       docType: '<!doctype html>',
       height: 340,
@@ -12,7 +12,7 @@
       shiftEnterMode: 1
     };
 
-    let config = {
+    const config = {
       language: opts.language || defaultConfig.language,
       defaultLanguage: opts.language || defaultConfig.language,
       contentsLanguage: opts.language || defaultConfig.language,
@@ -163,7 +163,7 @@
   };
 
   Quantumart.QP8.BackendVisualEditor = function BackendVisualEditor(componentElem) {
-    let $componentElem = $(componentElem);
+    const $componentElem = $(componentElem);
     this._$containerElem = $('.visualEditorContainer', $componentElem);
     this._componentElem = $componentElem.get(0);
     this._editorElem = $('.visualEditor', $componentElem).get(0);
@@ -196,8 +196,7 @@
     _checkIntervalID: null,
 
     initialize: function () {
-      let that = this;
-      let $editorLink;
+      const that = this;
       $(this._componentElem).data(Quantumart.QP8.BackendVisualEditor.DATA_KEY_COMPONENT, this);
       this._onChangeDataInDesignModeHandlerProxy = this._onChangeDataInDesignModeHandler.bind(this);
 
@@ -210,7 +209,7 @@
       this._isExpanded = $q.toBoolean($(this._editorElem).data('is_expanded'));
       this._isTextEditor = $q.toBoolean($(this._editorElem).data('is_texteditor'));
 
-      $editorLink = this._isTextEditor ? this._$visualEditorLink : this._$expandLink;
+      const $editorLink = this._isTextEditor ? this._$visualEditorLink : this._$expandLink;
       $editorLink.off('click').on('click', e => {
         if (!that._isInitialized) {
           that._isInitialized = true;
@@ -218,7 +217,7 @@
             siteId: that._siteId,
             fieldId: that._fieldId
           }, data => {
-            let instance = that.getCkEditor();
+            const instance = that.getCkEditor();
             if (instance) {
               that.disposeCKEditor(false);
             }
@@ -252,7 +251,7 @@
     },
 
     saveVisualEditorData: function () {
-      let editor = this.getCkEditor();
+      const editor = this.getCkEditor();
 
       if (editor) {
         editor.updateElement();
@@ -260,8 +259,8 @@
     },
 
     getZIndex: function () {
-      let $window = $(this._componentElem).closest('.t-window');
-      let zIndex = $window.length > 0 ? parseInt($window.css('zIndex'), 10) : 0;
+      const $window = $(this._componentElem).closest('.t-window');
+      const zIndex = $window.length > 0 ? parseInt($window.css('zIndex'), 10) : 0;
       return zIndex + 10000;
     },
 
@@ -287,21 +286,19 @@
     },
 
     disposeCKEditor: function (noUpdate) {
-      let editor, $editor, windowsToDipose, listenersToRemove;
-
       if (this._checkIntervalID) {
         clearInterval(this._checkIntervalID);
       }
 
-      $editor = $(this._editorElem);
-      windowsToDipose = ['imageWindow', 'linkWindow', 'flashWindow'];
-      listenersToRemove = ['afterCommandExec', 'loadSnapshot'];
+      const $editor = $(this._editorElem);
+      const windowsToDipose = ['imageWindow', 'linkWindow', 'flashWindow'];
+      const listenersToRemove = ['afterCommandExec', 'loadSnapshot'];
 
       this._destroyVisualEditorWindow($editor, windowsToDipose[0]);
       this._destroyVisualEditorWindow($editor, windowsToDipose[1]);
       this._destroyVisualEditorWindow($editor, windowsToDipose[2]);
 
-      editor = this.getCkEditor();
+      const editor = this.getCkEditor();
       if (editor) {
         if (editor.textarea) {
           editor.textarea.removeAllListeners();
@@ -317,12 +314,11 @@
       }
 
       $editor.removeData();
-      editor = null;
     },
 
     _onCheckChangesIntervalHandler: function () {
       let $field;
-      let editor = this.getCkEditor();
+      const editor = this.getCkEditor();
 
       if (editor) {
         if (this._storedTempValue !== editor.getData()) {
@@ -340,7 +336,7 @@
     },
 
     _onChangeDataInDesignModeHandler: function () {
-      let editor = this.getCkEditor();
+      const editor = this.getCkEditor();
       if (editor) {
         if (editor.textarea) {
           editor.textarea.off('keyup').on('keyup', this._onChangeDataInSourceModeHandler, this);
@@ -362,7 +358,7 @@
     },
 
     _onCKEEditorInitialized: function (sender) {
-      let that = this;
+      const that = this;
       if (sender) {
         this._storedTempValue = sender.getData();
       }

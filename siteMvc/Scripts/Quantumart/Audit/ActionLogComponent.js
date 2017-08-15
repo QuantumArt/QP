@@ -58,15 +58,15 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _onDataBinding: function (e) {
-    let filterData = this.get_filterData();
+    const filterData = this.get_filterData();
     if (!jQuery.isEmptyObject(filterData)) {
       e.data = Object.assign({}, e.data, { searchQuery: JSON.stringify(filterData) });
     }
   },
 
   get_filterData: function () {
-    let filterData = {};
-    for (let tileType in this._tiles) {
+    const filterData = {};
+    for (const tileType in this._tiles) {
       if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
         this._tiles[tileType].get_options().deriveFilterData(this._tiles[tileType], filterData);
       }
@@ -88,9 +88,9 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _createTile: function (options) {
-    let that = this;
+    const that = this;
     if (options && options.value && !Object.prototype.hasOwnProperty.call(this._tiles, options.value)) {
-      let ft = +options.value || 0;
+      const ft = +options.value || 0;
       let tileComponent = new Quantumart.QP8.ActionLogFilterTile(this.$tilesContainer,
         {
           title: options.text,
@@ -132,7 +132,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
             }
           },
           deriveFilterData: function (tile, filterData) {
-            let v = tile.get_value();
+            const v = tile.get_value();
             if (v) {
               switch (tile.get_options().type) {
                 case $e.ActionLogFilteredColumns.EntityStringId:
@@ -187,7 +187,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _destroyAllTiles: function () {
-    for (let tileType in this._tiles) {
+    for (const tileType in this._tiles) {
       this._destroyTile(tileType);
     }
   },

@@ -12,7 +12,7 @@ Quantumart.QP8.Cache.getItem = function (key) {
 };
 
 Quantumart.QP8.Cache.addItem = function (key, value) {
-  let itemInfo = { Value: value };
+  const itemInfo = { Value: value };
   Quantumart.QP8.Cache._itemInfos[key] = itemInfo;
 };
 
@@ -21,7 +21,7 @@ Quantumart.QP8.Cache.removeItem = function (key) {
 };
 
 Quantumart.QP8.Cache.clear = function () {
-  for (let key in Quantumart.QP8.Cache._itemInfos) {
+  for (const key in Quantumart.QP8.Cache._itemInfos) {
     Quantumart.QP8.Cache.removeItem(key);
   }
 };

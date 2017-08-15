@@ -21,20 +21,20 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   shortNameLength: 20,
 
   initialize: function () {
-    let $fileListContentElement = $(this._fileListContentElement);
+    const $fileListContentElement = $(this._fileListContentElement);
     $fileListContentElement.html('<div class="fileListNameContainer"></div>');
 
     $fileListContentElement.delegate('.fileItem input:checkbox', 'click', jQuery.proxy(this._onFileCheckBoxClickedHandler, this));
     $fileListContentElement.delegate('.fileItem', 'click', jQuery.proxy(this._onFileContainerClickedHandler, this));
 
     if (!$q.isNullOrWhiteSpace(this._contextMenuCode)) {
-      let contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format('{0}_ContextMenu', $fileListContentElement.attr('id')),
+      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format('{0}_ContextMenu', $fileListContentElement.attr('id')),
         { targetElements: this._fileListContentElement, allowManualShowing: true, zIndex: this._zIndex});
       contextMenuComponent.initialize();
 
       contextMenuComponent.addMenuItemsToMenu(false);
 
-      let contextMenuEventType = contextMenuComponent.getContextMenuEventType();
+      const contextMenuEventType = contextMenuComponent.getContextMenuEventType();
       $fileListContentElement.delegate('.fileItem', contextMenuEventType, jQuery.proxy(this._onContextMenuHandler, this));
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, jQuery.proxy(this._onNodeContextMenuItemClickingHandler, this));
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, jQuery.proxy(this._onNodeContextMenuHiddenHandler, this));
@@ -44,13 +44,13 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   },
 
   redraw: function (data, options) {
-    let $fileListContentElement = $(this._fileListContentElement);
-    let $fileListNameContainer = $fileListContentElement.find('.fileListNameContainer');
+    const $fileListContentElement = $(this._fileListContentElement);
+    const $fileListNameContainer = $fileListContentElement.find('.fileListNameContainer');
 
 
-    let html = new $.telerik.stringBuilder();
+    const html = new $.telerik.stringBuilder();
 
-    let self = this;
+    const self = this;
     if (data.TotalRecords > 0) {
       let columnCounter = 0;
       jQuery.each(data.Data, (index, item) => {
@@ -77,7 +77,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   },
 
   selectAll: function (value) {
-    let $fileListContentElement = $(this._fileListContentElement);
+    const $fileListContentElement = $(this._fileListContentElement);
     $fileListContentElement.find('.fileItem input:checkbox').prop('checked', value);
     $fileListContentElement.find('.fileItem').addClass(this.SELECTED_CLASS);
 
@@ -85,7 +85,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   },
 
   isAllSelected: function () {
-    let $fileListContentElement = $(this._fileListContentElement);
+    const $fileListContentElement = $(this._fileListContentElement);
     return $fileListContentElement.find('.fileItem input::checkbox:not(:checked)').size() == 0 && $fileListContentElement.find('.fileItem').size() > 0;
   },
 
@@ -97,7 +97,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     if (this._contextMenuComponent) {
       this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING);
       this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN);
-      let contextMenuEventType = this._contextMenuComponent.getContextMenuEventType();
+      const contextMenuEventType = this._contextMenuComponent.getContextMenuEventType();
       $fileListContentElement.undelegate('.fileItem', contextMenuEventType);
       this._contextMenuComponent.dispose();
     }
@@ -118,13 +118,13 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   },
 
   _getSelectedEntities: function () {
-    let selectedEntities = [];
+    const selectedEntities = [];
     let $fileListContentElement = $(this._fileListContentElement);
 
     $fileListContentElement
       .find(`.fileItem.${this.SELECTED_CLASS}`)
       .each((index, item) => {
-        let name = $(item).data('file_name');
+        const name = $(item).data('file_name');
         Array.add(selectedEntities, { Id: name, Name: name });
       });
 
@@ -145,8 +145,8 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   },
 
   _onFileContainerClickedHandler: function (event) {
-    let $item = $(event.currentTarget);
-    let $fileListContentElement = $(this._fileListContentElement);
+    const $item = $(event.currentTarget);
+    const $fileListContentElement = $(this._fileListContentElement);
 
     if (!event.ctrlKey || this._selectMode == window.FILE_LIST_SELECT_MODE_SINGLE) {
       $fileListContentElement.find(`.${this.SELECTED_CLASS}`).removeClass(this.SELECTED_CLASS);
@@ -159,7 +159,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   },
 
   _onContextMenuHandler: function (e) {
-    let $element = $(e.currentTarget);
+    const $element = $(e.currentTarget);
     if (this._contextMenuComponent) {
       this._contextMenuComponent.showMenu(e, $element.get(0));
     }
@@ -169,7 +169,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   },
 
   _onNodeContextMenuItemClickingHandler: function (eventType, sender, args) {
-    let $menuItem = $(args.get_menuItem());
+    const $menuItem = $(args.get_menuItem());
     if (!$q.isNullOrEmpty($menuItem)) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
@@ -177,8 +177,8 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 
   _onNodeContextMenuHiddenHandler: function (eventType, sender, args) {
     if (!$q.isNullOrEmpty(this._contextMenuActionCode)) {
-      let $element = $(this._currentContextMenuSelectedElement);
-      let eventArgs = new Quantumart.QP8.BackendEventArgs();
+      const $element = $(this._currentContextMenuSelectedElement);
+      const eventArgs = new Quantumart.QP8.BackendEventArgs();
       eventArgs.set_actionCode(this._contextMenuActionCode);
       eventArgs.set_entityId($element.data('file_name'));
       eventArgs.set_entityName($element.data('file_name'));

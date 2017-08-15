@@ -9,13 +9,13 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
     contentPicker.set_parentEntityId(+$siteCombo.val() || 0);
   }, this));
 
-  let onContentSelectedHandler = jQuery.proxy(() => {
+  const onContentSelectedHandler = jQuery.proxy(() => {
     if (contentPicker.getSelectedListItemCount() === 0) {
       articlePicker.disableList();
       articlePicker.removeAllListItems();
       articlePicker.set_parentEntityId(0);
     } else {
-      let selectedContent = contentPicker.getSelectedEntityIDs()[0];
+      const selectedContent = contentPicker.getSelectedEntityIDs()[0];
       articlePicker.enableList();
       if (articlePicker.get_parentEntityId() !== selectedContent) {
         articlePicker.removeAllListItems();

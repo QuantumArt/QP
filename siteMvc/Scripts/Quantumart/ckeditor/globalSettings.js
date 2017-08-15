@@ -2,10 +2,10 @@
 
 // eslint-disable-next-line no-extra-semi
 ; (function init() {
-  let onBrowseSiteLibrary = function onBrowseSiteLibrary(cb) {
+  const onBrowseSiteLibrary = function onBrowseSiteLibrary(cb) {
     let evArgs, options;
-    let dialog = CKEDITOR.dialog.getCurrent();
-    let $field = $(dialog.getParentEditor().element.$);
+    const dialog = CKEDITOR.dialog.getCurrent();
+    const $field = $(dialog.getParentEditor().element.$);
     let popup = $field.data('linkWindow-site');
 
     if (!popup) {
@@ -31,10 +31,10 @@
     evArgs = null;
   };
 
-  let onBrowseContentLibrary = function onBrowseContentLibrary(cb) {
+  const onBrowseContentLibrary = function onBrowseContentLibrary(cb) {
     let evArgs, options;
-    let dialog = CKEDITOR.dialog.getCurrent();
-    let $field = $(dialog.getParentEditor().element.$);
+    const dialog = CKEDITOR.dialog.getCurrent();
+    const $field = $(dialog.getParentEditor().element.$);
     let popup = $field.data('linkWindow-content');
 
     if (!popup) {
@@ -60,10 +60,10 @@
     evArgs = null;
   };
 
-  let bindEvents = function bindEvents() {
+  const bindEvents = function bindEvents() {
     CKEDITOR.on('dialogDefinition', function onDialogDefinition(ev) {
       let fieldlName, container;
-      let onSelectCb = function onSelectCb(url) {
+      const onSelectCb = function onSelectCb(url) {
         CKEDITOR.dialog.getCurrent().setValueOf('info', fieldlName, url);
       };
 

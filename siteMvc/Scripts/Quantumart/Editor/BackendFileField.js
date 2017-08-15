@@ -163,7 +163,7 @@ Quantumart.QP8.BackendFileField.prototype = {
 
   updateUploader: function (value) {
     this._uploaderSubFolder = value;
-    let $fileField = $(this._fileFieldElement);
+    const $fileField = $(this._fileFieldElement);
 
     if (this._uploaderSubFolder) {
       $fileField.attr('placeholder', this._getFileFieldSubFolder());
@@ -196,7 +196,7 @@ Quantumart.QP8.BackendFileField.prototype = {
   _librarySelectedHandler: function (eventType, sender, args) {
     this._closeLibrary();
     if (args) {
-      let entities = args.entities;
+      const entities = args.entities;
 
       if (entities.length > 0) {
         let url = args.context;
@@ -224,8 +224,8 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _showOrHidePreviewButton: function (filename, $previewButton) {
-    let _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
-    let result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
+    const _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
+    const result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
     if ((typeof result !== 'undefined' && result.length > 0) || this._isImage) {
       $previewButton.show();
     } else {
@@ -269,7 +269,7 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _initFileUploader: function () {
-    let extensions = this._isImage ? window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
+    const extensions = this._isImage ? window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
 
     if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
       this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
@@ -303,16 +303,16 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _previewImage: function () {
-    let $fileField = $(this._fileFieldElement);
+    const $fileField = $(this._fileFieldElement);
 
     if (!$q.isNullOrEmpty($fileField)) {
-      let fieldName = $fileField.attr('name');
-      let fieldValue = $fileField.val();
+      const fieldName = $fileField.attr('name');
+      const fieldValue = $fileField.val();
 
       if (!$q.isNullOrWhiteSpace(fieldValue)) {
         $c.destroyPopupWindow(this._previewWindowComponent);
-        let urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId, parentEntityId: this._libraryParentEntityId };
-        let testUrl = Quantumart.QP8.BackendLibrary.generateActionUrl('GetImageProperties', urlParams);
+        const urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId, parentEntityId: this._libraryParentEntityId };
+        const testUrl = Quantumart.QP8.BackendLibrary.generateActionUrl('GetImageProperties', urlParams);
 
         this._previewWindowComponent = $c.preview(testUrl);
       }
@@ -320,15 +320,15 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _downloadFieldFile: function () {
-    let $fileField = $(this._fileFieldElement);
+    const $fileField = $(this._fileFieldElement);
 
     if (!$q.isNullOrEmpty($fileField)) {
-      let fieldName = $fileField.attr('name');
-      let fieldValue = $fileField.val();
+      const fieldName = $fileField.attr('name');
+      const fieldValue = $fileField.val();
 
       if (!$q.isNullOrWhiteSpace(fieldValue)) {
-        let urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId };
-        let url = Quantumart.QP8.BackendLibrary.generateActionUrl('TestFieldValueDownload', urlParams);
+        const urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId };
+        const url = Quantumart.QP8.BackendLibrary.generateActionUrl('TestFieldValueDownload', urlParams);
 
         $c.downloadFileWithChecking(url, fieldValue);
       }
@@ -344,7 +344,7 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _openLibrary: function () {
-    let filterFileTypeId = this._isImage ? Quantumart.QP8.Enums.LibraryFileType.Image : '';
+    const filterFileTypeId = this._isImage ? Quantumart.QP8.Enums.LibraryFileType.Image : '';
     let eventArgs = new Quantumart.QP8.BackendEventArgs();
 
     eventArgs.set_entityId(this._libraryEntityId);

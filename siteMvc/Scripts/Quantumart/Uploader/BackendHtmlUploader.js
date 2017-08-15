@@ -72,13 +72,13 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
 
   _onUploadCompleteHandler: function () {
     if (this._uploadedFiles.length > 0) {
-      let filenames = [];
+      const filenames = [];
 
       $.each(this._uploadedFiles, (i, val) => {
         filenames.push(val);
       });
 
-      let eventArgs = new Quantumart.QP8.BackendUploaderEventArgs(filenames);
+      const eventArgs = new Quantumart.QP8.BackendUploaderEventArgs(filenames);
 
       this.notify(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, eventArgs);
       this._uploadedFiles = [];
@@ -101,7 +101,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
 
     if (this._extensions.length > 0) {
-      let extensions = $.map(this._extensions.split(';'), val => val.toLowerCase());
+      const extensions = $.map(this._extensions.split(';'), val => val.toLowerCase());
 
       $.each(e.files, function () {
         if (Array.indexOf(extensions, this.extension.toLowerCase()) == -1) {
@@ -116,7 +116,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
       return false;
     }
 
-    let self = this;
+    const self = this;
     if (!this._resolveName) {
       $.each(e.files, function () {
         if (self._checkFileExistence(self._folderPath, this.name)) {
@@ -140,8 +140,8 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   },
 
   _checkFileExistence: function (folderPath, fileName) {
-    let url = `${window.APPLICATION_ROOT_URL}Library/FileExists/`;
-    let obj = $q.getJsonSync(url, {
+    const url = `${window.APPLICATION_ROOT_URL}Library/FileExists/`;
+    const obj = $q.getJsonSync(url, {
       path: folderPath,
       name: fileName
     });

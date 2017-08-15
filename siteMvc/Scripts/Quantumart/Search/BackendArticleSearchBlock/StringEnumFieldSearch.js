@@ -5,8 +5,8 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (conta
 
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
   initialize: function () {
-    let queryDropDownListID = `${this._elementIdPrefix}_queryDropDownList`;
-    let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+    const queryDropDownListID = `${this._elementIdPrefix}_queryDropDownList`;
+    const isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
     let serverContent;
 
     $q.getJsonFromUrl(
@@ -60,7 +60,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    let stateData = this.get_blockState().data;
+    const stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.text) {

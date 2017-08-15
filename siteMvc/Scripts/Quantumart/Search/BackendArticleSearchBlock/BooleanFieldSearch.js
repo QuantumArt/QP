@@ -6,11 +6,11 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (containe
 
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   initialize: function () {
-    let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
-    let radioGroupName = `${this._elementIdPrefix}_radioGroup`;
-    let disablingContainerID = `${this._elementIdPrefix}_disablingContainer`;
-    let radioTrueID = `${this._elementIdPrefix}_radioTrue`;
-    let radioFalseID = `${this._elementIdPrefix}_radioFalse`;
+    const isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+    const radioGroupName = `${this._elementIdPrefix}_radioGroup`;
+    const disablingContainerID = `${this._elementIdPrefix}_disablingContainer`;
+    const radioTrueID = `${this._elementIdPrefix}_radioTrue`;
+    const radioFalseID = `${this._elementIdPrefix}_radioFalse`;
 
     let html = new $.telerik.stringBuilder();
     html
@@ -78,7 +78,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    let stateData = this.get_blockState().data;
+    const stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     }
@@ -106,7 +106,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 
   _getValue: function () {
     let result = null;
-    let val = $(this._containerElement).find('input:radio:checked').val();
+    const val = $(this._containerElement).find('input:radio:checked').val();
     if (val == 'true') {
       result = true;
     } else {

@@ -1,54 +1,54 @@
 Quantumart.QP8.ImageCropResizeClient = Quantumart.QP8.ImageCropResizeClient || {};
 Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClient.Cache || {};
 (function ($, imgCropResize) {
-  let parameters = null;
-  let $windowElement = null;
-  let $rootElement = null;
-  let $x = null;
-  let $y = null;
-  let $width = null;
-  let $height = null;
-  let imgAreaSelect = null;
-  let $btnSave = null;
-  let $saveForm = null;
-  let slider = null;
-  let $sliderValueSpan = null;
-  let defaultErrorMessage = $l.Crop.defaultErrorMessage;
-  let $nouislider = null;
-  let $errors = null;
-  let $errorsContainer = null;
-  let $radioSaveCopy = null;
-  let $radioOverwrite = null;
-  let $inputUserFileName = null;
-  let $radioInputs = null;
-  let $img = null;
-  let $aside = null;
-  let $imageContainerDiv = null;
-  let $wincontent = null;
+  const parameters = null;
+  const $windowElement = null;
+  const $rootElement = null;
+  const $x = null;
+  const $y = null;
+  const $width = null;
+  const $height = null;
+  const imgAreaSelect = null;
+  const $btnSave = null;
+  const $saveForm = null;
+  const slider = null;
+  const $sliderValueSpan = null;
+  const defaultErrorMessage = $l.Crop.defaultErrorMessage;
+  const $nouislider = null;
+  const $errors = null;
+  const $errorsContainer = null;
+  const $radioSaveCopy = null;
+  const $radioOverwrite = null;
+  const $inputUserFileName = null;
+  const $radioInputs = null;
+  const $img = null;
+  const $aside = null;
+  const $imageContainerDiv = null;
+  const $wincontent = null;
   let _telerikWindow = null;
-  let $imgArea = null;
-  let imgInitWidth = 0;
-  let imgInitHeight = 0;
+  const $imgArea = null;
+  const imgInitWidth = 0;
+  const imgInitHeight = 0;
 
-  let _saveMode = {
+  const _saveMode = {
     overwrite: 'overwrite',
     saveAs: 'saveAs'
   };
 
-  let _removeErrors = function () {
+  const _removeErrors = function () {
     _$errors.empty();
     _$errorsContainer.hide();
   };
 
-  let _setSize = function ($img) {
+  const _setSize = function ($img) {
     if (_$aside && $img) {
-      let padding = 10;
-      let width = _$aside.width() + $img.outerWidth() + (padding * 3);
-      let height = Math.max(_$aside.height(), $img.outerHeight() + padding) + (padding * 2);
-      let winWidth = Math.min(width, $(window).width() * 0.8);
-      let winHeight = Math.min(height, $(window).height() * 0.8);
-      let imgContainerWidth = winWidth - _$aside.width() - padding;
-      let imgContainerHeight = winHeight - padding;
+      const padding = 10;
+      const width = _$aside.width() + $img.outerWidth() + (padding * 3);
+      const height = Math.max(_$aside.height(), $img.outerHeight() + padding) + (padding * 2);
+      const winWidth = Math.min(width, $(window).width() * 0.8);
+      const winHeight = Math.min(height, $(window).height() * 0.8);
+      const imgContainerWidth = winWidth - _$aside.width() - padding;
+      const imgContainerHeight = winHeight - padding;
       _$windowElement.find('.t-content').css('width', `${winWidth}px`);
       _$windowElement.find('.t-content').css('height', `${winHeight}px`);
       _$windowElement.find('.image').css('width', `${imgContainerWidth}px`);
@@ -56,9 +56,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     }
   };
 
-  let displayErrors = function (errors) {
+  const displayErrors = function (errors) {
     _removeErrors();
-    for (let i in errors) {
+    for (const i in errors) {
       _$errors.append($(`<li>${errors[i]}</li>`));
     }
 
@@ -66,7 +66,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     _setSize(_$img);
   };
 
-  let _getSaveMode = function () {
+  const _getSaveMode = function () {
     if (!_parameters.allowFileRewrite || _$radioSaveCopy.attr('checked')) {
       return _saveMode.saveAs;
     }
@@ -74,22 +74,22 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     return _saveMode.overwrite;
   };
 
-  let _endsWith = function (suffix, str) {
+  const _endsWith = function (suffix, str) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
   };
 
-  let _getFolder = function (url) {
+  const _getFolder = function (url) {
     return url.substring(0, url.lastIndexOf('/'));
   };
 
-  let _getExtension = function (url) {
-    let index = url.lastIndexOf('.');
+  const _getExtension = function (url) {
+    const index = url.lastIndexOf('.');
     return index == -1 ? '' : url.substr(index, url.length - index);
   };
 
-  let readData = function () {
+  const readData = function () {
     let targetFileUrl = '';
-    let overwriteFile = _getSaveMode() == _saveMode.overwrite;
+    const overwriteFile = _getSaveMode() == _saveMode.overwrite;
 
     if (overwriteFile) {
       targetFileUrl = _parameters.sourceImageUrl;
@@ -107,14 +107,14 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       }
     }
 
-    let result = {
+    const result = {
       overwriteFile: overwriteFile,
       targetFileUrl: targetFileUrl,
       sourceFileUrl: _parameters.sourceImageUrl,
       resize: +_$nouislider.val()
     };
 
-    let select = _imgAreaSelect.getSelection();
+    const select = _imgAreaSelect.getSelection();
     if (select.width || select.height) {
       Object.assign(result, {
         left: Math.max(select.x1, 0),
@@ -127,19 +127,19 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     return result;
   };
 
-  let show = function () {
+  const show = function () {
     if (_telerikWindow) {
       _telerikWindow.center();
       _removeErrors();
     }
   };
 
-  let close = function () {
+  const close = function () {
     _removeErrors();
     _telerikWindow.close();
   };
 
-  let dispose = function () {
+  const dispose = function () {
     _$imgArea.imgAreaSelect('destroy');
     _telerikWindow.destroy();
     _$btnSave.off('click');
@@ -150,7 +150,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     _$radioInputs.off('change');
   };
 
-  let _defaultParameters = {
+  const _defaultParameters = {
     sourceImageUrl: '',
     resultImageFolder: '',
     crop: {
@@ -169,7 +169,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     }
   };
 
-  let _fieldsetCropHtml = `<fieldset class='crop'>\
+  const _fieldsetCropHtml = `<fieldset class='crop'>\
                 <legend>${$l.Crop.selection}</legend>\
                 <dl>\
                     <dt>${$l.Crop.left}</dt>\
@@ -198,7 +198,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 </dl>\
             </fieldset>`;
 
-  let _fieldsetSliderHtml = `<fieldset class='slider'>\
+  const _fieldsetSliderHtml = `<fieldset class='slider'>\
                 <legend>${$l.Crop.changeSize}</legend>\
                 <div>\
                     <span class='slider-value'>x1</span>\
@@ -208,7 +208,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 </div>\
             </fieldset>`;
 
-  let _fieldsetSaveHtml = `<form class='saveForm'><fieldset class='save'>\
+  const _fieldsetSaveHtml = `<form class='saveForm'><fieldset class='save'>\
                 <legend>${$l.Crop.save}</legend>\
                 <dl class='row'>\
                     <dd class='save-items'>\
@@ -217,7 +217,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                 </dl>\
             </fieldset></form>`;
 
-  let _saveOverwriteOrSaveAsHtml = `<div class='save-overwrite'>\
+  const _saveOverwriteOrSaveAsHtml = `<div class='save-overwrite'>\
                             <ul class='formItem'>\
                                 <li>\
                                     <input id='overwrite_0' class='image-overwrite' name='overwrite' checked='checked' type='radio' value='true' />\
@@ -233,7 +233,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                             </ul>\
                         </div>`;
 
-  let _saveOverwriteHtml = `<div class='save-overwrite'>\
+  const _saveOverwriteHtml = `<div class='save-overwrite'>\
                             <ul class='formItem'>\
                                 <li>\
                                     <label>${$l.Crop.saveAs}</label>\
@@ -244,13 +244,13 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
                             </ul>\
                         </div>`;
 
-  let _fieldsetErrorsContainerHtml = `<fieldset class='errorsContainer' style='display: none;'>\
+  const _fieldsetErrorsContainerHtml = `<fieldset class='errorsContainer' style='display: none;'>\
                 <legend>${$l.Crop.errors}</legend>\
                 <ul class='errors'>\
                 </ul>\
             </fieldset>`;
 
-  let _ensureSelection = function (selection) {
+  const _ensureSelection = function (selection) {
     setTimeout(() => {
       if (_imgAreaSelect != null && (selection.width != _parameters.crop.width || selection.height != _parameters.crop.height)) {
         _imgAreaSelect.setSelection(selection.x1, selection.y1, selection.x1 + _parameters.crop.width, selection.y2 + _parameters.crop.height);
@@ -259,32 +259,32 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     }, 0);
   };
 
-  let _resizeImage = function (resizeWidth) {
+  const _resizeImage = function (resizeWidth) {
     _$img[0].style.width = `${Math.floor(resizeWidth)}px`;
     _setSize(_$img);
     setTimeout(_imgAreaSelect.update(), 0);
   };
 
-  let _onSlide = function (resize) {
+  const _onSlide = function (resize) {
     _$sliderValueSpan.text(`x${resize}`);
 
-    let resizeWidth = _imgInitWidth * resize;
-    let resizeHeight = _imgInitHeight * resize;
+    const resizeWidth = _imgInitWidth * resize;
+    const resizeHeight = _imgInitHeight * resize;
     if (!_parameters.allowResizeCropArea) {
-      let dx = resizeWidth - _parameters.crop.width;
-      let dy = resizeHeight - _parameters.crop.height;
+      const dx = resizeWidth - _parameters.crop.width;
+      const dy = resizeHeight - _parameters.crop.height;
       if (dx > 0 && dy > 0) {
         _resizeImage(resizeWidth);
       }
 
-      let selection = _imgAreaSelect.getSelection();
+      const selection = _imgAreaSelect.getSelection();
       _ensureSelection(selection);
     } else {
       _resizeImage(resizeWidth);
     }
   };
 
-  let _createSlider = function () {
+  const _createSlider = function () {
     _slider = _$nouislider.noUiSlider({
       range: {
         min: _parameters.resizeRange.min,
@@ -305,18 +305,18 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     });
 
     _$nouislider.on('mousewheel DOMMouseScroll', function (e) {
-      let o = e.originalEvent;
-      let delta = o && (o.wheelDelta || (o.detail && -o.detail));
+      const o = e.originalEvent;
+      const delta = o && (o.wheelDelta || (o.detail && -o.detail));
 
       if (delta) {
         e.preventDefault();
-        let currentvalue = parseFloat($(this).val());
+        const currentvalue = parseFloat($(this).val());
         let step = 1;
         step *= delta < 0
           ? currentvalue < 1 ? -0.25 : -0.5
           : currentvalue < 1 ? 0.25 : 0.5;
 
-        let newValue = currentvalue + step;
+        const newValue = currentvalue + step;
         if (newValue >= 0 && newValue <= 3.5) {
           $(this).val(newValue, { set: true });
         }
@@ -324,7 +324,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     });
   };
 
-  let _displaySelectionCoordinates = function (selection, needRedrawWidthAndHeight) {
+  const _displaySelectionCoordinates = function (selection, needRedrawWidthAndHeight) {
     setTimeout(() => {
       if ((isNaN(selection.width) && isNaN(selection.height)) || (selection.width === 0 && selection.height === 0)) {
         _$x.text('');
@@ -342,8 +342,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     }, 0);
   };
 
-  let _createImgAreaSelect = function () {
-    let parameters = {
+  const _createImgAreaSelect = function () {
+    const parameters = {
       persistent: !_parameters.allowResizeCropArea,
       instance: true,
       resizable: _parameters.allowResizeCropArea,
@@ -378,12 +378,12 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     _imgAreaSelect = _$imgArea.imgAreaSelect(parameters);
   };
 
-  let _createControls = function () {
+  const _createControls = function () {
     _createImgAreaSelect();
     _createSlider();
   };
 
-  let _createWindow = function () {
+  const _createWindow = function () {
     _telerikWindow = $.telerik.window.create({
       title: $l.Crop.title,
       actions: ['Close'],
@@ -411,11 +411,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     _$wincontent.appendTo(_$windowElement.find('.t-content'));
   };
 
-  let _assignRootElement = function () {
+  const _assignRootElement = function () {
     _$rootElement = _$windowElement;
   };
 
-  let _createShortlinks = function () {
+  const _createShortlinks = function () {
     _$x = _$rootElement.find('.selection-x');
     _$y = _$rootElement.find('.selection-y');
     _$width = _$rootElement.find('.selection-width');
@@ -433,7 +433,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     _$imgArea = _$rootElement.find('img.img');
   };
 
-  let _checkPrameters = function () {
+  const _checkPrameters = function () {
     if (!_parameters.sourceImageUrl) {
       throw new Error("imgCropResize: parameter 'sourceImageUrl' not set");
     }
@@ -455,23 +455,23 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     }
   };
 
-  let _getFromCache = function () {
+  const _getFromCache = function () {
     return Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl];
   };
 
-  let _removeFromCache = function () {
+  const _removeFromCache = function () {
     delete Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl];
   };
 
-  let _saveToCache = function () {
-    let sendData = readData();
+  const _saveToCache = function () {
+    const sendData = readData();
     if (sendData.width && sendData.height) {
       Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl]
           = { crop: { top: sendData.top, left: sendData.left, width: sendData.width, height: sendData.height } };
     }
   };
 
-  let _serverOperateImage = function () {
+  const _serverOperateImage = function () {
     let sendData = readData();
     sendData = JSON.stringify(sendData);
 
@@ -484,7 +484,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
     }).success(response => {
       if (!response.ok) {
-        let message = response.message || _defaultErrorMessage;
+        const message = response.message || _defaultErrorMessage;
         displayErrors([message]);
       } else if (typeof _parameters.onCompleteCallback == 'function') {
         if (_getSaveMode() == _saveMode.saveAs) {
@@ -500,14 +500,14 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     });
   };
 
-  let _serverCheckFileName = function (userInputFileName) {
+  const _serverCheckFileName = function (userInputFileName) {
     $.ajax(_parameters.checkFileNameActionUrl, {
       data: { targetFileUrl: userInputFileName },
       type: 'POST',
       dataType: 'json'
     }).success(response => {
       if (!response.ok) {
-        let message = response.message || _defaultErrorMessage;
+        const message = response.message || _defaultErrorMessage;
         displayErrors([message]);
       } else {
         _serverOperateImage();
@@ -517,11 +517,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     });
   };
 
-  let _createContent = function () {
+  const _createContent = function () {
     _$wincontent = $("<div class='imgCropResize content-container' />");
     _$aside = $(" <div class='aside'></div>");
     _$imageContainerDiv = $("<div class='image'/>");
-    let url = `${_parameters.sourceImageUrl}?t=${new Date().getTime()}`;
+    const url = `${_parameters.sourceImageUrl}?t=${new Date().getTime()}`;
     _$img = $(`<img class='img' src='${url}' alt='изображение' />`);
     _$img.load(function () {
       _imgInitWidth = _$img.width();
@@ -531,7 +531,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     });
     _$img.appendTo(_$imageContainerDiv);
 
-    let $fieldsetSave = $(_fieldsetSaveHtml);
+    const $fieldsetSave = $(_fieldsetSaveHtml);
     if (_parameters.allowFileRewrite) {
       $fieldsetSave.find('.save-items').prepend($(_saveOverwriteOrSaveAsHtml));
     } else {
@@ -549,8 +549,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       _$imageContainerDiv);
   };
 
-  let _validate = function () {
-    let saveMode = _getSaveMode();
+  const _validate = function () {
+    const saveMode = _getSaveMode();
     if (saveMode == _saveMode.saveAs && !_$inputUserFileName.val()) {
       displayErrors([$l.Crop.enterFileName]);
       return false;
@@ -559,14 +559,14 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     return true;
   };
 
-  let _attachHandlers = function () {
+  const _attachHandlers = function () {
     _$btnSave.click(() => {
       if (_validate()) {
         _removeErrors();
         if (_getSaveMode() == _saveMode.overwrite) {
           _serverOperateImage();
         } else {
-          let formOptions = readData();
+          const formOptions = readData();
           _serverCheckFileName(formOptions.targetFileUrl);
         }
       }
@@ -579,7 +579,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     });
 
     _$radioInputs.change(radio => {
-      let saveCopy = _$radioSaveCopy.attr('checked');
+      const saveCopy = _$radioSaveCopy.attr('checked');
       if (saveCopy) {
         _$inputUserFileName.removeAttr('disabled');
       } else {

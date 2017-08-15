@@ -19,14 +19,14 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
   _keyPrefix: '',
 
   loadHostState: function (hostParams) {
-    let key = this._get_host_key(hostParams);
+    const key = this._get_host_key(hostParams);
     if (key) {
       return JSON.parse(localStorage.getItem(key));
     }
   },
 
   saveHostState: function (hostParams, hostState) {
-    let key = this._get_host_key(hostParams);
+    const key = this._get_host_key(hostParams);
     if (key) {
       if ($.isEmptyObject(hostState)) {
         localStorage.removeItem(key);
@@ -38,7 +38,7 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
 
   _get_host_key: function (hostParams) {
     if (hostParams && !$.isEmptyObject(hostParams)) {
-      let key = new $.telerik.stringBuilder();
+      const key = new $.telerik.stringBuilder();
       if (this && this._keyPrefix) {
         key
           .cat(this._keyPrefix)

@@ -6,15 +6,15 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
   _libraryGroups: {},
 
   generateLibraryGroupCode: function (actionCode, parentEntityId) {
-    let libraryGroupCode = String.format('{0}_{1}', actionCode, parentEntityId);
+    const libraryGroupCode = String.format('{0}_{1}', actionCode, parentEntityId);
 
     return libraryGroupCode;
   },
 
   getLibraryGroupCode: function (fileTypeCode, folderId) {
-    let folderTypeCode = fileTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE ? window.ENTITY_TYPE_CODE_SITE_FOLDER : window.ENTITY_TYPE_CODE_CONTENT_FOLDER;
-    let libraryActionCode = fileTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE ? window.ACTION_CODE_SITE_LIBRARY : window.ACTION_CODE_CONTENT_LIBRARY;
-    let parentEntityId = $o.getParentEntityId(folderTypeCode, folderId);
+    const folderTypeCode = fileTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE ? window.ENTITY_TYPE_CODE_SITE_FOLDER : window.ENTITY_TYPE_CODE_CONTENT_FOLDER;
+    const libraryActionCode = fileTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE ? window.ACTION_CODE_SITE_LIBRARY : window.ACTION_CODE_CONTENT_LIBRARY;
+    const parentEntityId = $o.getParentEntityId(folderTypeCode, folderId);
     return this.generateLibraryGroupCode(libraryActionCode, parentEntityId);
   },
 
@@ -41,7 +41,7 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
     let libraryGroup = this.getLibraryGroup(this.getLibraryGroupCode(entityTypeId, parentEntityId));
 
     if (libraryGroup) {
-      for (let libraryElementId in libraryGroup) {
+      for (const libraryElementId in libraryGroup) {
         this.refreshLibrary(libraryElementId, options);
       }
     }
@@ -53,7 +53,7 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
     let libraryGroup = this.getLibraryGroup(libraryGroupCode);
 
     if (libraryGroup) {
-      for (let libraryElementId in libraryGroup) {
+      for (const libraryElementId in libraryGroup) {
         this.resetLibrary(libraryElementId, options);
       }
     }
@@ -66,11 +66,11 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
   },
 
   getAllLibraries: function () {
-    let allLibraries = [];
+    const allLibraries = [];
 
-    for (let libraryGroupCode in this._libraryGroups) {
-      let libraryGroup = this._libraryGroups[libraryGroupCode];
-      for (let libraryElementId in libraryGroup) {
+    for (const libraryGroupCode in this._libraryGroups) {
+      const libraryGroup = this._libraryGroups[libraryGroupCode];
+      for (const libraryElementId in libraryGroup) {
         allLibraries.push(libraryGroup[libraryElementId]);
       }
     }
@@ -81,8 +81,8 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
   getLibrary: function (libraryElementId) {
     let library = null;
 
-    for (let libraryGroupCode in this._libraryGroups) {
-      let libraryGroup = this._libraryGroups[libraryGroupCode];
+    for (const libraryGroupCode in this._libraryGroups) {
+      const libraryGroup = this._libraryGroups[libraryGroupCode];
       if (libraryGroup[libraryElementId]) {
         library = libraryGroup[libraryElementId];
         break;
@@ -93,12 +93,12 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
   },
 
   createLibrary: function (libraryElementId, parentEntityId, actionCode, options, hostOptions) {
-    let libraryGroupCode = this.generateLibraryGroupCode(actionCode, parentEntityId);
+    const libraryGroupCode = this.generateLibraryGroupCode(actionCode, parentEntityId);
 
-    let library = new Quantumart.QP8.BackendLibrary(libraryGroupCode, libraryElementId, parentEntityId, actionCode, options, hostOptions);
+    const library = new Quantumart.QP8.BackendLibrary(libraryGroupCode, libraryElementId, parentEntityId, actionCode, options, hostOptions);
     library.set_libraryManager(this);
 
-    let libraryGroup = this.createLibraryGroup(libraryGroupCode);
+    const libraryGroup = this.createLibraryGroup(libraryGroupCode);
     libraryGroup[libraryElementId] = library;
 
     return library;
@@ -123,10 +123,10 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
   },
 
   removeLibrary: function (libraryElementId) {
-    let library = this.getLibrary(libraryElementId);
+    const library = this.getLibrary(libraryElementId);
     if (library) {
-      let libraryGroupCode = library._libraryGroupCode;
-      let libraryGroup = this.getLibraryGroup(libraryGroupCode);
+      const libraryGroupCode = library._libraryGroupCode;
+      const libraryGroup = this.getLibraryGroup(libraryGroupCode);
 
       $q.removeProperty(libraryGroup, libraryElementId);
 
@@ -147,8 +147,8 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    let entityTypeCode = eventArgs.get_entityTypeCode();
-    let actionTypeCode = eventArgs.get_actionTypeCode();
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
     if (
       (entityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE)
       && ((eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving()) || actionTypeCode == window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED || actionTypeCode == window.ACTION_TYPE_CODE_FILE_CROPPED)
@@ -161,8 +161,8 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
     Quantumart.QP8.BackendLibraryManager.callBaseMethod(this, 'dispose');
 
     if (this._libraryGroups) {
-      for (let libraryGroupCode in this._libraryGroups) {
-        let libraryGroup = this._libraryGroups[libraryGroupCode];
+      for (const libraryGroupCode in this._libraryGroups) {
+        const libraryGroup = this._libraryGroups[libraryGroupCode];
         Object.keys(libraryGroup).forEach(this.destroyLibrary);
       }
     }

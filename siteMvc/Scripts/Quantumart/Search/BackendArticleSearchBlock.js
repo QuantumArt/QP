@@ -30,9 +30,9 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
 
   renderSearchBlock: function () {
     if (!this.get_isRendered()) {
-      let $concreteSearchBlockElement = $(this._concreteSearchBlockElement);
+      const $concreteSearchBlockElement = $(this._concreteSearchBlockElement);
       if (!this.isVirtual) {
-        let $fullTextBlockElement = $('<div/>', { class: 'articleSearchRegion' });
+        const $fullTextBlockElement = $('<div/>', { class: 'articleSearchRegion' });
         this._fullTextBlockElement = $fullTextBlockElement.get(0);
         this._fullTextBlock = new Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock(this._fullTextBlockElement, this.get_parentEntityId());
         this._fullTextBlock.initialize();
@@ -40,7 +40,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
         $concreteSearchBlockElement.append($fullTextBlockElement);
       }
 
-      let $fieldSeachBlockElement = $('<div/>', { class: 'articleSearchRegion' });
+      const $fieldSeachBlockElement = $('<div/>', { class: 'articleSearchRegion' });
       this._fieldSearchBlockElement = $fieldSeachBlockElement.get(0);
 
       this._fieldSearchBlock = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock(this._fieldSearchBlockElement, this.get_parentEntityId());
@@ -68,14 +68,14 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
   get_searchQuery: function () {
     let result = [];
     if (this._fullTextBlock) {
-      let ftbsq = this._fullTextBlock.get_searchQuery();
+      const ftbsq = this._fullTextBlock.get_searchQuery();
       if (ftbsq) {
         result.push(ftbsq);
       }
     }
 
     if (this._fieldSearchBlock) {
-      let fssq = this._fieldSearchBlock.get_searchQuery();
+      const fssq = this._fieldSearchBlock.get_searchQuery();
       if (fssq) {
         result = result.concat(fssq);
       }

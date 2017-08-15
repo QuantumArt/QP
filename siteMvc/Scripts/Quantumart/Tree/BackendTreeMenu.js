@@ -47,8 +47,8 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 
   initialize: function () {
     Quantumart.QP8.BackendTreeMenu.callBaseMethod(this, 'initialize');
-    let treeComponent = this._treeComponent;
-    let $tree = $(this._treeComponent.element);
+    const treeComponent = this._treeComponent;
+    const $tree = $(this._treeComponent.element);
     if (this._contextMenuManagerComponent != null) {
       $tree.on(this._contextMenuManagerComponent.getContextMenuEventType(), this.NODE_NEW_CLICKABLE_SELECTORS, this._onContextMenuHandler);
       this._contextMenuManagerComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onNodeContextMenuShowingHandler);
@@ -70,17 +70,17 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   markTreeAsBusy: function () {
-    let $tree = $(this._treeComponent.element);
+    const $tree = $(this._treeComponent.element);
     $tree.find('UL:first').addClass(this.NODE_BUSY_CLASS_NAME);
   },
 
   unmarkTreeAsBusy: function () {
-    let $tree = $(this._treeComponent.element);
+    const $tree = $(this._treeComponent.element);
     $tree.find('UL:first').removeClass(this.NODE_BUSY_CLASS_NAME);
   },
 
   isTreeBusy: function () {
-    let $tree = $(this._treeComponent.element);
+    const $tree = $(this._treeComponent.element);
     return $tree.find('UL:first').hasClass(this.NODE_BUSY_CLASS_NAME);
   },
 
@@ -89,8 +89,8 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   generateNodeCodeToHighlight: function (eventArgs) {
-    let isFolder = eventArgs.get_actionTypeCode() == window.ACTION_TYPE_CODE_LIST;
-    let entityId = !isFolder ? eventArgs.get_entityId() : Quantumart.QP8.BackendEntityType.getEntityTypeByCode(eventArgs.get_entityTypeCode()).Id;
+    const isFolder = eventArgs.get_actionTypeCode() == window.ACTION_TYPE_CODE_LIST;
+    const entityId = !isFolder ? eventArgs.get_entityId() : Quantumart.QP8.BackendEntityType.getEntityTypeByCode(eventArgs.get_entityTypeCode()).Id;
     return this.generateNodeCode(eventArgs.get_entityTypeCode(), entityId, eventArgs.get_parentEntityId(), isFolder);
   },
 
@@ -101,9 +101,9 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   _addNodesToParentNode: function (parentNode, maxExpandLevel, getChildNodes, errorHandler) {
-    let self = this;
-    let $parentNode = this.getNode(parentNode);
-    let isRootNode = this.isRootNode($parentNode);
+    const self = this;
+    const $parentNode = this.getNode(parentNode);
+    const isRootNode = this.isRootNode($parentNode);
     let level = 0;
     let entityTypeCode = null;
     let entityId = null;
@@ -161,20 +161,20 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       return;
     }
 
-    let self = this;
-    let $parentNode = this.getParentNode($node);
+    const self = this;
+    const $parentNode = this.getParentNode($node);
 
-    let entityTypeCode = $parentNode ? $parentNode.data('entity_type_code') : null;
-    let entityId = $parentNode ? $node.data('entity_id') : 0;
-    let isFolder = $parentNode ? $parentNode.data('is_folder') : false;
-    let parentEntityId = $parentNode ? isFolder ? $parentNode.data('parent_entity_id') : $parentNode.data('entity_id') : null;
-    let isGroup = $parentNode ? $parentNode.data('is_group') : false;
-    let groupItemCode = $parentNode ? $parentNode.data('group_item_code') : '';
-    let isRootNode = this.isRootNode($node);
+    const entityTypeCode = $parentNode ? $parentNode.data('entity_type_code') : null;
+    const entityId = $parentNode ? $node.data('entity_id') : 0;
+    const isFolder = $parentNode ? $parentNode.data('is_folder') : false;
+    const parentEntityId = $parentNode ? isFolder ? $parentNode.data('parent_entity_id') : $parentNode.data('entity_id') : null;
+    const isGroup = $parentNode ? $parentNode.data('is_group') : false;
+    const groupItemCode = $parentNode ? $parentNode.data('group_item_code') : '';
+    const isRootNode = this.isRootNode($node);
 
     this._showAjaxLoadingIndicatorForNode($node);
     Quantumart.QP8.BackendTreeMenu.getTreeMenuNode(entityTypeCode, entityId, parentEntityId, isFolder, isGroup, groupItemCode, loadChildNodes, data => {
-      let node = data;
+      const node = data;
       if (node) {
         node.NodeCode = self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder);
         let dataItem = self.getTreeViewItemFromTreeNode(node);
@@ -184,7 +184,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 
         dataItem = null;
 
-        let childNodes = node.ChildNodes;
+        const childNodes = node.ChildNodes;
         let dataItems = self.getTreeViewItemCollectionFromTreeNodes(childNodes);
 
         if (dataItems.length == 0) {
@@ -213,7 +213,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   highlightNode: function (node) {
-    let $node = this.getNode(node);
+    const $node = this.getNode(node);
     if (!$q.isNullOrEmpty($node)) {
       this.unhighlightAllNodes();
       $node.find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME);
@@ -222,20 +222,20 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   highlightNodeWithEventArgs: function (eventArgs) {
-    let nodeCode = this.generateNodeCodeToHighlight(eventArgs);
+    const nodeCode = this.generateNodeCodeToHighlight(eventArgs);
     this._deferredNodeCodeToHighlight = nodeCode;
-    let $highlightedNode = this.getNode(nodeCode);
+    const $highlightedNode = this.getNode(nodeCode);
 
     if (!$q.isNullOrEmpty($highlightedNode)) {
       let $node = $highlightedNode;
       if (eventArgs.isExpandRequested) {
-        let self = this;
+        const self = this;
         Quantumart.QP8.BackendTreeMenu.getSubTreeToEntity(eventArgs.get_entityTypeCode(), eventArgs.get_parentEntityId(), eventArgs.get_entityId(), data => {
           if (!data) {
             return;
           }
 
-          let _exp = function (node) {
+          const _exp = function (node) {
             if (!node || $q.isNullOrEmpty(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)))) {
               return null;
             }
@@ -259,19 +259,19 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   _expandToEntityNode: function (entityTypeCode, parentEntityId, entityId) {
-    let self = this;
+    const self = this;
     Quantumart.QP8.BackendTreeMenu.getSubTreeToEntity(entityTypeCode, parentEntityId, entityId, data => {
       if (data) {
         return;
       }
 
-      let findDeepest = function (node, toExpand) {
+      const findDeepest = function (node, toExpand) {
         if (!node || $q.isNullOrEmpty(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)))) {
           return null;
         }
 
         if (toExpand) {
-          let $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
+          const $node = self.getNode(self.getNode(self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder)));
           if (self._isNodeCollapsed($node)) {
             self._treeComponent.nodeToggle(null, $node, true);
           }
@@ -282,7 +282,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       };
 
       let deepestExistedNode = findDeepest(data);
-      let findChildren = function (options, parent) {
+      const findChildren = function (options, parent) {
         if (!parent || $q.isNullOrEmpty(parent.ChildNodes)) {
           return [];
         } else if (parent.Code === options.entityTypeCode
@@ -314,7 +314,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           deepestExistedNode.IsFolder
         );
 
-        let $node = self.getNode(nodeCode);
+        const $node = self.getNode(nodeCode);
         self._deferredNodeCodeToHighlight = nodeCode;
         self.highlightNode($node);
       }
@@ -329,14 +329,14 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   scrollToNode: function (node) {
-    let $node = this.getNode(node);
+    const $node = this.getNode(node);
     if (!$q.isNullOrEmpty($node)) {
       $(`#${this._treeContainerElementId}`).scrollTo($node, { offset: -100, duration: 300, axis: 'y' });
     }
   },
 
   fillTreeViewItemFromTreeNode: function (dataItem, node) {
-    let iconUrl = node.Icon.left(7).toLowerCase() !== 'http://'
+    const iconUrl = node.Icon.left(7).toLowerCase() !== 'http://'
       ? window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + node.Icon
       : node.Icon;
 
@@ -354,7 +354,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   fillTreeViewItemCollectionFromTreeNodes: function (dataItems, nodes) {
-    let self = this;
+    const self = this;
     let nodeCount = 0;
     if (nodes != null) {
       nodeCount = nodes.length;
@@ -363,20 +363,20 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
     if (nodeCount > 0) {
       $.each(nodes, (index, node) => {
         node.NodeCode = self.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder);
-        let dataItem = self.getTreeViewItemFromTreeNode(node);
+        const dataItem = self.getTreeViewItemFromTreeNode(node);
         Array.add(dataItems, dataItem);
       });
     }
   },
 
   getTreeViewItemCollectionFromTreeNodes: function (nodes) {
-    let dataItems = [];
+    const dataItems = [];
     this.fillTreeViewItemCollectionFromTreeNodes(dataItems, nodes);
     return dataItems;
   },
 
   _extendNodeElement: function (nodeElem, node) {
-    let $node = this.getNode(nodeElem);
+    const $node = this.getNode(nodeElem);
     $node.data({
       entity_type_code: node.Code,
       entity_id: node.Id,
@@ -390,11 +390,11 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       context_menu_code: node.ContextMenuCode
     });
 
-    let contextMenuCode = node.ContextMenuCode;
+    const contextMenuCode = node.ContextMenuCode;
     if (!$q.isNullOrWhiteSpace(contextMenuCode) && this._contextMenuManagerComponent) {
       let contextMenu = this._contextMenuManagerComponent.getContextMenu(contextMenuCode);
       if ($q.isNullOrEmpty(contextMenu)) {
-        let targetElems = this._treeComponent.element;
+        const targetElems = this._treeComponent.element;
         contextMenu = this._contextMenuManagerComponent.createContextMenu(contextMenuCode, String.format('treeContextMenu_{0}', contextMenuCode), {
           targetElements: targetElems,
           allowManualShowing: true
@@ -406,32 +406,32 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   _extendNodeElements: function (parentNodeElem, nodes) {
-    let self = this;
-    let $parentNode = $q.toJQuery(parentNodeElem);
+    const self = this;
+    const $parentNode = $q.toJQuery(parentNodeElem);
     $.each(nodes, (index, node) => {
-      let $node = self.getNode(node.NodeCode, $parentNode);
+      const $node = self.getNode(node.NodeCode, $parentNode);
       self._extendNodeElement($node, node);
     });
   },
 
   executeAction: function (node, actionCode) {
-    let $node = this.getNode(node);
+    const $node = this.getNode(node);
     if (!$q.isNullOrEmpty($node)) {
-      let action = $a.getBackendActionByCode(actionCode);
+      const action = $a.getBackendActionByCode(actionCode);
       if (!action) {
         $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
       } else {
-        let actionTypeCode = action.ActionType.Code;
-        let isCustomAction = action.IsCustom;
+        const actionTypeCode = action.ActionType.Code;
+        const isCustomAction = action.IsCustom;
         if (!isCustomAction && actionTypeCode === window.ACTION_TYPE_CODE_REFRESH) {
           this.refreshNode($node);
           return;
         }
 
-        let isFolder = $q.toBoolean($node.data('is_folder'), false);
-        let isGroup = $q.toBoolean($node.data('is_group'), false);
+        const isFolder = $q.toBoolean($node.data('is_folder'), false);
+        const isGroup = $q.toBoolean($node.data('is_group'), false);
 
-        let params = new Quantumart.QP8.BackendActionParameters({
+        const params = new Quantumart.QP8.BackendActionParameters({
           entityTypeCode: $node.data('entity_type_code'),
           entityId: isFolder ? 0 : $node.data('entity_id'),
           entityName: $node.data('entity_name'),
@@ -440,28 +440,28 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
         });
 
         params.correct(action);
-        let eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+        const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
         this.notify(window.EVENT_TYPE_TREE_MENU_ACTION_EXECUTING, eventArgs);
       }
     }
   },
 
   onActionExecuted: function (eventArgs) {
-    let entityTypeCode = eventArgs.get_entityTypeCode();
-    let actionTypeCode = eventArgs.get_actionTypeCode();
-    let parentEntityId = eventArgs.get_parentEntityId();
-    let entityId = eventArgs.get_entityId();
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
+    const parentEntityId = eventArgs.get_parentEntityId();
+    const entityId = eventArgs.get_entityId();
 
     if (eventArgs.get_isRemoving() || actionTypeCode == window.ACTION_TYPE_CODE_COPY || eventArgs.get_isSaved() || eventArgs.get_isUpdated()) {
-      let entityType = Quantumart.QP8.BackendEntityType.getEntityTypeByCode(entityTypeCode);
+      const entityType = Quantumart.QP8.BackendEntityType.getEntityTypeByCode(entityTypeCode);
       if (!entityType) {
         $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
       } else {
-        let parentNodeCode = this.generateNodeCode(entityTypeCode, entityType.Id, parentEntityId, true);
-        let nodeCode = this.generateNodeCode(entityTypeCode, entityId, parentEntityId, false);
-        let orderChanged = eventArgs.get_context() && eventArgs.get_context().orderChanged;
-        let groupChanged = eventArgs.get_context() && eventArgs.get_context().groupChanged;
-        let options = { loadChildNodes: true };
+        const parentNodeCode = this.generateNodeCode(entityTypeCode, entityType.Id, parentEntityId, true);
+        const nodeCode = this.generateNodeCode(entityTypeCode, entityId, parentEntityId, false);
+        const orderChanged = eventArgs.get_context() && eventArgs.get_context().orderChanged;
+        const groupChanged = eventArgs.get_context() && eventArgs.get_context().groupChanged;
+        const options = { loadChildNodes: true };
 
         if (actionTypeCode == window.ACTION_TYPE_CODE_REMOVE) {
           this.removeNodeOrRefreshParent(nodeCode, parentNodeCode, options);
@@ -483,8 +483,8 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   _onNodeClicking: function (e) {
-    let $element = $(e.currentTarget);
-    let nodeEl = $($element.closest('.t-item')[0]);
+    const $element = $(e.currentTarget);
+    const nodeEl = $($element.closest('.t-item')[0]);
     if (!this._treeComponent.shouldNavigate($element)) {
       e.preventDefault();
       return false;
@@ -506,12 +506,12 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   _onContextMenu: function (e) {
-    let $element = $(e.currentTarget);
-    let $node = $($element.closest('.t-item')[0]);
-    let contextMenuCode = $node.data('context_menu_code');
+    const $element = $(e.currentTarget);
+    const $node = $($element.closest('.t-item')[0]);
+    const contextMenuCode = $node.data('context_menu_code');
     if (!this.isTreeBusy()) {
       if (contextMenuCode && this._contextMenuManagerComponent) {
-        let contextMenuComponent = this._contextMenuManagerComponent.getContextMenu(contextMenuCode);
+        const contextMenuComponent = this._contextMenuManagerComponent.getContextMenu(contextMenuCode);
         if (contextMenuComponent) {
           contextMenuComponent.showMenu(e, $element.parent().parent().get(0));
         }
@@ -522,22 +522,22 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   _onNodeContextMenuShowing: function (eventType, sender, args) {
-    let menuComponent = args.get_menu();
-    let $node = $(args.get_targetElement());
+    const menuComponent = args.get_menu();
+    const $node = $(args.get_targetElement());
     if (menuComponent && $node.length) {
       menuComponent.tuneMenuItems($node.data('entity_id'));
     }
   },
 
   _onNodeContextMenuItemClicking: function (eventType, sender, args) {
-    let $menuItem = $(args.get_menuItem());
+    const $menuItem = $(args.get_menuItem());
     if ($menuItem.length) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
   },
 
   _onNodeContextMenuHidden: function (eventType, sender, args) {
-    let $node = $(args.get_targetElement());
+    const $node = $(args.get_targetElement());
     if (this._contextMenuActionCode) {
       this.executeAction($node, this._contextMenuActionCode);
       this._contextMenuActionCode = '';
@@ -545,7 +545,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   dispose: function () {
-    let $tree = $(`#${this._treeElementId}`);
+    const $tree = $(`#${this._treeElementId}`);
     $tree.off('click', this.NODE_NEW_CLICKABLE_SELECTORS, this._onNodeClickingHandler);
 
     if (this._contextMenuManagerComponent != null) {

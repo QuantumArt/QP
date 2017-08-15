@@ -4,20 +4,20 @@ Quantumart.QP8.BackendFilePreviewListView = function (fileListContentElement, co
 
 Quantumart.QP8.BackendFilePreviewListView.prototype = {
   initialize: function () {
-    let $fileListContentElement = jQuery(this._fileListContentElement);
+    const $fileListContentElement = jQuery(this._fileListContentElement);
     $fileListContentElement.html('<div class="fileListPreviewContainer"></div>');
 
     $fileListContentElement.delegate('.fileItem input:checkbox', 'click', $.proxy(this._onFileCheckBoxClickedHandler, this));
     $fileListContentElement.delegate('.fileItem', 'click', $.proxy(this._onFileContainerClickedHandler, this));
 
     if (!$q.isNullOrWhiteSpace(this._contextMenuCode)) {
-      let contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format('{0}_ContextMenu', $fileListContentElement.attr('id')),
+      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format('{0}_ContextMenu', $fileListContentElement.attr('id')),
         { targetElements: this._fileListContentElement, allowManualShowing: true, zIndex: this._zIndex});
       contextMenuComponent.initialize();
 
       contextMenuComponent.addMenuItemsToMenu(false);
 
-      let contextMenuEventType = contextMenuComponent.getContextMenuEventType();
+      const contextMenuEventType = contextMenuComponent.getContextMenuEventType();
       $fileListContentElement.delegate('.fileItem', contextMenuEventType, $.proxy(this._onContextMenuHandler, this));
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, $.proxy(this._onNodeContextMenuItemClickingHandler, this));
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, $.proxy(this._onNodeContextMenuHiddenHandler, this));
@@ -30,10 +30,10 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
     let $fileListPreviewContainer = $fileListContentElement.find('.fileListPreviewContainer');
     let html = new $.telerik.stringBuilder();
 
-    let self = this;
+    const self = this;
     if (data.TotalRecords > 0) {
       jQuery.each(data.Data, (index, item) => {
-        let ss = self._getThumbnailLink(item, options);
+        const ss = self._getThumbnailLink(item, options);
         html.cat(String.format('<div class="fileItem" data-file_name="{0}">', item.FullName))
           .catIf('<input type="checkbox" />', self._selectMode == window.FILE_LIST_SELECT_MODE_MULTIPLE)
           .cat(

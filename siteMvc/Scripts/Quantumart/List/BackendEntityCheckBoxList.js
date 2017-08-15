@@ -35,14 +35,14 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   },
 
   _attachListItemEventHandlers: function () {
-    let $list = $(this._listElement);
+    const $list = $(this._listElement);
     $list.delegate('LI INPUT:checkbox', 'change', $.proxy(this._onSelectedItemChangeHandler, this));
     $list.delegate('LI A', 'click', $.proxy(this._onItemClickHandler, this));
     $list.delegate('LI A', 'mouseup', $.proxy(this._onItemClickHandler, this));
   },
 
   _detachListItemEventHandlers: function () {
-    let $list = $(this._listElement);
+    const $list = $(this._listElement);
     $list.undelegate('LI INPUT:checkbox', 'change');
     $list.undelegate('LI A', 'click');
     $list.undelegate('LI A', 'mouseup');
@@ -61,7 +61,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     this.deselectAllListItems();
     if (!$q.isNullOrEmpty(entityIDs) && $q.isArray(entityIDs)) {
       $(this._listElement).find('LI INPUT:checkbox').each((index, chb) => {
-        let $chb = $(chb);
+        const $chb = $(chb);
         if (entityIDs.indexOf($q.toInt($chb.val())) != -1) {
           $chb.prop('checked', true);
           isChanged = true;
@@ -74,26 +74,26 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   },
 
   _setAsChanged: function (refreshOnly) {
-    let $list = $(this._listElement);
+    const $list = $(this._listElement);
     $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
-    let operation = refreshOnly ? 'addClass' : 'removeClass';
+    const operation = refreshOnly ? 'addClass' : 'removeClass';
     $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
-    let value = this.getSelectedEntityIDs();
+    const value = this.getSelectedEntityIDs();
     $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value: value, contentFieldName: $list.closest('dl').data('field_name') });
   },
 
   getSelectedEntities: function () {
-    let entities = [];
-    let $selectedListItems = this.getSelectedListItems();
+    const entities = [];
+    const $selectedListItems = this.getSelectedListItems();
 
     $selectedListItems.each(
       (i, listItemElem) => {
-        let $listItem = $(listItemElem);
-        let $checkbox = $listItem.find('INPUT:checkbox');
-        let $label = $listItem.find('LABEL');
+        const $listItem = $(listItemElem);
+        const $checkbox = $listItem.find('INPUT:checkbox');
+        const $label = $listItem.find('LABEL');
 
-        let entityId = +$checkbox.val() || 0;
-        let entityName = $q.toString($label.text());
+        const entityId = +$checkbox.val() || 0;
+        const entityName = $q.toString($label.text());
 
         Array.add(entities, { Id: entityId, Name: entityName });
       }
@@ -103,21 +103,21 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   },
 
   _refreshListInner: function (dataItems, refreshOnly) {
-    let newSelectedIDs = $.map(
+    const newSelectedIDs = $.map(
       $.grep(dataItems, di => di.Selected === true),
       di => $q.toInt(di.Value)
     );
-    let currentSelectedIDs = this.getSelectedEntityIDs();
-    let selectedItemsIsChanged = _.union(
+    const currentSelectedIDs = this.getSelectedEntityIDs();
+    const selectedItemsIsChanged = _.union(
       _.difference(newSelectedIDs, currentSelectedIDs),
       _.difference(currentSelectedIDs, newSelectedIDs)
     ).length > 0;
 
-    let $list = $(this._listElement);
-    let $ul = $list.find('UL:first');
-    let listItemHtml = new $.telerik.stringBuilder();
+    const $list = $(this._listElement);
+    const $ul = $list.find('UL:first');
+    const listItemHtml = new $.telerik.stringBuilder();
     for (let dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
-      let dataItem = dataItems[dataItemIndex];
+      const dataItem = dataItems[dataItemIndex];
       this._getCheckBoxListItemHtml(listItemHtml, dataItem, dataItemIndex);
     }
 
@@ -167,19 +167,19 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
   makeReadonly: function () {
     this.disableList();
-    let $checked = this.getListItems().find('INPUT:checkbox:checked');
+    const $checked = this.getListItems().find('INPUT:checkbox:checked');
     $checked.each((i, cb) => {
-      let $cb = $(cb);
+      const $cb = $(cb);
       $cb.siblings(`input[name="${$cb.prop('name')}"]:hidden`).val($cb.val());
     });
   },
 
   _getCheckBoxListItemHtml: function (html, dataItem, dataItemIndex, saveChanges, listState) {
-    let itemElementName = this._listItemName;
-    let itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
-    let itemValue = dataItem.Value;
-    let itemText = dataItem.Text;
-    let isChecked = dataItem.Selected;
+    const itemElementName = this._listItemName;
+    const itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
+    const itemValue = dataItem.Value;
+    const itemText = dataItem.Text;
+    const isChecked = dataItem.Selected;
     html
       .cat('<li>')
       .cat('<input type="checkbox" ')

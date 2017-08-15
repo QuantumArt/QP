@@ -17,7 +17,7 @@ Quantumart.QP8.ActionLogTextFilter.prototype = {
   },
 
   get_filterDetails: function () {
-    let val = this.get_value();
+    const val = this.get_value();
     if (val) {
       return `"${$q.cutShort(val, 8)}"`;
     }

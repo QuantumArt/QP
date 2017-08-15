@@ -47,9 +47,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
       }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      let isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
-      let dateFromID = `${this._elementIdPrefix}_dateFrom`;
-      let dateToID = `${this._elementIdPrefix}_dateTo`;
+      const isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
+      const dateFromID = `${this._elementIdPrefix}_dateFrom`;
+      const dateToID = `${this._elementIdPrefix}_dateTo`;
 
       // полученную с сервера разметку добавить на страницу
       let $containerElement = $(this._containerElement);
@@ -96,7 +96,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
   },
 
   get_filterDetails: function () {
-    let stateData = this.get_blockState().data;
+    const stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.isByValue) {

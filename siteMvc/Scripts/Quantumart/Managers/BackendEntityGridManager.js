@@ -38,7 +38,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     let gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
 
     if (gridGroup) {
-      for (let gridElementId in gridGroup) {
+      for (const gridElementId in gridGroup) {
         this.refreshGrid(gridElementId, options);
       }
     }
@@ -47,11 +47,11 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   refreshGridGroupWithChecking: function (entityTypeCode, parentEntityId, entityId) {
-    let gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
+    const gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
 
     if (gridGroup) {
-      for (let gridElementId in gridGroup) {
-        let grid = this.getGrid(gridElementId);
+      for (const gridElementId in gridGroup) {
+        const grid = this.getGrid(gridElementId);
 
         if (grid && grid.checkExistEntityInCurrentPage(entityId)) {
           grid.refreshGrid();
@@ -64,7 +64,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     let gridGroup = this.getGridGroup(gridGroupCode);
 
     if (gridGroup) {
-      for (let gridElementId in gridGroup) {
+      for (const gridElementId in gridGroup) {
         this.resetGrid(gridElementId, options);
       }
     }
@@ -79,8 +79,8 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   getGrid: function (gridElementId) {
     let grid = null;
 
-    for (let gridGroupCode in this._gridGroups) {
-      let gridGroup = this._gridGroups[gridGroupCode];
+    for (const gridGroupCode in this._gridGroups) {
+      const gridGroup = this._gridGroups[gridGroupCode];
 
       if (gridGroup[gridElementId]) {
         grid = gridGroup[gridElementId];
@@ -92,11 +92,11 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   createGrid: function (gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
-    let gridGroupCode = this.generateGridGroupCode(entityTypeCode, parentEntityId);
-    let actionGroupCode = this.generateGridGroupCode(actionCode, parentEntityId);
-    let actionSimpleGroupCode = this.generateGridGroupCode(actionCode);
+    const gridGroupCode = this.generateGridGroupCode(entityTypeCode, parentEntityId);
+    const actionGroupCode = this.generateGridGroupCode(actionCode, parentEntityId);
+    const actionSimpleGroupCode = this.generateGridGroupCode(actionCode);
 
-    let grid = new Quantumart.QP8.BackendEntityGrid([
+    const grid = new Quantumart.QP8.BackendEntityGrid([
       gridGroupCode,
       actionGroupCode,
       actionSimpleGroupCode
@@ -115,28 +115,28 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   refreshGrid: function (gridElementId, options) {
-    let grid = this.getGrid(gridElementId);
+    const grid = this.getGrid(gridElementId);
     if (grid) {
       grid.refreshGrid(options);
     }
   },
 
   resetGrid: function (gridElementId, options) {
-    let grid = this.getGrid(gridElementId);
+    const grid = this.getGrid(gridElementId);
     if (grid) {
       grid.resetGrid(options);
     }
   },
 
   removeGrid: function (gridElementId) {
-    let grid = this.getGrid(gridElementId);
+    const grid = this.getGrid(gridElementId);
 
     if (grid) {
-      let gridGroupCodes = grid.get_gridGroupCodes();
-      let that = this;
+      const gridGroupCodes = grid.get_gridGroupCodes();
+      const that = this;
 
       jQuery.each(gridGroupCodes, (i, gridGroupCode) => {
-        let gridGroup = that.getGridGroup(gridGroupCode);
+        const gridGroup = that.getGridGroup(gridGroupCode);
 
         $q.removeProperty(gridGroup, gridElementId);
         if ($q.getHashKeysCount(gridGroup) == 0) {
@@ -147,7 +147,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   destroyGrid: function (gridElementId) {
-    let grid = this.getGrid(gridElementId);
+    const grid = this.getGrid(gridElementId);
     if (grid != null) {
       if (grid.dispose) {
         grid.dispose();
@@ -156,13 +156,13 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    let entityTypeCode = eventArgs.get_entityTypeCode();
+    const entityTypeCode = eventArgs.get_entityTypeCode();
 
     if (entityTypeCode != window.ENTITY_TYPE_CODE_SITE_FILE && entityTypeCode != window.ENTITY_TYPE_CODE_CONTENT_FILE) {
       let parentEntityId = eventArgs.get_parentEntityId();
-      let actionTypeCode = eventArgs.get_actionTypeCode();
-      let actionCode = eventArgs.get_actionCode();
-      let entityId = eventArgs.get_entityId();
+      const actionTypeCode = eventArgs.get_actionTypeCode();
+      const actionCode = eventArgs.get_actionCode();
+      const entityId = eventArgs.get_entityId();
 
       if (eventArgs.get_isSaved()
         || actionTypeCode == window.ACTION_TYPE_CODE_COPY
@@ -174,7 +174,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
         let options = null;
 
         if (eventArgs.get_isArchiving() || eventArgs.get_isRestoring() || eventArgs.get_isRemoving() || actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_UNLOCK) {
-          let removedIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [eventArgs.get_entityId()];
+          const removedIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [eventArgs.get_entityId()];
 
           options = { removedIds: removedIds };
         }
@@ -223,8 +223,8 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
     Quantumart.QP8.BackendEntityGridManager.callBaseMethod(this, 'dispose');
 
     if (this._gridGroups) {
-      for (let gridGroupCode in this._gridGroups) {
-        let gridGroup = this._gridGroups[gridGroupCode];
+      for (const gridGroupCode in this._gridGroups) {
+        const gridGroup = this._gridGroups[gridGroupCode];
         Object.keys(gridGroup).forEach(this.destroyGrid);
       }
     }

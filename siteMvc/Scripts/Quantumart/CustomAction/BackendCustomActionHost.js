@@ -39,7 +39,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   },
 
   onSelect: function () {
-    let id = this._options.iframeElementId;
+    const id = this._options.iframeElementId;
 
     $(`#${id}`).css('marginLeft', '1px');
     setTimeout(() => {
@@ -90,14 +90,14 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   },
 
   _onOpenSelectWindowMessageReceived: function (message) {
-    let eventArgs = new Quantumart.QP8.BackendEventArgs();
+    const eventArgs = new Quantumart.QP8.BackendEventArgs();
     eventArgs.set_isMultipleEntities(message.data.isMultiple);
     eventArgs.set_parentEntityId(message.data.parentEntityId);
     eventArgs.set_entityTypeCode(message.data.entityTypeCode);
     eventArgs.set_actionCode(message.data.selectActionCode);
 
     if ($q.isArray(message.data.selectedEntityIDs) && !$q.isNullOrEmpty(message.data.selectedEntityIDs)) {
-      let selectedEntities = jQuery.map(message.data.selectedEntityIDs, id => {
+      const selectedEntities = jQuery.map(message.data.selectedEntityIDs, id => {
         return { Id: id };
       });
       if (message.data.isMultiple) {
@@ -107,7 +107,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
       }
     }
 
-    let selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, message.data.options);
+    const selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, message.data.options);
     selectPopupWindowComponent.callerCallback = message.data.callerCallback;
     selectPopupWindowComponent.selectWindowUID = message.data.selectWindowUID;
     selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._popupWindowSelectedHandler, this));
@@ -120,7 +120,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     let selectedEntityIDs = _.pluck(selectedEntities, 'Id');
     if ($o.checkEntitiesForPresenceEmptyNames(selectedEntities)) {
       if (args.entityTypeCode && args.parentEntityId) {
-        let dataItems = $o.getSimpleEntityList(args.entityTypeCode, args.parentEntityId, 0, 0, window.$e.ListSelectionMode.OnlySelectedItems, selectedEntityIDs);
+        const dataItems = $o.getSimpleEntityList(args.entityTypeCode, args.parentEntityId, 0, 0, window.$e.ListSelectionMode.OnlySelectedItems, selectedEntityIDs);
         selectedEntities = $c.getEntitiesFromListItemCollection(dataItems);
         selectedEntityIDs = _.pluck(selectedEntities, 'Id');
       }
@@ -169,7 +169,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   _invokeCallback: function (type, message) {
     let iframe = window.document.getElementById(this._options.iframeElementId);
     if (iframe && iframe.contentWindow) {
-      let args = {};
+      const args = {};
       Object.assign(args, message);
       delete args.callerCallback;
       pmrpc.call({

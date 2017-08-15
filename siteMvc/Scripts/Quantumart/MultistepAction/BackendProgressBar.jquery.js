@@ -1,20 +1,19 @@
 // based on: http://benogle.com/2009/06/16/simple-css-shiny-progress-bar-technique.html
 // eslint-disable-next-line no-extra-semi
 ; (function module() {
-  let methods;
-  let BackendProgressBarComponent = function BackendProgressBarComponent($we, options) {
+  const BackendProgressBarComponent = function BackendProgressBarComponent($we, options) {
     let $wrapElement = $we;
-    let settings = Object.assign({
+    const settings = Object.assign({
       total: 0,
       value: 0,
       digits: 1
     }, options);
 
-    let progressbarInnerHtml = '<div class="progressbar-value"><div class="progressbar-text">0%</div></div>';
+    const progressbarInnerHtml = '<div class="progressbar-value"><div class="progressbar-text">0%</div></div>';
     let currentValue = settings.value;
     let currentWidth = 0;
 
-    let setValue = function setValue(val) {
+    const setValue = function setValue(val) {
       let result = val;
       if ($q.isNull(result)) {
         result = currentValue;
@@ -38,11 +37,11 @@
       }
     };
 
-    let getValue = function getValue() {
+    const getValue = function getValue() {
       return currentValue;
     };
 
-    let setTotal = function setTotal(val, dfr) {
+    const setTotal = function setTotal(val, dfr) {
       let result = val;
       if ($q.isNull(result)) {
         result = settings.total();
@@ -54,11 +53,11 @@
       }
     };
 
-    let getTotal = function getTotal() {
+    const getTotal = function getTotal() {
       return settings.total;
     };
 
-    let increment = function increment(val) {
+    const increment = function increment(val) {
       if ($.isNumeric(val)) {
         setValue(getValue() + val);
         return getValue();
@@ -67,7 +66,7 @@
       return undefined;
     };
 
-    let decriment = function decriment(val) {
+    const decriment = function decriment(val) {
       if ($.isNumeric(val)) {
         setValue(getValue() - val);
         return getValue();
@@ -76,25 +75,24 @@
       return undefined;
     };
 
-    let setText = function setText(val) {
+    const setText = function setText(val) {
       $wrapElement.find('.progressbar-text').text(val);
     };
 
-    let refresh = function refresh() {
+    const refresh = function refresh() {
       $wrapElement.find('.progressbar-value').css({ width: `${$q.toFixed(currentWidth, settings.digits)}%` });
       setText(`${$q.toFixed(currentWidth, settings.digits)}%`);
     };
 
-    let setColor = function setColor(color) {
+    const setColor = function setColor(color) {
       $wrapElement.css('background-color', color);
       $wrapElement.find('.progressbar-value').css('background-color', color);
     };
 
-    let dispose = function dispose() {
+    const dispose = function dispose() {
       $wrapElement = null;
     };
 
-    // Инициализация
     $wrapElement.addClass('progressbar-wrap');
     $wrapElement.html(progressbarInnerHtml);
     setValue(settings.value);
@@ -127,7 +125,7 @@
     };
   };
 
-  methods = {
+  const methods = {
     init: function (options) {
       return this.filter('div').each(function each() {
         let $this = $(this);
@@ -140,7 +138,7 @@
 
     dispose: function () {
       return this.each(function each() {
-        let $this = $(this);
+        const $this = $(this);
         let component = $this.data('backendProgressBar');
         component.dispose();
         component = null;

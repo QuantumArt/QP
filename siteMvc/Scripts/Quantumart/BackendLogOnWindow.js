@@ -27,7 +27,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
   },
 
   _createWindow: function (serverContent) {
-    let that = this;
+    const that = this;
     this._isAuthenticated = false;
     this._userName = null;
 
@@ -46,14 +46,14 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       that._disableWindow();
       event.preventDefault();
       let serverContent;
-      let currentUserName = that._getGurrentUserName();
-      let currentCustomerCode = that._getGurrentCustomerCode();
-      let userName = $(that.USERNAME_SELECTOR).val();
-      let password = $(that.PASSWORD_SELECTOR).val();
-      let customerCode = $(that.CUSTOMERCODE_SELECTOR).val();
+      const currentUserName = that._getGurrentUserName();
+      const currentCustomerCode = that._getGurrentCustomerCode();
+      const userName = $(that.USERNAME_SELECTOR).val();
+      const password = $(that.PASSWORD_SELECTOR).val();
+      const customerCode = $(that.CUSTOMERCODE_SELECTOR).val();
       let method = 'GET';
       let useAutoLogin = that._getUseAutoLogin();
-      let url = that._getUrl();
+      const url = that._getUrl();
       let setDefaultValues = false;
 
       if (event.type == 'submit') {
@@ -85,7 +85,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
           if (that._isAuthenticated) {
             that._closeWindow();
 
-            let needRefresh = that._userName != currentUserName || customerCode != currentCustomerCode;
+            const needRefresh = that._userName != currentUserName || customerCode != currentCustomerCode;
 
             if (needRefresh) {
               location.reload();
@@ -120,8 +120,8 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
   },
 
   _setDefaultValues: function () {
-    let currentUserName = this._getGurrentUserName();
-    let currentCustomerCode = this._getGurrentCustomerCode();
+    const currentUserName = this._getGurrentUserName();
+    const currentCustomerCode = this._getGurrentCustomerCode();
     $(this.USERNAME_SELECTOR).val(currentUserName);
     $(this.CUSTOMERCODE_SELECTOR).val(currentCustomerCode);
   },
@@ -197,7 +197,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
   _addDeferredCallcack: function (callback, settings) {
     this._updateZindex();
     $(this).on(this.AJAX_EVENT, e => {
-      let isAuthenticated = e.value;
+      const isAuthenticated = e.value;
       if (isAuthenticated) {
         jQuery.ajax(settings).done(callback);
       } else {
@@ -253,7 +253,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
 Quantumart.QP8.BackendLogOnWindow._instance = null;
 Quantumart.QP8.BackendLogOnWindow.deferredExecution = function (data, jqXHR, callback, settings) {
-  let logon = Quantumart.QP8.BackendLogOnWindow.getInstance();
+  const logon = Quantumart.QP8.BackendLogOnWindow.getInstance();
 
   if (logon.needLogon(jqXHR, settings.url)) {
     logon.showLogonForm(data, callback, settings);

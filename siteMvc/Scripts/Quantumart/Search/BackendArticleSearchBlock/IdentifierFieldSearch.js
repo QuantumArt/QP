@@ -30,9 +30,9 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       }
     );
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      let inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
-      let numberFromID = `${this._elementIdPrefix}_numberFrom`;
-      let numberToID = `${this._elementIdPrefix}_numberTo`;
+      const inverseCheckBoxID = `${this._elementIdPrefix}_inverseCheckBox`;
+      const numberFromID = `${this._elementIdPrefix}_numberFrom`;
+      const numberToID = `${this._elementIdPrefix}_numberTo`;
 
       let $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
@@ -83,11 +83,11 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   get_filterDetails: function () {
-    let stateData = this.get_blockState().data;
+    const stateData = this.get_blockState().data;
     let result;
 
     if (stateData.isByText) {
-      let ids = this._getIds(stateData.text);
+      const ids = this._getIds(stateData.text);
       result = ids.length == 0 ? '?' : this._getText(ids);
     } else if (stateData.isByValue) {
       result = stateData.from ? stateData.from : '?';
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       }
 
       if (!$q.isNull(state.isByValue) && !$q.isNull(state.isByText)) {
-        let value = state.isByText ? 2 : state.isByValue ? 0 : 1;
+        const value = state.isByText ? 2 : state.isByValue ? 0 : 1;
         $(`.radioButtonsList input:radio[value=${value}]`, this._containerElement).prop('checked', true).trigger('click');
       }
 
@@ -146,7 +146,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 
   // перенести значение из одного numeric textbox в другой если другой - пустой
   _onNumericInputFocus: function (e) {
-    let focusedNumeric = $(e.currentTarget).data('tTextBox');
+    const focusedNumeric = $(e.currentTarget).data('tTextBox');
     let otherInput;
     if (e.currentTarget === this._numberFromElement) {
       otherInput = $(this._numberToElement).data('tTextBox');

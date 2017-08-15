@@ -214,14 +214,14 @@ Quantumart.QP8.Backend.prototype = {
 
     $.connection.singleUserMode.client.send = this._updateSingleUserMode;
     $.connection.hub.start().done(() => {
-      let hash = $('body').data('dbhash');
+      const hash = $('body').data('dbhash');
       $.connection.communication.server.addHash(hash);
     });
   },
 
   _updateSingleUserMode: function (data) {
-    let $elem = $('.singleusermode');
-    let userId = $('.userName').data('userid');
+    const $elem = $('.singleusermode');
+    const userId = $('.userName').data('userid');
     let message = '';
 
     if (data == null) {
@@ -270,7 +270,7 @@ Quantumart.QP8.Backend.prototype = {
     this._backendTreeMenu.fixTreeHeight(eventArgs.get_firstPaneHeight());
     this._backendEditingArea.get_tabStrip().fixTabStripWidth(eventArgs.get_firstPaneWidth());
 
-    let selDoc = this._backendEditingArea.getSelectedDocument();
+    const selDoc = this._backendEditingArea.getSelectedDocument();
     if (selDoc) {
       selDoc.fixActionToolbarWidth();
     }
@@ -311,7 +311,7 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _isMultistep: function (action, eventArgs) {
-    let entities = eventArgs.get_entities();
+    const entities = eventArgs.get_entities();
     let limit = 1;
     if (action.EntityLimit) {
       limit = action.EntityLimit;
@@ -321,12 +321,12 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _onActionExecuting: function (eventType, sender, eventArgs) {
-    let status = this._backendActionExecutor.executeSpecialAction(eventArgs);
-    let that = this;
+    const status = this._backendActionExecutor.executeSpecialAction(eventArgs);
+    const that = this;
 
     if (status == window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING) {
-      let actionCode = eventArgs.get_actionCode();
-      let action = $a.getSelectedAction(actionCode);
+      const actionCode = eventArgs.get_actionCode();
+      const action = $a.getSelectedAction(actionCode);
 
       if ($q.isObject(action)) {
         if (action.IsInterface) {
@@ -343,7 +343,7 @@ Quantumart.QP8.Backend.prototype = {
           }).fail(() => { });
         } else {
           this._markAsBusy();
-          let callback = $.proxy(function (status, eventArgs) {
+          const callback = $.proxy(function (status, eventArgs) {
             if (status == window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
               this._onActionExecuted(eventArgs);
             }
@@ -411,11 +411,11 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   checkOpenDocumentByEventArgs: function (eventArgs) {
-    let tabsForEntity = this._backendTabStrip.getTabsByEventArgs(eventArgs);
-    let entityIsOpenedInTab = tabsForEntity && tabsForEntity.length > 0;
+    const tabsForEntity = this._backendTabStrip.getTabsByEventArgs(eventArgs);
+    const entityIsOpenedInTab = tabsForEntity && tabsForEntity.length > 0;
 
-    let windowsForEntity = this._backendPopupWindowManager.getPopupWindowByEventArgs(eventArgs);
-    let entityIsOpenedInWindow = windowsForEntity && windowsForEntity.length > 0;
+    const windowsForEntity = this._backendPopupWindowManager.getPopupWindowByEventArgs(eventArgs);
+    const entityIsOpenedInWindow = windowsForEntity && windowsForEntity.length > 0;
 
     if (entityIsOpenedInTab) {
       return String.format($l.Action.selectedDocumentIsOpenedInTab, eventArgs.get_entityId());
@@ -427,15 +427,15 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _loadHome: function () {
-    let action = $a.getBackendActionByCode('home');
-    let params = new Quantumart.QP8.BackendActionParameters({
+    const action = $a.getBackendActionByCode('home');
+    const params = new Quantumart.QP8.BackendActionParameters({
       entityTypeCode: 'db',
       entityId: 1,
       entityName: this._currentCustomerCode,
       parentEntityId: 0
     });
 
-    let eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+    const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
     this._onActionExecuting(null, this, eventArgs);
   },
 

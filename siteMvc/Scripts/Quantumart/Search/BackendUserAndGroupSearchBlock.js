@@ -1,16 +1,16 @@
 Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, onApplyFilter) {
 
-  let $searchBlock = $(`#${searchBlockElementId}`);
-  let $btnSearch = $('.pep-search-button', $searchBlock);
-  let $radioGroup = $('.radioButtonsList', $searchBlock);
+  const $searchBlock = $(`#${searchBlockElementId}`);
+  const $btnSearch = $('.pep-search-button', $searchBlock);
+  const $radioGroup = $('.radioButtonsList', $searchBlock);
 
-  let userPicker = $('.pep-user-selector', $searchBlock).data('entity_data_list_component');
-  let groupPicker = $('.pep-group-selector', $searchBlock).data('entity_data_list_component');
+  const userPicker = $('.pep-user-selector', $searchBlock).data('entity_data_list_component');
+  const groupPicker = $('.pep-group-selector', $searchBlock).data('entity_data_list_component');
 
-  let getSearchData = function () {
-    let users = userPicker.getSelectedEntities();
-    let groups = groupPicker.getSelectedEntities();
-    let type = $('li input:checked', $radioGroup).val();
+  const getSearchData = function () {
+    const users = userPicker.getSelectedEntities();
+    const groups = groupPicker.getSelectedEntities();
+    const type = $('li input:checked', $radioGroup).val();
 
     if (type == 1 && users[0]) {
       return { userId: users[0].Id };
@@ -21,7 +21,7 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, 
     return {};
   };
 
-  let dispose = function () {
+  const dispose = function () {
     $(userPicker.getStateFieldElement()).off('change', onApplyFilter);
     $(groupPicker.getStateFieldElement()).off('change', onApplyFilter);
     $('li input', $radioGroup).off();

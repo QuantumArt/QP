@@ -77,7 +77,7 @@ Quantumart.QP8.BackendPager.prototype = {
     let $pagerElement = $(this._pagerElement);
     $pagerElement.addClass('t-widget t-grid');
 
-    let innerHtml = '<div class="t-grid-pager t-grid-bottom">'
+    const innerHtml = '<div class="t-grid-pager t-grid-bottom">'
               + '<div class="t-pager t-reset">'
                 + '<a href="#" class="t-link qp-link-arrow-first qp-page-link"><span class="t-icon t-arrow-first">first</span></a>'
                 + '<a href="#" class="t-link qp-link-arrow-prev qp-page-link"><span class="t-icon t-arrow-prev">prev</span></a>'
@@ -186,7 +186,7 @@ Quantumart.QP8.BackendPager.prototype = {
 
 
   _onInHover: function (e) {
-    let $e = $(e.currentTarget);
+    const $e = $(e.currentTarget);
     if (!$e.hasClass('t-state-disabled')) {
       $e.addClass('t-state-hover');
     }

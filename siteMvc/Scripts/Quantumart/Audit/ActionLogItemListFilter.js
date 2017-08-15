@@ -6,14 +6,14 @@ Quantumart.QP8.ActionLogItemListFilter = function (filterContainer, items) {
 Quantumart.QP8.ActionLogItemListFilter.prototype = {
   _items: null,
   initialize: function () {
-    let html = new $.telerik.stringBuilder();
+    const html = new $.telerik.stringBuilder();
 
     html
       .cat('<div class="row">')
       .cat('<select class="dropDownList">');
 
     for (let i = 0; i < this._items.length; i++) {
-      let item = this._items[i];
+      const item = this._items[i];
       html.cat('<option value="').cat(item.value).cat('">')
         .cat(item.text)
         .cat('</option>');

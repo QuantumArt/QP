@@ -40,7 +40,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
   },
 
   get_searchQuery: function () {
-    let data = this._get_searchData();
+    const data = this._get_searchData();
     if (data) {
       return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.FullText, data.fieldID, data.fieldColumn, data.contentID, data.referenceFieldID, data.text);
     }
@@ -49,10 +49,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
   },
 
   get_blockState: function () {
-    let data = this._get_searchData();
+    const data = this._get_searchData();
 
     if (data) {
-      let state = {};
+      const state = {};
       if (data.fieldID) {
         state.fieldID = data.fieldID;
       }
@@ -90,14 +90,14 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
 
   _get_searchData: function () {
     if (this._textFieldsComboElement) {
-      let $selectedField = $(this._textFieldsComboElement).find('option:selected');
+      const $selectedField = $(this._textFieldsComboElement).find('option:selected');
 
       if ($selectedField) {
-        let fieldValue = $selectedField.val();
-        let fieldID = $selectedField.data('field_id');
-        let contentID = $selectedField.data('content_id');
-        let fieldColumn = $selectedField.attr('field_column');
-        let referenceFieldID = $selectedField.data('reference_field_id');
+        const fieldValue = $selectedField.val();
+        const fieldID = $selectedField.data('field_id');
+        const contentID = $selectedField.data('content_id');
+        const fieldColumn = $selectedField.attr('field_column');
+        const referenceFieldID = $selectedField.data('reference_field_id');
 
         return {
           fieldID: fieldID,

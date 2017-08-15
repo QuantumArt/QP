@@ -79,7 +79,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     if ($q.isNullOrEmpty($documentWrapper)) {
       $documentWrapper = $('<div />', { id: documentWrapperElementId, class: 'documentWrapper' });
 
-      let $documentsContainer = $(this._editingArea.get_documentsContainerElement());
+      const $documentsContainer = $(this._editingArea.get_documentsContainerElement());
       $documentsContainer.append($documentWrapper);
     }
 
@@ -90,8 +90,8 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   generateDocumentUrl: function (options) {
-    let entityIDs = this._isMultipleEntities ? $o.getEntityIDsFromEntities(this._entities) : [this._entityId];
-    let extraOptions = {
+    const entityIDs = this._isMultipleEntities ? $o.getEntityIDsFromEntities(this._entities) : [this._entityId];
+    const extraOptions = {
       additionalUrlParameters: this._additionalUrlParameters,
       controllerActionUrl: this.getCurrentViewActionUrl()
     };
@@ -101,10 +101,10 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
 
     options = !$q.isObject(options) ? extraOptions : Object.assign({}, options, extraOptions);
-    let url = $a.generateActionUrl(this._isMultipleEntities, entityIDs, this._parentEntityId, this._tabId, this.getCurrentAction(), options);
+    const url = $a.generateActionUrl(this._isMultipleEntities, entityIDs, this._parentEntityId, this._tabId, this.getCurrentAction(), options);
     this._documentUrl = url;
 
-    let params = {};
+    const params = {};
     if (this._isMultipleEntities || this._isCustomAction) {
       params.IDs = entityIDs;
     }
@@ -121,19 +121,19 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   showErrorMessageInDocumentWrapper: function (status) {
-    let $documentWrapper = $(this._documentWrapperElement);
+    const $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.html($q.generateErrorMessageText());
   },
 
   removeDocumentWrapper: function (callback) {
-    let $documentWrapper = $(this._documentWrapperElement);
+    const $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.empty().remove();
     $q.callFunction(callback);
   },
 
   createPanels: function () {
-    let action = this.getCurrentAction();
-    let breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(`breadCrumbs_${this._tabId}`, {
+    const action = this.getCurrentAction();
+    const breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(`breadCrumbs_${this._tabId}`, {
       documentHost: this,
       breadCrumbsContainerElementId: this._editingArea.get_breadCrumbsContainerElementId(),
       contextMenuManager: new Quantumart.QP8.BackendBreadMenuContextMenuManager()
@@ -144,29 +144,29 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     breadCrumbsComponent.attachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CONTEXT_CLICK, this._onGeneralEventHandler);
     this._breadCrumbsComponent = breadCrumbsComponent;
 
-    let actionToolbarOptions = {
+    const actionToolbarOptions = {
       toolbarContainerElementId: this._editingArea.get_actionToolbarContainerElementId()
     };
 
-    let eventArgsAdditionalData = this.get_eventArgsAdditionalData();
+    const eventArgsAdditionalData = this.get_eventArgsAdditionalData();
     if (eventArgsAdditionalData && eventArgsAdditionalData.disabledActionCodes) {
       actionToolbarOptions.disabledActionCodes = eventArgsAdditionalData.disabledActionCodes;
     }
 
-    let actionToolbarComponent = new Quantumart.QP8.BackendActionToolbar(`actionToolbar_${this._tabId}`, this._actionCode, this._parentEntityId, actionToolbarOptions);
+    const actionToolbarComponent = new Quantumart.QP8.BackendActionToolbar(`actionToolbar_${this._tabId}`, this._actionCode, this._parentEntityId, actionToolbarOptions);
     actionToolbarComponent.initialize();
     actionToolbarComponent.attachObserver(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
     this._actionToolbarComponent = actionToolbarComponent;
-    let viewToolbarOptions = {
+    const viewToolbarOptions = {
       toolbarContainerElementId: this._editingArea.get_viewToolbarContainerElementId()
     };
 
-    let state = this.loadHostState();
+    const state = this.loadHostState();
     if (state && state.viewTypeCode) {
       viewToolbarOptions.viewTypeCode = state.viewTypeCode;
     }
 
-    let viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar(`viewToolbar_${this._tabId}`, this._actionCode, viewToolbarOptions);
+    const viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar(`viewToolbar_${this._tabId}`, this._actionCode, viewToolbarOptions);
     viewToolbarComponent.initialize();
 
     viewToolbarComponent.attachObserver(window.EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, this._onGeneralEventHandler);
@@ -177,27 +177,27 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   showPanels: function (callback) {
-    let $breadCrumbsContainer = $(this._editingArea.get_breadCrumbsContainerElement());
+    const $breadCrumbsContainer = $(this._editingArea.get_breadCrumbsContainerElement());
     $breadCrumbsContainer.find('> *.breadCrumbs:visible').hide(0);
     this._breadCrumbsComponent.showBreadCrumbs();
 
-    let $actionToolbarContainer = $(this._editingArea.get_actionToolbarContainerElement());
+    const $actionToolbarContainer = $(this._editingArea.get_actionToolbarContainerElement());
     $actionToolbarContainer.find('> *.toolbar:visible').hide(0);
     this._actionToolbarComponent.showToolbar(callback);
 
-    let $viewToolbarContainer = $(this._editingArea.get_viewToolbarContainerElement());
+    const $viewToolbarContainer = $(this._editingArea.get_viewToolbarContainerElement());
     $viewToolbarContainer.find('> *.toolbar:visible').hide(0);
     this._viewToolbarComponent.showToolbar();
     this.fixActionToolbarWidth();
 
     if (this.get_isSearchBlockVisible() && this._searchBlockComponent) {
-      let $searchBlockContainer = $(this._editingArea.get_searchBlockContainerElement());
+      const $searchBlockContainer = $(this._editingArea.get_searchBlockContainerElement());
       $searchBlockContainer.find('> *.searchBlock:visible').hide(0);
       this._searchBlockComponent.showSearchBlock();
     }
 
     if (this._isContextBlockVisible && this._contextBlockComponent) {
-      let $contextBlockContainer = $(this._editingArea.get_contextBlockContainerElement());
+      const $contextBlockContainer = $(this._editingArea.get_contextBlockContainerElement());
       $contextBlockContainer.find('> *.contextBlock:visible').hide(0);
       this._contextBlockComponent.showSearchBlock();
     }
@@ -217,7 +217,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   createSearchBlock: function () {
-    let searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`searchBlock_${this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
+    const searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`searchBlock_${this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
       searchBlockContainerElementId: this._editingArea.get_searchBlockContainerElementId(),
       tabId: this._tabId,
       actionCode: this._actionCode,
@@ -231,7 +231,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   createContextBlock: function () {
-    let contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`contextBlock_${this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
+    const contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`contextBlock_${this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
       searchBlockContainerElementId: this._editingArea.get_contextBlockContainerElementId(),
       tabId: this._tabId,
       actionCode: this._actionCode,
@@ -246,26 +246,26 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   destroySearchBlock: function () {
-    let searchBlockComponent = this._searchBlockComponent;
+    const searchBlockComponent = this._searchBlockComponent;
     if (searchBlockComponent) {
       searchBlockComponent.hideSearchBlock();
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
 
-      let searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
+      const searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
       Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
       this._searchBlockComponent = null;
     }
   },
 
   destroyContextBlock: function () {
-    let contextBlockComponent = this._contextBlockComponent;
+    const contextBlockComponent = this._contextBlockComponent;
     if (contextBlockComponent) {
       contextBlockComponent.hideSearchBlock();
       contextBlockComponent.detachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
 
-      let contextBlockElementId = contextBlockComponent.get_searchBlockElementId();
+      const contextBlockElementId = contextBlockComponent.get_searchBlockElementId();
       Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(contextBlockElementId);
       this._contextBlockComponent = null;
       this._isContextBlockVisible = false;
@@ -294,7 +294,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
       this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
       this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CONTEXT_CLICK, this._onGeneralEventHandler);
 
-      let breadCrumbsElementId = this._breadCrumbsComponent.get_breadCrumbsElementId();
+      const breadCrumbsElementId = this._breadCrumbsComponent.get_breadCrumbsElementId();
       Quantumart.QP8.BackendBreadCrumbsManager.getInstance().destroyBreadCrumbs(breadCrumbsElementId);
       this._breadCrumbsComponent = null;
     }
@@ -338,9 +338,9 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   onChangeContent: function (eventType, sender, eventArgs) {
-    let tabId = this._editingArea.getExistingTabId(eventArgs);
+    const tabId = this._editingArea.getExistingTabId(eventArgs);
     if (tabId != 0) {
-      let selectedDocument = this._editingArea.selectDocument(tabId);
+      const selectedDocument = this._editingArea.selectDocument(tabId);
       if (selectedDocument) {
         selectedDocument.onSelectedThroughExecution(eventArgs);
       }
@@ -383,7 +383,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
     if (tabId == 0) {
       let bcEventArgs;
-      let bcItem = this._breadCrumbsComponent.getLastItemButOne();
+      const bcItem = this._breadCrumbsComponent.getLastItemButOne();
       if (bcItem) {
         bcEventArgs = this._breadCrumbsComponent.getItemActionEventArgs(bcItem);
         if (bcEventArgs) {
@@ -401,9 +401,9 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
   saveAndCloseRequest: function (eventArgs) {
     Sys.Debug.trace(`saveAndCloseRequest: ${eventArgs._tabId}`);
-    let context = this.get_documentContext();
+    const context = this.get_documentContext();
     if (context && context._options.saveAndCloseActionCode) {
-      let main = this.get_mainComponent();
+      const main = this.get_mainComponent();
       if (main != null && Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) && main.isFieldsChanged()) {
         this._isCloseForced = true;
         this.executeAction(context._options.saveAndCloseActionCode);
@@ -414,7 +414,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   onSaveAndClose: function () {
     if (this._isCloseForced) {
       this._isCloseForced = false;
-      let context = this.get_documentContext();
+      const context = this.get_documentContext();
       if (context && context.get_mainComponentType() == $e.MainComponentType.Editor && !context.get_mainComponent()._formHasErrors) {
         this._editingArea.closeDocument(this.get_tabId(), true);
       }

@@ -161,7 +161,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   getItemValue: function (itemElem) {
-    let $item = this.getItem(itemElem);
+    const $item = this.getItem(itemElem);
     let itemValue = '';
 
     if (!$q.isNullOrEmpty($item)) {
@@ -175,7 +175,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   getItemText: function (item) {
-    let $item = this.getItem(item);
+    const $item = this.getItem(item);
     let itemText = '';
 
     if (!$q.isNullOrEmpty($item)) {
@@ -206,7 +206,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   addItemsToBreadCrumbs: function (callback) {
-    let host = this._documentHost;
+    const host = this._documentHost;
     this._addItemsCallback = callback;
     Quantumart.QP8.BackendBreadCrumbs.getBreadCrumbsList(
       host.get_entityTypeCode(),
@@ -232,14 +232,14 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
       return;
     }
 
-    let items = data;
+    const items = data;
     if (!$q.isNull(items)) {
-      let itemCount = items.length;
+      const itemCount = items.length;
       if (itemCount > 0) {
-        let $breadCrumbsItemList = $(this._breadCrumbsItemListElement);
-        let itemsHtml = new $.telerik.stringBuilder();
+        const $breadCrumbsItemList = $(this._breadCrumbsItemListElement);
+        const itemsHtml = new $.telerik.stringBuilder();
         for (let itemIndex = itemCount - 1; itemIndex >= 0; itemIndex--) {
-          let item = items[itemIndex];
+          const item = items[itemIndex];
           this._getItemHtml(itemsHtml, item);
         }
 
@@ -253,20 +253,20 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   removeItemsFromBreadCrumbs: function (callback) {
-    let $breadCrumbsItemList = $(this._breadCrumbsItemListElement);
+    const $breadCrumbsItemList = $(this._breadCrumbsItemListElement);
     $breadCrumbsItemList.empty();
     $q.callFunction(callback);
   },
 
   _getItemHtml: function (html, dataItem, isSelectedItem) {
-    let itemCode = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().generateItemCode(dataItem.Code, dataItem.ParentId, dataItem.Id);
+    const itemCode = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().generateItemCode(dataItem.Code, dataItem.ParentId, dataItem.Id);
     html.cat(`<li code="${$q.htmlEncode(itemCode)}" class="${this.ITEM_CLASS_NAME}"></li>\n`);
   },
 
   _extendItemElement: function (itemElem, dataItem, isSelectedItem) {
-    let $item = this.getItem(itemElem);
+    const $item = this.getItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
-      let html = new $.telerik.stringBuilder();
+      const html = new $.telerik.stringBuilder();
       html
         .catIf('  <a href="javascript:void(0);">', !isSelectedItem)
         .cat('<span class="text"')
@@ -292,7 +292,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
       $item.data('parent_entity_id', dataItem.ParentId);
       $item.data('action_code', dataItem.ActionCode);
 
-      let contextMenuCode = dataItem.Code;
+      const contextMenuCode = dataItem.Code;
       if (!$q.isNullOrWhiteSpace(contextMenuCode) && this._contextMenuManagerComponent) {
         let contextMenu = this._contextMenuManagerComponent.getContextMenu(contextMenuCode);
         if ($q.isNullOrEmpty(contextMenu)) {
@@ -308,15 +308,15 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   _extendItemElements: function (dataItems) {
-    let breadCrumbsManager = Quantumart.QP8.BackendBreadCrumbsManager.getInstance();
-    let count = dataItems.length;
+    const breadCrumbsManager = Quantumart.QP8.BackendBreadCrumbsManager.getInstance();
+    const count = dataItems.length;
     for (let index = 0; index < dataItems.length; index++) {
-      let dataItem = dataItems[index];
-      let entityTypeCode = dataItem.Code;
-      let entityId = dataItem.Id;
-      let parentEntityId = dataItem.ParentId;
-      let itemCode = breadCrumbsManager.generateItemCode(entityTypeCode, parentEntityId, entityId);
-      let $item = this.getItem(itemCode);
+      const dataItem = dataItems[index];
+      const entityTypeCode = dataItem.Code;
+      const entityId = dataItem.Id;
+      const parentEntityId = dataItem.ParentId;
+      const itemCode = breadCrumbsManager.generateItemCode(entityTypeCode, parentEntityId, entityId);
+      const $item = this.getItem(itemCode);
 
       this._extendItemElement($item, dataItem, index === 0);
     }
@@ -324,13 +324,13 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 
   _onBreadCrumbsItemClick: function (e) {
     e.preventDefault();
-    let isLeftClick = e.type === 'click' && (e.which === 1 || e.which === 0);
-    let isMiddleClick = e.type === 'mouseup' && e.which === 2;
+    const isLeftClick = e.type === 'click' && (e.which === 1 || e.which === 0);
+    const isMiddleClick = e.type === 'mouseup' && e.which === 2;
     if (!(isLeftClick || isMiddleClick)) {
       return false;
     }
 
-    let eventArgs = this.getItemActionEventArgs(e.currentTarget);
+    const eventArgs = this.getItemActionEventArgs(e.currentTarget);
     if (eventArgs) {
       if (e.ctrlKey || e.shiftKey || isMiddleClick) {
         eventArgs.set_context(Object.assign({
@@ -344,16 +344,16 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   getItemActionEventArgs: function (item, selectedCode) {
-    let $item = this.getItem(item);
-    let actionCode = selectedCode || $item.data('action_code');
+    const $item = this.getItem(item);
+    const actionCode = selectedCode || $item.data('action_code');
     if (!$q.isNullOrWhiteSpace(actionCode)) {
-      let action = $a.getBackendActionByCode(actionCode);
+      const action = $a.getBackendActionByCode(actionCode);
       if (action === null) {
         $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
       } else {
-        let host = this._documentHost;
+        const host = this._documentHost;
         if (host) {
-          let params = new Quantumart.QP8.BackendActionParameters({
+          const params = new Quantumart.QP8.BackendActionParameters({
             entityTypeCode: $item.data('entity_type_code'),
             entityId: $item.data('entity_id'),
             entityName: $item.data('entity_name'),
@@ -368,11 +368,11 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   _onContextMenu: function (e) {
-    let $element = $(e.currentTarget);
-    let contextMenuCode = $element.data('entity_type_code');
+    const $element = $(e.currentTarget);
+    const contextMenuCode = $element.data('entity_type_code');
     if (!this._isBusy()) {
       if (contextMenuCode && this._contextMenuManagerComponent) {
-        let contextMenuComponent = this._contextMenuManagerComponent.getContextMenu(contextMenuCode);
+        const contextMenuComponent = this._contextMenuManagerComponent.getContextMenu(contextMenuCode);
         if (!$q.isNullOrEmpty(contextMenuComponent)) {
           contextMenuComponent.showMenu(e, $element.get(0));
         }
@@ -383,24 +383,24 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   _onContextMenuShowing: function (eventType, sender, args) {
-    let menuComponent = args.get_menu();
-    let $item = $(args.get_targetElement());
+    const menuComponent = args.get_menu();
+    const $item = $(args.get_targetElement());
     if (menuComponent && $item.length) {
       menuComponent.tuneMenuItems($item.data('entity_id'));
     }
   },
 
   _onContextMenuItemClicking: function (eventType, sender, args) {
-    let $menuItem = $(args.get_menuItem());
+    const $menuItem = $(args.get_menuItem());
     if ($menuItem.length) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
   },
 
   _onContextMenuHidden: function (eventType, sender, args) {
-    let $item = $(args.get_targetElement());
+    const $item = $(args.get_targetElement());
     if (this._contextMenuActionCode) {
-      let eventArgs = this.getItemActionEventArgs($item.get(0), this._contextMenuActionCode);
+      const eventArgs = this.getItemActionEventArgs($item.get(0), this._contextMenuActionCode);
       this.notify(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CONTEXT_CLICK, eventArgs);
       this._contextMenuActionCode = '';
     }
@@ -412,12 +412,12 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     this._detachBreadCrumbsHandlers();
 
     if (this._breadCrumbsItemListElement) {
-      let $breadCrumbsItemList = $(this._breadCrumbsItemListElement);
+      const $breadCrumbsItemList = $(this._breadCrumbsItemListElement);
       $breadCrumbsItemList.empty().remove();
     }
 
     if (this._breadCrumbsElement) {
-      let $breadCrumbs = $(this._breadCrumbsElement);
+      const $breadCrumbs = $(this._breadCrumbsElement);
       $breadCrumbs.empty().remove();
     }
 
@@ -444,8 +444,8 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 };
 
 Quantumart.QP8.BackendBreadCrumbs.getBreadCrumbsList = function (entityTypeCode, entityId, parentEntityId, actionCode, successHandler, errorHandler) {
-  let actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetBreadCrumbsList`;
-  let params = {
+  const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetBreadCrumbsList`;
+  const params = {
     entityTypeCode: entityTypeCode,
     entityId: entityId,
     parentEntityId: parentEntityId,

@@ -1,12 +1,12 @@
 // eslint-disable-next-line no-extra-semi
 ; (function init(PL, Moxie) {
-  let isValidMimeType = function (mimeType, skipMimeValidation) {
+  const isValidMimeType = function (mimeType, skipMimeValidation) {
     return !skipMimeValidation || mimeType.split('/')[0] === 'image';
   };
 
   PL.addFileFilter('max_img_resolution', function filterCb(options, file, cb) {
     let img;
-    let opts = Object.assign({}, {
+    const opts = Object.assign({}, {
       enabled: true,
       imageResolution: 640 * 480,
       skipMimeValidation: false,
@@ -24,7 +24,7 @@
       }
     }, options);
 
-    let finalize = function finalize(result, errorSettings) {
+    const finalize = function finalize(result, errorSettings) {
       if (img) {
         img.destroy();
         img = null;

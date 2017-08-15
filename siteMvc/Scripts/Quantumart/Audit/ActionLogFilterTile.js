@@ -27,7 +27,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
   _currentValue: null,
 
   initialize: function () {
-    let containerHeaderHtml = new $.telerik.stringBuilder();
+    const containerHeaderHtml = new $.telerik.stringBuilder();
     containerHeaderHtml
       .cat('<div class="filterTile">')
       .cat('<div class="filterTileContent group">')
@@ -64,7 +64,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
   },
 
   _createFilter: function () {
-    let html = new $.telerik.stringBuilder()
+    const html = new $.telerik.stringBuilder()
       .cat('<form class="formLayout alFilter">')
       .cat('<div class="filterContainer"></div>')
       .cat('<div>')

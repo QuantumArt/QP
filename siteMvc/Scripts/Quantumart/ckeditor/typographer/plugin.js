@@ -2,24 +2,23 @@
 
 // eslint-disable-next-line no-extra-semi
 ; (function init() {
-  let settings = {
+  const settings = {
     pluginName: 'Typographer',
     pluginDesc: 'Типографер',
     iconPath: '/Backend/Scripts/Quantumart/ckeditor/typographer/images/typographer.gif'
   };
 
   // eslint-disable-next-line max-statements
-  let fixWithRegexps = function fixWithRegexps(str, shouldUseEng) {
-    let fixToMdashFn;
+  const fixWithRegexps = function fixWithRegexps(str, shouldUseEng) {
     let result = str;
-    let apostropheHtmlCode = '&#146;';
-    let numericHtmlCode = '&#8470;';
-    let extLeft = shouldUseEng ? '&ldquo;' : '&laquo;';
-    let extRight = shouldUseEng ? '&rdquo;' : '&raquo;';
-    let intLeft = shouldUseEng ? '&lsquo;' : '&bdquo;';
-    let intRight = shouldUseEng ? '&rsquo;' : '&ldquo;';
+    const apostropheHtmlCode = '&#146;';
+    const numericHtmlCode = '&#8470;';
+    const extLeft = shouldUseEng ? '&ldquo;' : '&laquo;';
+    const extRight = shouldUseEng ? '&rdquo;' : '&raquo;';
+    const intLeft = shouldUseEng ? '&lsquo;' : '&bdquo;';
+    const intRight = shouldUseEng ? '&rsquo;' : '&ldquo;';
 
-    let quotesToReplace = [
+    const quotesToReplace = [
       '&quot;',
       '&ldquo;',
       '&rdquo;',
@@ -60,7 +59,7 @@
       }
     }
 
-    fixToMdashFn = function (input, symbol) {
+    const fixToMdashFn = function (input, symbol) {
       let tempResult = input;
       tempResult = tempResult.replace(new RegExp(` (${symbol}){1,2} `, 'g'), '&nbsp;&mdash; ');
       tempResult = tempResult.replace(new RegExp(`([>|\\s])${symbol} `, 'g'), '$1&mdash; ');
@@ -120,11 +119,11 @@
     return result;
   };
 
-  let processHtml = function processHtml(str, shouldUseEng) {
+  const processHtml = function processHtml(str, shouldUseEng) {
     let i = 0;
     let result = str;
     let regexp = /<([^>]*)>/;
-    let matches = result.match(/<([^>]*)>/g);
+    const matches = result.match(/<([^>]*)>/g);
     while (regexp.test(result)) {
       i += 1;
       result = result.replace(regexp, `\x01${i}\x02`);

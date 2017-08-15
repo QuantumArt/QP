@@ -60,10 +60,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   },
 
   get_searchQuery: function () {
-    let result = [];
-    for (let fieldID in this._fieldSearchContainerList) {
+    const result = [];
+    for (const fieldID in this._fieldSearchContainerList) {
       if (fieldID && this._fieldSearchContainerList[fieldID]) {
-        let fscsq = this._fieldSearchContainerList[fieldID].get_searchQuery();
+        const fscsq = this._fieldSearchContainerList[fieldID].get_searchQuery();
         if (fscsq) {
           result.push(fscsq);
         }
@@ -78,7 +78,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   },
 
   get_blockState: function () {
-    let r = jQuery.grep(
+    const r = jQuery.grep(
       jQuery.map(this._fieldSearchContainerList, fsc => fsc ? fsc.get_blockState() : null),
       fsc => fsc
     );
@@ -89,19 +89,19 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   restore_blockState: function (state) {
     if (state) {
-      let that = this;
-      let $options = jQuery('option', this._fieldsComboElement);
+      const that = this;
+      const $options = jQuery('option', this._fieldsComboElement);
       jQuery.each(state, (index, s) => {
         if (s.fieldID && !that._fieldSearchContainerList[s.fieldID]) {
-          let is = $options.is(function () {
-            let $option = jQuery(this);
+          const is = $options.is(function () {
+            const $option = jQuery(this);
             return s.fieldID == $option.data('field_id')
                  && s.fieldName == $option.text()
                  && s.searchType == $option.data('search_type')
                  && s.fieldColumn == $option.data('field_column');
           });
           if (is) {
-            let newContainer = that._createFieldSearchContainerInner(s.fieldID, s.contentID, s.searchType, s.fieldName, s.fieldColumn, s.fieldGroup, s.referenceFieldID);
+            const newContainer = that._createFieldSearchContainerInner(s.fieldID, s.contentID, s.searchType, s.fieldName, s.fieldColumn, s.fieldGroup, s.referenceFieldID);
             if (s.data) {
               newContainer.restore_blockState(s.data);
             }
@@ -136,19 +136,19 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   },
 
   _createFieldSearchContainer: function () {
-    let $combo = jQuery(this._fieldsComboElement);
-    let $selectedField = $combo.find('option:selected');
+    const $combo = jQuery(this._fieldsComboElement);
+    const $selectedField = $combo.find('option:selected');
 
     if ($selectedField) {
-      let fieldID = $selectedField.data('field_id');
+      const fieldID = $selectedField.data('field_id');
 
       if (fieldID && !this._fieldSearchContainerList[fieldID]) {
-        let contentID = $selectedField.data('content_id');
-        let fieldName = $selectedField.text();
-        let fieldSearchType = $selectedField.data('search_type');
-        let fieldColumn = $selectedField.data('field_column');
-        let fieldGroup = $selectedField.data('field_group');
-        let referenceFieldID = $selectedField.data('reference_field_id');
+        const contentID = $selectedField.data('content_id');
+        const fieldName = $selectedField.text();
+        const fieldSearchType = $selectedField.data('search_type');
+        const fieldColumn = $selectedField.data('field_column');
+        const fieldGroup = $selectedField.data('field_group');
+        const referenceFieldID = $selectedField.data('reference_field_id');
         this._createFieldSearchContainerInner(fieldID, contentID, fieldSearchType, fieldName, fieldColumn, fieldGroup, referenceFieldID);
       }
 
@@ -159,7 +159,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   _createFieldSearchContainerInner: function (fieldID, contentID, fieldSearchType, fieldName, fieldColumn, fieldGroup, referenceFieldID) {
     let $fieldSearchContainerElement = jQuery('<div />', { class: 'fieldSearchContainer' });
     jQuery(this._fieldSearchListElement).append($fieldSearchContainerElement);
-    let newFieldSearchContainer = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer($fieldSearchContainerElement.get(0), this._parentEntityId, fieldID, contentID, fieldName, fieldSearchType, fieldColumn, fieldGroup, referenceFieldID);
+    const newFieldSearchContainer = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer($fieldSearchContainerElement.get(0), this._parentEntityId, fieldID, contentID, fieldName, fieldSearchType, fieldColumn, fieldGroup, referenceFieldID);
     newFieldSearchContainer.initialize();
     newFieldSearchContainer.attachObserver(window.EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE, this._onFieldSearchContainerCloseHandler);
     this._fieldSearchContainerList[fieldID] = newFieldSearchContainer;
@@ -181,7 +181,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   },
 
   _destroyAllFieldSearchContainers: function () {
-    for (let fieldID in this._fieldSearchContainerList) {
+    for (const fieldID in this._fieldSearchContainerList) {
       this._destroyFieldSearchContainer(fieldID);
     }
   },

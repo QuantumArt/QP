@@ -7,7 +7,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   _valueStorage: {},
 
   generateListGroupCode: function (entityTypeCode, parentEntityId) {
-    let listGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
+    const listGroupCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
     return listGroupCode;
   },
@@ -32,9 +32,9 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   refreshListGroup: function (entityTypeCode, parentEntityId, testEntityId) {
-    let listGroup = this.getListGroup(this.generateListGroupCode(entityTypeCode, parentEntityId));
+    const listGroup = this.getListGroup(this.generateListGroupCode(entityTypeCode, parentEntityId));
     if (listGroup) {
-      for (let listElementId in listGroup) {
+      for (const listElementId in listGroup) {
         this.refreshList(listElementId, testEntityId);
       }
     }
@@ -43,8 +43,8 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   getList: function (listElementId) {
     let list = null;
 
-    for (let listGroupCode in this._listGroups) {
-      let listGroup = this._listGroups[listGroupCode];
+    for (const listGroupCode in this._listGroups) {
+      const listGroup = this._listGroups[listGroupCode];
       if (listGroup[listElementId]) {
         list = listGroup[listElementId];
       }
@@ -54,7 +54,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   createList: function (listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
-    let listGroupCode = this.generateListGroupCode(entityTypeCode, parentEntityId);
+    const listGroupCode = this.generateListGroupCode(entityTypeCode, parentEntityId);
 
     let list = null;
     if (listType == Quantumart.QP8.Enums.DataListType.DropDownList) {
@@ -71,7 +71,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
       list.set_listManagerComponent(this);
       list.initialize();
 
-      let listGroup = this.createListGroup(listGroupCode);
+      const listGroup = this.createListGroup(listGroupCode);
       listGroup[listElementId] = list;
     } else {
       $q.alertError('Данный тип списка не поддерживается!');
@@ -90,10 +90,10 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   removeList: function (listElementId) {
-    let list = this.getList(listElementId);
+    const list = this.getList(listElementId);
     if (list) {
-      let listGroupCode = list.get_listGroupCode();
-      let listGroup = this.getListGroup(listGroupCode);
+      const listGroupCode = list.get_listGroupCode();
+      const listGroup = this.getListGroup(listGroupCode);
 
       delete this._listGroups[listGroupCode][listElementId];
 
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   destroyList: function (listElementId) {
-    let list = this.getList(listElementId);
+    const list = this.getList(listElementId);
     if (list != null) {
       if (list.dispose) {
         list.dispose();
@@ -113,9 +113,9 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-    let entityTypeCode = eventArgs.get_entityTypeCode();
-    let parentEntityId = eventArgs.get_parentEntityId();
-    let actionTypeCode = eventArgs.get_actionTypeCode();
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const parentEntityId = eventArgs.get_parentEntityId();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
     let testEntityId = 0;
     if (eventArgs.get_isSaved() || eventArgs.get_isUpdated()) {
       testEntityId = eventArgs.get_entityId();
@@ -146,8 +146,8 @@ Quantumart.QP8.BackendEntityDataListManager.prototype = {
     Quantumart.QP8.BackendEntityDataListManager.callBaseMethod(this, 'dispose');
 
     if (this._listGroups) {
-      for (let listGroupCode in this._listGroups) {
-        let listGroup = this._listGroups[listGroupCode];
+      for (const listGroupCode in this._listGroups) {
+        const listGroup = this._listGroups[listGroupCode];
         Object.keys(listGroup).forEach(this.destroyList);
         delete this._listGroups[listGroupCode];
       }

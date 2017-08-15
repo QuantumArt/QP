@@ -10,7 +10,7 @@ Quantumart.QP8.BackendExpandedContainer.prototype = {
 
     this.$content.data(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY, this);
 
-    let html = new $.telerik.stringBuilder();
+    const html = new $.telerik.stringBuilder();
     html
       .cat('<div class="qp-expandedContainer-component">')
       .cat('<div class="qp-expandedContainer-toolBar">')
@@ -43,7 +43,7 @@ Quantumart.QP8.BackendExpandedContainer.prototype = {
     this.$content.before($component);
     $component.append(this.$content);
 
-    let that = this;
+    const that = this;
     this._$expandLink = $component
       .find('LI.expand')
       .click(function (e) {

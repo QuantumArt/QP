@@ -1,7 +1,7 @@
 Quantumart.QP8.BackendEntityObject = function () {};
 Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function (entityTypeCode, entityId, loadChilds, filter, successHandler, errorHandler) {
-  let actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetByTypeAndIdForTree`;
-  let params = { entityTypeCode: entityTypeCode, entityId: entityId, loadChilds: loadChilds, filter: filter };
+  const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetByTypeAndIdForTree`;
+  const params = { entityTypeCode: entityTypeCode, entityId: entityId, loadChilds: loadChilds, filter: filter };
   if ($q.isFunction(successHandler)) {
     $q.getJsonFromUrl('GET', actionUrl, params, false, false, successHandler, errorHandler);
   } else {
@@ -18,7 +18,7 @@ Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function (entit
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityChildList = function (ajaxParams, successHandler, errorHandler) {
-  let actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetChildList`;
+  const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetChildList`;
   if (!$q.isNullOrEmpty(ajaxParams.selectItemIDs)) {
     ajaxParams.selectItemIDs = ajaxParams.selectItemIDs.join(',');
   }
@@ -40,8 +40,8 @@ Quantumart.QP8.BackendEntityObject.getEntityChildList = function (ajaxParams, su
 };
 
 Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function (entityTypeCode, parentEntityId, entityId, listId, selectionMode, selectedEntitiesIDs, filter, testEntityId) {
-  let actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetSimpleList`;
-  let params = {
+  const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetSimpleList`;
+  const params = {
     entityTypeCode: entityTypeCode,
     parentEntityId: parentEntityId,
     entityId: entityId,
@@ -245,7 +245,7 @@ Quantumart.QP8.BackendEntityObject.getEntityNamesFromEntities = function (entiti
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function (entities) {
-  let count = entities.length;
+  const count = entities.length;
   return $.map(entities, (elem, index) => {
     let prefix = '';
     if (index > 0) {
@@ -263,10 +263,10 @@ Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function (
 Quantumart.QP8.BackendEntityObject.isTreeViewTypeAllowed = function (entityTypeCode, parentEntityId, action) {
   let result = false;
   if (action && !$q.isNullOrEmpty(action.Views)) {
-    let views = action.Views;
+    const views = action.Views;
     let treeViewTypeExist = false;
     for (let viewIndex = 0; viewIndex < views.length; viewIndex++) {
-      let view = views[viewIndex];
+      const view = views[viewIndex];
       if (view.ViewType.Code == window.VIEW_TYPE_CODE_TREE) {
         treeViewTypeExist = true;
         break;
