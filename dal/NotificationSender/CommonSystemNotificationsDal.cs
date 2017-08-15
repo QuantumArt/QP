@@ -27,18 +27,20 @@ namespace Quantumart.QP8.DAL.NotificationSender
         private const string UpdateSentNotificationsQuery =
             @"UPDATE SYSTEM_NOTIFICATION_QUEUE SET
 				SENT = 1,
+                LastExceptionMessage = NULL,
 				MODIFIED = getdate()
 			WHERE ID IN (SELECT Id FROM @ids)";
 
         private const string UpdateUnsentNotificationsQuery =
             @"UPDATE SYSTEM_NOTIFICATION_QUEUE SET
 				TRIES = TRIES + 1,
+                LastExceptionMessage = @lastExceptionMessage,
 				MODIFIED = getdate()
 			WHERE ID IN (SELECT Id FROM @ids)";
 
         private const string DeleteSentNotificationsQuery = @"DELETE FROM SYSTEM_NOTIFICATION_QUEUE WHERE SENT = 1";
 
-        private static void ExecuteIdsQuery(SqlConnection connection, string query, IEnumerable<int> ids)
+        private static void ExecuteIdsQuery(SqlConnection connection, string query, IEnumerable<int> ids, string lastExceptionMessage = null)
         {
             using (var cmd = SqlCommandFactory.Create(query, connection))
             {
@@ -47,6 +49,8 @@ namespace Quantumart.QP8.DAL.NotificationSender
                 var parameter = cmd.Parameters.AddWithValue("@ids", idsTable);
                 parameter.SqlDbType = SqlDbType.Structured;
                 parameter.TypeName = "dbo.Ids";
+
+                cmd.Parameters.Add(new SqlParameter("@lastExceptionMessage", SqlDbType.NVarChar, -1) { Value = lastExceptionMessage });
                 cmd.ExecuteNonQuery();
             }
         }
@@ -67,9 +71,9 @@ namespace Quantumart.QP8.DAL.NotificationSender
             ExecuteIdsQuery(connection, UpdateSentNotificationsQuery, ids);
         }
 
-        public static void UpdateUnsentNotifications(SqlConnection connection, IEnumerable<int> ids)
+        public static void UpdateUnsentNotifications(SqlConnection connection, IEnumerable<int> ids, string lastExceptionMessage = null)
         {
-            ExecuteIdsQuery(connection, UpdateUnsentNotificationsQuery, ids);
+            ExecuteIdsQuery(connection, UpdateUnsentNotificationsQuery, ids, lastExceptionMessage);
         }
 
         public static void DeleteSentNotifications(SqlConnection connection)

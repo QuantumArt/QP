@@ -55,7 +55,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                 try
                 {
                     var notificationIdsStatus = await ProcessCustomer(customer, token);
-                    prtgErrorsHandlerVm.IncrementTasksQueueCount(notificationIdsStatus.Item2.Count);
+                    prtgErrorsHandlerVm.IncrementTasksQueueCount(notificationIdsStatus.prtgUnsentNotificationIds.Count);
                 }
                 catch (Exception ex)
                 {
@@ -69,28 +69,31 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             _logger.Info("End sending notifications");
         }
 
-        private async Task<Tuple<List<int>, List<int>>> ProcessCustomer(QaConfigCustomer customer, CancellationToken token)
+        private async Task<(List<int> prtgSentNotificationIds, List<int> prtgUnsentNotificationIds)> ProcessCustomer(QaConfigCustomer customer, CancellationToken token)
         {
-            var sentNotificationIds = new List<int>();
-            var unsentNotificationIds = new List<int>();
+            var prtgSentNotificationIds = new List<int>();
+            var prtgUnsentNotificationIds = new List<int>();
 
             var tarantoolSentUnsentTuple = await ProcessTarantoolNotifications(customer, token);
-            sentNotificationIds.AddRange(tarantoolSentUnsentTuple.Item1);
-            unsentNotificationIds.AddRange(tarantoolSentUnsentTuple.Item2);
+            prtgSentNotificationIds.AddRange(tarantoolSentUnsentTuple.sentNotificationIds);
+            prtgUnsentNotificationIds.AddRange(tarantoolSentUnsentTuple.unsentNotificationIds);
 
             var elasticSentUnsentTuple = await ProcessElasticNotifications(customer, token);
-            sentNotificationIds.AddRange(elasticSentUnsentTuple.Item1);
-            unsentNotificationIds.AddRange(elasticSentUnsentTuple.Item2);
+            prtgSentNotificationIds.AddRange(elasticSentUnsentTuple.sentNotificationIds);
+            prtgUnsentNotificationIds.AddRange(elasticSentUnsentTuple.unsentNotificationIds);
 
-            UpdateDbNotificationsData(customer.ConnectionString, sentNotificationIds, unsentNotificationIds);
-            return Tuple.Create(sentNotificationIds, unsentNotificationIds);
+            UpdateDbNotificationsData(customer.ConnectionString, tarantoolSentUnsentTuple);
+            UpdateDbNotificationsData(customer.ConnectionString, elasticSentUnsentTuple);
+
+            return (prtgSentNotificationIds, prtgUnsentNotificationIds);
         }
 
-        private async Task<Tuple<List<int>, List<int>>> ProcessTarantoolNotifications(QaConfigCustomer customer, CancellationToken token)
+        private async Task<(List<int> sentNotificationIds, List<int> unsentNotificationIds, string lastExceptionMessage)> ProcessTarantoolNotifications(QaConfigCustomer customer, CancellationToken token)
         {
             var notificationDtos = GetPendingNotifications(customer.ConnectionString, CdcProviderName.Tarantool.ToString()).ToList();
             var sentNotificationIds = new List<int>();
 
+            string httpNotSendedReason = null;
             var notSendedDtosQueue = new Queue<SystemNotificationDto>(notificationDtos);
             while (notSendedDtosQueue.Any() && !token.IsCancellationRequested)
             {
@@ -101,6 +104,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                     var response = await responseMessage.ReceiveJson<JSendResponse>();
                     if (response.Status != JSendStatus.Success || response.Code != 200)
                     {
+                        httpNotSendedReason = response.ToJsonLog();
                         _logger.Warn($"Http push notification response was failed for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
                         break;
                     }
@@ -110,19 +114,21 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                 }
                 catch (Exception ex)
                 {
+                    httpNotSendedReason = ex.Dump();
                     _logger.Error($"Exception while sending notification for customer code: {customer.CustomerName}. Notification: {dto.ToJsonLog()}", ex);
                     break;
                 }
             }
 
-            return Tuple.Create(sentNotificationIds, notSendedDtosQueue.Select(dto => dto.Id).ToList());
+            return (sentNotificationIds, notSendedDtosQueue.Select(dto => dto.Id).ToList(), httpNotSendedReason);
         }
 
-        private async Task<Tuple<List<int>, List<int>>> ProcessElasticNotifications(QaConfigCustomer customer, CancellationToken token)
+        private async Task<(List<int> sentNotificationIds, List<int> unsentNotificationIds, string lastExceptionMessage)> ProcessElasticNotifications(QaConfigCustomer customer, CancellationToken token)
         {
             var notificationDtos = GetPendingNotifications(customer.ConnectionString, CdcProviderName.Elastic.ToString());
             var sentNotificationIds = new List<int>();
 
+            string httpNotSendedReason = null;
             var notSendedDtosQueue = new Queue<SystemNotificationDto>(notificationDtos);
             while (notSendedDtosQueue.Any() && !token.IsCancellationRequested)
             {
@@ -133,6 +139,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                     var response = await responseMessage.ReceiveString();
                     if (!(await responseMessage).IsSuccessStatusCode)
                     {
+                        httpNotSendedReason = response;
                         _logger.Warn($"Http push notification response was failed for customer code: {customer.CustomerName}: {response}");
                         break;
                     }
@@ -142,12 +149,13 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                 }
                 catch (Exception ex)
                 {
+                    httpNotSendedReason = ex.Dump();
                     _logger.Error($"Exception while sending notification for customer code: {customer.CustomerName}. Notification: {dto.ToJsonLog()}", ex);
                     break;
                 }
             }
 
-            return Tuple.Create(sentNotificationIds, notSendedDtosQueue.Select(dto => dto.Id).ToList());
+            return (sentNotificationIds, notSendedDtosQueue.Select(dto => dto.Id).ToList(), httpNotSendedReason);
         }
 
         private IEnumerable<SystemNotificationDto> GetPendingNotifications(string connection, string providerName)
@@ -159,18 +167,18 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             }
         }
 
-        private void UpdateDbNotificationsData(string connection, IReadOnlyCollection<int> sentNotificationIds, IReadOnlyCollection<int> unsentNotificationIds)
+        private void UpdateDbNotificationsData(string connection, (List<int> sentNotificationIds, List<int> unsentNotificationIds, string lastExceptionMessage) sentUnsentTuple)
         {
             using (new QPConnectionScope(connection))
             {
-                if (sentNotificationIds.Any())
+                if (sentUnsentTuple.sentNotificationIds.Any())
                 {
-                    _externalNotificationService.UpdateSentNotifications(sentNotificationIds);
+                    _externalNotificationService.UpdateSentNotifications(sentUnsentTuple.sentNotificationIds);
                 }
 
-                if (unsentNotificationIds.Any())
+                if (sentUnsentTuple.unsentNotificationIds.Any())
                 {
-                    _externalNotificationService.UpdateUnsentNotifications(unsentNotificationIds);
+                    _externalNotificationService.UpdateUnsentNotifications(new List<int> { sentUnsentTuple.unsentNotificationIds.First() }, sentUnsentTuple.lastExceptionMessage);
                 }
             }
         }

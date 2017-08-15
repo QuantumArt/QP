@@ -38,9 +38,9 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
             CommonSystemNotificationsDal.UpdateSentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
         }
 
-        public void UpdateUnsentNotifications(IEnumerable<int> notificationIds)
+        public void UpdateUnsentNotifications(IEnumerable<int> notificationIds, string lastExceptionMessage = null)
         {
-            CommonSystemNotificationsDal.UpdateUnsentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
+            CommonSystemNotificationsDal.UpdateUnsentNotifications(QPConnectionScope.Current.DbConnection, notificationIds, lastExceptionMessage);
         }
 
         public void DeleteSentNotifications()

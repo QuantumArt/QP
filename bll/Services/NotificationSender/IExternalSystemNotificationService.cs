@@ -9,7 +9,7 @@ namespace Quantumart.QP8.BLL.Services.NotificationSender
 
         void UpdateSentNotifications(IEnumerable<int> notificationIds);
 
-        void UpdateUnsentNotifications(IEnumerable<int> notificationIds);
+        void UpdateUnsentNotifications(IEnumerable<int> notificationIds, string lastExceptionMessage = null);
 
         void DeleteSentNotifications();
 
