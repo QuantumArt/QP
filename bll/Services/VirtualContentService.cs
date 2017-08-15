@@ -69,7 +69,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             // Сохранить контент
-            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds.ToList());
+            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds?.ToList());
             var newContent = VirtualContentRepository.Save(content);
 
             if (content.VirtualType == VirtualType.Join)
@@ -111,7 +111,7 @@ namespace Quantumart.QP8.BLL.Services
                 throw new ArgumentNullException(nameof(content));
             }
 
-            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds.ToList());
+            var helper = new VirtualContentHelper(content.ForceVirtualFieldIds?.ToList());
             using (VirtualFieldRepository.LoadVirtualFieldsRelationsToMemory(content.Id))
             {
                 // Если тип контента изменился
