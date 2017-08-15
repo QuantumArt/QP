@@ -36,7 +36,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
         if (!confirmPhrase || (confirmPhrase && $q.confirmMessage(confirmPhrase))) {
           const entityIDs = isMultiple ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
-          const actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, {additionalUrlParameters});
+          const actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, { additionalUrlParameters });
           if (actionUrl) {
             const postParams = {
               IDs: entityIDs,
@@ -734,7 +734,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
     return this._context;
   },
   get_entities () {
-    return $q.isArray(this._entities) && this._entities.length > 0 ? this._entities : [{ Id: this._entityId, Name: this._entityName}];
+    return $q.isArray(this._entities) && this._entities.length > 0 ? this._entities : [{ Id: this._entityId, Name: this._entityName }];
   },
   get_actionCode () {
     return this._actionCode;

@@ -141,7 +141,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const $tabStrip = $(`#${this._tabStripElementId}`);
     const $scrollable = $('<div />', { class: 'scrollable' });
     const $tabList = $('<ul />', { class: 'tabList' });
-    const $partialRemovedTabsContainer = $('<div />', { id: 'partialRemovedTabs', css: { display: 'none'} });
+    const $partialRemovedTabsContainer = $('<div />', { id: 'partialRemovedTabs', css: { display: 'none' } });
 
     $tabStrip.empty();
     $tabStrip.append($scrollable);
@@ -847,7 +847,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
     if (this._tabMenuElement == null) {
       const $menu = $('<div />', { class: 'tabMenu' });
-      const $upArrow = $('<div />', { class: this.TAB_MENU_UP_ARROW_CLASS_NAME, css: { display: 'none'} });
+      const $upArrow = $('<div />', { class: this.TAB_MENU_UP_ARROW_CLASS_NAME, css: { display: 'none' } });
       $menu.append($upArrow);
 
       const $scrollable = $('<div />', { class: 'scrollable' });
@@ -856,7 +856,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       const $menuItemList = $('<ul />');
       $scrollable.append($menuItemList);
 
-      const $downArrow = $('<div />', { class: this.TAB_MENU_DOWN_ARROW_CLASS_NAME, css: { display: 'none'} });
+      const $downArrow = $('<div />', { class: this.TAB_MENU_DOWN_ARROW_CLASS_NAME, css: { display: 'none' } });
       $downArrow.hide(0);
       $menu.append($downArrow);
 

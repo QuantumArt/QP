@@ -310,7 +310,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       if (this._isMultipleEntities) {
         this._selectedEntities = Array.clone(this._entities);
       } else if (this._entityId && this._entityName) {
-        this._selectedEntities = [{ Id: this._entityId, Name: this._entityName}];
+        this._selectedEntities = [{ Id: this._entityId, Name: this._entityName }];
       } else {
         this._selectedEntities = [];
       }
@@ -431,7 +431,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     const $contextBlockWrapper = $popupWindow.find(`#${contextBlockWrapperId}`);
     const $documentArea = $popupWindow.find(`#${documentAreaId}`);
 
-    const $loadingLayer = $('<div />', { class: 'loadingLayer', css: { display: 'none'} });
+    const $loadingLayer = $('<div />', { class: 'loadingLayer', css: { display: 'none' } });
     $documentArea.prepend($loadingLayer);
 
     const $documentWrapper = $popupWindow.find(`#${documentWrapperId}`);

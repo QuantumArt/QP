@@ -155,7 +155,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     const searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
 
     if (!searchBlockExist) {
-      $searchBlock = $('<div />', { id: this._searchBlockElementId, class: 'searchBlock', css: { display: 'none'} });
+      $searchBlock = $('<div />', { id: this._searchBlockElementId, class: 'searchBlock', css: { display: 'none' } });
     }
 
     if (!searchFormExist) {
