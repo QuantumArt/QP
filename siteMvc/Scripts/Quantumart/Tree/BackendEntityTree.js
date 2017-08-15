@@ -1017,8 +1017,8 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     this.selectNode($node, saveOtherNodesSelection);
   },
 
-  beforeCustomNodeCheck(checkbox, isChecked, suppressAutoCheck, autoCheckChildren) {
-    const self = this;
+  beforeCustomNodeCheck(checkbox, isChecked, suppressAutoCheck) {
+    const that = this;
     const $checkbox = $(checkbox);
 
     if ($q.isNullOrEmpty($checkbox)) {
@@ -1028,11 +1028,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     const $node = $checkbox.closest('.t-item');
     if (this.isNodeSelected($node) && !isChecked) {
       $node.each((index, item) => {
-        self.deselectNode(item);
+        that.deselectNode(item);
       });
     } else if ($checkbox.is(':checked')) {
       $node.each((index, item) => {
-        self.selectNode(item, self._allowMultipleNodeSelection);
+        that.selectNode(item, that._allowMultipleNodeSelection);
       });
     }
   },

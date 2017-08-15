@@ -105,9 +105,9 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   _initNodeCheck(treeComponent) {
     treeComponent.nodeCheck = function (li, isChecked, suppressAutoCheck, autoCheckChildren) {
       this._legacyNodeCheck.call(treeComponent, li, isChecked);
-      this.beforeCustomNodeCheck.call(this, li, isChecked, suppressAutoCheck, autoCheckChildren);
-      this._proceedAutoCheckAllChildren.call(this, li, isChecked, suppressAutoCheck, autoCheckChildren);
-      this.afterCustomNodeCheck.call(this, li, isChecked, suppressAutoCheck, autoCheckChildren);
+      this.beforeCustomNodeCheck(li, isChecked, suppressAutoCheck, autoCheckChildren);
+      this._proceedAutoCheckAllChildren(li, isChecked, suppressAutoCheck, autoCheckChildren);
+      this.afterCustomNodeCheck(li, isChecked, suppressAutoCheck, autoCheckChildren);
     }.bind(this);
 
     treeComponent.nodeCheckExcludeSelf = this._proceedAutoCheckDirectChildren.bind(this);
@@ -229,7 +229,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   _refreshNodeInner() {
     $q.alertFail($l.Common.methodNotImplemented);
-    
+
   },
 
   refreshNodes(nodes, options) {
@@ -470,7 +470,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   executeAction() {
     $q.alertFail($l.Common.methodNotImplemented);
-    
+
   },
 
   _legacyNodeCheck(li, isChecked) {
