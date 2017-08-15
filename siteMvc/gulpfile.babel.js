@@ -284,7 +284,7 @@ custom.paths = {
   ]
 };
 
-custom.reportError = error => {
+custom.reportError = function (error) {
   let report;
   $.notify({
     title: `Task Failed [${error.plugin}]`,
@@ -306,8 +306,6 @@ custom.reportError = error => {
      }\n`;
 
   global.console.error(report);
-
-  // eslint-disable-next-line no-invalid-this
   this.emit('end');
 };
 
