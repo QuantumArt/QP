@@ -51,7 +51,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype
           } else {
             imgUrl = this._options.libraryUrl + folderUrl + entities[0].Name;
           }
-          imgUrl = imgUrl.replace(new RegExp('\\\\', 'g'), '\/');
+          imgUrl = imgUrl.replace(new RegExp('\\\\', 'g'), '/');
 
           if (this._options.selectCallback) {
             this._options.selectCallback(imgUrl);

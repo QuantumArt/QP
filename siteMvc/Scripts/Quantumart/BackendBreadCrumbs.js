@@ -274,15 +274,15 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
         .cat(dataItem.Id)
         .cat(') ')
         .cat(dataItem.EntityTypeName)
-        .cat(' \"')
+        .cat(' "')
         .cat($q.htmlEncode(dataItem.Title))
-        .cat('\"')
+        .cat('"')
         .cat("'")
         .cat('>')
         .cat(dataItem.EntityTypeName)
         .cat(' "')
         .cat($q.middleCutShort($q.htmlEncode(dataItem.Title), this._maxTitleLength))
-        .cat('\"</span>')
+        .cat('"</span>')
         .catIf('</a>', !isSelectedItem);
 
       $item.html(html.string());

@@ -205,7 +205,7 @@ Quantumart.QP8.BackendFileField.prototype = {
           url = '';
         }
 
-        url = url.replace(`${this._subFolder}\\`, '').replace(/\\/g, '\/');
+        url = url.replace(`${this._subFolder}\\`, '').replace(/\\/g, '/');
         $(this._fileFieldElement).val(url + entities[0].Name).trigger('change');
       }
     }
