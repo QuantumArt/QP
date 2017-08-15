@@ -1,5 +1,5 @@
 Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
-  function initialize() {
+  const initialize = function () {
     const executeAction = function (actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters) {
       const action = $a.getBackendActionByCode(actionCode);
       const params = new Quantumart.QP8.BackendActionParameters({
@@ -68,7 +68,7 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
     $loggedAs.find('a').on('click', () => {
       executeAction('edit_profile', 'db', 1, customerCode, 0);
     });
-  }
+  };
 
   const dispose = function () {
     $(`#${searchElementId}`).siblings('.previewButton').off('click');

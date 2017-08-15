@@ -25,7 +25,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
   const currentFieldId = $(`#${currentFieldIdHiddenElementId}`).val();
   const relateableFieldsUrl = `${window.CONTROLLER_URL_CONTENT}_RelateableFields`;
 
-  function onRelatedToChanged() {
+  const onRelatedToChanged = function () {
     const selectedContentId = $(contentPicker.getStateFieldElement()).val();
 
     if (!$q.isNullOrEmpty(selectedContentId)) {
@@ -69,12 +69,11 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
           $q.processGenericAjaxError(jqXHR);
         });
     }
-  }
+  };
 
-
-  function dispose() {
+  const dispose = function () {
     $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
-  }
+  };
 
   $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
@@ -89,7 +88,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
   let $aggregatedElement = $(`#${aggregatedElementId}`);
   const classifierFieldsUrl = `${window.CONTROLLER_URL_CONTENT}_ClassifierFields`;
 
-  function onRelatedToChanged() {
+  const onRelatedToChanged = function () {
     const selectedContentId = $(contentPicker.getStateFieldElement()).val();
     if (!$q.isNullOrEmpty(selectedContentId)) {
       $q.getJsonFromUrl(
@@ -125,14 +124,14 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
           $q.processGenericAjaxError(jqXHR);
         });
     }
-  }
+  };
 
-  function dispose() {
+  const dispose = function () {
     $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
     contentPicker = null;
     $classifierSelectElement = null;
     $aggregatedElement = null;
-  }
+  };
 
   $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
@@ -147,17 +146,17 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
   const singleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(O2MPickerListElementId);
   const multipleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(`${M2MPickerListElementId}_list`);
 
-  function onRelatedToChanged() {
+  const onRelatedToChanged = function () {
     const selectedContentId = $(contentPicker.getStateFieldElement()).val();
     multipleItemPickerComponent.removeAllListItems();
     multipleItemPickerComponent.set_parentEntityId(selectedContentId);
     singleItemPickerComponent.set_parentEntityId(selectedContentId);
     singleItemPickerComponent.deselectAllListItems();
-  }
+  };
 
-  function dispose() {
+  const dispose = function () {
     $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
-  }
+  };
 
   $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
@@ -172,18 +171,18 @@ Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId
   const $fileFieldElement = $(`#${fileFieldElementId}`);
   const fileFieldComponent = $fileFieldElement.data('file_field');
 
-  function onFieldTypeChanged() {
+  const onFieldTypeChanged = function () {
     const fieldType = $('option:selected', $fieldTypeSelectElement).val();
     if (fieldType == window.FILE_FIELD_TYPE) {
       fileFieldComponent.set_isImage(false);
     } else if (fieldType == window.IMAGE_FIELD_TYPE) {
       fileFieldComponent.set_isImage(true);
     }
-  }
+  };
 
-  function dispose() {
+  const dispose = function () {
     $fieldTypeSelectElement.unbind();
-  }
+  };
 
   $fieldTypeSelectElement.bind('change keyup', onFieldTypeChanged);
 
@@ -196,7 +195,7 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
   const contentPicker = $(`#${relateToSelectElementId}`).data('entity_data_list_component');
   const $panels = $(panelsSelector);
 
-  function onRelatedToChanged() {
+  const onRelatedToChanged = function () {
     const selectedContentId = $(contentPicker.getStateFieldElement()).val();
     if (!selectedContentId) {
       $panels.hide();
@@ -212,12 +211,11 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
         $panels.filter('[hideforcurrent]').show();
       }
     }
-  }
+  };
 
-
-  function dispose() {
+  const dispose = function () {
     $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
-  }
+  };
 
   $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 

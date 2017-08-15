@@ -78,7 +78,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   get_blockState() {
     const r = jQuery.grep(
-      jQuery.map(this._fieldSearchContainerList, fsc => (fsc ? fsc.get_blockState() : null)),
+      jQuery.map(this._fieldSearchContainerList, fsc => fsc ? fsc.get_blockState() : null),
       fsc => fsc
     );
     if (r && r.length > 0) {

@@ -14,8 +14,8 @@ Quantumart.QP8.BackendPagePropertiesMediator = function (rootElementId) {
   manageCacheHours();
   $displayCacheHours.change(manageCacheHours);
 
-  function dispose() {
-  }
+  const dispose = function () {
+  };
 
   return {
     dispose
