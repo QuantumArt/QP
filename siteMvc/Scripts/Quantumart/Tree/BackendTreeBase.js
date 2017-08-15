@@ -100,8 +100,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       .undelegate(this.NODE_OLD_CLICKABLE_SELECTORS, 'click')
       .delegate(this.NODE_NEW_CLICKABLE_SELECTORS, 'click', this._onNodeClickingHandler)
       .delegate(this.NODE_ID_LINK_SELECTORS, 'click', this._onIdClickingHandler);
-
-    $tree = null;
   },
 
   _initNodeCheck: function (treeComponent) {
@@ -128,17 +126,11 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   getChildNodesContainer: function (node) {
-    let $node = this.getNode(node);
-    let $childNodesContainer = $('> UL.t-group', $node);
-    $node = null;
-    return $childNodesContainer;
+    return $('> UL.t-group', this.getNode(node));
   },
 
   getAllNodes: function () {
-    let $tree = $(this._treeElement);
-    let $nodes = $tree.find('LI.t-item');
-    $tree = null;
-    return $nodes;
+    return $(this._treeElement).find('LI.t-item');
   },
 
   getSelectedNodes: function () {
@@ -467,9 +459,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   _hideAjaxLoadingIndicatorForNode: function (node) {
     let $node = this.getNode(node);
-
     clearTimeout($node.data('loading_icon_timeout'));
-
     if ($node.hasClass('t-item')) {
       $node.data('loaded', true)
         .find('SPAN.t-icon:first')

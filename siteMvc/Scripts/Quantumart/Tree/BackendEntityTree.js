@@ -984,7 +984,6 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
       params.correct(action);
       let eventArgs = $a.getEventArgsFromActionWithParams(action, params);
-
       if (this._hostIsWindow) {
         let message = Quantumart.QP8.Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
 
@@ -997,25 +996,10 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       } else {
         this.notify(window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, eventArgs);
       }
-
-      params = null;
-      eventArgs = null;
-      action = null;
     }
-  },
-
-  _createDataQueryParams: function () {
-    let params = {};
-
-    if (this._searchQuery) {
-      params.searchQuery = this._searchQuery;
-    }
-
-    return params;
   },
 
   _onDataBinding: function (sender) {
-    sender.data = Object.assign({}, sender.data, this._createDataQueryParams());
     this.addNodesToParentNode(sender, 0);
   },
 
