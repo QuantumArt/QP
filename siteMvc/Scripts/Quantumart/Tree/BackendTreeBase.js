@@ -229,7 +229,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   _refreshNodeInner() {
     $q.alertFail($l.Common.methodNotImplemented);
-    return;
+    
   },
 
   refreshNodes(nodes, options) {
@@ -470,7 +470,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   executeAction() {
     $q.alertFail($l.Common.methodNotImplemented);
-    return;
+    
   },
 
   _legacyNodeCheck(li, isChecked) {

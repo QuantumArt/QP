@@ -54,7 +54,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 
     $q.clearArray(items);
 
-    return;
+    
   },
 
   getSelectedViewTypeCode() {
