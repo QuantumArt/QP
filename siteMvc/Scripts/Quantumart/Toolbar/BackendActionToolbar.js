@@ -76,8 +76,6 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
 
       $q.clearArray(items);
       $q.clearArray(actionToolbarItems);
-
-      
     },
 
     (jqXHR, textStatus, errorThrown) => {
@@ -109,7 +107,6 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
           if (!$q.isNullOrEmpty(actionStatuses)) {
             Quantumart.QP8.BackendActionToolbar.callBaseMethod(self, 'tuneToolbarItems', [actionStatuses]);
             $q.clearArray(actionStatuses);
-            
           }
         } else {
           $q.alertError(data.Text);

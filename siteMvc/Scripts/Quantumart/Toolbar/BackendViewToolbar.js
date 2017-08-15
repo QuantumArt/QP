@@ -53,8 +53,6 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
     Quantumart.QP8.BackendViewToolbar.callBaseMethod(this, 'addToolbarItemsToToolbar', [items, count]);
 
     $q.clearArray(items);
-
-    
   },
 
   getSelectedViewTypeCode() {

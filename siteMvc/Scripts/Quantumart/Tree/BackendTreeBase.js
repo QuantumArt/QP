@@ -229,7 +229,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   _refreshNodeInner() {
     $q.alertFail($l.Common.methodNotImplemented);
-
   },
 
   refreshNodes(nodes, options) {
@@ -470,7 +469,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   executeAction() {
     $q.alertFail($l.Common.methodNotImplemented);
-
   },
 
   _legacyNodeCheck(li, isChecked) {
@@ -483,7 +481,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       $checkboxHolder.find(`:input[name="${arrayName}[${index}].Text"]`).remove();
       $checkboxHolder.find(`:input[name="${arrayName}[${index}].Value"]`).remove();
       $checkboxHolder.find(':checkbox').attr({
-        checked: isChecked ? true : false,
+        checked: !!isChecked,
         value: isChecked
       });
 

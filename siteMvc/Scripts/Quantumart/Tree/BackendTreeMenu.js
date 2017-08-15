@@ -85,7 +85,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   },
 
   generateNodeCode(entityTypeCode, entityId, parentEntityId, isFolder) {
-    return String.format('{0}{1}_{2}_{3}', entityTypeCode, isFolder ? 's' : '', entityId, parentEntityId ? parentEntityId : 0);
+    return String.format('{0}{1}_{2}_{3}', entityTypeCode, isFolder ? 's' : '', entityId, parentEntityId || 0);
   },
 
   generateNodeCodeToHighlight(eventArgs) {
