@@ -3,20 +3,20 @@ Quantumart.QP8.ActionLogTextFilter = function (filterContainer) {
 };
 
 Quantumart.QP8.ActionLogTextFilter.prototype = {
-  initialize: function () {
+  initialize () {
     this.$container.append('<div class="row"><input type="text" class="textbox" value="" /></div>');
     this.$container.find('input.textbox').focus();
   },
 
-  onOpen: function () {
+  onOpen () {
     this.$container.find('input.textbox').focus();
   },
 
-  get_value: function () {
+  get_value () {
     return this.$container.find('input.textbox').val();
   },
 
-  get_filterDetails: function () {
+  get_filterDetails () {
     const val = this.get_value();
     if (val) {
       return `"${$q.cutShort(val, 8)}"`;

@@ -9,7 +9,7 @@ Quantumart.QP8.BackendActionExecutor = function () {
 };
 
 Quantumart.QP8.BackendActionExecutor.prototype = {
-  executeNonInterfaceAction: function (eventArgs, callback) {
+  executeNonInterfaceAction (eventArgs, callback) {
     const actionCode = eventArgs.get_actionCode();
     const isCustom = eventArgs.get_isCustomAction();
     let additionalUrlParameters = null;
@@ -36,11 +36,11 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
         if (!confirmPhrase || (confirmPhrase && $q.confirmMessage(confirmPhrase))) {
           const entityIDs = isMultiple ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
-          const actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, {additionalUrlParameters: additionalUrlParameters});
+          const actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, {additionalUrlParameters});
           if (actionUrl) {
             const postParams = {
               IDs: entityIDs,
-              actionCode: actionCode,
+              actionCode,
               parentEntityId: eventArgs.get_parentEntityId(),
               entityTypeCode: eventArgs.get_entityTypeCode(),
               level: selectedAction.ActionType.RequiredPermissionLevel
@@ -85,7 +85,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
             const preAction = function () {
               if (selectedAction.HasPreAction) {
                 if (!isCustom) {
-                  const preActionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, { isPreAction: true, additionalUrlParameters: additionalUrlParameters });
+                  const preActionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, { isPreAction: true, additionalUrlParameters });
                   $q.getJsonFromUrl('POST', preActionUrl, postParams, false, false, normalPreActionCallback, errorCallback);
                 } else {
                   $q.getCustomActionJson(customData.PreActionUrl, postParams, normalPreActionCallback, errorCallback);
@@ -123,12 +123,12 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     }
   },
 
-  executeSpecialAction: function (eventArgs) {
+  executeSpecialAction (eventArgs) {
     let status = window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING;
     const entityTypeCode = eventArgs.get_entityTypeCode();
     const actionTypeCode = eventArgs.get_actionTypeCode();
     const fileName = eventArgs.get_entityId();
-    const urlParams = { id: eventArgs.get_parentEntityId(), fileName: encodeURIComponent(fileName), entityTypeCode: entityTypeCode, actionTypeCode: actionTypeCode };
+    const urlParams = { id: eventArgs.get_parentEntityId(), fileName: encodeURIComponent(fileName), entityTypeCode, actionTypeCode };
     if (actionTypeCode == window.ACTION_TYPE_CODE_PREVIEW && (entityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE)) {
       $c.preview(Quantumart.QP8.BackendLibrary.generateActionUrl('GetLibraryImageProperties', urlParams));
       status = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
@@ -145,7 +145,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     return status;
   },
 
-  executeMultistepAction: function (eventArgs) {
+  executeMultistepAction (eventArgs) {
     const dfr = new $.Deferred();
     const that = this;
 
@@ -187,19 +187,19 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
         const runAction = function (urlParams) {
           const setupUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters: additionalUrlParameters,
+            additionalUrlParameters,
             isSetup: true,
-            urlParams: urlParams
+            urlParams
           });
           if (urlParams) {
             params.settingsParams = urlParams;
           }
           const tearDownUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters: additionalUrlParameters,
+            additionalUrlParameters,
             isTearDown: true
           });
           const stepUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters: additionalUrlParameters
+            additionalUrlParameters
           });
 
           let toCancel = false;
@@ -329,7 +329,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
         if (selectedAction.HasSettings && !eventArgs.isSettingsSet) {
           const settingsActionUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters: additionalUrlParameters,
+            additionalUrlParameters,
             hasSettings: true,
             isSettingsSet: eventArgs.isSettingsSet
           });
@@ -349,7 +349,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
           });
         } else if (selectedAction.HasPreAction) {
           const preActionUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters: additionalUrlParameters,
+            additionalUrlParameters,
             isPreAction: true
           });
 
@@ -386,7 +386,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     return dfr.promise();
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendActionExecutor.callBaseMethod(this, 'dispose');
     Quantumart.QP8.BackendActionExecutor._instance = null;
     $q.collectGarbageInIE();
@@ -425,7 +425,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCo
   let action = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!action) {
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetByCode`, { actionCode: actionCode }, false, false).done(data => {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetByCode`, { actionCode }, false, false).done(data => {
       if (data.success) {
         action = data.action;
       } else {
@@ -448,7 +448,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) 
   let actionCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!actionCode) {
-    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetCodeById`, { actionId: actionId }, false, false).done(data => {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetCodeById`, { actionId }, false, false).done(data => {
       if (data.success) {
         actionCode = data.actionCode;
       } else {
@@ -718,29 +718,29 @@ Quantumart.QP8.BackendActionParameters.prototype = {
   _actionCode: null,
   _isGroup: false,
 
-  get_entityId: function () {
+  get_entityId () {
     return this._entityId;
   },
-  get_entityName: function () {
+  get_entityName () {
     return this._entityName;
   },
-  get_parentEntityId: function () {
+  get_parentEntityId () {
     return this._parentEntityId;
   },
-  get_entityTypeCode: function () {
+  get_entityTypeCode () {
     return this._entityTypeCode;
   },
-  get_context: function () {
+  get_context () {
     return this._context;
   },
-  get_entities: function () {
+  get_entities () {
     return $q.isArray(this._entities) && this._entities.length > 0 ? this._entities : [{ Id: this._entityId, Name: this._entityName}];
   },
-  get_actionCode: function () {
+  get_actionCode () {
     return this._actionCode;
   },
 
-  correct: function (action) {
+  correct (action) {
     const currentAction = $a.getBackendAction(action);
 
     if (currentAction.IsWindow) {
@@ -784,7 +784,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
     }
   },
 
-  get_options: function () {
+  get_options () {
     return {
       previousAction: this._previousAction,
       forceOpenWindow: this._forceOpenWindow,

@@ -14,7 +14,7 @@ Quantumart.QP8.FieldPropertiesMediator = function (tabId) {
   onIntegerClick();
 
   return {
-    dispose: dispose
+    dispose
   };
 };
 
@@ -79,7 +79,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
   $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
   return {
-    dispose: dispose
+    dispose
   };
 };
 
@@ -137,7 +137,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
   $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
   return {
-    dispose: dispose
+    dispose
   };
 };
 
@@ -162,7 +162,7 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
   $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
   return {
-    dispose: dispose
+    dispose
   };
 };
 
@@ -188,7 +188,7 @@ Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId
   $fieldTypeSelectElement.bind('change keyup', onFieldTypeChanged);
 
   return {
-    dispose: dispose
+    dispose
   };
 };
 
@@ -223,6 +223,6 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
 
   return {
     refresh: onRelatedToChanged,
-    dispose: dispose
+    dispose
   };
 };

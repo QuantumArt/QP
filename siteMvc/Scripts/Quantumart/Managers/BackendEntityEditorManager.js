@@ -10,13 +10,13 @@ Quantumart.QP8.BackendEntityEditorManager = function () {
 Quantumart.QP8.BackendEntityEditorManager.prototype = {
   _editorGroups: {},
 
-  generateEditorGroupCode: function (entityTypeCode, entityId) {
+  generateEditorGroupCode (entityTypeCode, entityId) {
     const editorGroupCode = String.format('{0}_{1}', entityTypeCode, entityId);
 
     return editorGroupCode;
   },
 
-  getEditorGroup: function (editorGroupCode) {
+  getEditorGroup (editorGroupCode) {
     let editorGroup = null;
     if (this._editorGroups[editorGroupCode]) {
       editorGroup = this._editorGroups[editorGroupCode];
@@ -25,7 +25,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     return editorGroup;
   },
 
-  createEditorGroup: function (editorGroupCode) {
+  createEditorGroup (editorGroupCode) {
     let editorGroup = this.getEditorGroup(editorGroupCode);
     if (!editorGroup) {
       editorGroup = {};
@@ -35,7 +35,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     return editorGroup;
   },
 
-  refreshEditorGroup: function (entityTypeCode, entityId, options) {
+  refreshEditorGroup (entityTypeCode, entityId, options) {
     let editorGroup = this.getEditorGroup(this.generateEditorGroupCode(entityTypeCode, entityId));
     if (editorGroup) {
       for (const documentWrapperElementId in editorGroup) {
@@ -46,11 +46,11 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     editorGroup = null;
   },
 
-  removeEditorGroup: function (editorGroupCode) {
+  removeEditorGroup (editorGroupCode) {
     $q.removeProperty(this._editorGroups, editorGroupCode);
   },
 
-  getEditor: function (editorCode) {
+  getEditor (editorCode) {
     let editor = null;
 
     for (const editorGroupCode in this._editorGroups) {
@@ -64,7 +64,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     return editor;
   },
 
-  createEditor: function (documentWrapperElementId, entityTypeCode, entityId, actionTypeCode, options, hostOptions) {
+  createEditor (documentWrapperElementId, entityTypeCode, entityId, actionTypeCode, options, hostOptions) {
     const editorGroupCode = this.generateEditorGroupCode(entityTypeCode, entityId);
 
     const finalOptions = {};
@@ -103,7 +103,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     return editor;
   },
 
-  refreshEditor: function (documentWrapperElementId, options) {
+  refreshEditor (documentWrapperElementId, options) {
     let editor = this.getEditor(documentWrapperElementId);
     if (editor) {
       editor.refreshEditor(options);
@@ -112,7 +112,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     editor = null;
   },
 
-  removeEditor: function (documentWrapperElementId) {
+  removeEditor (documentWrapperElementId) {
     const editor = this.getEditor(documentWrapperElementId);
     if (editor) {
       const editorGroupCode = editor.get_editorGroupCode();
@@ -126,7 +126,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     }
   },
 
-  destroyEditor: function (documentWrapperElementId) {
+  destroyEditor (documentWrapperElementId) {
     let editor = this.getEditor(documentWrapperElementId);
     if (editor != null) {
       if (editor.dispose) {
@@ -136,7 +136,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
     }
   },
 
-  onActionExecuted: function (eventArgs) {
+  onActionExecuted (eventArgs) {
     const entityTypeCode = eventArgs.get_entityTypeCode();
     const actionTypeCode = eventArgs.get_actionTypeCode();
     const actionCode = eventArgs.get_actionCode();
@@ -152,37 +152,37 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
       this.refreshEditorGroup(entityTypeCode, entityId);
     } else if (eventArgs.get_isRestored() && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
       const confirmMessageText = String.format($l.EntityEditor.autoRefreshConfirmMessageAfterArticleRestoring, entityId);
-      this.refreshEditorGroup(window.ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { confirmMessageText: confirmMessageText });
+      this.refreshEditorGroup(window.ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { confirmMessageText });
     } else if (actionCode == window.ACTION_CODE_ENABLE_ARTICLES_PERMISSIONS && entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT) {
       this.refreshEditorGroup(entityTypeCode, entityId);
     }
   },
 
-  onEntityEditorReady: function (documentWrapperElementId) {
+  onEntityEditorReady (documentWrapperElementId) {
     const eventArgs = new Sys.EventArgs();
     eventArgs.documentWrapperElementId = documentWrapperElementId;
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_IS_READY, eventArgs);
   },
 
-  onEntityEditorDisposed: function (documentWrapperElementId) {
+  onEntityEditorDisposed (documentWrapperElementId) {
     const eventArgs = new Sys.EventArgs();
     eventArgs.documentWrapperElementId = documentWrapperElementId;
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED, eventArgs);
   },
 
-  onFieldValueChanged: function (args) {
+  onFieldValueChanged (args) {
     const eventArgs = new Sys.EventArgs();
     eventArgs.fieldChangeInfo = args;
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED, eventArgs);
   },
 
-  onAllFieldInvalidate: function (documentWrapperElementId) {
+  onAllFieldInvalidate (documentWrapperElementId) {
     const eventArgs = new Sys.EventArgs();
     eventArgs.documentWrapperElementId = documentWrapperElementId;
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE, eventArgs);
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendEntityEditorManager.callBaseMethod(this, 'dispose');
 
     if (this._editorGroups) {

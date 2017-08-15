@@ -4,7 +4,7 @@ Quantumart.QP8.BackendTreeMenuContextMenuManager = function () {
 
 Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
   _сontextMenus: {},
-  getContextMenu: function (contextMenuCode) {
+  getContextMenu (contextMenuCode) {
     let contextMenu = null;
     if (this._сontextMenus[contextMenuCode]) {
       contextMenu = this._сontextMenus[contextMenuCode];
@@ -13,7 +13,7 @@ Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
     return contextMenu;
   },
 
-  createContextMenu: function (contextMenuCode, contextMenuElementId, options) {
+  createContextMenu (contextMenuCode, contextMenuElementId, options) {
     const contextMenu = new Quantumart.QP8.BackendContextMenu(contextMenuCode, contextMenuElementId, options);
     contextMenu.set_contextMenuManager(this);
     contextMenu.initialize();
@@ -22,11 +22,11 @@ Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
     return contextMenu;
   },
 
-  removeContextMenu: function (contextMenuCode) {
+  removeContextMenu (contextMenuCode) {
     $q.removeProperty(this._сontextMenus, contextMenuCode);
   },
 
-  destroyContextMenu: function (contextMenuCode) {
+  destroyContextMenu (contextMenuCode) {
     let contextMenu = this._сontextMenus[contextMenuCode];
     if (contextMenu != null) {
       if (contextMenu.dispose) {
@@ -37,11 +37,11 @@ Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
     }
   },
 
-  getContextMenuEventType: function () {
+  getContextMenuEventType () {
     return jQuery.fn.jeegoocontext.getContextMenuEventType();
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendTreeMenuContextMenuManager.callBaseMethod(this, 'dispose');
     if (this._сontextMenus) {
       for (const contextMenuCode in this._сontextMenus) {

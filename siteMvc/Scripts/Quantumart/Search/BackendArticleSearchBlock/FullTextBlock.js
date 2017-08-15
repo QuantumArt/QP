@@ -11,7 +11,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
   _parentEntityId: 0,
   _elementIdPrefix: '',
 
-  initialize: function () {
+  initialize () {
     let serverContent;
 
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}FullTextBlock`, {
@@ -39,7 +39,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     }
   },
 
-  get_searchQuery: function () {
+  get_searchQuery () {
     const data = this._get_searchData();
     if (data) {
       return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.FullText, data.fieldID, data.fieldColumn, data.contentID, data.referenceFieldID, data.text);
@@ -48,7 +48,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     return null;
   },
 
-  get_blockState: function () {
+  get_blockState () {
     const data = this._get_searchData();
 
     if (data) {
@@ -72,7 +72,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     return null;
   },
 
-  restore_blockState: function (state) {
+  restore_blockState (state) {
     if (state) {
       $(this._queryTextBoxElement).prop('value', state.text);
 
@@ -88,7 +88,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     }
   },
 
-  _get_searchData: function () {
+  _get_searchData () {
     if (this._textFieldsComboElement) {
       const $selectedField = $(this._textFieldsComboElement).find('option:selected');
 
@@ -100,11 +100,11 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
         const referenceFieldID = $selectedField.data('reference_field_id');
 
         return {
-          fieldID: fieldID,
-          contentID: contentID,
-          referenceFieldID: referenceFieldID,
-          fieldColumn: fieldColumn,
-          fieldValue: fieldValue,
+          fieldID,
+          contentID,
+          referenceFieldID,
+          fieldColumn,
+          fieldValue,
           text: $(this._queryTextBoxElement).val()
         };
       }
@@ -114,7 +114,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     return null;
 
   },
-  clear: function () {
+  clear () {
     let $resetElem;
     if (this._textFieldsComboElement) {
       $resetElem = $(this._textFieldsComboElement).find("option[data-field_is_title='True']");
@@ -131,13 +131,13 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     }
   },
 
-  onFieldChanged: function () {
+  onFieldChanged () {
     if ($(this._queryTextBoxElement).val()) {
       $(this._fullTextBlockElement).closest('form').trigger('submit');
     }
   },
 
-  dispose: function () {
+  dispose () {
     $(this._textFieldsComboElement).unbind('change');
     this._fullTextBlockElement = null;
     this._queryTextBoxElement = null;

@@ -5,14 +5,14 @@ Quantumart.QP8.BackendActionPermissionViewManager = function () {
 Quantumart.QP8.BackendActionPermissionViewManager.prototype = {
   _viewComponent: null,
 
-  createView: function (viewElementId, options, hostOptions) {
+  createView (viewElementId, options, hostOptions) {
     if (this._viewComponent == null) {
       this._viewComponent = new Quantumart.QP8.BackendActionPermissionView(viewElementId, options, hostOptions);
     }
     return this._viewComponent;
   },
 
-  onActionExecuted: function (eventArgs) {
+  onActionExecuted (eventArgs) {
     const entityTypeCode = eventArgs.get_entityTypeCode();
     const parentEntityId = eventArgs.get_parentEntityId();
     const actionCode = eventArgs.get_actionCode();
@@ -25,11 +25,11 @@ Quantumart.QP8.BackendActionPermissionViewManager.prototype = {
     }
   },
 
-  destroyView: function () {
+  destroyView () {
     this._viewComponent = null;
   },
 
-  dispose: function () {
+  dispose () {
     this.destroyView();
   }
 };

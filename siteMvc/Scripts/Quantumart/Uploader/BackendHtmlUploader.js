@@ -21,7 +21,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   _resolveName: false,
   _uploadedFiles: [],
 
-  initialize: function () {
+  initialize () {
     let $mvcUpload = $(".t-upload input[type='file']", this._parentElement).data('tUpload');
 
     $mvcUpload.wrapper.unbind('upload');
@@ -39,27 +39,27 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     $mvcUpload = null;
   },
 
-  dispose: function () {
+  dispose () {
     this._$telerikUpload.wrapper.unbind();
     $(".t-upload input[type='file']", this._parentElement).removeData('tUpload');
   },
 
-  set_folderPath: function (value) {
+  set_folderPath (value) {
     this._folderPath = value;
   },
 
-  get_folderPath: function () {
+  get_folderPath () {
     return this._folderPath;
   },
 
-  _onUploadHandler: function (e) {
+  _onUploadHandler (e) {
     e.data = {
       folderPath: this._folderPath,
       resolveFileName: $q.toString(this._resolveName, 'false')
     };
   },
 
-  _onUploadSuccessHandler: function (e) {
+  _onUploadSuccessHandler (e) {
     this._uploadedFiles = [];
     if (e.response) {
       if (!e.response.proceed) {
@@ -70,7 +70,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
   },
 
-  _onUploadCompleteHandler: function () {
+  _onUploadCompleteHandler () {
     if (this._uploadedFiles.length > 0) {
       const filenames = [];
 
@@ -85,7 +85,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
   },
 
-  _onUploadSelectHandler: function (e) {
+  _onUploadSelectHandler (e) {
     let toPrevent = false;
 
     $.each(e.files, function () {
@@ -133,13 +133,13 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     }
   },
 
-  _onUploadErrorHandler: function (e) {
+  _onUploadErrorHandler (e) {
     $q.alertFail(window.HTML_UPLOAD_ERROR_MESSAGE);
     e.preventDefault();
     return false;
   },
 
-  _checkFileExistence: function (folderPath, fileName) {
+  _checkFileExistence (folderPath, fileName) {
     const url = `${window.APPLICATION_ROOT_URL}Library/FileExists/`;
     const obj = $q.getJsonSync(url, {
       path: folderPath,

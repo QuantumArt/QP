@@ -144,130 +144,130 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   _zIndex: 0,
   _isMultiOpen: false,
 
-  get_popupWindowId: function () {
+  get_popupWindowId () {
     return this._popupWindowId;
   },
 
-  get_showBreadCrumbs: function () {
+  get_showBreadCrumbs () {
     return this._showBreadCrumbs;
   },
 
-  get_saveSelectionWhenChangingView: function () {
+  get_saveSelectionWhenChangingView () {
     return this._saveSelectionWhenChangingView;
   },
 
-  set_saveSelectionWhenChangingView: function (value) {
+  set_saveSelectionWhenChangingView (value) {
     this._saveSelectionWhenChangingView = value;
   },
 
-  get_title: function () {
+  get_title () {
     return this._title;
   },
 
-  set_title: function (value) {
+  set_title (value) {
     this._title = value;
   },
 
-  get_width: function () {
+  get_width () {
     return this._width;
   },
 
-  set_width: function (value) {
+  set_width (value) {
     this._width = value;
   },
 
-  get_height: function () {
+  get_height () {
     return this._height;
   },
 
-  set_height: function (value) {
+  set_height (value) {
     this._height = value;
   },
 
-  get_minWidth: function () {
+  get_minWidth () {
     return this._minWidth;
   },
 
-  set_minWidth: function (value) {
+  set_minWidth (value) {
     this._minWidth = value;
   },
 
-  get_minHeight: function () {
+  get_minHeight () {
     return this._minHeight;
   },
 
-  set_minHeight: function (value) {
+  set_minHeight (value) {
     this._minHeight = value;
   },
 
-  get_isModal: function () {
+  get_isModal () {
     return this._isModal;
   },
 
-  set_isModal: function (value) {
+  set_isModal (value) {
     this._isModal = value;
   },
 
-  get_allowResize: function () {
+  get_allowResize () {
     return this._allowResize;
   },
 
-  set_allowResize: function (value) {
+  set_allowResize (value) {
     this._allowResize = value;
   },
 
-  get_allowDrag: function () {
+  get_allowDrag () {
     return this._allowDrag;
   },
 
-  set_allowDrag: function (value) {
+  set_allowDrag (value) {
     this._allowDrag = value;
   },
 
-  get_showRefreshButton: function () {
+  get_showRefreshButton () {
     return this._showRefreshButton;
   },
 
-  set_showRefreshButton: function (value) {
+  set_showRefreshButton (value) {
     this._showRefreshButton = value;
   },
 
-  get_showCloseButton: function () {
+  get_showCloseButton () {
     return this._showCloseButton;
   },
 
-  set_showCloseButton: function (value) {
+  set_showCloseButton (value) {
     this._showCloseButton = value;
   },
 
-  get_showMaximizeButton: function () {
+  get_showMaximizeButton () {
     return this._showMaximizeButton;
   },
 
-  set_showMaximizeButton: function (value) {
+  set_showMaximizeButton (value) {
     this._showMaximizeButton = value;
   },
 
-  get_popupWindowManager: function () {
+  get_popupWindowManager () {
     return this._popupWindowManagerComponent;
   },
 
-  set_popupWindowManager: function (value) {
+  set_popupWindowManager (value) {
     this._popupWindowManagerComponent = value;
   },
 
-  get_hostType: function () {
+  get_hostType () {
     return window.DOCUMENT_HOST_TYPE_POPUP_WINDOW;
   },
 
-  get_zIndex: function () {
+  get_zIndex () {
     return parseInt(jQuery(this._popupWindowElement).css('z-index'), 10);
   },
 
-  get_selectionContext: function () {
+  get_selectionContext () {
     return this._selectionContext;
   },
-  set_selectionContext: function (value) {
+  set_selectionContext (value) {
     this._selectionContext = value;
   },
 
@@ -276,7 +276,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   _onPopupWindowCloseHandler: null,
   _onPopupWindowActivatedHandler: null,
 
-  initialize: function () {
+  initialize () {
     this._initSelectedEntities();
 
     const action = this.getCurrentAction();
@@ -304,7 +304,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this._attachPopupWindowEventHandlers();
   },
 
-  _initSelectedEntities: function () {
+  _initSelectedEntities () {
     const actionTypeCode = this._actionTypeCode;
     if (actionTypeCode === window.ACTION_TYPE_CODE_SELECT || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT) {
       if (this._isMultipleEntities) {
@@ -317,7 +317,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
   },
 
-  generateDocumentUrl: function (options) {
+  generateDocumentUrl (options) {
     const isSelectAction = this._actionTypeCode == window.ACTION_TYPE_CODE_SELECT || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_SELECT;
     const entityIDs = this._isMultipleEntities ? $o.getEntityIDsFromEntities(isSelectAction ? this._selectedEntities : this._entities) : [this._entityId];
     const extraOptions = {
@@ -342,7 +342,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this._documentPostParams = params;
   },
 
-  _createWindow: function () {
+  _createWindow () {
     const popupWindowId = this._popupWindowId;
     const actions = [];
     if (this._showRefreshButton) {
@@ -388,7 +388,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       minWidth: this._minWidth,
       minHeight: this._minHeight,
       modal: this._isModal,
-      actions: actions,
+      actions,
       resizable: this._allowResize,
       draggable: this._allowDrag
     }).data('tWindow').center();
@@ -452,7 +452,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     return popupWindowComponent;
   },
 
-  openWindow: function (options) {
+  openWindow (options) {
     if (this._isMultiOpen && this._isContentLoaded()) {
       this._popupWindowComponent.open();
     } else {
@@ -467,7 +467,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
   },
 
-  closeWindow: function () {
+  closeWindow () {
     if (this._isMultiOpen) {
       $c.closePopupWindow(this._popupWindowComponent);
     } else if (this.allowClose()) {
@@ -482,12 +482,12 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
   },
 
-  setWindowTitle: function (titleText) {
+  setWindowTitle (titleText) {
     $c.setPopupWindowTitle(this._popupWindowComponent, titleText);
     this._title = titleText;
   },
 
-  _attachPopupWindowEventHandlers: function () {
+  _attachPopupWindowEventHandlers () {
     const $popupWindow = $(this._popupWindowElement);
     $popupWindow
       .bind('open', this._onPopupWindowOpenHandler)
@@ -496,7 +496,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       .bind('activated', this._onPopupWindowActivatedHandler);
   },
 
-  _detachPopupWindowEventHandlers: function () {
+  _detachPopupWindowEventHandlers () {
     const $popupWindow = $(this._popupWindowElement);
     $popupWindow
       .unbind('open', this._onPopupWindowOpenHandler)
@@ -505,7 +505,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       .unbind('activated', this._onPopupWindowActivatedHandler);
   },
 
-  _fixDocumentAreaHeight: function () {
+  _fixDocumentAreaHeight () {
     const $popupWindow = $(this._popupWindowElement);
     const $content = $popupWindow.find('DIV.t-window-content:first');
     let $breadCrumbsWrapper = null;
@@ -532,21 +532,21 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
   },
 
-  showLoadingLayer: function () {
+  showLoadingLayer () {
     const $loadingLayer = $(this._loadingLayerElement);
     $loadingLayer.show();
   },
 
-  hideLoadingLayer: function () {
+  hideLoadingLayer () {
     const $loadingLayer = $(this._loadingLayerElement);
     $loadingLayer.hide();
   },
 
-  htmlLoadingMethod: function () {
+  htmlLoadingMethod () {
     return this._isMultipleEntities || this._isCustomAction ? 'POST' : 'GET';
   },
 
-  createPanels: function () {
+  createPanels () {
     const action = this.getCurrentAction();
 
     // Создаем хлебные крошки
@@ -591,7 +591,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this._viewToolbarComponent = viewToolbarComponent;
   },
 
-  hidePanels: function (callback) {
+  hidePanels (callback) {
     if (this._breadCrumbsComponent) {
       this._breadCrumbsComponent.hideBreadCrumbs();
     }
@@ -608,7 +608,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
   },
 
-  showPanels: function (callback) {
+  showPanels (callback) {
     if (this._breadCrumbsComponent) {
       this._breadCrumbsComponent.showBreadCrumbs();
     }
@@ -626,7 +626,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
   },
 
-  destroyPanels: function () {
+  destroyPanels () {
     if (this._breadCrumbsComponent) {
       this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
       this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
@@ -652,7 +652,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
   },
 
-  createSearchBlock: function () {
+  createSearchBlock () {
     const searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
       .createSearchBlock(`searchBlock_${this._popupWindowId}`, this._entityTypeCode, this._parentEntityId, this,
         {
@@ -669,7 +669,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this._searchBlockComponent = searchBlockComponent;
   },
 
-  createContextBlock: function () {
+  createContextBlock () {
     const contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
       .createSearchBlock(`contextBlock_${this._popupWindowId}`, this._entityTypeCode, this._parentEntityId, this,
         {
@@ -687,7 +687,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this._contextBlockComponent = contextBlockComponent;
   },
 
-  destroySearchBlock: function () {
+  destroySearchBlock () {
     const searchBlockComponent = this._searchBlockComponent;
 
     if (searchBlockComponent) {
@@ -703,7 +703,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
   },
 
-  destroyContextBlock: function () {
+  destroyContextBlock () {
     const searchBlockComponent = this._searchBlockComponent;
     const contextBlockComponent = this._contextBlockComponent;
 
@@ -719,62 +719,62 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
   },
 
-  showErrorMessageInDocumentWrapper: function (status) {
+  showErrorMessageInDocumentWrapper (status) {
     const $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.html($q.generateErrorMessageText());
   },
 
-  updateTitle: function (eventArgs) {
+  updateTitle (eventArgs) {
     this.setWindowTitle(this._popupWindowManagerComponent.generatePopupWindowTitle(eventArgs));
   },
 
-  onChangeContent: function (eventType, sender, eventArgs) {
+  onChangeContent (eventType, sender, eventArgs) {
     this.changeContent(eventArgs);
   },
 
-  saveSelectionContext: function (eventArgs) {
+  saveSelectionContext (eventArgs) {
     this._selectionContext = eventArgs.get_context();
   },
 
-  onActionExecuting: function (eventArgs) {
+  onActionExecuting (eventArgs) {
     this._copyCurrentContextToEventArgs(eventArgs);
     return this._popupWindowManagerComponent.notify(window.EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING, eventArgs);
   },
 
-  onEntityReaded: function (eventArgs) {
+  onEntityReaded (eventArgs) {
     return this._popupWindowManagerComponent.notify(window.EVENT_TYPE_POPUP_WINDOW_ENTITY_READED, eventArgs);
   },
 
-  onDocumentChanging: function (isLocal) {
+  onDocumentChanging (isLocal) {
     this.markPanelsAsBusy();
   },
 
-  onDocumentChanged: function (isLocal) {
+  onDocumentChanged (isLocal) {
     this.unmarkPanelsAsBusy();
   },
 
-  onNeedUp: function (eventArgs) {
+  onNeedUp (eventArgs) {
     this._popupWindowManagerComponent.onNeedUp(eventArgs, this.get_popupWindowId());
   },
 
-  resetSelectedEntities: function () {
+  resetSelectedEntities () {
     this._initSelectedEntities();
   },
 
-  _onLibraryResized: function (eventType, sender) {
+  _onLibraryResized (eventType, sender) {
     const elHeight = $(this._documentAreaElement).height();
     $(sender._libraryElement).height(elHeight + 8);
   },
 
-  _onPopupWindowResize: function () {
+  _onPopupWindowResize () {
     this._fixDocumentAreaHeight();
   },
 
-  _onPopupWindowOpen: function () {
+  _onPopupWindowOpen () {
     this._fixDocumentAreaHeight();
   },
 
-  _onPopupWindowClose: function () {
+  _onPopupWindowClose () {
     const $active = $(document.activeElement);
     if ($active) {
       $active.blur();
@@ -783,31 +783,31 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this.closeWindow();
   },
 
-  _onPopupWindowActivated: function () {
+  _onPopupWindowActivated () {
     const main = this.get_mainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.resize();
     }
   },
 
-  _onExternalCallerContextsUnbinded: function (unbindingEventArgs) {
+  _onExternalCallerContextsUnbinded (unbindingEventArgs) {
     this.get_popupWindowManager().hostExternalCallerContextsUnbinded(unbindingEventArgs);
   },
 
-  _isContentLoaded: function () {
+  _isContentLoaded () {
     const $wrapper = $(this._documentWrapperElement);
     return $wrapper && $wrapper.html() != '';
   },
 
-  onDocumentError: function () {
+  onDocumentError () {
     this.closeWindow();
   },
 
-  _isWindow: function () {
+  _isWindow () {
     return true;
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendPopupWindow.callBaseMethod(this, 'dispose');
 
     this._detachPopupWindowEventHandlers();

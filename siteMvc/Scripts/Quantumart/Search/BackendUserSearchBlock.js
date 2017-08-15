@@ -6,7 +6,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
   _minSearchBlockHeight: 145,
   _maxSearchBlockHeight: 145,
 
-  get_searchQuery: function () {
+  get_searchQuery () {
     const $root = $(this._concreteSearchBlockElement);
 
     const login = $('.login', $root).val();
@@ -24,7 +24,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
     return query;
   },
 
-  renderSearchBlock: function () {
+  renderSearchBlock () {
     if (this.get_isRendered() !== true) {
       $q.getJsonFromUrl(
         'GET',
@@ -50,18 +50,18 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
     }
   },
 
-  _onFindButtonClick: function () {
+  _onFindButtonClick () {
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 
-  _onResetButtonClick: function () {
+  _onResetButtonClick () {
     $('.csFilterTextbox', this._concreteSearchBlockElement).val('');
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendUserSearchBlock.callBaseMethod(this, 'dispose');
   }
 };

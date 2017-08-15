@@ -5,26 +5,26 @@ Quantumart.QP8.BackendEntityDropDownList = function (listGroupCode, listElementI
 };
 
 Quantumart.QP8.BackendEntityDropDownList.prototype = {
-  initialize: function () {
+  initialize () {
     Quantumart.QP8.BackendEntityDropDownList.callBaseMethod(this, 'initialize');
     this._addReadButtonToToolbar();
     this._addNewButtonToToolbar();
     this._attachListItemEventHandlers();
   },
 
-  _attachListItemEventHandlers: function () {
+  _attachListItemEventHandlers () {
     $(this._listElement).bind('change', $.proxy(this._onSelectedItemChangeHandler, this));
   },
 
-  _detachListItemEventHandlers: function () {
+  _detachListItemEventHandlers () {
     $(this._listElement).unbind('change');
   },
 
-  getSelectedListItems: function () {
+  getSelectedListItems () {
     return $(this._listElement).find("OPTION[value!='']:selected");
   },
 
-  getSelectedEntities: function () {
+  getSelectedEntities () {
     const entities = [];
     const $selectedListItems = this.getSelectedListItems();
     if ($selectedListItems.length > 0) {
@@ -37,13 +37,13 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
     return entities;
   },
 
-  getSelectedEntityIDs: function () {
+  getSelectedEntityIDs () {
     return $.grep(
       $.map(this.getSelectedEntities(), item => $q.toString(item.Id)), item => item
     );
   },
 
-  selectEntities: function (entityID) {
+  selectEntities (entityID) {
     this.deselectAllListItems();
     if (!$q.isNullOrEmpty(entityID)) {
       if ($q.isArray(entityID) && entityID.length > 0) {
@@ -54,20 +54,20 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
     }
   },
 
-  deselectAllListItems: function () {
+  deselectAllListItems () {
     $(this._listElement).find('OPTION:selected').prop('selected', false).change();
   },
 
-  _checkAllowShowingToolbar: function () {
+  _checkAllowShowingToolbar () {
     return this._addNewActionCode != window.ACTION_CODE_NONE || this._readActionCode != window.ACTION_CODE_NONE;
   },
 
-  _refreshListInner: function (dataItems, refreshOnly) {
+  _refreshListInner (dataItems, refreshOnly) {
     const $list = $(this._listElement);
     const oldValue = $list.val();
     const markChanged = !refreshOnly;
     const selectedValue = markChanged ? oldValue : '';
-    const listState = { selectedValue: selectedValue, isChanged: markChanged };
+    const listState = { selectedValue, isChanged: markChanged };
     $list.find("OPTION[value!='']").remove();
 
     const listItemHtml = new $.telerik.stringBuilder();
@@ -82,21 +82,21 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
       $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
       const operation = refreshOnly ? 'addClass' : 'removeClass';
       $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
-      $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value: value, contentFieldName: $list.data('content_field_name') });
+      $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value, contentFieldName: $list.data('content_field_name') });
     }
   },
 
-  enableList: function () {
+  enableList () {
     $(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', false);
     this._enableAllToolbarButtons();
   },
 
-  disableList: function () {
+  disableList () {
     $(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', true);
     this._disableAllToolbarButtons();
   },
 
-  makeReadonly: function () {
+  makeReadonly () {
     const $listElement = $(this._listElement);
     const selectedVal = $listElement.find('OPTION:selected').val();
     if (!$q.isNullOrEmpty(selectedVal)) {
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
     this.disableList();
   },
 
-  _getDropDownListItemHtml: function (html, dataItem, saveChanges, listState) {
+  _getDropDownListItemHtml (html, dataItem, saveChanges, listState) {
     const itemValue = dataItem.Value;
     let itemText = dataItem.Text;
     if (this._showIds) {
@@ -134,21 +134,21 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
       .cat('</option>\n');
   },
 
-  isListChanged: function () {
+  isListChanged () {
     return $(this._listElement).hasClass(window.CHANGED_FIELD_CLASS_NAME);
   },
 
-  _onSelectedItemChangeHandler: function () {
+  _onSelectedItemChangeHandler () {
     if (!this.isListDisabled()) {
       this._refreshReadToolbarButton(true);
     }
   },
 
-  getListItems: function () {
+  getListItems () {
     return $(this._listElement).find('OPTION');
   },
 
-  dispose: function () {
+  dispose () {
     this._stopDeferredOperations = true;
     this._detachListItemEventHandlers();
     Quantumart.QP8.BackendEntityDropDownList.callBaseMethod(this, 'dispose');

@@ -25,31 +25,31 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   _stopDeferredOperations: false,
   _disabledActionCodes: null,
 
-  get_actionCode: function () {
+  get_actionCode () {
     return this._actionCode;
   },
-  set_actionCode: function (value) {
+  set_actionCode (value) {
     this._actionCode = value;
   },
-  get_entityId: function () {
+  get_entityId () {
     return this._entityId;
   },
-  set_entityId: function (value) {
+  set_entityId (value) {
     this._entityId = value;
   },
-  get_parentEntityId: function () {
+  get_parentEntityId () {
     return this._parentEntityId;
   },
-  set_parentEntityId: function (value) {
+  set_parentEntityId (value) {
     this._parentEntityId = value;
   },
-  get_alwaysEnabledRefreshButton: function () {
+  get_alwaysEnabledRefreshButton () {
     return this._alwaysEnabledRefreshButton;
   },
-  set_alwaysEnabledRefreshButton: function (value) {
+  set_alwaysEnabledRefreshButton (value) {
     this._alwaysEnabledRefreshButton = value;
   },
-  addToolbarItemsToToolbar: function (count) {
+  addToolbarItemsToToolbar (count) {
     const self = this;
     let queryParams = {
       actionCode: this._actionCode,
@@ -90,10 +90,10 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     );
   },
 
-  tuneToolbarItems: function (entityId, parentEntityId) {
+  tuneToolbarItems (entityId, parentEntityId) {
     const self = this;
 
-    let queryParams = { actionCode: this._actionCode, entityId: entityId, parentEntityId: parentEntityId };
+    let queryParams = { actionCode: this._actionCode, entityId, parentEntityId };
     if (this.get_isBindToExternal() === true) {
       queryParams = Object.assign({}, queryParams, { boundToExternal: true });
     }
@@ -124,18 +124,18 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     }
   },
 
-  notifyToolbarButtonClicked: function (eventArgs) {
+  notifyToolbarButtonClicked (eventArgs) {
     this.notify(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, eventArgs);
   },
 
-  setDisabledActionCodes: function (value) {
+  setDisabledActionCodes (value) {
     this._disabledActionCodes = value;
   },
-  getDisabledActionCodes: function () {
+  getDisabledActionCodes () {
     return this._disabledActionCodes;
   },
 
-  _getToolbarItemsFromResult: function (items) {
+  _getToolbarItemsFromResult (items) {
     const dataItems = [];
     jQuery.each(items, (index, item) => {
       Array.add(dataItems, {
@@ -155,7 +155,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
     return dataItems;
   },
 
-  dispose: function () {
+  dispose () {
     this._stopDeferredOperations = true;
     Quantumart.QP8.BackendActionToolbar.callBaseMethod(this, 'dispose');
     $q.collectGarbageInIE();

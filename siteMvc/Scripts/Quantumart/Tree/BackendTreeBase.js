@@ -62,19 +62,19 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   NODE_PLUS_SELECTOR: '> DIV .t-plus',
   NODE_MINUS_SELECTOR: '> DIV .t-minus',
 
-  get_treeElementId: function () {
+  get_treeElementId () {
     return this._treeElementId;
   },
-  set_treeElementId: function (value) {
+  set_treeElementId (value) {
     this._treeElementId = value;
   },
-  get_treeElement: function () {
+  get_treeElement () {
     return this._treeElement;
   },
-  get_treeContainerElementId: function () {
+  get_treeContainerElementId () {
     return this._treeContainerElementId;
   },
-  set_treeContainerElementId: function (value) {
+  set_treeContainerElementId (value) {
     this._treeContainerElementId = value;
   },
 
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   _onNodeClickingHandler: null,
   _onNodeCheckboxClickHandler: null,
 
-  initialize: function () {
+  initialize () {
     const $tree = $(`#${this._treeElementId}`);
     const treeComponent = $tree.data('tTreeView');
     treeComponent.isAjax = this.isAjax;
@@ -102,7 +102,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       .delegate(this.NODE_ID_LINK_SELECTORS, 'click', this._onIdClickingHandler);
   },
 
-  _initNodeCheck: function (treeComponent) {
+  _initNodeCheck (treeComponent) {
     treeComponent.nodeCheck = function (li, isChecked, suppressAutoCheck, autoCheckChildren) {
       this._legacyNodeCheck.call(treeComponent, li, isChecked);
       this.beforeCustomNodeCheck.call(this, li, isChecked, suppressAutoCheck, autoCheckChildren);
@@ -113,7 +113,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     treeComponent.nodeCheckExcludeSelf = this._proceedAutoCheckDirectChildren.bind(this);
   },
 
-  _initNewToggle: function (treeComponent) {
+  _initNewToggle (treeComponent) {
     const oldToggle = treeComponent.nodeToggle;
 
     treeComponent.nodeToggle = function (...args) {
@@ -121,23 +121,23 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     };
   },
 
-  isAjax: function () {
+  isAjax () {
     return true;
   },
 
-  getChildNodesContainer: function (node) {
+  getChildNodesContainer (node) {
     return $('> UL.t-group', this.getNode(node));
   },
 
-  getAllNodes: function () {
+  getAllNodes () {
     return $(this._treeElement).find('LI.t-item');
   },
 
-  getSelectedNodes: function () {
+  getSelectedNodes () {
     return this.getAllNodes().filter(`:has(> DIV > SPAN.${this.NODE_SELECTED_CLASS_NAME})`);
   },
 
-  getNode: function (node, parentNodeElem) {
+  getNode (node, parentNodeElem) {
     if ($q.isObject(node)) {
       return $q.toJQuery(node);
     } else if ($q.isString(node) || $.isNumeric(node)) {
@@ -160,7 +160,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  getNodeValue: function (node) {
+  getNodeValue (node) {
     const $node = this.getNode(node);
     let nodeValue = '';
 
@@ -175,7 +175,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     return nodeValue;
   },
 
-  getNodeText: function (node) {
+  getNodeText (node) {
     const $node = this.getNode(node);
     let nodeText = '';
 
@@ -186,7 +186,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     return nodeText;
   },
 
-  getParentNode: function (node) {
+  getParentNode (node) {
     const $node = this.getNode(node);
     let $parentNode = null;
     if (!$q.isNullOrEmpty($node)) {
@@ -199,7 +199,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     return $parentNode;
   },
 
-  refreshNode: function (node, options) {
+  refreshNode (node, options) {
     let loadChildNodes = true;
     let callback = null;
 
@@ -227,12 +227,12 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  _refreshNodeInner: function () {
+  _refreshNodeInner () {
     $q.alertFail($l.Common.methodNotImplemented);
     return;
   },
 
-  refreshNodes: function (nodes, options) {
+  refreshNodes (nodes, options) {
     const self = this;
     const $nodes = $q.toJQuery(nodes);
 
@@ -244,7 +244,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  _renderNode: function (node, dataItem, isRootNode) {
+  _renderNode (node, dataItem, isRootNode) {
     const $node = this.getNode(node);
     const nodeIndex = this.getCheckedNodeIndex(node);
     let nodeHtml = new $.telerik.stringBuilder();
@@ -271,7 +271,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     $node.attr('class', cssClassNames).html(htmlContent);
   },
 
-  _renderChildNodes: function (parentNode, dataItems, isRootNode) {
+  _renderChildNodes (parentNode, dataItems, isRootNode) {
     const $parentNode = this.getNode(parentNode);
     let $group = this._getChildNodesContainer($parentNode);
 
@@ -305,17 +305,17 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     $group = null;
   },
 
-  _isSearchQueryEmpty: function () {
+  _isSearchQueryEmpty () {
     return true;
   },
 
-  refreshTree: function () {
+  refreshTree () {
     const maxExpandLevel = this._isSearchQueryEmpty() ? 1 : 0;
     $('ul.t-group', this._treeElement).remove();
     this.addNodesToParentNode(this._treeElement, maxExpandLevel);
   },
 
-  _onNodeClicking: function (e) {
+  _onNodeClicking (e) {
     let $element = $(e.currentTarget);
     let $node = $($element.closest('.t-item')[0]);
     if (!this._treeComponent.shouldNavigate($element)) {
@@ -329,7 +329,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   },
 
-  _onIdClicking: function (e) {
+  _onIdClicking (e) {
     e.preventDefault();
     e.stopPropagation();
     if (this._readActionCode) {
@@ -337,21 +337,21 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  expandNode: function (node) {
+  expandNode (node) {
     const $node = this.getNode(node);
     if (!$q.isNullOrEmpty($node)) {
       this._treeComponent.expand($node);
     }
   },
 
-  collapseNode: function (node) {
+  collapseNode (node) {
     const $node = this.getNode(node);
     if (!$q.isNullOrEmpty($node)) {
       this._treeComponent.collapse($node);
     }
   },
 
-  removeNodeOrRefreshParent: function (node, parentNode, options) {
+  removeNodeOrRefreshParent (node, parentNode, options) {
     const $node = this.getNode(node);
     if ($node) {
       if ($node.siblings().length > 0) {
@@ -362,7 +362,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  removeNode: function (node) {
+  removeNode (node) {
     const $node = this.getNode(node);
 
     if (!$q.isNullOrEmpty($node)) {
@@ -372,7 +372,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  removeChildNodes: function (node) {
+  removeChildNodes (node) {
     const $node = this.getNode(node);
     const $group = this._getChildNodesContainer($node);
 
@@ -381,7 +381,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  isRootNode: function (node) {
+  isRootNode (node) {
     const $node = this.getNode(node);
     let isRootNode = false;
 
@@ -392,7 +392,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     return isRootNode;
   },
 
-  getNodeLevel: function (node) {
+  getNodeLevel (node) {
     const $node = this.getNode(node);
     let level = -1;
 
@@ -418,7 +418,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     return level;
   },
 
-  getCheckedNodeIndex: function (node) {
+  getCheckedNodeIndex (node) {
     const $node = this.getNode(node);
     let nodeIndex;
 
@@ -428,7 +428,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     return nodeIndex;
   },
 
-  getChildNodeCount: function (node) {
+  getChildNodeCount (node) {
     const $node = this.getNode(node);
     let childNodeCount = 0;
 
@@ -439,11 +439,11 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     return childNodeCount;
   },
 
-  _getChildNodesContainer: function (node) {
+  _getChildNodesContainer (node) {
     return this.getNode(node).find('> UL.t-group');
   },
 
-  _showAjaxLoadingIndicatorForNode: function (node) {
+  _showAjaxLoadingIndicatorForNode (node) {
     const self = this;
     const $node = this.getNode(node);
 
@@ -457,7 +457,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }, 100));
   },
 
-  _hideAjaxLoadingIndicatorForNode: function (node) {
+  _hideAjaxLoadingIndicatorForNode (node) {
     const $node = this.getNode(node);
     clearTimeout($node.data('loading_icon_timeout'));
     if ($node.hasClass('t-item')) {
@@ -469,12 +469,12 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  executeAction: function () {
+  executeAction () {
     $q.alertFail($l.Common.methodNotImplemented);
     return;
   },
 
-  _legacyNodeCheck: function (li, isChecked) {
+  _legacyNodeCheck (li, isChecked) {
     $(li, this.element).each($.proxy(function (index, item) {
       const $item = $(item).closest('.t-item');
       const $checkboxHolder = $('> div > .t-checkbox', $item);
@@ -494,7 +494,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }, this));
   },
 
-  _proceedAutoCheckChildren: function (nodeSelectorFn, li, isChecked, suppressAutoCheck, autoCheckChildren) {
+  _proceedAutoCheckChildren (nodeSelectorFn, li, isChecked, suppressAutoCheck, autoCheckChildren) {
     if (!suppressAutoCheck && (autoCheckChildren || this._autoCheckChildren)) {
       const $node = $(li).closest('.t-item').first();
 
@@ -506,7 +506,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  _proceedAutoCheckAllChildren: function (li, isChecked, suppressAutoCheck, autoCheckChildren) {
+  _proceedAutoCheckAllChildren (li, isChecked, suppressAutoCheck, autoCheckChildren) {
     return this._proceedAutoCheckChildren(function ($node) {
       const self = this;
       $node.find('ul.t-group .t-checkbox [type=checkbox]').each((index, item) => {
@@ -519,7 +519,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }, li, isChecked, suppressAutoCheck, autoCheckChildren);
   },
 
-  _proceedAutoCheckDirectChildren: function (li, isChecked, suppressAutoCheck, autoCheckChildren) {
+  _proceedAutoCheckDirectChildren (li, isChecked, suppressAutoCheck, autoCheckChildren) {
     return this._proceedAutoCheckChildren(function ($node) {
       const self = this;
       $node
@@ -537,14 +537,14 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }, li, isChecked, suppressAutoCheck, autoCheckChildren);
   },
 
-  beforeCustomNodeCheck: function () { },
-  afterCustomNodeCheck: function () { },
+  beforeCustomNodeCheck () { },
+  afterCustomNodeCheck () { },
 
-  _isNodeCollapsed: function ($node) {
+  _isNodeCollapsed ($node) {
     return $node.find(this.NODE_PLUS_SELECTOR).length;
   },
 
-  dispose: function () {
+  dispose () {
     this._stopDeferredOperations = true;
 
     Quantumart.QP8.BackendTreeBase.callBaseMethod(this, 'dispose');
@@ -694,7 +694,7 @@ $.telerik.treeview.getItemHtml = function (options) {
   if (item.Items && item.Items.length > 0) {
     $.telerik.treeview.getGroupHtml({
       data: item.Items,
-      html: html,
+      html,
       isAjax: options.isAjax,
       isFirstLevel: false,
       showCheckBoxes: options.showCheckBoxes,
@@ -727,9 +727,9 @@ $.telerik.treeview.getGroupHtml = function (options) {
     for (let i = 0, len = data.length; i < len; i++) {
       $.telerik.treeview.getItemHtml({
         item: data[i],
-        html: html,
+        html,
         isAjax: options.isAjax,
-        isFirstLevel: isFirstLevel,
+        isFirstLevel,
         showCheckBoxes: options.showCheckBoxes,
         groupLevel: options.groupLevel,
         itemIndex: i,

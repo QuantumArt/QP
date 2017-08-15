@@ -6,7 +6,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch = function (conta
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
-  initialize: function () {
+  initialize () {
     let serverContent;
 
     $q.getJsonFromUrl(
@@ -60,7 +60,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
     }
   },
 
-  get_searchQuery: function () {
+  get_searchQuery () {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
       this.get_IsNull(),
       $(this._numberFromElement).data('tTextBox').value(),
@@ -70,7 +70,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       this._isByText);
   },
 
-  get_blockState: function () {
+  get_blockState () {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
         inverse: this.get_IsNull(),
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       });
   },
 
-  get_filterDetails: function () {
+  get_filterDetails () {
     const stateData = this.get_blockState().data;
     let result;
 
@@ -102,7 +102,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
     return result;
   },
 
-  restore_blockState: function (state) {
+  restore_blockState (state) {
     if (state) {
       if (this._inverseCheckBoxElement) {
         let $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
@@ -121,7 +121,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
     }
   },
 
-  _onByValueSelectorChanged: function (e) {
+  _onByValueSelectorChanged (e) {
     this._isByValue = $(e.currentTarget).val() == 0;
     this._isByText = $(e.currentTarget).val() == 2;
 
@@ -145,7 +145,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   // перенести значение из одного numeric textbox в другой если другой - пустой
-  _onNumericInputFocus: function (e) {
+  _onNumericInputFocus (e) {
     const focusedNumeric = $(e.currentTarget).data('tTextBox');
     let otherInput;
     if (e.currentTarget === this._numberFromElement) {
@@ -159,11 +159,11 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
     }
   },
 
-  _onLoad: function () {
+  _onLoad () {
     $c.initAllNumericTextBoxes(this._containerElement);
   },
 
-  dispose: function () {
+  dispose () {
     if (this._numberFromElement) {
       $(this._numberFromElement).unbind('focus', this._onNumericInputFocusHandler);
     }
@@ -190,7 +190,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
 
-  get_IsNull: function () {
+  get_IsNull () {
     if (this._inverseCheckBoxElement) {
       return $(this._inverseCheckBoxElement).is(':checked');
     }

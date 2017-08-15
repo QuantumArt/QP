@@ -60,6 +60,6 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
   $externalCheckbox.bind('click', onExternalChanged);
 
   return {
-    dispose: dispose
+    dispose
   };
 };

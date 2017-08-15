@@ -28,31 +28,31 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   _editingArea: null,
   _additionalUrlParameters: null,
 
-  get_id: function () {
+  get_id () {
     return this._id;
   },
 
-  get_tabId: function () {
+  get_tabId () {
     return this._tabId;
   },
 
-  set_tabId: function (value) {
+  set_tabId (value) {
     this._tabId = value;
   },
 
-  get_editingArea: function () {
+  get_editingArea () {
     return this._editingArea;
   },
 
-  get_hostType: function () {
+  get_hostType () {
     return window.DOCUMENT_HOST_TYPE_EDITING_DOCUMENT;
   },
 
-  get_zIndex: function () {
+  get_zIndex () {
     return 0;
   },
 
-  initialize: function (callback) {
+  initialize (callback) {
     this.generateDocumentUrl();
     this.createPanels();
     this.renderPanels();
@@ -61,15 +61,15 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     this.loadHtmlContentToDocumentWrapper(callback);
   },
 
-  getDocumentIdByTabId: function (tabId) {
+  getDocumentIdByTabId (tabId) {
     return this._editingArea.getDocumentIdByTabId(tabId);
   },
 
-  generateDocumentWrapperId: function () {
+  generateDocumentWrapperId () {
     return String.format('doc_{0}', this._tabId);
   },
 
-  addNewDocumentWrapper: function () {
+  addNewDocumentWrapper () {
     let documentWrapperElementId = this._documentWrapperElementId;
     if ($q.isNullOrWhiteSpace(documentWrapperElementId)) {
       documentWrapperElementId = this.generateDocumentWrapperId();
@@ -89,7 +89,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     return documentWrapperElementId;
   },
 
-  generateDocumentUrl: function (options) {
+  generateDocumentUrl (options) {
     const entityIDs = this._isMultipleEntities ? $o.getEntityIDsFromEntities(this._entities) : [this._entityId];
     const extraOptions = {
       additionalUrlParameters: this._additionalUrlParameters,
@@ -116,22 +116,22 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     this._documentPostParams = params;
   },
 
-  htmlLoadingMethod: function () {
+  htmlLoadingMethod () {
     return this._isMultipleEntities || this._isCustomAction ? 'POST' : 'GET';
   },
 
-  showErrorMessageInDocumentWrapper: function (status) {
+  showErrorMessageInDocumentWrapper (status) {
     const $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.html($q.generateErrorMessageText());
   },
 
-  removeDocumentWrapper: function (callback) {
+  removeDocumentWrapper (callback) {
     const $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.empty().remove();
     $q.callFunction(callback);
   },
 
-  createPanels: function () {
+  createPanels () {
     const action = this.getCurrentAction();
     const breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(`breadCrumbs_${this._tabId}`, {
       documentHost: this,
@@ -176,7 +176,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     this._viewToolbarComponent = viewToolbarComponent;
   },
 
-  showPanels: function (callback) {
+  showPanels (callback) {
     const $breadCrumbsContainer = $(this._editingArea.get_breadCrumbsContainerElement());
     $breadCrumbsContainer.find('> *.breadCrumbs:visible').hide(0);
     this._breadCrumbsComponent.showBreadCrumbs();
@@ -203,7 +203,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  hidePanels: function () {
+  hidePanels () {
     this._breadCrumbsComponent.hideBreadCrumbs();
     this._actionToolbarComponent.hideToolbar();
     this._viewToolbarComponent.hideToolbar();
@@ -216,7 +216,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  createSearchBlock: function () {
+  createSearchBlock () {
     const searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`searchBlock_${this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
       searchBlockContainerElementId: this._editingArea.get_searchBlockContainerElementId(),
       tabId: this._tabId,
@@ -230,7 +230,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     this._searchBlockComponent = searchBlockComponent;
   },
 
-  createContextBlock: function () {
+  createContextBlock () {
     const contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(`contextBlock_${this._tabId}`, this._entityTypeCode, this._parentEntityId, this, {
       searchBlockContainerElementId: this._editingArea.get_contextBlockContainerElementId(),
       tabId: this._tabId,
@@ -245,7 +245,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     this._contextBlockComponent = contextBlockComponent;
   },
 
-  destroySearchBlock: function () {
+  destroySearchBlock () {
     const searchBlockComponent = this._searchBlockComponent;
     if (searchBlockComponent) {
       searchBlockComponent.hideSearchBlock();
@@ -259,7 +259,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  destroyContextBlock: function () {
+  destroyContextBlock () {
     const contextBlockComponent = this._contextBlockComponent;
     if (contextBlockComponent) {
       contextBlockComponent.hideSearchBlock();
@@ -272,7 +272,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  showLoadingLayer: function () {
+  showLoadingLayer () {
     if (this._editingArea) {
       if (this.isSelected()) {
         this._editingArea.showAjaxLoadingLayer();
@@ -280,7 +280,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  hideLoadingLayer: function () {
+  hideLoadingLayer () {
     if (this._editingArea) {
       if (this.isSelected()) {
         this._editingArea.hideAjaxLoadingLayer();
@@ -288,7 +288,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  destroyPanels: function () {
+  destroyPanels () {
     if (this._breadCrumbsComponent) {
       this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
       this._breadCrumbsComponent.detachObserver(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
@@ -324,20 +324,20 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  isSelected: function () {
+  isSelected () {
     return this._id == this._editingArea.getSelectedDocumentId();
   },
 
-  updateTitle: function (eventArgs) {
+  updateTitle (eventArgs) {
     this._editingArea.updateTab(this.get_tabId(), eventArgs);
   },
 
-  onDocumentError: function () {
+  onDocumentError () {
     this._isCloseForced = false;
     this._editingArea.onDocumentError(this._id);
   },
 
-  onChangeContent: function (eventType, sender, eventArgs) {
+  onChangeContent (eventType, sender, eventArgs) {
     const tabId = this._editingArea.getExistingTabId(eventArgs);
     if (tabId != 0) {
       const selectedDocument = this._editingArea.selectDocument(tabId);
@@ -349,28 +349,28 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  saveSelectionContext: function (eventArgs) {
+  saveSelectionContext (eventArgs) {
     this._selectedParentEntityId = eventArgs.get_parentEntityId();
   },
 
-  onActionExecuting: function (eventArgs) {
+  onActionExecuting (eventArgs) {
     this._copyCurrentContextToEventArgs(eventArgs);
     return this._editingArea.onActionExecuting(eventArgs);
   },
 
-  onEntityReaded: function (eventArgs) {
+  onEntityReaded (eventArgs) {
     return this._editingArea.onEntityReaded(eventArgs);
   },
 
-  onDocumentChanging: function (isLocal) {
+  onDocumentChanging (isLocal) {
     this._editingArea.onDocumentLoading(this._id, isLocal);
   },
 
-  onDocumentChanged: function (isLocal) {
+  onDocumentChanged (isLocal) {
     this._editingArea.onDocumentLoaded(this._id, isLocal);
   },
 
-  onNeedUp: function (eventArgs) {
+  onNeedUp (eventArgs) {
     let tabId = 0;
     if (this._callerContext && this._callerContext.eventArgs) {
       tabId = this._editingArea.getExistingTabId(this._callerContext.eventArgs);
@@ -399,7 +399,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  saveAndCloseRequest: function (eventArgs) {
+  saveAndCloseRequest (eventArgs) {
     Sys.Debug.trace(`saveAndCloseRequest: ${eventArgs._tabId}`);
     const context = this.get_documentContext();
     if (context && context._options.saveAndCloseActionCode) {
@@ -411,7 +411,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  onSaveAndClose: function () {
+  onSaveAndClose () {
     if (this._isCloseForced) {
       this._isCloseForced = false;
       const context = this.get_documentContext();
@@ -421,11 +421,11 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  resetSelectedEntities: function () {
+  resetSelectedEntities () {
     $q.clearArray(this._selectedEntities);
   },
 
-  _onLibraryResized: function () {
+  _onLibraryResized () {
     let $docContainer = $(this._editingArea.get_documentsContainerElement());
     let $docWrp = $(this._documentWrapperElement);
     $docWrp.height($docContainer.height());
@@ -433,15 +433,15 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     $docWrp = null;
   },
 
-  _onExternalCallerContextsUnbinded: function (unbindingEventArgs) {
+  _onExternalCallerContextsUnbinded (unbindingEventArgs) {
     this._editingArea.hostExternalCallerContextsUnbinded(unbindingEventArgs);
   },
 
-  _isWindow: function () {
+  _isWindow () {
     return false;
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendEditingDocument.callBaseMethod(this, 'dispose');
 
     this.destroyPanels();

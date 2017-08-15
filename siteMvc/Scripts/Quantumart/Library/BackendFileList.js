@@ -61,25 +61,25 @@ Quantumart.QP8.BackendFileList.prototype = {
   _listViewComponent: null,
   _zIndex: 0,
 
-  _onAllSelectorClicked: function () {
+  _onAllSelectorClicked () {
     this._listViewComponent.selectAll(jQuery(this._allSelectorElement).is(':checked'));
   },
 
-  _onPageNumberChanged: function (eventType, sender, args) {
+  _onPageNumberChanged (eventType, sender, args) {
     this.rebind({ pageNumber: args.get_PageNumber() });
   },
 
-  _onListViewSelected: function (eventType, sender, args) {
+  _onListViewSelected (eventType, sender, args) {
     $(this._allSelectorElement).prop('checked', this._listViewComponent.isAllSelected());
     this._raiseMultipleEventArgsEvent(window.EVENT_TYPE_FILE_LIST_SELECTED, args);
   },
 
-  _onContextMenuItemClicked: function (eventType, sender, args) {
+  _onContextMenuItemClicked (eventType, sender, args) {
     args.set_parentEntityId(this._currentDataQueryOptions.folderId);
     this.notify(eventType, args);
   },
 
-  _loadData: function () {
+  _loadData () {
     let url = '';
     if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
       url = `${window.CONTROLLER_URL_SITE}_FileList`;
@@ -119,7 +119,7 @@ Quantumart.QP8.BackendFileList.prototype = {
     return result;
   },
 
-  _raiseMultipleEventArgsEvent: function (eventType, args) {
+  _raiseMultipleEventArgsEvent (eventType, args) {
     const action = $a.getBackendActionByCode(this._actionCode);
     if (action != null) {
       const eventArgs = $a.getEventArgsFromAction(action);
@@ -134,7 +134,7 @@ Quantumart.QP8.BackendFileList.prototype = {
     }
   },
 
-  initialize: function () {
+  initialize () {
     let $listElement = jQuery(this._listElementId);
     this._listElement = $listElement.get(0);
 
@@ -182,7 +182,7 @@ Quantumart.QP8.BackendFileList.prototype = {
     $listElement = null;
   },
 
-  rebind: function (options) {
+  rebind (options) {
     if ($q.isObject(options)) {
       if (!$q.isNull(options.pageSize)) {
         this._currentDataQueryOptions.pageSize = $q.toInt(options.pageSize);
@@ -223,7 +223,7 @@ Quantumart.QP8.BackendFileList.prototype = {
     this._raiseMultipleEventArgsEvent(window.EVENT_TYPE_FILE_LIST_DATA_BOUND);
   },
 
-  dispose: function () {
+  dispose () {
     if (this._pagerComponent) {
       this._pagerComponent.detachObserver(window.EVENT_TYPE_PAGE_NUMBER_CHANGED);
       this._pagerComponent.dispose();
@@ -251,11 +251,11 @@ Quantumart.QP8.BackendFileList.prototype = {
 Quantumart.QP8.BackendFileList.registerClass('Quantumart.QP8.BackendFileList', Quantumart.QP8.Observable);
 Quantumart.QP8.IBackendFileListView = function () { };
 Quantumart.QP8.IBackendFileListView.prototype = {
-  initialize: function () { },
-  redraw: function (data, options) { },
-  selectAll: function (value) { },
-  isAllSelected: function () { },
-  dispose: function () { }
+  initialize () { },
+  redraw (data, options) { },
+  selectAll (value) { },
+  isAllSelected () { },
+  dispose () { }
 };
 
 Quantumart.QP8.IBackendFileListView.registerInterface('Quantumart.QP8.IBackendFileListView');

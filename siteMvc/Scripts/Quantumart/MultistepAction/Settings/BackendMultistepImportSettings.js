@@ -25,7 +25,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   _fileNameId: 'FileName',
   _noHeadersId: 'NoHeaders',
 
-  _initFileUploader: function (context, uploadPath) {
+  _initFileUploader (context, uploadPath) {
     this._fileWrapperElementId = `${context._popupWindowId}_upload_pl_cont_import`;
     this._fileWrapperElement = document.getElementById(this._fileWrapperElementId);
     $(this._fileWrapperElement).closest('.documentWrapper').addClass('ImportWrapper');
@@ -56,7 +56,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       ));
   },
 
-  _onFileUploadedHandler: function (eventType, sender, eventArgs) {
+  _onFileUploadedHandler (eventType, sender, eventArgs) {
     this.fileName = eventArgs.get_fileNames()[0];
 
     $(`#${this.options._popupWindowId}_${this._fileNameId}`).val(this.fileName);
@@ -66,7 +66,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     this._loadFileFields(this.options);
   },
 
-  _initValidation: function () {
+  _initValidation () {
     const that = this;
     const id = this.options._popupWindowId;
 
@@ -142,7 +142,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     });
   },
 
-  _updateMappingOptions: function () {
+  _updateMappingOptions () {
     const that = this;
     let $select, $fieldDescription;
 
@@ -169,11 +169,11 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     }
   },
 
-  _validate: function () {
+  _validate () {
     this._$importAction.trigger('change');
   },
 
-  _disposeValidation: function () {
+  _disposeValidation () {
     if (this._$fieldGroup) {
       this._$fieldGroup.off('change');
     }
@@ -195,7 +195,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     }
   },
 
-  _validateSelect: function (predicate) {
+  _validateSelect (predicate) {
     return function validateSelect() {
       if (predicate($(this)) && +$(this).val() === -1) {
         $(this).addClass('input-validation-error');
@@ -205,7 +205,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     };
   },
 
-  _showValidationSigns: function (fields, predicate) {
+  _showValidationSigns (fields, predicate) {
     fields.each(function each() {
       let star = $(this);
       if (!star.hasClass('star')) {
@@ -220,7 +220,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     });
   },
 
-  _addMessageLine: function (message) {
+  _addMessageLine (message) {
     let result = message;
     if (message.length > 0) {
       result = `${message}\n`;
@@ -229,7 +229,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     return result;
   },
 
-  addButtons: function (dataItems) {
+  addButtons (dataItems) {
     const importButton = {
       Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
       Value: this.IMPORT_BUTTON,
@@ -242,12 +242,12 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     return dataItems.concat(importButton);
   },
 
-  initActions: function (object, options) {
+  initActions (object, options) {
     this._initFileUploader(object, options.UploadPath);
     this._initValidation();
   },
 
-  validate: function () {
+  validate () {
     let content;
     const that = this;
     let errorMessage = '';
@@ -286,7 +286,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     return errorMessage;
   },
 
-  _loadFileFields: function (options) {
+  _loadFileFields (options) {
     const documentId = `#${options._popupWindowComponent._documentWrapperElementId} `;
     const delim = $(`${documentId}input[name="Delimiter"]:radio:checked`).val();
     const that = this;
@@ -306,7 +306,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     }
   },
 
-  loadFromFile: function (options) {
+  loadFromFile (options) {
     const that = this;
     const paramsSelector = `#${
       options._popupWindowComponent._documentWrapperElementId
@@ -328,7 +328,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       url: getFieldsUrl,
       data: $(paramsSelector).serialize(),
       type: 'POST',
-      success: function (fieldsFromFile) {
+      success (fieldsFromFile) {
         if (fieldsFromFile.Type === 'Error') {
           $(`#${that.options._popupWindowId}_mapping_fields_selects`).hide();
           $q.alert(fieldsFromFile.Text);
@@ -340,7 +340,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     });
   },
 
-  _fillOptionsFromFile: function (fields) {
+  _fillOptionsFromFile (fields) {
     const fieldsClass = ' .dropDownList.dataList.fields';
     const documentId = `#${this.options._popupWindowComponent._documentWrapperElementId} `;
     $.each($(documentId + fieldsClass), (index, item) => {
@@ -363,7 +363,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     this._$fieldGroup.show();
   },
 
-  dispose: function () {
+  dispose () {
     this._disposeValidation();
     if (this._uploaderComponent) {
       this._uploaderComponent.detachObserver(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED);

@@ -40,13 +40,13 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
   DESELECT_ALL_BUTTON_CODE: 'deselect_all',
   REFRESH_BUTTON_CODE: 'refresh',
 
-  _onPopupWindowToolbarButtonClicked: function (eventType, sender, args) {
+  _onPopupWindowToolbarButtonClicked (eventType, sender, args) {
     if (this._popupWindowComponent) {
       const value = args.get_value();
       if (value == this.SELECT_BUTTON_CODE) {
         const selectedEntities = this._popupWindowComponent.get_selectedEntities();
         const context = this._popupWindowComponent.get_selectionContext();
-        this.notify(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, { entities: selectedEntities, context: context, entityTypeCode: this._entityTypeCode, parentEntityId: this._parentEntityId });
+        this.notify(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, { entities: selectedEntities, context, entityTypeCode: this._entityTypeCode, parentEntityId: this._parentEntityId });
       } else if (value == this.SELECT_ALL_BUTTON_CODE) {
         this._popupWindowComponent.selectAllEntities();
       } else if (value == this.DESELECT_ALL_BUTTON_CODE) {
@@ -57,14 +57,14 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
     }
   },
 
-  _onClosed: function (eventType, sender, args) {
+  _onClosed (eventType, sender, args) {
     this._popupWindowComponent = null;
     let eventArgs = new Quantumart.QP8.BackendEventArgs();
     this.notify(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, eventArgs);
     eventArgs = null;
   },
 
-  _createToolbar: function () {
+  _createToolbar () {
     const toolbar = new Quantumart.QP8.BackendToolbar();
     toolbar.set_toolbarElementId(`popupWindowToolbar_${this._popupWindowId}`);
     toolbar.initialize();
@@ -73,7 +73,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
     return toolbar;
   },
 
-  _getToolbarItems: function () {
+  _getToolbarItems () {
     const dataItems = [];
 
     const selectButton = {
@@ -124,21 +124,21 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
     return dataItems;
   },
 
-  openWindow: function () {
+  openWindow () {
     if (this._popupWindowComponent) {
       this._popupWindowComponent.openWindow();
     }
   },
 
-  closeWindow: function () {
+  closeWindow () {
     if (this._popupWindowComponent) {
       this._popupWindowComponent.closeWindow();
     }
   },
-  _popupWindowClosedHandler: function () {
+  _popupWindowClosedHandler () {
     this.dispose();
   },
-  dispose: function () {
+  dispose () {
     if (this._popupWindowToolbarComponent) {
       this._popupWindowToolbarComponent.detachObserver(window.EVENT_TYPE_TOOLBAR_BUTTON_CLICKED);
       this._popupWindowToolbarComponent.dispose();

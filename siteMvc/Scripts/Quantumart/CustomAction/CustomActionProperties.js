@@ -54,8 +54,8 @@ Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId,
   setFilter();
 
   return {
-    updateActionList: updateActionList,
-    dispose: function () {
+    updateActionList,
+    dispose () {
       $entityTypesElement.unbind();
     }
   };
@@ -80,7 +80,7 @@ Quantumart.QP8.CustomActionIsInterfaceSelectorObserver = function (isInterfaceEl
 
   return {
     show: onIsInterfaceClicked,
-    dispose: function () {
+    dispose () {
       $isInterface.unbind();
     }
   };

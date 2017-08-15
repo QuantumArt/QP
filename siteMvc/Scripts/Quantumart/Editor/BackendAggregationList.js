@@ -24,7 +24,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
   _additionalNames: null,
   _viewModel: null,
 
-  initialize: function () {
+  initialize () {
     const aggrList = this._componentElem;
     $(aggrList).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT, this);
     const result = this._resultElem;
@@ -55,11 +55,11 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this._componentElem.data('component', this);
   },
 
-  get_items: function () {
+  get_items () {
     return this._items();
   },
 
-  set_items: function (items) {
+  set_items (items) {
     if (this._items()) {
       this._items.removeAll();
       if (!$q.isNullOrEmpty(items) && $q.isArray(items)) {
@@ -71,7 +71,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     }
   },
 
-  addItem: function () {
+  addItem () {
     const item = {};
     for (const i in this._fields) {
       item[this._fields[i]] = '';
@@ -82,26 +82,26 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this.checkHeaders();
   },
 
-  removeItem: function (item) {
+  removeItem (item) {
     this._items.remove(item);
     this._setAsChanged();
     this.checkHeaders();
   },
 
-  _onItemChanged: function () {
+  _onItemChanged () {
     this._setAsChanged();
     return true;
   },
 
-  _setAsChanged: function () {
+  _setAsChanged () {
     let $field = $(this._resultElem);
     $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
     const fieldName = $(this._componentElem).data('field_name');
-    $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: fieldName, value: this._items(), contentFieldName: $field.closest('dl').data('field_name') });
+    $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName, value: this._items(), contentFieldName: $field.closest('dl').data('field_name') });
     $field = null;
   },
 
-  checkHeaders: function () {
+  checkHeaders () {
     if (this._tableBody.children('tr').size() == 0) {
       this._tableHeader.hide();
     } else {
@@ -109,12 +109,12 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     }
   },
 
-  saveAggregationListData: function () {
+  saveAggregationListData () {
     const aggrList = this._componentElem;
     this._resultElem.val(JSON.stringify(aggrList.data('aggregation_list_data')));
   },
 
-  destroyAggregationList: function () {
+  destroyAggregationList () {
     const containerElem = this._containerElem;
     ko.cleanNode(containerElem.get(0));
 

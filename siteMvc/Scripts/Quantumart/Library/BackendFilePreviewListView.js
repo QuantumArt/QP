@@ -3,7 +3,7 @@ Quantumart.QP8.BackendFilePreviewListView = function (fileListContentElement, co
 };
 
 Quantumart.QP8.BackendFilePreviewListView.prototype = {
-  initialize: function () {
+  initialize () {
     const $fileListContentElement = jQuery(this._fileListContentElement);
     $fileListContentElement.html('<div class="fileListPreviewContainer"></div>');
 
@@ -25,7 +25,7 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
     }
   },
 
-  redraw: function (data, options) {
+  redraw (data, options) {
     let $fileListContentElement = jQuery(this._fileListContentElement);
     let $fileListPreviewContainer = $fileListContentElement.find('.fileListPreviewContainer');
     let html = new $.telerik.stringBuilder();
@@ -55,12 +55,12 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
     this._raiseSelectEvent();
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendFilePreviewListView.callBaseMethod(this, 'dispose');
   },
 
   shortNameLength: 15,
-  _getThumbnailLink: function (item, options) {
+  _getThumbnailLink (item, options) {
     if (item.FileType == Quantumart.QP8.Enums.LibraryFileType.Image) {
       let url = '';
 

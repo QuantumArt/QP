@@ -20,7 +20,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 
   shortNameLength: 20,
 
-  initialize: function () {
+  initialize () {
     const $fileListContentElement = $(this._fileListContentElement);
     $fileListContentElement.html('<div class="fileListNameContainer"></div>');
 
@@ -43,7 +43,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     }
   },
 
-  redraw: function (data, options) {
+  redraw (data, options) {
     const $fileListContentElement = $(this._fileListContentElement);
     const $fileListNameContainer = $fileListContentElement.find('.fileListNameContainer');
 
@@ -76,7 +76,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     this._raiseSelectEvent();
   },
 
-  selectAll: function (value) {
+  selectAll (value) {
     const $fileListContentElement = $(this._fileListContentElement);
     $fileListContentElement.find('.fileItem input:checkbox').prop('checked', value);
     $fileListContentElement.find('.fileItem').addClass(this.SELECTED_CLASS);
@@ -84,12 +84,12 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     this._raiseSelectEvent();
   },
 
-  isAllSelected: function () {
+  isAllSelected () {
     const $fileListContentElement = $(this._fileListContentElement);
     return $fileListContentElement.find('.fileItem input::checkbox:not(:checked)').size() == 0 && $fileListContentElement.find('.fileItem').size() > 0;
   },
 
-  dispose: function () {
+  dispose () {
     let $fileListContentElement = $(this._fileListContentElement);
     $fileListContentElement.undelegate('.fileItem input:checkbox', 'click');
     $fileListContentElement.undelegate('.fileItem', 'click');
@@ -107,7 +107,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     this._contextMenuComponent = null;
   },
 
-  _raiseSelectEvent: function () {
+  _raiseSelectEvent () {
     let eventArgs = new Quantumart.QP8.BackendEventArgs();
     eventArgs.set_entities(this._getSelectedEntities());
     eventArgs.set_isMultipleEntities(true);
@@ -117,7 +117,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     eventArgs = null;
   },
 
-  _getSelectedEntities: function () {
+  _getSelectedEntities () {
     const selectedEntities = [];
     let $fileListContentElement = $(this._fileListContentElement);
 
@@ -132,7 +132,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     return selectedEntities;
   },
 
-  _onFileCheckBoxClickedHandler: function (event) {
+  _onFileCheckBoxClickedHandler (event) {
     event.stopPropagation();
     let $chb = $(event.currentTarget);
     if ($chb.is(':checked')) {
@@ -144,7 +144,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     $chb = null;
   },
 
-  _onFileContainerClickedHandler: function (event) {
+  _onFileContainerClickedHandler (event) {
     const $item = $(event.currentTarget);
     const $fileListContentElement = $(this._fileListContentElement);
 
@@ -158,7 +158,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     this._raiseSelectEvent();
   },
 
-  _onContextMenuHandler: function (e) {
+  _onContextMenuHandler (e) {
     const $element = $(e.currentTarget);
     if (this._contextMenuComponent) {
       this._contextMenuComponent.showMenu(e, $element.get(0));
@@ -168,14 +168,14 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     e.preventDefault();
   },
 
-  _onNodeContextMenuItemClickingHandler: function (eventType, sender, args) {
+  _onNodeContextMenuItemClickingHandler (eventType, sender, args) {
     const $menuItem = $(args.get_menuItem());
     if (!$q.isNullOrEmpty($menuItem)) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
   },
 
-  _onNodeContextMenuHiddenHandler: function (eventType, sender, args) {
+  _onNodeContextMenuHiddenHandler (eventType, sender, args) {
     if (!$q.isNullOrEmpty(this._contextMenuActionCode)) {
       const $element = $(this._currentContextMenuSelectedElement);
       const eventArgs = new Quantumart.QP8.BackendEventArgs();

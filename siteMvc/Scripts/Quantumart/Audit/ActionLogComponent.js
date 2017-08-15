@@ -18,7 +18,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   _entityTypes: null,
   _tiles: {},
 
-  initialize: function () {
+  initialize () {
     let $grid = $(`#${this._gridElementId}`);
     let gridComponent = $grid.data('tGrid');
     let $filter = $(`#${this._filterElementId}`);
@@ -43,13 +43,13 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     $filter = null;
   },
 
-  _onApplyFilter: function () {
+  _onApplyFilter () {
     $(`#${this._gridElementId}`)
       .data('tGrid')
       .ajaxRequest();
   },
 
-  _onClearFilter: function () {
+  _onClearFilter () {
     let $filter = $(`#${this._filterElementId}`);
     this._destroyAllTiles();
     $('.alSearchButton', this.$filter).trigger('click');
@@ -57,14 +57,14 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     $filter = null;
   },
 
-  _onDataBinding: function (e) {
+  _onDataBinding (e) {
     const filterData = this.get_filterData();
     if (!jQuery.isEmptyObject(filterData)) {
       e.data = Object.assign({}, e.data, { searchQuery: JSON.stringify(filterData) });
     }
   },
 
-  get_filterData: function () {
+  get_filterData () {
     const filterData = {};
     for (const tileType in this._tiles) {
       if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
@@ -74,7 +74,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     return filterData;
   },
 
-  _onFilterSelected: function () {
+  _onFilterSelected () {
     let $selected = this.$filterCombo.find('option:selected');
     if ($selected.val()) {
       this._createTile({ value: $selected.val(), text: $selected.text() });
@@ -83,11 +83,11 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     $selected = null;
   },
 
-  _onTileClose: function (eventType, sender, args) {
+  _onTileClose (eventType, sender, args) {
     this._destroyTile(args.type);
   },
 
-  _createTile: function (options) {
+  _createTile (options) {
     const that = this;
     if (options && options.value && !Object.prototype.hasOwnProperty.call(this._tiles, options.value)) {
       const ft = +options.value || 0;
@@ -111,7 +111,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
                 return { w: 350, h: 125 };
             }
           }()),
-          createFilter: function ($filterContainer) {
+          createFilter ($filterContainer) {
             switch (ft) {
               case $e.ActionLogFilteredColumns.EntityStringId:
               case $e.ActionLogFilteredColumns.EntityTitle:
@@ -131,7 +131,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
                 return new Quantumart.QP8.ActionLogFilterBase($filterContainer);
             }
           },
-          deriveFilterData: function (tile, filterData) {
+          deriveFilterData (tile, filterData) {
             const v = tile.get_value();
             if (v) {
               switch (tile.get_options().type) {
@@ -176,7 +176,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     }
   },
 
-  _destroyTile: function (tileType) {
+  _destroyTile (tileType) {
     if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
       let tileComponent = this._tiles[tileType];
       tileComponent.detachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE);
@@ -186,13 +186,13 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     }
   },
 
-  _destroyAllTiles: function () {
+  _destroyAllTiles () {
     for (const tileType in this._tiles) {
       this._destroyTile(tileType);
     }
   },
 
-  dispose: function () {
+  dispose () {
     this._destroyAllTiles();
 
     let $grid = $(`#${this._gridElementId}`);

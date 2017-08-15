@@ -10,13 +10,13 @@
       enabled: true,
       imageResolution: 640 * 480,
       skipMimeValidation: false,
-      getResolutionErrorSettings: function (imgRes) {
+      getResolutionErrorSettings (imgRes) {
         return {
           code: PL.IMAGE_DIMENSIONS_ERROR,
           message: `Resolution exceeds the allowed limit of ${imgRes} pixels.`
         };
       },
-      getNotAnImgErrorSettings: function () {
+      getNotAnImgErrorSettings () {
         return {
           code: PL.IMAGE_FORMAT_ERROR,
           message: `Checking file mime type failed for file: "${file.name}".`
@@ -31,7 +31,7 @@
       }
 
       if (!result) {
-        this.trigger('Error', Object.assign({ file: file }, errorSettings));
+        this.trigger('Error', Object.assign({ file }, errorSettings));
       }
 
       cb(result);

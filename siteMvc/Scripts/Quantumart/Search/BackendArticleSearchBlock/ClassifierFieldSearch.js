@@ -6,7 +6,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (conta
 
 Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
   _contentElement: null,
-  initialize: function () {
+  initialize () {
     let serverContent;
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}ContentsListForClassifier`, {
       elementIdPrefix: this._elementIdPrefix,
@@ -44,19 +44,19 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     }
   },
 
-  get_searchQuery: function () {
+  get_searchQuery () {
     const contentObj = new Array($(this._contentElement).val());
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(this._searchType, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, contentObj, this.get_IsNull(), false);
   },
 
-  get_blockState: function () {
+  get_blockState () {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(this._searchType, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID, {
       isNull: this.get_IsNull(),
       contentID: $(this._contentElement).val()
     });
   },
 
-  get_filterDetails: function () {
+  get_filterDetails () {
     const stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
@@ -67,7 +67,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
 
   },
 
-  restore_blockState: function (state) {
+  restore_blockState (state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -84,7 +84,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChangeHandler: null,
-  get_IsNull: function () {
+  get_IsNull () {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
@@ -92,7 +92,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
 
   },
 
-  _onIsNullCheckBoxChange: function () {
+  _onIsNullCheckBoxChange () {
     if (this.get_IsNull()) {
       $(this._contentElement).prop('disabled', true);
     } else {
@@ -100,7 +100,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     }
   },
 
-  dispose: function () {
+  dispose () {
     if (this._isNullCheckBoxElement) {
       const $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);

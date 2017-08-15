@@ -8,23 +8,23 @@ Quantumart.QP8.BackendEntityCheckBoxList = function (listGroupCode, listElementI
 
 Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
-  get_maxListWidth: function () {
+  get_maxListWidth () {
     return this._maxListWidth;
   },
 
-  set_maxListWidth: function (value) {
+  set_maxListWidth (value) {
     this._maxListWidth = value;
   },
 
-  get_maxListHeight: function () {
+  get_maxListHeight () {
     return this._maxListHeight;
   },
 
-  set_maxListHeight: function (value) {
+  set_maxListHeight (value) {
     this._maxListHeight = value;
   },
 
-  initialize: function () {
+  initialize () {
     Quantumart.QP8.BackendEntityCheckBoxList.callBaseMethod(this, 'initialize');
 
     this._fixListOverflow();
@@ -34,29 +34,29 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     this._attachListItemEventHandlers();
   },
 
-  _attachListItemEventHandlers: function () {
+  _attachListItemEventHandlers () {
     const $list = $(this._listElement);
     $list.delegate('LI INPUT:checkbox', 'change', $.proxy(this._onSelectedItemChangeHandler, this));
     $list.delegate('LI A', 'click', $.proxy(this._onItemClickHandler, this));
     $list.delegate('LI A', 'mouseup', $.proxy(this._onItemClickHandler, this));
   },
 
-  _detachListItemEventHandlers: function () {
+  _detachListItemEventHandlers () {
     const $list = $(this._listElement);
     $list.undelegate('LI INPUT:checkbox', 'change');
     $list.undelegate('LI A', 'click');
     $list.undelegate('LI A', 'mouseup');
   },
 
-  getListItems: function () {
+  getListItems () {
     return $(this._listElement).find('LI');
   },
 
-  getSelectedListItems: function () {
+  getSelectedListItems () {
     return $(this._listElement).find('LI:has(INPUT:checkbox:checked)');
   },
 
-  selectEntities: function (entityIDs) {
+  selectEntities (entityIDs) {
     let isChanged = false;
     this.deselectAllListItems();
     if (!$q.isNullOrEmpty(entityIDs) && $q.isArray(entityIDs)) {
@@ -73,16 +73,16 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     }
   },
 
-  _setAsChanged: function (refreshOnly) {
+  _setAsChanged (refreshOnly) {
     const $list = $(this._listElement);
     $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
     const operation = refreshOnly ? 'addClass' : 'removeClass';
     $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
     const value = this.getSelectedEntityIDs();
-    $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value: value, contentFieldName: $list.closest('dl').data('field_name') });
+    $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value, contentFieldName: $list.closest('dl').data('field_name') });
   },
 
-  getSelectedEntities: function () {
+  getSelectedEntities () {
     const entities = [];
     const $selectedListItems = this.getSelectedListItems();
 
@@ -102,7 +102,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     return entities;
   },
 
-  _refreshListInner: function (dataItems, refreshOnly) {
+  _refreshListInner (dataItems, refreshOnly) {
     const newSelectedIDs = $.map(
       $.grep(dataItems, di => di.Selected === true),
       di => $q.toInt(di.Value)
@@ -132,22 +132,22 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     }
   },
 
-  selectAllListItems: function () {
+  selectAllListItems () {
     this._changeAllListItemsSelection(true);
   },
 
-  deselectAllListItems: function () {
+  deselectAllListItems () {
     this._changeAllListItemsSelection(false);
   },
 
-  _changeAllListItemsSelection: function (isSelect) {
+  _changeAllListItemsSelection (isSelect) {
     this.getListItems()
       .find('INPUT:checkbox')
       .prop('checked', isSelect);
     this._setAsChanged();
   },
 
-  enableList: function () {
+  enableList () {
     $(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
 
     this.getListItems().find('INPUT:checkbox').prop('disabled', false);
@@ -156,7 +156,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     this._enableAllToolbarButtons();
   },
 
-  disableList: function () {
+  disableList () {
     $(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
 
     this.getListItems().find('INPUT:checkbox').prop('disabled', true);
@@ -165,7 +165,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     this._disableAllToolbarButtons();
   },
 
-  makeReadonly: function () {
+  makeReadonly () {
     this.disableList();
     const $checked = this.getListItems().find('INPUT:checkbox:checked');
     $checked.each((i, cb) => {
@@ -174,7 +174,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     });
   },
 
-  _getCheckBoxListItemHtml: function (html, dataItem, dataItemIndex, saveChanges, listState) {
+  _getCheckBoxListItemHtml (html, dataItem, dataItemIndex, saveChanges, listState) {
     const itemElementName = this._listItemName;
     const itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
     const itemValue = dataItem.Value;
@@ -196,21 +196,21 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
       .cat('</li>');
   },
 
-  isListChanged: function () {
+  isListChanged () {
     return $(this._listElement).hasClass(window.CHANGED_FIELD_CLASS_NAME);
   },
 
-  _checkAllowShowingToolbar: function () {
+  _checkAllowShowingToolbar () {
     return this._addNewActionCode != window.ACTION_CODE_NONE;
   },
 
-  _onSelectedItemChangeHandler: function () {
+  _onSelectedItemChangeHandler () {
     this._syncGroupCheckbox();
     this._syncCountSpan();
     this._setAsChanged();
   },
 
-  dispose: function () {
+  dispose () {
     this._stopDeferredOperations = true;
     this._detachListItemEventHandlers();
     Quantumart.QP8.BackendEntityCheckBoxList.callBaseMethod(this, 'dispose');

@@ -143,7 +143,7 @@
   };
 
   CKEDITOR.plugins.add(settings.pluginName, {
-    init: function (editor) {
+    init (editor) {
       if (editor.contextMenu) {
         editor.addMenuGroup('qp8', 10);
         editor.addMenuItem(settings.pluginName, {
@@ -158,7 +158,7 @@
       }
 
       editor.addCommand(settings.pluginName, {
-        exec: function (execEditor) {
+        exec (execEditor) {
           let html, proccessedHtml;
           if (execEditor.mode === 'source' && execEditor.textarea) {
             html = execEditor.textarea.getValue();

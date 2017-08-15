@@ -4,7 +4,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (conta
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
-  initialize: function () {
+  initialize () {
     const queryDropDownListID = `${this._elementIdPrefix}_queryDropDownList`;
     const isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
     let serverContent;
@@ -44,13 +44,13 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     }
   },
 
-  get_searchQuery: function () {
+  get_searchQuery () {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
       this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
       $(this._queryDropDownListElement).val());
   },
 
-  get_blockState: function () {
+  get_blockState () {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
         isNull: this.get_IsNull(),
@@ -59,7 +59,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
       });
   },
 
-  get_filterDetails: function () {
+  get_filterDetails () {
     const stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
@@ -70,7 +70,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
 
   },
 
-  restore_blockState: function (state) {
+  restore_blockState (state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -83,11 +83,11 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     }
   },
 
-  _onIsNullCheckBoxChange: function () {
+  _onIsNullCheckBoxChange () {
     $(this._queryDropDownListElement).prop('disabled', this.get_IsNull());
   },
 
-  dispose: function () {
+  dispose () {
     if (this._isNullCheckBoxElement) {
       let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
@@ -102,7 +102,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChangeHandler: null,
-  get_IsNull: function () {
+  get_IsNull () {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }

@@ -7,7 +7,7 @@ Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actio
     $q.getJsonFromUrl(
       'GET',
       `${window.CONTROLLER_URL_BACKEND_ACTION_TYPE}/GetCodeByActionCode`,
-      { actionCode: actionCode },
+      { actionCode },
       false,
       false,
       (data, textStatus, jqXHR) => {

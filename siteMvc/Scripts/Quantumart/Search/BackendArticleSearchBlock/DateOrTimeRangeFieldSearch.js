@@ -9,7 +9,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = {
-  initialize: function () {
+  initialize () {
     let serverContent;
     let url = window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK;
     switch (this._rangeType) {
@@ -77,7 +77,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
     }
   },
 
-  get_searchQuery: function () {
+  get_searchQuery () {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(this._rangeType, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
       this.get_IsNull(),
       $c.getDateTimePickerValue(this._dateFromElement),
@@ -85,7 +85,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
       this._isByValue);
   },
 
-  get_blockState: function () {
+  get_blockState () {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(this._rangeType, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
         isNull: this.get_IsNull(),
@@ -95,7 +95,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
       });
   },
 
-  get_filterDetails: function () {
+  get_filterDetails () {
     const stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
@@ -106,7 +106,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 
   },
 
-  restore_blockState: function (state) {
+  restore_blockState (state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -132,7 +132,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
     }
   },
 
-  _onIsNullCheckBoxChange: function () {
+  _onIsNullCheckBoxChange () {
     // дизейблим текст бокс если пользователь выбрал IS NULL
     if (this.get_IsNull()) {
       $c.disableDateTimePicker(this._dateFromElement);
@@ -145,7 +145,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
     }
   },
 
-  _onByValueSelectorChanged: function (e) {
+  _onByValueSelectorChanged (e) {
     this._isByValue = $(e.currentTarget).val() == 0;
 
     if (this._isByValue == true) {
@@ -161,11 +161,11 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
     }
   },
 
-  _onLoad: function () {
+  _onLoad () {
     $c.initAllDateTimePickers(this._containerElement);
   },
 
-  dispose: function () {
+  dispose () {
     if (this._isNullCheckBoxElement) {
       let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
@@ -190,7 +190,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
   },
 
   _onIsNullCheckBoxChangeHandler: null,
-  get_IsNull: function () {
+  get_IsNull () {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }

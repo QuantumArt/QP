@@ -86,26 +86,26 @@ Quantumart.QP8.BackendLibrary.prototype = {
   LIBRARY_PHYSICAL_PATH_CLASS_NAME: 'l-physical-path',
   LIBRARY_VIRTUAL_PATH_CLASS_NAME: 'l-virtual-path',
 
-  set_libraryManager: function (value) {
+  set_libraryManager (value) {
     this._libraryManager = value;
   },
-  get_libraryManager: function () {
+  get_libraryManager () {
     return this._libraryManager;
   },
-  set_folderId: function (value) {
+  set_folderId (value) {
     this._folderId = value;
   },
-  get_folderId: function () {
+  get_folderId () {
     return this._folderId;
   },
-  set_viewTypeCode: function (value) {
+  set_viewTypeCode (value) {
     this._viewTypeCode = value;
   },
-  get_viewTypeCode: function () {
+  get_viewTypeCode () {
     return this._viewTypeCode;
   },
 
-  initialize: function () {
+  initialize () {
     $(this._libraryElement).closest('.documentWrapper').addClass('libraryWrapper');
     this._folderTree = Quantumart.QP8.BackendEntityTreeManager.getInstance().createTree(
       this._folderTreeId, this._folderEntityTypeCode, this._parentEntityId, this._actionCode, {
@@ -190,20 +190,20 @@ Quantumart.QP8.BackendLibrary.prototype = {
     this.showCurrentFileList();
   },
 
-  onLoad: function () {
+  onLoad () {
     this._splitter.initialize();
   },
 
-  refreshLibrary: function () {
+  refreshLibrary () {
   },
 
-  changeViewType: function (viewTypeCode) {
+  changeViewType (viewTypeCode) {
     this._viewTypeCode = viewTypeCode;
     this.resetCurrentFileList();
     this.showCurrentFileList();
   },
 
-  showCurrentFileList: function () {
+  showCurrentFileList () {
     for (const code in this._fileContainers) {
       const containerToHide = this._fileContainers[code];
 
@@ -219,7 +219,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     }
   },
 
-  resetCurrentFileList: function () {
+  resetCurrentFileList () {
     if (this._viewTypeCode == window.VIEW_TYPE_CODE_DETAILS) {
       this._fileGrid.set_parentEntityId(this._folderId);
       this._fileGrid.resetGrid({
@@ -248,7 +248,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     }
   },
 
-  refreshCurrentFileList: function () {
+  refreshCurrentFileList () {
     if (this._viewTypeCode == window.VIEW_TYPE_CODE_DETAILS) {
       this._fileGrid.refreshGrid();
     } else if (this._viewTypeCode == window.VIEW_TYPE_CODE_LIST) {
@@ -258,19 +258,19 @@ Quantumart.QP8.BackendLibrary.prototype = {
     }
   },
 
-  resize: function () {
+  resize () {
     if (this._splitter) {
       this.notify(window.EVENT_TYPE_LIBRARY_RESIZED, {});
       this._splitter.resize();
     }
   },
 
-  _onSplitterResized: function () {
+  _onSplitterResized () {
     this.notify(window.EVENT_TYPE_LIBRARY_RESIZED, {});
     this._splitter.resize();
   },
 
-  _onFolderSelectedHandler: function (eventType, sender, eventArgs) {
+  _onFolderSelectedHandler (eventType, sender, eventArgs) {
     const entities = eventArgs.get_entities();
 
     if (entities.length > 0) {
@@ -285,23 +285,23 @@ Quantumart.QP8.BackendLibrary.prototype = {
     }
   },
 
-  _onFileSelectedHandler: function (eventType, sender, eventArgs) {
+  _onFileSelectedHandler (eventType, sender, eventArgs) {
     eventArgs.set_context(this._libraryPath);
     this.notify(window.EVENT_TYPE_LIBRARY_ENTITY_SELECTED, eventArgs);
   },
 
-  _onFileListDataBoundHandler: function (eventType, sender, eventArgs) {
+  _onFileListDataBoundHandler (eventType, sender, eventArgs) {
     eventArgs.set_context(this._libraryPath);
     this.notify(window.EVENT_TYPE_LIBRARY_DATA_BOUND, eventArgs);
   },
 
-  _onFilterChangedHandler: function () {
+  _onFilterChangedHandler () {
     this._filterFileTypeId = $(this._fileTypeListElement).val();
     this._filterFileName = $(this._fileNameSearchElement).val();
     this.resetCurrentFileList();
   },
 
-  _onFilterResetHandler: function () {
+  _onFilterResetHandler () {
     if (!this._isFilterFileTypeIdDefined) {
       $("option[value='']", this._fileTypeListElement).prop('selected', true);
     }
@@ -311,25 +311,25 @@ Quantumart.QP8.BackendLibrary.prototype = {
     this._onFilterChangedHandler();
   },
 
-  _onFilterFormSubmittedHandler: function (e) {
+  _onFilterFormSubmittedHandler (e) {
     e.preventDefault();
     $(this._filterApplyButtonElement).trigger('click');
     return false;
   },
 
-  _onFileTypeChangedHandler: function () {
+  _onFileTypeChangedHandler () {
     $(this._filterApplyButtonElement).trigger('click');
   },
 
-  _onFileUploadedHandler: function () {
+  _onFileUploadedHandler () {
     this.refreshCurrentFileList();
   },
 
-  _onActionExecutingHandler: function (eventType, sender, eventArgs) {
+  _onActionExecutingHandler (eventType, sender, eventArgs) {
     const action = $a.getBackendActionByCode(eventArgs.get_actionCode());
 
     if (action) {
-      let params = new Quantumart.QP8.BackendActionParameters({ eventArgs: eventArgs });
+      let params = new Quantumart.QP8.BackendActionParameters({ eventArgs });
 
       params.correct(action);
       let newEventArgs = $a.getEventArgsFromActionWithParams(action, params);
@@ -341,11 +341,11 @@ Quantumart.QP8.BackendLibrary.prototype = {
     }
   },
 
-  _onFolderTreeLoaded: function () {
+  _onFolderTreeLoaded () {
     this._folderTree.selectRoot();
   },
 
-  _loadFolderPath: function () {
+  _loadFolderPath () {
     let url = '';
     if (this._fileEntityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE) {
       url = `${window.CONTROLLER_URL_SITE}_FolderPath`;
@@ -381,12 +381,12 @@ Quantumart.QP8.BackendLibrary.prototype = {
     );
   },
 
-  _updateFolderInfo: function () {
+  _updateFolderInfo () {
     $(`.${this.LIBRARY_PHYSICAL_PATH_CLASS_NAME}`, this._libraryElement).html(this._folderPath);
     $(`.${this.LIBRARY_VIRTUAL_PATH_CLASS_NAME}`, this._libraryElement).html(this._folderUrl);
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendLibraryManager.getInstance().removeLibrary(this._libraryElementId);
 
     if (this._splitter) {

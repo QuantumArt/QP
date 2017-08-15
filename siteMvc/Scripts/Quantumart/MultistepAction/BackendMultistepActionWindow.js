@@ -65,7 +65,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   _zIndex: undefined,
   _parentId: null,
 
-  initialize: function () {
+  initialize () {
     this._popupWindowComponent = this._createWindow();
     this._popupWindowElement = this._popupWindowComponent.element;
 
@@ -95,7 +95,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
       .get(0);
   },
 
-  _refreshView: function () {
+  _refreshView () {
     let timeRemaining;
 
     this._progressBarComponent.total(this._stageItemsCount);
@@ -151,7 +151,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     }
   },
 
-  _formatTimeRange: function (milliseconds) {
+  _formatTimeRange (milliseconds) {
     const secondsSpan = Math.floor(milliseconds / 1000);
     const hours = Math.floor(secondsSpan / 3600);
     let minutes = Math.floor((secondsSpan - (hours * 3600)) / 60);
@@ -167,13 +167,13 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     return `${hours}:${minutes}:${seconds}`;
   },
 
-  startAction: function (stageCount) {
+  startAction (stageCount) {
     this._stagesCount = stageCount;
     this._stagesRemaining = stageCount;
   },
 
   // Начать этап
-  startStage: function (stageName, stepsCount, itemsCount) {
+  startStage (stageName, stepsCount, itemsCount) {
     this._stageName = stageName;
     this._stageStepsCount = stepsCount;
     this._stageStepsRemaining = stepsCount;
@@ -184,7 +184,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   // Закончить этап
-  completeStage: function () {
+  completeStage () {
     this._stagesRemaining -= 1;
     if (this._stagesRemaining < 0) {
       this._stagesRemaining = 0;
@@ -198,7 +198,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
 
     this._refreshView();
   },
-  _createDownloadLink: function () {
+  _createDownloadLink () {
     let url, urlParams;
     if (!$q.isNullOrWhiteSpace(this._additionalInfo)) {
       urlParams = { id: this._parentId, fileName: encodeURIComponent(this._additionalInfo) };
@@ -210,7 +210,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   // Закончить шаг этапа
-  completeStep: function (processedItemsCount, additionalInfo, parentId) {
+  completeStep (processedItemsCount, additionalInfo, parentId) {
     this._stageItemsRemaining -= processedItemsCount;
     this._additionalInfo = additionalInfo;
     this._parentId = parentId;
@@ -227,7 +227,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   _isInProcess: true,
-  _stop: function () {
+  _stop () {
     this._isInProcess = false;
     $(this._cancelButtonElement).prop({
       value: $l.MultistepAction.close,
@@ -243,25 +243,25 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     ]).text('');
   },
 
-  setError: function () {
+  setError () {
     this._stop();
     this._progressBarComponent.setColor('red');
     this._progressBarComponent.setText($l.MultistepAction.errorStatus);
   },
 
-  setCancel: function () {
+  setCancel () {
     this._stop();
     this._progressBarComponent.setColor('#BDBDBD');
     this._progressBarComponent.setText($l.MultistepAction.canceledStatus);
   },
 
-  setComplete: function () {
+  setComplete () {
     this._stop();
     this._progressBarComponent.setColor('green');
     this._progressBarComponent.setText($l.MultistepAction.completeStatus);
   },
 
-  _createWindow: function () {
+  _createWindow () {
     let bottomPaddingFix;
     const windowContentHtml = new $.telerik.stringBuilder();
 
@@ -343,7 +343,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     return popupWindowComponent;
   },
 
-  _onWindowClose: function () {
+  _onWindowClose () {
     if (this._isInProcess) {
       this._cancel();
       return false;
@@ -353,11 +353,11 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     return undefined;
   },
 
-  _onCancelClicked: function () {
+  _onCancelClicked () {
     this._popupWindowComponent.close();
   },
 
-  _cancel: function () {
+  _cancel () {
     const eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
     this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, eventArgs);
     if (eventArgs.getCancel() === true) {
@@ -369,7 +369,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     return undefined;
   },
 
-  dispose: function () {
+  dispose () {
     let popupWindowComponent;
     this._progressBarComponent = null;
     if (this._progressBarElement) {
@@ -401,11 +401,11 @@ Quantumart.QP8.BackendMultistepActionWindowEventArgs = function BackendMultistep
 Quantumart.QP8.BackendMultistepActionWindowEventArgs.prototype = {
   _cancel: false,
 
-  getCancel: function () {
+  getCancel () {
     return this._cancel;
   },
 
-  setCancel: function (val) {
+  setCancel (val) {
     this._cancel = val;
   }
 };

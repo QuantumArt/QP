@@ -64,7 +64,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   _customInit: null,
   _customDispose: null,
 
-  initialize: function () {
+  initialize () {
     const selectedContentId = this._$componentElem.data('aggregated_content_id') || '';
 
     this._$articleWrapper = $(`.articleWrapper_${selectedContentId}`);
@@ -78,7 +78,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  selectContent: function (contentId) {
+  selectContent (contentId) {
     if (!$q.isNull(contentId) && $.isNumeric(contentId)) {
       this._$contentList.find(`OPTION[value="${contentId}"]`).prop('selected', true).change();
     } else {
@@ -86,11 +86,11 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  getSelectedContent: function () {
+  getSelectedContent () {
     return $q.toInt(this._$contentList.find('option:selected').val());
   },
 
-  makeReadonly: function () {
+  makeReadonly () {
     const selectedVal = this._$contentList.find('OPTION:selected').val();
     if (!$q.isNullOrEmpty(selectedVal)) {
       const $hidden = this._$contentList.siblings(`input[name="${this._$contentList.prop('name')}"]:hidden`);
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     this._$contentList.addClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', true);
   },
 
-  _onContentSelected: function (e) {
+  _onContentSelected (e) {
     const tabId = this._$componentElem.data('host_id');
     const rootContentId = +this._$componentElem.data('root_content_id') || 0;
     const rootArticleId = +this._$componentElem.data('root_article_id') || 0;
@@ -115,7 +115,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
       $q.getAjax(Url.Content('~/Article/GetAggregatedArticle'), {
         id: rootArticleId,
         parentId: rootContentId,
-        aggregatedContentId: aggregatedContentId
+        aggregatedContentId
       }, this._renderAggregatedDataView.bind(this)).error($q.processGenericAjaxError);
 
       $q.getAjax(Url.Content('~/Content/GetContentFormScript'), {
@@ -127,7 +127,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  _renderAggregatedDataView: function (articleViewData) {
+  _renderAggregatedDataView (articleViewData) {
     this.notify(window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING, {
       articleWrapper: this._$articleWrapper,
       toggleDisableChangeTracking: this.set_disableChangeTracking
@@ -158,7 +158,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  _executeAggregatedDataScript: function (aggregatedContentId, articleScriptData) {
+  _executeAggregatedDataScript (aggregatedContentId, articleScriptData) {
     const scriptId = `aggregated_script_${aggregatedContentId}`;
     if (articleScriptData) {
       const $scriptTag = $(`#${scriptId}`);
@@ -173,7 +173,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  _initAllFields: function () {
+  _initAllFields () {
     const $form = this._$articleWrapper;
 
     $c.setAllVisualEditorValues($form, this._initFieldValues);
@@ -229,15 +229,15 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  set_initFieldValues: function (value) {
+  set_initFieldValues (value) {
     this._initFieldValues = value;
   },
 
-  set_disableChangeTracking: function (value) {
+  set_disableChangeTracking (value) {
     this._disableChangeTracking = value;
   },
 
-  _disposeAggregatedFields: function () {
+  _disposeAggregatedFields () {
     const $form = this._$articleWrapper;
     if (this._customDispose) {
       this._customDispose(this._parentEditor, $form);
@@ -257,7 +257,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     Quantumart.QP8.BackendExpandedContainer.destroyAll($form);
   },
 
-  dispose: function () {
+  dispose () {
     this._customInit = null;
     this._customDispose = null;
     this._parentEditor = null;

@@ -15,7 +15,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
   DISPLAY_FIELD_CLASS_NAME: 'displayField',
   STATE_FIELD_CLASS_NAME: 'stateField',
 
-  initialize: function () {
+  initialize () {
     Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, 'initialize');
 
     let $copyButton, $pasteButton;
@@ -70,13 +70,13 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     $deselectButton = null;
   },
 
-  getListItemCount: function () {
+  getListItemCount () {
     const listItemCount = 1;
 
     return listItemCount;
   },
 
-  getSelectedListItemCount: function () {
+  getSelectedListItemCount () {
     let selectedListItemCount = 0;
     const $stateField = $(this._stateFieldElement);
 
@@ -90,7 +90,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     return selectedListItemCount;
   },
 
-  getSelectedEntities: function () {
+  getSelectedEntities () {
     const entities = [];
     const $stateField = $(this._stateFieldElement);
     const $displayField = $(this._displayFieldElement);
@@ -107,11 +107,11 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     return entities;
   },
 
-  getStateFieldElement: function () {
+  getStateFieldElement () {
     return this._stateFieldElement;
   },
 
-  _refreshListInner: function (dataItems, refreshOnly) {
+  _refreshListInner (dataItems, refreshOnly) {
     let html = '';
     let value = '';
     if (!$q.isNullOrEmpty(dataItems)) {
@@ -130,7 +130,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
       $stateField.addClass(window.CHANGED_FIELD_CLASS_NAME);
       const operation = refreshOnly ? 'addClass' : 'removeClass';
       $stateField[operation](window.REFRESHED_FIELD_CLASS_NAME);
-      $stateField.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $stateField.attr('name'), value: value, contentFieldName: $stateField.data('content_field_name') });
+      $stateField.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $stateField.attr('name'), value, contentFieldName: $stateField.data('content_field_name') });
       $stateField.change();
     }
 
@@ -138,13 +138,13 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     $stateField = null;
   },
 
-  deselectAllListItems: function () {
+  deselectAllListItems () {
     this._refreshListInner([]);
     const eventArgs = new Quantumart.QP8.BackendEventArgs();
     this.notify(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, eventArgs);
   },
 
-  selectEntities: function (entityId) {
+  selectEntities (entityId) {
     this.deselectAllListItems();
     if (!$q.isNullOrEmpty(entityId)) {
       if ($q.isArray(entityId) && entityId.length > 0) {
@@ -159,51 +159,51 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     }
   },
 
-  enableList: function () {
+  enableList () {
     $(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
     $(this._stateFieldElement).prop('disabled', false);
     this._enableAllToolbarButtons();
   },
 
-  disableList: function () {
+  disableList () {
     $(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
     $(this._stateFieldElement).prop('disabled', true);
     this._disableAllToolbarButtons();
   },
 
-  makeReadonly: function () {
+  makeReadonly () {
     this.disableList();
     $(this._stateFieldElement).prop('disabled', false);
   },
 
-  isListChanged: function () {
+  isListChanged () {
     let $stateField = $(this._stateFieldElement);
     const result = $stateField.hasClass(window.CHANGED_FIELD_CLASS_NAME);
     $stateField = null;
     return result;
   },
 
-  _onSelectedItemChangeHandler: function () {
+  _onSelectedItemChangeHandler () {
     if (!this.isListDisabled()) {
       this._refreshReadToolbarButton(true);
     }
   },
 
-  _onPickButtonClickHandler: function (event) {
+  _onPickButtonClickHandler (event) {
     if (!this.isListDisabled()) {
       this._openPopupWindow();
     }
     event.stopImmediatePropagation();
   },
 
-  _onDeselectButtonClickHandler: function (event) {
+  _onDeselectButtonClickHandler (event) {
     if (!this.isListDisabled()) {
       this.deselectAllListItems();
     }
     event.stopImmediatePropagation();
   },
 
-  dispose: function () {
+  dispose () {
     this._stopDeferredOperations = true;
 
     $(this._stateFieldElement).unbind('change');

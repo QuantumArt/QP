@@ -57,35 +57,35 @@ Quantumart.QP8.BackendToolbar.prototype = {
   _onToolbarDropDownListItemClickedHandler: null,
   _isBindToExternal: false,
 
-  get_toolbarElementId: function () {
+  get_toolbarElementId () {
     return this._toolbarElementId;
   },
 
-  set_toolbarElementId: function (value) {
+  set_toolbarElementId (value) {
     this._toolbarElementId = value;
   },
 
-  get_toolbarElement: function () {
+  get_toolbarElement () {
     return this._toolbarElement;
   },
 
-  get_toolbarContainerElementId: function () {
+  get_toolbarContainerElementId () {
     return this._toolbarContainerElementId;
   },
 
-  set_toolbarContainerElementId: function (value) {
+  set_toolbarContainerElementId (value) {
     this._toolbarContainerElementId = value;
   },
 
-  get_isBindToExternal: function () {
+  get_isBindToExternal () {
     return this._isBindToExternal;
   },
 
-  set_isBindToExternal: function (value) {
+  set_isBindToExternal (value) {
     this._isBindToExternal = value;
   },
 
-  initialize: function () {
+  initialize () {
     let $toolbar = $(`#${this._toolbarElementId}`);
     let $toolbarItemList = null;
 
@@ -117,33 +117,33 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  showToolbar: function (callback) {
+  showToolbar (callback) {
     $(this._toolbarElement).show();
     $q.callFunction(callback);
   },
 
-  hideToolbar: function (callback) {
+  hideToolbar (callback) {
     $(this._toolbarElement).hide();
     $q.callFunction(callback);
   },
 
-  markToolbarAsBusy: function () {
+  markToolbarAsBusy () {
     $(this._toolbarItemListElement).addClass(this.ITEM_BUSY_CLASS_NAME);
   },
 
-  unmarkToolbarAsBusy: function () {
+  unmarkToolbarAsBusy () {
     $(this._toolbarItemListElement).removeClass(this.ITEM_BUSY_CLASS_NAME);
   },
 
-  isToolbarBusy: function () {
+  isToolbarBusy () {
     return $(this._toolbarItemListElement).hasClass(this.ITEM_BUSY_CLASS_NAME);
   },
 
-  getToolbarItems: function () {
+  getToolbarItems () {
     return $('> LI.item', this._toolbarItemListElement);
   },
 
-  getToolbarItem: function (item) {
+  getToolbarItem (item) {
     let $item = null;
     if ($q.isObject(item)) {
       return $q.toJQuery(item);
@@ -157,7 +157,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _getToolbarItemByDropDownListItem: function (listItemElem) {
+  _getToolbarItemByDropDownListItem (listItemElem) {
     const $listItem = this._getToolbarDropDownListItem(listItemElem);
     let $item = null;
 
@@ -171,7 +171,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return $item;
   },
 
-  getToolbarItemValue: function (itemElem) {
+  getToolbarItemValue (itemElem) {
     let $item = this.getToolbarItem(itemElem);
     let itemValue = '';
 
@@ -187,7 +187,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return itemValue;
   },
 
-  getToolbarItemText: function (item) {
+  getToolbarItemText (item) {
     const $item = this.getToolbarItem(item);
     let itemText = '';
 
@@ -198,7 +198,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return itemText;
   },
 
-  _getToolbarItemsHtml: function (items) {
+  _getToolbarItemsHtml (items) {
     const itemCount = items.length;
     const itemsHtml = new $.telerik.stringBuilder();
 
@@ -214,7 +214,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return itemsHtml.string();
   },
 
-  addToolbarItemsToToolbar: function (items, count) {
+  addToolbarItemsToToolbar (items, count) {
     if (!$q.isNull(items)) {
       $(this._toolbarItemListElement).html(this._getToolbarItemsHtml(items));
       this._extendToolbarItemElements(items);
@@ -222,7 +222,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  tuneToolbarItems: function (statuses) {
+  tuneToolbarItems (statuses) {
     const statusCount = statuses.length;
     for (let statusIndex = 0; statusIndex < statusCount; statusIndex++) {
       const status = statuses[statusIndex];
@@ -234,12 +234,12 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  removeToolbarItemsFromToolbar: function () {
+  removeToolbarItemsFromToolbar () {
     const $toolbarItemList = $(this._toolbarItemListElement);
     $toolbarItemList.empty();
   },
 
-  refreshToolbarItems: function (selectedEntitiesCount) {
+  refreshToolbarItems (selectedEntitiesCount) {
     if (selectedEntitiesCount == null) {
       selectedEntitiesCount = 0;
     }
@@ -258,7 +258,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     $items = null;
   },
 
-  _getToolbarDropDownList: function (item) {
+  _getToolbarDropDownList (item) {
     let $list;
     const $item = this.getToolbarItem(item);
     if (!$q.isNullOrEmpty($item)) {
@@ -268,7 +268,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return $list;
   },
 
-  _updateDropDownListButton: function (item, listItemElem) {
+  _updateDropDownListButton (item, listItemElem) {
     const $item = this.getToolbarItem(item);
     const $listItem = this._getToolbarDropDownListItem(listItemElem);
 
@@ -295,7 +295,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _getToolbarDropDownListItem: function (listItemElem) {
+  _getToolbarDropDownListItem (listItemElem) {
     let $listItem = null;
 
     if ($q.isObject(listItemElem)) {
@@ -308,7 +308,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return $listItem;
   },
 
-  _getToolbarDropDownListNextItem: function (listItemElem) {
+  _getToolbarDropDownListNextItem (listItemElem) {
     const $listItem = this._getToolbarDropDownListItem(listItemElem);
     let $nextListItem = null;
 
@@ -329,7 +329,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return $nextListItem;
   },
 
-  _getToolbarDropDownListItemByValue: function (item, listItemValue) {
+  _getToolbarDropDownListItemByValue (item, listItemValue) {
     const $item = this.getToolbarItem(item);
     let $listItem = null;
 
@@ -346,7 +346,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return $listItem;
   },
 
-  _getToolbarDropDownListItemValue: function (listItemElem) {
+  _getToolbarDropDownListItemValue (listItemElem) {
     const $listItem = this._getToolbarDropDownListItem(listItemElem);
     let listItemValue = '';
 
@@ -357,7 +357,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return listItemValue;
   },
 
-  _getToolbarDropDownListItemText: function (listItemElem) {
+  _getToolbarDropDownListItemText (listItemElem) {
     const $listItem = this._getToolbarDropDownListItem(listItemElem);
     let listItemText = '';
 
@@ -368,7 +368,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return listItemText;
   },
 
-  _toggleDropDownList: function (item) {
+  _toggleDropDownList (item) {
     const $item = this.getToolbarItem(item);
 
     if (!$q.isNullOrEmpty($item)) {
@@ -380,7 +380,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _showDropDownList: function (item) {
+  _showDropDownList (item) {
     const $item = this.getToolbarItem(item);
 
     if (!$q.isNullOrEmpty($item)) {
@@ -406,7 +406,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _hideDropDownList: function (item) {
+  _hideDropDownList (item) {
     const $item = this.getToolbarItem(item);
 
     if (!$q.isNullOrEmpty($item)) {
@@ -421,7 +421,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _isDropDownListVisible: function (item) {
+  _isDropDownListVisible (item) {
     const $item = this.getToolbarItem(item);
     let isVisible = false;
 
@@ -435,7 +435,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return isVisible;
   },
 
-  _getToolbarButtonHtml: function (html, dataItem) {
+  _getToolbarButtonHtml (html, dataItem) {
     const iconUrl = dataItem.Icon.left(7).toLowerCase() !== 'http://' ? window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon : dataItem.Icon;
 
     html
@@ -456,7 +456,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     ;
   },
 
-  _getToolbarDropDownHtml: function (html, dataItem) {
+  _getToolbarDropDownHtml (html, dataItem) {
     const self = this;
     const selectedSubItemValue = dataItem.SelectedSubItemValue;
     const subItems = dataItem.Items;
@@ -495,7 +495,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _getToolbarDropDownItemHtml: function (html, dataItem, selectedSubItemValue) {
+  _getToolbarDropDownItemHtml (html, dataItem, selectedSubItemValue) {
     const isSelected = dataItem.Value == selectedSubItemValue;
 
     html
@@ -514,11 +514,11 @@ Quantumart.QP8.BackendToolbar.prototype = {
     ;
   },
 
-  _getSeparatorHtml: function (html) {
+  _getSeparatorHtml (html) {
     html.cat('<li class="separator"></li>\n');
   },
 
-  _extendToolbarItemElement: function (itemElem, item) {
+  _extendToolbarItemElement (itemElem, item) {
     const $item = this.getToolbarItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
       $item.data('tooltip', item.Tooltip);
@@ -538,7 +538,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _extendToolbarItemElements: function (items) {
+  _extendToolbarItemElements (items) {
     const self = this;
 
     jQuery.each(items,
@@ -551,7 +551,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     );
   },
 
-  _extendToolbarDropDownListItemElement: function (listItem, subItem) {
+  _extendToolbarDropDownListItemElement (listItem, subItem) {
     const $listItem = this._getToolbarDropDownListItem(listItem);
     if (!$q.isNullOrEmpty($listItem)) {
       $listItem.data('tooltip', subItem.Tooltip);
@@ -559,7 +559,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _extendToolbarDropDownListElements: function (itemElem, subItems) {
+  _extendToolbarDropDownListElements (itemElem, subItems) {
     if (!$q.isNullOrEmpty(subItems)) {
       const self = this;
       const $item = this.getToolbarItem(itemElem);
@@ -577,7 +577,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _applyClickedStyleToToolbarButton: function (itemElem) {
+  _applyClickedStyleToToolbarButton (itemElem) {
     const $item = this.getToolbarItem(itemElem);
 
     if (!$q.isNullOrEmpty($item)) {
@@ -590,7 +590,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _cancelClickedStyleToToolbarButton: function (itemElem) {
+  _cancelClickedStyleToToolbarButton (itemElem) {
     const $item = this.getToolbarItem(itemElem);
 
     if (!$q.isNullOrEmpty($item)) {
@@ -601,7 +601,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _toggleCheckedStyleToToolbarButton: function (itemElem) {
+  _toggleCheckedStyleToToolbarButton (itemElem) {
     const $item = this.getToolbarItem(itemElem);
 
     if (!$q.isNullOrEmpty($item)) {
@@ -633,7 +633,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _applyClickedStyleToToolbarDropDownArrow: function (itemElem) {
+  _applyClickedStyleToToolbarDropDownArrow (itemElem) {
     const $item = this.getToolbarItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
       const $link = $item.find('A:first');
@@ -641,7 +641,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _applyClickedStyleToToolbarDropDownButton: function (itemElem) {
+  _applyClickedStyleToToolbarDropDownButton (itemElem) {
     const $item = this.getToolbarItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
       let $link = $item.find('A:first');
@@ -651,7 +651,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _cancelClickedStyleToToolbarDropDown: function (itemElem) {
+  _cancelClickedStyleToToolbarDropDown (itemElem) {
     const $item = this.getToolbarItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
       const $link = $item.find('A:first');
@@ -662,7 +662,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  isToolbarItemEnabled: function (item) {
+  isToolbarItemEnabled (item) {
     const $item = this.getToolbarItem(item);
     let isEnabled = false;
 
@@ -673,7 +673,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return isEnabled;
   },
 
-  isToolbarButtonChecked: function (item) {
+  isToolbarButtonChecked (item) {
     const $item = this.getToolbarItem(item);
     let isChecked = false;
 
@@ -687,7 +687,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     return isChecked;
   },
 
-  setVisibleState: function (itemElem, state) {
+  setVisibleState (itemElem, state) {
     const $item = this.getToolbarItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
       if (state) {
@@ -698,7 +698,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  setVisibleStateForAll: function (state) {
+  setVisibleStateForAll (state) {
     const self = this;
     this.getToolbarItems().each(
       (index, elem) => {
@@ -707,7 +707,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     );
   },
 
-  setEnableState: function (itemElem, state) {
+  setEnableState (itemElem, state) {
     const $item = this.getToolbarItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
       if (state) {
@@ -718,7 +718,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  setEnableStateForAll: function (state) {
+  setEnableStateForAll (state) {
     const self = this;
     this.getToolbarItems().each(
       (index, elem) => {
@@ -727,7 +727,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     );
   },
 
-  _attachToolbarEventHandlers: function () {
+  _attachToolbarEventHandlers () {
     $(this._toolbarElement)
       .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarButtonUnhoveringHandler)
       .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarButtonClickingHandler)
@@ -742,7 +742,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       .delegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownListItemClickedHandler);
   },
 
-  _detachToolbarEventHandlers: function () {
+  _detachToolbarEventHandlers () {
     $(this._toolbarElement)
       .undelegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarButtonUnhoveringHandler)
       .undelegate(this.BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarButtonClickingHandler)
@@ -757,23 +757,23 @@ Quantumart.QP8.BackendToolbar.prototype = {
       .undelegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownListItemClickedHandler);
   },
 
-  notifyToolbarButtonClicking: function (eventArgs) {
+  notifyToolbarButtonClicking (eventArgs) {
     this.notify(window.EVENT_TYPE_TOOLBAR_BUTTON_CLICKING, eventArgs);
   },
 
-  notifyToolbarButtonClicked: function (eventArgs) {
+  notifyToolbarButtonClicked (eventArgs) {
     this.notify(window.EVENT_TYPE_TOOLBAR_BUTTON_CLICKED, eventArgs);
   },
 
-  notifyDropDownSelectedIndexChanged: function (eventArgs) {
+  notifyDropDownSelectedIndexChanged (eventArgs) {
     this.notify(window.EVENT_TYPE_TOOLBAR_DROPDOWN_SELECTED_INDEX_CHANGED, eventArgs);
   },
 
-  notifyDropDownSelectedIndexChanging: function (eventArgs) {
+  notifyDropDownSelectedIndexChanging (eventArgs) {
     this.notify(window.EVENT_TYPE_TOOLBAR_DROPDOWN_SELECTED_INDEX_CHANGING, eventArgs);
   },
 
-  _onToolbarButtonUnhovering: function (e) {
+  _onToolbarButtonUnhovering (e) {
     const $button = $(e.currentTarget);
     if (!this.isToolbarItemEnabled($button) || this.isToolbarBusy()) {
       return false;
@@ -782,7 +782,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     this._cancelClickedStyleToToolbarButton($button);
   },
 
-  _onToolbarButtonClicking: function (e) {
+  _onToolbarButtonClicking (e) {
     const $button = $(e.currentTarget);
     const isLeftClick = e.which === 1;
     if (!isLeftClick || !this.isToolbarItemEnabled($button) || this.isToolbarBusy()) {
@@ -803,7 +803,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     this.notifyToolbarButtonClicking(eventArgs);
   },
 
-  _onToolbarButtonClicked: function (e) {
+  _onToolbarButtonClicked (e) {
     const $button = $(e.currentTarget);
     const isLeftClick = e.which === 1;
     if (!isLeftClick || !this.isToolbarItemEnabled($button) || this.isToolbarBusy()) {
@@ -825,7 +825,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     this.notifyToolbarButtonClicked(eventArgs);
   },
 
-  _onToolbarDropDownArrowUnhovering: function (e) {
+  _onToolbarDropDownArrowUnhovering (e) {
     const $arrow = $(e.currentTarget);
     const $item = $arrow.parent().parent().parent().parent();
 
@@ -838,7 +838,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _onToolbarDropDownArrowClicking: function (e) {
+  _onToolbarDropDownArrowClicking (e) {
     const $arrow = $(e.currentTarget);
     const $item = $arrow.parent().parent().parent().parent();
 
@@ -849,7 +849,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     this._applyClickedStyleToToolbarDropDownArrow($item);
   },
 
-  _onToolbarDropDownArrowClicked: function (e) {
+  _onToolbarDropDownArrowClicked (e) {
     const $arrow = $(e.currentTarget);
     const $item = $arrow.parent().parent().parent().parent();
 
@@ -860,7 +860,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     this._toggleDropDownList($item);
   },
 
-  _onToolbarDropDownButtonUnhovering: function (e) {
+  _onToolbarDropDownButtonUnhovering (e) {
     const $button = $(e.currentTarget);
     const $item = $button.parent().parent().parent().parent();
 
@@ -873,7 +873,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _onToolbarDropDownButtonClicking: function (e) {
+  _onToolbarDropDownButtonClicking (e) {
     const $button = $(e.currentTarget);
     const $item = $button.parent().parent().parent().parent();
 
@@ -884,7 +884,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     this._cancelClickedStyleToToolbarDropDown($item);
   },
 
-  _onToolbarDropDownButtonClicked: function (e) {
+  _onToolbarDropDownButtonClicked (e) {
     const $button = $(e.currentTarget);
     const $item = $button.parent().parent().parent().parent();
 
@@ -928,7 +928,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _onToolbarDropDownListItemClicking: function (e) {
+  _onToolbarDropDownListItemClicking (e) {
     const $listItem = $(e.currentTarget);
     const $item = this._getToolbarItemByDropDownListItem($listItem);
 
@@ -951,7 +951,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  _onToolbarDropDownListItemClicked: function (e) {
+  _onToolbarDropDownListItemClicked (e) {
     const $listItem = $(e.currentTarget);
     const $item = this._getToolbarItemByDropDownListItem($listItem);
 
@@ -982,7 +982,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     }
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendToolbar.callBaseMethod(this, 'dispose');
 
     this._detachToolbarEventHandlers();
@@ -1032,27 +1032,27 @@ Quantumart.QP8.BackendToolbarButtonEventArgs.prototype = {
   _checkOnClick: false,
   _checked: false,
 
-  get_value: function () {
+  get_value () {
     return this._value;
   },
 
-  set_value: function (value) {
+  set_value (value) {
     this._value = value;
   },
 
-  get_checkOnClick: function () {
+  get_checkOnClick () {
     return this._checkOnClick;
   },
 
-  set_checkOnClick: function (value) {
+  set_checkOnClick (value) {
     this._checkOnClick = value;
   },
 
-  get_checked: function () {
+  get_checked () {
     return this._checked;
   },
 
-  set_checked: function (value) {
+  set_checked (value) {
     this._checked = value;
   }
 };
@@ -1067,27 +1067,27 @@ Quantumart.QP8.BackendToolbarDropDownListEventArgs.prototype = {
   _oldSubItemValue: '',
   _newSubItemValue: '',
 
-  get_itemValue: function () {
+  get_itemValue () {
     return this._itemValue;
   },
 
-  set_itemValue: function (value) {
+  set_itemValue (value) {
     this._itemValue = value;
   },
 
-  get_oldSubItemValue: function () {
+  get_oldSubItemValue () {
     return this._oldSubItemValue;
   },
 
-  set_oldSubItemValue: function (value) {
+  set_oldSubItemValue (value) {
     this._oldSubItemValue = value;
   },
 
-  get_newSubItemValue: function () {
+  get_newSubItemValue () {
     return this._newSubItemValue;
   },
 
-  set_newSubItemValue: function (value) {
+  set_newSubItemValue (value) {
     this._newSubItemValue = value;
   }
 };

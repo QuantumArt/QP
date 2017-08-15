@@ -18,6 +18,6 @@ Quantumart.QP8.BackendPagePropertiesMediator = function (rootElementId) {
   }
 
   return {
-    dispose: dispose
+    dispose
   };
 };

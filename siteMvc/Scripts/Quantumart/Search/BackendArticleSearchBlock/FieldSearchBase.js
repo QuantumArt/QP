@@ -23,36 +23,36 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   _referenceFieldID: null,
   _elementIdPrefix: '',
 
-  initialize: function () {
+  initialize () {
     $(this._containerElement).append('Не реализовано');
   },
 
-  get_searchQuery: function () {
+  get_searchQuery () {
     return null;
   },
 
-  get_blockState: function () {
+  get_blockState () {
     return null;
   },
 
-  set_blockState: function (state) {
+  set_blockState (state) {
   },
 
-  restore_blockState: function (state) {
+  restore_blockState (state) {
   },
 
-  get_filterDetails: function () {
+  get_filterDetails () {
     return '';
   },
 
-  onOpen: function () {
+  onOpen () {
   },
 
-  dispose: function () {
+  dispose () {
     this._containerElement = null;
   },
 
-  _getText: function (entities, callback) {
+  _getText (entities, callback) {
     const count = 3;
     const length = entities.length;
     let ids = entities.slice(0, count);
@@ -68,7 +68,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
     return result;
   },
 
-  _getIds: function (text) {
+  _getIds (text) {
     let ids = text.replace(/\r?\n|\r|;/g, ',').split(',');
     ids = ids.map(e => parseInt(e, 10));
     ids = $.grep(ids, e => e);

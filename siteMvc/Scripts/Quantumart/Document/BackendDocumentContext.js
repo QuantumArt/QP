@@ -87,42 +87,42 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   _customLinkButtonsSettings: null,
   _customButtonsSettings: null,
 
-  get_mainComponent: function () {
+  get_mainComponent () {
     return this._mainComponent;
   },
-  get_mainComponentType: function () {
+  get_mainComponentType () {
     return this._mainComponentType;
   },
 
-  get_state: function () {
+  get_state () {
     return this._state;
   },
 
-  set_initializingCallback: function (value) {
+  set_initializingCallback (value) {
     this._initializingCallback = value;
   },
 
-  set_initializedCallback: function (value) {
+  set_initializedCallback (value) {
     this._initializedCallback = value;
   },
 
-  set_terminatingCallback: function (value) {
+  set_terminatingCallback (value) {
     this._terminatingCallback = value;
   },
 
-  set_terminatedCallback: function (value) {
+  set_terminatedCallback (value) {
     this._terminatedCallback = value;
   },
 
-  set_execSelectCallback: function (value) {
+  set_execSelectCallback (value) {
     this._execSelectCallback = value;
   },
 
-  set_hostLoadedCallback: function (value) {
+  set_hostLoadedCallback (value) {
     this._hostLoadedCallback = value;
   },
 
-  init: function () {
+  init () {
     if (!this.needUp()) {
       $q.callFunction(this._initializingCallback, this);
     }
@@ -140,7 +140,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     $q.trace(`Created document context: ${this._hostId}`, this);
   },
 
-  getHost: function () {
+  getHost () {
     if (this._isWindow) {
       return Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindow(this._hostId);
     }
@@ -148,19 +148,19 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
 
   },
 
-  _getArea: function () {
+  _getArea () {
     return Quantumart.QP8.BackendEditingArea.getInstance();
   },
 
-  setGlobal: function (key, value) {
+  setGlobal (key, value) {
     Quantumart.QP8.BackendDocumentContext.setGlobal(key, value);
   },
 
-  getGlobal: function (key) {
+  getGlobal (key) {
     return Quantumart.QP8.BackendDocumentContext.getGlobal(key);
   },
 
-  loadScript: function (url, key) {
+  loadScript (url, key) {
     if (!key) {
       key = url;
     }
@@ -169,7 +169,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       const result = $.ajax({
         type: 'get',
         dataType: 'script',
-        url: url,
+        url,
         cache: false,
         async: false
       });
@@ -178,21 +178,21 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
   },
 
-  addCustomButton: function (settings) {
+  addCustomButton (settings) {
     this._customButtonsSettings.push(settings);
   },
 
-  addCustomLinkButton: function (settings) {
+  addCustomLinkButton (settings) {
     this._customLinkButtonsSettings.push(settings);
   },
 
-  execSelect: function (eventArgs) {
+  execSelect (eventArgs) {
     if (this._execSelectCallback) {
       this._execSelectCallback(eventArgs);
     }
   },
 
-  createMainComponent: function (host) {
+  createMainComponent (host) {
     const hostOptions = {
       viewTypeCode: host.get_viewTypeCode(),
       searchQuery: host.get_searchQuery(),
@@ -256,8 +256,8 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       mainComponent.attachObserver(window.EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.Area) {
       mainComponent = {
-        initialize: function () { },
-        dispose: function () { }
+        initialize () { },
+        dispose () { }
       };
     }
 
@@ -265,11 +265,11 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return mainComponent;
   },
 
-  onHostLoaded: function () {
+  onHostLoaded () {
     $q.callFunction(this._hostLoadedCallback, this);
   },
 
-  get_eventArgs: function () {
+  get_eventArgs () {
     if (!this._eventArgs) {
       const action = $a.getBackendAction(this._actionCode);
       const eventArgs = $a.getEventArgsFromAction(action);
@@ -287,7 +287,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return this._eventArgs;
   },
 
-  getEventArgsContext: function () {
+  getEventArgsContext () {
     const context = { orderChanged: false, groupChanged: false, viewInListAffected: false };
 
     if ($q.isBoolean(this._options.orderChanged)) {
@@ -305,11 +305,11 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return context;
   },
 
-  modifyEventArgsContext: function (eventArgsContext) {
+  modifyEventArgsContext (eventArgsContext) {
     return eventArgsContext;
   },
 
-  getPreviousAction: function () {
+  getPreviousAction () {
     let previousAction = null;
 
     if (this._previousActionCode) {
@@ -328,15 +328,15 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return previousAction;
   },
 
-  get_options: function () {
+  get_options () {
     return this._options;
   },
 
-  get_params: function () {
+  get_params () {
     return this._params;
   },
 
-  needUp: function () {
+  needUp () {
     let result = false;
 
     if (this._mainComponentType == $e.MainComponentType.Editor && this._state != $e.DocumentContextState.Error) {
@@ -350,7 +350,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return result;
   },
 
-  disposeMainComponent: function (host) {
+  disposeMainComponent (host) {
     const hostHandler = host._onGeneralEventHandler;
 
     if (this._mainComponentType == $e.MainComponentType.Grid) {
@@ -384,7 +384,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     this._mainComponent = null;
   },
 
-  getCustomHandlers: function () {
+  getCustomHandlers () {
     const result = {};
 
     if (this.initHandler) {
@@ -410,7 +410,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return result;
   },
 
-  dispose: function () {
+  dispose () {
     Sys.Debug.trace(`terminatePage ${this._hostId}`);
     if (!this.needUp()) {
       $q.callFunction(this._terminatingCallback, this);

@@ -5,7 +5,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (containe
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
-  initialize: function () {
+  initialize () {
     const isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
     const radioGroupName = `${this._elementIdPrefix}_radioGroup`;
     const disablingContainerID = `${this._elementIdPrefix}_disablingContainer`;
@@ -64,12 +64,12 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     html = null;
   },
 
-  get_searchQuery: function () {
+  get_searchQuery () {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
       this.get_IsNull(), this._getValue());
   },
 
-  get_blockState: function () {
+  get_blockState () {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
         isNull: this.get_IsNull(),
@@ -77,7 +77,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
       });
   },
 
-  get_filterDetails: function () {
+  get_filterDetails () {
     const stateData = this.get_blockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
@@ -86,7 +86,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 
   },
 
-  restore_blockState: function (state) {
+  restore_blockState (state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     }
   },
 
-  _getValue: function () {
+  _getValue () {
     let result = null;
     const val = $(this._containerElement).find('input:radio:checked').val();
     if (val == 'true') {
@@ -115,13 +115,13 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     return result;
   },
 
-  _onIsNullCheckBoxChange: function () {
+  _onIsNullCheckBoxChange () {
     $(this._containerElement)
       .find(`#${this._elementIdPrefix}_disablingContainer *`)
       .prop('disabled', this.get_IsNull());
   },
 
-  dispose: function () {
+  dispose () {
     if (this._isNullCheckBoxElement) {
       let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
       $isNullCheckBoxElement.unbind('change', this._onIsNullCheckBoxChangeHandler);
@@ -135,7 +135,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChangeHandler: null,
-  get_IsNull: function () {
+  get_IsNull () {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }

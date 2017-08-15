@@ -12,11 +12,11 @@ Quantumart.QP8.BackendContextBlock.prototype
     _contentNameElement: null,
     _searchBlockState: null,
 
-    get_searchBlockState: function () {
+    get_searchBlockState () {
       return this._searchBlockState;
     },
 
-    _restore_searchBlockState: function () {
+    _restore_searchBlockState () {
       if (this._searchBlockState) {
         const fieldValues = jQuery.map(this._searchBlockState, elem => {
           return { fieldName: elem.Name, value: elem.Value };
@@ -25,7 +25,7 @@ Quantumart.QP8.BackendContextBlock.prototype
       }
     },
 
-    _compute_searchBlockState: function () {
+    _compute_searchBlockState () {
       const result = [];
       $('.contextSwitcher .stateField', this._searchBlockElement).each(function () {
         const $item = $(this);
@@ -39,11 +39,11 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
 
-    get_searchQuery: function () {
+    get_searchQuery () {
       return JSON.stringify(this.get_searchBlockState());
     },
 
-    renderSearchBlock: function () {
+    renderSearchBlock () {
       if (!this._isRendered) {
         // получить разметку с сервера
         let serverContent;
@@ -86,13 +86,13 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
 
-    _onChangeCombo: function () {
+    _onChangeCombo () {
       this._searchBlockState = this._compute_searchBlockState();
       $(this._findButtonElement).trigger('click');
     },
 
 
-    _onFindButtonClick: function () {
+    _onFindButtonClick () {
       const state = this.get_searchBlockState();
       let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, JSON.stringify(state));
       eventArgs.set_searchBlockState(state);
@@ -100,11 +100,11 @@ Quantumart.QP8.BackendContextBlock.prototype
       eventArgs = null;
     },
 
-    _onResetButtonClick: function () {
+    _onResetButtonClick () {
 
     },
 
-    dispose: function () {
+    dispose () {
       const self = this;
       $('.contextSwitcher').each(function () {
         const component = $(this).data('entity_data_list_component');

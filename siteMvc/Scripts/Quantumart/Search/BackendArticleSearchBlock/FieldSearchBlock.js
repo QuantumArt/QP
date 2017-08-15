@@ -23,7 +23,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   _onAddFieldClickHandler: null,
   _onFieldSearchContainerCloseHandler: null,
 
-  initialize: function () {
+  initialize () {
     let serverContent;
     $q.getJsonFromUrl(
       'GET',
@@ -59,7 +59,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     }
   },
 
-  get_searchQuery: function () {
+  get_searchQuery () {
     const result = [];
     for (const fieldID in this._fieldSearchContainerList) {
       if (fieldID && this._fieldSearchContainerList[fieldID]) {
@@ -77,7 +77,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   },
 
-  get_blockState: function () {
+  get_blockState () {
     const r = jQuery.grep(
       jQuery.map(this._fieldSearchContainerList, fsc => fsc ? fsc.get_blockState() : null),
       fsc => fsc
@@ -87,7 +87,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     }
   },
 
-  restore_blockState: function (state) {
+  restore_blockState (state) {
     if (state) {
       const that = this;
       const $options = jQuery('option', this._fieldsComboElement);
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     }
   },
 
-  clear: function () {
+  clear () {
     if (this._fieldsComboElement) {
       jQuery(this._fieldsComboElement).find('option:first').prop('selected', true);
     }
@@ -119,7 +119,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     this._destroyAllFieldSearchContainers();
   },
 
-  _attachFieldSearchBlockEventHandlers: function () {
+  _attachFieldSearchBlockEventHandlers () {
     if (this._fieldsComboElement) {
       let $combo = jQuery(this._fieldsComboElement);
       $combo.bind('change', this._onAddFieldClickHandler);
@@ -127,7 +127,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     }
   },
 
-  _detachFieldSearchBlockEventHandlers: function () {
+  _detachFieldSearchBlockEventHandlers () {
     if (this._fieldsComboElement) {
       let $combo = jQuery(this._fieldsComboElement);
       $combo.unbind('change', this._onAddFieldClickHandler);
@@ -135,7 +135,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     }
   },
 
-  _createFieldSearchContainer: function () {
+  _createFieldSearchContainer () {
     const $combo = jQuery(this._fieldsComboElement);
     const $selectedField = $combo.find('option:selected');
 
@@ -156,7 +156,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     }
   },
 
-  _createFieldSearchContainerInner: function (fieldID, contentID, fieldSearchType, fieldName, fieldColumn, fieldGroup, referenceFieldID) {
+  _createFieldSearchContainerInner (fieldID, contentID, fieldSearchType, fieldName, fieldColumn, fieldGroup, referenceFieldID) {
     let $fieldSearchContainerElement = jQuery('<div />', { class: 'fieldSearchContainer' });
     jQuery(this._fieldSearchListElement).append($fieldSearchContainerElement);
     const newFieldSearchContainer = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer($fieldSearchContainerElement.get(0), this._parentEntityId, fieldID, contentID, fieldName, fieldSearchType, fieldColumn, fieldGroup, referenceFieldID);
@@ -167,7 +167,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     return newFieldSearchContainer;
   },
 
-  _destroyFieldSearchContainer: function (fieldID) {
+  _destroyFieldSearchContainer (fieldID) {
     if (this._fieldSearchContainerList[fieldID]) {
       let fieldSearchContainer = this._fieldSearchContainerList[fieldID];
       let $fsContainer = jQuery(fieldSearchContainer.get_ContainerElement());
@@ -180,21 +180,21 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     }
   },
 
-  _destroyAllFieldSearchContainers: function () {
+  _destroyAllFieldSearchContainers () {
     for (const fieldID in this._fieldSearchContainerList) {
       this._destroyFieldSearchContainer(fieldID);
     }
   },
 
-  _onAddFieldClick: function () {
+  _onAddFieldClick () {
     this._createFieldSearchContainer();
   },
 
-  _onFieldSearchContainerClose: function (eventType, sender, args) {
+  _onFieldSearchContainerClose (eventType, sender, args) {
     this._destroyFieldSearchContainer(args.fieldID);
   },
 
-  dispose: function () {
+  dispose () {
     this._detachFieldSearchBlockEventHandlers();
     this._destroyAllFieldSearchContainers();
     this._fieldSearchContainerList = null;

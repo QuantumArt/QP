@@ -88,7 +88,7 @@
     });
 
     config.on = {
-      instanceReady: function (ev) {
+      instanceReady (ev) {
         ev.editor.filter.addElementCallback(el => {
           if (el.name === 'table' || el.name === 'img') {
             return window.CKEDITOR.FILTER_SKIP_TREE;
@@ -152,7 +152,7 @@
       },
       afterCommandExec: obj._onChangeDataInDesignModeHandlerProxy,
       loadSnapshot: obj._onChangeDataInDesignModeHandlerProxy,
-      configLoaded: function (ev) {
+      configLoaded (ev) {
         Object.assign(ev.editor.config, {
           baseFloatZIndex: obj.getZIndex()
         });
@@ -195,7 +195,7 @@
     _storedTempValue: '',
     _checkIntervalID: null,
 
-    initialize: function () {
+    initialize () {
       const that = this;
       $(this._componentElem).data(Quantumart.QP8.BackendVisualEditor.DATA_KEY_COMPONENT, this);
       this._onChangeDataInDesignModeHandlerProxy = this._onChangeDataInDesignModeHandler.bind(this);
@@ -246,11 +246,11 @@
       }
     },
 
-    getCkEditor: function () {
+    getCkEditor () {
       return window.CKEDITOR.instances[this._editorElem.id];
     },
 
-    saveVisualEditorData: function () {
+    saveVisualEditorData () {
       const editor = this.getCkEditor();
 
       if (editor) {
@@ -258,13 +258,13 @@
       }
     },
 
-    getZIndex: function () {
+    getZIndex () {
       const $window = $(this._componentElem).closest('.t-window');
       const zIndex = $window.length > 0 ? parseInt($window.css('zIndex'), 10) : 0;
       return zIndex + 10000;
     },
 
-    dispose: function () {
+    dispose () {
       this.disposeCKEditor(false);
       this._$expandLink.off();
       this._$collapseLink.off();
@@ -285,7 +285,7 @@
       ]);
     },
 
-    disposeCKEditor: function (noUpdate) {
+    disposeCKEditor (noUpdate) {
       if (this._checkIntervalID) {
         clearInterval(this._checkIntervalID);
       }
@@ -316,7 +316,7 @@
       $editor.removeData();
     },
 
-    _onCheckChangesIntervalHandler: function () {
+    _onCheckChangesIntervalHandler () {
       let $field;
       const editor = this.getCkEditor();
 
@@ -335,7 +335,7 @@
       }
     },
 
-    _onChangeDataInDesignModeHandler: function () {
+    _onChangeDataInDesignModeHandler () {
       const editor = this.getCkEditor();
       if (editor) {
         if (editor.textarea) {
@@ -347,17 +347,17 @@
       }
     },
 
-    _onChangeDataInSourceModeHandler: function () {
+    _onChangeDataInSourceModeHandler () {
       $(`#${this.getCkEditor().name}`).addClass(window.CHANGED_FIELD_CLASS_NAME);
     },
 
-    _destroyVisualEditorWindow: function ($editor, dataName) {
+    _destroyVisualEditorWindow ($editor, dataName) {
       if ($editor.data(dataName)) {
         $editor.data(dataName).dispose();
       }
     },
 
-    _onCKEEditorInitialized: function (sender) {
+    _onCKEEditorInitialized (sender) {
       const that = this;
       if (sender) {
         this._storedTempValue = sender.getData();

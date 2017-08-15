@@ -18,7 +18,7 @@ Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectEle
   $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
   return {
-    dispose: dispose
+    dispose
   };
 };
 
@@ -44,6 +44,6 @@ Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (unionSourcePa
   $buildParamsPanelElement.bind('show', onUnionTypeSelected);
 
   return {
-    dispose: dispose
+    dispose
   };
 };

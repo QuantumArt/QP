@@ -98,7 +98,7 @@
     setValue(settings.value);
 
     return {
-      value: function (val) {
+      value (val) {
         if ($.isNumeric(val)) {
           return setValue(val);
         }
@@ -106,7 +106,7 @@
         return getValue();
       },
 
-      total: function (val) {
+      total (val) {
         if ($.isNumeric(val)) {
           return setTotal(val);
         }
@@ -114,19 +114,19 @@
         return getTotal();
       },
 
-      increment: increment,
-      decriment: decriment,
+      increment,
+      decriment,
 
-      refresh: refresh,
-      setText: setText,
-      setColor: setColor,
+      refresh,
+      setText,
+      setColor,
 
-      dispose: dispose
+      dispose
     };
   };
 
   const methods = {
-    init: function (options) {
+    init (options) {
       return this.filter('div').each(function each() {
         let $this = $(this);
         let component = new BackendProgressBarComponent($this, options);
@@ -136,7 +136,7 @@
       });
     },
 
-    dispose: function () {
+    dispose () {
       return this.each(function each() {
         const $this = $(this);
         let component = $this.data('backendProgressBar');

@@ -24,7 +24,7 @@ Quantumart.QP8.BackendChildEntityPermissionList = function (searchBlockElementId
   $grid.off('dataBinding', gridComponent.onDataBinding).on('dataBinding', onDataBinding);
 
   return {
-    dispose: dispose,
-    modifyEventArgsContext: modifyEventArgsContext
+    dispose,
+    modifyEventArgsContext
   };
 };

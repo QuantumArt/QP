@@ -108,8 +108,8 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     }
 
     const result = {
-      overwriteFile: overwriteFile,
-      targetFileUrl: targetFileUrl,
+      overwriteFile,
+      targetFileUrl,
       sourceFileUrl: _parameters.sourceImageUrl,
       resize: +_$nouislider.val()
     };
@@ -164,7 +164,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     checkFileNameActionUrl: `${window.APPLICATION_ROOT_URL}Library/CheckForCrop/`,
     cropResizeActionUrl: `${window.APPLICATION_ROOT_URL}Library/Crop/`,
     resizeRange: { max: 3.0, min: 0.1 },
-    onCompleteCallback: function () {
+    onCompleteCallback () {
       Sys.Debug.trace('imgCropResize: finished');
     }
   };
@@ -295,10 +295,10 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     });
 
     _$nouislider.on({
-      slide: function (slider, val) {
+      slide (slider, val) {
         _onSlide(val);
       },
-      set: function (slider, val) {
+      set (slider, val) {
         _$sliderValueSpan.text(`x${val}`);
         _onSlide(val);
       }
@@ -353,14 +353,14 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       x2: _parameters.crop.left + _parameters.crop.width,
       y2: _parameters.crop.top + _parameters.crop.height,
       parent: _$windowElement.find('.image'),
-      onSelectChange: function (img, selection) {
+      onSelectChange (img, selection) {
         if (!_parameters.allowResizeCropArea) {
           _ensureSelection(selection);
         }
 
         _displaySelectionCoordinates(selection, _parameters.allowResizeCropArea);
       },
-      onInit: function (img, selection) {
+      onInit (img, selection) {
         _displaySelectionCoordinates(selection, true);
       }
     };
@@ -392,16 +392,16 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       resizable: false,
       draggable: true,
       scrollable: true,
-      onOpen: function (evt) {
+      onOpen (evt) {
 
       },
-      onClose: function () {
+      onClose () {
         _telerikWindow.destroy();
       },
-      onActivate: function () {
+      onActivate () {
 
       },
-      onLoad: function () {
+      onLoad () {
 
       }
     }).data('tWindow');
@@ -604,11 +604,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
     return {
       type: 'Quantumart.QP8.ImageCropResizeClient',
-      displayErrors: displayErrors,
+      displayErrors,
       getOptions: readData,
       openWindow: show,
       closeWindow: close,
-      dispose: dispose,
+      dispose,
       parameters: _parameters,
       window: _$windowElement
     };

@@ -30,7 +30,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
   _extensions: '',
   _resolveName: false,
 
-  initialize: function () {
+  initialize () {
     let $parentElement = $(this._parentElement);
     $parentElement.data('qp_sl_uploader', this);
 
@@ -39,7 +39,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
     $parentElement = null;
   },
 
-  dispose: function () {
+  dispose () {
     let $parentElement = $(this._parentElement);
     $parentElement.removeData();
 
@@ -48,7 +48,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
   },
 
 
-  _createFileUploader: function () {
+  _createFileUploader () {
     const functionPrefix = 'Quantumart$QP8$BackendSilverlightUploader$';
     const uploadUrl = `${window.APPLICATION_ROOT_URL}Upload/`;
     const resolveNameFuction = this._resolveName ? `${functionPrefix}resolveFileName` : '';
@@ -88,7 +88,7 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
   },
 
 
-  _onSilverlightErrorHandler: function (sender, args) {
+  _onSilverlightErrorHandler (sender, args) {
     let appSource = '';
     if (sender != null && sender != 0) {
       appSource = sender.getHost().Source;
@@ -116,11 +116,11 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
     }
   },
 
-  set_folderPath: function (value) {
+  set_folderPath (value) {
     this._folderPath = value;
   },
 
-  get_folderPath: function () {
+  get_folderPath () {
     return this._folderPath;
   }
 };
@@ -144,13 +144,13 @@ function Quantumart$QP8$BackendSilverlightUploader$checkFileExistence(longfileNa
 
 function Quantumart$QP8$BackendSilverlightUploader$resolveFileName(path, fileName) {
   const url = `${window.APPLICATION_ROOT_URL}Library/ResolveFileName/`;
-  const obj = $q.getJsonSync(url, { path: path, name: fileName });
+  const obj = $q.getJsonSync(url, { path, name: fileName });
   return obj.result;
 }
 
 function Quantumart$QP8$BackendSilverlightUploader$checkSecurity(path) {
   const url = `${window.APPLICATION_ROOT_URL}Library/CheckSecurity/`;
-  const obj = $q.getJsonSync(url, { path: path });
+  const obj = $q.getJsonSync(url, { path });
   return obj.result;
 }
 

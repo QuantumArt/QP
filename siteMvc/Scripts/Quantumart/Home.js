@@ -3,14 +3,14 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
     const executeAction = function (actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters) {
       const action = $a.getBackendActionByCode(actionCode);
       const params = new Quantumart.QP8.BackendActionParameters({
-        entityTypeCode: entityTypeCode,
-        entityId: entityId,
-        entityName: entityName,
-        parentEntityId: parentEntityId
+        entityTypeCode,
+        entityId,
+        entityName,
+        parentEntityId
       });
 
       const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
-      eventArgs.set_context({ additionalUrlParameters: additionalUrlParameters });
+      eventArgs.set_context({ additionalUrlParameters });
       documentContext.getHost().onActionExecuting(eventArgs);
     };
 
@@ -79,7 +79,7 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
   };
 
   return {
-    dispose: dispose,
-    initialize: initialize
+    dispose,
+    initialize
   };
 };

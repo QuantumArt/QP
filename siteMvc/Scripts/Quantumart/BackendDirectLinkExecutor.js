@@ -19,7 +19,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
   _imFirst: false,
   _uid: null,
 
-  _onDirectLinkOpenRequested: function (e) {
+  _onDirectLinkOpenRequested (e) {
     if ($q.isNullOrEmpty(e.key)) {
       const key = window.localStorage.getItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
       if (key) {
@@ -40,7 +40,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 
   _onDirectLinkOpenRequestedHandler: null,
 
-  _executeAction: function (actionParams, byRequest) {
+  _executeAction (actionParams, byRequest) {
     if (actionParams) {
       if ($q.isNullOrEmpty(actionParams.customerCode)) {
         actionParams.customerCode = this._currentCustomerCode;
@@ -74,7 +74,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     }
   },
 
-  _send: function (type, message) {
+  _send (type, message) {
     window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
     window.localStorage.setItem(type, message);
     if ('onstorage' in document) {
@@ -82,7 +82,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     }
   },
 
-  _instanceExistenceCheck: function () {
+  _instanceExistenceCheck () {
     const dfr = new jQuery.Deferred();
     if (window.localStorage.getItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG)) {
       this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, this._uid);
@@ -99,15 +99,15 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     return dfr.promise();
   },
 
-  _registerInstance: function () {
+  _registerInstance () {
     this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, 'true');
   },
 
-  _unregisterInstance: function () {
+  _unregisterInstance () {
     window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG);
   },
 
-  ready: function (callback) {
+  ready (callback) {
     this._instanceExistenceCheck().done(function (instanceExists) {
       if (!instanceExists) {
         this._imFirst = true;
@@ -142,7 +142,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     });
   },
 
-  dispose: function () {
+  dispose () {
     if (this._imFirst) {
       if (!('onstorage' in document)) {
         this._unregisterInstance();

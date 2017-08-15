@@ -54,55 +54,55 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   _isBindToExternal: false,
   _zIndex: 0,
 
-  get_contextMenuCode: function () {
+  get_contextMenuCode () {
     return this._contextMenuCode;
   },
 
-  set_contextMenuCode: function (value) {
+  set_contextMenuCode (value) {
     this._contextMenuCode = value;
   },
 
-  get_contextMenuElementId: function () {
+  get_contextMenuElementId () {
     return this._contextMenuElementId;
   },
 
-  set_contextMenuElementId: function (value) {
+  set_contextMenuElementId (value) {
     this._contextMenuElementId = value;
   },
 
-  get_contextMenuElement: function () {
+  get_contextMenuElement () {
     return this._contextMenuElement;
   },
 
-  get_contextMenuComponent: function () {
+  get_contextMenuComponent () {
     return this._contextMenuComponent;
   },
 
-  set_targetElements: function (value) {
+  set_targetElements (value) {
     this._targetElements = value;
   },
 
-  get_targetElements: function () {
+  get_targetElements () {
     return this._targetElements;
   },
 
-  set_allowManualShowing: function (value) {
+  set_allowManualShowing (value) {
     this._allowManualShowing = value;
   },
 
-  get_allowManualShowing: function () {
+  get_allowManualShowing () {
     return this._allowManualShowing;
   },
 
-  get_contextMenuManager: function () {
+  get_contextMenuManager () {
     return this._contextMenuManagerComponent;
   },
 
-  set_contextMenuManager: function (value) {
+  set_contextMenuManager (value) {
     this._contextMenuManagerComponent = value;
   },
 
-  initialize: function () {
+  initialize () {
     if (!this._contextMenuElementId) {
       this._contextMenuElementId = this._contextMenuCode;
     }
@@ -139,33 +139,33 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     this._contextMenuComponent = contextMenuComponent;
   },
 
-  _getMenuComponentName: function () {
+  _getMenuComponentName () {
     return `jeegoocontext_${this._contextMenuElementId}`;
   },
 
-  showMenu: function (e, targetElem) {
+  showMenu (e, targetElem) {
     if (this._contextMenuComponent._menuElement.childNodes.length > 0) {
       this._contextMenuComponent.show(e, targetElem);
     }
   },
 
-  showMenuAt: function (e, targetElem, x, y) {
+  showMenuAt (e, targetElem, x, y) {
     if (this._contextMenuComponent._menuElement.childNodes.length > 0) {
       this._contextMenuComponent.showAt(e, targetElem, x, y);
     }
   },
 
-  hideMenu: function (e) {
+  hideMenu (e) {
     this._contextMenuComponent.hide(e);
   },
 
-  refresh: function (hideRefreshMenuItem, successHandler, errorHandler) {
+  refresh (hideRefreshMenuItem, successHandler, errorHandler) {
     const cacheKey = Quantumart.QP8.BackendContextMenu.getCacheKey(this._contextMenuCode, true, this._isBindToExternal);
     const contextMenuCachedData = Quantumart.QP8.Cache.removeItem(cacheKey);
     this.addMenuItemsToMenu(hideRefreshMenuItem, successHandler, errorHandler);
   },
 
-  addMenuItemsToMenu: function (hideRefreshMenuItem, successHandler, errorHandler) {
+  addMenuItemsToMenu (hideRefreshMenuItem, successHandler, errorHandler) {
     const self = this;
     this._hideRefreshMenuItem = hideRefreshMenuItem;
     const $menu = $(this._contextMenuElement);
@@ -206,11 +206,11 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     });
   },
 
-  tuneMenuItems: function (entityId, parentEntityId, callback) {
+  tuneMenuItems (entityId, parentEntityId, callback) {
     const self = this;
     let params = {
       menuCode: this._contextMenuCode,
-      entityId: entityId,
+      entityId,
       parentEntityId: parentEntityId || 0
     };
 
@@ -244,7 +244,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     );
   },
 
-  _tuneMenuSeparators: function () {
+  _tuneMenuSeparators () {
     $('li.separator', this._contextMenuComponent._menuElement).each(function () {
       const $separator = $(this);
       let toHide = true;
@@ -282,7 +282,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  _getMenuItemHtml: function (html, dataItem) {
+  _getMenuItemHtml (html, dataItem) {
     html
       .cat(`<li code="${$q.htmlEncode(dataItem.ActionCode)}" class="item">\n`)
       .cat('  <div class="outerWrapper">\n')
@@ -301,11 +301,11 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       .cat('</li>\n');
   },
 
-  _getSeparatorHtml: function (html) {
+  _getSeparatorHtml (html) {
     html.cat('<li class="separator"></li>\n');
   },
 
-  _extendMenuItemElement: function (menuItemElem, menuItem) {
+  _extendMenuItemElement (menuItemElem, menuItem) {
     const $menuItem = this.getMenuItem(menuItemElem);
     if (!$q.isNullOrEmpty($menuItem)) {
       $menuItem.data('action_code', menuItem.ActionCode);
@@ -313,7 +313,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  _extendMenuItemElements: function (menuItems) {
+  _extendMenuItemElements (menuItems) {
     const self = this;
     $.each(menuItems, (index, menuItem) => {
       const $menuItem = self.getMenuItem(menuItem.ActionCode);
@@ -322,11 +322,11 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     );
   },
 
-  getMenuItemCount: function () {
+  getMenuItemCount () {
     return $('> LI', this._contextMenuElement).length;
   },
 
-  getMenuItem: function (menuItem) {
+  getMenuItem (menuItem) {
     let $menuItem = null;
 
     if ($q.isObject(menuItem)) {
@@ -341,7 +341,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  getMenuItemValue: function (menuItemElem) {
+  getMenuItemValue (menuItemElem) {
     const $menuItem = this.getMenuItem(menuItemElem);
     let menuItemValue = '';
 
@@ -355,7 +355,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     return menuItemValue;
   },
 
-  getMenuItemText: function (menuItem) {
+  getMenuItemText (menuItem) {
     const $menuItem = this.getMenuItem(menuItem);
     let menuItemText = '';
 
@@ -366,7 +366,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     return menuItemText;
   },
 
-  setVisibleState: function (menuItem, state) {
+  setVisibleState (menuItem, state) {
     const $menuItem = this.getMenuItem(menuItem);
     if (state) {
       $menuItem.show();
@@ -375,7 +375,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  setEnableState: function (menuItem, state) {
+  setEnableState (menuItem, state) {
     const $menuItem = this.getMenuItem(menuItem);
     if (state) {
       $menuItem.removeClass('disabled');
@@ -384,11 +384,11 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  getContextMenuEventType: function () {
+  getContextMenuEventType () {
     return $.fn.jeegoocontext.getContextMenuEventType();
   },
 
-  _onContextMenuTune: function (e, context) {
+  _onContextMenuTune (e, context) {
     const eventArgs = new Quantumart.QP8.BackendContextMenuEventArgs();
     eventArgs.set_menu(this);
     eventArgs.set_targetElement(context);
@@ -405,11 +405,11 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  _onCustomActionChanged: function () {
+  _onCustomActionChanged () {
     this.refresh(this._hideRefreshMenuItem);
   },
 
-  _onContextMenuHiding: function (e, context) {
+  _onContextMenuHiding (e, context) {
     const eventArgs = new Quantumart.QP8.BackendContextMenuEventArgs();
 
     eventArgs.set_menu(this);
@@ -421,7 +421,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  _onContextMenuHidden: function (e, context) {
+  _onContextMenuHidden (e, context) {
     const eventArgs = new Quantumart.QP8.BackendContextMenuEventArgs();
 
     eventArgs.set_menu(this);
@@ -433,7 +433,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  _onContextMenuItemHovering: function (e, context) {
+  _onContextMenuItemHovering (e, context) {
     const eventArgs = new Quantumart.QP8.BackendContextMenuItemEventArgs();
 
     eventArgs.set_menu(this);
@@ -446,7 +446,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  _onContextMenuItemClicking: function (e, context) {
+  _onContextMenuItemClicking (e, context) {
     const eventArgs = new Quantumart.QP8.BackendContextMenuItemEventArgs();
 
     eventArgs.set_menu(this);
@@ -459,7 +459,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendContextMenu.callBaseMethod(this, 'dispose');
 
     if (this._contextMenuManagerComponent) {
@@ -518,7 +518,7 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
 
   if (!contextMenuCachedData) {
     const actionUrl = `${window.CONTROLLER_URL_CONTEXT_MENU}GetByCode`;
-    let params = { menuCode: menuCode, loadItems: loadItems };
+    let params = { menuCode, loadItems };
 
     if (isBindToExternal === true) {
       params = Object.assign({}, params, { boundToExternal: true });
@@ -559,19 +559,19 @@ Quantumart.QP8.BackendContextMenuEventArgs.prototype = {
   _menuComponent: null,
   _targetElement: null,
 
-  get_menu: function () {
+  get_menu () {
     return this._menuComponent;
   },
 
-  set_menu: function (value) {
+  set_menu (value) {
     this._menuComponent = value;
   },
 
-  get_targetElement: function () {
+  get_targetElement () {
     return this._targetElement;
   },
 
-  set_targetElement: function (value) {
+  set_targetElement (value) {
     this._targetElement = value;
   }
 };
@@ -584,11 +584,11 @@ Quantumart.QP8.BackendContextMenuItemEventArgs = function () {
 
 Quantumart.QP8.BackendContextMenuItemEventArgs.prototype = {
   _menuItemElement: null,
-  get_menuItem: function () {
+  get_menuItem () {
     return this._menuItemElement;
   },
 
-  set_menuItem: function (value) {
+  set_menuItem (value) {
     this._menuItemElement = value;
   }
 };

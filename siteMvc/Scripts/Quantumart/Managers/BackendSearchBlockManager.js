@@ -5,13 +5,13 @@ Quantumart.QP8.BackendSearchBlockManager = function () {
 Quantumart.QP8.BackendSearchBlockManager.prototype = {
   _searchBlockGroups: {},
 
-  generateSearchBlockGroupCode: function (entityTypeCode, parentEntityId) {
+  generateSearchBlockGroupCode (entityTypeCode, parentEntityId) {
     const searchBlockCode = String.format('{0}_{1}', entityTypeCode, parentEntityId);
 
     return searchBlockCode;
   },
 
-  getSearchBlockGroup: function (searchBlockGroupCode) {
+  getSearchBlockGroup (searchBlockGroupCode) {
     let searchBlockGroup = null;
     if (this._searchBlockGroups[searchBlockGroupCode]) {
       searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
@@ -20,7 +20,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
     return searchBlockGroup;
   },
 
-  createSearchBlockGroup: function (searchBlockGroupCode) {
+  createSearchBlockGroup (searchBlockGroupCode) {
     let searchBlockGroup = this.getSearchBlockGroup(searchBlockGroupCode);
     if (!searchBlockGroup) {
       searchBlockGroup = {};
@@ -30,11 +30,11 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
     return searchBlockGroup;
   },
 
-  removeSearchBlockGroup: function (searchBlockGroupCode) {
+  removeSearchBlockGroup (searchBlockGroupCode) {
     $q.removeProperty(this._searchBlockGroups, searchBlockGroupCode);
   },
 
-  getSearchBlock: function (searchBlockElementId) {
+  getSearchBlock (searchBlockElementId) {
     let searchBlock = null;
 
     for (const searchBlockGroupCode in this._searchBlockGroups) {
@@ -48,7 +48,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
     return searchBlock;
   },
 
-  createSearchBlock: function (searchBlockElementId, entityTypeCode, parentEntityId, host, options) {
+  createSearchBlock (searchBlockElementId, entityTypeCode, parentEntityId, host, options) {
     const searchBlockGroupCode = this.generateSearchBlockGroupCode(entityTypeCode, parentEntityId);
 
     let searchBlock = null;
@@ -74,7 +74,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
     return searchBlock;
   },
 
-  removeSearchBlock: function (searchBlockElementId) {
+  removeSearchBlock (searchBlockElementId) {
     const searchBlock = this.getSearchBlock(searchBlockElementId);
     if (searchBlock) {
       const searchBlockGroupCode = searchBlock.get_searchBlockGroupCode();
@@ -88,7 +88,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
     }
   },
 
-  destroySearchBlock: function (searchBlockElementId) {
+  destroySearchBlock (searchBlockElementId) {
     const searchBlock = this.getSearchBlock(searchBlockElementId);
     if (searchBlock) {
       this.removeSearchBlock(searchBlockElementId);
@@ -98,7 +98,7 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
     }
   },
 
-  dispose: function () {
+  dispose () {
     Quantumart.QP8.BackendSearchBlockManager.callBaseMethod(this, 'dispose');
     if (this._searchBlockGroups) {
       for (const searchBlockGroupCode in this._searchBlockGroups) {

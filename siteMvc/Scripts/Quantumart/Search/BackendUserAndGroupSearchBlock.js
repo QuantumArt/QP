@@ -37,7 +37,7 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, 
   $btnSearch.on('click', onApplyFilter);
 
   return {
-    getSearchData: getSearchData,
-    dispose: dispose
+    getSearchData,
+    dispose
   };
 };
