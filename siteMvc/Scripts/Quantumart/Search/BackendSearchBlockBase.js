@@ -47,10 +47,10 @@ Quantumart.QP8.BackendSearchBlockBase = function (searchBlockGroupCode, searchBl
     }
   }
 
-  this._onSearchBlockResizedHandler = jQuery.proxy(this._onSearchBlockResized, this);
-  this._onFindButtonClickHandler = jQuery.proxy(this._onFindButtonClick, this);
-  this._onResetButtonClickHandler = jQuery.proxy(this._onResetButtonClick, this);
-  this._onSearchFormSubmittedHandler = jQuery.proxy(this._onSearchFormSubmitted, this);
+  this._onSearchBlockResizedHandler = $.proxy(this._onSearchBlockResized, this);
+  this._onFindButtonClickHandler = $.proxy(this._onFindButtonClick, this);
+  this._onResetButtonClickHandler = $.proxy(this._onResetButtonClick, this);
+  this._onSearchFormSubmittedHandler = $.proxy(this._onSearchFormSubmitted, this);
 };
 
 Quantumart.QP8.BackendSearchBlockBase.prototype = {
@@ -256,10 +256,10 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   },
 
   _onSearchBlockResized() {
-    const $searchBlock = jQuery(this._searchBlockElement);
+    const $searchBlock = $(this._searchBlockElement);
     let $bottomHandle = null;
     if (this._verticalResizerComponent) {
-      $bottomHandle = jQuery(this._verticalResizerComponent.get_bottomHandleElement());
+      $bottomHandle = $(this._verticalResizerComponent.get_bottomHandleElement());
     }
 
     const searchBlockWidth = parseInt($searchBlock.width(), 10);
@@ -291,7 +291,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 
   _onSearchFormSubmitted(e) {
     e.preventDefault();
-    jQuery(this._findButtonElement).trigger('click');
+    $(this._findButtonElement).trigger('click');
     return false;
   },
 
@@ -299,23 +299,21 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     Quantumart.QP8.BackendSearchBlockBase.callBaseMethod(this, 'dispose');
 
     this._detachSearchBlockEventHandlers();
-
     this._verticalResizerComponent = null;
     this._concreteSearchBlockElement = null;
     this._findButtonElement = null;
     this._resetButtonElement = null;
     this._buttonsWrapperElement = null;
     if (this._searchBlockElement) {
-      let $searchBlock = jQuery(this._searchBlockElement);
+      const $searchBlock = $(this._searchBlockElement);
       $searchBlock
         .noVerticalResizer()
         .empty()
-        .remove()
-      ;
+        .remove();
 
-      $searchBlock = null;
       this._searchBlockElement = null;
     }
+
     this._onSearchBlockResizedHandler = null;
     this._onFindButtonClickHandler = null;
     this._onResetButtonClickHandler = null;
@@ -330,7 +328,6 @@ Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function () {
 Quantumart.QP8.BackendSearchBlockBase.registerClass('Quantumart.QP8.BackendSearchBlockBase', Quantumart.QP8.Observable);
 Quantumart.QP8.BackendSearchBlockEventArgs = function (searchBlockType, searchQuery) {
   Quantumart.QP8.BackendSearchBlockEventArgs.initializeBase(this);
-
   this._searchBlockType = searchBlockType;
   this._searchQuery = searchQuery;
 };

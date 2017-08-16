@@ -301,9 +301,8 @@ custom.reportError = function (error) {
     report += `${chalk.underline.bgRed('LineNumber:')} ${chalk.underline.bgCyan(error.lineNumber)}\n`;
   }
 
-  report += `${chalk.underline.bgRed('Message:')
-     } ${error.message.replace('Error:', chalk.underline.bgRed('Error:'))
-     }\n`;
+  report += `${chalk.underline.bgRed('Message:')}`
+    + `${error.message.replace('Error:', chalk.underline.bgRed('Error:'))}\n`;
 
   global.console.error(report);
   this.emit('end');
@@ -325,7 +324,7 @@ gulp.task('assets:js', ['assets:vendorsjs', 'assets:qpjs'], () => gulp.src(custo
 
 gulp.task('assets:vendorsjs', ['assets:revisions'], () => gulp.src(custom.paths.vendorsjs, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.sourcemaps.init({ loadMaps: true }))
+  .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
   .pipe($.rename({ suffix: '.min' }))
   .pipe(custom.isProduction() ? $.uglify({
@@ -341,7 +340,7 @@ gulp.task('assets:vendorsjs', ['assets:revisions'], () => gulp.src(custom.paths.
 
 gulp.task('assets:qpjs', ['assets:revisions'], () => gulp.src(custom.paths.qpjs, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.sourcemaps.init({ loadMaps: true }))
+  .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
   .pipe($.babel())
   .pipe(custom.isProduction() ? $.uglify({
@@ -364,7 +363,7 @@ gulp.task('assets:img', () => gulp.src(custom.paths.images)
 
 gulp.task('assets:css', ['assets:revisions'], () => gulp.src(custom.paths.styles)
   .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.sourcemaps.init({ loadMaps: true }))
+  .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
   .pipe($.sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
   .pipe($.replace(/url\('/g, 'url(\'images/'))

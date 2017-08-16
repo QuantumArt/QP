@@ -676,7 +676,6 @@ Quantumart.QP8.BackendEditingArea.prototype = {
     }
 
     $(window).unbind('resize', this._onWindowResizedHandler);
-    Quantumart.QP8.BackendEditingArea._instance = null;
     $q.collectGarbageInIE();
   }
 };
@@ -695,6 +694,7 @@ Quantumart.QP8.BackendEditingArea.getInstance = function (editingAreaElementId, 
 Quantumart.QP8.BackendEditingArea.destroyInstance = function () {
   if (Quantumart.QP8.BackendEditingArea._instance) {
     Quantumart.QP8.BackendEditingArea._instance.dispose();
+    Quantumart.QP8.BackendEditingArea._instance = null;
   }
 };
 

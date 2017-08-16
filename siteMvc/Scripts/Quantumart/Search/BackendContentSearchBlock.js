@@ -34,7 +34,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
     },
 
     renderSearchBlock() {
-      if (this.get_isRendered() !== true) {
+      if (!this.get_isRendered()) {
         let serverContent;
         $q.getJsonFromUrl(
           'GET',

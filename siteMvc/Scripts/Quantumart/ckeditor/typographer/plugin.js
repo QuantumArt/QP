@@ -179,7 +179,7 @@
       });
 
       editor.on('mode', () => {
-        if (editor.readOnly === false) {
+        if (!editor.readOnly) {
           editor.getCommand(settings.pluginName).enable();
         }
       });

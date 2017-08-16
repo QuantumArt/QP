@@ -156,7 +156,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
 
     let fileExtensions = '';
 
-    if (this._isFilterFileTypeIdDefined === true) {
+    if (this._isFilterFileTypeIdDefined) {
       fileExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[`${this._filterFileTypeId}`];
     }
 

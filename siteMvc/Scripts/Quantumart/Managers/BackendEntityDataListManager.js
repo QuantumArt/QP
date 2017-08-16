@@ -169,6 +169,7 @@ Quantumart.QP8.BackendEntityDataListManager.getInstance = function () {
 Quantumart.QP8.BackendEntityDataListManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendEntityDataListManager._instance) {
     Quantumart.QP8.BackendEntityDataListManager._instance.dispose();
+    Quantumart.QP8.BackendEntityDataListManager._instance = null;
   }
 };
 

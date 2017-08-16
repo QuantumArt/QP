@@ -62,18 +62,27 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   NODE_PLUS_SELECTOR: '> DIV .t-plus',
   NODE_MINUS_SELECTOR: '> DIV .t-minus',
 
+  // eslint-disable-next-line camelcase
   get_treeElementId() {
     return this._treeElementId;
   },
+
+  // eslint-disable-next-line camelcase
   set_treeElementId(value) {
     this._treeElementId = value;
   },
+
+  // eslint-disable-next-line camelcase
   get_treeElement() {
     return this._treeElement;
   },
+
+  // eslint-disable-next-line camelcase
   get_treeContainerElementId() {
     return this._treeContainerElementId;
   },
+
+  // eslint-disable-next-line camelcase
   set_treeContainerElementId(value) {
     this._treeContainerElementId = value;
   },
@@ -88,7 +97,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     treeComponent.isAjax = this.isAjax;
     treeComponent.ajaxRequest = this._onDataBindingHandler;
 
-    const self = this;
     this._initNodeCheck(treeComponent);
     this._initNewToggle(treeComponent);
 
@@ -103,22 +111,24 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   _initNodeCheck(treeComponent) {
-    treeComponent.nodeCheck = function (li, isChecked, suppressAutoCheck, autoCheckChildren) {
-      this._legacyNodeCheck.call(treeComponent, li, isChecked);
-      this.beforeCustomNodeCheck(li, isChecked, suppressAutoCheck, autoCheckChildren);
-      this._proceedAutoCheckAllChildren(li, isChecked, suppressAutoCheck, autoCheckChildren);
-      this.afterCustomNodeCheck(li, isChecked, suppressAutoCheck, autoCheckChildren);
-    }.bind(this);
-
-    treeComponent.nodeCheckExcludeSelf = this._proceedAutoCheckDirectChildren.bind(this);
+    Object.assign(treeComponent, {
+      nodeCheckExcludeSelf: this._proceedAutoCheckDirectChildren.bind(this),
+      nodeCheck: (li, isChecked, suppressAutoCheck, autoCheckChildren) => {
+        this._legacyNodeCheck.call(treeComponent, li, isChecked);
+        this.beforeCustomNodeCheck(li, isChecked, suppressAutoCheck, autoCheckChildren);
+        this._proceedAutoCheckAllChildren(li, isChecked, suppressAutoCheck, autoCheckChildren);
+        this.afterCustomNodeCheck(li, isChecked, suppressAutoCheck, autoCheckChildren);
+      }
+    });
   },
 
   _initNewToggle(treeComponent) {
-    const oldToggle = treeComponent.nodeToggle;
-
-    treeComponent.nodeToggle = function (...args) {
-      oldToggle.call(treeComponent, args[0], args[1], true);
-    };
+    const { nodeToggle: oldToggle } = treeComponent;
+    Object.assign(treeComponent, {
+      nodeToggle: (...args) => {
+        oldToggle.call(treeComponent, args[0], args[1], true);
+      }
+    });
   },
 
   isAjax() {
@@ -147,24 +157,26 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       }
 
       let $node = null;
-      if (node == this.ROOT_NODE_CODE) {
+      if (node === this.ROOT_NODE_CODE) {
         $node = $(`#${this._treeElementId}`);
       } else {
         $node = $(`LI DIV INPUT:hidden[value='${node}']`, $parentNode).parent().parent().filter('.t-item');
-        if ($node.length == 0) {
+        if ($node.length === 0) {
           $node = null;
         }
       }
 
       return $node;
     }
+
+    return undefined;
   },
 
   getNodeValue(node) {
     const $node = this.getNode(node);
     let nodeValue = '';
 
-    if (!$q.isNullOrEmpty($node)) {
+    if ($node) {
       if ($node.hasClass(this.ROOT_NODE_CLASS_NAME)) {
         nodeValue = this.ROOT_NODE_CODE;
       } else {
@@ -179,7 +191,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     const $node = this.getNode(node);
     let nodeText = '';
 
-    if (!$q.isNullOrEmpty($node)) {
+    if ($node) {
       nodeText = this._treeComponent.getItemText($node);
     }
 
@@ -189,9 +201,9 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   getParentNode(node) {
     const $node = this.getNode(node);
     let $parentNode = null;
-    if (!$q.isNullOrEmpty($node)) {
+    if ($node) {
       $parentNode = $node.parent().parent();
-      if ($parentNode.length == 0 || !$parentNode.hasClass('t-item')) {
+      if ($parentNode.length === 0 || !$parentNode.hasClass('t-item')) {
         return null;
       }
     }
@@ -200,25 +212,10 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   refreshNode(node, options) {
-    let loadChildNodes = true;
-    let callback = null;
-
-    if ($q.isObject(options)) {
-      if (!$q.isNull(options.loadChildNodes)) {
-        loadChildNodes = options.loadChildNodes;
-      }
-
-      if (options.callback) {
-        callback = options.callback;
-      }
-    }
-
+    const loadChildNodes = options && options.loadChildNodes ? options.loadChildNodes : null;
+    const callback = options && options.callback ? options.callback : null;
     const $node = this.getNode(node);
-    const self = this;
-
-    if (!$q.isNullOrEmpty($node)) {
-      const refreshCallback = function () { };
-
+    if ($node) {
       if (this.getChildNodeCount($node) > 0) {
         this.collapseNode($node);
       }
@@ -232,13 +229,13 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   refreshNodes(nodes, options) {
-    const self = this;
+    const that = this;
     const $nodes = $q.toJQuery(nodes);
 
     if (!$q.isNullOrEmpty($nodes)) {
       $nodes.each((index, nodeElem) => {
         const $node = $(nodeElem);
-        self.refreshNode($node, options);
+        that.refreshNode($node, options);
       });
     }
   },
@@ -292,9 +289,9 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       makeLinksFromIds: this._makeLinksFromIds
     });
 
-    if (!$q.isNullOrEmpty($group) && $parentNode.data('loaded') === false) {
+    if (!$q.isNullOrEmpty($group) && !$parentNode.data('loaded')) {
       $(groupHtml.string()).prependTo($group);
-    } else if (!$q.isNullOrEmpty($group) && $parentNode.data('loaded') !== false) {
+    } else if (!$q.isNullOrEmpty($group) && $parentNode.data('loaded')) {
       $group.empty().html(groupHtml.string());
     } else if ($q.isNullOrEmpty($group)) {
       $group = $(groupHtml.string()).appendTo($parentNode);
@@ -315,36 +312,39 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   _onNodeClicking(e) {
-    let $element = $(e.currentTarget);
-    let $node = $($element.closest('.t-item')[0]);
-    if (!this._treeComponent.shouldNavigate($element)) {
-      $node = null;
-      $element = null;
+    if (!this._treeComponent.shouldNavigate($(e.currentTarget))) {
       e.preventDefault();
       return false;
     }
-    $node = null;
-    $element = null;
+
+    return undefined;
   },
 
   _onIdClicking(e) {
     e.preventDefault();
     e.stopPropagation();
     if (this._readActionCode) {
-      this.executeAction($(e.currentTarget).closest('.t-item').first(), this._readActionCode, { ctrlKey: e.ctrlKey, shiftKey: e.shiftKey });
+      this.executeAction(
+        $(e.currentTarget).closest('.t-item').first(),
+        this._readActionCode,
+        {
+          ctrlKey: e.ctrlKey,
+          shiftKey: e.shiftKey
+        }
+      );
     }
   },
 
   expandNode(node) {
     const $node = this.getNode(node);
-    if (!$q.isNullOrEmpty($node)) {
+    if ($node) {
       this._treeComponent.expand($node);
     }
   },
 
   collapseNode(node) {
     const $node = this.getNode(node);
-    if (!$q.isNullOrEmpty($node)) {
+    if ($node) {
       this._treeComponent.collapse($node);
     }
   },
@@ -363,7 +363,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   removeNode(node) {
     const $node = this.getNode(node);
 
-    if (!$q.isNullOrEmpty($node)) {
+    if ($node) {
       $node.hide(100, () => {
         $node.removeData().empty().remove();
       });
@@ -383,7 +383,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     const $node = this.getNode(node);
     let isRootNode = false;
 
-    if (!$q.isNullOrEmpty($node)) {
+    if ($node) {
       isRootNode = $node.hasClass(this.ROOT_NODE_CLASS_NAME);
     }
 
@@ -394,22 +394,21 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     const $node = this.getNode(node);
     let level = -1;
 
-    if (!$q.isNullOrEmpty($node)) {
-      if (!this.isRootNode($node)) {
+    if ($node) {
+      if (this.isRootNode($node)) {
+        level = 0;
+      } else {
         let $parentNode = $node.parent();
-
         level = 1;
+
         while (!$q.isNullOrEmpty($parentNode) && !this.isRootNode($node)) {
           const parentNodeElem = $parentNode.get(0);
-
-          if (parentNodeElem && parentNodeElem.tagName == 'LI') {
+          if (parentNodeElem && parentNodeElem.tagName === 'LI') {
             level += 1;
           }
 
           $parentNode = $parentNode.parent();
         }
-      } else {
-        level = 0;
       }
     }
 
@@ -420,7 +419,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     const $node = this.getNode(node);
     let nodeIndex;
 
-    if (this._treeComponent.showCheckBox === true) {
+    if (this._treeComponent.showCheckBox) {
       nodeIndex = $(`.t-checkbox input[type='hidden'][name='${this._treeElementName}.Index']`, $node).val();
     }
     return nodeIndex;
@@ -430,7 +429,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     const $node = this.getNode(node);
     let childNodeCount = 0;
 
-    if (!$q.isNullOrEmpty($node)) {
+    if ($node) {
       childNodeCount = $node.find('> UL.t-group > LI').length;
     }
 
@@ -442,11 +441,10 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   _showAjaxLoadingIndicatorForNode(node) {
-    const self = this;
+    const that = this;
     const $node = this.getNode(node);
-
     $node.data('loading_icon_timeout', setTimeout(() => {
-      if (self._stopDeferredOperations) {
+      if (that._stopDeferredOperations) {
         clearTimeout($node.data('loading_icon_timeout'));
         return;
       }
@@ -476,17 +474,20 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       const $item = $(item).closest('.t-item');
       const $checkboxHolder = $('> div > .t-checkbox', $item);
       const arrayName = $checkboxHolder.data('array_name');
-      index = $checkboxHolder.find(`:input[name="${arrayName}.Index"]`).val();
+      const newIndex = $checkboxHolder.find(`:input[name="${arrayName}.Index"]`).val();
 
-      $checkboxHolder.find(`:input[name="${arrayName}[${index}].Text"]`).remove();
-      $checkboxHolder.find(`:input[name="${arrayName}[${index}].Value"]`).remove();
+      $checkboxHolder.find(`:input[name="${arrayName}[${newIndex}].Text"]`).remove();
+      $checkboxHolder.find(`:input[name="${arrayName}[${newIndex}].Value"]`).remove();
       $checkboxHolder.find(':checkbox').attr({
         checked: !!isChecked,
         value: isChecked
       });
 
       if (isChecked) {
-        $($.telerik.treeview.getNodeInputsHtml(this.getItemValue($item), this.getItemText($item), arrayName, index)).appendTo($checkboxHolder);
+        $($.telerik.treeview.getNodeInputsHtml(
+          this.getItemValue($item),
+          this.getItemText($item), arrayName, newIndex)
+        ).appendTo($checkboxHolder);
       }
     }, this));
   },
@@ -505,20 +506,19 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   _proceedAutoCheckAllChildren(li, isChecked, suppressAutoCheck, autoCheckChildren) {
     return this._proceedAutoCheckChildren(function ($node) {
-      const self = this;
+      const that = this;
       $node.find('ul.t-group .t-checkbox [type=checkbox]').each((index, item) => {
-        let $checkbox = $(item);
+        const $checkbox = $(item);
         $checkbox.prop('checked', isChecked);
-        self._treeComponent.nodeCheck($checkbox, isChecked, true);
+        that._treeComponent.nodeCheck($checkbox, isChecked, true);
         $checkbox.removeClass(window.CHANGED_FIELD_CLASS_NAME);
-        $checkbox = null;
       });
     }, li, isChecked, suppressAutoCheck, autoCheckChildren);
   },
 
   _proceedAutoCheckDirectChildren(li, isChecked, suppressAutoCheck, autoCheckChildren) {
     return this._proceedAutoCheckChildren(function ($node) {
-      const self = this;
+      const that = this;
       $node
         .children('ul.t-group')
         .children('li.t-item')
@@ -527,15 +527,20 @@ Quantumart.QP8.BackendTreeBase.prototype = {
         .each((index, item) => {
           let $checkbox = $(item);
           $checkbox.prop('checked', isChecked);
-          self._treeComponent.nodeCheck($checkbox, isChecked, true);
+          that._treeComponent.nodeCheck($checkbox, isChecked, true);
           $checkbox.removeClass(window.CHANGED_FIELD_CLASS_NAME);
           $checkbox = null;
         });
     }, li, isChecked, suppressAutoCheck, autoCheckChildren);
   },
 
-  beforeCustomNodeCheck() { },
-  afterCustomNodeCheck() { },
+  beforeCustomNodeCheck() {
+    // TODO: empty fn
+  },
+
+  afterCustomNodeCheck() {
+    // TODO: empty fn
+  },
 
   _isNodeCollapsed($node) {
     return $node.find(this.NODE_PLUS_SELECTOR).length;
@@ -543,7 +548,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   dispose() {
     this._stopDeferredOperations = true;
-
     Quantumart.QP8.BackendTreeBase.callBaseMethod(this, 'dispose');
 
     if (this._treeComponent) {
@@ -553,30 +557,32 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       this._treeComponent = null;
     }
 
-    let $tree = $(this._treeElement);
-
-    $tree
+    $(this._treeElement)
       .undelegate(this.NODE_NEW_CLICKABLE_SELECTORS, 'click')
       .undelegate(this.NODE_ID_LINK_SELECTORS, 'click')
       .removeData('tTreeView')
       .empty();
 
-    $tree = null;
     this._treeElement = null;
     this._onNodeClickingHandler = null;
     this._onIdClickingHandler = null;
-
     $q.collectGarbageInIE();
   }
 };
 
-$.telerik.treeview.getItemHtml = function (options) {
-  const item = options.item;
-  const html = options.html;
-  const isFirstLevel = options.isFirstLevel;
-  const groupLevel = options.groupLevel;
-  const itemIndex = options.itemIndex;
-  const itemsCount = options.itemsCount;
+$.telerik.treeview.getItemHtml = ({
+  item,
+  html,
+  isFirstLevel,
+  groupLevel,
+  itemIndex,
+  itemsCount,
+  isAjax,
+  showCheckBoxes,
+  elementId,
+  makeLinksFromIds,
+  showIds
+}) => {
   const absoluteIndex = new $.telerik.stringBuilder()
     .cat(groupLevel)
     .catIf(':', groupLevel)
@@ -585,26 +591,26 @@ $.telerik.treeview.getItemHtml = function (options) {
 
   html
     .cat('<li class="t-item')
-    .catIf(' t-first', isFirstLevel && itemIndex == 0)
-    .catIf(' t-last', itemIndex == itemsCount - 1)
+    .catIf(' t-first', isFirstLevel && itemIndex === 0)
+    .catIf(' t-last', itemIndex === itemsCount - 1)
     .cat('">')
     .cat('<div class="')
-    .catIf('t-top ', isFirstLevel && itemIndex == 0)
-    .catIf('t-top', itemIndex != itemsCount - 1 && itemIndex == 0)
-    .catIf('t-mid', itemIndex != itemsCount - 1 && itemIndex != 0)
-    .catIf('t-bot', itemIndex == itemsCount - 1)
+    .catIf('t-top ', isFirstLevel && itemIndex === 0)
+    .catIf('t-top', itemIndex !== itemsCount - 1 && itemIndex === 0)
+    .catIf('t-mid', itemIndex !== itemsCount - 1 && itemIndex !== 0)
+    .catIf('t-bot', itemIndex === itemsCount - 1)
     .cat('">');
 
-  if ((options.isAjax && item.LoadOnDemand) || (item.Items && item.Items.length > 0)) {
+  if ((isAjax && item.LoadOnDemand) || (item.Items && item.Items.length > 0)) {
     html
       .cat('<span class="t-icon')
-      .catIf(' t-plus', item.Expanded !== true)
-      .catIf(' t-minus', item.Expanded === true)
+      .catIf(' t-plus', !item.Expanded)
+      .catIf(' t-minus', item.Expanded)
       .cat('"></span>');
   }
 
-  if (options.showCheckBoxes && item.Checkable !== false) {
-    const arrayName = options.elementId;
+  if (showCheckBoxes && item.Checkable !== false) {
+    const arrayName = elementId;
 
     html
       .cat('<span class="t-checkbox" data-array_name="')
@@ -617,57 +623,53 @@ $.telerik.treeview.getItemHtml = function (options) {
       .cat('.Index')
       .cat('" class="t-input"/>')
       .cat('<input type="checkbox" value="')
-      .cat(item.Checked === true ? 'True' : 'False')
+      .cat(item.Checked ? 'True' : 'False')
       .cat('" class="t-input')
       .cat('" name="')
       .cat(arrayName)
       .cat('[')
       .cat(absoluteIndex)
       .cat('].Checked"')
-      .catIf(' disabled="disabled"', item.Enabled === false)
+      .catIf(' disabled="disabled"', !item.Enabled)
       .catIf(' checked="checked"', item.Checked)
       .cat('/>');
 
     if (item.Checked) {
       html.cat($.telerik.treeview.getNodeInputsHtml(item.Value, item.Text, arrayName, absoluteIndex));
     }
+
     html.cat('</span>');
   }
 
-  const startLinkFunction = function (html, item) {
-    const navigateUrl = item.NavigateUrl || item.Url;
-
-    html
+  const startLinkFunction = function (fnHtml, fnItem) {
+    const navigateUrl = fnItem.NavigateUrl || fnItem.Url;
+    fnHtml
       .cat(navigateUrl ? `<a href="${navigateUrl}" class="t-link ` : '<span class="')
       .cat('t-in')
-      .catIf(' t-state-selected', item.Selected === true)
+      .catIf(' t-state-selected', fnItem.Selected)
       .cat('">');
   };
 
-  const endLinkFunction = function (html, item) {
-    const navigateUrl = item.NavigateUrl || item.Url;
-    html.cat(navigateUrl ? '</a>' : '</span>');
+  const endLinkFunction = function (fnHtml, fnItem) {
+    const navigateUrl = fnItem.NavigateUrl || fnItem.Url;
+    fnHtml.cat(navigateUrl ? '</a>' : '</span>');
   };
 
   startLinkFunction(html, item);
 
-  if (item.ImageUrl != null) {
-    html
-      .cat('<img class="t-image" alt="" src="')
-      .cat(item.ImageUrl)
-      .cat('" />');
+  if (item.ImageUrl) {
+    html.cat('<img class="t-image" alt="" src="').cat(item.ImageUrl).cat('" />');
   }
 
-  if (item.SpriteCssClasses != null) {
-    html
-      .cat('<span class="t-sprite ')
-      .cat(item.SpriteCssClasses)
-      .cat('"></span>');
+  if (item.SpriteCssClasses) {
+    html.cat('<span class="t-sprite ').cat(item.SpriteCssClasses).cat('"></span>');
   }
 
-  if (options.showIds) {
-    if (options.makeLinksFromIds) {
-      html.cat(`<span class="idLink">(<a class="js" href="javascript:void(0)">${$q.htmlEncode(item.Value)}</a>)</span>`);
+  if (showIds) {
+    if (makeLinksFromIds) {
+      html.cat(
+        `<span class="idLink">(<a class="js" href="javascript:void(0)">${$q.htmlEncode(item.Value)}</a>)</span>`
+      );
     } else {
       html.cat(`<span class="idLink">(${$q.htmlEncode(item.Value)})</span>`);
     }
@@ -675,15 +677,11 @@ $.telerik.treeview.getItemHtml = function (options) {
     html.cat(' ');
   }
 
-  html.catIf(item.Text, item.Encoded === false)
-    .catIf(item.Text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), item.Encoded !== false);
+  html.catIf(item.Text, !item.Encoded).catIf(item.Text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), item.Encoded);
   endLinkFunction(html, item);
 
   if (item.Value) {
-    html
-      .cat('<input type="hidden" class="t-input" name="itemValue" value="')
-      .cat(item.Value)
-      .cat('" />');
+    html.cat('<input type="hidden" class="t-input" name="itemValue" value="').cat(item.Value).cat('" />');
   }
 
   html.cat('</div>');
@@ -692,53 +690,60 @@ $.telerik.treeview.getItemHtml = function (options) {
     $.telerik.treeview.getGroupHtml({
       data: item.Items,
       html,
-      isAjax: options.isAjax,
+      isAjax,
       isFirstLevel: false,
-      showCheckBoxes: options.showCheckBoxes,
+      showCheckBoxes,
       groupLevel: absoluteIndex,
-      elementId: options.elementId,
-      showIds: options.showIds,
-      makeLinksFromIds: options.makeLinksFromIds
+      elementId,
+      showIds,
+      makeLinksFromIds
     });
   }
 
   html.cat('</li>');
 };
 
-$.telerik.treeview.getGroupHtml = function (options) {
-  const data = options.data;
-  const html = options.html;
-  const showLines = options.showLines;
-  const isFirstLevel = options.isFirstLevel;
-  const renderGroup = options.renderGroup;
-
-  if (renderGroup !== false) {
+$.telerik.treeview.getGroupHtml = ({
+  showLines,
+  html,
+  isFirstLevel,
+  groupLevel,
+  renderGroup,
+  isExpanded,
+  isAjax,
+  showCheckBoxes,
+  elementId,
+  makeLinksFromIds,
+  showIds,
+  data
+}) => {
+  if (renderGroup) {
     html.cat('<ul class="t-group')
-      .catIf(' t-treeview-lines', isFirstLevel && (typeof showLines == typeof undefined || showLines))
+      .catIf(' t-treeview-lines', isFirstLevel && (typeof showLines === typeof undefined || showLines))
       .cat('"')
-      .catIf(' style="display:none"', options.isExpanded !== true)
+      .catIf(' style="display:none"', !isExpanded)
       .cat('>');
   }
 
   if (data && data.length > 0) {
-    for (let i = 0, len = data.length; i < len; i++) {
+    for (let i = 0; i < data.length; i++) {
       $.telerik.treeview.getItemHtml({
         item: data[i],
         html,
-        isAjax: options.isAjax,
+        isAjax,
         isFirstLevel,
-        showCheckBoxes: options.showCheckBoxes,
-        groupLevel: options.groupLevel,
+        showCheckBoxes,
+        groupLevel,
         itemIndex: i,
-        itemsCount: len,
-        elementId: options.elementId,
-        showIds: options.showIds,
-        makeLinksFromIds: options.makeLinksFromIds
+        itemsCount: data.length,
+        elementId,
+        showIds,
+        makeLinksFromIds
       });
     }
   }
 
-  if (renderGroup !== false) {
+  if (renderGroup) {
     html.cat('</ul>');
   }
 };

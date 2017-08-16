@@ -17,7 +17,7 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
 
       contextMenuComponent.addMenuItemsToMenu(false);
 
-      const contextMenuEventType = contextMenuComponent.getContextMenuEventType();
+      const contextMenuEventType = $.fn.jeegoocontext.getContextMenuEventType();
       $fileListContentElement.delegate('.fileItem', contextMenuEventType, $.proxy(this._onContextMenuHandler, this));
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, $.proxy(this._onNodeContextMenuItemClickingHandler, this));
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, $.proxy(this._onNodeContextMenuHiddenHandler, this));

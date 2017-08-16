@@ -1,25 +1,23 @@
-Quantumart.QP8.BackendVirtualFieldTree = function (treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options) {
-  Quantumart.QP8.BackendVirtualFieldTree.initializeBase(this, [treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options]);
-  if ($q.isObject(options)) {
-    if (!$q.isNullOrEmpty(options.virtualContentId)) {
-      this._virtualContentId = options.virtualContentId;
-    }
+Quantumart.QP8.BackendVirtualFieldTree = class BackendVirtualFieldTree extends Quantumart.QP8.BackendEntityTree {
+  static _getIcon(entity) {
+    return entity.IconUrl;
   }
-};
 
-Quantumart.QP8.BackendVirtualFieldTree.prototype = {
+  constructor(...props) {
+    super(...props);
+    const [,,,,, options] = props;
+    this._virtualContentId = options
+      ? options.virtualContentId
+      : null;
+  }
+
   convertNodeCodeToEntityId(nodeCode) {
-    if (nodeCode != this.ROOT_NODE_CODE) {
-      return nodeCode;
-    }
-    return null;
-  },
+    return nodeCode === this.ROOT_NODE_CODE ? null : nodeCode;
+  }
 
   _getEntityChildList(entityId, returnSelf, successHandler, errorHandler) {
     if (this._parentEntityId) {
-      let selectItemIDsParam,
-        entityIdParam,
-        alias;
+      let selectItemIDsParam, entityIdParam, alias;
 
       if (!$q.isNullOrEmpty(this._selectedEntitiesIDs)) {
         selectItemIDsParam = this._selectedEntitiesIDs.join(';');
@@ -29,7 +27,6 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
         alias = this.getNodeText(this.getNodeByEntityId(entityId));
       }
 
-      const actionUrl = `${window.CONTROLLER_URL_VIRTUAL_CONTENT}GetChildFieldList`;
       const params = {
         virtualContentId: this._virtualContentId,
         joinedContentId: this._parentEntityId,
@@ -40,7 +37,7 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
 
       $q.getJsonFromUrl(
         'POST',
-        actionUrl,
+        `${window.CONTROLLER_URL_VIRTUAL_CONTENT}GetChildFieldList`,
         params,
         true,
         false,
@@ -48,14 +45,5 @@ Quantumart.QP8.BackendVirtualFieldTree.prototype = {
         errorHandler
       );
     }
-  },
-
-  _getIcon(entity) {
-    const icon = entity.IconUrl;
-    return icon;
-  },
-
-  _virtualContentId: null
+  }
 };
-
-Quantumart.QP8.BackendVirtualFieldTree.registerClass('Quantumart.QP8.BackendVirtualFieldTree', Quantumart.QP8.BackendEntityTree);

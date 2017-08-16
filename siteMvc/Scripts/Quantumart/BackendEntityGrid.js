@@ -384,7 +384,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       contextMenuComponent.initialize();
       contextMenuComponent.addMenuItemsToMenu(true);
 
-      $grid.delegate(this.ROW_CLICKABLE_SELECTORS, contextMenuComponent.getContextMenuEventType(), this._onContextMenuHandler);
+      $grid.delegate(this.ROW_CLICKABLE_SELECTORS, $.fn.jeegoocontext.getContextMenuEventType(), this._onContextMenuHandler);
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onRowContextMenuShowingHandler);
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onRowContextMenuItemClickingHandler);
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onRowContextMenuHiddenHandler);
@@ -1168,7 +1168,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
           .unbind('dataBinding')
           .unbind('dataBound')
           .unbind('rowDataBound')
-          .undelegate(this.ROW_CLICKABLE_SELECTORS, this._contextMenuComponent.getContextMenuEventType(), this._onContextMenuHandler);
+          .undelegate(this.ROW_CLICKABLE_SELECTORS, $.fn.jeegoocontext.getContextMenuEventType(), this._onContextMenuHandler);
 
         this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onRowContextMenuShowingHandler);
         this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onRowContextMenuItemClickingHandler);

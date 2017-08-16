@@ -93,9 +93,6 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
 
   dispose() {
     Quantumart.QP8.BackendCustomActionHostManager.callBaseMethod(this, 'dispose');
-
-    Quantumart.QP8.BackendCustomActionHostManager._instance = null;
-
     $q.collectGarbageInIE();
   }
 };
@@ -113,6 +110,7 @@ Quantumart.QP8.BackendCustomActionHostManager.getInstance = function () {
 Quantumart.QP8.BackendCustomActionHostManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendCustomActionHostManager._instance) {
     Quantumart.QP8.BackendCustomActionHostManager._instance.dispose();
+    Quantumart.QP8.BackendCustomActionHostManager._instance = null;
   }
 };
 

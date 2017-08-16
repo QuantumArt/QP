@@ -359,7 +359,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   _cancel() {
     const eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
     this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, eventArgs);
-    if (eventArgs.getCancel() === true) {
+    if (eventArgs.getCancel()) {
       this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, eventArgs);
     } else {
       return false;

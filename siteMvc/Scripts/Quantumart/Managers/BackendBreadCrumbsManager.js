@@ -131,8 +131,6 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
     if (this._breadCrumbs) {
       Object.keys(this._breadCrumbs).forEach(this.destroyBreadCrumbs);
     }
-
-    Quantumart.QP8.BackendBreadCrumbsManager._instance = null;
   }
 };
 
@@ -149,6 +147,7 @@ Quantumart.QP8.BackendBreadCrumbsManager.getInstance = function (breadCrumbsCont
 Quantumart.QP8.BackendBreadCrumbsManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendBreadCrumbsManager._instance) {
     Quantumart.QP8.BackendBreadCrumbsManager._instance.dispose();
+    Quantumart.QP8.BackendBreadCrumbsManager._instance = null;
   }
 };
 

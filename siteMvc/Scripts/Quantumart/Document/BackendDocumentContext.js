@@ -440,3 +440,5 @@ Quantumart.QP8.BackendDocumentContext.setGlobal = function (key, value) {
 };
 
 Quantumart.QP8.BackendDocumentContext.registerClass('Quantumart.QP8.BackendDocumentContext');
+
+window.$ctx = Quantumart.QP8.BackendDocumentContext;

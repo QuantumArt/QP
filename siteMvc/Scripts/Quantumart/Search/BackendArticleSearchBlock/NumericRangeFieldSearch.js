@@ -120,11 +120,11 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       }
 
       if (!$q.isNull(state.isByValue)) {
-        if (state.isByValue === true) {
+        if (state.isByValue) {
           $('.radioButtonsList input:radio[value=0]', this._containerElement)
             .prop('checked', true)
             .trigger('click');
-        } else if (state.isByValue === false) {
+        } else if (!state.isByValue) {
           $('.radioButtonsList input:radio[value=1]', this._containerElement)
             .prop('checked', true)
             .trigger('click');

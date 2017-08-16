@@ -49,6 +49,7 @@ Quantumart.QP8.BackendActionPermissionViewManager.getInstance = function () {
 Quantumart.QP8.BackendActionPermissionViewManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendActionPermissionViewManager._instance) {
     Quantumart.QP8.BackendActionPermissionViewManager._instance.dispose();
+    Quantumart.QP8.BackendActionPermissionViewManager._instance = null;
   }
 };
 

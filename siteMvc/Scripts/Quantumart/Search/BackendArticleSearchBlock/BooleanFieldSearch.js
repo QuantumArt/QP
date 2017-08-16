@@ -82,7 +82,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     }
-    return stateData.value === true ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
+    return stateData.value ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
   },
 
   restore_blockState(state) {
@@ -94,9 +94,9 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
         $isNullCheckBoxElement = null;
       }
       if (!$q.isNull(state.value)) {
-        if (state.value === true) {
+        if (state.value) {
           $('input:radio[value=true]', this._containerElement).prop('checked', true);
-        } else if (state.value === false) {
+        } else if (!state.value) {
           $('input:radio[value!=true]', this._containerElement).prop('checked', true);
         }
       }

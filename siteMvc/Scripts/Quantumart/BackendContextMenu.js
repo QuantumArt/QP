@@ -214,7 +214,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       parentEntityId: parentEntityId || 0
     };
 
-    if (this._isBindToExternal === true) {
+    if (this._isBindToExternal) {
       params = Object.assign({}, params, { boundToExternal: true });
     }
 
@@ -261,7 +261,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
         }
       });
 
-      if (toHide === true) {
+      if (toHide) {
         $separator.hide();
       } else {
         $separator.show();
@@ -382,10 +382,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     } else {
       $menuItem.addClass('disabled');
     }
-  },
-
-  getContextMenuEventType() {
-    return $.fn.jeegoocontext.getContextMenuEventType();
   },
 
   _onContextMenuTune(e, context) {
@@ -520,7 +516,7 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (menuCode, loa
     const actionUrl = `${window.CONTROLLER_URL_CONTEXT_MENU}GetByCode`;
     let params = { menuCode, loadItems };
 
-    if (isBindToExternal === true) {
+    if (isBindToExternal) {
       params = Object.assign({}, params, { boundToExternal: true });
     }
 

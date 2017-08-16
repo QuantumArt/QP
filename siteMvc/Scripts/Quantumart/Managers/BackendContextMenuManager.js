@@ -7,7 +7,6 @@ Quantumart.QP8.BackendContextMenuManager = function () {
 Quantumart.QP8.BackendContextMenuManager.prototype = {
   dispose() {
     Quantumart.QP8.BackendContextMenuManager.callBaseMethod(this, 'dispose');
-    Quantumart.QP8.BackendContextMenuManager._instance = null;
     $q.collectGarbageInIE();
   },
 
@@ -30,6 +29,7 @@ Quantumart.QP8.BackendContextMenuManager.getInstance = function () {
 Quantumart.QP8.BackendContextMenuManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendContextMenuManager._instance) {
     Quantumart.QP8.BackendContextMenuManager._instance.dispose();
+    Quantumart.QP8.BackendContextMenuManager._instance = null;
   }
 };
 

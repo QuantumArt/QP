@@ -1,17 +1,27 @@
-Quantumart.QP8.BackendTreeMenuContextMenuManager = function () {
-  Quantumart.QP8.BackendTreeMenuContextMenuManager.initializeBase(this);
-};
-
-Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
-  _сontextMenus: {},
-  getContextMenu(contextMenuCode) {
-    let contextMenu = null;
-    if (this._сontextMenus[contextMenuCode]) {
-      contextMenu = this._сontextMenus[contextMenuCode];
+class BackendTreeMenuContextMenuManager extends Quantumart.QP8.Observable {
+  static getInstance(options) {
+    if (!BackendTreeMenuContextMenuManager._instance) {
+      BackendTreeMenuContextMenuManager._instance = new BackendTreeMenuContextMenuManager(options);
     }
 
-    return contextMenu;
-  },
+    return BackendTreeMenuContextMenuManager._instance;
+  }
+
+  static destroyInstance() {
+    if (BackendTreeMenuContextMenuManager._instance) {
+      BackendTreeMenuContextMenuManager._instance.dispose();
+      BackendTreeMenuContextMenuManager._instance = null;
+    }
+  }
+
+  constructor() {
+    super();
+    this._сontextMenus = {};
+  }
+
+  getContextMenu(contextMenuCode) {
+    return this._сontextMenus[contextMenuCode] || null;
+  }
 
   createContextMenu(contextMenuCode, contextMenuElementId, options) {
     const contextMenu = new Quantumart.QP8.BackendContextMenu(contextMenuCode, contextMenuElementId, options);
@@ -20,56 +30,26 @@ Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
 
     this._сontextMenus[contextMenuCode] = contextMenu;
     return contextMenu;
-  },
+  }
 
   removeContextMenu(contextMenuCode) {
     $q.removeProperty(this._сontextMenus, contextMenuCode);
-  },
-
-  destroyContextMenu(contextMenuCode) {
-    let contextMenu = this._сontextMenus[contextMenuCode];
-    if (contextMenu != null) {
-      if (contextMenu.dispose) {
-        contextMenu.dispose();
-      }
-
-      contextMenu = null;
-    }
-  },
-
-  getContextMenuEventType() {
-    return jQuery.fn.jeegoocontext.getContextMenuEventType();
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendTreeMenuContextMenuManager.callBaseMethod(this, 'dispose');
+    super.dispose();
     if (this._сontextMenus) {
-      for (const contextMenuCode in this._сontextMenus) {
-        this.destroyContextMenu(contextMenuCode);
-      }
+      Object.values(this._сontextMenus).forEach(menu => {
+        if (menu.dispose) {
+          menu.dispose();
+        }
+      }, this);
 
       this._сontextMenus = null;
     }
 
-    Quantumart.QP8.BackendTreeMenuContextMenuManager._instance = null;
     $q.collectGarbageInIE();
   }
-};
+}
 
-
-Quantumart.QP8.BackendTreeMenuContextMenuManager._instance = null;
-Quantumart.QP8.BackendTreeMenuContextMenuManager.getInstance = function () {
-  if (Quantumart.QP8.BackendTreeMenuContextMenuManager._instance == null) {
-    Quantumart.QP8.BackendTreeMenuContextMenuManager._instance = new Quantumart.QP8.BackendTreeMenuContextMenuManager();
-  }
-
-  return Quantumart.QP8.BackendTreeMenuContextMenuManager._instance;
-};
-
-Quantumart.QP8.BackendTreeMenuContextMenuManager.destroyInstance = function () {
-  if (Quantumart.QP8.BackendTreeMenuContextMenuManager._instance) {
-    Quantumart.QP8.BackendTreeMenuContextMenuManager._instance.dispose();
-  }
-};
-
-Quantumart.QP8.BackendTreeMenuContextMenuManager.registerClass('Quantumart.QP8.BackendTreeMenuContextMenuManager', Quantumart.QP8.Observable);
+Quantumart.QP8.BackendTreeMenuContextMenuManager = BackendTreeMenuContextMenuManager;

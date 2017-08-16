@@ -74,7 +74,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
         Object.assign(finalOptions, { contextQuery: hostOptions.contextQuery });
       }
       if (hostOptions.eventArgsAdditionalData) {
-        if ((entityId == 0 || hostOptions.eventArgsAdditionalData.restoring === true) && hostOptions.eventArgsAdditionalData.initFieldValues) {
+        if ((entityId == 0 || hostOptions.eventArgsAdditionalData.restoring) && hostOptions.eventArgsAdditionalData.initFieldValues) {
           Object.assign(finalOptions, {
             initFieldValues: hostOptions.eventArgsAdditionalData.initFieldValues,
             restoring: hostOptions.eventArgsAdditionalData.restoring
@@ -193,7 +193,6 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
       }
     }
 
-    Quantumart.QP8.BackendEntityEditorManager._instance = null;
     $q.collectGarbageInIE();
   }
 };
@@ -211,6 +210,7 @@ Quantumart.QP8.BackendEntityEditorManager.getInstance = function () {
 Quantumart.QP8.BackendEntityEditorManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendEntityEditorManager._instance) {
     Quantumart.QP8.BackendEntityEditorManager._instance.dispose();
+    Quantumart.QP8.BackendEntityEditorManager._instance = null;
   }
 };
 

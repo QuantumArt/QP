@@ -167,7 +167,6 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
       }
     }
 
-    Quantumart.QP8.BackendLibraryManager._instance = null;
     $q.collectGarbageInIE();
   }
 };
@@ -184,6 +183,7 @@ Quantumart.QP8.BackendLibraryManager.getInstance = function () {
 Quantumart.QP8.BackendLibraryManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendLibraryManager._instance) {
     Quantumart.QP8.BackendLibraryManager._instance.dispose();
+    Quantumart.QP8.BackendLibraryManager._instance = null;
   }
 };
 

@@ -332,19 +332,13 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   restoreHostState() {
     const state = this.loadHostState();
-
-    if (!$q.isNullOrEmpty(state)
-    && (
-      !$.isEmptyObject(state.searchBlockState)
-    || this.get_isSearchBlockVisible() === true
-    )
-    ) {
+    if (!$q.isNullOrEmpty(state) && (!$.isEmptyObject(state.searchBlockState) || this.get_isSearchBlockVisible())) {
       if (!this._searchBlockComponent) {
         this.createSearchBlock();
         this._searchBlockComponent.renderSearchBlock();
       }
 
-      if (this.get_isSearchBlockVisible() === true && this.documentWrapperIsVisible()) {
+      if (this.get_isSearchBlockVisible() && this.documentWrapperIsVisible()) {
         this._searchBlockComponent.showSearchBlock();
       } else {
         this._searchBlockComponent.hideSearchBlock();
@@ -1074,7 +1068,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     this.initAllActionLinks();
     this.restoreHostState();
     this.onLoadMainComponent();
-    if (this.get_eventArgsAdditionalData() && this.get_eventArgsAdditionalData().restoring === true) {
+    if (this.get_eventArgsAdditionalData() && this.get_eventArgsAdditionalData().restoring) {
       const argData = this.get_eventArgsAdditionalData();
       argData.restoring = false;
       argData.initFieldValues = null;
@@ -1316,17 +1310,16 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   // eslint-disable-next-line camelcase
   get_isSearchBlockVisible() {
     const state = this.loadHostState();
-
     if (!$q.isNullOrEmpty(state)) {
       return $q.toBoolean(state.isSearchBlockVisible, false);
     }
+
     return false;
   },
 
   // eslint-disable-next-line camelcase
   set_isSearchBlockVisible(value) {
     let state = this.loadHostState();
-
     if ($q.isNullOrEmpty(state)) {
       state = {};
     }

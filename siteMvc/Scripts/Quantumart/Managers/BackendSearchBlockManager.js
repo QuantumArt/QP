@@ -106,8 +106,6 @@ Quantumart.QP8.BackendSearchBlockManager.prototype = {
         Object.keys(searchBlockGroup).forEach(this.destroySearchBlock);
       }
     }
-
-    Quantumart.QP8.BackendSearchBlockManager._instance = null;
   }
 };
 
@@ -123,6 +121,7 @@ Quantumart.QP8.BackendSearchBlockManager.getInstance = function () {
 Quantumart.QP8.BackendSearchBlockManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendSearchBlockManager._instance) {
     Quantumart.QP8.BackendSearchBlockManager._instance.dispose();
+    Quantumart.QP8.BackendSearchBlockManager._instance = null;
   }
 };
 

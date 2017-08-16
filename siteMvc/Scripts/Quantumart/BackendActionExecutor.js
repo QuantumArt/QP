@@ -17,7 +17,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
       additionalUrlParameters = Object.assign({}, this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
     }
 
-    if (eventArgs.get_startedByExternal() === true) {
+    if (eventArgs.get_startedByExternal()) {
       additionalUrlParameters = Object.assign({}, additionalUrlParameters, { boundToExternal: true });
     }
 
@@ -150,7 +150,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     const that = this;
 
     let additionalUrlParameters = null;
-    if (eventArgs.get_startedByExternal() === true) {
+    if (eventArgs.get_startedByExternal()) {
       additionalUrlParameters = Object.assign({}, additionalUrlParameters, { boundToExternal: true });
     }
 
@@ -265,7 +265,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                 }
 
                 const iterationCallback = function () {
-                  if (toCancel === true) {
+                  if (toCancel) {
                     stageCounter = stageLength;
                   }
 
@@ -310,7 +310,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                     }
                   } else {
                     $q.postDataToUrl(tearDownUrl, { isError: false }, true).done(() => {
-                      if (toCancel === true) {
+                      if (toCancel) {
                         progressWindow.setCancel();
                       } else {
                         progressWindow.setComplete();
@@ -388,7 +388,6 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
   dispose() {
     Quantumart.QP8.BackendActionExecutor.callBaseMethod(this, 'dispose');
-    Quantumart.QP8.BackendActionExecutor._instance = null;
     $q.collectGarbageInIE();
   }
 };
@@ -406,6 +405,7 @@ Quantumart.QP8.BackendActionExecutor.getInstance = function () {
 Quantumart.QP8.BackendActionExecutor.destroyInstance = function () {
   if (Quantumart.QP8.BackendActionExecutor._instance) {
     Quantumart.QP8.BackendActionExecutor._instance.dispose();
+    Quantumart.QP8.BackendActionExecutor._instance = null;
   }
 };
 

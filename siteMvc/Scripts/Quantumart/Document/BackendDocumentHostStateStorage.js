@@ -39,7 +39,7 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
   _get_host_key(hostParams) {
     if (hostParams && !$.isEmptyObject(hostParams)) {
       const key = new $.telerik.stringBuilder();
-      if (this && this._keyPrefix) {
+      if (this._keyPrefix) {
         key
           .cat(this._keyPrefix)
           .cat('.')

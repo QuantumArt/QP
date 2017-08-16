@@ -340,10 +340,10 @@ $c.setAllBooleanValues = function (parentElement, fieldValues) {
       // eslint-disable-next-line eqeqeq
       const value = $q.isString(fv.value) ? fv.value == 'true' || fv.value == '1' : fv.value;
       if ($chbox.length > 0) {
-        if (value === true) {
+        if (value) {
           $chbox.prop('checked', true);
           $chbox.change();
-        } else if (value === false) {
+        } else if (!value) {
           $chbox.prop('checked', false);
           $chbox.change();
         }

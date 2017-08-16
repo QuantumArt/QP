@@ -2,10 +2,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (
   Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
 
   this._rangeType = rangeType;
-
-  this._onIsNullCheckBoxChangeHandler = jQuery.proxy(this._onIsNullCheckBoxChange, this);
-  this._onByValueSelectorChangedHandler = jQuery.proxy(this._onByValueSelectorChanged, this);
-  this._onLoadHandler = jQuery.proxy(this._onLoad, this);
+  this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
+  this._onByValueSelectorChangedHandler = $.proxy(this._onByValueSelectorChanged, this);
+  this._onLoadHandler = $.proxy(this._onLoad, this);
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = {
@@ -115,11 +114,11 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
       }
 
       if (!$q.isNull(state.isByValue)) {
-        if (state.isByValue === true) {
+        if (state.isByValue) {
           $('.radioButtonsList input:radio[value=0]', this._containerElement)
             .prop('checked', true)
             .trigger('click');
-        } else if (state.isByValue === false) {
+        } else if (!state.isByValue) {
           $('.radioButtonsList input:radio[value=1]', this._containerElement)
             .prop('checked', true)
             .trigger('click');
@@ -132,7 +131,6 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
   },
 
   _onIsNullCheckBoxChange() {
-    // дизейблим текст бокс если пользователь выбрал IS NULL
     if (this.get_IsNull()) {
       $c.disableDateTimePicker(this._dateFromElement);
       $c.disableDateTimePicker(this._dateToElement);

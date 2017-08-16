@@ -104,7 +104,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
   _refreshListInner(dataItems, refreshOnly) {
     const newSelectedIDs = $.map(
-      $.grep(dataItems, di => di.Selected === true),
+      $.grep(dataItems, di => di.Selected),
       di => $q.toInt(di.Value)
     );
     const currentSelectedIDs = this.getSelectedEntityIDs();
@@ -127,7 +127,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     this._refreshGroupCheckbox(dataItems.length);
     this._syncCountSpan(dataItems.length);
 
-    if (selectedItemsIsChanged === true) {
+    if (selectedItemsIsChanged) {
       this._setAsChanged(refreshOnly);
     }
   },

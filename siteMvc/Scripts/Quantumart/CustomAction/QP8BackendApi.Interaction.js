@@ -146,13 +146,13 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
         publicProcedureName: message.hostUID,
         params: [message],
         onSuccess(args) {
-          if (callbackIsCalled === false) {
+          if (!callbackIsCalled) {
             callbackIsCalled = true;
             callback({ success: true, hostVersion: args.returnValue });
           }
         },
         onError(args) {
-          if (callbackIsCalled === false) {
+          if (!callbackIsCalled) {
             callbackIsCalled = true;
             callback({ success: false, error: args.description });
           }

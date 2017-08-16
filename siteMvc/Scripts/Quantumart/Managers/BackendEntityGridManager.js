@@ -228,7 +228,6 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
       }
     }
 
-    Quantumart.QP8.BackendEntityGridManager._instance = null;
     $q.collectGarbageInIE();
   }
 };
@@ -246,6 +245,7 @@ Quantumart.QP8.BackendEntityGridManager.getInstance = function () {
 Quantumart.QP8.BackendEntityGridManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendEntityGridManager._instance) {
     Quantumart.QP8.BackendEntityGridManager._instance.dispose();
+    Quantumart.QP8.BackendEntityGridManager._instance = null;
   }
 };
 

@@ -193,7 +193,7 @@ function copyObj(obj, target, overwrite) {
  target = {};
 }
   for (var prop in obj) {
- if (obj.hasOwnProperty(prop) && (overwrite !== false || !target.hasOwnProperty(prop))) {
+ if (obj.hasOwnProperty(prop) && (overwrite || !target.hasOwnProperty(prop))) {
  target[prop] = obj[prop];
 }
 }
@@ -795,7 +795,7 @@ function stretchSpansOverChange(doc, change) {
 function clearEmptySpans(spans) {
   for (var i = 0; i < spans.length; ++i) {
     var span = spans[i];
-    if (span.from != null && span.from == span.to && span.marker.clearWhenEmpty !== false) {
+    if (span.from != null && span.from == span.to && span.marker.clearWhenEmpty) {
  spans.splice(i--, 1);
 }
   }
@@ -1773,7 +1773,7 @@ function extendMode(mode, properties) {
 }
 
 function copyState(mode, state) {
-  if (state === true) {
+  if (state) {
  return state;
 }
   if (mode.copyState) {
@@ -1893,7 +1893,7 @@ StringStream.prototype = {
 };
       var substr = this.string.substr(this.pos, pattern.length);
       if (cased(substr) == cased(pattern)) {
-        if (consume !== false) {
+        if (consume) {
  this.pos += pattern.length;
 }
         return true;
@@ -1903,7 +1903,7 @@ StringStream.prototype = {
       if (match && match.index > 0) {
  return null;
 }
-      if (match && consume !== false) {
+      if (match && consume) {
  this.pos += match[0].length;
 }
       return match;
@@ -3640,7 +3640,7 @@ function prepareSelection(cm, primary) {
   var selFragment = result.selection = document.createDocumentFragment();
 
   for (var i = 0; i < doc.sel.ranges.length; i++) {
-    if (primary === false && i == doc.sel.primIndex) {
+    if (!primary && i == doc.sel.primIndex) {
  continue;
 }
     var range$$1 = doc.sel.ranges[i];
@@ -5715,7 +5715,7 @@ function addSelectionToHistory(doc, sel, opId, options) {
   hist.lastSelTime = +new Date;
   hist.lastSelOrigin = origin;
   hist.lastSelOp = opId;
-  if (options && options.clearRedo !== false) {
+  if (options && options.clearRedo) {
  clearSelectionEvents(hist.undone);
 }
 }
@@ -5939,7 +5939,7 @@ function setSelectionNoUndo(doc, sel, options) {
     (cmp(sel.primary().head, doc.sel.primary().head) < 0 ? -1 : 1);
   setSelectionInner(doc, skipAtomicInSelection(doc, sel, bias, true));
 
-  if (!(options && options.scroll === false) && doc.cm) {
+  if (!(options && !options.scroll) && doc.cm) {
  ensureCursorVisible(doc.cm);
 }
 }
@@ -6924,7 +6924,7 @@ function markText(doc, from, to, options, type) {
  copyObj(options, marker, false);
 }
   // Don't connect empty markers unless clearWhenEmpty is false
-  if (diff > 0 || diff == 0 && marker.clearWhenEmpty !== false) {
+  if (diff > 0 || diff == 0 && marker.clearWhenEmpty) {
  return marker;
 }
   if (marker.replacedWith) {
@@ -7159,7 +7159,7 @@ Doc.prototype = createObj(BranchChunk.prototype, {
 
   getValue: function (lineSep) {
     var lines = getLines(this, this.first, this.first + this.size);
-    if (lineSep === false) {
+    if (!lineSep) {
  return lines;
 }
     return lines.join(lineSep || this.lineSeparator());
@@ -7177,7 +7177,7 @@ Doc.prototype = createObj(BranchChunk.prototype, {
   },
   getRange: function (from, to, lineSep) {
     var lines = getBetween(this, clipPos(this, from), clipPos(this, to));
-    if (lineSep === false) {
+    if (!lineSep) {
  return lines;
 }
     return lines.join(lineSep || this.lineSeparator());
@@ -7223,7 +7223,7 @@ Doc.prototype = createObj(BranchChunk.prototype, {
  pos = range$$1.head;
 } else if (start == "anchor") {
  pos = range$$1.anchor;
-} else if (start == "end" || start == "to" || start === false) {
+} else if (start == "end" || start == "to" || !start) {
  pos = range$$1.to();
 } else {
  pos = range$$1.from();
@@ -7283,7 +7283,7 @@ Doc.prototype = createObj(BranchChunk.prototype, {
       var sel = getBetween(this$1, ranges[i].from(), ranges[i].to());
       lines = lines ? lines.concat(sel) : sel;
     }
-    if (lineSep === false) {
+    if (!lineSep) {
  return lines;
 } else {
  return lines.join(lineSep || this.lineSeparator());
@@ -7295,7 +7295,7 @@ Doc.prototype = createObj(BranchChunk.prototype, {
     var parts = [], ranges = this.sel.ranges;
     for (var i = 0; i < ranges.length; i++) {
       var sel = getBetween(this$1, ranges[i].from(), ranges[i].to());
-      if (lineSep !== false) {
+      if (lineSep) {
  sel = sel.join(lineSep || this$1.lineSeparator());
 }
       parts[i] = sel;
@@ -7985,7 +7985,7 @@ function normalizeKeyMap(keymap) {
 function lookupKey(key, map$$1, handle, context) {
   map$$1 = getKeyMap(map$$1);
   var found = map$$1.call ? map$$1.call(key, context) : map$$1[key];
-  if (found === false) {
+  if (!found) {
  return "nothing";
 }
   if (found === "...") {

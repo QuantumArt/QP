@@ -244,8 +244,6 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       this._windowComponent = null;
     }
 
-    Quantumart.QP8.BackendLogOnWindow._instance = null;
-
     $q.collectGarbageInIE();
   }
 };
@@ -273,6 +271,7 @@ Quantumart.QP8.BackendLogOnWindow.getInstance = function () {
 Quantumart.QP8.BackendLogOnWindow.destroyInstance = function () {
   if (Quantumart.QP8.BackendLogOnWindow._instance) {
     Quantumart.QP8.BackendLogOnWindow._instance.dispose();
+    Quantumart.QP8.BackendLogOnWindow._instance = null;
   }
 };
 

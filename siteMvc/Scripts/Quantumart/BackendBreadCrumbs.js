@@ -122,7 +122,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     $(this._breadCrumbsItemListElement)
       .on('click', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
       .on('mouseup', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
-      .on(this._contextMenuManagerComponent.getContextMenuEventType(), this.ITEM_SELECTORS, this._onContextMenuHandler);
+      .on($.fn.jeegoocontext.getContextMenuEventType(), this.ITEM_SELECTORS, this._onContextMenuHandler);
   },
 
   _detachBreadCrumbsHandlers() {
@@ -135,7 +135,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     $(this._breadCrumbsItemListElement)
       .off('click', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
       .off('mouseup', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
-      .off(this._contextMenuManagerComponent.getContextMenuEventType(), this.ITEM_SELECTORS, this._onContextMenuHandler);
+      .off($.fn.jeegoocontext.getContextMenuEventType(), this.ITEM_SELECTORS, this._onContextMenuHandler);
   },
 
   getItems() {

@@ -94,7 +94,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
   onEntityEditorReady(documentWrapperElementId) {
     const editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${documentWrapperElementId}`));
 
-    if (editor && editor.allowAutoSave() && (this.restoring === true || editor.isFieldsValid() !== true)) {
+    if (editor && editor.allowAutoSave() && (this.restoring || !editor.isFieldsValid())) {
       localStorage.setItem(
         this._createKey(documentWrapperElementId),
         JSON.stringify(this._getEditorComponentState(documentWrapperElementId))
@@ -110,13 +110,13 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
   },
 
   onEntityEditorDisposed(documentWrapperElementId) {
-    if (this.isRun === true) {
+    if (this.isRun) {
       localStorage.removeItem(this._createKey(documentWrapperElementId));
     }
   },
 
   onFieldChanged(fieldChangeInfo) {
-    if (this.isRun === true) {
+    if (this.isRun) {
       const editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${fieldChangeInfo.documentWrapperElementId}`));
 
       if (editor && editor.allowAutoSave()) {
@@ -146,7 +146,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
 
   // Обработчик события изменения состояния редактора, при котором необходимо полностью перечитать состояние
   onAllFieldInvalidate(documentWrapperElementId) {
-    if (this.isRun === true) {
+    if (this.isRun) {
       const editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${documentWrapperElementId}`));
 
       if (editor && editor.allowAutoSave()) {

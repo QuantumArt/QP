@@ -37,10 +37,6 @@ Quantumart.QP8.BackendBreadMenuContextMenuManager.prototype = {
     }
   },
 
-  getContextMenuEventType() {
-    return jQuery.fn.jeegoocontext.getContextMenuEventType();
-  },
-
   dispose() {
     Quantumart.QP8.BackendBreadMenuContextMenuManager.callBaseMethod(this, 'dispose');
     if (this._сontextMenus) {
@@ -51,7 +47,6 @@ Quantumart.QP8.BackendBreadMenuContextMenuManager.prototype = {
       this._сontextMenus = null;
     }
 
-    Quantumart.QP8.BackendBreadMenuContextMenuManager._instance = null;
     $q.collectGarbageInIE();
   }
 };
@@ -69,6 +64,7 @@ Quantumart.QP8.BackendBreadMenuContextMenuManager.getInstance = function () {
 Quantumart.QP8.BackendBreadMenuContextMenuManager.destroyInstance = function () {
   if (Quantumart.QP8.BackendBreadMenuContextMenuManager._instance) {
     Quantumart.QP8.BackendBreadMenuContextMenuManager._instance.dispose();
+    Quantumart.QP8.BackendBreadMenuContextMenuManager._instance = null;
   }
 };
 

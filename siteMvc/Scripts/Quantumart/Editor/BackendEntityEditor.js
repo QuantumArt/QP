@@ -45,7 +45,7 @@ Quantumart.QP8.BackendEntityEditor = function (
       this._hideFields = options.hideFields;
     }
 
-    if (options.restoring === true) {
+    if (options.restoring) {
       this._restoring = true;
     }
 
@@ -69,7 +69,7 @@ Quantumart.QP8.BackendEntityEditor = function (
       this._customLinkButtonsSettings = options.customLinkButtonsSettings;
     }
 
-    if (options.notifyCustomButtonExistence === false) {
+    if (!options.notifyCustomButtonExistence) {
       this._notifyCustomButtonExistence = options.notifyCustomButtonExistence;
     }
 
