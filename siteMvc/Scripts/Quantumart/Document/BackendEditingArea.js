@@ -428,13 +428,6 @@ Quantumart.QP8.BackendEditingArea.prototype = {
     $q.removeProperty(this._documents, docId);
   },
 
-  destroyDocument(docId) {
-    const doc = this._documents[docId];
-    if (doc && doc.dispose) {
-      doc.dispose();
-    }
-  },
-
   updateTab(tabId, eventArgs) {
     this._tabStrip.updateTab(tabId, eventArgs);
   },
@@ -645,10 +638,17 @@ Quantumart.QP8.BackendEditingArea.prototype = {
     this._customScripts[key] = state;
   },
 
+  destroyDocument(docId) {
+    const doc = this._documents[docId];
+    if (doc && doc.dispose) {
+      doc.dispose();
+    }
+  },
+
   dispose() {
     Quantumart.QP8.BackendEditingArea.callBaseMethod(this, 'dispose');
     if (this._documents) {
-      Object.keys(this._documents).forEach(this.destroyDocument);
+      Object.keys(this._documents).forEach(this.destroyDocument, this);
     }
 
     if (this._loadingLayerElement) {

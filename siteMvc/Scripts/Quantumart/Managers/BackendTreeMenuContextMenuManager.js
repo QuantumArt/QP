@@ -20,7 +20,7 @@ class BackendTreeMenuContextMenuManager extends Quantumart.QP8.Observable {
   }
 
   getContextMenu(contextMenuCode) {
-    return this._сontextMenus[contextMenuCode] || null;
+    return this._сontextMenus[contextMenuCode];
   }
 
   createContextMenu(contextMenuCode, contextMenuElementId, options) {
@@ -44,10 +44,9 @@ class BackendTreeMenuContextMenuManager extends Quantumart.QP8.Observable {
           menu.dispose();
         }
       }, this);
-
-      this._сontextMenus = null;
     }
 
+    this._сontextMenus = null;
     $q.collectGarbageInIE();
   }
 }

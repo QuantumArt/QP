@@ -1,9 +1,9 @@
 [production]
-ie >= 8
-> 3%
+ie >= 9
+> 5%
 last 3 version
 
 [development]
-ie >= 8
-> 3%
+ie >= 9
+> 5%
 last 3 version

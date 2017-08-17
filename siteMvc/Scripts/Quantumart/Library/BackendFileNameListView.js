@@ -94,7 +94,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     if (this._contextMenuComponent) {
       this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING);
       this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN);
-      const contextMenuEventType = this._$.fn.jeegoocontext.getContextMenuEventType();
+      const contextMenuEventType = $.fn.jeegoocontext.getContextMenuEventType();
       $fileListContentElement.undelegate('.fileItem', contextMenuEventType);
       this._contextMenuComponent.dispose();
     }

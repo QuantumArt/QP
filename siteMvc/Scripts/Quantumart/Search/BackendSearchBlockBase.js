@@ -81,70 +81,87 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   _onFindButtonClickHandler: null,
   _onResetButtonClickHandler: null,
 
+  // eslint-disable-next-line camelcase
   get_searchBlockGroupCode() {
     return this._searchBlockGroupCode;
   },
 
+  // eslint-disable-next-line camelcase
   set_searchBlockGroupCode(value) {
     this._searchBlockGroupCode = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_searchBlockElementId() {
     return this._searchBlockElementId;
   },
 
+  // eslint-disable-next-line camelcase
   set_searchBlockElementId(value) {
     this._searchBlockElementId = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_searchBlockElement() {
     return this._searchBlockElement;
   },
 
+  // eslint-disable-next-line camelcase
   get_searchBlockContainerElementId() {
     return this._searchBlockContainerElementId;
   },
 
+  // eslint-disable-next-line camelcase
   set_searchBlockContainerElementId(value) {
     this._searchBlockContainerElementId = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_entityTypeCode() {
     return this._entityTypeCode;
   },
 
+  // eslint-disable-next-line camelcase
   set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_parentEntityId() {
     return this._parentEntityId;
   },
 
+  // eslint-disable-next-line camelcase
   set_parentEntityId(value) {
     this._parentEntityId = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_minSearchBlockHeight() {
     return this._minSearchBlockHeight;
   },
 
+  // eslint-disable-next-line camelcase
   set_minSearchBlockHeight(value) {
     this._minSearchBlockHeight = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_maxSearchBlockHeight() {
     return this._maxSearchBlockHeight;
   },
 
+  // eslint-disable-next-line camelcase
   set_maxSearchBlockHeight(value) {
     this._maxSearchBlockHeight = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_isRendered() {
     return this._isRendered;
   },
 
+  // eslint-disable-next-line camelcase
   set_isRendered(value) {
     this._isRendered = value;
   },
@@ -339,42 +356,52 @@ Quantumart.QP8.BackendSearchBlockEventArgs.prototype = {
   _searchBlockHeight: 0,
   _searchBlockState: null,
 
+  // eslint-disable-next-line camelcase
   get_searchQuery() {
     return this._searchQuery;
   },
 
+  // eslint-disable-next-line camelcase
   set_searchQuery(value) {
     this._searchQuery = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_searchBlockType() {
     return this._searchBlockType;
   },
 
+  // eslint-disable-next-line camelcase
   set_searchBlockType(value) {
     this._searchBlockType = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_searchBlockWidth() {
     return this._searchBlockWidth;
   },
 
+  // eslint-disable-next-line camelcase
   set_searchBlockWidth(value) {
     this._searchBlockWidth = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_searchBlockHeight() {
     return this._searchBlockHeight;
   },
 
+  // eslint-disable-next-line camelcase
   set_searchBlockHeight(value) {
     this._searchBlockHeight = value;
   },
 
+  // eslint-disable-next-line camelcase
   set_searchBlockState(value) {
     this._searchBlockState = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_searchBlockState() {
     return this._searchBlockState;
   }

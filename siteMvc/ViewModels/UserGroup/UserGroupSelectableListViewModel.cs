@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.Services.DTO;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
 {
     public class UserGroupSelectableListViewModel : ListViewModel
     {
@@ -15,6 +15,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             model.SelectedIDs = ids;
             model.AutoGenerateLink = false;
             model.ShowAddNewItemButton = !model.IsWindow;
+            model.AllowGlobalSelection = false;
             return model;
         }
 

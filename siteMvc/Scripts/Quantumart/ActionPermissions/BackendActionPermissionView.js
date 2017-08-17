@@ -50,7 +50,7 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
   },
 
   dispose() {
-    Quantumart.QP8.BackendActionPermissionViewManager.getInstance().destroyView();
+    Quantumart.QP8.BackendActionPermissionViewManager.getInstance().dispose();
 
     if (this._searchBlockComponent) {
       this._searchBlockComponent.dispose();

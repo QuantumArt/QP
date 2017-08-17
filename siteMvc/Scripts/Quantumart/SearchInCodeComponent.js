@@ -10,7 +10,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
   _filterElementId: '',
   _gridElementId: '',
 
-  _extendGridData(data) {
+  _onDataBinding(e) {
     const $filter = $(`#${this._filterElementId}`);
     const filter = {
       templateId: $('.sic_templateSelector', $filter).find('select').val(),
@@ -18,12 +18,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
       filterVal: $('.sic_filter input', $filter).val()
     };
 
-    return Object.assign({}, data, filter);
-  },
-
-  _onDataBinding(e) {
-    const $grid = $(`#${this._gridElementId}`);
-    e.data = this._extendGridData(e.data);
+    Object.assign(e, { data: filter });
   },
 
   _onApplyFilter() {
@@ -54,15 +49,19 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
       .unbind('dataBinding', gridComponent.onDataBinding)
       .bind('dataBinding', this._onDataBindingHandler);
 
-    $('.sic_search_button', $filter)
-      .click(this._onApplyFilterHandler);
-    $('.sic_reset_button', $filter)
-      .click(this._onClearFilterHandler);
+    $('.sic_search_button', $filter).click(this._onApplyFilterHandler);
+    $('.sic_reset_button', $filter).click(this._onClearFilterHandler);
     if ($('.sic_templateSelector select', $filter)) {
       $('.sic_templateSelector select', $filter).change($.proxy(this._onApplyFilter, this));
     }
-    if ($('.sic_pageSelector .singleItemPicker', $filter).size() > 0 && $('.sic_pageSelector .singleItemPicker', $filter).data('entity_data_list_component')) {
-      $('.sic_pageSelector .singleItemPicker', $filter).data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, $.proxy(this._onApplyFilter, this));
+
+    if ($('.sic_pageSelector .singleItemPicker', $filter).size() > 0
+      && $('.sic_pageSelector .singleItemPicker', $filter).data('entity_data_list_component')
+    ) {
+      $('.sic_pageSelector .singleItemPicker', $filter)
+        .data('entity_data_list_component')
+        .attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, $.proxy(this._onApplyFilter, this));
+
       gridComponent.ajaxRequest();
     }
   },
@@ -72,10 +71,10 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     const $filter = $(`#${this._filterElementId}`);
 
     $grid.unbind('dataBinding');
-    this._onDataBindingHandler = null;
-
     $('.sic_search_button', $filter).unbind();
     $('.sic_reset_button', $filter).unbind();
+
+    this._onDataBindingHandler = null;
     this._onApplyFilterHandler = null;
     this._onDataBindingHandler = null;
 

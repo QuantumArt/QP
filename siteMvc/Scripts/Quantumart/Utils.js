@@ -151,9 +151,8 @@ $q.hideLoader = function hideLoader() {
   }
 };
 
-$q.isBoolean = function isBoolean(value) {
-  return typeof value === 'boolean' || (value && ['true', 'false'].includes(value.toString().toLowerCase().trim()));
-};
+$q.isBoolean = value =>
+  typeof value === 'boolean' || (value && ['true', 'false'].includes(value.toString().toLowerCase().trim()));
 
 $q.toBoolean = function toBoolean(value, defaultValue) {
   if ($q.isBoolean(value)) {
@@ -167,15 +166,7 @@ $q.toBoolean = function toBoolean(value, defaultValue) {
   return false;
 };
 
-$q.isNull = function isNull(value) {
-  let result = false;
-  if (value === undefined || value === null) {
-    result = true;
-  }
-
-  return result;
-};
-
+$q.isNull = value => value === undefined || value === null;
 $q.isNullOrEmpty = function isNullOrEmpty(value) {
   let result = false;
   if ($q.isNull(value)) {

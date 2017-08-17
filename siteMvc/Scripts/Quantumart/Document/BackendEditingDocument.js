@@ -298,33 +298,6 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     this._contextBlockComponent = contextBlockComponent;
   },
 
-  destroySearchBlock() {
-    const searchBlockComponent = this._searchBlockComponent;
-    if (searchBlockComponent) {
-      searchBlockComponent.hideSearchBlock();
-      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
-      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
-      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
-
-      const searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
-      Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
-      this._searchBlockComponent = null;
-    }
-  },
-
-  destroyContextBlock() {
-    const contextBlockComponent = this._contextBlockComponent;
-    if (contextBlockComponent) {
-      contextBlockComponent.hideSearchBlock();
-      contextBlockComponent.detachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
-
-      const contextBlockElementId = contextBlockComponent.get_searchBlockElementId();
-      Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(contextBlockElementId);
-      this._contextBlockComponent = null;
-      this._isContextBlockVisible = false;
-    }
-  },
-
   showLoadingLayer() {
     if (this._editingArea) {
       if (this.isSelected()) {
@@ -480,7 +453,6 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   saveAndCloseRequest(eventArgs) {
-    Sys.Debug.trace(`saveAndCloseRequest: ${eventArgs._tabId}`);
     const context = this.get_documentContext();
     if (context && context._options.saveAndCloseActionCode) {
       const main = this.get_mainComponent();
@@ -520,6 +492,33 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
   _isWindow() {
     return false;
+  },
+
+  destroySearchBlock() {
+    const searchBlockComponent = this._searchBlockComponent;
+    if (searchBlockComponent) {
+      searchBlockComponent.hideSearchBlock();
+      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
+      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
+      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
+
+      const searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
+      Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
+      this._searchBlockComponent = null;
+    }
+  },
+
+  destroyContextBlock() {
+    const contextBlockComponent = this._contextBlockComponent;
+    if (contextBlockComponent) {
+      contextBlockComponent.hideSearchBlock();
+      contextBlockComponent.detachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
+
+      const contextBlockElementId = contextBlockComponent.get_searchBlockElementId();
+      Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(contextBlockElementId);
+      this._contextBlockComponent = null;
+      this._isContextBlockVisible = false;
+    }
   },
 
   dispose() {

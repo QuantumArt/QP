@@ -17,26 +17,17 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class SiteService
     {
-        public static SiteInitListResult InitList(int parentId)
+        public static SiteInitListResult InitList(int parentId) => new SiteInitListResult
         {
-            return new SiteInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewSite)
-            };
-        }
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewSite)
+        };
 
-        public static SiteInitListResult MultipleInitList(int parentId)
+        public static SiteInitListResult MultipleInitList(int parentId) => new SiteInitListResult
         {
-            return new SiteInitListResult
-            {
-                IsAddNewAccessable = false
-            };
-        }
+            IsAddNewAccessable = false
+        };
 
-        public static ListResult<SiteListItem> List(ListCommand cmd, IEnumerable<int> selectedIDs = null)
-        {
-            return SiteRepository.GetList(cmd, selectedIDs);
-        }
+        public static ListResult<SiteListItem> List(ListCommand cmd, IEnumerable<int> selectedIDs = null) => SiteRepository.GetList(cmd, selectedIDs);
 
         public static IEnumerable<ListItem> GetAllSites()
         {
@@ -45,19 +36,13 @@ namespace Quantumart.QP8.BLL.Services
 
         public static IEnumerable<ListItem> GetSites()
         {
-            var cmd = new ListCommand() { PageSize = int.MaxValue, StartPage = 1 };
+            var cmd = new ListCommand { PageSize = int.MaxValue, StartPage = 1 };
             return SiteRepository.GetList(cmd, null).Data.Select(s => new ListItem(s.Id.ToString(), s.Name)).ToArray();
         }
 
-        public static Site Read(int id)
-        {
-            return Read(id, true);
-        }
+        public static Site Read(int id) => Read(id, true);
 
-        public static Site ReadForUpdate(int id)
-        {
-            return Read(id, false);
-        }
+        public static Site ReadForUpdate(int id) => Read(id, false);
 
         public static Site Save(Site item, int[] activeCommands, int[] activeStyles)
         {
@@ -139,24 +124,38 @@ namespace Quantumart.QP8.BLL.Services
                 var stageTempDirectory = $@"{site.TempDirectoryForClasses}\stage";
 
                 if (Directory.Exists(liveTempDirectory))
+                {
                     Directory.Delete(liveTempDirectory, true);
+                }
+
                 Directory.CreateDirectory(liveTempDirectory);
-
                 if (Directory.Exists(stageTempDirectory))
+                {
                     Directory.Delete(stageTempDirectory, true);
+                }
+
                 Directory.CreateDirectory(stageTempDirectory);
-
                 if (File.Exists(site.TempArchiveForClasses))
+                {
                     File.Delete(site.TempArchiveForClasses);
+                }
 
+                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString)
+                {
+                    SiteRoot = liveTempDirectory,
+                    IsLive = true,
+                    DisableClassGeneration = site.DownloadEfSource
+                }.Assemble();
 
-                (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString) { SiteRoot = liveTempDirectory, IsLive = true, DisableClassGeneration = site.DownloadEfSource }).Assemble();
-                (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString) { SiteRoot = stageTempDirectory, IsLive = false, DisableClassGeneration = site.DownloadEfSource }).Assemble();
+                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString)
+                {
+                    SiteRoot = stageTempDirectory,
+                    IsLive = false,
+                    DisableClassGeneration = site.DownloadEfSource
+                }.Assemble();
 
                 ZipFile.CreateFromDirectory(site.TempDirectoryForClasses, site.TempArchiveForClasses);
-
                 return MessageResult.Download($"/Backend/Site/GetClassesZip/{id}");
-
             }
 
             new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString).Assemble();
@@ -188,15 +187,9 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        public static Site New()
-        {
-            return new Site();
-        }
+        public static Site New() => new Site();
 
-        public static Site NewForSave()
-        {
-            return new Site();
-        }
+        public static Site NewForSave() => new Site();
 
         public static LibraryResult Library(int id, string subFolder)
         {
@@ -208,7 +201,7 @@ namespace Quantumart.QP8.BLL.Services
             var factory = new SiteFolderFactory();
             var repository = factory.CreateRepository();
             var folder = repository.GetBySubFolder(id, subFolder);
-            return new LibraryResult() { Folder = folder };
+            return new LibraryResult { Folder = folder };
         }
 
         public static ListResult<FolderFile> GetFileList(ListCommand command, int parentFolderId, LibraryFileFilter filter)
@@ -224,35 +217,20 @@ namespace Quantumart.QP8.BLL.Services
             return folder.GetFiles(command, filter);
         }
 
-        public static PathInfo GetPathInfo(int folderId)
-        {
-            return SiteFolder.GetPathInfo(folderId);
-        }
+        public static PathInfo GetPathInfo(int folderId) => SiteFolder.GetPathInfo(folderId);
 
-        internal static IEnumerable<ListItem> GetSites(IEnumerable<int> siteIDs)
-        {
-            return SiteRepository.GetSimpleList(siteIDs);
-        }
+        internal static IEnumerable<ListItem> GetSites(IEnumerable<int> siteIDs) => SiteRepository.GetSimpleList(siteIDs);
 
-        public static IEnumerable<VisualEditorCommand> GetAllVisualEditorCommands()
-        {
-            return VisualEditorRepository.GetDefaultCommands();
-        }
+        public static IEnumerable<VisualEditorCommand> GetAllVisualEditorCommands() => VisualEditorRepository.GetDefaultCommands();
 
         public static IEnumerable<VisualEditorStyle> GetAllVeStyles()
         {
             return VisualEditorRepository.GetAllStyles().OrderBy(s => s.Order).ToList();
         }
 
-        public static Dictionary<int, bool> GetCommandBinding(int siteId)
-        {
-            return VisualEditorRepository.GetCommandBindingBySiteId(siteId);
-        }
+        public static Dictionary<int, bool> GetCommandBinding(int siteId) => VisualEditorRepository.GetCommandBindingBySiteId(siteId);
 
-        public static Dictionary<int, bool> GetStyleBinding(int siteId)
-        {
-            return VisualEditorRepository.GetStyleBindingBySiteId(siteId);
-        }
+        public static Dictionary<int, bool> GetStyleBinding(int siteId) => VisualEditorRepository.GetStyleBindingBySiteId(siteId);
 
         internal static void CopySiteSettings(int sourceSiteId, int destinationSiteId)
         {

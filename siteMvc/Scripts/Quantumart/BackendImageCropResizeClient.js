@@ -161,10 +161,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     allowFileRewrite: true,
     checkFileNameActionUrl: `${window.APPLICATION_ROOT_URL}Library/CheckForCrop/`,
     cropResizeActionUrl: `${window.APPLICATION_ROOT_URL}Library/Crop/`,
-    resizeRange: { max: 3.0, min: 0.1 },
-    onCompleteCallback() {
-      Sys.Debug.trace('imgCropResize: finished');
-    }
+    resizeRange: { max: 3.0, min: 0.1 }
   };
 
   const _fieldsetCropHtml = `<fieldset class='crop'>\
@@ -455,8 +452,14 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
   const _saveToCache = function () {
     const sendData = readData();
     if (sendData.width && sendData.height) {
-      Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl]
-          = { crop: { top: sendData.top, left: sendData.left, width: sendData.width, height: sendData.height } };
+      Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl] = {
+        crop: {
+          top: sendData.top,
+          left: sendData.left,
+          width: sendData.width,
+          height: sendData.height
+        }
+      };
     }
   };
 
@@ -465,12 +468,10 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     sendData = JSON.stringify(sendData);
 
     $.ajax(_parameters.cropResizeActionUrl, {
-
       contentType: 'application/json',
       data: sendData,
       type: 'POST',
       dataType: 'json'
-
     }).success(response => {
       if (!response.ok) {
         const message = response.message || $l.Crop.defaultErrorMessage;
@@ -544,6 +545,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       displayErrors([$l.Crop.enterFileName]);
       return false;
     }
+
     _removeErrors();
     return true;
   };

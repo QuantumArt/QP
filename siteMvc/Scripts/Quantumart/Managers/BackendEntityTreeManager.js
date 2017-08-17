@@ -24,7 +24,7 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
   }
 
   getTreeGroup(treeGroupCode) {
-    return this._treeGroups[treeGroupCode] || null;
+    return this._treeGroups[treeGroupCode];
   }
 
   createTreeGroup(treeGroupCode) {
@@ -99,7 +99,7 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
         const tree = this.getTree(treeElementId);
         const nodeCode = tree.convertEntityIdToNodeCode(entityId);
         tree.refreshNode(nodeCode, options);
-      });
+      }, this);
     }
   }
 
@@ -114,7 +114,7 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
         Object.keys(treeGroup).forEach(treeElementId => {
           const tree = this.getTree(treeElementId);
           tree.refreshTree();
-        });
+        }, this);
       }
     } else {
       $.each(ids, (index, id) => {
@@ -133,7 +133,7 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
         const tree = this.getTree(treeElementId);
         const nodeCode = tree.convertEntityIdToNodeCode(entityId);
         tree.removeNode(nodeCode);
-      });
+      }, this);
     }
   }
 
@@ -183,23 +183,21 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
     }
   }
 
-  destroyTree(treeElementId) {
-    const tree = this.getTree(treeElementId);
-    if (tree) {
-      this.removeTree(treeElementId);
-      if (tree.dispose) {
-        tree.dispose();
-      }
-    }
-  }
-
   dispose() {
     super.dispose();
     if (this._trees) {
-      Object.keys(this._trees).forEach(this.destroyTree, this);
-      this._trees = null;
+      Object.keys(this._trees).forEach(treeElementId => {
+        const tree = this.getTree(treeElementId);
+        if (tree) {
+          this.removeTree(treeElementId);
+          if (tree.dispose) {
+            tree.dispose();
+          }
+        }
+      }, this);
     }
 
+    this._trees = null;
     $q.collectGarbageInIE();
   }
 }

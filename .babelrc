@@ -4,7 +4,7 @@
     "debug": true,
     "targets": {
       "uglify": false,
-      "browsers": ["ie >= 8", "> 5%", "last 3 version"]
+      "browsers": ["ie >= 9", "> 5%", "last 3 version"]
     }}], "react", "stage-0"
   ],
   "ignore": [

@@ -101,11 +101,10 @@ Quantumart.QP8.BackendToolbar.prototype = {
 
     if (!isToolbarExist) {
       $toolbar.append($toolbarItemList);
-
-      if (!$q.isNullOrWhiteSpace(this._toolbarContainerElementId)) {
-        $(`#${this._toolbarContainerElementId}`).append($toolbar);
-      } else {
+      if ($q.isNullOrWhiteSpace(this._toolbarContainerElementId)) {
         $('BODY:first').append($toolbar);
+      } else {
+        $(`#${this._toolbarContainerElementId}`).append($toolbar);
       }
     }
 
@@ -149,12 +148,14 @@ Quantumart.QP8.BackendToolbar.prototype = {
       return $q.toJQuery(item);
     } else if ($q.isString(item)) {
       $item = $(`LI[code='${item}']`, this._toolbarItemListElement);
-      if ($item.length == 0) {
+      if ($item.length === 0) {
         $item = null;
       }
 
       return $item;
     }
+
+    return undefined;
   },
 
   _getToolbarItemByDropDownListItem(listItemElem) {
@@ -163,7 +164,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
 
     if (!$q.isNullOrEmpty($listItem)) {
       $item = $listItem.parent().parent().parent();
-      if ($item.length == 0) {
+      if ($item.length === 0) {
         $item = null;
       }
     }
@@ -172,17 +173,15 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   getToolbarItemValue(itemElem) {
-    let $item = this.getToolbarItem(itemElem);
+    const $item = this.getToolbarItem(itemElem);
     let itemValue = '';
 
-    if (!$q.isNullOrEmpty($item)) {
-      itemValue = $item.attr('code');
-    } else {
+    if ($q.isNullOrEmpty($item)) {
       $q.alertFail($l.Toolbar.itemNotSpecified);
-      return;
+      throw new Error($l.Toolbar.itemNotSpecified);
+    } else {
+      itemValue = $item.attr('code');
     }
-
-    $item = null;
 
     return itemValue;
   },
@@ -205,9 +204,9 @@ Quantumart.QP8.BackendToolbar.prototype = {
     for (let itemIndex = 0; itemIndex < itemCount; itemIndex++) {
       const item = items[itemIndex];
 
-      if (item.Type == window.TOOLBAR_ITEM_TYPE_BUTTON) {
+      if (item.Type === window.TOOLBAR_ITEM_TYPE_BUTTON) {
         this._getToolbarButtonHtml(itemsHtml, item);
-      } else if (item.Type == window.TOOLBAR_ITEM_TYPE_DROPDOWN) {
+      } else if (item.Type === window.TOOLBAR_ITEM_TYPE_DROPDOWN) {
         this._getToolbarDropDownHtml(itemsHtml, item);
       }
     }
@@ -240,22 +239,18 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   refreshToolbarItems(selectedEntitiesCount) {
-    if (selectedEntitiesCount == null) {
+    if (selectedEntitiesCount === null) {
       selectedEntitiesCount = 0;
     }
 
-    const self = this;
+    const that = this;
     let $items = this.getToolbarItems();
-    $items.each(
-      (index, elem) => {
-        const $item = $(elem);
-        const itemsAffected = +$item.data('items_affected') || 0;
-        const state = selectedEntitiesCount == itemsAffected || (itemsAffected == window.MAX_ITEMS_AFFECTED_NUMBER && selectedEntitiesCount >= 1);
-        self.setEnableState($item, state);
-      }
-    );
-
-    $items = null;
+    $items.each((index, elem) => {
+      const $item = $(elem);
+      const itemsAffected = +$item.data('items_affected') || 0;
+      const state = selectedEntitiesCount === itemsAffected || (itemsAffected === window.MAX_ITEMS_AFFECTED_NUMBER && selectedEntitiesCount >= 1);
+      that.setEnableState($item, state);
+    });
   },
 
   _getToolbarDropDownList(item) {
@@ -282,25 +277,25 @@ Quantumart.QP8.BackendToolbar.prototype = {
 
       $listItem
         .siblings().removeClass(this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME).end()
-        .addClass(this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME)
-      ;
-      $item.data('selected_sub_item_value', this._getToolbarDropDownListItemValue($listItem));
+        .addClass(this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME);
+
+      $item.data(
+        'selected_sub_item_value',
+        this._getToolbarDropDownListItemValue($listItem)
+      );
+
       $icon.css('backgroundImage', String.format("url('{0}')", window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon));
       if (!$q.isNullOrWhiteSpace(text) && showButtonText) {
         $text.text(text);
       }
-
-      $icon = null;
-      $text = null;
     }
   },
 
   _getToolbarDropDownListItem(listItemElem) {
     let $listItem = null;
-
     if ($q.isObject(listItemElem)) {
       $listItem = $q.toJQuery(listItemElem);
-      if ($listItem.length == 0) {
+      if ($listItem.length === 0) {
         $listItem = null;
       }
     }
@@ -317,11 +312,10 @@ Quantumart.QP8.BackendToolbar.prototype = {
       if ($q.isNullOrEmpty($nextListItem)) {
         $nextListItem = $listItem
           .siblings()
-          .first()
-        ;
+          .first();
       }
 
-      if ($nextListItem.length == 0) {
+      if ($nextListItem.length === 0) {
         $nextListItem = null;
       }
     }
@@ -337,7 +331,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       const $list = this._getToolbarDropDownList($item);
       if (!$q.isNullOrEmpty($list)) {
         $listItem = $item.find(`LI[code='${listItemValue}']`);
-        if ($listItem.length == 0) {
+        if ($listItem.length === 0) {
           $listItem = null;
         }
       }
@@ -457,12 +451,12 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   _getToolbarDropDownHtml(html, dataItem) {
-    const self = this;
+    const that = this;
     const selectedSubItemValue = dataItem.SelectedSubItemValue;
     const subItems = dataItem.Items;
 
     if (subItems.length > 1) {
-      let selectedSubItem = jQuery.grep(subItems, subItem => subItem.Value == selectedSubItemValue)[0];
+      let selectedSubItem = jQuery.grep(subItems, subItem => subItem.Value === selectedSubItemValue)[0];
       if (!selectedSubItem) {
         selectedSubItem = subItems[0];
       }
@@ -486,7 +480,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       html.cat('<ul>\n');
       jQuery.each(subItems,
         (index, subItem) => {
-          self._getToolbarDropDownItemHtml(html, subItem, selectedSubItemValue);
+          that._getToolbarDropDownItemHtml(html, subItem, selectedSubItemValue);
         }
       );
       html.cat('</ul>\n');
@@ -496,7 +490,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   _getToolbarDropDownItemHtml(html, dataItem, selectedSubItemValue) {
-    const isSelected = dataItem.Value == selectedSubItemValue;
+    const isSelected = dataItem.Value === selectedSubItemValue;
 
     html
       .cat(`<li code="${$q.htmlEncode(dataItem.Value)}" class="item${isSelected ? ` ${this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME}` : ''}">\n`)
@@ -524,13 +518,13 @@ Quantumart.QP8.BackendToolbar.prototype = {
       $item.data('tooltip', item.Tooltip);
       $item.data('items_affected', item.ItemsAffected);
       $item.data('always_enabled', item.AlwaysEnabled);
-      if (item.Type == window.TOOLBAR_ITEM_TYPE_BUTTON) {
+      if (item.Type === window.TOOLBAR_ITEM_TYPE_BUTTON) {
         $item.data('icon', item.Icon);
         $item.data('check_on_click', item.CheckOnClick);
         $item.data('icon_checked', item.IconChecked);
         $item.data('tooltip_checked', item.TooltipChecked);
         this._extendToolbarDropDownListElements($item, item.Items);
-      } else if (item.Type == window.TOOLBAR_ITEM_TYPE_DROPDOWN) {
+      } else if (item.Type === window.TOOLBAR_ITEM_TYPE_DROPDOWN) {
         $item.data('show_button_text', item.ShowButtonText);
         $item.data('selected_sub_item_value', item.SelectedSubItemValue);
         this._extendToolbarDropDownListElements($item, item.Items);
@@ -539,13 +533,13 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   _extendToolbarItemElements(items) {
-    const self = this;
+    const that = this;
 
     jQuery.each(items,
       (index, item) => {
-        const $item = self.getToolbarItem(item.Value);
+        const $item = that.getToolbarItem(item.Value);
         if (!$q.isNullOrEmpty($item)) {
-          self._extendToolbarItemElement($item, item);
+          that._extendToolbarItemElement($item, item);
         }
       }
     );
@@ -561,15 +555,15 @@ Quantumart.QP8.BackendToolbar.prototype = {
 
   _extendToolbarDropDownListElements(itemElem, subItems) {
     if (!$q.isNullOrEmpty(subItems)) {
-      const self = this;
+      const that = this;
       const $item = this.getToolbarItem(itemElem);
 
       if (!$q.isNullOrEmpty($item)) {
         jQuery.each(subItems,
           (index, subItem) => {
-            const $listItem = self._getToolbarDropDownListItemByValue($item, subItem.Value);
+            const $listItem = that._getToolbarDropDownListItemByValue($item, subItem.Value);
             if (!$q.isNullOrEmpty($listItem)) {
-              self._extendToolbarDropDownListItemElement($listItem, subItem);
+              that._extendToolbarDropDownListItemElement($listItem, subItem);
             }
           }
         );
@@ -699,10 +693,10 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   setVisibleStateForAll(state) {
-    const self = this;
+    const that = this;
     this.getToolbarItems().each(
       (index, elem) => {
-        self.setVisibleState(elem, state);
+        that.setVisibleState(elem, state);
       }
     );
   },
@@ -719,27 +713,70 @@ Quantumart.QP8.BackendToolbar.prototype = {
   },
 
   setEnableStateForAll(state) {
-    const self = this;
-    this.getToolbarItems().each(
-      (index, elem) => {
-        self.setEnableState(elem, state);
+    const that = this;
+    this.getToolbarItems().each((index, elem) => {
+        that.setEnableState(elem, state);
       }
     );
   },
 
   _attachToolbarEventHandlers() {
     $(this._toolbarElement)
-      .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarButtonUnhoveringHandler)
-      .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarButtonClickingHandler)
-      .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarButtonClickedHandler)
-      .delegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownArrowUnhoveringHandler)
-      .delegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownArrowClickingHandler)
-      .delegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownArrowClickedHandler)
-      .delegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownButtonUnhoveringHandler)
-      .delegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownButtonClickingHandler)
-      .delegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownButtonClickedHandler)
-      .delegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownListItemClickingHandler)
-      .delegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownListItemClickedHandler);
+      .delegate(
+        this.BUTTON_CLICKABLE_SELECTORS,
+        'mouseout',
+        this._onToolbarButtonUnhoveringHandler
+      )
+      .delegate(
+        this.BUTTON_CLICKABLE_SELECTORS,
+        'mousedown',
+        this._onToolbarButtonClickingHandler
+      )
+      .delegate(
+        this.BUTTON_CLICKABLE_SELECTORS,
+        'mouseup',
+        this._onToolbarButtonClickedHandler
+      )
+      .delegate(
+        this.DROPDOWN_ARROW_CLICKABLE_SELECTORS,
+        'mouseout',
+        this._onToolbarDropDownArrowUnhoveringHandler
+      )
+      .delegate(
+        this.DROPDOWN_ARROW_CLICKABLE_SELECTORS,
+        'mousedown',
+        this._onToolbarDropDownArrowClickingHandler
+      )
+      .delegate(
+        this.DROPDOWN_ARROW_CLICKABLE_SELECTORS,
+        'mouseup',
+        this._onToolbarDropDownArrowClickedHandler
+      )
+      .delegate(
+        this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS,
+        'mouseout',
+        this._onToolbarDropDownButtonUnhoveringHandler
+      )
+      .delegate(
+        this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS,
+        'mouseup',
+        this._onToolbarDropDownButtonClickingHandler
+      )
+      .delegate(
+        this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS,
+        'mousedown',
+        this._onToolbarDropDownButtonClickedHandler
+      )
+      .delegate(
+        this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS,
+        'mouseup',
+        this._onToolbarDropDownListItemClickingHandler
+      )
+      .delegate(
+        this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS,
+        'mousedown',
+        this._onToolbarDropDownListItemClickedHandler
+      );
   },
 
   _detachToolbarEventHandlers() {
@@ -754,7 +791,11 @@ Quantumart.QP8.BackendToolbar.prototype = {
       .undelegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownButtonClickingHandler)
       .undelegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownButtonClickedHandler)
       .undelegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownListItemClickingHandler)
-      .undelegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownListItemClickedHandler);
+      .undelegate(
+        this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS,
+        'mousedown',
+        this._onToolbarDropDownListItemClickedHandler
+      );
   },
 
   notifyToolbarButtonClicking(eventArgs) {
@@ -964,7 +1005,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       const oldSubItemValue = $item.data('selected_sub_item_value');
       const newSubItemValue = this._getToolbarDropDownListItemValue($listItem);
 
-      if (oldSubItemValue != newSubItemValue) {
+      if (oldSubItemValue !== newSubItemValue) {
         this._updateDropDownListButton($item, $listItem);
         this._hideDropDownList($item);
 
@@ -974,8 +1015,6 @@ Quantumart.QP8.BackendToolbar.prototype = {
         eventArgs.set_newSubItemValue(newSubItemValue);
 
         this.notifyDropDownSelectedIndexChanged(eventArgs);
-
-        eventArgs = null;
       } else {
         this._hideDropDownList($item);
       }

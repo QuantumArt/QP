@@ -31,8 +31,7 @@ Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager exten
   }
 
   getAllPopupWindows() {
-    const popupWindowsHash = this._popupWindows;
-    return Object.values(popupWindowsHash);
+    return Object.values(this._popupWindows);
   }
 
   getPopupWindow(popupWindowId) {
@@ -82,17 +81,6 @@ Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager exten
     return popupWindow;
   }
 
-  removePopupWindow(popupWindowId) {
-    $q.removeProperty(this._popupWindows, popupWindowId);
-  }
-
-  destroyPopupWindow(popupWindowId) {
-    const popupWindow = this._popupWindows[popupWindowId];
-    if (popupWindow && popupWindow.dispose) {
-      popupWindow.dispose();
-    }
-  }
-
   closeNotExistentPopupWindows() {
     const popupWindows = this.getAllPopupWindows();
     for (let popupWindowIndex = 0; popupWindowIndex < popupWindows.length; popupWindowIndex++) {
@@ -135,10 +123,21 @@ Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager exten
     this.notify(window.EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED, unbindingEventArgs);
   }
 
+  removePopupWindow(popupWindowId) {
+    $q.removeProperty(this._popupWindows, popupWindowId);
+  }
+
+  destroyPopupWindow(popupWindowId) {
+    const popupWindow = this._popupWindows[popupWindowId];
+    if (popupWindow && popupWindow.dispose) {
+      popupWindow.dispose();
+    }
+  }
+
   dispose() {
     super.dispose();
     if (this._popupWindows) {
-      Object.keys(this._popupWindows).forEach(this.destroyPopupWindow);
+      Object.keys(this._popupWindows).forEach(this.destroyPopupWindow, this);
     }
 
     $q.collectGarbageInIE();

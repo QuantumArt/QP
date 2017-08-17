@@ -28,9 +28,9 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = class BackendUserAndGroupSearchB
     const groups = this.groupPicker.getSelectedEntities();
     const type = $('li input:checked', this.$radioGroup).val();
 
-    if (type === 1 && users[0]) {
+    if (+type === 1 && users[0]) {
       return { userId: users[0].Id };
-    } else if (type === 2 && groups[0]) {
+    } else if (+type === 2 && groups[0]) {
       return { groupId: groups[0].Id };
     }
 

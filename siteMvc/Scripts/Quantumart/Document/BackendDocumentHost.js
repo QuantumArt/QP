@@ -1037,7 +1037,10 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     this.loadReadyHtmlContent(eventArgs.get_data());
     this.onDocumentChanged();
     this.saveAndUp();
-    this.onSaveAndClose();
+
+    if (this.onSaveAndClose) {
+      this.onSaveAndClose();
+    }
   },
 
   onEntitySubmittedError() {
@@ -1562,7 +1565,6 @@ Quantumart.QP8.BackendDocumentHost.generateTitle = function (eventArgs, options)
   );
 };
 
-// Генерирует шаблон заголовока таба
 Quantumart.QP8.BackendDocumentHost.generateTitleTemplate = function (
   actionTypeCode,
   entityTypeCode,

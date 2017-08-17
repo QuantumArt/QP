@@ -1,99 +1,81 @@
-Quantumart.QP8.BackendEntityGridManager = function () {
-  Quantumart.QP8.BackendEntityGridManager.initializeBase(this);
-};
-
-Quantumart.QP8.BackendEntityGridManager.prototype = {
-  _gridGroups: {},
-
-  generateGridGroupCode(entityTypeCode, parentEntityId) {
-    if (parentEntityId) {
-      return String.format('{0}_{1}', entityTypeCode, parentEntityId);
+class BackendEntityGridManager extends Quantumart.QP8.Observable {
+  static getInstance() {
+    if (!BackendEntityGridManager._instance) {
+      BackendEntityGridManager._instance = new BackendEntityGridManager();
     }
-    return entityTypeCode;
-  },
+
+    return BackendEntityGridManager._instance;
+  }
+
+  static destroyInstance() {
+    if (BackendEntityGridManager._instance) {
+      BackendEntityGridManager._instance.dispose();
+      BackendEntityGridManager._instance = null;
+    }
+  }
+
+  static generateGridGroupCode(entityTypeCode, parentEntityId) {
+    return parentEntityId ? `${entityTypeCode}_${parentEntityId}` : entityTypeCode;
+  }
+
+  constructor() {
+    super();
+    this._gridGroups = {};
+  }
 
   getGridGroup(gridGroupCode) {
-    let gridGroup = null;
-
-    if (this._gridGroups[gridGroupCode]) {
-      gridGroup = this._gridGroups[gridGroupCode];
-    }
-
-    return gridGroup;
-  },
+    return this._gridGroups[gridGroupCode];
+  }
 
   createGridGroup(gridGroupCode) {
-    let gridGroup = this.getGridGroup(gridGroupCode);
-
-    if (!gridGroup) {
-      gridGroup = {};
-      this._gridGroups[gridGroupCode] = gridGroup;
-    }
-
-    return gridGroup;
-  },
+    this._gridGroups[gridGroupCode] = this.getGridGroup(gridGroupCode) || {};
+    return this._gridGroups[gridGroupCode];
+  }
 
   refreshGridGroup(entityTypeCode, parentEntityId, options) {
-    let gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
-
+    const gridGroup = this.getGridGroup(BackendEntityGridManager.generateGridGroupCode(entityTypeCode, parentEntityId));
     if (gridGroup) {
-      for (const gridElementId in gridGroup) {
+      Object.keys(gridGroup).forEach(gridElementId => {
         this.refreshGrid(gridElementId, options);
-      }
+      }, this);
     }
-
-    gridGroup = null;
-  },
+  }
 
   refreshGridGroupWithChecking(entityTypeCode, parentEntityId, entityId) {
-    const gridGroup = this.getGridGroup(this.generateGridGroupCode(entityTypeCode, parentEntityId));
-
+    const gridGroup = this.getGridGroup(BackendEntityGridManager.generateGridGroupCode(entityTypeCode, parentEntityId));
     if (gridGroup) {
-      for (const gridElementId in gridGroup) {
+      Object.keys(gridGroup).forEach(gridElementId => {
         const grid = this.getGrid(gridElementId);
-
         if (grid && grid.checkExistEntityInCurrentPage(entityId)) {
           grid.refreshGrid();
         }
-      }
+      }, this);
     }
-  },
+  }
 
   resetGridGroup(gridGroupCode, options) {
-    let gridGroup = this.getGridGroup(gridGroupCode);
-
+    const gridGroup = this.getGridGroup(gridGroupCode);
     if (gridGroup) {
-      for (const gridElementId in gridGroup) {
+      Object.keys(gridGroup).forEach(gridElementId => {
         this.resetGrid(gridElementId, options);
-      }
+      }, this);
     }
-
-    gridGroup = null;
-  },
+  }
 
   removeGridGroup(gridGroupCode) {
     $q.removeProperty(this._gridGroups, gridGroupCode);
-  },
+  }
 
   getGrid(gridElementId) {
-    let grid = null;
+    const gridGroup = Object.values(this._gridGroups).find(val => val[gridElementId], this);
+    return gridGroup[gridElementId];
+  }
 
-    for (const gridGroupCode in this._gridGroups) {
-      const gridGroup = this._gridGroups[gridGroupCode];
-
-      if (gridGroup[gridElementId]) {
-        grid = gridGroup[gridElementId];
-        break;
-      }
-    }
-
-    return grid;
-  },
-
+  // eslint-disable-next-line max-params
   createGrid(gridElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
-    const gridGroupCode = this.generateGridGroupCode(entityTypeCode, parentEntityId);
-    const actionGroupCode = this.generateGridGroupCode(actionCode, parentEntityId);
-    const actionSimpleGroupCode = this.generateGridGroupCode(actionCode);
+    const gridGroupCode = BackendEntityGridManager.generateGridGroupCode(entityTypeCode, parentEntityId);
+    const actionGroupCode = BackendEntityGridManager.generateGridGroupCode(actionCode, parentEntityId);
+    const actionSimpleGroupCode = BackendEntityGridManager.generateGridGroupCode(actionCode);
 
     const grid = new Quantumart.QP8.BackendEntityGrid([
       gridGroupCode,
@@ -103,77 +85,73 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
 
     grid.set_gridManager(this);
     let gridGroup = this.createGridGroup(gridGroupCode);
-
     gridGroup[gridElementId] = grid;
+
     gridGroup = this.createGridGroup(actionGroupCode);
     gridGroup[gridElementId] = grid;
+
     gridGroup = this.createGridGroup(actionSimpleGroupCode);
     gridGroup[gridElementId] = grid;
 
     return grid;
-  },
+  }
 
   refreshGrid(gridElementId, options) {
     const grid = this.getGrid(gridElementId);
     if (grid) {
       grid.refreshGrid(options);
     }
-  },
+  }
 
   resetGrid(gridElementId, options) {
     const grid = this.getGrid(gridElementId);
     if (grid) {
       grid.resetGrid(options);
     }
-  },
+  }
 
   removeGrid(gridElementId) {
     const grid = this.getGrid(gridElementId);
-
     if (grid) {
       const gridGroupCodes = grid.get_gridGroupCodes();
       const that = this;
-
-      jQuery.each(gridGroupCodes, (i, gridGroupCode) => {
+      $.each(gridGroupCodes, (i, gridGroupCode) => {
         const gridGroup = that.getGridGroup(gridGroupCode);
-
         $q.removeProperty(gridGroup, gridElementId);
-        if ($q.getHashKeysCount(gridGroup) == 0) {
+        if ($q.getHashKeysCount(gridGroup) === 0) {
           that.removeGridGroup(gridGroupCode);
         }
       });
     }
-  },
+  }
 
-  destroyGrid(gridElementId) {
-    const grid = this.getGrid(gridElementId);
-    if (grid != null) {
-      if (grid.dispose) {
-        grid.dispose();
-      }
-    }
-  },
-
+  // eslint-disable-next-line complexity
   onActionExecuted(eventArgs) {
     const entityTypeCode = eventArgs.get_entityTypeCode();
-
-    if (entityTypeCode != window.ENTITY_TYPE_CODE_SITE_FILE && entityTypeCode != window.ENTITY_TYPE_CODE_CONTENT_FILE) {
+    if (entityTypeCode !== window.ENTITY_TYPE_CODE_SITE_FILE
+      && entityTypeCode !== window.ENTITY_TYPE_CODE_CONTENT_FILE
+    ) {
       let parentEntityId = eventArgs.get_parentEntityId();
       const actionTypeCode = eventArgs.get_actionTypeCode();
       const actionCode = eventArgs.get_actionCode();
       const entityId = eventArgs.get_entityId();
-
       if (eventArgs.get_isSaved()
-        || actionTypeCode == window.ACTION_TYPE_CODE_COPY
-        || actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_UNLOCK
+        || actionTypeCode === window.ACTION_TYPE_CODE_COPY
+        || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_UNLOCK
         || eventArgs.get_isRemoving()
         || eventArgs.get_isArchiving()
         || eventArgs.get_isRestoring()
-        || actionCode == window.ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
+        || actionCode === window.ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
         let options = null;
 
-        if (eventArgs.get_isArchiving() || eventArgs.get_isRestoring() || eventArgs.get_isRemoving() || actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_UNLOCK) {
-          const removedIds = eventArgs.get_isMultipleEntities() ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [eventArgs.get_entityId()];
+        if (eventArgs.get_isArchiving()
+          || eventArgs.get_isRestoring()
+          || eventArgs.get_isRemoving()
+          || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_UNLOCK
+        ) {
+          const removedIds = eventArgs.get_isMultipleEntities()
+            ? $o.getEntityIDsFromEntities(eventArgs.get_entities())
+            : [eventArgs.get_entityId()];
 
           options = { removedIds };
         }
@@ -181,73 +159,60 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
         this.refreshGridGroup(entityTypeCode, parentEntityId, options);
       } else if (eventArgs.get_isUpdated()
         || eventArgs.get_isLoaded()
-        || actionTypeCode == window.ACTION_TYPE_CODE_CANCEL
-        || actionTypeCode == window.ACTION_TYPE_CODE_CHANGE_LOCK) {
+        || actionTypeCode === window.ACTION_TYPE_CODE_CANCEL
+        || actionTypeCode === window.ACTION_TYPE_CODE_CHANGE_LOCK) {
         this.refreshGridGroupWithChecking(entityTypeCode, parentEntityId, entityId);
       }
 
-      // additional refreshes
-      if (eventArgs.get_isUpdated() && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE) {
+      if (eventArgs.get_isUpdated() && entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE) {
         this.refreshGridGroup(window.ENTITY_TYPE_CODE_ARTICLE_VERSION, entityId);
-      } else if ((eventArgs.get_isArchiving() || eventArgs.get_isRemoving()) && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE) {
+      } else if ((eventArgs.get_isArchiving() || eventArgs.get_isRemoving())
+        && entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE
+      ) {
         this.refreshGridGroup(window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE, parentEntityId);
-      } else if (eventArgs.get_isRestoring() && entityTypeCode == window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
+      } else if (eventArgs.get_isRestoring() && entityTypeCode === window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
         this.refreshGridGroup(window.ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
-      } else if (eventArgs.get_isRestored() && entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+      } else if (eventArgs.get_isRestored() && entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
         parentEntityId = +$o.getParentEntityId(window.ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
         this.refreshGridGroup(window.ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
-      } else if (actionTypeCode == window.ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE
-        || actionTypeCode == window.ACTION_TYPE_CHILD_ENTITY_MULTIPLE_REMOVE
-        || actionTypeCode == window.ACTION_TYPE_CHILD_ENTITY_REMOVE_ALL
-        || actionTypeCode == window.ACTION_TYPE_CHILD_ENTITY_REMOVE
+      } else if (actionTypeCode === window.ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE
+        || actionTypeCode === window.ACTION_TYPE_CHILD_ENTITY_MULTIPLE_REMOVE
+        || actionTypeCode === window.ACTION_TYPE_CHILD_ENTITY_REMOVE_ALL
+        || actionTypeCode === window.ACTION_TYPE_CHILD_ENTITY_REMOVE
       ) {
-        if (entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_PERMISSION) {
+        if (entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_PERMISSION) {
           this.refreshGridGroup(window.ACTION_CODE_CHILD_CONTENT_PERMISSIONS, parentEntityId);
           this.refreshGridGroup(window.ACTION_CODE_CONTENT_PERMISSIONS);
-        } else if (entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
+        } else if (entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
           this.refreshGridGroup(window.ACTION_CODE_CHILD_ARTICLE_PERMISSIONS, parentEntityId);
           this.refreshGridGroup(window.ACTION_CODE_ARTICLE_PERMISSIONS);
         }
       } else if (eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving()) {
-        if (entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_PERMISSION) {
+        if (entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_PERMISSION) {
           this.refreshGridGroup(window.ACTION_CODE_CHILD_CONTENT_PERMISSIONS);
-        } else if (entityTypeCode == window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
+        } else if (entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
           this.refreshGridGroup(window.ACTION_CODE_CHILD_ARTICLE_PERMISSIONS);
         }
       }
     }
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendEntityGridManager.callBaseMethod(this, 'dispose');
-
+    super.dispose();
     if (this._gridGroups) {
-      for (const gridGroupCode in this._gridGroups) {
-        const gridGroup = this._gridGroups[gridGroupCode];
-        Object.keys(gridGroup).forEach(this.destroyGrid);
-      }
+      Object.values(this._gridGroups).forEach(gridGroup => {
+        Object.keys(gridGroup).forEach(gridElementId => {
+          const grid = this.getGrid(gridElementId);
+          if (grid && grid.dispose) {
+            grid.dispose();
+          }
+        }, this);
+      }, this);
     }
 
+    this._gridGroups = null;
     $q.collectGarbageInIE();
   }
-};
+}
 
-Quantumart.QP8.BackendEntityGridManager._instance = null;
-
-Quantumart.QP8.BackendEntityGridManager.getInstance = function () {
-  if (Quantumart.QP8.BackendEntityGridManager._instance == null) {
-    Quantumart.QP8.BackendEntityGridManager._instance = new Quantumart.QP8.BackendEntityGridManager();
-  }
-
-  return Quantumart.QP8.BackendEntityGridManager._instance;
-};
-
-Quantumart.QP8.BackendEntityGridManager.destroyInstance = function () {
-  if (Quantumart.QP8.BackendEntityGridManager._instance) {
-    Quantumart.QP8.BackendEntityGridManager._instance.dispose();
-    Quantumart.QP8.BackendEntityGridManager._instance = null;
-  }
-};
-
-Quantumart.QP8.BackendEntityGridManager.registerClass('Quantumart.QP8.BackendEntityGridManager', Quantumart.QP8.Observable);
-
+Quantumart.QP8.BackendEntityGridManager = BackendEntityGridManager;

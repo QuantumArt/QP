@@ -84,90 +84,110 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   LIST_DISABLED_CLASS_NAME: 'disabled',
   SELF_CLEAR_FLOATS_CLASS_NAME: 'group',
 
+  // eslint-disable-next-line camelcase
   get_listElementId() {
     return this._listElementId;
   },
 
+  // eslint-disable-next-line camelcase
   set_listElementId(value) {
     this._listElementId = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_entityTypeCode() {
     return this._entityTypeCode;
   },
 
+  // eslint-disable-next-line camelcase
   set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_parentEntityId() {
     return this._parentEntityId;
   },
 
+  // eslint-disable-next-line camelcase
   set_parentEntityId(value) {
     this._parentEntityId = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_entityId() {
     return this._entityId;
   },
 
+  // eslint-disable-next-line camelcase
   set_entityId(value) {
     this._entityId = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_listType() {
     return this._listType;
   },
 
+  // eslint-disable-next-line camelcase
   set_listType(value) {
     this._listType = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_listId() {
     return this._listId;
   },
 
+  // eslint-disable-next-line camelcase
   set_listId(value) {
     this._listId = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_addNewActionCode() {
     return this._addNewActionCode;
   },
 
+  // eslint-disable-next-line camelcase
   set_addNewActionCode(value) {
     this._addNewActionCode = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_readActionCode() {
     return this._readActionCode;
   },
 
+  // eslint-disable-next-line camelcase
   set_readActionCode(value) {
     this._readActionCode = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_selectActionCode() {
     return this._selectActionCode;
   },
 
+  // eslint-disable-next-line camelcase
   set_selectActionCode(value) {
     this._selectActionCode = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_listGroupCode() {
     return this._listGroupCode;
   },
 
+  // eslint-disable-next-line camelcase
   get_listManagerComponent() {
     return this._listManagerComponent;
   },
 
+  // eslint-disable-next-line camelcase
   set_listManagerComponent(value) {
     this._listManagerComponent = value;
   },
-
 
   initialize() {
     if (!this._listElementId) {
@@ -294,10 +314,6 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
   getSelectedEntityIDs() {
     return $.grep($.map(this.getSelectedEntities(), item => $q.toInt(item.Id)), item => item);
-  },
-
-  selectEntities(entityIDs) {
-    Sys.Debug.trace(entityIDs);
   },
 
   refreshList(testEntityId) {
@@ -798,26 +814,9 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
   dispose() {
     Quantumart.QP8.BackendEntityDataListBase.callBaseMethod(this, 'dispose');
-
     this._destroyPopupWindow();
-
-    if (this._addNewButtonElement) {
-      this._addNewButtonElement = null;
-    }
-
-    if (this._readButtonElement) {
-      this._readButtonElement = null;
-    }
-
     if (this._toolbarElement) {
-      let $toolbar = $(this._toolbarElement);
-      $toolbar
-        .empty()
-        .remove()
-      ;
-
-      $toolbar = null;
-      this._toolbarElement = null;
+      $(this._toolbarElement).empty().remove();
     }
 
     this._destroyGroupCheckbox();
@@ -825,7 +824,6 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
     if (this._listWrapperElement) {
       $(this._listElement).unwrap(this._listWrapperElement);
-      this._listWrapperElement = null;
     }
 
     if (this._listManagerComponent) {
@@ -833,19 +831,22 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       if (!$q.isNullOrWhiteSpace(listElementId)) {
         this._listManagerComponent.removeList(listElementId);
       }
-
-      this._listManagerComponent = null;
     }
 
     if (this._expandLinkElement) {
       $(this._expandLinkElement).off();
-      this._expandLinkElement = null;
     }
     if (this._collapseLinkElement) {
       $(this._collapseLinkElement).off();
-      this._collapseLinkElement = null;
     }
 
+    this._addNewButtonElement = null;
+    this._readButtonElement = null;
+    this._toolbarElement = null;
+    this._listWrapperElement = null;
+    this._listManagerComponent = null;
+    this._expandLinkElement = null;
+    this._collapseLinkElement = null;
     this._listElement = null;
     $q.collectGarbageInIE();
   }

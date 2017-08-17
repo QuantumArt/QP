@@ -1,15 +1,15 @@
 Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
-  let $parentElement = jQuery(`#${parentElementId}`);
-  let $siteCombo = $parentElement.find('.qp-deffilter-site');
-  let contentPicker = $parentElement.find('.qp-deffilter-content').data('entity_data_list_component');
-  let articlePicker = $parentElement.find('.qp-deffilter-articles').data('entity_data_list_component');
+  const $parentElement = $(`#${parentElementId}`);
+  const $siteCombo = $parentElement.find('.qp-deffilter-site');
+  const contentPicker = $parentElement.find('.qp-deffilter-content').data('entity_data_list_component');
+  const articlePicker = $parentElement.find('.qp-deffilter-articles').data('entity_data_list_component');
 
-  $siteCombo.change(jQuery.proxy(() => {
+  $siteCombo.change($.proxy(() => {
     contentPicker.deselectAllListItems();
     contentPicker.set_parentEntityId(+$siteCombo.val() || 0);
   }, this));
 
-  const onContentSelectedHandler = jQuery.proxy(() => {
+  const onContentSelectedHandler = $.proxy(() => {
     if (contentPicker.getSelectedListItemCount() === 0) {
       articlePicker.disableList();
       articlePicker.removeAllListItems();
@@ -33,21 +33,18 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
         articlePicker.set_parentEntityId(contentPicker.getSelectedEntityIDs()[0]);
         articlePicker.enableList();
       }
+
       contentPicker.attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, onContentSelectedHandler);
     },
 
     dispose() {
       if (contentPicker) {
         contentPicker.detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, onContentSelectedHandler);
-        contentPicker = null;
       }
+
       if ($siteCombo) {
         $siteCombo.off();
       }
-
-      $siteCombo = null;
-      articlePicker = null;
-      $parentElement = null;
     }
   };
 };
