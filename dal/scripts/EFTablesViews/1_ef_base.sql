@@ -75,7 +75,7 @@ BEGIN
 
 			else if @attribute_type_id = 2 and @attribute_size <> 0 and @is_long = 1
 			begin
-				set @type_name = 'decimal'
+				set @type_name = 'decimal(18, ' + cast (@attribute_size as NVARCHAR(2)) + ')'
 				set @cast = 1
 			end
 

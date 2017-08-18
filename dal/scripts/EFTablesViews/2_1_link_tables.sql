@@ -275,13 +275,5 @@ BEGIN
 
   exec sp_executesql @sql, N'@link_id numeric, @content_id numeric, @links LINKS READONLY', @link_id = @link_id , @content_id = @content_id, @links = @links
 
-
 END
-GO
-
-exec qp_rebuild_all_new_views
-GO
-exec qp_rebuild_all_link_views
-GO
-exec qp_recreate_link_tables
 GO
