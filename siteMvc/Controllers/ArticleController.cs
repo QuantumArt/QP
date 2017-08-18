@@ -259,7 +259,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
-                      ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.FirstOrDefault().FieldValues)
+                      ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
                       : model.Data.FieldValues;
                     foreach (var fv in union.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
                     {
@@ -318,7 +318,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     model.Data = ArticleService.Update(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
-                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.FirstOrDefault().FieldValues)
+                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f=>f.FieldValues))
                         : model.Data.FieldValues;
                     foreach (var fv in union.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
                     {
