@@ -1,11 +1,12 @@
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[CdcLastExecutedLsn]') AND name = 'ProviderName')
+AND EXISTS (select * from information_schema.tables where table_name = 'CdcLastExecutedLsn')
 BEGIN
   DROP TABLE [dbo].[CdcLastExecutedLsn];
   PRINT 'DROP [dbo].[CdcLastExecutedLsn]';
 END
 GO
 
-IF dbo.qp_check_existence('CdcLastExecutedLsn', 'IsUserTable') = 0
+IF NOT EXISTS (select * from information_schema.tables where table_name = 'CdcLastExecutedLsn')
 BEGIN
   CREATE TABLE [dbo].[CdcLastExecutedLsn] (
     [Id] [int] IDENTITY(1,1) NOT NULL,
