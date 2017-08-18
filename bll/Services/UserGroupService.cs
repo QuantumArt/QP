@@ -12,7 +12,7 @@ namespace Quantumart.QP8.BLL.Services
     {
         public ListResult<UserGroupListItem> List(ListCommand cmd, IEnumerable<int> selectedIds = null)
         {
-            var list = UserGroupRepository.List(cmd, out int totalRecords, selectedIds.ToList());
+            var list = UserGroupRepository.List(cmd, out int totalRecords, selectedIds?.ToList() ?? new List<int>());
             return new ListResult<UserGroupListItem>
             {
                 Data = list.ToList(),
