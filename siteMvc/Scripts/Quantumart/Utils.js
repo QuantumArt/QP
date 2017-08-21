@@ -167,7 +167,7 @@ $q.toBoolean = function toBoolean(value, defaultValue) {
 };
 
 $q.isNull = value => value === undefined || value === null;
-$q.isNullOrEmpty = function isNullOrEmpty(value) {
+$q.isNullOrEmpty = function (value) {
   let result = false;
   if ($q.isNull(value)) {
     result = true;
@@ -182,7 +182,7 @@ $q.isNullOrEmpty = function isNullOrEmpty(value) {
   return result;
 };
 
-$q.isNullOrWhiteSpace = function isNullOrWhiteSpace(value) {
+$q.isNullOrWhiteSpace = function (value) {
   let result = false;
   if ($q.isNull(value)) {
     result = true;
@@ -197,7 +197,7 @@ $q.isNullOrWhiteSpace = function isNullOrWhiteSpace(value) {
   return result;
 };
 
-$q.toString = function toString(value, defaultValue) {
+$q.toString = function (value, defaultValue) {
   let string;
   if ($q.isNull(value)) {
     string = $q.isNull(defaultValue) ? null : defaultValue;

@@ -69,7 +69,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   },
 
   _onPopupWindowToolbarButtonClicked(eventType, sender) {
-    let options, errors, btn, className, prms, that;
+    let options, errors, btn, className, prms;
     if (this._popupWindowComponent) {
       options = Object.assign({}, this._eventsArgs, sender);
       errors = this._settingsWindow.validate();
@@ -85,7 +85,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
           this._popupWindowComponent._documentWrapperElementId
         } form select`).serialize();
 
-        that = this;
+        const that = this;
         $.ajax({
           url: that._settingsActionUrl.replace('Settings', 'SetupWithParams'),
           data: prms,

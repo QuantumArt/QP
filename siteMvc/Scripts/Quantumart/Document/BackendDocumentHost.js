@@ -1017,7 +1017,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   onEntityLoaded(eventArgs) {
-    if (eventArgs.get_entityId() !== 0) {
+    if (+eventArgs.get_entityId() !== 0) {
       this.updateDocument(eventArgs);
       this.onEntityReaded(eventArgs);
       if (eventArgs.get_isRestored() && eventArgs.get_entityTypeCode() === window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {

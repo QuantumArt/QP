@@ -212,7 +212,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   refreshNode(node, options) {
-    const loadChildNodes = options && options.loadChildNodes ? options.loadChildNodes : null;
+    const loadChildNodes = options && !$q.isNull(options.loadChildNodes) ? options.loadChildNodes : true;
     const callback = options && options.callback ? options.callback : null;
     const $node = this.getNode(node);
     if ($node) {

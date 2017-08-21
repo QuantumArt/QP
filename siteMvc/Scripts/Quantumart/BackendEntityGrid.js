@@ -1021,7 +1021,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     const params = this._createDataQueryParams();
 
     // eslint-disable-next-line no-param-reassign
-    Object.assign({}, e, { data: params });
+    Object.assign(e, { data: params });
     if (this._isDataLoaded) {
       const action = this._getCurrentAction();
       if (action) {
@@ -1282,7 +1282,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       '_gridManagerComponent',
       '_contextMenuComponent',
       '_gridElement',
-      '_onDataBindingHandler',
       '_onDataBoundHandler',
       '_onRowDataBoundHandler',
       '_onHeaderCheckboxClickHandler',
@@ -1295,7 +1294,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       '_onRowContextMenuHiddenHandler',
       '_onSelectAllClickHandler',
       '_onDeselectAllClickHandler',
-      '_onDataBindingHandler',
       '_onDataBindingHandler'
     ]);
 

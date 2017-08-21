@@ -53,6 +53,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   },
 
   _onUploadHandler(e) {
+    // eslint-disable-next-line no-param-reassign
     e.data = {
       folderPath: this._folderPath,
       resolveFileName: $q.toString(this._resolveName, 'false')

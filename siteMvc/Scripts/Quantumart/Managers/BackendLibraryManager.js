@@ -47,12 +47,12 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
 
   refreshLibraryGroup(entityTypeId, parentEntityId, options) {
     const libraryGroup = this.getLibraryGroup(BackendLibraryManager.getLibraryGroupCode(entityTypeId, parentEntityId));
-    Object.keys(libraryGroup).forEach(libraryElementId => this.refreshLibrary(libraryElementId, options), this);
+    Object.keys(libraryGroup || {}).forEach(libraryElementId => this.refreshLibrary(libraryElementId, options), this);
   }
 
   resetLibraryGroup(libraryGroupCode, options) {
     const libraryGroup = this.getLibraryGroup(libraryGroupCode);
-    Object.keys(libraryGroup).forEach(libraryElementId => this.resetLibrary(libraryElementId, options), this);
+    Object.keys(libraryGroup || {}).forEach(libraryElementId => this.resetLibrary(libraryElementId, options), this);
   }
 
   removeLibraryGroup(libraryGroupCode) {
@@ -61,15 +61,15 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
 
   getAllLibraries() {
     const allLibraries = [];
-    Object.values(this._libraryGroups).forEach(libraryGroup => {
-      Object.values(libraryGroup).forEach(val => allLibraries.push(val), this);
+    Object.values(this._libraryGroups || {}).forEach(libraryGroup => {
+      Object.values(libraryGroup || {}).forEach(val => allLibraries.push(val), this);
     }, this);
 
     return allLibraries;
   }
 
   getLibrary(libraryElementId) {
-    const libraryGroup = Object.values(this._libraryGroups).find(val => val[libraryElementId]);
+    const libraryGroup = Object.values(this._libraryGroups || {}).find(val => val[libraryElementId]);
     return libraryGroup[libraryElementId];
   }
 
@@ -135,8 +135,8 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
   dispose() {
     super.dispose();
     if (this._libraryGroups) {
-      Object.values(this._libraryGroups).forEach(libraryGroup => {
-        Object.keys(libraryGroup).forEach(libraryElementId => {
+      Object.values(this._libraryGroups || {}).forEach(libraryGroup => {
+        Object.keys(libraryGroup || {}).forEach(libraryElementId => {
           const library = this.getLibrary(libraryElementId);
           if (library && library.dispose) {
             library.dispose();

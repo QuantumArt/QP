@@ -23,7 +23,8 @@ window.Backend.Lang.MultistepAction = {
   exportTitle: 'Экспорт',
   errorTitleFromUnfilledFields: 'Не заполнены необходимые поля',
   downloadedFileName: 'Загружен файл',
-  classifierOraggregatorFields: 'Контент содержит поля аггрегатора или классификатора. \nВы не можете импортировать данные в этот контент.',
+  classifierOraggregatorFields: 'Контент содержит поля аггрегатора или классификатора. '
+    + '\nВы не можете импортировать данные в этот контент.',
   createLikeSite: 'Создать сайт по образцу',
   linkForDownloadFile: 'Ссылка для скачивания файла',
   NoDownloadedFile: 'Файл не был загружен. Пожалуйста выберите файл.',

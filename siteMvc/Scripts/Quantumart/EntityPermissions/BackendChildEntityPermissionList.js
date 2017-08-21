@@ -7,8 +7,13 @@ Quantumart.QP8.BackendChildEntityPermissionList = function (searchBlockElementId
     gridComponent.ajaxRequest();
   };
 
-  const searchBlockComponent = new Quantumart.QP8.BackendUserAndGroupSearchBlock(searchBlockElementId, $.proxy(onApplyFilter, this));
+  const searchBlockComponent = new Quantumart.QP8.BackendUserAndGroupSearchBlock(
+    searchBlockElementId,
+    $.proxy(onApplyFilter, this)
+  );
+
   const onDataBinding = function (e) {
+    // eslint-disable-next-line no-param-reassign
     e.data = Object.assign({}, e.data, searchBlockComponent.getSearchData());
   };
 
