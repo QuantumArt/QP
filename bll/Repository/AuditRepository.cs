@@ -78,7 +78,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         public IEnumerable<ListItem> GetEntityTitles(string entityTypeCode, int? parentEntityId, IEnumerable<int> entitiesIDs)
         {
-            if (entityTypeCode == EntityTypeCode.Article && parentEntityId.HasValue)
+            if (entityTypeCode == EntityTypeCode.Article && parentEntityId.HasValue && parentEntityId != 0)
             {
                 return ArticleRepository.GetSimpleList(parentEntityId.Value, null, null, ListSelectionMode.OnlySelectedItems, entitiesIDs.ToArray(), null, 0);
             }
