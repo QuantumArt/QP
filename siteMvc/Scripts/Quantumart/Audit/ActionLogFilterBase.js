@@ -1,19 +1,19 @@
-//#region class ActionLogFilterBase
 Quantumart.QP8.ActionLogFilterBase = function (filterContainer) {
-	this.$container = jQuery(filterContainer);
+  this.$container = jQuery(filterContainer);
 };
 
 Quantumart.QP8.ActionLogFilterBase.prototype = {
-	$container: null,
+  $container: null,
 
-	initialize: function () { },
-	onOpen: function () { },
-	get_filterDetails: function () { return "?"; },
-	get_value: function () { },
-	dispose: function () {
-		this.$container = null;
-	},
+  initialize() { },
+  onOpen() { },
+  get_filterDetails() {
+    return '?';
+  },
+  get_value() { },
+  dispose() {
+    this.$container = null;
+  }
 };
 
-Quantumart.QP8.ActionLogFilterBase.registerClass("Quantumart.QP8.ActionLogFilterBase");
-//#endregion
+Quantumart.QP8.ActionLogFilterBase.registerClass('Quantumart.QP8.ActionLogFilterBase');

@@ -1,22 +1,9 @@
-// ****************************************************************************
-// *** Компонент "Блок поиска"                        ***
-// ****************************************************************************
+window.EVENT_TYPE_SEARCH_BLOCK_FIND_START = 'OnSearchBlockFindStart';
+window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START = 'OnContextBlockFindStart';
+window.EVENT_TYPE_SEARCH_BLOCK_RESET_START = 'OnSearchBlockResetStart';
+window.EVENT_TYPE_SEARCH_BLOCK_RESIZED = 'OnSearchBlockResized';
+window.EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE = 'OnFieldSearchContainerClose';
 
-//#region event types of search block
-// === Типы событий блока поиска ===
-var EVENT_TYPE_SEARCH_BLOCK_FIND_START = "OnSearchBlockFindStart";
-var EVENT_TYPE_CONTEXT_BLOCK_FIND_START = "OnContextBlockFindStart";
-var EVENT_TYPE_SEARCH_BLOCK_RESET_START = "OnSearchBlockResetStart";
-var EVENT_TYPE_SEARCH_BLOCK_RESIZED = "OnSearchBlockResized";
-//#endregion
-
-//#region event types of conrete field
-// === Типы событий контейнера для блока поиска по конкрентому полю ===
-var EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE = "OnFieldSearchContainerClose";
-//#endregion
-
-//#region class BackendSearchBlockBase
-// === Класс "Блок поиска" ===
 Quantumart.QP8.BackendSearchBlockBase = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
   Quantumart.QP8.BackendSearchBlockBase.initializeBase(this);
 
@@ -60,133 +47,150 @@ Quantumart.QP8.BackendSearchBlockBase = function (searchBlockGroupCode, searchBl
     }
   }
 
-  this._onSearchBlockResizedHandler = jQuery.proxy(this._onSearchBlockResized, this);
-  this._onFindButtonClickHandler = jQuery.proxy(this._onFindButtonClick, this);
-  this._onResetButtonClickHandler = jQuery.proxy(this._onResetButtonClick, this);
-  this._onSearchFormSubmittedHandler = jQuery.proxy(this._onSearchFormSubmitted, this);
+  this._onSearchBlockResizedHandler = $.proxy(this._onSearchBlockResized, this);
+  this._onFindButtonClickHandler = $.proxy(this._onFindButtonClick, this);
+  this._onResetButtonClickHandler = $.proxy(this._onResetButtonClick, this);
+  this._onSearchFormSubmittedHandler = $.proxy(this._onSearchFormSubmitted, this);
 };
 
 Quantumart.QP8.BackendSearchBlockBase.prototype = {
-  _searchBlockGroupCode: "", // код группы, в которую входит блок поиска
-  _searchBlockElementId: "", // клиентский идентификатор блока поиска
-  _searchBlockElement: null, // DOM-элемент, образующий блок поиска
-  _searchBlockContainerElementId: "", // клиентский идентификатор контейнера, в котором располагается блок поиска
-  _tabId: "", // ID таба
-  _popupWindowId: "", // ID всплывающего окна
-  _hostId: "", // ID хоста
+  _searchBlockGroupCode: '',
+  _searchBlockElementId: '',
+  _searchBlockElement: null,
+  _searchBlockContainerElementId: '',
+  _tabId: '',
+  _popupWindowId: '',
+  _hostId: '',
   _actionCode: null,
-  _concreteSearchBlockElement: null, // DOM-элемент, образующий блок конкретного поиска
-  _buttonsWrapperElement: null, // DOM-элемент, контейнер кнопок
-  _findButtonElement: null, // DOM-элемент, образующий кнопку "Найти"
-  _resetButtonElement: null, // DOM-элемент, образующий кнопку "Очистить"
-  _entityTypeCode: "", // код типа сущности
-  _parentEntityId: 0, // идентификатор родительской сущности;
-  _minSearchBlockHeight: 180, // минимальная высота блока поиска
-  _maxSearchBlockHeight: 500, // максимальная высота блока поиска
-  _lastSearchBlockHeight: 500, // последнее значение высоты блока поиска
-  _isVisible: false, // признак того, что блок поиск находится в режиме отображения
-  _isRendered: false, // был ли выполнен рендеринг
-  _verticalResizerComponent: null, // компонент, реализующий вертикальное масштабирование
-  _hideButtons: false, // прятать ли стандартные кнопки поиска
-  _searchBlockState: null, // сохраняемое состояние блока поиска
+  _concreteSearchBlockElement: null,
+  _buttonsWrapperElement: null,
+  _findButtonElement: null,
+  _resetButtonElement: null,
+  _entityTypeCode: '',
+  _parentEntityId: 0,
+  _minSearchBlockHeight: 180,
+  _maxSearchBlockHeight: 500,
+  _lastSearchBlockHeight: 500,
+  _isVisible: false,
+  _isRendered: false,
+  _verticalResizerComponent: null,
+  _hideButtons: false,
+  _searchBlockState: null,
 
   _onSearchBlockResizedHandler: null,
   _onFindButtonClickHandler: null,
   _onResetButtonClickHandler: null,
 
-  get_searchBlockGroupCode: function () {
+  // eslint-disable-next-line camelcase
+  get_searchBlockGroupCode() {
     return this._searchBlockGroupCode;
   },
 
-  set_searchBlockGroupCode: function (value) {
+  // eslint-disable-next-line camelcase
+  set_searchBlockGroupCode(value) {
     this._searchBlockGroupCode = value;
   },
 
-  get_searchBlockElementId: function () {
+  // eslint-disable-next-line camelcase
+  get_searchBlockElementId() {
     return this._searchBlockElementId;
   },
 
-  set_searchBlockElementId: function (value) {
+  // eslint-disable-next-line camelcase
+  set_searchBlockElementId(value) {
     this._searchBlockElementId = value;
   },
 
-  get_searchBlockElement: function () {
+  // eslint-disable-next-line camelcase
+  get_searchBlockElement() {
     return this._searchBlockElement;
   },
 
-  get_searchBlockContainerElementId: function () {
+  // eslint-disable-next-line camelcase
+  get_searchBlockContainerElementId() {
     return this._searchBlockContainerElementId;
   },
 
-  set_searchBlockContainerElementId: function (value) {
+  // eslint-disable-next-line camelcase
+  set_searchBlockContainerElementId(value) {
     this._searchBlockContainerElementId = value;
   },
 
-  get_entityTypeCode: function () {
+  // eslint-disable-next-line camelcase
+  get_entityTypeCode() {
     return this._entityTypeCode;
   },
 
-  set_entityTypeCode: function (value) {
+  // eslint-disable-next-line camelcase
+  set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
 
-  get_parentEntityId: function () {
+  // eslint-disable-next-line camelcase
+  get_parentEntityId() {
     return this._parentEntityId;
   },
 
-  set_parentEntityId: function (value) {
+  // eslint-disable-next-line camelcase
+  set_parentEntityId(value) {
     this._parentEntityId = value;
   },
 
-  get_minSearchBlockHeight: function () {
+  // eslint-disable-next-line camelcase
+  get_minSearchBlockHeight() {
     return this._minSearchBlockHeight;
   },
 
-  set_minSearchBlockHeight: function (value) {
+  // eslint-disable-next-line camelcase
+  set_minSearchBlockHeight(value) {
     this._minSearchBlockHeight = value;
   },
 
-  get_maxSearchBlockHeight: function () {
+  // eslint-disable-next-line camelcase
+  get_maxSearchBlockHeight() {
     return this._maxSearchBlockHeight;
   },
 
-  set_maxSearchBlockHeight: function (value) {
+  // eslint-disable-next-line camelcase
+  set_maxSearchBlockHeight(value) {
     this._maxSearchBlockHeight = value;
   },
 
-  get_isRendered: function () {
+  // eslint-disable-next-line camelcase
+  get_isRendered() {
     return this._isRendered;
   },
 
-  set_isRendered: function (value) {
+  // eslint-disable-next-line camelcase
+  set_isRendered(value) {
     this._isRendered = value;
   },
 
-  initialize: function () {
-    var $searchBlock = $('#' + this._searchBlockElementId);
-    var searchBlockExist = !$q.isNullOrEmpty($searchBlock);
-    var searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
+  initialize() {
+    let $searchBlock = $(`#${this._searchBlockElementId}`);
+    const searchBlockExist = !$q.isNullOrEmpty($searchBlock);
+    const searchFormExist = !$q.isNullOrEmpty($searchBlock.find('form'));
 
     if (!searchBlockExist) {
-      $searchBlock = $('<div />', { 'id': this._searchBlockElementId, 'class': 'searchBlock', 'css': { 'display': 'none'} });
+      $searchBlock = $('<div />', { id: this._searchBlockElementId, class: 'searchBlock', css: { display: 'none' } });
     }
 
     if (!searchFormExist) {
-      var $searchForm = $('<form />', { 'class': 'formLayout' });
+      const $searchForm = $('<form />', { class: 'formLayout' });
       $searchBlock.append($searchForm);
 
-      var $concreteSearchBlock = $('<div />');
+      const $concreteSearchBlock = $('<div />');
       $searchForm.append($concreteSearchBlock);
 
-      var $buttonsWrapper = $('<div />')
+      const $buttonsWrapper = $('<div />');
       if (this._hideButtons) {
         $buttonsWrapper.hide();
       }
 
       $searchForm.append($buttonsWrapper);
 
-      var $findButton = $('<input />', { 'type': 'button', value: $l.SearchBlock.findButtonText, 'class': 'button' });
-      var $resetButton = $('<input />', { 'type': 'button', value: $l.SearchBlock.resetButtonText, 'class': 'button' });
+      const $findButton = $('<input />', { type: 'button', value: $l.SearchBlock.findButtonText, class: 'button' });
+      const $resetButton = $('<input />', { type: 'button', value: $l.SearchBlock.resetButtonText, class: 'button' });
 
       $buttonsWrapper.append($findButton);
       $buttonsWrapper.append('&nbsp;');
@@ -201,13 +205,13 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
 
     if (!searchBlockExist) {
       if (!$q.isNullOrWhiteSpace(this._searchBlockContainerElementId)) {
-        $('#' + this._searchBlockContainerElementId).append($searchBlock);
+        $(`#${this._searchBlockContainerElementId}`).append($searchBlock);
       } else {
         $('body:first').append($searchBlock);
       }
     }
 
-    $searchBlock.verticalResizer({ 'bottomHandleCssClassName': 'searchBottomHandle', 'minPanelHeight': this._minSearchBlockHeight, 'maxPanelHeight': this._maxSearchBlockHeight });
+    $searchBlock.verticalResizer({ bottomHandleCssClassName: 'searchBottomHandle', minPanelHeight: this._minSearchBlockHeight, maxPanelHeight: this._maxSearchBlockHeight });
     this._verticalResizerComponent = $searchBlock.data('vertical_resizer');
 
     this._searchBlockElement = $searchBlock.get(0);
@@ -218,25 +222,25 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     }
   },
 
-  _attachSearchBlockEventHandlers: function () {
+  _attachSearchBlockEventHandlers() {
     $(this._searchBlockElement).bind('resize', this._onSearchBlockResizedHandler);
     $(this._findButtonElement).bind('click', this._onFindButtonClickHandler);
     $(this._resetButtonElement).bind('click', this._onResetButtonClickHandler);
     $(this._searchForm).bind('submit', this._onSearchFormSubmittedHandler);
   },
 
-  _detachSearchBlockEventHandlers: function () {
+  _detachSearchBlockEventHandlers() {
     $(this._searchBlockElement).unbind('resize', this._onSearchBlockResizedHandler);
     $(this._findButtonElement).unbind('click', this._onFindButtonClickHandler);
     $(this._resetButtonElement).unbind('click', this._onResetButtonClickHandler);
     $(this._searchForm).unbind('submit');
   },
 
-  showSearchBlock: function () {
+  showSearchBlock() {
     this._isVisible = true;
-    var $searchBlock = $(this._searchBlockElement);
+    const $searchBlock = $(this._searchBlockElement);
     if ($searchBlock.is(':hidden')) {
-      var verticalResizerComponent = this._verticalResizerComponent;
+      const verticalResizerComponent = this._verticalResizerComponent;
       if (verticalResizerComponent) {
         verticalResizerComponent.showPanelWrapper();
         verticalResizerComponent.showBottomHandle();
@@ -246,11 +250,11 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     }
   },
 
-  hideSearchBlock: function () {
+  hideSearchBlock() {
     this._isVisible = false;
-    var $searchBlock = $(this._searchBlockElement);
+    const $searchBlock = $(this._searchBlockElement);
     if ($searchBlock.is(':visible')) {
-      var verticalResizerComponent = this._verticalResizerComponent;
+      const verticalResizerComponent = this._verticalResizerComponent;
       if (verticalResizerComponent) {
         verticalResizerComponent.hideBottomHandle();
       }
@@ -264,80 +268,69 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     }
   },
 
-  renderSearchBlock: function () {
+  renderSearchBlock() {
     this.set_isRendered(true);
   },
 
-  _onSearchBlockResized: function () {
-    var $searchBlock = jQuery(this._searchBlockElement);
-    var $bottomHandle = null;
+  _onSearchBlockResized() {
+    const $searchBlock = $(this._searchBlockElement);
+    let $bottomHandle = null;
     if (this._verticalResizerComponent) {
-      $bottomHandle = jQuery(this._verticalResizerComponent.get_bottomHandleElement());
+      $bottomHandle = $(this._verticalResizerComponent.get_bottomHandleElement());
     }
 
-    var searchBlockWidth = parseInt($searchBlock.width(), 10);
-    var searchBlockHeight = 0;
+    const searchBlockWidth = parseInt($searchBlock.width(), 10);
+    let searchBlockHeight = 0;
     if (this._isVisible) {
       searchBlockHeight = parseInt($searchBlock.outerHeight(), 10);
       if (!$q.isNullOrEmpty($bottomHandle)) {
         searchBlockHeight += parseInt($bottomHandle.outerHeight(), 10);
       }
-    }
-    else {
+    } else {
       searchBlockHeight = parseInt($searchBlock.height(), 10);
     }
 
-    $searchBlock = null;
-    $bottomHandle = null;
-
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, "");
+    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     eventArgs.set_searchBlockWidth(searchBlockWidth);
     eventArgs.set_searchBlockHeight(searchBlockHeight);
-
-    this.notify(EVENT_TYPE_SEARCH_BLOCK_RESIZED, eventArgs);
+    this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, eventArgs);
   },
 
-  _onFindButtonClick: function () {
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, "");
-    this.notify(EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
-
-    eventArgs = null;
+  _onFindButtonClick() {
+    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
+    this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 
-  _onResetButtonClick: function () {
-    var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, "");
-    this.notify(EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
-
-    eventArgs = null;
+  _onResetButtonClick() {
+    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
+    this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
   },
 
-  _onSearchFormSubmitted: function (e) {
+  _onSearchFormSubmitted(e) {
     e.preventDefault();
-    jQuery(this._findButtonElement).trigger("click");
+    $(this._findButtonElement).trigger('click');
     return false;
   },
 
-  dispose: function () {
-    Quantumart.QP8.BackendSearchBlockBase.callBaseMethod(this, "dispose");
+  dispose() {
+    Quantumart.QP8.BackendSearchBlockBase.callBaseMethod(this, 'dispose');
 
     this._detachSearchBlockEventHandlers();
-
     this._verticalResizerComponent = null;
     this._concreteSearchBlockElement = null;
     this._findButtonElement = null;
     this._resetButtonElement = null;
     this._buttonsWrapperElement = null;
     if (this._searchBlockElement) {
-      var $searchBlock = jQuery(this._searchBlockElement);
+      const $searchBlock = $(this._searchBlockElement);
       $searchBlock
         .noVerticalResizer()
         .empty()
-        .remove()
-        ;
+        .remove();
 
-      $searchBlock = null;
       this._searchBlockElement = null;
     }
+
     this._onSearchBlockResizedHandler = null;
     this._onFindButtonClickHandler = null;
     this._onResetButtonClickHandler = null;
@@ -345,70 +338,73 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   }
 };
 
-Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function(){
-    return "q" + $q.generateRandomString(6);
+Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix = function () {
+  return `q${$q.generateRandomString(6)}`;
 };
 
-Quantumart.QP8.BackendSearchBlockBase.registerClass("Quantumart.QP8.BackendSearchBlockBase", Quantumart.QP8.Observable);
-//#endregion
-
-//#region class BackendSearchBlockEventArgs
-// === Класс "Аргументы события, вызванного блоком поиска" ===
+Quantumart.QP8.BackendSearchBlockBase.registerClass('Quantumart.QP8.BackendSearchBlockBase', Quantumart.QP8.Observable);
 Quantumart.QP8.BackendSearchBlockEventArgs = function (searchBlockType, searchQuery) {
   Quantumart.QP8.BackendSearchBlockEventArgs.initializeBase(this);
-
   this._searchBlockType = searchBlockType;
   this._searchQuery = searchQuery;
 };
 
 Quantumart.QP8.BackendSearchBlockEventArgs.prototype = {
-  _searchBlockType: 0, // тип поискового блока
-  _searchQuery: null, // поисковый запрос
-  _searchBlockWidth: 0, // ширина поискового блока
-  _searchBlockHeight: 0, // высота поискового блока
-  _searchBlockState: null, // сохраняемое состояние
+  _searchBlockType: 0,
+  _searchQuery: null,
+  _searchBlockWidth: 0,
+  _searchBlockHeight: 0,
+  _searchBlockState: null,
 
-  get_searchQuery: function () {
+  // eslint-disable-next-line camelcase
+  get_searchQuery() {
     return this._searchQuery;
   },
 
-  set_searchQuery: function (value) {
+  // eslint-disable-next-line camelcase
+  set_searchQuery(value) {
     this._searchQuery = value;
   },
 
-  get_searchBlockType: function () {
+  // eslint-disable-next-line camelcase
+  get_searchBlockType() {
     return this._searchBlockType;
   },
 
-  set_searchBlockType: function (value) {
+  // eslint-disable-next-line camelcase
+  set_searchBlockType(value) {
     this._searchBlockType = value;
   },
 
-  get_searchBlockWidth: function () {
+  // eslint-disable-next-line camelcase
+  get_searchBlockWidth() {
     return this._searchBlockWidth;
   },
 
-  set_searchBlockWidth: function (value) {
+  // eslint-disable-next-line camelcase
+  set_searchBlockWidth(value) {
     this._searchBlockWidth = value;
   },
 
-  get_searchBlockHeight: function () {
+  // eslint-disable-next-line camelcase
+  get_searchBlockHeight() {
     return this._searchBlockHeight;
   },
 
-  set_searchBlockHeight: function (value) {
+  // eslint-disable-next-line camelcase
+  set_searchBlockHeight(value) {
     this._searchBlockHeight = value;
   },
 
-  set_searchBlockState: function (value) {
+  // eslint-disable-next-line camelcase
+  set_searchBlockState(value) {
     this._searchBlockState = value;
   },
 
-  get_searchBlockState: function () {
+  // eslint-disable-next-line camelcase
+  get_searchBlockState() {
     return this._searchBlockState;
   }
 };
 
-Quantumart.QP8.BackendSearchBlockEventArgs.registerClass("Quantumart.QP8.BackendSearchBlockEventArgs", Sys.EventArgs);
-//#endregion
-
+Quantumart.QP8.BackendSearchBlockEventArgs.registerClass('Quantumart.QP8.BackendSearchBlockEventArgs', Sys.EventArgs);

@@ -33,9 +33,9 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
 
   _minJsonEditorHeight: 190,
 
-  _openLibrary: function () {
-    var eventArgs = new Quantumart.QP8.BackendEventArgs();
-    var options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId: '', allowUpload: true } };
+  _openLibrary() {
+    let eventArgs = new Quantumart.QP8.BackendEventArgs();
+    let options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId: '', allowUpload: true } };
     eventArgs.set_entityId(this._libraryEntityId);
     eventArgs.set_parentEntityId(this._libraryParentEntityId);
     eventArgs.set_entityName('');
@@ -59,11 +59,11 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     options = null;
   },
 
-  _closeLibrary: function () {
+  _closeLibrary() {
     this._selectPopupWindowComponent.closeWindow();
   },
 
-  _destroyLibrary: function () {
+  _destroyLibrary() {
     if (this._selectPopupWindowComponent) {
       this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
       this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
@@ -72,25 +72,25 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  _libraryClosedHandler: function () {
+  _libraryClosedHandler() {
     this._closeLibrary();
   },
 
-  _librarySelectedHandler: function (eventType, sender, args) {
-    var url, entities;
+  _librarySelectedHandler(eventType, sender, args) {
+    let url, entities;
     this._closeLibrary();
     if (args) {
       entities = args.entities;
       if (entities.length > 0) {
-        url = $('#' + this._selectPopupWindowComponent._popupWindowId + '_Library').find('.l-virtual-path').text();
+        url = $(`#${this._selectPopupWindowComponent._popupWindowId}_Library`).find('.l-virtual-path').text();
         url += entities[0].Name;
         $.proxy(this._insertLibraryTag(url), this);
       }
     }
   },
 
-  _onCheckChangesIntervalHandler: function () {
-    var curVal;
+  _onCheckChangesIntervalHandler() {
+    let curVal;
     if (this._componentElem.data('codeMirror')) {
       curVal = this._componentElem.data('codeMirror').getValue();
       if (this._storedTempValue !== curVal) {
@@ -116,9 +116,9 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  _insertLibraryTag: function (url) {
-    var sCurs = this._componentElem.data('codeMirror').getCursor('start');
-    var eCurs = this._componentElem.data('codeMirror').getCursor('end');
+  _insertLibraryTag(url) {
+    const sCurs = this._componentElem.data('codeMirror').getCursor('start');
+    const eCurs = this._componentElem.data('codeMirror').getCursor('end');
     if ((eCurs.line === sCurs.line) && (eCurs.ch === sCurs.ch)) {
       this._componentElem.data('codeMirror').replaceRange(this._generateTag(url), sCurs);
     } else {
@@ -128,9 +128,9 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._componentElem.addClass(window.CHANGED_FIELD_CLASS_NAME);
   },
 
-  _insertCallText: function (callText) {
-    var sCurs = this._componentElem.data('codeMirror').getCursor('start');
-    var eCurs = this._componentElem.data('codeMirror').getCursor('end');
+  _insertCallText(callText) {
+    const sCurs = this._componentElem.data('codeMirror').getCursor('start');
+    const eCurs = this._componentElem.data('codeMirror').getCursor('end');
     if ((eCurs.line === sCurs.line) && (eCurs.ch === sCurs.ch)) {
       this._componentElem.data('codeMirror').replaceRange(callText, sCurs);
     } else {
@@ -140,7 +140,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._insertWindowComponent.close();
   },
 
-  _generateTag: function (url) {
+  _generateTag(url) {
     if (url.endsWith('.gif')
       || url.endsWith('.jpg')
       || url.endsWith('.jpeg')
@@ -160,8 +160,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     return $.telerik.formatString('<a  href="{0}">', url);
   },
 
-  initialize: function () {
-    var tArea = this._componentElem;
+  initialize() {
+    const tArea = this._componentElem;
     this._presentationOrCodeBehind = tArea.data('is_presentation') === 'True';
     this._templateId = tArea.data('template_id');
     this._formatId = tArea.data('format_id');
@@ -178,8 +178,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._checkIntervalID = setInterval($.proxy(this._onCheckChangesIntervalHandler, this), 10000);
   },
 
-  initCodeMirrorTArea: function (tArea) {
-    var cm;
+  initCodeMirrorTArea(tArea) {
+    let cm;
     tArea.wrap('<div class="CodemirrorContainer">');
     cm = CodeMirror.fromTextArea(tArea.get(0), {
       lineNumbers: $q.toBoolean(tArea.data('hta_lineNumbers'), true),
@@ -207,22 +207,20 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     cm = null;
   },
 
-  initJsonEditor: function (tArea) {
-    var options, height, je, json;
+  initJsonEditor(tArea) {
+    let json;
     tArea.hide();
-
     tArea.wrap('<div id="jsonEditor">');
 
-    options = {
+    const options = {
       mode: 'code',
       modes: ['text', 'code', 'tree'],
-      onError: function () {
+      onError() {
         $q.alertError($l.TextArea.forbiddenJsonMode);
       }
     };
 
-    if (tArea.is('[readOnly]'))
-    {
+    if (tArea.is('[readOnly]')) {
       options.onEditable = function (node) {
         if (!node.path) {
           return false;
@@ -230,12 +228,12 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       };
     }
 
-    height = parseInt(tArea.css('height'), 10);
+    const height = parseInt(tArea.css('height'), 10);
     this._editorHeight = !height || height < this._minJsonEditorHeight ? this._minJsonEditorHeight : height;
 
     tArea.parent().css('height', this._editorHeight);
 
-    je = new JSONEditor(tArea.parent().get(0), options);
+    const je = new JSONEditor(tArea.parent().get(0), options);
     json = '';
     if (tArea.val()) {
       json = tArea.val();
@@ -246,12 +244,12 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     tArea.data('jsonEditor', je);
   },
 
-  _onLibraryButtonClick: function () {
+  _onLibraryButtonClick() {
     this._openLibrary();
   },
 
-  _onRestoreButtonClick: function () {
-    var actionName = this._presentationOrCodeBehind ? 'GetDefaultPresentation' : 'GetDefaultCode';
+  _onRestoreButtonClick() {
+    const actionName = this._presentationOrCodeBehind ? 'GetDefaultPresentation' : 'GetDefaultCode';
     $q.getJsonFromUrl('POST', window.CONTROLLER_URL_PAGE_TEMPLATE + actionName, {
       formatId: this._formatId
     }, true, false).done($.proxy(function ajaxDone(data) {
@@ -269,7 +267,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }, this));
   },
 
-  _onInsertButtonClick: function () {
+  _onInsertButtonClick() {
     if (this._insertWindowInitialized) {
       this._insertWindowComponent.open();
     } else {
@@ -278,7 +276,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  _onInsertCall: function () {
+  _onInsertCall() {
     if (!this._insertPopUp.data('valToInsert') === '') {
       if (this._insertPopUp.data('valType') === 'object') {
         this._insertObjectFunc(
@@ -304,57 +302,57 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  _insertObjectFunc: function (objectName, netLanguage, isCodeBehind) {
-    var strIns;
+  _insertObjectFunc(objectName, netLanguage, isCodeBehind) {
+    let strIns;
     if (netLanguage === '') {
-      strIns = '<%Object("' + objectName + '")%>';
+      strIns = `<%Object("${objectName}")%>`;
     } else if (isCodeBehind) {
       strIns = netLanguage === '2'
-        ? 'ShowObject("' + objectName + '", Me)'
-        : 'ShowObject("' + objectName + '", this);';
+        ? `ShowObject("${objectName}", Me)`
+        : `ShowObject("${objectName}", this);`;
     } else {
-      strIns = '<qp:placeholder calls="' + objectName + '" runat="server"  />';
+      strIns = `<qp:placeholder calls="${objectName}" runat="server"  />`;
     }
 
     this._insertCallText(strIns);
   },
 
-  _insertFunc: function (fieldName, netLanguage, isCodeBehind) {
-    var strIns;
+  _insertFunc(fieldName, netLanguage, isCodeBehind) {
+    let strIns;
     if (netLanguage === '') {
-      strIns = '<%=' + fieldName + '%>';
+      strIns = `<%=${fieldName}%>`;
     } else
-      if (isCodeBehind === '0') {
-        strIns = '<%# ' + fieldName + '%>';
-      } else if (netLanguage === '1') {
-        strIns = fieldName;
-      }
+    if (isCodeBehind === '0') {
+      strIns = `<%# ${fieldName}%>`;
+    } else if (netLanguage === '1') {
+      strIns = fieldName;
+    }
 
     this._insertCallText(strIns);
   },
 
-  _insertFieldFunc: function (fieldName, netLanguage, isCodeBehind) {
-    var strIns = 'Field("' + fieldName + '")';
+  _insertFieldFunc(fieldName, netLanguage, isCodeBehind) {
+    let strIns = `Field("${fieldName}")`;
     if (netLanguage === '1') {
       if (isCodeBehind === '0') {
-        strIns = 'Field(((DataRowView)(Container.DataItem)), "' + fieldName + '")';
+        strIns = `Field(((DataRowView)(Container.DataItem)), "${fieldName}")`;
       } else {
-        strIns = 'Field(Data.Rows[e.Item.ItemIndex], "' + fieldName + '")';
+        strIns = `Field(Data.Rows[e.Item.ItemIndex], "${fieldName}")`;
       }
     }
     if (netLanguage === '2') {
       if (isCodeBehind === '0') {
-        strIns = 'Field(CType(Container.DataItem, DataRowView), "' + fieldName + '")';
+        strIns = `Field(CType(Container.DataItem, DataRowView), "${fieldName}")`;
       } else {
-        strIns = 'Field(Data.Rows(e.Item.ItemIndex), "' + fieldName + '")';
+        strIns = `Field(Data.Rows(e.Item.ItemIndex), "${fieldName}")`;
       }
     }
     this._insertFunc(strIns, netLanguage, isCodeBehind);
   },
 
-  createInsertPopupWindow: function () {
+  createInsertPopupWindow() {
     this._insertWindowHtml = '';
-    $q.getJsonFromUrl('POST', window.CONTROLLER_URL_PAGE_TEMPLATE + 'GetInsertPopUpMarkUp', {
+    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetInsertPopUpMarkUp`, {
       presentationOrCodeBehind: this._presentationOrCodeBehind,
       formatId: this._formatId,
       templateId: this._templateId
@@ -393,8 +391,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }, this));
   },
 
-  computeInsertType: function (elem) {
-    var $elem = $(elem);
+  computeInsertType(elem) {
+    const $elem = $(elem);
     if ($elem.hasClass('ht-toolbar-container-selector') || $elem.hasClass('ht-toolbar-function-selector')) {
       return 'function';
     } else if ($elem.hasClass('ht-toolbar-template-obj-selector') || $elem.hasClass('ht-toolbar-page-obj-selector')) {
@@ -406,9 +404,9 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     return undefined;
   },
 
-  saveData: function () {
-    var jsonEditor;
-    var codeMirror = this._componentElem.data('codeMirror');
+  saveData() {
+    let jsonEditor;
+    const codeMirror = this._componentElem.data('codeMirror');
     if (codeMirror) {
       if (this._componentElem.val() !== codeMirror.getValue()) {
         this._componentElem.change();
@@ -426,8 +424,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
   },
 
-  getMode: function () {
-    var tArea = this._componentElem;
+  getMode() {
+    const tArea = this._componentElem;
     if (tArea.hasClass('hta-htmlTextArea')) {
       return 'application/x-aspx';
     } else if (tArea.hasClass('hta-cSharpTextArea')) {
@@ -447,8 +445,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     return null;
   },
 
-  initTemplateToolbar: function () {
-    $q.getJsonFromUrl('POST', window.CONTROLLER_URL_PAGE_TEMPLATE + 'GetHTAToolbarMarkUp', {
+  initTemplateToolbar() {
+    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetHTAToolbarMarkUp`, {
       presentationOrCodeBehind: this._presentationOrCodeBehind,
       formatId: this._formatId,
       templateId: this._templateId
@@ -474,7 +472,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }, this));
   },
 
-  destroy: function () {
+  destroy() {
     if (this._checkIntervalID) {
       clearInterval(this._checkIntervalID);
     }

@@ -2,11 +2,11 @@
 
 // eslint-disable-next-line no-extra-semi
 ; (function init() {
-  var onBrowseSiteLibrary = function onBrowseSiteLibrary(cb) {
-    var evArgs, options;
-    var dialog = CKEDITOR.dialog.getCurrent();
-    var $field = $(dialog.getParentEditor().element.$);
-    var popup = $field.data('linkWindow-site');
+  const onBrowseSiteLibrary = function onBrowseSiteLibrary(cb) {
+    let evArgs, options;
+    const dialog = CKEDITOR.dialog.getCurrent();
+    const $field = $(dialog.getParentEditor().element.$);
+    let popup = $field.data('linkWindow-site');
 
     if (!popup) {
       evArgs = new Quantumart.QP8.BackendEventArgs();
@@ -31,11 +31,11 @@
     evArgs = null;
   };
 
-  var onBrowseContentLibrary = function onBrowseContentLibrary(cb) {
-    var evArgs, options;
-    var dialog = CKEDITOR.dialog.getCurrent();
-    var $field = $(dialog.getParentEditor().element.$);
-    var popup = $field.data('linkWindow-content');
+  const onBrowseContentLibrary = function onBrowseContentLibrary(cb) {
+    let evArgs, options;
+    const dialog = CKEDITOR.dialog.getCurrent();
+    const $field = $(dialog.getParentEditor().element.$);
+    let popup = $field.data('linkWindow-content');
 
     if (!popup) {
       evArgs = new Quantumart.QP8.BackendEventArgs();
@@ -60,10 +60,10 @@
     evArgs = null;
   };
 
-  var bindEvents = function bindEvents() {
+  const bindEvents = function bindEvents() {
     CKEDITOR.on('dialogDefinition', function onDialogDefinition(ev) {
-      var fieldlName, container;
-      var onSelectCb = function onSelectCb(url) {
+      let fieldlName, container;
+      const onSelectCb = function onSelectCb(url) {
         CKEDITOR.dialog.getCurrent().setValueOf('info', fieldlName, url);
       };
 
@@ -98,7 +98,7 @@
   };
 
   CKEDITOR.dtd.a.div = true;
-  ['a', 'i', 'b', 'span'].forEach(function allowEmptyTag(tag) {
+  ['a', 'i', 'b', 'span'].forEach(tag => {
     CKEDITOR.dtd.$removeEmpty[tag] = false;
   });
 

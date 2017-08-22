@@ -2,24 +2,23 @@
 
 // eslint-disable-next-line no-extra-semi
 ; (function init() {
-  var settings = {
+  const settings = {
     pluginName: 'Typographer',
     pluginDesc: 'Типографер',
     iconPath: '/Backend/Scripts/Quantumart/ckeditor/typographer/images/typographer.gif'
   };
 
   // eslint-disable-next-line max-statements
-  var fixWithRegexps = function fixWithRegexps(str, shouldUseEng) {
-    var fixToMdashFn;
-    var result = str;
-    var apostropheHtmlCode = '&#146;';
-    var numericHtmlCode = '&#8470;';
-    var extLeft = shouldUseEng ? '&ldquo;' : '&laquo;';
-    var extRight = shouldUseEng ? '&rdquo;' : '&raquo;';
-    var intLeft = shouldUseEng ? '&lsquo;' : '&bdquo;';
-    var intRight = shouldUseEng ? '&rsquo;' : '&ldquo;';
+  const fixWithRegexps = function fixWithRegexps(str, shouldUseEng) {
+    let result = str;
+    const apostropheHtmlCode = '&#146;';
+    const numericHtmlCode = '&#8470;';
+    const extLeft = shouldUseEng ? '&ldquo;' : '&laquo;';
+    const extRight = shouldUseEng ? '&rdquo;' : '&raquo;';
+    const intLeft = shouldUseEng ? '&lsquo;' : '&bdquo;';
+    const intRight = shouldUseEng ? '&rsquo;' : '&ldquo;';
 
-    var quotesToReplace = [
+    const quotesToReplace = [
       '&quot;',
       '&ldquo;',
       '&rdquo;',
@@ -34,7 +33,7 @@
       '”'
     ];
 
-    quotesToReplace.forEach(function foreach(quote) {
+    quotesToReplace.forEach(quote => {
       result = result.replace(new RegExp(quote, 'g'), '"');
     });
 
@@ -56,15 +55,15 @@
       // eslint-disable-next-line no-control-regex
       result = result.replace(/([\x01(\s"])(")([^"]{1,})([^\s"(])(")/g, '$1«$3$4»');
       while (/(«)([^»]*)(«)/.test(result)) {
-        result = result.replace(/(«)([^»]*)(«)([^»]*)(»)/g, '$1$2' + intLeft + '$4' + intRight);
+        result = result.replace(/(«)([^»]*)(«)([^»]*)(»)/g, `$1$2${intLeft}$4${intRight}`);
       }
     }
 
-    fixToMdashFn = function (input, symbol) {
-      var tempResult = input;
-      tempResult = tempResult.replace(new RegExp(' (' + symbol + '){1,2} ', 'g'), '&nbsp;&mdash; ');
-      tempResult = tempResult.replace(new RegExp('([>|\\s])' + symbol + ' ', 'g'), '$1&mdash; ');
-      tempResult = tempResult.replace(new RegExp('^' + symbol + ' ', 'g'), '&mdash; ');
+    const fixToMdashFn = function (input, symbol) {
+      let tempResult = input;
+      tempResult = tempResult.replace(new RegExp(` (${symbol}){1,2} `, 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp(`([>|\\s])${symbol} `, 'g'), '$1&mdash; ');
+      tempResult = tempResult.replace(new RegExp(`^${symbol} `, 'g'), '&mdash; ');
       return tempResult;
     };
 
@@ -78,9 +77,9 @@
     result = fixToMdashFn(result, '&ndash;');
 
     result = result.replace(/\b(\d+)-(\d+)\b/g, '<nobr>$1&ndash;$2</nobr>');
-    result = result.replace(/(\S+)-(\S+)/g, function replacer(match, p1, p2) {
+    result = result.replace(/(\S+)-(\S+)/g, (match, p1, p2) => {
       if (p1.length <= 3 || p2.length <= 3) {
-        return '<nobr>' + p1 + '-' + p2 + '</nobr>';
+        return `<nobr>${p1}-${p2}</nobr>`;
       }
 
       return match;
@@ -115,19 +114,19 @@
     result = result.replace(/\(c\)/gi, '&copy;');
     result = result.replace(/\(r\)/gi, '&reg;');
     result = result.replace(/\(tm\)/gi, '&trade;');
-    result = result.replace(/№ /gi, numericHtmlCode + '&nbsp;');
+    result = result.replace(/№ /gi, `${numericHtmlCode}&nbsp;`);
 
     return result;
   };
 
-  var processHtml = function processHtml(str, shouldUseEng) {
-    var i = 0;
-    var result = str;
-    var regexp = /<([^>]*)>/;
-    var matches = result.match(/<([^>]*)>/g);
+  const processHtml = function processHtml(str, shouldUseEng) {
+    let i = 0;
+    let result = str;
+    let regexp = /<([^>]*)>/;
+    const matches = result.match(/<([^>]*)>/g);
     while (regexp.test(result)) {
       i += 1;
-      result = result.replace(regexp, '\x01' + i + '\x02');
+      result = result.replace(regexp, `\x01${i}\x02`);
     }
 
     result = fixWithRegexps(result, shouldUseEng);
@@ -144,7 +143,7 @@
   };
 
   CKEDITOR.plugins.add(settings.pluginName, {
-    init: function onInit(editor) {
+    init(editor) {
       if (editor.contextMenu) {
         editor.addMenuGroup('qp8', 10);
         editor.addMenuItem(settings.pluginName, {
@@ -153,14 +152,14 @@
           group: 'qp8'
         });
 
-        editor.contextMenu.addListener(function contextMenuListener() {
+        editor.contextMenu.addListener(() => {
           return { typographer: CKEDITOR.TRISTATE_OFF };
         });
       }
 
       editor.addCommand(settings.pluginName, {
-        exec: function onExec(execEditor) {
-          var html, proccessedHtml;
+        exec(execEditor) {
+          let html, proccessedHtml;
           if (execEditor.mode === 'source' && execEditor.textarea) {
             html = execEditor.textarea.getValue();
             proccessedHtml = processHtml(html, execEditor.config.useEnglishQuotes);
@@ -179,8 +178,8 @@
         icon: settings.iconPath
       });
 
-      editor.on('mode', function onMode() {
-        if (editor.readOnly === false) {
+      editor.on('mode', () => {
+        if (!editor.readOnly) {
           editor.getCommand(settings.pluginName).enable();
         }
       });

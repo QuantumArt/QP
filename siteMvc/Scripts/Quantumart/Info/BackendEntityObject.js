@@ -1,14 +1,14 @@
-Quantumart.QP8.BackendEntityObject = function() {};
-Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function(entityTypeCode, entityId, loadChilds, filter, successHandler, errorHandler) {
-  var actionUrl = window.CONTROLLER_URL_ENTITY_OBJECT + 'GetByTypeAndIdForTree';
-  var params = { entityTypeCode: entityTypeCode, entityId: entityId, loadChilds: loadChilds, filter: filter };
+Quantumart.QP8.BackendEntityObject = function () {};
+Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function (entityTypeCode, entityId, loadChilds, filter, successHandler, errorHandler) {
+  const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetByTypeAndIdForTree`;
+  const params = { entityTypeCode, entityId, loadChilds, filter };
   if ($q.isFunction(successHandler)) {
     $q.getJsonFromUrl('GET', actionUrl, params, false, false, successHandler, errorHandler);
   } else {
-    var entity = null;
-    $q.getJsonFromUrl('GET', actionUrl, params, false, false, function(data) {
+    let entity = null;
+    $q.getJsonFromUrl('GET', actionUrl, params, false, false, data => {
       entity = data;
-    }, function(jqXHR) {
+    }, jqXHR => {
       entity = null;
       $q.processGenericAjaxError(jqXHR);
     });
@@ -17,9 +17,8 @@ Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function(entity
   }
 };
 
-// Возвращает список дочерних сущностей
-Quantumart.QP8.BackendEntityObject.getEntityChildList = function(ajaxParams, successHandler, errorHandler) {
-  var actionUrl = window.CONTROLLER_URL_ENTITY_OBJECT + 'GetChildList';
+Quantumart.QP8.BackendEntityObject.getEntityChildList = function (ajaxParams, successHandler, errorHandler) {
+  const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetChildList`;
   if (!$q.isNullOrEmpty(ajaxParams.selectItemIDs)) {
     ajaxParams.selectItemIDs = ajaxParams.selectItemIDs.join(',');
   }
@@ -27,11 +26,11 @@ Quantumart.QP8.BackendEntityObject.getEntityChildList = function(ajaxParams, suc
   if ($q.isFunction(successHandler)) {
     $q.getJsonFromUrl('POST', actionUrl, ajaxParams, false, false, successHandler, errorHandler);
   } else {
-    var entities = null;
+    let entities = null;
 
-    $q.getJsonFromUrl('POST', actionUrl, ajaxParams, false, false, function(data) {
+    $q.getJsonFromUrl('POST', actionUrl, ajaxParams, false, false, data => {
       entities = data;
-    }, function(jqXHR) {
+    }, jqXHR => {
       entities = null;
       $q.processGenericAjaxError(jqXHR);
     });
@@ -40,28 +39,27 @@ Quantumart.QP8.BackendEntityObject.getEntityChildList = function(ajaxParams, suc
   }
 };
 
-// Возвращает упрощенный список сущностей
-Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function(entityTypeCode, parentEntityId, entityId, listId, selectionMode, selectedEntitiesIDs, filter, testEntityId) {
-  var actionUrl = window.CONTROLLER_URL_ENTITY_OBJECT + 'GetSimpleList';
-  var params = {
-    entityTypeCode: entityTypeCode,
-    parentEntityId: parentEntityId,
-    entityId: entityId,
-    listId: listId,
-    selectionMode: selectionMode,
-    selectedEntitiesIDs: selectedEntitiesIDs,
-    filter: filter,
-    testEntityId: testEntityId
+Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function (entityTypeCode, parentEntityId, entityId, listId, selectionMode, selectedEntitiesIDs, filter, testEntityId) {
+  const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetSimpleList`;
+  const params = {
+    entityTypeCode,
+    parentEntityId,
+    entityId,
+    listId,
+    selectionMode,
+    selectedEntitiesIDs,
+    filter,
+    testEntityId
   };
 
-  var entities = [];
-  $q.getJsonFromUrl('POST', actionUrl, params, false, false, function(data) {
+  let entities = [];
+  $q.getJsonFromUrl('POST', actionUrl, params, false, false, data => {
     if (data && data.ErrorMessage) {
-      window.alert(data.ErrorMessage);
+      $q.alertError(data.ErrorMessage);
     } else {
       entities = data;
     }
-  }, function(jqXHR) {
+  }, jqXHR => {
     entities = [];
     $q.processGenericAjaxError(jqXHR);
   });
@@ -69,11 +67,11 @@ Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function(entityTypeCode
   return entities;
 };
 
-Quantumart.QP8.BackendEntityObject.makeSimpleCall = function(verb, method, params) {
-  var result = null;
-  $q.getJsonFromUrl(verb, method, params, false, false, function(data) {
+Quantumart.QP8.BackendEntityObject.makeSimpleCall = function (verb, method, params) {
+  let result = null;
+  $q.getJsonFromUrl(verb, method, params, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -81,15 +79,14 @@ Quantumart.QP8.BackendEntityObject.makeSimpleCall = function(verb, method, param
   return result;
 };
 
-// Проверяет существование сущности
-Quantumart.QP8.BackendEntityObject.checkEntityExistence = function Quantumart$QP8$BackendEntityObject$checkEntityExistence(entityTypeCode, entityId) {
-  var result = null;
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'CheckExistence', {
-    entityTypeCode: entityTypeCode,
-    entityId: entityId
-  }, false, false, function(data) {
+Quantumart.QP8.BackendEntityObject.checkEntityExistence = function (entityTypeCode, entityId) {
+  let result = null;
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}CheckExistence`, {
+    entityTypeCode,
+    entityId
+  }, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -97,15 +94,14 @@ Quantumart.QP8.BackendEntityObject.checkEntityExistence = function Quantumart$QP
   return result;
 };
 
-// Проверяет сущность на наличие рекурсивных связей
-Quantumart.QP8.BackendEntityObject.checkEntityForPresenceSelfRelations = function Quantumart$QP8$BackendEntityObject$checkEntityForPresenceSelfRelations(entityTypeCode, entityId) {
-  var result = null;
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'CheckPresenceSelfRelations', {
-    entityTypeCode: entityTypeCode,
-    entityId: entityId
-  }, false, false, function(data) {
+Quantumart.QP8.BackendEntityObject.checkEntityForPresenceSelfRelations = function (entityTypeCode, entityId) {
+  let result = null;
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}CheckPresenceSelfRelations`, {
+    entityTypeCode,
+    entityId
+  }, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -113,15 +109,14 @@ Quantumart.QP8.BackendEntityObject.checkEntityForPresenceSelfRelations = functio
   return result;
 };
 
-// Проверяет сущность на наличие вариаций
-Quantumart.QP8.BackendEntityObject.checkEntityForVariations = function Quantumart$QP8$BackendEntityObject$checkEntityForVariations(entityTypeCode, entityId) {
-  var result = null;
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'CheckForVariations', {
-    entityTypeCode: entityTypeCode,
-    entityId: entityId
-  }, false, false, function(data) {
+Quantumart.QP8.BackendEntityObject.checkEntityForVariations = function (entityTypeCode, entityId) {
+  let result = null;
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}CheckForVariations`, {
+    entityTypeCode,
+    entityId
+  }, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -129,16 +124,15 @@ Quantumart.QP8.BackendEntityObject.checkEntityForVariations = function Quantumar
   return result;
 };
 
-// Возвращает название сущности
-Quantumart.QP8.BackendEntityObject.getEntityName = function Quantumart$QP8$BackendEntityObject$getEntityName(entityTypeCode, entityId, parentEntityId) {
-  var result = null;
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetName', {
-    entityTypeCode: entityTypeCode,
-    entityId: entityId,
-    parentEntityId: parentEntityId
-  }, false, false, function(data) {
+Quantumart.QP8.BackendEntityObject.getEntityName = function (entityTypeCode, entityId, parentEntityId) {
+  let result = null;
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetName`, {
+    entityTypeCode,
+    entityId,
+    parentEntityId
+  }, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -146,15 +140,14 @@ Quantumart.QP8.BackendEntityObject.getEntityName = function Quantumart$QP8$Backe
   return result;
 };
 
-// Возвращает идентификатор родительской сущности
-Quantumart.QP8.BackendEntityObject.getParentEntityId = function Quantumart$QP8$BackendEntityObject$getParentEntityId(entityTypeCode, entityId) {
-  var result = null;
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentId', {
-    entityTypeCode: entityTypeCode,
+Quantumart.QP8.BackendEntityObject.getParentEntityId = function (entityTypeCode, entityId) {
+  let result = null;
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentId`, {
+    entityTypeCode,
     entityId: +entityId || 0
-  }, false, false, function(data) {
+  }, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -162,15 +155,14 @@ Quantumart.QP8.BackendEntityObject.getParentEntityId = function Quantumart$QP8$B
   return result;
 };
 
-// Возвращает идентификаторы родительских сущностей того же типа (для обновления дерева)
-Quantumart.QP8.BackendEntityObject.getParentIdsForTree = function Quantumart$QP8$BackendEntityObject$getParentIdsForTree(entityTypeCode, ids) {
-  var result = null;
-  $q.getJsonFromUrl('POST', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentIdsForTree', {
-    entityTypeCode: entityTypeCode,
-    ids: ids
-  }, false, false, function(data) {
+Quantumart.QP8.BackendEntityObject.getParentIdsForTree = function (entityTypeCode, ids) {
+  let result = null;
+  $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentIdsForTree`, {
+    entityTypeCode,
+    ids
+  }, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -178,17 +170,15 @@ Quantumart.QP8.BackendEntityObject.getParentIdsForTree = function Quantumart$QP8
   return result;
 };
 
-// Возвращает информацию о текущей и родительской сущности
-// по коду типа и идентификатору
-Quantumart.QP8.BackendEntityObject.getParentInfo = function Quantumart$QP8$BackendEntityObject$getParentInfo(entityTypeCode, entityId, parentEntityId) {
-  var result = null;
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentInfo', {
-    entityTypeCode: entityTypeCode,
-    entityId: entityId,
-    parentEntityId: parentEntityId
-  }, false, false, function(data) {
+Quantumart.QP8.BackendEntityObject.getParentInfo = function (entityTypeCode, entityId, parentEntityId) {
+  let result = null;
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentInfo`, {
+    entityTypeCode,
+    entityId,
+    parentEntityId
+  }, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -196,39 +186,37 @@ Quantumart.QP8.BackendEntityObject.getParentInfo = function Quantumart$QP8$Backe
   return result;
 };
 
-Quantumart.QP8.BackendEntityObject.getArticleFieldValue = function(contentId, fieldName, articleId) {
-  return $o.makeSimpleCall('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleFieldValue', {
-    contentId: contentId,
-    fieldName: fieldName,
-    articleId: articleId
+Quantumart.QP8.BackendEntityObject.getArticleFieldValue = function (contentId, fieldName, articleId) {
+  return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleFieldValue`, {
+    contentId,
+    fieldName,
+    articleId
   });
 };
 
-Quantumart.QP8.BackendEntityObject.getArticleLinkedItems = function Quantumart$QP8$BackendEntityObject$getArticleLinkedItems(linkId, articleId) {
-  return $o.makeSimpleCall('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleLinkedItems', {
-    linkId: linkId, articleId: articleId
+Quantumart.QP8.BackendEntityObject.getArticleLinkedItems = function (linkId, articleId) {
+  return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleLinkedItems`, {
+    linkId, articleId
   });
 };
 
-Quantumart.QP8.BackendEntityObject.getArticleIdByFieldValue = function Quantumart$QP8$BackendEntityObject$getArticleIdByFieldValue(contentId, fieldName, fieldValue) {
-  return $o.makeSimpleCall('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleIdByFieldValue', {
-    contentId: contentId,
-    fieldName: fieldName,
-    fieldValue: fieldValue
+Quantumart.QP8.BackendEntityObject.getArticleIdByFieldValue = function (contentId, fieldName, fieldValue) {
+  return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleIdByFieldValue`, {
+    contentId,
+    fieldName,
+    fieldValue
   });
 };
 
-// Возвращает информацию о текущей сущности и всех предках
-// по коду типа и идентификатору
-Quantumart.QP8.BackendEntityObject.getParentsChain = function(entityTypeCode, entityId, parentEntityId) {
-  var result = null;
-  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentsChain', {
-    entityTypeCode: entityTypeCode,
-    entityId: entityId,
-    parentEntityId: parentEntityId
-  }, false, false, function(data) {
+Quantumart.QP8.BackendEntityObject.getParentsChain = function (entityTypeCode, entityId, parentEntityId) {
+  let result = null;
+  $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetParentsChain`, {
+    entityTypeCode,
+    entityId,
+    parentEntityId
+  }, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });
@@ -236,10 +224,9 @@ Quantumart.QP8.BackendEntityObject.getParentsChain = function(entityTypeCode, en
   return result;
 };
 
-// Проверяет список сущностей на наличие пустых имен
-Quantumart.QP8.BackendEntityObject.checkEntitiesForPresenceEmptyNames = function Quantumart$QP8$BackendEntityObject$checkEntitiesForPresenceEmptyNames(entities) {
-  var isEmpty = false;
-  $.each(entities, function(index, entity) {
+Quantumart.QP8.BackendEntityObject.checkEntitiesForPresenceEmptyNames = function (entities) {
+  let isEmpty = false;
+  $.each(entities, (index, entity) => {
     if ($q.isNullOrWhiteSpace(entity.Name)) {
       isEmpty = true;
       return false;
@@ -249,46 +236,38 @@ Quantumart.QP8.BackendEntityObject.checkEntitiesForPresenceEmptyNames = function
   return isEmpty;
 };
 
-// Возвращает массив идентификаторов сущностей из списка сущностей
-Quantumart.QP8.BackendEntityObject.getEntityIDsFromEntities = function Quantumart$QP8$BackendEntityObject$getEntityIDsFromEntities(entities) {
-  return $.map(entities, function(elem) {
-    return elem.Id;
-  });
+Quantumart.QP8.BackendEntityObject.getEntityIDsFromEntities = function (entities) {
+  return $.map(entities, elem => elem.Id);
 };
 
-// Возвращает массив названий сущностей из списка сущностей
-Quantumart.QP8.BackendEntityObject.getEntityNamesFromEntities = function Quantumart$QP8$BackendEntityObject$getEntityNamesFromEntities(entities) {
-  return $.map(entities, function(elem) {
-    return elem.Name;
-  });
+Quantumart.QP8.BackendEntityObject.getEntityNamesFromEntities = function (entities) {
+  return $.map(entities, elem => elem.Name);
 };
 
-// Возвращает строку названий сущностей из списка сущностей
-Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function Quantumart$QP8$BackendEntityObject$getEntityNamesFromEntities(entities) {
-  var count = entities.length;
-  return $.map(entities, function(elem, index) {
-    var prefix = '';
+Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function (entities) {
+  const count = entities.length;
+  return $.map(entities, (elem, index) => {
+    let prefix = '';
     if (index > 0) {
       if (index == (count - 1)) {
-        prefix = ' ' + $l.Common.andUnion.toLowerCase() + ' ';
+        prefix = ` ${$l.Common.andUnion.toLowerCase()} `;
       } else {
         prefix = ', ';
       }
     }
 
-    return prefix + '"' + elem.Name + '"';
+    return `${prefix}"${elem.Name}"`;
   }).join('');
 };
 
-// Проверяет наличие разрешений на использование представления типа "Дерево"
-Quantumart.QP8.BackendEntityObject.isTreeViewTypeAllowed = function Quantumart$QP8$BackendEntityObject$isTreeViewTypeAllowed(entityTypeCode, parentEntityId, action) {
-  var result = false;
+Quantumart.QP8.BackendEntityObject.isTreeViewTypeAllowed = function (entityTypeCode, parentEntityId, action) {
+  let result = false;
   if (action && !$q.isNullOrEmpty(action.Views)) {
-    var views = action.Views;
-    var treeViewTypeExist = false;
-    for (var viewIndex = 0; viewIndex < views.length; viewIndex++) {
-      var view = views[viewIndex];
-      if (view.ViewType.Code == VIEW_TYPE_CODE_TREE) {
+    const views = action.Views;
+    let treeViewTypeExist = false;
+    for (let viewIndex = 0; viewIndex < views.length; viewIndex++) {
+      const view = views[viewIndex];
+      if (view.ViewType.Code == window.VIEW_TYPE_CODE_TREE) {
         treeViewTypeExist = true;
         break;
       }
@@ -296,21 +275,21 @@ Quantumart.QP8.BackendEntityObject.isTreeViewTypeAllowed = function Quantumart$Q
 
     if (treeViewTypeExist) {
       result = Quantumart.QP8.BackendEntityObject.checkEntityForPresenceSelfRelations(
-      entityTypeCode, parentEntityId);
+        entityTypeCode, parentEntityId);
     }
   }
 
   return result;
 };
 
-Quantumart.QP8.BackendEntityObject.getContextQuery = function(contentId, currentContext) {
-  var result = null;
+Quantumart.QP8.BackendEntityObject.getContextQuery = function (contentId, currentContext) {
+  let result = null;
   $q.getJsonFromUrl('GET', 'Article/GetContextQuery', {
     id: contentId,
-    currentContext: currentContext
-  }, false, false, function(data) {
+    currentContext
+  }, false, false, data => {
     result = data;
-  }, function(jqXHR) {
+  }, jqXHR => {
     result = null;
     $q.processGenericAjaxError(jqXHR);
   });

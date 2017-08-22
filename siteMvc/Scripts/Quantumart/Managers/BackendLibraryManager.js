@@ -1,202 +1,153 @@
-//#region class BackendLibraryManager
-// === Класс "Менеджер библиотек" ===
-Quantumart.QP8.BackendLibraryManager = function () {
-	Quantumart.QP8.BackendLibraryManager.initializeBase(this);
-};
+class BackendLibraryManager extends Quantumart.QP8.Observable {
+  static getInstance() {
+    if (!BackendLibraryManager._instance) {
+      BackendLibraryManager._instance = new BackendLibraryManager();
+    }
 
-Quantumart.QP8.BackendLibraryManager.prototype = {
-	_libraryGroups: {}, // список групп библиотек
+    return BackendLibraryManager._instance;
+  }
 
-	generateLibraryGroupCode: function (actionCode, parentEntityId) {
-		var libraryGroupCode = String.format("{0}_{1}", actionCode, parentEntityId);
+  static destroyInstance() {
+    if (BackendLibraryManager._instance) {
+      BackendLibraryManager._instance.dispose();
+      BackendLibraryManager._instance = null;
+    }
+  }
 
-		return libraryGroupCode;
-	},
+  static generateLibraryGroupCode(actionCode, parentEntityId) {
+    return `${actionCode}_${parentEntityId}`;
+  }
 
-	getLibraryGroupCode: function (fileTypeCode, folderId) {
-		var folderTypeCode = (fileTypeCode == ENTITY_TYPE_CODE_SITE_FILE) ? ENTITY_TYPE_CODE_SITE_FOLDER : ENTITY_TYPE_CODE_CONTENT_FOLDER;
-		var libraryActionCode = (fileTypeCode == ENTITY_TYPE_CODE_SITE_FILE) ? ACTION_CODE_SITE_LIBRARY : ACTION_CODE_CONTENT_LIBRARY;
-		var parentEntityId = $o.getParentEntityId(folderTypeCode, folderId);
-		return this.generateLibraryGroupCode(libraryActionCode, parentEntityId);
-	},
+  static getLibraryGroupCode(fileTypeCode, folderId) {
+    const folderTypeCode = fileTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE
+      ? window.ENTITY_TYPE_CODE_SITE_FOLDER
+      : window.ENTITY_TYPE_CODE_CONTENT_FOLDER;
 
-	getLibraryGroup: function (libraryGroupCode) {
-		var libraryGroup = null;
-		if (this._libraryGroups[libraryGroupCode]) {
-			libraryGroup = this._libraryGroups[libraryGroupCode];
-		}
+    const libraryActionCode = fileTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE
+      ? window.ACTION_CODE_SITE_LIBRARY
+      : window.ACTION_CODE_CONTENT_LIBRARY;
 
-		return libraryGroup;
-	},
+    const parentEntityId = $o.getParentEntityId(folderTypeCode, folderId);
+    return BackendLibraryManager.generateLibraryGroupCode(libraryActionCode, parentEntityId);
+  }
 
-	createLibraryGroup: function (libraryGroupCode) {
-		var libraryGroup = this.getLibraryGroup(libraryGroupCode);
-		if (!libraryGroup) {
-			libraryGroup = {};
-			this._libraryGroups[libraryGroupCode] = libraryGroup;
-		}
+  constructor() {
+    super();
+    this._libraryGroups = {};
+  }
 
-		return libraryGroup;
-	},
+  getLibraryGroup(libraryGroupCode) {
+    return this._libraryGroups[libraryGroupCode];
+  }
 
-	refreshLibraryGroup: function (entityTypeId, parentEntityId, options) {
-		var libraryGroup = this.getLibraryGroup(this.getLibraryGroupCode(entityTypeId, parentEntityId));
+  createLibraryGroup(libraryGroupCode) {
+    this._libraryGroups[libraryGroupCode] = this.getLibraryGroup(libraryGroupCode) || {};
+    return this._libraryGroups[libraryGroupCode];
+  }
 
-		if (libraryGroup) {
-			for (var libraryElementId in libraryGroup) {
-				this.refreshLibrary(libraryElementId, options);
-			}
-		}
+  refreshLibraryGroup(entityTypeId, parentEntityId, options) {
+    const libraryGroup = this.getLibraryGroup(BackendLibraryManager.getLibraryGroupCode(entityTypeId, parentEntityId));
+    Object.keys(libraryGroup || {}).forEach(libraryElementId => this.refreshLibrary(libraryElementId, options), this);
+  }
 
-		libraryGroup = null;
-	},
+  resetLibraryGroup(libraryGroupCode, options) {
+    const libraryGroup = this.getLibraryGroup(libraryGroupCode);
+    Object.keys(libraryGroup || {}).forEach(libraryElementId => this.resetLibrary(libraryElementId, options), this);
+  }
 
-	resetLibraryGroup: function (libraryGroupCode, options) {
-		var libraryGroup = this.getLibraryGroup(libraryGroupCode);
+  removeLibraryGroup(libraryGroupCode) {
+    $q.removeProperty(this._libraryGroups, libraryGroupCode);
+  }
 
-		if (libraryGroup) {
-			for (var libraryElementId in libraryGroup) {
-				this.resetLibrary(libraryElementId, options);
-			}
-		}
+  getAllLibraries() {
+    const allLibraries = [];
+    Object.values(this._libraryGroups || {}).forEach(libraryGroup => {
+      Object.values(libraryGroup || {}).forEach(val => allLibraries.push(val), this);
+    }, this);
 
-		libraryGroup = null;
-	},
+    return allLibraries;
+  }
 
-	removeLibraryGroup: function (libraryGroupCode) {
-		$q.removeProperty(this._libraryGroups, libraryGroupCode);
-	},
+  getLibrary(libraryElementId) {
+    const libraryGroup = Object.values(this._libraryGroups || {}).find(val => val[libraryElementId]);
+    return libraryGroup[libraryElementId];
+  }
 
-	getAllLibraries: function () {
-		var allLibraries = [];
+  createLibrary(libraryElementId, parentEntityId, actionCode, options, hostOptions) {
+    const libraryGroupCode = BackendLibraryManager.generateLibraryGroupCode(actionCode, parentEntityId);
+    const library = new Quantumart.QP8.BackendLibrary(
+      libraryGroupCode,
+      libraryElementId,
+      parentEntityId,
+      actionCode,
+      options,
+      hostOptions
+    );
 
-		for (var libraryGroupCode in this._libraryGroups) {
-			var libraryGroup = this._libraryGroups[libraryGroupCode];
-			for (var libraryElementId in libraryGroup) {
-				allLibraries.push(libraryGroup[libraryElementId]);
-			}
-		}
+    library.set_libraryManager(this);
 
-		return allLibraries;
-	},
+    const libraryGroup = this.createLibraryGroup(libraryGroupCode);
+    libraryGroup[libraryElementId] = library;
 
-	getLibrary: function (libraryElementId) {
-		var library = null;
+    return library;
+  }
 
-		for (var libraryGroupCode in this._libraryGroups) {
-			var libraryGroup = this._libraryGroups[libraryGroupCode];
-			if (libraryGroup[libraryElementId]) {
-				library = libraryGroup[libraryElementId];
-				break;
-			}
-		}
+  refreshLibrary(libraryElementId, options) {
+    const library = this.getLibrary(libraryElementId);
+    if (library) {
+      library.refreshCurrentFileList(options);
+    }
+  }
 
-		return library;
-	},
+  resetLibrary(libraryElementId, options) {
+    const library = this.getLibrary(libraryElementId);
+    if (library) {
+      library.resetCurrentFileList(options);
+    }
+  }
 
-	createLibrary: function (libraryElementId, parentEntityId, actionCode, options, hostOptions) {
-		var libraryGroupCode = this.generateLibraryGroupCode(actionCode, parentEntityId);
+  removeLibrary(libraryElementId) {
+    const library = this.getLibrary(libraryElementId);
+    if (library) {
+      const libraryGroup = this.getLibraryGroup(library._libraryGroupCode);
+      $q.removeProperty(libraryGroup, libraryElementId);
+      if ($q.getHashKeysCount(libraryGroup) === 0) {
+        this.removeLibraryGroup(library._libraryGroupCode);
+      }
+    }
+  }
 
-		var library = new Quantumart.QP8.BackendLibrary(libraryGroupCode, libraryElementId, parentEntityId, actionCode, options, hostOptions);
-		library.set_libraryManager(this);
+  onActionExecuted(eventArgs) {
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
+    if ((entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE
+      || entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_FILE)
+      && ((eventArgs.get_isSaved()
+        || eventArgs.get_isUpdated()
+        || eventArgs.get_isRemoving()
+      ) || actionTypeCode === window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED
+      || actionTypeCode === window.ACTION_TYPE_CODE_FILE_CROPPED)
+    ) {
+      this.refreshLibraryGroup(entityTypeCode, eventArgs.get_parentEntityId());
+    }
+  }
 
-		var libraryGroup = this.createLibraryGroup(libraryGroupCode);
-		libraryGroup[libraryElementId] = library;
+  dispose() {
+    super.dispose();
+    if (this._libraryGroups) {
+      Object.values(this._libraryGroups || {}).forEach(libraryGroup => {
+        Object.keys(libraryGroup || {}).forEach(libraryElementId => {
+          const library = this.getLibrary(libraryElementId);
+          if (library && library.dispose) {
+            library.dispose();
+          }
+        }, this);
+      }, this);
+    }
 
-		return library;
-	},
+    this._libraryGroups = null;
+    $q.collectGarbageInIE();
+  }
+}
 
-	refreshLibrary: function (libraryElementId, options) {
-		var library = this.getLibrary(libraryElementId)
-		if (library) {
-			library.refreshCurrentFileList(options);
-		}
-
-		library = null;
-	},
-
-	resetLibrary: function (libraryElementId, options) {
-		var library = this.getLibrary(libraryElementId)
-		if (library) {
-			library.resetCurrentFileList(options);
-		}
-
-		library = null;
-	},
-
-	removeLibrary: function (libraryElementId) {
-		var library = this.getLibrary(libraryElementId);
-		if (library) {
-			var libraryGroupCode = library._libraryGroupCode;
-			var libraryGroup = this.getLibraryGroup(libraryGroupCode);
-
-			$q.removeProperty(libraryGroup, libraryElementId);
-
-			if ($q.getHashKeysCount(libraryGroup) == 0) {
-				this.removeLibraryGroup(libraryGroupCode);
-			}
-		}
-	},
-
-	destroyLibrary: function (libraryElementId) {
-		var library = this.getLibrary(libraryElementId);
-		if (library != null) {
-			if (library.dispose) {
-				library.dispose();
-			}
-			library = null;
-		}
-	},
-
-	onActionExecuted: function (eventArgs) {
-		var entityTypeCode = eventArgs.get_entityTypeCode();
-		var actionTypeCode = eventArgs.get_actionTypeCode();
-		if (
-			(entityTypeCode == ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE)
-			&& ((eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving()) || actionTypeCode == ACTION_TYPE_CODE_ALL_FILES_UPLOADED || actionTypeCode == ACTION_TYPE_CODE_FILE_CROPPED)
-		) {
-			this.refreshLibraryGroup(entityTypeCode, eventArgs.get_parentEntityId());
-		}
-	},
-
-	dispose: function () {
-		Quantumart.QP8.BackendLibraryManager.callBaseMethod(this, "dispose");
-
-		if (this._libraryGroups) {
-			for (libraryGroupCode in this._libraryGroups) {
-				var libraryGroup = this._libraryGroups[libraryGroupCode];
-
-				for (libraryElementId in libraryGroup) {
-					this.destroyLibrary(libraryElementId);
-				}
-			}
-
-			this._libraryGroups = null;
-		}
-
-		Quantumart.QP8.BackendLibraryManager._instance = null;
-
-		$q.collectGarbageInIE();
-	}
-};
-
-Quantumart.QP8.BackendLibraryManager._instance = null; // экземпляр класса
-
-// Возвращает экземпляр класса "Менеджер библиотек"
-Quantumart.QP8.BackendLibraryManager.getInstance = function Quantumart$QP8$BackendLibraryManager$getInstance() {
-	if (Quantumart.QP8.BackendLibraryManager._instance == null) {
-		Quantumart.QP8.BackendLibraryManager._instance = new Quantumart.QP8.BackendLibraryManager();
-	}
-
-	return Quantumart.QP8.BackendLibraryManager._instance;
-};
-
-// Уничтожает экземпляр класса "Менеджер библиотек"
-Quantumart.QP8.BackendLibraryManager.destroyInstance = function Quantumart$QP8$BackendLibraryManager$destroyInstance() {
-	if (Quantumart.QP8.BackendLibraryManager._instance) {
-		Quantumart.QP8.BackendLibraryManager._instance.dispose();
-	}
-};
-
-Quantumart.QP8.BackendLibraryManager.registerClass("Quantumart.QP8.BackendLibraryManager", Quantumart.QP8.Observable);
-//#endregion
+Quantumart.QP8.BackendLibraryManager = BackendLibraryManager;

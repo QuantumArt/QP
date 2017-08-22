@@ -33,7 +33,7 @@ module.exports = {
     'generator-star-spacing': ['error', { before: false, after: true }],
 
     // disallow modifying variables of class declarations
-    'no-class-assign': 'error',
+    'no-class-assign': 'error', // TODO: maybe 0 for React HOCs
 
     // disallow arrow functions where they could be confused with comparisons
     'no-confusing-arrow': ['error', { allowParens: true }],

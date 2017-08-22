@@ -1,3 +1,3 @@
-Backend.Lang.FileList = {
-	noRecords: "No records to display."
+window.Backend.Lang.FileList = {
+  noRecords: 'No records to display.'
 };

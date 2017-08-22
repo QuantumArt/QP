@@ -1,7 +1,7 @@
 /* eslint camelcase: ["off", { properties: "never"}] */
 Quantumart.QP8.BackendPlUploader = function BackendPlUploader(containerBlock, options) {
-  var $container;
-  var getFormScriptOptions = function getFormScriptOptions() {
+  const $container = $(containerBlock);
+  const getFormScriptOptions = function getFormScriptOptions() {
     return {
       imgFilterResolution: 0,
       extensions: options.extensions,
@@ -12,7 +12,6 @@ Quantumart.QP8.BackendPlUploader = function BackendPlUploader(containerBlock, op
 
   Quantumart.QP8.BackendPlUploader.initializeBase(this);
 
-  $container = $(containerBlock);
   this._container = $container.find('.l-pl-uploader-container').first();
   this._pickupButton = $container.find('.pl_upload_button').first();
   this._pb_cont = $container.find('.lop-pbar-container').first();
@@ -41,25 +40,25 @@ Quantumart.QP8.BackendPlUploader.prototype = {
   _libraryParentEntityId: null,
   _uploader: null,
 
-  set_folderPath: function (value) {
+  set_folderPath(value) {
     this._folderPath = value;
   },
 
-  get_folderPath: function () {
+  get_folderPath() {
     return this._folderPath;
   },
 
   _checkFileExistence: function _checkFileExistence(folderPath, fileName) {
-    var url = window.APPLICATION_ROOT_URL + 'Library/FileExists/';
+    const url = `${window.APPLICATION_ROOT_URL}Library/FileExists/`;
     return $q.getJsonSync(url, { path: folderPath, name: fileName }).result;
   },
 
-  _resolveFileName: function (path, fileName) {
-    var url = window.APPLICATION_ROOT_URL + 'Library/ResolveFileName/';
-    return $q.getJsonSync(url, { path: path, name: fileName }).result;
+  _resolveFileName(path, fileName) {
+    const url = `${window.APPLICATION_ROOT_URL}Library/ResolveFileName/`;
+    return $q.getJsonSync(url, { path, name: fileName }).result;
   },
 
-  _showProgress: function () {
+  _showProgress() {
     this._progress.value(0);
     this._progress.refresh();
     this._progress.setText('0%');
@@ -67,27 +66,27 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     this._pb_cont.css('display', 'inline-block');
   },
 
-  _hideProgress: function () {
+  _hideProgress() {
     this._pickupButton.css('display', 'inline-block');
     this._pb_cont.css('display', 'none');
   },
 
-  _beforeUploadHandler: function (up) {
+  _beforeUploadHandler(up) {
     // eslint-disable-next-line no-param-reassign
     up.settings.multipart_params = { destinationUrl: encodeURI(this.get_folderPath()) };
     up.refresh();
   },
 
-  _uploadProgressHandler: function (up, file) {
+  _uploadProgressHandler(up, file) {
     this._progress.value(file.percent);
     this._progress.refresh();
-    this._progress.setText(file.name + ' ' + this._progress.value() + '%');
+    this._progress.setText(`${file.name} ${this._progress.value()}%`);
     up.refresh();
   },
 
-  _fileUploadedHandler: function (up, file, data) {
-    var eventArgs, newEventArgs;
-    var response = JSON.parse(data.response);
+  _fileUploadedHandler(up, file, data) {
+    let eventArgs, newEventArgs;
+    const response = JSON.parse(data.response);
     if (response.isError) {
       this._hideProgress();
       $q.alertError(response.message);
@@ -119,25 +118,24 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     up.refresh();
   },
 
-  _checkExt: function (filename, value) {
+  _checkExt(filename, value) {
     return filename.toLowerCase().endsWith(value.toLowerCase());
   },
 
-  _showOrHidePreviewButton: function (filename, $previewButton) {
-    var _arrayOfExtensions = LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
+  _showOrHidePreviewButton(filename, $previewButton) {
+    const _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
 
-    var result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename)) ;
-    if (typeof result !== 'undefined' && result.length > 0 || this._isImage) {
+    const result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
+    if ((typeof result !== 'undefined' && result.length > 0) || this._isImage) {
       this._previewButton.show();
-    }
-    else {
+    } else {
       this._previewButton.hide();
     }
   },
 
-  _filesAddedHandler: function filesAddedHandler(up, files) {
-    var i, file;
-    var cancelledFiles = [];
+  _filesAddedHandler(up, files) {
+    let i, file;
+    const cancelledFiles = [];
     for (i = 0; i < files.length; i++) {
       file = files[i];
       if (file.size === 0) {
@@ -163,12 +161,12 @@ Quantumart.QP8.BackendPlUploader.prototype = {
   },
 
   initialize: function initialize() {
-    var getFormOptsFn = this._getFormScriptOptions.bind(this);
-    var options = {
+    const getFormOptsFn = this._getFormScriptOptions.bind(this);
+    const options = {
       runtimes: 'html5,flash,html4,silverlight',
       browse_button: this._pickupButton.attr('id'),
       container: this._container.attr('id'),
-      max_file_size: window.MAX_UPLOAD_SIZE_BYTES + 'b',
+      max_file_size: `${window.MAX_UPLOAD_SIZE_BYTES}b`,
       chunk_size: '1mb',
       debug: false,
       url: '/Backend/Upload/UploadChunk',
@@ -178,7 +176,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
         max_img_resolution: {
           enabled: false,
           imageResolution: window.PL_IMAGE_RESOLUTION,
-          prefilterAction: function () {
+          prefilterAction() {
             this.imageResolution = getFormOptsFn().imgFilterResolution;
             this.enabled = !!this.imageResolution;
           }
@@ -200,7 +198,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     this._uploader.bind('FilesAdded', $.proxy(this._filesAddedHandler, this));
     this._uploader.bind('UploadProgress', $.proxy(this._uploadProgressHandler, this));
     this._uploader.bind('FileUploaded', $.proxy(this._fileUploadedHandler, this));
-    this._uploader.bind('Error', function errorHandler(up, err) {
+    this._uploader.bind('Error', (up, err) => {
       if (+err.code === -600) {
         $q.alertError(String.format(
           window.HTML_UPLOAD_MAX_SIZE_MESSAGE,
@@ -227,7 +225,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     this._container.data('qp_pl_uploader', this);
   },
 
-  dispose: function () {
+  dispose() {
     this._uploader.destroy();
     $q.dispose.call(this, [
       '_container',

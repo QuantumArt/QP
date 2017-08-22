@@ -2,7 +2,7 @@ Quantumart.QP8.BackendExpandedContainer = function () { };
 Quantumart.QP8.BackendExpandedContainer.prototype = {
   $content: null,
 
-  initialize: function (element) {
+  initialize(element) {
     this.$content = $q.toJQuery(element);
     if (this.$content.data(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY)) {
       return;
@@ -10,42 +10,42 @@ Quantumart.QP8.BackendExpandedContainer.prototype = {
 
     this.$content.data(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY, this);
 
-    var html = new $.telerik.stringBuilder();
+    const html = new $.telerik.stringBuilder();
     html
       .cat('<div class="qp-expandedContainer-component">')
-        .cat('<div class="qp-expandedContainer-toolBar">')
-          .cat('<ul class="linkButtons group">')
-            .cat('<li style="display: none;" class="expand">')
-              .cat('<span class="linkButton actionLink">')
-                .cat('<a href="javascript:void(0);">')
-                  .cat('<span class="icon expand"><img src="/Backend/Content/Common/0.gif"></span>')
-                  .cat('<span class="text">')
-                    .cat($q.toString(this.$content.data("expand_text"), $l.ExpandedContainer.expandText))
-                  .cat('</span>')
-                .cat('</a>')
-              .cat('</span>')
-            .cat('</li>')
-            .cat('<li style="" class="collapse">')
-              .cat('<span class="linkButton actionLink">')
-                .cat('<a href="javascript:void(0);">')
-                  .cat('<span class="icon collapse"><img src="/Backend/Content/Common/0.gif"></span>')
-                  .cat('<span class="text">')
-                    .cat($q.toString(this.$content.data("collapse_text"), $l.ExpandedContainer.collapseText))
-                  .cat('</span>')
-                .cat('</a>')
-              .cat('</span>')
-            .cat('</li>')
-          .cat('</ul>')
-        .cat('</div>')
+      .cat('<div class="qp-expandedContainer-toolBar">')
+      .cat('<ul class="linkButtons group">')
+      .cat('<li style="display: none;" class="expand">')
+      .cat('<span class="linkButton actionLink">')
+      .cat('<a href="javascript:void(0);">')
+      .cat('<span class="icon expand"><img src="/Backend/Content/Common/0.gif"></span>')
+      .cat('<span class="text">')
+      .cat($q.toString(this.$content.data('expand_text'), $l.ExpandedContainer.expandText))
+      .cat('</span>')
+      .cat('</a>')
+      .cat('</span>')
+      .cat('</li>')
+      .cat('<li style="" class="collapse">')
+      .cat('<span class="linkButton actionLink">')
+      .cat('<a href="javascript:void(0);">')
+      .cat('<span class="icon collapse"><img src="/Backend/Content/Common/0.gif"></span>')
+      .cat('<span class="text">')
+      .cat($q.toString(this.$content.data('collapse_text'), $l.ExpandedContainer.collapseText))
+      .cat('</span>')
+      .cat('</a>')
+      .cat('</span>')
+      .cat('</li>')
+      .cat('</ul>')
+      .cat('</div>')
       .cat('</div>');
 
-    var $component = jQuery(html.string());
+    let $component = jQuery(html.string());
     this.$content.before($component);
     $component.append(this.$content);
 
-    var that = this;
+    const that = this;
     this._$expandLink = $component
-      .find("LI.expand")
+      .find('LI.expand')
       .click(function (e) {
         jQuery(this).hide();
         that._$collapseLink.show();
@@ -53,7 +53,7 @@ Quantumart.QP8.BackendExpandedContainer.prototype = {
         e.preventDefault();
       }).hide();
 
-    this._$collapseLink = $component.find("LI.collapse").click(function (e) {
+    this._$collapseLink = $component.find('LI.collapse').click(function (e) {
       jQuery(this).hide();
       that._$expandLink.show();
       that.$content.hide();
@@ -69,7 +69,7 @@ Quantumart.QP8.BackendExpandedContainer.prototype = {
     $component = null;
   },
 
-  dispose: function () {
+  dispose() {
     if (this.$content) {
       this.$content.removeData(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY);
       this.$content = null;
@@ -102,7 +102,7 @@ Quantumart.QP8.BackendExpandedContainer.getAllElements = function (parentElement
     throw new Error($l.Common.parentDomElementNotSpecified);
   }
 
-  return $q.toJQuery(parentElement).find(".qp-expandedContent");
+  return $q.toJQuery(parentElement).find('.qp-expandedContent');
 };
 
 Quantumart.QP8.BackendExpandedContainer.destroyAll = function (parentElement) {
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendExpandedContainer.destroyAll = function (parentElement) {
   }
 
   Quantumart.QP8.BackendExpandedContainer.getAllElements(parentElement).each(function () {
-    var component = $q.toJQuery(this).data(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY);
+    let component = $q.toJQuery(this).data(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY);
     if (component) {
       component.dispose();
     }
@@ -120,5 +120,5 @@ Quantumart.QP8.BackendExpandedContainer.destroyAll = function (parentElement) {
   });
 };
 
-Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY = "QP8_ExpandedContainer";
-Quantumart.QP8.BackendExpandedContainer.registerClass("Quantumart.QP8.BackendExpandedContainer");
+Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY = 'QP8_ExpandedContainer';
+Quantumart.QP8.BackendExpandedContainer.registerClass('Quantumart.QP8.BackendExpandedContainer');

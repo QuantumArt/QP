@@ -1,37 +1,37 @@
 // eslint-disable-next-line no-extra-semi
 ; (function init(PL, Moxie) {
-  var isValidMimeType = function (mimeType, skipMimeValidation) {
+  const isValidMimeType = function (mimeType, skipMimeValidation) {
     return !skipMimeValidation || mimeType.split('/')[0] === 'image';
   };
 
   PL.addFileFilter('max_img_resolution', function filterCb(options, file, cb) {
-    var img;
-    var opts = Object.assign({}, {
+    let img;
+    const opts = Object.assign({}, {
       enabled: true,
       imageResolution: 640 * 480,
       skipMimeValidation: false,
-      getResolutionErrorSettings: function (imgRes) {
+      getResolutionErrorSettings(imgRes) {
         return {
           code: PL.IMAGE_DIMENSIONS_ERROR,
-          message: 'Resolution exceeds the allowed limit of ' + imgRes + ' pixels.'
+          message: `Resolution exceeds the allowed limit of ${imgRes} pixels.`
         };
       },
-      getNotAnImgErrorSettings: function () {
+      getNotAnImgErrorSettings() {
         return {
           code: PL.IMAGE_FORMAT_ERROR,
-          message: 'Checking file mime type failed for file: "' + file.name + '".'
+          message: `Checking file mime type failed for file: "${file.name}".`
         };
       }
     }, options);
 
-    var finalize = function finalize(result, errorSettings) {
+    const finalize = function finalize(result, errorSettings) {
       if (img) {
         img.destroy();
         img = null;
       }
 
       if (!result) {
-        this.trigger('Error', Object.assign({ file: file }, errorSettings));
+        this.trigger('Error', Object.assign({ file }, errorSettings));
       }
 
       cb(result);
@@ -42,11 +42,11 @@
       if (isValidMimeType(file.type, opts.skipMimeValidation)) {
         img = new Moxie.Image();
 
-        img.onload = function onImageLoad() {
+        img.onload = function () {
           finalize(img.width * img.height < opts.imageResolution, opts.getResolutionErrorSettings());
         };
 
-        img.onerror = function onImageError() {
+        img.onerror = function () {
           finalize(false, opts.getResolutionErrorSettings());
         };
 

@@ -1,87 +1,91 @@
-var EVENT_TYPE_BACKEND_ACTION_EXECUTED = 'OnActionExecuted';
-var BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING = 0;
-var BACKEND_ACTION_EXECUTION_STATUS_SUCCESS = 1;
-var BACKEND_ACTION_EXECUTION_STATUS_FAILED = 2;
-var BACKEND_ACTION_EXECUTION_STATUS_ERROR = 3;
+window.EVENT_TYPE_BACKEND_ACTION_EXECUTED = 'OnActionExecuted';
+window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING = 0;
+window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS = 1;
+window.BACKEND_ACTION_EXECUTION_STATUS_FAILED = 2;
+window.BACKEND_ACTION_EXECUTION_STATUS_ERROR = 3;
 
 Quantumart.QP8.BackendActionExecutor = function () {
   Quantumart.QP8.BackendActionExecutor.initializeBase(this);
 };
 
 Quantumart.QP8.BackendActionExecutor.prototype = {
-  executeNonInterfaceAction: function (eventArgs, callback) {
-    var actionCode = eventArgs.get_actionCode();
-    var isCustom = eventArgs.get_isCustomAction();
-    var additionalUrlParameters = null;
+  executeNonInterfaceAction(eventArgs, callback) {
+    const actionCode = eventArgs.get_actionCode();
+    const isCustom = eventArgs.get_isCustomAction();
+    let additionalUrlParameters = null;
     if (eventArgs.get_context() && eventArgs.get_context().additionalUrlParameters) {
-      additionalUrlParameters = jQuery.extend(this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
+      additionalUrlParameters = Object.assign({}, this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
     }
 
-    if (eventArgs.get_startedByExternal() === true) {
-      additionalUrlParameters = jQuery.extend(additionalUrlParameters, { boundToExternal: true });
+    if (eventArgs.get_startedByExternal()) {
+      additionalUrlParameters = Object.assign({}, additionalUrlParameters, { boundToExternal: true });
     }
 
     if (!$q.isNullOrWhiteSpace(actionCode)) {
-      var selectedAction = Quantumart.QP8.BackendActionExecutor.getSelectedAction(actionCode);
+      const selectedAction = Quantumart.QP8.BackendActionExecutor.getSelectedAction(actionCode);
       if (!$q.isNull(selectedAction) && !selectedAction.IsInterface) {
-        var entities = eventArgs.get_entities();
-        var isMultiple = selectedAction.ActionType.IsMultiple;
-        var confirmPhrase = selectedAction.ConfirmPhrase;
+        const entities = eventArgs.get_entities();
+        const isMultiple = selectedAction.ActionType.IsMultiple;
+        let confirmPhrase = selectedAction.ConfirmPhrase;
 
         if (confirmPhrase) {
-          var nameString = (isMultiple) ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
-          nameString = '"' + nameString + '"';
+          let nameString = isMultiple ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
+          nameString = `"${nameString}"`;
           confirmPhrase = String.format(confirmPhrase, nameString);
         }
 
-        if (!confirmPhrase || (confirmPhrase && confirm(confirmPhrase))) {
-          var entityIDs = (isMultiple) ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
-          var actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), "0", actionCode, {additionalUrlParameters:  additionalUrlParameters});
+        if (!confirmPhrase || (confirmPhrase && $q.confirmMessage(confirmPhrase))) {
+          const entityIDs = isMultiple ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
+          const actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, { additionalUrlParameters });
           if (actionUrl) {
-            var postParams = {
+            const postParams = {
               IDs: entityIDs,
-              actionCode: actionCode,
+              actionCode,
               parentEntityId: eventArgs.get_parentEntityId(),
               entityTypeCode: eventArgs.get_entityTypeCode(),
               level: selectedAction.ActionType.RequiredPermissionLevel
             };
 
-            var normalPreActionCallback = function (data, textStatus, jqXHR) {
+            const normalCallback = function (data, textStatus, jqXHR) {
               Quantumart.QP8.BackendActionExecutor.showResult(data);
-              if (!data || data.Type != ACTION_MESSAGE_TYPE_CONFIRM && data.Type != ACTION_MESSAGE_TYPE_ERROR || data.Type == ACTION_MESSAGE_TYPE_CONFIRM && confirm(data.Text)) {
+              callback(data && data.Type == window.ACTION_MESSAGE_TYPE_ERROR ? window.BACKEND_ACTION_EXECUTION_STATUS_ERROR : window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS, eventArgs);
+            };
+
+            const errorCallback = function (jqXHR, textStatus, errorThrown) {
+              if (textStatus === 'timeout') {
+                $q.alertFail($l.Action.actionExecutingTimeoutMessage);
+              } else {
+                $q.alertFail($l.Action.actionExecutingErrorMessage);
+              }
+
+              callback(window.BACKEND_ACTION_EXECUTION_STATUS_FAILED, eventArgs);
+            };
+
+            let customData;
+            const runAction = function () {
+              if (isCustom) {
+                $q.getCustomActionJson(customData.Url, postParams, normalCallback, errorCallback);
+              } else {
+                $q.getJsonFromUrl('POST', actionUrl, postParams, true, false, normalCallback, errorCallback);
+              }
+            };
+
+            const normalPreActionCallback = function (data, textStatus, jqXHR) {
+              Quantumart.QP8.BackendActionExecutor.showResult(data);
+              if (!data
+                || (data.Type != window.ACTION_MESSAGE_TYPE_CONFIRM && data.Type != window.ACTION_MESSAGE_TYPE_ERROR)
+                || (data.Type == window.ACTION_MESSAGE_TYPE_CONFIRM && $q.confirmMessage(data.Text))
+              ) {
                 runAction();
               } else {
                 callback('', eventArgs);
               }
             };
 
-            var runAction = function () {
-              if (isCustom) {
-                $q.getCustomActionJson(customData.Url, postParams, normalCallback, errorCallback);
-              } else {
-                $q.getJsonFromUrl('POST', actionUrl, postParams, true, false, normalCallback, errorCallback);
-              }
-            }
-
-            var normalCallback = function (data, textStatus, jqXHR) {
-              Quantumart.QP8.BackendActionExecutor.showResult(data)
-              callback((data && data.Type == ACTION_MESSAGE_TYPE_ERROR) ? BACKEND_ACTION_EXECUTION_STATUS_ERROR : BACKEND_ACTION_EXECUTION_STATUS_SUCCESS, eventArgs);
-            };
-
-            var errorCallback = function (jqXHR, textStatus, errorThrown) {
-              if (textStatus === 'timeout') {
-                alert($l.Action.actionExecutingTimeoutMessage);
-              } else {
-                alert($l.Action.actionExecutingErrorMessage);
-              }
-
-              callback(BACKEND_ACTION_EXECUTION_STATUS_FAILED, eventArgs);
-            };
-
-            var preAction = function () {
+            const preAction = function () {
               if (selectedAction.HasPreAction) {
                 if (!isCustom) {
-                  var preActionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), "0", actionCode, { isPreAction: true, additionalUrlParameters: additionalUrlParameters });
+                  const preActionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, { isPreAction: true, additionalUrlParameters });
                   $q.getJsonFromUrl('POST', preActionUrl, postParams, false, false, normalPreActionCallback, errorCallback);
                 } else {
                   $q.getCustomActionJson(customData.PreActionUrl, postParams, normalPreActionCallback, errorCallback);
@@ -91,10 +95,9 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
               }
             };
 
-            var customData;
-            var getCustomUrlCallback = function (data) {
-              if (data && data.Type == ACTION_MESSAGE_TYPE_ERROR) {
-                $a.showResult(data)
+            const getCustomUrlCallback = function (data) {
+              if (data && data.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
+                $a.showResult(data);
                 callback('', eventArgs);
               } else {
                 customData = data;
@@ -120,169 +123,168 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     }
   },
 
-  executeSpecialAction: function (eventArgs) {
-    var status = BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING;
-    var entityTypeCode = eventArgs.get_entityTypeCode();
-    var actionTypeCode = eventArgs.get_actionTypeCode();
-    var fileName = eventArgs.get_entityId();
-    var urlParams = { id: eventArgs.get_parentEntityId(), fileName: encodeURIComponent(fileName), entityTypeCode: entityTypeCode, actionTypeCode: actionTypeCode };
-    if (actionTypeCode == ACTION_TYPE_CODE_PREVIEW && (entityTypeCode == ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE)) {
+  executeSpecialAction(eventArgs) {
+    let status = window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING;
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
+    const fileName = eventArgs.get_entityId();
+    const urlParams = { id: eventArgs.get_parentEntityId(), fileName: encodeURIComponent(fileName), entityTypeCode, actionTypeCode };
+    if (actionTypeCode == window.ACTION_TYPE_CODE_PREVIEW && (entityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE)) {
       $c.preview(Quantumart.QP8.BackendLibrary.generateActionUrl('GetLibraryImageProperties', urlParams));
-      status = BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
-    }
-    else if (actionTypeCode == ACTION_TYPE_CODE_DOWNLOAD && (entityTypeCode == ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE)) {
+      status = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
+    } else if (actionTypeCode == window.ACTION_TYPE_CODE_DOWNLOAD && (entityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE)) {
       $c.downloadFileWithChecking(Quantumart.QP8.BackendLibrary.generateActionUrl('TestLibraryFileDownload', urlParams), fileName);
-      status = BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
+      status = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
     }
-    if (actionTypeCode == ACTION_TYPE_CODE_CROP && (entityTypeCode == ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE)) {
+    if (actionTypeCode == window.ACTION_TYPE_CODE_CROP && (entityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE || entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE)) {
       $c.crop(Quantumart.QP8.BackendLibrary.generateActionUrl('GetLibraryImageProperties', urlParams), urlParams);
-      status = BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
-    }
-    else if ((actionTypeCode == ACTION_TYPE_CODE_ALL_FILES_UPLOADED || actionTypeCode == ACTION_TYPE_CODE_FILE_CROPPED) && (entityTypeCode == ENTITY_TYPE_CODE_CONTENT_FILE || entityTypeCode == ENTITY_TYPE_CODE_SITE_FILE)) {
-        status = BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
+      status = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
+    } else if ((actionTypeCode == window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED || actionTypeCode == window.ACTION_TYPE_CODE_FILE_CROPPED) && (entityTypeCode == window.ENTITY_TYPE_CODE_CONTENT_FILE || entityTypeCode == window.ENTITY_TYPE_CODE_SITE_FILE)) {
+      status = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
     }
     return status;
   },
 
-  executeMultistepAction: function (eventArgs) {
-    var dfr = new jQuery.Deferred(),
-      that = this;
+  executeMultistepAction(eventArgs) {
+    const dfr = new $.Deferred();
+    const that = this;
 
-    var additionalUrlParameters = null;
-    if (eventArgs.get_startedByExternal() === true) {
-      additionalUrlParameters = jQuery.extend(additionalUrlParameters, { boundToExternal: true });
+    let additionalUrlParameters = null;
+    if (eventArgs.get_startedByExternal()) {
+      additionalUrlParameters = Object.assign({}, additionalUrlParameters, { boundToExternal: true });
     }
 
-    var actionCode = eventArgs.get_actionCode();
-    var selectedAction = Quantumart.QP8.BackendActionExecutor.getSelectedAction(actionCode);
+    const actionCode = eventArgs.get_actionCode();
+    const selectedAction = Quantumart.QP8.BackendActionExecutor.getSelectedAction(actionCode);
 
     if (!$q.isNull(selectedAction)) {
-      var entities = eventArgs.get_entities();
+      const entities = eventArgs.get_entities();
 
-      var isMultiple = selectedAction.ActionType.IsMultiple;
-      var confirmPhrase = selectedAction.ConfirmPhrase;
+      const isMultiple = selectedAction.ActionType.IsMultiple;
+      let confirmPhrase = selectedAction.ConfirmPhrase;
 
       if (confirmPhrase) {
-          var nameString = (isMultiple) ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
-          nameString = '"' + nameString + '"';
+        let nameString = isMultiple ? $o.getEntityNamesFromEntities(entities).join('", "') : eventArgs.get_entityName();
+        nameString = `"${nameString}"`;
         confirmPhrase = String.format(confirmPhrase, nameString);
       }
 
-      if (!confirmPhrase || (confirmPhrase && confirm(confirmPhrase))) {
-        var parentEntityId = eventArgs.get_parentEntityId();
-        var entityIDs = (isMultiple) ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
-        var params = {};
+      if (!confirmPhrase || (confirmPhrase && $q.confirmMessage(confirmPhrase))) {
+        const parentEntityId = eventArgs.get_parentEntityId();
+        const entityIDs = isMultiple ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
+        const params = {};
         if (isMultiple) {
           params.IDs = entityIDs;
         }
 
-        var errorCallback = function (jqXHR, textStatus, errorThrown) {
+        const errorCallback = function (jqXHR, textStatus, errorThrown) {
           if (textStatus === 'timeout') {
-            alert($l.Action.actionExecutingTimeoutMessage);
-          }
-          else {
-            alert($l.Action.actionExecutingErrorMessage);
+            $q.alertFail($l.Action.actionExecutingTimeoutMessage);
+          } else {
+            $q.alertFail($l.Action.actionExecutingErrorMessage);
           }
         };
 
-        var runAction = function (urlParams) {
-          var setupUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters:  additionalUrlParameters,
+        const runAction = function (urlParams) {
+          const setupUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
+            additionalUrlParameters,
             isSetup: true,
-            urlParams: urlParams
+            urlParams
           });
-          if (urlParams)
-              params.settingsParams = urlParams;
-          var tearDownUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters:  additionalUrlParameters,
+          if (urlParams) {
+            params.settingsParams = urlParams;
+          }
+          const tearDownUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
+            additionalUrlParameters,
             isTearDown: true
           });
-          var stepUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters: additionalUrlParameters
+          const stepUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
+            additionalUrlParameters
           });
 
-          var toCancel = false;
-          var progressWindow = new Quantumart.QP8.BackendMultistepActionWindow(selectedAction.Name, selectedAction.ShortName);
-          var disposeProgressWindow = function () {
-            progressWindow.detachObserver(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING);
-            progressWindow.detachObserver(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED);
-            progressWindow.detachObserver(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED);
+          let toCancel = false;
+          let progressWindow = new Quantumart.QP8.BackendMultistepActionWindow(selectedAction.Name, selectedAction.ShortName);
+          const disposeProgressWindow = function () {
+            progressWindow.detachObserver(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING);
+            progressWindow.detachObserver(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED);
+            progressWindow.detachObserver(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED);
             progressWindow.dispose();
             progressWindow = null;
           };
 
-          progressWindow.attachObserver(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, function (eventType, sender, eventArgs) {
-            if (confirm($l.MultistepAction.cancelConfirmation)) {
+          progressWindow.attachObserver(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, (eventType, sender, eventArgs) => {
+            if ($q.confirmMessage($l.MultistepAction.cancelConfirmation)) {
               eventArgs.setCancel(true);
             }
           });
-          progressWindow.attachObserver(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, function () { toCancel = true; });
-          progressWindow.attachObserver(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED, disposeProgressWindow);
+          progressWindow.attachObserver(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, () => {
+            toCancel = true;
+          });
+          progressWindow.attachObserver(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED, disposeProgressWindow);
           progressWindow.initialize();
 
-          var errorCallback1 = function (jqXHR, textStatus, errorThrown) {
+          const errorCallback1 = function (jqXHR, textStatus, errorThrown) {
             errorCallback(jqXHR, textStatus, errorThrown);
             progressWindow.setError();
-            dfr.rejectWith(that, [BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
+            dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
           };
 
-          var errorCallback2 = function (jqXHR, textStatus, errorThrown) {
+          const errorCallback2 = function (jqXHR, textStatus, errorThrown) {
             $q.postDataToUrl(tearDownUrl, { isError: true }, true)
-              .done(function () { errorCallback1(jqXHR, textStatus, errorThrown) })
-              .fail(errorCallback1);
-          };
-
-          var errorHandler = function (msgResult) {
-            Quantumart.QP8.BackendActionExecutor.showResult(msgResult);
-              $q.postDataToUrl(tearDownUrl, { isError: true }, true)
-              .done(function () {
-                progressWindow.setError();
-                dfr.rejectWith(that, [BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
+              .done(() => {
+                errorCallback1(jqXHR, textStatus, errorThrown);
               })
               .fail(errorCallback1);
           };
 
-          $q.getJsonFromUrl('POST', setupUrl, params, true, false).done(function (actionData) {
+          const errorHandler = function (msgResult) {
+            Quantumart.QP8.BackendActionExecutor.showResult(msgResult);
+            $q.postDataToUrl(tearDownUrl, { isError: true }, true)
+              .done(() => {
+                progressWindow.setError();
+                dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
+              })
+              .fail(errorCallback1);
+          };
+
+          $q.getJsonFromUrl('POST', setupUrl, params, true, false).done(actionData => {
             if (actionData) {
-              if (actionData.Type == ACTION_MESSAGE_TYPE_ERROR) {
+              if (actionData.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
                 errorHandler(actionData);
-              }
-              else {
+              } else {
                 progressWindow.startAction(actionData.Stages.length);
 
-                // Счетчики
-                var stageCounter = 0,
-                stageLength = 0,
-                stepCounter = 0,
-                stepLength = 0;
-                var stage = null;
+                let stageCounter = 0;
+                let stageLength = 0;
+                let stepCounter = 0;
+                let stepLength = 0;
+                let stage = null;
 
                 if (actionData.Stages && actionData.Stages.length) {
                   stageLength = actionData.Stages.length;
                 }
 
-                var iterationCallback = function () {
-
-                  if (toCancel === true) {
+                const iterationCallback = function () {
+                  if (toCancel) {
                     stageCounter = stageLength;
-                  };
+                  }
 
                   if (stageCounter < stageLength) {
                     if (stepCounter < stepLength) {
                       $q.getJsonFromUrl('POST', stepUrl,
-                      {
-                        stage: stageCounter,
-                        step: stepCounter
-                      }, true, false).done(function (stepData) {
+                        {
+                          stage: stageCounter,
+                          step: stepCounter
+                        }, true, false).done(stepData => {
                         if (stepData) {
-                          if (stepData.Type == ACTION_MESSAGE_TYPE_ERROR) {
+                          if (stepData.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
                             errorHandler(stepData);
                           } else {
                             progressWindow.completeStep(stepData.ProcessedItemsCount, stepData.AdditionalInfo, actionData.ParentId || parentEntityId);
-                            stepCounter++;
+                            stepCounter += 1;
                             if (stepCounter == stepLength) {
                               progressWindow.completeStage();
-                              stageCounter++;
+                              stageCounter += 1;
                             }
 
                             iterationCallback();
@@ -292,7 +294,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                     } else {
                       if (stage && stepLength == 0) {
                         progressWindow.completeStage();
-                        stageCounter++;
+                        stageCounter += 1;
                       }
 
                       stage = actionData.Stages[stageCounter];
@@ -307,14 +309,14 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                       iterationCallback();
                     }
                   } else {
-                    $q.postDataToUrl(tearDownUrl, { isError: false }, true).done(function () {
-                      if (toCancel === true) {
+                    $q.postDataToUrl(tearDownUrl, { isError: false }, true).done(() => {
+                      if (toCancel) {
                         progressWindow.setCancel();
                       } else {
                         progressWindow.setComplete();
                       }
 
-                      dfr.resolveWith(that, [BACKEND_ACTION_EXECUTION_STATUS_SUCCESS]);
+                      dfr.resolveWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS]);
                     }).fail(errorCallback1);
                   }
                 };
@@ -323,62 +325,60 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
               }
             }
           }).fail(errorCallback2);
-        }
+        };
 
         if (selectedAction.HasSettings && !eventArgs.isSettingsSet) {
-          var settingsActionUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-              additionalUrlParameters: additionalUrlParameters,
-              hasSettings: true,
-              isSettingsSet: eventArgs.isSettingsSet
+          const settingsActionUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
+            additionalUrlParameters,
+            hasSettings: true,
+            isSettingsSet: eventArgs.isSettingsSet
           });
 
-          var settingsResult = null;
-          $q.getJsonFromUrl('POST', settingsActionUrl.replace('Settings', 'PreSettings'), params, true, false).done(function (settingsResult) {
-            if (settingsResult && settingsResult.Type == ACTION_MESSAGE_TYPE_ERROR) {
+          const settingsResult = null;
+          $q.getJsonFromUrl('POST', settingsActionUrl.replace('Settings', 'PreSettings'), params, true, false).done(settingsResult => {
+            if (settingsResult && settingsResult.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
               Quantumart.QP8.BackendActionExecutor.showResult(settingsResult);
-              dfr.rejectWith(that, [BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
+              dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
               return;
             }
 
             eventArgs.settingsActionUrl = settingsActionUrl;
-            var popup = new Quantumart.QP8.BackendSettingsPopupWindow(eventArgs, settingsResult, runAction);
-          }).fail(errorCallback, function () {
-            dfr.rejectWith(that, [BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
+            const popup = new Quantumart.QP8.BackendSettingsPopupWindow(eventArgs, settingsResult, runAction);
+          }).fail(errorCallback, () => {
+            dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
           });
         } else if (selectedAction.HasPreAction) {
-          var preActionUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
-            additionalUrlParameters:  additionalUrlParameters,
+          const preActionUrl = Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl(selectedAction, entityIDs, parentEntityId, {
+            additionalUrlParameters,
             isPreAction: true
           });
 
-          var preActionResult = null;
-          $q.getJsonFromUrl('POST', preActionUrl, params, true, false).done(function (preActionResult) {
+          const preActionResult = null;
+          $q.getJsonFromUrl('POST', preActionUrl, params, true, false).done(preActionResult => {
             if (preActionResult) {
-              if (preActionResult.Type == ACTION_MESSAGE_TYPE_ERROR) {
+              if (preActionResult.Type == window.ACTION_MESSAGE_TYPE_ERROR) {
                 Quantumart.QP8.BackendActionExecutor.showResult(preActionResult);
-                dfr.rejectWith(that, [BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
+                dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
                 return;
-              }
-              else if (preActionResult.Type == ACTION_MESSAGE_TYPE_INFO) {
+              } else if (preActionResult.Type == window.ACTION_MESSAGE_TYPE_INFO) {
                 Quantumart.QP8.BackendActionExecutor.showResult(preActionResult);
                 dfr.resolveWith(that);
                 return;
               }
             }
 
-            if (!preActionResult || preActionResult.Type != ACTION_MESSAGE_TYPE_CONFIRM || confirm(preActionResult.Text)) {
+            if (!preActionResult || preActionResult.Type != window.ACTION_MESSAGE_TYPE_CONFIRM || $q.confirmMessage(preActionResult.Text)) {
               runAction();
             } else {
               dfr.resolveWith(that);
             }
-          }).fail(errorCallback, function () {
-            dfr.rejectWith(that, [BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
+          }).fail(errorCallback, () => {
+            dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
           });
         } else {
           runAction();
         }
-      }
-      else {
+      } else {
         dfr.resolveWith(that);
       }
     }
@@ -386,17 +386,15 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     return dfr.promise();
   },
 
-  dispose: function () {
+  dispose() {
     Quantumart.QP8.BackendActionExecutor.callBaseMethod(this, 'dispose');
-    Quantumart.QP8.BackendActionExecutor._instance = null;
     $q.collectGarbageInIE();
   }
 };
 
-Quantumart.QP8.BackendActionExecutor._instance = null; // экземпляр класса
+Quantumart.QP8.BackendActionExecutor._instance = null;
 
-// Возвращает экземпляр класса 'Действие'
-Quantumart.QP8.BackendActionExecutor.getInstance = function Quantumart$QP8$BackendActionExecutor$getInstance() {
+Quantumart.QP8.BackendActionExecutor.getInstance = function () {
   if (Quantumart.QP8.BackendActionExecutor._instance == null) {
     Quantumart.QP8.BackendActionExecutor._instance = new Quantumart.QP8.BackendActionExecutor();
   }
@@ -404,16 +402,15 @@ Quantumart.QP8.BackendActionExecutor.getInstance = function Quantumart$QP8$Backe
   return Quantumart.QP8.BackendActionExecutor._instance;
 };
 
-// Уничтожает экземпляр класса 'Действие'
-Quantumart.QP8.BackendActionExecutor.destroyInstance = function Quantumart$QP8$BackendActionExecutor$destroyInstance() {
+Quantumart.QP8.BackendActionExecutor.destroyInstance = function () {
   if (Quantumart.QP8.BackendActionExecutor._instance) {
     Quantumart.QP8.BackendActionExecutor._instance.dispose();
+    Quantumart.QP8.BackendActionExecutor._instance = null;
   }
 };
 
-// Возвращает действие
 Quantumart.QP8.BackendActionExecutor.getBackendAction = function (action) {
-  var newAction = null;
+  let newAction = null;
   if ($q.isObject(action)) {
     newAction = action;
   } else if ($q.isString(action)) {
@@ -423,56 +420,54 @@ Quantumart.QP8.BackendActionExecutor.getBackendAction = function (action) {
   return newAction;
 };
 
-// Возвращает действие по его коду
 Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCode) {
-  var cacheKey = 'ActionByActionCode_' + actionCode;
-  var action = $cache.getItem(cacheKey);
+  const cacheKey = `ActionByActionCode_${actionCode}`;
+  let action = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!action) {
-    $q.getJsonFromUrl('GET', CONTROLLER_URL_BACKEND_ACTION + 'GetByCode', { 'actionCode': actionCode }, false, false) .done(function(data){
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetByCode`, { actionCode }, false, false).done(data => {
       if (data.success) {
         action = data.action;
       } else {
         action = null;
-        alert(data.Text);
+        $q.alertFail(data.Text);
       }
-    }) .fail(function (jqXHR, textStatus, errorThrown) {
+    }).fail((jqXHR, textStatus, errorThrown) => {
       action = null;
       $q.processGenericAjaxError(jqXHR);
     });
 
-    $cache.addItem(cacheKey, action);
+    Quantumart.QP8.Cache.addItem(cacheKey, action);
   }
 
   return action;
 };
 
-// Возвращает действие по его id
 Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) {
-  var cacheKey = 'ActionByActionId_' + actionId;
-  var actionCode = $cache.getItem(cacheKey);
+  const cacheKey = `ActionByActionId_${actionId}`;
+  let actionCode = Quantumart.QP8.Cache.getItem(cacheKey);
 
   if (!actionCode) {
-    $q.getJsonFromUrl('GET',CONTROLLER_URL_BACKEND_ACTION + 'GetCodeById',{ 'actionId': actionId },false,false).done(function(data){
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetCodeById`, { actionId }, false, false).done(data => {
       if (data.success) {
         actionCode = data.actionCode;
       } else {
         actionCode = null;
-        window.alert(data.Text);
+        $q.alertError(data.Text);
       }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
+    }).fail((jqXHR, textStatus, errorThrown) => {
       actionCode = null;
       $q.processGenericAjaxError(jqXHR);
     });
 
-    $cache.addItem(cacheKey, actionCode);
+    Quantumart.QP8.Cache.addItem(cacheKey, actionCode);
   }
 
   return Quantumart.QP8.BackendActionExecutor.getBackendActionByCode(actionCode);
 };
 
-Quantumart.QP8.BackendActionExecutor.getSelectedAction = function Quantumart$QP8$BackendActionExecutor$getSelectedAction(action) {
-  var selectedAction = null;
+Quantumart.QP8.BackendActionExecutor.getSelectedAction = function (action) {
+  let selectedAction = null;
   if ($q.isObject(action)) {
     selectedAction = action;
   } else if ($q.isString(action)) {
@@ -487,40 +482,40 @@ Quantumart.QP8.BackendActionExecutor.generateActionUrl = function (isMultiple, e
     parentEntityId = 0;
   }
 
-  var url = '';
-  var selectedAction = Quantumart.QP8.BackendActionExecutor.getSelectedAction(action);
-  var extraQueryString = (options && options.additionalUrlParameters) ? $q.hashToQueryString(options.additionalUrlParameters) : '';
+  let url = '';
+  const selectedAction = Quantumart.QP8.BackendActionExecutor.getSelectedAction(action);
+  const extraQueryString = options && options.additionalUrlParameters ? $q.hashToQueryString(options.additionalUrlParameters) : '';
 
   if (!$q.isNull(selectedAction)) {
-    var isInterface = selectedAction.IsInterface;
-    var isCustom = selectedAction.IsCustom;
+    const isInterface = selectedAction.IsInterface;
+    const isCustom = selectedAction.IsCustom;
     if (options && options.controllerActionUrl) {
       url = options.controllerActionUrl;
     } else if (selectedAction.ControllerActionUrl) {
       url = selectedAction.ControllerActionUrl;
     } else {
-      url = (isInterface) ? '~/Diagnostics/Index/' : '';
+      url = isInterface ? '~/Diagnostics/Index/' : '';
     }
 
     if (options && options.isPreAction) {
-      url = url.replace(/\/$/, 'PreAction/')
+      url = url.replace(/\/$/, 'PreAction/');
     }
 
     if (options && options.hasSettings && !options.isSettingsSet) {
-      url = url.replace(/\/$/, '/Settings/')
+      url = url.replace(/\/$/, '/Settings/');
     }
 
-    url = url.replace(/^~\//, APPLICATION_ROOT_URL);
+    url = url.replace(/^~\//, window.APPLICATION_ROOT_URL);
     if (url) {
       if (isMultiple) {
         url += String.format('{0}/{1}/', tabId, parentEntityId);
       } else {
-        var entityId = (entityIDs.length > 0) ? entityIDs[0] : 0;
+        const entityId = entityIDs.length > 0 ? entityIDs[0] : 0;
         url += String.format('{0}/{1}/{2}/', tabId, parentEntityId, entityId);
       }
 
       if (extraQueryString.length > 0) {
-        url += '?' + extraQueryString;
+        url += `?${extraQueryString}`;
       }
     }
   }
@@ -528,12 +523,10 @@ Quantumart.QP8.BackendActionExecutor.generateActionUrl = function (isMultiple, e
   return url;
 };
 
-// Генерирует URL действия
 Quantumart.QP8.BackendActionExecutor.generateBackendActionUrl = function (entityId, parentEntityId, tabId, action, options) {
   return Quantumart.QP8.BackendActionExecutor.generateActionUrl(false, [entityId], parentEntityId, tabId, action, options);
 };
 
-// Генерирует URL множественного действия
 Quantumart.QP8.BackendActionExecutor.generateBackendMultipleActionUrl = function (entityIDs, parentEntityId, tabId, action, options) {
   return Quantumart.QP8.BackendActionExecutor.generateActionUrl(true, entityIDs, parentEntityId, tabId, action, options);
 };
@@ -543,50 +536,43 @@ Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl = function (sele
     parentEntityId = 0;
   }
 
-  var url = '';
-  var extraQueryString = (options && options.additionalUrlParameters) ? $q.hashToQueryString(options.additionalUrlParameters) : '';
+  let url = '';
+  const extraQueryString = options && options.additionalUrlParameters ? $q.hashToQueryString(options.additionalUrlParameters) : '';
 
   if (!$q.isNull(selectedAction)) {
-      if (!(selectedAction.IsMultistep || $q.isNullOrEmpty(selectedAction.AdditionalControllerActionUrl))) {
-          url = selectedAction.AdditionalControllerActionUrl;
-      }
-      else {
-          url = selectedAction.ControllerActionUrl;
-      }
+    if (!(selectedAction.IsMultistep || $q.isNullOrEmpty(selectedAction.AdditionalControllerActionUrl))) {
+      url = selectedAction.AdditionalControllerActionUrl;
+    } else {
+      url = selectedAction.ControllerActionUrl;
+    }
     if (options) {
       if (options.isPreAction) {
         url = url.replace(/\/$/, '/PreAction/');
-      }
-      else if (options.isSetup) {
-              url = url.replace(/\/$/, '/Setup/');
-      }
-      else if (options.isTearDown) {
+      } else if (options.isSetup) {
+        url = url.replace(/\/$/, '/Setup/');
+      } else if (options.isTearDown) {
         url = url.replace(/\/$/, '/TearDown/');
+      } else if (options && options.hasSettings && !options.isSettingsSet) {
+        url = url.replace(/\/$/, '/Settings/');
+      } else {
+        url = url.replace(/\/$/, '/Step/');
       }
-      else if (options && options.hasSettings && !options.isSettingsSet) {
-          url = url.replace(/\/$/, '/Settings/');
-      }
-      else {
-        url = url.replace(/\/$/, '/Step/')
-      }
-    }
-    else {
-      url = url.replace(/\/$/, '/Step/')
+    } else {
+      url = url.replace(/\/$/, '/Step/');
     }
 
-    url = url.replace(/^~\//, APPLICATION_ROOT_URL);
+    url = url.replace(/^~\//, window.APPLICATION_ROOT_URL);
 
     if (url) {
-            if (selectedAction.ActionType.IsMultiple) {
-            url += String.format('{0}/{1}/', '0', parentEntityId);
-        }
-        else {
-            var entityId = (entityIDs.length > 0) ? entityIDs[0] : 0;
-            url += String.format('{0}/{1}/{2}/', '0', parentEntityId, entityId);
-        }
+      if (selectedAction.ActionType.IsMultiple) {
+        url += String.format('{0}/{1}/', '0', parentEntityId);
+      } else {
+        const entityId = entityIDs.length > 0 ? entityIDs[0] : 0;
+        url += String.format('{0}/{1}/{2}/', '0', parentEntityId, entityId);
+      }
 
       if (extraQueryString.length > 0) {
-        url += '?' + extraQueryString;
+        url += `?${extraQueryString}`;
       }
     }
   }
@@ -596,25 +582,21 @@ Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl = function (sele
 
 Quantumart.QP8.BackendActionExecutor.showResult = function (data) {
   if (data && data.Type) {
-    var messageType = data.Type;
+    const messageType = data.Type;
 
-    if (messageType == ACTION_MESSAGE_TYPE_DOWNLOAD)
-    {
+    if (messageType == window.ACTION_MESSAGE_TYPE_DOWNLOAD) {
       $c.downloadFile(data.Url);
-    }
-    else if (messageType == ACTION_MESSAGE_TYPE_INFO
-                || messageType == ACTION_MESSAGE_TYPE_WARNING
-                || messageType == ACTION_MESSAGE_TYPE_ERROR) {
-
-      var messageText = data.Text;
+    } else if (messageType == window.ACTION_MESSAGE_TYPE_INFO
+                || messageType == window.ACTION_MESSAGE_TYPE_WARNING
+                || messageType == window.ACTION_MESSAGE_TYPE_ERROR) {
+      const messageText = data.Text;
       if (!$q.isNullOrWhiteSpace(messageText)) {
-        alert(messageText);
+        $q.alertFail(messageText);
       }
     }
   }
 };
 
-// Заполняет агрументы события на основе действия
 Quantumart.QP8.BackendActionExecutor.fillEventArgsFromAction = function (eventArgs, action) {
   if (!$q.isObject(eventArgs)) {
     throw new Error($l.Common.targetEventArgsNotSpecified);
@@ -647,8 +629,8 @@ Quantumart.QP8.BackendActionExecutor.getEventArgsFromAction = function (action) 
     throw new Error($l.Common.actionNotSpecified);
   }
 
-  var eventArgs = new Quantumart.QP8.BackendEventArgs();
-  Quantumart.QP8.BackendActionExecutor.fillEventArgsFromAction(eventArgs, action)
+  const eventArgs = new Quantumart.QP8.BackendEventArgs();
+  Quantumart.QP8.BackendActionExecutor.fillEventArgsFromAction(eventArgs, action);
 
   return eventArgs;
 };
@@ -657,21 +639,21 @@ Quantumart.QP8.BackendActionExecutor.getEventArgsFromActionWithParams = function
   if (!$q.isObject(action)) {
     throw new Error($l.Common.actionNotSpecified);
   }
-  var eventArgs = new Quantumart.QP8.BackendEventArgs();
+  const eventArgs = new Quantumart.QP8.BackendEventArgs();
   Quantumart.QP8.BackendActionExecutor.fillEventArgsFromAction(eventArgs, action);
   eventArgs.init(params.get_entityTypeCode(), params.get_entities(), params.get_parentEntityId(), action, params.get_options(), params.get_actionCode());
   return eventArgs;
 };
 
 Quantumart.QP8.BackendActionExecutor.getActionViewByViewTypeCode = function (action, viewTypeCode) {
-    var actionViews = action.Views;
-    var actionView = null;
+  const actionViews = action.Views;
+  let actionView = null;
 
-    if (!$q.isNullOrEmpty(actionViews)) {
-        actionView = jQuery.grep(actionViews, function (actionView) { return actionView.ViewType.Code == viewTypeCode; })[0];
-    }
+  if (!$q.isNullOrEmpty(actionViews)) {
+    actionView = $.grep(actionViews, actionView => actionView.ViewType.Code == viewTypeCode)[0];
+  }
 
-    return actionView;
+  return actionView;
 };
 
 
@@ -736,16 +718,30 @@ Quantumart.QP8.BackendActionParameters.prototype = {
   _actionCode: null,
   _isGroup: false,
 
-  get_entityId: function () { return this._entityId },
-  get_entityName: function () { return this._entityName },
-  get_parentEntityId: function () { return this._parentEntityId },
-  get_entityTypeCode: function () { return this._entityTypeCode },
-  get_context: function () { return this._context },
-  get_entities: function () { return ($q.isArray(this._entities) && this._entities.length > 0) ? this._entities : [{ Id: this._entityId, Name: this._entityName}]; },
-  get_actionCode: function(){ return this._actionCode;},
+  get_entityId() {
+    return this._entityId;
+  },
+  get_entityName() {
+    return this._entityName;
+  },
+  get_parentEntityId() {
+    return this._parentEntityId;
+  },
+  get_entityTypeCode() {
+    return this._entityTypeCode;
+  },
+  get_context() {
+    return this._context;
+  },
+  get_entities() {
+    return $q.isArray(this._entities) && this._entities.length > 0 ? this._entities : [{ Id: this._entityId, Name: this._entityName }];
+  },
+  get_actionCode() {
+    return this._actionCode;
+  },
 
-  correct: function (action) {
-    var currentAction = $a.getBackendAction(action);
+  correct(action) {
+    const currentAction = $a.getBackendAction(action);
 
     if (currentAction.IsWindow) {
       this._forceOpenWindow = true;
@@ -768,7 +764,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
 
     if (action.Code === window.ACTION_CODE_ADD_NEW_ADJACENT_FIELD) {
       this._context = this._context || {};
-      $.extend(this._context, { additionalUrlParameters: { fieldId: this._entityId } });
+      Object.assign(this._context, { additionalUrlParameters: { fieldId: this._entityId } });
       this._entityId = 0;
     }
 
@@ -779,7 +775,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
           this._parentEntityId = this._entityId;
         } else {
           this._context = this._context || {};
-          $.extend(this._context, { additionalUrlParameters: { groupId: this._entityId } });
+          Object.assign(this._context, { additionalUrlParameters: { groupId: this._entityId } });
         }
 
         this._entityId = 0;
@@ -788,7 +784,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
     }
   },
 
-  get_options: function () {
+  get_options() {
     return {
       previousAction: this._previousAction,
       forceOpenWindow: this._forceOpenWindow,

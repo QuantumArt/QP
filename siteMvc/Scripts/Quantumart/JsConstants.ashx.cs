@@ -460,7 +460,6 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
         private static string GenerateEnumeration(string typeName, Dictionary<string, int> items)
         {
             var enumeration = new StringBuilder();
-
             var itemIndex = 0;
             foreach (var key in items.Keys)
             {

@@ -1,38 +1,33 @@
-var EVENT_TYPE_CUSTOM_ACTION_CHANGED = "OnCustomActionChanged";
+window.EVENT_TYPE_CUSTOM_ACTION_CHANGED = 'OnCustomActionChanged';
+class BackendContextMenuManager extends Quantumart.QP8.Observable {
+  static getInstance() {
+    if (!BackendContextMenuManager._instance) {
+      BackendContextMenuManager._instance = new BackendContextMenuManager();
+    }
 
-Quantumart.QP8.BackendContextMenuManager = function () {
-  Quantumart.QP8.BackendContextMenuManager.initializeBase(this);
-};
+    return BackendContextMenuManager._instance;
+  }
 
-Quantumart.QP8.BackendContextMenuManager.prototype = {
-  dispose: function () {
-    Quantumart.QP8.BackendContextMenuManager.callBaseMethod(this, "dispose");
-    Quantumart.QP8.BackendContextMenuManager._instance = null;
-    $q.collectGarbageInIE();
-  },
+  static destroyInstance() {
+    if (BackendContextMenuManager._instance) {
+      BackendContextMenuManager._instance.dispose();
+      BackendContextMenuManager._instance = null;
+    }
+  }
 
-  onActionExecuted: function (eventArgs) {
-    if (eventArgs && eventArgs.get_entityTypeCode() === ENTITY_TYPE_CODE_CUSTOM_ACTION && (eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving())) {
+  onActionExecuted(eventArgs) {
+    if (eventArgs
+      && eventArgs.get_entityTypeCode() === window.ENTITY_TYPE_CODE_CUSTOM_ACTION
+      && (eventArgs.get_isSaved() || eventArgs.get_isUpdated() || eventArgs.get_isRemoving())
+    ) {
       this.notify(window.EVENT_TYPE_CUSTOM_ACTION_CHANGED, {});
     }
   }
-};
 
-Quantumart.QP8.BackendContextMenuManager._instance = null;
-Quantumart.QP8.BackendContextMenuManager.getInstance = function Quantumart$QP8$BackendContextMenuManager$getInstance() {
-  if (Quantumart.QP8.BackendContextMenuManager._instance === null) {
-    Quantumart.QP8.BackendContextMenuManager._instance = new Quantumart.QP8.BackendContextMenuManager();
+  dispose() {
+    super.dispose();
+    $q.collectGarbageInIE();
   }
+}
 
-  return Quantumart.QP8.BackendContextMenuManager._instance;
-};
-
-Quantumart.QP8.BackendContextMenuManager.destroyInstance = function Quantumart$QP8$BackendContextMenuManager$destroyInstance() {
-  if (Quantumart.QP8.BackendContextMenuManager._instance) {
-    Quantumart.QP8.BackendContextMenuManager._instance.dispose();
-  }
-};
-
-Quantumart.QP8.BackendContextMenuManager.registerClass("Quantumart.QP8.BackendContextMenuManager", Quantumart.QP8.Observable);
-
-
+Quantumart.QP8.BackendContextMenuManager = BackendContextMenuManager;

@@ -1,211 +1,145 @@
-//#region class BackendPopupWindowManager
-// === Класс "Менеджер всплывающих окон" ===
-Quantumart.QP8.BackendPopupWindowManager = function (options) {
-    Quantumart.QP8.BackendPopupWindowManager.initializeBase(this);
+Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager extends Quantumart.QP8.Observable {
+  static getInstance(options) {
+    if (!BackendPopupWindowManager._instance) {
+      BackendPopupWindowManager._instance = new BackendPopupWindowManager(options);
+    }
 
+    return BackendPopupWindowManager._instance;
+  }
+
+  static destroyInstance() {
+    if (BackendPopupWindowManager._instance) {
+      BackendPopupWindowManager._instance.dispose();
+      BackendPopupWindowManager._instance = null;
+    }
+  }
+
+  constructor() {
+    super();
+    this._popupWindows = {};
     this._hostStateStorage = new Quantumart.QP8.BackendDocumentHostStateStorage();
-    this._hostStateStorage._get_host_key = (function (that) {
-        var original = that._hostStateStorage._get_host_key;
-        return function (hostParams) {
-            hostParams.entityId = 0;
-            return original(hostParams);
-        };
-    })(this);
-};
+  }
 
-Quantumart.QP8.BackendPopupWindowManager.prototype = {
-    _popupWindows: {},
-    _hostStateStorage: null,
+  generatePopupWindowId() {
+    const popupWindowNums = Object.keys(this._popupWindows).map(value => {
+      const matches = value.match('^win([0-9]+)$');
+      return matches && matches.length === 2 ? matches[1] : 0;
+    });
 
-    generatePopupWindowId: function () {
-        var popupWindowNums = Object.keys(this._popupWindows).map(
-            function(value) {
-                var matches = value.match("^win([0-9]+)$");
-                return (matches && matches.length === 2) ? matches[1] : 0;
-            });
-        var maxNumber = (popupWindowNums.length > 0) ? Math.max.apply(null, popupWindowNums) : 0;
-        return String.format("win{0}", maxNumber + 1);
-    },
+    const maxNumber = popupWindowNums.length > 0 ? Math.max.apply(null, popupWindowNums) : 0;
+    return String.format('win{0}', maxNumber + 1);
+  }
 
-    generatePopupWindowTitle: function (eventArgs) {
-        var popupWindowTitle = Quantumart.QP8.BackendDocumentHost.generateTitle(eventArgs, { "isTab": false });
-        return popupWindowTitle;
-    },
+  getAllPopupWindows() {
+    return Object.values(this._popupWindows);
+  }
 
-    getAllPopupWindows: function () {
-        var popupWindowsHash = this._popupWindows;
-        var popupWindows = [];
-
-        for (var popupWindowId in popupWindowsHash) {
-            Array.add(popupWindows, popupWindowsHash[popupWindowId]);
-        }
-
-        return popupWindows;
-    },
-
-    getPopupWindow: function (popupWindowId) {
-        var popupWindow = null;
-
-        if (this._popupWindows[popupWindowId]) {
-            popupWindow = this._popupWindows[popupWindowId];
-        }
-
-        return popupWindow;
-    },
-
-    getPopupWindowByEventArgs: function (eventArgs) {
-        return jQuery.grep(this.getAllPopupWindows(), function (w) {
-            return w.get_entityTypeCode() == eventArgs.get_entityTypeCode() &&
-                    w.get_entityId() == eventArgs.get_entityId() &&
-                    w.get_actionCode() == eventArgs.get_actionCode();
-        });
-    },
-
-    createPopupWindow: function (eventArgs, options) {
-        var popupWindowId = options ? options.popupWindowId : "";
-        if ($q.isNullOrWhiteSpace(popupWindowId)) {
-            popupWindowId = this.generatePopupWindowId();
-        }
-
-        if (this._popupWindows[popupWindowId]) {
-            alert($l.PopupWindow.popupWindowIdNotUniqueErrorMessage);
-            return null;
-        }
-
-        jQuery.extend(options,
-        {
-            width: eventArgs.get_windowWidth(),
-            height: eventArgs.get_windowHeight(),
-            hostStateStorage: this._hostStateStorage
-        });
-
-        var popupWindow = new Quantumart.QP8.BackendPopupWindow(popupWindowId, eventArgs, options);
-        popupWindow.set_popupWindowManager(this);
-        popupWindow.initialize();
-
-        this._popupWindows[popupWindowId] = popupWindow;
-
-        return popupWindow;
-    },
-
-    openPopupWindow: function (eventArgs) {
-        var popupWindow = this.createPopupWindow(eventArgs, {});
-        popupWindow.openWindow();
-
-        return popupWindow;
-    },
-
-    removePopupWindow: function (popupWindowId) {
-        $q.removeProperty(this._popupWindows, popupWindowId);
-    },
-
-    destroyPopupWindow: function (popupWindowId) {
-        var popupWindow = this._popupWindows[popupWindowId];
-
-        if (popupWindow != null) {
-            if (popupWindow.dispose) {
-                popupWindow.dispose();
-            }
-            popupWindow = null;
-        }
-    },
-
-    closeNotExistentPopupWindows: function () {
-        var popupWindows = this.getAllPopupWindows();
-
-        for (var popupWindowIndex = 0, popupWindowCount = popupWindows.length; popupWindowIndex < popupWindowCount; popupWindowIndex++) {
-            var popupWindow = popupWindows[popupWindowIndex];
-
-            var entityTypeCode = popupWindow.get_entityTypeCode();
-            var entityId = popupWindow.get_entityId();
-            var actionTypeCode = popupWindow.get_actionTypeCode();
-            var isMultipleEntities = popupWindow.get_isMultipleEntities();
-
-            if (actionTypeCode != ACTION_TYPE_CODE_ADD_NEW) {
-                if (isMultipleEntities && actionTypeCode != ACTION_TYPE_CODE_MULTIPLE_SELECT) {
-                    var entities = popupWindow.get_entities();
-
-                    for (var entityIndex = 0; entityIndex < entities.length; entityIndex++) {
-                        var entity = entities[entityIndex];
-                        if (entity) {
-                            var entityExist = $o.checkEntityExistence(entityTypeCode, entity.Id)
-                            if (!entityExist) {
-                                popupWindow.closeWindow();
-                                break;
-                            }
-                        }
-                    }
-                }
-                else {
-                    var entityExist = $o.checkEntityExistence(entityTypeCode, entityId);
-                    if (!entityExist) {
-                        popupWindow.closeWindow();
-                    }
-                }
-            }
-
-            popupWindow = null;
-        }
-
-        popupWindows = null;
-    },
-
-    onActionExecuted: function (eventArgs) {
-        if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving() || eventArgs.get_isRestoring()) {
-            this.closeNotExistentPopupWindows();
-        }
-    },
-
-    onNeedUp: function (eventArgs, popupWindowId) {
-        var popupWindow = this.getPopupWindow(popupWindowId);
-        if (popupWindow) {
-            popupWindow.closeWindow();
-        }
-    },
-
-    hostExternalCallerContextsUnbinded: function (unbindingEventArgs) {
-        this.notify(EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED, unbindingEventArgs);
-    },
-
-    dispose: function () {
-        Quantumart.QP8.BackendPopupWindowManager.callBaseMethod(this, "dispose");
-
-        if (this._popupWindows) {
-            for (var popupWindowId in this._popupWindows) {
-                this.destroyPopupWindow(popupWindowId);
-            }
-
-            this._popupWindows = null;
-        }
-
-        if (this._hostStateStorage) {
-            this._hostStateStorage.dispose();
-            this._hostStateStorage = null;
-        }
-
-        Quantumart.QP8.BackendPopupWindowManager._instance = null;
-
-        $q.collectGarbageInIE();
-    }
-};
-
-Quantumart.QP8.BackendPopupWindowManager._instance = null; // экземпляр класса
-
-// Возвращает экземпляр класса "Менеджер всплывающих окон"
-Quantumart.QP8.BackendPopupWindowManager.getInstance = function Quantumart$QP8$BackendPopupWindowManager$getInstance(options) {
-    if (Quantumart.QP8.BackendPopupWindowManager._instance == null) {
-        Quantumart.QP8.BackendPopupWindowManager._instance = new Quantumart.QP8.BackendPopupWindowManager(options);
+  getPopupWindow(popupWindowId) {
+    if (this._popupWindows[popupWindowId]) {
+      return this._popupWindows[popupWindowId];
     }
 
-    return Quantumart.QP8.BackendPopupWindowManager._instance;
-};
+    return undefined;
+  }
 
-// Уничтожает экземпляр класса "Менеджер всплывающих окон"
-Quantumart.QP8.BackendPopupWindowManager.destroyInstance = function Quantumart$QP8$BackendPopupWindowManager$destroyInstance() {
-    if (Quantumart.QP8.BackendPopupWindowManager._instance) {
-        Quantumart.QP8.BackendPopupWindowManager._instance.dispose();
+  getPopupWindowByEventArgs(eventArgs) {
+    return $.grep(this.getAllPopupWindows(), win =>
+      win.get_entityTypeCode() === eventArgs.get_entityTypeCode()
+      && win.get_entityId() === eventArgs.get_entityId()
+      && win.get_actionCode() === eventArgs.get_actionCode()
+    );
+  }
+
+  createPopupWindow(eventArgs, options) {
+    let popupWindowId = options ? options.popupWindowId : '';
+    if ($q.isNullOrWhiteSpace(popupWindowId)) {
+      popupWindowId = this.generatePopupWindowId();
     }
-};
 
-Quantumart.QP8.BackendPopupWindowManager.registerClass("Quantumart.QP8.BackendPopupWindowManager", Quantumart.QP8.Observable);
-//#endregion
+    if (this._popupWindows[popupWindowId]) {
+      $q.alertError($l.PopupWindow.popupWindowIdNotUniqueErrorMessage);
+      throw new Error($l.PopupWindow.popupWindowIdNotUniqueErrorMessage);
+    }
+
+    const newOptions = Object.assign({}, options, {
+      width: eventArgs.get_windowWidth(),
+      height: eventArgs.get_windowHeight(),
+      hostStateStorage: this._hostStateStorage
+    });
+
+    const popupWindow = new Quantumart.QP8.BackendPopupWindow(popupWindowId, eventArgs, newOptions);
+    popupWindow.set_popupWindowManager(this);
+    popupWindow.initialize();
+
+    this._popupWindows[popupWindowId] = popupWindow;
+    return popupWindow;
+  }
+
+  openPopupWindow(eventArgs) {
+    const popupWindow = this.createPopupWindow(eventArgs, {});
+    popupWindow.openWindow();
+    return popupWindow;
+  }
+
+  closeNotExistentPopupWindows() {
+    const popupWindows = this.getAllPopupWindows();
+    for (let popupWindowIndex = 0; popupWindowIndex < popupWindows.length; popupWindowIndex++) {
+      const popupWindow = popupWindows[popupWindowIndex];
+      const entityTypeCode = popupWindow.get_entityTypeCode();
+      const entityId = popupWindow.get_entityId();
+      const actionTypeCode = popupWindow.get_actionTypeCode();
+      const isMultipleEntities = popupWindow.get_isMultipleEntities();
+      if (actionTypeCode !== window.ACTION_TYPE_CODE_ADD_NEW) {
+        if (isMultipleEntities && actionTypeCode !== window.ACTION_TYPE_CODE_MULTIPLE_SELECT) {
+          const entities = popupWindow.get_entities();
+          for (let entityIndex = 0; entityIndex < entities.length; entityIndex++) {
+            const entity = entities[entityIndex];
+            if (entity && !$o.checkEntityExistence(entityTypeCode, entity.Id)) {
+              popupWindow.closeWindow();
+              break;
+            }
+          }
+        } else if (!$o.checkEntityExistence(entityTypeCode, entityId)) {
+          popupWindow.closeWindow();
+        }
+      }
+    }
+  }
+
+  onActionExecuted(eventArgs) {
+    if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving() || eventArgs.get_isRestoring()) {
+      this.closeNotExistentPopupWindows();
+    }
+  }
+
+  onNeedUp(eventArgs, popupWindowId) {
+    const popupWindow = this.getPopupWindow(popupWindowId);
+    if (popupWindow) {
+      popupWindow.closeWindow();
+    }
+  }
+
+  hostExternalCallerContextsUnbinded(unbindingEventArgs) {
+    this.notify(window.EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED, unbindingEventArgs);
+  }
+
+  removePopupWindow(popupWindowId) {
+    $q.removeProperty(this._popupWindows, popupWindowId);
+  }
+
+  destroyPopupWindow(popupWindowId) {
+    const popupWindow = this._popupWindows[popupWindowId];
+    if (popupWindow && popupWindow.dispose) {
+      popupWindow.dispose();
+    }
+  }
+
+  dispose() {
+    super.dispose();
+    if (this._popupWindows) {
+      Object.keys(this._popupWindows).forEach(this.destroyPopupWindow, this);
+    }
+
+    $q.collectGarbageInIE();
+  }
+};

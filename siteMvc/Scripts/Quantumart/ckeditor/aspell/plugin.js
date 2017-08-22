@@ -12,7 +12,7 @@
   };
 
   CKEDITOR.plugins.add(CKEDITOR.aspellSettings.pluginName, {
-    init: function initPlugin(editor) {
+    init(editor) {
       if (editor.contextMenu) {
         editor.addMenuGroup('qp8', 10);
         editor.addMenuItem(CKEDITOR.aspellSettings.pluginName, {
@@ -21,7 +21,7 @@
           group: 'qp8'
         });
 
-        editor.contextMenu.addListener(function contextMenuListener() {
+        editor.contextMenu.addListener(() => {
           return { typographer: CKEDITOR.TRISTATE_OFF };
         });
       }

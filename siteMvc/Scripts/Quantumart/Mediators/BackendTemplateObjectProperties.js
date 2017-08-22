@@ -1,105 +1,90 @@
+window.CONTENT_CHANGE_TRACK_SELECTORS = '.containerContentSelector .singleItemPicker';
 Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId) {
+  const $componentElem = jQuery(`#${rootElementId}`);
+  const $parentObjectSelector = $componentElem.find('.parentTemplateObjectsSelector');
+  const $nameField = $componentElem.find('.name');
+  const $netNameField = $componentElem.find('.netName');
+  const $overrideChkbx = $componentElem.find('.overrideChkbx');
+  const $globalChkbx = $componentElem.find('.globalChkbx');
+  const $typeSelector = $componentElem.find('.typeDlist');
+  const $statusSelector = $componentElem.find('.multipleItemPicker');
+  const $selectionIsStarting = $componentElem.find('.selection-is-starting .radioButtonsList');
+  const $selectionIncludes = $componentElem.find('.selection-includes .radioButtonsList');
 
-    var $componentElem = jQuery('#' + rootElementId);
-    var CONTENT_CHANGE_TRACK_SELECTORS = ".containerContentSelector .singleItemPicker";
-    var $parentObjectSelector = $componentElem.find('.parentTemplateObjectsSelector');
-    var $nameField = $componentElem.find('.name');
-    var $netNameField = $componentElem.find('.netName');
-    var $overrideChkbx = $componentElem.find('.overrideChkbx');
-    var $globalChkbx = $componentElem.find('.globalChkbx');
-    var $typeSelector = $componentElem.find('.typeDlist');
-    var $statusSelector = $componentElem.find('.multipleItemPicker');
-    var $selectionIsStarting = $componentElem.find('.selection-is-starting .radioButtonsList');
-    var $selectionIncludes = $componentElem.find('.selection-includes .radioButtonsList');
+  const onContentValueChanged = function (e, data) {
+    if (data.value) {
+      $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetFieldsByContentId`,
+        {
+          contentId: data.value
+        },
+        true, false).done(
+        data => {
+          const newFields = data.fields.split(',');
+          const newStatuses = data.statuses;
+          const publishedStatusId = $statusSelector.data('published-id');
+          const vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
 
-    $componentElem.on(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
-    $parentObjectSelector.change(jQuery.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
-    $overrideChkbx.click(jQuery.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
-    $typeSelector.change(manageGlobalVisibility);
+          if (vm.fields) {
+            vm.fields.removeAll();
+            for (const i in newFields) {
+              vm.fields.push(newFields[i]);
+            }
+          }
 
-    checkPublished();
-    if ($statusSelector.data('has-workflow') == "False") {
-        $statusSelector.data('entity_data_list_component').disableList();
+          $statusSelector.data('entity_data_list_component').removeAllListItems();
+
+          if (data.hasWorkflow == true) {
+            $statusSelector.data('entity_data_list_component').selectEntities(newStatuses);
+            $statusSelector.data('entity_data_list_component').deselectAllListItems();
+            $statusSelector.data('entity_data_list_component').enableList();
+          } else {
+            $statusSelector.data('entity_data_list_component').selectEntities([$statusSelector.data('published-id')]);
+            $statusSelector.data('entity_data_list_component').disableList();
+          }
+        });
     }
+  };
 
-    manageGlobalVisibility();
-
-    function onContentValueChanged(e, data) {
-        if (data.value) {
-            $q.getJsonFromUrl('POST', CONTROLLER_URL_PAGE_TEMPLATE + "GetFieldsByContentId",
-            {
-                contentId: data.value
-            },
-            true, false).done(
-            function (data) {
-                var newFields = data.fields.split(",");
-                var newStatuses = data.statuses;
-                var publishedStatusId = $statusSelector.data('published-id');
-                var vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
-
-                if (vm.fields) {
-                    vm.fields.removeAll();
-                    for (var i in newFields) {
-                        vm.fields.push(newFields[i]);
-                    }
-                }
-
-                $statusSelector.data('entity_data_list_component').removeAllListItems();
-
-                if (data.hasWorkflow == true) {
-                    $statusSelector.data('entity_data_list_component').selectEntities(newStatuses);
-                    $statusSelector.data('entity_data_list_component').deselectAllListItems();
-                    $statusSelector.data('entity_data_list_component').enableList();
-                }
-
-                else {
-                    $statusSelector.data('entity_data_list_component').selectEntities([$statusSelector.data('published-id')]);
-                    $statusSelector.data('entity_data_list_component').disableList();
-                }
-            });
-        }
+  const manageGlobalVisibility = function () {
+    if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(',').indexOf($typeSelector.val()) != -1) {
+      $globalChkbx.parent('.field').show();
+    } else {
+      $globalChkbx.parent('.field').hide();
     }
+  };
 
-    function checkPublished() {
-        $statusSelector.find('.multi-picker-item[value="' + $statusSelector.data('published-id') + '"]').attr('checked', true);
+  const onParentTemplateObjectChanged = function () {
+    if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
+      const objId = $parentObjectSelector.val();
+      const targetObj = $(this.data('objects')).filter(function () {
+        return this.Id == objId;
+      })[0];
+      $nameField.val(targetObj.Name);
+      $netNameField.val(targetObj.NetName);
+    } else {
+      $nameField.val('');
+      $netNameField.val('');
     }
+  };
 
-    function onParentTemplateObjectChanged() {
-        if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
-            var objId = $parentObjectSelector.val();
-            var targetObj = $(this.data('objects')).filter(function () { return this.Id == objId; })[0];
-            $nameField.val(targetObj.Name);
-            $netNameField.val(targetObj.NetName);
-        }
-        else {
-            $nameField.val('');
-            $netNameField.val('');
-        }
-    }
+  $componentElem.on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, window.CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
+  $parentObjectSelector.change($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
+  $overrideChkbx.click($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
 
+  $typeSelector.change(manageGlobalVisibility);
+  $statusSelector.find(`.multi-picker-item[value="${$statusSelector.data('published-id')}"]`).attr('checked', true);
+  if ($statusSelector.data('has-workflow') == 'False') {
+    $statusSelector.data('entity_data_list_component').disableList();
+  }
 
+  manageGlobalVisibility();
 
-    function manageGlobalVisibility() {
-        if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(",").indexOf($typeSelector.val()) != -1) {
-            $globalChkbx.parent('.field').show();
-        }
-        else
-            $globalChkbx.parent('.field').hide();
-    }
+  const dispose = function () {
+    $componentElem.unbind();
+    $parentObjectSelector.unbind();
+  };
 
-    function dispose() {
-        $componentElem.unbind();
-        $parentObjectSelector.unbind();
-
-        $componentElem = null;
-        CONTENT_CHANGE_TRACK_SELECTORS = null;
-        $parentObjectSelector = null;
-        $statusSelector = null;
-        $selectionIsStarting = null;
-        $selectionIncludes = null;
-    }
-
-    return {
-        dispose: dispose
-    };
+  return {
+    dispose
+  };
 };

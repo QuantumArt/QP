@@ -1,147 +1,144 @@
-//#region class BackendSearchBlockManager
-// === Класс "Менеджер блоков поиска" ===
-Quantumart.QP8.BackendSearchBlockManager = function () {
-	Quantumart.QP8.BackendSearchBlockManager.initializeBase(this);
-};
+class BackendSearchBlockManager extends Quantumart.QP8.Observable {
+  static getInstance() {
+    if (!BackendSearchBlockManager._instance) {
+      BackendSearchBlockManager._instance = new BackendSearchBlockManager();
+    }
 
-Quantumart.QP8.BackendSearchBlockManager.prototype = {
-	_searchBlockGroups: {}, // список групп блоков поиска
+    return BackendSearchBlockManager._instance;
+  }
 
-	generateSearchBlockGroupCode: function (entityTypeCode, parentEntityId) {
-		var searchBlockCode = String.format("{0}_{1}", entityTypeCode, parentEntityId);
+  static destroyInstance() {
+    if (BackendSearchBlockManager._instance) {
+      BackendSearchBlockManager._instance.dispose();
+      BackendSearchBlockManager._instance = null;
+    }
+  }
 
-		return searchBlockCode;
-	},
+  static generateSearchBlockGroupCode(entityTypeCode, parentEntityId) {
+    return `${entityTypeCode}_${parentEntityId}`;
+  }
 
-	getSearchBlockGroup: function (searchBlockGroupCode) {
-		var searchBlockGroup = null;
-		if (this._searchBlockGroups[searchBlockGroupCode]) {
-			searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
-		}
+  constructor() {
+    super();
+    this._searchBlockGroups = {};
+  }
 
-		return searchBlockGroup;
-	},
+  getSearchBlockGroup(searchBlockGroupCode) {
+    return this._searchBlockGroups[searchBlockGroupCode];
+  }
 
-	createSearchBlockGroup: function (searchBlockGroupCode) {
-		var searchBlockGroup = this.getSearchBlockGroup(searchBlockGroupCode);
-		if (!searchBlockGroup) {
-			searchBlockGroup = {};
-			this._searchBlockGroups[searchBlockGroupCode] = searchBlockGroup;
-		}
+  createSearchBlockGroup(searchBlockGroupCode) {
+    this._searchBlockGroups[searchBlockGroupCode] = this.getSearchBlockGroup(searchBlockGroupCode) || {};
+    return this._searchBlockGroups[searchBlockGroupCode];
+  }
 
-		return searchBlockGroup;
-	},
+  removeSearchBlockGroup(searchBlockGroupCode) {
+    $q.removeProperty(this._searchBlockGroups, searchBlockGroupCode);
+  }
 
-	removeSearchBlockGroup: function (searchBlockGroupCode) {
-		$q.removeProperty(this._searchBlockGroups, searchBlockGroupCode);
-	},
+  getSearchBlock(searchBlockElementId) {
+    const searchBlockGroup = Object.values(this._searchBlockGroups).find(val => val[searchBlockElementId]);
+    return searchBlockGroup[searchBlockElementId];
+  }
 
-	getSearchBlock: function (searchBlockElementId) {
-		var searchBlock = null;
+  createSearchBlock(searchBlockElementId, entityTypeCode, parentEntityId, host, options) {
+    const searchBlockGroupCode = BackendSearchBlockManager.generateSearchBlockGroupCode(entityTypeCode, parentEntityId);
 
-		for (var searchBlockGroupCode in this._searchBlockGroups) {
-			var searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
-			if (searchBlockGroup[searchBlockElementId]) {
-				searchBlock = searchBlockGroup[searchBlockElementId];
-				break;
-			}
-		}
+    let searchBlock = null;
+    if (options.contextSearch) {
+      searchBlock = new Quantumart.QP8.BackendContextBlock(
+        searchBlockGroupCode,
+        searchBlockElementId,
+        entityTypeCode,
+        parentEntityId,
+        options
+      );
+    } else if (entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE
+      || entityTypeCode === window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE
+      || entityTypeCode === window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE
+    ) {
+      if (host
+        && host.get_documentContext()
+        && host.get_documentContext().get_options()
+        && host.get_documentContext().get_options().isVirtual
+      ) {
+        Object.assign(options, { isVirtual: true });
+      }
 
-		return searchBlock;
-	},
+      searchBlock = new Quantumart.QP8.BackendArticleSearchBlock(
+        searchBlockGroupCode,
+        searchBlockElementId,
+        entityTypeCode,
+        parentEntityId,
+        options
+      );
+    } else if (entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT) {
+      searchBlock = new Quantumart.QP8.BackendContentSearchBlock(
+        searchBlockGroupCode,
+        searchBlockElementId,
+        entityTypeCode,
+        parentEntityId,
+        options
+      );
+    } else if (entityTypeCode === window.ENTITY_TYPE_CODE_USER) {
+      searchBlock = new Quantumart.QP8.BackendUserSearchBlock(
+        searchBlockGroupCode,
+        searchBlockElementId,
+        entityTypeCode,
+        parentEntityId,
+        options
+      );
+    } else {
+      searchBlock = new Quantumart.QP8.BackendSearchBlockBase(
+        searchBlockGroupCode,
+        searchBlockElementId,
+        entityTypeCode,
+        parentEntityId,
+        options
+      );
+    }
 
-	createSearchBlock: function (searchBlockElementId, entityTypeCode, parentEntityId, host, options) {
-		var searchBlockGroupCode = this.generateSearchBlockGroupCode(entityTypeCode, parentEntityId);
+    searchBlock.initialize();
 
-		var searchBlock = null;
-		if (options.contextSearch) {
-		    searchBlock = new Quantumart.QP8.BackendContextBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
-		}
-		else if (entityTypeCode == ENTITY_TYPE_CODE_ARTICLE || entityTypeCode == ENTITY_TYPE_CODE_VIRTUAL_ARTICLE || entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
-			if (host && host.get_documentContext() && host.get_documentContext().get_options() && host.get_documentContext().get_options().isVirtual) {
-				jQuery.extend(options, { isVirtual: true });
-			}
-			searchBlock = new Quantumart.QP8.BackendArticleSearchBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
-		}
-		else if (entityTypeCode == ENTITY_TYPE_CODE_CONTENT) {
-			searchBlock = new Quantumart.QP8.BackendContentSearchBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
-		}
-		else if (entityTypeCode == ENTITY_TYPE_CODE_USER) {
-			searchBlock = new Quantumart.QP8.BackendUserSearchBlock(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
-		}
-		else {
-			searchBlock = new Quantumart.QP8.BackendSearchBlockBase(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options);
-		}
-		searchBlock.initialize();
+    const searchBlockGroup = this.createSearchBlockGroup(searchBlockGroupCode);
+    searchBlockGroup[searchBlockElementId] = searchBlock;
 
-		var searchBlockGroup = this.createSearchBlockGroup(searchBlockGroupCode);
-		searchBlockGroup[searchBlockElementId] = searchBlock;
+    return searchBlock;
+  }
 
-		return searchBlock;
-	},
+  removeSearchBlock(searchBlockElementId) {
+    const searchBlock = this.getSearchBlock(searchBlockElementId);
+    if (searchBlock) {
+      const searchBlockGroupCode = searchBlock.get_searchBlockGroupCode();
+      const searchBlockGroup = this.getSearchBlockGroup(searchBlockGroupCode);
+      $q.removeProperty(searchBlockGroup, searchBlockElementId);
+      if ($q.getHashKeysCount(searchBlockGroup) === 0) {
+        this.removeSearchBlockGroup(searchBlockGroupCode);
+      }
+    }
+  }
 
-	removeSearchBlock: function (searchBlockElementId) {
-		var searchBlock = this.getSearchBlock(searchBlockElementId);
-		if (searchBlock) {
-			var searchBlockGroupCode = searchBlock.get_searchBlockGroupCode();
-			var searchBlockGroup = this.getSearchBlockGroup(searchBlockGroupCode);
+  destroySearchBlock(searchBlockElementId) {
+    const searchBlock = this.getSearchBlock(searchBlockElementId);
+    if (searchBlock) {
+      this.removeSearchBlock(searchBlockElementId);
+      if (searchBlock.dispose) {
+        searchBlock.dispose();
+      }
+    }
+  }
 
-			$q.removeProperty(searchBlockGroup, searchBlockElementId);
+  dispose() {
+    super.dispose();
+    if (this._searchBlockGroups) {
+      Object.values(this._searchBlockGroups).forEach(searchBlockGroup => {
+        Object.keys(searchBlockGroup).forEach(this.destroySearchBlock, this);
+      }, this);
+    }
 
-			if ($q.getHashKeysCount(searchBlockGroup) == 0) {
-				this.removeSearchBlockGroup(searchBlockGroupCode);
-			}
-		}
-	},
+    this._searchBlockGroups = null;
+    $q.collectGarbageInIE();
+  }
+}
 
-	destroySearchBlock: function (searchBlockElementId) {
-		var searchBlock = this.getSearchBlock(searchBlockElementId);
-		if (searchBlock) {
-			this.removeSearchBlock(searchBlockElementId);
-
-			if (searchBlock.dispose) {
-				searchBlock.dispose();
-			}
-			searchBlock = null;
-		}
-	},
-
-	dispose: function () {
-		Quantumart.QP8.BackendSearchBlockManager.callBaseMethod(this, "dispose");
-
-		if (this._searchBlockGroups) {
-			for (var searchBlockGroupCode in this._searchBlockGroups) {
-				var searchBlockGroup = this._searchBlockGroups[searchBlockGroupCode];
-
-				for (searchBlockElementId in searchBlockGroup) {
-					this.destroySearchBlock(searchBlockElementId);
-				}
-			}
-
-			this._searchBlockGroups = null;
-		}
-
-		Quantumart.QP8.BackendSearchBlockManager._instance = null;
-	}
-};
-
-Quantumart.QP8.BackendSearchBlockManager._instance = null; // экземпляр класса
-
-// Возвращает экземпляр класса "Менеджер блоков поиска"
-Quantumart.QP8.BackendSearchBlockManager.getInstance = function Quantumart$QP8$BackendSearchBlockManager$getInstance() {
-	if (Quantumart.QP8.BackendSearchBlockManager._instance == null) {
-		Quantumart.QP8.BackendSearchBlockManager._instance = new Quantumart.QP8.BackendSearchBlockManager();
-	}
-
-	return Quantumart.QP8.BackendSearchBlockManager._instance;
-};
-
-// Уничтожает экземпляр класса "Менеджер блоков поиска"
-Quantumart.QP8.BackendSearchBlockManager.destroyInstance = function Quantumart$QP8$BackendSearchBlockManager$destroyInstance() {
-	if (Quantumart.QP8.BackendSearchBlockManager._instance) {
-		Quantumart.QP8.BackendSearchBlockManager._instance.dispose();
-	}
-};
-
-Quantumart.QP8.BackendSearchBlockManager.registerClass("Quantumart.QP8.BackendSearchBlockManager", Quantumart.QP8.Observable);
-//#endregion
+Quantumart.QP8.BackendSearchBlockManager = BackendSearchBlockManager;

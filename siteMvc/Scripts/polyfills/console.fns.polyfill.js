@@ -1,5 +1,5 @@
-if (Function.prototype.bind && window.console && typeof console.log === 'object') {
+if (Function.prototype.bind && window.console && typeof window.console.log === 'object') {
   ['log', 'info', 'warn', 'error', 'assert', 'dir', 'clear', 'profile', 'profileEnd'].forEach(function (method) {
-    console[method] = this.bind(console[method], console);
+    window.console[method] = this.bind(window.console[method], window.console);
   }, Function.prototype.call);
 }

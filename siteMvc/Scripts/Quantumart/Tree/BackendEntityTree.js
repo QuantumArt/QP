@@ -1,18 +1,20 @@
-// ****************************************************************************
-// *** Компонент "Дерево сущностей"                     ***
-// ****************************************************************************
+/* eslint max-lines: 'off' */
 
-//#region event types of entity tree
-// === Типы событий дерева сущностей ===
-var EVENT_TYPE_ENTITY_TREE_DATA_BINDING = 'OnEntityTreeDataBinding';
-var EVENT_TYPE_ENTITY_TREE_DATA_BOUND = 'OnEntityTreeDataBound';
-var EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING = 'OnEntityTreeActionExecuting';
-var EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED = 'OnEntityTreeEntitySelected';
-//#endregion
+window.EVENT_TYPE_ENTITY_TREE_DATA_BINDING = 'OnEntityTreeDataBinding';
+window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND = 'OnEntityTreeDataBound';
+window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING = 'OnEntityTreeActionExecuting';
+window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED = 'OnEntityTreeEntitySelected';
 
-//#region class BackendEntityTree
-// === Класс "Дерево сущностей" ===
-Quantumart.QP8.BackendEntityTree = function(treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
+// eslint-disable-next-line max-params, max-statements
+Quantumart.QP8.BackendEntityTree = function (
+  treeGroupCode,
+  treeElementId,
+  entityTypeCode,
+  parentEntityId,
+  actionCode,
+  options,
+  hostOptions
+) {
   Quantumart.QP8.BackendEntityTree.initializeBase(this, [treeElementId, options]);
   this._treeGroupCode = treeGroupCode;
   this._entityTypeCode = entityTypeCode;
@@ -81,98 +83,122 @@ Quantumart.QP8.BackendEntityTree = function(treeGroupCode, treeElementId, entity
 };
 
 Quantumart.QP8.BackendEntityTree.prototype = {
-  _treeGroupCode: '', // код группы, в которую входит дерево
-  _currentNodeId: -1, // идентификатор текущего узла
-  _allowMultipleNodeSelection: false, // признак, разрешающий множественный выбор узлов
-  _allowGlobalSelection: false, // признак разрешающий глобальный выбор элементов списка
-  _entityTypeCode: '', // код типа сущности
-  _parentEntityId: 0, // идентификатор родительской сущности
-  _actionCode: '', // код действия
-  _contextMenuCode: '', // код контекстного меню
-  _selectedEntitiesIDs: [], // идентификаторы выбранных сущностей
-  _allowSaveNodesSelection: true, // признак, разрешающий сохранять выделение узлов дерева при загрузке в него новых данных
-  _isDataLoaded: false, // признак того, что данные загружены в дерево
-  _contextMenuComponent: null, // компонент "Контекстное меню"
-  _treeManagerComponent: null, // менеджер деревьев сущностей
-  _rootEntityId: null, // при задании позволяет показать поддерево
+  _treeGroupCode: '',
+  _currentNodeId: -1,
+  _allowMultipleNodeSelection: false,
+  _allowGlobalSelection: false,
+  _entityTypeCode: '',
+  _parentEntityId: 0,
+  _actionCode: '',
+  _contextMenuCode: '',
+  _selectedEntitiesIDs: [],
+  _allowSaveNodesSelection: true,
+  _isDataLoaded: false,
+  _contextMenuComponent: null,
+  _treeManagerComponent: null,
+  _rootEntityId: null,
   _contextMenuActionCode: '',
   _filter: '',
   _hostFilter: '',
   _zIndex: 0,
 
-  get_treeGroupCode: function() {
+  // eslint-disable-next-line camelcase
+  get_treeGroupCode() {
     return this._treeGroupCode;
   },
-  set_treeGroupCode: function() {
+
+  // eslint-disable-next-line camelcase
+  set_treeGroupCode() {
+    window.console.error('TODO: delete this call');
   },
 
-  get_entityTypeCode: function() {
+  // eslint-disable-next-line camelcase
+  get_entityTypeCode() {
     return this._entityTypeCode;
   },
 
-  set_entityTypeCode: function(value) {
+  // eslint-disable-next-line camelcase
+  set_entityTypeCode(value) {
     this._entityTypeCode = value;
   },
 
-  get_parentEntityId: function() {
+  // eslint-disable-next-line camelcase
+  get_parentEntityId() {
     return this._parentEntityId;
   },
-  set_parentEntityId: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_parentEntityId(value) {
     this._parentEntityId = value;
   },
 
-  get_actionCode: function() {
+  // eslint-disable-next-line camelcase
+  get_actionCode() {
     return this._actionCode;
   },
 
-  set_actionCode: function(value) {
+  // eslint-disable-next-line camelcase
+  set_actionCode(value) {
     this._actionCode = value;
   },
 
-  get_allowMultipleNodeSelection: function() {
+  // eslint-disable-next-line camelcase
+  get_allowMultipleNodeSelection() {
     return this._allowMultipleNodeSelection;
   },
 
-  set_allowMultipleNodeSelection: function(value) {
+  // eslint-disable-next-line camelcase
+  set_allowMultipleNodeSelection(value) {
     this._allowMultipleNodeSelection = value;
   },
 
-  get_allowGlobalSelection: function() {
+  // eslint-disable-next-line camelcase
+  get_allowGlobalSelection() {
     return this._allowGlobalSelection;
   },
-  set_allowGlobalSelection: function(value) {
+
+  // eslint-disable-next-line camelcase
+  set_allowGlobalSelection(value) {
     this._allowGlobalSelection = value;
   },
 
-  get_selectedEntitiesIDs: function() {
+  // eslint-disable-next-line camelcase
+  get_selectedEntitiesIDs() {
     return this._selectedEntitiesIDs;
   },
 
-  set_selectedEntitiesIDs: function(value) {
+  // eslint-disable-next-line camelcase
+  set_selectedEntitiesIDs(value) {
     this._selectedEntitiesIDs = value;
   },
 
-  get_contextMenuCode: function() {
+  // eslint-disable-next-line camelcase
+  get_contextMenuCode() {
     return this._contextMenuCode;
   },
 
-  set_contextMenuCode: function(value) {
+  // eslint-disable-next-line camelcase
+  set_contextMenuCode(value) {
     this._contextMenuCode = value;
   },
 
-  get_treeManager: function() {
+  // eslint-disable-next-line camelcase
+  get_treeManager() {
     return this._treeManagerComponent;
   },
 
-  set_treeManager: function(value) {
+  // eslint-disable-next-line camelcase
+  set_treeManager(value) {
     this._treeManagerComponent = value;
   },
 
-  get_treeFieldId: function() {
+  // eslint-disable-next-line camelcase
+  get_treeFieldId() {
     return this._treeFieldId;
   },
 
-  set_treeFieldId: function(value) {
+  // eslint-disable-next-line camelcase
+  set_treeFieldId(value) {
     this._treeFieldId = value;
   },
 
@@ -184,60 +210,71 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   _onNodeContextMenuItemClickingHandler: null,
   _onNodeContextMenuHiddenHandler: null,
 
-  initialize: function() {
+  initialize() {
     Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'initialize');
-
     $('.fullTextBlock label').removeClass('hidden');
 
-    var treeComponent = this._treeComponent;
+    const treeComponent = this._treeComponent;
     treeComponent.showCheckBox = this._allowMultipleNodeSelection;
-    var $tree = $(this._treeElement);
+
+    const $tree = $(this._treeElement);
     $tree.bind('dataBound', this._onDataBoundHandler);
     if (!$q.isNullOrWhiteSpace(this._contextMenuCode)) {
-      var contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format('{0}_ContextMenu', this._treeElementId), {
-        targetElements: this._treeElement,
-        allowManualShowing: true,
-        zIndex: this._zIndex
-      });
+      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(
+        this._contextMenuCode,
+        `${this._treeElementId}_ContextMenu`,
+        {
+          targetElements: this._treeElement,
+          allowManualShowing: true,
+          zIndex: this._zIndex
+        }
+      );
 
       contextMenuComponent.initialize();
       contextMenuComponent.addMenuItemsToMenu(false);
 
-      var contextMenuEventType = contextMenuComponent.getContextMenuEventType();
-
+      const contextMenuEventType = $.fn.jeegoocontext.getContextMenuEventType();
       $tree.delegate(this.NODE_NEW_CLICKABLE_SELECTORS, contextMenuEventType, this._onContextMenuHandler);
 
-      contextMenuComponent.attachObserver(EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onNodeContextMenuShowingHandler);
-      contextMenuComponent.attachObserver(EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onNodeContextMenuItemClickingHandler);
-      contextMenuComponent.attachObserver(EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onNodeContextMenuHiddenHandler);
+      contextMenuComponent.attachObserver(
+        window.EVENT_TYPE_CONTEXT_MENU_SHOWING,
+        this._onNodeContextMenuShowingHandler
+      );
+
+      contextMenuComponent.attachObserver(
+        window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING,
+        this._onNodeContextMenuItemClickingHandler
+      );
+
+      contextMenuComponent.attachObserver(
+        window.EVENT_TYPE_CONTEXT_MENU_HIDDEN,
+        this._onNodeContextMenuHiddenHandler
+      );
 
       this._contextMenuComponent = contextMenuComponent;
     }
 
-    treeComponent = null;
-    $tree = null;
-
     this.refreshTree();
   },
 
-  _getCurrentAction: function() {
+  _getCurrentAction() {
     return $a.getBackendActionByCode(this._actionCode);
   },
 
-  getNodeByEntityId: function(entityId, parentNodeElem) {
+  getNodeByEntityId(entityId, parentNodeElem) {
     return this.getNode(this.convertEntityIdToNodeCode(entityId), parentNodeElem);
   },
 
-  getNodesByEntitiesIDs: function(entitiesIDs) {
-    var selectedNodeElems = [];
+  getNodesByEntitiesIDs(entitiesIDs) {
+    const selectedNodeElems = [];
 
     if (!$q.isNullOrEmpty(entitiesIDs)) {
-      var self = this;
-      var $nodes = this.getAllNodes();
+      const that = this;
+      const $nodes = this.getAllNodes();
 
       $nodes.each(
-        function(index, nodeElem) {
-          if (Array.contains(entitiesIDs, $q.toString(self.getEntityId(nodeElem)))) {
+        (index, nodeElem) => {
+          if (Array.contains(entitiesIDs, $q.toString(that.getEntityId(nodeElem)))) {
             Array.add(selectedNodeElems, nodeElem);
           }
         }
@@ -247,14 +284,12 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     return selectedNodeElems;
   },
 
-  getParentNode: function(node) {
-    var $parentNode = Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'getParentNode', [node]);
-
+  getParentNode(node) {
+    let $parentNode = Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'getParentNode', [node]);
     if ($q.isNullOrEmpty($parentNode) && $q.isString(node)) {
-      var entityTypeCode = this._entityTypeCode;
-      var entityId = this.convertNodeCodeToEntityId(node);
-      var parentId = $o.getParentEntityId(entityTypeCode, entityId);
-
+      const entityTypeCode = this._entityTypeCode;
+      const entityId = this.convertNodeCodeToEntityId(node);
+      const parentId = $o.getParentEntityId(entityTypeCode, entityId);
       if (parentId) {
         $parentNode = this.getNode(this.convertEntityIdToNodeCode(parentId));
       }
@@ -263,90 +298,71 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     return $parentNode;
   },
 
-  getParentNodesByEntitiesIDs: function(entitiesIDs) {
-    var entityCount = entitiesIDs.length;
+  getParentNodesByEntitiesIDs(entitiesIDs) {
+    const entityCount = entitiesIDs.length;
 
     if (entityCount <= 0) {
       return $([]);
     }
 
     // Получаем коды родительских узлов
-    var parentNodeCodes = [];
+    let parentNodeCodes = [];
 
-    for (var entityIndex = 0; entityIndex < entityCount; entityIndex++) {
-      var entityId = entitiesIDs[entityIndex];
-      var $node = this.getNodeByEntityId(entityId);
+    for (let entityIndex = 0; entityIndex < entityCount; entityIndex++) {
+      const entityId = entitiesIDs[entityIndex];
+      const $node = this.getNodeByEntityId(entityId);
 
       if (!$q.isNullOrEmpty($node)) {
-        var $parentNode = this.getParentNode($node);
-
+        const $parentNode = this.getParentNode($node);
         if (!$q.isNullOrEmpty($parentNode)) {
-          var parentNodeCode = this.getNodeValue($parentNode);
+          const parentNodeCode = this.getNodeValue($parentNode);
           Array.add(parentNodeCodes, parentNodeCode);
         }
-
-        $parentNode = null;
       }
     }
 
-    if (parentNodeCodes.length > 0) {
+    if (parentNodeCodes.length) {
       parentNodeCodes = Array.distinct(parentNodeCodes);
     } else {
       parentNodeCodes = [this.ROOT_NODE_CODE];
     }
 
-    // Формируем список родительских узлов с информацией об уровне вложенности
-    var parentNodeInfos = [];
-
-    for (var parentNodeCodeIndex = 0; parentNodeCodeIndex < parentNodeCodes.length; parentNodeCodeIndex++) {
-      var parentNodeCode = parentNodeCodes[parentNodeCodeIndex];
-      var level = this.getNodeLevel(parentNodeCode);
-
-      Array.add(parentNodeInfos, { nodeCode: parentNodeCode, level: level });
+    const parentNodeInfos = [];
+    for (let parentNodeCodeIndex = 0; parentNodeCodeIndex < parentNodeCodes.length; parentNodeCodeIndex++) {
+      const parentNodeCode = parentNodeCodes[parentNodeCodeIndex];
+      const level = this.getNodeLevel(parentNodeCode);
+      Array.add(parentNodeInfos, { nodeCode: parentNodeCode, level });
     }
 
     $q.clearArray(parentNodeCodes);
 
-    // Формируем список уровней вложенности
-    var levels = [];
-
-    for (var parentNodeInfoIndex = 0; parentNodeInfoIndex < parentNodeInfos.length; parentNodeInfoIndex++) {
-      var parentNodeInfo = parentNodeInfos[parentNodeInfoIndex];
-      var level = parentNodeInfo.level;
-
+    let levels = [];
+    for (let parentNodeInfoIndex = 0; parentNodeInfoIndex < parentNodeInfos.length; parentNodeInfoIndex++) {
+      const parentNodeInfo = parentNodeInfos[parentNodeInfoIndex];
+      const level = parentNodeInfo.level;
       if (!Array.contains(levels, level)) {
         Array.add(levels, level);
       }
     }
 
     levels = levels.sort();
-
-    // Очищаем список родительских узлов от узлов, которые являются дочерними
-    // по отношению к узлам, содержащимся в списке
-    var levelCount = levels.length;
+    const levelCount = levels.length;
 
     if (levelCount > 1) {
-      for (var levelIndex = levelCount - 2; levelIndex >= 0; levelIndex--) {
-        var level = levels[levelIndex];
-        var nodeInfos = $.grep(parentNodeInfos, function(parentNodeInfo) {
-          return (parentNodeInfo.level == level);
-        });
-
-        var nodeInfoCount = nodeInfos.length;
-        var childNodeInfos = $.grep(parentNodeInfos, function(parentNodeInfo) {
-          return (parentNodeInfo.level > level);
-        });
-
-        var childNodeInfoCount = childNodeInfos.length;
-
+      for (let levelIndex = levelCount - 2; levelIndex >= 0; levelIndex--) {
+        const level = levels[levelIndex];
+        const nodeInfos = $.grep(parentNodeInfos, parentNodeInfo => parentNodeInfo.level === level);
+        const nodeInfoCount = nodeInfos.length;
+        const childNodeInfos = $.grep(parentNodeInfos, parentNodeInfo => parentNodeInfo.level > level);
+        const childNodeInfoCount = childNodeInfos.length;
         if (childNodeInfoCount > 0) {
-          for (var nodeInfoIndex = 0; nodeInfoIndex < nodeInfoCount; nodeInfoIndex++) {
-            var nodeInfo = nodeInfos[nodeInfoIndex];
-            var $node = this.getNode(nodeInfo.nodeCode);
+          for (let nodeInfoIndex = 0; nodeInfoIndex < nodeInfoCount; nodeInfoIndex++) {
+            const nodeInfo = nodeInfos[nodeInfoIndex];
+            const $node = this.getNode(nodeInfo.nodeCode);
 
-            for (var childNodeInfoIndex = childNodeInfoCount - 1; childNodeInfoIndex >= 0; childNodeInfoIndex--) {
-              var childNodeInfo = childNodeInfos[childNodeInfoIndex];
-              var $childNode = this.getNode(childNodeInfo.nodeCode, $node);
+            for (let childNodeInfoIndex = childNodeInfoCount - 1; childNodeInfoIndex >= 0; childNodeInfoIndex--) {
+              const childNodeInfo = childNodeInfos[childNodeInfoIndex];
+              const $childNode = this.getNode(childNodeInfo.nodeCode, $node);
 
               if (!$q.isNullOrEmpty($childNode)) {
                 Array.remove(parentNodeInfos, childNodeInfo);
@@ -362,24 +378,22 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     $q.clearArray(levels);
 
-    var self = this;
-    var parentNodeElems = $.map(parentNodeInfos, function(parentNodeInfo) {
-      return self.getNode(parentNodeInfo.nodeCode).get(0);
-    });
+    const that = this;
+    const parentNodeElems = $.map(parentNodeInfos, parentNodeInfo => that.getNode(parentNodeInfo.nodeCode).get(0));
 
     $q.clearArray(parentNodeInfos);
     return $q.toJQuery(parentNodeElems);
   },
 
-  _isSearchQueryEmpty: function(searchQuery) {
-    var query = searchQuery || this._searchQuery;
+  _isSearchQueryEmpty(searchQuery) {
+    const query = searchQuery || this._searchQuery;
 
     if ($q.isNullOrWhiteSpace(query)) {
       return true;
     }
 
-    var i, j;
-    var jsonData = JSON.parse(query);
+    let i, j;
+    const jsonData = JSON.parse(query);
 
     for (i = 0; i < jsonData.length; i++) {
       for (j = 0; j < jsonData[i].QueryParams.length; j++) {
@@ -392,14 +406,13 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     return true;
   },
 
-  _drawData: function(entities, $parentNode, irn) {
+  _drawData(entities, $parentNode, irn) {
     if ($q.isNullOrEmpty(entities)) {
       return;
     }
 
-    var dataItems = this.getTreeViewItemCollectionFromEntityObjects(entities);
-
-    if (dataItems.length == 0) {
+    let dataItems = this.getTreeViewItemCollectionFromEntityObjects(entities);
+    if (!dataItems.length) {
       $('.t-icon', $parentNode).hide();
       dataItems = null;
       return;
@@ -409,9 +422,8 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     this._extendNodeElements($parentNode, entities);
     $q.clearArray(dataItems);
 
-    $(entities).each(function(index, ent) {
-      var $currentNode = this.getNodeByEntityId(ent.Id);
-
+    $(entities).each((index, ent) => {
+      const $currentNode = this.getNodeByEntityId(ent.Id);
       this._drawData(ent.Children, $currentNode, false);
       if (!this._isSearchQueryEmpty()) {
         if (ent.IsHighlighted) {
@@ -422,19 +434,19 @@ Quantumart.QP8.BackendEntityTree.prototype = {
           $currentNode.find('.t-icon').first().hide();
         }
       }
-    }.bind(this));
+    });
   },
 
-  _getEntityChildListSuccess: function(options, data) {
+  _getEntityChildListSuccess(options, data) {
     if (!this._stopDeferredOperations) {
       this._drawData(data, options.$parentNode, options.isRootNode);
       this._hideAjaxLoadingIndicatorForNode(options.$parentNode);
       this._raiseDataBoundEvent();
 
       if (options.maxExpandLevel !== 0) {
-        $parentNode.find('> UL > LI').each((function(index, $childNode) {
+        options.$parentNode.find('> UL > LI').each((index, $childNode) => {
           this.addNodesToParentNode($childNode, options.maxExpandLevel);
-        }).bind(this));
+        });
       }
 
       if (options.level === options.maxExpandLevel || options.maxExpandLevel === 0) {
@@ -443,7 +455,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
   },
 
-  _getEntityChildListError: function(options, jqXHR) {
+  _getEntityChildListError(options, jqXHR) {
     if (!this._stopDeferredOperations) {
       this._raiseDataBoundEvent();
       $q.processGenericAjaxError(jqXHR);
@@ -451,11 +463,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
   },
 
-  addNodesToParentNode: function(parentNode, maxExpandLevel, callback) {
-    var $parentNode = this.getNode(parentNode);
-    var isRootNode = this.isRootNode($parentNode);
-    var level = 0; // уровень вложенности
-    var entityId;
+  addNodesToParentNode(parentNode, maxExpandLevel, callback) {
+    const $parentNode = this.getNode(parentNode);
+    const isRootNode = this.isRootNode($parentNode);
+    let level = 0;
+    let entityId;
 
     level = this.getNodeLevel($parentNode);
     if (isRootNode) {
@@ -465,21 +477,21 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       entityId = this.getEntityId($parentNode);
     }
 
-    var options = {
-      $parentNode: $parentNode,
-      isRootNode: isRootNode,
-      maxExpandLevel: maxExpandLevel,
-      level: level,
-      callback: callback
+    const options = {
+      $parentNode,
+      isRootNode,
+      maxExpandLevel,
+      level,
+      callback
     };
 
-    if (level < maxExpandLevel || maxExpandLevel == 0) {
+    if (level < maxExpandLevel || maxExpandLevel === 0) {
       this._raiseDataBindingEvent();
       this._showAjaxLoadingIndicatorForNode($parentNode);
-      var returnSelf = (this._rootEntityId != null) && isRootNode;
+      const returnSelf = this._rootEntityId && isRootNode;
 
       this._getEntityChildList(entityId,
-        returnSelf,
+        !!returnSelf,
         this._getEntityChildListSuccess.bind(this, options),
         this._getEntityChildListError.bind(this, options));
     } else {
@@ -487,75 +499,77 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
   },
 
-  _refreshNodeInner: function($node, loadChildNodes, callback) {
-    var isRootNode = this.isRootNode($node);
-
+  _refreshNodeInner($node, loadChildNodes, callback) {
+    const isRootNode = this.isRootNode($node);
     this._raiseDataBindingEvent();
     this._showAjaxLoadingIndicatorForNode($node);
 
     if (isRootNode) {
       this.addNodesToParentNode($node, 0, callback);
     } else {
-      var self = this;
-
-      $o.getEntityByTypeAndIdForTree(this._entityTypeCode, this.getEntityId($node), loadChildNodes, this._filter, function(data) {
-        if (self._stopDeferredOperations) {
-          return;
-        }
-
-        var entity = data;
-        if (entity) {
-          var dataItem = self.getTreeViewItemFromEntityObject(entity);
-          self._renderNode($node, dataItem, isRootNode);
-          self._extendNodeElement($node, entity);
-          dataItem = null;
-
-          var childEntities = entity.Children;
-          var dataItems = self.getTreeViewItemCollectionFromEntityObjects(childEntities);
-          if (dataItems.length == 0) {
-            self._hideAjaxLoadingIndicatorForNode($node);
-            dataItems = null;
+      const that = this;
+      $o.getEntityByTypeAndIdForTree(
+        this._entityTypeCode,
+        this.getEntityId($node),
+        loadChildNodes,
+        this._filter,
+        data => {
+          if (that._stopDeferredOperations) {
             return;
           }
 
-          self._renderChildNodes($node, dataItems, isRootNode);
-          $q.clearArray(dataItems);
+          const entity = data;
+          if (entity) {
+            const dataItem = that.getTreeViewItemFromEntityObject(entity);
+            that._renderNode($node, dataItem, isRootNode);
+            that._extendNodeElement($node, entity);
 
-          self._extendNodeElements($node, childEntities);
-          $q.clearArray(childEntities);
+            const childEntities = entity.Children;
+            const dataItems = that.getTreeViewItemCollectionFromEntityObjects(childEntities);
+            if (!dataItems.length) {
+              that._hideAjaxLoadingIndicatorForNode($node);
+              return;
+            }
+
+            that._renderChildNodes($node, dataItems, isRootNode);
+            $q.clearArray(dataItems);
+
+            that._extendNodeElements($node, childEntities);
+            $q.clearArray(childEntities);
+          }
+
+          that._hideAjaxLoadingIndicatorForNode($node);
+          that._raiseDataBoundEvent();
+          $q.callFunction(callback);
+        }, jqXHR => {
+          if (that._stopDeferredOperations) {
+            return;
+          }
+
+          that._hideAjaxLoadingIndicatorForNode($node);
+          that._raiseDataBoundEvent();
+
+          $q.processGenericAjaxError(jqXHR);
+          $q.callFunction(callback);
         }
-
-        self._hideAjaxLoadingIndicatorForNode($node);
-        self._raiseDataBoundEvent();
-        $q.callFunction(callback);
-      }, function(jqXHR) {
-        if (self._stopDeferredOperations) {
-          return;
-        }
-
-        self._hideAjaxLoadingIndicatorForNode($node);
-        self._raiseDataBoundEvent();
-
-        $q.processGenericAjaxError(jqXHR);
-        $q.callFunction(callback);
-      });
+      );
     }
   },
 
-  removeNode: function(node) {
-    var parentNode = this.getParentNode(node);
-    var options = {};
+  removeNode(node) {
+    const parentNode = this.getParentNode(node);
+    const options = {};
 
-    var $node = this.getNode(node);
-    var entityId = this.convertNodeCodeToEntityId($node);
-    var selectedEntitiesIDs = this._selectedEntitiesIDs;
+    const $node = this.getNode(node);
+    const entityId = this.convertNodeCodeToEntityId($node);
+    const selectedEntitiesIDs = this._selectedEntitiesIDs;
 
     if ($q.isArray(selectedEntitiesIDs) && Array.contains(selectedEntitiesIDs, entityId)) {
       Array.remove(selectedEntitiesIDs, entityId);
     }
 
     if ($node) {
-      if ($node.siblings().length > 0) {
+      if ($node.siblings().length) {
         Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'removeNode', [node]);
       } else {
         this.refreshNode(parentNode, options);
@@ -563,18 +577,26 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
   },
 
-  selectNode: function(nodeElem, saveOtherNodesSelection) {
-    if ($q.isNull(saveOtherNodesSelection)) {
-      saveOtherNodesSelection = false;
-    }
-
-    var $node = this.getNode(nodeElem);
+  selectNode(nodeElem, saveOtherNodesSelection) {
+    const $node = this.getNode(nodeElem);
     if (saveOtherNodesSelection) {
       $node.find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME);
       $node.find(this.NODE_CHECKBOX_SELECTORS).prop('checked', this.isNodeSelected($node));
     } else {
-      this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', false);
-      $node.find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', true);
+      this.getAllNodes()
+        .find(this.NODE_WRAPPER_SELECTOR)
+        .removeClass(this.NODE_SELECTED_CLASS_NAME)
+        .end()
+        .find(this.NODE_CHECKBOX_SELECTORS)
+        .prop('checked', false);
+
+      $node
+        .find(this.NODE_WRAPPER_SELECTOR)
+        .addClass(this.NODE_SELECTED_CLASS_NAME)
+        .end()
+        .find(this.NODE_CHECKBOX_SELECTORS)
+        .prop('checked', true);
+
       if (!this._allowMultipleNodeSelection) {
         this._resetNodeSelectionState();
       }
@@ -584,8 +606,8 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     this._executePostSelectActions();
   },
 
-  deselectNode: function(node) {
-    var $node = this.getNode(node);
+  deselectNode(node) {
+    const $node = this.getNode(node);
 
     $node.find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_SELECTED_CLASS_NAME);
     $node.find(this.NODE_CHECKBOX_SELECTORS).prop('checked', false);
@@ -594,26 +616,44 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     this._executePostSelectActions();
   },
 
-  selectNodes: function(nodeElems) {
-    this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', false);
+  selectNodes(nodeElems) {
+    this
+      .getAllNodes()
+      .find(this.NODE_WRAPPER_SELECTOR)
+      .removeClass(this.NODE_SELECTED_CLASS_NAME)
+      .end()
+      .find(this.NODE_CHECKBOX_SELECTORS)
+      .prop('checked', false);
+
     if (!$q.isNullOrEmpty(nodeElems)) {
-      $q.toJQuery(nodeElems).find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', true);
+      $q.toJQuery(nodeElems)
+        .find(this.NODE_WRAPPER_SELECTOR)
+        .addClass(this.NODE_SELECTED_CLASS_NAME)
+        .end()
+        .find(this.NODE_CHECKBOX_SELECTORS)
+        .prop('checked', true);
     }
 
     this._saveNodeSelectionState();
     this._executePostSelectActions();
   },
 
-  selectAllNodes: function(value) {
-    this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', value);
+  selectAllNodes(value) {
+    this
+      .getAllNodes()
+      .find(this.NODE_WRAPPER_SELECTOR)
+      .addClass(this.NODE_SELECTED_CLASS_NAME)
+      .end()
+      .find(this.NODE_CHECKBOX_SELECTORS)
+      .prop('checked', value);
+
     this._saveNodeSelectionState();
     this._executePostSelectActions();
   },
 
-  isNodeSelected: function(node) {
-    var $node = this.getNode(node);
-    var isSelected = false;
-
+  isNodeSelected(node) {
+    const $node = this.getNode(node);
+    let isSelected = false;
     if (!$q.isNullOrEmpty($node)) {
       isSelected = $node.find(this.NODE_WRAPPER_SELECTOR).hasClass(this.NODE_SELECTED_CLASS_NAME);
     }
@@ -621,13 +661,13 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     return isSelected;
   },
 
-  selectRoot: function() {
+  selectRoot() {
     this.selectNode(this.getNodeByEntityId(this._rootEntityId));
   },
 
-  convertNodeCodeToEntityId: function(nodeCode) {
-    var entityId = -1;
-    if (nodeCode == this.ROOT_NODE_CODE) {
+  convertNodeCodeToEntityId(nodeCode) {
+    let entityId = -1;
+    if (nodeCode === this.ROOT_NODE_CODE) {
       entityId = null;
     } else {
       entityId = $q.toInt(nodeCode, -1);
@@ -636,9 +676,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     return entityId;
   },
 
-  convertEntityIdToNodeCode: function(entityId) {
-    var nodeCode = '';
-    if (entityId == 0 || entityId == null || entityId == '0') {
+  convertEntityIdToNodeCode(entityId) {
+    let nodeCode = '';
+    if (!entityId || entityId === '0') {
       nodeCode = this.ROOT_NODE_CODE;
     } else {
       nodeCode = $q.toString(entityId, '');
@@ -647,107 +687,88 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     return nodeCode;
   },
 
-  getEntityId: function(nodeElem) {
-    var entityId = -1;
-    var $node = this.getNode(nodeElem);
+  getEntityId(nodeElem) {
+    let entityId = -1;
+    const $node = this.getNode(nodeElem);
 
     if (!$q.isNullOrEmpty($node)) {
-      var nodeCode = this.getNodeValue($node);
+      const nodeCode = this.getNodeValue($node);
       entityId = this.convertNodeCodeToEntityId(nodeCode);
     }
 
     return entityId;
   },
 
-  getEntityName: function(nodeElem) {
-    var entityName = '';
-    var $node = this.getNode(nodeElem);
+  getEntityName(nodeElem) {
+    let entityName = '';
+    const $node = this.getNode(nodeElem);
 
     if (!$q.isNullOrEmpty($node)) {
-      var entityName = $q.toString($node.data('entity_name'));
+      entityName = $q.toString($node.data('entity_name'));
     }
 
     return entityName;
   },
 
-  getEntitiesFromNodes: function(nodeElems) {
-    var entities = [];
-    var $nodes = $q.toJQuery(nodeElems);
-    var self = this;
+  getEntitiesFromNodes(nodeElems) {
+    const entities = [];
+    const $nodes = $q.toJQuery(nodeElems);
+    const that = this;
 
-    $nodes.each(
-      function(index) {
-        var $node = $nodes.eq(index);
-        var entityId = self.getEntityId($node);
-        var entityName = self.getEntityName($node);
-
-        if (entityId != -1) {
-          Array.add(entities, { Id: entityId, Name: entityName });
-        }
+    $nodes.each(index => {
+      const $node = $nodes.eq(index);
+      const entityId = that.getEntityId($node);
+      const entityName = that.getEntityName($node);
+      if (entityId !== -1) {
+        Array.add(entities, { Id: entityId, Name: entityName });
       }
-    );
+    });
 
     return entities;
   },
 
-  getSelectedEntities: function() {
+  getSelectedEntities() {
     return this.getEntitiesFromNodes(this.getSelectedNodes());
   },
 
-  checkExistEntityInCurrentPage: function(entityId) {
-    var result = false;
-    var nodeCode = this.convertEntityIdToNodeCode(entityId);
-    var $node = this.getNode(nodeCode);
-
-    if (!$q.isNullOrEmpty($node)) {
-      result = true;
-    }
-
-    return result;
+  checkExistEntityInCurrentPage(entityId) {
+    const nodeCode = this.convertEntityIdToNodeCode(entityId);
+    return !!this.getNode(nodeCode);
   },
 
-  searchByTerm: function(options) {
+  searchByTerm(options) {
     if (options && $q.isObject(options)) {
       this._searchQuery = options.searchQuery;
     }
 
-    var treeComponent = this._treeComponent;
-
-    if (treeComponent) {
+    if (this._treeComponent) {
       this.refreshTree();
     }
-
-    treeComponent = null;
   },
 
-  _saveNodeSelectionState: function() {
-    var self = this;
-    var $nodes = this.getAllNodes();
-
-    $nodes.each(function(index) {
-      var $node = $nodes.eq(index);
-      var isSelected = self.isNodeSelected($node);
-      var entityId = self.getEntityId($node);
-
-      if (Array.contains(self._selectedEntitiesIDs, entityId)) {
+  _saveNodeSelectionState() {
+    const that = this;
+    const $nodes = this.getAllNodes();
+    $nodes.each(index => {
+      const $node = $nodes.eq(index);
+      const isSelected = that.isNodeSelected($node);
+      const entityId = that.getEntityId($node);
+      if (Array.contains(that._selectedEntitiesIDs, entityId)) {
         if (!isSelected) {
-          Array.remove(self._selectedEntitiesIDs, entityId);
+          Array.remove(that._selectedEntitiesIDs, entityId);
         }
       } else if (isSelected) {
-        Array.add(self._selectedEntitiesIDs, entityId);
+        Array.add(that._selectedEntitiesIDs, entityId);
       }
     });
-
-    $nodes = null;
   },
 
-  _restoreNodeSelectionState: function() {
-    var self = this;
-
-    var selectedEntitiesIDs = this._selectedEntitiesIDs;
-    var selectedNodeElems = [];
-    this.getAllNodes().each(function(index, nodeElem) {
-      var entityId = self.getEntityId($(nodeElem));
+  _restoreNodeSelectionState() {
+    const that = this;
+    const selectedEntitiesIDs = this._selectedEntitiesIDs;
+    const selectedNodeElems = [];
+    this.getAllNodes().each((index, nodeElem) => {
+      const entityId = that.getEntityId($(nodeElem));
       if (Array.contains(selectedEntitiesIDs, entityId)) {
         Array.add(selectedNodeElems, nodeElem);
       }
@@ -756,93 +777,91 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     this.selectNodes(selectedNodeElems);
   },
 
-  _resetNodeSelectionState: function() {
+  _resetNodeSelectionState() {
     $q.clearArray(this._selectedEntitiesIDs);
   },
 
-  fillTreeViewItemFromEntityObject: function(dataItem, entity) {
-    var icon = this._getIcon(entity);
+  fillTreeViewItemFromEntityObject(dataItem, entity) {
+    const icon = this._getIcon(entity);
+    const iconUrl = icon.left(7).toLowerCase() === 'http://' ? icon : window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon;
+    const result = {
+      Value: entity.Id,
+      Text: entity.Alias,
+      ImageUrl: iconUrl,
+      LoadOnDemand: entity.HasChildren,
+      Expanded: entity.Expanded,
+      Enabled: entity.Enabled
+    };
 
-    var iconUrl = (icon.left(7).toLowerCase() !== 'http://') ? window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon : icon;
-
-    dataItem.Value = entity.Id;
-    dataItem.Text = entity.Alias;
-    dataItem.ImageUrl = iconUrl;
-    dataItem.LoadOnDemand = entity.HasChildren;
-    dataItem.Expanded = entity.Expanded;
-    dataItem.Enabled = entity.Enabled;
-
-    if (entity.Checked === true || (!$q.isNullOrEmpty(this._selectedEntitiesIDs) && Array.contains(this._selectedEntitiesIDs, +entity.Id || 0))) {
-      dataItem.Checked = true;
-      dataItem.Selected = true;
+    if (entity.Checked
+      || (!$q.isNullOrEmpty(this._selectedEntitiesIDs) && Array.contains(this._selectedEntitiesIDs, +entity.Id || 0))
+    ) {
+      result.Checked = true;
+      result.Selected = true;
     }
 
-    return dataItem;
+    return result;
   },
 
-  getTreeViewItemFromEntityObject: function(entity) {
-    var dataItem = new Object();
-    this.fillTreeViewItemFromEntityObject(dataItem, entity);
-    return dataItem;
+  getTreeViewItemFromEntityObject(entity) {
+    return this.fillTreeViewItemFromEntityObject({}, entity);
   },
 
-  fillTreeViewItemCollectionFromEntityObjects: function(dataItems, entities) {
-    var self = this;
-    var entityCount = 0;
-
+  fillTreeViewItemCollectionFromEntityObjects(dataItems, entities) {
+    const that = this;
+    let entityCount = 0;
     if (entities) {
       entityCount = entities.length;
     }
 
     if (entityCount > 0) {
-      $.each(entities, function(index, entity) {
-        var dataItem = self.getTreeViewItemFromEntityObject(entity);
+      $.each(entities, (index, entity) => {
+        const dataItem = that.getTreeViewItemFromEntityObject(entity);
         Array.add(dataItems, dataItem);
       });
     }
   },
 
-  getTreeViewItemCollectionFromEntityObjects: function(entities) {
-    var dataItems = [];
+  getTreeViewItemCollectionFromEntityObjects(entities) {
+    const dataItems = [];
     this.fillTreeViewItemCollectionFromEntityObjects(dataItems, entities);
     return dataItems;
   },
 
-  _extendNodeElement: function(nodeElem, entity) {
-    var $node = this.getNode(nodeElem);
+  _extendNodeElement(nodeElem, entity) {
+    const $node = this.getNode(nodeElem);
     if (!$q.isNullOrEmpty($node)) {
       $node.data('entity_id', entity.Id);
       $node.data('entity_name', entity.Alias);
 
-      var $icon = $node.find('> DIV > SPAN.t-in > IMG.t-image');
+      const $icon = $node.find('> DIV > SPAN.t-in > IMG.t-image');
       $icon.attr('title', entity.LockedByToolTip);
     }
   },
 
-  _extendNodeElements: function(parentNodeElem, entities) {
-    var self = this;
-    var $parentNode = $q.toJQuery(parentNodeElem);
-
+  _extendNodeElements(parentNodeElem, entities) {
+    const that = this;
+    const $parentNode = $q.toJQuery(parentNodeElem);
     $.each(entities || [],
-      function(index, entity) {
-        var $node = self.getNode(entity.Id, $parentNode);
-        self._extendNodeElement($node, entity);
+      (index, entity) => {
+        const $node = that.getNode(entity.Id, $parentNode);
+        that._extendNodeElement($node, entity);
       }
     );
   },
 
-  _raiseDataBindingEvent: function() {
-    var action = this._getCurrentAction();
+  _raiseDataBindingEvent() {
+    const action = this._getCurrentAction();
 
     if (action) {
-      var eventArgs = $a.getEventArgsFromAction(action);
+      const eventArgs = $a.getEventArgsFromAction(action);
 
       eventArgs.set_isMultipleEntities(true);
       eventArgs.set_entityTypeCode(this._entityTypeCode);
       eventArgs.set_entities(this.getSelectedEntities());
       eventArgs.set_parentEntityId(this._parentEntityId);
 
-      this.notify(EVENT_TYPE_ENTITY_TREE_DATA_BINDING, eventArgs);
+      this.notify(window.EVENT_TYPE_ENTITY_TREE_DATA_BINDING, eventArgs);
     }
 
     if (this._isDataLoaded) {
@@ -856,13 +875,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
   },
 
-  _raiseDataBoundEvent: function() {
+  _raiseDataBoundEvent() {
     this._isDataLoaded = true;
-
-    var action = this._getCurrentAction();
-
+    const action = this._getCurrentAction();
     if (action) {
-      var eventArgs = $a.getEventArgsFromAction(action);
+      const eventArgs = $a.getEventArgsFromAction(action);
       eventArgs.set_isMultipleEntities(true);
       eventArgs.set_entityTypeCode(this._entityTypeCode);
       eventArgs.set_entities(this.getSelectedEntities());
@@ -873,36 +890,32 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     this._restoreNodeSelectionState();
   },
 
-  _executePostSelectActions: function () {
+  _executePostSelectActions() {
     if (this.articlesCountId) {
-      $('#' + this.articlesCountId).text(this._selectedEntitiesIDs.length);
+      $(`#${this.articlesCountId}`).text(this._selectedEntitiesIDs.length);
     }
 
     this._raiseSelectEvent();
   },
 
-  _raiseSelectEvent: function() {
-    var nodes = this.getSelectedNodes();
-    var action = this._getCurrentAction();
-
+  _raiseSelectEvent() {
+    const action = this._getCurrentAction();
     if (action) {
-      var eventArgs = $a.getEventArgsFromAction(action);
+      const eventArgs = $a.getEventArgsFromAction(action);
       eventArgs.set_isMultipleEntities(true);
       eventArgs.set_entityTypeCode(this._entityTypeCode);
       eventArgs.set_entities(this.getSelectedEntities());
       eventArgs.set_parentEntityId(this._parentEntityId);
       this.notify(window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED, eventArgs);
     }
-
-    eventArgs = null;
   },
 
-  _getEntityChildList: function(entityId, returnSelf, succ, fail) {
+  _getEntityChildList(entityId, returnSelf, succ, fail) {
     return $o.getEntityChildList({
       entityTypeCode: this._entityTypeCode,
       parentEntityId: this._parentEntityId,
-      entityId: entityId,
-      returnSelf: returnSelf,
+      entityId,
+      returnSelf,
       filter: this._filter,
       hostFilter: this._hostFilter,
       selectItemIDs: this._selectedEntitiesIDs,
@@ -910,9 +923,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }, succ, fail);
   },
 
-  _getIcon: function(entity) {
+  _getIcon(entity) {
     if ($q.isNullOrEmpty(entity.IconUrl)) {
-      var icon = 'article_node.gif';
+      let icon = 'article_node.gif';
       if (entity.LockedByAnyone) {
         if (entity.LockedByYou) {
           icon = 'article_node_locked.gif';
@@ -922,21 +935,15 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       }
 
       return icon;
-    } else {
-      return entity.IconUrl;
     }
+
+    return entity.IconUrl;
   },
 
-  executeAction: function(node, actionCode, options) {
-    var $node = this.getNode(node);
-    options = $.extend({
-      ctrlKey: false,
-      shiftKey: false
-    }, options);
-
+  executeAction(node, actionCode) {
+    const $node = this.getNode(node);
     if (!$q.isNullOrEmpty($node)) {
-      var action = $a.getBackendActionByCode(actionCode);
-
+      const action = $a.getBackendActionByCode(actionCode);
       if (!action) {
         $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
         return;
@@ -948,22 +955,14 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       }
 
       if (actionCode === window.ACTION_TYPE_SELECT_CHILD_ARTICLES) {
-        var nodesToSelect = [].filter.call(this.getAllNodes(), function(entry) {
-          return this.getEntityId(entry) === this.getEntityId(node);
-        }, this);
-
         this._treeComponent.nodeCheckExcludeSelf(node, true, false, true);
       }
 
       if (actionCode === window.ACTION_TYPE_UNSELECT_CHILD_ARTICLES) {
-        var nodesToSelect = [].filter.call(this.getAllNodes(), function(entry) {
-          return this.getEntityId(entry) === this.getEntityId(node);
-        }, this);
-
         this._treeComponent.nodeCheckExcludeSelf(node, false, false, true);
       }
 
-      var context = (actionCode === window.ACTION_CODE_ADD_NEW_CHILD_ARTICLE) ? {
+      const context = actionCode === window.ACTION_CODE_ADD_NEW_CHILD_ARTICLE ? {
         additionalUrlParameters: {
           isChild: true,
           fieldId: this._treeFieldId,
@@ -971,22 +970,21 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         }
       } : null;
 
-      var params = new Quantumart.QP8.BackendActionParameters({
+      const params = new Quantumart.QP8.BackendActionParameters({
         entityTypeCode: this._entityTypeCode,
         entityId: this.getEntityId($node),
         entityName: this.getEntityName($node),
         parentEntityId: this._parentEntityId,
-        context: context
+        context
       });
 
       params.correct(action);
-      var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
-
+      const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
       if (this._hostIsWindow) {
-        var message = Quantumart.QP8.Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
+        const message = Quantumart.QP8.Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
 
         if (message) {
-          window.alert(message);
+          $q.alertError(message);
         } else {
           eventArgs.set_isWindow(true);
           this.notify(window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, eventArgs);
@@ -994,106 +992,78 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       } else {
         this.notify(window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, eventArgs);
       }
-
-      params = null;
-      eventArgs = null;
-      action = null;
     }
   },
 
-  _createDataQueryParams: function() {
-    var params = {};
-
-    if (this._searchQuery) {
-      params.searchQuery = this._searchQuery;
-    }
-
-    return params;
-  },
-
-  _onDataBinding: function(sender) {
-    sender.data = $.extend(sender.data, this._createDataQueryParams());
+  _onDataBinding(sender) {
     this.addNodesToParentNode(sender, 0);
   },
 
-  _onNodeClicking: function(e) {
-    var $element = $(e.currentTarget);
-    var $node = $($element.closest('.t-item')[0]);
-
+  _onNodeClicking(e) {
+    const $element = $(e.currentTarget);
+    const $node = $($element.closest('.t-item')[0]);
     if (!this._treeComponent.shouldNavigate($element)) {
-      $node = null;
       e.preventDefault();
       return false;
     }
 
-    var saveOtherNodesSelection = this._allowMultipleNodeSelection || this._treeComponent.showCheckBox === true;
+    const saveOtherNodesSelection = this._allowMultipleNodeSelection || this._treeComponent.showCheckBox;
     $node.find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_HOVER_CLASS_NAME);
     this.selectNode($node, saveOtherNodesSelection);
+    return undefined;
   },
 
-  beforeCustomNodeCheck: function(checkbox, isChecked, suppressAutoCheck, autoCheckChildren) {
-    var self = this;
-    var $checkbox = $(checkbox);
-
-    if ($q.isNullOrEmpty($checkbox)) {
-      return;
-    }
-
-    var $node = $checkbox.closest('.t-item');
-    if (this.isNodeSelected($node) && !isChecked) {
-      $node.each(function(index, item) {
-        self.deselectNode(item);
-      });
-    } else  if ($checkbox.is(':checked') ) {
-      $node.each(function(index, item) {
-        self.selectNode(item, self._allowMultipleNodeSelection);
-      });
+  beforeCustomNodeCheck(checkbox, isChecked) {
+    const that = this;
+    const $checkbox = $(checkbox);
+    if (!$q.isNullOrEmpty($checkbox)) {
+      const $node = $checkbox.closest('.t-item');
+      if (this.isNodeSelected($node) && !isChecked) {
+        $node.each((index, item) => {
+          that.deselectNode(item);
+        });
+      } else if ($checkbox.is(':checked')) {
+        $node.each((index, item) => {
+          that.selectNode(item, that._allowMultipleNodeSelection);
+        });
+      }
     }
   },
 
-  _onContextMenu: function(e) {
-    var $element = $(e.currentTarget);
-    var $node = $($element.closest('.t-item')[0]);
-
+  _onContextMenu(e) {
+    const $element = $(e.currentTarget);
+    const $node = $($element.closest('.t-item')[0]);
     this._currentNodeId = this.getEntityId($node);
-
     if (this._contextMenuComponent) {
       this._contextMenuComponent.showMenu(e, $element.get(0));
     }
 
-    $element = null;
     e.preventDefault();
   },
 
-  _onNodeContextMenuShowing: function(eventType, sender, args) {
-    var menuComponent = args.get_menu();
-    var $node = $(args.get_targetElement());
-
+  _onNodeContextMenuShowing(eventType, sender, args) {
+    const menuComponent = args.get_menu();
+    const $node = $(args.get_targetElement());
     if (!$q.isNullOrEmpty($node) && !$q.isNullOrEmpty(menuComponent)) {
       menuComponent.tuneMenuItems(this._currentNodeId, this._parentEntityId);
     }
-
-    $node = null;
   },
 
-  _onNodeContextMenuItemClicking: function(eventType, sender, args) {
-    var $menuItem = $(args.get_menuItem());
-
+  _onNodeContextMenuItemClicking(eventType, sender, args) {
+    const $menuItem = $(args.get_menuItem());
     if (!$q.isNullOrEmpty($menuItem)) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
-
-    $menuItem = null;
   },
 
-  _onNodeContextMenuHidden: function() {
+  _onNodeContextMenuHidden() {
     if (!$q.isNullOrEmpty(this._contextMenuActionCode)) {
       this.executeAction(this.getNode(this._currentNodeId), this._contextMenuActionCode);
       this._contextMenuActionCode = null;
     }
   },
 
-  dispose: function() {
+  dispose() {
     this._stopDeferredOperations = true;
     this._resetNodeSelectionState();
     this._selectedEntitiesIDs = null;
@@ -1103,23 +1073,31 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       this._treeManagerComponent = null;
     }
 
-    var $tree = $(this._treeElement);
-
+    const $tree = $(this._treeElement);
     $tree.unbind('dataBinding').unbind('dataBound');
 
     if (this._contextMenuComponent) {
-      var contextMenuComponent = this._contextMenuComponent;
-      var contextMenuEventType = contextMenuComponent.getContextMenuEventType();
+      const contextMenuComponent = this._contextMenuComponent;
+      const contextMenuEventType = $.fn.jeegoocontext.getContextMenuEventType();
 
       $tree.undelegate(this.NODE_NEW_CLICKABLE_SELECTORS, contextMenuEventType, this._onContextMenuHandler);
+      contextMenuComponent.detachObserver(
+        window.EVENT_TYPE_CONTEXT_MENU_SHOWING,
+        this._onNodeContextMenuShowingHandler
+      );
 
-      contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onNodeContextMenuShowingHandler);
-      contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onNodeContextMenuItemClickingHandler);
-      contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onNodeContextMenuHiddenHandler);
+      contextMenuComponent.detachObserver(
+        window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING,
+        this._onNodeContextMenuItemClickingHandler
+      );
+
+      contextMenuComponent.detachObserver(
+        window.EVENT_TYPE_CONTEXT_MENU_HIDDEN,
+        this._onNodeContextMenuHiddenHandler
+      );
+
 
       contextMenuComponent.dispose();
-      contextMenuComponent = null;
-
       this._contextMenuComponent = null;
     }
 
@@ -1138,5 +1116,3 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 };
 
 Quantumart.QP8.BackendEntityTree.registerClass('Quantumart.QP8.BackendEntityTree', Quantumart.QP8.BackendTreeBase);
-
-//#endregion

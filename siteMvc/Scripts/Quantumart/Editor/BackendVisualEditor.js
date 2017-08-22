@@ -1,9 +1,10 @@
+/* global CKEDITOR */
 /* eslint camelcase: ["off", { properties: "never"}] */
 
 // eslint-disable-next-line no-extra-semi
 ; (function init() {
-  var getCkEditorConfig = function getCkEditorConfig(obj, opts) {
-    var defaultConfig = {
+  const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
+    const defaultConfig = {
       language: 'ru',
       docType: '<!doctype html>',
       height: 340,
@@ -11,7 +12,7 @@
       shiftEnterMode: 1
     };
 
-    var config = {
+    const config = {
       language: opts.language || defaultConfig.language,
       defaultLanguage: opts.language || defaultConfig.language,
       contentsLanguage: opts.language || defaultConfig.language,
@@ -52,20 +53,18 @@
       protectedSource: [/<a[^>]*><\/a>/g, /<i[^>]*><\/i>/g, /<b[^>]*><\/b>/g, /<span[^>]*><\/span>/g],
       extraPlugins: 'Spellchecker,Typographer,codemirror',
       removePlugins: 'save,newpage,scayt,spellchecker,forms,language,smiley,iframe,about',
-      format_tags: opts.formatsSet.map(function addFormatTag(fs) {
-        return fs.element;
-      }).join(';')
+      format_tags: opts.formatsSet.map(fs => fs.element).join(';')
     };
 
-    opts.extraPlugins.forEach(function addExternalPlugin(pl) {
-      config.extraPlugins += ',' + pl.name;
+    opts.extraPlugins.forEach(pl => {
+      config.extraPlugins += `,${pl.name}`;
       if (pl.url) {
         window.CKEDITOR.plugins.addExternal(pl.name, pl.url, 'plugin.js');
       }
     });
 
-    opts.formatsSet.forEach(function setElementFormat(fs) {
-      config['format_' + fs.element] = fs;
+    opts.formatsSet.forEach(fs => {
+      config[`format_${fs.element}`] = fs;
     });
 
     config.listItems = Object.assign({}, window.CKEDITOR.dtd.$listItem, {
@@ -74,23 +73,23 @@
       li: 1
     });
 
-    window.CKEDITOR.on('instanceCreated', function onInstanceCreated() {
+    CKEDITOR.on('instanceCreated', () => {
       Object.keys(Object.assign({},
         config.listItems
-      )).forEach(function setListAutoWrapping(key) {
+      )).forEach(key => {
         if (config.disableListAutoWrap) {
-          delete window.CKEDITOR.dtd.$listItem[key];
-          delete window.CKEDITOR.dtd.$intermediate[key];
+          delete CKEDITOR.dtd.$listItem[key];
+          delete CKEDITOR.dtd.$intermediate[key];
         } else {
-          window.CKEDITOR.dtd.$listItem[key] = 1;
+          CKEDITOR.dtd.$listItem[key] = 1;
           window.CKEDITOR.dtd.$intermediate[key] = 1;
         }
       });
     });
 
     config.on = {
-      instanceReady: function (ev) {
-        ev.editor.filter.addElementCallback(function disableStyleTransformations(el) {
+      instanceReady(ev) {
+        ev.editor.filter.addElementCallback(el => {
           if (el.name === 'table' || el.name === 'img') {
             return window.CKEDITOR.FILTER_SKIP_TREE;
           }
@@ -153,7 +152,7 @@
       },
       afterCommandExec: obj._onChangeDataInDesignModeHandlerProxy,
       loadSnapshot: obj._onChangeDataInDesignModeHandlerProxy,
-      configLoaded: function onConfigLoaded(ev) {
+      configLoaded(ev) {
         Object.assign(ev.editor.config, {
           baseFloatZIndex: obj.getZIndex()
         });
@@ -164,7 +163,7 @@
   };
 
   Quantumart.QP8.BackendVisualEditor = function BackendVisualEditor(componentElem) {
-    var $componentElem = $(componentElem);
+    const $componentElem = $(componentElem);
     this._$containerElem = $('.visualEditorContainer', $componentElem);
     this._componentElem = $componentElem.get(0);
     this._editorElem = $('.visualEditor', $componentElem).get(0);
@@ -196,9 +195,8 @@
     _storedTempValue: '',
     _checkIntervalID: null,
 
-    initialize: function () {
-      var that = this;
-      var $editorLink;
+    initialize() {
+      const that = this;
       $(this._componentElem).data(Quantumart.QP8.BackendVisualEditor.DATA_KEY_COMPONENT, this);
       this._onChangeDataInDesignModeHandlerProxy = this._onChangeDataInDesignModeHandler.bind(this);
 
@@ -211,15 +209,15 @@
       this._isExpanded = $q.toBoolean($(this._editorElem).data('is_expanded'));
       this._isTextEditor = $q.toBoolean($(this._editorElem).data('is_texteditor'));
 
-      $editorLink = this._isTextEditor ? this._$visualEditorLink : this._$expandLink;
-      $editorLink.off('click').on('click', function onClick(e) {
+      const $editorLink = this._isTextEditor ? this._$visualEditorLink : this._$expandLink;
+      $editorLink.off('click').on('click', e => {
         if (!that._isInitialized) {
           that._isInitialized = true;
           $q.getAjax('/Backend/VisualEditorConfig/LoadVeConfig', {
             siteId: that._siteId,
             fieldId: that._fieldId
-          }, function ajaxDone(data) {
-            var instance = that.getCkEditor();
+          }, data => {
+            const instance = that.getCkEditor();
             if (instance) {
               that.disposeCKEditor(false);
             }
@@ -231,7 +229,7 @@
       });
 
       if (this._isTextEditor) {
-        this._$textEditorLink.off('click').on('click', function onClick(e) {
+        this._$textEditorLink.off('click').on('click', e => {
           that.disposeCKEditor(false);
           that._$containerElem.show();
           that._$visualEditorLink.show();
@@ -248,25 +246,25 @@
       }
     },
 
-    getCkEditor: function () {
+    getCkEditor() {
       return window.CKEDITOR.instances[this._editorElem.id];
     },
 
-    saveVisualEditorData: function () {
-      var editor = this.getCkEditor();
+    saveVisualEditorData() {
+      const editor = this.getCkEditor();
 
       if (editor) {
         editor.updateElement();
       }
     },
 
-    getZIndex: function () {
-      var $window = $(this._componentElem).closest('.t-window');
-      var zIndex = $window.length > 0 ? parseInt($window.css('zIndex'), 10) : 0;
+    getZIndex() {
+      const $window = $(this._componentElem).closest('.t-window');
+      const zIndex = $window.length > 0 ? parseInt($window.css('zIndex'), 10) : 0;
       return zIndex + 10000;
     },
 
-    dispose: function () {
+    dispose() {
       this.disposeCKEditor(false);
       this._$expandLink.off();
       this._$collapseLink.off();
@@ -287,22 +285,20 @@
       ]);
     },
 
-    disposeCKEditor: function (noUpdate) {
-      var editor, $editor, windowsToDipose, listenersToRemove;
-
+    disposeCKEditor(noUpdate) {
       if (this._checkIntervalID) {
         clearInterval(this._checkIntervalID);
       }
 
-      $editor = $(this._editorElem);
-      windowsToDipose = ['imageWindow', 'linkWindow', 'flashWindow'];
-      listenersToRemove = ['afterCommandExec', 'loadSnapshot'];
+      const $editor = $(this._editorElem);
+      const windowsToDipose = ['imageWindow', 'linkWindow', 'flashWindow'];
+      const listenersToRemove = ['afterCommandExec', 'loadSnapshot'];
 
       this._destroyVisualEditorWindow($editor, windowsToDipose[0]);
       this._destroyVisualEditorWindow($editor, windowsToDipose[1]);
       this._destroyVisualEditorWindow($editor, windowsToDipose[2]);
 
-      editor = this.getCkEditor();
+      const editor = this.getCkEditor();
       if (editor) {
         if (editor.textarea) {
           editor.textarea.removeAllListeners();
@@ -318,12 +314,11 @@
       }
 
       $editor.removeData();
-      editor = null;
     },
 
-    _onCheckChangesIntervalHandler: function () {
-      var $field;
-      var editor = this.getCkEditor();
+    _onCheckChangesIntervalHandler() {
+      let $field;
+      const editor = this.getCkEditor();
 
       if (editor) {
         if (this._storedTempValue !== editor.getData()) {
@@ -340,30 +335,30 @@
       }
     },
 
-    _onChangeDataInDesignModeHandler: function () {
-      var editor = this.getCkEditor();
+    _onChangeDataInDesignModeHandler() {
+      const editor = this.getCkEditor();
       if (editor) {
         if (editor.textarea) {
           editor.textarea.off('keyup').on('keyup', this._onChangeDataInSourceModeHandler, this);
           editor.textarea.off('paste').on('paste', this._onChangeDataInSourceModeHandler, this);
         }
 
-        $('#' + editor.name).addClass(window.CHANGED_FIELD_CLASS_NAME);
+        $(`#${editor.name}`).addClass(window.CHANGED_FIELD_CLASS_NAME);
       }
     },
 
-    _onChangeDataInSourceModeHandler: function () {
-      $('#' + this.getCkEditor().name).addClass(window.CHANGED_FIELD_CLASS_NAME);
+    _onChangeDataInSourceModeHandler() {
+      $(`#${this.getCkEditor().name}`).addClass(window.CHANGED_FIELD_CLASS_NAME);
     },
 
-    _destroyVisualEditorWindow: function ($editor, dataName) {
+    _destroyVisualEditorWindow($editor, dataName) {
       if ($editor.data(dataName)) {
         $editor.data(dataName).dispose();
       }
     },
 
-    _onCKEEditorInitialized: function (sender) {
-      var that = this;
+    _onCKEEditorInitialized(sender) {
+      const that = this;
       if (sender) {
         this._storedTempValue = sender.getData();
       }

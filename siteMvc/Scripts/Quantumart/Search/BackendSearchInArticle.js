@@ -1,54 +1,49 @@
-// === Класс "Блок поиска по всем статьям" ===
 Quantumart.QP8.BackendSearchInArticle = function (gridElementId, searchBlockElementId, initQuery, documentContext) {
-	this._gridElementId = gridElementId;
-	this._searchBlockElementId = searchBlockElementId;
-	this._onSearchButtonClickHandler = jQuery.proxy(this._onSearchButtonClick, this);
-	this._initQuery = initQuery;
-	this._documentContext = documentContext;
+  this._gridElementId = gridElementId;
+  this._searchBlockElementId = searchBlockElementId;
+  this._onSearchButtonClickHandler = $.proxy(this._onSearchButtonClick, this);
+  this._initQuery = initQuery;
+  this._documentContext = documentContext;
 };
 
 Quantumart.QP8.BackendSearchInArticle.prototype = {
-	_gridElementId: "", // клиентский идентификатор грида
-	_searchBlockElementId: "", // клиентский идентификатор блока поиска
-	_initQuery: "",
-	_documentContext: null,
+  _gridElementId: '',
+  _searchBlockElementId: '',
+  _initQuery: '',
+  _documentContext: null,
 
-	_onSearchButtonClick: function () {
-		var searchQuery = jQuery("#" + this._searchBlockElementId + " input.textbox").val();
-		Quantumart.QP8.BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { "searchQuery": searchQuery });
-	},
+  _onSearchButtonClick() {
+    const searchQuery = $(`#${this._searchBlockElementId} input.textbox`).val();
+    Quantumart.QP8.BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { searchQuery });
+  },
 
-	_getButton: function()
-	{
-		return jQuery("#" + this._searchBlockElementId).find(".button");
-	},
+  _getButton() {
+    return $(`#${this._searchBlockElementId}`).find('.button');
+  },
 
-	initialize: function () {
-		var $button = this._getButton();
-		$button.bind("click", this._onSearchButtonClickHandler);
-		this._refreshQuery(this._initQuery);
-	},
+  initialize() {
+    const $button = this._getButton();
+    $button.bind('click', this._onSearchButtonClickHandler);
+    this._refreshQuery(this._initQuery);
+  },
 
-	refreshQuery: function(eventArgs)
-	{
-		var context = eventArgs.get_context();
-		var query = (context && context.additionalUrlParameters) ? context.additionalUrlParameters.query : "";
-		this._documentContext.getHost()._additionalUrlParameters = null;
-		this._refreshQuery(query);
-	},
+  refreshQuery(eventArgs) {
+    const context = eventArgs.get_context();
+    const query = context && context.additionalUrlParameters ? context.additionalUrlParameters.query : '';
+    this._documentContext.getHost()._additionalUrlParameters = null;
+    this._refreshQuery(query);
+  },
 
-	_refreshQuery: function (query)
-	{
-		var $button = this._getButton();
-		if (query)
-		{
-			jQuery("#" + this._searchBlockElementId + " input.textbox").val(query);
-			$button.trigger("click");
-		}
-	},
+  _refreshQuery(query) {
+    const $button = this._getButton();
+    if (query) {
+      $(`#${this._searchBlockElementId} input.textbox`).val(query);
+      $button.trigger('click');
+    }
+  },
 
-	dispose: function () {
-		jQuery("#" + this._searchBlockElementId).find(".button").unbind("click");
-		this._onSearchButtonClickHandler = null;
-	}
+  dispose() {
+    $(`#${this._searchBlockElementId}`).find('.button').unbind('click');
+    this._onSearchButtonClickHandler = null;
+  }
 };

@@ -1,4 +1,4 @@
-window.wordWindow = function() {
+window.wordWindow = function () {
   this._forms = [];
   this.wordChar = /[a-zA-Z]/;
   this.windowType = 'wordWindow';
@@ -12,7 +12,7 @@ window.wordWindow = function() {
 };
 
 window.wordWindow.prototype = {
-  resetForm: function() {
+  resetForm: function () {
     if (this._forms) {
       for (var i = 0; i < this._forms.length; i++) {
         this._forms[i].reset();
@@ -22,7 +22,7 @@ window.wordWindow.prototype = {
     return true;
   },
 
-  totalMisspellings: function() {
+  totalMisspellings: function () {
     var total_words = 0;
 
     for (var i = 0; i < this.textInputs.length; i++) {
@@ -32,11 +32,11 @@ window.wordWindow.prototype = {
     return total_words;
   },
 
-  totalWords: function(textIndex) {
+  totalWords: function (textIndex) {
     return this.originalSpellings[textIndex].length;
   },
 
-  totalPreviousWords: function(textIndex, wordIndex) {
+  totalPreviousWords: function (textIndex, wordIndex) {
     var total_words = 0;
 
     for (var i = 0; i <= textIndex; i++) {
@@ -52,7 +52,7 @@ window.wordWindow.prototype = {
     return total_words;
   },
 
-  getTextVal: function(textIndex, wordIndex) {
+  getTextVal: function (textIndex, wordIndex) {
     var word = this._getWordObject(textIndex, wordIndex);
 
     if (word) {
@@ -60,7 +60,7 @@ window.wordWindow.prototype = {
     }
   },
 
-  setFocus: function(textIndex, wordIndex) {
+  setFocus: function (textIndex, wordIndex) {
     var word = this._getWordObject(textIndex, wordIndex);
 
     if (word) {
@@ -71,7 +71,7 @@ window.wordWindow.prototype = {
     }
   },
 
-  removeFocus: function(textIndex, wordIndex) {
+  removeFocus: function (textIndex, wordIndex) {
     var word = this._getWordObject(textIndex, wordIndex);
 
     if (word) {
@@ -82,7 +82,7 @@ window.wordWindow.prototype = {
     }
   },
 
-  setText: function(textIndex, wordIndex, newText) {
+  setText: function (textIndex, wordIndex, newText) {
     var word = this._getWordObject(textIndex, wordIndex);
     var beginStr;
     var endStr;
@@ -106,7 +106,7 @@ window.wordWindow.prototype = {
     }
   },
 
-  writeBody: function() {
+  writeBody: function () {
     var d = window.document;
     var is_html = false;
 
@@ -123,7 +123,9 @@ window.wordWindow.prototype = {
       if (wordtxt) {
         var orig = this.originalSpellings[txtid];
 
-        if (!orig) break;
+        if (!orig) {
+ break;
+}
         d.writeln('<div class="plainText">');
 
         // iterate through each occurrence of a misspelled word.
@@ -136,7 +138,9 @@ window.wordWindow.prototype = {
             end_idx = begin_idx + orig[i].length;
 
             // word not found? messed up!
-            if (begin_idx == -1) break;
+            if (begin_idx == -1) {
+ break;
+}
 
             // look at the characters immediately before and after
             // the word. If they are word characters we'll keep looking.
@@ -171,12 +175,12 @@ window.wordWindow.prototype = {
       d.writeln('</form>');
     }
 
-    //for ( var j = 0; j < d.forms.length; j++ ) {
+    // for ( var j = 0; j < d.forms.length; j++ ) {
     //  alert( d.forms[j].name );
     //  for( var k = 0; k < d.forms[j].elements.length; k++ ) {
     //    alert( d.forms[j].elements[k].name + ": " + d.forms[j].elements[k].value );
     //  }
-    //}
+    // }
 
     // set the _forms property
     this._forms = d.forms;
@@ -184,18 +188,19 @@ window.wordWindow.prototype = {
   },
 
   // return the character index in the full text after the last word we evaluated
-  _lastPos: function(txtid, idx) {
-    if (idx > 0)
-        return this.indexes[txtid][idx - 1] + this.originalSpellings[txtid][idx - 1].length;
-    else
-        return 0;
+  _lastPos: function (txtid, idx) {
+    if (idx > 0) {
+ return this.indexes[txtid][idx - 1] + this.originalSpellings[txtid][idx - 1].length;
+} else {
+ return 0;
+}
   },
 
-  printForHtml: function(n) {
-    return n; // by FredCK
+  printForHtml: function (n) {
+    return n;
   },
 
-  _isWordChar: function(letter) {
+  _isWordChar: function (letter) {
     if (letter.search(this.wordChar) == -1) {
       return false;
     } else {
@@ -203,7 +208,7 @@ window.wordWindow.prototype = {
     }
   },
 
-  _getWordObject: function(textIndex, wordIndex) {
+  _getWordObject: function (textIndex, wordIndex) {
     if (this._forms[textIndex]) {
       if (this._forms[textIndex].elements[wordIndex]) {
         return this._forms[textIndex].elements[wordIndex];
@@ -213,11 +218,11 @@ window.wordWindow.prototype = {
     return null;
   },
 
-  _wordInputStr: function(word) {
+  _wordInputStr: function (word) {
     return '<input readonly class="blend" type="text" value="' + word + '" size="' + word.length + '">';
   },
 
-  _adjustIndexes: function(textIndex, wordIndex, lengthDiff) {
+  _adjustIndexes: function (textIndex, wordIndex, lengthDiff) {
     for (var i = wordIndex + 1; i < this.originalSpellings[textIndex].length; i++) {
       this.indexes[textIndex][i] = this.indexes[textIndex][i] + lengthDiff;
     }

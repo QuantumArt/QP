@@ -1,10 +1,4 @@
-// ****************************************************************************
-// *** Компонент "Файловое поле"                      ***
-// ****************************************************************************
-
-//#region class BackendFileField
-// === Класс "Файловое поле" ===
-Quantumart.QP8.BackendFileField = function(fileFieldElementId, fileWrapperElementId, options) {
+Quantumart.QP8.BackendFileField = function (fileFieldElementId, fileWrapperElementId, options) {
   Quantumart.QP8.BackendFileField.initializeBase(this);
 
   this._fileFieldElementId = fileFieldElementId;
@@ -59,117 +53,117 @@ Quantumart.QP8.BackendFileField = function(fileFieldElementId, fileWrapperElemen
     }
   }
 
-  this._onPreviewButtonClickHandler = jQuery.proxy(this._onPreviewButtonClick, this);
-  this._onDownloadButtonClickHandler = jQuery.proxy(this._onDownloadButtonClick, this);
-  this._onLibraryButtonClickHandler = jQuery.proxy(this._onLibraryButtonClick, this);
+  this._onPreviewButtonClickHandler = $.proxy(this._onPreviewButtonClick, this);
+  this._onDownloadButtonClickHandler = $.proxy(this._onDownloadButtonClick, this);
+  this._onLibraryButtonClickHandler = $.proxy(this._onLibraryButtonClick, this);
 };
 
 Quantumart.QP8.BackendFileField.prototype = {
-  _fileFieldElementId: '', // клиентский идентификатор файлового поля
-  _fileFieldElement: null, // DOM-элемент, образующий файловое поле
-  _fileWrapperElementId: '', // клиентский идентификатор контейнера, в котором располагается файловое поле
-  _fileWrapperElement: null, // DOM-элемент, образующий контейнер, в котором располагается файловое поле
-  _browseButtonElement: null, // DOM-элемент, образующий кнопку для загрузки файла
-  _previewButtonElement: null, // DOM-элемент, образующий кнопку для предварительного просмотра рисунка
-  _libraryButtonElement: null, // DOM-элемент, образующий кнопку для библиотеки
-  _previewWindowComponent: null, // компонент, образующий окно для предварительного просмотра
-  _downloadButtonElement: null, // DOM-элемент, образующий кнопку для загрузки файла
-  _entityId: 0, // идентификатор сущности
-  _allowFileUpload: false, // признак, разрешающий загрузку файлов на сервер
-  _libraryPath: '', // путь к библиотеке контента
-  _libraryUrl: '', // URL библиотеки контента
-  _renameMatched: false, // признак, разрешающий переименовывать совпадающие файлы
-  _isImage: false, // признак того, что файл является рисунком
-  _isVersion: false, // признак того, что сущность является версией
-  _subFolder: '', //относительный путь от корня библиотеки до папки поля
-  _useSiteLibrary: false, //признак, покзывающий используется ли библиотека сайта или контента
-  _libraryEntityId: 0, // id сущности, которой принадлежит библиотека (сайта или контента)
-  _libraryParentEntityId: 0, // id родительской сущности, относительно той, которой принадлежит библиотека(0 или id сайта)
+  _fileFieldElementId: '',
+  _fileFieldElement: null,
+  _fileWrapperElementId: '',
+  _fileWrapperElement: null,
+  _browseButtonElement: null,
+  _previewButtonElement: null,
+  _libraryButtonElement: null,
+  _previewWindowComponent: null,
+  _downloadButtonElement: null,
+  _entityId: 0,
+  _allowFileUpload: false,
+  _libraryPath: '',
+  _libraryUrl: '',
+  _renameMatched: false,
+  _isImage: false,
+  _isVersion: false,
+  _subFolder: '',
+  _useSiteLibrary: false,
+  _libraryEntityId: 0,
+  _libraryParentEntityId: 0,
   _uploaderType: Quantumart.QP8.Enums.UploaderType.Silverlight,
-  _selectPopupWindowComponent: null, // окно выбора файла в библиотеке
-  _uploaderComponent: null, // компонент аплоадер
-  _uploaderSubFolder: '', // относительный путь для аплоадера
+  _selectPopupWindowComponent: null,
+  _uploaderComponent: null,
+  _uploaderSubFolder: '',
 
   PREVIEW_BUTTON_CLASS_NAME: 'previewButton',
   BROWSE_BUTTON_CLASS_NAME: 'browseButton',
   DOWNLOAD_BUTTON_CLASS_NAME: 'downloadButton',
   LIBRARY_BUTTON_CLASS_NAME: 'libraryButton',
 
-  get_fileFieldElementId: function() {
+  get_fileFieldElementId() {
     return this._fileFieldElementId;
   },
 
-  set_fileFieldElementId: function(value) {
+  set_fileFieldElementId(value) {
     this._fileFieldElementId = value;
   },
 
-  get_fileFieldElement: function() {
+  get_fileFieldElement() {
     return this._fileFieldElement;
   },
 
-  get_fileWrapperElementId: function() {
+  get_fileWrapperElementId() {
     return this._fileWrapperElementId;
   },
 
-  set_fileWrapperElementId: function(value) {
+  set_fileWrapperElementId(value) {
     this._fileWrapperElementId = value;
   },
 
-  get_fileWrapperElement: function() {
+  get_fileWrapperElement() {
     return this._fileWrapperElement;
   },
 
-  get_entityId: function() {
+  get_entityId() {
     return this._entityId;
   },
 
-  set_entityId: function(value) {
+  set_entityId(value) {
     this._entityId = value;
   },
 
-  get_allowFileUpload: function() {
+  get_allowFileUpload() {
     return this._allowFileUpload;
   },
 
-  set_allowFileUpload: function(value) {
+  set_allowFileUpload(value) {
     this._allowFileUpload = value;
   },
 
-  get_libraryPath: function() {
+  get_libraryPath() {
     return this._libraryPath;
   },
 
-  set_libraryPath: function(value) {
+  set_libraryPath(value) {
     this._libraryPath = value;
   },
 
-  get_renameMatched: function() {
+  get_renameMatched() {
     return this._renameMatched;
   },
 
-  set_renameMatched: function(value) {
+  set_renameMatched(value) {
     this._renameMatched = value;
   },
 
-  get_isImage: function() {
+  get_isImage() {
     return this._isImage;
   },
 
-  set_isImage: function(value) {
+  set_isImage(value) {
     this._isImage = value;
   },
 
-  get_isVersion: function() {
+  get_isVersion() {
     return this._isVersion;
   },
 
-  set_isVersion: function(value) {
+  set_isVersion(value) {
     this._isVersion = value;
   },
 
-  updateUploader: function(value) {
+  updateUploader(value) {
     this._uploaderSubFolder = value;
-    var $fileField = jQuery(this._fileFieldElement);
+    const $fileField = $(this._fileFieldElement);
 
     if (this._uploaderSubFolder) {
       $fileField.attr('placeholder', this._getFileFieldSubFolder());
@@ -178,10 +172,10 @@ Quantumart.QP8.BackendFileField.prototype = {
       this._uploaderSubFolder = '';
     }
 
-    var path = this._libraryPath;
+    let path = this._libraryPath;
 
     if (this._uploaderSubFolder) {
-      path += '\\' + this._uploaderSubFolder;
+      path += `\\${this._uploaderSubFolder}`;
     }
 
     if (this._uploaderComponent) {
@@ -189,8 +183,8 @@ Quantumart.QP8.BackendFileField.prototype = {
     }
   },
 
-  _getFileFieldSubFolder: function() {
-    var subFolder = this._uploaderSubFolder;
+  _getFileFieldSubFolder() {
+    let subFolder = this._uploaderSubFolder;
 
     if (subFolder && !subFolder.match(/\/$/)) {
       subFolder += '/';
@@ -199,25 +193,25 @@ Quantumart.QP8.BackendFileField.prototype = {
     return subFolder;
   },
 
-  _librarySelectedHandler: function(eventType, sender, args) {
+  _librarySelectedHandler(eventType, sender, args) {
     this._closeLibrary();
     if (args) {
-      var entities = args.entities;
+      const entities = args.entities;
 
       if (entities.length > 0) {
-        var url = args.context;
+        let url = args.context;
 
         if (url === '\\') {
           url = '';
         }
 
-        url = url.replace(this._subFolder + '\\', '').replace(/\\/g, '\/');
-        jQuery(this._fileFieldElement).val(url + entities[0].Name).trigger('change');
+        url = url.replace(`${this._subFolder}\\`, '').replace(/\\/g, '/');
+        $(this._fileFieldElement).val(url + entities[0].Name).trigger('change');
       }
     }
   },
 
-  _libraryClosedHandler: function() {
+  _libraryClosedHandler() {
     this._closeLibrary();
   },
 
@@ -225,34 +219,33 @@ Quantumart.QP8.BackendFileField.prototype = {
   _onDownloadButtonClickHandler: null,
   _onLibraryButtonClickHandler: null,
 
-  _checkExt: function (filename, value) {
+  _checkExt(filename, value) {
     return filename.toLowerCase().endsWith(value.toLowerCase());
   },
 
-  _showOrHidePreviewButton: function (filename, $previewButton) {
-    var _arrayOfExtensions = LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
-    var result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
-    if (typeof result !== 'undefined' && result.length > 0 || this._isImage) {
+  _showOrHidePreviewButton(filename, $previewButton) {
+    const _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
+    const result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
+    if ((typeof result !== 'undefined' && result.length > 0) || this._isImage) {
       $previewButton.show();
-    }
-    else {
+    } else {
       $previewButton.hide();
     }
   },
-  initialize: function() {
-    var $fileField = jQuery('#' + this._fileFieldElementId);
+  initialize() {
+    let $fileField = $(`#${this._fileFieldElementId}`);
 
     $fileField.data('file_field', this);
-    var $fileWrapper = jQuery('#' + this._fileWrapperElementId);
-    var $browseButton = $fileWrapper.find('.' + this.BROWSE_BUTTON_CLASS_NAME + ':first');
-    var $previewButton = $fileWrapper.find('.' + this.PREVIEW_BUTTON_CLASS_NAME + ':first');
+    let $fileWrapper = $(`#${this._fileWrapperElementId}`);
+    let $browseButton = $fileWrapper.find(`.${this.BROWSE_BUTTON_CLASS_NAME}:first`);
+    let $previewButton = $fileWrapper.find(`.${this.PREVIEW_BUTTON_CLASS_NAME}:first`);
 
     $previewButton.bind('click', this._onPreviewButtonClickHandler);
     this._showOrHidePreviewButton($fileField.val(), $previewButton);
-    var $libraryButton = $fileWrapper.find('.' + this.LIBRARY_BUTTON_CLASS_NAME + ':first');
+    let $libraryButton = $fileWrapper.find(`.${this.LIBRARY_BUTTON_CLASS_NAME}:first`);
 
     $libraryButton.bind('click', this._onLibraryButtonClickHandler);
-    var $downloadButton = $fileWrapper.find('.' + this.DOWNLOAD_BUTTON_CLASS_NAME + ':first');
+    let $downloadButton = $fileWrapper.find(`.${this.DOWNLOAD_BUTTON_CLASS_NAME}:first`);
 
     $downloadButton.bind('click', this._onDownloadButtonClickHandler);
 
@@ -275,23 +268,23 @@ Quantumart.QP8.BackendFileField.prototype = {
     $downloadButton = null;
   },
 
-  _initFileUploader: function() {
-    var extensions = (this._isImage) ? LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
+  _initFileUploader() {
+    const extensions = this._isImage ? window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
 
     if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
       this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
         background: '#ffffff',
-        extensions: extensions,
+        extensions,
         resolveName: this.get_renameMatched()
       });
     } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
       this._uploaderComponent = new Quantumart.QP8.BackendHtmlUploader(this._fileWrapperElement, {
-        extensions: extensions,
+        extensions,
         resolveName: this.get_renameMatched()
       });
     } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.PlUpload) {
       this._uploaderComponent = new Quantumart.QP8.BackendPlUploader(this._fileWrapperElement, {
-        extensions: extensions,
+        extensions,
         resolveName: this.get_renameMatched(),
         useSiteLibrary: this._useSiteLibrary,
         getFormScriptOptions: this._getFormScriptOptions.bind(this)
@@ -300,71 +293,71 @@ Quantumart.QP8.BackendFileField.prototype = {
 
     this._uploaderComponent.initialize();
     this.updateUploader();
-    this._uploaderComponent.attachObserver(EVENT_TYPE_LIBRARY_FILE_UPLOADED, jQuery.proxy(this._onFileUploadedHandler, this));
+    this._uploaderComponent.attachObserver(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, $.proxy(this._onFileUploadedHandler, this));
   },
 
-  _getFormScriptOptions: function() {
+  _getFormScriptOptions() {
     return {
       imgFilterResolution: this.imgFilterResolution
     };
   },
 
-  _previewImage: function() {
-    var $fileField = jQuery(this._fileFieldElement);
+  _previewImage() {
+    const $fileField = $(this._fileFieldElement);
 
     if (!$q.isNullOrEmpty($fileField)) {
-      var fieldName = $fileField.attr('name');
-      var fieldValue = $fileField.val();
+      const fieldName = $fileField.attr('name');
+      const fieldValue = $fileField.val();
 
       if (!$q.isNullOrWhiteSpace(fieldValue)) {
         $c.destroyPopupWindow(this._previewWindowComponent);
-        var urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId, parentEntityId: this._libraryParentEntityId };
-        var testUrl = Quantumart.QP8.BackendLibrary.generateActionUrl('GetImageProperties', urlParams);
+        const urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId, parentEntityId: this._libraryParentEntityId };
+        const testUrl = Quantumart.QP8.BackendLibrary.generateActionUrl('GetImageProperties', urlParams);
 
         this._previewWindowComponent = $c.preview(testUrl);
       }
     }
   },
 
-  _downloadFieldFile: function() {
-    var $fileField = jQuery(this._fileFieldElement);
+  _downloadFieldFile() {
+    const $fileField = $(this._fileFieldElement);
 
     if (!$q.isNullOrEmpty($fileField)) {
-      var fieldName = $fileField.attr('name');
-      var fieldValue = $fileField.val();
+      const fieldName = $fileField.attr('name');
+      const fieldValue = $fileField.val();
 
       if (!$q.isNullOrWhiteSpace(fieldValue)) {
-        var urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId };
-        var url = Quantumart.QP8.BackendLibrary.generateActionUrl('TestFieldValueDownload', urlParams);
+        const urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId };
+        const url = Quantumart.QP8.BackendLibrary.generateActionUrl('TestFieldValueDownload', urlParams);
 
         $c.downloadFileWithChecking(url, fieldValue);
       }
     }
   },
 
-  getUrl: function() {
-    return this._libraryUrl + jQuery(this._fileFieldElement).val();
+  getUrl() {
+    return this._libraryUrl + $(this._fileFieldElement).val();
   },
 
-  pasteUrl: function(url) {
-    jQuery(this._fileFieldElement).val(url.replace(this._libraryUrl, ''));
+  pasteUrl(url) {
+    $(this._fileFieldElement).val(url.replace(this._libraryUrl, ''));
   },
 
-  _openLibrary: function() {
-    var filterFileTypeId = (this._isImage) ? Quantumart.QP8.Enums.LibraryFileType.Image : '';
-    var eventArgs = new Quantumart.QP8.BackendEventArgs();
+  _openLibrary() {
+    const filterFileTypeId = this._isImage ? Quantumart.QP8.Enums.LibraryFileType.Image : '';
+    let eventArgs = new Quantumart.QP8.BackendEventArgs();
 
     eventArgs.set_entityId(this._libraryEntityId);
     eventArgs.set_parentEntityId(this._libraryParentEntityId);
     eventArgs.set_entityName('');
-    eventArgs.set_entityTypeCode(this._useSiteLibrary ? ENTITY_TYPE_CODE_SITE : ENTITY_TYPE_CODE_CONTENT);
-    eventArgs.set_actionCode(this._useSiteLibrary ? ACTION_CODE_POPUP_SITE_LIBRARY : ACTION_CODE_POPUP_CONTENT_LIBRARY);
-    var options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId: filterFileTypeId, subFolder: this._subFolder, allowUpload: this._allowFileUpload } };
+    eventArgs.set_entityTypeCode(this._useSiteLibrary ? window.ENTITY_TYPE_CODE_SITE : window.ENTITY_TYPE_CODE_CONTENT);
+    eventArgs.set_actionCode(this._useSiteLibrary ? window.ACTION_CODE_POPUP_SITE_LIBRARY : window.ACTION_CODE_POPUP_CONTENT_LIBRARY);
+    let options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId, subFolder: this._subFolder, allowUpload: this._allowFileUpload } };
 
     if (!this._selectPopupWindowComponent) {
       this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, options);
-      this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this));
-      this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._libraryClosedHandler, this));
+      this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, $.proxy(this._librarySelectedHandler, this));
+      this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, $.proxy(this._libraryClosedHandler, this));
     }
 
     this._selectPopupWindowComponent.openWindow();
@@ -372,48 +365,49 @@ Quantumart.QP8.BackendFileField.prototype = {
     options = null;
   },
 
-  _closeLibrary: function() {
+  _closeLibrary() {
     this._selectPopupWindowComponent.closeWindow();
   },
 
-  _destroyLibrary: function() {
+  _destroyLibrary() {
     if (this._selectPopupWindowComponent) {
-      this._selectPopupWindowComponent.detachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
-      this._selectPopupWindowComponent.detachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
+      this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
+      this._selectPopupWindowComponent.detachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
       this._selectPopupWindowComponent.dispose();
       this._selectPopupWindowComponent = null;
     }
   },
 
-  _onFileUploadedHandler: function(eventType, sender, eventArgs) {
-    if (eventArgs.get_fileNames().length > 0)
-    jQuery(this._fileFieldElement)
-    .val(this._getFileFieldSubFolder() + eventArgs.get_fileNames()[0])
-    .trigger('change');
+  _onFileUploadedHandler(eventType, sender, eventArgs) {
+    if (eventArgs.get_fileNames().length > 0) {
+      $(this._fileFieldElement)
+        .val(this._getFileFieldSubFolder() + eventArgs.get_fileNames()[0])
+        .trigger('change');
+    }
   },
 
-  _onPreviewButtonClick: function() {
+  _onPreviewButtonClick() {
     this._previewImage();
   },
 
-  _onDownloadButtonClick: function() {
+  _onDownloadButtonClick() {
     this._downloadFieldFile();
   },
 
-  _onLibraryButtonClick: function() {
+  _onLibraryButtonClick() {
     this._openLibrary();
   },
 
-  dispose: function() {
+  dispose() {
     this._destroyLibrary();
 
-    var $fileFieldElement = jQuery(this._fileFieldElement);
+    let $fileFieldElement = $(this._fileFieldElement);
 
     $fileFieldElement.removeData();
     $fileFieldElement = null;
 
     if (this._downloadButtonElement) {
-      var $downloadButton = jQuery(this._downloadButtonElement);
+      let $downloadButton = $(this._downloadButtonElement);
 
       $downloadButton.unbind('click', this._onDownloadButtonClickHandler);
 
@@ -427,7 +421,7 @@ Quantumart.QP8.BackendFileField.prototype = {
     }
 
     if (this._previewButtonElement) {
-      var $previewButton = jQuery(this._previewButtonElement);
+      let $previewButton = $(this._previewButtonElement);
 
       $previewButton.unbind('click', this._onPreviewButtonClickHandler);
 
@@ -436,7 +430,7 @@ Quantumart.QP8.BackendFileField.prototype = {
     }
 
     if (this._libraryButtonElement) {
-      var $libraryButton = jQuery(this._libraryButtonElement);
+      let $libraryButton = $(this._libraryButtonElement);
 
       $libraryButton.unbind('click', this._onLibraryButtonClickHandler);
 
@@ -445,7 +439,7 @@ Quantumart.QP8.BackendFileField.prototype = {
     }
 
     if (this._uploaderComponent) {
-      this._uploaderComponent.detachObserver(EVENT_TYPE_LIBRARY_FILE_UPLOADED);
+      this._uploaderComponent.detachObserver(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED);
       this._uploaderComponent.dispose();
       this._uploaderComponent = null;
     }
@@ -461,5 +455,3 @@ Quantumart.QP8.BackendFileField.prototype = {
 };
 
 Quantumart.QP8.BackendFileField.registerClass('Quantumart.QP8.BackendFileField', null, Sys.IDisposable);
-
-//#endregion

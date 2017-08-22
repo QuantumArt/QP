@@ -1,233 +1,222 @@
-//#region class BackendEntityEditorManager
-var EVENT_TYPE_ENTITY_EDITOR_IS_READY = "OnEntityEditorIsReady";
-var EVENT_TYPE_ENTITY_EDITOR_DISPOSED = "OnEntityEditorDisposed";
-var EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = "OnEntityEditorFieldChanged";
-var EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE = "OnEntityEditorAllFieldInvalidate";
+window.EVENT_TYPE_ENTITY_EDITOR_IS_READY = 'OnEntityEditorIsReady';
+window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED = 'OnEntityEditorDisposed';
+window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = 'OnEntityEditorFieldChanged';
+window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE = 'OnEntityEditorAllFieldInvalidate';
 
-// === Класс "Менеджер редакторов сущностей" ===
-Quantumart.QP8.BackendEntityEditorManager = function () {
-	Quantumart.QP8.BackendEntityEditorManager.initializeBase(this);
-};
+class BackendEntityEditorManager extends Quantumart.QP8.Observable {
+  static getInstance() {
+    if (!BackendEntityEditorManager._instance) {
+      BackendEntityEditorManager._instance = new BackendEntityEditorManager();
+    }
 
-Quantumart.QP8.BackendEntityEditorManager.prototype = {
-	_editorGroups: {}, // список групп редакторов сущностей
+    return BackendEntityEditorManager._instance;
+  }
 
-	generateEditorGroupCode: function (entityTypeCode, entityId) {
-		var editorGroupCode = String.format("{0}_{1}", entityTypeCode, entityId);
+  static destroyInstance() {
+    if (BackendEntityEditorManager._instance) {
+      BackendEntityEditorManager._instance.dispose();
+      BackendEntityEditorManager._instance = null;
+    }
+  }
 
-		return editorGroupCode;
-	},
+  static generateEditorGroupCode(entityTypeCode, entityId) {
+    return `${entityTypeCode}_${entityId}`;
+  }
 
-	getEditorGroup: function (editorGroupCode) {
-		var editorGroup = null;
-		if (this._editorGroups[editorGroupCode]) {
-			editorGroup = this._editorGroups[editorGroupCode];
-		}
+  constructor() {
+    super();
+    this._editorGroups = {};
+  }
 
-		return editorGroup;
-	},
+  getEditorGroup(editorGroupCode) {
+    return this._editorGroups[editorGroupCode];
+  }
 
-	createEditorGroup: function (editorGroupCode) {
-		var editorGroup = this.getEditorGroup(editorGroupCode);
-		if (!editorGroup) {
-			editorGroup = {};
-			this._editorGroups[editorGroupCode] = editorGroup;
-		}
+  createEditorGroup(editorGroupCode) {
+    let editorGroup = this.getEditorGroup(editorGroupCode);
+    if (!editorGroup) {
+      editorGroup = {};
+      this._editorGroups[editorGroupCode] = editorGroup;
+    }
 
-		return editorGroup;
-	},
+    return editorGroup;
+  }
 
-	refreshEditorGroup: function (entityTypeCode, entityId, options) {
-		var editorGroup = this.getEditorGroup(this.generateEditorGroupCode(entityTypeCode, entityId));
-		if (editorGroup) {
-			for (var documentWrapperElementId in editorGroup) {
-				this.refreshEditor(documentWrapperElementId, options);
-			}
-		}
+  refreshEditorGroup(entityTypeCode, entityId, options) {
+    const editorGroup = this.getEditorGroup(
+      BackendEntityEditorManager.generateEditorGroupCode(entityTypeCode, entityId)
+    );
 
-		editorGroup = null;
-	},
+    if (editorGroup) {
+      Object.keys(editorGroup).forEach(documentWrapperElementId => {
+        this.refreshEditor(documentWrapperElementId, options);
+      }, this);
+    }
+  }
 
-	removeEditorGroup: function (editorGroupCode) {
-		$q.removeProperty(this._editorGroups, editorGroupCode)
-	},
+  removeEditorGroup(editorGroupCode) {
+    $q.removeProperty(this._editorGroups, editorGroupCode);
+  }
 
-	getEditor: function (editorCode) {
-		var editor = null;
+  getEditor(editorCode) {
+    const editorGroup = Object.values(this._editorGroups).find(val => val[editorCode]);
+    return editorGroup[editorCode];
+  }
 
-		for (var editorGroupCode in this._editorGroups) {
-			var editorGroup = this._editorGroups[editorGroupCode];
-			if (editorGroup[editorCode]) {
-				editor = editorGroup[editorCode];
-				break;
-			}
-		}
+  // eslint-disable-next-line max-params
+  createEditor(documentWrapperElementId, entityTypeCode, entityId, actionTypeCode, options, hostOptions) {
+    const editorGroupCode = BackendEntityEditorManager.generateEditorGroupCode(entityTypeCode, entityId);
+    let finalOptions = Object.assign({}, options);
 
-		return editor;
-	},
+    if (hostOptions) {
+      finalOptions = Object.assign({}, finalOptions, {
+        isBindToExternal: hostOptions.isBindToExternal
+      });
 
-	createEditor: function (documentWrapperElementId, entityTypeCode, entityId, actionTypeCode, options, hostOptions) {
-		var editorGroupCode = this.generateEditorGroupCode(entityTypeCode, entityId);
+      if (hostOptions.contextQuery) {
+        finalOptions = Object.assign({}, finalOptions, {
+          contextQuery: hostOptions.contextQuery
+        });
+      }
 
-		var finalOptions = {};
-		jQuery.extend(finalOptions, options);
-		if (hostOptions) {
-		    if (hostOptions.contextQuery) {
-		        jQuery.extend(finalOptions, { contextQuery: hostOptions.contextQuery });
-		    }
-			if (hostOptions.eventArgsAdditionalData) {
-				if ((entityId == 0 || hostOptions.eventArgsAdditionalData.restoring === true) && hostOptions.eventArgsAdditionalData.initFieldValues) {
-					jQuery.extend(finalOptions, {
-						initFieldValues: hostOptions.eventArgsAdditionalData.initFieldValues,
-						restoring: hostOptions.eventArgsAdditionalData.restoring
-					});
-				}
-				if (hostOptions.eventArgsAdditionalData.disabledFields) {
-					jQuery.extend(finalOptions, { disabledFields: hostOptions.eventArgsAdditionalData.disabledFields });
-				}
-				if (hostOptions.eventArgsAdditionalData.hideFields) {
-					jQuery.extend(finalOptions, { hideFields: hostOptions.eventArgsAdditionalData.hideFields });
-				}
-				if (hostOptions.eventArgsAdditionalData.contextQuery) {
-				    jQuery.extend(finalOptions, { contextQuery: hostOptions.eventArgsAdditionalData.contextQuery });
-				}
-			}
+      if (hostOptions.eventArgsAdditionalData) {
+        if ((entityId === 0 || hostOptions.eventArgsAdditionalData.restoring)
+          && hostOptions.eventArgsAdditionalData.initFieldValues
+        ) {
+          finalOptions = Object.assign({}, finalOptions, {
+            initFieldValues: hostOptions.eventArgsAdditionalData.initFieldValues,
+            restoring: hostOptions.eventArgsAdditionalData.restoring
+          });
+        }
 
-			finalOptions.isBindToExternal = hostOptions.isBindToExternal;
-		}
+        if (hostOptions.eventArgsAdditionalData.disabledFields) {
+          finalOptions = Object.assign({}, finalOptions, {
+            disabledFields: hostOptions.eventArgsAdditionalData.disabledFields
+          });
+        }
 
-		var editor = new Quantumart.QP8.BackendEntityEditor(editorGroupCode, documentWrapperElementId, entityTypeCode, entityId, actionTypeCode, finalOptions);
-		editor.set_editorManagerComponent(this);
+        if (hostOptions.eventArgsAdditionalData.hideFields) {
+          finalOptions = Object.assign({}, finalOptions, {
+            hideFields: hostOptions.eventArgsAdditionalData.hideFields
+          });
+        }
 
-		var editorGroup = this.createEditorGroup(editorGroupCode);
-		editorGroup[editorGroupCode] = editor;
+        if (hostOptions.eventArgsAdditionalData.contextQuery) {
+          finalOptions = Object.assign({}, finalOptions, {
+            contextQuery: hostOptions.eventArgsAdditionalData.contextQuery
+          });
+        }
+      }
+    }
 
-		return editor;
-	},
+    const editor = new Quantumart.QP8.BackendEntityEditor(
+      editorGroupCode,
+      documentWrapperElementId,
+      entityTypeCode,
+      entityId,
+      actionTypeCode,
+      finalOptions
+    );
 
-	refreshEditor: function (documentWrapperElementId, options) {
-		var editor = this.getEditor(documentWrapperElementId)
-		if (editor) {
-			editor.refreshEditor(options);
-		}
+    editor.set_editorManagerComponent(this);
 
-		editor = null;
-	},
+    const editorGroup = this.createEditorGroup(editorGroupCode);
+    editorGroup[editorGroupCode] = editor;
 
-	removeEditor: function (documentWrapperElementId) {
-		var editor = this.getEditor(documentWrapperElementId);
-		if (editor) {
-			var editorGroupCode = editor.get_editorGroupCode();
-			var editorGroup = this.getEditorGroup(editorGroupCode);
+    return editor;
+  }
 
-			$q.removeProperty(editorGroup, documentWrapperElementId);
+  refreshEditor(documentWrapperElementId, options) {
+    const editor = this.getEditor(documentWrapperElementId);
+    if (editor) {
+      editor.refreshEditor(options);
+    }
+  }
 
-			if ($q.getHashKeysCount(editorGroup) == 0) {
-				this.removeEditorGroup(editorGroupCode);
-			}
-		}
-	},
+  removeEditor(documentWrapperElementId) {
+    const editor = this.getEditor(documentWrapperElementId);
+    if (editor) {
+      const editorGroupCode = editor.get_editorGroupCode();
+      const editorGroup = this.getEditorGroup(editorGroupCode);
 
-	destroyEditor: function (documentWrapperElementId) {
-		var editor = this.getEditor(documentWrapperElementId);
-		if (editor != null) {
-			if (editor.dispose) {
-				editor.dispose();
-			}
-			editor = null;
-		}
-	},
+      $q.removeProperty(editorGroup, documentWrapperElementId);
+      if ($q.getHashKeysCount(editorGroup) === 0) {
+        this.removeEditorGroup(editorGroupCode);
+      }
+    }
+  }
 
-	onActionExecuted: function (eventArgs) {
-		var entityTypeCode = eventArgs.get_entityTypeCode();
-		var actionTypeCode = eventArgs.get_actionTypeCode();
-		var actionCode = eventArgs.get_actionCode();
-		var entityId = eventArgs.get_entityId();
+  onActionExecuted(eventArgs) {
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
+    const actionCode = eventArgs.get_actionCode();
+    const entityId = eventArgs.get_entityId();
 
-		if (actionCode == ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES)
-		{
-			var entityIds = (eventArgs.get_isMultipleEntities()) ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
-			var self = this;
-			jQuery.each(entityIds, function (index, id) {
-				self.refreshEditorGroup(ENTITY_TYPE_CODE_ARTICLE, id);
-			});
-		}
-		else if (actionTypeCode == ACTION_TYPE_CODE_CHANGE_LOCK) {
-			this.refreshEditorGroup(entityTypeCode, entityId);
-		}
-		else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-			var confirmMessageText = String.format($l.EntityEditor.autoRefreshConfirmMessageAfterArticleRestoring, entityId);
-			this.refreshEditorGroup(ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { "confirmMessageText": confirmMessageText })
-		}
-		else if (actionCode == ACTION_CODE_ENABLE_ARTICLES_PERMISSIONS && entityTypeCode == ENTITY_TYPE_CODE_CONTENT) {
-			this.refreshEditorGroup(entityTypeCode, entityId);
-		}
-	},
+    if (actionCode === window.ACTION_CODE_MULTIPLE_PUBLISH_ARTICLES) {
+      const entityIds = eventArgs.get_isMultipleEntities()
+        ? $o.getEntityIDsFromEntities(eventArgs.get_entities())
+        : [entityId];
 
-	onEntityEditorReady: function (documentWrapperElementId) {
-		var eventArgs = new Sys.EventArgs();
-		eventArgs.documentWrapperElementId = documentWrapperElementId;
-		this.notify(EVENT_TYPE_ENTITY_EDITOR_IS_READY, eventArgs);
-	},
+      const that = this;
+      $.each(entityIds, (index, id) => {
+        that.refreshEditorGroup(window.ENTITY_TYPE_CODE_ARTICLE, id);
+      });
+    } else if (actionTypeCode === window.ACTION_TYPE_CODE_CHANGE_LOCK) {
+      this.refreshEditorGroup(entityTypeCode, entityId);
+    } else if (eventArgs.get_isRestored() && entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+      const confirmMessageText = String.format(
+        $l.EntityEditor.autoRefreshConfirmMessageAfterArticleRestoring,
+        entityId
+      );
 
-	onEntityEditorDisposed: function (documentWrapperElementId) {
-		var eventArgs = new Sys.EventArgs();
-		eventArgs.documentWrapperElementId = documentWrapperElementId;
-		this.notify(EVENT_TYPE_ENTITY_EDITOR_DISPOSED, eventArgs);
-	},
+      this.refreshEditorGroup(window.ENTITY_TYPE_CODE_ARTICLE, eventArgs.get_parentEntityId(), { confirmMessageText });
+    } else if (actionCode === window.ACTION_CODE_ENABLE_ARTICLES_PERMISSIONS
+      && entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT
+    ) {
+      this.refreshEditorGroup(entityTypeCode, entityId);
+    }
+  }
 
-	onFieldValueChanged: function(args){
-		var eventArgs = new Sys.EventArgs();
-		eventArgs.fieldChangeInfo = args;
-		this.notify(EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED, eventArgs);
-	},
+  onEntityEditorReady(documentWrapperElementId) {
+    const eventArgs = new Sys.EventArgs();
+    eventArgs.documentWrapperElementId = documentWrapperElementId;
+    this.notify(window.EVENT_TYPE_ENTITY_EDITOR_IS_READY, eventArgs);
+  }
 
-	onAllFieldInvalidate: function (documentWrapperElementId) {
-		var eventArgs = new Sys.EventArgs();
-		eventArgs.documentWrapperElementId = documentWrapperElementId;
-		this.notify(EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE, eventArgs);
-	},
+  onEntityEditorDisposed(documentWrapperElementId) {
+    const eventArgs = new Sys.EventArgs();
+    eventArgs.documentWrapperElementId = documentWrapperElementId;
+    this.notify(window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED, eventArgs);
+  }
 
-	dispose: function () {
-		Quantumart.QP8.BackendEntityEditorManager.callBaseMethod(this, "dispose");
+  onFieldValueChanged(args) {
+    const eventArgs = new Sys.EventArgs();
+    eventArgs.fieldChangeInfo = args;
+    this.notify(window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED, eventArgs);
+  }
 
-		if (this._editorGroups) {
-			for (editorGroupCode in this._editorGroups) {
-				var editorGroup = this._editorGroups[editorGroupCode];
+  onAllFieldInvalidate(documentWrapperElementId) {
+    const eventArgs = new Sys.EventArgs();
+    eventArgs.documentWrapperElementId = documentWrapperElementId;
+    this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE, eventArgs);
+  }
 
-				for (documentWrapperElementId in editorGroup) {
-					this.destroyEditor(documentWrapperElementId);
-				}
+  dispose() {
+    super.dispose();
+    if (this._editorGroups) {
+      Object.values(this._editorGroups).forEach(editorGroup => {
+        Object.keys(editorGroup).forEach(documentWrapperElementId => {
+          const editor = this.getEditor(documentWrapperElementId);
+          if (editor && editor.dispose) {
+            editor.dispose();
+          }
+        }, this);
+      }, this);
+    }
 
-				delete this._editorGroups[editorGroupCode];
-			}
+    this._editorGroups = null;
+    $q.collectGarbageInIE();
+  }
+}
 
-			this._editorGroups = null;
-		}
-
-		Quantumart.QP8.BackendEntityEditorManager._instance = null;
-
-		$q.collectGarbageInIE();
-	}
-};
-
-Quantumart.QP8.BackendEntityEditorManager._instance = null; // экземпляр класса
-
-// Возвращает экземпляр класса "Менеджер редакторов сущностей"
-Quantumart.QP8.BackendEntityEditorManager.getInstance = function Quantumart$QP8$BackendEntityEditorManager$getInstance() {
-	if (Quantumart.QP8.BackendEntityEditorManager._instance == null) {
-		Quantumart.QP8.BackendEntityEditorManager._instance = new Quantumart.QP8.BackendEntityEditorManager();
-	}
-
-	return Quantumart.QP8.BackendEntityEditorManager._instance;
-};
-
-// Уничтожает экземпляр класса "Менеджер редакторов сущностей"
-Quantumart.QP8.BackendEntityEditorManager.destroyInstance = function Quantumart$QP8$BackendEntityEditorManager$destroyInstance() {
-	if (Quantumart.QP8.BackendEntityEditorManager._instance) {
-		Quantumart.QP8.BackendEntityEditorManager._instance.dispose();
-	}
-};
-
-Quantumart.QP8.BackendEntityEditorManager.registerClass("Quantumart.QP8.BackendEntityEditorManager", Quantumart.QP8.Observable);
-//#endregion
+Quantumart.QP8.BackendEntityEditorManager = BackendEntityEditorManager;

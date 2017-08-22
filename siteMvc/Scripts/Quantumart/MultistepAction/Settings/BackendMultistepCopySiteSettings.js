@@ -1,11 +1,11 @@
-Quantumart.QP8.MultistepActionCopySiteSettings = function MultistepActionCopySiteSettings() {
+Quantumart.QP8.MultistepActionCopySiteSettings = function () {
   // ctor
 };
 
 Quantumart.QP8.MultistepActionCopySiteSettings.prototype = {
   COPY_BUTTON: 'Create like site',
-  addButtons: function (dataItems) {
-    var exportButton = {
+  addButtons(dataItems) {
+    const exportButton = {
       Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
       Value: this.COPY_BUTTON,
       Text: $l.MultistepAction.createLikeSite,
@@ -17,15 +17,15 @@ Quantumart.QP8.MultistepActionCopySiteSettings.prototype = {
     return dataItems.concat(exportButton);
   },
 
-  initActions: function () {
+  initActions() {
     // empty fn
   },
 
-  validate: function () {
+  validate() {
     return '';
   },
 
-  dispose: function () {
+  dispose() {
     // empty fn
   }
 };

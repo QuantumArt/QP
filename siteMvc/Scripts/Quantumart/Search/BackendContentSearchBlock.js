@@ -1,111 +1,103 @@
-//#region class BackendContentSearchBlock
-// === Класс "Блок поиска статей" ===
 Quantumart.QP8.BackendContentSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
-	Quantumart.QP8.BackendContentSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
-	this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
+  Quantumart.QP8.BackendContentSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
+  this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
 };
 
-Quantumart.QP8.BackendContentSearchBlock.prototype =
-{
-	_minSearchBlockHeight: 80, // минимальная высота блока поиска
-	_maxSearchBlockHeight: 80, // максимальная высота блока поиска
-	_contentGroupListElement: null, // dom-элемент списка групп
-	_siteListElement: null,
-	_contentNameElement: null,
+Quantumart.QP8.BackendContentSearchBlock.prototype
+= {
+    _minSearchBlockHeight: 80,
+    _maxSearchBlockHeight: 80,
+    _contentGroupListElement: null,
+    _siteListElement: null,
+    _contentNameElement: null,
 
-	get_searchQuery: function () {
-		var groupId = null;
-		var siteId = null;
-		var contentName = null;
+    get_searchQuery() {
+      let groupId = null;
+      let siteId = null;
+      let contentName = null;
 
-		if (this._contentGroupListElement)
-			groupId = jQuery(this._contentGroupListElement).find("option:selected").val();
-		if (this._siteListElement)
-			siteId = jQuery(this._siteListElement).find("option:selected").val();
-		if (this._contentNameElement)
-			contentName = jQuery(this._contentNameElement).val();
+      if (this._contentGroupListElement) {
+        groupId = $(this._contentGroupListElement).find('option:selected').val();
+      }
+      if (this._siteListElement) {
+        siteId = $(this._siteListElement).find('option:selected').val();
+      }
+      if (this._contentNameElement) {
+        contentName = $(this._contentNameElement).val();
+      }
 
-		return JSON.stringify({
-			"GroupId": groupId,
-			"SiteId": siteId,
-			"ContentName": contentName
-		});
-	},
-	// возвращает параметры поиска
+      return JSON.stringify({
+        GroupId: groupId,
+        SiteId: siteId,
+        ContentName: contentName
+      });
+    },
 
-	renderSearchBlock: function () {
+    renderSearchBlock() {
+      if (!this.get_isRendered()) {
+        let serverContent;
+        $q.getJsonFromUrl(
+          'GET',
+          `${window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK}SearchBlock/${this._parentEntityId}`,
+          {
+            actionCode: this._actionCode,
+            hostId: this._hostId
+          },
+          false,
+          false,
+          (data, textStatus, jqXHR) => {
+            if (data.success) {
+              serverContent = data.view;
+            } else {
+              $q.alertFail(data.message);
+            }
+          },
+          (jqXHR, textStatus, errorThrown) => {
+            serverContent = null;
+            $q.processGenericAjaxError(jqXHR);
+          });
+        if (!$q.isNullOrWhiteSpace(serverContent)) {
+          $(this._concreteSearchBlockElement).html(serverContent);
 
-		if (this.get_isRendered() !== true) {
+          this._contentGroupListElement = $('.contentGroupList', this._searchBlockElement).get(0);
+          this._siteListElement = $('.siteList', this._searchBlockElement).get(0);
+          this._contentNameElement = $('.contentNameText', this._searchBlockElement).get(0);
+          $('.csFilterCombo', this._searchBlockElement).bind('change', this._onChangeComboHandler);
+        }
 
-			// получить разметку с сервера
-			var serverContent;
-			$q.getJsonFromUrl(
-			"GET",
-			CONTROLLER_URL_CONTENT_SEARCH_BLOCK + "SearchBlock/" + this._parentEntityId,
-			{
-				"actionCode": this._actionCode,
-				"hostId": this._hostId
-			},
-			false,
-			false,
-			function (data, textStatus, jqXHR) {
-				if (data.success)
-					serverContent = data.view;
-				else
-					alert(data.message);
-			},
-			function (jqXHR, textStatus, errorThrown) {
-				serverContent = null;
-				$q.processGenericAjaxError(jqXHR);
-			});
-			if (!$q.isNullOrWhiteSpace(serverContent)) {
+        this.set_isRendered(true);
+      }
+    },
 
-			    jQuery(this._concreteSearchBlockElement).html(serverContent);
+    _onChangeCombo() {
+      $(this._findButtonElement).trigger('click');
+    },
 
-			    // получить список групп
-				this._contentGroupListElement = jQuery(".contentGroupList", this._searchBlockElement).get(0);
-				this._siteListElement = jQuery(".siteList", this._searchBlockElement).get(0);
-				this._contentNameElement = jQuery(".contentNameText", this._searchBlockElement).get(0);
-				jQuery(".csFilterCombo", this._searchBlockElement).bind("change", this._onChangeComboHandler);
-			}
+    _onFindButtonClick() {
+      let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
+      this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
+      eventArgs = null;
+    },
 
-			this.set_isRendered(true);
-		}
-	},
+    _onResetButtonClick() {
+      $('.csFilterCombo', this._searchBlockElement).find("option[value='']").prop('selected', true);
+      $('.csFilterTextbox', this._searchBlockElement).val('');
 
+      let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
+      this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
+      eventArgs = null;
+    },
 
-	_onChangeCombo: function () {
-		jQuery(this._findButtonElement).trigger("click");
-	},
+    dispose() {
+      $('.csFilterCombo', this._searchBlockElement).unbind();
 
-	_onFindButtonClick: function () {
-		var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
-		this.notify(EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
-		eventArgs = null;
-	},
+      this._contentGroupListElement = null;
+      this._siteListElement = null;
+      this._contentNameElement = null;
+      this._onChangeComboHandler = null;
 
-	_onResetButtonClick: function () {
+      Quantumart.QP8.BackendContentSearchBlock.callBaseMethod(this, 'dispose');
+    }
+  };
 
-		// очистить блоки поиска
-		jQuery(".csFilterCombo", this._searchBlockElement).find("option[value='']").prop("selected", true);
-		jQuery(".csFilterTextbox", this._searchBlockElement).val('');
-
-		var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
-		this.notify(EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
-		eventArgs = null;
-	},
-
-	dispose: function () {
-	    jQuery(".csFilterCombo", this._searchBlockElement).unbind();
-
-		this._contentGroupListElement = null;
-		this._siteListElement = null;
-		this._contentNameElement = null;
-		this._onChangeComboHandler = null;
-
-		Quantumart.QP8.BackendContentSearchBlock.callBaseMethod(this, "dispose");
-	}
-};
-
-Quantumart.QP8.BackendContentSearchBlock.registerClass("Quantumart.QP8.BackendContentSearchBlock", Quantumart.QP8.BackendSearchBlockBase);
-//#endregion
+Quantumart.QP8.BackendContentSearchBlock.registerClass('Quantumart.QP8.BackendContentSearchBlock', Quantumart.QP8.BackendSearchBlockBase);

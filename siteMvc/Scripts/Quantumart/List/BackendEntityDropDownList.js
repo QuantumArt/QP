@@ -1,212 +1,158 @@
-//#region class BackendEntityDropDownList
-// === Класс "Список сущностей в виде раскрывающегося списка" ===
 Quantumart.QP8.BackendEntityDropDownList = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
-	Quantumart.QP8.BackendEntityDropDownList.initializeBase(this,
-		[listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]);
-
-	this._allowMultipleItemSelection = false;
-	this._selectionMode = Quantumart.QP8.Enums.ListSelectionMode.AllItems;
+  Quantumart.QP8.BackendEntityDropDownList.initializeBase(this, [listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]);
+  this._allowMultipleItemSelection = false;
+  this._selectionMode = Quantumart.QP8.Enums.ListSelectionMode.AllItems;
 };
 
 Quantumart.QP8.BackendEntityDropDownList.prototype = {
-	initialize: function () {
-		Quantumart.QP8.BackendEntityDropDownList.callBaseMethod(this, "initialize");
+  initialize() {
+    Quantumart.QP8.BackendEntityDropDownList.callBaseMethod(this, 'initialize');
+    this._addReadButtonToToolbar();
+    this._addNewButtonToToolbar();
+    this._attachListItemEventHandlers();
+  },
 
-		this._addReadButtonToToolbar();
+  _attachListItemEventHandlers() {
+    $(this._listElement).bind('change', $.proxy(this._onSelectedItemChangeHandler, this));
+  },
 
-		this._addNewButtonToToolbar();
+  _detachListItemEventHandlers() {
+    $(this._listElement).unbind('change');
+  },
 
-		this._attachListItemEventHandlers();
+  getSelectedListItems() {
+    return $(this._listElement).find("OPTION[value!='']:selected");
+  },
 
-	},
+  getSelectedEntities() {
+    const entities = [];
+    const $selectedListItems = this.getSelectedListItems();
+    if ($selectedListItems.length > 0) {
+      const $selectedListItem = $selectedListItems.eq(0);
+      const entityId = $q.toString($selectedListItem.val());
+      const entityName = $q.toString($selectedListItem.text(), '');
+      Array.add(entities, { Id: entityId, Name: entityName });
+    }
 
-	_attachListItemEventHandlers: function () {
-		var $list = jQuery(this._listElement);
-		$list.bind("change", jQuery.proxy(this._onSelectedItemChangeHandler, this));
+    return entities;
+  },
 
-		$list = null;
-	},
+  getSelectedEntityIDs() {
+    return $.grep(
+      $.map(this.getSelectedEntities(), item => $q.toString(item.Id)), item => item
+    );
+  },
 
-	_detachListItemEventHandlers: function () {
-		var $list = jQuery(this._listElement);
-		$list.unbind("change");
-		$list = null;
-	},
+  selectEntities(entityID) {
+    this.deselectAllListItems();
+    if (!$q.isNullOrEmpty(entityID)) {
+      if ($q.isArray(entityID) && entityID.length > 0) {
+        this.selectEntities(entityID[0]);
+      } else {
+        $(this._listElement).find(`OPTION[value="${$q.toString(entityID, '')}"]`).prop('selected', true).change();
+      }
+    }
+  },
 
-	getSelectedListItems: function () {
-		var $selectedListItems = jQuery(this._listElement).find("OPTION[value!='']:selected");
+  deselectAllListItems() {
+    $(this._listElement).find('OPTION:selected').prop('selected', false).change();
+  },
 
-		return $selectedListItems;
-	},
+  _checkAllowShowingToolbar() {
+    return this._addNewActionCode != window.ACTION_CODE_NONE || this._readActionCode != window.ACTION_CODE_NONE;
+  },
 
-	getSelectedEntities: function () {
-		var entities = [];
-		var $selectedListItems = this.getSelectedListItems();
+  _refreshListInner(dataItems, refreshOnly) {
+    const $list = $(this._listElement);
+    const oldValue = $list.val();
+    const markChanged = !refreshOnly;
+    const selectedValue = markChanged ? oldValue : '';
+    const listState = { selectedValue, isChanged: markChanged };
+    $list.find("OPTION[value!='']").remove();
 
-		if ($selectedListItems.length > 0) {
-			var $selectedListItem = $selectedListItems.eq(0);
-			var entityId = $q.toString($selectedListItem.val());
-			var entityName = $q.toString($selectedListItem.text(), "");
+    const listItemHtml = new $.telerik.stringBuilder();
+    for (let dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
+      const dataItem = dataItems[dataItemIndex];
+      this._getDropDownListItemHtml(listItemHtml, dataItem, markChanged, listState);
+    }
 
-			Array.add(entities, { "Id": entityId, "Name": entityName });
-		}
+    $list.append(listItemHtml.string());
+    const value = $list.val();
+    if (oldValue != value) {
+      $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
+      const operation = refreshOnly ? 'addClass' : 'removeClass';
+      $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
+      $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value, contentFieldName: $list.data('content_field_name') });
+    }
+  },
 
-		$selectedListItem = null;
-		$list = null;
+  enableList() {
+    $(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', false);
+    this._enableAllToolbarButtons();
+  },
 
-		return entities;
-	},
+  disableList() {
+    $(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', true);
+    this._disableAllToolbarButtons();
+  },
 
-	getSelectedEntityIDs: function () {
-		return jQuery.grep(
-			jQuery.map(this.getSelectedEntities(), function (item) {
-				return $q.toString(item.Id)
-			}),
-			function (item) {
-				return item;
-			}
-		);
-	},
+  makeReadonly() {
+    const $listElement = $(this._listElement);
+    const selectedVal = $listElement.find('OPTION:selected').val();
+    if (!$q.isNullOrEmpty(selectedVal)) {
+      const $hidden = $listElement.siblings(`input[name="${$listElement.prop('name')}"]:hidden`);
+      if ($hidden.length > 0) {
+        $hidden.val(selectedVal);
+      } else {
+        $listElement.after(`<input type="hidden" name="${$listElement.prop('name')}" value="${selectedVal}" />`);
+      }
+    }
 
-	selectEntities: function (entityID) {
-		this.deselectAllListItems();
-		if (!$q.isNullOrEmpty(entityID)) {
-			if ($q.isArray(entityID) && entityID.length > 0) {
-				this.selectEntities(entityID[0]);
-			} else {
-				jQuery(this._listElement)
-					.find('OPTION[value="' + $q.toString(entityID, "") + '"]')
-					.prop("selected", true)
-					.change();
-			}
-		}
-	},
+    this.disableList();
+  },
 
-	deselectAllListItems: function () {
-		jQuery(this._listElement).find('OPTION:selected').prop('selected', false).change();
-	},
+  _getDropDownListItemHtml(html, dataItem, saveChanges, listState) {
+    const itemValue = dataItem.Value;
+    let itemText = dataItem.Text;
+    if (this._showIds) {
+      itemText = `(#${itemValue}) - ${itemText}`;
+    }
 
-	_checkAllowShowingToolbar: function () {
-		return (this._addNewActionCode != ACTION_CODE_NONE || this._readActionCode != ACTION_CODE_NONE);
-	},
+    let isSelected = false;
+    if (saveChanges) {
+      isSelected = listState.selectedValue == itemValue;
+    } else {
+      isSelected = dataItem.Selected;
+    }
 
-	_refreshListInner: function (dataItems, refreshOnly) {
-	    var $list = jQuery(this._listElement);
-	    var oldValue = $list.val();
-	    var markChanged = !refreshOnly;
-	    var selectedValue = (markChanged) ? oldValue : "";
-		var listState = { 'selectedValue': selectedValue, 'isChanged': markChanged };
+    html
+      .cat('<option')
+      .cat(` value="${$q.htmlEncode(itemValue)}"`)
+      .catIf(' selected="selected"', isSelected)
+      .cat('>')
+      .cat(itemText)
+      .cat('</option>\n');
+  },
 
-		$list.find("OPTION[value!='']").remove();
+  isListChanged() {
+    return $(this._listElement).hasClass(window.CHANGED_FIELD_CLASS_NAME);
+  },
 
-		var listItemHtml = new $.telerik.stringBuilder();
+  _onSelectedItemChangeHandler() {
+    if (!this.isListDisabled()) {
+      this._refreshReadToolbarButton(true);
+    }
+  },
 
-		for (var dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
-			var dataItem = dataItems[dataItemIndex];
+  getListItems() {
+    return $(this._listElement).find('OPTION');
+  },
 
-			this._getDropDownListItemHtml(listItemHtml, dataItem, markChanged, listState);
-		}
-
-		$list.append(listItemHtml.string());
-
-		var value = $list.val();
-		if (oldValue != value) {
-		    $list.addClass(CHANGED_FIELD_CLASS_NAME)
-		    var operation = (refreshOnly) ? "addClass" : "removeClass";
-		    $list[operation](REFRESHED_FIELD_CLASS_NAME)
-		    $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $list.data("list_item_name"), "value": value, contentFieldName: $list.data('content_field_name') });
-		}
-
-
-		listItemHtml = null;
-		$list = null;
-	},
-
-	enableList: function () {
-		jQuery(this._listElement)
-			.removeClass(this.LIST_DISABLED_CLASS_NAME)
-			.prop("disabled", false)
-			;
-
-		this._enableAllToolbarButtons();
-	},
-
-	disableList: function () {
-		jQuery(this._listElement)
-			.addClass(this.LIST_DISABLED_CLASS_NAME)
-			.prop("disabled", true);
-
-		this._disableAllToolbarButtons();
-	},
-
-	makeReadonly: function () {
-		var $listElement = jQuery(this._listElement);
-		var selectedVal = $listElement.find("OPTION:selected").val();
-		if (!$q.isNullOrEmpty(selectedVal)) {
-			var $hidden = $listElement.siblings('input[name="' + $listElement.prop("name") + '"]:hidden')
-			if ($hidden.length > 0) {
-				$hidden.val(selectedVal);
-			}
-			else {
-				$listElement.after('<input type="hidden" name="' + $listElement.prop("name") + '" value="' + selectedVal + '" />');
-			}
-		}
-		$listElement = null;
-
-		this.disableList();
-	},
-
-	_getDropDownListItemHtml: function (html, dataItem, saveChanges, listState) {
-		var itemValue = dataItem.Value;
-		var itemText = dataItem.Text;
-		if (this._showIds) {
-			itemText = "(#" + itemValue + ") - " + itemText;
-		}
-		var isSelected = false;
-		if (saveChanges) {
-			isSelected = (listState.selectedValue == itemValue);
-		}
-		else {
-			isSelected = dataItem.Selected;
-		}
-
-		html
-			.cat('<option')
-			.cat(' value="' + $q.htmlEncode(itemValue) + '"')
-			.catIf(' selected="selected"', isSelected)
-			.cat('>')
-			.cat(itemText)
-			.cat('</option>\n')
-			;
-	},
-
-	isListChanged: function () {
-		var $list = jQuery(this._listElement);
-		var result = $list.hasClass(CHANGED_FIELD_CLASS_NAME);
-		$list = null;
-		return result;
-	},
-
-	_onSelectedItemChangeHandler: function () {
-		if (!this.isListDisabled()) {
-			this._refreshReadToolbarButton(true);
-		}
-	},
-
-	getListItems: function () {
-		var $listItems = jQuery(this._listElement).find("OPTION");
-
-		return $listItems;
-	},
-
-	dispose: function () {
-		this._stopDeferredOperations = true;
-
-		this._detachListItemEventHandlers();
-
-		Quantumart.QP8.BackendEntityDropDownList.callBaseMethod(this, "dispose");
-	}
+  dispose() {
+    this._stopDeferredOperations = true;
+    this._detachListItemEventHandlers();
+    Quantumart.QP8.BackendEntityDropDownList.callBaseMethod(this, 'dispose');
+  }
 };
 
-Quantumart.QP8.BackendEntityDropDownList.registerClass("Quantumart.QP8.BackendEntityDropDownList", Quantumart.QP8.BackendEntityDataListBase);
-//#endregion
+Quantumart.QP8.BackendEntityDropDownList.registerClass('Quantumart.QP8.BackendEntityDropDownList', Quantumart.QP8.BackendEntityDataListBase);

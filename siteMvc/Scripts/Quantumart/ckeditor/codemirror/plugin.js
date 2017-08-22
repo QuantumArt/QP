@@ -6,10 +6,10 @@
 * CodeMirror Plugin: http://codemirror.net/ (MIT License)
 */
 
-(function() {
+(function () {
     CKEDITOR.plugins.add('codemirror', {
-        icons: 'searchcode,autoformat,commentselectedrange,uncommentselectedrange,autocomplete', // %REMOVE_LINE_CORE%
-        lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+        icons: 'searchcode,autoformat,commentselectedrange,uncommentselectedrange,autocomplete',
+        lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh',
         version: 1.15,
         init: function (editor) {
             var rootPath = this.path,
@@ -87,7 +87,8 @@
                             showCursorWhenSelecting: true,
                             styleActiveLine: config.styleActiveLine,
                             viewportMargin: Infinity,
-                            //extraKeys: {"Ctrl-Space": "autocomplete"},
+
+                            // extraKeys: {"Ctrl-Space": "autocomplete"},
                             extraKeys: {
                                 "Ctrl-Q": function (codeMirror_Editor) {
                                     if (config.enableCodeFolding) {
@@ -109,7 +110,7 @@
                             if (config.useBeautifyOnStart) {
                                 var indent_size = 4,
                                     indent_char = ' ',
-                                    brace_style = 'collapse'; //collapse, expand, end-expand
+                                    brace_style = 'collapse';
 
                                 var source = window["codemirror_" + editor.id].getValue();
 
@@ -143,6 +144,7 @@
                         if (config.lineNumbers && config.enableCodeFolding) {
                             window["codemirror_" + editor.id].on("gutterClick", window["foldFunc_" + editor.id]);
                         }
+
                         // Run config.onLoad callback, if present.
                         if (typeof config.onLoad === 'function') {
                             config.onLoad(window["codemirror_" + editor.id], editor);
@@ -177,7 +179,7 @@
                         title: editor.lang.sourcedialog.title,
                         minWidth: width,
                         minHeight: height,
-                        resizable : CKEDITOR.DIALOG_RESIZE_NONE,
+                        resizable: CKEDITOR.DIALOG_RESIZE_NONE,
                         onShow: function () {
                             // Set Elements
                             this.getContentElement('main', 'data').focus();
@@ -198,21 +200,21 @@
 
                             if (typeof (CodeMirror) == 'undefined') {
 
-                                CKEDITOR.scriptLoader.load(rootPath + 'js/codemirror.min.js', function() {
+                                CKEDITOR.scriptLoader.load(rootPath + 'js/codemirror.min.js', function () {
 
-                                    CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function() {
+                                    CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function () {
                                         loadCodeMirrorInline(editor, textArea);
                                     });
                                 });
 
 
                             } else {
-                                //loadCodeMirrorInline(editor, textArea);
-                                if (CodeMirror.prototype['autoFormatAll']) {
+                                // loadCodeMirrorInline(editor, textArea);
+                                if (CodeMirror.prototype.autoFormatAll) {
                                     loadCodeMirrorInline(editor, textArea);
                                 } else {
                                     // loading the add-on scripts.
-                                    CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function() {
+                                    CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function () {
                                         loadCodeMirrorInline(editor, textArea);
                                     });
                                 }
@@ -255,8 +257,9 @@
 
                                 // Avoid unnecessary setData. Also preserve selection
                                 // when user changed his mind and goes back to wysiwyg editing.
-                                if (newData === oldData)
-                                    return true;
+                                if (newData === oldData) {
+ return true;
+}
 
                                 // Set data asynchronously to avoid errors in IE.
                                 CKEDITOR.env.ie ? CKEDITOR.tools.setTimeout(setData, 0, this, newData) : setData.call(this, newData);
@@ -267,7 +270,7 @@
                                 // Don't let the dialog close before setData is over.
                                 return false;
                             };
-                        })(),
+                        }()),
 
                         contents: [{
                             id: 'main',
@@ -283,8 +286,8 @@
                                             id: 'searchCode',
                                             label: '',
                                             title: lang.searchCode,
-                                            'class': 'searchCodeButton',
-                                            onClick: function() {
+                                            class: 'searchCodeButton',
+                                            onClick: function () {
                                                 CodeMirror.commands.find(window["codemirror_" + editor.id]);
                                             }
                                         }, {
@@ -292,8 +295,8 @@
                                             id: 'autoFormat',
                                             label: '',
                                             title: lang.autoFormat,
-                                            'class': 'autoFormat',
-                                            onClick: function() {
+                                            class: 'autoFormat',
+                                            onClick: function () {
                                                 var range = {
                                                     from: window["codemirror_" + editor.id].getCursor(true),
                                                     to: window["codemirror_" + editor.id].getCursor(false)
@@ -305,7 +308,7 @@
                                             id: 'CommentSelectedRange',
                                             label: '',
                                             title: lang.commentSelectedRange,
-                                            'class': 'CommentSelectedRange',
+                                            class: 'CommentSelectedRange',
                                             onClick: function () {
                                                 var range = {
                                                     from: window["codemirror_" + editor.id].getCursor(true),
@@ -318,7 +321,7 @@
                                             id: 'UncommentSelectedRange',
                                             label: '',
                                             title: lang.uncommentSelectedRange,
-                                            'class': 'UncommentSelectedRange',
+                                            class: 'UncommentSelectedRange',
                                             onClick: function () {
                                                 var range = {
                                                     from: window["codemirror_" + editor.id].getCursor(true),
@@ -347,7 +350,7 @@
                                         'height:' + height + 'px;' +
                                         'tab-size:4;' +
                                         'text-align:left;',
-                                    'class': 'cke_source cke_enable_context_menu'
+                                    class: 'cke_source cke_enable_context_menu'
                                 }
                             ]
                         }]
@@ -395,7 +398,7 @@
                     source: 1
                 };
 
-                editor.commands.find.exec = function() {
+                editor.commands.find.exec = function () {
                     if (editor.mode === 'wysiwyg') {
                         editor.openDialog('find');
                     } else {
@@ -433,7 +436,7 @@
                         },
                         editorFocus: false,
                         readOnly: 1,
-                        exec: function(editorInstance) {
+                        exec: function (editorInstance) {
                             if (editorInstance.mode === 'wysiwyg') {
                                 editorInstance.fire('saveSnapshot');
                             }
@@ -539,20 +542,20 @@
 
                 if (typeof (CodeMirror) == 'undefined') {
 
-                    CKEDITOR.scriptLoader.load(rootPath + 'js/codemirror.min.js', function() {
+                    CKEDITOR.scriptLoader.load(rootPath + 'js/codemirror.min.js', function () {
 
-                        CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function() {
+                        CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function () {
                             loadCodeMirror(editor);
                             callback();
                         });
                     });
                 } else {
-                    if (CodeMirror.prototype['autoFormatAll']) {
+                    if (CodeMirror.prototype.autoFormatAll) {
                         loadCodeMirror(editor);
                         callback();
                     } else {
                         // loading the add-on scripts.
-                        CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function() {
+                        CKEDITOR.scriptLoader.load(getCodeMirrorScripts(), function () {
                             loadCodeMirror(editor);
                             callback();
                         });
@@ -632,7 +635,7 @@
                 textarea.setAttributes({
                     dir: 'ltr',
                     tabIndex: CKEDITOR.env.webkit ? -1 : editor.tabIndex,
-                    'role': 'textbox',
+                    role: 'textbox',
                     'aria-label': ariaLabel
                 });
                 textarea.addClass('cke_source');
@@ -640,6 +643,7 @@
                 textarea.addClass('cke_enable_context_menu');
                 editor.ui.space('contents').append(textarea);
                 window["editable_" + editor.id] = editor.editable(new sourceEditable(editor, textarea));
+
                 // Fill the textarea with the current editor data.
                 window["editable_" + editor.id].setData(editor.getData(1));
                 window["editable_" + editor.id].editorID = editor.id;
@@ -648,7 +652,7 @@
                 var sourceAreaElement = window["editable_" + editor.id],
                     holderElement = sourceAreaElement.getParent();
 
-                /*CodeMirror.commands.autocomplete = function(cm) {
+                /* CodeMirror.commands.autocomplete = function(cm) {
                     CodeMirror.showHint(cm, CodeMirror.htmlHint);
                 };*/
 
@@ -685,15 +689,15 @@
                                 (function (command) {
                                     editorExtraKeys[key] = function () {
                                         editor.execCommand(command);
-                                    }
-                                })(ckeditorKeystrokes[i][1]);
+                                    };
+                                }(ckeditorKeystrokes[i][1]));
                             }
                         }
                     }
                 }
 
                 var extraKeys = {
-                    "Ctrl-Q": function(codeMirror_Editor) {
+                    "Ctrl-Q": function (codeMirror_Editor) {
                         if (config.enableCodeFolding) {
                             window["foldFunc_" + editor.id](codeMirror_Editor, codeMirror_Editor.getCursor().line);
                         }
@@ -720,7 +724,8 @@
                     showTrailingSpace: config.showTrailingSpace,
                     showCursorWhenSelecting: true,
                     styleActiveLine: config.styleActiveLine,
-                    //extraKeys: {"Ctrl-Space": "autocomplete"},
+
+                    // extraKeys: {"Ctrl-Space": "autocomplete"},
                     extraKeys: extraKeys,
                     foldGutter: true,
                     gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
@@ -735,7 +740,7 @@
                     if (config.useBeautifyOnStart) {
                         var indent_size = 4;
                         var indent_char = ' ';
-                        var brace_style = 'collapse'; //collapse, expand, end-expand
+                        var brace_style = 'collapse';
 
                         var source = window["codemirror_" + editor.id].getValue();
 
@@ -884,8 +889,8 @@
 
                     if (editor.plugins.textselection && textRange) {
 
-                        //textRange.element = new CKEDITOR.dom.element(editor._.editable.$);
-                        //textRange.select();
+                        // textRange.element = new CKEDITOR.dom.element(editor._.editable.$);
+                        // textRange.select();
 
                         var start, end;
 
@@ -903,7 +908,7 @@
                 }
 
             });
-            editor.on('resize', function() {
+            editor.on('resize', function () {
                 if (window["editable_" + editor.id] && editor.mode === 'source') {
                     var holderElement = window["editable_" + editor.id].getParent();
                     var holderHeight = holderElement.$.clientHeight + 'px';
@@ -938,9 +943,9 @@
                             });
                         } else {
                             var editable = editor.editable();
-                            if (editable.is('body'))
-                                editor.document.$.execCommand('SelectAll', false, null);
-                            else {
+                            if (editable.is('body')) {
+ editor.document.$.execCommand('SelectAll', false, null);
+} else {
                                 var range = editor.createRange();
                                 range.selectNodeContents(editable);
                                 range.select();
@@ -955,12 +960,12 @@
             });
 
             if (typeof (jQuery) != 'undefined' && jQuery('a[data-toggle="tab"]') && window["codemirror_" + editor.id]) {
-                jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function() {
+                jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function () {
                     window["codemirror_" + editor.id].refresh();
                 });
             }
 
-            editor.on('setData', function(data) {
+            editor.on('setData', function (data) {
 
                 if (window["editable_" + data.editor.id] && data.editor.mode === 'source') {
                     window["codemirror_" + data.editor.id].setValue(data.data.dataValue);
@@ -981,22 +986,24 @@
 
                 this.editor.fire('dataReady');
             },
-            getData: function() {
+            getData: function () {
                 return this.getValue();
             },
+
             // Insertions are not supported in source editable.
-            insertHtml: function() {
+            insertHtml: function () {
             },
-            insertElement: function() {
+            insertElement: function () {
             },
-            insertText: function() {
+            insertText: function () {
             },
+
             // Read-only support for textarea.
-            setReadOnly: function(isReadOnly) {
+            setReadOnly: function (isReadOnly) {
                 this[(isReadOnly ? 'set' : 'remove') + 'Attribute']('readOnly', 'readonly');
             },
             editorID: null,
-            detach: function() {
+            detach: function () {
                 window["codemirror_" + this.editorID].toTextArea();
 
                 // Free Memory on destroy
@@ -1010,7 +1017,7 @@
             }
         }
     });
-})();
+}());
 CKEDITOR.plugins.sourcearea = {
     commands: {
         source: {
@@ -1020,7 +1027,7 @@ CKEDITOR.plugins.sourcearea = {
             },
             editorFocus: false,
             readOnly: 1,
-            exec: function(editor) {
+            exec: function (editor) {
                 if (editor.mode === 'wysiwyg') {
                     editor.fire('saveSnapshot');
                 }
@@ -1037,7 +1044,7 @@ CKEDITOR.plugins.sourcearea = {
             },
             editorFocus: false,
             readOnly: 1,
-            exec: function(editor) {
+            exec: function (editor) {
                 CodeMirror.commands.find(window["codemirror_" + editor.id]);
             },
             canUndo: true
@@ -1081,7 +1088,7 @@ CKEDITOR.plugins.sourcearea = {
             },
             editorFocus: false,
             readOnly: 0,
-            exec: function(editor) {
+            exec: function (editor) {
                 var range = {
                     from: window["codemirror_" + editor.id].getCursor(true),
                     to: window["codemirror_" + editor.id].getCursor(false)
@@ -1119,16 +1126,16 @@ CKEDITOR.plugins.sourcearea = {
 function LineChannelToOffSet(ed, linech) {
     var line = linech.line;
     var ch = linech.ch;
-    var n = (line + ch); //for the \n s & chars in the line
+    var n = (line + ch);
     for (i = 0; i < line; i++) {
-        n += (ed.getLine(i)).length;//for the chars in all preceeding lines
+        n += (ed.getLine(i)).length;// for the chars in all preceeding lines
     }
     return n;
 }
 
 function OffSetToLineChannel(ed, n) {
     var line = 0, ch = 0, index = 0;
-    for (i = 0; i < ed.lineCount() ; i++) {
+    for (i = 0; i < ed.lineCount(); i++) {
         len = (ed.getLine(i)).length;
         if (n < index + len) {
 
@@ -1136,7 +1143,7 @@ function OffSetToLineChannel(ed, n) {
             ch = n - index;
             return { line: line, ch: ch };
         }
-        len++;//for \n char
+        len++;// for \n char
         index += len;
     }
     return { line: line, ch: ch };
@@ -1145,7 +1152,7 @@ function OffSetToLineChannel(ed, n) {
 function IsStyleSheetAlreadyLoaded(href) {
     var links = CKEDITOR.document.getHead().find('link');
 
-    for (var i = 0; i < links.count() ; i++) {
+    for (var i = 0; i < links.count(); i++) {
         if (links.getItem(i).$.href === href) {
             return true;
         }

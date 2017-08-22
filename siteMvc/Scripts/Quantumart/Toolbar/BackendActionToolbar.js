@@ -1,5 +1,5 @@
-var EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKING = 'OnActionToolbarButtonClicking';
-var EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED = 'OnActionToolbarButtonClicked';
+window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKING = 'OnActionToolbarButtonClicking';
+window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED = 'OnActionToolbarButtonClicked';
 
 Quantumart.QP8.BackendActionToolbar = function (toolbarElementId, actionCode, parentEntityId, options) {
   Quantumart.QP8.BackendActionToolbar.initializeBase(this, [toolbarElementId, options]);
@@ -18,133 +18,158 @@ Quantumart.QP8.BackendActionToolbar = function (toolbarElementId, actionCode, pa
 };
 
 Quantumart.QP8.BackendActionToolbar.prototype = {
-  _actionCode: '', // код действия, для которого создается панель инструментов
-  _entityId: 0, // ID сущности, для которой создается тулбар
-  _parentEntityId: 0, // ID родительской сущности
-  _alwaysEnabledRefreshButton: true, // признак, разрешающий всегда оставлять активной кнопку 'Обновить'
-  _stopDeferredOperations: false, // признак, отвечающий за остановку все отложенных операций
-  _disabledActionCodes: null, // список запрещенных операций
+  _actionCode: '',
+  _entityId: 0,
+  _parentEntityId: 0,
+  _alwaysEnabledRefreshButton: true,
+  _stopDeferredOperations: false,
+  _disabledActionCodes: null,
 
-  get_actionCode: function () { return this._actionCode; },
-  set_actionCode: function (value) { this._actionCode = value; },
-  get_entityId: function () { return this._entityId; },
-  set_entityId: function (value) { this._entityId = value; },
-  get_parentEntityId: function () { return this._parentEntityId; },
-  set_parentEntityId: function (value) { this._parentEntityId = value; },
-  get_alwaysEnabledRefreshButton: function () { return this._alwaysEnabledRefreshButton; },
-  set_alwaysEnabledRefreshButton: function (value) { this._alwaysEnabledRefreshButton = value; },
-  addToolbarItemsToToolbar: function (count) {
-    var self = this;
-    var queryParams = {
-      'actionCode': this._actionCode,
-      'entityId': this._entityId,
-      'parentEntityId': this._parentEntityId
+  // eslint-disable-next-line camelcase
+  get_actionCode() {
+    return this._actionCode;
+  },
+
+  // eslint-disable-next-line camelcase
+  set_actionCode(value) {
+    this._actionCode = value;
+  },
+
+  // eslint-disable-next-line camelcase
+  get_entityId() {
+    return this._entityId;
+  },
+
+  // eslint-disable-next-line camelcase
+  set_entityId(value) {
+    this._entityId = value;
+  },
+
+  // eslint-disable-next-line camelcase
+  get_parentEntityId() {
+    return this._parentEntityId;
+  },
+
+  // eslint-disable-next-line camelcase
+  set_parentEntityId(value) {
+    this._parentEntityId = value;
+  },
+
+  // eslint-disable-next-line camelcase
+  get_alwaysEnabledRefreshButton() {
+    return this._alwaysEnabledRefreshButton;
+  },
+
+  // eslint-disable-next-line camelcase
+  set_alwaysEnabledRefreshButton(value) {
+    this._alwaysEnabledRefreshButton = value;
+  },
+
+  addToolbarItemsToToolbar(count) {
+    const that = this;
+    let queryParams = {
+      actionCode: this._actionCode,
+      entityId: this._entityId,
+      parentEntityId: this._parentEntityId
     };
 
-    if (this.get_isBindToExternal() === true) {
-      queryParams = jQuery.extend(queryParams, { 'boundToExternal': true });
+    if (this.get_isBindToExternal()) {
+      queryParams = Object.assign({}, queryParams, { boundToExternal: true });
     }
 
-    $q.getJsonFromUrl('GET', CONTROLLER_URL_TOOLBAR + 'GetToolbarButtonListByActionCode', queryParams, false, false, function (data, textStatus, jqXHR) {
-        if (self._stopDeferredOperations) {
-          return;
+    $q.getJsonFromUrl(
+      'GET',
+      `${window.CONTROLLER_URL_TOOLBAR}GetToolbarButtonListByActionCode`,
+      queryParams,
+      false,
+      false,
+      data => {
+        if (!that._stopDeferredOperations) {
+          let actionToolbarItems = data;
+          if (!$q.isNullOrEmpty(that.getDisabledActionCodes())) {
+            actionToolbarItems = $.grep(actionToolbarItems, itm => that.getDisabledActionCodes().indexOf(itm.ActionCode) == -1);
+          }
+
+          const items = that._getToolbarItemsFromResult(actionToolbarItems);
+          Quantumart.QP8.BackendActionToolbar.callBaseMethod(that, 'addToolbarItemsToToolbar', [items, count]);
+
+          $q.clearArray(items);
+          $q.clearArray(actionToolbarItems);
         }
-
-        var actionToolbarItems = data;
-        if (!$q.isNullOrEmpty(self.getDisabledActionCodes())) {
-          actionToolbarItems = jQuery.grep(actionToolbarItems, function(itm){
-            return (self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1);
-          });
+      }, jqXHR => {
+        if (!that._stopDeferredOperations) {
+          $q.processGenericAjaxError(jqXHR);
         }
-
-        var items = self._getToolbarItemsFromResult(actionToolbarItems);
-        Quantumart.QP8.BackendActionToolbar.callBaseMethod(self, 'addToolbarItemsToToolbar', [items, count]);
-
-        $q.clearArray(items);
-        $q.clearArray(actionToolbarItems);
-
-        return;
-      },
-
-      function (jqXHR, textStatus, errorThrown) {
-        if (self._stopDeferredOperations) {
-          return;
-        }
-
-        $q.processGenericAjaxError(jqXHR);
       }
     );
   },
 
-  tuneToolbarItems: function (entityId, parentEntityId) {
-    var self = this;
-
-    var queryParams = { 'actionCode': this._actionCode, 'entityId': entityId, 'parentEntityId': parentEntityId };
-    if (this.get_isBindToExternal() === true) {
-      queryParams = jQuery.extend(queryParams, { 'boundToExternal': true });
+  tuneToolbarItems(entityId, parentEntityId) {
+    const that = this;
+    let queryParams = { actionCode: this._actionCode, entityId, parentEntityId };
+    if (this.get_isBindToExternal()) {
+      queryParams = Object.assign({}, queryParams, { boundToExternal: true });
     }
 
     if (entityId != 0) {
-      $q.getJsonFromUrl('GET', CONTROLLER_URL_BACKEND_ACTION + 'GetStatusesList', queryParams, true, false).done(function (data) {
-        if (self._stopDeferredOperations) {
-          return;
+      $q.getJsonFromUrl(
+        'GET',
+        `${window.CONTROLLER_URL_BACKEND_ACTION}GetStatusesList`,
+        queryParams,
+        true,
+        false
+      ).done(data => {
+        if (!that._stopDeferredOperations) {
+         if (data.success) {
+           const actionStatuses = data.actionStatuses;
+           if (!$q.isNullOrEmpty(actionStatuses)) {
+             Quantumart.QP8.BackendActionToolbar.callBaseMethod(that, 'tuneToolbarItems', [actionStatuses]);
+             $q.clearArray(actionStatuses);
+           }
+         } else {
+           $q.alertError(data.Text);
+         }
         }
-
-        if (data.success) {
-          var actionStatuses = data.actionStatuses;
-          if (!$q.isNullOrEmpty(actionStatuses)) {
-            Quantumart.QP8.BackendActionToolbar.callBaseMethod(self, 'tuneToolbarItems', [actionStatuses]);
-            $q.clearArray(actionStatuses);
-            return;
-          }
-        } else {
-          window.alert(data.Text);
+      }).fail((jqXHR, textStatus, errorThrown) => {
+        if (!that._stopDeferredOperations) {
+          $q.processGenericAjaxError(jqXHR);
         }
-      }).fail(function (jqXHR, textStatus, errorThrown) {
-        if (self._stopDeferredOperations) {
-          return;
-        }
-
-        $q.processGenericAjaxError(jqXHR);
       });
     }
   },
 
-  notifyToolbarButtonClicked: function (eventArgs) {
-    this.notify(EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, eventArgs);
+  notifyToolbarButtonClicked(eventArgs) {
+    this.notify(window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, eventArgs);
   },
 
-  setDisabledActionCodes: function(value){
+  setDisabledActionCodes(value) {
     this._disabledActionCodes = value;
   },
-  getDisabledActionCodes: function () {
+  getDisabledActionCodes() {
     return this._disabledActionCodes;
   },
 
-  _getToolbarItemsFromResult: function (items) {
-    var self = this;
-    var dataItems = [];
-    jQuery.each(items, function (index, item) {
-      var dataItem = new Object();
-      dataItem.Type = TOOLBAR_ITEM_TYPE_BUTTON;
-      dataItem.Value = item.ActionCode;
-      dataItem.Text = item.Name;
-      dataItem.Tooltip = item.Name;
-      dataItem.ItemsAffected = item.ItemsAffected;
-      dataItem.Icon = item.Icon;
-      dataItem.AlwaysEnabled = item.ItemsAffected == 0;
-      dataItem.CheckOnClick = false;
-      dataItem.Checked = false;
-      dataItem.IconChecked = null;
-
-      Array.add(dataItems, dataItem);
+  _getToolbarItemsFromResult(items) {
+    const dataItems = [];
+    $.each(items, (index, item) => {
+      Array.add(dataItems, {
+        Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
+        Value: item.ActionCode,
+        Text: item.Name,
+        Tooltip: item.Name,
+        ItemsAffected: item.ItemsAffected,
+        Icon: item.Icon,
+        AlwaysEnabled: item.ItemsAffected == 0,
+        CheckOnClick: false,
+        Checked: false,
+        IconChecked: null
+      });
     });
 
     return dataItems;
   },
 
-
-  dispose: function () {
+  dispose() {
     this._stopDeferredOperations = true;
     Quantumart.QP8.BackendActionToolbar.callBaseMethod(this, 'dispose');
     $q.collectGarbageInIE();

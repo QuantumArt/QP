@@ -1,16 +1,12 @@
-/* global pmrpc */
-
 window.Quantumart = window.Quantumart || {};
 window.Quantumart.QP8 = window.Quantumart.QP8 || {};
 window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || {};
 window.Quantumart.QP8.Interaction = (function Interaction() {
-  var BackendEventObserver;
-
   /* eslint-disable no-empty-function */
-  var ArticleFormState = function () {};
-  var ExecuteActionOptions = function () {};
-  var BackendExternalMessage = function () {};
-  var OpenSelectWindowOptions = function () {};
+  const ArticleFormState = function () {};
+  const ExecuteActionOptions = function () {};
+  const BackendExternalMessage = function () {};
+  const OpenSelectWindowOptions = function () {};
 
   /* eslint-enable no-empty-function */
   BackendExternalMessage.prototype = {
@@ -65,7 +61,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
     options: null
   };
 
-  BackendEventObserver = function (callbackProcName, callback) {
+  const BackendEventObserver = function (callbackProcName, callback) {
     this.callbackProcName = callbackProcName;
     this.callback = callback;
     pmrpc.register({
@@ -78,7 +74,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
   BackendEventObserver.prototype = {
     callbackProcName: '',
     callback: null,
-    dispose: function () {
+    dispose() {
       pmrpc.unregister(this.callback);
     }
   };
@@ -96,68 +92,67 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
   };
 
   return {
-    BackendEventObserver: BackendEventObserver,
-    ExecuteActionOptions: ExecuteActionOptions,
+    BackendEventObserver,
+    ExecuteActionOptions,
     ExecuteActionOtions: ExecuteActionOptions,
-    ArticleFormState: ArticleFormState,
-    OpenSelectWindowOptions: OpenSelectWindowOptions,
+    ArticleFormState,
+    OpenSelectWindowOptions,
     ExternalMessageTypes: BackendExternalMessage.Types,
     BackendEventTypes: BackendEventObserver.EventType,
-    executeBackendAction: function (executeOtions, hostUID, destination) {
-      var message = new BackendExternalMessage();
+    executeBackendAction(executeOtions, hostUID, destination) {
+      const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.ExecuteAction;
       message.hostUID = hostUID;
       message.data = executeOtions;
       pmrpc.call({
-        destination: destination,
+        destination,
         publicProcedureName: message.hostUID,
         params: [message]
       });
     },
 
-    closeBackendHost: function (actionUID, hostUID, destination) {
-      var message = new BackendExternalMessage();
+    closeBackendHost(actionUID, hostUID, destination) {
+      const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CloseBackendHost;
       message.hostUID = hostUID;
-      message.data = { actionUID: actionUID };
+      message.data = { actionUID };
       pmrpc.call({
-        destination: destination,
+        destination,
         publicProcedureName: message.hostUID,
         params: [message]
       });
     },
 
-    openSelectWindow: function (openSelectWindowOptions, hostUID, destination) {
-      var message = new BackendExternalMessage();
+    openSelectWindow(openSelectWindowOptions, hostUID, destination) {
+      const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.OpenSelectWindow;
       message.hostUID = hostUID;
       message.data = openSelectWindowOptions;
       pmrpc.call({
-        destination: destination,
+        destination,
         publicProcedureName: message.hostUID,
         params: [message]
       });
     },
 
-    checkHost: function (hostUID, destination, callback) {
-      var prmpcObject;
-      var callbackIsCalled = false;
-      var message = new BackendExternalMessage();
+    checkHost(hostUID, destination, callback) {
+      let callbackIsCalled = false;
+      const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CheckHost;
       message.hostUID = hostUID;
 
-      prmpcObject = {
-        destination: destination,
+      const prmpcObject = {
+        destination,
         publicProcedureName: message.hostUID,
         params: [message],
-        onSuccess: function (args) {
-          if (callbackIsCalled === false) {
+        onSuccess(args) {
+          if (!callbackIsCalled) {
             callbackIsCalled = true;
             callback({ success: true, hostVersion: args.returnValue });
           }
         },
-        onError: function (args) {
-          if (callbackIsCalled === false) {
+        onError(args) {
+          if (!callbackIsCalled) {
             callbackIsCalled = true;
             callback({ success: false, error: args.description });
           }

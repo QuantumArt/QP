@@ -1,5 +1,5 @@
-; (function() {
-  'use strict';
+; (function () {
+
 
   var interval;
   var number = CKEDITOR.tools.getNextNumber();
@@ -21,7 +21,7 @@
   function spellTime(dialog, editor) {
     var i = 0;
 
-    return function() {
+    return function () {
       if (typeof window.spellChecker === 'function') {
         if (typeof interval !== 'undefined') {
           window.clearInterval(interval);
@@ -30,7 +30,7 @@
         var oSpeller = new window.spellChecker(document.getElementById(textareaId));
 
         oSpeller.spellCheckScript = CKEDITOR.aspellSettings.spellCheckScriptPath;
-        oSpeller.OnFinished = function(numChanges) {
+        oSpeller.OnFinished = function (numChanges) {
           oSpeller_OnFinished(dialog, numChanges, editor);
         };
 
@@ -40,13 +40,13 @@
 
         oSpeller.openChecker();
       } else if (i++ === 180) {
-        window.alert('Плагин "Проверка синтаксиса" - не доступен');
+        alert('Плагин "Проверка синтаксиса" - не доступен');
         dialog.hide();
       }
     };
   }
 
-  CKEDITOR.dialog.add(CKEDITOR.aspellSettings.pluginName, function(editor) {
+  CKEDITOR.dialog.add(CKEDITOR.aspellSettings.pluginName, function (editor) {
     return {
       title: CKEDITOR.aspellSettings.pluginDesc,
       minWidth: document.all ? 510 : 485,
@@ -64,7 +64,7 @@
           html: '<div></div>'
         }]
       }],
-      onShow: function() {
+      onShow: function () {
         var contentArea = this.getContentElement('general', 'content').getElement();
 
         contentArea.setHtml(spellHTML);
@@ -78,7 +78,7 @@
         CKEDITOR.document.getById(textareaId).setValue(editor.getData());
         interval = window.setInterval(spellTime(this, editor), 250);
       },
-      onHide: function() {
+      onHide: function () {
         window.ooo = undefined;
         window.framesetLoaded = undefined;
         window.int_framsetLoaded = undefined;
@@ -86,4 +86,4 @@
       }
     };
   });
-})();
+}());

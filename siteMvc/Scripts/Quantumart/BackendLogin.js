@@ -1,4 +1,4 @@
-Quantumart.QP8.BackendLogin = function(options) {
+Quantumart.QP8.BackendLogin = function (options) {
   Quantumart.QP8.BackendLogin.initializeBase(this);
 
   if (options) {
@@ -11,7 +11,7 @@ Quantumart.QP8.BackendLogin = function(options) {
 };
 
 Quantumart.QP8.BackendLogin.storageKey = 'Quantumart.QP8.BackendLogin.CustomerCode';
-Quantumart.QP8.BackendLogin.removeCustomerCode = function() {
+Quantumart.QP8.BackendLogin.removeCustomerCode = function () {
   localStorage.removeItem(Quantumart.QP8.BackendLogin.storageKey);
 };
 
@@ -19,17 +19,17 @@ Quantumart.QP8.BackendLogin.prototype = {
   storageKey: Quantumart.QP8.BackendLogin.storageKey,
   _useSavedCustomerCode: false,
 
-  _initialize: function() {
-    jQuery('#IsSilverlightInstalled').val((Silverlight.isInstalled(null) == true) ? 'True' : 'False');
+  _initialize() {
+    jQuery('#IsSilverlightInstalled').val(Silverlight.isInstalled(null) == true ? 'True' : 'False');
 
     if (this._useSavedCustomerCode) {
-      var isValid = (jQuery('.validation-summary-errors').length == 0);
+      const isValid = jQuery('.validation-summary-errors').length == 0;
 
       if (!isValid) {
         this.removeCustomerCode();
       } else {
-        var value = localStorage.getItem(this.storageKey);
-        var isIntegratedLogin = jQuery('#UserName').length == 0;
+        const value = localStorage.getItem(this.storageKey);
+        const isIntegratedLogin = jQuery('#UserName').length == 0;
 
         if (isIntegratedLogin) {
           if (!value) {
@@ -43,7 +43,7 @@ Quantumart.QP8.BackendLogin.prototype = {
     }
   },
 
-  _loginClick: function() {
+  _loginClick() {
     localStorage.setItem(this.storageKey, jQuery('#CustomerCode').val());
   },
 

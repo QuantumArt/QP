@@ -1,214 +1,205 @@
-//#region class BackendEntityTreeManager
-// === Класс "Менеджер деревьев сущностей" ===
-Quantumart.QP8.BackendEntityTreeManager = function () {
-	Quantumart.QP8.BackendEntityTreeManager.initializeBase(this);
-};
-
-Quantumart.QP8.BackendEntityTreeManager.prototype = {
-	_treeGroups: {}, // список групп деревьев
-
-	initialize: function () {
-	},
-
-	generateTreeGroupCode: function (entityTypeCode, parentEntityId) {
-		var treeGroupCode = String.format("{0}_{1}", entityTypeCode, parentEntityId);
-
-		return treeGroupCode;
-	},
-
-	getTreeGroup: function (treeGroupCode) {
-		var treeGroup = null;
-		if (this._treeGroups[treeGroupCode]) {
-			treeGroup = this._treeGroups[treeGroupCode];
-		}
-
-		return treeGroup;
-	},
-
-	createTreeGroup: function (treeGroupCode) {
-		var treeGroup = this.getTreeGroup(treeGroupCode);
-		if (!treeGroup) {
-			treeGroup = {};
-			this._treeGroups[treeGroupCode] = treeGroup;
-		}
-
-		return treeGroup;
-	},
-
-	removeTreeGroup: function (treeGroupCode) {
-		$q.removeProperty(this._treeGroups, treeGroupCode);
-	},
-
-	getTree: function (treeElementId) {
-		var tree = null;
-
-		for (var treeGroupCode in this._treeGroups) {
-			var treeGroup = this._treeGroups[treeGroupCode];
-			if (treeGroup[treeElementId]) {
-				tree = treeGroup[treeElementId];
-				break;
-			}
-		}
-
-		return tree;
-	},
-
-	createTree: function (treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
-		var treeGroupCode = this.generateTreeGroupCode(entityTypeCode, parentEntityId);
-
-		var tree = null;
-		if ($q.isNullOrEmpty(options.virtualContentId)) {
-			tree = new Quantumart.QP8.BackendEntityTree(treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions);
-    } else {
-			tree = new Quantumart.QP8.BackendVirtualFieldTree(treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options);
+class BackendEntityTreeManager extends Quantumart.QP8.Observable {
+  static getInstance(options) {
+    if (!BackendEntityTreeManager._instance) {
+      BackendEntityTreeManager._instance = new BackendEntityTreeManager(options);
     }
 
-		tree.set_treeManager(this);
+    return BackendEntityTreeManager._instance;
+  }
 
-		var treeGroup = this.createTreeGroup(treeGroupCode);
-		treeGroup[treeElementId] = tree;
-		return tree;
-	},
+  static destroyInstance() {
+    if (BackendEntityTreeManager._instance) {
+      BackendEntityTreeManager._instance.dispose();
+      BackendEntityTreeManager._instance = null;
+    }
+  }
 
-	removeTree: function (treeElementId) {
-		var tree = this.getTree(treeElementId);
-		if (tree) {
-			var treeGroupCode = tree.get_treeGroupCode();
-			var treeGroup = this.getTreeGroup(treeGroupCode);
+  static generateTreeGroupCode(entityTypeCode, parentEntityId) {
+    return `${entityTypeCode}_${parentEntityId}`;
+  }
 
-			$q.removeProperty(treeGroup, treeElementId);
+  constructor() {
+    super();
+    this._treeGroups = {};
+  }
 
-			if ($q.getHashKeysCount(treeGroup) == 0) {
-				this.removeTreeGroup(treeGroupCode);
-			}
-		}
-	},
+  getTreeGroup(treeGroupCode) {
+    return this._treeGroups[treeGroupCode];
+  }
 
-	destroyTree: function (treeElementId) {
-		var tree = this.getTree(treeElementId);
-		if (tree != null) {
-			this.removeTree(treeElementId);
-			if (tree.dispose) {
-				tree.dispose();
-			}
-			tree = null;
-		}
-	},
+  createTreeGroup(treeGroupCode) {
+    let treeGroup = this.getTreeGroup(treeGroupCode);
+    if (!treeGroup) {
+      treeGroup = {};
+      this._treeGroups[treeGroupCode] = treeGroup;
+    }
 
-	refreshNode: function (entityTypeCode, parentEntityId, entityId, options) {
-		var treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
-		if (treeGroup) {
-			for (var treeElementId in treeGroup) {
-				var tree = this.getTree(treeElementId);
-				var nodeCode = tree.convertEntityIdToNodeCode(entityId);
+    return treeGroup;
+  }
 
-				tree.refreshNode(nodeCode, options);
-			}
-		}
-	},
+  removeTreeGroup(treeGroupCode) {
+    $q.removeProperty(this._treeGroups, treeGroupCode);
+  }
 
-	refreshNodes: function (entityTypeCode, parentEntityId, ids, options) {
-		var self = this;
-		if ($q.isNullOrEmpty(ids)) {
-			var treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
-			if (treeGroup) {
-				for (var treeElementId in treeGroup) {
-					var tree = this.getTree(treeElementId);
-					tree.refreshTree();
-				}
-			}
-		}
-		else {
-			jQuery.each(ids, function (index, id) {
-				self.refreshNode(entityTypeCode, parentEntityId, id, options);
-			});
-		}
-	},
+  getTree(treeElementId) {
+    const groupCode = Object
+      .keys(this._treeGroups)
+      .find(treeGroupCode => this._treeGroups[treeGroupCode][treeElementId]);
 
-	removeNode: function (entityTypeCode, parentEntityId, entityId) {
-		var treeGroup = this.getTreeGroup(this.generateTreeGroupCode(entityTypeCode, parentEntityId));
-		if (treeGroup) {
-			for (var treeElementId in treeGroup) {
-				var tree = this.getTree(treeElementId);
-				var nodeCode = tree.convertEntityIdToNodeCode(entityId);
+    return this._treeGroups[groupCode][treeElementId];
+  }
 
-				tree.removeNode(nodeCode);
-			}
-		}
-	},
+  // eslint-disable-next-line max-params
+  createTree(treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
+    const treeGroupCode = BackendEntityTreeManager.generateTreeGroupCode(entityTypeCode, parentEntityId);
+    const tree = options.virtualContentId >= 0
+      ? new Quantumart.QP8.BackendVirtualFieldTree(
+        treeGroupCode,
+        treeElementId,
+        entityTypeCode,
+        parentEntityId,
+        actionCode,
+        options
+      )
+      : new Quantumart.QP8.BackendEntityTree(
+        treeGroupCode,
+        treeElementId,
+        entityTypeCode,
+        parentEntityId,
+        actionCode,
+        options,
+        hostOptions
+      );
 
-	removeNodes: function (entityTypeCode, parentEntityId, ids) {
-		var self = this;
-		jQuery.each(ids, function (index, id) {
-			self.removeNode(entityTypeCode, parentEntityId, id);
-		});
-	},
+    tree.set_treeManager(this);
 
-	onActionExecuted: function (eventArgs) {
-		var entityTypeCode = eventArgs.get_entityTypeCode();
-		var parentEntityId = eventArgs.get_parentEntityId();
-		var actionTypeCode = eventArgs.get_actionTypeCode();
-		var entityId = eventArgs.get_entityId();
-		var entityIds = (eventArgs.get_isMultipleEntities()) ? $o.getEntityIDsFromEntities(eventArgs.get_entities()) : [entityId];
+    const treeGroup = this.createTreeGroup(treeGroupCode);
+    treeGroup[treeElementId] = tree;
 
-		if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving()) {
-			this.removeNodes(entityTypeCode, parentEntityId, entityIds)
-		}
-		else if ((eventArgs.get_isUpdated()
+    return tree;
+  }
+
+  removeTree(treeElementId) {
+    const tree = this.getTree(treeElementId);
+    if (tree) {
+      const treeGroupCode = tree.get_treeGroupCode();
+      const treeGroup = this.getTreeGroup(treeGroupCode);
+
+      $q.removeProperty(treeGroup, treeElementId);
+      if ($q.getHashKeysCount(treeGroup) === 0) {
+        this.removeTreeGroup(treeGroupCode);
+      }
+    }
+  }
+
+  refreshNode(entityTypeCode, parentEntityId, entityId, options) {
+    const treeGroup = this.getTreeGroup(BackendEntityTreeManager.generateTreeGroupCode(entityTypeCode, parentEntityId));
+    if (treeGroup) {
+      Object.keys(treeGroup).forEach(treeElementId => {
+        const tree = this.getTree(treeElementId);
+        const nodeCode = tree.convertEntityIdToNodeCode(entityId);
+        tree.refreshNode(nodeCode, options);
+      }, this);
+    }
+  }
+
+  refreshNodes(entityTypeCode, parentEntityId, ids, options) {
+    const that = this;
+    if ($q.isNullOrEmpty(ids)) {
+      const treeGroup = this.getTreeGroup(
+        BackendEntityTreeManager.generateTreeGroupCode(entityTypeCode, parentEntityId)
+      );
+
+      if (treeGroup) {
+        Object.keys(treeGroup).forEach(treeElementId => {
+          const tree = this.getTree(treeElementId);
+          tree.refreshTree();
+        }, this);
+      }
+    } else {
+      $.each(ids, (index, id) => {
+        that.refreshNode(entityTypeCode, parentEntityId, id, options);
+      });
+    }
+  }
+
+  removeNode(entityTypeCode, parentEntityId, entityId) {
+    const treeGroup = this.getTreeGroup(
+      BackendEntityTreeManager.generateTreeGroupCode(entityTypeCode, parentEntityId)
+    );
+
+    if (treeGroup) {
+      Object.keys(treeGroup).forEach(treeElementId => {
+        const tree = this.getTree(treeElementId);
+        const nodeCode = tree.convertEntityIdToNodeCode(entityId);
+        tree.removeNode(nodeCode);
+      }, this);
+    }
+  }
+
+  removeNodes(entityTypeCode, parentEntityId, ids) {
+    const that = this;
+    $.each(ids, (index, id) => {
+      that.removeNode(entityTypeCode, parentEntityId, id);
+    });
+  }
+
+  onActionExecuted(eventArgs) {
+    const entityTypeCode = eventArgs.get_entityTypeCode();
+    const parentEntityId = eventArgs.get_parentEntityId();
+    const actionTypeCode = eventArgs.get_actionTypeCode();
+    const entityId = eventArgs.get_entityId();
+    const entityIds = eventArgs.get_isMultipleEntities()
+      ? $o.getEntityIDsFromEntities(eventArgs.get_entities())
+      : [entityId];
+
+    if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving()) {
+      this.removeNodes(entityTypeCode, parentEntityId, entityIds);
+    } else if ((eventArgs.get_isUpdated()
       || eventArgs.get_isLoaded()
-      || actionTypeCode == ACTION_TYPE_CODE_CANCEL
-      || actionTypeCode == ACTION_TYPE_CODE_CHANGE_LOCK)
-      && entityTypeCode != ENTITY_TYPE_CODE_VIRTUAL_ARTICLE) {
-			this.refreshNode(entityTypeCode, parentEntityId, entityId, { "loadChildNodes": true, "saveNodesSelection": true });
-		}
-		else if (eventArgs.get_isSaved() || actionTypeCode == ACTION_TYPE_CODE_COPY) {
-			var parentIdsInTree = $o.getParentIdsForTree(entityTypeCode, entityIds);
-			this.refreshNodes(entityTypeCode, parentEntityId, parentIdsInTree, { "loadChildNodes": true, "saveNodesSelection": false });
-		}
-		else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
-			var parentArticlesInTree = $o.getParentIdsForTree(ENTITY_TYPE_CODE_ARTICLE, entityIds);
-			this.refreshNodes(ENTITY_TYPE_CODE_ARTICLE, parentEntityId, parentArticlesInTree, { "loadChildNodes": true, "saveNodesSelection": false });
-		}
-		else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-			var newParentEntityId = +$o.getParentEntityId(ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
-			this.refreshNode(ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, { "loadChildNodes": true, "saveNodesSelection": false });
-		}
-	},
+      || actionTypeCode === window.ACTION_TYPE_CODE_CANCEL
+      || actionTypeCode === window.ACTION_TYPE_CODE_CHANGE_LOCK)
+      && entityTypeCode !== window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE) {
+      this.refreshNode(entityTypeCode, parentEntityId, entityId, { loadChildNodes: true, saveNodesSelection: true });
+    } else if (eventArgs.get_isSaved() || actionTypeCode === window.ACTION_TYPE_CODE_COPY) {
+      const parentIdsInTree = $o.getParentIdsForTree(entityTypeCode, entityIds);
+      this.refreshNodes(entityTypeCode, parentEntityId, parentIdsInTree, {
+        loadChildNodes: true,
+        saveNodesSelection: false
+      });
+    } else if (eventArgs.get_isRestoring() && entityTypeCode === window.ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
+      const parentArticlesInTree = $o.getParentIdsForTree(window.ENTITY_TYPE_CODE_ARTICLE, entityIds);
+      this.refreshNodes(window.ENTITY_TYPE_CODE_ARTICLE, parentEntityId, parentArticlesInTree, {
+        loadChildNodes: true,
+        saveNodesSelection: false
+      });
+    } else if (eventArgs.get_isRestored() && entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+      const newParentEntityId = +$o.getParentEntityId(window.ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
+      this.refreshNode(window.ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, {
+        loadChildNodes:
+        true,
+        saveNodesSelection: false
+      });
+    }
+  }
 
-	dispose: function () {
-		Quantumart.QP8.BackendEntityTreeManager.callBaseMethod(this, "dispose");
+  dispose() {
+    super.dispose();
+    if (this._trees) {
+      Object.keys(this._trees).forEach(treeElementId => {
+        const tree = this.getTree(treeElementId);
+        if (tree) {
+          this.removeTree(treeElementId);
+          if (tree.dispose) {
+            tree.dispose();
+          }
+        }
+      }, this);
+    }
 
-		if (this._trees) {
-			for (treeCode in this._trees) {
-				this.destroyTree(treeCode);
-			}
+    this._trees = null;
+    $q.collectGarbageInIE();
+  }
+}
 
-			this._trees = null;
-		}
-
-		Quantumart.QP8.BackendEntityTreeManager._instance = null;
-
-		$q.collectGarbageInIE();
-	}
-};
-
-Quantumart.QP8.BackendEntityTreeManager._instance = null; // экземпляр класса
-
-// Возвращает экземпляр класса "Менеджер деревьев сущностей"
-Quantumart.QP8.BackendEntityTreeManager.getInstance = function Quantumart$QP8$BackendEntityTreeManager$getInstance() {
-	if (Quantumart.QP8.BackendEntityTreeManager._instance == null) {
-		Quantumart.QP8.BackendEntityTreeManager._instance = new Quantumart.QP8.BackendEntityTreeManager();
-	}
-
-	return Quantumart.QP8.BackendEntityTreeManager._instance;
-};
-
-// Уничтожает экземпляр класса "Менеджер деревьев сущностей"
-Quantumart.QP8.BackendEntityTreeManager.destroyInstance = function Quantumart$QP8$BackendEntityTreeManager$destroyInstance() {
-	if (Quantumart.QP8.BackendEntityTreeManager._instance) {
-		Quantumart.QP8.BackendEntityTreeManager._instance.dispose();
-	}
-};
-
-Quantumart.QP8.BackendEntityTreeManager.registerClass("Quantumart.QP8.BackendEntityTreeManager", Quantumart.QP8.Observable);
-//#endregion
+Quantumart.QP8.BackendEntityTreeManager = BackendEntityTreeManager;

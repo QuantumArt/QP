@@ -17,7 +17,7 @@ module.exports = {
     'block-scoped-var': 'error',
 
     // enforce that class methods utilize this
-    'class-methods-use-this': 'error',
+    'class-methods-use-this': 'error', // TODO: maybe 0 for react
 
     // limit cyclomatic complexity
     complexity: ['warn', 20],
@@ -168,7 +168,7 @@ module.exports = {
     }],
 
     // disallow assignment in return statement
-    'no-return-assign': ['error', 'always'],
+    'no-return-assign': ['error', 'always'], // TODO: maybe 0 for React refs assign
 
     // disallows unnecessary return await
     'no-return-await': 'error',

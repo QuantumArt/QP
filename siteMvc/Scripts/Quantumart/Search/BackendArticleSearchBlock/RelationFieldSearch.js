@@ -12,52 +12,50 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (contain
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
-  initialize: function () {
-    var serverContent;
-    $q.getJsonFromUrl('POST', CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + 'RelationSearch', {
-        'elementIdPrefix': this._elementIdPrefix,
-        'fieldID': this._fieldID,
-        'parentEntityId': this._parentEntityId,
-        'IDs': this._selectedEntitiesIDs
-      }, false, false, function (data, textStatus, jqXHR) {
-        if (data.success) {
-          serverContent = data.view;
-        } else {
-          window.alert(data.message);
-        }
-      }, function (jqXHR, textStatus, errorThrown) {
-        serverContent = null;
-        $q.processGenericAjaxError(jqXHR);
+  initialize() {
+    let serverContent;
+    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}RelationSearch`, {
+      elementIdPrefix: this._elementIdPrefix,
+      fieldID: this._fieldID,
+      parentEntityId: this._parentEntityId,
+      IDs: this._selectedEntitiesIDs
+    }, false, false, (data, textStatus, jqXHR) => {
+      if (data.success) {
+        serverContent = data.view;
+      } else {
+        $q.alertError(data.message);
       }
+    }, (jqXHR, textStatus, errorThrown) => {
+      serverContent = null;
+      $q.processGenericAjaxError(jqXHR);
+    }
     );
 
     if (serverContent) {
-      var $containerElement = $(this._containerElement);
+      const $containerElement = $(this._containerElement);
       $containerElement.html(serverContent);
 
-      this._isNullCheckBoxElement = document.getElementById(this._elementIdPrefix + '_isNullCheckBox');
-      this._inverseCheckBoxElement = document.getElementById(this._elementIdPrefix + '_inverseCheckBox');
-      this._unionAllCheckBoxElement = document.getElementById(this._elementIdPrefix + '_unionAllCheckBox');
-      this._textAreaElement = document.getElementById(this._elementIdPrefix + '_relationTextArea');
+      this._isNullCheckBoxElement = document.getElementById(`${this._elementIdPrefix}_isNullCheckBox`);
+      this._inverseCheckBoxElement = document.getElementById(`${this._elementIdPrefix}_inverseCheckBox`);
+      this._unionAllCheckBoxElement = document.getElementById(`${this._elementIdPrefix}_unionAllCheckBox`);
+      this._textAreaElement = document.getElementById(`${this._elementIdPrefix}_relationTextArea`);
       this._entityContainerElement = $containerElement.find('#EntityContainer').get(0);
       this._textAreaContainerElement = $containerElement.find('#TextAreaContainer').get(0);
 
       $(this._isNullCheckBoxElement).on('change', this._onIsNullCheckBoxChangeHandler);
       $('.radioButtonsList input[type="radio"]', $containerElement).on('click', this._onSelectorChangeHandler);
-      $('.expandParentsButton', $containerElement).on('click', this._expandHierarchy(window.CONTROLLER_URL_ARTICLE + 'GetParentIds'));
-      $('.expandChildsButton', $containerElement).on('click', this._expandHierarchy(window.CONTROLLER_URL_ARTICLE + 'GetChildArticleIds'));
+      $('.expandParentsButton', $containerElement).on('click', this._expandHierarchy(`${window.CONTROLLER_URL_ARTICLE}GetParentIds`));
+      $('.expandChildsButton', $containerElement).on('click', this._expandHierarchy(`${window.CONTROLLER_URL_ARTICLE}GetChildArticleIds`));
       $containerElement.on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, this._onListContentChangedHandler);
 
       $(document).ready(this._onLoadHandler);
     }
   },
 
-  getSelectedIds: function() {
-    var result;
+  getSelectedIds() {
+    let result;
     if (this._isEntity) {
-      result = $.map(this._getSelectedEntities(), function(item) {
-        return item.Id;
-      });
+      result = $.map(this._getSelectedEntities(), item => item.Id);
     } else {
       result = this._getIds($(this._textAreaElement).val());
     }
@@ -65,7 +63,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     return result;
   },
 
-  get_searchQuery: function () {
+  get_searchQuery() {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
       this._searchType,
       this._fieldID,
@@ -79,7 +77,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     );
   },
 
-  get_blockState: function () {
+  get_blockState() {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(this._searchType, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID, {
       isNull: $(this._isNullCheckBoxElement).is(':checked'),
       inverse: $(this._inverseCheckBoxElement).is(':checked'),
@@ -92,41 +90,39 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
 
   _selectedEntitiesIDs: null,
 
-  set_blockState: function (state) {
+  set_blockState(state) {
     if (state && !$q.isNullOrEmpty(state.entities)) {
-      this._selectedEntitiesIDs = $.map(state.entities, function (item) {
-        return item.Id;
-      });
+      this._selectedEntitiesIDs = $.map(state.entities, item => item.Id);
     } else {
       this._selectedEntitiesIDs = null;
     }
   },
 
-  get_filterDetails: function () {
-    var stateData = this.get_blockState().data;
-    var result, builder;
+  get_filterDetails() {
+    const stateData = this.get_blockState().data;
+    let result, builder;
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (!stateData.isEntity) {
-      var ids = this._getIds(stateData.text);
+      const ids = this._getIds(stateData.text);
       result = this._getText(ids);
     } else if (!$q.isNullOrEmpty(stateData.entities)) {
-      result = this._getText(stateData.entities, function (e) { return $q.cutShort(e.Name, 10); });
+      result = this._getText(stateData.entities, e => $q.cutShort(e.Name, 10));
     } else {
       result = '';
     }
 
     if (stateData.inverse && result != '') {
-      result = $l.SearchBlock.notText + '(' + result + ')';
+      result = `${$l.SearchBlock.notText}(${result})`;
     }
 
     return result;
   },
 
-  restore_blockState: function(state, isRestoreByClose) {
+  restore_blockState(state, isRestoreByClose) {
     if (state) {
       if (this._isNullCheckBoxElement) {
-        var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
+        const $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
         $isNullCheckBoxElement.prop('checked', state.isNull);
         $isNullCheckBoxElement.trigger('change');
       }
@@ -140,59 +136,57 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       }
 
       if (isRestoreByClose) {
-        this._selectedEntitiesIDs = $.map(state.entities, function(item) {
-          return item.Id;
-        });
+        this._selectedEntitiesIDs = $.map(state.entities, item => item.Id);
 
         this._replaceWithSelectedEntities();
       }
 
       $(this._textAreaElement).val(state.text);
-      $('.radioButtonsList input:radio[value=' + (state.isEntity ? 0 : 1) + ']', this._containerElement).prop('checked', true).trigger('click');
+      $(`.radioButtonsList input:radio[value=${state.isEntity ? 0 : 1}]`, this._containerElement).prop('checked', true).trigger('click');
     }
   },
 
-  _onListContentChanged: function(eventArgs, data) {
+  _onListContentChanged(eventArgs, data) {
     this._toggleLinkVisibility(data.value);
   },
 
-  _toggleLinkVisibility: function(selectedIds) {
+  _toggleLinkVisibility(selectedIds) {
     $('.expandParentsButton > a, .expandChildsButton > a', $(this._containerElement)).toggleClass('disabled', !selectedIds.length);
   },
 
-  _expandHierarchy: function(url) {
-    var self = this;
-    return function() {
-      var selectedIds = self.getSelectedIds();
+  _expandHierarchy(url) {
+    const self = this;
+    return function () {
+      const selectedIds = self.getSelectedIds();
       if (selectedIds && selectedIds.length) {
         $q.getAjax(url, {
           ids: self.getSelectedIds(),
           fieldId: self._fieldID,
           filter: self._getEntityDataList()._filter
-        }, function(data) {
+        }, data => {
           self._selectedEntitiesIDs = $q.addRemoveToArrUniq(selectedIds, data);
           self._replaceWithSelectedEntities();
         });
       }
-    }
+    };
   },
 
-  _getEntityDataList: function() {
+  _getEntityDataList() {
     return $(this._entityDataListElement).data('entity_data_list_component');
   },
 
-  _getSelectedEntities: function () {
+  _getSelectedEntities() {
     return this._getEntityDataList().getSelectedEntities();
   },
 
-  _replaceWithSelectedEntities: function() {
+  _replaceWithSelectedEntities() {
     if (this._entityDataListElement) {
       this._getEntityDataList().selectEntities(this._selectedEntitiesIDs);
     }
   },
 
-  _onIsNullCheckBoxChange: function () {
-    var edlComponent = this._getEntityDataList();
+  _onIsNullCheckBoxChange() {
+    const edlComponent = this._getEntityDataList();
     if ($(this._isNullCheckBoxElement).is(':checked')) {
       edlComponent.disableList();
       $(this._textAreaElement).prop('disabled', true);
@@ -202,13 +196,13 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     }
   },
 
-  _onLoad: function () {
-    $c.initAllEntityDataLists(this._containerElement)
+  _onLoad() {
+    $c.initAllEntityDataLists(this._containerElement);
     this._entityDataListElement = $c.getAllEntityDataLists(this._containerElement).get(0);
     this._toggleLinkVisibility(this.getSelectedIds());
   },
 
-  _onSelectorChange: function (e) {
+  _onSelectorChange(e) {
     this._isEntity = $(e.currentTarget).val() == 0;
     if (this._isEntity) {
       $(this._entityContainerElement).show();
@@ -220,12 +214,12 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     }
   },
 
-  onOpen: function () {
+  onOpen() {
     $c.fixAllEntityDataListsOverflow(this._containerElement);
   },
 
-  dispose: function () {
-    $c.destroyAllEntityDataLists(this._containerElement)
+  dispose() {
+    $c.destroyAllEntityDataLists(this._containerElement);
     if (this._isNullCheckBoxElement) {
       $(this._isNullCheckBoxElement).off('change', this._onIsNullCheckBoxChangeHandler);
     }
@@ -245,7 +239,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.callBaseMethod(this, 'dispose');
   },
 
-  _searchType: 0, //тип поиска (Many2Nany или One2Many)
+  _searchType: 0,
   _isEntity: true,
 
   _onIsNullCheckBoxChangeHandler: null,

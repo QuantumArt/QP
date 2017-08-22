@@ -1,76 +1,65 @@
 Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) {
+  const $root = $(`#${rootElementId}`);
 
-	var $root = jQuery('#' + rootElementId);
+  const $statusPanel = $('.nfp-status-panel', $root);
+  const $senderNamePanel = $('.nfp-senderNamePanel', $root);
+  const $senderEmailPanel = $('.nfp-senderEmailPanel', $root);
+  const $externalPanel = $('.nfp-externalPanel', $root);
 
-	var $statusPanel = jQuery('.nfp-status-panel', $root);
-	var $senderNamePanel = jQuery('.nfp-senderNamePanel', $root);
-	var $senderEmailPanel = jQuery('.nfp-senderEmailPanel', $root);
-	var $externalPanel = jQuery('.nfp-externalPanel', $root);
+  const $statusCheckBoxes = $('.nfp-status', $root);
+  const $senderNameCheckbox = $('.nfp-useDefaultSenderNameCheckbox', $root);
+  const $backendEmailCheckbox = $('.nfp-useBackendEmailCheckbox', $root);
+  const $externalCheckbox = $('.nfp-external', $root);
 
-	var $statusCheckBoxes = jQuery('.nfp-status', $root);
-	var $senderNameCheckbox = jQuery('.nfp-useDefaultSenderNameCheckbox', $root);
-	var $backendEmailCheckbox = jQuery('.nfp-useBackendEmailCheckbox', $root);
-	var $externalCheckbox = jQuery('.nfp-external', $root);
+  const onExternalChanged = function () {
+    if ($externalCheckbox.is(':checked')) {
+      $externalPanel.hide();
+    } else {
+      $externalPanel.show();
+    }
+  };
 
-	$statusCheckBoxes.bind("click", onStatusChanged);
-	$senderNameCheckbox.bind("click", onUseDefaultSenderNameChanged);
-	$backendEmailCheckbox.bind("click", onUseBackendEmailChanged);
-	$externalCheckbox.bind("click", onExternalChanged);
+  const onUseBackendEmailChanged = function () {
+    if ($backendEmailCheckbox.is(':checked')) {
+      $senderEmailPanel.hide();
+    } else {
+      $senderEmailPanel.show();
+    }
+  };
 
-	function onExternalChanged() {
-		if ($externalCheckbox.is(':checked'))
-			$externalPanel.hide();
-		else
-			$externalPanel.show();
-	}
+  const onUseDefaultSenderNameChanged = function () {
+    if ($senderNameCheckbox.is(':checked')) {
+      $senderNamePanel.hide();
+    } else {
+      $senderNamePanel.show();
+    }
+  };
 
-	function onUseBackendEmailChanged() {
-		if ($backendEmailCheckbox.is(':checked'))
-			$senderEmailPanel.hide();
-		else
-			$senderEmailPanel.show();
-	}
+  const onStatusChanged = function () {
+    if ($statusCheckBoxes.filter(':checked').length != 0) {
+      $statusPanel.show();
+    } else {
+      $statusPanel.hide();
+    }
+  };
 
-	function onUseDefaultSenderNameChanged() {
-		if ($senderNameCheckbox.is(':checked'))
-			$senderNamePanel.hide();
-		else
-			$senderNamePanel.show();
-	}
+  const dispose = function () {
+    $statusCheckBoxes.unbind();
+    $senderNameCheckbox.unbind();
+    $backendEmailCheckbox.unbind();
+  };
 
-	function onStatusChanged() {
-		if ($statusCheckBoxes.filter(':checked').length != 0) {
-			$statusPanel.show();
-		}
-		else {
-			$statusPanel.hide();
-		}
-	}
+  onStatusChanged();
+  onUseDefaultSenderNameChanged();
+  onUseBackendEmailChanged();
+  onExternalChanged();
 
-	function dispose() {
-		$statusCheckBoxes.unbind();
-		$senderNameCheckbox.unbind();
-		$backendEmailCheckbox.unbind();
+  $statusCheckBoxes.bind('click', onStatusChanged);
+  $senderNameCheckbox.bind('click', onUseDefaultSenderNameChanged);
+  $backendEmailCheckbox.bind('click', onUseBackendEmailChanged);
+  $externalCheckbox.bind('click', onExternalChanged);
 
-		$root = null;
-
-		$statusPanel = null;
-		$senderNamePanel = null;
-		$senderEmailPanel = null;
-		$externalPanel = null;
-
-		$statusCheckBoxes = null;
-		$senderNameCheckbox = null;
-		$backendEmailCheckbox = null;
-		$externalCheckbox = null;
-	}
-
-	onStatusChanged();
-	onUseDefaultSenderNameChanged();
-	onUseBackendEmailChanged();
-	onExternalChanged();
-
-	return {
-		dispose: dispose
-	};
+  return {
+    dispose
+  };
 };

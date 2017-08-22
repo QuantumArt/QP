@@ -1,6 +1,4 @@
-//#region class BackendDocumentContext
-// === Cодержимое документа ===
-Quantumart.QP8.BackendDocumentContext = function(params, options) {
+Quantumart.QP8.BackendDocumentContext = function (params, options) {
   Quantumart.QP8.BackendDocumentContext.initializeBase(this);
   this._hostId = params.hostId;
   if ($q.isBoolean(params.isWindow)) {
@@ -89,47 +87,47 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   _customLinkButtonsSettings: null,
   _customButtonsSettings: null,
 
-  get_mainComponent: function() {
+  get_mainComponent() {
     return this._mainComponent;
   },
-  get_mainComponentType: function() {
+  get_mainComponentType() {
     return this._mainComponentType;
   },
 
-  get_state: function() {
+  get_state() {
     return this._state;
   },
 
-  set_initializingCallback: function(value) {
+  set_initializingCallback(value) {
     this._initializingCallback = value;
   },
 
-  set_initializedCallback: function(value) {
+  set_initializedCallback(value) {
     this._initializedCallback = value;
   },
 
-  set_terminatingCallback: function(value) {
+  set_terminatingCallback(value) {
     this._terminatingCallback = value;
   },
 
-  set_terminatedCallback: function(value) {
+  set_terminatedCallback(value) {
     this._terminatedCallback = value;
   },
 
-  set_execSelectCallback: function(value) {
+  set_execSelectCallback(value) {
     this._execSelectCallback = value;
   },
 
-  set_hostLoadedCallback: function(value) {
+  set_hostLoadedCallback(value) {
     this._hostLoadedCallback = value;
   },
 
-  init: function() {
+  init() {
     if (!this.needUp()) {
       $q.callFunction(this._initializingCallback, this);
     }
 
-    var host = this.getHost();
+    const host = this.getHost();
     if (host) {
       this._mainComponent = this.createMainComponent(host);
       host.set_documentContext(this);
@@ -139,39 +137,38 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       $q.callFunction(this._initializedCallback, this);
     }
 
-    $q.trace('Created document context: ' + this._hostId, this);
+    $q.trace(`Created document context: ${this._hostId}`, this);
   },
 
-  getHost: function() {
+  getHost() {
     if (this._isWindow) {
       return Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindow(this._hostId);
-    } else {
-      return this._getArea().getDocument(this._hostId);
     }
+    return this._getArea().getDocument(this._hostId);
   },
 
-  _getArea: function() {
+  _getArea() {
     return Quantumart.QP8.BackendEditingArea.getInstance();
   },
 
-  setGlobal: function(key, value) {
-    $ctx.setGlobal(key, value);
+  setGlobal(key, value) {
+    Quantumart.QP8.BackendDocumentContext.setGlobal(key, value);
   },
 
-  getGlobal: function(key) {
-    return $ctx.getGlobal(key);
+  getGlobal(key) {
+    return Quantumart.QP8.BackendDocumentContext.getGlobal(key);
   },
 
-  loadScript: function(url, key) {
+  loadScript(url, key) {
     if (!key) {
       key = url;
     }
 
     if (!this._getArea().getCustomScriptState(key)) {
-      var result = $.ajax({
+      const result = $.ajax({
         type: 'get',
         dataType: 'script',
-        url: url,
+        url,
         cache: false,
         async: false
       });
@@ -180,21 +177,22 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
   },
 
-  addCustomButton: function(settings) {
+  addCustomButton(settings) {
     this._customButtonsSettings.push(settings);
   },
 
-  addCustomLinkButton: function(settings) {
+  addCustomLinkButton(settings) {
     this._customLinkButtonsSettings.push(settings);
   },
 
-  execSelect: function(eventArgs) {
-    if (this._execSelectCallback)
-    this._execSelectCallback(eventArgs);
+  execSelect(eventArgs) {
+    if (this._execSelectCallback) {
+      this._execSelectCallback(eventArgs);
+    }
   },
 
-  createMainComponent: function(host) {
-    var hostOptions = {
+  createMainComponent(host) {
+    const hostOptions = {
       viewTypeCode: host.get_viewTypeCode(),
       searchQuery: host.get_searchQuery(),
       contextQuery: host.get_contextQuery(),
@@ -207,26 +205,26 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       zIndex: host.get_zIndex()
     };
 
-    var hostHandler = host._onGeneralEventHandler;
-    var mainComponent = null;
+    const hostHandler = host._onGeneralEventHandler;
+    let mainComponent = null;
 
     if (this._mainComponentType == $e.MainComponentType.Grid) {
       mainComponent = Quantumart.QP8.BackendEntityGridManager.getInstance().createGrid(this._mainComponentId, this._entityTypeCode, this._parentEntityId, this._actionCode, this._options, hostOptions);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_GRID_DATA_BINDING, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_GRID_DATA_BOUND, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.Tree) {
       mainComponent = Quantumart.QP8.BackendEntityTreeManager.getInstance().createTree(this._mainComponentId, this._entityTypeCode, this._parentEntityId, this._actionCode, this._options, hostOptions);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_TREE_DATA_BOUND, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.Library) {
       mainComponent = Quantumart.QP8.BackendLibraryManager.getInstance().createLibrary(this._mainComponentId, this._parentEntityId, this._actionCode, this._options, hostOptions);
-      mainComponent.attachObserver(EVENT_TYPE_LIBRARY_DATA_BOUND, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_LIBRARY_ENTITY_SELECTED, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_LIBRARY_ACTION_EXECUTING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_LIBRARY_DATA_BOUND, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_LIBRARY_ENTITY_SELECTED, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_LIBRARY_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.Editor) {
       this._options.needUp = this.needUp();
       this._options.customHandlers = this.getCustomHandlers();
@@ -235,30 +233,30 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       this._options.notifyCustomButtonExistence = this.notifyCustomButtonExistence;
 
       mainComponent = Quantumart.QP8.BackendEntityEditorManager.getInstance().createEditor(host.get_documentWrapperElementId(), this._entityTypeCode, this._entityId, '', this._options, hostOptions);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING, hostHandler);
-      mainComponent.attachObserver(EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.CustomActionHost) {
       if (hostOptions.eventArgsAdditionalData) {
-        jQuery.extend(this._params, {
+        Object.assign(this._params, {
           additionalParams: hostOptions.eventArgsAdditionalData.additionalParams
         });
       }
 
       mainComponent = Quantumart.QP8.BackendCustomActionHostManager.getInstance().createComponent(this._hostId, this._params);
-      mainComponent.attachObserver(EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.ActionPermissionView) {
       mainComponent = Quantumart.QP8.BackendActionPermissionViewManager.getInstance().createView(this._mainComponentId, this._options, hostOptions);
-      mainComponent.attachObserver(EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING, hostHandler);
+      mainComponent.attachObserver(window.EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.Area) {
       mainComponent = {
-        initialize: function() { },
-        dispose: function() { }
+        initialize() { },
+        dispose() { }
       };
     }
 
@@ -266,14 +264,14 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return mainComponent;
   },
 
-  onHostLoaded: function() {
+  onHostLoaded() {
     $q.callFunction(this._hostLoadedCallback, this);
   },
 
-  get_eventArgs: function() {
+  get_eventArgs() {
     if (!this._eventArgs) {
-      var action = $a.getBackendAction(this._actionCode);
-      var eventArgs = $a.getEventArgsFromAction(action);
+      const action = $a.getBackendAction(this._actionCode);
+      const eventArgs = $a.getEventArgsFromAction(action);
 
       eventArgs.set_entityId(this._entityId);
       eventArgs.set_entityName(this._entityName);
@@ -288,8 +286,8 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return this._eventArgs;
   },
 
-  getEventArgsContext: function() {
-    var context = { orderChanged: false, groupChanged: false, viewInListAffected: false };
+  getEventArgsContext() {
+    const context = { orderChanged: false, groupChanged: false, viewInListAffected: false };
 
     if ($q.isBoolean(this._options.orderChanged)) {
       context.orderChanged = this._options.orderChanged;
@@ -306,15 +304,15 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return context;
   },
 
-  modifyEventArgsContext: function(eventArgsContext) {
+  modifyEventArgsContext(eventArgsContext) {
     return eventArgsContext;
   },
 
-  getPreviousAction: function() {
-    var previousAction = null;
+  getPreviousAction() {
+    let previousAction = null;
 
     if (this._previousActionCode) {
-      var action = $a.getBackendAction(this._previousActionCode);
+      const action = $a.getBackendAction(this._previousActionCode);
 
       if (action) {
         previousAction = new Quantumart.QP8.BackendPreviousAction({
@@ -329,19 +327,19 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return previousAction;
   },
 
-  get_options: function() {
+  get_options() {
     return this._options;
   },
 
-  get_params: function () {
-      return this._params;
+  get_params() {
+    return this._params;
   },
 
-  needUp: function() {
-    var result = false;
+  needUp() {
+    let result = false;
 
     if (this._mainComponentType == $e.MainComponentType.Editor && this._state != $e.DocumentContextState.Error) {
-      var eventArgs = this.get_eventArgs();
+      const eventArgs = this.get_eventArgs();
 
       if (eventArgs.get_needUp() && !$q.isNull(eventArgs.get_previousAction())) {
         result = true;
@@ -351,42 +349,42 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return result;
   },
 
-  disposeMainComponent: function(host) {
-    var hostHandler = host._onGeneralEventHandler;
+  disposeMainComponent(host) {
+    const hostHandler = host._onGeneralEventHandler;
 
     if (this._mainComponentType == $e.MainComponentType.Grid) {
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_GRID_DATA_BINDING, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_GRID_DATA_BOUND, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.Editor) {
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.Library) {
-      this._mainComponent.detachObserver(EVENT_TYPE_LIBRARY_DATA_BOUND, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_LIBRARY_ENTITY_SELECTED, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_LIBRARY_ACTION_EXECUTING, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_LIBRARY_DATA_BOUND, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_LIBRARY_ENTITY_SELECTED, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_LIBRARY_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.Tree) {
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_TREE_DATA_BOUND, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED, hostHandler);
-      this._mainComponent.detachObserver(EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.CustomActionHost) {
-      this._mainComponent.detachObserver(EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType == $e.MainComponentType.ActionPermissionView) {
-      this._mainComponent.detachObserver(EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING, hostHandler);
+      this._mainComponent.detachObserver(window.EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING, hostHandler);
     }
 
     this._mainComponent.dispose();
     this._mainComponent = null;
   },
 
-  getCustomHandlers: function() {
-    var result = {};
+  getCustomHandlers() {
+    const result = {};
 
     if (this.initHandler) {
       result.init = jQuery.proxy(this.initHandler, this);
@@ -411,36 +409,36 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return result;
   },
 
-  dispose: function() {
-    Sys.Debug.trace('terminatePage ' + this._hostId);
-    if (!this.needUp())
-    $q.callFunction(this._terminatingCallback, this);
-    var host = this.getHost();
+  dispose() {
+    Sys.Debug.trace(`terminatePage ${this._hostId}`);
+    if (!this.needUp()) {
+      $q.callFunction(this._terminatingCallback, this);
+    }
+    const host = this.getHost();
 
     if (host) {
       this.disposeMainComponent(host);
       host.set_documentContext(null);
     }
 
-    if (!this.needUp())
-    $q.callFunction(this._terminatedCallback, this);
+    if (!this.needUp()) {
+      $q.callFunction(this._terminatedCallback, this);
+    }
   }
 };
 
-var $ctx = Quantumart.QP8.BackendDocumentContext;
-
-Quantumart.QP8.BackendDocumentContext.getArea = function() {
+Quantumart.QP8.BackendDocumentContext.getArea = function () {
   return Quantumart.QP8.BackendEditingArea.getInstance();
 };
 
-Quantumart.QP8.BackendDocumentContext.getGlobal = function(key) {
-  return $ctx.getArea().getGlobal(key);
+Quantumart.QP8.BackendDocumentContext.getGlobal = function (key) {
+  return Quantumart.QP8.BackendDocumentContext.getArea().getGlobal(key);
 };
 
-Quantumart.QP8.BackendDocumentContext.setGlobal = function(key, value) {
-  return $ctx.getArea().setGlobal(key, value);
+Quantumart.QP8.BackendDocumentContext.setGlobal = function (key, value) {
+  return Quantumart.QP8.BackendDocumentContext.getArea().setGlobal(key, value);
 };
 
 Quantumart.QP8.BackendDocumentContext.registerClass('Quantumart.QP8.BackendDocumentContext');
 
-//#endregion
+window.$ctx = Quantumart.QP8.BackendDocumentContext;

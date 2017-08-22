@@ -1,4 +1,4 @@
-Backend.Lang.ExpandedContainer = {
-	expandText: "Показать",
-	collapseText: "Скрыть"
+window.Backend.Lang.ExpandedContainer = {
+  expandText: 'Показать',
+  collapseText: 'Скрыть'
 };

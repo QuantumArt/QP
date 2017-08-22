@@ -25,12 +25,14 @@
 
 <body data-dbhash="@Model.DbHash">
   <div id="page" class="twoColumnLayout">
-    <div id="header">
-      <div id="communicationMessage">
+    <div id="header" class="main-header">
+      <div id="communicationMessage" class="communicationMessage">
         <span class="singleusermode"></span>
       </div>
-
-      <div id="userInformation">
+      <div class="enableDebugMode">
+        <button class="btn-list">Enable debug mode</button>
+      </div>
+      <div id="userInformation" class="userInformation">
         @GlobalStrings.UserInfo_Label_LoggedInAs <span data-userid="@QPContext.CurrentUserId" class="userName">@QPContext.CurrentUserName</span>
         @Html.ActionLink(GlobalStrings.UserInfo_Link_Exit, "LogOut", "LogOn", null, new { @class = "signOut" })
       </div>

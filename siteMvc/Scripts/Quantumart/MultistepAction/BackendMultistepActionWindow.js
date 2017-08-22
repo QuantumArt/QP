@@ -11,7 +11,7 @@ Quantumart.QP8.BackendMultistepActionWindow = function BackendMultistepActionWin
 };
 
 Quantumart.QP8.BackendMultistepActionWindow.prototype = {
-  //  название действия
+  // название действия
   _actionName: '',
 
   // краткое название действия
@@ -65,18 +65,16 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   _zIndex: undefined,
   _parentId: null,
 
-  initialize: function () {
-    var $mainContainer, $stageNameElement, $progressBarElement;
-
+  initialize() {
     this._popupWindowComponent = this._createWindow();
     this._popupWindowElement = this._popupWindowComponent.element;
 
-    $mainContainer = $('.lop-main', this._popupWindowElement);
+    const $mainContainer = $('.lop-main', this._popupWindowElement);
     $mainContainer
       .find('.lop-action-name')
       .text(this._shortActionName === null ? this._actionName : this._shortActionName);
 
-    $stageNameElement = $mainContainer.find('.lop-stage-name dd');
+    const $stageNameElement = $mainContainer.find('.lop-stage-name dd');
     $stageNameElement.text($l.MultistepAction.setupStageName);
 
     this._stageNameElement = $stageNameElement.get(0);
@@ -85,8 +83,8 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     this._stageElapsedTimeElement = $mainContainer.find('.lop-elapsed-time dd').get(0);
     this._stageTimeRemainingElement = $mainContainer.find('.lop-time-remaining dd').get(0);
     this._stageAdditionalInfoElement = $mainContainer.find('.lop-additional-info dd').get(0);
-    $progressBarElement = $mainContainer.find('.lop-pbar');
 
+    const $progressBarElement = $mainContainer.find('.lop-pbar');
     this._progressBarElement = $progressBarElement.get(0);
     $progressBarElement.backendProgressBar();
 
@@ -95,13 +93,10 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
       .find('.lop-cancel-button')
       .click($.proxy(this._onCancelClicked, this))
       .get(0);
-
-    $progressBarElement = null;
-    $mainContainer = null;
   },
 
-  _refreshView: function () {
-    var elapsedTime, timeRemaining;
+  _refreshView() {
+    let timeRemaining;
 
     this._progressBarComponent.total(this._stageItemsCount);
     this._progressBarComponent.value(this._stageItemsCount - this._stageItemsRemaining);
@@ -111,13 +106,13 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     if (this._additionalInfo !== null) {
       if (this._additionalInfo.indexOf('.csv') > 0) {
         $(this._stageAdditionalInfoElement).html(
-          "<a href='javascript:void(0);'>" + $l.MultistepAction.linkForDownloadFile + '</a>');
+          `<a href='javascript:void(0);'>${$l.MultistepAction.linkForDownloadFile}</a>`);
         $(this._stageAdditionalInfoElement).children('a').on('click', $.proxy(this._createDownloadLink, this));
       } else {
         $(this._stageAdditionalInfoElement).html(this._additionalInfo);
 
         if (this._stageAdditionalInfoElement.scrollWidth > this._stageAdditionalInfoElement.clientWidth) {
-          $(this._stageAdditionalInfoElement).append('<div class="tooltip">' + this._additionalInfo + '</div>');
+          $(this._stageAdditionalInfoElement).append(`<div class="tooltip">${this._additionalInfo}</div>`);
         }
       }
     }
@@ -135,7 +130,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
       this._stageItemsCount
     ));
 
-    elapsedTime = new Date().getTime() - this._startStageTime.getTime();
+    const elapsedTime = new Date().getTime() - this._startStageTime.getTime();
     $(this._stageElapsedTimeElement).text(this._formatTimeRange(elapsedTime));
 
     timeRemaining = 0;
@@ -156,48 +151,45 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     }
   },
 
-  _formatTimeRange: function (milliseconds) {
-    var secondsSpan = Math.floor(milliseconds / 1000);
-    var hours = Math.floor(secondsSpan / 3600);
-    var minutes = Math.floor((secondsSpan - (hours * 3600)) / 60);
-    var seconds = Math.round(secondsSpan - (hours * 3600) - (minutes * 60));
+  _formatTimeRange(milliseconds) {
+    const secondsSpan = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(secondsSpan / 3600);
+    let minutes = Math.floor((secondsSpan - (hours * 3600)) / 60);
+    let seconds = Math.round(secondsSpan - (hours * 3600) - (minutes * 60));
     if (minutes < 10) {
-      minutes = '0' + minutes;
+      minutes = `0${minutes}`;
     }
 
     if (seconds < 10) {
-      seconds = '0' + seconds;
+      seconds = `0${seconds}`;
     }
 
-    return hours + ':' + minutes + ':' + seconds;
+    return `${hours}:${minutes}:${seconds}`;
   },
 
-  startAction: function (stageCount) {
+  startAction(stageCount) {
     this._stagesCount = stageCount;
     this._stagesRemaining = stageCount;
   },
 
   // Начать этап
-  startStage: function (stageName, stepsCount, itemsCount) {
+  startStage(stageName, stepsCount, itemsCount) {
     this._stageName = stageName;
-
     this._stageStepsCount = stepsCount;
     this._stageStepsRemaining = stepsCount;
-
     this._stageItemsCount = itemsCount;
     this._stageItemsRemaining = itemsCount;
-
     this._startStageTime = new Date();
-
     this._refreshView();
   },
 
   // Закончить этап
-  completeStage: function () {
+  completeStage() {
     this._stagesRemaining -= 1;
     if (this._stagesRemaining < 0) {
       this._stagesRemaining = 0;
     }
+
     this._stageItemsCount = 0;
     this._stageItemsRemaining = 0;
 
@@ -206,8 +198,8 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
 
     this._refreshView();
   },
-  _createDownloadLink: function () {
-    var url, urlParams;
+  _createDownloadLink() {
+    let url, urlParams;
     if (!$q.isNullOrWhiteSpace(this._additionalInfo)) {
       urlParams = { id: this._parentId, fileName: encodeURIComponent(this._additionalInfo) };
       url = Quantumart.QP8.BackendLibrary.generateActionUrl('ExportFileDownload', urlParams);
@@ -217,8 +209,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     return false;
   },
 
-  // Закончить шаг этапа
-  completeStep: function (processedItemsCount, additionalInfo, parentId) {
+  completeStep(processedItemsCount, additionalInfo, parentId) {
     this._stageItemsRemaining -= processedItemsCount;
     this._additionalInfo = additionalInfo;
     this._parentId = parentId;
@@ -235,7 +226,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   _isInProcess: true,
-  _stop: function () {
+  _stop() {
     this._isInProcess = false;
     $(this._cancelButtonElement).prop({
       value: $l.MultistepAction.close,
@@ -251,27 +242,27 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     ]).text('');
   },
 
-  setError: function () {
+  setError() {
     this._stop();
     this._progressBarComponent.setColor('red');
     this._progressBarComponent.setText($l.MultistepAction.errorStatus);
   },
 
-  setCancel: function () {
+  setCancel() {
     this._stop();
     this._progressBarComponent.setColor('#BDBDBD');
     this._progressBarComponent.setText($l.MultistepAction.canceledStatus);
   },
 
-  setComplete: function () {
+  setComplete() {
     this._stop();
     this._progressBarComponent.setColor('green');
     this._progressBarComponent.setText($l.MultistepAction.completeStatus);
   },
 
-  _createWindow: function () {
-    var popupWindowComponent, $popupWindow, $content, bottomPaddingFix;
-    var windowContentHtml = new $.telerik.stringBuilder();
+  _createWindow() {
+    let bottomPaddingFix;
+    const windowContentHtml = new $.telerik.stringBuilder();
 
     windowContentHtml
       .cat('<div class="lop-main">')
@@ -279,32 +270,32 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
       .cat('<div class="lop-info">')
 
       .cat('<dl class="lop-stage-remaining">')
-      .cat('<dt>' + $l.MultistepAction.stageRemainingLabel + '</dt>')
+      .cat(`<dt>${$l.MultistepAction.stageRemainingLabel}</dt>`)
       .cat('<dd></dd>')
       .cat('</dl>')
 
       .cat('<dl class="lop-stage-name">')
-      .cat('<dt>' + $l.MultistepAction.stageNameLabel + '</dt>')
+      .cat(`<dt>${$l.MultistepAction.stageNameLabel}</dt>`)
       .cat('<dd></dd>')
       .cat('</dl>')
 
       .cat('<dl class="lop-stage-items">')
-      .cat('<dt>' + $l.MultistepAction.stageItemsRemainingLabel + '</dt>')
+      .cat(`<dt>${$l.MultistepAction.stageItemsRemainingLabel}</dt>`)
       .cat('<dd></dd>')
       .cat('</dl>')
 
       .cat('<dl class="lop-elapsed-time">')
-      .cat('<dt>' + $l.MultistepAction.stageElapsedTimeLabel + '</dt>')
+      .cat(`<dt>${$l.MultistepAction.stageElapsedTimeLabel}</dt>`)
       .cat('<dd></dd>')
       .cat('</dl>')
 
       .cat('<dl class="lop-time-remaining">')
-      .cat('<dt>' + $l.MultistepAction.stageTimeRemaningLabel + '</dt>')
+      .cat(`<dt>${$l.MultistepAction.stageTimeRemaningLabel}</dt>`)
       .cat('<dd></dd>')
       .cat('</dl>')
 
       .cat('<dl class="lop-additional-info">')
-      .cat('<dt>' + $l.MultistepAction.additionalInfoLabel + '</dt>')
+      .cat(`<dt>${$l.MultistepAction.additionalInfoLabel}</dt>`)
       .cat('<dd class="brief"></dd>')
       .cat('</dl>')
 
@@ -323,7 +314,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
       .cat('</div>')
       .cat('</div>');
 
-    popupWindowComponent = $.telerik.window.create({
+    const popupWindowComponent = $.telerik.window.create({
       title: this._windowTitle,
       html: windowContentHtml.string(),
       width: this._windowWidth,
@@ -334,24 +325,24 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
       onClose: $.proxy(this._onWindowClose, this)
     }).data('tWindow').center();
 
-    $popupWindow = $(popupWindowComponent.element);
+    const $popupWindow = $(popupWindowComponent.element);
     if (this._zIndex) {
       $popupWindow.css('z-index', this._windowZIndex);
     }
 
-    $content = $popupWindow.find('DIV.t-window-content:first');
+    const $content = $popupWindow.find('DIV.t-window-content:first');
     bottomPaddingFix = 0;
     if ($.support.borderRadius) {
       bottomPaddingFix = 15;
     } else {
       bottomPaddingFix = 10;
     }
-    $content.css('padding-bottom', bottomPaddingFix + 'px');
 
+    $content.css('padding-bottom', `${bottomPaddingFix}px`);
     return popupWindowComponent;
   },
 
-  _onWindowClose: function onWindowClose() {
+  _onWindowClose() {
     if (this._isInProcess) {
       this._cancel();
       return false;
@@ -361,14 +352,14 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     return undefined;
   },
 
-  _onCancelClicked: function () {
+  _onCancelClicked() {
     this._popupWindowComponent.close();
   },
 
-  _cancel: function onCancel() {
-    var eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
+  _cancel() {
+    const eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
     this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, eventArgs);
-    if (eventArgs.getCancel() === true) {
+    if (eventArgs.getCancel()) {
       this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, eventArgs);
     } else {
       return false;
@@ -377,8 +368,8 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     return undefined;
   },
 
-  dispose: function () {
-    var popupWindowComponent;
+  dispose() {
+    let popupWindowComponent;
     this._progressBarComponent = null;
     if (this._progressBarElement) {
       $(this._progressBarElement).backendProgressBar('dispose');
@@ -409,11 +400,11 @@ Quantumart.QP8.BackendMultistepActionWindowEventArgs = function BackendMultistep
 Quantumart.QP8.BackendMultistepActionWindowEventArgs.prototype = {
   _cancel: false,
 
-  getCancel: function () {
+  getCancel() {
     return this._cancel;
   },
 
-  setCancel: function (val) {
+  setCancel(val) {
     this._cancel = val;
   }
 };

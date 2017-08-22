@@ -1,83 +1,85 @@
-﻿Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
+Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
+  const initialize = function () {
+    const executeAction = function (actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters) {
+      const action = $a.getBackendActionByCode(actionCode);
+      const params = new Quantumart.QP8.BackendActionParameters({
+        entityTypeCode,
+        entityId,
+        entityName,
+        parentEntityId
+      });
 
-	function initialize() {
-		var $search = jQuery("#" + searchElementId);
-		$search.wrap($("<div/>", { 'id' : searchElementId + "_wrapper", 'class' : "fieldWrapper group myClass" }));
-		var $wrapper = $search.parent("div");
-		var $form = $search.parents("form");
-		$form.on("submit", onSubmit);
-		var $div = $("<div/>", {
-			id : searchElementId + '_preview', 
-			'class' : 'previewButton', 
-			title: $l.Home.search
-		});
-		$div.append($("<img/>", { src: '/Backend/Content/Common/0.gif' }));
-		$wrapper.append($div);
-		$div.on("click", onSubmit);
-		var $locked = jQuery("#" + lockedElementId);
-		var $loggedAs = jQuery("#" + loggedAsElementId);
-		var $approval = jQuery("#" + approvalElementId);
-		var temp = ' (<a class="js" href="javascript:void(0)">{0}</a>) ';
-		var listStr = String.format(temp, $l.Home.list);
-		var profileStr = String.format(temp, $l.Home.profile);;
+      const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+      eventArgs.set_context({ additionalUrlParameters });
+      documentContext.getHost().onActionExecuting(eventArgs);
+    };
 
-		if ($locked.text().trim() != "0")
-		{
-			$locked.append(listStr);
-			$locked.find("a").on("click", function () { executeAction('list_locked_article', 'db', 1, customerCode, 0) })
-		}
+    const onSubmit = function (e) {
+      e.preventDefault();
+      const $site = $(`#${siteElementId}`);
+      const siteId = $site.val();
 
-		if ($approval.text().trim() != "0")
-		{
-			$approval.append(listStr);
-			$approval.find("a").on("click", function () { executeAction('list_articles_for_approval', 'db', 1, customerCode, 0) })
-		}
+      if (siteId) {
+        const siteName = $site.text();
+        const text = $(`#${searchElementId}`).val();
+        executeAction('search_in_articles', 'site', siteId, siteName, 1, { query: text });
+      }
+    };
 
-		$loggedAs.append(profileStr);
-		$loggedAs.find("a").on("click", function () { executeAction('edit_profile', 'db', 1, customerCode, 0) })
+    const $search = $(`#${searchElementId}`);
+    $search.wrap($('<div/>', { id: `${searchElementId}_wrapper`, class: 'fieldWrapper group myClass' }));
 
-	}
+    const $wrapper = $search.parent('div');
+    const $form = $search.parents('form');
+    $form.on('submit', onSubmit);
 
-	function onSubmit(e) {
-		e.preventDefault();
-		var $site = jQuery("#" + siteElementId);
-		var siteId = $site.val();
+    const $div = $('<div/>', {
+      id: `${searchElementId}_preview`,
+      class: 'previewButton',
+      title: $l.Home.search
+    });
 
-		if (siteId)
-		{
-			var siteName = $site.text();
-			var text = jQuery("#" + searchElementId).val();
-			executeAction('search_in_articles', 'site', siteId, siteName, 1, { "query": text });
-		}
-	}
+    $div.append($('<img/>', { src: '/Backend/Content/Common/0.gif' }));
+    $wrapper.append($div);
+    $div.on('click', onSubmit);
 
-	function executeAction(actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters)
-	{
-		var action = $a.getBackendActionByCode(actionCode);
+    const $locked = $(`#${lockedElementId}`);
+    const $loggedAs = $(`#${loggedAsElementId}`);
+    const $approval = $(`#${approvalElementId}`);
+    const temp = ' (<a class="js" href="javascript:void(0)">{0}</a>) ';
+    const listStr = String.format(temp, $l.Home.list);
+    const profileStr = String.format(temp, $l.Home.profile);
 
-		var params = new Quantumart.QP8.BackendActionParameters({
-			entityTypeCode: entityTypeCode,
-			entityId: entityId,
-			entityName: entityName,
-			parentEntityId: parentEntityId
-		});
+    if ($locked.text().trim() != '0') {
+      $locked.append(listStr);
+      $locked.find('a').on('click', () => {
+        executeAction('list_locked_article', 'db', 1, customerCode, 0);
+      });
+    }
 
-		var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
-		eventArgs.set_context({ additionalUrlParameters: additionalUrlParameters });
-		documentContext.getHost().onActionExecuting(eventArgs);
-	}
+    if ($approval.text().trim() != '0') {
+      $approval.append(listStr);
+      $approval.find('a').on('click', () => {
+        executeAction('list_articles_for_approval', 'db', 1, customerCode, 0);
+      });
+    }
 
+    $loggedAs.append(profileStr);
+    $loggedAs.find('a').on('click', () => {
+      executeAction('edit_profile', 'db', 1, customerCode, 0);
+    });
+  };
 
-	function dispose() {
-		jQuery("#" + searchElementId).siblings(".previewButton").off("click");
-		jQuery("#" + searchElementId).parents("form").off("sumbit");
-		jQuery("#" + lockedElementId).find("a").off("click");
-		jQuery("#" + loggedAsElementId).find("a").off("click");
-		jQuery("#" + approvalElementId).find("a").off("click");
-	}
+  const dispose = function () {
+    $(`#${searchElementId}`).siblings('.previewButton').off('click');
+    $(`#${searchElementId}`).parents('form').off('sumbit');
+    $(`#${lockedElementId}`).find('a').off('click');
+    $(`#${loggedAsElementId}`).find('a').off('click');
+    $(`#${approvalElementId}`).find('a').off('click');
+  };
 
-	return {
-		dispose: dispose,
-		initialize: initialize
-	};
+  return {
+    dispose,
+    initialize
+  };
 };
