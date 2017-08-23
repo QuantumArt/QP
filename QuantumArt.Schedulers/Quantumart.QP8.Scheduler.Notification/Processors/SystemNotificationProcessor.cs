@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Flurl.Http;
+using Newtonsoft.Json;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging.Interfaces;
 using QP8.Infrastructure.Web.Enums;
@@ -98,9 +99,11 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             while (notSendedDtosQueue.Any() && !token.IsCancellationRequested)
             {
                 var dto = notSendedDtosQueue.Peek();
+                Task<HttpResponseMessage> responseMessage = null;
+
                 try
                 {
-                    var responseMessage = PushDataToHttpChannel(dto.Url, dto.Json, customer.CustomerName);
+                    responseMessage = PushDataToHttpChannel(dto.Url, dto.Json, customer.CustomerName);
                     var response = await responseMessage.ReceiveJson<JSendResponse>();
                     if (response.Status != JSendStatus.Success || response.Code != 200)
                     {
@@ -111,6 +114,13 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
 
                     sentNotificationIds.Add(notSendedDtosQueue.Dequeue().Id);
                     _logger.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
+                }
+                catch (JsonReaderException jrEx)
+                {
+                    var responseBodyMessage = $"Response body: {await responseMessage.ReceiveString()}.";
+                    httpNotSendedReason = $"Exception while parsing response. {responseBodyMessage}";
+                    _logger.Error($"Exception while parsing response for customer code: {customer.CustomerName}. {responseBodyMessage} Notification: {dto.ToJsonLog()}", jrEx);
+                    break;
                 }
                 catch (Exception ex)
                 {
