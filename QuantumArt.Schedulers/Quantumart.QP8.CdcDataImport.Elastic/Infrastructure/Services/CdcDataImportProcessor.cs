@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.CdcImport;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Cdc;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Services

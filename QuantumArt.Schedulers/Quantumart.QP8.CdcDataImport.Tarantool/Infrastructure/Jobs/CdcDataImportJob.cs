@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using AutoMapper;
 using Flurl.Http;
+using Newtonsoft.Json;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
@@ -92,9 +93,11 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             {
                 shouldSendHttpRequests = false;
                 var data = notSendedDtosQueue.Peek();
+                Task<HttpResponseMessage> responseMessage = null;
+
                 try
                 {
-                    var responseMessage = PushDataToHttpChannel(data);
+                    responseMessage = PushDataToHttpChannel(data);
                     var response = await responseMessage.ReceiveJson<JSendResponse>();
                     if (response.Status != JSendStatus.Success || response.Code != 200)
                     {
@@ -105,6 +108,12 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                     shouldSendHttpRequests = true;
                     lastPushedLsn = notSendedDtosQueue.Dequeue().TransactionLsn;
                     Logger.Log.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName} [{data.TransactionLsn}]: {response.ToJsonLog()}");
+                }
+                catch (JsonReaderException jrEx)
+                {
+                    var responseBodyMessage = $"Response body: {await responseMessage.ReceiveString()}.";
+                    Logger.Log.Warn($"Exception while parsing response for customer code: {customer.CustomerName}. {responseBodyMessage} Notification: {data.ToJsonLog()}", jrEx);
+                    break;
                 }
                 catch (Exception ex)
                 {
