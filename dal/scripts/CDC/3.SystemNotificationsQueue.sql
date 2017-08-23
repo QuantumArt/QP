@@ -1,4 +1,4 @@
-IF dbo.qp_check_existence('SYSTEM_NOTIFICATION_QUEUE', 'IsUserTable') = 1
+IF EXISTS (select * from information_schema.tables where table_name = 'SYSTEM_NOTIFICATION_QUEUE')
 BEGIN
     IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[SYSTEM_NOTIFICATION_QUEUE]') AND name = 'CdcLastExecutedLsnId')
     BEGIN
@@ -8,7 +8,7 @@ BEGIN
 END
 GO
 
-IF dbo.qp_check_existence('SYSTEM_NOTIFICATION_QUEUE', 'IsUserTable') = 0
+IF NOT EXISTS (select * from information_schema.tables where table_name = 'SYSTEM_NOTIFICATION_QUEUE')
 BEGIN
   CREATE TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] (
     [ID] [numeric](18, 0) IDENTITY(1,1) NOT NULL,
