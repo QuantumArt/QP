@@ -1940,6 +1940,9 @@ END
 GO
 
 GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_CDC')
+  ALTER TABLE [dbo].[DB] ADD [USE_CDC] [bit] NOT NULL DEFAULT ((0))
+GO
 EXEC qp_drop_existing '[dbo].[tu_db]', 'IsTrigger'
 GO
 
@@ -2029,9 +2032,6 @@ AS BEGIN
            @capture_instance = N'dbo_status_type';
     END
 END
-GO
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_CDC')
-  ALTER TABLE [dbo].[DB] ADD [USE_CDC] [bit] NOT NULL DEFAULT ((0))
 GO
 IF EXISTS (select * from information_schema.tables where table_name = 'SYSTEM_NOTIFICATION_QUEUE')
 BEGIN
