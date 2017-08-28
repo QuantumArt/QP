@@ -320,7 +320,7 @@ namespace Quantumart.QP8.BLL
             ValidateRelationSecurity(errors);
             ValidateFields(errors);
             ValidateAggregated(errors);
-            ValidateXaml(errors);
+            ValidateXaml(errors, QPContext.CurrentCustomerCode);
             ValidateSchedule(errors, Schedule);
 
             if (!errors.IsEmpty)
@@ -329,10 +329,10 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public static void ValidateXamlById(int articleId, RulesException errors)
+        public static void ValidateXamlById(int articleId, RulesException errors, string customerCode = null)
         {
             var article = ArticleRepository.GetById(articleId);
-            article.ValidateXaml(errors);
+            article.ValidateXaml(errors, customerCode ?? QPContext.CurrentCustomerCode);
         }
 
         public static string GetDynamicColumnName(Field field, Dictionary<int, int> relationCounters, bool useFormName = false)
@@ -664,7 +664,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private void ValidateXaml(RulesException errors)
+        private void ValidateXaml(RulesException errors, string customerCode)
         {
             var values = FieldValues
                 .Concat(AggregatedArticles.SelectMany(a => a.FieldValues))
@@ -691,7 +691,7 @@ namespace Quantumart.QP8.BLL
                         Validator = Content.XamlValidation,
                         AggregatedValidatorList = aggregatedXamlValidators,
                         DynamicResource = Content.Site.XamlDictionaries,
-                        CustomerCode = QPContext.CurrentCustomerCode,
+                        CustomerCode = customerCode,
                         SiteId = Content.SiteId,
                         ContentId = ContentId
                     };

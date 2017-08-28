@@ -1,4 +1,4 @@
-window.EVENT_TYPE_ENTITY_EDITOR_IS_READY = 'OnEntityEditorIsReady';
+﻿window.EVENT_TYPE_ENTITY_EDITOR_IS_READY = 'OnEntityEditorIsReady';
 window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED = 'OnEntityEditorDisposed';
 window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = 'OnEntityEditorFieldChanged';
 window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE = 'OnEntityEditorAllFieldInvalidate';
@@ -80,7 +80,7 @@ class BackendEntityEditorManager extends Quantumart.QP8.Observable {
       }
 
       if (hostOptions.eventArgsAdditionalData) {
-        if ((entityId === 0 || hostOptions.eventArgsAdditionalData.restoring)
+        if ((entityId === '0' || hostOptions.eventArgsAdditionalData.restoring)
           && hostOptions.eventArgsAdditionalData.initFieldValues
         ) {
           finalOptions = Object.assign({}, finalOptions, {
