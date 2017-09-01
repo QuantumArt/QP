@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
@@ -68,8 +68,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             using (var scope = new QPConnectionScope())
             {
-                int totalRecords;
-                var rows = Common.GetSitesPage(scope.DbConnection, options, out totalRecords);
+                var rows = Common.GetSitesPage(scope.DbConnection, options, out int totalRecords);
                 return new ListResult<SiteListItem> { Data = MapperFacade.SiteListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }
@@ -170,9 +169,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<ListItem> GetSimpleList(IEnumerable<int> siteIDs)
         {
-            return GetList(siteIDs)
-                .Select(s => new ListItem { Value = s.Id.ToString(), Text = s.Name });
-
+            return GetList(siteIDs).Select(s => new ListItem { Value = s.Id.ToString(), Text = s.Name });
         }
 
         internal static int GetSiteVirtualContentCount(int siteId)
