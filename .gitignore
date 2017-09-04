@@ -262,6 +262,7 @@ siteMvc/Scripts/Quantumart/**/*.min.js
 *.sublime-workspace
 **/*.generated.cs
 npm-debug.log.*
+Elmah.txt
 
 siteMvc/Scripts/build
 siteMvc/Content/build

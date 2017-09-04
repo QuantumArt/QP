@@ -19,6 +19,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="$OutputPath$NLog.QuantumArt.xsd" target="lib\net45" />
+    <file src="$OutputPath$NLog.QuantumArt.xsd" target="lib\net47" />
   </files>
 </package>
