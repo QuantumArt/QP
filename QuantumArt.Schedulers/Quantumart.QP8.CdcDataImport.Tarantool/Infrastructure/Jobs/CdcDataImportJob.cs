@@ -109,10 +109,10 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                     lastPushedLsn = notSendedDtosQueue.Dequeue().TransactionLsn;
                     Logger.Log.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName} [{data.TransactionLsn}]: {response.ToJsonLog()}");
                 }
-                catch (JsonReaderException jrEx)
+                catch (Exception ex) when (ex is FlurlHttpException || ex is JsonReaderException)
                 {
                     var responseBodyMessage = $"Response body: {await responseMessage.ReceiveString()}.";
-                    Logger.Log.Warn($"Exception while parsing response for customer code: {customer.CustomerName}. {responseBodyMessage} Notification: {data.ToJsonLog()}", jrEx);
+                    Logger.Log.Warn($"Exception while parsing response for customer code: {customer.CustomerName}. {responseBodyMessage} Notification: {data.ToJsonLog()}", ex);
                     break;
                 }
                 catch (Exception ex)

@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.Constants
+namespace Quantumart.QP8.Constants
 {
     public static class RegularExpressions
     {
@@ -14,7 +14,7 @@
         public const string RelativeUrl = @"^/([a-zA-Z0-9а-яА-Я- ./?%&=]*$)";
         public const string AbsoluteWebFolderUrl = @"^http(s)?://(?:[a-zA-Zа-яА-Я0-9_\-]{1,63}|(?:(?!\d+\.|-)[a-zA-Zа-яА-Я0-9_\-]{1,63}(?<!-)\.)+(?:[a-zA-Zа-яА-Я]{2,}))(:[0-9]{1,5})?(/[a-zA-Z0-9а-яА-Я-_/\.]*)?$";
         public const string RelativeWebFolderUrl = @"^/([a-zA-Z0-9а-яА-Я-_\./]*$)";
-        public const string AbsoluteWindowsFolderPath = @"^[a-zA-Z]:\\([a-zA-Z0-9а-яА-Я-_\\\.]*)$";
+        public const string AbsoluteWindowsFolderPath = @"^(([a-zA-Z]:\\)|(\\))([a-zA-Z0-9а-яА-Я-_\\\.]*)$";
         public const string RelativeWindowsFolderPath = @"^([a-zA-Z0-9а-яА-Я-_\\\.]*)$";
         public const string DomainName = @"^(?:[a-zA-Zа-яА-Я0-9_\-]{1,63}|(?:(?!\d+\.|-)[a-zA-Zа-яА-Я0-9_\-]{1,63}(?<!-)\.)+(?:[a-zA-Zа-яА-Я]{2,}))(:[0-9]{1,5})?$";
         public const string FileName = @"^[\w\- ]+[\w\-. ]*$";

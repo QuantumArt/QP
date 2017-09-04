@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -94,12 +94,6 @@
     <EmbeddedResource Include="..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll">
       <Link>References\Castle.Core.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\Quantumart.2.1.3\lib\net45\Quantumart.dll">
-      <Link>References\Quantumart.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\Quantumart.2.1.3\lib\net45\Quantumart.QP8.Assembling.dll">
-      <Link>References\Quantumart.QP8.Assembling.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\QA.Validation.Xaml.1.1.0\lib\net40\QA.Validation.Xaml.dll">
       <Link>References\QA.Validation.Xaml.dll</Link>
     </EmbeddedResource>
@@ -139,18 +133,12 @@
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</Link>
     </EmbeddedResource>
-    <Content Include="..\siteMvc\bin\QA.Validation.Xaml.dll">
-      <Link>References\QA.Validation.Xaml.dll</Link>
-    </Content>
-    <Content Include="..\siteMvc\bin\QA.Validation.Xaml.Extensions.dll">
-      <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
-    </Content>
-    <Content Include="..\siteMvc\bin\Quantumart.dll">
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.dll">
       <Link>References\Quantumart.dll</Link>
-    </Content>
-    <Content Include="..\siteMvc\bin\Quantumart.QP8.Assembling.dll">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Assembling.dll">
       <Link>References\Quantumart.QP8.Assembling.dll</Link>
-    </Content>
+    </EmbeddedResource>
     <Content Include="App.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
