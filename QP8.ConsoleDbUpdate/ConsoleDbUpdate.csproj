@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -91,9 +91,6 @@
     <Compile Include="Infrastructure\FileSystemReaders\XmlReaderSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll">
-      <Link>References\Castle.Core.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\QA.Validation.Xaml.1.1.0\lib\net40\QA.Validation.Xaml.dll">
       <Link>References\QA.Validation.Xaml.dll</Link>
     </EmbeddedResource>
@@ -138,6 +135,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Assembling.dll">
       <Link>References\Quantumart.QP8.Assembling.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Castle.Core.dll">
+      <Link>References\Castle.Core.dll</Link>
     </EmbeddedResource>
     <Content Include="App.config">
       <SubType>Designer</SubType>
@@ -311,8 +311,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Transactions" />
