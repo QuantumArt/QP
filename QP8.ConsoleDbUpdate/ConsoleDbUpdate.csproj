@@ -91,12 +91,6 @@
     <Compile Include="Infrastructure\FileSystemReaders\XmlReaderSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\packages\QA.Validation.Xaml.1.1.0\lib\net40\QA.Validation.Xaml.dll">
-      <Link>References\QA.Validation.Xaml.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\QA.Validation.Xaml.Extensions.1.1.0\lib\net40\QA.Validation.Xaml.Extensions.dll">
-      <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.dll">
       <Link>References\QP8.Infrastructure.dll</Link>
     </EmbeddedResource>
@@ -106,14 +100,8 @@
     <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Web.dll">
       <Link>References\QP8.Infrastructure.Web.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\QA.Configuration.1.0.2\lib\net40\QA.Configuration.dll">
-      <Link>References\QA.Configuration.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.ServiceLocation.dll">
       <Link>References\Microsoft.Practices.ServiceLocation.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Data.dll">
-      <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\NLog.dll">
       <Link>References\NLog.dll</Link>
@@ -138,6 +126,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Castle.Core.dll">
       <Link>References\Castle.Core.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QA.Configuration.dll">
+      <Link>References\QA.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.dll">
+      <Link>References\QA.Validation.Xaml.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.Extensions.dll">
+      <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.Data.dll">
+      <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
     </EmbeddedResource>
     <Content Include="App.config">
       <SubType>Designer</SubType>
