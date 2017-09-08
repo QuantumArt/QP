@@ -137,55 +137,9 @@
     return result;
   };
 
-  // second and unused version of fix quotes
-  // const fixQuotesFnSecondVersion = function(input, shouldUseEng) {
-  //   var temp, extLeftIndex, extRightIndex, innerStr, newInnerStr;
-
-  //   var splittedResult = [];
-  //   var normalizedInput = input;
-  //   quotesToReplace.forEach(function(quote) {
-  //     normalizedInput = normalizedInput.replace(new RegExp(quote, 'g'), '"');
-  //   });
-
-  //   var splitRegexp = /(<h[1-6]>.*?<\/h[1-6]>)|(<p>.*?<\/p>)|(<div>.*?<\/div>)|(<span>.*?<\/span>)|(<area>.*?<\/area>)/;
-  //   normalizedInput.split(splitRegexp).forEach(function(subStr) {
-  //     temp = false;
-  //     extLeftIndex = (subStr || '').indexOf('"');
-  //     extRightIndex = (subStr || '').lastIndexOf('"');
-
-  //     if (subStr && extLeftIndex > -1) {
-  //       innerStr = subStr.substring(extLeftIndex + 1, extRightIndex);
-  //       newInnerStr = '';
-  //       innerStr.split('').forEach(function(letter) {
-  //         if (letter === '"') {
-  //           temp = !temp;
-  //           newInnerStr += temp ? intLeft : intRight;
-  //         } else {
-  //           newInnerStr += letter;
-  //         }
-  //       });
-
-  //       splittedResult.push(subStr.substring(0, extLeftIndex)
-  //         + extLeft
-  //         + newInnerStr
-  //         + extRight
-  //         + subStr.substring(extRightIndex + 1, subStr.length));
-  //     } else {
-  //       splittedResult.push(subStr);
-  //     }
-  //   });
-
-  //   return splittedResult.join('');
-  // };
-
   const processHtml = function processHtml(str, shouldUseEng) {
     let i = 0;
     let result = str;
-
-    // second and unused version of fix quotes
-    // fix quotes first before encoding
-    // result = fixQuotesFnSecondVersion(result, shouldUseEng);
-
     let regexp = /<([^>]*)>/;
     const matches = result.match(/<([^>]*)>/g);
     while (regexp.test(result)) {
