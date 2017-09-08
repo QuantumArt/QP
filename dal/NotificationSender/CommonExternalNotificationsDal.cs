@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -13,9 +13,9 @@ namespace Quantumart.QP8.DAL.NotificationSender
 				[ARTICLE_ID],
 				[URL],
 				[NEW_XML],
-				[OLD_XML]
+				[OLD_XML],
 				[CONTENT_ID],
-				[SITE_ID],
+				[SITE_ID]
 			)
 			SELECT
                 col.value('(EventName)[1]','nvarchar(max)') [EVENT_NAME],
