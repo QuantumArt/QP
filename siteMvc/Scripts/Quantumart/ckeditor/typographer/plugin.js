@@ -27,8 +27,12 @@
       '&raquo;',
       '&lsquo;',
       '&rsquo;',
+      '‚',
+      '‘',
+      '’',
       '«',
       '»',
+      '„',
       '“',
       '”'
     ];
@@ -37,14 +41,25 @@
       result = result.replace(new RegExp(quote, 'g'), '"');
     });
 
-    // wordfix
-    result = result.replace(/…/g, '...');
-
     // &#8211; &ndash;
     result = result.replace(/–/g, '-');
 
     // &#8212; &mdash;
     result = result.replace(/—/g, '-');
+
+    // wordfix
+    result = result.replace(/…/g, '...');
+    result = result.replace(/\.{3}/g, '&hellip;');
+
+    // fix whitespaces
+    result = result.replace(/(&nbsp;\s)|(\s&nbsp;)|(&nbsp;&nbsp;)/g, ' ');
+    result = result.replace(/[\s|\u00A0]+/g, ' ');
+
+    // Add &nbsp; after comma for conjunctions, prepositions, pronouns
+    // Conjunctions: а, и,
+    // Prepositions: в, к, о, с, у,
+    // Pronouns: я,
+    result = result.replace(/([\s|\u00A0]|&nbsp;)([аивкосуя],)\s/g, '$1$2&nbsp;');
 
     // advanced quotes
     // eslint-disable-next-line no-control-regex
@@ -61,9 +76,11 @@
 
     const fixToMdashFn = function (input, symbol) {
       let tempResult = input;
-      tempResult = tempResult.replace(new RegExp(` (${symbol}){1,2} `, 'g'), '&nbsp;&mdash; ');
-      tempResult = tempResult.replace(new RegExp(`([>|\\s])${symbol} `, 'g'), '$1&mdash; ');
-      tempResult = tempResult.replace(new RegExp(`^${symbol} `, 'g'), '&mdash; ');
+      tempResult = tempResult.replace(new RegExp(' ' + symbol + '&nbsp;', 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp('&nbsp;' + symbol + ' ', 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp(' (' + symbol + '){1,2} ', 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp('([>|\\s])' + symbol + ' ', 'g'), '$1&mdash; ');
+      tempResult = tempResult.replace(new RegExp('^' + symbol + ' ', 'g'), '&mdash; ');
       return tempResult;
     };
 
@@ -75,6 +92,7 @@
     result = fixToMdashFn(result, '-');
     result = fixToMdashFn(result, '–');
     result = fixToMdashFn(result, '&ndash;');
+    result = fixToMdashFn(result, '&mdash;');
 
     result = result.replace(/\b(\d+)-(\d+)\b/g, '<nobr>$1&ndash;$2</nobr>');
     result = result.replace(/(\S+)-(\S+)/g, (match, p1, p2) => {
@@ -119,9 +137,55 @@
     return result;
   };
 
+  // second and unused version of fix quotes
+  // const fixQuotesFnSecondVersion = function(input, shouldUseEng) {
+  //   var temp, extLeftIndex, extRightIndex, innerStr, newInnerStr;
+
+  //   var splittedResult = [];
+  //   var normalizedInput = input;
+  //   quotesToReplace.forEach(function(quote) {
+  //     normalizedInput = normalizedInput.replace(new RegExp(quote, 'g'), '"');
+  //   });
+
+  //   var splitRegexp = /(<h[1-6]>.*?<\/h[1-6]>)|(<p>.*?<\/p>)|(<div>.*?<\/div>)|(<span>.*?<\/span>)|(<area>.*?<\/area>)/;
+  //   normalizedInput.split(splitRegexp).forEach(function(subStr) {
+  //     temp = false;
+  //     extLeftIndex = (subStr || '').indexOf('"');
+  //     extRightIndex = (subStr || '').lastIndexOf('"');
+
+  //     if (subStr && extLeftIndex > -1) {
+  //       innerStr = subStr.substring(extLeftIndex + 1, extRightIndex);
+  //       newInnerStr = '';
+  //       innerStr.split('').forEach(function(letter) {
+  //         if (letter === '"') {
+  //           temp = !temp;
+  //           newInnerStr += temp ? intLeft : intRight;
+  //         } else {
+  //           newInnerStr += letter;
+  //         }
+  //       });
+
+  //       splittedResult.push(subStr.substring(0, extLeftIndex)
+  //         + extLeft
+  //         + newInnerStr
+  //         + extRight
+  //         + subStr.substring(extRightIndex + 1, subStr.length));
+  //     } else {
+  //       splittedResult.push(subStr);
+  //     }
+  //   });
+
+  //   return splittedResult.join('');
+  // };
+
   const processHtml = function processHtml(str, shouldUseEng) {
     let i = 0;
     let result = str;
+
+    // second and unused version of fix quotes
+    // fix quotes first before encoding
+    // result = fixQuotesFnSecondVersion(result, shouldUseEng);
+
     let regexp = /<([^>]*)>/;
     const matches = result.match(/<([^>]*)>/g);
     while (regexp.test(result)) {
