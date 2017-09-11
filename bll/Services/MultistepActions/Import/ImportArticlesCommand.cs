@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Transactions;
 using System.Web;
 using QP8.Infrastructure;
@@ -61,8 +61,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 {
                     try
                     {
-                        int processedItemsCount;
-                        reader.Process(step, ItemsPerStep, out processedItemsCount);
+                        reader.Process(step, ItemsPerStep, out int processedItemsCount);
                         if (step * ItemsPerStep >= reader.ArticleCount - ItemsPerStep)
                         {
                             reader.PostUpdateM2MRelationAndO2MRelationFields();

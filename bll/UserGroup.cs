@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.Resources;
@@ -45,7 +44,7 @@ namespace Quantumart.QP8.BLL
 
         public UserGroup ParentGroup { get; set; }
 
-        public IEnumerable<UserGroup> ChildGroups { get; set; } 
+        public IEnumerable<UserGroup> ChildGroups { get; set; }
         #endregion
 
         #region Validation

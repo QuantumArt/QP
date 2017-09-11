@@ -8,6 +8,8 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using QP8.Infrastructure.Logging;
+using FileIO = System.IO.File;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -47,11 +49,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 securityResult = PathInfo.CheckSecurity(destinationUrl);
                 if (!securityResult.Result)
                 {
-                    return Json(new
-                    {
-                        message = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied"),
-                        isError = true
-                    });
+                    var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied");
+                    Logger.Log.Warn(errorMsg);
+                    return Json(new { message = errorMsg, isError = true });
                 }
 
                 try
@@ -65,7 +65,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { message = string.Format(PlUploadStrings.ServerError, name, destinationUrl, ex.Message), isError = true });
+                    var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, ex.Message);
+                    Logger.Log.Error(errorMsg, ex);
+                    return Json(new { message = errorMsg, isError = true });
                 }
             }
             else
@@ -81,7 +83,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { message = string.Format(PlUploadStrings.ServerError, name, tempPath, ex.Message), isError = true });
+                    var errorMsg = string.Format(PlUploadStrings.ServerError, name, tempPath, ex.Message);
+                    Logger.Log.Error(errorMsg, ex);
+                    return Json(new { message = errorMsg, isError = true });
                 }
 
                 try
@@ -94,30 +98,31 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                         if (!securityResult.Result)
                         {
-                            return Json(new
-                            {
-                                message = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied"),
-                                isError = true
-                            });
+                            var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied");
+                            Logger.Log.Warn(errorMsg);
+                            return Json(new { message = errorMsg, isError = true });
                         }
 
-                        if (System.IO.File.Exists(destPath))
+                        if (FileIO.Exists(destPath))
                         {
-                            System.IO.File.SetAttributes(destPath, FileAttributes.Normal);
-                            System.IO.File.Delete(destPath);
+                            FileIO.SetAttributes(destPath, FileAttributes.Normal);
+                            FileIO.Delete(destPath);
                         }
 
-                        System.IO.File.Move(tempPath, destPath);
-
+                        FileIO.Move(tempPath, destPath);
                         BackendActionContext.SetCurrent(actionCode, new[] { name }, securityResult.FolderId);
+
                         var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, _logger);
                         _logger.Save(logs);
+
                         BackendActionContext.ResetCurrent();
                     }
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { message = string.Format(PlUploadStrings.ServerError, name, destinationUrl, ex.Message), isError = true });
+                    var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, ex.Message);
+                    Logger.Log.Error(errorMsg, ex);
+                    return Json(new { message = errorMsg, isError = true });
                 }
 
                 return Json(new { message = $"chunk#{chunk.Value}, of file{name} uploaded", isError = false });

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -91,7 +91,7 @@ namespace Quantumart.QP8.BLL
         public static PathSecurityResult Check(string path)
         {
             var result = new PathSecurityResult();
-            var pathToFind = path.Replace(@"\\", @"\");
+            var pathToFind = path;
             if (pathToFind[pathToFind.Length - 1].ToString() != @"\")
             {
                 pathToFind = pathToFind + @"\";
@@ -105,11 +105,12 @@ namespace Quantumart.QP8.BLL
             }
 
             var images = @"\images";
-            pathToFind = pathToFind.Replace(site.Path, "");
+            pathToFind = pathToFind.Replace(site.Path, string.Empty);
             if (pathToFind.StartsWith(images, CompareOption))
             {
                 result.IsSite = true;
-                pathToFind = pathToFind.Replace(images, "");
+                pathToFind = pathToFind.Replace(images, string.Empty);
+
                 var checksiteFolderResult = CheckSiteFolder(pathToFind, site.Id);
                 result.Result = checksiteFolderResult.Result;
                 result.FolderId = checksiteFolderResult.FolderId;
@@ -121,8 +122,8 @@ namespace Quantumart.QP8.BLL
                 Match match = contents.Match(pathToFind);
                 if (match.Success)
                 {
-                    int contentId = Int32.Parse(match.Groups[1].Value);
-                    pathToFind = pathToFind.Replace(match.Value, "");
+                    var contentId = Int32.Parse(match.Groups[1].Value);
+                    pathToFind = pathToFind.Replace(match.Value, string.Empty);
                     return CheckContentFolder(pathToFind, contentId);
                 }
             }
