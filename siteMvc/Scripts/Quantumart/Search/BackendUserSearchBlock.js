@@ -43,9 +43,9 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
           $q.alertFail(data.message);
         }
       }, this))
-      .fail((jqXHR, textStatus, errorThrown) => {
-        $q.processGenericAjaxError(jqXHR);
-      });
+        .fail((jqXHR, textStatus, errorThrown) => {
+          $q.processGenericAjaxError(jqXHR);
+        });
     }
   },
 

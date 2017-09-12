@@ -120,15 +120,15 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         false
       ).done(data => {
         if (!that._stopDeferredOperations) {
-         if (data.success) {
-           const actionStatuses = data.actionStatuses;
-           if (!$q.isNullOrEmpty(actionStatuses)) {
-             Quantumart.QP8.BackendActionToolbar.callBaseMethod(that, 'tuneToolbarItems', [actionStatuses]);
-             $q.clearArray(actionStatuses);
-           }
-         } else {
-           $q.alertError(data.Text);
-         }
+          if (data.success) {
+            const actionStatuses = data.actionStatuses;
+            if (!$q.isNullOrEmpty(actionStatuses)) {
+              Quantumart.QP8.BackendActionToolbar.callBaseMethod(that, 'tuneToolbarItems', [actionStatuses]);
+              $q.clearArray(actionStatuses);
+            }
+          } else {
+            $q.alertError(data.Text);
+          }
         }
       }).fail((jqXHR, textStatus, errorThrown) => {
         if (!that._stopDeferredOperations) {
