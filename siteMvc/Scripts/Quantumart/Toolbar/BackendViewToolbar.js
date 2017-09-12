@@ -65,10 +65,10 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   },
 
   _getToolbarItemCollectionFromAction(action) {
-    const self = this;
+    const that = this;
     const dataItems = [];
 
-    if ($o.checkEntityForVariations(action.EntityType.Code, self.get_parentEntityId())) {
+    if ($o.checkEntityForVariations(action.EntityType.Code, that.get_parentEntityId())) {
       const variationButton = {
         Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
         Value: this.CONTEXT_BUTTON_CODE,
@@ -106,7 +106,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
         (index, actionView) => {
           const parentEntityTypeCode = Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(action.EntityType.Code);
           const view = actionView.ViewType;
-          if (view.Code != window.VIEW_TYPE_CODE_TREE || $o.checkEntityForPresenceSelfRelations(parentEntityTypeCode, self.get_parentEntityId())) {
+          if (view.Code != window.VIEW_TYPE_CODE_TREE || $o.checkEntityForPresenceSelfRelations(parentEntityTypeCode, that.get_parentEntityId())) {
             const dataItem = { Value: view.Code, Text: view.Name, Tooltip: view.Name, Icon: view.Icon };
             Array.add(viewsDropDown.Items, dataItem);
           }

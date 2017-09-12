@@ -30,18 +30,18 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
     let $fileListPreviewContainer = $fileListContentElement.find('.fileListPreviewContainer');
     let html = new $.telerik.stringBuilder();
 
-    const self = this;
+    const that = this;
     if (data.TotalRecords > 0) {
       jQuery.each(data.Data, (index, item) => {
-        const ss = self._getThumbnailLink(item, options);
+        const link = that._getThumbnailLink(item, options);
         html.cat(String.format('<div class="fileItem" data-file_name="{0}">', item.FullName))
-          .catIf('<input type="checkbox" />', self._selectMode == window.FILE_LIST_SELECT_MODE_MULTIPLE)
+          .catIf('<input type="checkbox" />', that._selectMode === window.FILE_LIST_SELECT_MODE_MULTIPLE)
           .cat(
             String.format('<div class="preview" style="background-image:url({3});"></div>'
             + '<h5><ul><li title="{4}">{0}</li></ul></h5>'
             + '<span>{1}</span>'
             + '<span>{2}</span>'
-          + '</div>', item.Name, item.Modified, item.Size, self._getThumbnailLink(item, options), item.FullName));
+          + '</div>', item.Name, item.Modified, item.Size, link, item.FullName));
       });
     } else {
       html.cat($l.FileList.noRecords);

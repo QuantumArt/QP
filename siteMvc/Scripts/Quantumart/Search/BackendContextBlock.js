@@ -74,10 +74,10 @@ Quantumart.QP8.BackendContextBlock.prototype
 
           this._restore_searchBlockState();
 
-          const self = this;
+          const that = this;
           $('.contextSwitcher').each(function () {
             const component = $(this).data('entity_data_list_component');
-            component.attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
+            component.attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, that._onChangeComboHandler);
           });
         }
 
@@ -105,10 +105,10 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
     dispose() {
-      const self = this;
+      const that = this;
       $('.contextSwitcher').each(function () {
         const component = $(this).data('entity_data_list_component');
-        component.detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, self._onChangeComboHandler);
+        component.detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, that._onChangeComboHandler);
       });
 
       $c.destroyAllEntityDataLists(this._searchBlockElement);

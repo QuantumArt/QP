@@ -355,7 +355,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
       throw new Error('fileEntityTypeCode is unknown.');
     }
 
-    const self = this;
+    const that = this;
 
     $q.getJsonFromUrl(
       'GET',
@@ -367,10 +367,10 @@ Quantumart.QP8.BackendLibrary.prototype = {
       false,
       data => {
         if (data.success) {
-          self._folderPath = data.path;
-          self._folderUrl = data.url;
-          self._uploader.set_folderPath(data.path);
-          self._libraryPath = data.libraryPath;
+          that._folderPath = data.path;
+          that._folderUrl = data.url;
+          that._uploader.set_folderPath(data.path);
+          that._libraryPath = data.libraryPath;
         } else {
           $q.alertFail(data.message);
         }

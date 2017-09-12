@@ -607,8 +607,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   scrollToTab(tab, duration) {
-    const self = this;
-
     let $tab = this.getTab(tab);
     if ($tab) {
       let $scrollable = $(this._tabStripScrollableElement);

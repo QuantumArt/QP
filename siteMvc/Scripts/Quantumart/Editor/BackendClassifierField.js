@@ -215,16 +215,16 @@ Quantumart.QP8.BackendClassifierField.prototype = {
       this._customInit(this._parentEditor, $form);
     }
 
-    const self = this;
+    const that = this;
     if (this._customButtonsSettings) {
       $.each(this._customButtonsSettings, (index, item) => {
-        self._parentEditor.addCustomButton(item, $form);
+        that._parentEditor.addCustomButton(item, $form);
       });
     }
 
     if (this._customLinkButtonsSettings) {
       $.each(this._customLinkButtonsSettings, (index, item) => {
-        self._parentEditor.addCustomLinkButton(item, $form);
+        that._parentEditor.addCustomLinkButton(item, $form);
       });
     }
   },

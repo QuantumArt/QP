@@ -63,9 +63,9 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     if (this._items()) {
       this._items.removeAll();
       if (!$q.isNullOrEmpty(items) && $q.isArray(items)) {
-        const self = this;
+        const that = this;
         jQuery.each(items, function () {
-          self._items.push(Object.assign({}, this));
+          that._items.push(Object.assign({}, this));
         });
       }
     }

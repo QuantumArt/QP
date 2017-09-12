@@ -155,17 +155,17 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   _expandHierarchy(url) {
-    const self = this;
+    const that = this;
     return function () {
-      const selectedIds = self.getSelectedIds();
+      const selectedIds = that.getSelectedIds();
       if (selectedIds && selectedIds.length) {
         $q.getAjax(url, {
-          ids: self.getSelectedIds(),
-          fieldId: self._fieldID,
-          filter: self._getEntityDataList()._filter
+          ids: that.getSelectedIds(),
+          fieldId: that._fieldID,
+          filter: that._getEntityDataList()._filter
         }, data => {
-          self._selectedEntitiesIDs = $q.addRemoveToArrUniq(selectedIds, data);
-          self._replaceWithSelectedEntities();
+          that._selectedEntitiesIDs = $q.addRemoveToArrUniq(selectedIds, data);
+          that._replaceWithSelectedEntities();
         });
       }
     };

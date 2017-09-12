@@ -117,10 +117,10 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
       return false;
     }
 
-    const self = this;
+    const that = this;
     if (!this._resolveName) {
       $.each(e.files, function () {
-        if (self._checkFileExistence(self._folderPath, this.name)) {
+        if (that._checkFileExistence(that._folderPath, this.name)) {
           if (!$q.confirmMessage(String.format(window.UPLOAD_OVERWRITE_MESSAGE, this.name))) {
             toPrevent = true;
           }

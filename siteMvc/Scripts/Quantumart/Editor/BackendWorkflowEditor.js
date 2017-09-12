@@ -96,10 +96,10 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     ko.applyBindingsToNode(this._containerElem.get(0), { template: { name: workflow.attr('id').replace('_workflow_control', '_template') } }, viewModel);
     this._resultElem = $('.workflowResult', this._componentElem);
 
-    const component = this;
+    const that = this;
     this._componentElem.closest('form').find('.workflow_control_selector').parent('div').find('.checkbox')
       .change(e => {
-        component.manageItems(e);
+        that.manageItems(e);
       });
 
     this._contentSelector

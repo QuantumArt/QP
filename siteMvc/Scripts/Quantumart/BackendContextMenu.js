@@ -166,7 +166,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   addMenuItemsToMenu(hideRefreshMenuItem, successHandler, errorHandler) {
-    const self = this;
+    const that = this;
     this._hideRefreshMenuItem = hideRefreshMenuItem;
     const $menu = $(this._contextMenuElement);
     $menu.empty();
@@ -186,14 +186,14 @@ Quantumart.QP8.BackendContextMenu.prototype = {
           const menuItemsHtml = new $.telerik.stringBuilder();
           for (let menuItemIndex = 0; menuItemIndex < menuItemCount; menuItemIndex++) {
             const menuItem = menuItems[menuItemIndex];
-            self._getMenuItemHtml(menuItemsHtml, menuItem);
+            that._getMenuItemHtml(menuItemsHtml, menuItem);
             if (menuItem.BottomSeparator) {
-              self._getSeparatorHtml(menuItemsHtml);
+              that._getSeparatorHtml(menuItemsHtml);
             }
           }
 
           $menu.html(menuItemsHtml.string());
-          self._extendMenuItemElements(menuItems);
+          that._extendMenuItemElements(menuItems);
         }
 
         $q.clearArray(menuItems);
@@ -207,7 +207,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   tuneMenuItems(entityId, parentEntityId, callback) {
-    const self = this;
+    const that = this;
     let params = {
       menuCode: this._contextMenuCode,
       entityId,
@@ -225,9 +225,9 @@ Quantumart.QP8.BackendContextMenu.prototype = {
         if (statusCount > 0) {
           for (let statusIndex = 0; statusIndex < statusCount; statusIndex++) {
             const status = statuses[statusIndex];
-            const $menuItem = self.getMenuItem(status.Code);
+            const $menuItem = that.getMenuItem(status.Code);
             if (!$q.isNullOrEmpty($menuItem)) {
-              self.setVisibleState($menuItem, status.Visible);
+              that.setVisibleState($menuItem, status.Visible);
             }
           }
         }
@@ -235,7 +235,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
         $q.clearArray(statuses);
       }
 
-      self._tuneMenuSeparators();
+      that._tuneMenuSeparators();
       $q.callFunction(callback);
     }, jqXHR => {
       $q.processGenericAjaxError(jqXHR);
@@ -314,10 +314,10 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   _extendMenuItemElements(menuItems) {
-    const self = this;
+    const that = this;
     $.each(menuItems, (index, menuItem) => {
-      const $menuItem = self.getMenuItem(menuItem.ActionCode);
-      self._extendMenuItemElement($menuItem, menuItem);
+      const $menuItem = that.getMenuItem(menuItem.ActionCode);
+      that._extendMenuItemElement($menuItem, menuItem);
     }
     );
   },
