@@ -9,6 +9,7 @@ Quantumart.QP8.BackendAggregationList.getComponent = function (componentElem) {
   if (componentElem) {
     return $q.toJQuery(componentElem).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT);
   }
+  return undefined;
 };
 
 Quantumart.QP8.BackendAggregationList.prototype = {

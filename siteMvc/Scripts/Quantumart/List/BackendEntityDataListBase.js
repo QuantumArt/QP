@@ -754,6 +754,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       eventArgs.set_context({ ctrlKey: e.ctrlKey || isMiddleClick });
       this.notify(window.EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, eventArgs);
     }
+    return undefined;
   },
 
   _getIdLinkCode(value) {

@@ -54,9 +54,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
   },
 
   get_value() {
-    if (this._currentValue) {
-      return this._currentValue;
-    }
+    return this._currentValue ? this._currentValue : undefined;
   },
 
   get_options() {

@@ -132,6 +132,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
       e.preventDefault();
       return false;
     }
+    return true;
   },
 
   _onUploadErrorHandler(e) {

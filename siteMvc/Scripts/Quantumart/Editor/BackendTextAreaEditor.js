@@ -225,6 +225,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         if (!node.path) {
           return false;
         }
+        return undefined;
       };
     }
 

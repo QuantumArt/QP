@@ -156,7 +156,8 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
         if (editorState) {
           localStorage.setItem(key, JSON.stringify(this._getEditorComponentState(documentWrapperElementId)));
         } else {
-          localStorage.setItem(this._createKey(documentWrapperElementId), JSON.stringify(this._getEditorComponentState(documentWrapperElementId)));
+          localStorage.setItem(this._createKey(documentWrapperElementId),
+            JSON.stringify(this._getEditorComponentState(documentWrapperElementId)));
         }
       }
     }
@@ -180,6 +181,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
         hideFields: editor.get_hideFields()
       };
     }
+    return undefined;
   },
 
   // сортировка на предмет возможности восстановления

@@ -84,6 +84,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     if (r && r.length > 0) {
       return r;
     }
+    return undefined;
   },
 
   restore_blockState(state) {

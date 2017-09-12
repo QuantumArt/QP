@@ -382,23 +382,24 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       return $q.toJQuery(tab);
     } else if ($q.isString(tab)) {
       $tab = $(this._tabListElement).find(`#${tab}`);
-      if ($tab.length == 0) {
+      if ($tab.length === 0) {
         $tab = null;
       }
 
       return $tab;
     }
+    return undefined;
   },
 
   isLastTab(tab) {
     const $tab = this.getTab(tab);
-    return $tab.next('LI').length == 0;
+    return $tab.next('LI').length === 0;
   },
 
   getTabId(tabElem) {
     if (!$q.isObject(tabElem)) {
       $q.alertError($l.TabStrip.tabNotSpecified);
-      return;
+      return undefined;
     }
 
     const $tab = $q.toJQuery(tabElem);
@@ -413,7 +414,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   getTabGroupCode(tabElem) {
     if (!$q.isObject(tabElem)) {
       $q.alertError($l.TabStrip.tabNotSpecified);
-      return;
+      return undefined;
     }
 
     const $tab = $q.toJQuery(tabElem);
