@@ -1,5 +1,7 @@
-Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
-  Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
+Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch = function (
+  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
+  Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.initializeBase(
+    this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
   this._onByValueSelectorChangedHandler = jQuery.proxy(this._onByValueSelectorChanged, this);
   this._onNumericInputFocusHandler = jQuery.proxy(this._onNumericInputFocus, this);
   this._onLoadHandler = jQuery.proxy(this._onLoad, this);
@@ -17,14 +19,14 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       },
       false,
       false,
-      (data, textStatus, jqXHR) => {
+      data => {
         if (data.success) {
           serverContent = data.view;
         } else {
           $q.alertFail(data.message);
         }
       },
-      (jqXHR, textStatus, errorThrown) => {
+      jqXHR => {
         serverContent = null;
         $q.processGenericAjaxError(jqXHR);
       }
@@ -88,7 +90,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 
     if (stateData.isByText) {
       const ids = this._getIds(stateData.text);
-      result = ids.length == 0 ? '?' : this._getText(ids);
+      result = ids.length === 0 ? '?' : this._getText(ids);
     } else if (stateData.isByValue) {
       result = stateData.from ? stateData.from : '?';
     } else {
@@ -111,8 +113,14 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       }
 
       if (!$q.isNull(state.isByValue) && !$q.isNull(state.isByText)) {
-        const value = state.isByText ? 2 : state.isByValue ? 0 : 1;
-        $(`.radioButtonsList input:radio[value=${value}]`, this._containerElement).prop('checked', true).trigger('click');
+        let value = 1;
+        if (state.isByText) {
+          value = 2;
+        } else if (state.isByValue) {
+          value = 0;
+        }
+        $(`.radioButtonsList input:radio[value=${value}]`, this._containerElement)
+          .prop('checked', true).trigger('click');
       }
 
       $(this._numberFromElement).data('tTextBox').value(state.from);
@@ -208,4 +216,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   _textAreaElement: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.registerClass(
+  'Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch',
+  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
+);

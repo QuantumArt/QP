@@ -1,3 +1,4 @@
+/* eslint new-cap: 0 */
 window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED = 'OnClassifierFieldArticleLoaded';
 window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING = 'OnClassifierFieldArticleUnloading';
 

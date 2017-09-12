@@ -1,3 +1,4 @@
+/* eslint new-cap: 0 */
 Quantumart.QP8.BackendWorkflow = function (componentElem) {
   this._componentElem = componentElem;
   this._containerElem = $('.workflowContainer', componentElem);
@@ -230,7 +231,14 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       };
 
       this._items.push(item);
-      this._items.sort((left, right) => left.Weight == right.Weight ? 0 : left.Weight > right.Weight ? 1 : -1);
+      this._items.sort((left, right) => {
+        if (left.Weight === right.Weight) {
+          return 0;
+        } else if (left.Weight > right.Weight) {
+          return 1;
+        }
+        return -1;
+      });
       this._setAsChanged();
     }
   },
