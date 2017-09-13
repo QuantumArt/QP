@@ -104,35 +104,42 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _onTabMenuUpArrowUnhoveredHandler: null,
   _onTabMenuDownArrowHoveredHandler: null,
   _onTabMenuDownArrowUnhoveredHandler: null,
-
+  // eslint-disable-next-line camelcase
   get_tabStripElementId() {
     return this._tabStripElementId;
   },
 
+  // eslint-disable-next-line camelcase
   set_tabStripElementId(value) {
     this._tabStripElementId = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_maxTabTextLength() {
     return this._maxTabTextLength;
   },
 
+  // eslint-disable-next-line camelcase
   set_maxTabTextLength(value) {
     this._maxTabTextLength = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_maxTabMenuHeight() {
     return this._maxTabMenuHeight;
   },
 
+  // eslint-disable-next-line camelcase
   set_maxTabMenuHeight(value) {
     this._maxTabMenuHeight = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_maxTabMenuItemTextLength() {
     return this._maxTabMenuItemTextLength;
   },
 
+  // eslint-disable-next-line camelcase
   set_maxTabMenuItemTextLength(value) {
     this._maxTabMenuItemTextLength = value;
   },
@@ -215,7 +222,8 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const tabGroupCode = String.format(
       '{0}_{1}',
       associatedAction.Code,
-      associatedAction.ActionType.Code === window.ACTION_TYPE_CODE_ADD_NEW ? tabNumber : this._getTabEntityId(eventArgs));
+      associatedAction.ActionType.Code === window.ACTION_TYPE_CODE_ADD_NEW
+        ? tabNumber : this._getTabEntityId(eventArgs));
 
     return tabGroupCode;
   },
@@ -238,7 +246,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     return tabGroup;
   },
 
-  updateTabGroup(tabGroupCode, eventArgs) {},
   closeTabGroup(tabGroupCode) {
     const tabGroup = this.getTabGroup(tabGroupCode);
     if ($q.isArray(tabGroup)) {
@@ -257,7 +264,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _removeEmptyTabGroup(tabGroupCode) {
     const tabGroup = this.getTabGroup(tabGroupCode);
     if ($q.isArray(tabGroup)) {
-      if (tabGroup.length == 0) {
+      if (tabGroup.length === 0) {
         $q.removeProperty(this._tabGroups, tabGroupCode);
       }
     }
@@ -276,7 +283,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _moveTabToGroup(tab, oldTabGroupCode, newTabGroupCode) {
-    if (oldTabGroupCode != newTabGroupCode) {
+    if (oldTabGroupCode !== newTabGroupCode) {
       const $tab = this.getTab(tab);
       const tabId = this.getTabId($tab);
       const oldTabGroup = this.getTabGroup(oldTabGroupCode);
@@ -308,7 +315,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       const $lastTab = $tabs.last();
       const lastTabId = $lastTab.attr('id');
       const numberMatch = lastTabId.match('[0-9]+');
-      if (numberMatch.length == 1) {
+      if (numberMatch.length === 1) {
         tabNumber = parseInt(numberMatch[0], 10) + 1;
       } else {
         $q.alertError($l.TabStrip.tabIdGenerationErrorMessage);
@@ -344,7 +351,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const $tabs = this.getAllTabs();
     for (let tabIndex = 0, tabCount = $tabs.length; tabIndex < tabCount; tabIndex++) {
       const $tab = $tabs.eq(tabIndex);
-      if ($tab.data('parent_entity_type_code') == parentEntityTypeCode && $tab.data('parent_entity_id') == parentEntityId) {
+      $q.warnIfEqDiff($tab.data('parent_entity_id'), parentEntityId);
+      if ($tab.data('parent_entity_type_code') === parentEntityTypeCode
+         && $tab.data('parent_entity_id') === parentEntityId) {
         Array.add(foundTabElems, $tab.get(0));
       }
     }
@@ -357,9 +366,10 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const $tabs = this.getAllTabs();
     for (let tabIndex = 0, tabCount = $tabs.length; tabIndex < tabCount; tabIndex++) {
       const $tab = $tabs.eq(tabIndex);
-      if ($tab.data('entity_type_code') == eventArgs.get_entityTypeCode()
-          && $tab.data('entity_id') == eventArgs.get_entityId()
-          && $tab.data('action_code') == eventArgs.get_actionCode()) {
+      $q.warnIfEqDiff($tab.data('entity_id'), eventArgs.get_entityId());
+      if ($tab.data('entity_type_code') === eventArgs.get_entityTypeCode()
+          && $tab.data('entity_id') === eventArgs.get_entityId()
+          && $tab.data('action_code') === eventArgs.get_actionCode()) {
         Array.add(foundTabElems, $tab.get(0));
       }
     }
@@ -369,7 +379,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   getFirstTabByGroupCode(tabGroupCode) {
     let $tab = $(`> LI[groupCode='${tabGroupCode}'].tab:first`, this._tabListElement).eq(0);
-    if ($tab.length == 0) {
+    if ($tab.length === 0) {
       $tab = null;
     }
 
@@ -455,7 +465,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _getTabEntityTypeCode(eventArgs) {
     let result;
     const actionTypeCode = eventArgs.get_actionTypeCode();
-    if (actionTypeCode == window.ACTION_TYPE_CODE_LIST) {
+    if (actionTypeCode === window.ACTION_TYPE_CODE_LIST) {
       result = Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(eventArgs.get_entityTypeCode());
     } else {
       result = eventArgs.get_entityTypeCode();
@@ -467,7 +477,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _getTabEntityId(eventArgs) {
     let result;
     const actionTypeCode = eventArgs.get_actionTypeCode();
-    if (actionTypeCode == window.ACTION_TYPE_CODE_LIST) {
+    if (actionTypeCode === window.ACTION_TYPE_CODE_LIST) {
       result = eventArgs.get_parentEntityId();
     } else if (eventArgs.get_isMultipleEntities()) {
       const entityIDs = $o.getEntityIDsFromEntities(eventArgs.get_entities());
@@ -481,7 +491,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   getExistingTabId(eventArgs) {
     let result = 0;
-    if (eventArgs.get_actionTypeCode() != window.ACTION_TYPE_CODE_ADD_NEW) {
+    if (eventArgs.get_actionTypeCode() !== window.ACTION_TYPE_CODE_ADD_NEW) {
       const $tab = this.getFirstTabByGroupCode(this.generateTabGroupCode(eventArgs, 0));
       if ($q.isObject($tab)) {
         result = this.getTabId($tab);
@@ -495,7 +505,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const associatedAction = $a.getBackendAction(eventArgs.get_actionCode());
     const actionTypeCode = associatedAction.ActionType.Code;
     const tabTypeCode = associatedAction.Code;
-    const tabNumber = actionTypeCode == window.ACTION_TYPE_CODE_ADD_NEW ? this._getTabTypeCounter(tabTypeCode) + 1 : 0;
+    const tabNumber = actionTypeCode === window.ACTION_TYPE_CODE_ADD_NEW ? this._getTabTypeCounter(tabTypeCode) + 1 : 0;
     const tabId = this.generateTabId();
     const tabGroupCode = this.generateTabGroupCode(eventArgs, tabNumber);
     const tabText = this.generateTabText(eventArgs, tabNumber);
@@ -503,11 +513,13 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     let $tabList = $(this._tabListElement);
     $tabList.append(this._getTabHtml(tabId, tabGroupCode));
     const $tab = this.getTab(tabId);
-    this._extendTabElement($tab, eventArgs, { TabGroupCode: tabGroupCode, TabText: tabText, TabTypeCode: tabTypeCode, TabNumber: tabNumber });
+    this._extendTabElement($tab, eventArgs, {
+      TabGroupCode: tabGroupCode, TabText: tabText, TabTypeCode: tabTypeCode, TabNumber: tabNumber
+    });
     this._addTabToGroup($tab, tabGroupCode);
     $tabList = null;
 
-    if (this.getAllTabsCount() == 1) {
+    if (this.getAllTabsCount() === 1) {
       $(window).resize(this._onWindowResizedHandler);
       this._addTabMenuToTabStrip();
     }
@@ -515,7 +527,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     this._previousSelectedTabId = this._selectedTabId.valueOf();
     this._selectedTabId = tabId;
 
-    if (actionTypeCode == window.ACTION_TYPE_CODE_ADD_NEW) {
+    if (actionTypeCode === window.ACTION_TYPE_CODE_ADD_NEW) {
       this._increaseTabTypeCounter(tabTypeCode);
     }
 
@@ -538,17 +550,16 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const oldActionTypeCode = oldAction.ActionType.Code;
     const oldActionCode = oldAction.Code;
     const oldTabGroupCode = this.getTabGroupCode($tab);
-    const oldTabText = this.getTabText($tab);
     const oldTabTypeCode = oldActionCode;
     const oldTabNumber = $tab.data('tab_number');
-    if (oldActionTypeCode == window.ACTION_TYPE_CODE_ADD_NEW) {
+    if (oldActionTypeCode === window.ACTION_TYPE_CODE_ADD_NEW) {
       this._decreaseTabTypeCounter(oldTabTypeCode, oldTabNumber);
     }
 
     const newActionCode = eventArgs.get_actionCode();
     const newAction = $a.getBackendAction(newActionCode);
     const newActionTypeCode = newAction.ActionType.Code;
-    if (newActionTypeCode == window.ACTION_TYPE_CODE_ADD_NEW) {
+    if (newActionTypeCode === window.ACTION_TYPE_CODE_ADD_NEW) {
       this._increaseTabTypeCounter(newActionCode);
     }
     const newTabNumber = this._getTabTypeCounter(newActionCode);
@@ -556,9 +567,13 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const newTabText = this.generateTabText(eventArgs, newTabNumber);
 
     $tab.attr('groupCode', newTabGroupCode);
-    this._extendTabElement($tab, eventArgs, { TabGroupCode: newTabGroupCode, TabText: newTabText, TabTypeCode: newActionCode, TabNumber: newTabNumber });
+    this._extendTabElement(
+      $tab, eventArgs, {
+        TabGroupCode: newTabGroupCode, TabText: newTabText, TabTypeCode: newActionCode, TabNumber: newTabNumber
+      }
+    );
 
-    if (newTabGroupCode != oldTabGroupCode) {
+    if (newTabGroupCode !== oldTabGroupCode) {
       this._moveTabToGroup($tab, oldTabGroupCode, newTabGroupCode);
     }
   },
@@ -574,7 +589,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     this._previousSelectedTabId = this._selectedTabId.valueOf();
     this._selectedTabId = this.getTabId($tab);
 
-    if (this._selectedTabId != this._previousSelectedTabId) {
+    if (this._selectedTabId !== this._previousSelectedTabId) {
       // Оповещаем о начале выбора компоненты-наблюдатели
 
       // Выделяем таб
@@ -635,7 +650,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   closeTab(tab) {
     let $tab = this.getTab(tab);
     if (!$q.isNullOrEmpty($tab)) {
-      const tabId = this.getTabId($tab);
       const tabTypeCode = $tab.data('tab_type_code');
       const tabNumber = $tab.data('tab_number');
 
@@ -646,7 +660,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       }
 
       this._decreaseTabTypeCounter(tabTypeCode, tabNumber);
-      if (this.getAllTabsCount() == 0) {
+      if (this.getAllTabsCount() === 0) {
         this._hideTabMenu();
         this._removeTabMenuFromTabStrip();
         $(window).unbind('resize', this._onWindowResizedHandler);
@@ -696,7 +710,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $tab.data('entity_type_code', eventArgs.get_entityTypeCode());
     $tab.data('entity_id', eventArgs.get_entityId());
     $tab.data('entity_name', eventArgs.get_entityName());
-    $tab.data('parent_entity_type_code', Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(eventArgs.get_entityTypeCode()));
+    $tab.data('parent_entity_type_code', Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(
+      eventArgs.get_entityTypeCode())
+    );
     $tab.data('parent_entity_id', eventArgs.get_parentEntityId());
     $tab.data('action_type_code', eventArgs.get_actionTypeCode());
     $tab.data('action_code', eventArgs.get_actionCode());
@@ -769,17 +785,15 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       const tabCount = $tabs.length;
       let matchedTabCount = 0;
       for (let tabIndex = 0; tabIndex < tabCount; tabIndex++) {
-        if ($tabs.eq(tabIndex).data('tab_type_code') == tabTypeCode) {
+        if ($tabs.eq(tabIndex).data('tab_type_code') === tabTypeCode) {
           matchedTabCount += 1;
         }
       }
 
-      if (matchedTabCount != 0) {
-        if (this._getTabTypeCounter(tabTypeCode) == tabNumber) {
-          this._tabTypeCounters[tabTypeCode] -= 1;
-        }
-      } else {
+      if (matchedTabCount === 0) {
         this._tabTypeCounters[tabTypeCode] = 0;
+      } else if (this._getTabTypeCounter(tabTypeCode) === tabNumber) {
+        this._tabTypeCounters[tabTypeCode] -= 1;
       }
     }
   },
@@ -827,7 +841,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   _addTabMenuToTabStrip() {
     const $tabStrip = $(this._tabStripElement);
-    if (this._tabMenuButtonContainerElement == null) {
+    if ($q.isNull(this._tabMenuButtonContainerElement)) {
       const $menuButtonContainer = $('<div />', { class: 'tabMenuButton' });
       const $menuButton = $('<span />');
       const $menuButtonImage = $('<img />', {
@@ -844,7 +858,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       $tabStrip.append($menuButtonContainer);
     }
 
-    if (this._tabMenuElement == null) {
+    if ($q.isNull(this._tabMenuElement)) {
       const $menu = $('<div />', { class: 'tabMenu' });
       const $upArrow = $('<div />', { class: this.TAB_MENU_UP_ARROW_CLASS_NAME, css: { display: 'none' } });
       $menu.append($upArrow);
@@ -983,7 +997,8 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .cat('  <div class="outerWrapper">\n')
       .cat('      <div class="innerWrapper">\n')
       .cat('          <span class="icon"')
-      .catIf(` style="background-image: url(${window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS}${dataItem.Icon})"`, !$q.isNullOrWhiteSpace(dataItem.Icon))
+      .catIf(` style="background-image: url(${window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS}${dataItem.Icon})"`,
+        !$q.isNullOrWhiteSpace(dataItem.Icon))
       .cat('>')
       .cat(`<img src="${window.COMMON_IMAGE_FOLDER_URL_ROOT}/0.gif" width="16px" height="16px" />`)
       .cat('</span>\n')
@@ -1014,9 +1029,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     this._loadItemsToTabMenu();
 
     const $menuButton = $(this._tabMenuButtonElement);
-    const menuWidth = $menu.outerWidth();
     const menuHeight = $menu.outerHeight();
-    const menuTop = $menuButton.offset().top + $menuButton.height() + $menuButton.borderTopWidth() + $menuButton.borderBottomWidth();
+    const menuTop = $menuButton.offset().top + $menuButton.height()
+    + $menuButton.borderTopWidth() + $menuButton.borderBottomWidth();
     const menuRight = $(window).width() - $menuButton.offset().left - $menuButton.outerWidth();
 
     const $scrollable = $(this._tabMenuScrollableElement);
@@ -1081,25 +1096,17 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _scrollTabMenuToFirstItem(duration) {
-    if (duration == null) {
-      duration = this._calculateTabMenuScrollingDuration(true);
-    }
-
     const $scrollable = $(this._tabMenuScrollableElement);
     const $firstMenuItem = this._getMenuItems().first();
     const options = { axis: 'y', easing: 'swing' };
-    options.duration = duration;
+    options.duration = $q.isNull(duration) ? this._calculateTabMenuScrollingDuration(true) : duration;
     $scrollable.scrollTo($firstMenuItem, options);
   },
 
   _scrollTabMenuToLastItem(duration) {
-    if (duration == null) {
-      duration = this._calculateTabMenuScrollingDuration(false);
-    }
-
     const $lastMenuItem = this._getMenuItems().last();
     const options = { axis: 'y', easing: 'swing' };
-    options.duration = duration;
+    options.duration = $q.isNull(duration) ? this._calculateTabMenuScrollingDuration(false) : duration;
     $(this._tabMenuScrollableElement).scrollTo($lastMenuItem, options);
   },
 
@@ -1167,7 +1174,8 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   tabEntityExists($tab) {
     let result = true;
     const actionTypeCode = $tab.data('action_type_code');
-    if (actionTypeCode != window.ACTION_TYPE_CODE_ADD_NEW && actionTypeCode != window.ACTION_TYPE_CODE_MULTIPLE_SELECT) {
+    if (actionTypeCode !== window.ACTION_TYPE_CODE_ADD_NEW
+      && actionTypeCode !== window.ACTION_TYPE_CODE_MULTIPLE_SELECT) {
       const eventArgs = this.getEventArgsFromTab($tab);
       const tabEntityTypeCode = this._getTabEntityTypeCode(eventArgs);
       if ($q.toBoolean($tab.data('is_multiple_entities'), false)) {
@@ -1205,7 +1213,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     return $tabToSelect;
   },
 
-  _onDocumentBodyClick(e) {
+  _onDocumentBodyClick() {
     this._hideTabMenu();
   },
 
@@ -1238,11 +1246,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     this.fixTabStripWidth();
   },
 
-  _onTabStripOverflowEvoked(sender, args) {
+  _onTabStripOverflowEvoked() {
     this._changeTabStripOverflowIndicator(true);
   },
 
-  _onTabStripOverflowPrecluded(sender, args) {
+  _onTabStripOverflowPrecluded() {
     this._changeTabStripOverflowIndicator(false);
   },
 
@@ -1251,15 +1259,17 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _onCloseButtonClicking(e) {
-    if (!this.isTabStripBusy()) {
-      this._applyClickedStyleToCloseButton(e.currentTarget);
-    } else {
+    if (this.isTabStripBusy()) {
       e.preventDefault();
+    } else {
+      this._applyClickedStyleToCloseButton(e.currentTarget);
     }
   },
 
   _onCloseButtonClicked(e) {
-    if (!this.isTabStripBusy()) {
+    if (this.isTabStripBusy()) {
+      e.preventDefault();
+    } else {
       this._tabContextMenuComponent.hide(e);
 
       const $tab = $(e.currentTarget).parent().parent().parent();
@@ -1267,8 +1277,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this._applyHoveredStyleToCloseButton(e.currentTarget);
 
       e.stopPropagation();
-    } else {
-      e.preventDefault();
     }
   },
 
@@ -1339,7 +1347,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _onTabMenuItemClicking(e) {
-    if (!this.isTabMenuBusy()) {
+    if (this.isTabMenuBusy()) {
+      e.preventDefault();
+    } else {
       const $menuItem = $(e.currentTarget);
       const tabId = $menuItem.attr('code');
       if (tabId === this.TAB_MENU_CLOSE_ALL_ITEM_CODE) {
@@ -1350,8 +1360,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         this.selectTabRequest(tabId);
       }
       this._hideTabMenu();
-    } else {
-      e.preventDefault();
     }
   },
 
@@ -1364,17 +1372,19 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _onTabMenuButtonClicking(e) {
-    if (!this.isTabMenuBusy()) {
+    if (this.isTabMenuBusy()) {
+      e.preventDefault();
+    } else {
       this._applyClickedStyleToTabMenuButton(e.currentTarget);
 
       e.stopPropagation();
-    } else {
-      e.preventDefault();
     }
   },
 
   _onTabMenuButtonClicked(e) {
-    if (!this.isTabMenuBusy()) {
+    if (this.isTabMenuBusy()) {
+      e.preventDefault();
+    } else {
       let $menuButton = $(e.currentTarget);
       $menuButton
         .unbind('mouseover', this._onTabMenuButtonHoveredHandler)
@@ -1386,8 +1396,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this._toggleTabMenu();
 
       e.stopPropagation();
-    } else {
-      e.preventDefault();
     }
   },
 
@@ -1553,7 +1561,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
 Quantumart.QP8.BackendTabStrip._instance = null;
 Quantumart.QP8.BackendTabStrip.getInstance = function (tabStripElementId, options) {
-  if (Quantumart.QP8.BackendTabStrip._instance == null) {
+  if (Quantumart.QP8.BackendTabStrip._instance === null) {
     const instance = new Quantumart.QP8.BackendTabStrip(tabStripElementId, options);
     Quantumart.QP8.BackendTabStrip._instance = instance;
   }
@@ -1568,9 +1576,12 @@ Quantumart.QP8.BackendTabEventArgs = function () {
 
 Quantumart.QP8.BackendTabEventArgs.prototype = {
   _tabId: '',
+  // eslint-disable-next-line camelcase
   get_tabId() {
     return this._tabId;
   },
+
+  // eslint-disable-next-line camelcase
   set_tabId(value) {
     this._tabId = value;
   }

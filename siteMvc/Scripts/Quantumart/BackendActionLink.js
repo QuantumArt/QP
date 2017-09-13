@@ -30,10 +30,10 @@ Quantumart.QP8.BackendActionLink = function (actionLinkElementId, options) {
       this._context = options.context;
     }
 
-    if (!$q.isNull(options.actionTargetType)) {
-      this._actionTargetType = options.actionTargetType;
-    } else {
+    if ($q.isNull(options.actionTargetType)) {
       this._actionTargetType = Quantumart.QP8.Enums.ActionTargetType.NewTab;
+    } else {
+      this._actionTargetType = options.actionTargetType;
     }
   }
 
@@ -56,51 +56,51 @@ Quantumart.QP8.BackendActionLink.prototype = {
   ACTION_LINK_DISABLED_CLASS_NAME: 'disabled',
   ACTION_LINK_BUSY_CLASS_NAME: 'busy',
 
-  get_entityId() {
+  get_entityId() { // eslint-disable-line camelcase
     return this._entityId;
   },
 
-  set_entityId(value) {
+  set_entityId(value) { // eslint-disable-line camelcase
     this._entityId = value;
   },
 
-  get_entityName() {
+  get_entityName() { // eslint-disable-line camelcase
     return this._entityName;
   },
 
-  set_entityName(value) {
+  set_entityName(value) { // eslint-disable-line camelcase
     this._entityName = value;
   },
 
-  get_parentEntityId() {
+  get_parentEntityId() { // eslint-disable-line camelcase
     return this._parentEntityId;
   },
 
-  set_parentEntityId(value) {
+  set_parentEntityId(value) { // eslint-disable-line camelcase
     this._parentEntityId = value;
   },
 
-  get_actionTypeCode() {
+  get_actionTypeCode() { // eslint-disable-line camelcase
     return this._actionTypeCode;
   },
 
-  set_actionTypeCode(value) {
+  set_actionTypeCode(value) { // eslint-disable-line camelcase
     this._actionTypeCode = value;
   },
 
-  get_actionCode() {
+  get_actionCode() { // eslint-disable-line camelcase
     return this._actionCode;
   },
 
-  set_actionCode(value) {
+  set_actionCode(value) { // eslint-disable-line camelcase
     this._actionCode = value;
   },
 
-  get_actionTargetType() {
+  get_actionTargetType() { // eslint-disable-line camelcase
     return this._actionTargetType;
   },
 
-  set_actionTargetType(value) {
+  set_actionTargetType(value) { // eslint-disable-line camelcase
     this._actionTargetType = value;
   },
 
@@ -183,11 +183,13 @@ Quantumart.QP8.BackendActionLink.prototype = {
 
   onActionExecuting(e) {
     e.preventDefault();
-    const isLeftClick = e.type == 'click' && (e.which == 1 || e.which == 0);
-    const isMiddleClick = e.type == 'mouseup' && e.which == 2;
+    const isLeftClick = e.type === 'click' && (e.which === 1 || e.which === 0);
+    const isMiddleClick = e.type === 'mouseup' && e.which === 2;
     if (!this.isActionLinkDisabled() && !this.isActionLinkBusy() && (isLeftClick || isMiddleClick)) {
       const actionTargetType = this._actionTargetType;
-      if (!$q.isNull(actionTargetType)) {
+      if ($q.isNull(actionTargetType)) {
+        $q.alertFail($l.ActionLink.actionTargetTypeNotSpecified);
+      } else {
         const actionCode = this._actionCode;
         const action = $a.getBackendActionByCode(actionCode);
         if (action) {
@@ -197,7 +199,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
             parentEntityId: this._parentEntityId,
             context: this._context,
             entityTypeCode: action.EntityType.Code,
-            forceOpenWindow: actionTargetType == Quantumart.QP8.Enums.ActionTargetType.NewWindow
+            forceOpenWindow: actionTargetType === Quantumart.QP8.Enums.ActionTargetType.NewWindow
           });
 
           params.correct(action);
@@ -207,7 +209,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
             eventArgs.set_context(Object.assign({ ctrlKey: e.ctrlKey || isMiddleClick }, eventArgs.get_context()));
           }
 
-          if (action.IsInterface && actionTargetType == Quantumart.QP8.Enums.ActionTargetType.Self) {
+          if (action.IsInterface && actionTargetType === Quantumart.QP8.Enums.ActionTargetType.Self) {
             this.notify(window.EVENT_TYPE_ACTION_LINK_SELF_CLICK, eventArgs);
           } else {
             this.notify(window.EVENT_TYPE_ACTION_LINK_CLICK, eventArgs);
@@ -216,8 +218,6 @@ Quantumart.QP8.BackendActionLink.prototype = {
           eventArgs = null;
           params = null;
         }
-      } else {
-        $q.alertFail($l.ActionLink.actionTargetTypeNotSpecified);
       }
     }
   },

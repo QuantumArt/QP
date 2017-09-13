@@ -63,6 +63,17 @@ $q.alertFail = function alertFail(msg) {
   }
 };
 
+$q.doesImplicitEqDiffer = function doesImplicitEqDiffer(left, right) {
+  return (left == right) && (left !== right); // eslint-disable-line eqeqeq
+};
+
+
+$q.warnIfEqDiff = function warnEqDiff(left, right) {
+  if ($q.doesImplicitEqDiffer(left, right)) {
+    $q.alertFail(`Implicit and explicit equality operations produces different results for ${left} and ${right}`);
+  }
+};
+
 $q.confirmMessage = function confirmMessage(msg) {
   return window.confirm(msg);
 };
