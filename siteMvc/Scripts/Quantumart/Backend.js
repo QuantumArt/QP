@@ -87,14 +87,21 @@ Quantumart.QP8.Backend.prototype = {
   _onEntityReadedHandler: null,
   _onHostExternalCallerContextsUnbindedHandler: null,
 
+  _defaultFirstPaneWidth: 250,
+  _defaultScreenPartPercent: 0.2,
+
   _initialize() {
     this._directLinkExecutor = new Quantumart.QP8.DirectLinkExecutor(this._currentCustomerCode, this._directLinkOptions);
     this._directLinkExecutor.ready($.proxy(function (openByDirectLink) {
       this._directLinkExecutor.attachObserver(window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, this._onActionExecutingHandler);
       this._backendActionExecutor = Quantumart.QP8.BackendActionExecutor.getInstance();
       this._backendActionExecutor.attachObserver(window.EVENT_TYPE_BACKEND_ACTION_EXECUTED, this._onActionExecutedHandler);
+      let widthLeftPane = document.documentElement.clientWidth * this._defaultScreenPartPercent;
+      let firstPanelWidth = widthLeftPane > this._defaultFirstPaneWidth
+          ? widthLeftPane
+          : this._defaultFirstPanelWidth; 
       this._backendSplitter = new Quantumart.QP8.BackendSplitter('splitter', {
-        firstPaneWidth: 270,
+        firstPaneWidth: firstPanelWidth,
         minFirstPaneWidth: 50,
         maxFirstPaneWidth: 400,
         stateCookieName: 'leftMenuSize',
