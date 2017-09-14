@@ -353,7 +353,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
   generateDocumentUrl(options) {
     const isSelectAction = this._actionTypeCode === window.ACTION_TYPE_CODE_SELECT
-      || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_SELECT;
+      || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT;
 
     const entityIDs = this._isMultipleEntities
       ? $o.getEntityIDsFromEntities(isSelectAction ? this._selectedEntities : this._entities)
@@ -372,14 +372,14 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       );
     }
 
-    options = !$q.isObject(options) ? extraOptions : Object.assign({}, options, extraOptions);
+    const newOptions = $q.isObject(options) ? Object.assign({}, options, extraOptions) : extraOptions;
     this._documentUrl = $a.generateActionUrl(
       this._isMultipleEntities,
       entityIDs,
       this._parentEntityId,
       this._popupWindowId,
       this.getCurrentAction(),
-      options
+      newOptions
     );
 
     const params = {};

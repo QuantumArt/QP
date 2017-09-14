@@ -15,7 +15,8 @@ Quantumart.QP8.EntityEditorAutoSaver = function (options) {
 
   this.isRun = false;
   this.restoring = false;
-  this._keyPrefix = `${Quantumart.QP8.EntityEditorAutoSaver._keyNameRoot}.${this._currentCustomerCode}.${this._currentUserId}`;
+  const root = Quantumart.QP8.EntityEditorAutoSaver._keyNameRoot;
+  this._keyPrefix = `${root}.${this._currentCustomerCode}.${this._currentUserId}`;
 };
 
 Quantumart.QP8.EntityEditorAutoSaver._keyNameRoot = 'Quantumart.QP8.EntityEditorAutoSaver';
@@ -33,8 +34,6 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
   },
 
   restore() {
-    let key, i;
-
     this.isRun = false;
     this.restoring = true;
 
@@ -42,14 +41,14 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     const autoSaverKeys = [];
     const savedStates = [];
 
-    for (key in localStorage) {
+    Object.keys(localStorage).forEach(key => {
       if (keyRegExp.test(key)) {
         autoSaverKeys.push(key);
         savedStates.push(jQuery.parseJSON(localStorage.getItem(key)));
       }
-    }
+    });
 
-    for (i = 0; i < autoSaverKeys.length; i++) {
+    for (let i = 0; i < autoSaverKeys.length; i++) {
       localStorage.removeItem(autoSaverKeys[i]);
     }
 
@@ -57,8 +56,8 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
       let eventArgs, editorState, action, params;
       if (approvedStates.length > 0 && $q.confirmMessage($l.EntityEditorAutoSaver.restoreConfirmationRequest)) {
         this._restoringStateCount = approvedStates.length;
-        for (let i = 0; i < approvedStates.length; i++) {
-          editorState = approvedStates[i];
+        for (let j = 0; j < approvedStates.length; j++) {
+          editorState = approvedStates[j];
           action = $a.getBackendActionByCode(editorState.actionCode);
           params = new Quantumart.QP8.BackendActionParameters({
             entityTypeCode: editorState.entityTypeCode,
@@ -123,7 +122,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
         const key = this._createKey(fieldChangeInfo.documentWrapperElementId);
         let editorState = jQuery.parseJSON(localStorage.getItem(key));
 
-        if (!editorState) {
+        if ($q.isNullOrEmpty(editorState)) {
           editorState = this._getEditorComponentState(fieldChangeInfo.documentWrapperElementId);
         } else {
           const fieldState = jQuery.grep(editorState.fieldValues, v => v.fieldName === fieldChangeInfo.fieldName)[0];
@@ -209,14 +208,14 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
         false
       ).done(data => {
         if (data.success) {
-          if (!$q.isNullOrEmpty(data.approvedRecordIDs)) {
+          if ($q.isNullOrEmpty(data.approvedRecordIDs)) {
+            dfr.resolve([]);
+          } else {
             dfr.resolve(
 
               // Оставить только те записи, которые прошли проверку на сервере
               jQuery.grep(stateRecords, r => _.indexOf(data.approvedRecordIDs, r.recordId) > -1)
             );
-          } else {
-            dfr.resolve([]);
           }
         } else {
           $q.alertError(data.Text);
@@ -237,6 +236,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     return `${this._keyPrefix}.${documentWrapperElementId}`;
   },
 
+  // eslint-disable-next-line no-empty-function
   dispose() { }
 };
 

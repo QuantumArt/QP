@@ -66,7 +66,7 @@ Quantumart.QP8.BackendFileList.prototype = {
   },
 
   _onPageNumberChanged(eventType, sender, args) {
-    this.rebind({ pageNumber: args.get_PageNumber() });
+    this.rebind({ pageNumber: args.getPageNumber() });
   },
 
   _onListViewSelected(eventType, sender, args) {
@@ -216,7 +216,7 @@ Quantumart.QP8.BackendFileList.prototype = {
           currentPageNumber: this._currentDataQueryOptions.pageNumber
         });
 
-      this._currentDataQueryOptions.pageNumber = this._pagerComponent.get_pageNumber();
+      this._currentDataQueryOptions.pageNumber = this._pagerComponent.getPageNumber();
       this._pagerComponent.redraw();
     }
 
