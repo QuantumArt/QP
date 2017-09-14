@@ -224,7 +224,7 @@ Quantumart.QP8.Backend.prototype = {
     const userId = $('.userName').data('userid');
     let message = '';
 
-    if (data == null) {
+    if ($q.isNull(data)) {
       $('form :input').prop('disabled', false);
       $elem.hide();
     } else {
@@ -582,7 +582,7 @@ Quantumart.QP8.Backend._instance = null;
 
 Quantumart.QP8.Backend.getInstance = function (isDebugMode, options) {
   let instance = Quantumart.QP8.Backend._instance;
-  if (instance == null) {
+  if (instance === null) {
     instance = new Quantumart.QP8.Backend(isDebugMode, options);
     Quantumart.QP8.Backend._instance = instance;
   }

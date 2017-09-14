@@ -121,7 +121,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 
   _raiseMultipleEventArgsEvent(eventType, args) {
     const action = $a.getBackendActionByCode(this._actionCode);
-    if (action != null) {
+    if (!$q.isNull(action)) {
       const eventArgs = $a.getEventArgsFromAction(action);
       eventArgs.set_isMultipleEntities(true);
       if (args) {

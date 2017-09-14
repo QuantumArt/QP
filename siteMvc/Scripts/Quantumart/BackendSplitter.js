@@ -151,7 +151,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
   dispose() {
     Quantumart.QP8.BackendSplitter.callBaseMethod(this, 'dispose');
 
-    if (this._splitterComponent != null) {
+    if (!$q.isNull(this._splitterComponent)) {
       let splitter = this._splitterComponent.data('tSplitter');
       splitter.onResize = null;
       splitter = null;

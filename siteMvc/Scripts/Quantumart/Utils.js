@@ -68,7 +68,7 @@ $q.doesImplicitEqDiffer = function doesImplicitEqDiffer(left, right) {
 };
 
 
-$q.warnIfEqDiff = function warnEqDiff(left, right) {
+$q.warnIfEqDiff = function warnIfEqDiff(left, right) {
   if ($q.doesImplicitEqDiffer(left, right)) {
     $q.alertFail(`Implicit and explicit equality operations produces different results for ${left} and ${right}`);
   }

@@ -76,9 +76,7 @@ Quantumart.QP8.Observable.prototype = {
       return;
     }
 
-    if (times == null) {
-      times = -1;
-    }
+    const newTimes = $q.isNull(times) ? -1 : times;
 
     if (!this._observerInfos[eventType]) {
       this._observerInfos[eventType] = [];
@@ -86,24 +84,23 @@ Quantumart.QP8.Observable.prototype = {
 
     const observerInfo = this._getObserverInfo(eventType, observer);
 
-    if (!$q.isNull(observerInfo)) {
-      observerInfo.times = times;
+    if ($q.isNull(observerInfo)) {
+      Array.add(this._observerInfos[eventType], { observer, newTimes });
     } else {
-      Array.add(this._observerInfos[eventType], { observer, times });
+      observerInfo.times = newTimes;
     }
   },
 
   detachObserver(eventType, observer) {
     if (!$q.isNull(this._observerInfos)
     && this._observerInfos[eventType]) {
-      if (!$q.isNull(observer)) {
+      if ($q.isNull(observer)) {
+        $q.removeProperty(this._observerInfos, eventType);
+      } else {
         const observerInfo = this._getObserverInfo(eventType, observer);
-
         if (!$q.isNull(observerInfo)) {
           Array.remove(this._observerInfos[eventType], observerInfo);
         }
-      } else {
-        $q.removeProperty(this._observerInfos, eventType);
       }
     }
   },
@@ -139,11 +136,11 @@ Quantumart.QP8.Observable.prototype = {
         if (observerInfo) {
           const observer = observerInfo.observer;
 
-          if (observerInfo.times == -1) {
+          if (observerInfo.times === -1) {
             this._updateObserver(eventType, eventArgs, observer);
           } else if (observerInfo.times > 0) {
             observerInfo.times -= 1;
-            if (observerInfo.times == 0) {
+            if (observerInfo.times === 0) {
               this.detachObserver(eventType, observer);
             }
 

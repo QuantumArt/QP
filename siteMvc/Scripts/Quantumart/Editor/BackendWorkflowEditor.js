@@ -61,7 +61,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
         const activeContentsIds = this.contentSelector.find('input:checkbox:checked').map((index, elem) => $(elem).val()).get().join();
 
-        if (element.UserId() != null || element.GroupId() != null) {
+        if ($q.isNull(element.UserId()) && $q.isNull(element.GroupId())) {
+          $(dom).find('.singleItemPicker').each(jQuery.proxy(function (index, element) {
+            $(element).data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this.checkSinglePermisssionHandler);
+          }, this));
+        } else {
           $q.getJsonFromUrl(
             'GET',
             `${window.CONTROLLER_URL_WORKFLOW}CheckUserOrGroupAccessOnContents`,
@@ -74,21 +78,17 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             false,
             false,
             data => {
-              if (element.UserId() != null) {
-                $(dom).find('span.workflow_permission_message').first().html(data);
-              } else {
+              if ($q.isNull(element.UserId())) {
                 $(dom).find('span.workflow_permission_message').last().html(data);
+              } else {
+                $(dom).find('span.workflow_permission_message').first().html(data);
               }
             }
           );
-        } else {
-          $(dom).find('.singleItemPicker').each(jQuery.proxy(function (index, element) {
-            $(element).data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this.checkSinglePermisssionHandler);
-          }, this));
         }
       },
 
-      disposePickers(dom, element, index) {
+      disposePickers(dom) {
         Quantumart.QP8.ControlHelpers.destroyAllEntityDataLists($(dom));
         $(dom).remove();
       }
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     }, this));
 
     const onRadioChanged = function () {
-      if ($(this).val() == 'User') {
+      if ($(this).val() === 'User') {
         $(this).closest('fieldset').find('.workflow_group_row').hide();
         $(this).closest('fieldset').find('.workflow_user_row').show();
       } else {
@@ -170,10 +170,10 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     const activeContentsIds = this.getCheckedContentsIds();
     const statusName = $(eventArgs._listElement).closest('fieldset').attr('Class').replace('workflow_fieldset', '');
 
-    if (eventArgs.get_entityTypeCode() == 'user') {
-      userId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null;
+    if (eventArgs.get_entityTypeCode() === 'user') {
+      userId = $q.isNullOrEmpty(eventArgs.getSelectedEntities()[0]) ? null : eventArgs.getSelectedEntities()[0].Id;
     } else if (eventArgs.get_entityTypeCode() == 'user_group') {
-      groupId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null;
+      groupId = $q.isNullOrEmpty(eventArgs.getSelectedEntities()[0]) ? null : eventArgs.getSelectedEntities()[0].Id;
     }
     $q.getJsonFromUrl(
       'GET',
@@ -187,13 +187,13 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       false,
       false,
       data => {
-        const current_workflow_stage = $(eventArgs._listElement).closest('fieldset');
-        const user_row = current_workflow_stage.find(':visible.workflow_user_row');
-        const group_row = current_workflow_stage.find(':visible.workflow_group_row');
-        if (user_row.size() > group_row.size()) {
-          user_row.find('span.workflow_permission_message').html(data);
+        const stage = $(eventArgs._listElement).closest('fieldset');
+        const userRow = stage.find(':visible.workflow_user_row');
+        const groupRow = stage.find(':visible.workflow_group_row');
+        if (userRow.size() > groupRow.size()) {
+          userRow.find('span.workflow_permission_message').html(data);
         } else {
-          group_row.find('span.workflow_permission_message').html(data);
+          groupRow.find('span.workflow_permission_message').html(data);
         }
       }
     );
@@ -201,15 +201,20 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
   manageItems(e) {
     let target = $(e.target);
-    if (target.size() == 0) {
+    if (target.size() === 0) {
       target = $(e);
     }
     if (target.parent('div').hasClass('groupCheckbox')) {
-      target.parent('.groupCheckbox').siblings('.workflow_control_selector').find('.checkbox').each(jQuery.proxy(function (index, item) {
-        this.manageItems($(item));
-      }, this));
-    } else if (target.attr('checked') == 'checked') {
-      this.addItem(target.val(), target.siblings('label').text(), target.closest('.workflow_control_selector').data('weights')[target.val()]);
+      target.parent('.groupCheckbox').siblings('.workflow_control_selector').find('.checkbox')
+        .each(jQuery.proxy(function (index, item) {
+          this.manageItems($(item));
+        }, this));
+    } else if (target.attr('checked') === 'checked') {
+      this.addItem(
+        target.val(),
+        target.siblings('label').text(),
+        target.closest('.workflow_control_selector').data('weights')[target.val()]
+      );
     } else {
       this.removeItem(target.val());
     }
@@ -218,7 +223,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   addItem(statusId, statusName, weight) {
     const existingItem = ko.utils.arrayFirst(this._items(), item => item.StId == statusId);
 
-    if (existingItem == null) {
+    if ($q.isNull(existingItem)) {
       const item = {
         StName: statusName,
         StId: statusId,

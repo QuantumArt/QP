@@ -261,7 +261,7 @@ Quantumart.QP8.BackendLogOnWindow.deferredExecution = function (data, jqXHR, cal
 };
 
 Quantumart.QP8.BackendLogOnWindow.getInstance = function () {
-  if (Quantumart.QP8.BackendLogOnWindow._instance == null) {
+  if (Quantumart.QP8.BackendLogOnWindow._instance === null) {
     Quantumart.QP8.BackendLogOnWindow._instance = new Quantumart.QP8.BackendLogOnWindow();
   }
 

@@ -1,4 +1,6 @@
-Quantumart.QP8.BackendEntityMultipleItemPicker = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
+// eslint-disable-next-line max-params
+Quantumart.QP8.BackendEntityMultipleItemPicker = function (
+  listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
   Quantumart.QP8.BackendEntityMultipleItemPicker.initializeBase(this,
     [listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]);
 
@@ -15,22 +17,27 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   OVERFLOW_HIDDEN_CLASS: 'overflowHiddenValue',
 
+  // eslint-disable-next-line camelcase
   get_maxListWidth() {
     return this._maxListWidth;
   },
 
+  // eslint-disable-next-line camelcase
   set_maxListWidth(value) {
     this._maxListWidth = value;
   },
 
+  // eslint-disable-next-line camelcase
   get_maxListHeight() {
     return this._maxListHeight;
   },
 
+  // eslint-disable-next-line camelcase
   set_maxListHeight(value) {
     this._maxListHeight = value;
   },
 
+  // eslint-disable-next-line max-statements
   initialize() {
     Quantumart.QP8.BackendEntityMultipleItemPicker.callBaseMethod(this, 'initialize');
 
@@ -49,17 +56,25 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     this._addGroupCheckbox(hidden);
     this._syncGroupCheckbox();
 
-    let $pickButton = this._createToolbarButton(`${this._listElementId}_PickButton`, $l.EntityDataList.pickLinkButtonText, 'pick');
+    let $pickButton = this._createToolbarButton(
+      `${this._listElementId}_PickButton`, $l.EntityDataList.pickLinkButtonText, 'pick'
+    );
     this._addButtonToToolbar($pickButton);
 
-    let $clearButton = this._createToolbarButton(`${this._listElementId}_ClearButton`, $l.EntityDataList.clearUnmarkedLinkButtonText, 'deselectAll');
+    let $clearButton = this._createToolbarButton(
+      `${this._listElementId}_ClearButton`, $l.EntityDataList.clearUnmarkedLinkButtonText, 'deselectAll'
+    );
     this._addButtonToToolbar($clearButton);
 
     if (this._enableCopy) {
-      $copyButton = this._createToolbarButton(`${this._listElementId}_CopyButton`, $l.EntityDataList.copyLinkButtonText, 'copy');
+      $copyButton = this._createToolbarButton(
+        `${this._listElementId}_CopyButton`, $l.EntityDataList.copyLinkButtonText, 'copy'
+      );
       this._addButtonToToolbar($copyButton);
 
-      $pasteButton = this._createToolbarButton(`${this._listElementId}_PasteButton`, $l.EntityDataList.pasteLinkButtonText, 'paste');
+      $pasteButton = this._createToolbarButton(
+        `${this._listElementId}_PasteButton`, $l.EntityDataList.pasteLinkButtonText, 'paste'
+      );
       this._addButtonToToolbar($pasteButton);
     }
 
@@ -99,7 +114,12 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   getSelectedEntities() {
     let result;
-    if (!this._isCountOverflow()) {
+    if (this._isCountOverflow()) {
+      const ids = $(this._countOverflowElement).val().split(',');
+      result = $.map(ids, id => {
+        return { Id: id, Name: '' };
+      }) || [];
+    } else {
       const $selectedListItems = this.getSelectedListItems();
       result = $selectedListItems.map((i, item) => {
         const $item = $(item);
@@ -108,28 +128,23 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
           Name: $item.find('LABEL').text()
         };
       }).get() || [];
-    } else {
-      const ids = $(this._countOverflowElement).val().split(',');
-      result = $.map(ids, id => {
-        return { Id: id, Name: '' };
-      }) || [];
     }
 
     return result;
   },
 
   _isCountOverflow() {
-    return this._countOverflowElement != null;
+    return !$q.isNull(this._countOverflowElement);
   },
 
   _refreshListInner(dataItems, refreshOnly) {
     const newSelectedIDs = $.map($.grep(dataItems, di => di.Value), di => $q.toInt(di.Value));
 
     const currentSelectedIDs = this.getSelectedEntityIDs();
-    const selectedItemsIsChanged = newSelectedIDs.length != currentSelectedIDs.length || newSelectedIDs.length != _.union(newSelectedIDs, currentSelectedIDs).length;
+    const selectedItemsIsChanged = newSelectedIDs.length !== currentSelectedIDs.length
+    || newSelectedIDs.length !== _.union(newSelectedIDs, currentSelectedIDs).length;
 
     if (selectedItemsIsChanged) {
-      const oldCount = this.getSelectedEntities().length;
       const $list = $(this._listElement);
       const $ul = $list.find('UL');
 
@@ -143,8 +158,9 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
         if (this._countOverflowElement) {
           $(this._countOverflowElement).val(value);
         } else {
-          const name = $list.data('list_item_name');
-          const html = `<input type="hidden" class="${this.OVERFLOW_HIDDEN_CLASS}" name="${name}" value = "${value}" />`;
+          const ln = $list.data('list_item_name');
+          const cl = this.OVERFLOW_HIDDEN_CLASS;
+          const html = `<input type="hidden" class="${cl}" name="${ln}" value = "${value}" />`;
           $ul.before(html);
 
           this._countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`).get(0);
@@ -237,7 +253,9 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
 
     const value = this.getSelectedEntityIDs();
-    $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value, contentFieldName: $list.closest('dl').data('field_name') });
+    $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, {
+      fieldName: $list.data('list_item_name'), value, contentFieldName: $list.closest('dl').data('field_name')
+    });
   },
 
   _getCheckBoxListHtml(dataItems) {
@@ -289,7 +307,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _checkAllowShowingToolbar() {
-    return this._selectActionCode != window.ACTION_CODE_NONE;
+    return this._selectActionCode !== window.ACTION_CODE_NONE;
   },
 
   _onSelectedItemChangeHandler() {
@@ -302,7 +320,10 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   _refreshClearButton() {
     if (this._clearButtonElement) {
-      this._changeToolbarButtonState($(this._clearButtonElement), !this._isCountOverflow() && this.getSelectedListItemCount() != this.getListItemCount());
+      this._changeToolbarButtonState(
+        $(this._clearButtonElement), !this._isCountOverflow()
+        && this.getSelectedListItemCount() !== this.getListItemCount()
+      );
     }
   },
 
@@ -330,4 +351,6 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   }
 };
 
-Quantumart.QP8.BackendEntityMultipleItemPicker.registerClass('Quantumart.QP8.BackendEntityMultipleItemPicker', Quantumart.QP8.BackendEntityDataListBase);
+Quantumart.QP8.BackendEntityMultipleItemPicker.registerClass(
+  'Quantumart.QP8.BackendEntityMultipleItemPicker', Quantumart.QP8.BackendEntityDataListBase
+);

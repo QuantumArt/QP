@@ -175,39 +175,39 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 
     Quantumart.QP8.BackendContextMenu.getContextMenuByCode(
       this._contextMenuCode, true, this._isBindToExternal, data => {
-      const menu = data;
-      if (!$q.isNull(menu)) {
-        let menuItems = menu.Items;
-        let menuItemCount = 0;
-        if (!$q.isNull(menuItems)) {
-          menuItems = $.grep(menuItems, menuItem => !hideRefreshMenuItem
+        const menu = data;
+        if (!$q.isNull(menu)) {
+          let menuItems = menu.Items;
+          let menuItemCount = 0;
+          if (!$q.isNull(menuItems)) {
+            menuItems = $.grep(menuItems, menuItem => !hideRefreshMenuItem
             || menuItem.ActionTypeCode !== window.ACTION_TYPE_CODE_REFRESH);
 
-          menuItemCount = menuItems.length;
-        }
-
-        if (menuItemCount > 0) {
-          const menuItemsHtml = new $.telerik.stringBuilder();
-          for (let menuItemIndex = 0; menuItemIndex < menuItemCount; menuItemIndex++) {
-            const menuItem = menuItems[menuItemIndex];
-            that._getMenuItemHtml(menuItemsHtml, menuItem);
-            if (menuItem.BottomSeparator) {
-              that._getSeparatorHtml(menuItemsHtml);
-            }
+            menuItemCount = menuItems.length;
           }
 
-          $menu.html(menuItemsHtml.string());
-          that._extendMenuItemElements(menuItems);
+          if (menuItemCount > 0) {
+            const menuItemsHtml = new $.telerik.stringBuilder();
+            for (let menuItemIndex = 0; menuItemIndex < menuItemCount; menuItemIndex++) {
+              const menuItem = menuItems[menuItemIndex];
+              that._getMenuItemHtml(menuItemsHtml, menuItem);
+              if (menuItem.BottomSeparator) {
+                that._getSeparatorHtml(menuItemsHtml);
+              }
+            }
+
+            $menu.html(menuItemsHtml.string());
+            that._extendMenuItemElements(menuItems);
+          }
+
+          $q.clearArray(menuItems);
         }
 
-        $q.clearArray(menuItems);
-      }
-
-      $q.callFunction(successHandler);
-    }, jqXHR => {
-      $q.processGenericAjaxError(jqXHR);
-      $q.callFunction(errorHandler);
-    });
+        $q.callFunction(successHandler);
+      }, jqXHR => {
+        $q.processGenericAjaxError(jqXHR);
+        $q.callFunction(errorHandler);
+      });
   },
 
   tuneMenuItems(entityId, parentEntityId, callback) {
