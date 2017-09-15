@@ -169,7 +169,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File {0} already exists. Please, try enter another name..
+        ///   Looks up a localized string similar to File {0} already exists. Please, try enter another name.
         /// </summary>
         public static string FileExistsTryAnother {
             get {
@@ -349,7 +349,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to proceed requested operation for the file {0}. Extension {1} is not supported.
+        ///   Looks up a localized string similar to Unable to proceed requested operation for the file {0}.
         /// </summary>
         public static string OperationIsNotSupported {
             get {
@@ -376,7 +376,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File: {0}. Unhandled error: {1}. Pl error code: {2}. .
+        ///   Looks up a localized string similar to File: {0}. Unhandled error: {1}. Pl error code: {2}.
         /// </summary>
         public static string PlUploadErrorReport {
             get {
