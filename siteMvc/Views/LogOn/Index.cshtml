@@ -32,7 +32,6 @@
                         <dt class="label"></dt>
                         <dd class="field">
                             <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login"/>
-                            <br/>
                             @Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors)
                         </dd>
                     </dl>
@@ -42,17 +41,6 @@
             }
         </div>
     </div>
-
-    @(Html.Telerik().ScriptRegistrar()
-      .DefaultGroup(g => g.Enabled(false))
-      .Scripts(js => js.AddGroup("Main", g => g
-      .Add("es5-shim.js")
-      .Add("jquery/jquery-1.7.1.js")
-      .Add("microsoft/MicrosoftAjax.js")
-      .Add("Silverlight.js")
-      .Add("Quantumart/Common.js")
-      .Add("Quantumart/BackendLogin.js")))
-    )
 
     <script>
       var login = new Quantumart.QP8.BackendLogin({ useSavedCustomerCode: false });

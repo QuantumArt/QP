@@ -2040,7 +2040,6 @@
     <Content Include="Scripts\Quantumart\Toolbar\BackendActionToolbar.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendTreeMenu.js" />
     <Content Include="Scripts\Quantumart\Toolbar\BackendViewToolbar.js" />
-    <Content Include="Scripts\Quantumart\Common.js" />
     <Content Include="Scripts\Quantumart\Info\BackendEntityType.js" />
     <Content Include="Scripts\Quantumart\Toolbar\BackendToolbar.js" />
     <Content Include="Scripts\Quantumart\Info\BackendEntityObject.js" />
@@ -2448,5 +2447,3 @@
   </ProjectExtensions>
   <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
-
-
