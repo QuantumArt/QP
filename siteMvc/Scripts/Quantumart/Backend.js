@@ -36,7 +36,7 @@ Quantumart.QP8.Backend = function (isDebugMode, options) {
   ]);
 
   $(document).bind('click', e => {
-    if (e.which == 2) {
+    if (e.which === 2) {
       e.preventDefault();
     }
   });
@@ -87,21 +87,15 @@ Quantumart.QP8.Backend.prototype = {
   _onEntityReadedHandler: null,
   _onHostExternalCallerContextsUnbindedHandler: null,
 
-  _defaultFirstPaneWidth: 250,
-  _defaultScreenPartPercent: 0.2,
-
   _initialize() {
     this._directLinkExecutor = new Quantumart.QP8.DirectLinkExecutor(this._currentCustomerCode, this._directLinkOptions);
     this._directLinkExecutor.ready($.proxy(function (openByDirectLink) {
       this._directLinkExecutor.attachObserver(window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, this._onActionExecutingHandler);
       this._backendActionExecutor = Quantumart.QP8.BackendActionExecutor.getInstance();
       this._backendActionExecutor.attachObserver(window.EVENT_TYPE_BACKEND_ACTION_EXECUTED, this._onActionExecutedHandler);
-      let widthLeftPane = document.documentElement.clientWidth * this._defaultScreenPartPercent;
-      let firstPanelWidth = widthLeftPane > this._defaultFirstPaneWidth
-          ? widthLeftPane
-          : this._defaultFirstPanelWidth; 
+
       this._backendSplitter = new Quantumart.QP8.BackendSplitter('splitter', {
-        firstPaneWidth: firstPanelWidth,
+        firstPaneWidth: 250,
         minFirstPaneWidth: 50,
         maxFirstPaneWidth: 400,
         stateCookieName: 'leftMenuSize',
@@ -235,7 +229,7 @@ Quantumart.QP8.Backend.prototype = {
       $('form :input').prop('disabled', false);
       $elem.hide();
     } else {
-      if (data.userId == userId) {
+      if (data.userId === userId) {
         message = $l.Communacation.singleUserModeMessage;
         $elem.addClass('info');
         $elem.removeClass('warning');
@@ -296,23 +290,23 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _onEditingAreaEvent(eventType, sender, eventArgs) {
-    if (eventType == window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADING) {
+    if (eventType === window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADING) {
       this._backendTreeMenu.markTreeAsBusy();
-    } else if (eventType == window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADED) {
+    } else if (eventType === window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADED) {
       this._backendTreeMenu.unmarkTreeAsBusy();
       if (eventArgs.get_isSelected()) {
         this._backendTreeMenu.highlightNodeWithEventArgs(eventArgs);
       }
-    } else if (eventType == window.EVENT_TYPE_EDITING_AREA_FIND_TAB_IN_TREE) {
+    } else if (eventType === window.EVENT_TYPE_EDITING_AREA_FIND_TAB_IN_TREE) {
       this._backendTreeMenu.unmarkTreeAsBusy();
       this._backendTreeMenu.highlightNodeWithEventArgs(eventArgs);
-    } else if (eventType == window.EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSING) {
+    } else if (eventType === window.EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSING) {
       this._backendTreeMenu.markTreeAsBusy();
-    } else if (eventType == window.EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSED) {
+    } else if (eventType === window.EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSED) {
       this._backendTreeMenu.unmarkTreeAsBusy();
-    } else if (eventType == window.EVENT_TYPE_EDITING_AREA_DOCUMENT_ERROR) {
+    } else if (eventType === window.EVENT_TYPE_EDITING_AREA_DOCUMENT_ERROR) {
       this._backendTreeMenu.unmarkTreeAsBusy();
-    } else if (eventType == window.EVENT_TYPE_EDITING_AREA_CLOSED) {
+    } else if (eventType === window.EVENT_TYPE_EDITING_AREA_CLOSED) {
       this._backendTreeMenu.unhighlightAllNodes();
     }
   },
@@ -331,7 +325,7 @@ Quantumart.QP8.Backend.prototype = {
     const status = this._backendActionExecutor.executeSpecialAction(eventArgs);
     const that = this;
 
-    if (status == window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING) {
+    if (status === window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING) {
       const actionCode = eventArgs.get_actionCode();
       const action = $a.getSelectedAction(actionCode);
 
@@ -343,7 +337,7 @@ Quantumart.QP8.Backend.prototype = {
             this._backendEditingArea.addDocument(eventArgs);
           }
         } else if (this._isMultistep(action, eventArgs)) {
-          jQuery.when(this._backendActionExecutor.executeMultistepAction(eventArgs)).done(status => {
+          $.when(this._backendActionExecutor.executeMultistepAction(eventArgs)).done(status => {
             if (status == window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
               that._onActionExecuted(eventArgs);
             }
@@ -351,7 +345,7 @@ Quantumart.QP8.Backend.prototype = {
         } else {
           this._markAsBusy();
           const callback = $.proxy(function (status, eventArgs) {
-            if (status == window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
+            if (status === window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
               this._onActionExecuted(eventArgs);
             }
 
@@ -361,7 +355,7 @@ Quantumart.QP8.Backend.prototype = {
           this._backendActionExecutor.executeNonInterfaceAction(eventArgs, callback);
         }
       }
-    } else if (status == window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
+    } else if (status === window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
       this._onActionExecuted(eventArgs);
     }
   },
@@ -380,7 +374,7 @@ Quantumart.QP8.Backend.prototype = {
     this._backendContextMenuManager.onActionExecuted(eventArgs);
     this._backendActionPermissionViewManager.onActionExecuted(eventArgs);
 
-    if (eventArgs.get_isUpdated() && eventArgs.get_entityTypeCode() == window.ENTITY_TYPE_CODE_CUSTOM_ACTION) {
+    if (eventArgs.get_isUpdated() && eventArgs.get_entityTypeCode() === window.ENTITY_TYPE_CODE_CUSTOM_ACTION) {
       Quantumart.QP8.Cache.clear();
     }
   },
