@@ -504,6 +504,7 @@ div.dateTimeWrapper .dateTimeCheckboxWrapper
 {
   float: left;
   margin-right: 5px;
+  height: 16px;
 }
 .formLayout div.fieldWrapper .downloadButton img,
 .formLayout div.fieldWrapper .previewButton img,
