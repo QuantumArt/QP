@@ -2266,6 +2266,8 @@
     <Content Include="Views\PageTemplate\HTAreaToolbar.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Raw.cshtml" />
     <Content Include="Views\LogOn\Popup.cshtml" />
+    <Content Include="Views\LogOn\Index.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
     <None Include="Views\razorgenerator.directives" />
     <None Include="Views\Shared\Error.cshtml">
       <LastGenOutput>Error.generated.cs</LastGenOutput>
