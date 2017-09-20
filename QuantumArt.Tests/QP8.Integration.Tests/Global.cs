@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,7 +11,9 @@ namespace QP8.Integration.Tests
 {
     internal class Global
     {
-        public static string ConnectionString => $"Initial Catalog=qp8_test_{Environment.MachineName.ToLowerInvariant()};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
+        public static string DbName => TestContext.Parameters.Get("qp8_test_ci_dbname", $"qp8_test_{Environment.MachineName.ToLowerInvariant()}");
+
+        public static string ConnectionString => $"Initial Catalog={DbName};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
 
         public static string GetXml(string fileName)
         {

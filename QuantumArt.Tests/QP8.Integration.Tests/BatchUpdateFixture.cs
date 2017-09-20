@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using Moq;
@@ -143,6 +143,8 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
+            TestContext.WriteLine($"Using next database for tests: {Global.DbName}");
+
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
             BaseContentId = Global.GetContentId(Cnn, BaseContent);
@@ -235,6 +237,7 @@ namespace QP8.Integration.Tests
             {
                 InitBaseContentFields();
                 InitExtensions();
+
                 var baseIds = Global.GetIds(Cnn, BaseContentId);
                 ArticleService.Delete(BaseContentId, baseIds);
                 contentService.Delete(Ex11ContentId);

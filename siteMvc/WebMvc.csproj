@@ -754,7 +754,6 @@
     <Content Include="Content\ckeditor\skins\moono\images\refresh.png" />
     <Content Include="Content\ckeditor\skins\moono\images\spinner.gif" />
     <Content Include="Content\ckeditor\styles.js" />
-    <Content Include="Content\codemirror.css" />
     <Content Include="Content\codemirrorTheme.css" />
     <Content Include="Content\codemirror\addon\comment\comment.js" />
     <Content Include="Content\codemirror\addon\comment\continuecomment.js" />
@@ -1400,6 +1399,7 @@
     <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
     <Content Include="Scripts\polyfills\array.find.polyfill.js" />
     <Content Include="Scripts\polyfills\object.assign.polyfill.js" />
+    <Content Include="Scripts\Quantumart\App.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\dialogs\aspell.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\plugin.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\spellerpages\blank.html" />
@@ -1541,6 +1541,12 @@
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\quotes.txt" />
+    <Content Include="Scripts\Quantumart\Common\BackendEventArgs.js" />
+    <Content Include="Scripts\Quantumart\Common\BackendPreviousAction.js" />
+    <Content Include="Scripts\Quantumart\Common\IMediator.js" />
+    <Content Include="Scripts\Quantumart\Common\IObservable.js" />
+    <Content Include="Scripts\Quantumart\Common\IObserver.js" />
+    <Content Include="Scripts\Quantumart\Common\Mediator.js" />
     <Content Include="Scripts\Quantumart\Helpers\vanilla.helpers.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.js" />
@@ -2040,7 +2046,6 @@
     <Content Include="Scripts\Quantumart\Toolbar\BackendActionToolbar.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendTreeMenu.js" />
     <Content Include="Scripts\Quantumart\Toolbar\BackendViewToolbar.js" />
-    <Content Include="Scripts\Quantumart\Common.js" />
     <Content Include="Scripts\Quantumart\Info\BackendEntityType.js" />
     <Content Include="Scripts\Quantumart\Toolbar\BackendToolbar.js" />
     <Content Include="Scripts\Quantumart\Info\BackendEntityObject.js" />
@@ -2214,10 +2219,9 @@
     <Content Include="Views\Home\Index.Template.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
     </Content>
-    <Content Include="Views\Home\Index.cshtml" />
-    <None Include="Views\LogOn\Index.cshtml">
+    <Content Include="Views\LogOn\Index.Template.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </None>
+    </Content>
     <Content Include="Views\Shared\EntityPermissionProperties.cshtml">
     </Content>
     <Content Include="Views\Notification\Index.cshtml">
@@ -2448,5 +2452,3 @@
   </ProjectExtensions>
   <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
-
-
