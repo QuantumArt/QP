@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -473,17 +473,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     if (extensionsMap.ContainsKey(article.BaseArticle.Id) && extensionsMap[article.BaseArticle.Id].ContainsKey(fieldId))
                     {
                         var currentId = extensionsMap[article.BaseArticle.Id][fieldId];
-                        if (currentId == aggregatedArticle.Id)
-                        {
-                            idsToUpdate.Add(aggregatedArticle.Id);
-                            articlesToUpdate.Add(aggregatedArticle);
-                        }
-                        else
-                        {
+                        if (currentId != aggregatedArticle.Id)
+                        {                       
                             aggregatedArticle.Id = currentId;
-                            idsToDelete.Add(aggregatedArticle.Id);
-                            articlesToInsert.Add(aggregatedArticle);
                         }
+                        idsToUpdate.Add(aggregatedArticle.Id);
+                        articlesToUpdate.Add(aggregatedArticle);
                     }
                     else
                     {
