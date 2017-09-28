@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -36,6 +36,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -778,7 +779,6 @@
     <Content Include="Content\ckeditor\skins\moono\images\refresh.png" />
     <Content Include="Content\ckeditor\skins\moono\images\spinner.gif" />
     <Content Include="Content\ckeditor\styles.js" />
-    <Content Include="Content\codemirror.css" />
     <Content Include="Content\codemirrorTheme.css" />
     <Content Include="Content\codemirror\addon\comment\comment.js" />
     <Content Include="Content\codemirror\addon\comment\continuecomment.js" />
@@ -1373,7 +1373,7 @@
     <Content Include="Content\ckeditor\samples\toolbarconfigurator\font\fontello.woff" />
     <Content Include="Content\ckeditor\samples\toolbarconfigurator\lib\codemirror\LICENSE" />
     <Content Include="Content\ckeditor\skins\moono\readme.md" />
-    <Content Include="gulpfile.js" />
+    <Content Include="gulpfile.babel.js" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
