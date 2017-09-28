@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -50,6 +51,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
                 ParentId = ContentId,
                 Id = 0,
                 Ids = Ids,
+                ExtensionContents = ContentRepository.GetList(
+                    ContentRepository.GetReferencedAggregatedContentIds(ContentId /* TODO: или id (contentId) */, Ids ?? new int[0])
+                ).ToArray(),
                 BoundToExternal = BoundToExternal,
                 ItemsPerStep = ItemsPerStep
             };

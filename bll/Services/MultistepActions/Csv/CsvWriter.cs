@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -24,12 +24,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private const string FieldNameHeaderTemplate = "{0}.{1}";
         private const string BaseFieldNameQueryTemplate = "base.[{0}]";
 
-        public CsvWriter(int siteId, int contentId, int[] ids, ExportSettings setts)
+        private readonly int _siteId;
+        private readonly int _contentId;
+        private readonly ExportSettings _settings;
+        private readonly int[] _ids;
+        private int _processedItemsCount;
+        private int _step;
+        private StringBuilder _sb;
+        private int _itemsPerStep;
+        private readonly IEnumerable<Content> _extensionContents;
+
+        public CsvWriter(int siteId, int contentId, int[] ids, IEnumerable<Content> extensionContents, ExportSettings settings)
         {
             _siteId = siteId;
             _contentId = contentId;
-            _settings = setts;
+            _settings = settings;
             _ids = ids;
+            _extensionContents = extensionContents;
         }
 
         public bool CsvReady => _itemsPerStep * (_step + 1) >= _ids.Length;
@@ -71,31 +82,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return _processedItemsCount;
         }
 
-        private readonly int _siteId;
-        private readonly int _contentId;
-        private readonly ExportSettings _settings;
-        private readonly int[] _ids;
-        private int _processedItemsCount;
-        private int _step;
-        private StringBuilder _sb;
-        private int _itemsPerStep;
-        private Content[] _extensionContents;
-
         private int StartFrom => _step * _itemsPerStep + 1;
-
-        private IEnumerable<Content> ExtensionContents
-        {
-            get
-            {
-                if (_extensionContents == null)
-                {
-                    var extensionContentIds = ContentRepository.GetReferencedAggregatedContentIds(_settings.ContentId, _ids ?? new int[0]);
-                    _extensionContents = ContentRepository.GetList(extensionContentIds).ToArray();
-                }
-
-                return _extensionContents;
-            }
-        }
 
         private void WriteFieldNames()
         {
@@ -139,9 +126,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var articles = GetArticlesForExport(_settings.FieldsToExpandSettings);
             var aliases = _settings.FieldsToExpandSettings.Select(n => n.Alias).ToArray();
 
-            var fields = ExtensionContents.SelectMany(c => c.Fields).Concat(FieldRepository.GetFullList(_contentId)).ToList();
+            var fields = _extensionContents.SelectMany(c => c.Fields).Concat(FieldRepository.GetFullList(_contentId)).ToList();
             var ids = articles.AsEnumerable().Select(n => (int)n.Field<decimal>("content_item_id")).ToArray();
-            var extensionIdsMap = ExtensionContents.ToDictionary(c => c.Id, c => articles
+            var extensionIdsMap = _extensionContents.ToDictionary(c => c.Id, c => articles
                 .AsEnumerable()
                 .Select(n => n.Field<decimal?>(string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName)))
                 .Where(n => n.HasValue)
@@ -172,7 +159,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         {
                             _sb.AppendFormat("{0}{1}", FormatFieldValue(article, value, field, dict), _settings.Delimiter);
                         }
-                        else if (ExtensionContents.Any(c => string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName) == column.ColumnName))
+                        else if (_extensionContents.Any(c => string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName) == column.ColumnName))
                         {
                             _sb.AppendFormat("{0}{1}", string.IsNullOrEmpty(value) ? "NULL" : value, _settings.Delimiter);
                         }
@@ -414,9 +401,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private void UpdateExportSettings()
         {
-            _settings.FieldNames = GetFieldNames(ExtensionContents);
-            _settings.HeaderNames = GetHeaderNames(ExtensionContents);
-            _settings.Extensions = GetExtensions(ExtensionContents);
+            _settings.FieldNames = GetFieldNames(_extensionContents);
+            _settings.HeaderNames = GetHeaderNames(_extensionContents);
+            _settings.Extensions = GetExtensions(_extensionContents);
         }
     }
 }
