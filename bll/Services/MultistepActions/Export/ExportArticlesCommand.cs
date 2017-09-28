@@ -43,9 +43,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
                 ParentId = SiteId,
                 Id = ContentId,
                 Ids = Ids,
-                ExtensionContents = ContentRepository.GetList(
-                    ContentRepository.GetReferencedAggregatedContentIds(ContentId /* TODO: или id (contentId) */, Ids ?? new int[0])
-                ).ToArray()
+                ExtensionContents = ExtensionContents
             };
         }
 
