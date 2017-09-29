@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -13,7 +13,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
     public class ArticleViewModel : LockableEntityViewModel
     {
-        public const int MaxDataListItemCount = 10;
 
         public new BLL.Article Data
         {
@@ -242,7 +241,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             var selectedArticleIDs = Converter.ToInt32Collection(value, ',');
             var filter = baseField.GetRelationFilter(articleId);
             var itemCount = ArticleService.Count(contentId, filter);
-            var isListOverflow = itemCount > MaxDataListItemCount;
+            var isListOverflow = field.MaxDataListItemCount == 0 || itemCount > field.MaxDataListItemCount ;
             var mode = isListOverflow ? Constants.ListSelectionMode.OnlySelectedItems : Constants.ListSelectionMode.AllItems;
             var list = new List<ListItem>();
             if (!isListOverflow || selectedArticleIDs.Length != 0)

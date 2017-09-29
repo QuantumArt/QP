@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -782,5 +782,11 @@
   </data>
   <data name="LinqPropertyNameExistInSystemColumns" xml:space="preserve">
     <value>Такое имя LINQ-свойства уже используется как системное</value>
+  </data>
+  <data name="MaxDataListItemCount" xml:space="preserve">
+    <value>Макисмальное количество элементов</value>
+  </data>
+  <data name="MaxDataItemCountNotInRange" xml:space="preserve">
+    <value>Содержимое поля не входит в допустимый диапазон: от {3} до {5} </value>
   </data>
 </root>

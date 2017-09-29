@@ -133,6 +133,7 @@ namespace Quantumart.QP8.BLL.Mappers
                     break;
                 case FieldTypeCodes.Numeric:
                     dataObject.Size = bizObject.DecimalPlaces;
+                    dataObject.MaxDataListItemCount = bizObject.MaxDataListItemCount;
                     if (bizObject.DecimalPlaces != 0)
                     {
                         dataObject.IsLong = bizObject.IsDecimal;

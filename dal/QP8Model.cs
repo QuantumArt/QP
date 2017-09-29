@@ -17464,7 +17464,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="isLocalization">Initial value of the IsLocalization property.</param>
         /// <param name="useSeparateReverseViews">Initial value of the UseSeparateReverseViews property.</param>
         /// <param name="disableListAutoWrap">Initial value of the DisableListAutoWrap property.</param>
-        public static FieldDAL CreateFieldDAL(global::System.Decimal id, global::System.Decimal contentId, global::System.String name, global::System.Decimal size, global::System.Decimal typeId, global::System.Decimal indexFlag, global::System.DateTime modified, global::System.DateTime created, global::System.Decimal lastModifiedBy, global::System.Decimal order, global::System.Decimal required, global::System.Decimal permanentFlag, global::System.Decimal primaryFlag, global::System.Decimal displayAsRadioButton, global::System.Boolean viewInList, global::System.Boolean readonlyFlag, global::System.Decimal allowStageEdit, global::System.Boolean autoLoad, global::System.Boolean useSiteLibrary, global::System.Boolean useArchiveArticles, global::System.Boolean autoExpand, global::System.Boolean fullPage, global::System.Boolean renameMatched, global::System.Boolean disableVersionControl, global::System.Boolean mapAsProperty, global::System.Boolean isLong, global::System.Boolean useForTree, global::System.Boolean autoCheckChildren, global::System.Boolean aggregated, global::System.Boolean isClassifier, global::System.Boolean changeable, global::System.Boolean useRelationSecurity, global::System.Boolean copyPermissionsToChildren, global::System.Boolean showAsRadioButtons, global::System.Boolean useForDefaultFiltration, global::System.Boolean hide, global::System.Boolean @override, global::System.Boolean useForContext, global::System.Boolean useForVariations, global::System.Boolean orderByTitle, global::System.Int32 fieldTitleCount, global::System.Boolean includeRelationsInTitle, global::System.Boolean useInChildContentFilter, global::System.Boolean optimizeForHierarchy, global::System.Boolean isLocalization, global::System.Boolean useSeparateReverseViews, global::System.Boolean disableListAutoWrap)
+        /// <param name="maxDataListItemCount">Initial value of the MaxDataListItemCount property.</param>
+        public static FieldDAL CreateFieldDAL(global::System.Decimal id, global::System.Decimal contentId, global::System.String name, global::System.Decimal size, global::System.Decimal typeId, global::System.Decimal indexFlag, global::System.DateTime modified, global::System.DateTime created, global::System.Decimal lastModifiedBy, global::System.Decimal order, global::System.Decimal required, global::System.Decimal permanentFlag, global::System.Decimal primaryFlag, global::System.Decimal displayAsRadioButton, global::System.Boolean viewInList, global::System.Boolean readonlyFlag, global::System.Decimal allowStageEdit, global::System.Boolean autoLoad, global::System.Boolean useSiteLibrary, global::System.Boolean useArchiveArticles, global::System.Boolean autoExpand, global::System.Boolean fullPage, global::System.Boolean renameMatched, global::System.Boolean disableVersionControl, global::System.Boolean mapAsProperty, global::System.Boolean isLong, global::System.Boolean useForTree, global::System.Boolean autoCheckChildren, global::System.Boolean aggregated, global::System.Boolean isClassifier, global::System.Boolean changeable, global::System.Boolean useRelationSecurity, global::System.Boolean copyPermissionsToChildren, global::System.Boolean showAsRadioButtons, global::System.Boolean useForDefaultFiltration, global::System.Boolean hide, global::System.Boolean @override, global::System.Boolean useForContext, global::System.Boolean useForVariations, global::System.Boolean orderByTitle, global::System.Int32 fieldTitleCount, global::System.Boolean includeRelationsInTitle, global::System.Boolean useInChildContentFilter, global::System.Boolean optimizeForHierarchy, global::System.Boolean isLocalization, global::System.Boolean useSeparateReverseViews, global::System.Boolean disableListAutoWrap, global::System.Decimal maxDataListItemCount)
         {
             FieldDAL fieldDAL = new FieldDAL();
             fieldDAL.Id = id;
@@ -17514,6 +17515,7 @@ namespace Quantumart.QP8.DAL
             fieldDAL.IsLocalization = isLocalization;
             fieldDAL.UseSeparateReverseViews = useSeparateReverseViews;
             fieldDAL.DisableListAutoWrap = disableListAutoWrap;
+            fieldDAL.MaxDataListItemCount = maxDataListItemCount;
             return fieldDAL;
         }
 
@@ -19323,6 +19325,30 @@ namespace Quantumart.QP8.DAL
         private global::System.String _TaHighlightType;
         partial void OnTaHighlightTypeChanging(global::System.String value);
         partial void OnTaHighlightTypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal MaxDataListItemCount
+        {
+            get
+            {
+                return _MaxDataListItemCount;
+            }
+            set
+            {
+                OnMaxDataListItemCountChanging(value);
+                ReportPropertyChanging("MaxDataListItemCount");
+                _MaxDataListItemCount = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MaxDataListItemCount");
+                OnMaxDataListItemCountChanged();
+            }
+        }
+        private global::System.Decimal _MaxDataListItemCount;
+        partial void OnMaxDataListItemCountChanging(global::System.Decimal value);
+        partial void OnMaxDataListItemCountChanged();
 
         #endregion
 
