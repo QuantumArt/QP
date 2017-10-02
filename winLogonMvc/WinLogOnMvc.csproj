@@ -134,7 +134,6 @@
     </None>
     <Content Include="Views\WinLogOn\Popup.cshtml" />
     <None Include="packages.config" />
-    <None Include="Views\WinLogOn\Index.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -147,6 +146,8 @@
     <None Include="Views\Web.config">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Views\WinLogOn\Index.Template.cshtml" />
+    <Content Include="Views\WinLogOn\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -210,5 +211,3 @@
   <Import Project="$(SolutionDir)packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('$(SolutionDir)packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
   <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
-
-

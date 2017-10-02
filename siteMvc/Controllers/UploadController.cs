@@ -25,6 +25,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         public ActionResult UploadChunk(int? chunk, int? chunks, string name, string destinationUrl)
         {
+            if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                var errorMsg = $"File to upload: \"{name}\" has invalid characters";
+                Logger.Log.Warn(errorMsg);
+                return Json(new { message = errorMsg, isError = true });
+            }
+
             destinationUrl = HttpUtility.UrlDecode(destinationUrl);
             if (string.IsNullOrEmpty(destinationUrl))
             {

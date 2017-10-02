@@ -1,4 +1,4 @@
-@using Quantumart.QP8.Resources
+﻿@using Quantumart.QP8.Resources
 @model Quantumart.QP8.BLL.LogOnCredentials
 
 @{
@@ -9,7 +9,7 @@
     <title>Login page</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
-    <link rel="stylesheet" href="@Url.Content("~/Content/build/app-logon.css?rel=0.1.0.0")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/build/app-logon.css?rel=@@version")" />
 </head>
 <body>
     <div id="page" class="loginFormLayout">
@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <script src="@Url.Content("~/Scripts/build/vendors-logon.js?rel=0.1.0.0")"></script>
-    <script src="@Url.Content("~/Scripts/build/app-logon.js?rel=0.1.0.0")"></script>
+    <script src="@Url.Content("~/Scripts/build/vendors-logon.js?rel=@@version")"></script>
+    <script src="@Url.Content("~/Scripts/build/app-logon.js?rel=@@version")"></script>
     <script>var login = new Quantumart.QP8.BackendLogin({ useSavedCustomerCode: false });</script>
 </body>
