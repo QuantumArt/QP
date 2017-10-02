@@ -25,4 +25,6 @@ Quantumart.QP8.ActionLogTextFilter.prototype = {
   }
 };
 
-Quantumart.QP8.ActionLogTextFilter.registerClass('Quantumart.QP8.ActionLogTextFilter', Quantumart.QP8.ActionLogFilterBase);
+Quantumart.QP8.ActionLogTextFilter.registerClass(
+  'Quantumart.QP8.ActionLogTextFilter', Quantumart.QP8.ActionLogFilterBase
+);

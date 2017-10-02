@@ -212,7 +212,10 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
       }
     }
 
-    $searchBlock.verticalResizer({ bottomHandleCssClassName: 'searchBottomHandle', minPanelHeight: this._minSearchBlockHeight, maxPanelHeight: this._maxSearchBlockHeight });
+    $searchBlock.verticalResizer({
+      bottomHandleCssClassName: 'searchBottomHandle',
+      minPanelHeight: this._minSearchBlockHeight,
+      maxPanelHeight: this._maxSearchBlockHeight });
     this._verticalResizerComponent = $searchBlock.data('vertical_resizer');
 
     this._searchBlockElement = $searchBlock.get(0);

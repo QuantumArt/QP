@@ -12,13 +12,16 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
   _searchBlockComponent: null,
 
   initialize() {
-    const $view = $(`#${this._viewElementId}`);
     const treeElementId = $('.treeContainer .t-treeview').attr('id');
 
     this._treeComponent = new Quantumart.QP8.BackendActionPermissionTree(treeElementId);
-    this._treeComponent.attachObserver(window.EVENT_TYPE_ACTION_PERMISSIONS_TREE_EXECUTING, jQuery.proxy(this._onActionExecuting, this));
+    this._treeComponent.attachObserver(
+      window.EVENT_TYPE_ACTION_PERMISSIONS_TREE_EXECUTING, jQuery.proxy(this._onActionExecuting, this)
+    );
     this._treeComponent.initialize();
-    this._searchBlockComponent = new Quantumart.QP8.BackendUserAndGroupSearchBlock(this._viewElementId, jQuery.proxy(this._onApplyFilter, this));
+    this._searchBlockComponent = new Quantumart.QP8.BackendUserAndGroupSearchBlock(
+      this._viewElementId, jQuery.proxy(this._onApplyFilter, this)
+    );
   },
 
   _onApplyFilter() {
@@ -30,8 +33,10 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
 
   _onActionExecuting(eventType, sender, eventArgs) {
     const actionCode = eventArgs.get_actionCode();
-    if (actionCode == window.ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE || actionCode == window.ACTION_CODE_REMOVE_ENTITY_TYPE_PERMISSION_NODE
-      || actionCode == window.ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE || actionCode == window.ACTION_CODE_REMOVE_ACTION_PERMISSION_NODE) {
+    if (actionCode === window.ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE
+      || actionCode === window.ACTION_CODE_REMOVE_ENTITY_TYPE_PERMISSION_NODE
+      || actionCode === window.ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE
+      || actionCode === window.ACTION_CODE_REMOVE_ACTION_PERMISSION_NODE) {
       const eventArgsContext = eventArgs.get_context();
       eventArgs.set_context(Object.assign({}, eventArgsContext,
         {
@@ -65,4 +70,6 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
   }
 };
 
-Quantumart.QP8.BackendActionPermissionView.registerClass('Quantumart.QP8.BackendActionPermissionView', Quantumart.QP8.Observable);
+Quantumart.QP8.BackendActionPermissionView.registerClass(
+  'Quantumart.QP8.BackendActionPermissionView', Quantumart.QP8.Observable
+);

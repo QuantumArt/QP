@@ -209,7 +209,7 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
       $panels.hide();
     } else {
       $panels.show();
-      $q.warnIfEqDiffer(selectedContentId, fieldContentID);
+      $q.warnIfEqDiff(selectedContentId, fieldContentID);
       if (selectedContentId === fieldContentID) {
         $panels.filter('[showforcurrent]').show();
         $panels.filter('[hideforcurrent]').hide();

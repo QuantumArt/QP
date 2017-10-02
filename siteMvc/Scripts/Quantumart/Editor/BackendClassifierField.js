@@ -98,15 +98,16 @@ Quantumart.QP8.BackendClassifierField.prototype = {
       if ($hidden.length) {
         $hidden.val(selectedVal);
       } else {
-        this._$contentList.after(`<input type="hidden" name="${this._$contentList.prop('name')}" value="${selectedVal}" />`);
+        this._$contentList.after(
+          `<input type="hidden" name="${this._$contentList.prop('name')}" value="${selectedVal}" />`
+        );
       }
     }
 
     this._$contentList.addClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', true);
   },
 
-  _onContentSelected(e) {
-    const tabId = this._$componentElem.data('host_id');
+  _onContentSelected() {
     const rootContentId = +this._$componentElem.data('root_content_id') || 0;
     const rootArticleId = +this._$componentElem.data('root_article_id') || 0;
     const aggregatedContentId = +this._$contentList.find('option:selected').val() || 0;
@@ -275,4 +276,6 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   }
 };
 
-Quantumart.QP8.BackendClassifierField.registerClass('Quantumart.QP8.BackendClassifierField', Quantumart.QP8.Observable);
+Quantumart.QP8.BackendClassifierField.registerClass(
+  'Quantumart.QP8.BackendClassifierField', Quantumart.QP8.Observable
+);

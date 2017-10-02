@@ -63,10 +63,10 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   _onUploadSuccessHandler(e) {
     this._uploadedFiles = [];
     if (e.response) {
-      if (!e.response.proceed) {
-        $q.alertSuccess(e.response.msg);
-      } else {
+      if (e.response.proceed) {
         $.merge(this._uploadedFiles, e.response.fileNames);
+      } else {
+        $q.alertSuccess(e.response.msg);
       }
     }
   },
@@ -92,7 +92,11 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     $.each(e.files, function () {
       if (this.size && this.size >= window.MAX_UPLOAD_SIZE_BYTES) {
         toPrevent = true;
-        $q.alertFail(String.format(window.HTML_UPLOAD_MAX_SIZE_MESSAGE, this.name, Math.ceil(window.MAX_UPLOAD_SIZE_BYTES / 1024 / 1024 * 100) / 100));
+        $q.alertFail(String.format(
+          window.HTML_UPLOAD_MAX_SIZE_MESSAGE,
+          this.name,
+          Math.ceil(window.MAX_UPLOAD_SIZE_BYTES / 1024 / 1024 * 100) / 100)
+        );
       }
     });
 
@@ -105,7 +109,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
       const extensions = $.map(this._extensions.split(';'), val => val.toLowerCase());
 
       $.each(e.files, function () {
-        if (Array.indexOf(extensions, this.extension.toLowerCase()) == -1) {
+        if (Array.indexOf(extensions, this.extension.toLowerCase()) === -1) {
           toPrevent = true;
           $q.alertFail(String.format(window.UPLOAD_EXTENSION_MESSAGE, this.name, this.extension));
         }
@@ -152,4 +156,6 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
   }
 };
 
-Quantumart.QP8.BackendHtmlUploader.registerClass('Quantumart.QP8.BackendHtmlUploader', Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader);
+Quantumart.QP8.BackendHtmlUploader.registerClass(
+  'Quantumart.QP8.BackendHtmlUploader', Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader
+);

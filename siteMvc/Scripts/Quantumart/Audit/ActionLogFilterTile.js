@@ -62,11 +62,12 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
   },
 
   _createFilter() {
+    const applyText = $l.SearchBlock.closeAndApplyWndButtonText;
     const html = new $.telerik.stringBuilder()
       .cat('<form class="formLayout alFilter">')
       .cat('<div class="filterContainer"></div>')
       .cat('<div>')
-      .cat(`<input class="button closeAndApplyFilter" type="button" value="${$l.SearchBlock.closeAndApplyWndButtonText}">`)
+      .cat(`<input class="button closeAndApplyFilter" type="button" value="${applyText}">`)
       .cat(`<input class="button closeFilter" type="button" value="${$l.SearchBlock.closeWndButtonText}">`)
       .cat('</div>')
       .cat('</form>')
@@ -84,7 +85,8 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     }).data('tWindow').center();
 
     $('.closeFilter', this._popupWindowComponent.element).click($.proxy(this._onCloseFilterWndClick, this));
-    $('.closeAndApplyFilter', this._popupWindowComponent.element).click($.proxy(this._onCloseAndApplyFilterWndClick, this));
+    $('.closeAndApplyFilter', this._popupWindowComponent.element)
+      .click($.proxy(this._onCloseAndApplyFilterWndClick, this));
     $('form', this._popupWindowComponent.element).submit($.proxy(this._onFilterFormSubmitted, this));
 
 

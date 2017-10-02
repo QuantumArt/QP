@@ -7,7 +7,9 @@ window.Backend.Lang.Common = {
   error500Title: 'An error occurred!',
   error500Text: '<p>On requested page encountered an error.<br />\nWe apologize for any inconvenience.</p>',
   error404Title: 'Page not found!',
-  error404Text: '<p>Requested page does not exist.<br />\nPerhaps you made a mistake when writing url address or page has been deleted.</p>',
+  error404Text:
+  '<p>Requested page does not exist.<br />'
+    + '\nPerhaps you made a mistake when writing url address or page has been deleted.</p>',
   eventTypeNotSpecified: 'You do not specify event type!',
   eventArgsNotSpecified: 'You do not specify arguments of event "{0}"!',
   observerIsNotFunctionOrObject: 'Attaching observer is not an object or function!',

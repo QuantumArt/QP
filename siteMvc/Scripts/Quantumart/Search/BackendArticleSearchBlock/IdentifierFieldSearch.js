@@ -63,7 +63,9 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   get_searchQuery() {
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
+    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier,
+      this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
       this.get_IsNull(),
       $(this._numberFromElement).data('tTextBox').value(),
       $(this._numberToElement).data('tTextBox').value(),
@@ -73,7 +75,9 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   get_blockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
+    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier,
+      this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
         inverse: this.get_IsNull(),
         from: $(this._numberFromElement).data('tTextBox').value(),
@@ -130,8 +134,8 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   _onByValueSelectorChanged(e) {
-    this._isByValue = $(e.currentTarget).val() == 0;
-    this._isByText = $(e.currentTarget).val() == 2;
+    this._isByValue = $(e.currentTarget).val() === 0;
+    this._isByText = $(e.currentTarget).val() === 2;
 
     if (this._isByText) {
       $(this._textAreaElement).closest('.row').show();

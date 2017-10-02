@@ -1,5 +1,9 @@
-Quantumart.QP8.BackendArticleSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
-  Quantumart.QP8.BackendArticleSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
+Quantumart.QP8.BackendArticleSearchBlock = function (
+  searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options
+) {
+  Quantumart.QP8.BackendArticleSearchBlock.initializeBase(
+    this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]
+  );
   this.isVirtual = options.isVirtual;
   this._minSearchBlockHeight = this.isVirtual ? 125 : 180;
 };
@@ -19,7 +23,11 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       this._defaultFieldSearchBlockState = this._searchBlockState.defaultFieldSearchBlockState;
 
       let $buttonsWrapper = $(this._buttonsWrapperElement);
-      this._$defaultFilterButton = $('<input />', { type: 'button', value: $l.SearchBlock.defaultFilterButtonText, class: 'button' });
+      this._$defaultFilterButton = $('<input />', {
+        type: 'button',
+        value: $l.SearchBlock.defaultFilterButtonText,
+        class: 'button'
+      });
       $buttonsWrapper.append('&nbsp;');
       $buttonsWrapper.append(this._$defaultFilterButton);
       $buttonsWrapper = null;
@@ -34,7 +42,9 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       if (!this.isVirtual) {
         const $fullTextBlockElement = $('<div/>', { class: 'articleSearchRegion' });
         this._fullTextBlockElement = $fullTextBlockElement.get(0);
-        this._fullTextBlock = new Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock(this._fullTextBlockElement, this.get_parentEntityId());
+        this._fullTextBlock = new Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock(
+          this._fullTextBlockElement, this.get_parentEntityId()
+        );
         this._fullTextBlock.initialize();
 
         $concreteSearchBlockElement.append($fullTextBlockElement);
@@ -43,7 +53,9 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       const $fieldSeachBlockElement = $('<div/>', { class: 'articleSearchRegion' });
       this._fieldSearchBlockElement = $fieldSeachBlockElement.get(0);
 
-      this._fieldSearchBlock = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock(this._fieldSearchBlockElement, this.get_parentEntityId());
+      this._fieldSearchBlock = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock(
+        this._fieldSearchBlockElement, this.get_parentEntityId()
+      );
       this._fieldSearchBlock.initialize();
 
       $concreteSearchBlockElement.append($fieldSeachBlockElement);
@@ -175,7 +187,9 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
   }
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (searchType, fieldID, fieldColumn, contentId, referenceFieldId) {
+Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (
+  searchType, fieldID, fieldColumn, contentId, referenceFieldId
+) {
   return {
     SearchType: searchType,
     FieldID: fieldID,
@@ -186,4 +200,7 @@ Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (sear
   };
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.registerClass('Quantumart.QP8.BackendArticleSearchBlock', Quantumart.QP8.BackendSearchBlockBase);
+Quantumart.QP8.BackendArticleSearchBlock.registerClass(
+  'Quantumart.QP8.BackendArticleSearchBlock',
+  Quantumart.QP8.BackendSearchBlockBase
+);

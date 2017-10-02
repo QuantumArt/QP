@@ -122,8 +122,9 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     return filename.toLowerCase().endsWith(value.toLowerCase());
   },
 
-  _showOrHidePreviewButton(filename, $previewButton) {
-    const _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
+  _showOrHidePreviewButton(filename) {
+    const it = Quantumart.QP8.Enums.LibraryFileType.Image;
+    const _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[it].split(';');
 
     const result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
     if ((typeof result !== 'undefined' && result.length > 0) || this._isImage) {

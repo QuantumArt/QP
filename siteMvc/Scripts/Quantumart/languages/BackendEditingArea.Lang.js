@@ -8,6 +8,7 @@ window.Backend.Lang.EditingArea = {
   cancelActionNotExist: 'Action type "Cancel" is not provided for entity type!',
   documentWrapperNotSpecified: 'Not specified document identifier that is bound to tab!',
   tabIdNotSpecifiedInConstructor: 'You do not specify tab id in constructor of class BackendEditingDocument!',
-  editingAreaNotSpecifiedInConstructor: 'You do not specify editing area in constructor of class BackendEditingDocument!',
+  editingAreaNotSpecifiedInConstructor:
+  'You do not specify editing area in constructor of class BackendEditingDocument!',
   editingDocumentWithSpecifiedIdNotExist: 'Editing document with ID {0} does not exist!'
 };

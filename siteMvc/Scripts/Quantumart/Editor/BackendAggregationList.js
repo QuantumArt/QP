@@ -28,8 +28,6 @@ Quantumart.QP8.BackendAggregationList.prototype = {
   initialize() {
     const aggrList = this._componentElem;
     $(aggrList).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT, this);
-    const result = this._resultElem;
-    const containerElem = this._containerElem;
     this._items = ko.observableArray(aggrList.data('aggregation_list_data'));
     this._fields = aggrList.data('aggregation_list_item_fields').split(',');
     this._addItemHandler = jQuery.proxy(this.addItem, this);
@@ -49,7 +47,11 @@ Quantumart.QP8.BackendAggregationList.prototype = {
       this._viewModel[curName] = ko.observableArray(aggrList.data(`additional_${curName}`).split(','));
     }
 
-    ko.applyBindingsToNode(this._containerElem.get(0), { template: { name: aggrList.attr('id').replace('_aggregationlist', '_template') } }, this._viewModel);
+    ko.applyBindingsToNode(
+      this._containerElem.get(0),
+      { template: { name: aggrList.attr('id').replace('_aggregationlist', '_template') } },
+      this._viewModel
+    );
     this._tableHeader = $('thead', this._componentElem);
     this._tableBody = $('tbody', this._componentElem);
     this.checkHeaders();
@@ -98,12 +100,14 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     let $field = $(this._resultElem);
     $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
     const fieldName = $(this._componentElem).data('field_name');
-    $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName, value: this._items(), contentFieldName: $field.closest('dl').data('field_name') });
+    $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED,
+      { fieldName, value: this._items(), contentFieldName: $field.closest('dl').data('field_name') }
+    );
     $field = null;
   },
 
   checkHeaders() {
-    if (this._tableBody.children('tr').size() == 0) {
+    if (this._tableBody.children('tr').size() === 0) {
       this._tableHeader.hide();
     } else {
       this._tableHeader.show();

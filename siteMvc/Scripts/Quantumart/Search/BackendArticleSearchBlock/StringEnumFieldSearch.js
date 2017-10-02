@@ -1,5 +1,9 @@
-Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
-  Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
+Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (
+  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID
+) {
+  Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.initializeBase(
+    this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]
+  );
   this._onIsNullCheckBoxChangeHandler = jQuery.proxy(this._onIsNullCheckBoxChange, this);
 };
 
@@ -18,14 +22,14 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
       },
       false,
       false,
-      (data, textStatus, jqXHR) => {
+      data => {
         if (data.success) {
           serverContent = data.view;
         } else {
           $q.alertFail(data.message);
         }
       },
-      (jqXHR, textStatus, errorThrown) => {
+      jqXHR => {
         serverContent = null;
         $q.processGenericAjaxError(jqXHR);
       }
@@ -45,13 +49,16 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
   },
 
   get_searchQuery() {
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
+    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
       this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
       $(this._queryDropDownListElement).val());
   },
 
   get_blockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
+    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
+      this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
         isNull: this.get_IsNull(),
         text: $(this._queryDropDownListElement).val(),
@@ -111,4 +118,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
   _isNullCheckBoxElement: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.registerClass(
+  'Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch',
+  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
+);

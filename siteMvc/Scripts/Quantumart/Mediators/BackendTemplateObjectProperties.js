@@ -67,7 +67,9 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
     }
   };
 
-  $componentElem.on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, window.CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
+  $componentElem.on(
+    window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, window.CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged
+  );
   $parentObjectSelector.change($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
   $overrideChkbx.click($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
 

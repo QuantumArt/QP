@@ -9,7 +9,8 @@ Quantumart.QP8.BackendDocumentHostStateStorage = function (options) {
     }
   }
 
-  this._keyPrefix = `${Quantumart.QP8.BackendDocumentHostStateStorage._keyNameRoot}.${this._currentCustomerCode}.${this._currentUserId}`;
+  const root = Quantumart.QP8.BackendDocumentHostStateStorage._keyNameRoot;
+  this._keyPrefix = `${root}.${this._currentCustomerCode}.${this._currentUserId}`;
 };
 
 Quantumart.QP8.BackendDocumentHostStateStorage._keyNameRoot = 'Quantumart.QP8.BackendDocumentHostStateStorage';

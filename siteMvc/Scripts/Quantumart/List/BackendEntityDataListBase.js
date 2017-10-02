@@ -792,7 +792,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
   _onPasteButtonClickHandler() {
     const storage = this._getValueStorage();
-    $q.warnIfEqDiffer(storage.parentEntityId, this._parentEntityId);
+    $q.warnIfEqDiff(storage.parentEntityId, this._parentEntityId);
     if (storage.entities) {
       if (storage.entityTypeCode !== this._entityTypeCode) {
         $q.alertError($l.EntityDataList.typesDoesNotMatchMessage);

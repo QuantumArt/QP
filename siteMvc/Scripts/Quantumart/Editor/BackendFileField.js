@@ -224,7 +224,8 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _showOrHidePreviewButton(filename, $previewButton) {
-    const _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image].split(';');
+    const it = Quantumart.QP8.Enums.LibraryFileType.Image;
+    const _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[it].split(';');
     const result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
     if ((typeof result !== 'undefined' && result.length > 0) || this._isImage) {
       $previewButton.show();
@@ -269,7 +270,8 @@ Quantumart.QP8.BackendFileField.prototype = {
   },
 
   _initFileUploader() {
-    const extensions = this._isImage ? window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
+    const it = Quantumart.QP8.Enums.LibraryFileType.Image;
+    const extensions = this._isImage ? window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[it] : '';
 
     if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
       this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
@@ -293,7 +295,9 @@ Quantumart.QP8.BackendFileField.prototype = {
 
     this._uploaderComponent.initialize();
     this.updateUploader();
-    this._uploaderComponent.attachObserver(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, $.proxy(this._onFileUploadedHandler, this));
+    this._uploaderComponent.attachObserver(
+      window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, $.proxy(this._onFileUploadedHandler, this)
+    );
   },
 
   _getFormScriptOptions() {
@@ -311,7 +315,13 @@ Quantumart.QP8.BackendFileField.prototype = {
 
       if (!$q.isNullOrWhiteSpace(fieldValue)) {
         $c.destroyPopupWindow(this._previewWindowComponent);
-        const urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId, parentEntityId: this._libraryParentEntityId };
+        const urlParams = {
+          id: fieldName,
+          fileName: encodeURIComponent(fieldValue),
+          isVersion: this._isVersion,
+          entityId: this._entityId,
+          parentEntityId: this._libraryParentEntityId
+        };
         const testUrl = Quantumart.QP8.BackendLibrary.generateActionUrl('GetImageProperties', urlParams);
 
         this._previewWindowComponent = $c.preview(testUrl);
@@ -327,7 +337,12 @@ Quantumart.QP8.BackendFileField.prototype = {
       const fieldValue = $fileField.val();
 
       if (!$q.isNullOrWhiteSpace(fieldValue)) {
-        const urlParams = { id: fieldName, fileName: encodeURIComponent(fieldValue), isVersion: this._isVersion, entityId: this._entityId };
+        const urlParams = {
+          id: fieldName,
+          fileName: encodeURIComponent(fieldValue),
+          isVersion: this._isVersion,
+          entityId: this._entityId
+        };
         const url = Quantumart.QP8.BackendLibrary.generateActionUrl('TestFieldValueDownload', urlParams);
 
         $c.downloadFileWithChecking(url, fieldValue);
@@ -351,13 +366,22 @@ Quantumart.QP8.BackendFileField.prototype = {
     eventArgs.set_parentEntityId(this._libraryParentEntityId);
     eventArgs.set_entityName('');
     eventArgs.set_entityTypeCode(this._useSiteLibrary ? window.ENTITY_TYPE_CODE_SITE : window.ENTITY_TYPE_CODE_CONTENT);
-    eventArgs.set_actionCode(this._useSiteLibrary ? window.ACTION_CODE_POPUP_SITE_LIBRARY : window.ACTION_CODE_POPUP_CONTENT_LIBRARY);
-    let options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId, subFolder: this._subFolder, allowUpload: this._allowFileUpload } };
+    eventArgs.set_actionCode(
+      this._useSiteLibrary ? window.ACTION_CODE_POPUP_SITE_LIBRARY : window.ACTION_CODE_POPUP_CONTENT_LIBRARY
+    );
+    let options = {
+      isMultiOpen: true,
+      additionalUrlParameters: { filterFileTypeId, subFolder: this._subFolder, allowUpload: this._allowFileUpload }
+    };
 
     if (!this._selectPopupWindowComponent) {
       this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, options);
-      this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, $.proxy(this._librarySelectedHandler, this));
-      this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, $.proxy(this._libraryClosedHandler, this));
+      this._selectPopupWindowComponent.attachObserver(
+        window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, $.proxy(this._librarySelectedHandler, this)
+      );
+      this._selectPopupWindowComponent.attachObserver(
+        window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, $.proxy(this._libraryClosedHandler, this)
+      );
     }
 
     this._selectPopupWindowComponent.openWindow();

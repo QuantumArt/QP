@@ -1,5 +1,10 @@
-Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType) {
-  Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType]);
+Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (
+  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType
+) {
+  Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.initializeBase(this, [
+    containerElement, parentEntityId, fieldID, contentID,
+    fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType
+  ]);
   this._searchType = searchType;
   this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
 };
@@ -11,13 +16,13 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}ContentsListForClassifier`, {
       elementIdPrefix: this._elementIdPrefix,
       fieldID: this._fieldID
-    }, false, false, (data, textStatus, jqXHR) => {
+    }, false, false, data => {
       if (data.success) {
         serverContent = data.view;
       } else {
         $q.alertError(data.message);
       }
-    }, (jqXHR, textStatus, errorThrown) => {
+    }, jqXHR => {
       serverContent = null;
       $q.processGenericAjaxError(jqXHR);
     });
@@ -46,14 +51,19 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
 
   get_searchQuery() {
     const contentObj = new Array($(this._contentElement).val());
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(this._searchType, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, contentObj, this.get_IsNull(), false);
+    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+      this._searchType, this._fieldID, this._fieldColumn, this._contentID,
+      this._referenceFieldID, contentObj, this.get_IsNull(), false
+    );
   },
 
   get_blockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(this._searchType, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID, {
-      isNull: this.get_IsNull(),
-      contentID: $(this._contentElement).val()
-    });
+    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+      this._searchType, this._fieldID, this._contentID, this._fieldColumn,
+      this._fieldName, this._fieldGroup, this._referenceFieldID, {
+        isNull: this.get_IsNull(),
+        contentID: $(this._contentElement).val()
+      });
   },
 
   get_filterDetails() {
@@ -117,4 +127,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
   _contentID: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.registerClass(
+  'Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch',
+  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
+);

@@ -199,39 +199,54 @@ Quantumart.QP8.BackendEventArgs.prototype = {
   },
 
   get_isLoaded() {
-    return this._actionTypeCode == window.ACTION_TYPE_CODE_READ && this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_NONE;
+    return this._actionTypeCode === window.ACTION_TYPE_CODE_READ
+    && this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_NONE;
   },
 
   get_isSaved() {
-    return this._actionTypeCode == window.ACTION_TYPE_CODE_READ && (this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_SAVE || this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_SAVE_AND_UP);
+    return this._actionTypeCode === window.ACTION_TYPE_CODE_READ
+    && (
+      this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_SAVE
+      || this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_SAVE_AND_UP
+    );
   },
 
   get_isUpdated() {
-    return this._actionTypeCode == window.ACTION_TYPE_CODE_READ && (this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_UPDATE || this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_UPDATE_AND_UP);
+    return this._actionTypeCode === window.ACTION_TYPE_CODE_READ
+    && (
+      this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_UPDATE
+      || this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_UPDATE_AND_UP
+    );
   },
 
   get_isRestored() {
-    return this._actionTypeCode == window.ACTION_TYPE_CODE_READ && this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_RESTORE;
+    return this._actionTypeCode === window.ACTION_TYPE_CODE_READ
+    && this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_RESTORE;
   },
 
   get_needUp() {
-    return this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_SAVE_AND_UP || this.get_previousActionTypeCode() == window.ACTION_TYPE_CODE_UPDATE_AND_UP;
+    return this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_SAVE_AND_UP
+    || this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_UPDATE_AND_UP;
   },
 
   get_previousActionTypeCode() {
-    return this._previousAction && this._previousAction.get_isSuccessfullyExecuted() ? this._previousAction.get_actionTypeCode() : window.ACTION_TYPE_CODE_NONE;
+    return this._previousAction && this._previousAction.get_isSuccessfullyExecuted()
+      ? this._previousAction.get_actionTypeCode() : window.ACTION_TYPE_CODE_NONE;
   },
 
   get_isArchiving() {
-    return this._actionTypeCode == window.ACTION_TYPE_CODE_ARCHIVE || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_ARCHIVE;
+    return this._actionTypeCode === window.ACTION_TYPE_CODE_ARCHIVE
+    || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_ARCHIVE;
   },
 
   get_isRemoving() {
-    return this._actionTypeCode == window.ACTION_TYPE_CODE_REMOVE || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_REMOVE;
+    return this._actionTypeCode === window.ACTION_TYPE_CODE_REMOVE
+    || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_REMOVE;
   },
 
   get_isRestoring() {
-    return this._actionTypeCode == window.ACTION_TYPE_CODE_RESTORE || this._actionTypeCode == window.ACTION_TYPE_CODE_MULTIPLE_RESTORE;
+    return this._actionTypeCode === window.ACTION_TYPE_CODE_RESTORE
+    || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_RESTORE;
   },
 
   get_callerContext() {

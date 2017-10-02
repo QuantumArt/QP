@@ -1,5 +1,9 @@
-Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
-  Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
+Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch = function (
+  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID
+) {
+  Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.initializeBase(
+    this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]
+  );
   this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
   this._onByValueSelectorChangedHandler = $.proxy(this._onByValueSelectorChanged, this);
   this._onNumericInputFocusHandler = $.proxy(this._onNumericInputFocus, this);
@@ -17,14 +21,14 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       },
       false,
       false,
-      (data, textStatus, jqXHR) => {
+      data => {
         if (data.success) {
           serverContent = data.view;
         } else {
           $q.alertFail(data.message);
         }
       },
-      (jqXHR, textStatus, errorThrown) => {
+      jqXHR => {
         serverContent = null;
         $q.processGenericAjaxError(jqXHR);
       }
@@ -68,7 +72,9 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   get_searchQuery() {
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
+    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange,
+      this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
       this.get_IsNull(),
       $(this._numberFromElement).data('tTextBox').value(),
       $(this._numberToElement).data('tTextBox').value(),
@@ -78,7 +84,9 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   get_blockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
+    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._contentID,
+      this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
         isNull: this.get_IsNull(),
         from: $(this._numberFromElement).data('tTextBox').value(),
@@ -96,7 +104,9 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
     } else if (stateData.isByValue) {
       result = $.isNumeric(stateData.from) ? stateData.from : '?';
     } else {
-      result = `[${$.isNumeric(stateData.from) ? stateData.from : '?'}..${$.isNumeric(stateData.to) ? stateData.to : '?'}]`;
+      const from = $.isNumeric(stateData.from) ? stateData.from : '?';
+      const to = $.isNumeric(stateData.to) ? stateData.to : '?';
+      result = `[${from}..${to}]`;
     }
 
     if (stateData.inverse) {
@@ -149,9 +159,9 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   _onByValueSelectorChanged(e) {
-    this._isByValue = $(e.currentTarget).val() == 0;
+    this._isByValue = $(e.currentTarget).val() === 0;
 
-    if (this._isByValue == true) {
+    if (this._isByValue === true) {
       $(this._numberToElement).data('tTextBox').disable();
       $(this._numberToElement).closest('.row').hide();
       $(`label[for='${$(this._numberFromElement).attr('id')}']`, this._containerElement).text($l.SearchBlock.valueText);
@@ -241,4 +251,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   _inverseCheckBoxElement: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.registerClass(
+  'Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch',
+  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
+);

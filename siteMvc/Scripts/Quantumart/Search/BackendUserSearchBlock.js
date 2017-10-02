@@ -1,5 +1,8 @@
-Quantumart.QP8.BackendUserSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
-  Quantumart.QP8.BackendUserSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
+Quantumart.QP8.BackendUserSearchBlock = function (
+  searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
+  Quantumart.QP8.BackendUserSearchBlock.initializeBase(
+    this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]
+  );
 };
 
 Quantumart.QP8.BackendUserSearchBlock.prototype = {
@@ -43,7 +46,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
           $q.alertFail(data.message);
         }
       }, this))
-        .fail((jqXHR, textStatus, errorThrown) => {
+        .fail(jqXHR => {
           $q.processGenericAjaxError(jqXHR);
         });
     }
@@ -65,4 +68,6 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
   }
 };
 
-Quantumart.QP8.BackendUserSearchBlock.registerClass('Quantumart.QP8.BackendUserSearchBlock', Quantumart.QP8.BackendSearchBlockBase);
+Quantumart.QP8.BackendUserSearchBlock.registerClass(
+  'Quantumart.QP8.BackendUserSearchBlock', Quantumart.QP8.BackendSearchBlockBase
+);

@@ -20,10 +20,13 @@ Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectEle
   };
 };
 
-Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (unionSourcePanelElementId, buildParamsPanelElementId, unionSourcesElementId) {
+Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (
+  unionSourcePanelElementId, buildParamsPanelElementId, unionSourcesElementId
+) {
   const $unionSourcePanelElement = $(`#${unionSourcePanelElementId}`);
   const $buildParamsPanelElement = $(`#${buildParamsPanelElementId}`);
-  const unionSourcesComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(`${unionSourcesElementId}_list`);
+  const unionSourcesComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance()
+    .getList(`${unionSourcesElementId}_list`);
 
   const onUnionTypeSelected = function () {
     unionSourcesComponent._fixListOverflow();

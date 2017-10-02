@@ -21,7 +21,6 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
   initialize() {
     const workflow = this._componentElem;
-    const contentSelector = this._contentSelector;
     this._items = ko.observableArray(
       $.map(workflow.data('workflow_list_data'), o => {
         const r = {};
@@ -41,7 +40,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       items: this._items,
       contentSelector: this._contentSelector,
       checkSinglePermisssionHandler: this._checkSinglePermisssionHandler,
-      initializePickers(dom, element, index) {
+      initializePickers(dom, element) {
         Quantumart.QP8.ControlHelpers.initAllEntityDataLists($(dom));
         $(dom)
           .find('.pep-user-selector')
@@ -59,11 +58,14 @@ Quantumart.QP8.BackendWorkflow.prototype = {
           .find(`.${window.CHANGED_FIELD_CLASS_NAME}`)
           .removeClass(window.CHANGED_FIELD_CLASS_NAME);
 
-        const activeContentsIds = this.contentSelector.find('input:checkbox:checked').map((index, elem) => $(elem).val()).get().join();
+        const activeContentsIds = this.contentSelector.find('input:checkbox:checked')
+          .map((index, elem) => $(elem).val()).get().join();
 
         if ($q.isNull(element.UserId()) && $q.isNull(element.GroupId())) {
-          $(dom).find('.singleItemPicker').each(jQuery.proxy(function (index, element) {
-            $(element).data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this.checkSinglePermisssionHandler);
+          $(dom).find('.singleItemPicker').each(jQuery.proxy(function (index, elem) {
+            $(elem).data('entity_data_list_component').attachObserver(
+              window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this.checkSinglePermisssionHandler
+            );
           }, this));
         } else {
           $q.getJsonFromUrl(
@@ -94,7 +96,10 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       }
     };
 
-    ko.applyBindingsToNode(this._containerElem.get(0), { template: { name: workflow.attr('id').replace('_workflow_control', '_template') } }, viewModel);
+    ko.applyBindingsToNode(
+      this._containerElem.get(0),
+      { template: { name: workflow.attr('id').replace('_workflow_control', '_template') } }, viewModel
+    );
     this._resultElem = $('.workflowResult', this._componentElem);
 
     const that = this;
@@ -104,10 +109,14 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       });
 
     this._contentSelector
-      .data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler);
+      .data('entity_data_list_component').attachObserver(
+        window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler
+      );
 
     this._containerElem.find('.singleItemPicker').each(jQuery.proxy(function (index, elem) {
-      $(elem).data('entity_data_list_component').attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
+      $(elem).data('entity_data_list_component').attachObserver(
+        window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler
+      );
     }, this));
 
     const onRadioChanged = function () {
@@ -131,7 +140,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   checkAllPermisssions() {
     const activeContentsIds = this.getCheckedContentsIds();
 
-    const usersAndGroups = $.map(this._items(), (elem, index) => {
+    const usersAndGroups = $.map(this._items(), elem => {
       return { StName: elem.StName, UserId: elem.UserId(), GroupId: elem.GroupId() };
     });
 
@@ -172,7 +181,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
     if (eventArgs.get_entityTypeCode() === 'user') {
       userId = $q.isNullOrEmpty(eventArgs.getSelectedEntities()[0]) ? null : eventArgs.getSelectedEntities()[0].Id;
-    } else if (eventArgs.get_entityTypeCode() == 'user_group') {
+    } else if (eventArgs.get_entityTypeCode() === 'user_group') {
       groupId = $q.isNullOrEmpty(eventArgs.getSelectedEntities()[0]) ? null : eventArgs.getSelectedEntities()[0].Id;
     }
     $q.getJsonFromUrl(
@@ -221,7 +230,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   },
 
   addItem(statusId, statusName, weight) {
-    const existingItem = ko.utils.arrayFirst(this._items(), item => item.StId == statusId);
+    const existingItem = ko.utils.arrayFirst(this._items(), item => item.StId === statusId);
 
     if ($q.isNull(existingItem)) {
       const item = {
@@ -252,7 +261,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     const items = this._items();
     for (let i = 0; i < items.length; i++) {
       const current = items[i];
-      if (current.StId == statusId) {
+      if (current.StId === statusId) {
         this._items.remove(current);
       }
     }
@@ -268,7 +277,9 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   destroyWorkflow() {
     const containerElem = this._containerElem;
     containerElem.find('.singleItemPicker').each(jQuery.proxy(function (index, elem) {
-      $(elem).data('entity_data_list_component').detachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler);
+      $(elem).data('entity_data_list_component').detachObserver(
+        window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler
+      );
     }), this);
 
     this._contentSelector

@@ -42,7 +42,10 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
   get_searchQuery() {
     const data = this._get_searchData();
     if (data) {
-      return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.FullText, data.fieldID, data.fieldColumn, data.contentID, data.referenceFieldID, data.text);
+      return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+        Quantumart.QP8.Enums.ArticleFieldSearchType.FullText,
+        data.fieldID, data.fieldColumn, data.contentID, data.referenceFieldID, data.text
+      );
     }
 
     return null;
@@ -142,4 +145,6 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
   }
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.registerClass('Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock', null, Sys.IDisposable);
+Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.registerClass(
+  'Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock', null, Sys.IDisposable
+);
