@@ -279,18 +279,17 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
             }
 
             const _exp = function (node) {
-              let tempNode = that.getNode(that.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder));
-              if (!node || $q.isNullOrEmpty(tempNode)) {
-                return null;
+              if (node) {
+                const tempNode = that.getNode(that.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder));
+                $node = that.getNode(tempNode);
+                if (that._isNodeCollapsed($node)) {
+                  that._treeComponent.nodeToggle(null, $node, true);
+                }
+
+                return _exp($.grep(node.ChildNodes, leaf => !!leaf.ChildNodes)[0]) || node;
               }
 
-              tempNode = that.getNode(that.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder));
-              $node = that.getNode(tempNode);
-              if (that._isNodeCollapsed($node)) {
-                that._treeComponent.nodeToggle(null, $node, true);
-              }
-
-              return _exp($.grep(node.ChildNodes, leaf => !!leaf.ChildNodes)[0]) || node;
+              return undefined;
             };
 
             _exp(data);

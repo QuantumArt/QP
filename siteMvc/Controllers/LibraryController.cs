@@ -353,7 +353,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 url = pathInfo.GetUrl(normalizedFileName);
                 if (!GetImageSize(path, ref width, ref height))
                 {
-                    message = string.Format(options.NotSupportedMessage, normalizedFileName, Path.GetExtension(normalizedFileName));
+                    message = string.Format(options.NotSupportedMessage, normalizedFileName);
                 }
             }
             else

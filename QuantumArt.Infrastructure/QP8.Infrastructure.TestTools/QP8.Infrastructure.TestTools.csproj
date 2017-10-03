@@ -59,13 +59,13 @@
       <HintPath>$(SolutionDir)packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="Ploeh.AutoFixture, Version=3.50.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\AutoFixture.3.50.6\lib\net40\Ploeh.AutoFixture.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\AutoFixture.3.50.7\lib\net40\Ploeh.AutoFixture.dll</HintPath>
     </Reference>
     <Reference Include="Ploeh.AutoFixture.AutoMoq, Version=3.50.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\AutoFixture.AutoMoq.3.50.6\lib\net40\Ploeh.AutoFixture.AutoMoq.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\AutoFixture.AutoMoq.3.50.7\lib\net40\Ploeh.AutoFixture.AutoMoq.dll</HintPath>
     </Reference>
     <Reference Include="Ploeh.AutoFixture.Xunit2, Version=3.50.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\AutoFixture.Xunit2.3.50.6\lib\net45\Ploeh.AutoFixture.Xunit2.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\AutoFixture.Xunit2.3.50.7\lib\net45\Ploeh.AutoFixture.Xunit2.dll</HintPath>
     </Reference>
     <Reference Include="SeleniumExtension, Version=1.0.7.32199, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\SeleniumExtension.1.0.13\lib\net45\SeleniumExtension.dll</HintPath>

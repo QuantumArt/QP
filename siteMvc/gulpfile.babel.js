@@ -121,6 +121,12 @@ custom.paths = {
     'Scripts/PlUpload/moxie.js',
     'Scripts/PlUpload/plupload.dev.js'
   ],
+  vendorsjsLogon: [
+    'Scripts/es5-shim.js',
+    'Scripts/jquery/jquery-1.7.1.js',
+    'Scripts/microsoft/MicrosoftAjax.js',
+    'Scripts/Silverlight.js'
+  ],
   qpjs: [
     'Scripts/Quantumart/Helpers/vanilla.helpers.js',
     'Scripts/Quantumart/Uploader/plupload/plupload.filters.js',
@@ -130,9 +136,14 @@ custom.paths = {
     'Scripts/Quantumart/ckeditor/codemirror/plugin.js',
     'Scripts/Quantumart/ckeditor/globalSettings.js',
 
+    'Scripts/Quantumart/App.js',
     'Scripts/Quantumart/Utils.js',
     'Scripts/Quantumart/Cache.js',
-    'Scripts/Quantumart/Common.js',
+    'Scripts/Quantumart/Common/IObserver.js',
+    'Scripts/Quantumart/Common/IObservable.js',
+    'Scripts/Quantumart/Common/IMediator.js',
+    'Scripts/Quantumart/Common/BackendPreviousAction.js',
+    'Scripts/Quantumart/Common/BackendEventArgs.js',
     'Scripts/Quantumart/ControlHelpers.js',
     'Scripts/Quantumart/Info/BackendEntityType.js',
     'Scripts/Quantumart/Info/BackendEntityObject.js',
@@ -250,6 +261,15 @@ custom.paths = {
 
     '!Scripts/build/**/*.js'
   ],
+  qpjsLogon: [
+    'Scripts/Quantumart/App.js',
+    'Scripts/Quantumart/Common/IObserver.js',
+    'Scripts/Quantumart/Common/IObservable.js',
+    'Scripts/Quantumart/Common/IMediator.js',
+    'Scripts/Quantumart/Common/BackendPreviousAction.js',
+    'Scripts/Quantumart/Common/BackendEventArgs.js',
+    'Scripts/Quantumart/BackendLogin.js'
+  ],
   styles: [
     'Content/basic.css',
     'Content/page.css',
@@ -267,6 +287,10 @@ custom.paths = {
     'Content/custom/**/*.{scss,css}',
 
     '!Content/build/**/*.css'
+  ],
+  stylesLogon: [
+    'Content/basic.css',
+    'Content/page.css'
   ],
   images: [
     'Content/**/*.{jpg,jpeg,png,gif,svg}',
@@ -308,7 +332,11 @@ custom.reportError = function (error) {
   this.emit('end');
 };
 
-gulp.task('assets:revisions', () => gulp.src('Views/Home/Index.Template.cshtml')
+gulp.task('assets:revisions', () => gulp.src([
+  'Views/Home/Index.Template.cshtml',
+  'Views/LogOn/Index.Template.cshtml',
+  '../winLogonMvc/Views/WinLogOn/Index.Template.cshtml'
+], { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.replaceTask({
     patterns: [{
@@ -316,11 +344,15 @@ gulp.task('assets:revisions', () => gulp.src('Views/Home/Index.Template.cshtml')
       replacement: custom.config.assemblyVersion
     }]
   }))
-  .pipe($.rename('Index.cshtml'))
-  .pipe(gulp.dest('Views/Home/')));
+  .pipe($.rename({ basename: 'Index' }))
+  .pipe(gulp.dest('.'))
+);
 
 gulp.task('assets:js', ['assets:vendorsjs', 'assets:qpjs'], () => gulp.src(custom.destPaths.scripts)
   .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true })));
+
+gulp.task('assets-logon:js', ['assets-logon:vendorsjs', 'assets-logon:qpjs'], () => gulp.src(custom.destPaths.scripts)
+  .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:js task complete', onLast: true })));
 
 gulp.task('assets:vendorsjs', ['assets:revisions'], () => gulp.src(custom.paths.vendorsjs, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
@@ -335,8 +367,28 @@ gulp.task('assets:vendorsjs', ['assets:revisions'], () => gulp.src(custom.paths.
   .pipe($.concat('vendors.js'))
   .pipe($.sourcemaps.write('maps'))
   .pipe(gulp.dest(custom.destPaths.scripts))
-  .pipe($.size({ title: 'assets:js', showFiles: true }))
+  .pipe($.size({ title: 'assets:vendorsjs', showFiles: true }))
   .pipe($.notify({ title: 'Part task was completed', message: 'assets:vendorsjs task complete', onLast: true })));
+
+gulp.task('assets-logon:vendorsjs', ['assets:revisions'], () => gulp.src(custom.paths.vendorsjsLogon, { base: './' })
+  .pipe($.plumber({ errorHandler: custom.reportError }))
+  .pipe($.sourcemaps.init({ loadMaps: false }))
+  .pipe($.sourcemaps.identityMap())
+  .pipe($.rename({ suffix: '.min' }))
+  .pipe(custom.isProduction() ? $.uglify({
+    compress: {
+      sequences: false
+    }
+  }) : $.util.noop())
+  .pipe($.concat('vendors-logon.js'))
+  .pipe($.sourcemaps.write('maps'))
+  .pipe(gulp.dest(custom.destPaths.scripts))
+  .pipe($.size({ title: 'assets-logon:vendorsjs', showFiles: true }))
+  .pipe($.notify({
+    title: 'Part task was completed',
+    message: 'assets-logon:vendorsjs task complete',
+    onLast: true
+  })));
 
 gulp.task('assets:qpjs', ['assets:revisions'], () => gulp.src(custom.paths.qpjs, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
@@ -351,8 +403,24 @@ gulp.task('assets:qpjs', ['assets:revisions'], () => gulp.src(custom.paths.qpjs,
   .pipe($.concat('app.js'))
   .pipe($.sourcemaps.write('maps'))
   .pipe(gulp.dest(custom.destPaths.scripts))
-  .pipe($.size({ title: 'assets:js', showFiles: true }))
+  .pipe($.size({ title: 'assets:qpjs', showFiles: true }))
   .pipe($.notify({ title: 'Part task was completed', message: 'assets:qpjs task complete', onLast: true })));
+
+gulp.task('assets-logon:qpjs', ['assets:revisions'], () => gulp.src(custom.paths.qpjsLogon, { base: './' })
+  .pipe($.plumber({ errorHandler: custom.reportError }))
+  .pipe($.sourcemaps.init({ loadMaps: false }))
+  .pipe($.sourcemaps.identityMap())
+  .pipe($.babel())
+  .pipe(custom.isProduction() ? $.uglify({
+    compress: {
+      sequences: false
+    }
+  }) : $.util.noop())
+  .pipe($.concat('app-logon.js'))
+  .pipe($.sourcemaps.write('maps'))
+  .pipe(gulp.dest(custom.destPaths.scripts))
+  .pipe($.size({ title: 'assets-logon:qpjs', showFiles: true }))
+  .pipe($.notify({ title: 'Part task was completed', message: 'assets-logon:qpjs task complete', onLast: true })));
 
 gulp.task('assets:img', () => gulp.src(custom.paths.images)
   .pipe($.plumber({ errorHandler: custom.reportError }))
@@ -376,6 +444,21 @@ gulp.task('assets:css', ['assets:revisions'], () => gulp.src(custom.paths.styles
   .pipe($.size({ title: 'assets:css', showFiles: true }))
   .pipe($.notify({ title: 'Task was completed', message: 'assets:css task complete', onLast: true })));
 
+gulp.task('assets-logon:css', () => gulp.src(custom.paths.stylesLogon)
+  .pipe($.plumber({ errorHandler: custom.reportError }))
+  .pipe($.sourcemaps.init({ loadMaps: false }))
+  .pipe($.sourcemaps.identityMap())
+  .pipe($.sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
+  .pipe($.replace(/url\('/g, 'url(\'images/'))
+  .pipe($.autoprefixer())
+  .pipe($.cssnano({ zindex: false }))
+  .pipe($.concat('app-logon.css'))
+  .pipe($.sourcemaps.write('maps'))
+  .pipe(gulp.dest(custom.destPaths.styles))
+  .pipe(bs.stream({ match: '**/*.css' }))
+  .pipe($.size({ title: 'assets-logon:css', showFiles: true }))
+  .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:css task complete', onLast: true })));
+
 gulp.task('clean', () => del(custom.paths.clean));
 
 gulp.task('browserSync', () => {
@@ -385,8 +468,10 @@ gulp.task('browserSync', () => {
 });
 
 gulp.task('watch', () => {
-  const reportOnChange = ev =>
-    global.console.log(`File ${ev.path} was ${ev.type}, ${chalk.underline.bgCyan('running tasks...')}`);
+  const reportOnChange = ev => global.console.log(
+    `File ${ev.path} was ${ev.type},
+    ${chalk.underline.bgCyan('running tasks...')}`
+  );
 
   gulp.watch(custom.paths.styles, ['assets:css']).on('change', reportOnChange);
 });
@@ -399,7 +484,7 @@ gulp.task('default', ['clean'], () => {
 
   global.console.log(welcomeMsg);
   notifier.notify({ title: welcomeMsg, message: 'gulp is running' });
-  gulp.start('assets:js', 'assets:css', 'assets:img');
+  gulp.start('assets:js', 'assets-logon:js', 'assets:css', 'assets-logon:css', 'assets:img');
 });
 
 module.exports = gulp;

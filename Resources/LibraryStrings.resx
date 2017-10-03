@@ -163,7 +163,7 @@
     <value>Upload</value>
   </data>
   <data name="OperationIsNotSupported" xml:space="preserve">
-    <value>Unable to proceed requested operation for the file {0}. Extension {1} is not supported</value>
+    <value>Unable to proceed requested operation for the file {0}</value>
   </data>
   <data name="ContentFolderNotExists" xml:space="preserve">
     <value>Content folder (id = {0}) is not exists</value>
@@ -232,7 +232,7 @@
     <value>File: {0}. Max size exceeded: {1} Mb</value>
   </data>
   <data name="PlUploadErrorReport" xml:space="preserve">
-    <value>File: {0}. Unhandled error: {1}. Pl error code: {2}. </value>
+    <value>File: {0}. Unhandled error: {1}. Pl error code: {2}</value>
   </data>
   <data name="VirtualPath" xml:space="preserve">
     <value>Virtual Path</value>
@@ -247,7 +247,7 @@
     <value>Copying files from site {0}</value>
   </data>
   <data name="FileExistsTryAnother" xml:space="preserve">
-    <value>File {0} already exists. Please, try enter another name.</value>
+    <value>File {0} already exists. Please, try enter another name</value>
   </data>
   <data name="AccessDenied" xml:space="preserve">
     <value>Access to the path {0} is denied for user {1}</value>
