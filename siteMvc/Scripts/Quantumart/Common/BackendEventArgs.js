@@ -1,3 +1,5 @@
+/* eslint camelcase: 0 */
+
 Quantumart.QP8.BackendEventArgs = function () {
   Quantumart.QP8.BackendEventArgs.initializeBase(this);
 };

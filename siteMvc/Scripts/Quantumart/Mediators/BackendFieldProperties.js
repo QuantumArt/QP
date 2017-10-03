@@ -180,9 +180,9 @@ Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId
   const onFieldTypeChanged = function () {
     const fieldType = $('option:selected', $fieldTypeSelectElement).val();
     if (fieldType === window.FILE_FIELD_TYPE) {
-      fileFieldComponent.set_isImage(false);
+      fileFieldComponent.setIsImage(false);
     } else if (fieldType === window.IMAGE_FIELD_TYPE) {
-      fileFieldComponent.set_isImage(true);
+      fileFieldComponent.setIsImage(true);
     }
   };
 

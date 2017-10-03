@@ -317,8 +317,8 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _onResizeSplitter(eventType, sender, eventArgs) {
-    this._backendTreeMenu.fixTreeHeight(eventArgs.get_firstPaneHeight());
-    this._backendEditingArea.get_tabStrip().fixTabStripWidth(eventArgs.get_firstPaneWidth());
+    this._backendTreeMenu.fixTreeHeight(eventArgs.getFirstPaneHeight());
+    this._backendEditingArea.get_tabStrip().fixTabStripWidth(eventArgs.getFirstPaneWidth());
 
     const selDoc = this._backendEditingArea.getSelectedDocument();
     if (selDoc) {

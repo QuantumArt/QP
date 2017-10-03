@@ -95,22 +95,22 @@ Quantumart.QP8.BackendLibrary.prototype = {
   LIBRARY_PHYSICAL_PATH_CLASS_NAME: 'l-physical-path',
   LIBRARY_VIRTUAL_PATH_CLASS_NAME: 'l-virtual-path',
 
-  set_libraryManager(value) {
+  setLibraryManager(value) {
     this._libraryManager = value;
   },
-  get_libraryManager() {
+  getLibraryManager() {
     return this._libraryManager;
   },
-  set_folderId(value) {
+  setFolderId(value) {
     this._folderId = value;
   },
-  get_folderId() {
+  getFolderId() {
     return this._folderId;
   },
-  set_viewTypeCode(value) {
+  setViewTypeCode(value) {
     this._viewTypeCode = value;
   },
-  get_viewTypeCode() {
+  getViewTypeCode() {
     return this._viewTypeCode;
   },
 
@@ -418,7 +418,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
         if (data.success) {
           that._folderPath = data.path;
           that._folderUrl = data.url;
-          that._uploader.set_folderPath(data.path);
+          that._uploader.setFolderPath(data.path);
           that._libraryPath = data.libraryPath;
         } else {
           $q.alertFail(data.message);

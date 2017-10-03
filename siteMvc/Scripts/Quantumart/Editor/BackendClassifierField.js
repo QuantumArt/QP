@@ -132,7 +132,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   _renderAggregatedDataView(articleViewData) {
     this.notify(window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING, {
       articleWrapper: this._$articleWrapper,
-      toggleDisableChangeTracking: this.set_disableChangeTracking
+      toggleDisableChangeTracking: this.setDisableChangeTracking
     });
 
     this._$articleWrapper.empty();
@@ -150,7 +150,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
       this._initAllFields();
       this.notify(window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED, {
         articleWrapper: this._$articleWrapper,
-        toggleDisableChangeTracking: this.set_disableChangeTracking
+        toggleDisableChangeTracking: this.setDisableChangeTracking
       });
     }
 
@@ -231,11 +231,11 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  set_initFieldValues(value) {
+  setInitFieldValues(value) {
     this._initFieldValues = value;
   },
 
-  set_disableChangeTracking(value) {
+  setDisableChangeTracking(value) {
     this._disableChangeTracking = value;
   },
 

@@ -116,11 +116,11 @@ Quantumart.QP8.BackendSilverlightUploader.prototype = {
     }
   },
 
-  set_folderPath(value) {
+  setFolderPath(value) {
     this._folderPath = value;
   },
 
-  get_folderPath() {
+  getFolderPath() {
     return this._folderPath;
   }
 };
@@ -161,7 +161,7 @@ function Quantumart$QP8$BackendSilverlightUploader$returnFolderPath(id) {
   if ($element) {
     const component = $element.data('qp_sl_uploader');
     if (component) {
-      result = component.get_folderPath();
+      result = component.getFolderPath();
     }
   }
 

@@ -61,7 +61,7 @@
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">
-	@(Model.ContextObjectName).set_initializedCallback(function() {
+	@(Model.ContextObjectName).setInitializedCallback(function() {
 	    var sb = new Quantumart.QP8.BackendSearchInArticle("@Model.MainComponentId", "@Model.SeachBlockElementId", "@Model.Query", this);
 	    sb.initialize();
 	    this.searchBlock = sb;
@@ -73,7 +73,7 @@
 	        return false;
 	    })
 	});
-    @(Model.ContextObjectName).set_terminatingCallback(function() {
+    @(Model.ContextObjectName).setTerminatingCallback(function() {
         if(this.searchBlock)
         {
             this.searchBlock.dispose();
@@ -83,7 +83,7 @@
         jQuery("#@Model.SearchLayoutFormElementId").unbind("submit");
     });
 
-    @(Model.ContextObjectName).set_execSelectCallback(function(eventArgs) {
+    @(Model.ContextObjectName).setExecSelectCallback(function(eventArgs) {
         if(this.searchBlock)
             this.searchBlock.refreshQuery(eventArgs);
     });

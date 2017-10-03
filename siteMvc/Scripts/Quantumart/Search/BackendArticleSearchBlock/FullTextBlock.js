@@ -39,8 +39,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     }
   },
 
-  get_searchQuery() {
-    const data = this._get_searchData();
+  getSearchQuery() {
+    const data = this.getSearchData();
     if (data) {
       return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
         Quantumart.QP8.Enums.ArticleFieldSearchType.FullText,
@@ -51,8 +51,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     return null;
   },
 
-  get_blockState() {
-    const data = this._get_searchData();
+  getBlockState() {
+    const data = this.getSearchData();
 
     if (data) {
       const state = {};
@@ -74,7 +74,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     return null;
   },
 
-  restore_blockState(state) {
+  restoreBlockState(state) {
     if (state) {
       $(this._queryTextBoxElement).prop('value', state.text);
 
@@ -90,7 +90,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     }
   },
 
-  _get_searchData() {
+  getSearchData() {
     if (this._textFieldsComboElement) {
       const $selectedField = $(this._textFieldsComboElement).find('option:selected');
 

@@ -460,7 +460,7 @@
 
 @Html.PrepareInitScript(Model)
 <script>
-    @(Model.ContextObjectName).set_initializedCallback(function() {
+    @(Model.ContextObjectName).setInitializedCallback(function() {
       this.fieldPropertiesMediator = new Quantumart.QP8.FieldPropertiesMediator("@(Model.TabId)");
       this.relateToAndDisplayFieldMediator = new Quantumart.QP8.RelateToAndDisplayFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.DisplayFieldSelectElementId)", "@(Model.CurrentFieldIdHiddenElementId)", "@(Model.ListOrderSelectElementId)");
       this.relateToAndClassifierFieldMediator = new Quantumart.QP8.RelateToAndClassifierFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.ClassifierSelectElementId)", "@(Model.AggregatedElementId)");
@@ -470,7 +470,7 @@
       this.relateToAndPanelsMediator = new Quantumart.QP8.RelateToAndPanelsMediator("@(Model.RelateToSelectElementId)", "@(Model.RelatedSettingsPanelsSelector)", "@(Model.Data.ContentId)");
       this.relateToAndPanelsMediator.refresh();
 
-      this.$documentWrapper= $("#" + this.get_mainComponent()._documentWrapperElementId);
+      this.$documentWrapper= $("#" + this.getMainComponent()._documentWrapperElementId);
       this.$stringEnum = $('#@Html.UniqueId("Data_StringEnumItems_aggregationlist")');
       var that = this;
       this.$documentWrapper.on("change", "input:checkbox.enum-default", function(){
@@ -479,7 +479,7 @@
         if(aggList){
           var chIndex = $q.toInt($curr.data('index'), -1);
           var i = 0;
-          $.each(aggList.get_items(), function(){
+          $.each(aggList.getItems(), function(){
             if(i !== chIndex){
               this.IsDefault = false;
             }
@@ -496,7 +496,7 @@
       });
     });
 
-  @(Model.ContextObjectName).set_terminatingCallback(function() {
+  @(Model.ContextObjectName).setTerminatingCallback(function() {
     this.relateToAndDisplayFieldMediator.dispose();
     this.relateToAndDisplayFieldMediator = null;
 

@@ -1,4 +1,5 @@
 /* eslint new-cap: 0 */
+/* eslint camelcase: 0 */
 Quantumart.QP8.BackendWorkflow = function (componentElem) {
   this._componentElem = componentElem;
   this._containerElem = $('.workflowContainer', componentElem);

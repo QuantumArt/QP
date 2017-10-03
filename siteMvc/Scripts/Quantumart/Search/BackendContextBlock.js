@@ -16,11 +16,11 @@ Quantumart.QP8.BackendContextBlock.prototype
     _contentNameElement: null,
     _searchBlockState: null,
 
-    get_searchBlockState() {
+    getSearchBlockState() {
       return this._searchBlockState;
     },
 
-    _restore_searchBlockState() {
+    restoreSearchBlockState() {
       if (this._searchBlockState) {
         const fieldValues = jQuery.map(this._searchBlockState, elem => {
           return { fieldName: elem.Name, value: elem.Value };
@@ -29,7 +29,7 @@ Quantumart.QP8.BackendContextBlock.prototype
       }
     },
 
-    _compute_searchBlockState() {
+    _computeSearchBlockState() {
       const result = [];
       $('.contextSwitcher .stateField', this._searchBlockElement).each(function () {
         const $item = $(this);
@@ -43,8 +43,8 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
 
-    get_searchQuery() {
-      return JSON.stringify(this.get_searchBlockState());
+    getSearchQuery() {
+      return JSON.stringify(this.getSearchBlockState());
     },
 
     renderSearchBlock() {
@@ -76,7 +76,7 @@ Quantumart.QP8.BackendContextBlock.prototype
 
           $c.initAllEntityDataLists(this._searchBlockElement);
 
-          this._restore_searchBlockState();
+          this.restoreSearchBlockState();
 
           const that = this;
           $('.contextSwitcher').each(function () {
@@ -91,15 +91,15 @@ Quantumart.QP8.BackendContextBlock.prototype
 
 
     _onChangeCombo() {
-      this._searchBlockState = this._compute_searchBlockState();
+      this._searchBlockState = this._computeSearchBlockState();
       $(this._findButtonElement).trigger('click');
     },
 
 
     _onFindButtonClick() {
-      const state = this.get_searchBlockState();
+      const state = this.getSearchBlockState();
       let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, JSON.stringify(state));
-      eventArgs.set_searchBlockState(state);
+      eventArgs.setSearchBlockState(state);
       this.notify(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, eventArgs);
       eventArgs = null;
     },

@@ -32,11 +32,11 @@ Quantumart.QP8.ActionLogItemListFilter.prototype = {
     this.$container.find('select.dropDownList').focus();
   },
 
-  get_value() {
+  getValue() {
     return this.$container.find('select.dropDownList option:selected').val();
   },
 
-  get_filterDetails() {
+  getFilterDetails() {
     return this.$container.find('select.dropDownList option:selected').text();
   }
 };

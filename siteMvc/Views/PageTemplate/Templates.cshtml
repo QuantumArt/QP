@@ -53,11 +53,11 @@
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">	
-	@(Model.ContextObjectName).set_initializedCallback(function() {				
+	@(Model.ContextObjectName).setInitializedCallback(function() {				
 	    this.filterComponent = new Quantumart.QP8.SearchInCodeComponent("@Model.FilterElementId", "@Model.GridElementId");		
 		this.filterComponent.initialize();
 	});	
-	@(Model.ContextObjectName).set_terminatingCallback(function() {								
+	@(Model.ContextObjectName).setTerminatingCallback(function() {								
 		this.filterComponent.dispose();
 		this.filterComponent = null;
 	});

@@ -18,22 +18,22 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   OVERFLOW_HIDDEN_CLASS: 'overflowHiddenValue',
 
   // eslint-disable-next-line camelcase
-  get_maxListWidth() {
+  getMaxListWidth() {
     return this._maxListWidth;
   },
 
   // eslint-disable-next-line camelcase
-  set_maxListWidth(value) {
+  setMaxListWidth(value) {
     this._maxListWidth = value;
   },
 
   // eslint-disable-next-line camelcase
-  get_maxListHeight() {
+  getMaxListHeight() {
     return this._maxListHeight;
   },
 
   // eslint-disable-next-line camelcase
-  set_maxListHeight(value) {
+  setMaxListHeight(value) {
     this._maxListHeight = value;
   },
 

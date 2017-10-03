@@ -58,11 +58,11 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this._componentElem.data('component', this);
   },
 
-  get_items() {
+  getItems() {
     return this._items();
   },
 
-  set_items(items) {
+  setItems(items) {
     if (this._items()) {
       this._items.removeAll();
       if (!$q.isNullOrEmpty(items) && $q.isArray(items)) {

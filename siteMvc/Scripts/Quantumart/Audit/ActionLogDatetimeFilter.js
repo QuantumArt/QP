@@ -11,12 +11,12 @@ Quantumart.QP8.ActionLogDatetimeFilter.prototype = {
     this.dtFieldSearch.initialize();
   },
 
-  get_filterDetails() {
-    return this.dtFieldSearch.get_filterDetails();
+  getFilterDetails() {
+    return this.dtFieldSearch.getFilterDetails();
   },
 
-  get_value() {
-    const sq = this.dtFieldSearch.get_searchQuery();
+  getValue() {
+    const sq = this.dtFieldSearch.getSearchQuery();
     if (!sq.QueryParams[3]) {
       return {
         from: sq.QueryParams[1],

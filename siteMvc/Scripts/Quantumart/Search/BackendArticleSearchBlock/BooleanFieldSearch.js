@@ -68,32 +68,32 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     html = null;
   },
 
-  get_searchQuery() {
+  getSearchQuery() {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
       Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean,
       this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
-      this.get_IsNull(), this._getValue());
+      this.getIsNull(), this._getValue());
   },
 
-  get_blockState() {
+  getBlockState() {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
       Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean,
       this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
-        isNull: this.get_IsNull(),
+        isNull: this.getIsNull(),
         value: this._getValue()
       });
   },
 
-  get_filterDetails() {
-    const stateData = this.get_blockState().data;
+  getFilterDetails() {
+    const stateData = this.getBlockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     }
     return stateData.value ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
   },
 
-  restore_blockState(state) {
+  restoreBlockState(state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -125,7 +125,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   _onIsNullCheckBoxChange() {
     $(this._containerElement)
       .find(`#${this._elementIdPrefix}_disablingContainer *`)
-      .prop('disabled', this.get_IsNull());
+      .prop('disabled', this.getIsNull());
   },
 
   dispose() {
@@ -142,7 +142,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChangeHandler: null,
-  get_IsNull() {
+  getIsNull() {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }

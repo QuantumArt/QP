@@ -26,16 +26,16 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   _parentEntityId: 0,
   _viewTypeCode: '',
 
-  get_actionCode() {
+  get_actionCode() { // eslint-disable-line camelcase
     return this._actionCode;
   },
-  set_actionCode(value) {
+  set_actionCode(value) { // eslint-disable-line camelcase
     this._actionCode = value;
   },
-  get_parentEntityId() {
+  get_parentEntityId() { // eslint-disable-line camelcase
     return this._parentEntityId;
   },
-  set_parentEntityId(value) {
+  set_parentEntityId(value) { // eslint-disable-line camelcase
     this._parentEntityId = value;
   },
 
@@ -200,9 +200,9 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
       .getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
     let actionView = $a.getActionViewByViewTypeCode(this._getCurrentAction(), subItemValue);
     if (actionView) {
-      newArgs.set_controllerActionUrl(actionView.ControllerActionUrl);
-      newArgs.set_preventDefaultBehavior(actionView.PreventDefaultBehavior);
-      newArgs.set_code(eventArgs.get_newSubItemValue());
+      newArgs.setControllerActionUrl(actionView.ControllerActionUrl);
+      newArgs.setPreventDefaultBehavior(actionView.PreventDefaultBehavior);
+      newArgs.setCode(eventArgs.get_newSubItemValue());
 
       actionView = null;
     }
@@ -222,9 +222,9 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
       .getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
     let actionView = $a.getActionViewByViewTypeCode(this._getCurrentAction(), subItemValue);
     if (actionView) {
-      newArgs.set_controllerActionUrl(actionView.ControllerActionUrl);
-      newArgs.set_preventDefaultBehavior(actionView.PreventDefaultBehavior);
-      newArgs.set_code(subItemValue);
+      newArgs.setControllerActionUrl(actionView.ControllerActionUrl);
+      newArgs.setPreventDefaultBehavior(actionView.PreventDefaultBehavior);
+      newArgs.setCode(subItemValue);
 
       actionView = null;
     }
@@ -272,22 +272,22 @@ Quantumart.QP8.BackendViewToolbarDropDownListEventArgs.prototype = {
   _preventDefaultBehavior: false,
   _code: '',
 
-  get_controllerActionUrl() {
+  getControllerActionUrl() {
     return this._controllerActionUrl;
   },
-  set_controllerActionUrl(value) {
+  setControllerActionUrl(value) {
     this._controllerActionUrl = value;
   },
-  get_preventDefaultBehavior() {
+  getPreventDefaultBehavior() {
     return this._preventDefaultBehavior;
   },
-  set_preventDefaultBehavior(value) {
+  setPreventDefaultBehavior(value) {
     this._preventDefaultBehavior = value;
   },
-  get_code() {
+  getCode() {
     return this._code;
   },
-  set_code(value) {
+  setCode(value) {
     this._code = value;
   }
 };

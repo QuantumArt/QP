@@ -9,11 +9,11 @@ Quantumart.QP8.IBackendUploader.prototype = {
   dispose() {
     $q.alertFail('dispose is not implemented');
   },
-  set_folderPath() {
-    $q.alertFail('set_folderPath is not implemented');
+  setFolderPath() {
+    $q.alertFail('setFolderPath is not implemented');
   },
-  get_folderPath() {
-    $q.alertFail('get_folderPath is not implemented');
+  getFolderPath() {
+    $q.alertFail('getFolderPath is not implemented');
   }
 };
 
@@ -27,7 +27,7 @@ Quantumart.QP8.BackendUploaderEventArgs = function (fileNames) {
 Quantumart.QP8.BackendUploaderEventArgs.prototype = {
   _fileNames: [],
 
-  get_fileNames() {
+  getFileNames() {
     return this._fileNames;
   }
 };

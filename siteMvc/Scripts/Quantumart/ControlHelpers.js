@@ -476,8 +476,8 @@ $c.setAllClassifierFieldValues = function (parentElement, fieldValues, disableCh
       if ($cl.length > 0) {
         component = Quantumart.QP8.BackendClassifierField.getComponent($cl);
         if (component) {
-          component.set_initFieldValues(fieldValues);
-          component.set_disableChangeTracking(disableChangeTracking);
+          component.setInitFieldValues(fieldValues);
+          component.setDisableChangeTracking(disableChangeTracking);
           component.selectContent(v.value);
         }
       }
@@ -502,7 +502,7 @@ $c.setAllAggregationListValues = function (parentElement, fieldValues) {
       const $lf = $lists.filter(`[data-field_name="${fv.fieldName}"]:first`);
       const component = Quantumart.QP8.BackendAggregationList.getComponent($lf);
       if (component) {
-        component.set_items(fv.value);
+        component.setItems(fv.value);
       }
     });
   }
@@ -663,7 +663,7 @@ $c.getAllAggregationListValues = function (parentElement) {
     if (component) {
       return {
         fieldName: $that.data('field_name'),
-        value: component.get_items()
+        value: component.getItems()
       };
     }
 

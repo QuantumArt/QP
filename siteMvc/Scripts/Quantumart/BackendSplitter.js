@@ -44,43 +44,43 @@ Quantumart.QP8.BackendSplitter.prototype = {
   _stateCookieName: 'leftMenuSize',
   _toWindowResize: false,
 
-  get_splitterElementId() {
+  getSplitterElementId() {
     return this._splitterElementId;
   },
 
-  set_splitterElementId(value) {
+  setSplitterElementId(value) {
     this._splitterElementId = value;
   },
 
-  get_firstPaneWidth() {
+  getFirstPaneWidth() {
     return this._firstPaneWidth;
   },
 
-  set_firstPaneWidth(value) {
+  setFirstPaneWidth(value) {
     this._firstPaneWidth = value;
   },
 
-  get_minFirstPaneWidth() {
+  getMinFirstPaneWidth() {
     return this._minFirstPaneWidth;
   },
 
-  set_minFirstPaneWidth(value) {
+  setMinFirstPaneWidth(value) {
     this._minFirstPaneWidth = value;
   },
 
-  get_maxFirstPaneWidth() {
+  getMaxFirstPaneWidth() {
     return this._maxFirstPaneWidth;
   },
 
-  set_maxFirstPaneWidth(value) {
+  setMaxFirstPaneWidth(value) {
     this._maxFirstPaneWidth = value;
   },
 
-  get_stateCookieName() {
+  getStateCookieName() {
     return this._stateCookieName;
   },
 
-  set_stateCookieName(value) {
+  setStateCookieName(value) {
     this._stateCookieName = value;
   },
 
@@ -105,9 +105,9 @@ Quantumart.QP8.BackendSplitter.prototype = {
     const firstPaneHeight = $firstPane.height();
 
     let eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
-    eventArgs.set_firstPane(this._firstPaneElement);
-    eventArgs.set_firstPaneWidth(firstPaneWidth);
-    eventArgs.set_firstPaneHeight(firstPaneHeight);
+    eventArgs.setFirstPane(this._firstPaneElement);
+    eventArgs.setFirstPaneWidth(firstPaneWidth);
+    eventArgs.setFirstPaneHeight(firstPaneHeight);
 
 
     this.notify(window.EVENT_TYPE_SPLITTER_INITIALIZED, eventArgs);
@@ -124,9 +124,9 @@ Quantumart.QP8.BackendSplitter.prototype = {
     const firstPaneHeight = $firstPane.height();
     const eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
 
-    eventArgs.set_firstPane(this._firstPaneElement);
-    eventArgs.set_firstPaneWidth(firstPaneWidth);
-    eventArgs.set_firstPaneHeight(firstPaneHeight);
+    eventArgs.setFirstPane(this._firstPaneElement);
+    eventArgs.setFirstPaneWidth(firstPaneWidth);
+    eventArgs.setFirstPaneHeight(firstPaneHeight);
 
     this.notify(window.EVENT_TYPE_SPLITTER_RESIZED, eventArgs);
   },
@@ -178,27 +178,27 @@ Quantumart.QP8.BackendSplitterEventArgs.prototype = {
   _firstPaneWidth: 0,
   _firstPaneHeight: 0,
 
-  get_firstPane() {
+  getFirstPane() {
     return this._firstPaneElement;
   },
 
-  set_firstPane(value) {
+  setFirstPane(value) {
     this._firstPaneElement = value;
   },
 
-  get_firstPaneWidth() {
+  getFirstPaneWidth() {
     return this._firstPaneWidth;
   },
 
-  set_firstPaneWidth(value) {
+  setFirstPaneWidth(value) {
     this._firstPaneWidth = value;
   },
 
-  get_firstPaneHeight() {
+  getFirstPaneHeight() {
     return this._firstPaneHeight;
   },
 
-  set_firstPaneHeight(value) {
+  setFirstPaneHeight(value) {
     this._firstPaneHeight = value;
   }
 };

@@ -22,12 +22,12 @@
 
 @Html.PrepareInitScript(Model)
 <script>
-	@(Model.ContextObjectName).set_initializedCallback(function() {
+	@(Model.ContextObjectName).setInitializedCallback(function() {
 		this.mediatorComponent = new Quantumart.QP8.Home(this, "@Model.SiteElementId", "@Model.SearchElementId", "@Model.LockedElementId", "@Model.ApprovalElementId", "@Model.LoggedAsElementId", "@Model.CustomerCode");
 		this.mediatorComponent.initialize();
 	});
 
-	@(Model.ContextObjectName).set_terminatingCallback(function() {
+	@(Model.ContextObjectName).setTerminatingCallback(function() {
 		this.mediatorComponent.dispose();
 		this.mediatorComponent = null;
 	});

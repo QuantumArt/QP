@@ -50,7 +50,7 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
     }
   },
 
-  get_Tree() {
+  getTree() {
     return this._treeComponent;
   },
 

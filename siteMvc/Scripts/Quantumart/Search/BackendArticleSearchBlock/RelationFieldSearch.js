@@ -68,7 +68,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     return result;
   },
 
-  get_searchQuery() {
+  getSearchQuery() {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
       this._searchType,
       this._fieldID,
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     );
   },
 
-  get_blockState() {
+  getBlockState() {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
       this._searchType, this._fieldID, this._contentID, this._fieldColumn
       , this._fieldName, this._fieldGroup, this._referenceFieldID, {
@@ -97,7 +97,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
 
   _selectedEntitiesIDs: null,
 
-  set_blockState(state) {
+  setBlockState(state) {
     if (state && !$q.isNullOrEmpty(state.entities)) {
       this._selectedEntitiesIDs = $.map(state.entities, item => item.Id);
     } else {
@@ -105,8 +105,8 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     }
   },
 
-  get_filterDetails() {
-    const stateData = this.get_blockState().data;
+  getFilterDetails() {
+    const stateData = this.getBlockState().data;
     let result;
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
@@ -126,7 +126,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     return result;
   },
 
-  restore_blockState(state, isRestoreByClose) {
+  restoreBlockState(state, isRestoreByClose) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         const $isNullCheckBoxElement = $(this._isNullCheckBoxElement);

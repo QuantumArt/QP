@@ -450,8 +450,8 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     let entityId = this._entityId;
     let entityName = this._entityName;
     const isMultiple = action.ActionType.IsMultiple;
-    const isEditor = Quantumart.QP8.BackendEntityEditor.isInstanceOfType(this.get_mainComponent());
-    const isCustomActionHost = Quantumart.QP8.BackendCustomActionHost.isInstanceOfType(this.get_mainComponent());
+    const isEditor = Quantumart.QP8.BackendEntityEditor.isInstanceOfType(this.getMainComponent());
+    const isCustomActionHost = Quantumart.QP8.BackendCustomActionHost.isInstanceOfType(this.getMainComponent());
     const selectedEntities = !isEditor
       && !isCustomActionHost
       ? this._selectedEntities
@@ -526,7 +526,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     const isMultistepAction = action.IsMultistep;
 
     if (!isCustomAction && !isMultistepAction && actionTypeCode === window.ACTION_TYPE_CODE_REFRESH) {
-      const main = this.get_mainComponent();
+      const main = this.getMainComponent();
       if (!main || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmRefresh()) {
         this.refresh();
       }
@@ -540,7 +540,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
         && action.EntityType.Code === window.ENTITY_TYPE_CODE_ARTICLE_VERSION)
     )
     ) {
-      const main = this.get_mainComponent();
+      const main = this.getMainComponent();
       if (main && Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
         main.saveEntity(actionCode);
       }
@@ -590,22 +590,19 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     return entities;
   },
 
-  // eslint-disable-next-line camelcase
-  get_mainComponent() {
-    return $q.isObject(this._documentContext) ? this._documentContext.get_mainComponent() : null;
+  getMainComponent() {
+    return $q.isObject(this._documentContext) ? this._documentContext.getMainComponent() : null;
   },
 
-  // eslint-disable-next-line camelcase
-  get_viewTypeCode() {
+  getViewTypeCode() {
     return this._viewToolbarComponent ? this._viewToolbarComponent.getSelectedViewTypeCode() : '';
   },
 
-  // eslint-disable-next-line camelcase
-  get_searchQuery() {
+  getSearchQuery() {
     let result = '';
 
     if (this._searchBlockComponent) {
-      result = this._searchBlockComponent.get_searchQuery();
+      result = this._searchBlockComponent.getSearchQuery();
     } else {
       const state = this.loadHostState();
 
@@ -621,7 +618,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   get_contextQuery() {
     let result = '';
     if (this._contextBlockComponent) {
-      result = this._contextBlockComponent.get_searchQuery();
+      result = this._contextBlockComponent.getSearchQuery();
     } else if (this._eventArgsAdditionalData) {
       result = this._eventArgsAdditionalData.contextQuery;
     }
@@ -641,7 +638,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   // eslint-disable-next-line camelcase
   get_currentPage() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       return main.get_currentPage();
     }
@@ -656,7 +653,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   // eslint-disable-next-line camelcase
   get_orderBy() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       return main.get_orderBy();
     }
@@ -879,7 +876,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   onLoadMainComponent() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main) {
       if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
         main.onLoad();
@@ -893,7 +890,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   onSelectMainComponent() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
 
     if (main) {
       if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
@@ -917,36 +914,36 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   unmarkMainComponentAsBusy() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.unmarkGridAsBusy();
     }
   },
 
   markMainComponentAsBusy() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.markGridAsBusy();
     }
   },
 
   onSearchBlockResize(eventType, sender, args) {
-    this._fixDocumentWrapperHeight(args.get_searchBlockHeight());
+    this._fixDocumentWrapperHeight(args.getSearchBlockHeight());
   },
 
   onContextSwitching(eventType, sender, args) {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main) {
       if (Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
-        main.resetGrid({ contextQuery: args.get_searchQuery() });
+        main.resetGrid({ contextQuery: args.getSearchQuery() });
       } else if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
-        main.applyContext(args.get_searchBlockState());
+        main.applyContext(args.getSearchBlockState());
       }
     }
   },
 
   _getComponentSearchProcessor(options) {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     const isGrid = Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main);
     const isTree = Quantumart.QP8.BackendEntityTree.isInstanceOfType(main);
     if (main && (isGrid || isTree)) {
@@ -982,7 +979,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   onSearch(eventType, sender, args) {
     const state = this.loadHostState() || {};
-    const searchBlockState = args.get_searchBlockState();
+    const searchBlockState = args.getSearchBlockState();
 
     if ($q.isNullOrEmpty(searchBlockState)) {
       $q.removeProperty(state, 'searchBlockState');
@@ -992,7 +989,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
     this._getComponentSearchProcessor({
       state,
-      searchQuery: args.get_searchQuery.bind(args)
+      searchQuery: args.getSearchQuery.bind(args)
     }).process();
 
     this.saveHostState(state);
@@ -1004,15 +1001,15 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       state = {};
     }
 
-    const code = args.get_code();
+    const code = args.getCode();
     state.viewTypeCode = code;
     this.saveHostState(state);
 
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.changeViewType(code);
     } else {
-      this.changeView(args.get_controllerActionUrl());
+      this.changeView(args.getControllerActionUrl());
     }
   },
 
@@ -1051,13 +1048,13 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   saveAndUp() {
     const context = this.get_documentContext();
     if (context && context.needUp()) {
-      this.onNeedUp(context.get_eventArgs());
+      this.onNeedUp(context.getEventArgs());
     }
   },
 
   onDocumentUnloaded() {
     this.destroyAllActionLinks();
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.detachObserver(window.EVENT_TYPE_LIBRARY_RESIZED);
     }
@@ -1079,12 +1076,12 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
     const context = this.get_documentContext();
     if (context) {
-      const state = context.get_state();
-      const mainComponentType = context.get_mainComponentType();
+      const state = context.getState();
+      const mainComponentType = context.getMainComponentType();
       if (mainComponentType === $e.MainComponentType.Editor && state !== $e.DocumentContextState.Error) {
-        const eventArgs = context.get_eventArgs();
+        const eventArgs = context.getEventArgs();
         this._copyContextQueryToEventArgs(eventArgs);
-        this.onEntityLoaded(context.get_eventArgs());
+        this.onEntityLoaded(context.getEventArgs());
       }
 
       context.onHostLoaded();
@@ -1108,7 +1105,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   onDataBound(eventType, sender, eventArgs) {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       let state = this.loadHostState();
       if ($q.isNullOrEmpty(state)) {
@@ -1203,17 +1200,17 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   allowChange() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     return !main || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmChange();
   },
 
   allowClose() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     return !main || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmClose();
   },
 
   selectAllEntities() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.selectAllRows();
     } else {
@@ -1222,7 +1219,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   deselectAllEntities() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.deselectAllRows();
     } else {

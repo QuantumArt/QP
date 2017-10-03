@@ -85,14 +85,14 @@
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">		
-	@(Model.ContextObjectName).set_initializedCallback(function() {				
+	@(Model.ContextObjectName).setInitializedCallback(function() {				
 		this.customActionEntityTypesObserver = new Quantumart.QP8.CustomActionEntityTypesObserver("@Model.CustomActionEntityTypesElementId", "@Model.ToolbarButtonParentActionsElementId", "@Model.ContentsElementId");
 		this.customActionEntityTypesObserver.updateActionList("@Model.SelectedActionsString");		
 
 		this.isInterfaceSelectorObserver = new Quantumart.QP8.CustomActionIsInterfaceSelectorObserver("@Model.IsInterfaceElementId", "@Model.ActionWindowPanelElementId", "@Model.PreActionPanelElementId");		
 		this.isInterfaceSelectorObserver.show();
 	});	
-	@(Model.ContextObjectName).set_terminatingCallback(function() {								
+	@(Model.ContextObjectName).setTerminatingCallback(function() {								
 		this.customActionEntityTypesObserver.dispose();
 		this.customActionEntityTypesObserver = null;
 

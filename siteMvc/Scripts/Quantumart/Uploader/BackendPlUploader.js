@@ -40,11 +40,11 @@ Quantumart.QP8.BackendPlUploader.prototype = {
   _libraryParentEntityId: null,
   _uploader: null,
 
-  set_folderPath(value) {
+  setFolderPath(value) {
     this._folderPath = value;
   },
 
-  get_folderPath() {
+  getFolderPath() {
     return this._folderPath;
   },
 
@@ -73,7 +73,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
 
   _beforeUploadHandler(up) {
     // eslint-disable-next-line no-param-reassign
-    up.settings.multipart_params = { destinationUrl: encodeURI(this.get_folderPath()) };
+    up.settings.multipart_params = { destinationUrl: encodeURI(this.getFolderPath()) };
     up.refresh();
   },
 

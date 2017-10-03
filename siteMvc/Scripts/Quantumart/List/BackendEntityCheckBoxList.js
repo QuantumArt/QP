@@ -10,19 +10,19 @@ Quantumart.QP8.BackendEntityCheckBoxList = function (
 
 Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
-  get_maxListWidth() {
+  getMaxListWidth() {
     return this._maxListWidth;
   },
 
-  set_maxListWidth(value) {
+  setMaxListWidth(value) {
     this._maxListWidth = value;
   },
 
-  get_maxListHeight() {
+  getMaxListHeight() {
     return this._maxListHeight;
   },
 
-  set_maxListHeight(value) {
+  setMaxListHeight(value) {
     this._maxListHeight = value;
   },
 

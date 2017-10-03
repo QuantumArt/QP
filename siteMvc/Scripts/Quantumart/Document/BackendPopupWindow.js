@@ -572,7 +572,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     const areaHeight = contentHeight - breadCrumbsWrapperHeight - toolbarWrapperHeight;
     $area.height(areaHeight);
 
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.resize();
     }
@@ -896,7 +896,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
   },
 
   _onPopupWindowActivated() {
-    const main = this.get_mainComponent();
+    const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.resize();
     }

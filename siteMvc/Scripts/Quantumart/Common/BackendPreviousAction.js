@@ -1,3 +1,4 @@
+/* eslint camelcase: 0 */
 Quantumart.QP8.BackendPreviousAction = function (options) {
   if ($q.isObject(options)) {
     if (options.entityTypeCode) {

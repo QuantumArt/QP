@@ -48,26 +48,26 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     }
   },
 
-  get_searchQuery() {
+  getSearchQuery() {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
       Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
-      this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
+      this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.getIsNull(),
       $(this._queryDropDownListElement).val());
   },
 
-  get_blockState() {
+  getBlockState() {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
       Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
       this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
-        isNull: this.get_IsNull(),
+        isNull: this.getIsNull(),
         text: $(this._queryDropDownListElement).val(),
         alias: $(this._queryDropDownListElement).find('option:selected').text()
       });
   },
 
-  get_filterDetails() {
-    const stateData = this.get_blockState().data;
+  getFilterDetails() {
+    const stateData = this.getBlockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.text) {
@@ -76,7 +76,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     return '""';
   },
 
-  restore_blockState(state) {
+  restoreBlockState(state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -90,7 +90,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChange() {
-    $(this._queryDropDownListElement).prop('disabled', this.get_IsNull());
+    $(this._queryDropDownListElement).prop('disabled', this.getIsNull());
   },
 
   dispose() {
@@ -108,7 +108,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChangeHandler: null,
-  get_IsNull() {
+  getIsNull() {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }

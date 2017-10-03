@@ -62,11 +62,11 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
     }
   },
 
-  get_searchQuery() {
+  getSearchQuery() {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
       Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier,
       this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
-      this.get_IsNull(),
+      this.getIsNull(),
       $(this._numberFromElement).data('tTextBox').value(),
       $(this._numberToElement).data('tTextBox').value(),
       this._isByValue,
@@ -74,12 +74,12 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       this._isByText);
   },
 
-  get_blockState() {
+  getBlockState() {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
       Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier,
       this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
-        inverse: this.get_IsNull(),
+        inverse: this.getIsNull(),
         from: $(this._numberFromElement).data('tTextBox').value(),
         to: $(this._numberToElement).data('tTextBox').value(),
         text: $(this._textAreaElement).val(),
@@ -88,8 +88,8 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       });
   },
 
-  get_filterDetails() {
-    const stateData = this.get_blockState().data;
+  getFilterDetails() {
+    const stateData = this.getBlockState().data;
     let result;
 
     if (stateData.isByText) {
@@ -108,7 +108,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
     return result;
   },
 
-  restore_blockState(state) {
+  restoreBlockState(state) {
     if (state) {
       if (this._inverseCheckBoxElement) {
         let $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
@@ -202,7 +202,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
 
-  get_IsNull() {
+  getIsNull() {
     if (this._inverseCheckBoxElement) {
       return $(this._inverseCheckBoxElement).is(':checked');
     }

@@ -87,38 +87,38 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   _customLinkButtonsSettings: null,
   _customButtonsSettings: null,
 
-  get_mainComponent() {
+  getMainComponent() {
     return this._mainComponent;
   },
-  get_mainComponentType() {
+  getMainComponentType() {
     return this._mainComponentType;
   },
 
-  get_state() {
+  getState() {
     return this._state;
   },
 
-  set_initializingCallback(value) {
+  setInitializingCallback(value) {
     this._initializingCallback = value;
   },
 
-  set_initializedCallback(value) {
+  setInitializedCallback(value) {
     this._initializedCallback = value;
   },
 
-  set_terminatingCallback(value) {
+  setTerminatingCallback(value) {
     this._terminatingCallback = value;
   },
 
-  set_terminatedCallback(value) {
+  setTerminatedCallback(value) {
     this._terminatedCallback = value;
   },
 
-  set_execSelectCallback(value) {
+  setExecSelectCallback(value) {
     this._execSelectCallback = value;
   },
 
-  set_hostLoadedCallback(value) {
+  setHostLoadedCallback(value) {
     this._hostLoadedCallback = value;
   },
 
@@ -193,8 +193,8 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
 
   createMainComponent(host) {
     const hostOptions = {
-      viewTypeCode: host.get_viewTypeCode(),
-      searchQuery: host.get_searchQuery(),
+      viewTypeCode: host.getViewTypeCode(),
+      searchQuery: host.getSearchQuery(),
       contextQuery: host.get_contextQuery(),
       filter: host.get_filter(),
       hostType: host.get_hostType(),
@@ -284,7 +284,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     $q.callFunction(this._hostLoadedCallback, this);
   },
 
-  get_eventArgs() {
+  getEventArgs() {
     if (!this._eventArgs) {
       const action = $a.getBackendAction(this._actionCode);
       const eventArgs = $a.getEventArgsFromAction(action);
@@ -343,11 +343,11 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return previousAction;
   },
 
-  get_options() {
+  getOptions() {
     return this._options;
   },
 
-  get_params() {
+  getParams() {
     return this._params;
   },
 
@@ -355,7 +355,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     let result = false;
 
     if (this._mainComponentType === $e.MainComponentType.Editor && this._state !== $e.DocumentContextState.Error) {
-      const eventArgs = this.get_eventArgs();
+      const eventArgs = this.getEventArgs();
 
       if (eventArgs.get_needUp() && !$q.isNull(eventArgs.get_previousAction())) {
         result = true;

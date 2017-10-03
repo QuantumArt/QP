@@ -80,29 +80,29 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
     }
   },
 
-  get_searchQuery() {
+  getSearchQuery() {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
       this._rangeType, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
-      this.get_IsNull(),
+      this.getIsNull(),
       $c.getDateTimePickerValue(this._dateFromElement),
       $c.getDateTimePickerValue(this._dateToElement),
       this._isByValue);
   },
 
-  get_blockState() {
+  getBlockState() {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
       this._rangeType, this._fieldID, this._contentID,
       this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
-        isNull: this.get_IsNull(),
+        isNull: this.getIsNull(),
         from: $c.getDateTimePickerValue(this._dateFromElement),
         to: $c.getDateTimePickerValue(this._dateToElement),
         isByValue: this._isByValue
       });
   },
 
-  get_filterDetails() {
-    const stateData = this.get_blockState().data;
+  getFilterDetails() {
+    const stateData = this.getBlockState().data;
     if (stateData.isNull) {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     } else if (stateData.isByValue) {
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
     return `${stateData.from ? stateData.from : '?'} - ${stateData.to ? stateData.to : '?'}`;
   },
 
-  restore_blockState(state) {
+  restoreBlockState(state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -138,7 +138,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
   },
 
   _onIsNullCheckBoxChange() {
-    if (this.get_IsNull()) {
+    if (this.getIsNull()) {
       $c.disableDateTimePicker(this._dateFromElement);
       $c.disableDateTimePicker(this._dateToElement);
     } else {
@@ -157,7 +157,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
       $(this._dateToElement).closest('.row').hide();
       $(`label[for='${$(this._dateFromElement).attr('id')}']`, this._containerElement).text($l.SearchBlock.valueText);
     } else {
-      if (!this.get_IsNull()) {
+      if (!this.getIsNull()) {
         $c.enableDateTimePicker(this._dateToElement);
       }
       $(`label[for='${$(this._dateFromElement).attr('id')}']`, this._containerElement).text($l.SearchBlock.fromText);
@@ -194,7 +194,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
   },
 
   _onIsNullCheckBoxChangeHandler: null,
-  get_IsNull() {
+  getIsNull() {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }

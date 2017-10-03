@@ -84,7 +84,7 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
       hostOptions
     );
 
-    library.set_libraryManager(this);
+    library.setLibraryManager(this);
 
     const libraryGroup = this.createLibraryGroup(libraryGroupCode);
     libraryGroup[libraryElementId] = library;

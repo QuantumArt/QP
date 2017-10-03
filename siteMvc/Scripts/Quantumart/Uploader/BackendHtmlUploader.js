@@ -44,11 +44,11 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     $(".t-upload input[type='file']", this._parentElement).removeData('tUpload');
   },
 
-  set_folderPath(value) {
+  setFolderPath(value) {
     this._folderPath = value;
   },
 
-  get_folderPath() {
+  getFolderPath() {
     return this._folderPath;
   },
 

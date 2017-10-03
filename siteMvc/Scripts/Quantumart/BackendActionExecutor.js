@@ -694,7 +694,7 @@ Quantumart.QP8.BackendActionExecutor.getEventArgsFromActionWithParams = function
   Quantumart.QP8.BackendActionExecutor.fillEventArgsFromAction(eventArgs, action);
   eventArgs.init(
     params.get_entityTypeCode(), params.get_entities(), params.get_parentEntityId(),
-    action, params.get_options(), params.get_actionCode()
+    action, params.getOptions(), params.get_actionCode()
   );
   return eventArgs;
 };
@@ -842,7 +842,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
     }
   },
 
-  get_options() { // eslint-disable-line camelcase
+  getOptions() { 
     return {
       previousAction: this._previousAction,
       forceOpenWindow: this._forceOpenWindow,

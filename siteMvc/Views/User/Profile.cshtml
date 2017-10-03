@@ -24,17 +24,17 @@
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">
-	@(Model.ContextObjectName).set_initializedCallback(function() {
+	@(Model.ContextObjectName).setInitializedCallback(function() {
 	  this.contentDefaultFiltersMediator = new Quantumart.QP8.ContentDefaultFiltersMediator("@Model.ContentFilterElementId");
 	});
 
-  @(Model.ContextObjectName).set_hostLoadedCallback(function() {
+  @(Model.ContextObjectName).setHostLoadedCallback(function() {
     if(this.contentDefaultFiltersMediator){
       this.contentDefaultFiltersMediator.initialize();
     }
   });
 
-  @(Model.ContextObjectName).set_terminatingCallback(function() {
+  @(Model.ContextObjectName).setTerminatingCallback(function() {
     if(this.contentDefaultFiltersMediator){
       this.contentDefaultFiltersMediator.dispose();
     }

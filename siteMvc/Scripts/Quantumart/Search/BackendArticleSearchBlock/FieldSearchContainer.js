@@ -86,33 +86,33 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
   },
 
   // eslint-disable-next-line camelcase
-  get_searchQuery() {
+  getSearchQuery() {
     if (this._fieldSearch) {
-      return this._fieldSearch.get_searchQuery();
+      return this._fieldSearch.getSearchQuery();
     }
 
     return null;
   },
 
   // eslint-disable-next-line camelcase
-  get_blockState() {
+  getBlockState() {
     if (this._fieldSearch) {
-      return this._fieldSearch.get_blockState();
+      return this._fieldSearch.getBlockState();
     }
 
     return undefined;
   },
 
   // eslint-disable-next-line camelcase
-  restore_blockState(state) {
+  restoreBlockState(state) {
     let result;
     this._createFieldSearchComponent(false);
     this._savedWindowState = state;
     if (this._fieldSearch) {
-      this._fieldSearch.set_blockState(state);
+      this._fieldSearch.setBlockState(state);
       this._fieldSearch.initialize();
-      result = this._fieldSearch.restore_blockState(state, false);
-      this.$filterDetailsSpanElement.html(`: ${this._fieldSearch.get_filterDetails()}`);
+      result = this._fieldSearch.restoreBlockState(state, false);
+      this.$filterDetailsSpanElement.html(`: ${this._fieldSearch.getFilterDetails()}`);
       return result;
     }
 
@@ -374,8 +374,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
   },
 
   _onCloseWndClick() {
-    this.$filterDetailsSpanElement.html(`: ${this._fieldSearch.get_filterDetails()}`);
-    this._savedWindowState = this._fieldSearch.get_blockState();
+    this.$filterDetailsSpanElement.html(`: ${this._fieldSearch.getFilterDetails()}`);
+    this._savedWindowState = this._fieldSearch.getBlockState();
     this._restoreWindowStateOnClosing = false;
     this._popupWindowComponent.close();
   },
@@ -400,13 +400,13 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
       this._fieldSearch.initialize();
     }
 
-    this._savedWindowState = this._fieldSearch.get_blockState();
+    this._savedWindowState = this._fieldSearch.getBlockState();
     this._restoreWindowStateOnClosing = true;
   },
 
   _onPopupWindowClose() {
     if (this._restoreWindowStateOnClosing) {
-      this._fieldSearch.restore_blockState(this._savedWindowState.data, true);
+      this._fieldSearch.restoreBlockState(this._savedWindowState.data, true);
     }
   },
 

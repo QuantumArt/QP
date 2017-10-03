@@ -11,12 +11,12 @@ Quantumart.QP8.ActionLogUserFilter.prototype = {
     this.userSearch.initialize();
   },
 
-  get_filterDetails() {
-    return this.userSearch.get_filterDetails();
+  getFilterDetails() {
+    return this.userSearch.getFilterDetails();
   },
 
-  get_value() {
-    return this.userSearch.get_searchQuery().QueryParams[0];
+  getValue() {
+    return this.userSearch.getSearchQuery().QueryParams[0];
   },
 
   onOpen() {

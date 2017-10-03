@@ -71,33 +71,33 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
     }
   },
 
-  get_searchQuery() {
+  getSearchQuery() {
     return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
       Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange,
       this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
-      this.get_IsNull(),
+      this.getIsNull(),
       $(this._numberFromElement).data('tTextBox').value(),
       $(this._numberToElement).data('tTextBox').value(),
       this._isByValue,
-      this.get_Inverse()
+      this.getInverse()
     );
   },
 
-  get_blockState() {
+  getBlockState() {
     return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
       Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange, this._fieldID, this._contentID,
       this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
-        isNull: this.get_IsNull(),
+        isNull: this.getIsNull(),
         from: $(this._numberFromElement).data('tTextBox').value(),
         to: $(this._numberToElement).data('tTextBox').value(),
         isByValue: this._isByValue,
-        inverse: this.get_Inverse()
+        inverse: this.getInverse()
       });
   },
 
-  get_filterDetails() {
-    const stateData = this.get_blockState().data;
+  getFilterDetails() {
+    const stateData = this.getBlockState().data;
     let result;
     if (stateData.isNull) {
       result = $l.SearchBlock.isNullCheckBoxLabelText;
@@ -115,7 +115,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
     return result;
   },
 
-  restore_blockState(state) {
+  restoreBlockState(state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -147,7 +147,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChange() {
-    if (this.get_IsNull()) {
+    if (this.getIsNull()) {
       $(this._numberFromElement).data('tTextBox').disable();
       $(this._numberToElement).data('tTextBox').disable();
     } else {
@@ -166,7 +166,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
       $(this._numberToElement).closest('.row').hide();
       $(`label[for='${$(this._numberFromElement).attr('id')}']`, this._containerElement).text($l.SearchBlock.valueText);
     } else {
-      if (!this.get_IsNull()) {
+      if (!this.getIsNull()) {
         $(this._numberToElement).data('tTextBox').enable();
       }
       $(`label[for='${$(this._numberFromElement).attr('id')}']`, this._containerElement).text($l.SearchBlock.fromText);
@@ -226,14 +226,14 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
 
-  get_IsNull() {
+  getIsNull() {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
     return false;
   },
 
-  get_Inverse() {
+  getInverse() {
     if (this._inverseCheckBoxElement) {
       return $(this._inverseCheckBoxElement).is(':checked');
     }

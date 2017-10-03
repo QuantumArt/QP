@@ -113,7 +113,7 @@
 <script>
   //# sourceURL=dbsettings.js
   var $editingForm = $("#@Model.UniqueId("editingForm")");
-  @(Model.ContextObjectName).set_initializedCallback(function() {
+  @(Model.ContextObjectName).setInitializedCallback(function() {
     $editingForm.on('click', '.downloadRecords', function() {
       $c.downloadFile("@Url.Action("GetRecordedUserActions")");
     });
@@ -135,7 +135,7 @@
     });
   });
 
-  @(Model.ContextObjectName).set_terminatingCallback(function() {
+  @(Model.ContextObjectName).setTerminatingCallback(function() {
     $editingForm.off('click');
   });
 </script>

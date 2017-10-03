@@ -29,21 +29,21 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
     $(this._containerElement).append('Не реализовано');
   },
 
-  get_searchQuery() {
+  getSearchQuery() {
     return null;
   },
 
-  get_blockState() {
+  getBlockState() {
     return null;
   },
 
-  set_blockState(state) {
+  setBlockState(state) {
   },
 
-  restore_blockState(state) {
+  restoreBlockState(state) {
   },
 
-  get_filterDetails() {
+  getFilterDetails() {
     return '';
   },
 

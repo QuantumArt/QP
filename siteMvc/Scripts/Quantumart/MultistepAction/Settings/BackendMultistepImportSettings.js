@@ -49,7 +49,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     }
 
     this._uploaderComponent.initialize();
-    this._uploaderComponent.set_folderPath(uploadPath);
+    this._uploaderComponent.setFolderPath(uploadPath);
     this._uploaderComponent.attachObserver(
       window.EVENT_TYPE_LIBRARY_FILE_UPLOADED,
       $.proxy(this._onFileUploadedHandler, this
@@ -57,7 +57,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   },
 
   _onFileUploadedHandler(eventType, sender, eventArgs) {
-    this.fileName = eventArgs.get_fileNames()[0];
+    this.fileName = eventArgs.getFileNames()[0];
 
     $(`#${this.options._popupWindowId}_${this._fileNameId}`).val(this.fileName);
     $(`#${this._fileNameId}`).val(this.fileName);

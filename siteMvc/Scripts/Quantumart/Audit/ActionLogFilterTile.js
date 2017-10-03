@@ -53,11 +53,11 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     $(this._containerElement).append(this.$tile);
   },
 
-  get_value() {
+  getValue() {
     return this._currentValue ? this._currentValue : undefined;
   },
 
-  get_options() {
+  getOptions() {
     return this._options;
   },
 
@@ -108,8 +108,8 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
   },
 
   _onCloseFilterWndClick() {
-    this._currentValue = this._filterComponent.get_value();
-    this.$filterDetailsSpanElement.html(`: ${this._filterComponent.get_filterDetails()}`);
+    this._currentValue = this._filterComponent.getValue();
+    this.$filterDetailsSpanElement.html(`: ${this._filterComponent.getFilterDetails()}`);
     this._popupWindowComponent.close();
   },
 

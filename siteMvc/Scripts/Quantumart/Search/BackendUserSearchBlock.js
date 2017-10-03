@@ -9,7 +9,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
   _minSearchBlockHeight: 145,
   _maxSearchBlockHeight: 145,
 
-  get_searchQuery() {
+  getSearchQuery() {
     const $root = $(this._concreteSearchBlockElement);
 
     const login = $('.login', $root).val();
@@ -53,7 +53,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
   },
 
   _onFindButtonClick() {
-    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
+    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.getSearchQuery());
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 

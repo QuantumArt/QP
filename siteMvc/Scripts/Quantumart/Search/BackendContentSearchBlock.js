@@ -15,7 +15,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
     _siteListElement: null,
     _contentNameElement: null,
 
-    get_searchQuery() {
+    getSearchQuery() {
       let groupId = null;
       let siteId = null;
       let contentName = null;
@@ -78,7 +78,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
     },
 
     _onFindButtonClick() {
-      let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
+      let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.getSearchQuery());
       this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
       eventArgs = null;
     },

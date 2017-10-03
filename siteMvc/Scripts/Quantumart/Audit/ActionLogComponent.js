@@ -52,18 +52,18 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _onDataBinding(e) {
-    const filterData = this.get_filterData();
+    const filterData = this.getFilterData();
     if (filterData) {
       // eslint-disable-next-line no-param-reassign
       e.data = Object.assign({}, e.data, { searchQuery: JSON.stringify(filterData) });
     }
   },
 
-  get_filterData() {
+  getFilterData() {
     const filterData = {};
     for (const tileType in this._tiles) {
       if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
-        this._tiles[tileType].get_options().deriveFilterData(this._tiles[tileType], filterData);
+        this._tiles[tileType].getOptions().deriveFilterData(this._tiles[tileType], filterData);
       }
     }
 
@@ -128,9 +128,9 @@ Quantumart.QP8.ActionLogComponent.prototype = {
             }
           },
           deriveFilterData(tile, filterData) {
-            const v = tile.get_value();
+            const v = tile.getValue();
             if (v) {
-              switch (tile.get_options().type) {
+              switch (tile.getOptions().type) {
                 case $e.ActionLogFilteredColumns.EntityStringId:
                   filterData.entityStringId = v;
                   break;

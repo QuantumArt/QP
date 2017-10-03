@@ -77,11 +77,11 @@
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">
-	@(Model.ContextObjectName).set_initializedCallback(function() {
+	@(Model.ContextObjectName).setInitializedCallback(function() {
 		this.mediatorComponent = new Quantumart.QP8.BackendChildEntityPermissionList("@Model.SearchBlockId");
 		this.modifyEventArgsContext = this.mediatorComponent.modifyEventArgsContext;		
 	});
-	@(Model.ContextObjectName).set_terminatingCallback(function() {								
+	@(Model.ContextObjectName).setTerminatingCallback(function() {								
 		this.mediatorComponent.dispose();
 		this.mediatorComponent = null;
 	});
