@@ -33,7 +33,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
 
           $statusSelector.data('entity_data_list_component').removeAllListItems();
 
-          if (data.hasWorkflow == true) {
+          if (data.hasWorkflow) {
             $statusSelector.data('entity_data_list_component').selectEntities(newStatuses);
             $statusSelector.data('entity_data_list_component').deselectAllListItems();
             $statusSelector.data('entity_data_list_component').enableList();
@@ -46,7 +46,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   };
 
   const manageGlobalVisibility = function () {
-    if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(',').indexOf($typeSelector.val()) != -1) {
+    if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(',').indexOf($typeSelector.val()) !== -1) {
       $globalChkbx.parent('.field').show();
     } else {
       $globalChkbx.parent('.field').hide();
@@ -57,7 +57,8 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
     if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
       const objId = $parentObjectSelector.val();
       const targetObj = $(this.data('objects')).filter(function () {
-        return this.Id == objId;
+        $q.warnIfEqDiff(this.id, objId);
+        return this.Id === objId;
       })[0];
       $nameField.val(targetObj.Name);
       $netNameField.val(targetObj.NetName);
@@ -75,7 +76,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
 
   $typeSelector.change(manageGlobalVisibility);
   $statusSelector.find(`.multi-picker-item[value="${$statusSelector.data('published-id')}"]`).attr('checked', true);
-  if ($statusSelector.data('has-workflow') == 'False') {
+  if ($statusSelector.data('has-workflow') === 'False') {
     $statusSelector.data('entity_data_list_component').disableList();
   }
 

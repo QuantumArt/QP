@@ -56,7 +56,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       const url = that._getUrl();
       let setDefaultValues = false;
 
-      if (event.type == 'submit') {
+      if (event.type === 'submit') {
         method = 'POST';
       } else {
         setDefaultValues = useAutoLogin;
@@ -85,7 +85,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
           if (that._isAuthenticated) {
             that._closeWindow();
 
-            const needRefresh = that._userName != currentUserName || customerCode != currentCustomerCode;
+            const needRefresh = that._userName !== currentUserName || customerCode !== currentCustomerCode;
 
             if (needRefresh) {
               location.reload();
@@ -160,7 +160,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
   },
 
   _getUseAutoLogin() {
-    return $('input#UseAutoLogin').val().toUpperCase() == 'TRUE';
+    return $('input#UseAutoLogin').val().toUpperCase() === 'TRUE';
   },
 
   _disableWindow() {
@@ -217,8 +217,8 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
   needLogon(jqXHR, url) {
     if (
-      url.toUpperCase() == window.CONTROLLER_URL_LOGON.toUpperCase()
-            || url.toUpperCase() == window.CONTROLLER_URL_WINLOGON.toUpperCase()) {
+      url.toUpperCase() === window.CONTROLLER_URL_LOGON.toUpperCase()
+            || url.toUpperCase() === window.CONTROLLER_URL_WINLOGON.toUpperCase()) {
       return false;
     } else if (jqXHR.getResponseHeader('QP-Not-Authenticated')) {
       return true;

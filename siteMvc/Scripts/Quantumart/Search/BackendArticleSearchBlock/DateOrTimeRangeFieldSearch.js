@@ -150,9 +150,9 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
   },
 
   _onByValueSelectorChanged(e) {
-    this._isByValue = $(e.currentTarget).val() == 0;
+    this._isByValue = $(e.currentTarget).val() === 0;
 
-    if (this._isByValue == true) {
+    if (this._isByValue) {
       $c.disableDateTimePicker(this._dateToElement);
       $(this._dateToElement).closest('.row').hide();
       $(`label[for='${$(this._dateFromElement).attr('id')}']`, this._containerElement).text($l.SearchBlock.valueText);

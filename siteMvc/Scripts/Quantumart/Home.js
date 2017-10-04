@@ -54,14 +54,14 @@ Quantumart.QP8.Home = function (
     const listStr = String.format(temp, $l.Home.list);
     const profileStr = String.format(temp, $l.Home.profile);
 
-    if ($locked.text().trim() != '0') {
+    if ($locked.text().trim() !== '0') {
       $locked.append(listStr);
       $locked.find('a').on('click', () => {
         executeAction('list_locked_article', 'db', 1, customerCode, 0);
       });
     }
 
-    if ($approval.text().trim() != '0') {
+    if ($approval.text().trim() !== '0') {
       $approval.append(listStr);
       $approval.find('a').on('click', () => {
         executeAction('list_articles_for_approval', 'db', 1, customerCode, 0);

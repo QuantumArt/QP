@@ -32,7 +32,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this._fields = aggrList.data('aggregation_list_item_fields').split(',');
     this._addItemHandler = jQuery.proxy(this.addItem, this);
     this._removeItemHandler = jQuery.proxy(this.removeItem, this);
-    if (aggrList.data('additional_names') != undefined) {
+    if (!$q.isNull(aggrList.data('additional_names'))) {
       this._additionalNames = aggrList.data('additional_names').split(',');
     }
     this._viewModel = {

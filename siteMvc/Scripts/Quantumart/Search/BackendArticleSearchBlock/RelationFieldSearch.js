@@ -119,7 +119,8 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       result = this._getText(stateData.entities, e => $q.cutShort(e.Name, 10));
     }
 
-    if (stateData.inverse && result != '') {
+    $q.warnIfEqDiff(result, '');
+    if (stateData.inverse && result !== '') {
       result = `${$l.SearchBlock.notText}(${result})`;
     }
 
