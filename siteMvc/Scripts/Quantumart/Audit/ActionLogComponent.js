@@ -46,7 +46,6 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _onClearFilter() {
-    const $filter = $(`#${this._filterElementId}`);
     this._destroyAllTiles();
     $('.alSearchButton', this.$filter).trigger('click');
   },

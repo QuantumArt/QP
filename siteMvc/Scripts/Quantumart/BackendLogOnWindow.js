@@ -74,7 +74,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         },
         true,
         false,
-        (data, textStatus, jqXHR) => {
+        data => {
           if (data.isAuthenticated) {
             that._isAuthenticated = true;
             that._userName = data.userName;
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       );
     };
 
-    this._onCloseWindowHandler = function (event) {
+    this._onCloseWindowHandler = function () {
       that._triggerDeferredCallcacks(that._isAuthenticated);
       that.dispose();
     };

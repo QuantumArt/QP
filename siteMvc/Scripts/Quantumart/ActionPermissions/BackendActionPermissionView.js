@@ -1,6 +1,6 @@
 window.EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING = 'OnActionPermissionsViewExecuting';
 
-Quantumart.QP8.BackendActionPermissionView = function (viewElementId, options, hostOptions) {
+Quantumart.QP8.BackendActionPermissionView = function (viewElementId) {
   Quantumart.QP8.BackendActionPermissionView.initializeBase(this);
 
   this._viewElementId = viewElementId;

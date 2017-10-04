@@ -160,12 +160,10 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   },
 
   loadScript(url, key) {
-    if (!key) {
-      key = url;
-    }
+    const resultKey = key || url;
 
-    if (!this._getArea().getCustomScriptState(key)) {
-      const result = $.ajax({
+    if (!this._getArea().getCustomScriptState(resultKey)) {
+      $.ajax({
         type: 'get',
         dataType: 'script',
         url,
@@ -173,7 +171,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
         async: false
       });
 
-      this._getArea().setCustomScriptState(key, true);
+      this._getArea().setCustomScriptState(resultKey, true);
     }
   },
 

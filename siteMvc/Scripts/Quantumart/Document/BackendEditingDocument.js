@@ -452,7 +452,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  saveAndCloseRequest(eventArgs) {
+  saveAndCloseRequest() {
     const context = this.get_documentContext();
     if (context && context._options.saveAndCloseActionCode) {
       const main = this.getMainComponent();

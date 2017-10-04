@@ -60,14 +60,14 @@ Quantumart.QP8.BackendContextBlock.prototype
           },
           false,
           false,
-          (data, textStatus, jqXHR) => {
+          data => {
             if (data.success) {
               serverContent = data.view;
             } else {
               $q.alertFail(data.message);
             }
           },
-          (jqXHR, textStatus, errorThrown) => {
+          jqXHR => {
             serverContent = null;
             $q.processGenericAjaxError(jqXHR);
           });

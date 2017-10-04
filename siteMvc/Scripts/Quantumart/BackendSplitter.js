@@ -118,7 +118,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
     splitter = null;
   },
 
-  _onSplitterResized(event) {
+  _onSplitterResized() {
     const $firstPane = $(this._firstPaneElement);
     const firstPaneWidth = $firstPane.width();
     const firstPaneHeight = $firstPane.height();
@@ -131,11 +131,11 @@ Quantumart.QP8.BackendSplitter.prototype = {
     this.notify(window.EVENT_TYPE_SPLITTER_RESIZED, eventArgs);
   },
 
-  _onSplitterDragStart(event) {
+  _onSplitterDragStart() {
     this.notify(window.EVENT_TYPE_SPLITTER_DRAG_START, {});
   },
 
-  _onSplitterDrop(event) {
+  _onSplitterDrop() {
     this.notify(window.EVENT_TYPE_SPLITTER_DROP, {});
   },
 
