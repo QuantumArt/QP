@@ -1,7 +1,9 @@
 window.EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING = 'OnEntityListActionExecuting';
 window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED = 'OnEntityListSelectionChanged';
 
-Quantumart.QP8.Enums.DataListType = function () { };
+Quantumart.QP8.Enums.DataListType = function () {
+  // default constructor
+};
 Quantumart.QP8.Enums.DataListType.prototype = {
   None: 0,
   DropDownList: 1,

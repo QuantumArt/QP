@@ -1,4 +1,6 @@
-Quantumart.QP8.BackendEntityObject = function () {};
+Quantumart.QP8.BackendEntityObject = function () {
+  // empty constructor
+};
 Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function (
   entityTypeCode, entityId, loadChilds, filter, successHandler, errorHandler) {
   const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetByTypeAndIdForTree`;

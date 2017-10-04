@@ -1,4 +1,6 @@
-Quantumart.QP8.BackendExpandedContainer = function () { };
+Quantumart.QP8.BackendExpandedContainer = function () {
+  // empty constructor
+};
 Quantumart.QP8.BackendExpandedContainer.prototype = {
   $content: null,
 

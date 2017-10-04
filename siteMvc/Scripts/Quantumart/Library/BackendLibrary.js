@@ -242,9 +242,6 @@ Quantumart.QP8.BackendLibrary.prototype = {
     this._splitter.initialize();
   },
 
-  refreshLibrary() {
-  },
-
   changeViewType(viewTypeCode) {
     this._viewTypeCode = viewTypeCode;
     this.resetCurrentFileList();

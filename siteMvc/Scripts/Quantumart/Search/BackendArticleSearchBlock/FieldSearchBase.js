@@ -37,10 +37,12 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
     return null;
   },
 
-  setBlockState(state) {
+  setBlockState(state) { // eslint-disable-line no-unused-vars
+    // default implementation
   },
 
-  restoreBlockState(state) {
+  restoreBlockState(state) { // eslint-disable-line no-unused-vars
+    // default implementation
   },
 
   getFilterDetails() {
@@ -48,6 +50,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
   },
 
   onOpen() {
+    // default implementation
   },
 
   dispose() {

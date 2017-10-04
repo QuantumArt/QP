@@ -5,12 +5,14 @@ Quantumart.QP8.ActionLogFilterBase = function (filterContainer) {
 Quantumart.QP8.ActionLogFilterBase.prototype = {
   $container: null,
 
-  initialize() { },
-  onOpen() { },
+  initialize: $c.notImplemented,
+  onOpen() {
+    // default implementation
+  },
   getFilterDetails() {
     return '?';
   },
-  getValue() { },
+  getValue: $c.notImplemented,
   dispose() {
     this.$container = null;
   }

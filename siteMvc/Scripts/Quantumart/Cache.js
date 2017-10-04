@@ -1,4 +1,5 @@
 Quantumart.QP8.Cache = function () {
+  // empty constructor
 };
 
 Quantumart.QP8.Cache._itemInfos = {};

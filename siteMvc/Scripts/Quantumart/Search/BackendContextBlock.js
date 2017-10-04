@@ -105,7 +105,7 @@ Quantumart.QP8.BackendContextBlock.prototype
     },
 
     _onResetButtonClick() {
-
+      // default implementation
     },
 
     dispose() {

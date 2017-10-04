@@ -1,7 +1,9 @@
 window.EVENT_TYPE_LIBRARY_FILE_UPLOADED = 'OnLibraryFileUploaded';
 window.EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED = 'OnLibraryAllFilesUploaded';
 
-Quantumart.QP8.IBackendUploader = function () { };
+Quantumart.QP8.IBackendUploader = function () {
+  // empty constructor
+};
 Quantumart.QP8.IBackendUploader.prototype = {
   initialize() {
     $q.alertFail('initialize is not implemented');
