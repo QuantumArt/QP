@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>QP8BackendApi.Interaction</id>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <title>QP8BackendApi.Interaction</title>
     <authors>Pavel Celut,Maxim Tertyshnyy,Alex Kostyukov</authors>
     <owners>Quantum Art</owners>
@@ -11,7 +11,7 @@
     <copyright>Copyright © 2007-2017 Quantum Art</copyright>
     <tags>QP</tags>
     <dependencies>
-        <dependency id="Json2" version="1.0.2" />
+      <dependency id="Json2" version="1.0.2" />
     </dependencies>
   </metadata>
   <files>

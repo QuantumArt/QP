@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -410,14 +410,9 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public void DoCustomBinding()
         {
-            const CorrectSlashMode dirMode =
-                CorrectSlashMode.RemoveLastSlash | CorrectSlashMode.ReplaceDoubleSlashes |
-                CorrectSlashMode.ConvertSlashesToBackSlashes;
-            const CorrectSlashMode urlMode =
-                CorrectSlashMode.ReplaceDoubleSlashes | CorrectSlashMode.ConvertBackSlashesToSlashes |
-                CorrectSlashMode.WrapToSlashes;
-            const CorrectSlashMode absUrlMode =
-                CorrectSlashMode.ConvertBackSlashesToSlashes | CorrectSlashMode.RemoveLastSlash;
+            const CorrectSlashMode dirMode = CorrectSlashMode.RemoveLastSlash | CorrectSlashMode.ConvertSlashesToBackSlashes;
+            const CorrectSlashMode urlMode = CorrectSlashMode.ReplaceDoubleSlashes | CorrectSlashMode.ConvertBackSlashesToSlashes | CorrectSlashMode.WrapToSlashes;
+            const CorrectSlashMode absUrlMode = CorrectSlashMode.ConvertBackSlashesToSlashes | CorrectSlashMode.RemoveLastSlash;
 
             UploadDir = PathUtility.CorrectSlashes(UploadDir, dirMode);
             LiveDirectory = PathUtility.CorrectSlashes(LiveDirectory, dirMode);

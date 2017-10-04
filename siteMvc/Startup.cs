@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Owin;
+using Quantumart.QP8.WebMvc;
 
-[assembly: OwinStartup(typeof(Quantumart.QP8.WebMvc.Startup))]
+[assembly: OwinStartup(typeof(Startup))]
 namespace Quantumart.QP8.WebMvc
 {
     public class Startup

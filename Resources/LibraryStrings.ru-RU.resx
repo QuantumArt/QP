@@ -163,7 +163,7 @@
     <value>Загрузить</value>
   </data>
   <data name="OperationIsNotSupported" xml:space="preserve">
-    <value>Невозможно выполнить запрашиваемую операцию для файла {0}. Расширение {1} не поддерживается</value>
+    <value>Невозможно выполнить запрашиваемую операцию для файла {0}</value>
   </data>
   <data name="ContentFolderNotExists" xml:space="preserve">
     <value>Папка контента (id = {0}) не существует</value>
@@ -232,7 +232,7 @@
     <value>Файл: {0}. Превышен максимальный размер: {1} Mb</value>
   </data>
   <data name="PlUploadErrorReport" xml:space="preserve">
-    <value>Файл: {0}. Неизвестная ошибка: {1}. Pl error code: {2}.</value>
+    <value>Файл: {0}. Неизвестная ошибка: {1}. Pl error code: {2}</value>
   </data>
   <data name="VirtualPath" xml:space="preserve">
     <value>Виртуальный путь</value>
@@ -247,7 +247,7 @@
     <value>Копирование файлов с сайта {0}</value>
   </data>
   <data name="FileExistsTryAnother" xml:space="preserve">
-    <value>Файл {0} уже существует. Пожалуйста, попробуйте ввести другое имя.</value>
+    <value>Файл {0} уже существует. Пожалуйста, попробуйте ввести другое имя</value>
   </data>
   <data name="AccessDenied" xml:space="preserve">
     <value>Доступ к пути {0} запрещен для пользователя {1}</value>

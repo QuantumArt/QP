@@ -27,8 +27,12 @@
       '&raquo;',
       '&lsquo;',
       '&rsquo;',
+      '‚',
+      '‘',
+      '’',
       '«',
       '»',
+      '„',
       '“',
       '”'
     ];
@@ -37,14 +41,25 @@
       result = result.replace(new RegExp(quote, 'g'), '"');
     });
 
-    // wordfix
-    result = result.replace(/…/g, '...');
-
     // &#8211; &ndash;
     result = result.replace(/–/g, '-');
 
     // &#8212; &mdash;
     result = result.replace(/—/g, '-');
+
+    // wordfix
+    result = result.replace(/…/g, '...');
+    result = result.replace(/\.{3}/g, '&hellip;');
+
+    // fix whitespaces
+    result = result.replace(/(&nbsp;\s)|(\s&nbsp;)|(&nbsp;&nbsp;)/g, ' ');
+    result = result.replace(/[\s|\u00A0]+/g, ' ');
+
+    // Add &nbsp; after comma for conjunctions, prepositions, pronouns
+    // Conjunctions: а, и,
+    // Prepositions: в, к, о, с, у,
+    // Pronouns: я,
+    result = result.replace(/([\s|\u00A0]|&nbsp;)([аивкосуя],)\s/g, '$1$2&nbsp;');
 
     // advanced quotes
     // eslint-disable-next-line no-control-regex
@@ -61,9 +76,11 @@
 
     const fixToMdashFn = function (input, symbol) {
       let tempResult = input;
-      tempResult = tempResult.replace(new RegExp(` (${symbol}){1,2} `, 'g'), '&nbsp;&mdash; ');
-      tempResult = tempResult.replace(new RegExp(`([>|\\s])${symbol} `, 'g'), '$1&mdash; ');
-      tempResult = tempResult.replace(new RegExp(`^${symbol} `, 'g'), '&mdash; ');
+      tempResult = tempResult.replace(new RegExp(' ' + symbol + '&nbsp;', 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp('&nbsp;' + symbol + ' ', 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp(' (' + symbol + '){1,2} ', 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp('([>|\\s])' + symbol + ' ', 'g'), '$1&mdash; ');
+      tempResult = tempResult.replace(new RegExp('^' + symbol + ' ', 'g'), '&mdash; ');
       return tempResult;
     };
 
@@ -75,6 +92,7 @@
     result = fixToMdashFn(result, '-');
     result = fixToMdashFn(result, '–');
     result = fixToMdashFn(result, '&ndash;');
+    result = fixToMdashFn(result, '&mdash;');
 
     result = result.replace(/\b(\d+)-(\d+)\b/g, '<nobr>$1&ndash;$2</nobr>');
     result = result.replace(/(\S+)-(\S+)/g, (match, p1, p2) => {
