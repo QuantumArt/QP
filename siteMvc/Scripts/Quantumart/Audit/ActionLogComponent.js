@@ -60,12 +60,11 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
   getFilterData() {
     const filterData = {};
-    for (const tileType in this._tiles) {
+    Object.keys(this._tiles).forEach(tileType => {
       if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
         this._tiles[tileType].getOptions().deriveFilterData(this._tiles[tileType], filterData);
       }
-    }
-
+    });
     return filterData;
   },
 
@@ -131,30 +130,30 @@ Quantumart.QP8.ActionLogComponent.prototype = {
             if (v) {
               switch (tile.getOptions().type) {
                 case $e.ActionLogFilteredColumns.EntityStringId:
-                  filterData.entityStringId = v;
+                  filterData.entityStringId = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.EntityTitle:
-                  filterData.entityTitle = v;
+                  filterData.entityTitle = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ParentEntityId:
-                  filterData.parentEntityId = v;
+                  filterData.parentEntityId = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ExecutionTime:
-                  filterData.from = v.from;
-                  filterData.to = v.to;
+                  filterData.from = v.from; // eslint-disable-line no-param-reassign
+                  filterData.to = v.to; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ActionTypeName:
-                  filterData.actionTypeCode = v;
+                  filterData.actionTypeCode = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ActionName:
-                  filterData.actionCode = v;
+                  filterData.actionCode = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.EntityTypeName:
-                  filterData.entityTypeCode = v;
+                  filterData.entityTypeCode = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.UserLogin:
                   if ($.isArray(v) && v.length > 0) {
-                    filterData.userIDs = v;
+                    filterData.userIDs = v; // eslint-disable-line no-param-reassign
                   }
                   break;
                 default:

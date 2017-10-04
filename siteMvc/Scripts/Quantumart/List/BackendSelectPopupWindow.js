@@ -12,7 +12,7 @@ Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
   this._popupWindowToolbarComponent = this._createToolbar();
 
 
-  options = Object.assign({}, options, {
+  const popupOptions = Object.assign({}, options, {
     popupWindowId: this._popupWindowId,
     showBreadCrumbs: false,
     saveSelectionWhenChangingView: true,
@@ -23,7 +23,7 @@ Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
   });
 
   eventArgs.set_actionTypeCode(Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode(this._actionCode));
-  this._popupWindowComponent = manager.createPopupWindow(eventArgs, options);
+  this._popupWindowComponent = manager.createPopupWindow(eventArgs, popupOptions);
   this._popupWindowComponent.attachObserver(
     window.EVENT_TYPE_POPUP_WINDOW_CLOSED, $.proxy(this._onClosed, this)
   );
