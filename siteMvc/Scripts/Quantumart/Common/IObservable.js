@@ -67,7 +67,9 @@ Quantumart.QP8.Observable.prototype = {
       return;
     }
 
-    const newTimes = $q.isNull(times) ? -1 : times;
+    if ($q.isNull(times)) {
+      times = -1; // eslint-disable-line no-param-reassign
+    }
 
     if (!this._observerInfos[eventType]) {
       this._observerInfos[eventType] = [];
@@ -76,9 +78,9 @@ Quantumart.QP8.Observable.prototype = {
     const observerInfo = this._getObserverInfo(eventType, observer);
 
     if ($q.isNull(observerInfo)) {
-      Array.add(this._observerInfos[eventType], { observer, newTimes });
+      Array.add(this._observerInfos[eventType], { observer, times });
     } else {
-      observerInfo.times = newTimes;
+      observerInfo.times = times;
     }
   },
 
