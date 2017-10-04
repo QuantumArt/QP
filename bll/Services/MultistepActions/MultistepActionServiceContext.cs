@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions
 {
@@ -25,6 +26,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
         public int Id { get; set; }
 
         public int[] Ids { get; set; }
+
+        public IEnumerable<Content> ExtensionContents { get; set; }
 
         public bool? BoundToExternal { get; set; }
 
