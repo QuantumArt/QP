@@ -150,12 +150,14 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   createPanels() {
-    const breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(
+    const manager = Quantumart.QP8.BackendBreadCrumbsManager.getInstance();
+    const menuManager = Quantumart.QP8.BackendBreadMenuContextMenuManager.getInstance();
+    const breadCrumbsComponent = manager.createBreadCrumbs(
       `breadCrumbs_${this._tabId}`,
       {
         documentHost: this,
         breadCrumbsContainerElementId: this._editingArea.get_breadCrumbsContainerElementId(),
-        contextMenuManager: new Quantumart.QP8.BackendBreadMenuContextMenuManager()
+        contextMenuManager: menuManager
       }
     );
 
