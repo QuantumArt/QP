@@ -62,14 +62,14 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   getSearchQuery() {
     const result = [];
-    for (const fieldID in this._fieldSearchContainerList) {
+    Object.keys(this._fieldSearchContainerList).forEach(fieldID => {
       if (fieldID && this._fieldSearchContainerList[fieldID]) {
         const fscsq = this._fieldSearchContainerList[fieldID].getSearchQuery();
         if (fscsq) {
           result.push(fscsq);
         }
       }
-    }
+    });
 
     if (result.length > 0) {
       return result;
@@ -79,6 +79,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   getBlockState() {
     const r = jQuery.grep(
+      // eslint-disable-next-line no-confusing-arrow
       jQuery.map(this._fieldSearchContainerList, fsc => fsc ? fsc.getBlockState() : null),
       fsc => fsc
     );

@@ -5,15 +5,9 @@
 /* eslint max-lines: 'off' */
 /* eslint no-alert: 'off' */
 /* eslint no-sync: 'off' */
+/* eslint prefer-rest-params: 0 */
+/* eslint prefer-spread: 0 */
 
-/* TODO: wait4{webpack|browserify}
-var config = require("./config");
-if (config.env === 'development') {
-  $q.isDebug = true;
-}
-
-$q.isDebug = process.env.NODE_ENV === 'development';
-*/
 
 window.$q = {
   isDebug: window.Sys.Debug.isDebug

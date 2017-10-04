@@ -842,7 +842,7 @@ Quantumart.QP8.BackendActionParameters.prototype = {
     }
   },
 
-  getOptions() { 
+  getOptions() {
     return {
       previousAction: this._previousAction,
       forceOpenWindow: this._forceOpenWindow,

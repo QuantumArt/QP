@@ -196,6 +196,7 @@ Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (
     FieldColumn: fieldColumn,
     ContentId: contentId,
     ReferenceFieldId: referenceFieldId,
+    // eslint-disable-next-line prefer-rest-params
     QueryParams: Array.prototype.slice.call(arguments, 5)
   };
 };

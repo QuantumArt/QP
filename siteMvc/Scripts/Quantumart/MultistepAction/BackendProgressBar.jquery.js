@@ -149,8 +149,10 @@
 
   $.fn.backendProgressBar = function backendProgressBar(method) {
     if (methods[method]) {
+    // eslint-disable-next-line prefer-rest-params
       return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
     } else if (typeof method === 'object' || !method) {
+    // eslint-disable-next-line prefer-rest-params
       return methods.init.apply(this, arguments);
     }
 

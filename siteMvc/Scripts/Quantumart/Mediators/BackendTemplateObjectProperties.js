@@ -16,9 +16,9 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
           contentId: data.value
         },
         true, false).done(
-        data => {
-          const newFields = data.fields.split(',');
-          const newStatuses = data.statuses;
+        info => {
+          const newFields = info.fields.split(',');
+          const newStatuses = info.statuses;
           const vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
 
           if (vm.fields) {
@@ -28,7 +28,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
 
           $statusSelector.data('entity_data_list_component').removeAllListItems();
 
-          if (data.hasWorkflow) {
+          if (info.hasWorkflow) {
             $statusSelector.data('entity_data_list_component').selectEntities(newStatuses);
             $statusSelector.data('entity_data_list_component').deselectAllListItems();
             $statusSelector.data('entity_data_list_component').enableList();

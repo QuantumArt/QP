@@ -76,11 +76,11 @@
 
     const fixToMdashFn = function (input, symbol) {
       let tempResult = input;
-      tempResult = tempResult.replace(new RegExp(' ' + symbol + '&nbsp;', 'g'), '&nbsp;&mdash; ');
-      tempResult = tempResult.replace(new RegExp('&nbsp;' + symbol + ' ', 'g'), '&nbsp;&mdash; ');
-      tempResult = tempResult.replace(new RegExp(' (' + symbol + '){1,2} ', 'g'), '&nbsp;&mdash; ');
-      tempResult = tempResult.replace(new RegExp('([>|\\s])' + symbol + ' ', 'g'), '$1&mdash; ');
-      tempResult = tempResult.replace(new RegExp('^' + symbol + ' ', 'g'), '&mdash; ');
+      tempResult = tempResult.replace(new RegExp(` ${symbol}&nbsp;`, 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp(`&nbsp;${symbol} `, 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp(` (${symbol}){1,2} `, 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp(`([>|\\s])${symbol} `, 'g'), '$1&mdash; ');
+      tempResult = tempResult.replace(new RegExp(`^${symbol} `, 'g'), '&mdash; ');
       return tempResult;
     };
 
