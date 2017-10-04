@@ -195,9 +195,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   },
 
   _destroyAllFieldSearchContainers() {
-    for (const fieldID in this._fieldSearchContainerList) {
-      this._destroyFieldSearchContainer(fieldID);
-    }
+    Object.keys(this._fieldSearchContainerList).forEach(fieldId => this._destroyFieldSearchContainer(fieldId), this);
   },
 
   _onAddFieldClick() {

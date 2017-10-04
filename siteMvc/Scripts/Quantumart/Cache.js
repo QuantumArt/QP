@@ -21,9 +21,9 @@ Quantumart.QP8.Cache.removeItem = function (key) {
 };
 
 Quantumart.QP8.Cache.clear = function () {
-  for (const key in Quantumart.QP8.Cache._itemInfos) {
+  Object.keys(Quantumart.QP8.Cache._itemInfos).forEach(key => {
     Quantumart.QP8.Cache.removeItem(key);
-  }
+  });
 };
 
 Quantumart.QP8.Cache.dispose = function () {

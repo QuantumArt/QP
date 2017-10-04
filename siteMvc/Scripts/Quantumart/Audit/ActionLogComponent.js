@@ -183,9 +183,9 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _destroyAllTiles() {
-    for (const tileType in this._tiles) {
+    Object.keys(this._tiles).forEach(tileType => {
       this._destroyTile(tileType);
-    }
+    }, this);
   },
 
   dispose() {

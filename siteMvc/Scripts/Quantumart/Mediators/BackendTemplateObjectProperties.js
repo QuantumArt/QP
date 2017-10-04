@@ -8,8 +8,6 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   const $globalChkbx = $componentElem.find('.globalChkbx');
   const $typeSelector = $componentElem.find('.typeDlist');
   const $statusSelector = $componentElem.find('.multipleItemPicker');
-  const $selectionIsStarting = $componentElem.find('.selection-is-starting .radioButtonsList');
-  const $selectionIncludes = $componentElem.find('.selection-includes .radioButtonsList');
 
   const onContentValueChanged = function (e, data) {
     if (data.value) {
@@ -21,14 +19,11 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
         data => {
           const newFields = data.fields.split(',');
           const newStatuses = data.statuses;
-          const publishedStatusId = $statusSelector.data('published-id');
           const vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
 
           if (vm.fields) {
             vm.fields.removeAll();
-            for (const i in newFields) {
-              vm.fields.push(newFields[i]);
-            }
+            newFields.forEach(v => vm.fields.push(v));
           }
 
           $statusSelector.data('entity_data_list_component').removeAllListItems();

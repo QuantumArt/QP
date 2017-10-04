@@ -156,7 +156,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       false,
       $.proxy(function (data) {
         this._containerElem.find('span.workflow_permission_message').html('');
-        for (const i in data) {
+        Object.keys(data).forEach(i => {
           const current_workflow_stage = this._containerElem.find(`.${data[i].StName}`);
           const user_row = current_workflow_stage.find(':visible.workflow_user_row');
           const group_row = current_workflow_stage.find(':visible.workflow_group_row');
@@ -170,7 +170,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             const oldHtml = span.html();
             group_row.find('span.workflow_permission_message').html(`${oldHtml}<br>${data[i].Message}`);
           }
-        }
+        }, this);
       }, this)
     );
   },

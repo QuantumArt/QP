@@ -42,10 +42,9 @@ Quantumart.QP8.BackendAggregationList.prototype = {
       onItemChanged: jQuery.proxy(this._onItemChanged, this)
     };
 
-    for (const i in this._additionalNames) {
-      const curName = this._additionalNames[i];
+    this._additionalNames.forEach(curName => {
       this._viewModel[curName] = ko.observableArray(aggrList.data(`additional_${curName}`).split(','));
-    }
+    }, this);
 
     ko.applyBindingsToNode(
       this._containerElem.get(0),
@@ -76,9 +75,11 @@ Quantumart.QP8.BackendAggregationList.prototype = {
 
   addItem() {
     const item = {};
-    for (const i in this._fields) {
-      item[this._fields[i]] = '';
-    }
+    this._fields.forEach(f => {
+      item[f] = '';
+      return undefined;
+    });
+
     item.Invalid = false;
     this._items.push(item);
     this._setAsChanged();

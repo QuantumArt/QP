@@ -252,13 +252,12 @@ Quantumart.QP8.BackendLibrary.prototype = {
   },
 
   showCurrentFileList() {
-    for (const code in this._fileContainers) {
+    Object.keys(this._fileContainers).forEach(code => {
       const containerToHide = this._fileContainers[code];
-
       if (containerToHide) {
         containerToHide.hide();
       }
-    }
+    }, this);
 
     const containerToShow = this._fileContainers[this._viewTypeCode];
 
