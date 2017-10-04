@@ -161,14 +161,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         int classifierContentId;
                         if (int.TryParse(fv.Value, out classifierContentId))
                         {
-                            var extensionArticle = InitializeArticle(classifierContentId);
-                            ReadLineFields(extensionArticle, fieldValues, classifierContentId, line.Number, true);
-
-                            var content = _aggregatedContentsMap[classifierContentId];
-                            var field = content.Fields.First(f => f.Aggregated);
-                            extensionArticle.FieldValues.Add(new FieldValue { Field = field });
-                            article.Extensions[fv.Field] = extensionArticle;
-                            _articlesListFromCsv.ExtensionFields.Add(fv.Field);
+                            AddExtensionArticle(article, fv.Field, classifierContentId, fieldValues, line);
                         }
                         else
                         {
@@ -176,10 +169,38 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         }
                     }
                 }
+                if (!article.BaseArticle.FieldValues.Any() && _aggregatedContentsMap.Where(w => w.Key != article.BaseArticle.Id).Any())
+                {
+                    var classifierFields = _importSettings.FieldsList.Where(w => w.Value.IsClassifier).Select(s => s.Value);
+
+                    foreach (var classifier in classifierFields)
+                    {
+                        foreach (var classifierContentId in _aggregatedContentsMap.Where(w => w.Key != classifier.ContentId).Select(s => s.Key))
+                        {
+                            if (_importSettings.FieldsList.Where(w => w.Key != "-1" && w.Value.ContentId == classifierContentId).Any())
+                            {
+                                AddExtensionArticle(article, classifier, classifierContentId, fieldValues, line);
+                            }
+                        }
+                    }
+                }
 
                 _articlesListFromCsv.Add(article);
             }
         }
+
+        private void AddExtensionArticle(ExtendedArticle article, Field fv, int classifierContentId, string[] fieldValues, Line line)
+        {
+            var extensionArticle = InitializeArticle(classifierContentId);
+            ReadLineFields(extensionArticle, fieldValues, classifierContentId, line.Number, true);
+
+            var content = _aggregatedContentsMap[classifierContentId];
+            var field = content.Fields.First(f => f.Aggregated);
+            extensionArticle.FieldValues.Add(new FieldValue { Field = field });
+            article.Extensions[fv] = extensionArticle;
+            _articlesListFromCsv.ExtensionFields.Add(fv);
+        }
+
 
         private void ReadLineFields(Article article, IReadOnlyList<string> fieldValues, int contentId, int lineNumber, bool isExtension = false)
         {
@@ -452,17 +473,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     if (extensionsMap.ContainsKey(article.BaseArticle.Id) && extensionsMap[article.BaseArticle.Id].ContainsKey(fieldId))
                     {
                         var currentId = extensionsMap[article.BaseArticle.Id][fieldId];
-                        if (currentId == aggregatedArticle.Id)
-                        {
-                            idsToUpdate.Add(aggregatedArticle.Id);
-                            articlesToUpdate.Add(aggregatedArticle);
-                        }
-                        else
-                        {
+                        if (currentId != aggregatedArticle.Id)
+                        {                       
                             aggregatedArticle.Id = currentId;
-                            idsToDelete.Add(aggregatedArticle.Id);
-                            articlesToInsert.Add(aggregatedArticle);
                         }
+                        idsToUpdate.Add(aggregatedArticle.Id);
+                        articlesToUpdate.Add(aggregatedArticle);
                     }
                     else
                     {
