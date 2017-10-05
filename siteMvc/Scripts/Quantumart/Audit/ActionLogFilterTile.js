@@ -53,13 +53,9 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     $(this._containerElement).append(this.$tile);
   },
 
-  getValue() {
-    return this._currentValue ? this._currentValue : undefined;
-  },
+  getValue: () => this._currentValue,
 
-  getOptions() {
-    return this._options;
-  },
+  getOptions: () => this._options,
 
   _createFilter() {
     const applyText = $l.SearchBlock.closeAndApplyWndButtonText;
