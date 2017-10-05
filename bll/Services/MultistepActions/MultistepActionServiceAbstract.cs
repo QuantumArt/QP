@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -41,15 +41,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
     /// </summary>
     public abstract class MultistepActionServiceAbstract : IMultistepActionService
     {
-        public virtual MessageResult PreAction(int parentId, int id)
-        {
-            return null;
-        }
+        public virtual MessageResult PreAction(int parentId, int id) => null;
 
-        public virtual MessageResult PreAction(int parentId, int id, int[] ids)
-        {
-            return null;
-        }
+        public virtual MessageResult PreAction(int parentId, int id, int[] ids) => null;
 
         public virtual MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
         {
@@ -63,10 +57,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
             return CreateActionSettings(parentId, id);
         }
 
-        public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)
-        {
-            throw new NotImplementedException();
-        }
+        public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => throw new NotImplementedException();
 
         public virtual void SetupWithParams(int parentId, int[] ids, IMultistepActionParams settingsParams)
         {
@@ -98,29 +89,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
 
         protected abstract IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state);
 
-        protected bool HasAlreadyRun()
-        {
-            return HttpContext.Current.Session[ContextSessionKey] != null;
-        }
+        protected bool HasAlreadyRun() => HttpContext.Current.Session[ContextSessionKey] != null;
 
-        public BllObject ReadObjectProperties(int objectId)
-        {
-            return ObjectRepository.GetObjectPropertiesById(objectId);
-        }
+        public BllObject ReadObjectProperties(int objectId) => ObjectRepository.GetObjectPropertiesById(objectId);
 
-        public PageTemplate ReadTemplateProperties(int templateId)
-        {
-            return PageTemplateRepository.GetPageTemplatePropertiesById(templateId);
-        }
+        public PageTemplate ReadTemplateProperties(int templateId) => PageTemplateRepository.GetPageTemplatePropertiesById(templateId);
 
-        public virtual IMultistepActionSettings MultistepActionSettings(int parentId, int id)
-        {
-            return null;
-        }
+        public virtual IMultistepActionSettings MultistepActionSettings(int parentId, int id) => null;
 
-        public virtual IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids)
-        {
-            return null;
-        }
+        public virtual IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids) => null;
     }
 }
