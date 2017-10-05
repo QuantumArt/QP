@@ -62,13 +62,9 @@ Quantumart.QP8.Observable.prototype = {
     return result;
   },
 
-  attachObserver(eventType, observer, times) {
+  attachObserver(eventType, observer, times = -1) {
     if (!this._checkObserver(observer)) {
       return;
-    }
-
-    if ($q.isNull(times)) {
-      times = -1; // eslint-disable-line no-param-reassign
     }
 
     if (!this._observerInfos[eventType]) {
