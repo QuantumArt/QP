@@ -1,14 +1,3 @@
-Quantumart.QP8.IObservable = function () {
-  // empty constructor
-};
-Quantumart.QP8.IObservable.prototype = {
-  attachObserver: $c.notImplemented,
-  detachObserver: $c.notImplemented,
-  notify: $c.notImplemented
-};
-
-Quantumart.QP8.IObservable.registerInterface('Quantumart.QP8.IObservable');
-
 Quantumart.QP8.Observable = function () {
   this._observerInfos = [];
 };
@@ -34,32 +23,10 @@ Quantumart.QP8.Observable.prototype = {
   },
 
   _checkObserver(observer) {
-    let result = false;
-    if ($q.isObject(observer) || $q.isFunction(observer)) {
-      result = true;
-    } else {
-      throw new Error($l.Common.observerIsNotFunctionOrObject);
+    if (($q.isObject(observer) && $q.isFunction(observer.update)) || $q.isFunction(observer)) {
+      return true;
     }
-
-    if (result) {
-      if (!$q.isFunction(observer)) {
-        let isObserver = true;
-
-        try {
-          isObserver = Object.getType(observer).implementsInterface(Quantumart.QP8.IObserver);
-        } catch (e) {
-          $q.trace('Exception was catched', e);
-        }
-
-        if (isObserver) {
-          result = true;
-        } else {
-          throw new Error($l.Common.observerIsNotImplementedInterface);
-        }
-      }
-    }
-
-    return result;
+    throw new Error($l.Common.observerIsNotFunctionOrObject);
   },
 
   attachObserver(eventType, observer, times = -1) {
@@ -143,15 +110,7 @@ Quantumart.QP8.Observable.prototype = {
 
   _updateObserver(eventType, eventArgs, observer) {
     if ($q.isObject(observer)) {
-      let isObserver = false;
-
-      try {
-        isObserver = Object.getType(observer).implementsInterface(Quantumart.QP8.IObserver);
-      } catch (e) {
-        isObserver = true;
-      }
-
-      if (isObserver) {
+      if ($q.isFunction(observer.update)) {
         observer.update(eventType, this, eventArgs);
       }
     } else if ($q.isFunction(observer)) {
@@ -164,4 +123,4 @@ Quantumart.QP8.Observable.prototype = {
   }
 };
 
-Quantumart.QP8.Observable.registerClass('Quantumart.QP8.Observable', null, Quantumart.QP8.IObservable, Sys.IDisposable);
+Quantumart.QP8.Observable.registerClass('Quantumart.QP8.Observable', null);

@@ -13,7 +13,7 @@ window.Backend.Lang.Common = {
   eventTypeNotSpecified: 'Вы не задали тип события!',
   eventArgsNotSpecified: 'Вы не задали аргументы события "{0}"!',
   observerIsNotFunctionOrObject: 'Привязываемый наблюдатель не является объектом или функцией!',
-  observerIsNotImplementedInterface: 'Привязываемый наблюдатель не поддерживает интерфейс Quantumart.QP8.IObserver!',
+  observerIsNotImplementedInterface: 'Привязываемый наблюдатель не содержит метод update',
   firstComponentInMediatorNotSpecified: 'Вы не задали первый компонент!',
   secondComponentInMediatorNotSpecified: 'Вы не задали второй компонент!',
   parentDomElementNotSpecified: 'Вы не задали родительский DOM-элемент!',

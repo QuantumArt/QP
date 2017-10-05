@@ -2008,10 +2008,7 @@
     <Content Include="Scripts\Quantumart\Tree\BackendTreeBase.js" />
     <Content Include="Scripts\Quantumart\Common\BackendEventArgs.js" />
     <Content Include="Scripts\Quantumart\Common\BackendPreviousAction.js" />
-    <Content Include="Scripts\Quantumart\Common\IMediator.js" />
-    <Content Include="Scripts\Quantumart\Common\IObservable.js" />
-    <Content Include="Scripts\Quantumart\Common\IObserver.js" />
-    <Content Include="Scripts\Quantumart\Common\Mediator.js" />
+    <Content Include="Scripts\Quantumart\Common\Observable.js" />
     <Content Include="Scripts\jquery\jquery.cookie.js" />
     <Content Include="Scripts\jquery\jquery.form.js" />
     <Content Include="Scripts\jquery\jquery.jeegoocontext.js" />

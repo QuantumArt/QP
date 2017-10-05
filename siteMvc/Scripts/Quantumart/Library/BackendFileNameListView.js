@@ -191,5 +191,5 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 };
 
 Quantumart.QP8.BackendFileNameListView.registerClass(
-  'Quantumart.QP8.BackendFileNameListView', Quantumart.QP8.Observable, Quantumart.QP8.IBackendFileListView
+  'Quantumart.QP8.BackendFileNameListView', Quantumart.QP8.Observable
 );

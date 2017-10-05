@@ -138,9 +138,7 @@ custom.paths = {
     'Scripts/Quantumart/Utils.js',
     'Scripts/Quantumart/Cache.js',
     'Scripts/Quantumart/ControlHelpers.js',
-    'Scripts/Quantumart/Common/IObserver.js',
-    'Scripts/Quantumart/Common/IObservable.js',
-    'Scripts/Quantumart/Common/IMediator.js',
+    'Scripts/Quantumart/Common/Observable.js',
     'Scripts/Quantumart/Common/BackendPreviousAction.js',
     'Scripts/Quantumart/Common/BackendEventArgs.js',
     'Scripts/Quantumart/Info/BackendEntityType.js',
@@ -261,9 +259,7 @@ custom.paths = {
   qpjsLogon: [
     'Scripts/Quantumart/App.js',
     'Scripts/Quantumart/ControlHelpers.js',
-    'Scripts/Quantumart/Common/IObserver.js',
-    'Scripts/Quantumart/Common/IObservable.js',
-    'Scripts/Quantumart/Common/IMediator.js',
+    'Scripts/Quantumart/Common/Observable.js',
     'Scripts/Quantumart/Common/BackendPreviousAction.js',
     'Scripts/Quantumart/Common/BackendEventArgs.js',
     'Scripts/Quantumart/BackendLogin.js'

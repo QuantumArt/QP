@@ -264,15 +264,4 @@ Quantumart.QP8.BackendFileList.prototype = {
 };
 
 Quantumart.QP8.BackendFileList.registerClass('Quantumart.QP8.BackendFileList', Quantumart.QP8.Observable);
-Quantumart.QP8.IBackendFileListView = function () {
-  // empty constructor
-};
-Quantumart.QP8.IBackendFileListView.prototype = {
-  initialize: $c.notImplemented,
-  redraw: $c.notImplemented,
-  selectAll: $c.notImplemented,
-  isAllSelected: $c.notImplemented,
-  dispose: $c.notImplemented
-};
 
-Quantumart.QP8.IBackendFileListView.registerInterface('Quantumart.QP8.IBackendFileListView');
