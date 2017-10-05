@@ -188,7 +188,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (
-  searchType, fieldID, fieldColumn, contentId, referenceFieldId
+  searchType, fieldID, fieldColumn, contentId, referenceFieldId, ...params
 ) {
   return {
     SearchType: searchType,
@@ -196,8 +196,7 @@ Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (
     FieldColumn: fieldColumn,
     ContentId: contentId,
     ReferenceFieldId: referenceFieldId,
-    // eslint-disable-next-line prefer-rest-params
-    QueryParams: Array.prototype.slice.call(arguments, 5)
+    QueryParams: params
   };
 };
 

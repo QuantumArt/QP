@@ -5,38 +5,33 @@
 /* eslint max-lines: 'off' */
 /* eslint no-alert: 'off' */
 /* eslint no-sync: 'off' */
-/* eslint prefer-rest-params: 0 */
-/* eslint prefer-spread: 0 */
 
 
 window.$q = {
   isDebug: window.Sys.Debug.isDebug
 };
 
-$q.trace = function trace() {
-  let args, firstArg, otherArgs;
+$q.trace = function trace(...args) {
+  let firstArg, otherArgs;
   if ($q.isDebug || window.Sys.Debug.isDebug) {
-    args = [].slice.call(arguments);
-    firstArg = args.slice(0, 1)[0];
-    otherArgs = args.slice(1);
-
+    [firstArg, ...otherArgs] = args;
     if ($.isFunction(window.console.groupCollapsed)
       && $.isFunction(window.console.groupEnd)
       && $.isFunction(window.console.trace)) {
       window.console.groupCollapsed(firstArg);
-      window.console.log.apply(window.console, otherArgs);
+      window.console.log(otherArgs);
       window.console.trace('%cView tracing', 'color: darkblue;font-weight:bold;');
       window.console.groupEnd(firstArg);
     } else {
-      window.console.log.apply(window.console, args);
+      window.console.log(args);
     }
   }
 };
 
-$q.alertSuccess = function alertSuccess(msg) {
+$q.alertSuccess = function alertSuccess(msg, ...params) {
   window.alert(msg);
   if ($q.isDebug || window.Sys.Debug.isDebug) {
-    window.console.log.apply(window.console, Array.prototype.slice.call(arguments));
+    window.console.log([msg, ...params]);
   }
 };
 
@@ -50,10 +45,10 @@ $q.alertError = function alertError(msg) {
   $q.trace(msg);
 };
 
-$q.alertFail = function alertFail(msg) {
+$q.alertFail = function alertFail(msg, ...params) {
   window.alert(msg);
   if ($q.isDebug || window.Sys.Debug.isDebug) {
-    window.console.warn.apply(window.console, Array.prototype.slice.call(arguments));
+    window.console.warn([msg, ...params]);
   }
 };
 
