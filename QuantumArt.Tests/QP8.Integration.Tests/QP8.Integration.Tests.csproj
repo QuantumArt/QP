@@ -73,6 +73,7 @@
     <Compile Include="ContentGroupFixture.cs" />
     <Compile Include="DynamicImageFixture.cs" />
     <Compile Include="ExtensionFixture.cs" />
+    <Compile Include="Global.ContentDataItem.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="HierarchyFixture.cs" />
     <Compile Include="M2MFixture.cs" />
@@ -141,4 +142,3 @@
   </Target>
   -->
 </Project>
-

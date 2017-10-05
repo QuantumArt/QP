@@ -1,4 +1,4 @@
-Quantumart.QP8.MultistepActionImportSettings = function MultistepActionImportSettings(options) {
+﻿Quantumart.QP8.MultistepActionImportSettings = function MultistepActionImportSettings(options) {
   this.options = options;
 };
 
@@ -133,6 +133,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       that._$fields.trigger('change');
       that._$uniqueFieldToUpdate.trigger('change');
       that._showValidationSigns($('.star:first'), that._uniqueFieldToUpdatePredicate);
+      that._toggleFieldsRequiring(that._$fields, that._fieldsPredicate);
     });
   },
 
@@ -214,6 +215,16 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     });
   },
 
+  _toggleFieldsRequiring(fields, predicate) {
+      fields.each(function each() { 
+          if (predicate($(this))) {
+              this.removeAttribute("data-excludeValid");
+          } else {
+              this.setAttribute("data-excludeValid", 'True');
+          }
+      });
+  },
+
   _addMessageLine(message) {
     let result = message;
     if (message.length > 0) {
@@ -271,8 +282,9 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     });
 
     const $requiredSelects = $('select[data-aggregated="False"]select[data-required="True"]');
-    if (($requiredSelects.length === 0 || !this._fieldsPredicate(null))
-      && $('select[data-aggregated="False"]select[value!="-1"]').length === 0) {
+    if (($requiredSelects.length === 0 || !this._fieldsPredicate(null)) 
+        && ($('select[data-aggregated="False"]select[value!="-1"]').length === 0
+        && $('select[data-aggregated="False"]select([data-excludeValid])').length === 0)) {
       errorMessage = that._addMessageLine(errorMessage);
       errorMessage += $l.MultistepAction.AnyFieldRequired;
     }

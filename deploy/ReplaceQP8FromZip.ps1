@@ -33,7 +33,7 @@ $path = $s.PhysicalPath
 $dir = Split-Path $path -Leaf
 $isRootSites = ($dir -eq "sites")
 
-if ($p) { $pluginsPath = $p.PhysicalPath }
+if ($p) { $pluginsPath = if ($p.GetType().ToString() -eq "System.IO.DirectoryInfo") { $p.FullName } else { $p.PhysicalPath } }
 if ($b) { $backendPath = $b.PhysicalPath }
 if ($w) { $winlogonPath = $w.PhysicalPath }
 
@@ -42,7 +42,7 @@ $winLogonSource = Join-Path $source "WinLogon.zip"
 $pluginsSource = Join-Path $source "plugins.zip"
 $sitesSource = Join-Path $source "sites.zip"
 
-if ([string]::IsNullOrEmpty($pluginsPath)) { throw [System.ArgumentException] "Virtual directory 'plugins' is not found"}
+if ([string]::IsNullOrEmpty($pluginsPath)) { throw [System.ArgumentException] "Virtual directory or subdirectory 'plugins' is not found"}
 if ([string]::IsNullOrEmpty($backendPath)) { throw [System.ArgumentException] "Web application 'backend' is not found"}
 if ([string]::IsNullOrEmpty($winlogonPath)) { throw [System.ArgumentException] "Web application 'Backend/Winlogon' is not found"}
 

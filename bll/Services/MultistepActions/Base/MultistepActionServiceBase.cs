@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Web;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
@@ -26,7 +28,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
         {
             var action = BackendActionService.GetByCode(ActionCode);
             var itemsPerStep = action.EntityLimit ?? 1;
-            var state = new MultistepActionStageCommandState { ParentId = parentId, Id = id, Ids = ids, BoundToExternal = boundToExternal, ItemsPerStep = itemsPerStep };
+            var state = new MultistepActionStageCommandState
+            {
+                ParentId = parentId,
+                Id = id,
+                Ids = ids,
+                ExtensionContents = ContentRepository.GetList(
+                    ContentRepository.GetReferencedAggregatedContentIds(parentId /* TODO: или id (contentId) */, ids ?? new int[0])
+                ).ToArray(),
+                BoundToExternal = boundToExternal,
+                ItemsPerStep = itemsPerStep
+            };
 
             Command = (TCommand)CreateCommand(state);
             return new MultistepActionServiceContext { CommandStates = new[] { Command.GetState() } };

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -50,7 +52,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             }
 
             var articleIds = GetArticleIds(ids, content.Id);
-            _command = new ExportArticlesCommand(content.SiteId, content.Id, articleIds.Length, articleIds);
+            var articleExtensionContents = GetArticleExtensionContents(articleIds, content.Id);
+            _command = new ExportArticlesCommand(content.SiteId, content.Id, articleIds.Length, articleIds, articleExtensionContents);
 
             return base.Setup(content.SiteId, content.Id, boundToExternal);
         }
@@ -107,6 +110,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             var settings = HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] as ExportSettings;
             var orderBy = string.IsNullOrEmpty(settings.OrderByField) ? FieldName.ContentItemId : settings.OrderByField;
             return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy);
+        }
+
+        private static IEnumerable<Content> GetArticleExtensionContents(int[] ids, int contentId)
+        {
+            return ContentRepository.GetList(
+                ContentRepository.GetReferencedAggregatedContentIds(contentId, ids ?? new int[0])
+            ).ToArray();
         }
     }
 }
