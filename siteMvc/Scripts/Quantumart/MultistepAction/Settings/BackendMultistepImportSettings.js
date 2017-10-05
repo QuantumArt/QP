@@ -29,18 +29,12 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     this._fileWrapperElementId = `${context._popupWindowId}_upload_pl_cont_import`;
     this._fileWrapperElement = document.getElementById(this._fileWrapperElementId);
     $(this._fileWrapperElement).closest('.documentWrapper').addClass('ImportWrapper');
-    if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
-      this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
-        background: '#ffffff',
-        extensions: '',
-        resolveName: this._renameMatch
-      });
-    } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
+    if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
       this._uploaderComponent = new Quantumart.QP8.BackendHtmlUploader(this._fileWrapperElement, {
         extensions: '',
         resolveName: this._renameMatch
       });
-    } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.PlUpload) {
+    } else {
       this._uploaderComponent = new Quantumart.QP8.BackendPlUploader(this._fileWrapperElement, {
         extensions: '',
         resolveName: this._renameMatch,

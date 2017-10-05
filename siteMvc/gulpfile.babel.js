@@ -67,7 +67,6 @@ custom.paths = {
     'Scripts/Quantumart/jQueryExtensions.js',
     'Scripts/microsoft/MicrosoftAjax.js',
     'Scripts/json2.js',
-    'Scripts/Silverlight.js',
     'Scripts/pmrpc.js',
     'Scripts/underscore.js',
     'Scripts/knockout.js',
@@ -125,7 +124,6 @@ custom.paths = {
     'Scripts/es5-shim.js',
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/microsoft/MicrosoftAjax.js',
-    'Scripts/Silverlight.js'
   ],
   qpjs: [
     'Scripts/Quantumart/Helpers/vanilla.helpers.js',
@@ -216,10 +214,9 @@ custom.paths = {
     'Scripts/Quantumart/Editor/BackendTextAreaEditor.js',
     'Scripts/Quantumart/Editor/BackendEditorsAutoSaver.js',
     'Scripts/Quantumart/Editor/BackendClassifierField.js',
-    'Scripts/Quantumart/Uploader/IBackendUploader.js',
+    'Scripts/Quantumart/Uploader/BackendBaseUploader.js',
     'Scripts/Quantumart/Uploader/BackendHtmlUploader.js',
     'Scripts/Quantumart/Uploader/BackendPlUploader.js',
-    'Scripts/Quantumart/Uploader/BackendSilverlightUploader.js',
     'Scripts/Quantumart/Audit/ActionLogComponent.js',
     'Scripts/Quantumart/Audit/ActionLogFilterTile.js',
     'Scripts/Quantumart/Audit/ActionLogFilterBase.js',

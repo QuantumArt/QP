@@ -9,6 +9,5 @@ siteMvc/Scripts/Quantumart/ckeditor/aspell/**
 siteMvc/Scripts/Quantumart/ckeditor/codemirror/**
 
 siteMvc/Scripts/Quantumart/jQueryExtensions.js
-siteMvc/Scripts/Quantumart/Uploader/BackendSilverlightUploader.js
 
 siteMvc/Scripts/Quantumart/BackendImageCropResizeClient.js

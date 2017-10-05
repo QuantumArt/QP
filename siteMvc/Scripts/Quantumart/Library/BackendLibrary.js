@@ -201,15 +201,11 @@ Quantumart.QP8.BackendLibrary.prototype = {
     }
 
     if (this._allowUpload) {
-      if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
-        this._uploader = new Quantumart.QP8.BackendSilverlightUploader(
-          this._libraryElement, { background: '#EBF5FB', extensions: fileExtensions }
-        );
-      } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
+      if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
         this._uploader = new Quantumart.QP8.BackendHtmlUploader(
           this._libraryElement, { extensions: fileExtensions }
         );
-      } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.PlUpload) {
+      } else {
         this._uploader = new Quantumart.QP8.BackendPlUploader(
           this._libraryElement, { extensions: fileExtensions }
         );

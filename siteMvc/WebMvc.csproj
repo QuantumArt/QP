@@ -1998,8 +1998,7 @@
     <Content Include="Scripts\Quantumart\Search\BackendUserSearchBlock.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendActionPermissionTree.js" />
     <Content Include="Scripts\Quantumart\Uploader\BackendHtmlUploader.js" />
-    <Content Include="Scripts\Quantumart\Uploader\BackendSilverlightUploader.js" />
-    <Content Include="Scripts\Quantumart\Uploader\IBackendUploader.js" />
+    <Content Include="Scripts\Quantumart\Uploader\BackendBaseUploader.js" />
     <Content Include="Scripts\Quantumart\Mediators\BackendVirtualContentProperties.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendVirtualFieldTree.js" />
     <Content Include="Scripts\Quantumart\Cache.js" />
@@ -2052,7 +2051,6 @@
     <Content Include="Scripts\Quantumart\ControlHelpers.js" />
     <Content Include="Scripts\Quantumart\jQueryExtensions.js" />
     <Content Include="Scripts\Quantumart\Utils.js" />
-    <Content Include="Scripts\Silverlight.js" />
     <Content Include="Scripts\telerik\telerik.autocomplete.js" />
     <Content Include="Scripts\telerik\telerik.calendar.js" />
     <Content Include="Scripts\telerik\telerik.chart.js" />

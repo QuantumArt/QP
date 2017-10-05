@@ -1,25 +1,13 @@
-Quantumart.QP8.BackendHtmlUploader = function (parentElement, options) {
-  Quantumart.QP8.BackendHtmlUploader.initializeBase(this);
-
-  this._parentElement = parentElement;
-
-  if (!$q.isNull(options)) {
-    if (!$q.isNull(options.extensions)) {
-      this._extensions = options.extensions;
-    }
-    if (!$q.isNull(options.resolveName)) {
-      this._resolveName = options.resolveName;
-    }
+class BackendHtmlUploader extends Quantumart.QP8.BackendBaseUploader {
+  constructor(parentElement, options) {
+    super();
+    this._parentElement = parentElement;
+    this._extensions = options.extensions || '';
+    this._resolveName = options.resolveName || false;
+    this._$telerikUpload = null;
+    this._folderPath = '';
+    this._uploadedFiles = [];
   }
-};
-
-Quantumart.QP8.BackendHtmlUploader.prototype = {
-  _parentElement: null,
-  _$telerikUpload: null,
-  _folderPath: '',
-  _extensions: '',
-  _resolveName: false,
-  _uploadedFiles: [],
 
   initialize() {
     let $mvcUpload = $(".t-upload input[type='file']", this._parentElement).data('tUpload');
@@ -37,20 +25,20 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
 
     this._$telerikUpload = $mvcUpload;
     $mvcUpload = null;
-  },
+  }
 
   dispose() {
     this._$telerikUpload.wrapper.unbind();
     $(".t-upload input[type='file']", this._parentElement).removeData('tUpload');
-  },
+  }
 
   setFolderPath(value) {
     this._folderPath = value;
-  },
+  }
 
   getFolderPath() {
     return this._folderPath;
-  },
+  }
 
   _onUploadHandler(e) {
     // eslint-disable-next-line no-param-reassign
@@ -58,7 +46,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
       folderPath: this._folderPath,
       resolveFileName: $q.toString(this._resolveName, 'false')
     };
-  },
+  }
 
   _onUploadSuccessHandler(e) {
     this._uploadedFiles = [];
@@ -69,7 +57,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
         $q.alertSuccess(e.response.msg);
       }
     }
-  },
+  }
 
   _onUploadCompleteHandler() {
     if (this._uploadedFiles.length > 0) {
@@ -84,7 +72,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
       this.notify(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, eventArgs);
       this._uploadedFiles = [];
     }
-  },
+  }
 
   _onUploadSelectHandler(e) {
     let toPrevent = false;
@@ -124,7 +112,7 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
     const that = this;
     if (!this._resolveName) {
       $.each(e.files, function () {
-        if (that._checkFileExistence(that._folderPath, this.name)) {
+        if (that._checkFileExistence(this.name)) {
           if (!$q.confirmMessage(String.format(window.UPLOAD_OVERWRITE_MESSAGE, this.name))) {
             toPrevent = true;
           }
@@ -137,25 +125,23 @@ Quantumart.QP8.BackendHtmlUploader.prototype = {
       return false;
     }
     return true;
-  },
+  }
 
   _onUploadErrorHandler(e) {
-    $q.alertFail(window.HTML_UPLOAD_ERROR_MESSAGE);
+    $q.alertFail(`Uploading to ${this._folderPath} failed: ${window.HTML_UPLOAD_ERROR_MESSAGE}`);
     e.preventDefault();
     return false;
-  },
+  }
 
-  _checkFileExistence(folderPath, fileName) {
+  _checkFileExistence(fileName) {
     const url = `${window.APPLICATION_ROOT_URL}Library/FileExists/`;
     const obj = $q.getJsonSync(url, {
-      path: folderPath,
+      path: this._folderPath,
       name: fileName
     });
 
     return obj.result;
   }
-};
+}
 
-Quantumart.QP8.BackendHtmlUploader.registerClass(
-  'Quantumart.QP8.BackendHtmlUploader', Quantumart.QP8.Observable, Quantumart.QP8.IBackendUploader
-);
+Quantumart.QP8.BackendHtmlUploader = BackendHtmlUploader;

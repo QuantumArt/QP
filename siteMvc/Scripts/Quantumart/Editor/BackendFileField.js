@@ -211,15 +211,11 @@ Quantumart.QP8.BackendFileField.prototype = {
   _onDownloadButtonClickHandler: null,
   _onLibraryButtonClickHandler: null,
 
-  _checkExt(filename, value) {
-    return filename.toLowerCase().endsWith(value.toLowerCase());
-  },
-
   _showOrHidePreviewButton(filename, $previewButton) {
     const it = Quantumart.QP8.Enums.LibraryFileType.Image;
-    const _arrayOfExtensions = window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[it].split(';');
-    const result = _arrayOfExtensions.filter(this._checkExt.bind(null, filename));
-    if ((typeof result !== 'undefined' && result.length > 0) || this._isImage) {
+    if (this._isImage || window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[it].split(';').filter(
+      ext => filename.toLowerCase().endsWith(ext.toLowerCase())
+    ).length > 0) {
       $previewButton.show();
     } else {
       $previewButton.hide();
@@ -265,18 +261,12 @@ Quantumart.QP8.BackendFileField.prototype = {
     const it = Quantumart.QP8.Enums.LibraryFileType.Image;
     const extensions = this._isImage ? window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[it] : '';
 
-    if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
-      this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
-        background: '#ffffff',
-        extensions,
-        resolveName: this.getRenameMatched()
-      });
-    } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
+    if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
       this._uploaderComponent = new Quantumart.QP8.BackendHtmlUploader(this._fileWrapperElement, {
         extensions,
         resolveName: this.getRenameMatched()
       });
-    } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.PlUpload) {
+    } else {
       this._uploaderComponent = new Quantumart.QP8.BackendPlUploader(this._fileWrapperElement, {
         extensions,
         resolveName: this.getRenameMatched(),
