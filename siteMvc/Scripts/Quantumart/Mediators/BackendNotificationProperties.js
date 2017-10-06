@@ -36,10 +36,10 @@ Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) 
   };
 
   const onStatusChanged = function () {
-    if ($statusCheckBoxes.filter(':checked').length != 0) {
-      $statusPanel.show();
-    } else {
+    if ($statusCheckBoxes.filter(':checked').length === 0) {
       $statusPanel.hide();
+    } else {
+      $statusPanel.show();
     }
   };
 

@@ -1,5 +1,9 @@
-Quantumart.QP8.BackendEntityDropDownList = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
-  Quantumart.QP8.BackendEntityDropDownList.initializeBase(this, [listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]);
+Quantumart.QP8.BackendEntityDropDownList = function (
+  listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options
+) {
+  Quantumart.QP8.BackendEntityDropDownList.initializeBase(
+    this, [listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]
+  );
   this._allowMultipleItemSelection = false;
   this._selectionMode = Quantumart.QP8.Enums.ListSelectionMode.AllItems;
 };
@@ -59,7 +63,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
   },
 
   _checkAllowShowingToolbar() {
-    return this._addNewActionCode != window.ACTION_CODE_NONE || this._readActionCode != window.ACTION_CODE_NONE;
+    return this._addNewActionCode !== window.ACTION_CODE_NONE || this._readActionCode !== window.ACTION_CODE_NONE;
   },
 
   _refreshListInner(dataItems, refreshOnly) {
@@ -78,11 +82,15 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
 
     $list.append(listItemHtml.string());
     const value = $list.val();
-    if (oldValue != value) {
+    $q.warnIfEqDiff(oldValue, value);
+    if (oldValue !== value) {
       $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
       const operation = refreshOnly ? 'addClass' : 'removeClass';
       $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
-      $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $list.data('list_item_name'), value, contentFieldName: $list.data('content_field_name') });
+      $list.trigger(
+        window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED,
+        { fieldName: $list.data('list_item_name'), value, contentFieldName: $list.data('content_field_name') }
+      );
     }
   },
 
@@ -120,7 +128,8 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
 
     let isSelected = false;
     if (saveChanges) {
-      isSelected = listState.selectedValue == itemValue;
+      $q.warnIfEqDiff(listState.selectedValue, itemValue);
+      isSelected = listState.selectedValue === itemValue;
     } else {
       isSelected = dataItem.Selected;
     }
@@ -155,4 +164,6 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
   }
 };
 
-Quantumart.QP8.BackendEntityDropDownList.registerClass('Quantumart.QP8.BackendEntityDropDownList', Quantumart.QP8.BackendEntityDataListBase);
+Quantumart.QP8.BackendEntityDropDownList.registerClass(
+  'Quantumart.QP8.BackendEntityDropDownList', Quantumart.QP8.BackendEntityDataListBase
+);

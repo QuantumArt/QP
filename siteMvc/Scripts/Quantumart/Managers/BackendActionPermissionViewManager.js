@@ -30,12 +30,12 @@ class BackendActionPermissionViewManager extends Quantumart.QP8.Observable {
       if (entityTypeCode === window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION
         || entityTypeCode === window.ENTITY_TYPE_CODE_ACTION_PERMISSION
       ) {
-        this._viewComponent.get_Tree().refreshPermissionNode(entityTypeCode, parentEntityId);
+        this._viewComponent.getTree().refreshPermissionNode(entityTypeCode, parentEntityId);
       }
     } else if (actionCode === window.ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE
       || actionCode === window.ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE
     ) {
-      this._viewComponent.get_Tree().refreshPermissionNode(entityTypeCode, parentEntityId);
+      this._viewComponent.getTree().refreshPermissionNode(entityTypeCode, parentEntityId);
     }
   }
 

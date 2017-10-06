@@ -2,8 +2,12 @@ Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
   Object.assign(this._options, options);
   this._eventArgs = eventArgs;
   this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(this._eventArgs, this._options);
-  this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this));
-  this._selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._libraryClosedHandler, this));
+  this._selectPopupWindowComponent.attachObserver(
+    window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this)
+  );
+  this._selectPopupWindowComponent.attachObserver(
+    window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._libraryClosedHandler, this)
+  );
 };
 
 Quantumart.QP8.LibraryPopupWindow.prototype
@@ -42,14 +46,15 @@ Quantumart.QP8.LibraryPopupWindow.prototype
         const entities = args.entities;
         if (entities.length > 0) {
           let folderUrl = args.context;
-          if (folderUrl.charAt(0) == '\\') {
+          if (folderUrl.charAt(0) === '\\') {
             folderUrl = folderUrl.substring(1, folderUrl.length);
           }
           let imgUrl = '';
-          if (this._options.contentId != 0) {
-            imgUrl = `${this._options.libraryUrl.replace('images/', '')}contents/${this._options.contentId}/${folderUrl}${entities[0].Name}`;
-          } else {
+          if (this._options.contentId === 0) {
             imgUrl = this._options.libraryUrl + folderUrl + entities[0].Name;
+          } else {
+            const libraryUrl = this._options.libraryUrl.replace('images/', '');
+            imgUrl = `${libraryUrl}contents/${this._options.contentId}/${folderUrl}${entities[0].Name}`;
           }
           imgUrl = imgUrl.replace(new RegExp('\\\\', 'g'), '/');
 
@@ -60,7 +65,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype
       }
     },
 
-    _libraryClosedHandler(eventType, sender, args) {
+    _libraryClosedHandler() {
       this.closeWindow();
     },
 

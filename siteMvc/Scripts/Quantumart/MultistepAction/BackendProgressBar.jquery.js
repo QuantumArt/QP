@@ -147,11 +147,11 @@
     }
   };
 
-  $.fn.backendProgressBar = function backendProgressBar(method) {
+  $.fn.backendProgressBar = function backendProgressBar(method, ...params) {
     if (methods[method]) {
-      return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+      return methods[method].apply(this, params);
     } else if (typeof method === 'object' || !method) {
-      return methods.init.apply(this, arguments);
+      return methods.init.apply(this, [method, ...params]);
     }
 
     $.error(`Method ${method} does not exist on backendProgressBar`);

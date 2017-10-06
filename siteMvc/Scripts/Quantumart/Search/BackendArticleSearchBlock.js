@@ -1,5 +1,9 @@
-Quantumart.QP8.BackendArticleSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
-  Quantumart.QP8.BackendArticleSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
+Quantumart.QP8.BackendArticleSearchBlock = function (
+  searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options
+) {
+  Quantumart.QP8.BackendArticleSearchBlock.initializeBase(
+    this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]
+  );
   this.isVirtual = options.isVirtual;
   this._minSearchBlockHeight = this.isVirtual ? 125 : 180;
 };
@@ -19,7 +23,11 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       this._defaultFieldSearchBlockState = this._searchBlockState.defaultFieldSearchBlockState;
 
       let $buttonsWrapper = $(this._buttonsWrapperElement);
-      this._$defaultFilterButton = $('<input />', { type: 'button', value: $l.SearchBlock.defaultFilterButtonText, class: 'button' });
+      this._$defaultFilterButton = $('<input />', {
+        type: 'button',
+        value: $l.SearchBlock.defaultFilterButtonText,
+        class: 'button'
+      });
       $buttonsWrapper.append('&nbsp;');
       $buttonsWrapper.append(this._$defaultFilterButton);
       $buttonsWrapper = null;
@@ -34,7 +42,9 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       if (!this.isVirtual) {
         const $fullTextBlockElement = $('<div/>', { class: 'articleSearchRegion' });
         this._fullTextBlockElement = $fullTextBlockElement.get(0);
-        this._fullTextBlock = new Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock(this._fullTextBlockElement, this.get_parentEntityId());
+        this._fullTextBlock = new Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock(
+          this._fullTextBlockElement, this.get_parentEntityId()
+        );
         this._fullTextBlock.initialize();
 
         $concreteSearchBlockElement.append($fullTextBlockElement);
@@ -43,39 +53,41 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       const $fieldSeachBlockElement = $('<div/>', { class: 'articleSearchRegion' });
       this._fieldSearchBlockElement = $fieldSeachBlockElement.get(0);
 
-      this._fieldSearchBlock = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock(this._fieldSearchBlockElement, this.get_parentEntityId());
+      this._fieldSearchBlock = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock(
+        this._fieldSearchBlockElement, this.get_parentEntityId()
+      );
       this._fieldSearchBlock.initialize();
 
       $concreteSearchBlockElement.append($fieldSeachBlockElement);
 
-      this._restore_searchBlockState();
+      this.restoreSearchBlockState();
       this.set_isRendered(true);
     }
   },
 
-  _restore_searchBlockState() {
+  restoreSearchBlockState() {
     if (this._searchBlockState) {
       if (this._searchBlockState.fullTextBlockState) {
-        this._fullTextBlock.restore_blockState(this._searchBlockState.fullTextBlockState);
+        this._fullTextBlock.restoreBlockState(this._searchBlockState.fullTextBlockState);
       }
 
       if (this._searchBlockState.fieldSearchBlockState) {
-        this._fieldSearchBlock.restore_blockState(this._searchBlockState.fieldSearchBlockState);
+        this._fieldSearchBlock.restoreBlockState(this._searchBlockState.fieldSearchBlockState);
       }
     }
   },
 
-  get_searchQuery() {
+  getSearchQuery() {
     let result = [];
     if (this._fullTextBlock) {
-      const ftbsq = this._fullTextBlock.get_searchQuery();
+      const ftbsq = this._fullTextBlock.getSearchQuery();
       if (ftbsq) {
         result.push(ftbsq);
       }
     }
 
     if (this._fieldSearchBlock) {
-      const fssq = this._fieldSearchBlock.get_searchQuery();
+      const fssq = this._fieldSearchBlock.getSearchQuery();
       if (fssq) {
         result = result.concat(fssq);
       }
@@ -84,19 +96,19 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
     return JSON.stringify(result);
   },
 
-  get_searchBlockState() {
+  getSearchBlockState() {
     let bs = null;
 
     this._searchBlockState = {};
     if (this._fullTextBlock) {
-      bs = this._fullTextBlock.get_blockState();
+      bs = this._fullTextBlock.getBlockState();
       if (bs) {
         this._searchBlockState.fullTextBlockState = bs;
       }
     }
 
     if (this._fieldSearchBlock) {
-      bs = this._fieldSearchBlock.get_blockState();
+      bs = this._fieldSearchBlock.getBlockState();
       if (bs) {
         this._searchBlockState.fieldSearchBlockState = bs;
       }
@@ -114,9 +126,9 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
   },
 
   _onFindButtonClick() {
-    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
+    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.getSearchQuery());
 
-    eventArgs.set_searchBlockState(this.get_searchBlockState());
+    eventArgs.setSearchBlockState(this.getSearchBlockState());
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
     eventArgs = null;
   },
@@ -148,7 +160,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
         defaultFieldSearchBlockState: this._defaultFieldSearchBlockState
       };
 
-      this._restore_searchBlockState();
+      this.restoreSearchBlockState();
       this._onFindButtonClick();
     }
   },
@@ -175,15 +187,20 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
   }
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (searchType, fieldID, fieldColumn, contentId, referenceFieldId) {
+Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (
+  searchType, fieldID, fieldColumn, contentId, referenceFieldId, ...params
+) {
   return {
     SearchType: searchType,
     FieldID: fieldID,
     FieldColumn: fieldColumn,
     ContentId: contentId,
     ReferenceFieldId: referenceFieldId,
-    QueryParams: Array.prototype.slice.call(arguments, 5)
+    QueryParams: params
   };
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.registerClass('Quantumart.QP8.BackendArticleSearchBlock', Quantumart.QP8.BackendSearchBlockBase);
+Quantumart.QP8.BackendArticleSearchBlock.registerClass(
+  'Quantumart.QP8.BackendArticleSearchBlock',
+  Quantumart.QP8.BackendSearchBlockBase
+);

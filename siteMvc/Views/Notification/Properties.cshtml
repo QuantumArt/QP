@@ -169,11 +169,11 @@
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">	
 	
-    @(Model.ContextObjectName).set_initializedCallback(function() {
+    @(Model.ContextObjectName).setInitializedCallback(function() {
 		this.viewMediator = new Quantumart.QP8.BackendNotificationPropertiesMediator('@(Html.UniqueId("editingForm"))');
 	});
     
-    @(Model.ContextObjectName).set_terminatingCallback(function() {
+    @(Model.ContextObjectName).setTerminatingCallback(function() {
         this.viewMediator.dispose();
         this.viewMediator = null;
     });

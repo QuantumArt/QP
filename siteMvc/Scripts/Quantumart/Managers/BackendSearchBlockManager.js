@@ -59,8 +59,8 @@ class BackendSearchBlockManager extends Quantumart.QP8.Observable {
     ) {
       if (host
         && host.get_documentContext()
-        && host.get_documentContext().get_options()
-        && host.get_documentContext().get_options().isVirtual
+        && host.get_documentContext().getOptions()
+        && host.get_documentContext().getOptions().isVirtual
       ) {
         Object.assign(options, { isVirtual: true });
       }

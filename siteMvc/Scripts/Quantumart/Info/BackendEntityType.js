@@ -1,4 +1,6 @@
-Quantumart.QP8.BackendEntityType = function () {};
+Quantumart.QP8.BackendEntityType = function () {
+  // empty constructor
+};
 Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode) {
   const cacheKey = `EntityTypeByEntityTypeCode_${entityTypeCode}`;
   let entityType = Quantumart.QP8.Cache.getItem(cacheKey);
@@ -10,10 +12,10 @@ Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode)
       { entityTypeCode },
       false,
       false,
-      (data, textStatus, jqXHR) => {
+      data => {
         entityType = data;
       },
-      (jqXHR, textStatus, errorThrown) => {
+      () => {
         entityType = null;
       }
     );
@@ -35,10 +37,10 @@ Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
       { entityTypeId },
       false,
       false,
-      (data, textStatus, jqXHR) => {
+      data => {
         entityTypeCode = data;
       },
-      (jqXHR, textStatus, errorThrown) => {
+      () => {
         entityTypeCode = null;
       }
     );
@@ -60,10 +62,10 @@ Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entit
       { entityTypeCode },
       false,
       false,
-      (data, textStatus, jqXHR) => {
+      data => {
         parentEntityTypeCode = data;
       },
-      (jqXHR, textStatus, errorThrown) => {
+      jqXHR => {
         parentEntityTypeCode = null;
         $q.processGenericAjaxError(jqXHR);
       }
@@ -97,7 +99,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
             $q.alertError(data.Text);
           }
         })
-      .fail((jqXHR, textStatus, errorThrown) => {
+      .fail(jqXHR => {
         dictionary = null;
         $q.processGenericAjaxError(jqXHR);
       });

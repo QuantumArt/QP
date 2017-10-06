@@ -24,26 +24,34 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     const $fileListContentElement = $(this._fileListContentElement);
     $fileListContentElement.html('<div class="fileListNameContainer"></div>');
 
-    $fileListContentElement.delegate('.fileItem input:checkbox', 'click', $.proxy(this._onFileCheckBoxClickedHandler, this));
+    $fileListContentElement.delegate(
+      '.fileItem input:checkbox', 'click', $.proxy(this._onFileCheckBoxClickedHandler, this)
+    );
     $fileListContentElement.delegate('.fileItem', 'click', $.proxy(this._onFileContainerClickedHandler, this));
 
     if (!$q.isNullOrWhiteSpace(this._contextMenuCode)) {
-      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format('{0}_ContextMenu', $fileListContentElement.attr('id')),
-        { targetElements: this._fileListContentElement, allowManualShowing: true, zIndex: this._zIndex });
+      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(
+        this._contextMenuCode, String.format('{0}_ContextMenu', $fileListContentElement.attr('id')),
+        { targetElements: this._fileListContentElement, allowManualShowing: true, zIndex: this._zIndex }
+      );
       contextMenuComponent.initialize();
 
       contextMenuComponent.addMenuItemsToMenu(false);
 
       const contextMenuEventType = $.fn.jeegoocontext.getContextMenuEventType();
       $fileListContentElement.delegate('.fileItem', contextMenuEventType, $.proxy(this._onContextMenuHandler, this));
-      contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, $.proxy(this._onNodeContextMenuItemClickingHandler, this));
-      contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, $.proxy(this._onNodeContextMenuHiddenHandler, this));
+      contextMenuComponent.attachObserver(
+        window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, $.proxy(this._onNodeContextMenuItemClickingHandler, this)
+      );
+      contextMenuComponent.attachObserver(
+        window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, $.proxy(this._onNodeContextMenuHiddenHandler, this)
+      );
 
       this._contextMenuComponent = contextMenuComponent;
     }
   },
 
-  redraw(data, options) {
+  redraw(data) {
     const $fileListContentElement = $(this._fileListContentElement);
     const $fileListNameContainer = $fileListContentElement.find('.fileListNameContainer');
     const html = new $.telerik.stringBuilder();
@@ -52,12 +60,13 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
       let columnCounter = 0;
       $.each(data.Data, (index, item) => {
         html
-          .catIf('<div class="column"><ul>', columnCounter == 0)
+          .catIf('<div class="column"><ul>', columnCounter === 0)
           .cat(String.format('<li title="{0}"><div class="fileItem" data-file_name="{0}">', item.FullName))
-          .catIf('<input type="checkbox" />', that._selectMode == window.FILE_LIST_SELECT_MODE_MULTIPLE)
-          .cat(String.format('<img src="{1}{2}" /><label>{0}</label></div></li>', item.Name, window.THEME_IMAGE_FOLDER_URL_SMALL_FILE_TYPE_ICONS, item.SmallIconLink));
+          .catIf('<input type="checkbox" />', that._selectMode === window.FILE_LIST_SELECT_MODE_MULTIPLE)
+          .cat(String.format('<img src="{1}{2}" /><label>{0}</label></div></li>',
+            item.Name, window.THEME_IMAGE_FOLDER_URL_SMALL_FILE_TYPE_ICONS, item.SmallIconLink));
 
-        if (columnCounter == window.FILE_LIST_ITEMS_PER_COLUMN - 1) {
+        if (columnCounter === window.FILE_LIST_ITEMS_PER_COLUMN - 1) {
           html.cat('</ul></div>');
           columnCounter = 0;
         } else {
@@ -83,7 +92,8 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 
   isAllSelected() {
     const $fileListContentElement = $(this._fileListContentElement);
-    return $fileListContentElement.find('.fileItem input::checkbox:not(:checked)').size() == 0 && $fileListContentElement.find('.fileItem').size() > 0;
+    return $fileListContentElement.find('.fileItem input::checkbox:not(:checked)').size() === 0
+    && $fileListContentElement.find('.fileItem').size() > 0;
   },
 
   dispose() {
@@ -117,17 +127,17 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     $fileListContentElement
       .find(`.fileItem.${this.SELECTED_CLASS}`)
       .each((index, item) => {
-        const name = $(item).data('file_name');
-        Array.add(selectedEntities, { Id: name, Name: name });
+        const fn = $(item).data('file_name');
+        Array.add(selectedEntities, { Id: fn, Name: fn });
       });
 
     $fileListContentElement = null;
     return selectedEntities;
   },
 
-  _onFileCheckBoxClickedHandler(event) {
-    event.stopPropagation();
-    let $chb = $(event.currentTarget);
+  _onFileCheckBoxClickedHandler(evt) {
+    evt.stopPropagation();
+    let $chb = $(evt.currentTarget);
     if ($chb.is(':checked')) {
       $chb.parent('.fileItem').addClass(this.SELECTED_CLASS);
     } else {
@@ -137,11 +147,11 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     $chb = null;
   },
 
-  _onFileContainerClickedHandler(event) {
-    const $item = $(event.currentTarget);
+  _onFileContainerClickedHandler(evt) {
+    const $item = $(evt.currentTarget);
     const $fileListContentElement = $(this._fileListContentElement);
 
-    if (!event.ctrlKey || this._selectMode == window.FILE_LIST_SELECT_MODE_SINGLE) {
+    if (!evt.ctrlKey || this._selectMode === window.FILE_LIST_SELECT_MODE_SINGLE) {
       $fileListContentElement.find(`.${this.SELECTED_CLASS}`).removeClass(this.SELECTED_CLASS);
       $fileListContentElement.find('.fileItem input:checkbox:checked').prop('checked', false);
     }
@@ -168,7 +178,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
     }
   },
 
-  _onNodeContextMenuHiddenHandler(eventType, sender, args) {
+  _onNodeContextMenuHiddenHandler() {
     if (!$q.isNullOrEmpty(this._contextMenuActionCode)) {
       const $element = $(this._currentContextMenuSelectedElement);
       const eventArgs = new Quantumart.QP8.BackendEventArgs();
@@ -180,4 +190,6 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
   }
 };
 
-Quantumart.QP8.BackendFileNameListView.registerClass('Quantumart.QP8.BackendFileNameListView', Quantumart.QP8.Observable, Quantumart.QP8.IBackendFileListView);
+Quantumart.QP8.BackendFileNameListView.registerClass(
+  'Quantumart.QP8.BackendFileNameListView', Quantumart.QP8.Observable
+);

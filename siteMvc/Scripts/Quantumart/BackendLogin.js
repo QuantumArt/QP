@@ -7,7 +7,7 @@ Quantumart.QP8.BackendLogin = function (options) {
     }
   }
 
-  $(document).ready($.proxy(this._initialize, this));
+  jQuery(document).ready(jQuery.proxy(this._initialize, this));
 };
 
 Quantumart.QP8.BackendLogin.storageKey = 'Quantumart.QP8.BackendLogin.CustomerCode';
@@ -20,19 +20,23 @@ Quantumart.QP8.BackendLogin.prototype = {
   _useSavedCustomerCode: false,
 
   _initialize() {
-    $('#IsSilverlightInstalled').val(Silverlight.isInstalled(null) ? 'True' : 'False');
+    jQuery('#IsSilverlightInstalled').val(Silverlight.isInstalled(null) ? 'True' : 'False');
 
     if (this._useSavedCustomerCode) {
-      if ($('.validation-summary-errors').length) {
+      const notValid = jQuery('.validation-summary-errors').length > 0;
+
+      if (notValid) {
         this.removeCustomerCode();
       } else {
         const value = localStorage.getItem(this.storageKey);
-        if (!$('#UserName').length) {
+        const isIntegratedLogin = jQuery('#UserName').length === 0;
+
+        if (isIntegratedLogin) {
           if (value) {
-            $('#CustomerCode').val(value);
-            $('form').submit();
+            jQuery('#CustomerCode').val(value);
+            jQuery('form').submit();
           } else {
-            $('#Login').click($.proxy(this._loginClick, this));
+            jQuery('#Login').click(jQuery.proxy(this._loginClick, this));
           }
         }
       }
@@ -40,7 +44,7 @@ Quantumart.QP8.BackendLogin.prototype = {
   },
 
   _loginClick() {
-    localStorage.setItem(this.storageKey, $('#CustomerCode').val());
+    localStorage.setItem(this.storageKey, jQuery('#CustomerCode').val());
   },
 
   removeCustomerCode: Quantumart.QP8.BackendLogin.removeCustomerCode

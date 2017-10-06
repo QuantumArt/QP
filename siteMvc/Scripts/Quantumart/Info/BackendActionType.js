@@ -1,4 +1,6 @@
-Quantumart.QP8.BackendActionType = function () {};
+Quantumart.QP8.BackendActionType = function () {
+  // empty constructor
+};
 Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actionCode) {
   const cacheKey = `ActionTypeCodeByActionCode_${actionCode}`;
   let actionTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
@@ -10,10 +12,10 @@ Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actio
       { actionCode },
       false,
       false,
-      (data, textStatus, jqXHR) => {
+      data => {
         actionTypeCode = data;
       },
-      (jqXHR, textStatus, errorThrown) => {
+      jqXHR => {
         actionTypeCode = null;
         $q.processGenericAjaxError(jqXHR);
       }

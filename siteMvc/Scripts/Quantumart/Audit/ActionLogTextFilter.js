@@ -12,12 +12,12 @@ Quantumart.QP8.ActionLogTextFilter.prototype = {
     this.$container.find('input.textbox').focus();
   },
 
-  get_value() {
+  getValue() {
     return this.$container.find('input.textbox').val();
   },
 
-  get_filterDetails() {
-    const val = this.get_value();
+  getFilterDetails() {
+    const val = this.getValue();
     if (val) {
       return `"${$q.cutShort(val, 8)}"`;
     }
@@ -25,4 +25,6 @@ Quantumart.QP8.ActionLogTextFilter.prototype = {
   }
 };
 
-Quantumart.QP8.ActionLogTextFilter.registerClass('Quantumart.QP8.ActionLogTextFilter', Quantumart.QP8.ActionLogFilterBase);
+Quantumart.QP8.ActionLogTextFilter.registerClass(
+  'Quantumart.QP8.ActionLogTextFilter', Quantumart.QP8.ActionLogFilterBase
+);

@@ -18,7 +18,9 @@ Quantumart.QP8.FieldPropertiesMediator = function (tabId) {
   };
 };
 
-Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElementId, displayFieldSelectElementId, currentFieldIdHiddenElementId, listOrderSelectElementId) {
+Quantumart.QP8.RelateToAndDisplayFieldMediator = function (
+  relateToSelectElementId, displayFieldSelectElementId, currentFieldIdHiddenElementId, listOrderSelectElementId
+) {
   const contentPicker = $(`#${relateToSelectElementId}`).data('entity_data_list_component');
   const $displayFieldSelectElement = $(`#${displayFieldSelectElementId}`);
   const $listOrderSelectElement = $(`#${listOrderSelectElementId}`);
@@ -44,7 +46,10 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
             $displayFieldSelectElement.empty();
             $listOrderSelectElement.empty();
             let html, html2;
-            if (!$q.isNullOrEmpty(data.data)) {
+            if ($q.isNullOrEmpty(data.data)) {
+              html = '<option value=""></option>';
+              html2 = html;
+            } else {
               const htmlBuilder = new $.telerik.stringBuilder();
               $(data.data).each(function () {
                 htmlBuilder
@@ -55,9 +60,6 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
               });
               html = htmlBuilder.string();
               html2 = `<option value="">${$l.EntityEditor.selectField}</option>${html}`;
-            } else {
-              html = '<option value=""></option>';
-              html2 = html;
             }
             $displayFieldSelectElement.append(html);
             $listOrderSelectElement.append(html2);
@@ -65,7 +67,7 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
             $q.alertError(data.message);
           }
         })
-        .fail((jqXHR, textStatus, errorThrown) => {
+        .fail(jqXHR => {
           $q.processGenericAjaxError(jqXHR);
         });
     }
@@ -82,10 +84,11 @@ Quantumart.QP8.RelateToAndDisplayFieldMediator = function (relateToSelectElement
   };
 };
 
-Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElementId, classifierSelectElementId, aggregatedElementId, multiplePickerId) {
+Quantumart.QP8.RelateToAndClassifierFieldMediator = function (
+  relateToSelectElementId, classifierSelectElementId
+) {
   let contentPicker = $(`#${relateToSelectElementId}`).data('entity_data_list_component');
   let $classifierSelectElement = $(`#${classifierSelectElementId}`);
-  let $aggregatedElement = $(`#${aggregatedElementId}`);
   const classifierFieldsUrl = `${window.CONTROLLER_URL_CONTENT}_ClassifierFields`;
 
   const onRelatedToChanged = function () {
@@ -102,7 +105,9 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
       ).done(data => {
         if (data.success) {
           $classifierSelectElement.empty();
-          if (!$q.isNullOrEmpty(data.data)) {
+          if ($q.isNullOrEmpty(data.data)) {
+            $classifierSelectElement.append('<option value=""></option>');
+          } else {
             const html = new $.telerik.stringBuilder();
             $(data.data).each(function () {
               html
@@ -113,14 +118,12 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
                 .cat('</option>');
             });
             $classifierSelectElement.append(html.string());
-          } else {
-            $classifierSelectElement.append('<option value=""></option>');
           }
         } else {
           $q.alertError(data.message);
         }
       })
-        .fail((jqXHR, textStatus, errorThrown) => {
+        .fail(jqXHR => {
           $q.processGenericAjaxError(jqXHR);
         });
     }
@@ -130,7 +133,6 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
     $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
     contentPicker = null;
     $classifierSelectElement = null;
-    $aggregatedElement = null;
   };
 
   $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
@@ -141,10 +143,14 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 };
 
 
-Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId, O2MPickerListElementId, M2MPickerListElementId) {
+Quantumart.QP8.RelateToAndO2MDefaultMediator = function (
+  relateToSelectElementId, O2MPickerListElementId, M2MPickerListElementId
+) {
   const contentPicker = $(`#${relateToSelectElementId}`).data('entity_data_list_component');
-  const singleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(O2MPickerListElementId);
-  const multipleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance().getList(`${M2MPickerListElementId}_list`);
+  const singleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager
+    .getInstance().getList(O2MPickerListElementId);
+  const multipleItemPickerComponent = Quantumart.QP8.BackendEntityDataListManager
+    .getInstance().getList(`${M2MPickerListElementId}_list`);
 
   const onRelatedToChanged = function () {
     const selectedContentId = $(contentPicker.getStateFieldElement()).val();
@@ -173,10 +179,10 @@ Quantumart.QP8.FieldTypeFileDefaultMediator = function (fieldTypeSelectElementId
 
   const onFieldTypeChanged = function () {
     const fieldType = $('option:selected', $fieldTypeSelectElement).val();
-    if (fieldType == window.FILE_FIELD_TYPE) {
-      fileFieldComponent.set_isImage(false);
-    } else if (fieldType == window.IMAGE_FIELD_TYPE) {
-      fileFieldComponent.set_isImage(true);
+    if (fieldType === window.FILE_FIELD_TYPE) {
+      fileFieldComponent.setIsImage(false);
+    } else if (fieldType === window.IMAGE_FIELD_TYPE) {
+      fileFieldComponent.setIsImage(true);
     }
   };
 
@@ -203,7 +209,8 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
       $panels.hide();
     } else {
       $panels.show();
-      if (selectedContentId == fieldContentID) {
+      $q.warnIfEqDiff(selectedContentId, fieldContentID);
+      if (selectedContentId === fieldContentID) {
         $panels.filter('[showforcurrent]').show();
         $panels.filter('[hideforcurrent]').hide();
       } else {

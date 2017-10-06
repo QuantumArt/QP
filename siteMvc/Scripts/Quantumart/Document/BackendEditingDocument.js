@@ -150,12 +150,14 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
   },
 
   createPanels() {
-    const breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(
+    const manager = Quantumart.QP8.BackendBreadCrumbsManager.getInstance();
+    const menuManager = Quantumart.QP8.BackendBreadMenuContextMenuManager.getInstance();
+    const breadCrumbsComponent = manager.createBreadCrumbs(
       `breadCrumbs_${this._tabId}`,
       {
         documentHost: this,
         breadCrumbsContainerElementId: this._editingArea.get_breadCrumbsContainerElementId(),
-        contextMenuManager: new Quantumart.QP8.BackendBreadMenuContextMenuManager()
+        contextMenuManager: menuManager
       }
     );
 
@@ -452,10 +454,10 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
     }
   },
 
-  saveAndCloseRequest(eventArgs) {
+  saveAndCloseRequest() {
     const context = this.get_documentContext();
     if (context && context._options.saveAndCloseActionCode) {
-      const main = this.get_mainComponent();
+      const main = this.getMainComponent();
       if (main && Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) && main.isFieldsChanged()) {
         this._isCloseForced = true;
         this.executeAction(context._options.saveAndCloseActionCode);
@@ -468,8 +470,8 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
       this._isCloseForced = false;
       const context = this.get_documentContext();
       if (context
-        && context.get_mainComponentType() === $e.MainComponentType.Editor
-        && !context.get_mainComponent()._formHasErrors
+        && context.getMainComponentType() === $e.MainComponentType.Editor
+        && !context.getMainComponent()._formHasErrors
       ) {
         this._editingArea.closeDocument(this.get_tabId(), true);
       }

@@ -1,3 +1,4 @@
+/* eslint new-cap: 0 */
 window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED = 'OnClassifierFieldArticleLoaded';
 window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING = 'OnClassifierFieldArticleUnloading';
 
@@ -97,15 +98,16 @@ Quantumart.QP8.BackendClassifierField.prototype = {
       if ($hidden.length) {
         $hidden.val(selectedVal);
       } else {
-        this._$contentList.after(`<input type="hidden" name="${this._$contentList.prop('name')}" value="${selectedVal}" />`);
+        this._$contentList.after(
+          `<input type="hidden" name="${this._$contentList.prop('name')}" value="${selectedVal}" />`
+        );
       }
     }
 
     this._$contentList.addClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', true);
   },
 
-  _onContentSelected(e) {
-    const tabId = this._$componentElem.data('host_id');
+  _onContentSelected() {
     const rootContentId = +this._$componentElem.data('root_content_id') || 0;
     const rootArticleId = +this._$componentElem.data('root_article_id') || 0;
     const aggregatedContentId = +this._$contentList.find('option:selected').val() || 0;
@@ -130,7 +132,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   _renderAggregatedDataView(articleViewData) {
     this.notify(window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING, {
       articleWrapper: this._$articleWrapper,
-      toggleDisableChangeTracking: this.set_disableChangeTracking
+      toggleDisableChangeTracking: this.setDisableChangeTracking
     });
 
     this._$articleWrapper.empty();
@@ -148,7 +150,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
       this._initAllFields();
       this.notify(window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED, {
         articleWrapper: this._$articleWrapper,
-        toggleDisableChangeTracking: this.set_disableChangeTracking
+        toggleDisableChangeTracking: this.setDisableChangeTracking
       });
     }
 
@@ -215,25 +217,25 @@ Quantumart.QP8.BackendClassifierField.prototype = {
       this._customInit(this._parentEditor, $form);
     }
 
-    const self = this;
+    const that = this;
     if (this._customButtonsSettings) {
       $.each(this._customButtonsSettings, (index, item) => {
-        self._parentEditor.addCustomButton(item, $form);
+        that._parentEditor.addCustomButton(item, $form);
       });
     }
 
     if (this._customLinkButtonsSettings) {
       $.each(this._customLinkButtonsSettings, (index, item) => {
-        self._parentEditor.addCustomLinkButton(item, $form);
+        that._parentEditor.addCustomLinkButton(item, $form);
       });
     }
   },
 
-  set_initFieldValues(value) {
+  setInitFieldValues(value) {
     this._initFieldValues = value;
   },
 
-  set_disableChangeTracking(value) {
+  setDisableChangeTracking(value) {
     this._disableChangeTracking = value;
   },
 
@@ -274,4 +276,6 @@ Quantumart.QP8.BackendClassifierField.prototype = {
   }
 };
 
-Quantumart.QP8.BackendClassifierField.registerClass('Quantumart.QP8.BackendClassifierField', Quantumart.QP8.Observable);
+Quantumart.QP8.BackendClassifierField.registerClass(
+  'Quantumart.QP8.BackendClassifierField', Quantumart.QP8.Observable
+);

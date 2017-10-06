@@ -53,22 +53,21 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     $(this._containerElement).append(this.$tile);
   },
 
-  get_value() {
-    if (this._currentValue) {
-      return this._currentValue;
-    }
+  getValue() {
+    return this._currentValue;
   },
 
-  get_options() {
+  getOptions() {
     return this._options;
   },
 
   _createFilter() {
+    const applyText = $l.SearchBlock.closeAndApplyWndButtonText;
     const html = new $.telerik.stringBuilder()
       .cat('<form class="formLayout alFilter">')
       .cat('<div class="filterContainer"></div>')
       .cat('<div>')
-      .cat(`<input class="button closeAndApplyFilter" type="button" value="${$l.SearchBlock.closeAndApplyWndButtonText}">`)
+      .cat(`<input class="button closeAndApplyFilter" type="button" value="${applyText}">`)
       .cat(`<input class="button closeFilter" type="button" value="${$l.SearchBlock.closeWndButtonText}">`)
       .cat('</div>')
       .cat('</form>')
@@ -86,7 +85,8 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     }).data('tWindow').center();
 
     $('.closeFilter', this._popupWindowComponent.element).click($.proxy(this._onCloseFilterWndClick, this));
-    $('.closeAndApplyFilter', this._popupWindowComponent.element).click($.proxy(this._onCloseAndApplyFilterWndClick, this));
+    $('.closeAndApplyFilter', this._popupWindowComponent.element)
+      .click($.proxy(this._onCloseAndApplyFilterWndClick, this));
     $('form', this._popupWindowComponent.element).submit($.proxy(this._onFilterFormSubmitted, this));
 
 
@@ -108,8 +108,8 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
   },
 
   _onCloseFilterWndClick() {
-    this._currentValue = this._filterComponent.get_value();
-    this.$filterDetailsSpanElement.html(`: ${this._filterComponent.get_filterDetails()}`);
+    this._currentValue = this._filterComponent.getValue();
+    this.$filterDetailsSpanElement.html(`: ${this._filterComponent.getFilterDetails()}`);
     this._popupWindowComponent.close();
   },
 

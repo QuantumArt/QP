@@ -1,5 +1,9 @@
-Quantumart.QP8.BackendContentSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
-  Quantumart.QP8.BackendContentSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
+Quantumart.QP8.BackendContentSearchBlock = function (
+  searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options
+) {
+  Quantumart.QP8.BackendContentSearchBlock.initializeBase(
+    this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]
+  );
   this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
 };
 
@@ -11,7 +15,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
     _siteListElement: null,
     _contentNameElement: null,
 
-    get_searchQuery() {
+    getSearchQuery() {
       let groupId = null;
       let siteId = null;
       let contentName = null;
@@ -45,14 +49,14 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
           },
           false,
           false,
-          (data, textStatus, jqXHR) => {
+          data => {
             if (data.success) {
               serverContent = data.view;
             } else {
               $q.alertFail(data.message);
             }
           },
-          (jqXHR, textStatus, errorThrown) => {
+          jqXHR => {
             serverContent = null;
             $q.processGenericAjaxError(jqXHR);
           });
@@ -74,7 +78,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
     },
 
     _onFindButtonClick() {
-      let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.get_searchQuery());
+      let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.getSearchQuery());
       this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
       eventArgs = null;
     },
@@ -100,4 +104,6 @@ Quantumart.QP8.BackendContentSearchBlock.prototype
     }
   };
 
-Quantumart.QP8.BackendContentSearchBlock.registerClass('Quantumart.QP8.BackendContentSearchBlock', Quantumart.QP8.BackendSearchBlockBase);
+Quantumart.QP8.BackendContentSearchBlock.registerClass(
+  'Quantumart.QP8.BackendContentSearchBlock', Quantumart.QP8.BackendSearchBlockBase
+);

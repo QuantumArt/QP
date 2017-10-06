@@ -29,18 +29,12 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     this._fileWrapperElementId = `${context._popupWindowId}_upload_pl_cont_import`;
     this._fileWrapperElement = document.getElementById(this._fileWrapperElementId);
     $(this._fileWrapperElement).closest('.documentWrapper').addClass('ImportWrapper');
-    if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
-      this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
-        background: '#ffffff',
-        extensions: '',
-        resolveName: this._renameMatch
-      });
-    } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
+    if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
       this._uploaderComponent = new Quantumart.QP8.BackendHtmlUploader(this._fileWrapperElement, {
         extensions: '',
         resolveName: this._renameMatch
       });
-    } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.PlUpload) {
+    } else {
       this._uploaderComponent = new Quantumart.QP8.BackendPlUploader(this._fileWrapperElement, {
         extensions: '',
         resolveName: this._renameMatch,
@@ -49,7 +43,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     }
 
     this._uploaderComponent.initialize();
-    this._uploaderComponent.set_folderPath(uploadPath);
+    this._uploaderComponent.setFolderPath(uploadPath);
     this._uploaderComponent.attachObserver(
       window.EVENT_TYPE_LIBRARY_FILE_UPLOADED,
       $.proxy(this._onFileUploadedHandler, this
@@ -57,7 +51,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   },
 
   _onFileUploadedHandler(eventType, sender, eventArgs) {
-    this.fileName = eventArgs.get_fileNames()[0];
+    this.fileName = eventArgs.getFileNames()[0];
 
     $(`#${this.options._popupWindowId}_${this._fileNameId}`).val(this.fileName);
     $(`#${this._fileNameId}`).val(this.fileName);

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -754,6 +754,7 @@
     <Content Include="Content\ckeditor\skins\moono\images\refresh.png" />
     <Content Include="Content\ckeditor\skins\moono\images\spinner.gif" />
     <Content Include="Content\ckeditor\styles.js" />
+    <Content Include="Content\codemirror.css" />
     <Content Include="Content\codemirrorTheme.css" />
     <Content Include="Content\codemirror\addon\comment\comment.js" />
     <Content Include="Content\codemirror\addon\comment\continuecomment.js" />
@@ -1399,7 +1400,6 @@
     <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
     <Content Include="Scripts\polyfills\array.find.polyfill.js" />
     <Content Include="Scripts\polyfills\object.assign.polyfill.js" />
-    <Content Include="Scripts\Quantumart\App.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\dialogs\aspell.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\plugin.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\spellerpages\blank.html" />
@@ -1541,12 +1541,6 @@
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\quotes.txt" />
-    <Content Include="Scripts\Quantumart\Common\BackendEventArgs.js" />
-    <Content Include="Scripts\Quantumart\Common\BackendPreviousAction.js" />
-    <Content Include="Scripts\Quantumart\Common\IMediator.js" />
-    <Content Include="Scripts\Quantumart\Common\IObservable.js" />
-    <Content Include="Scripts\Quantumart\Common\IObserver.js" />
-    <Content Include="Scripts\Quantumart\Common\Mediator.js" />
     <Content Include="Scripts\Quantumart\Helpers\vanilla.helpers.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.js" />
@@ -2004,8 +1998,7 @@
     <Content Include="Scripts\Quantumart\Search\BackendUserSearchBlock.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendActionPermissionTree.js" />
     <Content Include="Scripts\Quantumart\Uploader\BackendHtmlUploader.js" />
-    <Content Include="Scripts\Quantumart\Uploader\BackendSilverlightUploader.js" />
-    <Content Include="Scripts\Quantumart\Uploader\IBackendUploader.js" />
+    <Content Include="Scripts\Quantumart\Uploader\BackendBaseUploader.js" />
     <Content Include="Scripts\Quantumart\Mediators\BackendVirtualContentProperties.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendVirtualFieldTree.js" />
     <Content Include="Scripts\Quantumart\Cache.js" />
@@ -2013,6 +2006,9 @@
     <Content Include="Scripts\Quantumart\Tree\BackendEntityTree.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendFileField.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendTreeBase.js" />
+    <Content Include="Scripts\Quantumart\Common\BackendEventArgs.js" />
+    <Content Include="Scripts\Quantumart\Common\BackendPreviousAction.js" />
+    <Content Include="Scripts\Quantumart\Common\Observable.js" />
     <Content Include="Scripts\jquery\jquery.cookie.js" />
     <Content Include="Scripts\jquery\jquery.form.js" />
     <Content Include="Scripts\jquery\jquery.jeegoocontext.js" />
@@ -2052,7 +2048,6 @@
     <Content Include="Scripts\Quantumart\ControlHelpers.js" />
     <Content Include="Scripts\Quantumart\jQueryExtensions.js" />
     <Content Include="Scripts\Quantumart\Utils.js" />
-    <Content Include="Scripts\Silverlight.js" />
     <Content Include="Scripts\telerik\telerik.autocomplete.js" />
     <Content Include="Scripts\telerik\telerik.calendar.js" />
     <Content Include="Scripts\telerik\telerik.chart.js" />
@@ -2219,9 +2214,10 @@
     <Content Include="Views\Home\Index.Template.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
     </Content>
-    <Content Include="Views\LogOn\Index.Template.cshtml">
+    <Content Include="Views\Home\Index.cshtml" />
+    <None Include="Views\LogOn\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </Content>
+    </None>
     <Content Include="Views\Shared\EntityPermissionProperties.cshtml">
     </Content>
     <Content Include="Views\Notification\Index.cshtml">
@@ -2266,8 +2262,6 @@
     <Content Include="Views\PageTemplate\HTAreaToolbar.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Raw.cshtml" />
     <Content Include="Views\LogOn\Popup.cshtml" />
-    <Content Include="Views\LogOn\Index.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <None Include="Views\razorgenerator.directives" />
     <None Include="Views\Shared\Error.cshtml">
       <LastGenOutput>Error.generated.cs</LastGenOutput>

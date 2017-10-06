@@ -98,11 +98,11 @@
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">	
-	@(Model.ContextObjectName).set_initializedCallback(function() {				
+	@(Model.ContextObjectName).setInitializedCallback(function() {				
 		this.joinContentAndJoinFieldsMediator = new Quantumart.QP8.JoinContentAndJoinFieldsMediator("@Model.JoinRootElementId", "@Model.JoinFieldsElementId");
 		this.unionRadioAndSourceContentsListMediator = new Quantumart.QP8.UnionRadioAndSourceContentsListMediator('@Html.UniqueId("UnionTypePanel")', '@Html.UniqueId("BuildParamsPanel")', "@Model.UnionSourcesElementId");
 	});	
-	@(Model.ContextObjectName).set_terminatingCallback(function() {								
+	@(Model.ContextObjectName).setTerminatingCallback(function() {								
 		this.joinContentAndJoinFieldsMediator.dispose();
 		this.joinContentAndJoinFieldsMediator = null;
 

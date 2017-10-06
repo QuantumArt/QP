@@ -78,6 +78,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     }
 
     if (message.data.options && message.data.options.currentContext) {
+      // eslint-disable-next-line no-param-reassign
       message.data.options.contextQuery = JSON.stringify(
         $o.getContextQuery(message.data.parentEntityId, message.data.options.currentContext)
       );

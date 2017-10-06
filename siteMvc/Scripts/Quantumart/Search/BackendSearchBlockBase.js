@@ -4,7 +4,8 @@ window.EVENT_TYPE_SEARCH_BLOCK_RESET_START = 'OnSearchBlockResetStart';
 window.EVENT_TYPE_SEARCH_BLOCK_RESIZED = 'OnSearchBlockResized';
 window.EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE = 'OnFieldSearchContainerClose';
 
-Quantumart.QP8.BackendSearchBlockBase = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
+Quantumart.QP8.BackendSearchBlockBase = function (
+  searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
   Quantumart.QP8.BackendSearchBlockBase.initializeBase(this);
 
   this._searchBlockGroupCode = searchBlockGroupCode;
@@ -204,14 +205,17 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     }
 
     if (!searchBlockExist) {
-      if (!$q.isNullOrWhiteSpace(this._searchBlockContainerElementId)) {
-        $(`#${this._searchBlockContainerElementId}`).append($searchBlock);
-      } else {
+      if ($q.isNullOrWhiteSpace(this._searchBlockContainerElementId)) {
         $('body:first').append($searchBlock);
+      } else {
+        $(`#${this._searchBlockContainerElementId}`).append($searchBlock);
       }
     }
 
-    $searchBlock.verticalResizer({ bottomHandleCssClassName: 'searchBottomHandle', minPanelHeight: this._minSearchBlockHeight, maxPanelHeight: this._maxSearchBlockHeight });
+    $searchBlock.verticalResizer({
+      bottomHandleCssClassName: 'searchBottomHandle',
+      minPanelHeight: this._minSearchBlockHeight,
+      maxPanelHeight: this._maxSearchBlockHeight });
     this._verticalResizerComponent = $searchBlock.data('vertical_resizer');
 
     this._searchBlockElement = $searchBlock.get(0);
@@ -291,8 +295,8 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     }
 
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
-    eventArgs.set_searchBlockWidth(searchBlockWidth);
-    eventArgs.set_searchBlockHeight(searchBlockHeight);
+    eventArgs.setSearchBlockWidth(searchBlockWidth);
+    eventArgs.setSearchBlockHeight(searchBlockHeight);
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, eventArgs);
   },
 
@@ -356,53 +360,43 @@ Quantumart.QP8.BackendSearchBlockEventArgs.prototype = {
   _searchBlockHeight: 0,
   _searchBlockState: null,
 
-  // eslint-disable-next-line camelcase
-  get_searchQuery() {
+  getSearchQuery() {
     return this._searchQuery;
   },
 
-  // eslint-disable-next-line camelcase
-  set_searchQuery(value) {
+  setSearchQuery(value) {
     this._searchQuery = value;
   },
 
-  // eslint-disable-next-line camelcase
-  get_searchBlockType() {
+  getSearchBlockType() {
     return this._searchBlockType;
   },
 
-  // eslint-disable-next-line camelcase
-  set_searchBlockType(value) {
+  setSearchBlockType(value) {
     this._searchBlockType = value;
   },
 
-  // eslint-disable-next-line camelcase
-  get_searchBlockWidth() {
+  getSearchBlockWidth() {
     return this._searchBlockWidth;
   },
 
-  // eslint-disable-next-line camelcase
-  set_searchBlockWidth(value) {
+  setSearchBlockWidth(value) {
     this._searchBlockWidth = value;
   },
 
-  // eslint-disable-next-line camelcase
-  get_searchBlockHeight() {
+  getSearchBlockHeight() {
     return this._searchBlockHeight;
   },
 
-  // eslint-disable-next-line camelcase
-  set_searchBlockHeight(value) {
+  setSearchBlockHeight(value) {
     this._searchBlockHeight = value;
   },
 
-  // eslint-disable-next-line camelcase
-  set_searchBlockState(value) {
+  setSearchBlockState(value) {
     this._searchBlockState = value;
   },
 
-  // eslint-disable-next-line camelcase
-  get_searchBlockState() {
+  getSearchBlockState() {
     return this._searchBlockState;
   }
 };

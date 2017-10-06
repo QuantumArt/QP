@@ -535,11 +535,11 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   beforeCustomNodeCheck() {
-    // TODO: empty fn
+    // default implementation
   },
 
   afterCustomNodeCheck() {
-    // TODO: empty fn
+    // default implementation
   },
 
   _isNodeCollapsed($node) {

@@ -46,27 +46,25 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _onClearFilter() {
-    const $filter = $(`#${this._filterElementId}`);
     this._destroyAllTiles();
     $('.alSearchButton', this.$filter).trigger('click');
   },
 
   _onDataBinding(e) {
-    const filterData = this.get_filterData();
+    const filterData = this.getFilterData();
     if (filterData) {
       // eslint-disable-next-line no-param-reassign
       e.data = Object.assign({}, e.data, { searchQuery: JSON.stringify(filterData) });
     }
   },
 
-  get_filterData() {
+  getFilterData() {
     const filterData = {};
-    for (const tileType in this._tiles) {
+    Object.keys(this._tiles).forEach(tileType => {
       if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
-        this._tiles[tileType].get_options().deriveFilterData(this._tiles[tileType], filterData);
+        this._tiles[tileType].getOptions().deriveFilterData(this._tiles[tileType], filterData);
       }
-    }
-
+    });
     return filterData;
   },
 
@@ -128,34 +126,34 @@ Quantumart.QP8.ActionLogComponent.prototype = {
             }
           },
           deriveFilterData(tile, filterData) {
-            const v = tile.get_value();
+            const v = tile.getValue();
             if (v) {
-              switch (tile.get_options().type) {
+              switch (tile.getOptions().type) {
                 case $e.ActionLogFilteredColumns.EntityStringId:
-                  filterData.entityStringId = v;
+                  filterData.entityStringId = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.EntityTitle:
-                  filterData.entityTitle = v;
+                  filterData.entityTitle = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ParentEntityId:
-                  filterData.parentEntityId = v;
+                  filterData.parentEntityId = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ExecutionTime:
-                  filterData.from = v.from;
-                  filterData.to = v.to;
+                  filterData.from = v.from; // eslint-disable-line no-param-reassign
+                  filterData.to = v.to; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ActionTypeName:
-                  filterData.actionTypeCode = v;
+                  filterData.actionTypeCode = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ActionName:
-                  filterData.actionCode = v;
+                  filterData.actionCode = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.EntityTypeName:
-                  filterData.entityTypeCode = v;
+                  filterData.entityTypeCode = v; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.UserLogin:
                   if ($.isArray(v) && v.length > 0) {
-                    filterData.userIDs = v;
+                    filterData.userIDs = v; // eslint-disable-line no-param-reassign
                   }
                   break;
                 default:
@@ -183,9 +181,9 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
   _destroyAllTiles() {
-    for (const tileType in this._tiles) {
+    Object.keys(this._tiles).forEach(tileType => {
       this._destroyTile(tileType);
-    }
+    }, this);
   },
 
   dispose() {

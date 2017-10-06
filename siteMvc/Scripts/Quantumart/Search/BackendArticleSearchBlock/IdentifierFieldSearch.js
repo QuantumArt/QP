@@ -1,5 +1,7 @@
-Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
-  Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
+Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch = function (
+  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
+  Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.initializeBase(
+    this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
   this._onByValueSelectorChangedHandler = jQuery.proxy(this._onByValueSelectorChanged, this);
   this._onNumericInputFocusHandler = jQuery.proxy(this._onNumericInputFocus, this);
   this._onLoadHandler = jQuery.proxy(this._onLoad, this);
@@ -17,14 +19,14 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       },
       false,
       false,
-      (data, textStatus, jqXHR) => {
+      data => {
         if (data.success) {
           serverContent = data.view;
         } else {
           $q.alertFail(data.message);
         }
       },
-      (jqXHR, textStatus, errorThrown) => {
+      jqXHR => {
         serverContent = null;
         $q.processGenericAjaxError(jqXHR);
       }
@@ -60,9 +62,11 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
     }
   },
 
-  get_searchQuery() {
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
-      this.get_IsNull(),
+  getSearchQuery() {
+    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier,
+      this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
+      this.getIsNull(),
       $(this._numberFromElement).data('tTextBox').value(),
       $(this._numberToElement).data('tTextBox').value(),
       this._isByValue,
@@ -70,10 +74,12 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       this._isByText);
   },
 
-  get_blockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
+  getBlockState() {
+    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier,
+      this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
-        inverse: this.get_IsNull(),
+        inverse: this.getIsNull(),
         from: $(this._numberFromElement).data('tTextBox').value(),
         to: $(this._numberToElement).data('tTextBox').value(),
         text: $(this._textAreaElement).val(),
@@ -82,13 +88,13 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       });
   },
 
-  get_filterDetails() {
-    const stateData = this.get_blockState().data;
+  getFilterDetails() {
+    const stateData = this.getBlockState().data;
     let result;
 
     if (stateData.isByText) {
       const ids = this._getIds(stateData.text);
-      result = ids.length == 0 ? '?' : this._getText(ids);
+      result = ids.length === 0 ? '?' : this._getText(ids);
     } else if (stateData.isByValue) {
       result = stateData.from ? stateData.from : '?';
     } else {
@@ -102,7 +108,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
     return result;
   },
 
-  restore_blockState(state) {
+  restoreBlockState(state) {
     if (state) {
       if (this._inverseCheckBoxElement) {
         let $inverseCheckBoxElement = $(this._inverseCheckBoxElement);
@@ -111,8 +117,14 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
       }
 
       if (!$q.isNull(state.isByValue) && !$q.isNull(state.isByText)) {
-        const value = state.isByText ? 2 : state.isByValue ? 0 : 1;
-        $(`.radioButtonsList input:radio[value=${value}]`, this._containerElement).prop('checked', true).trigger('click');
+        let value = 1;
+        if (state.isByText) {
+          value = 2;
+        } else if (state.isByValue) {
+          value = 0;
+        }
+        $(`.radioButtonsList input:radio[value=${value}]`, this._containerElement)
+          .prop('checked', true).trigger('click');
       }
 
       $(this._numberFromElement).data('tTextBox').value(state.from);
@@ -122,8 +134,8 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   _onByValueSelectorChanged(e) {
-    this._isByValue = $(e.currentTarget).val() == 0;
-    this._isByText = $(e.currentTarget).val() == 2;
+    this._isByValue = $(e.currentTarget).val() === 0;
+    this._isByText = $(e.currentTarget).val() === 2;
 
     if (this._isByText) {
       $(this._textAreaElement).closest('.row').show();
@@ -190,7 +202,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
 
-  get_IsNull() {
+  getIsNull() {
     if (this._inverseCheckBoxElement) {
       return $(this._inverseCheckBoxElement).is(':checked');
     }
@@ -208,4 +220,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   _textAreaElement: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.registerClass(
+  'Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch',
+  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
+);

@@ -5,16 +5,18 @@ Quantumart.QP8.ActionLogUserFilter = function (filterContainer) {
 Quantumart.QP8.ActionLogUserFilter.prototype = {
   initialize() {
     this.$container.addClass('fieldSearchContainerContent');
-    this.userSearch = new Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch(this.$container, 0, -4, '', '', $e.ArticleFieldSearchType.M2MRelation);
+    this.userSearch = new Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch(
+      this.$container, 0, -4, '', '', $e.ArticleFieldSearchType.M2MRelation
+    );
     this.userSearch.initialize();
   },
 
-  get_filterDetails() {
-    return this.userSearch.get_filterDetails();
+  getFilterDetails() {
+    return this.userSearch.getFilterDetails();
   },
 
-  get_value() {
-    return this.userSearch.get_searchQuery().QueryParams[0];
+  getValue() {
+    return this.userSearch.getSearchQuery().QueryParams[0];
   },
 
   onOpen() {
@@ -31,4 +33,6 @@ Quantumart.QP8.ActionLogUserFilter.prototype = {
   }
 };
 
-Quantumart.QP8.ActionLogUserFilter.registerClass('Quantumart.QP8.ActionLogUserFilter', Quantumart.QP8.ActionLogFilterBase);
+Quantumart.QP8.ActionLogUserFilter.registerClass(
+  'Quantumart.QP8.ActionLogUserFilter', Quantumart.QP8.ActionLogFilterBase
+);

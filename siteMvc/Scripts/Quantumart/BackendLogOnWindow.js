@@ -42,10 +42,10 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       visible: true
     }).data('tWindow').center();
 
-    this._onLogonHandler = function (event) {
+    this._onLogonHandler = function (evt) {
       that._disableWindow();
-      event.preventDefault();
-      let serverContent;
+      evt.preventDefault();
+      let content;
       const currentUserName = that._getGurrentUserName();
       const currentCustomerCode = that._getGurrentCustomerCode();
       const userName = $(that.USERNAME_SELECTOR).val();
@@ -56,7 +56,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       const url = that._getUrl();
       let setDefaultValues = false;
 
-      if (event.type == 'submit') {
+      if (evt.type === 'submit') {
         method = 'POST';
       } else {
         setDefaultValues = useAutoLogin;
@@ -74,24 +74,24 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
         },
         true,
         false,
-        (data, textStatus, jqXHR) => {
+        data => {
           if (data.isAuthenticated) {
             that._isAuthenticated = true;
             that._userName = data.userName;
           } else {
-            serverContent = that._getServerContent(data);
+            content = that._getServerContent(data);
           }
 
           if (that._isAuthenticated) {
             that._closeWindow();
 
-            const needRefresh = that._userName != currentUserName || customerCode != currentCustomerCode;
+            const needRefresh = that._userName !== currentUserName || customerCode !== currentCustomerCode;
 
             if (needRefresh) {
               location.reload();
             }
           } else {
-            that._updateWindow(serverContent);
+            that._updateWindow(content);
 
             if (setDefaultValues) {
               that._setDefaultValues();
@@ -104,7 +104,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       );
     };
 
-    this._onCloseWindowHandler = function (event) {
+    this._onCloseWindowHandler = function () {
       that._triggerDeferredCallcacks(that._isAuthenticated);
       that.dispose();
     };
@@ -160,7 +160,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
   },
 
   _getUseAutoLogin() {
-    return $('input#UseAutoLogin').val().toUpperCase() == 'TRUE';
+    return $('input#UseAutoLogin').val().toUpperCase() === 'TRUE';
   },
 
   _disableWindow() {
@@ -217,8 +217,8 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
 
   needLogon(jqXHR, url) {
     if (
-      url.toUpperCase() == window.CONTROLLER_URL_LOGON.toUpperCase()
-            || url.toUpperCase() == window.CONTROLLER_URL_WINLOGON.toUpperCase()) {
+      url.toUpperCase() === window.CONTROLLER_URL_LOGON.toUpperCase()
+            || url.toUpperCase() === window.CONTROLLER_URL_WINLOGON.toUpperCase()) {
       return false;
     } else if (jqXHR.getResponseHeader('QP-Not-Authenticated')) {
       return true;
@@ -261,7 +261,7 @@ Quantumart.QP8.BackendLogOnWindow.deferredExecution = function (data, jqXHR, cal
 };
 
 Quantumart.QP8.BackendLogOnWindow.getInstance = function () {
-  if (Quantumart.QP8.BackendLogOnWindow._instance == null) {
+  if (Quantumart.QP8.BackendLogOnWindow._instance === null) {
     Quantumart.QP8.BackendLogOnWindow._instance = new Quantumart.QP8.BackendLogOnWindow();
   }
 

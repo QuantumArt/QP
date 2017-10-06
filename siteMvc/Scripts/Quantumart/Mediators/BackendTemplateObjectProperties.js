@@ -8,8 +8,6 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   const $globalChkbx = $componentElem.find('.globalChkbx');
   const $typeSelector = $componentElem.find('.typeDlist');
   const $statusSelector = $componentElem.find('.multipleItemPicker');
-  const $selectionIsStarting = $componentElem.find('.selection-is-starting .radioButtonsList');
-  const $selectionIncludes = $componentElem.find('.selection-includes .radioButtonsList');
 
   const onContentValueChanged = function (e, data) {
     if (data.value) {
@@ -18,22 +16,19 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
           contentId: data.value
         },
         true, false).done(
-        data => {
-          const newFields = data.fields.split(',');
-          const newStatuses = data.statuses;
-          const publishedStatusId = $statusSelector.data('published-id');
+        info => {
+          const newFields = info.fields.split(',');
+          const newStatuses = info.statuses;
           const vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
 
           if (vm.fields) {
             vm.fields.removeAll();
-            for (const i in newFields) {
-              vm.fields.push(newFields[i]);
-            }
+            newFields.forEach(v => vm.fields.push(v));
           }
 
           $statusSelector.data('entity_data_list_component').removeAllListItems();
 
-          if (data.hasWorkflow == true) {
+          if (info.hasWorkflow) {
             $statusSelector.data('entity_data_list_component').selectEntities(newStatuses);
             $statusSelector.data('entity_data_list_component').deselectAllListItems();
             $statusSelector.data('entity_data_list_component').enableList();
@@ -46,7 +41,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   };
 
   const manageGlobalVisibility = function () {
-    if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(',').indexOf($typeSelector.val()) != -1) {
+    if ($globalChkbx.get(0) && $globalChkbx.data('visibletypes').split(',').indexOf($typeSelector.val()) !== -1) {
       $globalChkbx.parent('.field').show();
     } else {
       $globalChkbx.parent('.field').hide();
@@ -57,7 +52,8 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
     if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
       const objId = $parentObjectSelector.val();
       const targetObj = $(this.data('objects')).filter(function () {
-        return this.Id == objId;
+        $q.warnIfEqDiff(this.id, objId);
+        return this.Id === objId;
       })[0];
       $nameField.val(targetObj.Name);
       $netNameField.val(targetObj.NetName);
@@ -67,13 +63,15 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
     }
   };
 
-  $componentElem.on(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, window.CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
+  $componentElem.on(
+    window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, window.CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged
+  );
   $parentObjectSelector.change($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
   $overrideChkbx.click($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
 
   $typeSelector.change(manageGlobalVisibility);
   $statusSelector.find(`.multi-picker-item[value="${$statusSelector.data('published-id')}"]`).attr('checked', true);
-  if ($statusSelector.data('has-workflow') == 'False') {
+  if ($statusSelector.data('has-workflow') === 'False') {
     $statusSelector.data('entity_data_list_component').disableList();
   }
 

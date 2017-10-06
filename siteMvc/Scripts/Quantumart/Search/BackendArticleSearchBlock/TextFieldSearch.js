@@ -1,5 +1,9 @@
-Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
-  Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
+Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch = function (
+  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID
+) {
+  Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.initializeBase(
+    this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]
+  );
   this._onIsNullCheckBoxChangeHandler = jQuery.proxy(this._onIsNullCheckBoxChange, this);
 };
 
@@ -15,14 +19,14 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
       },
       false,
       false,
-      (data, textStatus, jqXHR) => {
+      data => {
         if (data.success) {
           serverContent = data.view;
         } else {
           $q.alertFail(data.message);
         }
       },
-      (jqXHR, textStatus, errorThrown) => {
+      jqXHR => {
         serverContent = null;
         $q.processGenericAjaxError(jqXHR);
       }
@@ -54,25 +58,28 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     }
   },
 
-  get_searchQuery() {
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(Quantumart.QP8.Enums.ArticleFieldSearchType.Text,
-      this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.get_IsNull(),
-      $(this._queryTextBoxElement).val(), this.get_Inverse(), this.get_ExactMatch(), this.get_BeginningStart());
+  getSearchQuery() {
+    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.Text,
+      this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.getIsNull(),
+      $(this._queryTextBoxElement).val(), this.getInverse(), this.getExactMatch(), this.getBeginningStart());
   },
 
-  get_blockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.Text, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
+  getBlockState() {
+    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+      Quantumart.QP8.Enums.ArticleFieldSearchType.Text,
+      this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
-        isNull: this.get_IsNull(),
+        isNull: this.getIsNull(),
         text: $(this._queryTextBoxElement).val(),
-        inverse: this.get_Inverse(),
-        exactMatch: this.get_ExactMatch(),
-        beginningStart: this.get_BeginningStart()
+        inverse: this.getInverse(),
+        exactMatch: this.getExactMatch(),
+        beginningStart: this.getBeginningStart()
       });
   },
 
-  get_filterDetails() {
-    const stateData = this.get_blockState().data;
+  getFilterDetails() {
+    const stateData = this.getBlockState().data;
     let result;
 
     if (stateData.text) {
@@ -100,7 +107,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     return result;
   },
 
-  restore_blockState(state) {
+  restoreBlockState(state) {
     if (state) {
       if (this._isNullCheckBoxElement) {
         let $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
@@ -129,9 +136,9 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   },
 
   _onIsNullCheckBoxChange() {
-    $(this._queryTextBoxElement).prop('disabled', this.get_IsNull());
-    $(this._exactMatchCheckBoxElement).prop('disabled', this.get_IsNull());
-    $(this._beginningStartChechBoxElement).prop('disabled', this.get_IsNull());
+    $(this._queryTextBoxElement).prop('disabled', this.getIsNull());
+    $(this._exactMatchCheckBoxElement).prop('disabled', this.getIsNull());
+    $(this._beginningStartChechBoxElement).prop('disabled', this.getIsNull());
   },
 
   dispose() {
@@ -153,7 +160,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
 
   _onIsNullCheckBoxChangeHandler: null,
 
-  get_IsNull() {
+  getIsNull() {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
@@ -161,7 +168,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     return false;
   },
 
-  get_Inverse() {
+  getInverse() {
     if (this._inverseCheckBoxElement) {
       return $(this._inverseCheckBoxElement).is(':checked');
     }
@@ -169,7 +176,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     return false;
   },
 
-  get_ExactMatch() {
+  getExactMatch() {
     if (this._exactMatchCheckBoxElement) {
       return $(this._exactMatchCheckBoxElement).is(':checked');
     }
@@ -177,7 +184,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
     return false;
   },
 
-  get_BeginningStart() {
+  getBeginningStart() {
     if (this._beginningStartChechBoxElement) {
       return $(this._beginningStartChechBoxElement).is(':checked');
     }
@@ -192,4 +199,7 @@ Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.prototype = {
   _exactMatchCheckBoxElement: null
 };
 
-Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.registerClass('Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch', Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);
+Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.registerClass(
+  'Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch',
+  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
+);

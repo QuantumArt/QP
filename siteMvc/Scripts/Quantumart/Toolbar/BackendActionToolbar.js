@@ -87,7 +87,9 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         if (!that._stopDeferredOperations) {
           let actionToolbarItems = data;
           if (!$q.isNullOrEmpty(that.getDisabledActionCodes())) {
-            actionToolbarItems = $.grep(actionToolbarItems, itm => that.getDisabledActionCodes().indexOf(itm.ActionCode) == -1);
+            actionToolbarItems = $.grep(actionToolbarItems, itm =>
+              that.getDisabledActionCodes().indexOf(itm.ActionCode) === -1
+            );
           }
 
           const items = that._getToolbarItemsFromResult(actionToolbarItems);
@@ -111,7 +113,8 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
       queryParams = Object.assign({}, queryParams, { boundToExternal: true });
     }
 
-    if (entityId != 0) {
+    $q.warnIfEqDiff(entityId, 0);
+    if (entityId !== 0) {
       $q.getJsonFromUrl(
         'GET',
         `${window.CONTROLLER_URL_BACKEND_ACTION}GetStatusesList`,
@@ -120,17 +123,17 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         false
       ).done(data => {
         if (!that._stopDeferredOperations) {
-         if (data.success) {
-           const actionStatuses = data.actionStatuses;
-           if (!$q.isNullOrEmpty(actionStatuses)) {
-             Quantumart.QP8.BackendActionToolbar.callBaseMethod(that, 'tuneToolbarItems', [actionStatuses]);
-             $q.clearArray(actionStatuses);
-           }
-         } else {
-           $q.alertError(data.Text);
-         }
+          if (data.success) {
+            const actionStatuses = data.actionStatuses;
+            if (!$q.isNullOrEmpty(actionStatuses)) {
+              Quantumart.QP8.BackendActionToolbar.callBaseMethod(that, 'tuneToolbarItems', [actionStatuses]);
+              $q.clearArray(actionStatuses);
+            }
+          } else {
+            $q.alertError(data.Text);
+          }
         }
-      }).fail((jqXHR, textStatus, errorThrown) => {
+      }).fail(jqXHR => {
         if (!that._stopDeferredOperations) {
           $q.processGenericAjaxError(jqXHR);
         }
@@ -159,7 +162,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         Tooltip: item.Name,
         ItemsAffected: item.ItemsAffected,
         Icon: item.Icon,
-        AlwaysEnabled: item.ItemsAffected == 0,
+        AlwaysEnabled: item.ItemsAffected === 0,
         CheckOnClick: false,
         Checked: false,
         IconChecked: null

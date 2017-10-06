@@ -1,12 +1,3 @@
-Quantumart.QP8.IObservable = function () {};
-Quantumart.QP8.IObservable.prototype = {
-  attachObserver() {},
-  detachObserver() {},
-  notify() {}
-};
-
-Quantumart.QP8.IObservable.registerInterface('Quantumart.QP8.IObservable');
-
 Quantumart.QP8.Observable = function () {
   this._observerInfos = [];
 };
@@ -17,9 +8,9 @@ Quantumart.QP8.Observable.prototype = {
   _getObserverInfo(eventType, observer) {
     let observerInfo = null;
 
-    const observerInfos = $.grep(this._observerInfos[eventType], observerInfo => {
-      if (observerInfo.observer) {
-        return observerInfo.observer == observer;
+    const observerInfos = $.grep(this._observerInfos[eventType], info => {
+      if (info.observer) {
+        return info.observer === observer;
       }
       return false;
     });
@@ -32,41 +23,15 @@ Quantumart.QP8.Observable.prototype = {
   },
 
   _checkObserver(observer) {
-    let result = false;
-    if ($q.isObject(observer) || $q.isFunction(observer)) {
-      result = true;
-    } else {
-      throw new Error($l.Common.observerIsNotFunctionOrObject);
+    if (($q.isObject(observer) && $q.isFunction(observer.update)) || $q.isFunction(observer)) {
+      return true;
     }
-
-    if (result) {
-      if (!$q.isFunction(observer)) {
-        let isObserver = true;
-
-        try {
-          isObserver = Object.getType(observer).implementsInterface(Quantumart.QP8.IObserver);
-        } catch (e) {
-          $q.trace('Exception was catched', e);
-        }
-
-        if (isObserver) {
-          result = true;
-        } else {
-          throw new Error($l.Common.observerIsNotImplementedInterface);
-        }
-      }
-    }
-
-    return result;
+    throw new Error($l.Common.observerIsNotFunctionOrObject);
   },
 
-  attachObserver(eventType, observer, times) {
+  attachObserver(eventType, observer, times = -1) {
     if (!this._checkObserver(observer)) {
       return;
-    }
-
-    if (times == null) {
-      times = -1;
     }
 
     if (!this._observerInfos[eventType]) {
@@ -75,27 +40,27 @@ Quantumart.QP8.Observable.prototype = {
 
     const observerInfo = this._getObserverInfo(eventType, observer);
 
-    if (!$q.isNull(observerInfo)) {
-      observerInfo.times = times;
-    } else {
+    if ($q.isNull(observerInfo)) {
       Array.add(this._observerInfos[eventType], { observer, times });
+    } else {
+      observerInfo.times = times;
     }
   },
 
   detachObserver(eventType, observer) {
     if (!$q.isNull(this._observerInfos)
     && this._observerInfos[eventType]) {
-      if (!$q.isNull(observer)) {
+      if ($q.isNull(observer)) {
+        $q.removeProperty(this._observerInfos, eventType);
+      } else {
         const observerInfo = this._getObserverInfo(eventType, observer);
-
         if (!$q.isNull(observerInfo)) {
           Array.remove(this._observerInfos[eventType], observerInfo);
         }
-      } else {
-        $q.removeProperty(this._observerInfos, eventType);
       }
     }
   },
+
 
   oneTimeObserver(eventType, observer) {
     this.attachObserver(eventType, observer, 1);
@@ -128,11 +93,11 @@ Quantumart.QP8.Observable.prototype = {
         if (observerInfo) {
           const observer = observerInfo.observer;
 
-          if (observerInfo.times == -1) {
+          if (observerInfo.times === -1) {
             this._updateObserver(eventType, eventArgs, observer);
           } else if (observerInfo.times > 0) {
             observerInfo.times -= 1;
-            if (observerInfo.times == 0) {
+            if (observerInfo.times === 0) {
               this.detachObserver(eventType, observer);
             }
 
@@ -145,15 +110,7 @@ Quantumart.QP8.Observable.prototype = {
 
   _updateObserver(eventType, eventArgs, observer) {
     if ($q.isObject(observer)) {
-      let isObserver = false;
-
-      try {
-        isObserver = Object.getType(observer).implementsInterface(Quantumart.QP8.IObserver);
-      } catch (e) {
-        isObserver = true;
-      }
-
-      if (isObserver) {
+      if ($q.isFunction(observer.update)) {
         observer.update(eventType, this, eventArgs);
       }
     } else if ($q.isFunction(observer)) {
@@ -166,4 +123,4 @@ Quantumart.QP8.Observable.prototype = {
   }
 };
 
-Quantumart.QP8.Observable.registerClass('Quantumart.QP8.Observable', null, Quantumart.QP8.IObservable, Sys.IDisposable);
+Quantumart.QP8.Observable.registerClass('Quantumart.QP8.Observable', null);

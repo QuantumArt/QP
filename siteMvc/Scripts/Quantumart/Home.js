@@ -1,6 +1,10 @@
-Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode) {
+Quantumart.QP8.Home = function (
+  documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode
+) {
   const initialize = function () {
-    const executeAction = function (actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters) {
+    const executeAction = function (
+      actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters
+    ) {
       const action = $a.getBackendActionByCode(actionCode);
       const params = new Quantumart.QP8.BackendActionParameters({
         entityTypeCode,
@@ -50,14 +54,14 @@ Quantumart.QP8.Home = function (documentContext, siteElementId, searchElementId,
     const listStr = String.format(temp, $l.Home.list);
     const profileStr = String.format(temp, $l.Home.profile);
 
-    if ($locked.text().trim() != '0') {
+    if ($locked.text().trim() !== '0') {
       $locked.append(listStr);
       $locked.find('a').on('click', () => {
         executeAction('list_locked_article', 'db', 1, customerCode, 0);
       });
     }
 
-    if ($approval.text().trim() != '0') {
+    if ($approval.text().trim() !== '0') {
       $approval.append(listStr);
       $approval.find('a').on('click', () => {
         executeAction('list_articles_for_approval', 'db', 1, customerCode, 0);

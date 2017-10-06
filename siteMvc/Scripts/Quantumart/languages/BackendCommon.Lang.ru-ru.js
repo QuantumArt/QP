@@ -5,13 +5,15 @@ window.Backend.Lang.Common = {
   ajaxDataReceivingErrorMessage: 'При получении данных произошла ошибка!',
   ajaxUserSessionExpiredErrorMessage: 'Ваша пользовательская сессия истекла!\nПройдите повторную аутентификацию.',
   error500Title: 'Произошла ошибка!',
-  error500Text: '<p>На запрашиваемой Вами странице произошла ошибка.<br />\nПриносим свои извинения за причиненные неудобства.</p>',
+  error500Text: '<p>На запрашиваемой Вами странице произошла ошибка.<br />'
+  + '\nПриносим свои извинения за причиненные неудобства.</p>',
   error404Title: 'Страница не найдена!',
-  error404Text: '<p>Запрашиваемая Вами страница не существует.<br />\nВозможно, Вы ошиблись при написании адреса или страница была удалена.</p>',
+  error404Text: '<p>Запрашиваемая Вами страница не существует.<br />'
+  + '\nВозможно, Вы ошиблись при написании адреса или страница была удалена.</p>',
   eventTypeNotSpecified: 'Вы не задали тип события!',
   eventArgsNotSpecified: 'Вы не задали аргументы события "{0}"!',
   observerIsNotFunctionOrObject: 'Привязываемый наблюдатель не является объектом или функцией!',
-  observerIsNotImplementedInterface: 'Привязываемый наблюдатель не поддерживает интерфейс Quantumart.QP8.IObserver!',
+  observerIsNotImplementedInterface: 'Привязываемый наблюдатель не содержит метод update',
   firstComponentInMediatorNotSpecified: 'Вы не задали первый компонент!',
   secondComponentInMediatorNotSpecified: 'Вы не задали второй компонент!',
   parentDomElementNotSpecified: 'Вы не задали родительский DOM-элемент!',

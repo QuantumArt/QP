@@ -23,7 +23,8 @@ window.Backend.Lang.MultistepAction = {
   exportTitle: 'Export',
   errorTitleFromUnfilledFields: 'You didnt fill in all fields',
   downloadedFileName: 'Downloaded file name',
-  classifierOraggregatorFields: 'Content contains either classifier or aggregator fields. \nYou can not import data to this content.',
+  classifierOraggregatorFields:
+    'Content contains either classifier or aggregator fields. \nYou can not import data to this content.',
   createLikeSite: 'Create like site',
   linkForDownloadFile: 'Link for download file',
   NoDownloadedFile: 'There is no downloaded file. Please select a file',
