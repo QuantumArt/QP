@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -50,7 +51,7 @@ namespace Quantumart.QP8.DAL.NotificationSender
                 parameter.SqlDbType = SqlDbType.Structured;
                 parameter.TypeName = "dbo.Ids";
 
-                cmd.Parameters.Add(new SqlParameter("@lastExceptionMessage", SqlDbType.NVarChar, -1) { Value = lastExceptionMessage });
+                cmd.Parameters.Add(new SqlParameter("@lastExceptionMessage", SqlDbType.NVarChar, -1) { Value = (object)lastExceptionMessage ?? DBNull.Value });
                 cmd.ExecuteNonQuery();
             }
         }
