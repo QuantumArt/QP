@@ -83,7 +83,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
         internal async Task ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
         {
             var shouldSendHttpRequests = isNotificationQueueEmpty;
-            var tableTypeModels = GetCdcDataModels(customer.ConnectionString, out string lastExecutedLsn);
+            var tableTypeModels = GetCdcDataModels(customer.ConnectionString, out var lastExecutedLsn);
 
             Ensure.Items(tableTypeModels, ttm => ttm.ToLsn == lastExecutedLsn, "All cdc tables should be proceeded at single transaction");
 
@@ -109,7 +109,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                     lastPushedLsn = notSendedDtosQueue.Dequeue().TransactionLsn;
                     Logger.Log.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName} [{data.TransactionLsn}]: {response.ToJsonLog()}");
                 }
-                catch (Exception ex) when (ex is FlurlHttpException || ex is JsonReaderException)
+                catch (Exception ex) when (ex is JsonReaderException)
                 {
                     var responseBodyMessage = $"Response body: {await responseMessage.ReceiveString()}.";
                     Logger.Log.Warn($"Exception while parsing response for customer code: {customer.CustomerName}. {responseBodyMessage} Notification: {data.ToJsonLog()}", ex);

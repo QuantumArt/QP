@@ -115,7 +115,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                     sentNotificationIds.Add(notSendedDtosQueue.Dequeue().Id);
                     _logger.Trace($"Http push notification was pushed successfuly for customer code: {customer.CustomerName}: {response.ToJsonLog()}");
                 }
-                catch (Exception ex) when(ex is FlurlHttpException || ex is JsonReaderException)
+                catch (Exception ex) when (ex is JsonReaderException)
                 {
                     var responseBodyMessage = $"Response body: {await responseMessage.ReceiveString()}.";
                     httpNotSendedReason = $"Exception while parsing response. {responseBodyMessage}";

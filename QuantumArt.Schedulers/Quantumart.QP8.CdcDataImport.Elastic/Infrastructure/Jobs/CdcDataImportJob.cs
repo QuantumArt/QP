@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -80,7 +80,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
         internal async Task ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty)
         {
             var shouldSendHttpRequests = isNotificationQueueEmpty;
-            var tableTypeModels = GetCdcDataModels(customer.ConnectionString, out string lastExecutedLsn).ToList();
+            var tableTypeModels = GetCdcDataModels(customer.ConnectionString, out var lastExecutedLsn).ToList();
 
             Ensure.Items(tableTypeModels, ttm => ttm.ToLsn == lastExecutedLsn, "All cdc tables should be proceeded at single transaction");
 
