@@ -351,9 +351,8 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const $tabs = this.getAllTabs();
     for (let tabIndex = 0, tabCount = $tabs.length; tabIndex < tabCount; tabIndex++) {
       const $tab = $tabs.eq(tabIndex);
-      $q.warnIfEqDiff($tab.data('parent_entity_id'), parentEntityId);
       if ($tab.data('parent_entity_type_code') === parentEntityTypeCode
-         && $tab.data('parent_entity_id') === parentEntityId) {
+         && $tab.data('parent_entity_id') === `${parentEntityId}`) {
         Array.add(foundTabElems, $tab.get(0));
       }
     }
@@ -366,9 +365,8 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const $tabs = this.getAllTabs();
     for (let tabIndex = 0, tabCount = $tabs.length; tabIndex < tabCount; tabIndex++) {
       const $tab = $tabs.eq(tabIndex);
-      $q.warnIfEqDiff($tab.data('entity_id'), eventArgs.get_entityId());
       if ($tab.data('entity_type_code') === eventArgs.get_entityTypeCode()
-          && $tab.data('entity_id') === eventArgs.get_entityId()
+          && $tab.data('entity_id') === `${eventArgs.get_entityId()}`
           && $tab.data('action_code') === eventArgs.get_actionCode()) {
         Array.add(foundTabElems, $tab.get(0));
       }
@@ -1306,14 +1304,13 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     if (!this.isTabStripBusy()) {
       $(this._tabStripElement)
         .find(this.TAB_CLICKABLE_SELECTORS)
-        .each($.proxy(
-          function (i, tab) {
-            let eventArgs = this.getEventArgsFromTab(tab);
-            if ($q.isObject(eventArgs)) {
-              this.notify(window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST, eventArgs);
-            }
-            eventArgs = null;
-          }, this)
+        .each((i, tab) => {
+          let eventArgs = this.getEventArgsFromTab(tab);
+          if ($q.isObject(eventArgs)) {
+            this.notify(window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST, eventArgs);
+          }
+          eventArgs = null;
+        }
         );
     }
   },
