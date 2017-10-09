@@ -283,7 +283,7 @@
       <Name>BLL</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
+    <ProjectReference Include="C:\ProxyDocuments\Projects\QP\configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
       <Private>False</Private>
@@ -293,7 +293,7 @@
       <Name>Constants</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)siteMvc\WebMvc.csproj">
+    <ProjectReference Include="C:\ProxyDocuments\Projects\QP\siteMvc\WebMvc.csproj">
       <Project>{8be1bb60-1938-45e8-bafb-1d008d62059c}</Project>
       <Name>WebMvc</Name>
       <Private>False</Private>
@@ -322,9 +322,7 @@
       <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
