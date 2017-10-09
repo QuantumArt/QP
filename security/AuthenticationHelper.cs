@@ -4,6 +4,8 @@ using System.Web;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.Security;
+using QP8.Infrastructure.Extensions;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Configuration.Authentication.WindowsAuthentication;
 using Quantumart.QP8.Constants.Mvc;
@@ -18,19 +20,16 @@ namespace Quantumart.QP8.Security
             var config = (AuthenticationSection)HttpContext.Current.GetSection(WebConfigSections.SystemWebAuthentication);
             var expireAt = (int)config.Forms.Timeout.TotalMinutes;
             return new FormsAuthenticationTicket(
-                1,                                    // версия
-                userName,                             // логин пользователя
-                DateTime.Now,                         // время создания
-                DateTime.Now.AddMinutes(expireAt),    // время истечения срока
-                false,                                // признак постоянного Cookie
-                userData ?? string.Empty,             // пользовательские данные
+                1, // версия
+                userName, // логин пользователя
+                DateTime.Now, // время создания
+                DateTime.Now.AddMinutes(expireAt), // время истечения срока
+                false, // признак постоянного Cookie
+                userData ?? string.Empty, // пользовательские данные
                 FormsAuthentication.FormsCookiePath); // путь действия Cookie
         }
 
-        public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, QpUser userInformation)
-        {
-            return CreateAuthenticationTicket(userName, SerializeUserInformation(userInformation));
-        }
+        public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, QpUser userInformation) => CreateAuthenticationTicket(userName, SerializeUserInformation(userInformation));
 
         public static void SetAuthenticationCookie(FormsAuthenticationTicket ticket)
         {
@@ -116,10 +115,7 @@ namespace Quantumart.QP8.Security
             return userInformation;
         }
 
-        public static QpUser GetUserInformationFromStorage(string userName)
-        {
-            return HttpContext.Current.Cache[userName] as QpUser;
-        }
+        public static QpUser GetUserInformationFromStorage(string userName) => HttpContext.Current.Cache[userName] as QpUser;
 
         public static void AddUserInformationToStorage(QpUser userInformartion)
         {
@@ -175,7 +171,7 @@ namespace Quantumart.QP8.Security
 
             SetAuthenticationCookie(ticket);
 
-            // TODO: Logger.Log.Debug($"User successfully authenticated: {user.ToJsonLog()}");
+            Logger.Log.Debug($"User successfully authenticated: {user.ToJsonLog()}");
             return FormsAuthentication.GetRedirectUrl(string.Empty, false);
         }
 

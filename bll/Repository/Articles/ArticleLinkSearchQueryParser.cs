@@ -89,15 +89,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 throw new ApplicationException("Не удалость получить LinkedId для поля с id = " + fieldId);
             }
-
-            int extensionContentId;
-            int referenceFieldId;
-            if (!int.TryParse(p.ContentID, out extensionContentId))
+            if (!int.TryParse(p.ContentID, out int extensionContentId))
             {
                 extensionContentId = 0;
             }
 
-            if (!int.TryParse(p.ReferenceFieldID, out referenceFieldId))
+            if (!int.TryParse(p.ReferenceFieldID, out int referenceFieldId))
             {
                 referenceFieldId = 0;
             }

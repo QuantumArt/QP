@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -10,11 +10,11 @@ namespace Quantumart.QP8.BLL.Helpers
     {
         private static IEnumerable<int> GetRelations(int contentId)
         {
-            var content = ContentRepository
-                .GetById(contentId);
+            var content = ContentRepository.GetById(contentId);
             var fields = content.AggregatedContents.Any()
                 ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
                 : content.Fields;
+
             return fields
                 .Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.ExactType))
                 .Select(f => f.Id);
@@ -29,14 +29,8 @@ namespace Quantumart.QP8.BLL.Helpers
                 .Select(f => f.Id);
         }
 
-        public static bool IsRelation(int contentId, int fieldId)
-        {
-            return GetRelations(contentId).Contains(fieldId);
-        }
+        public static bool IsRelation(int contentId, int fieldId) => GetRelations(contentId).Contains(fieldId);
 
-        public static bool IsClassifier(int contentId, int fieldId)
-        {
-            return GetClassifiers(contentId).Contains(fieldId);
-        }
+        public static bool IsClassifier(int contentId, int fieldId) => GetClassifiers(contentId).Contains(fieldId);
     }
 }

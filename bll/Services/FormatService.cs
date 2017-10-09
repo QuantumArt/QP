@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.ListItems;
@@ -72,23 +72,15 @@ namespace Quantumart.QP8.BLL.Services
 
     public class FormatService : IFormatService
     {
-        public FormatInitListResult InitFormatList(int parentId, bool isTemplateFormat)
+        public FormatInitListResult InitFormatList(int parentId, bool isTemplateFormat) => new FormatInitListResult
         {
-            return new FormatInitListResult
-            {
-                IsAddNewAccessable = isTemplateFormat ?
-                SecurityRepository.IsActionAccessible(ActionCode.AddNewTemplateObjectFormat) && SecurityRepository.IsEntityAccessible(EntityTypeCode.TemplateObjectFormat, parentId, ActionTypeCode.Update) :
-                SecurityRepository.IsActionAccessible(ActionCode.AddNewPageObjectFormat) && SecurityRepository.IsEntityAccessible(EntityTypeCode.PageObjectFormat, parentId, ActionTypeCode.Update)
-            };
-        }
+            IsAddNewAccessable = isTemplateFormat ? SecurityRepository.IsActionAccessible(ActionCode.AddNewTemplateObjectFormat) && SecurityRepository.IsEntityAccessible(EntityTypeCode.TemplateObjectFormat, parentId, ActionTypeCode.Update) : SecurityRepository.IsActionAccessible(ActionCode.AddNewPageObjectFormat) && SecurityRepository.IsEntityAccessible(EntityTypeCode.PageObjectFormat, parentId, ActionTypeCode.Update)
+        };
 
-        public FormatVersionInitListResult InitFormatVersionList()
+        public FormatVersionInitListResult InitFormatVersionList() => new FormatVersionInitListResult
         {
-            return new FormatVersionInitListResult
-            {
-                IsAddNewAccessable = false
-            };
-        }
+            IsAddNewAccessable = false
+        };
 
         public IEnumerable<ListItem> GetNetLanguagesAsListItems()
         {
@@ -109,7 +101,6 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             template.LoadLockedByUser();
-            template.ReplacePlaceHoldersToUrls();
             return template;
         }
 
@@ -168,10 +159,7 @@ namespace Quantumart.QP8.BLL.Services
             format.AutoUnlock();
         }
 
-        public ObjectFormat NewPageObjectFormatProperties(int parentId, bool isSiteDotNet)
-        {
-            return ObjectFormat.Create(parentId, true, isSiteDotNet);
-        }
+        public ObjectFormat NewPageObjectFormatProperties(int parentId, bool isSiteDotNet) => ObjectFormat.Create(parentId, true, isSiteDotNet);
 
         public ObjectFormat ReadPageObjectFormatPropertiesForUpdate(int parentId, bool isSiteDotNet)
         {
@@ -192,6 +180,7 @@ namespace Quantumart.QP8.BLL.Services
             {
                 format.AutoLock();
             }
+
             format.LoadLockedByUser();
             format.PageOrTemplate = pageOrTemplate;
             format.ReplacePlaceHoldersToUrls();
@@ -206,10 +195,7 @@ namespace Quantumart.QP8.BLL.Services
             return format;
         }
 
-        public ObjectFormat NewPageObjectFormatPropertiesForUpdate(int parentId, bool isSiteDotNet)
-        {
-            return NewPageObjectFormatProperties(parentId, isSiteDotNet);
-        }
+        public ObjectFormat NewPageObjectFormatPropertiesForUpdate(int parentId, bool isSiteDotNet) => NewPageObjectFormatProperties(parentId, isSiteDotNet);
 
         public ObjectFormat ReadPageObjectFormatProperties(int parentId, bool isSiteDotNet)
         {
@@ -233,15 +219,9 @@ namespace Quantumart.QP8.BLL.Services
             return result;
         }
 
-        public ObjectFormat NewTemplateObjectFormatProperties(int parentId, bool isSiteDotNet)
-        {
-            return ObjectFormat.Create(parentId, false, isSiteDotNet);
-        }
+        public ObjectFormat NewTemplateObjectFormatProperties(int parentId, bool isSiteDotNet) => ObjectFormat.Create(parentId, false, isSiteDotNet);
 
-        public ObjectFormat NewTemplateObjectFormatPropertiesForUpdate(int parentId, bool isSiteDotNet)
-        {
-            return NewTemplateObjectFormatProperties(parentId, isSiteDotNet);
-        }
+        public ObjectFormat NewTemplateObjectFormatPropertiesForUpdate(int parentId, bool isSiteDotNet) => NewTemplateObjectFormatProperties(parentId, isSiteDotNet);
 
         public ObjectFormat ReadTemplateObjectFormatPropertiesForUpdate(int parentId, bool isSiteDotNet)
         {
@@ -250,15 +230,11 @@ namespace Quantumart.QP8.BLL.Services
             return result;
         }
 
-        public ListResult<ObjectFormatListItem> GetPageObjectFormatsByObjectId(ListCommand listCommand, int parentId)
-        {
-            return GetObjectFormatsByObjectId(listCommand, parentId, true);
-        }
+        public ListResult<ObjectFormatListItem> GetPageObjectFormatsByObjectId(ListCommand listCommand, int parentId) => GetObjectFormatsByObjectId(listCommand, parentId, true);
 
         private static ListResult<ObjectFormatListItem> GetObjectFormatsByObjectId(ListCommand listCommand, int objectId, bool pageOrTemplate)
         {
-            int totalRecords;
-            var list = PageTemplateRepository.ListObjectFormats(listCommand, objectId, out totalRecords, pageOrTemplate);
+            var list = PageTemplateRepository.ListObjectFormats(listCommand, objectId, out int totalRecords, pageOrTemplate);
             return new ListResult<ObjectFormatListItem>
             {
                 Data = list.ToList(),
@@ -266,10 +242,7 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public ListResult<ObjectFormatListItem> GetTemplateObjectFormatsByObjectId(ListCommand listCommand, int parentId)
-        {
-            return GetObjectFormatsByObjectId(listCommand, parentId, false);
-        }
+        public ListResult<ObjectFormatListItem> GetTemplateObjectFormatsByObjectId(ListCommand listCommand, int parentId) => GetObjectFormatsByObjectId(listCommand, parentId, false);
 
         public bool IsSiteDotNetByObjectId(int objectId)
         {
@@ -310,15 +283,11 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        public ListResult<ObjectFormatVersionListItem> GetTemplateObjectFormatVersionsByFormatId(ListCommand listCommand, int parentId)
-        {
-            return GetObjectFormatVersionsByFormatId(listCommand, parentId, false);
-        }
+        public ListResult<ObjectFormatVersionListItem> GetTemplateObjectFormatVersionsByFormatId(ListCommand listCommand, int parentId) => GetObjectFormatVersionsByFormatId(listCommand, parentId, false);
 
         private static ListResult<ObjectFormatVersionListItem> GetObjectFormatVersionsByFormatId(ListCommand listCommand, int formatId, bool pageOrTemplate)
         {
-            int totalRecords;
-            var list = PageTemplateRepository.ListFormatVersions(listCommand, formatId, out totalRecords, pageOrTemplate);
+            var list = PageTemplateRepository.ListFormatVersions(listCommand, formatId, out var totalRecords, pageOrTemplate);
             return new ListResult<ObjectFormatVersionListItem>
             {
                 Data = list.ToList(),
@@ -326,20 +295,11 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public ListResult<ObjectFormatVersionListItem> GetPageObjectFormatVersionsByFormatId(ListCommand listCommand, int parentId)
-        {
-            return GetObjectFormatVersionsByFormatId(listCommand, parentId, true);
-        }
+        public ListResult<ObjectFormatVersionListItem> GetPageObjectFormatVersionsByFormatId(ListCommand listCommand, int parentId) => GetObjectFormatVersionsByFormatId(listCommand, parentId, true);
 
-        public ObjectFormatVersion ReadTemplateObjectFormatVersionProperties(int id)
-        {
-            return PageTemplateRepository.ReadFormatVersion(id);
-        }
+        public ObjectFormatVersion ReadTemplateObjectFormatVersionProperties(int id) => PageTemplateRepository.ReadFormatVersion(id);
 
-        public ObjectFormatVersion ReadPageObjectFormatVersionProperties(int id)
-        {
-            return PageTemplateRepository.ReadFormatVersion(id);
-        }
+        public ObjectFormatVersion ReadPageObjectFormatVersionProperties(int id) => PageTemplateRepository.ReadFormatVersion(id);
 
         public ObjectFormatVersion GetMergedObjectFormatVersion(int[] ids, int parentId, bool pageOrTemplate)
         {
@@ -389,6 +349,7 @@ namespace Quantumart.QP8.BLL.Services
                     throw new Exception(string.Format(TemplateStrings.FormatVersionNotFoundForFormat, result.Item2, parentId));
                 }
             }
+
             version1.MergeToVersion(version2);
             return version1;
         }
@@ -414,7 +375,7 @@ namespace Quantumart.QP8.BLL.Services
                 Exchange(ref id1, ref id2);
             }
 
-            return Tuple.Create<int, int>(id1, id2);
+            return Tuple.Create(id1, id2);
         }
 
         public MessageResult MultipleRemoveObjectFormatVersion(int[] ids)
@@ -429,9 +390,6 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
-        public MessageResult RestoreObjectFormatVersion(int versionId)
-        {
-            return PageTemplateRepository.RestoreObjectFormatVersion(versionId);
-        }
+        public MessageResult RestoreObjectFormatVersion(int versionId) => PageTemplateRepository.RestoreObjectFormatVersion(versionId);
     }
 }

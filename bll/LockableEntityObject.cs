@@ -34,7 +34,9 @@ namespace Quantumart.QP8.BLL
             if (!LockedByAnyone)
             {
                 LockedBy = QPContext.CurrentUserId;
-                Locked = (DateTime)EntityObjectRepository.Lock(this);
+
+                // ReSharper disable once PossibleInvalidOperationException
+                Locked = EntityObjectRepository.Lock(this).Value;
             }
         }
 
@@ -48,20 +50,11 @@ namespace Quantumart.QP8.BLL
 
         public string LockedByIcon => LockedByAnyone ? (LockedByYou ? "locked.gif" : "locked_by_user.gif") : "0.gif";
 
-        public static string GetLockedByIcon(int lockedBy)
-        {
-            return IsLockedByAnyone(lockedBy) ? (IsLockedByYou(lockedBy) ? "locked.gif" : "locked_by_user.gif") : "0.gif";
-        }
+        public static string GetLockedByIcon(int lockedBy) => IsLockedByAnyone(lockedBy) ? (IsLockedByYou(lockedBy) ? "locked.gif" : "locked_by_user.gif") : "0.gif";
 
-        public static bool IsLockedByAnyone(int lockedBy)
-        {
-            return lockedBy != 0;
-        }
+        public static bool IsLockedByAnyone(int lockedBy) => lockedBy != 0;
 
-        public static bool IsLockedByYou(int lockedBy)
-        {
-            return lockedBy == QPContext.CurrentUserId;
-        }
+        public static bool IsLockedByYou(int lockedBy) => lockedBy == QPContext.CurrentUserId;
 
         public static string GetLockedByToolTip(int lockedBy, string displayName)
         {

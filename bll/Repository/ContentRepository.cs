@@ -96,7 +96,6 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                int totalRecords;
                 var options = new ContentPageOptions
                 {
                     ContentName = filter.ContentName,
@@ -115,7 +114,7 @@ namespace Quantumart.QP8.BLL.Repository
                     CustomFilter = filter.CustomFilter
                 };
 
-                var rows = Common.GetContentsPage(scope.DbConnection, options, out totalRecords);
+                var rows = Common.GetContentsPage(scope.DbConnection, options, out int totalRecords);
                 return new ListResult<ContentListItem> { Data = MapperFacade.ContentListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }

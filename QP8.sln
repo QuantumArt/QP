@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schedule Service", "Schedule Service", "{F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}"
 EndProject
@@ -1318,6 +1318,10 @@ Global
 		{E8E1D72A-60CF-475C-9A62-25150ACA26E6} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
 		{EC03D2D0-1291-497D-88D8-071F6C109E9A} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
 		{01F1F98E-3B89-4AE1-8D50-07A2D765BD61} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35
+		SolutionGuid = {B74DBDFE-BC53-4451-BEB9-6E29E1F411C1}
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

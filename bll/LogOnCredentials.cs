@@ -69,9 +69,8 @@ namespace Quantumart.QP8.BLL
 
             if (errors.IsEmpty)
             {
-                string message;
                 var errorCode = QpAuthenticationErrorNumber.NoErrors;
-                User = QPContext.Authenticate(this, ref errorCode, out message);
+                User = QPContext.Authenticate(this, ref errorCode, out string message);
 
                 if (User != null)
                 {

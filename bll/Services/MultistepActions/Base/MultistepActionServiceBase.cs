@@ -11,18 +11,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
     {
         private TCommand Command { get; set; }
 
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id)
+        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
         {
-            return new MultistepActionSettings
+            Stages = new[]
             {
-                Stages = new[]
-                {
-                    Command.GetStageSettings()
-                },
+                Command.GetStageSettings()
+            },
 
-                ParentId = parentId
-            };
-        }
+            ParentId = parentId
+        };
 
         protected MultistepActionServiceContext CreateContext(int parentId, int id, int[] ids, bool? boundToExternal)
         {
@@ -34,7 +31,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
                 Id = id,
                 Ids = ids,
                 ExtensionContents = ContentRepository.GetList(
-                    ContentRepository.GetReferencedAggregatedContentIds(parentId /* TODO: или id (contentId) */, ids ?? new int[0])
+                    ContentRepository.GetReferencedAggregatedContentIds(parentId, ids ?? new int[0])
                 ).ToArray(),
                 BoundToExternal = boundToExternal,
                 ItemsPerStep = itemsPerStep
@@ -44,10 +41,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             return new MultistepActionServiceContext { CommandStates = new[] { Command.GetState() } };
         }
 
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
-        {
-            return CreateContext(parentId, id, new int[0], boundToExternal);
-        }
+        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => CreateContext(parentId, id, new int[0], boundToExternal);
 
         protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
         {
@@ -71,10 +65,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             return CreateActionSettings(parentId, id);
         }
 
-        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
-        {
-            return Setup(parentId, id, new int[0], boundToExternal);
-        }
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal) => Setup(parentId, id, new int[0], boundToExternal);
 
         public override void TearDown()
         {

@@ -22,9 +22,8 @@ namespace Quantumart.QP8.BLL.Services.Audit
 
 		public ListResult<ButtonTrace> GetPage(ListCommand cmd)
 		{
-			int totalRecords;
-			List<ButtonTrace> data = repository.GetPage(cmd, out totalRecords).ToList();
-			return new ListResult<ButtonTrace>
+            List<ButtonTrace> data = repository.GetPage(cmd, out int totalRecords).ToList();
+            return new ListResult<ButtonTrace>
 			{
 				Data = data,
 				TotalRecords = totalRecords

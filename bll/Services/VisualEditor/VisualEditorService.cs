@@ -30,8 +30,7 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
 
         public ListResult<VisualEditorPluginListItem> GetVisualEditorPlugins(ListCommand cmd, int contentId)
         {
-            int totalRecords;
-            var list = VisualEditorRepository.List(cmd, contentId, out totalRecords);
+            var list = VisualEditorRepository.List(cmd, contentId, out int totalRecords);
             return new ListResult<VisualEditorPluginListItem>
             {
                 Data = list.ToList(),
@@ -41,8 +40,7 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
 
         public ListResult<VisualEditorStyleListItem> GetVisualEditorStyles(ListCommand cmd, int contentId)
         {
-            int totalRecords;
-            var list = VisualEditorRepository.ListStyles(cmd, contentId, out totalRecords);
+            var list = VisualEditorRepository.ListStyles(cmd, contentId, out int totalRecords);
             return new ListResult<VisualEditorStyleListItem>
             {
                 Data = list.ToList(),

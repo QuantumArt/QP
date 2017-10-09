@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -107,8 +107,7 @@ namespace Quantumart.QP8.BLL.Services
     {
         public ListResult<PageTemplateListItem> GetPageTemplatesBySiteId(ListCommand cmd, int siteId)
         {
-            int totalRecords;
-            var list = PageTemplateRepository.ListTemplates(cmd, siteId, out totalRecords);
+            var list = PageTemplateRepository.ListTemplates(cmd, siteId, out var totalRecords);
             return new ListResult<PageTemplateListItem>
             {
                 Data = list.ToList(),
@@ -116,28 +115,17 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public PageTemplateInitListResult InitTemplateList(int contentId)
+        public PageTemplateInitListResult InitTemplateList(int contentId) => new PageTemplateInitListResult
         {
-            return new PageTemplateInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewPageTemplate) && SecurityRepository.IsEntityAccessible(EntityTypeCode.PageTemplate, contentId, ActionTypeCode.Update)
-            };
-        }
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewPageTemplate) && SecurityRepository.IsEntityAccessible(EntityTypeCode.PageTemplate, contentId, ActionTypeCode.Update)
+        };
 
-        public PageTemplate NewPageTemplateProperties(int parentId)
-        {
-            var site = SiteRepository.GetById(parentId);
-            return PageTemplate.Create(parentId, site);
-        }
+        public PageTemplate NewPageTemplateProperties(int parentId) => PageTemplate.Create(parentId, SiteRepository.GetById(parentId));
 
-        public PageTemplate NewPageTemplatePropertiesForUpdate(int parentId)
-        {
-            return NewPageTemplateProperties(parentId);
-        }
+        public PageTemplate NewPageTemplatePropertiesForUpdate(int parentId) => NewPageTemplateProperties(parentId);
 
         public PageTemplate SavePageTemplateProperties(PageTemplate template)
         {
-            template.ReplaceUrlsToPlaceHolders();
             ManagePageTemplateFolders(template, FolderManagingType.CreateFolder);
             return PageTemplateRepository.SaveProperties(template);
         }
@@ -248,18 +236,13 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             template.LoadLockedByUser();
-            template.ReplacePlaceHoldersToUrls();
             return template;
         }
 
-        public PageTemplate ReadPageTemplatePropertiesForUpdate(int id)
-        {
-            return ReadPageTemplateProperties(id, false);
-        }
+        public PageTemplate ReadPageTemplatePropertiesForUpdate(int id) => ReadPageTemplateProperties(id, false);
 
         public PageTemplate UpdatePageTemplateProperties(PageTemplate pageTemplate)
         {
-            pageTemplate.ReplaceUrlsToPlaceHolders();
             ManageTemplateInheritance(pageTemplate);
             ManagePageTemplateFolders(pageTemplate, FolderManagingType.ChangeFolder);
             return PageTemplateRepository.UpdatePageTemplateProperties(pageTemplate);
@@ -417,15 +400,9 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        public Content GetContentById(int contentId)
-        {
-            return ContentRepository.GetById(contentId);
-        }
+        public Content GetContentById(int contentId) => ContentRepository.GetById(contentId);
 
-        public IEnumerable<int> GetStatusIdsByContentId(int contentId, out bool hasWf)
-        {
-            return PageTemplateRepository.GetStatusIdsByContentId(contentId, out hasWf);
-        }
+        public IEnumerable<int> GetStatusIdsByContentId(int contentId, out bool hasWf) => PageTemplateRepository.GetStatusIdsByContentId(contentId, out hasWf);
 
         public void CaptureLockTemplate(int id)
         {
@@ -441,20 +418,19 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        public MessageResult AssemblePageFromPageObject(int pageId)
-        {
-            return AssemblePage(pageId);
-        }
+        public MessageResult AssemblePageFromPageObject(int pageId) => AssemblePage(pageId);
 
-        public MessageResult AssemblePageFromPageObjectPreAction(int pageId)
-        {
-            return AssemblePagePreAction(pageId);
-        }
+        public MessageResult AssemblePageFromPageObjectPreAction(int pageId) => AssemblePagePreAction(pageId);
 
         public MessageResult AssemblePageFromPageObjectFormatPreAction(int objectId)
         {
-            var obj = ReadObjectProperties(objectId, false);
-            return AssemblePagePreAction(obj.PageId.Value);
+            var props = ReadObjectProperties(objectId, false);
+            if (props.PageId == null)
+            {
+                throw new ArgumentException(@"Wrong argument", nameof(objectId));
+            }
+
+            return AssemblePagePreAction(props.PageId.Value);
         }
 
         public BllObject ReadObjectProperties(int id, bool withAutoLock = true)
@@ -474,35 +450,17 @@ namespace Quantumart.QP8.BLL.Services
             return obj;
         }
 
-        public MessageResult AssemblePageFromPageObjectList(int parentId)
-        {
-            return AssemblePage(parentId);
-        }
+        public MessageResult AssemblePageFromPageObjectList(int parentId) => AssemblePage(parentId);
 
-        public MessageResult AssemblePageFromPageObjectListPreAction(int parentId)
-        {
-            return AssemblePagePreAction(parentId);
-        }
+        public MessageResult AssemblePageFromPageObjectListPreAction(int parentId) => AssemblePagePreAction(parentId);
 
-        public MessageResult AssembleObjectFromPageObjectFormat(int parentId)
-        {
-            return AssembleObject(parentId);
-        }
+        public MessageResult AssembleObjectFromPageObjectFormat(int parentId) => AssembleObject(parentId);
 
-        public MessageResult AssembleObjectFromPageObjectFormatPreAction(int parentId)
-        {
-            return AssembleObjectPreAction(parentId);
-        }
+        public MessageResult AssembleObjectFromPageObjectFormatPreAction(int parentId) => AssembleObjectPreAction(parentId);
 
-        public MessageResult AssembleObjectFromTemplateObjectFormatPreAction(int parentId)
-        {
-            return AssembleObjectPreAction(parentId);
-        }
+        public MessageResult AssembleObjectFromTemplateObjectFormatPreAction(int parentId) => AssembleObjectPreAction(parentId);
 
-        public MessageResult AssembleObjectFromTemplateObjectFormat(int parentId)
-        {
-            return AssembleObject(parentId);
-        }
+        public MessageResult AssembleObjectFromTemplateObjectFormat(int parentId) => AssembleObject(parentId);
 
         public MessageResult AssembleObjectPreAction(int id)
         {
@@ -524,19 +482,20 @@ namespace Quantumart.QP8.BLL.Services
 
         public MessageResult AssemblePageFromPageObjectFormat(int parentId)
         {
-            var obj = ReadObjectProperties(parentId);
-            return AssemblePage(obj.PageId.Value);
+            var props = ReadObjectProperties(parentId);
+            if (props.PageId == null)
+            {
+                throw new ArgumentException(@"Wrong argument", nameof(parentId));
+            }
+
+            return AssemblePage(props.PageId.Value);
         }
 
-        public IEnumerable<PageTemplate> GetAllSiteTemplates(int siteId)
-        {
-            return PageTemplateRepository.GetSiteTemplates(siteId);
-        }
+        public IEnumerable<PageTemplate> GetAllSiteTemplates(int siteId) => PageTemplateRepository.GetSiteTemplates(siteId);
 
         public ListResult<ObjectFormatSearchResultListItem> FormatSearch(ListCommand listCommand, int siteId, int? templateId, int? pageId, string filter)
         {
-            int totalRecords;
-            var data = PageTemplateRepository.GetSearchFormatPage(listCommand, siteId, templateId, pageId, filter, out totalRecords).ToList();
+            var data = PageTemplateRepository.GetSearchFormatPage(listCommand, siteId, templateId, pageId, filter, out var totalRecords).ToList();
             ManageFormatSearchItemsDescription(data, filter);
             return new ListResult<ObjectFormatSearchResultListItem>
             {
@@ -570,8 +529,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ListResult<PageTemplateSearchListItem> TemplateSearch(ListCommand listCommand, int siteId, string filter)
         {
-            int totalRecords;
-            var data = PageTemplateRepository.GetSearchTemplatePage(listCommand, siteId, filter, out totalRecords).ToList();
+            var data = PageTemplateRepository.GetSearchTemplatePage(listCommand, siteId, filter, out var totalRecords).ToList();
             ManageTemplateSearchItemsDescription(data, filter);
             return new ListResult<PageTemplateSearchListItem>
             {
@@ -605,8 +563,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ListResult<ObjectSearchListItem> ObjectSearch(ListCommand listCommand, int siteId, int? templateId, int? pageId, string filter)
         {
-            int totalRecords;
-            var data = PageTemplateRepository.GetSearchObjectPage(listCommand, siteId, templateId, pageId, filter, out totalRecords).ToList();
+            var data = PageTemplateRepository.GetSearchObjectPage(listCommand, siteId, templateId, pageId, filter, out var totalRecords).ToList();
             ManageObjectSearchItemsDescription(data, filter);
             return new ListResult<ObjectSearchListItem>
             {
@@ -625,10 +582,10 @@ namespace Quantumart.QP8.BLL.Services
             foreach (var item in data)
             {
                 var obj = ObjectRepository.GetObjectPropertiesById(item.Id);
-                var defVals = obj.DefaultValues;
-                if (defVals != null && defVals.Any())
+                var defaultValues = obj.DefaultValues?.ToList();
+                if (defaultValues != null && defaultValues.Any())
                 {
-                    var names = defVals.Where(x => x.VariableName.Contains(filter));
+                    var names = defaultValues.Where(x => x.VariableName.Contains(filter)).ToList();
                     var dName = names.Any() ? names.First() : null;
                     if (dName != null)
                     {
@@ -636,8 +593,8 @@ namespace Quantumart.QP8.BLL.Services
                         continue;
                     }
 
-                    var vals = defVals.Where(x => x.VariableValue.Contains(filter));
-                    var dVal = vals.Any() ? vals.First() : null;
+                    var filteredDefaultValues = defaultValues.Where(x => x.VariableValue.Contains(filter)).ToList();
+                    var dVal = filteredDefaultValues.Any() ? filteredDefaultValues.First() : null;
                     if (dVal != null)
                     {
                         item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(dVal.VariableValue), filter, 20, "<span class='seachResultHighlight'>", "</span>");
@@ -672,25 +629,13 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        public IEnumerable<BllObject> GetAllTemplateObjects(int templateId)
-        {
-            return ObjectRepository.GetTemplateObjects(templateId);
-        }
+        public IEnumerable<BllObject> GetAllTemplateObjects(int templateId) => ObjectRepository.GetTemplateObjects(templateId);
 
-        public IEnumerable<BllObject> GetAllPageObjects(int pageId)
-        {
-            return ObjectRepository.GetPageObjects(pageId);
-        }
+        public IEnumerable<BllObject> GetAllPageObjects(int pageId) => ObjectRepository.GetPageObjects(pageId);
 
-        public Content ReadContentProperties(int id)
-        {
-            return ContentRepository.GetByIdWithFields(id);
-        }
+        public Content ReadContentProperties(int id) => ContentRepository.GetByIdWithFields(id);
 
-        IEnumerable<TemplateObjectFormatDto> IPageTemplateService.GetRestTemplateObjects(int templateId)
-        {
-            return ObjectRepository.GetRestTemplateObjects(templateId);
-        }
+        IEnumerable<TemplateObjectFormatDto> IPageTemplateService.GetRestTemplateObjects(int templateId) => ObjectRepository.GetRestTemplateObjects(templateId);
 
         public ObjectFormat ReadFormatProperties(int id, bool pageOrTemplate, bool withAutoLock = true)
         {
@@ -741,8 +686,7 @@ namespace Quantumart.QP8.BLL.Services
             var relBetweenObjects = string.Empty;
             ObjectRepository.CopySiteTemplateObjects(relBetweenTemplates, relBetweenPages, ref relBetweenObjects);
 
-            string relBetweenObjectFormats;
-            ObjectFormatRepository.CopySiteTemplateObjectFormats(relBetweenObjects, out relBetweenObjectFormats);
+            ObjectFormatRepository.CopySiteTemplateObjectFormats(relBetweenObjects, out var relBetweenObjectFormats);
 
             ObjectRepository.CopySiteUpdateObjects(relBetweenObjectFormats, relBetweenObjects);
             ObjectRepository.CopySiteObjectValues(relBetweenObjects);

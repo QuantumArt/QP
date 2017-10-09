@@ -46,8 +46,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         internal static bool IsActionAccessible(string actionCode)
         {
-            BackendAction action;
-            return IsActionAccessible(actionCode, out action);
+            return IsActionAccessible(actionCode, out BackendAction action);
         }
         /// <summary>
         /// Определение доступа к действию для пользователя по action_code

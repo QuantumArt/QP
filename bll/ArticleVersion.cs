@@ -68,8 +68,7 @@ namespace Quantumart.QP8.BLL
             {
                 foreach (var item in result.Where(n => n.Field.IsClassifier))
                 {
-                    int contentId;
-                    if (!string.IsNullOrEmpty(item.Value) && int.TryParse(item.Value, out contentId))
+                    if (!string.IsNullOrEmpty(item.Value) && int.TryParse(item.Value, out int contentId))
                     {
                         var id = Article.AggregatedArticles.Where(n => n.ContentId == contentId).Select(n => n.Id).SingleOrDefault();
                         var aggArticle = new Article(ContentRepository.GetById(contentId)) { Id = id };

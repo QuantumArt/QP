@@ -82,8 +82,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return false;
             }
 
-            string sqlQString;
-            if (!_iSearchGrammarParser.TryParse(qString, out sqlQString))
+            if (!_iSearchGrammarParser.TryParse(qString, out string sqlQString))
             {
                 hasError = true;
                 return true;

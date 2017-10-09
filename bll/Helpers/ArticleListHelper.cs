@@ -250,8 +250,7 @@ namespace Quantumart.QP8.BLL.Helpers
             {
                 if (field.ExactType == FieldExactTypes.M2MRelation)
                 {
-                    List<string> result;
-                    if (fieldValues.TryGetValue(articleId + "_" + field.LinkId.Value, out result))
+                    if (fieldValues.TryGetValue(articleId + "_" + field.LinkId.Value, out List<string> result))
                     {
                         var addDots = result.Count - 1 > Default.MaxViewInListArticleNumber;
                         if (addDots)
@@ -274,8 +273,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
                 else if (fieldTypeName == FieldTypeName.M2ORelation)
                 {
-                    List<string> result;
-                    if (fieldValues.TryGetValue(articleId + "_" + field.Id, out result))
+                    if (fieldValues.TryGetValue(articleId + "_" + field.Id, out List<string> result))
                     {
                         var addDots = result.Count() - 1 > Default.MaxViewInListArticleNumber;
                         if (addDots)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.ListItems;
@@ -38,8 +38,7 @@ namespace Quantumart.QP8.BLL.Services
     {
         public ListResult<StatusTypeListItem> GetStatusesBySiteId(ListCommand cmd, int siteId)
         {
-            int totalRecords;
-            var list = StatusTypeRepository.GetStatusTypePage(cmd, siteId, out totalRecords);
+            var list = StatusTypeRepository.GetStatusTypePage(cmd, siteId, out var totalRecords);
             return new ListResult<StatusTypeListItem>
             {
                 Data = list.ToList(),
@@ -47,13 +46,10 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public StatusTypeInitListResult InitList(int parentId)
+        public StatusTypeInitListResult InitList(int parentId) => new StatusTypeInitListResult
         {
-            return new StatusTypeInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewStatusType) && SecurityRepository.IsEntityAccessible(EntityTypeCode.StatusType, parentId, ActionTypeCode.Update)
-            };
-        }
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewStatusType) && SecurityRepository.IsEntityAccessible(EntityTypeCode.StatusType, parentId, ActionTypeCode.Update)
+        };
 
         public StatusType ReadProperties(int id)
         {
@@ -66,26 +62,13 @@ namespace Quantumart.QP8.BLL.Services
             return status;
         }
 
-        public StatusType ReadPropertiesForUpdate(int id)
-        {
-            return ReadProperties(id);
-        }
+        public StatusType ReadPropertiesForUpdate(int id) => ReadProperties(id);
 
-        public StatusType UpdateProperties(StatusType statusType)
-        {
-            return StatusTypeRepository.UpdateProperties(statusType);
-        }
+        public StatusType UpdateProperties(StatusType statusType) => StatusTypeRepository.UpdateProperties(statusType);
 
+        public StatusType NewStatusTypeProperties(int parentId) => StatusType.Create(parentId);
 
-        public StatusType NewStatusTypeProperties(int parentId)
-        {
-            return StatusType.Create(parentId);
-        }
-
-        public StatusType NewStatusTypePropertiesForUpdate(int parentId)
-        {
-            return NewStatusTypeProperties(parentId);
-        }
+        public StatusType NewStatusTypePropertiesForUpdate(int parentId) => NewStatusTypeProperties(parentId);
 
         public StatusType SaveProperties(StatusType statusType)
         {
@@ -124,15 +107,8 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
+        public ListResult<StatusTypeListItem> ListForWorkflow(ListCommand listCommand, int[] selectedIds, int workflowId) => StatusTypeRepository.GetPageForWorkflow(listCommand, selectedIds, workflowId);
 
-        public ListResult<StatusTypeListItem> ListForWorkflow(ListCommand listCommand, int[] selectedIds, int workflowId)
-        {
-            return StatusTypeRepository.GetPageForWorkflow(listCommand, selectedIds, workflowId);
-        }
-
-        public IEnumerable<StatusType> GetColouredStatuses()
-        {
-            return StatusTypeRepository.GetColouredStatuses();
-        }
+        public IEnumerable<StatusType> GetColouredStatuses() => StatusTypeRepository.GetColouredStatuses();
     }
 }

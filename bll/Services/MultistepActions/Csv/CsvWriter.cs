@@ -316,15 +316,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             if (field != null && field.RelationType == RelationType.ManyToMany)
             {
                 value = string.Empty;
-                Dictionary<int, string> mappings;
-                if (m2MValues.TryGetValue(field.LinkId.Value, out mappings) && mappings.Any())
+                if (m2MValues.TryGetValue(field.LinkId.Value, out Dictionary<int, string> mappings) && mappings.Any())
                 {
                     var key = field.ContentId == _contentId ? IdentifierFieldName : string.Format(FieldNameHeaderTemplate, field.Content.Name, IdentifierFieldName);
-                    int id;
-                    if (int.TryParse(article[key].ToString(), out id))
+                    if (int.TryParse(article[key].ToString(), out int id))
                     {
-                        string items;
-                        if (mappings.TryGetValue(id, out items))
+                        if (mappings.TryGetValue(id, out string items))
                         {
                             value = items.Replace(",", ";");
                         }

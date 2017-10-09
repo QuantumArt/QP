@@ -33,9 +33,8 @@ namespace Quantumart.QP8.BLL.Services.Audit
 
 		public ListResult<SessionsLog> GetSucessfullSessionPage(ListCommand cmd)
 		{
-			int totalRecords;
-			List<SessionsLog> sessions = repository.GetSucessfullSessionPage(cmd, out totalRecords).ToList();
-			return new ListResult<SessionsLog>
+            List<SessionsLog> sessions = repository.GetSucessfullSessionPage(cmd, out int totalRecords).ToList();
+            return new ListResult<SessionsLog>
 			{
 				Data = sessions,
 				TotalRecords = totalRecords
@@ -44,9 +43,8 @@ namespace Quantumart.QP8.BLL.Services.Audit
 
 		public ListResult<SessionsLog> GetFailedSessionPage(ListCommand cmd)
 		{
-			int totalRecords;
-			List<SessionsLog> sessions = repository.GetFailedSessionPage(cmd, out totalRecords).ToList();
-			return new ListResult<SessionsLog>
+            List<SessionsLog> sessions = repository.GetFailedSessionPage(cmd, out int totalRecords).ToList();
+            return new ListResult<SessionsLog>
 			{
 				Data = sessions,
 				TotalRecords = totalRecords

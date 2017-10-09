@@ -25,9 +25,8 @@ namespace Quantumart.QP8.BLL.Services.EntityPermissions
 
 		public virtual ListResult<EntityPermissionListItem> List(int parentId, ListCommand cmd)
 		{
-			int totalRecords;
-			IEnumerable<EntityPermissionListItem> list = Repository.List(cmd, parentId, out totalRecords);
-			return new ListResult<EntityPermissionListItem>
+            IEnumerable<EntityPermissionListItem> list = Repository.List(cmd, parentId, out int totalRecords);
+            return new ListResult<EntityPermissionListItem>
 			{
 				Data = list.ToList(),
 				TotalRecords = totalRecords

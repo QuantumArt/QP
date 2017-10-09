@@ -52,7 +52,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://mscnix01.artq.com/{customercode}/product-building/replication")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://mscnix02.artq.com/{customercode}/product-building/replication")]
         public string HttpEndpoint {
             get {
                 return ((string)(this["HttpEndpoint"]));

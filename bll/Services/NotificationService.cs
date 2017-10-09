@@ -241,8 +241,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ListResult<NotificationListItem> GetNotificationsByContentId(ListCommand cmd, int contentId)
         {
-            int totalRecords;
-            var list = NotificationRepository.List(cmd, contentId, out totalRecords);
+            var list = NotificationRepository.List(cmd, contentId, out int totalRecords);
             return new ListResult<NotificationListItem>
             {
                 Data = list.ToList(),

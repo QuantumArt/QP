@@ -369,8 +369,7 @@ namespace Quantumart.QP8.BLL
                 if (pair.Field.ExactType == FieldExactTypes.Boolean)
                 {
                     value = string.IsNullOrEmpty(value) ? "0" : value;
-                    bool isBool;
-                    var boolValue = bool.TryParse(value, out isBool);
+                    var boolValue = bool.TryParse(value, out bool isBool);
                     value = (isBool ? Converter.ToInt32(boolValue) : Converter.ToInt32(value)).ToString();
                 }
 
@@ -1229,8 +1228,7 @@ namespace Quantumart.QP8.BLL
                 var fieldValuesToTest = constraint.Filter(FieldValues);
                 if (fieldValuesToTest[0].Field.Id != exceptFieldId)
                 {
-                    string conflictingIds, constraintToDisplay;
-                    if (!ArticleRepository.ValidateUnique(fieldValuesToTest, out constraintToDisplay, out conflictingIds))
+                    if (!ArticleRepository.ValidateUnique(fieldValuesToTest, out string constraintToDisplay, out string conflictingIds))
                     {
                         if (!constraint.IsComplex)
                         {
