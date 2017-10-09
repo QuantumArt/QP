@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.DAL;
@@ -8,9 +8,6 @@ namespace Quantumart.QP8.BLL.Repository
 {
     public class SecurityRepository
     {
-        /// <summary>
-        /// Определяет есть ли доступ к действию над конкретнам экземпляром сущности для текущего пользователя по entity_type_code и action_type_code
-        /// </summary>
         internal static bool IsEntityAccessible(string entityTypeCode, int entityId, string actionTypeCode)
         {
             using (new QPConnectionScope())
@@ -19,9 +16,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        /// <summary>
-        /// Определяет есть ли доступ к действию над конкретнам экземпляром сущности для пользователя по entity_type_code, action_type_code, userId
-        /// </summary>
         internal static bool IsEntityAccessible(string entityTypeCode, int entityId, string actionTypeCode, int userId)
         {
             using (new QPConnectionScope())
@@ -30,9 +24,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        /// <summary>
-        /// Определяет есть ли доступ к действию над конкретнам экземпляром сущности для группы пользователей по entity_type_code, action_type_code, userGroupId
-        /// </summary>
         internal static bool IsEntityAccessibleForUserGroup(string entityTypeCode, int entityId, string actionTypeCode, int userGroupId)
         {
             using (new QPConnectionScope())
@@ -41,16 +32,8 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        /// <summary>
-        /// Определение доступа к действию для пользователя по action_code
-        /// </summary>
-        internal static bool IsActionAccessible(string actionCode)
-        {
-            return IsActionAccessible(actionCode, out BackendAction action);
-        }
-        /// <summary>
-        /// Определение доступа к действию для пользователя по action_code
-        /// </summary>
+        internal static bool IsActionAccessible(string actionCode) => IsActionAccessible(actionCode, out BackendAction _);
+
         internal static bool IsActionAccessible(string actionCode, out BackendAction action)
         {
             using (new QPConnectionScope())

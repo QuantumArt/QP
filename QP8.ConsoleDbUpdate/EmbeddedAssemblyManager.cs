@@ -19,7 +19,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             var defaultNamespace = typeof(Program).Namespace ?? "ConsoleDbUpdate";
             foreach (var resourceName in embeddedResourceNames.Where(resourceName => resourceName.EndsWith(".dll")))
             {
-                Load(resourceName, resourceName.Replace($"{defaultNamespace}.References.", string.Empty));
+                Load(resourceName, resourceName.Replace($"{defaultNamespace}.EmbeddedResources.", string.Empty));
             }
 
             AppDomain.CurrentDomain.AssemblyResolve += (obj, args) => Get(args.Name);
@@ -29,7 +29,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         public static void Load(string embeddedResourceName, string fileName)
         {
             ConsoleHelpers.WriteDebug($"Loading assembly. EmbeddedResourceName: {embeddedResourceName}. FileName: {fileName}");
-
             if (_mapFullnameToAssembly == null)
             {
                 _mapFullnameToAssembly = new Dictionary<string, Assembly>();
