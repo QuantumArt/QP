@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -53,6 +53,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
             return new[] { new ListItem("", "") }.Concat(HighlightModes());
         }
 
+        public int MaxArticleItemCount { get; set; }
 
         public bool OrderChanged { get; set; }
 

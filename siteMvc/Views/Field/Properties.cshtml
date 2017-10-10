@@ -232,6 +232,8 @@
                 {
                     @Html.CheckBoxFieldFor(s => s.Data.UseRelationSecurity)
                 }
+        
+                @Html.NumericFieldFor(s => s.Data.MaxDataListItemCount)
 
                 using (Html.BeginPanel("O2MDefault"))
                 {
