@@ -68,6 +68,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 
             sqlResult.AppendLine($"EXEC qp_replicate {ContentItemId}");
             sqlResult.AppendLine($"EXEC qp_update_m2o_final {ContentItemId};");
+            sqlResult.AppendLine($"EXEC qp_remove_old_aggregates {ContentItemId};");
             sqlResult.AppendLine("DROP TABLE #resultIds;");
             return sqlResult.ToString();
         }

@@ -22,3 +22,4 @@ CDC
 DPC
 ContextMenuAction
 EFTablesViews
+AggregatesToRemove

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -83,7 +83,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (new QPConnectionScope())
             {
-                var result = MapperFacade.ArticleRowMapper.GetBizObject(GetData(id, contentId));
+                var result = MapperFacade.ArticleRowMapper.GetBizObject(GetData(id, contentId, QPContext.IsLive));
                 if (result != null)
                 {
                     result.ContentId = contentId;
@@ -649,13 +649,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return orderExpression;
         }
 
-        internal static DataRow GetData(int id, int contentId)
+        internal static DataRow GetData(int id, int contentId, bool isLive)
         {
             using (new QPConnectionScope())
             {
                 return id == 0
                     ? Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId)
-                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, QPContext.IsLive);
+                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive);
             }
         }
 
@@ -968,7 +968,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static IEnumerable<Article> LoadAggregatedArticles(Article article)
+        internal static IEnumerable<Article> LoadAggregatedArticles(Article article, bool isLive)
         {
             using (var scope = new QPConnectionScope())
             {

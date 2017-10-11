@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Transactions;
 using Quantumart.QP8.BLL.Repository;
@@ -132,9 +132,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                         schedule.Article = article;
                         if (article != null && article.Delayed)
                         {
-                            QPContext.IsLive = true;
                             article.LoadFieldValues();
-                            QPContext.IsLive = false;
 
                             var repo = new NotificationPushRepository();
                             repo.PrepareNotifications(article, new[] { NotificationCode.DelayedPublication });
