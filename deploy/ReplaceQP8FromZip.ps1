@@ -4,17 +4,18 @@ param(
   [Bool] $transform=$true,
   [String] $config='Default',
   [String] $configFiles='Web,NLog',
-  [String] $backupPath = ''
+  [String] $backupPath = '',
+  [String] $backupsFolderName = 'backups',
+  [Bool] $throwIfBackupsFailed = $false
 )
 
 Import-Module WebAdministration
 
-if ([string]::IsNullOrEmpty($source)) { throw [System.ArgumentException] "Parameter 'source' is empty"}
-if ([string]::IsNullOrEmpty($name)) { throw [System.ArgumentException] "Parameter 'name' is empty"}
-if ([string]::IsNullOrEmpty($config) -and $transform) { throw [System.ArgumentException] "Parameter 'config' is empty while 'transform' is true"}
-if ([string]::IsNullOrEmpty($configFiles) -and $transform) { throw [System.ArgumentException] "Parameter 'configFiles' is empty while 'transform' is true"}
-
-if (-not(Test-Path $source)) { throw [System.ArgumentException] "Folder $source not exists"}
+  if ([string]::IsNullOrEmpty($source)) { throw [System.ArgumentException] "Parameter 'source' is empty"}
+  if ([string]::IsNullOrEmpty($name)) { throw [System.ArgumentException] "Parameter 'name' is empty" }
+  if ([string]::IsNullOrEmpty($config) -and $transform) { throw [System.ArgumentException] "Parameter 'config' is empty while 'transform' is true"}
+  if ([string]::IsNullOrEmpty($configFiles) -and $transform) { throw [System.ArgumentException] "Parameter 'configFiles' is empty while 'transform' is true"}
+  if ($throwIfBackupsFailed -eq $true -and -not(Test-Path $source)) { throw [System.ArgumentException] "Folder $source not exists"}
 
 try {
   $s = Get-Item "IIS:\sites\$name" -ErrorAction SilentlyContinue
@@ -46,10 +47,13 @@ if ([string]::IsNullOrEmpty($pluginsPath)) { throw [System.ArgumentException] "V
 if ([string]::IsNullOrEmpty($backendPath)) { throw [System.ArgumentException] "Web application 'backend' is not found"}
 if ([string]::IsNullOrEmpty($winlogonPath)) { throw [System.ArgumentException] "Web application 'Backend/Winlogon' is not found"}
 
-if (-not(Test-Path $backendSource)) { throw [System.ArgumentException] "File $backendSource not exists"}
-if (-not(Test-Path $winLogonSource)) { throw [System.ArgumentException] "File $winLogonSource not exists"}
-if (-not(Test-Path $pluginsSource)) { throw [System.ArgumentException] "File $pluginsSource not exists"}
-if (-not(Test-Path $sitesSource)) { throw [System.ArgumentException] "File $sitesSource not exists"}
+if($throwIfBackupsFailed -eq $true)
+{
+  if (-not(Test-Path $backendSource)) { throw [System.ArgumentException] "File $backendSource not exists"}
+  if (-not(Test-Path $winLogonSource)) { throw [System.ArgumentException] "File $winLogonSource not exists"}
+  if (-not(Test-Path $pluginsSource)) { throw [System.ArgumentException] "File $pluginsSource not exists"}
+  if (-not(Test-Path $sitesSource)) { throw [System.ArgumentException] "File $sitesSource not exists"}
+}
 
 $p = Get-Item "IIS:\AppPools\$($s.applicationPool)"
 
@@ -63,11 +67,16 @@ if ($p.State -ne "Stopped"){
 }
 
 Write-Verbose "Stopped" -Verbose
-
 Write-Verbose "Checking backup path for $backupPath..." -Verbose
 if ([String]::IsNullOrEmpty($backupPath)) {
   $backupPath = if ($isRootSites) { (Split-Path $path -Parent)} Else { $path }
 }
+
+if (-not [string]::IsNullOrEmpty($backupsFolderName))
+{
+  $backupPath = Join-Path $backupPath $backupsFolderName
+}
+
 Write-Verbose "Done" -Verbose
 
 if (-not(Test-Path $backupPath)) {
@@ -76,10 +85,14 @@ if (-not(Test-Path $backupPath)) {
   Write-Verbose "Done" -Verbose
 }
 
+$backendDir = Split-Path $backendPath -Leaf
+$pluginsDir = Split-Path $pluginsPath -Leaf
+$winlogonDir = Split-Path $winlogonPath -Leaf
+
 Write-Verbose "Preparing zip-files to $backupPath..." -Verbose
-$command = "CreateBackup.ps1 -sourcePath ""$backendPath"" -name Backend -path ""$backupPath"" -separateFolder `$false
-            CreateBackup.ps1 -sourcePath ""$winlogonPath"" -name WinLogon -path ""$backupPath"" -separateFolder `$false
-            CreateBackup.ps1 -sourcePath ""$pluginsPath"" -name plugins -path ""$backupPath"" -separateFolder `$false"
+$command = "CreateBackup.ps1 -sourcePath ""$backendPath"" -name ""$backendDir"" -path ""$backupPath"" -separateFolder `$false `$throwIfBackupsFailed
+            CreateBackup.ps1 -sourcePath ""$winlogonPath"" -name ""$winlogonDir"" -path ""$backupPath"" -separateFolder `$false `$throwIfBackupsFailed
+            CreateBackup.ps1 -sourcePath ""$pluginsPath"" -name ""$pluginsDir"" -path ""$backupPath"" -separateFolder `$false `$throwIfBackupsFailed"
 Invoke-Expression -command $command
 if ($isRootSites)
 {
