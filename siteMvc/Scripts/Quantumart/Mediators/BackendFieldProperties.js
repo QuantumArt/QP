@@ -231,3 +231,64 @@ Quantumart.QP8.RelateToAndPanelsMediator = function (relateToSelectElementId, pa
     dispose
   };
 };
+
+Quantumart.QP8.BackRelationSelectAndFieldMediator = function (BackRelationSelectElementId, listOrderSelectElementId) {
+  const $fieldSelectElement = $(`#${BackRelationSelectElementId}`);
+  const $listOrderSelectElement = $(`#${listOrderSelectElementId}`);
+  const relateableFieldsUrl = `${window.CONTROLLER_URL_CONTENT}_RelateableFields`;
+
+  const onRelatedToChanged = function () {
+    const currentFieldId = $('option:selected', $fieldSelectElement).val();
+
+    if (!$q.isNullOrEmpty(currentFieldId)) {
+      $q.getJsonFromUrl(
+        'GET',
+        relateableFieldsUrl,
+        {
+          contentId: 0,
+          fieldId: currentFieldId
+        },
+        true,
+        false
+      )
+        .done(data => {
+          if (data.success) {
+            $listOrderSelectElement.empty();
+            let html, html2;
+            if ($q.isNullOrEmpty(data.data)) {
+              html = '<option value=""></option>';
+              html2 = html;
+            } else {
+              const htmlBuilder = new $.telerik.stringBuilder();
+              $(data.data).each(function () {
+                htmlBuilder
+                  .cat('<option value="')
+                  .cat(this.id).cat('">')
+                  .cat(this.text)
+                  .cat('</option>');
+              });
+              html = htmlBuilder.string();
+              html2 = `<option value="">${$l.EntityEditor.selectField}</option>${html}`;
+            }
+            $listOrderSelectElement.append(html2);
+          } else {
+            $q.alertError(data.message);
+          }
+        })
+        .fail(jqXHR => {
+          $q.processGenericAjaxError(jqXHR);
+        });
+    }
+  };
+
+  const dispose = function () {
+    $fieldSelectElement.off('change', onRelatedToChanged);
+  };
+
+  $fieldSelectElement.on('change', onRelatedToChanged);
+
+  return {
+    dispose
+  };
+};
+

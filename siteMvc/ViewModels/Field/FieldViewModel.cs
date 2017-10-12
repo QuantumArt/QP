@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -131,6 +131,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         public string ClassifierSelectElementId => UniqueId("ClassifierSelect");
 
         public string ListOrderSelectElementId => UniqueId("ListOrderSelect");
+
+        public string BackRelationSelectElementId => UniqueId("BackRelationId");
 
         public string RelatedSettingsPanelsSelector => $"#{RelationFieldPanelElementId},#{O2MDefaultPanelElementId},#{M2MBackwardFieldNamePanelElementId},#{O2MBackwardFieldNamePanelElementId},#{O2MTreePanelElementId},#{ClassifierFieldPanelElementId},#{M2MDefaultPanelElementId},#{ListTitleOptionsPanelElementId}";
 

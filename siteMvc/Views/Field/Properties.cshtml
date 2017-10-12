@@ -296,7 +296,7 @@
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2ORelation, true))
             {
-                @Html.SelectFieldFor(s => s.Data.BackRelationId, Html.List(Model.GetBaseFieldsForM2O()))
+                @Html.SelectFieldFor(s => s.Data.BackRelationId, Html.List(Model.GetBaseFieldsForM2O()), new Dictionary<string, object> { { "id", Model.BackRelationSelectElementId } })                 
             }
 
             using (Html.BeginPanel("ListOrderOptions"))
@@ -466,6 +466,8 @@
       this.relateToAndClassifierFieldMediator = new Quantumart.QP8.RelateToAndClassifierFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.ClassifierSelectElementId)", "@(Model.AggregatedElementId)");
       this.fieldTypeFileDefaultMediator = new Quantumart.QP8.FieldTypeFileDefaultMediator("@(Model.ExactSelectElementId)", "@(Model.FileDefaultElementId)");
       this.relateToAndO2MDefaultMediator = new Quantumart.QP8.RelateToAndO2MDefaultMediator("@(Model.RelateToSelectElementId)", "@(Model.O2MDefaultElementId)", "@(Model.M2MDefaultElementId)");
+      this.backRelationSelectAndFieldMediator = new Quantumart.QP8.BackRelationSelectAndFieldMediator("@(Model.BackRelationSelectElementId)", "@(Model.ListOrderSelectElementId)");
+
 
       this.relateToAndPanelsMediator = new Quantumart.QP8.RelateToAndPanelsMediator("@(Model.RelateToSelectElementId)", "@(Model.RelatedSettingsPanelsSelector)", "@(Model.Data.ContentId)");
       this.relateToAndPanelsMediator.refresh();
@@ -514,6 +516,9 @@
 
     this.fieldPropertiesMediator.dispose();
     this.fieldPropertiesMediator = null;
+
+    this.backRelationSelectAndFieldMediator.dispose();
+    this.backRelationSelectAndFieldMediator = null;
 
     this.$stringEnum = null;
     if(this.$documentWrapper) {
