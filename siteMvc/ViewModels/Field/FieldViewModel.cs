@@ -133,6 +133,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public string ListOrderSelectElementId => UniqueId("ListOrderSelect");
 
+        public string BackRelationSelectElementId => UniqueId("BackRelationId");
+
         public string RelatedSettingsPanelsSelector => $"#{RelationFieldPanelElementId},#{O2MDefaultPanelElementId},#{M2MBackwardFieldNamePanelElementId},#{O2MBackwardFieldNamePanelElementId},#{O2MTreePanelElementId},#{ClassifierFieldPanelElementId},#{M2MDefaultPanelElementId},#{ListTitleOptionsPanelElementId}";
 
         public EntityDataListArgs InCombinationWithEventArgs => new EntityDataListArgs { MaxListHeight = 200 };
