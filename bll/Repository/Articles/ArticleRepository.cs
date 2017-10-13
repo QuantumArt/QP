@@ -978,6 +978,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 }
 
                 var values = article.FieldValues.Where(n => n.Field.IsClassifier).ToList();
+                if (isLive)
+                {
+                    values = article.LiveFieldValues.Where(n => n.Field.IsClassifier).ToList();
+                }
+
                 if (!values.Any())
                 {
                     return Enumerable.Empty<Article>();
@@ -985,7 +990,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
                 var classifierFields = values.Select(n => n.Field.Id).ToArray();
                 var types = values.Where(n => !string.IsNullOrEmpty(n.Value)).Select(n => int.Parse(n.Value)).ToArray();
-                var aggregatedArticlesId = Common.GetAggregatedArticlesIDs(scope.DbConnection, article.Id, classifierFields, types).ToList();
+                var aggregatedArticlesId = Common.GetAggregatedArticlesIDs(scope.DbConnection, article.Id, classifierFields, types, isLive).ToList();
                 if (aggregatedArticlesId.Any())
                 {
                     return MapperFacade.ArticleMapper.GetBizList(

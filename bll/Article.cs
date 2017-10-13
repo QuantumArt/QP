@@ -226,7 +226,13 @@ namespace Quantumart.QP8.BLL
 
         private IEnumerable<int> SelfAndAggregatedIds
         {
-            get { return Enumerable.Repeat(Id, 1).Union(AggregatedArticles.Select(n => n.Id)); }
+            get {
+                return
+                    Enumerable.Repeat(Id, 1)
+                    .Union(AggregatedArticles.Select(n => n.Id))
+                    .Union(LiveAggregatedArticles.Select(n => n.Id))
+                    ;
+            }
         }
 
         public int[] SelfAndChildIds
