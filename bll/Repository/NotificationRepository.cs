@@ -1,37 +1,26 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 using Quantumart.QPublishing.Database;
 
-
 namespace Quantumart.QP8.BLL.Repository
 {
-    class NotificationRepository
+    internal class NotificationRepository
     {
-        internal static Notification UpdateProperties(Notification notification)
-        {
-            return DefaultRepository.Update<Notification, NotificationsDAL>(notification);
-        }
+        internal static Notification UpdateProperties(Notification notification) => DefaultRepository.Update<Notification, NotificationsDAL>(notification);
 
         public void SendNotification(string connectionString, int siteId, string code, int id, bool isLive)
         {
-            QPConfiguration.SetAppSettings(DBConnector.AppSettings);
-            DBConnector cnn = new DBConnector(connectionString) {CacheData = false};
-            cnn.SendNotification(siteId, code, id, String.Empty, isLive);
+            var cnn = new DBConnector(connectionString) { CacheData = false };
+            QPConfiguration.SetAppSettings(cnn.AppSettings);
+            cnn.SendNotification(siteId, code, id, string.Empty, isLive);
         }
 
-        /// <summary>
-        /// Удалить ссылки на поле
-        /// </summary>
-        /// <param name="fieldId"></param>
         public void ClearEmailField(int fieldId)
         {
             using (var scope = new QPConnectionScope())
@@ -58,25 +47,20 @@ namespace Quantumart.QP8.BLL.Repository
             );
         }
 
-        /// <summary>
-        /// Возвращает список по ids
-        /// </summary>
-        /// <returns></returns>
         internal static IEnumerable<Notification> GetList(IEnumerable<int> ids)
         {
             IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
-            return MapperFacade.NotificationMapper
-                .GetBizList(QPContext.EFContext.NotificationsSet
-                    .Where(f => decIDs.Contains(f.Id))
-                    .ToList()
-                );
+            return MapperFacade.NotificationMapper.GetBizList(QPContext.EFContext.NotificationsSet
+                .Where(f => decIDs.Contains(f.Id))
+                .ToList()
+            );
         }
 
         internal static IEnumerable<NotificationListItem> List(ListCommand cmd, int contentId, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
             {
-                IEnumerable<DataRow> rows = Common.GetNotificationsPage(scope.DbConnection, contentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
+                var rows = Common.GetNotificationsPage(scope.DbConnection, contentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
                 return MapperFacade.NotificationListItemRowMapper.GetBizList(rows.ToList());
             }
         }
@@ -109,7 +93,9 @@ namespace Quantumart.QP8.BLL.Repository
         public static void MultipleDelete(int[] ids)
         {
             if (ids.Length > 0)
+            {
                 DefaultRepository.Delete<NotificationsDAL>(ids);
+            }
         }
 
         internal static void CopySiteUpdateNotifications(string relationsBetweenObjectFormats, string relationsBetweenContents)
@@ -130,8 +116,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<Notification> GetContentNotifications(int contentId, IEnumerable<string> codes)
         {
-            return MapperFacade.NotificationMapper.GetBizList(
-                QPContext.EFContext.NotificationsSet
+            return MapperFacade.NotificationMapper.GetBizList(QPContext.EFContext.NotificationsSet
                 .Where(g => g.ContentId == contentId)
                 .FilterByCode(codes)
                 .ToList()
@@ -143,17 +128,16 @@ namespace Quantumart.QP8.BLL.Repository
     {
         internal static IQueryable<NotificationsDAL> FilterByCode(this IQueryable<NotificationsDAL> source, IEnumerable<string> codes)
         {
-            var c = new HashSet<string>(codes);
+            var codesSet = new HashSet<string>(codes);
             return source.Where(g =>
-                        g.ForCreate && c.Contains(NotificationCode.Create) ||
-                        g.ForModify && c.Contains(NotificationCode.Update) ||
-                        g.ForRemove && c.Contains(NotificationCode.Delete) ||
-                        g.ForFrontend.Value && c.Contains(NotificationCode.Custom) ||
-                        g.ForStatusChanged.Value && c.Contains(NotificationCode.ChangeStatus) ||
-                        g.ForStatusPartiallyChanged && c.Contains(NotificationCode.PartialChangeStatus) ||
-                        g.ForDelayedPublication && c.Contains(NotificationCode.DelayedPublication)
-                    );
+                g.ForCreate && codesSet.Contains(NotificationCode.Create) ||
+                g.ForModify && codesSet.Contains(NotificationCode.Update) ||
+                g.ForRemove && codesSet.Contains(NotificationCode.Delete) ||
+                g.ForFrontend.Value && codesSet.Contains(NotificationCode.Custom) ||
+                g.ForStatusChanged.Value && codesSet.Contains(NotificationCode.ChangeStatus) ||
+                g.ForStatusPartiallyChanged && codesSet.Contains(NotificationCode.PartialChangeStatus) ||
+                g.ForDelayedPublication && codesSet.Contains(NotificationCode.DelayedPublication)
+            );
         }
     }
-
 }

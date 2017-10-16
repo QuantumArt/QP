@@ -25,6 +25,7 @@
     "chalk": "^2.1.0",
     "del": "^3.0.0",
     "es6-promise": "^4.1.1",
+    "eslint": "^4.8.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-babel": "^7.0.0",
@@ -54,7 +55,7 @@
     "build": "cross-env NODE_ENV=production gulp --production --gulpfile siteMvc/gulpfile.babel.js",
     "build-dev": "gulp --gulpfile siteMvc/gulpfile.babel.js",
     "nibble": "eslint-nibble ./siteMvc/Scripts/Quantumart/ || exit 0",
-    "lint": "eslint ./siteMvc/Scripts/Quantumart/ || exit 0"
+    "lint": "eslint ./siteMvc/Scripts/Quantumart/"
   },
   "private": true,
   "-vs-binding": {

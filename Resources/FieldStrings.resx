@@ -768,4 +768,10 @@
   <data name="LinqBackPropertyNameExistInSystemColumns" xml:space="preserve">
     <value>Such LINQ Back Property Name is already in using in system names</value>
   </data>
+  <data name="MaxDataListItemCount" xml:space="preserve">
+    <value>The maximum number of items</value>
+  </data>
+  <data name="MaxDataItemCountNotInRange" xml:space="preserve">
+    <value>Values of field is not in acceptable range: from {3} to {5}</value>
+  </data>
 </root>

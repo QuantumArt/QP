@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +28,7 @@ namespace QP8.Integration.Tests
 
         public static int PublishedId { get; private set; }
 
-        public static DBConnector Cnn { get; private set; }
+        public static DBConnector DbConnector { get; private set; }
 
         public static int ContentId { get; private set; }
 
@@ -48,32 +48,19 @@ namespace QP8.Integration.Tests
                 To = to;
             }
 
-            public bool Equals(CopyFile other)
-            {
-                return From == other.From && To == other.To;
-            }
+            public bool Equals(CopyFile other) => From == other?.From && To == other?.To;
 
-            public override bool Equals(object other)
-            {
-                var otherFile = other as CopyFile;
-                return otherFile != null && Equals(other);
-            }
+            public override bool Equals(object other) => other is CopyFile && Equals(other);
 
-            public override int GetHashCode()
-            {
-                return From.GetHashCode() + To.GetHashCode();
-            }
+            public override int GetHashCode() => From.GetHashCode() + To.GetHashCode();
 
-            public override string ToString()
-            {
-                return $"From: {From}, To: {To}";
-            }
+            public override string ToString() => $"From: {From}, To: {To}";
         }
 
         [OneTimeSetUp]
         public static void Init()
         {
-            Cnn = new DBConnector(Global.ConnectionString)
+            DbConnector = new DBConnector(Global.ConnectionString)
             {
                 DynamicImageCreator = new FakeDynamicImage(),
                 FileSystem = new FakeFileSystem(),
@@ -89,23 +76,20 @@ namespace QP8.Integration.Tests
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
             service.Process(Global.GetXml(@"xmls\files.xml"));
-            ContentId = Global.GetContentId(Cnn, ContentName);
-            BaseArticlesIds = Global.GetIds(Cnn, ContentId);
-            NoneId = Cnn.GetStatusTypeId(Global.SiteId, "None");
-            PublishedId = Cnn.GetStatusTypeId(Global.SiteId, "Published");
+            ContentId = Global.GetContentId(DbConnector, ContentName);
+            BaseArticlesIds = Global.GetIds(DbConnector, ContentId);
+            NoneId = DbConnector.GetStatusTypeId(Global.SiteId, "None");
+            PublishedId = DbConnector.GetStatusTypeId(Global.SiteId, "Published");
         }
 
         [Test]
         public void MassUpdate_CreateVersionDirectory_ContentHasFileFields()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
 
             var actualPathes = new List<string>();
-            mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>())).Callback<string>(path =>
-            {
-                actualPathes.Add(path);
-            });
+            mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>())).Callback<string>(path => { actualPathes.Add(path); });
 
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
             var values = new List<Dictionary<string, string>>();
@@ -121,9 +105,9 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
 
-            var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
+            var paths = Global.GetMaxVersions(DbConnector, ids).Select(n => DbConnector.GetVersionFolderForContent(ContentId, n)).ToArray();
             Assert.That(paths, Is.SubsetOf(actualPathes), "CreateDirectory calls");
         }
 
@@ -131,33 +115,24 @@ namespace QP8.Integration.Tests
         public void AddFormToContent_CreateVersionDirectory_ContentHasFileFields()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
 
             var actualPathes = new List<string>();
-            mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>())).Callback<string>(path =>
-            {
-                actualPathes.Add(path);
-            });
+            mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>())).Callback<string>(path => { actualPathes.Add(path); });
 
             var id = 0;
-            var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
+            var imageName = DbConnector.FieldName(Global.SiteId, ContentName, "BaseImage");
             var article1 = new Hashtable
             {
                 [imageName] = "testxx.jpg"
             };
 
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Create");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Create");
 
             var ids = new[] { id };
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
-            }, "Update");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id); }, "Update");
 
-            var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
+            var paths = Global.GetMaxVersions(DbConnector, ids).Select(n => DbConnector.GetVersionFolderForContent(ContentId, n)).ToArray();
             Assert.That(paths, Is.SubsetOf(actualPathes), "CreateDirectory calls");
         }
 
@@ -165,7 +140,7 @@ namespace QP8.Integration.Tests
         public void MassUpdate_DoesntCreateVersions_CreateVersionsFalse()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
 
             var values = new List<Dictionary<string, string>>();
@@ -184,8 +159,8 @@ namespace QP8.Integration.Tests
 
             values.Add(article2);
             var ids = new[] { int.Parse(article1[FieldName.ContentItemId]), int.Parse(article2[FieldName.ContentItemId]) };
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions { CreateVersions = false }), "Update");
-            var versions = Global.GetMaxVersions(Cnn, ids).ToArray();
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1, new MassUpdateOptions { CreateVersions = false }), "Update");
+            var versions = Global.GetMaxVersions(DbConnector, ids).ToArray();
 
             Assert.That(versions, Is.Empty, "No new versions");
             mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "No new folders");
@@ -195,13 +170,10 @@ namespace QP8.Integration.Tests
         public void MassUpdate_CopyFiles_ContentHasFileFields()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
 
             var list = new List<CopyFile>();
-            mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((from, to) =>
-            {
-                list.Add(new CopyFile(from, to));
-            });
+            mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((from, to) => { list.Add(new CopyFile(from, to)); });
 
             var values = new List<Dictionary<string, string>>();
             const string name1 = "test234";
@@ -225,12 +197,12 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            var attrFolder = Cnn.GetDirectoryForFileAttribute(Cnn.FieldID(Global.SiteId, ContentName, ImageName));
-            var currentVersionFolder = Cnn.GetCurrentVersionFolderForContent(ContentId);
-            var fileValuesBefore = Global.GetFieldValues<string>(Cnn, ContentId, ImageName, ids);
+            var attrFolder = DbConnector.GetDirectoryForFileAttribute(DbConnector.FieldID(Global.SiteId, ContentName, ImageName));
+            var currentVersionFolder = DbConnector.GetCurrentVersionFolderForContent(ContentId);
+            var fileValuesBefore = Global.GetFieldValues<string>(DbConnector, ContentId, ImageName, ids);
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
-            var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
+            var paths = Global.GetMaxVersions(DbConnector, ids).Select(n => DbConnector.GetVersionFolderForContent(ContentId, n)).ToArray();
             var file1 = new CopyFile(
                 Path.Combine(currentVersionFolder, fileValuesBefore[0]),
                 Path.Combine(paths[0], fileValuesBefore[0])
@@ -256,8 +228,8 @@ namespace QP8.Integration.Tests
             Assert.That(list, Has.Member(file3), "Copy new file 1 to current dir");
             Assert.That(list, Has.Member(file4), "Copy new file 2 to current dir without subfolders");
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
-            var paths2 = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
+            var paths2 = Global.GetMaxVersions(DbConnector, ids).Select(n => DbConnector.GetVersionFolderForContent(ContentId, n)).ToArray();
             var file5 = new CopyFile(
                 Path.Combine(currentVersionFolder, $"{name2}.{ext2}"),
                 Path.Combine(paths2[1], $"{name2}.{ext2}")
@@ -270,13 +242,10 @@ namespace QP8.Integration.Tests
         public void AddFormToContent_CopyFiles_ContentHasFileFields()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
 
             var list = new List<CopyFile>();
-            mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((from, to) =>
-            {
-                list.Add(new CopyFile(from, to));
-            });
+            mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((from, to) => { list.Add(new CopyFile(from, to)); });
 
             const string name1 = "test123";
             const string ext1 = "jpg";
@@ -284,7 +253,7 @@ namespace QP8.Integration.Tests
             const string ext2 = "png";
             const string folder2 = "center";
 
-            var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
+            var imageName = DbConnector.FieldName(Global.SiteId, ContentName, "BaseImage");
             var article1 = new Hashtable
             {
                 [imageName] = $"{name1}.{ext1}"
@@ -296,26 +265,17 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Create");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Create");
 
             var ids = new[] { id };
-            var attrFolder = Cnn.GetDirectoryForFileAttribute(Cnn.FieldID(Global.SiteId, ContentName, ImageName));
-            var currentVersionFolder = Cnn.GetCurrentVersionFolderForContent(ContentId);
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
-            }, "Update");
+            var attrFolder = DbConnector.GetDirectoryForFileAttribute(DbConnector.FieldID(Global.SiteId, ContentName, ImageName));
+            var currentVersionFolder = DbConnector.GetCurrentVersionFolderForContent(ContentId);
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id); }, "Update");
 
-            var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
-            }, "Update");
+            var paths = Global.GetMaxVersions(DbConnector, ids).Select(n => DbConnector.GetVersionFolderForContent(ContentId, n)).ToArray();
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id); }, "Update");
 
-            var paths2 = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
+            var paths2 = Global.GetMaxVersions(DbConnector, ids).Select(n => DbConnector.GetVersionFolderForContent(ContentId, n)).ToArray();
             var file1 = new CopyFile(
                 Path.Combine(attrFolder, article1[imageName].ToString()),
                 Path.Combine(currentVersionFolder, article1[imageName].ToString())
@@ -346,7 +306,7 @@ namespace QP8.Integration.Tests
         public void MassUpdate_DoesntCreateVersionDirectory_EmptyFileFields()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
 
             var values = new List<Dictionary<string, string>>();
@@ -356,8 +316,8 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article1);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Create");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
             mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "Shouldn't be called for empty file fields");
         }
 
@@ -365,7 +325,7 @@ namespace QP8.Integration.Tests
         public void AddFormToContent_DoesntCreateVersionDirectory_EmptyFileFields()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
 
             var values = new List<Dictionary<string, string>>();
@@ -375,8 +335,8 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article1);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Create");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
             mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "Shouldn't be called for empty file fields");
         }
 
@@ -384,7 +344,7 @@ namespace QP8.Integration.Tests
         public void MassUpdate_DoesntCreateVersionDirectory_DisableVersionControlFields()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
             mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>()));
 
@@ -397,19 +357,18 @@ namespace QP8.Integration.Tests
 
             values.Add(article1);
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Create");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
 
             mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "Shouldn't be called for disabled versions control fields");
             mockFileSystem.Verify(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never(), "Shouldn't be called for disabled versions control fields");
-
         }
 
         [Test]
         public void AddFormToContent_DoesntCreateVersionDirectory_DisableVersionControlFields()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
             mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>()));
 
@@ -419,32 +378,22 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Create");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Create");
 
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
-            }, "Update");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id); }, "Update");
 
             mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "Shouldn't be called for disabled versions control fields");
             mockFileSystem.Verify(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never(), "Shouldn't be called for disabled versions control fields");
-
         }
 
         [Test]
         public void MassUpdate_RemoveVersionDirectory_VersionOverflow()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
 
             var actualPathes = new List<string>();
-            mockFileSystem.Setup(x => x.RemoveDirectory(It.IsAny<string>())).Callback<string>(path =>
-            {
-                actualPathes.Add(path);
-            });
+            mockFileSystem.Setup(x => x.RemoveDirectory(It.IsAny<string>())).Callback<string>(path => { actualPathes.Add(path); });
 
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
@@ -454,14 +403,14 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article1);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Create");
 
             var id = int.Parse(values[0][FieldName.ContentItemId]);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
 
-            var paths = Global.GetMaxVersions(Cnn, new[] { id }).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            var paths = Global.GetMaxVersions(DbConnector, new[] { id }).Select(n => DbConnector.GetVersionFolderForContent(ContentId, n)).ToArray();
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
             Assert.That(paths, Is.EqualTo(actualPathes), "RemoveDirectory calls");
         }
 
@@ -469,41 +418,26 @@ namespace QP8.Integration.Tests
         public void AddFormToContent_RemoveVersionDirectory_VersionOverflow()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
             var actualPathes = new List<string>();
-            mockFileSystem.Setup(x => x.RemoveDirectory(It.IsAny<string>())).Callback<string>(path =>
-            {
-                actualPathes.Add(path);
-            });
+            mockFileSystem.Setup(x => x.RemoveDirectory(It.IsAny<string>())).Callback<string>(path => { actualPathes.Add(path); });
 
-            var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
+            var imageName = DbConnector.FieldName(Global.SiteId, ContentName, "BaseImage");
             var article1 = new Hashtable
             {
                 [imageName] = "testxx.jpg"
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Create");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Create");
 
             var ids = new[] { id };
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
-            }, "Update");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id); }, "Update");
 
-            var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
-            }, "Update");
+            var paths = Global.GetMaxVersions(DbConnector, ids).Select(n => DbConnector.GetVersionFolderForContent(ContentId, n)).ToArray();
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id); }, "Update");
 
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
-            }, "Update");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id); }, "Update");
 
             Assert.That(paths, Is.EqualTo(actualPathes), "RemoveDirectory calls");
         }
@@ -512,12 +446,10 @@ namespace QP8.Integration.Tests
         public void MassUpdate_CreateDynamicImages_UpdateBaseImage()
         {
             var mockDynamicImage = new Mock<IDynamicImage>();
-            Cnn.DynamicImageCreator = mockDynamicImage.Object;
+            DbConnector.DynamicImageCreator = mockDynamicImage.Object;
+
             var actualImages = new List<DynamicImageInfo>();
-            mockDynamicImage.Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>())).Callback<DynamicImageInfo>(info =>
-            {
-                actualImages.Add(info);
-            });
+            mockDynamicImage.Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>())).Callback<DynamicImageInfo>(info => { actualImages.Add(info); });
 
             var values = new List<Dictionary<string, string>>();
             const string name1 = "test789";
@@ -542,20 +474,20 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
 
             const string imagePng = "PngImage";
             const string imageJpg = "JpgImage";
             const string imageGif = "GifImage";
 
-            var pngs = Global.GetFieldValues<string>(Cnn, ContentId, imagePng, ids);
-            var jpgs = Global.GetFieldValues<string>(Cnn, ContentId, imageJpg, ids);
-            var gifs = Global.GetFieldValues<string>(Cnn, ContentId, imageGif, ids);
+            var pngs = Global.GetFieldValues<string>(DbConnector, ContentId, imagePng, ids);
+            var jpgs = Global.GetFieldValues<string>(DbConnector, ContentId, imageJpg, ids);
+            var gifs = Global.GetFieldValues<string>(DbConnector, ContentId, imageGif, ids);
 
-            var pngId = Cnn.FieldID(Global.SiteId, ContentName, imagePng);
-            var jpgId = Cnn.FieldID(Global.SiteId, ContentName, imageJpg);
-            var gifId = Cnn.FieldID(Global.SiteId, ContentName, imageGif);
-            var fileId = Cnn.FieldID(Global.SiteId, ContentName, "File");
+            var pngId = DbConnector.FieldID(Global.SiteId, ContentName, imagePng);
+            var jpgId = DbConnector.FieldID(Global.SiteId, ContentName, imageJpg);
+            var gifId = DbConnector.FieldID(Global.SiteId, ContentName, imageGif);
+            var fileId = DbConnector.FieldID(Global.SiteId, ContentName, "File");
 
             var dbPng1 = $"field_{pngId}/{name1}.PNG";
             var dbPng2 = $"field_{pngId}/{folder2}/{name2}.PNG";
@@ -584,13 +516,10 @@ namespace QP8.Integration.Tests
         public void AddFormToContent_CreateDynamicImages_ContentHasDynamicImages()
         {
             var mockDynamicImage = new Mock<IDynamicImage>();
-            Cnn.DynamicImageCreator = mockDynamicImage.Object;
+            DbConnector.DynamicImageCreator = mockDynamicImage.Object;
 
             var actualImages = new List<DynamicImageInfo>();
-            mockDynamicImage.Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>())).Callback<DynamicImageInfo>(info =>
-            {
-                actualImages.Add(info);
-            });
+            mockDynamicImage.Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>())).Callback<DynamicImageInfo>(info => { actualImages.Add(info); });
 
             const string name1 = "test789";
             const string name2 = "test321";
@@ -598,7 +527,7 @@ namespace QP8.Integration.Tests
             const string ext2 = "png";
             const string folder2 = "cnt";
 
-            var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
+            var imageName = DbConnector.FieldName(Global.SiteId, ContentName, "BaseImage");
             var article1 = new Hashtable
             {
                 [imageName] = $"{name1}.{ext1}"
@@ -610,32 +539,26 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Create");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Create");
 
             var ids = new[] { id };
             const string imagePng = "PngImage";
             const string imageJpg = "JpgImage";
             const string imageGif = "GifImage";
 
-            var pngs1 = Global.GetFieldValues<string>(Cnn, ContentId, imagePng, ids);
-            var jpgs1 = Global.GetFieldValues<string>(Cnn, ContentId, imageJpg, ids);
-            var gifs1 = Global.GetFieldValues<string>(Cnn, ContentId, imageGif, ids);
+            var pngs1 = Global.GetFieldValues<string>(DbConnector, ContentId, imagePng, ids);
+            var jpgs1 = Global.GetFieldValues<string>(DbConnector, ContentId, imageJpg, ids);
+            var gifs1 = Global.GetFieldValues<string>(DbConnector, ContentId, imageGif, ids);
 
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
-            }, "Update");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id); }, "Update");
 
-            var pngs2 = Global.GetFieldValues<string>(Cnn, ContentId, imagePng, ids);
-            var jpgs2 = Global.GetFieldValues<string>(Cnn, ContentId, imageJpg, ids);
-            var gifs2 = Global.GetFieldValues<string>(Cnn, ContentId, imageGif, ids);
+            var pngs2 = Global.GetFieldValues<string>(DbConnector, ContentId, imagePng, ids);
+            var jpgs2 = Global.GetFieldValues<string>(DbConnector, ContentId, imageJpg, ids);
+            var gifs2 = Global.GetFieldValues<string>(DbConnector, ContentId, imageGif, ids);
 
-            var pngId = Cnn.FieldID(Global.SiteId, ContentName, imagePng);
-            var jpgId = Cnn.FieldID(Global.SiteId, ContentName, imageJpg);
-            var gifId = Cnn.FieldID(Global.SiteId, ContentName, imageGif);
+            var pngId = DbConnector.FieldID(Global.SiteId, ContentName, imagePng);
+            var jpgId = DbConnector.FieldID(Global.SiteId, ContentName, imageJpg);
+            var gifId = DbConnector.FieldID(Global.SiteId, ContentName, imageGif);
 
             var dbPng1 = $"field_{pngId}/{name1}.PNG";
             var dbPng2 = $"field_{pngId}/{folder2}/{name2}.PNG";
@@ -663,7 +586,7 @@ namespace QP8.Integration.Tests
         public void MassUpdate_DoesntCreateDynamicImages_EmptyBaseImage()
         {
             var mockDynamicImage = new Mock<IDynamicImage>();
-            Cnn.DynamicImageCreator = mockDynamicImage.Object;
+            DbConnector.DynamicImageCreator = mockDynamicImage.Object;
             mockDynamicImage.Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>()));
 
             var values = new List<Dictionary<string, string>>();
@@ -673,16 +596,16 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article1);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Create");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
             mockDynamicImage.Verify(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>()), Times.Never(), "Shouldn't be called for empty image fields");
         }
 
         [TearDown]
         public static void TestTearDown()
         {
-            Cnn.FileSystem = new FakeFileSystem();
-            Cnn.DynamicImageCreator = new FakeDynamicImage();
+            DbConnector.FileSystem = new FakeFileSystem();
+            DbConnector.DynamicImageCreator = new FakeDynamicImage();
         }
 
         [OneTimeTearDown]
@@ -693,7 +616,7 @@ namespace QP8.Integration.Tests
 
         private static void Clear()
         {
-            ContentId = Global.GetContentId(Cnn, ContentName);
+            ContentId = Global.GetContentId(DbConnector, ContentName);
             var srv = new ContentService(Global.ConnectionString, 1);
             if (srv.Exists(ContentId))
             {

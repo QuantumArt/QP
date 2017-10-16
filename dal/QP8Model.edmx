@@ -352,6 +352,7 @@
           <Property Name="USE_SEPARATE_REVERSE_VIEWS" Type="bit" Nullable="false" />
           <Property Name="DISABLE_LIST_AUTO_WRAP" Type="bit" Nullable="false" />
           <Property Name="TA_HIGHLIGHT_TYPE" Type="nvarchar" MaxLength="50" />
+		  <Property Name="MAX_DATA_LIST_ITEM_COUNT" Type="numeric" Precision="18" Scale="0" />
         </EntityType>
         <EntityType Name="content_constraint">
           <Key>
@@ -6438,6 +6439,7 @@
           <Property Name="UseSeparateReverseViews" Type="Boolean" Nullable="false" />
           <Property Name="DisableListAutoWrap" Type="Boolean" Nullable="false" />
           <Property Name="TaHighlightType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MaxDataListItemCount" Type="Decimal" Nullable="false" />
 				</EntityType>
         <EntityType Name="ContentConstraintDAL">
           <Key>
@@ -10780,6 +10782,7 @@
                 <ScalarProperty Name="NetBackName" ColumnName="NET_BACK_ATTRIBUTE_NAME" />
                 <ScalarProperty Name="PEnterMode" ColumnName="P_ENTER_MODE" />
 								<ScalarProperty Name="UseEnglishQuotes" ColumnName="USE_ENGLISH_QUOTES" />
+								<ScalarProperty Name="MaxDataListItemCount" ColumnName="MAX_DATA_LIST_ITEM_COUNT" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -12108,7 +12111,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="35">
+      <Diagram Name="QP8Model" ZoomLevel="34">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />

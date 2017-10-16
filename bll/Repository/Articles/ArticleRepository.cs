@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -154,6 +154,14 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             using (new QPConnectionScope())
             {
                 return Common.CountArticles(QPConnectionScope.Current.DbConnection, contentId, true);
+            }
+        }
+
+        internal static int GetCount(int contentId, bool includeArchive)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.CountArticles(QPConnectionScope.Current.DbConnection, contentId, includeArchive);
             }
         }
 

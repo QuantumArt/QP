@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using QP8.Infrastructure;
@@ -135,6 +135,7 @@ namespace Quantumart.QP8.BLL.Services
         public static ArticleInitListResult InitArchiveList(int contentId) => InitList(contentId, true);
 
         public static int Count(int contentId, string filter) => ArticleRepository.GetCount(contentId);
+        public static int Count(int contentId, string filter, bool includeArchive) => ArticleRepository.GetCount(contentId, includeArchive);
 
         public static ListResult<SimpleDataRow> List(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds = null, int[] filterIds = null)
         {

@@ -1195,6 +1195,24 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Values of field is not in acceptable range: from {3} to {5}.
+        /// </summary>
+        public static string MaxDataItemCountNotInRange {
+            get {
+                return ResourceManager.GetString("MaxDataItemCountNotInRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The maximum number of items.
+        /// </summary>
+        public static string MaxDataListItemCount {
+            get {
+                return ResourceManager.GetString("MaxDataListItemCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Field is included in multiple unique constraint.
         /// </summary>
         public static string MultiplyUniqueConstraint {

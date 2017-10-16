@@ -81,6 +81,8 @@
     <Compile Include="FormatValidatorAttribute.cs" />
     <Compile Include="MaxLengthValidatorAttribute.cs" />
     <Compile Include="MaxLengthValidator.cs" />
+    <Compile Include="RangeValueValidator.cs" />
+    <Compile Include="RangeValueValidatorAttribute.cs" />
     <Compile Include="RuleSetAttribute.cs" />
     <Compile Include="ValidatorArgumentsValidatorHelper.cs" />
     <Compile Include="ValueComparisonValidator.cs" />
@@ -117,4 +119,3 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
-

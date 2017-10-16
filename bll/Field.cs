@@ -516,6 +516,10 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("HighlightType", NameResourceType = typeof(FieldStrings))]
         public string HighlightType { get; set; }
 
+        [LocalizedDisplayName("MaxDataListItemCount", NameResourceType = typeof(FieldStrings))]
+        [RangeValueValidator(0, 100, MessageTemplateResourceName = "MaxDataItemCountNotInRange", MessageTemplateResourceType = typeof(FieldStrings))]
+        public int MaxDataListItemCount { get; set; }
+
         [LocalizedDisplayName("VisualEditorHeight", NameResourceType = typeof(FieldStrings))]
         public int VisualEditorHeight { get; set; }
 

@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.MultistepActionImportSettings = function MultistepActionImportSettings(options) {
+Quantumart.QP8.MultistepActionImportSettings = function MultistepActionImportSettings(options) {
   this.options = options;
 };
 
@@ -216,13 +216,13 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   },
 
   _toggleFieldsRequiring(fields, predicate) {
-      fields.each(function each() { 
-          if (predicate($(this))) {
-              this.removeAttribute("data-excludeValid");
-          } else {
-              this.setAttribute("data-excludeValid", 'True');
-          }
-      });
+    fields.each(function each() {
+      if (predicate($(this))) {
+        this.removeAttribute('data-excludeValid');
+      } else {
+        this.setAttribute('data-excludeValid', 'True');
+      }
+    });
   },
 
   _addMessageLine(message) {
@@ -282,7 +282,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     });
 
     const $requiredSelects = $('select[data-aggregated="False"]select[data-required="True"]');
-    if (($requiredSelects.length === 0 || !this._fieldsPredicate(null)) 
+    if (($requiredSelects.length === 0 || !this._fieldsPredicate(null))
         && ($('select[data-aggregated="False"]select[value!="-1"]').length === 0
         && $('select[data-aggregated="False"]select([data-excludeValid])').length === 0)) {
       errorMessage = that._addMessageLine(errorMessage);

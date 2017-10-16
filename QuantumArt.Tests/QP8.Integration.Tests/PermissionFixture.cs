@@ -1,63 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using NUnit.Framework;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.Helpers;
-using System.Configuration;
-using System.Reflection;
 
 namespace QP8.Integration.Tests
 {
     [TestFixture]
     public class PermissionFixture
     {
-        private const string username = "test";
-        private const string password = "1Qaz2Wsx";
-        private const string firstName = "testFirstName";
-        private const string lastName = "testLastName";
-        private const string email = "testEmail@test.ru";
-        private const string columnIdName = "user_id";
-        private static int groupId = 1;
+        private const string Username = "test";
+        private const string Password = "1Qaz2Wsx";
+        private const string FirstName = "testFirstName";
+        private const string LastName = "testLastName";
+        private const string Email = "testEmail@test.ru";
+        private const string ColumnIdName = "user_id";
+        private const int GroupId = 1;
 
-        public static DBConnector Cnn { get; private set; }
+        public static DBConnector DbConnector { get; set; }
 
         [OneTimeSetUp]
         public static void Init()
         {
-            DBConnector.ConnectionString = Global.ConnectionString;
+            DbConnector = new DBConnector(Global.ConnectionString);
         }
 
         [Test]
         public void AuthenticateUser()
         {
+            var permissions = new Permissions(DbConnector);
+
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Permissions.AddUser(username, password, 0, firstName, lastName, email);
-            }, "Add User");
+            Assert.DoesNotThrow(() => { id = permissions.AddUser(Username, Password, 0, FirstName, LastName, Email); }, "Add User");
 
             //authenticate user
             var auth = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                auth = Permissions.AuthenticateUser(username, password);
-            }, "Authenticate");
+            Assert.DoesNotThrow(() => { auth = permissions.AuthenticateUser(Username, Password); }, "Authenticate");
             Assert.That(auth, Is.Not.EqualTo(0));
 
             //add user to group
-            Assert.DoesNotThrow(() =>
-            {
-                Permissions.AddUserToGroup(id, groupId);
-            }, "Add user to group");
+            Assert.DoesNotThrow(() => { permissions.AddUserToGroup(id, GroupId); }, "Add user to group");
 
             //remove user from group
-            Assert.DoesNotThrow(() =>
-            {
-                Permissions.RemoveUserFromGroup(id, groupId);
-            }, "Remove user from group");
+            Assert.DoesNotThrow(() => { permissions.RemoveUserFromGroup(id, GroupId); }, "Remove user from group");
         }
 
         [OneTimeTearDown]
@@ -68,12 +52,12 @@ namespace QP8.Integration.Tests
 
         private static void Clear()
         {
-            var id = 0;
-            var userInfo = Permissions.GetUserInfo(username);
+            var permissions = new Permissions(DbConnector);
+            var userInfo = permissions.GetUserInfo(Username);
             if (userInfo.Rows.Count > 0)
             {
-                id = Convert.ToInt32(userInfo.Rows[0][columnIdName]);
-                Permissions.RemoveUser(id);
+                var id = Convert.ToInt32(userInfo.Rows[0][ColumnIdName]);
+                permissions.RemoveUser(id);
             }
         }
     }
