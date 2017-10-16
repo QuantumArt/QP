@@ -19,7 +19,7 @@ namespace QP8.Integration.Tests
     [TestFixture]
     public class HierarchyFixture
     {
-        public static DBConnector Cnn { get; private set; }
+        public static DBConnector DbConnector { get; private set; }
 
         public static int RegionContentId { get; private set; }
 
@@ -34,7 +34,7 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            Cnn = new DBConnector(Global.ConnectionString)
+            DbConnector = new DBConnector(Global.ConnectionString)
             {
                 DynamicImageCreator = new FakeDynamicImage(),
                 FileSystem = new FakeFileSystem(),
@@ -52,9 +52,9 @@ namespace QP8.Integration.Tests
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
             service.Process(Global.GetXml(@"xmls\hierarchy.xml"));
 
-            RegionContentId = Global.GetContentId(Cnn, RegionContentName);
-            ProductContentId = Global.GetContentId(Cnn, ProductContentName);
-            BaseArticlesIds = Global.GetIdsWithTitles(Cnn, RegionContentId);
+            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
+            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
+            BaseArticlesIds = Global.GetIdsWithTitles(DbConnector, RegionContentId);
         }
 
         [Test]
@@ -64,17 +64,14 @@ namespace QP8.Integration.Tests
             var ids2 = new[] { BaseArticlesIds["root"] };
             using (new QPConnectionScope(Global.ConnectionString))
             {
-
                 var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
-
                 Assert.DoesNotThrow(() => article = articleService.Save(article), "Create article");
 
                 var expected = ids2.OrderBy(n => n).ToArray();
                 var actual = article.FieldValues.Single(n => n.Field.Name == "Regions").RelatedItems.OrderBy(n => n).ToArray();
-
                 Assert.That(actual, Is.EqualTo(expected), "M2M equality");
             }
         }
@@ -86,17 +83,14 @@ namespace QP8.Integration.Tests
             var ids2 = new[] { BaseArticlesIds["macro1"] };
             using (new QPConnectionScope(Global.ConnectionString))
             {
-
                 var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
-
                 Assert.DoesNotThrow(() => article = articleService.Save(article), "Create article");
 
                 var expected = ids2.OrderBy(n => n).ToArray();
                 var actual = article.FieldValues.Single(n => n.Field.Name == "Regions").RelatedItems.OrderBy(n => n).ToArray();
-
                 Assert.That(actual, Is.EqualTo(expected), "M2M equality");
             }
         }
@@ -108,17 +102,14 @@ namespace QP8.Integration.Tests
             var ids2 = new[] { BaseArticlesIds["root"] };
             using (new QPConnectionScope(Global.ConnectionString))
             {
-
                 var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
-
                 Assert.DoesNotThrow(() => article = articleService.Save(article), "Create article");
 
                 var expected = ids2.OrderBy(n => n).ToArray();
                 var actual = article.FieldValues.Single(n => n.Field.Name == "Regions").RelatedItems.OrderBy(n => n).ToArray();
-
                 Assert.That(actual, Is.EqualTo(expected), "M2M equality");
             }
         }
@@ -134,12 +125,10 @@ namespace QP8.Integration.Tests
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
-
                 Assert.DoesNotThrow(() => article = articleService.Save(article), "Create article");
 
                 var expected = ids2.OrderBy(n => n).ToArray();
                 var actual = article.FieldValues.Single(n => n.Field.Name == "Regions").RelatedItems.OrderBy(n => n).ToArray();
-
                 Assert.That(actual, Is.EqualTo(expected), "M2M equality");
             }
         }
@@ -153,8 +142,9 @@ namespace QP8.Integration.Tests
         private static void Clear()
         {
             var srv = new ContentService(Global.ConnectionString, 1);
-            RegionContentId = Global.GetContentId(Cnn, RegionContentName);
-            ProductContentId = Global.GetContentId(Cnn, ProductContentName);
+            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
+            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
+
             if (srv.Exists(ProductContentId))
             {
                 srv.Delete(ProductContentId);

@@ -1,16 +1,16 @@
-﻿using QP8.Infrastructure.Logging;
-using Quantumart.QP8.BLL.Models.NotificationSender;
-using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.BLL.Services.NotificationSender;
-using Quantumart.QP8.Configuration;
-using Quantumart.QP8.Constants;
-using Quantumart.QPublishing.Database;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
+using QP8.Infrastructure.Logging;
+using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Services.NotificationSender;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -34,9 +34,6 @@ namespace Quantumart.QP8.BLL.Repository
 
         private string[] Codes { get; set; }
 
-        /// <summary>
-        /// Do not send internal e-mail notifications
-        /// </summary>
         public bool IgnoreInternal { get; set; }
 
         internal NotificationPushRepository()
@@ -142,58 +139,57 @@ namespace Quantumart.QP8.BLL.Repository
                 if (Codes.Contains(NotificationCode.Delete))
                 {
                     notificationQueue = from notification in ServiceNotifications
-                                        join article in Articles on notification.ContentId equals article.ContentId
-                                        select new ExternalNotificationModel
-                                        {
-                                            EventName = NotificationCode.Delete,
-                                            ArticleId = article.Id,
-                                            ContentId = ContentId,
-                                            SiteId = SiteId,
-                                            Url = notification.ExternalUrl,
-                                            OldXml = GetXDocument(article).ToString(),
-                                            NewXml = null
-                                        };
-
+                        join article in Articles on notification.ContentId equals article.ContentId
+                        select new ExternalNotificationModel
+                        {
+                            EventName = NotificationCode.Delete,
+                            ArticleId = article.Id,
+                            ContentId = ContentId,
+                            SiteId = SiteId,
+                            Url = notification.ExternalUrl,
+                            OldXml = GetXDocument(article).ToString(),
+                            NewXml = null
+                        };
                 }
                 else if (Codes.Contains(NotificationCode.Create))
                 {
                     notificationQueue = from notification in ServiceNotifications
-                                        join article in GetArticles() on notification.ContentId equals article.ContentId
-                                        select new ExternalNotificationModel
-                                        {
-                                            EventName = NotificationCode.Create,
-                                            ArticleId = article.Id,
-                                            ContentId = ContentId,
-                                            SiteId = SiteId,
-                                            Url = notification.ExternalUrl,
-                                            OldXml = null,
-                                            NewXml = GetXDocument(article).ToString(),
-                                        };
+                        join article in GetArticles() on notification.ContentId equals article.ContentId
+                        select new ExternalNotificationModel
+                        {
+                            EventName = NotificationCode.Create,
+                            ArticleId = article.Id,
+                            ContentId = ContentId,
+                            SiteId = SiteId,
+                            Url = notification.ExternalUrl,
+                            OldXml = null,
+                            NewXml = GetXDocument(article).ToString()
+                        };
                 }
                 else
                 {
                     var oldArticles = Articles;
                     var newArticles = GetArticles();
                     notificationQueue = from notification in ServiceNotifications
-                                        from code in Codes
-                                        join oldArticle in oldArticles on notification.ContentId equals oldArticle.ContentId
-                                        join newArticle in newArticles on oldArticle.Id equals newArticle.Id
-                                        where
-                                            notification.ForModify && code == NotificationCode.Update ||
-                                            notification.ForFrontend && code == NotificationCode.Custom ||
-                                            notification.ForStatusChanged && code == NotificationCode.ChangeStatus ||
-                                            notification.ForStatusPartiallyChanged && code == NotificationCode.PartialChangeStatus ||
-                                            notification.ForDelayedPublication && code == NotificationCode.DelayedPublication
-                                        select new ExternalNotificationModel
-                                        {
-                                            EventName = code,
-                                            ArticleId = oldArticle.Id,
-                                            ContentId = ContentId,
-                                            SiteId = SiteId,
-                                            Url = notification.ExternalUrl,
-                                            OldXml = GetXDocument(oldArticle).ToString(),
-                                            NewXml = GetXDocument(newArticle).ToString()
-                                        };
+                        from code in Codes
+                        join oldArticle in oldArticles on notification.ContentId equals oldArticle.ContentId
+                        join newArticle in newArticles on oldArticle.Id equals newArticle.Id
+                        where
+                            notification.ForModify && code == NotificationCode.Update ||
+                            notification.ForFrontend && code == NotificationCode.Custom ||
+                            notification.ForStatusChanged && code == NotificationCode.ChangeStatus ||
+                            notification.ForStatusPartiallyChanged && code == NotificationCode.PartialChangeStatus ||
+                            notification.ForDelayedPublication && code == NotificationCode.DelayedPublication
+                        select new ExternalNotificationModel
+                        {
+                            EventName = code,
+                            ArticleId = oldArticle.Id,
+                            ContentId = ContentId,
+                            SiteId = SiteId,
+                            Url = notification.ExternalUrl,
+                            OldXml = GetXDocument(oldArticle).ToString(),
+                            NewXml = GetXDocument(newArticle).ToString()
+                        };
                 }
 
                 new ExternalInterfaceNotificationService().Insert(notificationQueue);
@@ -206,7 +202,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static void QueueAsync(Action action)
         {
-            ThreadPool.QueueUserWorkItem((o) => action());
+            ThreadPool.QueueUserWorkItem(o => action());
         }
 
         private static void Queue(Action action)
@@ -223,7 +219,6 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static void Notify(string connectionString, int id, string code, bool disableInternalNotifications)
         {
-            QPConfiguration.SetAppSettings(DBConnector.AppSettings);
             var cnn = new DBConnector(connectionString)
             {
                 CacheData = false,
@@ -233,6 +228,7 @@ namespace Quantumart.QP8.BLL.Repository
                 ThrowNotificationExceptions = false
             };
 
+            QPConfiguration.SetAppSettings(cnn.AppSettings);
             foreach (var simpleCode in code.Split(';'))
             {
                 cnn.SendNotification(id, simpleCode);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -348,7 +348,7 @@ namespace Quantumart.QP8.BLL
                 }
 
                 relationCounters[relationId] = currentCount;
-                var countSuffix = currentCount == 1 ? "" : "_" + currentCount;
+                var countSuffix = currentCount == 1 ? string.Empty : "_" + currentCount;
                 var result = "rel_field_" + relationId + countSuffix;
                 if (field.Relation.ExactType == FieldExactTypes.O2MRelation)
                 {
@@ -369,8 +369,7 @@ namespace Quantumart.QP8.BLL
                 if (pair.Field.ExactType == FieldExactTypes.Boolean)
                 {
                     value = string.IsNullOrEmpty(value) ? "0" : value;
-                    bool isBool;
-                    var boolValue = bool.TryParse(value, out isBool);
+                    var boolValue = bool.TryParse(value, out var isBool);
                     value = (isBool ? Converter.ToInt32(boolValue) : Converter.ToInt32(value)).ToString();
                 }
 
@@ -390,14 +389,13 @@ namespace Quantumart.QP8.BLL
 
         public void UpdateAggregatedCollection()
         {
-            var classifierValues = FieldValues
+            AggregatedArticles = FieldValues
                 .Where(v => v.Field.IsClassifier)
                 .Select(v => Converter.ToNullableInt32(v.Value))
                 .Where(v => v.HasValue)
-                .Select(v => v.Value);
-
-            IEnumerable<Article> newAggregatedArticlesCollection = classifierValues.Select(GetAggregatedArticleByClassifier).ToArray();
-            AggregatedArticles = newAggregatedArticlesCollection;
+                .Select(v => v.Value)
+                .Select(GetAggregatedArticleByClassifier)
+                .ToArray();
         }
 
         public Article GetAggregatedArticleByClassifier(int classifierValue)
@@ -683,9 +681,9 @@ namespace Quantumart.QP8.BLL
             {
                 try
                 {
-                    var valuesState = new Dictionary<string,string>(values);
+                    var valuesState = new Dictionary<string, string>(values);
 
-                    var obj = new ValidationParamObject()
+                    var obj = new ValidationParamObject
                     {
                         Model = values,
                         Validator = Content.XamlValidation,
@@ -695,7 +693,7 @@ namespace Quantumart.QP8.BLL
                         SiteId = Content.SiteId,
                         ContentId = ContentId
                     };
-                    
+
                     var vcontext = ValidationServices.ValidateModel(obj);
                     CheckChangesValues(valuesState, values);
 
@@ -720,7 +718,7 @@ namespace Quantumart.QP8.BLL
 
         public void CheckChangesValues(Dictionary<string, string> stateValues, Dictionary<string, string> values)
         {
-            if (!Enumerable.SequenceEqual(stateValues, values))
+            if (!stateValues.SequenceEqual(values))
             {
                 UpdateFieldValues(values);
             }
@@ -1229,8 +1227,7 @@ namespace Quantumart.QP8.BLL
                 var fieldValuesToTest = constraint.Filter(FieldValues);
                 if (fieldValuesToTest[0].Field.Id != exceptFieldId)
                 {
-                    string conflictingIds, constraintToDisplay;
-                    if (!ArticleRepository.ValidateUnique(fieldValuesToTest, out constraintToDisplay, out conflictingIds))
+                    if (!ArticleRepository.ValidateUnique(fieldValuesToTest, out var constraintToDisplay, out var conflictingIds))
                     {
                         if (!constraint.IsComplex)
                         {
@@ -1321,15 +1318,15 @@ namespace Quantumart.QP8.BLL
                         else if (mode == CopyFilesMode.ToVersionFolder)
                         {
                             // режем откуда, режем куда
-                            var source = Path.Combine(currentVersionPath, Path.GetFileName(item.Value) ?? "");
-                            var destination = Path.Combine(versionPath, Path.GetFileName(item.Value) ?? "");
+                            var source = Path.Combine(currentVersionPath, Path.GetFileName(item.Value) ?? string.Empty);
+                            var destination = Path.Combine(versionPath, Path.GetFileName(item.Value) ?? string.Empty);
                             CopyFile(source, destination);
                         }
                         else if (mode == CopyFilesMode.FromVersionFolder)
                         {
                             // режем откуда, режем куда
-                            var source = Path.Combine(versionPath, Path.GetFileName(item.Value) ?? "");
-                            var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value) ?? "");
+                            var source = Path.Combine(versionPath, Path.GetFileName(item.Value) ?? string.Empty);
+                            var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value) ?? string.Empty);
                             CopyFile(source, destination);
 
                             // режем откуда, не режем куда

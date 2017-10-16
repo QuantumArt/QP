@@ -25,7 +25,7 @@ namespace QP8.Integration.Tests
 
         public static int PublishedId { get; private set; }
 
-        public static DBConnector Cnn { get; private set; }
+        public static DBConnector DbConnector { get; private set; }
 
         public static int ContentId { get; private set; }
 
@@ -50,7 +50,7 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
+            DbConnector = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test M2M";
             Clear();
 
@@ -61,17 +61,17 @@ namespace QP8.Integration.Tests
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
             service.Process(Global.GetXml(@"xmls\m2m.xml"));
 
-            ContentId = Global.GetContentId(Cnn, ContentName);
-            EfLinksExists = Global.EfLinksExists(Cnn, ContentId);
-            TitleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
-            MainCategoryName = Cnn.FieldName(Global.SiteId, ContentName, "MainCategory");
-            NumberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
-            CategoryName = Cnn.FieldName(Global.SiteId, ContentName, "Categories");
-            DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
-            BaseArticlesIds = Global.GetIds(Cnn, ContentId);
-            CategoryIds = Global.GetIds(Cnn, DictionaryContentId);
-            NoneId = Cnn.GetStatusTypeId(Global.SiteId, "None");
-            PublishedId = Cnn.GetStatusTypeId(Global.SiteId, "Published");
+            ContentId = Global.GetContentId(DbConnector, ContentName);
+            EfLinksExists = Global.EfLinksExists(DbConnector, ContentId);
+            TitleName = DbConnector.FieldName(Global.SiteId, ContentName, "Title");
+            MainCategoryName = DbConnector.FieldName(Global.SiteId, ContentName, "MainCategory");
+            NumberName = DbConnector.FieldName(Global.SiteId, ContentName, "Number");
+            CategoryName = DbConnector.FieldName(Global.SiteId, ContentName, "Categories");
+            DictionaryContentId = Global.GetContentId(DbConnector, "Test Category");
+            BaseArticlesIds = Global.GetIds(DbConnector, ContentId);
+            CategoryIds = Global.GetIds(DbConnector, DictionaryContentId);
+            NoneId = DbConnector.GetStatusTypeId(Global.SiteId, "None");
+            PublishedId = DbConnector.GetStatusTypeId(Global.SiteId, "Published");
         }
 
         [Test]
@@ -93,11 +93,11 @@ namespace QP8.Integration.Tests
 
             values.Add(article2);
             var ints = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
-            var cntAsyncBefore = Global.CountLinks(Cnn, ints, true);
-            var cntBefore = Global.CountLinks(Cnn, ints);
-            var titlesBefore = Global.GetTitles(Cnn, ContentId, ints);
-            var cntArticlesAsyncBefore = Global.CountArticles(Cnn, ContentId, ints, true);
-            var cntArticlesBefore = Global.CountArticles(Cnn, ContentId, ints);
+            var cntAsyncBefore = Global.CountLinks(DbConnector, ints, true);
+            var cntBefore = Global.CountLinks(DbConnector, ints);
+            var titlesBefore = Global.GetTitles(DbConnector, ContentId, ints);
+            var cntArticlesAsyncBefore = Global.CountArticles(DbConnector, ContentId, ints, true);
+            var cntArticlesBefore = Global.CountArticles(DbConnector, ContentId, ints);
 
             Assert.That(cntAsyncBefore, Is.EqualTo(0));
             Assert.That(cntBefore, Is.Not.EqualTo(0));
@@ -106,18 +106,18 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var cntEfAsyncBefore = Global.CountEfLinks(Cnn, ints, ContentId, true);
-                var cntEfBefore = Global.CountEfLinks(Cnn, ints, ContentId);
+                var cntEfAsyncBefore = Global.CountEfLinks(DbConnector, ints, ContentId, true);
+                var cntEfBefore = Global.CountEfLinks(DbConnector, ints, ContentId);
                 Assert.That(cntEfAsyncBefore, Is.EqualTo(cntAsyncBefore));
                 Assert.That(cntEfBefore, Is.EqualTo(cntBefore));
             }
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
-            var cntAsyncAfterSplit = Global.CountLinks(Cnn, ints, true);
-            var cntAfterSplit = Global.CountLinks(Cnn, ints);
-            var asyncTitlesAfterSplit = Global.GetTitles(Cnn, ContentId, ints, true);
-            var cntArticlesAsyncAfterSplit = Global.CountArticles(Cnn, ContentId, ints, true);
-            var cntArticlesAfterSplit = Global.CountArticles(Cnn, ContentId, ints);
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1));
+            var cntAsyncAfterSplit = Global.CountLinks(DbConnector, ints, true);
+            var cntAfterSplit = Global.CountLinks(DbConnector, ints);
+            var asyncTitlesAfterSplit = Global.GetTitles(DbConnector, ContentId, ints, true);
+            var cntArticlesAsyncAfterSplit = Global.CountArticles(DbConnector, ContentId, ints, true);
+            var cntArticlesAfterSplit = Global.CountArticles(DbConnector, ContentId, ints);
 
             Assert.That(cntAsyncAfterSplit, Is.Not.EqualTo(0));
             Assert.That(cntAfterSplit, Is.EqualTo(cntAsyncAfterSplit));
@@ -126,8 +126,8 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var cntEfAsyncAfterSplit = Global.CountEfLinks(Cnn, ints, ContentId, true);
-                var cntEfAfterSplit = Global.CountEfLinks(Cnn, ints, ContentId);
+                var cntEfAsyncAfterSplit = Global.CountEfLinks(DbConnector, ints, ContentId, true);
+                var cntEfAfterSplit = Global.CountEfLinks(DbConnector, ints, ContentId);
                 Assert.That(cntEfAsyncAfterSplit, Is.EqualTo(cntAsyncAfterSplit));
                 Assert.That(cntEfAfterSplit, Is.EqualTo(cntAfterSplit));
             }
@@ -146,13 +146,13 @@ namespace QP8.Integration.Tests
             };
             values2.Add(article4);
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values2, 1));
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values2, 1));
 
-            var cntAsyncAfterMerge = Global.CountLinks(Cnn, ints, true);
-            var cntAfterMerge = Global.CountLinks(Cnn, ints);
-            var titlesAfterMerge = Global.GetTitles(Cnn, ContentId, ints);
-            var cntArticlesAsyncAfterMerge = Global.CountArticles(Cnn, ContentId, ints, true);
-            var cntArticlesAfterMerge = Global.CountArticles(Cnn, ContentId, ints);
+            var cntAsyncAfterMerge = Global.CountLinks(DbConnector, ints, true);
+            var cntAfterMerge = Global.CountLinks(DbConnector, ints);
+            var titlesAfterMerge = Global.GetTitles(DbConnector, ContentId, ints);
+            var cntArticlesAsyncAfterMerge = Global.CountArticles(DbConnector, ContentId, ints, true);
+            var cntArticlesAfterMerge = Global.CountArticles(DbConnector, ContentId, ints);
 
             Assert.That(cntAsyncAfterMerge, Is.EqualTo(0));
             Assert.That(cntAfterMerge, Is.Not.EqualTo(0));
@@ -166,8 +166,8 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var cntEfAsyncAfterMerge = Global.CountEfLinks(Cnn, ints, ContentId, true);
-                var cntEfAfterMerge = Global.CountEfLinks(Cnn, ints, ContentId);
+                var cntEfAsyncAfterMerge = Global.CountEfLinks(DbConnector, ints, ContentId, true);
+                var cntEfAfterMerge = Global.CountEfLinks(DbConnector, ints, ContentId);
                 Assert.That(cntEfAsyncAfterMerge, Is.EqualTo(cntAsyncAfterMerge));
                 Assert.That(cntEfAfterMerge, Is.EqualTo(cntAfterMerge));
             }
@@ -197,18 +197,18 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Create");
             var ids1 = new[] { int.Parse(article1[FieldName.ContentItemId]) };
             var ids2 = new[] { int.Parse(article2[FieldName.ContentItemId]) };
-            var intsSaved1 = Global.GetLinks(Cnn, ids1);
-            var intsSaved2 = Global.GetLinks(Cnn, ids2);
+            var intsSaved1 = Global.GetLinks(DbConnector, ids1);
+            var intsSaved2 = Global.GetLinks(DbConnector, ids2);
 
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
             if (EfLinksExists)
             {
-                var intsEfSaved1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEfSaved2 = Global.GetEfLinks(Cnn, ids2, ContentId);
+                var intsEfSaved1 = Global.GetEfLinks(DbConnector, ids1, ContentId);
+                var intsEfSaved2 = Global.GetEfLinks(DbConnector, ids2, ContentId);
                 Assert.That(intsEfSaved1, Is.EquivalentTo(intsSaved1));
                 Assert.That(intsEfSaved2, Is.EquivalentTo(intsSaved2));
             }
@@ -223,12 +223,12 @@ namespace QP8.Integration.Tests
             article1[FieldName.StatusTypeId] = NoneId.ToString();
             article2[FieldName.StatusTypeId] = NoneId.ToString();
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change and split");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Change and split");
 
-            var intsUpdated1 = Global.GetLinks(Cnn, ids1);
-            var intsUpdated2 = Global.GetLinks(Cnn, ids2);
-            var intsUpdatedAsync1 = Global.GetLinks(Cnn, ids1, true);
-            var intsUpdatedAsync2 = Global.GetLinks(Cnn, ids2, true);
+            var intsUpdated1 = Global.GetLinks(DbConnector, ids1);
+            var intsUpdated2 = Global.GetLinks(DbConnector, ids2);
+            var intsUpdatedAsync1 = Global.GetLinks(DbConnector, ids1, true);
+            var intsUpdatedAsync2 = Global.GetLinks(DbConnector, ids2, true);
 
             Assert.That(ints1, Is.EqualTo(intsUpdated1), "First article M2M (main) remains the same");
             Assert.That(ints2, Is.EqualTo(intsUpdated2), "Second article M2M (main) remains the same");
@@ -237,10 +237,10 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var intsEfUpdated1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEfUpdated2 = Global.GetEfLinks(Cnn, ids2, ContentId);
-                var intsEfUpdatedAsync1 = Global.GetEfLinks(Cnn, ids1, ContentId, true);
-                var intsEfUpdatedAsync2 = Global.GetEfLinks(Cnn, ids2, ContentId, true);
+                var intsEfUpdated1 = Global.GetEfLinks(DbConnector, ids1, ContentId);
+                var intsEfUpdated2 = Global.GetEfLinks(DbConnector, ids2, ContentId);
+                var intsEfUpdatedAsync1 = Global.GetEfLinks(DbConnector, ids1, ContentId, true);
+                var intsEfUpdatedAsync2 = Global.GetEfLinks(DbConnector, ids2, ContentId, true);
                 Assert.That(intsEfUpdated1, Is.EquivalentTo(intsUpdated1));
                 Assert.That(intsEfUpdated2, Is.EquivalentTo(intsUpdated2));
                 Assert.That(intsEfUpdatedAsync1, Is.EquivalentTo(intsUpdatedAsync1));
@@ -262,13 +262,13 @@ namespace QP8.Integration.Tests
             };
 
             values2.Add(article4);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values2, 1), "Merge");
-            var intsMerged1 = Global.GetLinks(Cnn, ids1);
-            var intsMerged2 = Global.GetLinks(Cnn, ids2);
-            var intsMergedAsync1 = Global.GetLinks(Cnn, ids1, true);
-            var intsMergedAsync2 = Global.GetLinks(Cnn, ids2, true);
-            var mergedTitles = Global.GetTitles(Cnn, ContentId, ids1.Union(ids2).ToArray());
-            var mergedTitlesAsync = Global.GetTitles(Cnn, ContentId, ids1.Union(ids2).ToArray(), true);
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values2, 1), "Merge");
+            var intsMerged1 = Global.GetLinks(DbConnector, ids1);
+            var intsMerged2 = Global.GetLinks(DbConnector, ids2);
+            var intsMergedAsync1 = Global.GetLinks(DbConnector, ids1, true);
+            var intsMergedAsync2 = Global.GetLinks(DbConnector, ids2, true);
+            var mergedTitles = Global.GetTitles(DbConnector, ContentId, ids1.Union(ids2).ToArray());
+            var mergedTitlesAsync = Global.GetTitles(DbConnector, ContentId, ids1.Union(ids2).ToArray(), true);
 
             Assert.That(titles, Is.EqualTo(mergedTitles), "Updated articles (main) after merge");
             Assert.That(mergedTitlesAsync, Is.Empty, "Empty articles (async) after merge");
@@ -279,10 +279,10 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var intsEfMerged1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEfMerged2 = Global.GetEfLinks(Cnn, ids2, ContentId);
-                var intsEfMergedAsync1 = Global.GetEfLinks(Cnn, ids1, ContentId, true);
-                var intsEfMergedAsync2 = Global.GetEfLinks(Cnn, ids2, ContentId, true);
+                var intsEfMerged1 = Global.GetEfLinks(DbConnector, ids1, ContentId);
+                var intsEfMerged2 = Global.GetEfLinks(DbConnector, ids2, ContentId);
+                var intsEfMergedAsync1 = Global.GetEfLinks(DbConnector, ids1, ContentId, true);
+                var intsEfMergedAsync2 = Global.GetEfLinks(DbConnector, ids2, ContentId, true);
                 Assert.That(intsEfMerged1, Is.EquivalentTo(intsMerged1));
                 Assert.That(intsEfMerged2, Is.EquivalentTo(intsMerged2));
                 Assert.That(intsEfMergedAsync1, Is.EquivalentTo(intsMergedAsync1));
@@ -301,22 +301,18 @@ namespace QP8.Integration.Tests
                 [TitleName] = titles1[0],
                 [CategoryName] = string.Join(",", ints1),
                 [MainCategoryName] = CategoryIds[0]
-
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Create");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Create");
 
             var ids1 = new[] { id };
-            var intsSaved1 = Global.GetLinks(Cnn, ids1);
+            var intsSaved1 = Global.GetLinks(DbConnector, ids1);
             Assert.That(ints1, Is.EqualTo(intsSaved1), "article M2M saved");
 
             if (EfLinksExists)
             {
-                var intsEfSaved1 = Global.GetEfLinks(Cnn, ids1, ContentId);
+                var intsEfSaved1 = Global.GetEfLinks(DbConnector, ids1, ContentId);
                 Assert.That(ints1, Is.EqualTo(intsEfSaved1), "article EF M2M saved");
             }
 
@@ -325,15 +321,12 @@ namespace QP8.Integration.Tests
             article1[CategoryName] = string.Join(",", intsNew1);
             article1[TitleName] = titles2[0];
 
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "None", ref article1, id);
-            }, "Change and split");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "None", ref article1, id); }, "Change and split");
 
-            var intsUpdated1 = Global.GetLinks(Cnn, ids1);
-            var intsUpdatedAsync1 = Global.GetLinks(Cnn, ids1, true);
-            var updatedTitlesAsync = Global.GetTitles(Cnn, ContentId, ids1, true);
-            var updatedTitles = Global.GetTitles(Cnn, ContentId, ids1);
+            var intsUpdated1 = Global.GetLinks(DbConnector, ids1);
+            var intsUpdatedAsync1 = Global.GetLinks(DbConnector, ids1, true);
+            var updatedTitlesAsync = Global.GetTitles(DbConnector, ContentId, ids1, true);
+            var updatedTitles = Global.GetTitles(DbConnector, ContentId, ids1);
 
             Assert.That(titles1, Is.EqualTo(updatedTitles), "Article (main) remains the same");
             Assert.That(titles2, Is.EqualTo(updatedTitlesAsync), "Article (async) saved");
@@ -342,21 +335,18 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var intsEfUpdated1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEfUpdatedAsync1 = Global.GetEfLinks(Cnn, ids1, ContentId, true);
+                var intsEfUpdated1 = Global.GetEfLinks(DbConnector, ids1, ContentId);
+                var intsEfUpdatedAsync1 = Global.GetEfLinks(DbConnector, ids1, ContentId, true);
                 Assert.That(ints1, Is.EqualTo(intsEfUpdated1), "Article EF M2M (main) remains the same");
                 Assert.That(intsNew1, Is.EqualTo(intsEfUpdatedAsync1), "Article EF M2M (async) saved");
             }
 
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
-            }, "Merge with values");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id); }, "Merge with values");
 
-            var intsMerged1 = Global.GetLinks(Cnn, ids1);
-            var intsMergedAsync1 = Global.GetLinks(Cnn, ids1, true);
-            var mergedTitles = Global.GetTitles(Cnn, ContentId, ids1);
-            var mergedTitlesAsync = Global.GetTitles(Cnn, ContentId, ids1, true);
+            var intsMerged1 = Global.GetLinks(DbConnector, ids1);
+            var intsMergedAsync1 = Global.GetLinks(DbConnector, ids1, true);
+            var mergedTitles = Global.GetTitles(DbConnector, ContentId, ids1);
+            var mergedTitlesAsync = Global.GetTitles(DbConnector, ContentId, ids1, true);
 
             Assert.That(titles2, Is.EqualTo(mergedTitles), "Updated article (main) after merge");
             Assert.That(mergedTitlesAsync, Is.Empty, "Empty article (async) after merge");
@@ -365,8 +355,8 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var intsEfMerged1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEfMergedAsync1 = Global.GetEfLinks(Cnn, ids1, ContentId, true);
+                var intsEfMerged1 = Global.GetEfLinks(DbConnector, ids1, ContentId);
+                var intsEfMergedAsync1 = Global.GetEfLinks(DbConnector, ids1, ContentId, true);
                 Assert.That(intsEfMerged1, Is.EqualTo(intsUpdatedAsync1), "Article EF M2M (main) merged");
                 Assert.That(intsEfMergedAsync1, Is.Empty, "Article EF M2M (async) cleared");
             }
@@ -396,21 +386,21 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Create");
 
             var ids1 = new[] { int.Parse(article1[FieldName.ContentItemId]) };
             var ids2 = new[] { int.Parse(article2[FieldName.ContentItemId]) };
             var ids = ids1.Union(ids2).ToArray();
-            var intsSaved1 = Global.GetLinks(Cnn, ids1);
-            var intsSaved2 = Global.GetLinks(Cnn, ids2);
+            var intsSaved1 = Global.GetLinks(DbConnector, ids1);
+            var intsSaved2 = Global.GetLinks(DbConnector, ids2);
 
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
 
             if (EfLinksExists)
             {
-                var intsEfSaved1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEfSaved2 = Global.GetEfLinks(Cnn, ids2, ContentId);
+                var intsEfSaved1 = Global.GetEfLinks(DbConnector, ids1, ContentId);
+                var intsEfSaved2 = Global.GetEfLinks(DbConnector, ids2, ContentId);
                 Assert.That(ints1, Is.EqualTo(intsEfSaved1), "First article EF M2M saved");
                 Assert.That(ints2, Is.EqualTo(intsEfSaved2), "Second article EF M2M saved");
             }
@@ -423,32 +413,32 @@ namespace QP8.Integration.Tests
             article1["Title"] = titles[0];
             article2["Title"] = titles[1];
 
-            var cntData = Global.CountData(Cnn, ids);
-            var cntLinks = Global.CountLinks(Cnn, ids);
+            var cntData = Global.CountData(DbConnector, ids);
+            var cntLinks = Global.CountLinks(DbConnector, ids);
 
             if (EfLinksExists)
             {
-                var cntEfLinks = Global.CountEfLinks(Cnn, ids, ContentId);
+                var cntEfLinks = Global.CountEfLinks(DbConnector, ids, ContentId);
                 Assert.That(cntEfLinks, Is.EqualTo(cntLinks), "EF links");
             }
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change");
-            var intsUpdated1 = Global.GetLinks(Cnn, ids1);
-            var intsUpdated2 = Global.GetLinks(Cnn, ids2);
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Change");
+            var intsUpdated1 = Global.GetLinks(DbConnector, ids1);
+            var intsUpdated2 = Global.GetLinks(DbConnector, ids2);
 
             Assert.That(intsNew1, Is.EqualTo(intsUpdated1), "First article M2M updated");
             Assert.That(intsNew2, Is.EqualTo(intsUpdated2), "Second article M2M updated");
             if (EfLinksExists)
             {
-                var intsEfUpdated1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEfUpdated2 = Global.GetEfLinks(Cnn, ids2, ContentId);
+                var intsEfUpdated1 = Global.GetEfLinks(DbConnector, ids1, ContentId);
+                var intsEfUpdated2 = Global.GetEfLinks(DbConnector, ids2, ContentId);
                 Assert.That(intsNew1, Is.EqualTo(intsEfUpdated1), "First article EF M2M updated");
                 Assert.That(intsNew2, Is.EqualTo(intsEfUpdated2), "Second article EF M2M updated");
             }
 
-            var versions = Global.GetMaxVersions(Cnn, ids);
-            var cntVersionData = Global.CountVersionData(Cnn, versions);
-            var cntVersionLinks = Global.CountVersionLinks(Cnn, versions);
+            var versions = Global.GetMaxVersions(DbConnector, ids);
+            var cntVersionData = Global.CountVersionData(DbConnector, versions);
+            var cntVersionLinks = Global.CountVersionLinks(DbConnector, versions);
 
             Assert.That(versions.Length, Is.EqualTo(2), "Versions created");
             Assert.That(cntData, Is.EqualTo(cntVersionData), "Data moved to versions");
@@ -467,18 +457,15 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Create");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Create");
 
             var ids = new[] { id };
-            var intsSaved1 = Global.GetLinks(Cnn, ids);
+            var intsSaved1 = Global.GetLinks(DbConnector, ids);
             Assert.That(id, Is.Not.EqualTo(0), "Saved");
             Assert.That(ints1, Is.EqualTo(intsSaved1), "Article M2M saved");
             if (EfLinksExists)
             {
-                var intsEfSaved1 = Global.GetEfLinks(Cnn, ids, ContentId);
+                var intsEfSaved1 = Global.GetEfLinks(DbConnector, ids, ContentId);
                 Assert.That(ints1, Is.EqualTo(intsEfSaved1), "Article EF M2M saved");
             }
 
@@ -487,31 +474,28 @@ namespace QP8.Integration.Tests
             article1[CategoryName] = string.Join(",", intsNew1);
             article1[TitleName] = title1;
 
-            var cntData = Global.CountData(Cnn, ids);
-            var cntLinks = Global.CountLinks(Cnn, ids);
+            var cntData = Global.CountData(DbConnector, ids);
+            var cntLinks = Global.CountLinks(DbConnector, ids);
 
             if (EfLinksExists)
             {
-                var cntEfLinks = Global.CountEfLinks(Cnn, ids, ContentId);
+                var cntEfLinks = Global.CountEfLinks(DbConnector, ids, ContentId);
                 Assert.That(cntEfLinks, Is.EqualTo(cntLinks), "EF links");
             }
 
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
-            }, "Update");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id); }, "Update");
 
-            var intsUpdated1 = Global.GetLinks(Cnn, ids);
+            var intsUpdated1 = Global.GetLinks(DbConnector, ids);
             Assert.That(intsNew1, Is.EqualTo(intsUpdated1), "Article M2M updated");
             if (EfLinksExists)
             {
-                var intsEfUpdated1 = Global.GetEfLinks(Cnn, ids, ContentId);
+                var intsEfUpdated1 = Global.GetEfLinks(DbConnector, ids, ContentId);
                 Assert.That(intsNew1, Is.EqualTo(intsEfUpdated1), "Article EF M2M updated");
             }
 
-            var versions = Global.GetMaxVersions(Cnn, ids);
-            var cntVersionData = Global.CountVersionData(Cnn, versions);
-            var cntVersionLinks = Global.CountVersionLinks(Cnn, versions);
+            var versions = Global.GetMaxVersions(DbConnector, ids);
+            var cntVersionData = Global.CountVersionData(DbConnector, versions);
+            var cntVersionLinks = Global.CountVersionLinks(DbConnector, versions);
 
             Assert.That(versions.Length, Is.EqualTo(1), "Versions created");
             Assert.That(cntData, Is.EqualTo(cntVersionData), "Data moved to versions");
@@ -522,8 +506,8 @@ namespace QP8.Integration.Tests
         public void MassUpdate_UpdateOK_ForAsymmetricData()
         {
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
-            var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
-            var numbersBefore = Global.GetNumbers(Cnn, ContentId, ids);
+            var descriptionsBefore = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids);
+            var numbersBefore = Global.GetNumbers(DbConnector, ContentId, ids);
             var values = new List<Dictionary<string, string>>();
 
             const string title1 = "newtestxx";
@@ -534,7 +518,6 @@ namespace QP8.Integration.Tests
                 [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["Title"] = title1,
                 ["Number"] = num.ToString()
-
             };
 
             values.Add(article1);
@@ -545,11 +528,11 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
 
-            var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
-            var titlesAfter = Global.GetTitles(Cnn, ContentId, ids);
-            var numbersAfter = Global.GetNumbers(Cnn, ContentId, ids);
+            var descriptionsAfter = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids);
+            var titlesAfter = Global.GetTitles(DbConnector, ContentId, ids);
+            var numbersAfter = Global.GetNumbers(DbConnector, ContentId, ids);
 
             Assert.That(numbersAfter[1], Is.EqualTo(numbersBefore[1]), "Number 2 remains the same");
             Assert.That(numbersAfter[0], Is.EqualTo(num), "Number 1 is changed");
@@ -569,7 +552,6 @@ namespace QP8.Integration.Tests
                 ["Title"] = "testa",
                 ["Number"] = "20",
                 ["Description"] = "abc"
-
             };
 
             values.Add(article1);
@@ -579,15 +561,14 @@ namespace QP8.Integration.Tests
                 ["Title"] = "testb",
                 ["Number"] = "30",
                 ["Description"] = "def"
-
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values), "Create");
+            Assert.DoesNotThrow(() => DbConnector.ImportToContent(ContentId, values), "Create");
 
             var ids = new[] { int.Parse(article1[FieldName.ContentItemId]), int.Parse(article2[FieldName.ContentItemId]) };
-            var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
-            var numbersBefore = Global.GetNumbers(Cnn, ContentId, ids);
+            var descriptionsBefore = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids);
+            var numbersBefore = Global.GetNumbers(DbConnector, ContentId, ids);
 
             var values2 = new List<Dictionary<string, string>>();
             const string title1 = "newtestab";
@@ -608,11 +589,11 @@ namespace QP8.Integration.Tests
             };
 
             values2.Add(article4);
-            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2), "Update");
+            Assert.DoesNotThrow(() => DbConnector.ImportToContent(ContentId, values2), "Update");
 
-            var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
-            var titlesAfter = Global.GetTitles(Cnn, ContentId, ids);
-            var numbersAfter = Global.GetNumbers(Cnn, ContentId, ids);
+            var descriptionsAfter = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids);
+            var titlesAfter = Global.GetTitles(DbConnector, ContentId, ids);
+            var numbersAfter = Global.GetNumbers(DbConnector, ContentId, ids);
 
             Assert.That(numbersAfter[1], Is.EqualTo(numbersBefore[1]), "Number 2 remains the same");
             Assert.That(numbersAfter[0], Is.EqualTo(num), "Number 1 is changed");
@@ -621,7 +602,6 @@ namespace QP8.Integration.Tests
             Assert.That(descriptionsAfter[1], Is.EqualTo(descriptionsBefore[1]), "Description 2 remains the same");
             Assert.That(descriptionsAfter[0], Is.EqualTo(descriptionsBefore[0]), "Description 1 remains the same");
         }
-
 
         [Test]
         public void ImportToContent_UpdateOK_ForAsymmetricDataWithOverrideMissedFields()
@@ -645,7 +625,7 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values), "Create");
+            Assert.DoesNotThrow(() => DbConnector.ImportToContent(ContentId, values), "Create");
 
             var ids = new[] { int.Parse(article1[FieldName.ContentItemId]), int.Parse(article2[FieldName.ContentItemId]) };
             var values2 = new List<Dictionary<string, string>>();
@@ -657,7 +637,6 @@ namespace QP8.Integration.Tests
                 [FieldName.ContentItemId] = article1[FieldName.ContentItemId],
                 ["Title"] = title1,
                 ["Number"] = num.ToString()
-
             };
 
             values2.Add(article3);
@@ -668,11 +647,11 @@ namespace QP8.Integration.Tests
             };
 
             values2.Add(article4);
-            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2, 1, null, true), "Update");
+            Assert.DoesNotThrow(() => DbConnector.ImportToContent(ContentId, values2, 1, null, true), "Update");
 
-            var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
-            var titlesAfter = Global.GetTitles(Cnn, ContentId, ids);
-            var numbersAfter = Global.GetNumbers(Cnn, ContentId, ids);
+            var descriptionsAfter = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids);
+            var titlesAfter = Global.GetTitles(DbConnector, ContentId, ids);
+            var numbersAfter = Global.GetNumbers(DbConnector, ContentId, ids);
 
             Assert.That(numbersAfter[1], Is.EqualTo(0), "Number 2 is cleared");
             Assert.That(numbersAfter[0], Is.EqualTo(num), "Number 1 is changed");
@@ -704,15 +683,15 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values), "Create");
+            Assert.DoesNotThrow(() => DbConnector.ImportToContent(ContentId, values), "Create");
 
             var ids = new[] { int.Parse(article1[FieldName.ContentItemId]), int.Parse(article2[FieldName.ContentItemId]) };
-            var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
+            var descriptionsBefore = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids);
 
             var values2 = new List<Dictionary<string, string>>();
+            const int num = 40;
             const string title1 = "newtestab";
             const string title2 = "newtestabc";
-            const int num = 40;
             var article3 = new Dictionary<string, string>
             {
                 [FieldName.ContentItemId] = article1[FieldName.ContentItemId],
@@ -728,14 +707,14 @@ namespace QP8.Integration.Tests
             };
 
             values2.Add(article4);
-            var titleId = Cnn.FieldID(Global.SiteId, Cnn.GetContentName(ContentId), "Title");
-            var numberId = Cnn.FieldID(Global.SiteId, Cnn.GetContentName(ContentId), "Number");
+            var titleId = DbConnector.FieldID(Global.SiteId, DbConnector.GetContentName(ContentId), "Title");
+            var numberId = DbConnector.FieldID(Global.SiteId, DbConnector.GetContentName(ContentId), "Number");
             var attrIds = new[] { titleId, numberId };
 
-            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2, 1, attrIds, true), "Update");
-            var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
-            var titlesAfter = Global.GetTitles(Cnn, ContentId, ids);
-            var numbersAfter = Global.GetNumbers(Cnn, ContentId, ids);
+            Assert.DoesNotThrow(() => DbConnector.ImportToContent(ContentId, values2, 1, attrIds, true), "Update");
+            var descriptionsAfter = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids);
+            var titlesAfter = Global.GetTitles(DbConnector, ContentId, ids);
+            var numbersAfter = Global.GetNumbers(DbConnector, ContentId, ids);
 
             Assert.That(numbersAfter[1], Is.EqualTo(0), "Number 2 is cleared");
             Assert.That(numbersAfter[0], Is.EqualTo(num), "Number 1 is changed");
@@ -749,7 +728,7 @@ namespace QP8.Integration.Tests
         public void MassUpdate_ReturnModified_ForInsertingAndUpdatingData()
         {
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
-            var modifiedBefore = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", ids);
+            var modifiedBefore = Global.GetFieldValues<DateTime>(DbConnector, ContentId, "Modified", ids);
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
@@ -769,11 +748,11 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article3);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update and Insert");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update and Insert");
             var afterIds = values.Select(n => n[FieldName.ContentItemId]).Select(int.Parse).ToArray();
             var newId = afterIds.Except(ids).Single();
 
-            var modifiedAfter = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", afterIds);
+            var modifiedAfter = Global.GetFieldValues<DateTime>(DbConnector, ContentId, "Modified", afterIds);
             var everyOneHasModified = values.All(n => n.ContainsKey(FieldName.Modified));
             var createdItemId = int.Parse(values.Single(n => n.ContainsKey(FieldName.Created))[FieldName.ContentItemId]);
 
@@ -795,21 +774,14 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Add article");
 
             var ids = new[] { id };
             var modified = DateTime.MinValue;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, true, false, true, ref modified);
-            }, "Update article");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, true, false, true, ref modified); }, "Update article");
 
-            var modifiedAfter = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", ids)[0];
+            var modifiedAfter = Global.GetFieldValues<DateTime>(DbConnector, ContentId, "Modified", ids)[0];
             Assert.That(modified, Is.EqualTo(modifiedAfter), "Modified changed");
-
         }
 
         [Test]
@@ -828,7 +800,7 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions { ReturnModified = false }), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1, new MassUpdateOptions { ReturnModified = false }), "Update");
 
             var noOneHasModified = values.All(n => !n.ContainsKey(FieldName.Modified));
             Assert.That(noOneHasModified, Is.EqualTo(true), "All articles has Modified");
@@ -846,7 +818,7 @@ namespace QP8.Integration.Tests
 
             values.Add(article1);
             Assert.That(
-                () => Cnn.MassUpdate(ContentId, values, 1),
+                () => DbConnector.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("type is incorrect"),
                 "Validate numeric data"
             );
@@ -861,12 +833,10 @@ namespace QP8.Integration.Tests
                 [MainCategoryName] = CategoryIds[0]
             };
 
-            Assert.That(() =>
-            {
-                Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
-            },
-            Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("type is incorrect"),
-            "Validate numeric data");
+            Assert.That(
+                () => { DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]); },
+                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("type is incorrect"),
+                "Validate numeric data");
         }
 
         [Test]
@@ -881,7 +851,7 @@ namespace QP8.Integration.Tests
 
             values.Add(article1);
             Assert.That(
-                () => Cnn.MassUpdate(ContentId, values, 1),
+                () => DbConnector.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("input mask"),
                 "Validate input mask"
             );
@@ -896,12 +866,11 @@ namespace QP8.Integration.Tests
                 [MainCategoryName] = CategoryIds[0]
             };
 
-            Assert.That(() =>
-            {
-                Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
-            },
-            Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("input mask"),
-            "Validate input mask");
+            Assert.That(
+                () => { DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]); },
+                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("input mask"),
+                "Validate input mask"
+            );
         }
 
         [Test]
@@ -915,22 +884,22 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article1);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Add article");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Add article");
 
             var id = int.Parse(values[0][FieldName.ContentItemId]);
             var ids = new[] { id };
             Assert.That(id, Is.Not.EqualTo(0), "Return id");
 
-            var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
-            var num = (int)Global.GetNumbers(Cnn, ContentId, ids)[0];
-            var cnt = Global.CountLinks(Cnn, ids);
+            var desc = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids)[0];
+            var num = (int)Global.GetNumbers(DbConnector, ContentId, ids)[0];
+            var cnt = Global.CountLinks(DbConnector, ids);
             Assert.That(num, Is.Not.EqualTo(0), "Default number");
             Assert.That(desc, Is.Not.Null.Or.Empty, "Default description");
             Assert.That(cnt, Is.EqualTo(2), "Default M2M");
 
             if (EfLinksExists)
             {
-                var cntEf = Global.CountEfLinks(Cnn, ids, ContentId);
+                var cntEf = Global.CountEfLinks(DbConnector, ids, ContentId);
                 Assert.That(cntEf, Is.EqualTo(2), "Default EF M2M");
             }
         }
@@ -942,15 +911,15 @@ namespace QP8.Integration.Tests
             var article1 = new Dictionary<string, string>
             {
                 [FieldName.ContentItemId] = "0",
-                ["Description"] = $@"<a href=""{ Cnn.GetImagesUploadUrl(Global.SiteId) }"">test</a>"
+                ["Description"] = $@"<a href=""{DbConnector.GetImagesUploadUrl(Global.SiteId)}"">test</a>"
             };
 
             values.Add(article1);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Add article");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Add article");
 
             var id = int.Parse(values[0][FieldName.ContentItemId]);
             var ids = new[] { id };
-            var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
+            var desc = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids)[0];
             Assert.That(desc, Does.Contain(@"<%=upload_url%>"));
         }
 
@@ -961,15 +930,15 @@ namespace QP8.Integration.Tests
             var article1 = new Dictionary<string, string>
             {
                 [FieldName.ContentItemId] = "0",
-                ["Description"] = $@"<a href=""{ Cnn.GetImagesUploadUrl(Global.SiteId) }"">test</a>"
+                ["Description"] = $@"<a href=""{DbConnector.GetImagesUploadUrl(Global.SiteId)}"">test</a>"
             };
 
             values.Add(article1);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions { ReplaceUrls = false }), "Add article");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1, new MassUpdateOptions { ReplaceUrls = false }), "Add article");
 
             var id = int.Parse(values[0][FieldName.ContentItemId]);
             var ids = new[] { id };
-            var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
+            var desc = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids)[0];
             Assert.That(desc, Does.Not.Contain(@"<%=upload_url%>"));
         }
 
@@ -982,17 +951,14 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Add article");
 
             var ids = new[] { id };
             Assert.That(id, Is.Not.EqualTo(0), "Return id");
 
-            var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
-            var num = (int)Global.GetNumbers(Cnn, ContentId, ids)[0];
-            var cnt = Global.CountLinks(Cnn, ids);
+            var desc = Global.GetFieldValues<string>(DbConnector, ContentId, "Description", ids)[0];
+            var num = (int)Global.GetNumbers(DbConnector, ContentId, ids)[0];
+            var cnt = Global.CountLinks(DbConnector, ids);
 
             Assert.That(num, Is.Not.EqualTo(0), "Default number");
             Assert.That(desc, Is.Not.Null.Or.Empty, "Default description");
@@ -1000,7 +966,7 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var cntEf = Global.CountEfLinks(Cnn, ids, ContentId);
+                var cntEf = Global.CountEfLinks(DbConnector, ids, ContentId);
                 Assert.That(cntEf, Is.EqualTo(2), "Default EF M2M");
             }
         }
@@ -1009,7 +975,7 @@ namespace QP8.Integration.Tests
         public void MassUpdate_DoesntCreateVersionDirectory_ContentDoesntHaveFileFields()
         {
             var mockFileSystem = new Mock<IFileSystem>();
-            Cnn.FileSystem = mockFileSystem.Object;
+            DbConnector.FileSystem = mockFileSystem.Object;
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
 
             var values = new List<Dictionary<string, string>>();
@@ -1025,7 +991,7 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1), "Update");
 
             mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "Shouldn't be called");
         }
@@ -1040,22 +1006,16 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Add article");
 
             var ids = new[] { id };
-            var visibleBefore = Global.GetFieldValues<decimal>(Cnn, ContentId, "Visible", ids)[0];
-            var archiveBefore = Global.GetFieldValues<decimal>(Cnn, ContentId, "Archive", ids)[0];
+            var visibleBefore = Global.GetFieldValues<decimal>(DbConnector, ContentId, "Visible", ids)[0];
+            var archiveBefore = Global.GetFieldValues<decimal>(DbConnector, ContentId, "Archive", ids)[0];
             var modified = DateTime.MinValue;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, false, true, true, ref modified);
-            }, "Update article");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, false, true, true, ref modified); }, "Update article");
 
-            var visibleAfter = Global.GetFieldValues<decimal>(Cnn, ContentId, "Visible", ids)[0];
-            var archiveAfter = Global.GetFieldValues<decimal>(Cnn, ContentId, "Archive", ids)[0];
+            var visibleAfter = Global.GetFieldValues<decimal>(DbConnector, ContentId, "Visible", ids)[0];
+            var archiveAfter = Global.GetFieldValues<decimal>(DbConnector, ContentId, "Archive", ids)[0];
             Assert.That(visibleBefore, Is.Not.EqualTo(visibleAfter), "Visible changed");
             Assert.That(archiveBefore, Is.Not.EqualTo(archiveAfter), "Archive changed");
             Assert.That(visibleAfter, Is.EqualTo(0), "Visible updated");
@@ -1078,22 +1038,16 @@ namespace QP8.Integration.Tests
 
             var mainCatId = int.Parse(MainCategoryName.Replace("field_", ""));
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Add article");
 
             var ids = new[] { id };
-            var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
-            var catBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
+            var titleBefore = Global.GetFieldValues<string>(DbConnector, ContentId, "Title", ids)[0];
+            var catBefore = (int)Global.GetFieldValues<decimal>(DbConnector, ContentId, "MainCategory", ids)[0];
             var files = (HttpFileCollection)null;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article2, ref files, id, true, mainCatId);
-            }, "Update article");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentId, "Published", ref article2, ref files, id, true, mainCatId); }, "Update article");
 
-            var titleAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
-            var catAfter = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
+            var titleAfter = Global.GetFieldValues<string>(DbConnector, ContentId, "Title", ids)[0];
+            var catAfter = (int)Global.GetFieldValues<decimal>(DbConnector, ContentId, "MainCategory", ids)[0];
             Assert.That(titleBefore, Is.EqualTo(titleAfter), "Same Title");
             Assert.That(catBefore, Is.Not.EqualTo(catAfter), "Category changed");
             Assert.That(catAfter, Is.EqualTo(CategoryIds[1]), "Category updated");
@@ -1116,24 +1070,18 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Add article");
 
             var ids = new[] { id };
-            var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
-            var catBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
-            var numBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "Number", ids)[0];
+            var titleBefore = Global.GetFieldValues<string>(DbConnector, ContentId, "Title", ids)[0];
+            var catBefore = (int)Global.GetFieldValues<decimal>(DbConnector, ContentId, "MainCategory", ids)[0];
+            var numBefore = (int)Global.GetFieldValues<decimal>(DbConnector, ContentId, "Number", ids)[0];
             var files = (HttpFileCollection)null;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, ref files, id, false);
-            }, "Update article");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, ref files, id, false); }, "Update article");
 
-            var titleAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
-            var catAfter = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
-            var numAfter = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "Number", ids)[0];
+            var titleAfter = Global.GetFieldValues<string>(DbConnector, ContentId, "Title", ids)[0];
+            var catAfter = (int)Global.GetFieldValues<decimal>(DbConnector, ContentId, "MainCategory", ids)[0];
+            var numAfter = (int)Global.GetFieldValues<decimal>(DbConnector, ContentId, "Number", ids)[0];
             Assert.That(titleBefore, Is.Not.EqualTo(titleAfter), "Changed Title");
             Assert.That(catBefore, Is.EqualTo(catAfter), "Same Category");
             Assert.That(numBefore, Is.EqualTo(numAfter), "Same Number");
@@ -1159,31 +1107,25 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Create");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0); }, "Create");
 
             var ids = new[] { id };
-            var cntLinks = Global.CountLinks(Cnn, ids);
+            var cntLinks = Global.CountLinks(DbConnector, ids);
             Assert.That(cntLinks, Is.Not.EqualTo(0), "Links saved");
 
             if (EfLinksExists)
             {
-                var cntEfLinks = Global.CountEfLinks(Cnn, ids, ContentId);
+                var cntEfLinks = Global.CountEfLinks(DbConnector, ids, ContentId);
                 Assert.That(cntEfLinks, Is.EqualTo(cntLinks), "EF links saved");
             }
 
-            Assert.DoesNotThrow(() =>
-            {
-                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
-            }, "Update");
+            Assert.DoesNotThrow(() => { id = DbConnector.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id); }, "Update");
 
-            var cntLinksAfter = Global.CountLinks(Cnn, ids);
+            var cntLinksAfter = Global.CountLinks(DbConnector, ids);
             Assert.That(cntLinksAfter, Is.EqualTo(0), "Links nullified");
             if (EfLinksExists)
             {
-                var cntEfLinksAfter = Global.CountEfLinks(Cnn, ids, ContentId);
+                var cntEfLinksAfter = Global.CountEfLinks(DbConnector, ids, ContentId);
                 Assert.That(cntEfLinksAfter, Is.EqualTo(0), "EF links nullified");
             }
         }
@@ -1196,8 +1138,8 @@ namespace QP8.Integration.Tests
 
         private static void Clear()
         {
-            ContentId = Global.GetContentId(Cnn, "Test M2M");
-            DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
+            ContentId = Global.GetContentId(DbConnector, "Test M2M");
+            DictionaryContentId = Global.GetContentId(DbConnector, "Test Category");
             var srv = new ContentService(Global.ConnectionString, 1);
             if (srv.Exists(ContentId))
             {
