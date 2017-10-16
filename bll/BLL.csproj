@@ -83,10 +83,10 @@
       <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.Extensions.1.1.0\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Quantumart, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quantumart.3.0.0\lib\net47\Quantumart.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.3.0.0\lib\net47\Quantumart.dll</HintPath>
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quantumart.3.0.0\lib\net47\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.3.0.0\lib\net47\Quantumart.QP8.Assembling.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -781,3 +781,4 @@
   </Target>
   -->
 </Project>
+

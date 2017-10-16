@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -283,7 +283,7 @@
       <Name>BLL</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="C:\ProxyDocuments\Projects\QP\configuration\Configuration.csproj">
+    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
       <Private>False</Private>
@@ -293,17 +293,17 @@
       <Name>Constants</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="C:\ProxyDocuments\Projects\QP\siteMvc\WebMvc.csproj">
+    <ProjectReference Include="$(SolutionDir)siteMvc\WebMvc.csproj">
       <Project>{8be1bb60-1938-45e8-bafb-1d008d62059c}</Project>
       <Name>WebMvc</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
+    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
       <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
       <Name>QP8.Infrastructure</Name>
       <Private>False</Private>
