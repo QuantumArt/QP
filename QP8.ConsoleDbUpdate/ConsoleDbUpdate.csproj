@@ -102,9 +102,6 @@
     <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Web.dll">
       <Link>References\QP8.Infrastructure.Web.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.ServiceLocation.dll">
-      <Link>References\Microsoft.Practices.ServiceLocation.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\NLog.dll">
       <Link>References\NLog.dll</Link>
     </EmbeddedResource>
@@ -152,6 +149,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll">
       <Link>References\CsvHelper.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\binaries\DbUpdate\Microsoft.Practices.ServiceLocation.dll">
+      <Link>References\Microsoft.Practices.ServiceLocation.dll</Link>
     </EmbeddedResource>
     <Content Include="App.config">
       <SubType>Designer</SubType>
