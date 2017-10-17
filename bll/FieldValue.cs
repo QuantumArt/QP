@@ -56,8 +56,7 @@ namespace Quantumart.QP8.BLL
             }
             else if (Field.IsDateTime && !string.IsNullOrEmpty(Value))
             {
-                DateTime dt;
-                if (!DateTime.TryParse(Value, out dt))
+                if (!DateTime.TryParse(Value, out DateTime dt))
                 {
                     errors.Error(Field.FormName, Value, string.Format(ArticleStrings.InvalidDateTimeFormat, Field.DisplayName));
                 }

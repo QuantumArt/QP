@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Web;
@@ -19,8 +19,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
                 return context.Items.Contains(HttpContextItems.BackendUrlContext) ? context.Items[HttpContextItems.BackendUrlContext].ToString() : string.Empty;
             }
 
-            var request = context.Request;
-            return $"{request.Url.Scheme}://{request.Url.Host}:{request.Url.Port}{request.ApplicationPath}/";
+            return $"{context.Request.Url?.Scheme}://{context.Request.Url?.Host}:{context.Request.Url?.Port}{context.Request.ApplicationPath}/";
         }
 
         internal static HashSet<string> GetDbIdentityInsertOptions(bool disableFieldIdentity, bool disableContentIdentity)

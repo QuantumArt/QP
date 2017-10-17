@@ -61,7 +61,6 @@
     <Compile Include="CorrectSlashMode.cs" />
     <Compile Include="DataSetExtensions.cs" />
     <Compile Include="DateTimeExtensions.cs" />
-    <Compile Include="ExpandoObjectExtensions.cs" />
     <Compile Include="ExpressionExtensions.cs" />
     <Compile Include="GraphHepler.cs" />
     <Compile Include="ObjectExtensions.cs" />

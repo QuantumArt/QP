@@ -145,8 +145,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var fieldValues = SplitToValues(_titleHeaders.Count, line.Value);
                 var baseArticle = InitializeArticle(_contentId);
 
-                int articleId;
-                if (int.TryParse(fieldValues.First(), out articleId))
+                if (int.TryParse(fieldValues.First(), out int articleId))
                 {
                     baseArticle.Id = articleId;
                 }
@@ -158,8 +157,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 {
                     if (fv.Field.IsClassifier)
                     {
-                        int classifierContentId;
-                        if (int.TryParse(fv.Value, out classifierContentId))
+                        if (int.TryParse(fv.Value, out int classifierContentId))
                         {
                             AddExtensionArticle(article, fv.Field, classifierContentId, fieldValues, line);
                         }
@@ -204,8 +202,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private void ReadLineFields(Article article, IReadOnlyList<string> fieldValues, int contentId, int lineNumber, bool isExtension = false)
         {
-            List<Field> fields;
-            if (_fieldsMap.TryGetValue(contentId, out fields))
+            if (_fieldsMap.TryGetValue(contentId, out List<Field> fields))
             {
                 foreach (var field in fields)
                 {

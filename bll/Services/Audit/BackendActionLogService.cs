@@ -42,8 +42,7 @@ namespace Quantumart.QP8.BLL.Services.Audit
 
         public ListResult<BackendActionLog> GetLogPage(ListCommand cmd, BackendActionLogFilter filter)
         {
-            int totalRecords;
-            List<BackendActionLog> data = repository.GetPage(cmd, filter, out totalRecords).ToList();
+            List<BackendActionLog> data = repository.GetPage(cmd, filter, out int totalRecords).ToList();
             return new ListResult<BackendActionLog>
             {
                 Data = data,

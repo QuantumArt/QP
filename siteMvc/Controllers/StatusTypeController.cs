@@ -120,11 +120,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveStatusType)]
         [BackendActionContext(ActionCode.RemoveStatusType)]
         [BackendActionLog]
-        public ActionResult Remove(int id)
-        {
-            var result = _statusTypeService.Remove(id);
-            return Json(result);
-        }
+        public ActionResult Remove(int id) => Json(_statusTypeService.Remove(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -133,7 +129,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
         {
-            // TODO: check
             _statusTypeService.InitList(parentId);
             var model = new StatusTypeSelectableListViewModel(tabId, parentId, IDs);
             return JsonHtml("MultiSelectIndex", model);

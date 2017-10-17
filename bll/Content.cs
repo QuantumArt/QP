@@ -1010,8 +1010,7 @@ namespace Quantumart.QP8.BLL
                 {
                     // проверить sql запросы на возможность выполнения
                     var areQueriesCorrect = true;
-                    string userQueryErrorMsg;
-                    if (!VirtualContentRepository.IsQueryQueryCorrect(UserQuery, out userQueryErrorMsg))
+                    if (!VirtualContentRepository.IsQueryQueryCorrect(UserQuery, out string userQueryErrorMsg))
                     {
                         areQueriesCorrect = false;
                         errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.UserQueryIsInvalid, userQueryErrorMsg));

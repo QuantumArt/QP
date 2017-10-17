@@ -79,8 +79,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ListResult<CustomActionListItem> List(ListCommand cmd)
         {
-            int totalRecords;
-            var list = CustomActionRepository.List(cmd, out totalRecords);
+            var list = CustomActionRepository.List(cmd, out int totalRecords);
             return new ListResult<CustomActionListItem>
             {
                 Data = list.ToList(),

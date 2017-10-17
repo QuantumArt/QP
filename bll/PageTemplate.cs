@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Helpers;
@@ -88,19 +88,16 @@ namespace Quantumart.QP8.BLL
 
         public string Using { get; set; }
 
-        internal static PageTemplate Create(int parentId, Site site)
+        internal static PageTemplate Create(int parentId, Site site) => new PageTemplate
         {
-            return new PageTemplate
-            {
-                SiteId = parentId,
-                Site = site,
-                MaxNumOfFormatStoredVersions = 100,
-                SendNocacheHeaders = true,
-                EnableViewstate = true,
-                Charset = PageTemplateRepository.GetCharsetByName("utf-8").Subj,
-                Locale = PageTemplateRepository.GetLocaleByName("Russian").Id
-            };
-        }
+            SiteId = parentId,
+            Site = site,
+            MaxNumOfFormatStoredVersions = 100,
+            SendNocacheHeaders = true,
+            EnableViewstate = true,
+            Charset = PageTemplateRepository.GetCharsetByName("utf-8").Subj,
+            Locale = PageTemplateRepository.GetLocaleByName("Russian").Id
+        };
 
         [LocalizedDisplayName("ApplyToExistingPagesAndObjects", NameResourceType = typeof(TemplateStrings))]
         public bool ApplyToExistingPagesAndObjects { get; set; }
@@ -238,8 +235,8 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("AdditionalNamespases", NameResourceType = typeof(TemplateStrings))]
         public IEnumerable<AdditionalNamespace> AdditionalNamespaceItems
         {
-            get { return _additionalNamespaceItems.Value; }
-            set { _additionalNamespaceItems.Value = value; }
+            get => _additionalNamespaceItems.Value;
+            set => _additionalNamespaceItems.Value = value;
         }
 
         public void SetUsings()
@@ -253,38 +250,5 @@ namespace Quantumart.QP8.BLL
         {
             NetTemplateName = Name.Replace(" ", "_");
         }
-
-        private static string UploadUrlPlaceHolder => "<%=upload_url%>";
-
-        private static string SiteUrlPlaceHolder => "<%=site_url%>";
-
-        // TODO: CHECK DELETE
-        // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-        public void ReplacePlaceHoldersToUrls()
-        {
-            if (!string.IsNullOrEmpty(TemplateBody))
-            {
-                TemplateBody
-                    .Replace(UploadUrlPlaceHolder, SiteUrls["ImagesLongUploadUrl"])
-                    .Replace(SiteUrlPlaceHolder, SiteUrls["CurrentUrl"]);
-            }
-        }
-
-        // TODO: CHECK DELETE
-        // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-        public void ReplaceUrlsToPlaceHolders()
-        {
-            if (!string.IsNullOrEmpty(TemplateBody))
-            {
-                TemplateBody
-                    .Replace(SiteUrls["ImagesLongUploadUrl"], UploadUrlPlaceHolder)
-                    .Replace(SiteUrls["StageUrl"], SiteUrlPlaceHolder)
-                    .Replace(SiteUrls["LiveUrl"], SiteUrlPlaceHolder);
-            }
-        }
-
-        private Dictionary<string, string> _siteUrls;
-
-        private Dictionary<string, string> SiteUrls => _siteUrls ?? (_siteUrls = SiteUrlHelper.GetSiteUrlsBySiteId(SiteId));
     }
 }

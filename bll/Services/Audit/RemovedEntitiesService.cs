@@ -21,9 +21,8 @@ namespace Quantumart.QP8.BLL.Services.Audit
 
 		public ListResult<RemovedEntity> GetPage(ListCommand cmd)
 		{
-			int totalRecords;
-			List<RemovedEntity> data = repository.GetPage(cmd, out totalRecords).ToList();
-			return new ListResult<RemovedEntity>
+            List<RemovedEntity> data = repository.GetPage(cmd, out int totalRecords).ToList();
+            return new ListResult<RemovedEntity>
 			{
 				Data = data,
 				TotalRecords = totalRecords

@@ -48,8 +48,7 @@ namespace Quantumart.QP8.BLL.Services
     {
         public ListResult<WorkflowListItem> GetWorkflowsBySiteId(ListCommand cmd, int siteId)
         {
-            int totalRecords;
-            var list = WorkflowRepository.GetSiteWorkflowsPage(cmd, siteId, out totalRecords);
+            var list = WorkflowRepository.GetSiteWorkflowsPage(cmd, siteId, out int totalRecords);
             return new ListResult<WorkflowListItem>
             {
                 Data = list.ToList(),
