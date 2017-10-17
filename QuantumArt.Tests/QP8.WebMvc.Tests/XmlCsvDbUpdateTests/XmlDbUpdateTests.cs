@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -68,7 +68,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 
         [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml", "3471C3F5D13C53877D1EB0C90E8061E5")]
         [Theory, Trait("XmlDbUpdate", "XmlHashVerifier")]
-        public void GivenXmlData_WhenContainsCorrectData_ShouldCallAllServices(string xmlString, string expectedHash)
+        public void GivenXmlData_WhenContainsCorrectData_ShouldCallAllServices(string xmlString)
         {
             // Fixture setup
             const string dbVersionFromXml = "7.9.9.0";

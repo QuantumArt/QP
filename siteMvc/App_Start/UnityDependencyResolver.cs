@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging.IoC;
@@ -105,7 +103,6 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<SingleUserModeHub>();
 
             RegisterMultistepActionServices(UnityContainer);
-            UnityContainer.RegisterType<ExceptionManager>(new InjectionFactory(c => EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>()));
             UnityContainer.AddExtension(new NLogUnityContainerExtension(AssemblyHelpers.GetAssemblyName()));
         }
 
