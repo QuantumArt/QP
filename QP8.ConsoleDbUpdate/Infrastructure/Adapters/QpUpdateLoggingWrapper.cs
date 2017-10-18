@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;

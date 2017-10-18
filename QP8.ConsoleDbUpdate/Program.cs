@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Mono.Options;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;

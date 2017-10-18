@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums
+namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums
 {
     internal enum ExitCode
     {
