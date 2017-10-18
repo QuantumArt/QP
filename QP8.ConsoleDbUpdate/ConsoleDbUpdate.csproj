@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -33,6 +33,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -100,23 +102,14 @@
     <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Web.dll">
       <Link>References\QP8.Infrastructure.Web.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.ServiceLocation.dll">
-      <Link>References\Microsoft.Practices.ServiceLocation.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\NLog.dll">
       <Link>References\NLog.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\Mono.Options.5.3.0.1\lib\portable-net45+netcore45+wpa81+wp8\Mono.Options.dll">
-      <Link>References\Mono.Options.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Moq.dll">
       <Link>References\Moq.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\AutoMapper.dll">
       <Link>References\AutoMapper.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll">
-      <Link>References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.dll">
       <Link>References\Quantumart.dll</Link>
@@ -151,9 +144,17 @@
     <EmbeddedResource Include="..\binaries\DbUpdate\Microsoft.Practices.EnterpriseLibrary.Data.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\binaries\DbUpdate\Microsoft.Practices.ServiceLocation.dll">
+      <Link>References\Microsoft.Practices.ServiceLocation.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll">
+      <Link>References\Mono.Options.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll">
+      <Link>References\CsvHelper.dll</Link>
+    </EmbeddedResource>
     <Content Include="App.config">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -266,9 +267,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll">
-      <Link>References\CsvHelper.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Merger.dll">
       <Link>References\Quantumart.QP8.Merger.dll</Link>
     </EmbeddedResource>
@@ -311,17 +309,20 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
+      <HintPath>..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Options, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll</HintPath>
+      <HintPath>..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll</HintPath>
       <Private>False</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />

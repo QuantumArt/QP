@@ -1734,8 +1734,8 @@ Global
 		{01F1F98E-3B89-4AE1-8D50-07A2D765BD61} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FD7B8CF1-31DF-4ACD-B743-E7E581B75B66}
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35
+		SolutionGuid = {FD7B8CF1-31DF-4ACD-B743-E7E581B75B66}
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
