@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -274,7 +274,7 @@ namespace Quantumart.QP8.BLL
         [ScriptIgnore, JsonIgnore]
         public List<FieldValue> LiveFieldValues
         {
-            get
+            get 
             {
                 LoadFieldValues();
                 return _liveFieldValues;
@@ -284,11 +284,17 @@ namespace Quantumart.QP8.BLL
 
         internal List<FieldValue> LoadFieldValues()
         {
-            if (_fieldValues == null)
+            if (_fieldValues == null || _liveFieldValues == null)
             {
                 var fields = FieldRepository.GetFullList(DisplayContentId);
-                _fieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive), fields, this);
-                _liveFieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, true), fields, this);
+                if (_fieldValues == null)
+                {
+                    _fieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive), fields, this);
+                }
+                if (_liveFieldValues == null)
+                {
+                    _liveFieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, true), fields, this);
+                }
             }
             return _fieldValues;
         }
