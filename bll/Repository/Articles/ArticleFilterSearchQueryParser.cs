@@ -602,8 +602,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
             if (!string.IsNullOrWhiteSpace(timeToString))
             {
-                string sqlTimeToString;
-                if (!Converter.TryConvertToSqlTimeString(timeToString, out sqlTimeToString, out timeTo))
+                if (!Converter.TryConvertToSqlTimeString(timeToString, out string sqlTimeToString, out timeTo))
                 {
                     throw new FormatException("time To");
                 }

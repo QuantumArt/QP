@@ -124,11 +124,10 @@ namespace Quantumart.QP8.BLL.Services
 
         public string AssemblePage(int pageId, QP7Token token)
         {
-            string response;
             var path = string.Format(AssemblePageTemplate, token.ApplicationPath, pageId);
             var assemblyRequest = CreateHttpWebRequest(path);
             assemblyRequest.CookieContainer = token.Cookie;
-            CallPage(assemblyRequest, out response);
+            CallPage(assemblyRequest, out string response);
 
             return response;
         }
@@ -147,8 +146,7 @@ namespace Quantumart.QP8.BLL.Services
 
         private static HttpWebResponse CallPage(WebRequest request)
         {
-            string response;
-            return CallPage(request, out response);
+            return CallPage(request, out string response);
         }
 
         private static HttpWebResponse CallPage(WebRequest request, out string responseValue)

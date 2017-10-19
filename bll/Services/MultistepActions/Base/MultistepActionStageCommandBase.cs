@@ -44,30 +44,24 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             ItemsPerStep = state.ItemsPerStep;
         }
 
-        public MultistepActionStageCommandState GetState()
+        public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
         {
-            return new MultistepActionStageCommandState
-            {
-                ParentId = ContentId,
-                Id = 0,
-                Ids = Ids,
-                ExtensionContents = ContentRepository.GetList(
-                    ContentRepository.GetReferencedAggregatedContentIds(ContentId /* TODO: или id (contentId) */, Ids ?? new int[0])
-                ).ToArray(),
-                BoundToExternal = BoundToExternal,
-                ItemsPerStep = ItemsPerStep
-            };
-        }
+            ParentId = ContentId,
+            Id = 0,
+            Ids = Ids,
+            ExtensionContents = ContentRepository.GetList(
+                ContentRepository.GetReferencedAggregatedContentIds(ContentId, Ids ?? new int[0])
+            ).ToArray(),
+            BoundToExternal = BoundToExternal,
+            ItemsPerStep = ItemsPerStep
+        };
 
-        public MultistepStageSettings GetStageSettings()
+        public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
         {
-            return new MultistepStageSettings
-            {
-                ItemCount = ItemCount,
-                StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
-                Name = MultistepActionStrings.ResourceManager.GetString(GetType().Name)
-            };
-        }
+            ItemCount = ItemCount,
+            StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
+            Name = MultistepActionStrings.ResourceManager.GetString(GetType().Name)
+        };
 
         public MultistepActionStepResult Step(int step)
         {

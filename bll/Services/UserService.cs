@@ -71,8 +71,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ListResult<UserListItem> List(ListCommand cmd, UserListFilter filter, IEnumerable<int> selectedIDs = null)
         {
-            int totalRecords;
-            var list = UserRepository.List(cmd, filter, selectedIDs, out totalRecords);
+            var list = UserRepository.List(cmd, filter, selectedIDs, out int totalRecords);
             return new ListResult<UserListItem>
             {
                 Data = list.ToList(),

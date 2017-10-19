@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
@@ -111,8 +111,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var entities = QPContext.EFContext;
             var key = new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id);
-            object result;
-            if (entities.TryGetObjectByKey(key, out result))
+            if (entities.TryGetObjectByKey(key, out var result))
             {
                 return (TDal)result;
             }

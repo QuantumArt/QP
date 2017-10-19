@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -22,8 +22,6 @@ using Telerik.Web.Mvc.UI;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
-    // TODO: CLEAN THIS FILE
-    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public static class HtmlHelpersExtensions
     {
         public const string TextboxClassName = "textbox simple-text";
@@ -198,7 +196,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var result = sourceType.GetProperty(propertyName);
             var attrs = result?.GetCustomAttributes(type, true);
-            return attrs.Any() ? attrs[0] : null;
+            return (attrs ?? throw new InvalidOperationException()).Any() ? attrs[0] : null;
         }
 
         public static MvcHtmlString QpLabel(this HtmlHelper html, string id, string title, bool withColon = true, string tooltip = null)
@@ -270,8 +268,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static string DateTimePart(object value, string formatString, DateTime? defaultValue)
         {
-            DateTime dt;
-            if (value != null && System.DateTime.TryParse(value.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+            if (value != null && System.DateTime.TryParse(value.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
             {
                 return dt.ToString(formatString);
             }
@@ -437,13 +434,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <returns>код раскрывающегося списка</returns>
         public static MvcHtmlString QpDropDownList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, string optionLabel, ControlOptions options, EntityDataListArgs entityDataListArgs)
         {
-            options.SetDropDownOptions(name, source.UniqueId(name), list.ToList(), entityDataListArgs);
-            if (entityDataListArgs.ShowIds)
-            {
-                list = list.Select(n => n.CopyWithIdInText());
-            }
-
-            return source.DropDownList(name, list, optionLabel, options.HtmlAttributes);
+            var qpSelectListItems = list.ToList();
+            options.SetDropDownOptions(name, source.UniqueId(name), qpSelectListItems, entityDataListArgs);
+            return entityDataListArgs.ShowIds
+                ? source.DropDownList(name, qpSelectListItems.Select(n => n.CopyWithIdInText()), optionLabel, options.HtmlAttributes)
+                : source.DropDownList(name, qpSelectListItems, optionLabel, options.HtmlAttributes);
         }
 
         /// <summary>
@@ -454,7 +449,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="list">список элементов списка</param>
         /// <param name="options">дополнительные настройки списка радио-кнопок</param>
         /// <returns>код списка радио-кнопок</returns>
-        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options) => source.QpRadioButtonList(name, list, options, null);
+        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options) =>
+            source.QpRadioButtonList(name, list, options, null);
 
         /// <summary>
         /// Генерирует код списка радио-кнопок
@@ -465,7 +461,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="repeatDirection">направление списка</param>
         /// <param name="options">дополнительные настройки списка радио-кнопок</param>
         /// <returns>код списка радио-кнопок</returns>
-        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection, ControlOptions options) => source.QpRadioButtonList(name, list, repeatDirection, options, null);
+        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection, ControlOptions options) =>
+            source.QpRadioButtonList(name, list, repeatDirection, options, null);
 
         /// <summary>
         /// Генерирует код списка радио-кнопок
@@ -476,7 +473,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="options">дополнительные настройки списка радио-кнопок</param>
         /// <param name="entityDataListArgs">свойства списка сущностей</param>
         /// <returns>код списка радио-кнопок</returns>
-        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs) => source.QpRadioButtonList(name, list, RepeatDirection.Horizontal, options, entityDataListArgs);
+        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs) =>
+            source.QpRadioButtonList(name, list, RepeatDirection.Horizontal, options, entityDataListArgs);
 
         /// <summary>
         /// Генерирует код списка радио-кнопок
@@ -491,17 +489,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection, ControlOptions options, EntityDataListArgs entityDataListArgs)
         {
             var div = new TagBuilder("div");
-
+            var qpSelectListItems = list.ToList();
             var contentFieldName = (string)options.HtmlAttributes?.GetAndRemove(DataContentFieldName);
-
-            options.SetRadioButtonListOptions(name, source.UniqueId(name), list.ToList(), repeatDirection, entityDataListArgs);
+            options.SetRadioButtonListOptions(name, source.UniqueId(name), qpSelectListItems, repeatDirection, entityDataListArgs);
             div.MergeAttributes(options.HtmlAttributes);
 
             var sb = new StringBuilder();
             sb.AppendLine("<ul>");
 
             var itemIndex = 0;
-            foreach (var item in list)
+            foreach (var item in qpSelectListItems)
             {
                 var itemId = source.UniqueId(name, itemIndex);
 
@@ -545,8 +542,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <returns>код списка чекбоксов</returns>
         public static MvcHtmlString QpCheckBoxList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs, RepeatDirection repeatDirection = RepeatDirection.Vertical, bool asArray = false)
         {
+            var qpSelectListItems = list.ToList();
             var div = new TagBuilder("div");
-            options.SetCheckBoxListOptions(name, source.UniqueId(name), list, repeatDirection, entityDataListArgs);
+            options.SetCheckBoxListOptions(name, source.UniqueId(name), qpSelectListItems, repeatDirection, entityDataListArgs);
 
             var contentFieldName = (string)options.HtmlAttributes?.GetAndRemove(DataContentFieldName);
 
@@ -556,7 +554,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             sb.AppendLine("<ul>");
 
             var itemIndex = 0;
-            foreach (var item in list)
+            foreach (var item in qpSelectListItems)
             {
                 var htmlAttributes = source.QpHtmlProperties(name, 0, EditorType.Checkbox, itemIndex);
                 if (!options.Enabled)
@@ -884,12 +882,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             var tb = source.FileWrapper(id, fieldId, field, entityId, version, readOnly, shouldAllowUpload);
-            tb.InnerHtml = source.FileContents(id, value, htmlAttributes, field, allowLibrary, shouldAllowUpload, allowPreview, allowDownload);
+            tb.InnerHtml = source.FileContents(id, value, htmlAttributes, allowLibrary, shouldAllowUpload, allowPreview, allowDownload);
 
             return MvcHtmlString.Create(tb.ToString());
         }
 
-        private static string FileContents(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, Field field, bool allowLibrary, bool allowUpload, bool allowPreview, bool allowDownload)
+        private static string FileContents(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool allowLibrary, bool allowUpload, bool allowPreview, bool allowDownload)
         {
             var sb = new StringBuilder();
             sb.Append(source.QpTextBox(id, value, htmlAttributes));
@@ -1131,35 +1129,35 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString QpDropDownListFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, Dictionary<string, object> htmlAttributes, SelectOptions dropDownOptions)
         {
-            var showedList = list;
+            var qpSelectListItems = list.ToList();
             var options = new ControlOptions { Enabled = !source.IsReadOnly() && !dropDownOptions.ReadOnly };
             var name = ExpressionHelper.GetExpressionText(expression);
-            if (!string.IsNullOrEmpty(dropDownOptions?.DefaultOption))
-            {
-                showedList = new[] { new QPSelectListItem { Value = "", Text = dropDownOptions.DefaultOption } }.Concat(list).ToArray();
-            }
+            var showedList = string.IsNullOrEmpty(dropDownOptions?.DefaultOption)
+                ? qpSelectListItems.ToList()
+                : new[] { new QPSelectListItem { Value = string.Empty, Text = dropDownOptions.DefaultOption } }.Concat(qpSelectListItems).ToList();
 
-            options.SetDropDownOptions(name, source.UniqueId(name), list.ToList(), dropDownOptions?.EntityDataListArgs);
+            options.SetDropDownOptions(name, source.UniqueId(name), qpSelectListItems, dropDownOptions?.EntityDataListArgs);
             options.HtmlAttributes.Merge(htmlAttributes, true);
             return source.DropDownListFor(expression, showedList, options.HtmlAttributes);
         }
 
-        public static MvcHtmlString QpRadioButtonListFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list = null, RepeatDirection repeatDirection = RepeatDirection.Horizontal, EntityDataListArgs entityDataListArgs = null, ControlOptions options = null)
+        public static MvcHtmlString QpRadioButtonListFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection = RepeatDirection.Horizontal, EntityDataListArgs entityDataListArgs = null, ControlOptions options = null)
         {
+            var div = new TagBuilder("div");
+            var qpSelectListItems = list.ToList();
             var name = ExpressionHelper.GetExpressionText(expression);
             var id = source.UniqueId(name);
-            var div = new TagBuilder("div");
-
             var localOptions = options ?? new ControlOptions();
+
             localOptions.Enabled &= !source.IsReadOnly();
-            localOptions.SetRadioButtonListOptions(name, id, list.ToList(), repeatDirection, entityDataListArgs);
+            localOptions.SetRadioButtonListOptions(name, id, qpSelectListItems, repeatDirection, entityDataListArgs);
             div.MergeAttributes(localOptions.HtmlAttributes);
 
             var sb = new StringBuilder();
             sb.AppendLine("<ul>");
 
             var itemIndex = 0;
-            foreach (var item in list)
+            foreach (var item in qpSelectListItems)
             {
                 var htmlAttributes = source.QpHtmlProperties(expression, EditorType.RadioButton, itemIndex);
                 if (!localOptions.Enabled)
@@ -1182,6 +1180,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString QpCheckBoxListFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IList<QPCheckedItem>>> expression, IEnumerable<QPSelectListItem> list, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes, RepeatDirection repeatDirection = RepeatDirection.Vertical)
         {
+            var qpSelectListItems = list.ToList();
             var name = ExpressionHelper.GetExpressionText(expression);
             var options = new ControlOptions { Enabled = !source.IsReadOnly() };
             if (htmlAttributes != null)
@@ -1189,23 +1188,21 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 options.HtmlAttributes = htmlAttributes;
             }
 
-            var resultList = list.ToArray();
-            foreach (var item in resultList)
+            foreach (var item in qpSelectListItems)
             {
                 item.Selected = false;
             }
 
-            var propertyValue = source.GetMetaData(expression).Model as IList<QPCheckedItem>;
-            if (propertyValue != null && propertyValue.Count > 0)
+            if (source.GetMetaData(expression).Model is IList<QPCheckedItem> propertyValue && propertyValue.Count > 0)
             {
-                var checkedValues = propertyValue.Select(i => i.Value).Intersect(list.Select(b => b.Value));
-                foreach (var item in resultList)
+                var checkedValues = propertyValue.Select(i => i.Value).Intersect(qpSelectListItems.Select(b => b.Value)).ToList();
+                foreach (var item in qpSelectListItems)
                 {
                     item.Selected = checkedValues.Contains(item.Value);
                 }
             }
 
-            return source.QpCheckBoxList(name, resultList, options, entityDataListArgs, repeatDirection, true);
+            return source.QpCheckBoxList(name, qpSelectListItems, options, entityDataListArgs, repeatDirection, true);
         }
 
         public static MvcHtmlString CheckBoxTreeFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression, string entityTypeCode, int? parentEntityId, string actionCode, bool allowGlobalSelection = false, Dictionary<string, object> htmlAttributes = null)
@@ -1220,8 +1217,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             options.AddData("show_checkbox", bool.TrueString.ToLowerInvariant());
             options.AddCssClass(CheckBoxTreeClassName);
 
-            var propertyValue = source.GetMetaData(expression).Model as IList<QPTreeCheckedNode>;
-            if (propertyValue != null && propertyValue.Count > 0)
+            if (source.GetMetaData(expression).Model is IList<QPTreeCheckedNode> propertyValue && propertyValue.Count > 0)
             {
                 var selectedIDsString = string.Join(";", propertyValue.Select(i => i.Value));
                 options.AddData("selected_ids", selectedIDsString);

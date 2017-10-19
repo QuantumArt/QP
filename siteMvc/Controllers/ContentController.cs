@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
@@ -386,6 +386,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     },
                     JsonRequestBehavior = JsonRequestBehavior.AllowGet
                 };
+            }
+
+            if (contentId == 0 && fieldId != null && fieldId.HasValue)
+            {
+                contentId = FieldService.Read(fieldId.Value).ContentId;
             }
 
             var content = ContentService.Read(contentId.Value);

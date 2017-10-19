@@ -111,28 +111,27 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
 				{
 					bool isLast = fieldCondition.Fields.Length == n;
 					key += "_" + field.Name + (isLast ? "_" + fieldCondition.Type : null);
-					FieldInfo info;
 
-					if (result.TryGetValue(key, out info))
-					{
-						parentId = info.Id;
-					}
-					else
-					{
-						result[key] = new FieldInfo
-						{
-							Id = id,
-							ParentId = parentId,
-							Name = field.Name,
-							Type = isLast ? fieldCondition.Type : null,
-							ContentId = field.ContentId
-						};
+                    if (result.TryGetValue(key, out FieldInfo info))
+                    {
+                        parentId = info.Id;
+                    }
+                    else
+                    {
+                        result[key] = new FieldInfo
+                        {
+                            Id = id,
+                            ParentId = parentId,
+                            Name = field.Name,
+                            Type = isLast ? fieldCondition.Type : null,
+                            ContentId = field.ContentId
+                        };
 
-						parentId = id;
+                        parentId = id;
 
-						id++;
-					}
-					n++;
+                        id++;
+                    }
+                    n++;
 				}
 			}
 

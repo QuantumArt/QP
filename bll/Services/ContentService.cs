@@ -321,8 +321,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static void CopyContentLinks(int sourceSiteId, int destinationSiteId)
         {
-            string relBetweenLinks;
-            ContentRepository.CopyContentLinks(sourceSiteId, destinationSiteId, out relBetweenLinks);
+            ContentRepository.CopyContentLinks(sourceSiteId, destinationSiteId, out string relBetweenLinks);
             FieldRepository.UpdateAttributeLinkIdAndDefaultValue(sourceSiteId, destinationSiteId, relBetweenLinks);
         }
 
@@ -344,8 +343,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static int CopyContents(int sourceSiteId, int destinationSiteId, int startFrom, int endOn)
         {
-            string newContentIds;
-            var count = ContentRepository.CopyContents(sourceSiteId, destinationSiteId, startFrom, endOn, out newContentIds);
+            var count = ContentRepository.CopyContents(sourceSiteId, destinationSiteId, startFrom, endOn, out string newContentIds);
 
             var relBetweenContents = ContentRepository.GetRelationsBetweenContentsXml(sourceSiteId, destinationSiteId, newContentIds);
             var relBetweenStatuses = ContentRepository.GetRelationsBetweenStatuses(sourceSiteId, destinationSiteId);
@@ -354,8 +352,7 @@ namespace Quantumart.QP8.BLL.Services
             var relBetweenAttributes = FieldRepository.GetRelationsBetweenAttributesXml(sourceSiteId, destinationSiteId, newContentIds, false, true);
             NotificationRepository.CopyContentNotifications(relBetweenContents, relBetweenStatuses, relBetweenAttributes);
 
-            string relBetweenConstraints;
-            ContentRepository.CopyContentConstraints(relBetweenContents, out relBetweenConstraints);
+            ContentRepository.CopyContentConstraints(relBetweenContents, out string relBetweenConstraints);
             ContentConstraintRepository.CopyContentConstrainRules(relBetweenConstraints, relBetweenAttributes);
 
             FieldRepository.CopyDynamicImageAttributes(relBetweenAttributes);

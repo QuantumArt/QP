@@ -157,6 +157,14 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
+        internal static int GetCount(int contentId, bool includeArchive)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.CountArticles(QPConnectionScope.Current.DbConnection, contentId, includeArchive);
+            }
+        }
+
         internal static int GetCountNonArchive(int contentId)
         {
             using (new QPConnectionScope())

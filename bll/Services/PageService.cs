@@ -1,13 +1,13 @@
-﻿using Quantumart.QP8.Assembling;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -37,7 +37,7 @@ namespace Quantumart.QP8.BLL.Services
 
         void CancelPage(int id);
 
-        MessageResult MultipleRemovePage(int[] IDs);
+        MessageResult MultipleRemovePage(int[] ids);
 
         PageTemplate ReadPageTemplateProperties(int id, bool withAutoLock = true);
 
@@ -58,7 +58,7 @@ namespace Quantumart.QP8.BLL.Services
         CopyResult Copy(int id);
     }
 
-    public class PageService: IPageService
+    public class PageService : IPageService
     {
         private readonly IQP7Service _qp7Service;
 
@@ -69,31 +69,33 @@ namespace Quantumart.QP8.BLL.Services
 
         public PageTemplate ReadPageTemplateProperties(int id, bool withAutoLock = true)
         {
-            PageTemplate template = PageTemplateRepository.GetPageTemplatePropertiesById(id);
+            var template = PageTemplateRepository.GetPageTemplatePropertiesById(id);
             if (template == null)
-                throw new ApplicationException(String.Format(TemplateStrings.TemplateNotFound, id));
+            {
+                throw new ApplicationException(string.Format(TemplateStrings.TemplateNotFound, id));
+            }
 
             if (withAutoLock)
+            {
                 template.AutoLock();
+            }
 
             template.LoadLockedByUser();
-            template.ReplacePlaceHoldersToUrls();
             return template;
         }
 
-        public PageInitListResult InitPageList(int parentId)
+        public PageInitListResult InitPageList(int parentId) => new PageInitListResult
         {
-            return new PageInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewPage) && SecurityRepository.IsEntityAccessible(EntityTypeCode.Page, parentId, ActionTypeCode.Update)
-            };
-        }
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewPage) && SecurityRepository.IsEntityAccessible(EntityTypeCode.Page, parentId, ActionTypeCode.Update)
+        };
 
         public PageInitListResult InitPageListForSite(int siteId)
         {
             var site = SiteRepository.GetById(siteId);
             if (site == null)
-                throw new Exception(String.Format(SiteStrings.SiteNotFound, siteId));
+            {
+                throw new Exception(string.Format(SiteStrings.SiteNotFound, siteId));
+            }
 
             return new PageInitListResult
             {
@@ -104,8 +106,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ListResult<PageListItem> GetPagesByTemplateId(ListCommand cmd, int parentId)
         {
-            int totalRecords;
-            IEnumerable<PageListItem> list = PageRepository.ListPages(cmd, parentId, out totalRecords);
+            var list = PageRepository.ListPages(cmd, parentId, out var totalRecords);
             return new ListResult<PageListItem>
             {
                 Data = list.ToList(),
@@ -123,19 +124,20 @@ namespace Quantumart.QP8.BLL.Services
             return PageTemplateRepository.GetCharsetsList().Select(charset => new ListItem { Text = charset.Subj, Value = charset.Subj });
         }
 
-        public Page ReadPagePropertiesForUpdate(int id)
-        {
-            return ReadPageProperties(id, false);
-        }
+        public Page ReadPagePropertiesForUpdate(int id) => ReadPageProperties(id, false);
 
         public Page ReadPageProperties(int id, bool withAutoLock = true)
         {
-            Page page = PageRepository.GetPagePropertiesById(id);
+            var page = PageRepository.GetPagePropertiesById(id);
             if (page == null)
-                throw new ApplicationException(String.Format(TemplateStrings.PageNotFound, id));
+            {
+                throw new ApplicationException(string.Format(TemplateStrings.PageNotFound, id));
+            }
 
             if (withAutoLock)
+            {
                 page.AutoLock();
+            }
 
             page.LoadLockedByUser();
             return page;
@@ -151,20 +153,26 @@ namespace Quantumart.QP8.BLL.Services
         private void ManagePageInheritance(Page page)
         {
             if (page.ApplyToExistingObjects)
+            {
                 SetPageObjectEnableViewState(page.Id, page.EnableViewState);
+            }
         }
 
         private void ManagePageFolders(Page page, FolderManagingType type)
         {
-            string stageDirectory = page.PageTemplate.Site.StageDirectory + "\\" + page.PageTemplate.TemplateFolder + "\\" + page.Folder;
-            string liveDirectory = page.PageTemplate.Site.LiveDirectory + "\\" + page.PageTemplate.TemplateFolder + "\\" + page.Folder;
+            var stageDirectory = page.PageTemplate.Site.StageDirectory + "\\" + page.PageTemplate.TemplateFolder + "\\" + page.Folder;
+            var liveDirectory = page.PageTemplate.Site.LiveDirectory + "\\" + page.PageTemplate.TemplateFolder + "\\" + page.Folder;
 
             if (type == FolderManagingType.CreateFolder)
             {
                 if (!Directory.Exists(stageDirectory))
+                {
                     Directory.CreateDirectory(stageDirectory);
+                }
                 if (!Directory.Exists(liveDirectory))
+                {
                     Directory.CreateDirectory(liveDirectory);
+                }
             }
 
             else if (type == FolderManagingType.DeleteFolder)
@@ -172,9 +180,13 @@ namespace Quantumart.QP8.BLL.Services
                 if (!string.IsNullOrWhiteSpace(page.Folder))
                 {
                     if (Directory.Exists(stageDirectory))
+                    {
                         Directory.Delete(stageDirectory, true);
+                    }
                     if (Directory.Exists(liveDirectory))
+                    {
                         Directory.Delete(liveDirectory, true);
+                    }
                 }
             }
 
@@ -182,8 +194,11 @@ namespace Quantumart.QP8.BLL.Services
             {
                 var oldPage = ReadPageProperties(page.Id, false);
                 if (oldPage == null)
-                    throw new ApplicationException(String.Format(TemplateStrings.PageNotFound, oldPage.Id));
-                string oldFolder = oldPage.Folder;
+                {
+                    throw new ApplicationException(string.Format(TemplateStrings.PageNotFound, page.Id));
+                }
+
+                var oldFolder = oldPage.Folder;
                 if (!string.IsNullOrWhiteSpace(oldFolder))
                 {
                     if (string.IsNullOrWhiteSpace(page.Folder))
@@ -191,14 +206,22 @@ namespace Quantumart.QP8.BLL.Services
                         ManagePageFolders(oldPage, FolderManagingType.DeleteFolder);
                         return;
                     }
+
                     if (page.Folder == oldFolder)
+                    {
                         return;
-                    string oldStageDirectory = oldPage.PageTemplate.Site.StageDirectory + "\\" + oldPage.PageTemplate.TemplateFolder + "\\" + oldFolder;
-                    string oldLiveDirectory = oldPage.PageTemplate.Site.LiveDirectory + "\\" + oldPage.PageTemplate.TemplateFolder + "\\" + oldFolder;
+                    }
+
+                    var oldStageDirectory = oldPage.PageTemplate.Site.StageDirectory + "\\" + oldPage.PageTemplate.TemplateFolder + "\\" + oldFolder;
+                    var oldLiveDirectory = oldPage.PageTemplate.Site.LiveDirectory + "\\" + oldPage.PageTemplate.TemplateFolder + "\\" + oldFolder;
                     if (Directory.Exists(oldStageDirectory))
+                    {
                         Directory.Move(oldStageDirectory, stageDirectory);
+                    }
                     if (Directory.Exists(oldLiveDirectory))
+                    {
                         Directory.Move(oldLiveDirectory, liveDirectory);
+                    }
                 }
 
                 else if (!string.IsNullOrWhiteSpace(page.Folder))
@@ -213,15 +236,9 @@ namespace Quantumart.QP8.BLL.Services
             ObjectRepository.SetPageObjectEnableViewState(pageId, enableViewState);
         }
 
-        public Page NewPageProperties(int parentId)
-        {
-            return Page.Create(parentId);
-        }
+        public Page NewPageProperties(int parentId) => Page.Create(parentId);
 
-        public Page NewPagePropertiesForUpdate(int parentId)
-        {
-            return NewPageProperties(parentId);
-        }
+        public Page NewPagePropertiesForUpdate(int parentId) => NewPageProperties(parentId);
 
         public Page SavePageProperties(Page page)
         {
@@ -231,11 +248,17 @@ namespace Quantumart.QP8.BLL.Services
 
         public MessageResult RemovePage(int id)
         {
-            Page page = PageRepository.GetPagePropertiesById(id);
+            var page = PageRepository.GetPagePropertiesById(id);
             if (page == null)
-                throw new ApplicationException(String.Format(TemplateStrings.TemplateNotFound, id));
+            {
+                throw new ApplicationException(string.Format(TemplateStrings.TemplateNotFound, id));
+            }
+
             if (page.LockedByAnyoneElse)
-                return MessageResult.Error(String.Format(TemplateStrings.LockedByAnyoneElse, page.LockedByDisplayName));
+            {
+                return MessageResult.Error(string.Format(TemplateStrings.LockedByAnyoneElse, page.LockedByDisplayName));
+            }
+
             ManagePageFolders(page, FolderManagingType.DeleteFolder);
             PageRepository.DeletePage(id);
             return null;
@@ -243,26 +266,29 @@ namespace Quantumart.QP8.BLL.Services
 
         public void CancelPage(int id)
         {
-            Page page = PageRepository.GetPagePropertiesById(id);
+            var page = PageRepository.GetPagePropertiesById(id);
             if (page == null)
-                throw new Exception(String.Format(TemplateStrings.PageNotFound, id));
+            {
+                throw new Exception(string.Format(TemplateStrings.PageNotFound, id));
+            }
+
             page.AutoUnlock();
         }
 
-        public MessageResult MultipleRemovePage(int[] IDs)
+        public MessageResult MultipleRemovePage(int[] ids)
         {
-            if (IDs == null)
-                throw new ArgumentNullException("IDs");
+            if (ids == null)
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
 
-            PageTemplateRepository.MultipleDeletePage(IDs);
-
+            PageTemplateRepository.MultipleDeletePage(ids);
             return null;
         }
 
         public ListResult<PageListItem> ListPagesForSite(ListCommand listCommand, int parentId, int id)
         {
-            int totalRecords;
-            IEnumerable<PageListItem> list = PageRepository.ListSitePages(listCommand, parentId, out totalRecords);
+            var list = PageRepository.ListSitePages(listCommand, parentId, out var totalRecords);
             return new ListResult<PageListItem>
             {
                 Data = list.ToList(),
@@ -274,28 +300,28 @@ namespace Quantumart.QP8.BLL.Services
         {
             var page = PageRepository.GetPagePropertiesById(id);
             var site = page.PageTemplate.Site;
-            string message = (!site.IsLive) ? null : String.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
-            return (String.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+            var message = !site.IsLive ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
+            return string.IsNullOrEmpty(message) ? null : MessageResult.Confirm(message);
         }
 
         public MessageResult MultipleAssemblePagePreAction(int[] ids)
         {
             if (ids == null)
-                throw new ArgumentNullException("IDs");
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
+
             var site = PageRepository.GetPagePropertiesById(ids[0]).PageTemplate.Site;
-            string message = (!site.IsLive) ? null : String.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
-            return (String.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+            var message = !site.IsLive ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
+            return string.IsNullOrEmpty(message) ? null : MessageResult.Confirm(message);
         }
 
-        public MessageResult MultipleAssemblePage(int[] IDs)
+        public MessageResult MultipleAssemblePage(int[] ids)
         {
             var failedIds = new List<int>();
-
-            foreach (int id in IDs)
+            foreach (var id in ids)
             {
-                QP7Token token = null;
                 var page = PageRepository.GetPagePropertiesById(id);
-                var site = page.PageTemplate.Site;
                 if (page.PageTemplate.SiteIsDotNet)
                 {
                     new AssemblePageController(id, QPContext.CurrentDbConnectionString).Assemble();
@@ -303,13 +329,8 @@ namespace Quantumart.QP8.BLL.Services
                 }
                 else
                 {
-                    if (token == null)
-                    {
-                        token = _qp7Service.Authenticate();
-                    }
-
-                    var message = _qp7Service.AssemblePage(id, token);  
-                    
+                    var token = _qp7Service.Authenticate();
+                    var message = _qp7Service.AssemblePage(id, token);
                     if (!string.IsNullOrEmpty(message))
                     {
                         failedIds.Add(id);
@@ -317,14 +338,9 @@ namespace Quantumart.QP8.BLL.Services
                 }
             }
 
-            if (failedIds.Any())
-            {
-                return MessageResult.Error(SiteStrings.AssemblePagesError + string.Join(", ", failedIds), failedIds.ToArray());
-            }
-            else
-            {
-                return null;
-            }
+            return failedIds.Any()
+                ? MessageResult.Error(SiteStrings.AssemblePagesError + string.Join(", ", failedIds), failedIds.ToArray())
+                : null;
         }
 
         public MessageResult AssemblePage(int id)
@@ -353,28 +369,36 @@ namespace Quantumart.QP8.BLL.Services
         {
             var page = PageRepository.GetPagePropertiesById(id);
             if (page == null)
-                throw new Exception(String.Format(TemplateStrings.PageNotFound, id));
+            {
+                throw new Exception(string.Format(TemplateStrings.PageNotFound, id));
+            }
+
             if (page.CanBeUnlocked)
             {
                 EntityObjectRepository.CaptureLock(page);
             }
         }
 
-
         public CopyResult Copy(int id)
         {
-            CopyResult result = new CopyResult();
-            Page page = PageRepository.GetPagePropertiesById(id);
+            var result = new CopyResult();
+            var page = PageRepository.GetPagePropertiesById(id);
             if (page == null)
-                throw new ApplicationException(String.Format(TemplateStrings.PageNotFound, id));
+            {
+                throw new ApplicationException(string.Format(TemplateStrings.PageNotFound, id));
+            }
 
             page.MutatePage();
             ManagePageFolders(page, FolderManagingType.CreateFolder);
-            int newId = PageRepository.CopyPage(page, QPContext.CurrentUserId);
+            var newId = PageRepository.CopyPage(page, QPContext.CurrentUserId);
             if (newId == 0)
+            {
                 result.Message = MessageResult.Error(TemplateStrings.PageNotCreated);
+            }
             else
+            {
                 result.Id = newId;
+            }
             return result;
         }
     }

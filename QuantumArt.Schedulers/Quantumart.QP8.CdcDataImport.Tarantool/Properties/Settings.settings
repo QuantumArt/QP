@@ -12,7 +12,7 @@
       <Value Profile="(Default)">00:00:10</Value>
     </Setting>
     <Setting Name="HttpEndpoint" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://mscnix01.artq.com/{customercode}/product-building/replication</Value>
+      <Value Profile="(Default)">http://mscnix02.artq.com/{customercode}/product-building/replication</Value>
     </Setting>
   </Settings>
 </SettingsFile>

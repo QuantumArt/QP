@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Options;
@@ -32,11 +32,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal virtual void PrintEnteredData()
         {
-            Console.WriteLine("Customer Code: " + CustomerCode);
-            Console.WriteLine("File Pathes: " + string.Join(", ", FilePathes));
-            Console.WriteLine("Config: " + (string.IsNullOrWhiteSpace(ConfigPath) ? "disabled" : ConfigPath));
-            Console.WriteLine("Verbosity Level: " + Program.VerboseLevel);
-            Console.WriteLine("Is silent mode enabled: " + Program.IsSilentModeEnabled);
+            Console.WriteLine($@"Customer Code: {CustomerCode}");
+            Console.WriteLine($@"File Pathes: {string.Join(", ", FilePathes)}");
+            Console.WriteLine($@"Config: {(string.IsNullOrWhiteSpace(ConfigPath) ? "disabled" : ConfigPath)}");
+            Console.WriteLine($@"Verbosity Level: {Program.VerboseLevel}");
+            Console.WriteLine($@"Is silent mode enabled: {Program.IsSilentModeEnabled}");
             Console.WriteLine();
 
             if (!Program.IsSilentModeEnabled)
@@ -96,7 +96,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         private static void ShowCommandLineHelp(OptionSet optionsSet)
         {
-            Console.WriteLine("USAGE: qpdbupdate [OPTIONS]+ <customer_code>" + Environment.NewLine);
+            Console.WriteLine(@"USAGE: qpdbupdate [OPTIONS]+ <customer_code>" + Environment.NewLine);
             Console.WriteLine(@"OPTIONS:");
             optionsSet.WriteOptionDescriptions(Console.Out);
             ConsoleHelpers.ExitProgram(ExitCode.Success);

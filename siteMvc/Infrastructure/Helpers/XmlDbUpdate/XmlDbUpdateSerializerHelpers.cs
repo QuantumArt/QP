@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
@@ -16,10 +14,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
     internal static class XmlDbUpdateSerializerHelpers
     {
-        internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string currentDbVersion, string backendUrl)
-        {
-            return SerializeAction(action, currentDbVersion, backendUrl, false);
-        }
+        internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string currentDbVersion, string backendUrl) => SerializeAction(action, currentDbVersion, backendUrl, false);
 
         internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string currentDbVersion, string backendUrl, bool withoutRoot)
         {
@@ -156,20 +151,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }) ?? Enumerable.Empty<XElement>();
         }
 
-        private static XElement CreateActionsRoot(string backendUrl, string currentDbVersion)
-        {
-            return new XElement(
-                XmlDbUpdateXDocumentConstants.RootElement,
-                GetBackendUrlAttribute(backendUrl),
-                new XAttribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute,
+        private static XElement CreateActionsRoot(string backendUrl, string currentDbVersion) => new XElement(
+            XmlDbUpdateXDocumentConstants.RootElement,
+            GetBackendUrlAttribute(backendUrl),
+            new XAttribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute,
                 currentDbVersion)
-            );
-        }
+        );
 
-        private static XAttribute GetBackendUrlAttribute(string backendUrl)
-        {
-            return new XAttribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute, backendUrl);
-        }
+        private static XAttribute GetBackendUrlAttribute(string backendUrl) => new XAttribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute, backendUrl);
 
         private static XElement GetOrCreateRoot(string backendUrl, string currentDbVersion)
         {
@@ -177,35 +166,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();
         }
 
-        private static string GetCode(XElement action)
-        {
-            return action.Attribute(XmlDbUpdateXDocumentConstants.ActionCodeAttribute).Value;
-        }
+        private static string GetCode(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.ActionCodeAttribute)?.Value;
 
-        private static string[] GetIds(XElement action)
-        {
-            return action.Attribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute).Value.Split(",".ToCharArray());
-        }
+        private static string[] GetIds(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute)?.Value.Split(",".ToCharArray());
 
-        private static int GetParentId(XElement action)
-        {
-            return int.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionParentIdAttribute).Value);
-        }
+        private static int GetParentId(XElement action) => int.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionParentIdAttribute)?.Value ?? throw new InvalidOperationException());
 
-        private static int GetLcid(XElement action)
-        {
-            return action.Attribute(XmlDbUpdateXDocumentConstants.ActionLcidAttribute).GetValueOrDefault<int>();
-        }
+        private static int GetLcid(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.ActionLcidAttribute).GetValueOrDefault<int>();
 
-        private static int GetBackwardId(XElement action)
-        {
-            return action.Attribute(XmlDbUpdateXDocumentConstants.ActionNewBackwardIdAttribute).GetValueOrDefault<int>();
-        }
+        private static int GetBackwardId(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.ActionNewBackwardIdAttribute).GetValueOrDefault<int>();
 
-        private static string GetVirtualFieldIds(XElement action)
-        {
-            return action.Attribute(XmlDbUpdateXDocumentConstants.ActionNewVirtualFieldIdsAttribute).GetValueOrDefault<string>();
-        }
+        private static string GetVirtualFieldIds(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.ActionNewVirtualFieldIdsAttribute).GetValueOrDefault<string>();
 
         private static int GetChildIdByCode(XElement action)
         {
@@ -265,12 +236,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }
         }
 
-        private static int GetResultIdByCode(XElement action)
-        {
-            return XmlDbUpdateQpActionHelpers.IsActionHasResultId(GetCode(action))
-                ? action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute).GetValueOrDefault<int>()
-                : default(int);
-        }
+        private static int GetResultIdByCode(XElement action) => XmlDbUpdateQpActionHelpers.IsActionHasResultId(GetCode(action))
+            ? action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute).GetValueOrDefault<int>()
+            : default(int);
 
         private static Guid[] GetUniqueIdByCode(XElement action)
         {
@@ -282,12 +250,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return uniqueIdValue.Split(",".ToCharArray()).Select(Guid.Parse).ToArray();
         }
 
-        private static Guid GetResultUniqueIdByCode(XElement action)
-        {
-            return XmlDbUpdateQpActionHelpers.IsArticleAndHasResultUniqueId(GetCode(action))
-                ? Guid.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute)?.Value ?? Guid.Empty.ToString())
-                : Guid.Empty;
-        }
+        private static Guid GetResultUniqueIdByCode(XElement action) => XmlDbUpdateQpActionHelpers.IsArticleAndHasResultUniqueId(GetCode(action))
+            ? Guid.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute)?.Value ?? Guid.Empty.ToString())
+            : Guid.Empty;
 
         private static string GetCustomActionCodeByCode(XElement action)
         {
@@ -304,28 +269,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         {
             return root.Elements().Aggregate(new NameValueCollection(), (seed, curr) =>
             {
-                seed.Add(curr.Attribute(XmlDbUpdateXDocumentConstants.FieldNameAttribute).Value, curr.Value);
+                seed.Add(curr.Attribute(XmlDbUpdateXDocumentConstants.FieldNameAttribute)?.Value, curr.Value);
                 return seed;
             });
         }
 
-        private static DateTime GetExecuted(XElement action, int lcid)
-        {
-            try
-            {
-                return Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute).Value, CultureHelpers.GetCultureInfoByLcid(lcid));
-            }
-            catch
-            {
-                // TODO: DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! And remove unusing references then.
-                Logger.Log.Warn("Used obsolete time conversion method!");
-                return Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute).Value, CultureInfo.InvariantCulture);
-            }
-        }
+        private static DateTime GetExecuted(XElement action, int lcid) =>
+            Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute)?.Value, CultureHelpers.GetCultureInfoByLcid(lcid));
 
-        private static string GetExecutedBy(XElement action)
-        {
-            return action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedByAttribute).GetValueOrDefault<string>();
-        }
+        private static string GetExecutedBy(XElement action) =>
+            action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedByAttribute).GetValueOrDefault<string>();
     }
 }

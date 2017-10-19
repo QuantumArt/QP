@@ -1,4 +1,4 @@
-ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGIN
+﻿ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGIN
 
     if object_id('tempdb..#disable_td_delete_item') is null
     begin
@@ -2426,7 +2426,7 @@ BEGIN
   set nocount on
   IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
     BEGIN
-        IF NOT (UPDATE(SPLITTED)) AND NOT (UPDATE(not_for_replication) AND EXISTS(select content_data_id from deleted))
+        IF NOT EXISTS(select content_data_id from deleted) OR (NOT(UPDATE(SPLITTED)) AND NOT (UPDATE(not_for_replication)))
         BEGIN
 
             update content_item set modified = getdate() where content_item_id in (select content_item_id from deleted where not_for_replication = 0)
@@ -3605,6 +3605,13 @@ if not update(attribute_order) and
 		end
 	end
 END
+
+GO
+  IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ATTRIBUTE' AND COLUMN_NAME = 'MAX_DATA_LIST_ITEM_COUNT')
+  BEGIN
+	ALTER TABLE CONTENT_ATTRIBUTE ADD MAX_DATA_LIST_ITEM_COUNT numeric(18,0) NOT NULL
+	CONSTRAINT DF_MAX_DATA_LIST_ITEM_COUNT DEFAULT 10
+  END
 
 GO
 exec qp_drop_existing 'qp_aggregates_to_remove', 'IsTableFunction'

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -418,10 +418,7 @@ namespace Quantumart.QP8.BLL
 
         public string FormCheckboxName => FormName + "_checkbox";
 
-        public static int ParseFormName(string formName)
-        {
-            return int.TryParse(formName.Replace(Prefix, string.Empty), out int value) ? value : 0;
-        }
+        public static int ParseFormName(string formName) => int.TryParse(formName.Replace(Prefix, string.Empty), out var value) ? value : 0;
 
         public string ParamName => "@" + FormName;
 
@@ -518,6 +515,10 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("HighlightType", NameResourceType = typeof(FieldStrings))]
         public string HighlightType { get; set; }
+
+        [LocalizedDisplayName("MaxDataListItemCount", NameResourceType = typeof(FieldStrings))]
+        [RangeValueValidator(0, 100, MessageTemplateResourceName = "MaxDataItemCountNotInRange", MessageTemplateResourceType = typeof(FieldStrings))]
+        public int MaxDataListItemCount { get; set; }
 
         [LocalizedDisplayName("VisualEditorHeight", NameResourceType = typeof(FieldStrings))]
         public int VisualEditorHeight { get; set; }
@@ -707,7 +708,7 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = string.Empty;
-                if (Relation != null && int.TryParse(O2MDefaultValue, out int parsedArticleId))
+                if (Relation != null && int.TryParse(O2MDefaultValue, out var parsedArticleId))
                 {
                     result = ArticleRepository.GetFieldValue(parsedArticleId, Relation.ContentId, Relation.Name);
                 }
@@ -721,7 +722,7 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = string.Empty;
-                if (Relation != null && int.TryParse(M2MDefaultValue, out int parsedArticleId))
+                if (Relation != null && int.TryParse(M2MDefaultValue, out var parsedArticleId))
                 {
                     result = ArticleRepository.GetFieldValue(parsedArticleId, Relation.ContentId, Relation.Name);
                 }
@@ -1942,13 +1943,12 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private bool LinqPropertyNameExistsInSystemColumns(string linqPropertyName)
+        private static bool LinqPropertyNameExistsInSystemColumns(string linqPropertyName)
         {
             //Проверка на пересечение служебных полей и введённого пользователем LINQ имени
-            var systemMembersNames = ObjectExtensions.GetFields(new SystemColumnMemberNames());
-            var systemNames = ObjectExtensions.GetFields(new SystemColumnNames());
-            return systemNames.Contains(linqPropertyName, StringComparer.CurrentCultureIgnoreCase)
-                   || systemMembersNames.Contains(linqPropertyName, StringComparer.CurrentCultureIgnoreCase);
+            var systemMembersNames = new SystemColumnMemberNames().GetFields();
+            var systemNames = new SystemColumnNames().GetFields();
+            return systemNames.Contains(linqPropertyName, StringComparer.CurrentCultureIgnoreCase) || systemMembersNames.Contains(linqPropertyName, StringComparer.CurrentCultureIgnoreCase);
         }
 
         private void ValidateRelations(RulesException<Field> errors)
@@ -1963,7 +1963,7 @@ namespace Quantumart.QP8.BLL
                 {
                     errors.ErrorFor(f => f.LinqPropertyName, FieldStrings.LinqPropertyNameNonUnique);
                 }
-                else if (LinqPropertyNameExistsInSystemColumns(this.LinqPropertyName))
+                else if (LinqPropertyNameExistsInSystemColumns(LinqPropertyName))
                 {
                     errors.ErrorFor(f => f.LinqPropertyName, FieldStrings.LinqPropertyNameExistInSystemColumns);
                 }
@@ -1978,7 +1978,7 @@ namespace Quantumart.QP8.BLL
                     {
                         errors.ErrorFor(f => f.LinqBackPropertyName, FieldStrings.LinqBackPropertyNameNonUnique);
                     }
-                    else if (LinqPropertyNameExistsInSystemColumns(this.LinqBackPropertyName))
+                    else if (LinqPropertyNameExistsInSystemColumns(LinqBackPropertyName))
                     {
                         errors.ErrorFor(f => f.LinqBackPropertyName, FieldStrings.LinqBackPropertyNameExistInSystemColumns);
                     }
@@ -2033,6 +2033,11 @@ namespace Quantumart.QP8.BLL
 
                 if (!string.IsNullOrWhiteSpace(NewM2MBackwardFieldName))
                 {
+                    if (RelateToContentId == null)
+                    {
+                        throw new InvalidOperationException("RelateToContentId is null");
+                    }
+
                     var relContent = _contentRepository.GetById(RelateToContentId.Value);
 
                     // BackwardField возможно создать только если Related контент не виртуальный
@@ -2082,6 +2087,11 @@ namespace Quantumart.QP8.BLL
 
                 if (!string.IsNullOrWhiteSpace(NewO2MBackwardFieldName))
                 {
+                    if (RelateToContentId == null)
+                    {
+                        throw new InvalidOperationException("RelateToContentId is null");
+                    }
+
                     var relContent = _contentRepository.GetById(RelateToContentId.Value);
 
                     // BackwardField возможно создать только если Related контент не виртуальный
@@ -2396,12 +2406,17 @@ namespace Quantumart.QP8.BLL
                         }
 
                         newChildField.SaveContentLink();
-
                         if (childField.LinkId != newChildField.LinkId)
                         {
+                            if (newChildField.LinkId == null)
+                            {
+                                throw new ArgumentException(@"Wrong input data");
+                            }
+
                             newChildLinkIds.Add(newChildField.LinkId.Value);
                         }
                     }
+
                     newChildField.PersistWithVirtualRebuild();
                     if (newChildField.ResultChildLinkIds != null)
                     {

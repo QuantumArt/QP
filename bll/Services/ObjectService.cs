@@ -114,9 +114,8 @@ namespace Quantumart.QP8.BLL.Services
 
 		public ListResult<ObjectListItem> GetTemplateObjectsByTemplateId(ListCommand listCommand, int parentId)
 		{
-			int totalRecords;
-			IEnumerable<ObjectListItem> list = ObjectRepository.ListTemplateObjects(listCommand, parentId, out totalRecords);
-			return new ListResult<ObjectListItem>
+            IEnumerable<ObjectListItem> list = ObjectRepository.ListTemplateObjects(listCommand, parentId, out int totalRecords);
+            return new ListResult<ObjectListItem>
 			{
 				Data = list.ToList(),
 				TotalRecords = totalRecords
@@ -130,9 +129,8 @@ namespace Quantumart.QP8.BLL.Services
 
 		public ListResult<ObjectListItem> GetPageObjectsByPageId(ListCommand listCommand, int parentId)
 		{
-			int totalRecords;
-			IEnumerable<ObjectListItem> list = ObjectRepository.ListPageObjects(listCommand, parentId, out totalRecords);
-			return new ListResult<ObjectListItem>
+            IEnumerable<ObjectListItem> list = ObjectRepository.ListPageObjects(listCommand, parentId, out int totalRecords);
+            return new ListResult<ObjectListItem>
 			{
 				Data = list.ToList(),
 				TotalRecords = totalRecords

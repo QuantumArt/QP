@@ -1,4 +1,4 @@
-FixContentItemTriggers
+﻿FixContentItemTriggers
 MultipleUpdate
 OptimizeHierarchy
 VisualEditor
@@ -23,3 +23,4 @@ DPC
 ContextMenuAction
 EFTablesViews
 AggregatesToRemove
+AddMaxItemCountColumn

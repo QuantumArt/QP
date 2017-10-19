@@ -130,8 +130,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
             public void SetLevel(int level, IDictionary<int, List<HierarchyItem>> levelItems)
             {
-                List<HierarchyItem> list;
-                if (!levelItems.TryGetValue(level, out list))
+                if (!levelItems.TryGetValue(level, out List<HierarchyItem> list))
                 {
                     list = new List<HierarchyItem>();
                     levelItems.Add(level, list);

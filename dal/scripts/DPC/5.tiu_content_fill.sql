@@ -3,7 +3,7 @@ BEGIN
   set nocount on
   IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
     BEGIN
-        IF NOT (UPDATE(SPLITTED)) AND NOT (UPDATE(not_for_replication) AND EXISTS(select content_data_id from deleted))
+        IF NOT EXISTS(select content_data_id from deleted) OR (NOT(UPDATE(SPLITTED)) AND NOT (UPDATE(not_for_replication)))
         BEGIN
 
             update content_item set modified = getdate() where content_item_id in (select content_item_id from deleted where not_for_replication = 0)

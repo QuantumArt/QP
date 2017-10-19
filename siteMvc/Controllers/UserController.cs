@@ -203,6 +203,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword
+
         // TODO: RENAME
         public ActionResult Profile(string tabId, int parentId, string successfulActionCode)
         {
