@@ -1,4 +1,4 @@
-﻿ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGIN
+ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGIN
 
     if object_id('tempdb..#disable_td_delete_item') is null
     begin
@@ -3607,13 +3607,6 @@ if not update(attribute_order) and
 END
 
 GO
-  IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ATTRIBUTE' AND COLUMN_NAME = 'MAX_DATA_LIST_ITEM_COUNT')
-  BEGIN
-	ALTER TABLE CONTENT_ATTRIBUTE ADD MAX_DATA_LIST_ITEM_COUNT numeric(18,0) NOT NULL
-	CONSTRAINT DF_MAX_DATA_LIST_ITEM_COUNT DEFAULT 10
-  END
-
-GO
 exec qp_drop_existing 'qp_aggregates_to_remove', 'IsTableFunction'
 GO
 
@@ -3687,6 +3680,7 @@ BEGIN
 	select @item_id
 	EXEC qp_merge_articles @ids, @last_modified_by, 0
 END
+GO
 exec qp_drop_existing 'qp_remove_old_aggregates', 'IsProcedure'
 GO
 
@@ -3698,6 +3692,13 @@ begin
     DELETE FROM content_item WITH(ROWLOCK) WHERE content_item_id IN (SELECT id FROM dbo.qp_aggregates_to_remove(@ids))
 end
 GO
+
+GO
+  IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ATTRIBUTE' AND COLUMN_NAME = 'MAX_DATA_LIST_ITEM_COUNT')
+  BEGIN
+	ALTER TABLE CONTENT_ATTRIBUTE ADD MAX_DATA_LIST_ITEM_COUNT numeric(18,0) NOT NULL
+	CONSTRAINT DF_MAX_DATA_LIST_ITEM_COUNT DEFAULT 10
+  END
 
 GO
 
