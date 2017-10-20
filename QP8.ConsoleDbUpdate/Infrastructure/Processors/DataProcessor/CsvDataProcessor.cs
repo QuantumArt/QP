@@ -1,4 +1,6 @@
-﻿using Quantumart.QP8.BLL;
+using CsvHelper;
+using QP8.Infrastructure.Logging;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
@@ -24,6 +26,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
         {
             var csvData = CsvReaderProcessor.Process(_settings.FilePathes, _settings.CsvConfiguration);
             _csvDbUpdateService.Process(csvData);
+        }
+
+        public void Process(string csvData)
+        {
+            const string validationMessage = "Cannot use pipes for processing csv data";
+            Logger.Log.Error(validationMessage);
+            throw new CsvBadDataException(validationMessage);
         }
     }
 }
