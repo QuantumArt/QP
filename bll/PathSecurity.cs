@@ -28,10 +28,7 @@ namespace Quantumart.QP8.BLL
     {
         private static StringComparison CompareOption = StringComparison.InvariantCultureIgnoreCase;
 
-        private static PathSecurityInfo FindFirst(string path, List<PathSecurityInfo> input)
-        {
-            return FindMatched(path, input).FirstOrDefault();
-        }
+        private static PathSecurityInfo FindFirst(string path, List<PathSecurityInfo> input) => FindMatched(path, input).FirstOrDefault();
 
         private static PathSecurityInfo FindLongest(string path, List<PathSecurityInfo> input)
         {
@@ -116,16 +113,14 @@ namespace Quantumart.QP8.BLL
                 result.FolderId = checksiteFolderResult.FolderId;
                 return result;
             }
-            else
+
+            var contents = new Regex(@"^\\contents\\([\d]+)");
+            var match = contents.Match(pathToFind);
+            if (match.Success)
             {
-                Regex contents = new Regex(@"^\\contents\\([\d]+)");
-                Match match = contents.Match(pathToFind);
-                if (match.Success)
-                {
-                    var contentId = Int32.Parse(match.Groups[1].Value);
-                    pathToFind = pathToFind.Replace(match.Value, string.Empty);
-                    return CheckContentFolder(pathToFind, contentId);
-                }
+                var contentId = int.Parse(match.Groups[1].Value);
+                pathToFind = pathToFind.Replace(match.Value, string.Empty);
+                return CheckContentFolder(pathToFind, contentId);
             }
 
             return result;

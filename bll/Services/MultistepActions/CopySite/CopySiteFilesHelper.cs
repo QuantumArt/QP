@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -21,10 +21,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             _destination = destination;
         }
 
-        public static int FilesCount(Site source)
-        {
-            return GetAllFilesPaths(source).Count();
-        }
+        public static int FilesCount(Site source) => GetAllFilesPaths(source).Count();
 
         private static CopySiteSettings Settings => (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
 
@@ -75,10 +72,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             }
         }
 
-        private bool CheckIfFoldersAreEqual()
-        {
-            return _source.LiveDirectory == _destination.LiveDirectory || _source.AssemblyPath == _destination.AssemblyPath || _source.UploadDir == _destination.UploadDir;
-        }
+        private bool CheckIfFoldersAreEqual() => _source.LiveDirectory == _destination.LiveDirectory || _source.AssemblyPath == _destination.AssemblyPath || _source.UploadDir == _destination.UploadDir;
 
         public int CopyFiles(int step, bool overwriteFilesOnDestination = true)
         {
@@ -201,9 +195,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             File.WriteAllLines(Settings.PathForFileWithFilesToCopy, filePaths.ToArray<string>());
         }
 
-        private static List<string> GetAllFiles()
-        {
-            return File.ReadAllLines(Settings.PathForFileWithFilesToCopy).ToList<string>();
-        }
+        private static List<string> GetAllFiles() => File.ReadAllLines(Settings.PathForFileWithFilesToCopy).ToList();
     }
 }

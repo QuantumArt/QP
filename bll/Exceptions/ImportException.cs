@@ -1,7 +1,7 @@
-﻿using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using System;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 
 namespace Quantumart.QP8.BLL.Exceptions
 {
@@ -24,7 +24,7 @@ namespace Quantumart.QP8.BLL.Exceptions
 			Settings = (ImportSettings)info.GetValue(SettingsKey, typeof(ImportSettings));
 		}
 
-		[SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue(SettingsKey, Settings, typeof(ImportSettings));

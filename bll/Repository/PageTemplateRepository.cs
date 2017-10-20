@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -34,10 +34,7 @@ namespace Quantumart.QP8.BLL.Repository
             return DefaultMapper.GetBizList<PageTemplate, PageTemplateDAL>(QPContext.EFContext.PageTemplateSet.Where(f => decIDs.Contains(f.Id)).ToList());
         }
 
-        internal static PageTemplate SaveProperties(PageTemplate template)
-        {
-            return DefaultRepository.Save<PageTemplate, PageTemplateDAL>(template);
-        }
+        internal static PageTemplate SaveProperties(PageTemplate template) => DefaultRepository.Save<PageTemplate, PageTemplateDAL>(template);
 
         internal static IEnumerable<NetLanguage> GetNetLanguagesList()
         {
@@ -64,10 +61,7 @@ namespace Quantumart.QP8.BLL.Repository
             );
         }
 
-        internal static PageTemplate UpdatePageTemplateProperties(PageTemplate pageTemplate)
-        {
-            return DefaultRepository.Update<PageTemplate, PageTemplateDAL>(pageTemplate);
-        }
+        internal static PageTemplate UpdatePageTemplateProperties(PageTemplate pageTemplate) => DefaultRepository.Update<PageTemplate, PageTemplateDAL>(pageTemplate);
 
         internal static void DeletePageTemplate(int id)
         {

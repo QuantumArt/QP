@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
@@ -16,10 +16,7 @@ namespace Quantumart.QP8.BLL.Repository
             return QPContext.EFContext.ContentWorkflowBindSet.SingleOrDefault(s => s.ContentId == (decimal)contentId);
         }
 
-        internal static ContentWorkflowBind GetContentWorkflow(int contentId)
-        {
-            return MapperFacade.ContentWorkflowBindMapper.GetBizObject(GetContentWorkflowDal(contentId));
-        }
+        internal static ContentWorkflowBind GetContentWorkflow(int contentId) => MapperFacade.ContentWorkflowBindMapper.GetBizObject(GetContentWorkflowDal(contentId));
 
         internal static ContentWorkflowBind GetContentWorkflow(Content content)
         {
@@ -41,10 +38,7 @@ namespace Quantumart.QP8.BLL.Repository
             return QPContext.EFContext.ArticleWorkflowBindSet.SingleOrDefault(s => s.ArticleId == (decimal)articleId);
         }
 
-        internal static ArticleWorkflowBind GetArticleWorkflow(int articleId)
-        {
-            return MapperFacade.ArticleWorkflowBindMapper.GetBizObject(GetArticleWorkflowDal(articleId));
-        }
+        internal static ArticleWorkflowBind GetArticleWorkflow(int articleId) => MapperFacade.ArticleWorkflowBindMapper.GetBizObject(GetArticleWorkflowDal(articleId));
 
         internal static ArticleWorkflowBind GetArticleWorkflow(Article article)
         {

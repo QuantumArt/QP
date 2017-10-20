@@ -1,6 +1,6 @@
-﻿using System;
-using Quantumart.QP8.Resources;
+using System;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
@@ -22,35 +22,31 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 			ContentName = contentName;
 		}
 
-		public MultistepActionStageCommandState GetState()
+		public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
 		{
-			return new MultistepActionStageCommandState
-			{
-				Type = RemovingStageCommandTypes.RemoveContent,
-				ParentId = SiteId,
-				Id = ContentId
-			};
-		}
+		    Type = RemovingStageCommandTypes.RemoveContent,
+		    ParentId = SiteId,
+		    Id = ContentId
+		};
 
-		public MultistepStageSettings GetStageSettings()
-		{
-			return new MultistepStageSettings
-			{
-				ItemCount = 1,
-				StepCount = 1,
-				Name = String.Format(ContentStrings.RemoveContentStageName, (ContentName ?? ""))
-			};
-		}
+	    public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
+	    {
+	        ItemCount = 1,
+	        StepCount = 1,
+	        Name = string.Format(ContentStrings.RemoveContentStageName, (ContentName ?? ""))
+	    };
 
-		#region IRemovingStageCommand Members
+	    #region IRemovingStageCommand Members
 
 		public MultistepActionStepResult Step(int step)
 		{
-			Content content = ContentRepository.GetById(ContentId);
+			var content = ContentRepository.GetById(ContentId);
 			if (content == null)
-				throw new Exception(String.Format(ContentStrings.ContentNotFound, ContentId));
-			
-			content.DieWithoutValidation();
+			{
+			    throw new Exception(string.Format(ContentStrings.ContentNotFound, ContentId));
+			}
+
+		    content.DieWithoutValidation();
 
 			return new MultistepActionStepResult { ProcessedItemsCount = 1 };
 		}

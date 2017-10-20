@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Objects;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -46,10 +45,7 @@ namespace Quantumart.QP8.BLL.Repository
             return result;
         }
 
-        internal static IEnumerable<EntityType> GetList()
-        {
-            return EntityTypesCache.Value;
-        }
+        internal static IEnumerable<EntityType> GetList() => EntityTypesCache.Value;
 
         internal static IEnumerable<EntityType> GetListByCodes(IEnumerable<string> entityCodes)
         {

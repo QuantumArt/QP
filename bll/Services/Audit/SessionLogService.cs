@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
 
@@ -33,7 +32,7 @@ namespace Quantumart.QP8.BLL.Services.Audit
 
 		public ListResult<SessionsLog> GetSucessfullSessionPage(ListCommand cmd)
 		{
-            List<SessionsLog> sessions = repository.GetSucessfullSessionPage(cmd, out int totalRecords).ToList();
+            var sessions = repository.GetSucessfullSessionPage(cmd, out var totalRecords).ToList();
             return new ListResult<SessionsLog>
 			{
 				Data = sessions,
@@ -43,7 +42,7 @@ namespace Quantumart.QP8.BLL.Services.Audit
 
 		public ListResult<SessionsLog> GetFailedSessionPage(ListCommand cmd)
 		{
-            List<SessionsLog> sessions = repository.GetFailedSessionPage(cmd, out int totalRecords).ToList();
+            var sessions = repository.GetFailedSessionPage(cmd, out var totalRecords).ToList();
             return new ListResult<SessionsLog>
 			{
 				Data = sessions,

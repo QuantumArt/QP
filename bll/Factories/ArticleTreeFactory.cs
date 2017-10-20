@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace Quantumart.QP8.BLL.Factories
                 if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.VirtualArticle)
                 {
                     var contentId = parentEntityId.GetValueOrDefault();
-                    commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] extensionContentIds, out ContentReference[] contentReferences);
+                    commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
 
                     var filterSqlParams = new List<SqlParameter>();
                     var sourceQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);

@@ -1,7 +1,6 @@
-﻿using System;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.Resources;
 using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
@@ -25,27 +24,21 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 			ItemCount = itemCount;
 		}
 
-		public MultistepActionStageCommandState GetState()
+		public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
 		{
-			return new MultistepActionStageCommandState
-			{
-				Type = RemovingStageCommandTypes.RemoveSiteArticles,
-				ParentId = 0,
-				Id = SiteId
-			};
-		}
+		    Type = RemovingStageCommandTypes.RemoveSiteArticles,
+		    ParentId = 0,
+		    Id = SiteId
+		};
 
-		public MultistepStageSettings GetStageSettings()
-		{
-			return new MultistepStageSettings
-			{
-				ItemCount = ItemCount,
-				StepCount = MultistepActionHelper.GetStepCount(ItemCount, ITEMS_PER_STEP),
-				Name = String.Format(SiteStrings.RemoveSiteArticlesStageName, (SiteName ?? ""))
-			};
-		}
+	    public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
+	    {
+	        ItemCount = ItemCount,
+	        StepCount = MultistepActionHelper.GetStepCount(ItemCount, ITEMS_PER_STEP),
+	        Name = string.Format(SiteStrings.RemoveSiteArticlesStageName, (SiteName ?? ""))
+	    };
 
-		#region IRemovingStageCommand Members
+	    #region IRemovingStageCommand Members
 
 		public MultistepActionStepResult Step(int step)
 		{

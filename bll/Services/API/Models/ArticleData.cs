@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.BLL.Services.API.Models
 {
@@ -15,13 +15,10 @@ namespace Quantumart.QP8.BLL.Services.API.Models
 
         public List<FieldData> Fields { get; set; }
 
-        public override string ToString()
+        public override string ToString() => new
         {
-            return new
-            {
-                Id,
-                ContentId
-            }.ToString();
-        }
+            Id,
+            ContentId
+        }.ToString();
     }
 }

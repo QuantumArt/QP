@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Quantumart.QP8.BLL
 {
 	/// <summary>
 	/// Типы файлов
 	/// </summary>
-	public enum FolderFileType : int
+	public enum FolderFileType
 	{
 		Unknown = 0,
 		Image = 1,

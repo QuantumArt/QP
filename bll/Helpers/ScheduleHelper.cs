@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL.Helpers
@@ -9,22 +6,15 @@ namespace Quantumart.QP8.BLL.Helpers
     public static class ScheduleHelper
     {
         
-        public static DateTime GetStartDateTime(int? dateValue, int? timeValue)
-        {
-            return GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultStartDate);
-        }
+        public static DateTime GetStartDateTime(int? dateValue, int? timeValue) => GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultStartDate);
 
-        public static DateTime GetEndDateTime(int? dateValue, int? timeValue)
-        {
-            return GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultEndDate);
-        }
-
+        public static DateTime GetEndDateTime(int? dateValue, int? timeValue) => GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultEndDate);
 
         public static DateTime DefaultStartDate
         {
             get
             {
-                DateTime tomorrow = DateTime.Now.AddDays(1);
+                var tomorrow = DateTime.Now.AddDays(1);
                 return new DateTime(tomorrow.Year, tomorrow.Month, tomorrow.Day, 0, 0, 0);
             }
         }
@@ -34,82 +24,58 @@ namespace Quantumart.QP8.BLL.Helpers
             get
             {
 
-                DateTime tomorrow = DateTime.Now.AddDays(1);
+                var tomorrow = DateTime.Now.AddDays(1);
                 return new DateTime(tomorrow.Year, tomorrow.Month, tomorrow.Day, 23, 59, 59);
             }
         }
 
-        private static DateTime GetScheduleDateTimeFromSqlValues(int? dateValue, int? timeValue, DateTime defaultDate)
-        {
-            return (dateValue != null && timeValue != null) ? GetScheduleDateTimeFromSqlValues((int)dateValue, (int)timeValue) : defaultDate;
-        }
+        private static DateTime GetScheduleDateTimeFromSqlValues(int? dateValue, int? timeValue, DateTime defaultDate) => (dateValue != null && timeValue != null) ? GetScheduleDateTimeFromSqlValues((int)dateValue, (int)timeValue) : defaultDate;
 
-		public static DateTime GetScheduleDateFromSqlValues(int? dateValue, DateTime defaultDate)
+        public static DateTime GetScheduleDateFromSqlValues(int? dateValue, DateTime defaultDate) => dateValue.HasValue ? GetScheduleDateFromSqlValues(dateValue.Value) : defaultDate;
+
+        public static TimeSpan GetScheduleTimeFromSqlValues(int? timeValue, TimeSpan defaultTime) => timeValue.HasValue ? GetScheduleTimeFromSqlValues(timeValue.Value) : defaultTime;
+
+        internal static DateTime GetScheduleDateTimeFromSqlValues(int dateValue, int timeValue) => GetScheduleDateFromSqlValues(dateValue) + GetScheduleTimeFromSqlValues(timeValue);
+
+        internal static DateTime GetScheduleDateFromSqlValues(int dateValue)
 		{
-			return dateValue.HasValue ? GetScheduleDateFromSqlValues(dateValue.Value) : defaultDate;
-		}
-
-		public static TimeSpan GetScheduleTimeFromSqlValues(int? timeValue, TimeSpan defaultTime)
-		{
-			return timeValue.HasValue ? GetScheduleTimeFromSqlValues(timeValue.Value) : defaultTime;
-		}
-
-
-        internal static DateTime GetScheduleDateTimeFromSqlValues(int dateValue, int timeValue)
-        {			
-			return GetScheduleDateFromSqlValues(dateValue) + GetScheduleTimeFromSqlValues(timeValue);
-        }
-
-		internal static DateTime GetScheduleDateFromSqlValues(int dateValue)
-		{
-			int year = dateValue / 10000; ;
-			int month = (dateValue % 10000) / 100;
-			int day = dateValue % 100;			
+			var year = dateValue / 10000; ;
+			var month = (dateValue % 10000) / 100;
+			var day = dateValue % 100;			
 			return new DateTime(year, month, day);
 		}
 
 		internal static TimeSpan GetScheduleTimeFromSqlValues(int timeValue)
 		{			
-			int hour = timeValue / 10000;
-			int minute = (timeValue % 10000) / 100;
-			int second = timeValue % 100;
+			var hour = timeValue / 10000;
+			var minute = (timeValue % 10000) / 100;
+			var second = timeValue % 100;
 			return new TimeSpan(hour, minute, second);
 		}
 
 
-        internal static Tuple<int, int> GetSqlValuesFromScheduleDateTime(DateTime date)
-        {
-			return new Tuple<int, int>(GetSqlValuesFromScheduleDate(date.Date), GetSqlValuesFromScheduleTime(date.TimeOfDay));
-        }
+        internal static Tuple<int, int> GetSqlValuesFromScheduleDateTime(DateTime date) => new Tuple<int, int>(GetSqlValuesFromScheduleDate(date.Date), GetSqlValuesFromScheduleTime(date.TimeOfDay));
 
-		internal static int GetSqlValuesFromScheduleDate(DateTime date)
-		{
-			return date.Year * 10000 + date.Month * 100 + date.Day;
-		}
+        internal static int GetSqlValuesFromScheduleDate(DateTime date) => date.Year * 10000 + date.Month * 100 + date.Day;
 
-		internal static int GetSqlValuesFromScheduleTime(TimeSpan time)
-		{
-			return time.Hours * 10000 + time.Minutes * 100 + time.Seconds;
-		}
+        internal static int GetSqlValuesFromScheduleTime(TimeSpan time) => time.Hours * 10000 + time.Minutes * 100 + time.Seconds;
 
-              
-
-		public static TimeSpan GetDuration(string durationUnits, Decimal duration, DateTime startDate)
+        public static TimeSpan GetDuration(string durationUnits, decimal duration, DateTime startDate)
 		{
 			switch (durationUnits.ToLower())
 			{
 				case "mi":
-					return TimeSpan.FromMinutes(Decimal.ToDouble(duration));
+					return TimeSpan.FromMinutes(decimal.ToDouble(duration));
 				case "hh":
-					return TimeSpan.FromHours(Decimal.ToDouble(duration));
+					return TimeSpan.FromHours(decimal.ToDouble(duration));
 				case "dd":
-					return TimeSpan.FromDays(Decimal.ToDouble(duration));
+					return TimeSpan.FromDays(decimal.ToDouble(duration));
 				case "wk":
-					return TimeSpan.FromTicks(TimeSpan.TicksPerDay * 7 * Decimal.ToInt64(duration));
+					return TimeSpan.FromTicks(TimeSpan.TicksPerDay * 7 * decimal.ToInt64(duration));
 				case "mm":
-					return startDate.Date.AddMonths(Decimal.ToInt32(duration)) - startDate.Date;
+					return startDate.Date.AddMonths(decimal.ToInt32(duration)) - startDate.Date;
 				case "yy":
-					return startDate.Date.AddYears(Decimal.ToInt32(duration)) - startDate.Date;
+					return startDate.Date.AddYears(decimal.ToInt32(duration)) - startDate.Date;
 				default:
 					throw new ArgumentException("Unknown duration units: " + durationUnits);
 			}

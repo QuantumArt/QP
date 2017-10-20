@@ -1,12 +1,9 @@
-﻿using Quantumart.QP8.BLL.Services.MultistepActions.Base;
+using Quantumart.QP8.BLL.Services.MultistepActions.Base;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Remove
 {
 	public class RemoveArticlesFromArchiveService : MultistepActionServiceBase<RemoveArticlesFromArchiveCommand>
 	{
-		public override string ActionCode
-		{
-			get { return Constants.ActionCode.MultipleRemoveArticleFromArchive; }
-		}
+		public override string ActionCode => Constants.ActionCode.MultipleRemoveArticleFromArchive;
 	}
 }

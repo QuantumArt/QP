@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
@@ -33,11 +33,8 @@ namespace Quantumart.QP8.BLL
 
         public Content Content
         {
-            get { return _content ?? (_content = ContentRepository.GetById(ContentId)); }
-            set
-            {
-                _content = value;
-            }
+            get => _content ?? (_content = ContentRepository.GetById(ContentId));
+            set => _content = value;
         }
 
         [LocalizedDisplayName("Format", NameResourceType = typeof(NotificationStrings))]

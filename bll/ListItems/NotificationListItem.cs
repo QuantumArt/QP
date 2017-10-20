@@ -1,5 +1,4 @@
-﻿using System;
-using Quantumart.QP8.Resources;
+using System;
 
 namespace Quantumart.QP8.BLL.ListItems
 {

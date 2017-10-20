@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,10 +54,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 			return clone;
 		}
 
-		object ICloneable.Clone()
-		{
-			return Clone();
-		}
-		#endregion
+		object ICloneable.Clone() => Clone();
+
+	    #endregion
 	}
 }

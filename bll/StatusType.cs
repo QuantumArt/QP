@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -32,25 +32,13 @@ namespace Quantumart.QP8.BLL
 
         public override int ParentEntityId => SiteId;
 
-        public static StatusType GetPublished(int siteId)
-        {
-            return StatusTypeRepository.GetByName(StatusName.Published, siteId);
-        }
+        public static StatusType GetPublished(int siteId) => StatusTypeRepository.GetByName(StatusName.Published, siteId);
 
-        public static StatusType GetNone(int siteId)
-        {
-            return StatusTypeRepository.GetByName(StatusName.None, siteId);
-        }
+        public static StatusType GetNone(int siteId) => StatusTypeRepository.GetByName(StatusName.None, siteId);
 
-        public static StatusType Create(int siteId)
-        {
-            return new StatusType { SiteId = siteId, Weight = MinFreeWeight(StatusTypeRepository.GetWeightsBySiteId(siteId)) };
-        }
+        public static StatusType Create(int siteId) => new StatusType { SiteId = siteId, Weight = MinFreeWeight(StatusTypeRepository.GetWeightsBySiteId(siteId)) };
 
-        private static int MinFreeWeight(IEnumerable<int> occupiedWeights)
-        {
-            return Enumerable.Range(0, MaxWeight + 1).Except(occupiedWeights).Min();
-        }
+        private static int MinFreeWeight(IEnumerable<int> occupiedWeights) => Enumerable.Range(0, MaxWeight + 1).Except(occupiedWeights).Min();
 
         public override void Validate()
         {

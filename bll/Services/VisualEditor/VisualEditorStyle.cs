@@ -1,12 +1,12 @@
-﻿using Quantumart.QP8.BLL.Helpers.VisualEditor;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Quantumart.QP8.BLL.Helpers.VisualEditor;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
@@ -18,13 +18,10 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
         internal VisualEditorStyle()
         { }
 
-        internal static VisualEditorStyle Create()
+        internal static VisualEditorStyle Create() => new VisualEditorStyle
         {
-            return new VisualEditorStyle
-            {
-                Order = VisualEditorRepository.GetStyleMaxOrder() + 1
-            };
-        }
+            Order = VisualEditorRepository.GetStyleMaxOrder() + 1
+        };
 
         public VisualEditorStyle Init()
         {
@@ -69,8 +66,8 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
         [LocalizedDisplayName("Styles", NameResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<VeStyleAggregationListItem> StylesItems
         {
-            get { return _stylesItems.Value; }
-            set { _stylesItems.Value = value; }
+            get => _stylesItems.Value;
+            set => _stylesItems.Value = value;
         }
 
         private InitPropertyValue<IEnumerable<VeStyleAggregationListItem>> _attributeItems;
@@ -78,8 +75,8 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
         [LocalizedDisplayName("Attributes", NameResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<VeStyleAggregationListItem> AttributeItems
         {
-            get { return _attributeItems.Value; }
-            set { _attributeItems.Value = value; }
+            get => _attributeItems.Value;
+            set => _attributeItems.Value = value;
         }
 
         public void DoCustomBinding(List<VeStyleAggregationListItem> jsonStyles, List<VeStyleAggregationListItem> jsonAttributes)

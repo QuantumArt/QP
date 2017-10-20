@@ -1,8 +1,4 @@
-﻿using Quantumart.QP8.BLL.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL
 {
@@ -19,19 +15,10 @@ namespace Quantumart.QP8.BLL
 		public string Name { get; set; }
 		public string Description { get; set; }
 
-		public static EntityPermissionLevel GetList()
-		{
-			return GetEntityPermissionLevelByName(_list);
-		}
+		public static EntityPermissionLevel GetList() => GetEntityPermissionLevelByName(_list);
 
-		public static EntityPermissionLevel GetFullAccess()
-		{
-			return GetEntityPermissionLevelByName(_fullAccess);
-		}
+	    public static EntityPermissionLevel GetFullAccess() => GetEntityPermissionLevelByName(_fullAccess);
 
-		private static EntityPermissionLevel GetEntityPermissionLevelByName(string name)
-		{
-			return PageTemplateRepository.GetPermissionLevelByName(name);
-		}
+	    private static EntityPermissionLevel GetEntityPermissionLevelByName(string name) => PageTemplateRepository.GetPermissionLevelByName(name);
 	}
 }

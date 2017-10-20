@@ -290,8 +290,8 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("ExternalCss", NameResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<ExternalCss> ExternalCssItems
         {
-            get { return _externalCssItems.Value; }
-            set { _externalCssItems.Value = value; }
+            get => _externalCssItems.Value;
+            set => _externalCssItems.Value = value;
         }
 
         [LocalizedDisplayName("RootElementClass", NameResourceType = typeof(VisualEditorStrings))]
@@ -503,10 +503,7 @@ namespace Quantumart.QP8.BLL
             return ValidationServices.GenerateDynamicResourceText(container);
         }
 
-        public static string GetFullyQualifiedName(string nameSpace, string className)
-        {
-            return string.IsNullOrEmpty(nameSpace) ? className : $"{nameSpace}.{className}";
-        }
+        public static string GetFullyQualifiedName(string nameSpace, string className) => string.IsNullOrEmpty(nameSpace) ? className : $"{nameSpace}.{className}";
 
         public void SaveVisualEditorCommands(int[] activeVeCommands)
         {

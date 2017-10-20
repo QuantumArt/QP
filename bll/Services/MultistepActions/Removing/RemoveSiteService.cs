@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
@@ -14,30 +13,34 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 
 		public override MultistepActionSettings Setup(int dbId, int siteId, bool? boundToExternal)
 		{
-			Site site = SiteRepository.GetById(siteId);
+			var site = SiteRepository.GetById(siteId);
 			if (site == null)
-				throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, siteId));
-			if (site.LockedByAnyoneElse)
-				throw new ApplicationException(String.Format(SiteStrings.LockedByAnyoneElse, site.LockedByDisplayName));
+			{
+			    throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, siteId));
+			}
+		    if (site.LockedByAnyoneElse)
+		    {
+		        throw new ApplicationException(string.Format(SiteStrings.LockedByAnyoneElse, site.LockedByDisplayName));
+		    }
 
-			IEnumerable<string> sharedUnionBaseContentsName = ContentRepository.GetSharedUnionBaseContentNames(siteId);
+		    var sharedUnionBaseContentsName = ContentRepository.GetSharedUnionBaseContentNames(siteId);
 			if (sharedUnionBaseContentsName.Any())
 			{
-				string message = String.Format(ContentStrings.ContentsAreSharedUnionBase,
-					Environment.NewLine + String.Join(Environment.NewLine, sharedUnionBaseContentsName.Distinct(StringComparer.InvariantCultureIgnoreCase)));
+				var message = string.Format(ContentStrings.ContentsAreSharedUnionBase,
+					Environment.NewLine + string.Join(Environment.NewLine, sharedUnionBaseContentsName.Distinct(StringComparer.InvariantCultureIgnoreCase)));
 				throw new ApplicationException(message);
 			}
 
-			IEnumerable<string> sharedRelatedContentsName = ContentRepository.GetSharedRelatedContentNames(siteId);
+			var sharedRelatedContentsName = ContentRepository.GetSharedRelatedContentNames(siteId);
 			if (sharedRelatedContentsName.Any())
 			{
-				string message = String.Format(ContentStrings.ContentsAreSharedRelated,
-					Environment.NewLine + String.Join(Environment.NewLine, sharedRelatedContentsName.Distinct(StringComparer.InvariantCultureIgnoreCase)));
+				var message = string.Format(ContentStrings.ContentsAreSharedRelated,
+					Environment.NewLine + string.Join(Environment.NewLine, sharedRelatedContentsName.Distinct(StringComparer.InvariantCultureIgnoreCase)));
 				throw new ApplicationException(message);
 			}
 
-			int articleCount = SiteRepository.GetSiteArticleCount(siteId);
-			int contentCount = SiteRepository.GetSiteContentCount(siteId);
+			var articleCount = SiteRepository.GetSiteArticleCount(siteId);
+			var contentCount = SiteRepository.GetSiteContentCount(siteId);
 
 			removeSiteArticlesCommand = new RemoveSiteArticlesCommand(siteId, site.Name, articleCount);
 			removeSiteContentsCommand = new RemoveSiteContentsCommand(siteId, site.Name, contentCount);
@@ -45,30 +48,24 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 			
 			return base.Setup(dbId, siteId, boundToExternal);
 		}
-		protected override MultistepActionSettings CreateActionSettings(int dbId, int siteId)
+		protected override MultistepActionSettings CreateActionSettings(int dbId, int siteId) => new MultistepActionSettings
 		{
-			return new MultistepActionSettings
-			{
-				Stages = new[] 
-				{ 
-					removeSiteArticlesCommand.GetStageSettings(),
-					removeSiteContentsCommand.GetStageSettings(),
-					removeSiteCommand.GetStageSettings()
-				} 
-			};
-		}
+		    Stages = new[] 
+		    { 
+		        removeSiteArticlesCommand.GetStageSettings(),
+		        removeSiteContentsCommand.GetStageSettings(),
+		        removeSiteCommand.GetStageSettings()
+		    } 
+		};
 
-		protected override MultistepActionServiceContext CreateContext(int dbId, int siteId, bool? boundToExternal)
+	    protected override MultistepActionServiceContext CreateContext(int dbId, int siteId, bool? boundToExternal) => new MultistepActionServiceContext
 		{
-			return new MultistepActionServiceContext
-			{
-				CommandStates = new[] 
-				{ 
-					removeSiteArticlesCommand.GetState(),
- 					removeSiteContentsCommand.GetState(),
- 					removeSiteCommand.GetState()
-				} 
-			};
-		}
+		    CommandStates = new[] 
+		    { 
+		        removeSiteArticlesCommand.GetState(),
+		        removeSiteContentsCommand.GetState(),
+		        removeSiteCommand.GetState()
+		    } 
+		};
 	}
 }

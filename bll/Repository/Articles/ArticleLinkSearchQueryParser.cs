@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using QP8.Infrastructure;
@@ -89,12 +89,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 throw new ApplicationException("Не удалость получить LinkedId для поля с id = " + fieldId);
             }
-            if (!int.TryParse(p.ContentID, out int extensionContentId))
+            if (!int.TryParse(p.ContentID, out var extensionContentId))
             {
                 extensionContentId = 0;
             }
 
-            if (!int.TryParse(p.ReferenceFieldID, out int referenceFieldId))
+            if (!int.TryParse(p.ReferenceFieldID, out var referenceFieldId))
             {
                 referenceFieldId = 0;
             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
@@ -17,8 +17,8 @@ namespace Quantumart.QP8.BLL
 
         public static BackendActionContext Current
         {
-            get { return QPContext.BackendActionContext; }
-            private set { QPContext.BackendActionContext = value; }
+            get => QPContext.BackendActionContext;
+            private set => QPContext.BackendActionContext = value;
         }
 
         public string ActionTypeCode { get; private set; }

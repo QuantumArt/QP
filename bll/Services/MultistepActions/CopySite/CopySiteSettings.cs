@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
 
@@ -34,9 +34,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             DoNotCopyFiles = doNotCopyFiles;
         }
 
-        private string GetDateTimeForFileName()
-        {
-            return $"{DateTimeOnStart.Year}_{DateTimeOnStart.Month}_{DateTimeOnStart.Day}_{DateTimeOnStart.Hour}_{DateTimeOnStart.Minute}_{DateTimeOnStart.Second}";
-        }
+        private string GetDateTimeForFileName() => $"{DateTimeOnStart.Year}_{DateTimeOnStart.Month}_{DateTimeOnStart.Day}_{DateTimeOnStart.Hour}_{DateTimeOnStart.Minute}_{DateTimeOnStart.Second}";
     }
 }

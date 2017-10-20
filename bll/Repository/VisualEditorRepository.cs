@@ -1,15 +1,14 @@
-﻿using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.BLL.Services.VisualEditor;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL;
-using Quantumart.QP8.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Services.VisualEditor;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -219,10 +218,7 @@ namespace Quantumart.QP8.BLL.Repository
                 .ThenBy(c => c.CommandInGroupOrder);
         }
 
-        internal static IEnumerable<VisualEditorCommand> GetAllCommands()
-        {
-            return MapperFacade.VisualEditorCommandMapper.GetBizList(QPContext.EFContext.VeCommandSet.ToList());
-        }
+        internal static IEnumerable<VisualEditorCommand> GetAllCommands() => MapperFacade.VisualEditorCommandMapper.GetBizList(QPContext.EFContext.VeCommandSet.ToList());
 
         internal static IEnumerable<VisualEditorCommand> GetSiteCommands(int siteId)
         {
@@ -347,10 +343,7 @@ namespace Quantumart.QP8.BLL.Repository
             );
         }
 
-        internal static VisualEditorStyle UpdateStyleProperties(VisualEditorStyle visualEditorStyle)
-        {
-            return DefaultRepository.Update<VisualEditorStyle, VeStyleDAL>(visualEditorStyle);
-        }
+        internal static VisualEditorStyle UpdateStyleProperties(VisualEditorStyle visualEditorStyle) => DefaultRepository.Update<VisualEditorStyle, VeStyleDAL>(visualEditorStyle);
 
         internal static void DeleteStyle(int id)
         {

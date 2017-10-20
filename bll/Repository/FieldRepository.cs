@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Objects;
@@ -429,7 +429,7 @@ namespace Quantumart.QP8.BLL.Repository
                     PageSize = cmd.PageSize
                 };
 
-                var rows = Common.GetFieldsPage(scope.DbConnection, options, out int totalRecords);
+                var rows = Common.GetFieldsPage(scope.DbConnection, options, out var totalRecords);
                 return new ListResult<FieldListItem> { Data = MapperFacade.FieldListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }
@@ -466,7 +466,7 @@ namespace Quantumart.QP8.BLL.Repository
                     Mode = mode
                 };
 
-                var rows = Common.GetFieldsPage(scope.DbConnection, options, out int totalRecords);
+                var rows = Common.GetFieldsPage(scope.DbConnection, options, out var totalRecords);
                 return new ListResult<FieldListItem> { Data = MapperFacade.FieldListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }

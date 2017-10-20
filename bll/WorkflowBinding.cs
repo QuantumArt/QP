@@ -1,10 +1,8 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -26,7 +24,7 @@ namespace Quantumart.QP8.BLL
 
 		public WorkflowBind()
 		{
-			WorkflowId = WorkflowBind.UnassignedId;
+			WorkflowId = UnassignedId;
 			IsAsync = true;
 		}
 
@@ -36,39 +34,15 @@ namespace Quantumart.QP8.BLL
 		[LocalizedDisplayName("SplitArticles", NameResourceType = typeof(ContentStrings))]	
 		public bool IsAsync { get; set; }
 
-		public bool IsAssigned
-		{
-			get
-			{
-				return WorkflowId != WorkflowBind.UnassignedId;
-			}
-		}
+		public bool IsAssigned => WorkflowId != UnassignedId;
 
-		public bool CurrentUserCanUpdateArticles
-		{
-			get
-			{
-				return !IsAssigned || QPContext.IsAdmin || CurrentUserMaxWeight > 0;			
-			}
-		}
+	    public bool CurrentUserCanUpdateArticles => !IsAssigned || QPContext.IsAdmin || CurrentUserMaxWeight > 0;
 
-		public bool CurrentUserCanRemoveArticles
-		{
-			get
-			{
-				return !IsAssigned || QPContext.IsAdmin || CurrentUserHasWorkflowMaxWeight;
-			}
-		}
+	    public bool CurrentUserCanRemoveArticles => !IsAssigned || QPContext.IsAdmin || CurrentUserHasWorkflowMaxWeight;
 
-		public bool CurrentUserCanPublishArticles
-		{
-			get
-			{
-				return !IsAssigned || QPContext.IsAdmin || CurrentUserHasWorkflowMaxWeight;
-			}
-		}
+	    public bool CurrentUserCanPublishArticles => !IsAssigned || QPContext.IsAdmin || CurrentUserHasWorkflowMaxWeight;
 
-		/// <summary>
+	    /// <summary>
 		/// Список статусов Workflow
 		/// </summary>
 		public List<StatusType> StatusTypes
@@ -128,9 +102,13 @@ namespace Quantumart.QP8.BLL
 				if (_CurrentUserMaxWeight == 0)
 				{
 					if (QPContext.IsAdmin)
-						_CurrentUserMaxWeight = MaxStatus.Weight;
+					{
+					    _CurrentUserMaxWeight = MaxStatus.Weight;
+					}
 					else
-						_CurrentUserMaxWeight = WorkflowRepository.GetCurrentUserMaxWeight(WorkflowId);
+					{
+					    _CurrentUserMaxWeight = WorkflowRepository.GetCurrentUserMaxWeight(WorkflowId);
+					}
 				}
 				return _CurrentUserMaxWeight;
 			}
@@ -139,23 +117,10 @@ namespace Quantumart.QP8.BLL
 		/// <summary>
 		/// Доступен ли пользователю максимальный вес данного Workflow
 		/// </summary>
-		public bool CurrentUserHasWorkflowMaxWeight
-		{
-			get
-			{
-				return (MaxStatus.Weight == CurrentUserMaxWeight);
-			}
-		}
+		public bool CurrentUserHasWorkflowMaxWeight => (MaxStatus.Weight == CurrentUserMaxWeight);
 
-		public bool UseStatus(int statusTypeId)
-		{
-			return WorkflowRepository.DoesWorkflowUseStatus(WorkflowId, statusTypeId);
-		}
+	    public bool UseStatus(int statusTypeId) => WorkflowRepository.DoesWorkflowUseStatus(WorkflowId, statusTypeId);
 
-		public StatusType GetClosestStatus(int statusWeight)
-		{
-			return WorkflowRepository.GetClosestStatus(WorkflowId, statusWeight);
-		}
-
-    }
+	    public StatusType GetClosestStatus(int statusWeight) => WorkflowRepository.GetClosestStatus(WorkflowId, statusWeight);
+	}
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Data;
-using System.Linq;
-using System.Text;
 using AutoMapper;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Utils;

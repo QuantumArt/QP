@@ -1,11 +1,8 @@
-﻿using AutoMapper;
+using System;
+using System.Data;
+using AutoMapper;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Utils;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -22,7 +19,7 @@ namespace Quantumart.QP8.BLL.Mappers
 				.ForMember(biz => biz.LastModifiedBy, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("LastModifiedBy"))))
 				.ForMember(biz => biz.LastModifiedByLogin, opt => opt.MapFrom(row => row.Field<string>("LastModifiedByLogin")))
 				.ForMember(biz => biz.LockedBy, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal?>("LockedBy"), 0)))
-				.ForMember(biz => biz.LockedByFullName, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("LockedByFullName"), String.Empty)))
+				.ForMember(biz => biz.LockedByFullName, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("LockedByFullName"), string.Empty)))
 				.AfterMap(SetBizProperties);
 		}
 

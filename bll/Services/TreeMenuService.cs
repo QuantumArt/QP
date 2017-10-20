@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Services
@@ -19,10 +20,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="groupItemCode"></param>
         /// <param name="loadChildNodes">признак, разрешающий предварительную загрузку первого уровня дочерних узлов</param>
         /// <returns>узел дерева</returns>
-        public static TreeNode GetNode(string entityTypeCode, int entityId, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, bool loadChildNodes = false)
-        {
-            return TreeMenuRepository.GetNode(entityTypeCode, entityId, parentEntityId, isFolder, isGroup, groupItemCode, loadChildNodes);
-        }
+        public static TreeNode GetNode(string entityTypeCode, int entityId, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, bool loadChildNodes = false) => TreeMenuRepository.GetNode(entityTypeCode, entityId, parentEntityId, isFolder, isGroup, groupItemCode, loadChildNodes);
 
         /// <summary>
         /// Возвращает список дочерних узлов для указанного узла
@@ -33,10 +31,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="isGroup"></param>
         /// <param name="groupItemCode"></param>
         /// <returns>список дочерних узлов</returns>
-        public static IEnumerable<TreeNode> GetChildNodeList(string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode)
-        {
-            return TreeMenuRepository.GetChildNodeList(entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode);
-        }
+        public static IEnumerable<TreeNode> GetChildNodeList(string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode) => TreeMenuRepository.GetChildNodeList(entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode);
 
         /// <summary>
         /// Возвращает поддерево меню от корня до ближайшего существующего нода для параметров
@@ -58,10 +53,10 @@ namespace Quantumart.QP8.BLL.Services
                         Code = e.Code,
                         Id = Converter.ToInt32(e.Id),
                         ParentId = Converter.ToInt32(e.ParentId),
-                        IsFolder = false,
+                        IsFolder = false
                     });
 
-                    if (StringComparer.InvariantCultureIgnoreCase.Equals(e.Code, Constants.EntityTypeCode.Content))
+                    if (StringComparer.InvariantCultureIgnoreCase.Equals(e.Code, EntityTypeCode.Content))
                     {
                         var group = ContentRepository.GetContentGroup(Convert.ToInt32(e.Id));
                         if (group != null)
@@ -71,8 +66,8 @@ namespace Quantumart.QP8.BLL.Services
                                 Code = group.EntityTypeCode,
                                 Id = Converter.ToInt32(group.Id),
                                 ParentId = Converter.ToInt32(group.ParentEntityId),
-                                GroupItemCode = Constants.GroupItemCodes.ContentGroup,
-                                IsGroup = true,
+                                GroupItemCode = GroupItemCodes.ContentGroup,
+                                IsGroup = true
                             });
                         }
                     }

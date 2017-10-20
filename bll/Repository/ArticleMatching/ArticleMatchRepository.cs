@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions;
 using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
 using Quantumart.QP8.DAL;
@@ -25,7 +24,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
 		internal static ArticleInfo[] MatchArticles(int[] contentIds, ConditionBase condition, MatchMode mode)
 		{
 			var fields = GetFieldInfo(condition);
-			int count = GetFieldCount(condition);
+			var count = GetFieldCount(condition);
 
 			var schema = MatchContents(contentIds, fields);
 			schema = Validate(schema, contentIds, mode, count);
@@ -51,14 +50,12 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
 					return new ParameterCondition { Parameter = parameterKey };
 				});
 
-				string query = GetQuery(schema, cnd);
+				var query = GetQuery(schema, cnd);
 
 				return MatchArticles(parameters, query);
 			}
-			else
-			{
-				return new ArticleInfo[0];
-			}
+
+		    return new ArticleInfo[0];
 		}
 		#endregion
 
@@ -99,20 +96,20 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
 		private static FieldInfo[] GetFieldInfo(ConditionBase condition)
 		{
 			var result = new Dictionary<string, FieldInfo>();
-			int id = 0;
+			var id = 0;
 
 			foreach (var fieldCondition in condition.OfType<FieldCondition>())
 			{
-				string key = "";
-				int n = 1;
+				var key = "";
+				var n = 1;
 				int? parentId = null;
 
 				foreach (var field in fieldCondition.Fields)
 				{
-					bool isLast = fieldCondition.Fields.Length == n;
+					var isLast = fieldCondition.Fields.Length == n;
 					key += "_" + field.Name + (isLast ? "_" + fieldCondition.Type : null);
 
-                    if (result.TryGetValue(key, out FieldInfo info))
+                    if (result.TryGetValue(key, out var info))
                     {
                         parentId = info.Id;
                     }
@@ -155,14 +152,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
 			{
 				throw new Exception("Contents " + string.Join(", ", unmatchedContentIds) + " don't match filter condition");
 			}
-			else if (mode == MatchMode.StrictIfPossible)
-			{
-				return schema.Where(d => !unmatchedContentIds.Contains(d.RootContentId)).ToArray();
-			}
-			else
-			{
-				return schema;
-			}
+
+		    if (mode == MatchMode.StrictIfPossible)
+		    {
+		        return schema.Where(d => !unmatchedContentIds.Contains(d.RootContentId)).ToArray();
+		    }
+
+		    return schema;
 		}
 
 		private static bool ComparitionPredicate(ComparitionCondition condition, Func<string, int> getTypeId)
@@ -171,49 +167,47 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
 
 			if (data.Length == 2)
 			{
-				int leftTypeId = getTypeId(data[0].GetCurrentExpression());
-				int rightTypeId = getTypeId(data[1].GetCurrentExpression());
-				string leftType = GetTypeByTypeId(leftTypeId);
-				string rightType = GetTypeByTypeId(rightTypeId);
+				var leftTypeId = getTypeId(data[0].GetCurrentExpression());
+				var rightTypeId = getTypeId(data[1].GetCurrentExpression());
+				var leftType = GetTypeByTypeId(leftTypeId);
+				var rightType = GetTypeByTypeId(rightTypeId);
 
 				return leftType == rightType && leftType != null;
 			}
-			else
-			{
-				return true;
-			}
+
+		    return true;
 		}
 
 		private static string GetTypeByTypeId(int typeId)
 		{
-			if (new[] { 4, 5, 6 }.Contains(typeId))
+		    if (new[] { 4, 5, 6 }.Contains(typeId))
 			{
 				return "date";
 			}
-			else if (new[] { 1, 7, 8, 9, 10, 12 }.Contains(typeId))
-			{
-				return "string";
-			}
-			else if (new[] { 2, 3 }.Contains(typeId))
-			{
-				return "numeric";
-			}
-			else
-			{
-				return null;
-			}
+
+		    if (new[] { 1, 7, 8, 9, 10, 12 }.Contains(typeId))
+		    {
+		        return "string";
+		    }
+
+		    if (new[] { 2, 3 }.Contains(typeId))
+		    {
+		        return "numeric";
+		    }
+
+		    return null;
 		}
 
 		private static string GetQuery(SchemaInfo[] schema, ConditionBase condition)
 		{
 			var sb = new StringBuilder();
 			var groups = schema.GroupBy(s => s.RootContentId).ToArray();
-			int n = 1;
+			var n = 1;
 
 			foreach (var group in groups)
 			{
-				int contentId = group.Key;
-				bool needGrouping = false;
+				var contentId = group.Key;
+				var needGrouping = false;
 
 				var aliaces = group
 					.Where(s => s.RefContentId == null)

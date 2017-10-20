@@ -1,8 +1,5 @@
-﻿using Quantumart.QP8.BLL.Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -21,15 +18,12 @@ namespace Quantumart.QP8.BLL.Helpers
 			return GetSiteUrls(site);
 		}
 
-		private static Dictionary<string, string> GetSiteUrls(Site site)
+		private static Dictionary<string, string> GetSiteUrls(Site site) => new Dictionary<string, string>
 		{
-			return new Dictionary<string, string>()
-			{
-				{"ImagesLongUploadUrl", site.ImagesLongUploadUrl},
-				{"StageUrl", site.StageUrl},
-				{"LiveUrl", site.LiveUrl},
-				{"CurrentUrl", site.CurrentUrl}
-			};
-		}
+		    {"ImagesLongUploadUrl", site.ImagesLongUploadUrl},
+		    {"StageUrl", site.StageUrl},
+		    {"LiveUrl", site.LiveUrl},
+		    {"CurrentUrl", site.CurrentUrl}
+		};
 	}
 }

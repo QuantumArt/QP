@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
@@ -23,24 +23,15 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("DefaultFilterContent", NameResourceType = typeof(UserStrings))]
         public int? ContentId { get; set; }
 
-        public Content GetContent()
-        {
-            return ContentId.HasValue ? ContentRepository.GetById(ContentId.Value) : null;
-        }
+        public Content GetContent() => ContentId.HasValue ? ContentRepository.GetById(ContentId.Value) : null;
 
         [LocalizedDisplayName("DefaultFilterArticles", NameResourceType = typeof(UserStrings))]
         public IList<int> ArticleIDs { get; set; }
 
-        public IEnumerable<Article> GetArticles()
-        {
-            return ArticleRepository.GetList(ArticleIDs);
-        }
+        public IEnumerable<Article> GetArticles() => ArticleRepository.GetList(ArticleIDs);
 
         private readonly Lazy<IEnumerable<Site>> _allSites = new Lazy<IEnumerable<Site>>(SiteRepository.GetAll);
 
-        public IEnumerable<Site> GetAllSites()
-        {
-            return _allSites.Value;
-        }
+        public IEnumerable<Site> GetAllSites() => _allSites.Value;
     }
 }

@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Validators;
+using System;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators;
+using DayOfWeek = Quantumart.QP8.Constants.DayOfWeek;
 
 namespace Quantumart.QP8.BLL
 {
 	public class RecurringSchedule
 	{
 		
-		public RecurringSchedule Clone()
-		{
-			return (RecurringSchedule)this.MemberwiseClone();
-		}
-		
+		public RecurringSchedule Clone() => (RecurringSchedule)MemberwiseClone();
 
-		public static RecurringSchedule Empty
+	    public static RecurringSchedule Empty
 		{
 			get
 			{
@@ -43,12 +37,9 @@ namespace Quantumart.QP8.BLL
 			}
 		}	
 		
-		public DateTime GetDefaultRepetitionEndDate()
-		{
-			return RepetitionStartDate.Date.AddYears(1);
-		}
+		public DateTime GetDefaultRepetitionEndDate() => RepetitionStartDate.Date.AddYears(1);
 
-		[LocalizedDisplayName("RepetitionStartDate", NameResourceType = typeof(ArticleStrings))]
+	    [LocalizedDisplayName("RepetitionStartDate", NameResourceType = typeof(ArticleStrings))]
 		public DateTime RepetitionStartDate { get; set; }
 
 		[LocalizedDisplayName("RepetitionNoEnd", NameResourceType = typeof(ArticleStrings))]
@@ -99,7 +90,7 @@ namespace Quantumart.QP8.BLL
 		public WeekOfMonth WeekOfMonth { get; set; }
 
 		[LocalizedDisplayName("DayOfWeek", NameResourceType = typeof(ArticleStrings))]
-		public Constants.DayOfWeek DayOfWeek { get; set; }
+		public DayOfWeek DayOfWeek { get; set; }
 
 		[LocalizedDisplayName("ShowStartTime", NameResourceType = typeof(ArticleStrings))]
 		public TimeSpan ShowStartTime { get; set; }

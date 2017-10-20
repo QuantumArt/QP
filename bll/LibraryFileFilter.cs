@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Quantumart.QP8.BLL
 {
 	/// <summary>
@@ -13,12 +8,6 @@ namespace Quantumart.QP8.BLL
 		public FolderFileType? FileType { get; set; }
 		public string FileNameFilter { get; set; }
 
-		public string Mask
-		{
-			get
-			{
-				return String.IsNullOrEmpty(FileNameFilter) ? "*" : String.Format("*{0}*", FileNameFilter);
-			}
-		}
+		public string Mask => string.IsNullOrEmpty(FileNameFilter) ? "*" : string.Format("*{0}*", FileNameFilter);
 	}
 }

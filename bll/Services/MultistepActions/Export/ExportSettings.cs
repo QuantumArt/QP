@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
@@ -46,14 +46,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public string OrderByField
         {
-            get
-            {
-                return _orderByField;
-            }
-            set
-            {
-                _orderByField = value.Replace("ID", "content_item_id");
-            }
+            get => _orderByField;
+            set => _orderByField = value.Replace("ID", "content_item_id");
         }
 
         public string UploadFilePath
@@ -71,10 +65,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public string Extensions { get; set; }
 
-        private Field[] GetFieldsToExpand()
-        {
-            return FieldIdsToExpand != null && FieldIdsToExpand.Any() ? FieldRepository.GetList(FieldIdsToExpand).ToArray() : new Field[] { };
-        }
+        private Field[] GetFieldsToExpand() => FieldIdsToExpand != null && FieldIdsToExpand.Any() ? FieldRepository.GetList(FieldIdsToExpand).ToArray() : new Field[] { };
 
         private IEnumerable<FieldSetting> GetFieldsToExpandSettings()
         {

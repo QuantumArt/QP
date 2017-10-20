@@ -1,11 +1,11 @@
-using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -250,7 +250,7 @@ namespace Quantumart.QP8.BLL.Helpers
             {
                 if (field.ExactType == FieldExactTypes.M2MRelation)
                 {
-                    if (fieldValues.TryGetValue(articleId + "_" + field.LinkId.Value, out List<string> result))
+                    if (fieldValues.TryGetValue(articleId + "_" + field.LinkId.Value, out var result))
                     {
                         var addDots = result.Count - 1 > Default.MaxViewInListArticleNumber;
                         if (addDots)
@@ -268,12 +268,14 @@ namespace Quantumart.QP8.BLL.Helpers
                         fieldFormattedValue = Cleaner.RemoveAllHtmlTagsAndSpaces(Converter.ToString(fieldFormattedValue));
                     }
                     else
+                    {
                         fieldFormattedValue = "";
+                    }
                 }
 
                 else if (fieldTypeName == FieldTypeName.M2ORelation)
                 {
-                    if (fieldValues.TryGetValue(articleId + "_" + field.Id, out List<string> result))
+                    if (fieldValues.TryGetValue(articleId + "_" + field.Id, out var result))
                     {
                         var addDots = result.Count() - 1 > Default.MaxViewInListArticleNumber;
                         if (addDots)

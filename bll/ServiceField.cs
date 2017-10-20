@@ -1,16 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Quantumart.QP8.Resources;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL
 {
     /// <summary>
     /// Тип служебного поля
     /// </summary>
-    public enum ServiceFieldType : int
+    public enum ServiceFieldType
     {
         None = 0,
         ID = -1,
@@ -43,7 +42,7 @@ namespace Quantumart.QP8.BLL
             switch(type)
             {
                 case ServiceFieldType.ID:
-                    return new ServiceField()
+                    return new ServiceField
                     {
                         Type = type,
                         ID = (int)type,
@@ -52,7 +51,7 @@ namespace Quantumart.QP8.BLL
                         ArticleFieldSearchType = ArticleFieldSearchType.Identifier
                     };
                 case ServiceFieldType.Created:
-                    return new ServiceField()
+                    return new ServiceField
                     {
                         Type = type,
                         ID = (int)type,
@@ -61,7 +60,7 @@ namespace Quantumart.QP8.BLL
                         ArticleFieldSearchType = ArticleFieldSearchType.DateRange
                     };
                 case ServiceFieldType.Modified:
-                    return new ServiceField()
+                    return new ServiceField
                     {
                         Type = type,
                         ID = (int)type,
@@ -70,7 +69,7 @@ namespace Quantumart.QP8.BLL
                         ArticleFieldSearchType = ArticleFieldSearchType.DateRange
                     };
                 case ServiceFieldType.LastModifiedBy:
-                    return new ServiceField()
+                    return new ServiceField
                     {
                         Type = type,
                         ID = (int)type,
@@ -79,7 +78,7 @@ namespace Quantumart.QP8.BLL
                         ArticleFieldSearchType = ArticleFieldSearchType.O2MRelation
                     };
                 case ServiceFieldType.StatusType:
-                    return new ServiceField()
+                    return new ServiceField
                     {
                         Type = type,
                         ID = (int)type,
@@ -102,7 +101,7 @@ namespace Quantumart.QP8.BLL
                 .OfType<ServiceFieldType>()
                 .Where(t => t != ServiceFieldType.None)
                 .Reverse()
-                .Select(t => ServiceField.Create(t))
+                .Select(t => Create(t))
                 .AsEnumerable();
         }
     }

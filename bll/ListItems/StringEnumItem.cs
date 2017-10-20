@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Quantumart.QP8.BLL.ListItems
 {
 	public class StringEnumItem
@@ -12,9 +7,6 @@ namespace Quantumart.QP8.BLL.ListItems
 		public bool? IsDefault { get; set; }
 		public bool Invalid { get; set; }
 
-		internal bool GetIsDefault()
-		{
-			return IsDefault ?? false;
-		}
+		internal bool GetIsDefault() => IsDefault ?? false;
 	}
 }

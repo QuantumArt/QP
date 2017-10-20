@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL.ListItems;
 using System.Data;
 using AutoMapper;
-using Quantumart.QP8.Utils;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers.EntityPermissions
 {

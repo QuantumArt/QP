@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Validators;
-using Quantumart.QP8.Resources;
-using System.Xml;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
-
+using System.Xml;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -30,24 +29,23 @@ namespace Quantumart.QP8.BLL
 
         public static DynamicImage Load(Field field)
         {
-            DynamicImage image = FieldRepository.GetDynamicImageInfoById(field.Id);
+            var image = FieldRepository.GetDynamicImageInfoById(field.Id);
             if (image != null)
+            {
                 image.Field = field;
+            }
             return image;
         }
 
-        public static DynamicImage Create(Field field)
+        public static DynamicImage Create(Field field) => new DynamicImage
         {
-            return new DynamicImage
-            {
-                Field = field,
-                Height = 100,
-                Width = 100,
-                MaxSize = false,
-                Quality = 90,
-                Type = JPG_EXTENSION
-            };
-        }
+            Field = field,
+            Height = 100,
+            Width = 100,
+            MaxSize = false,
+            Quality = 90,
+            Type = JPG_EXTENSION
+        };
 
         #region private
 
@@ -65,27 +63,37 @@ namespace Quantumart.QP8.BLL
             get
             {
                 if (Width != 0 && Height == 0)
+                {
                     return ImageResizeMode.ByWidth;
-                else if (Width == 0 && Height != 0)
+                }
+
+                if (Width == 0 && Height != 0)
+                {
                     return ImageResizeMode.ByHeight;
-                else if (Width != 0 && Height != 0)
+                }
+
+                if (Width != 0 && Height != 0)
+                {
                     return (MaxSize) ? ImageResizeMode.Fit : ImageResizeMode.Absolute;
-                else
-                    return ImageResizeMode.None;
+                }
+
+                return ImageResizeMode.None;
             }
         }
 
         public string GetDesiredFileName(string baseFileName)
         {
-            if (String.IsNullOrEmpty(baseFileName))
-                return String.Empty;
+            if (string.IsNullOrEmpty(baseFileName))
+            {
+                return string.Empty;
+            }
 
-            string[] fileNameParts = baseFileName.Split('.');
+            var fileNameParts = baseFileName.Split('.');
             if (!fileNameParts[fileNameParts.Length - 1].Equals(SVG_EXTENSION, StringComparison.InvariantCultureIgnoreCase))
             {
                 fileNameParts[fileNameParts.Length - 1] = Type;
             }
-            return String.Join(".", fileNameParts);
+            return string.Join(".", fileNameParts);
         }
 
         private Size GetDesiredImageSize(Size currentSize)
@@ -94,28 +102,28 @@ namespace Quantumart.QP8.BLL
             {
                 return new Size(Width, Height);
             }
+
+            var widthCoef = Width / (double)currentSize.Width;
+            var heightCoef = Height / (double)currentSize.Height;
+            double targetCoef;
+            if (ResizeMode == ImageResizeMode.ByWidth)
+            {
+                targetCoef = widthCoef;
+            }
+            else if (ResizeMode == ImageResizeMode.ByHeight)
+            {
+                targetCoef = heightCoef;
+            }
+            else if (ResizeMode == ImageResizeMode.Fit)
+            {
+                targetCoef = (heightCoef >= 1 && widthCoef >= 1) ? 1 : Math.Min(heightCoef, widthCoef);
+            }
             else
             {
-                double widthCoef = (double)Width / (double)currentSize.Width;
-                double heightCoef = (double)Height / (double)currentSize.Height;
-                double targetCoef;
-                if (ResizeMode == ImageResizeMode.ByWidth)
-                {
-                    targetCoef = widthCoef;
-                }
-                else if (ResizeMode == ImageResizeMode.ByHeight)
-                {
-                    targetCoef = heightCoef;
-                }
-                else if (ResizeMode == ImageResizeMode.Fit)
-                {
-                    targetCoef = (heightCoef >= 1 && widthCoef >= 1) ? 1 : Math.Min(heightCoef, widthCoef);
-                }
-                else
-                    throw new Exception("Incorrect resize mode");
-
-                return new Size((int)(currentSize.Width * targetCoef), (int)(currentSize.Height * targetCoef));
+                throw new Exception("Incorrect resize mode");
             }
+
+            return new Size((int)(currentSize.Width * targetCoef), (int)(currentSize.Height * targetCoef));
         }
 
         private string MimeType
@@ -123,13 +131,21 @@ namespace Quantumart.QP8.BLL
             get
             {
                 if (Type == "JPG")
+                {
                     return "image/jpeg";
-                else if (Type == "GIF")
+                }
+
+                if (Type == "GIF")
+                {
                     return "image/gif";
-                else if (Type == "PNG")
+                }
+
+                if (Type == "PNG")
+                {
                     return "image/png";
-                else
-                    return String.Empty;
+                }
+
+                return string.Empty;
             }
         }
 
@@ -141,39 +157,25 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private EncoderParameters EncoderParameters
         {
             get
             {
                 if (Type == "JPG")
                 {
-                    EncoderParameters parameters = new EncoderParameters(1);
+                    var parameters = new EncoderParameters(1);
                     parameters.Param[0] = new EncoderParameter(Encoder.Quality, (int)Quality);
                     return parameters;
                 }
-                else
-                    return null;
+
+                return null;
             }
         }
 
-        public PathInfo PathInfo
-        {
-            get
-            {
-                return Field.PathInfo.GetSubPathInfo(SubFolder);
-            }
-        }
+        public PathInfo PathInfo => Field.PathInfo.GetSubPathInfo(SubFolder);
 
-
-        private string SubFolder
-        {
-            get
-            {
-                return String.Format("{0}{1}", Field.Prefix, Id);
-            }
-        }
-
+        private string SubFolder => string.Format("{0}{1}", Field.Prefix, Id);
 
         #endregion
 
@@ -195,13 +197,16 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("DynamicImageType", NameResourceType = typeof(FieldStrings))]
         public string Type { get; set; }
 
-        public bool IsNew { get { return Id == default(int); } }
+        public bool IsNew => Id == default(int);
 
         public string GetValue(string baseFileName)
         {
-            if (String.IsNullOrEmpty(baseFileName))
-                return String.Empty;
-            return String.Format("{0}/{1}", SubFolder, GetDesiredFileName(baseFileName));
+            if (string.IsNullOrEmpty(baseFileName))
+            {
+                return string.Empty;
+            }
+
+            return string.Format("{0}/{1}", SubFolder, GetDesiredFileName(baseFileName));
 
         }
 
@@ -211,17 +216,17 @@ namespace Quantumart.QP8.BLL
             {
                 if (!imageValue.ToUpper().EndsWith(SVG_EXTENSION))
                 {
-                    using (Bitmap input = new Bitmap(baseImagePath))
+                    using (var input = new Bitmap(baseImagePath))
                     {
-                        Size desiredSize = GetDesiredImageSize(input.Size);
-                        using (Bitmap output = new Bitmap(desiredSize.Width, desiredSize.Height))
+                        var desiredSize = GetDesiredImageSize(input.Size);
+                        using (var output = new Bitmap(desiredSize.Width, desiredSize.Height))
                         {
-                            Graphics resizer = Graphics.FromImage(output);
+                            var resizer = Graphics.FromImage(output);
                             resizer.InterpolationMode = (output.Width < input.Width && output.Height < input.Height) ? InterpolationMode.HighQualityBicubic : InterpolationMode.HighQualityBilinear;
                             resizer.DrawImage(input, 0, 0, desiredSize.Width, desiredSize.Height);
-                            string resultPath = Path.Combine(PathInfo.Path, GetDesiredFileName(imageValue).Replace(@"/", @"\"));
+                            var resultPath = Path.Combine(PathInfo.Path, GetDesiredFileName(imageValue).Replace(@"/", @"\"));
                             Directory.CreateDirectory(Path.GetDirectoryName(resultPath));
-                            using (FileStream fs = File.OpenWrite(resultPath))
+                            using (var fs = File.OpenWrite(resultPath))
                             {
                                 output.Save(fs, ImageCodecInfo, EncoderParameters);
                             }
@@ -230,24 +235,24 @@ namespace Quantumart.QP8.BLL
                 }
                 else
                 {
-                    XmlDocument xmlDocument = new XmlDocument();
+                    var xmlDocument = new XmlDocument();
                     xmlDocument.Load(baseImagePath);
-                    XmlElement documentElement = xmlDocument.DocumentElement;
-                    int width = 0;
-                    int height = 0;
-                    XmlNode widthAttr = documentElement.Attributes.GetNamedItem("width");
+                    var documentElement = xmlDocument.DocumentElement;
+                    var width = 0;
+                    var height = 0;
+                    var widthAttr = documentElement.Attributes.GetNamedItem("width");
                     if (widthAttr != null)
                     {
                         width = int.Parse(Regex.Match(widthAttr.Value, "\\d+").Value);
                     }
 
-                    XmlNode heightAttr = documentElement.Attributes.GetNamedItem("height");
+                    var heightAttr = documentElement.Attributes.GetNamedItem("height");
                     if (heightAttr != null)
                     {
                         height = int.Parse(Regex.Match(heightAttr.Value, "\\d+").Value);
                     }
 
-                    if (this.ResizeMode == DynamicImage.ImageResizeMode.Fit)
+                    if (ResizeMode == ImageResizeMode.Fit)
                     {
                         documentElement.SetAttribute("preserveAspectRatio", "none");
                     }
@@ -256,11 +261,11 @@ namespace Quantumart.QP8.BLL
                         documentElement.SetAttribute("preserveAspectRatio", "XMinYMin meet");
                     }
 
-                    Size desiredImageSize = this.GetDesiredImageSize(new Size(width, height));
+                    var desiredImageSize = GetDesiredImageSize(new Size(width, height));
                     widthAttr.Value = desiredImageSize.Width.ToString();
                     heightAttr.Value = desiredImageSize.Height.ToString();
 
-                    string filename = Path.Combine(this.PathInfo.Path, this.GetDesiredFileName(imageValue).Replace("/", "\\"));
+                    var filename = Path.Combine(PathInfo.Path, GetDesiredFileName(imageValue).Replace("/", "\\"));
                     xmlDocument.Save(filename);
                 }
             }
@@ -279,7 +284,7 @@ namespace Quantumart.QP8.BLL
 
         public DynamicImage Clone(Field field)
         {
-            DynamicImage result = (DynamicImage)this.MemberwiseClone();
+            var result = (DynamicImage)MemberwiseClone();
             result.Id = 0;
             result.Field = field;
             return result;

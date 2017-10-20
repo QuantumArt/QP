@@ -1,15 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.BLL.Helpers;
 using System.Data;
+using System.Linq;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.DAL;
-using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {
@@ -21,19 +18,26 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 		{
 			using (var scope = new QPConnectionScope())
 			{
-				Field titleField = FieldRepository.GetTitleField(contentId);
-				string titleFieldName = (titleField == null) ? FieldName.ContentItemId : titleField.Name;
+				var titleField = FieldRepository.GetTitleField(contentId);
+				var titleFieldName = (titleField == null) ? FieldName.ContentItemId : titleField.Name;
 
 				cmd.SortExpression = TranslateHelper.TranslateSortExpression(cmd.SortExpression);
 				IEnumerable<DataRow> rows = null;
 				totalRecords = 0;
 				if (userId.HasValue)
-					rows = Common.GetChildArticlePermissionsForUser(scope.DbConnection, contentId, userId.Value, titleFieldName, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
+				{
+				    rows = Common.GetChildArticlePermissionsForUser(scope.DbConnection, contentId, userId.Value, titleFieldName, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
+				}
 				else if (groupId.HasValue)
-					rows = Common.GetChildArticlePermissionsForGroup(scope.DbConnection, contentId, groupId.Value, titleFieldName, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
+				{
+				    rows = Common.GetChildArticlePermissionsForGroup(scope.DbConnection, contentId, groupId.Value, titleFieldName, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
+				}
 				else
-					throw new ArgumentNullException("groupId, siteId");
-				return MapperFacade.ChildEntityPermissionListItemRowMapper.GetBizList(rows.ToList());
+				{
+				    throw new ArgumentNullException("groupId, siteId");
+				}
+
+			    return MapperFacade.ChildEntityPermissionListItemRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
@@ -43,16 +47,24 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 			{
 				DataRow row;
 				if (userId.HasValue)
-					row = Common.GetChildArticlePermissionForUser(scope.DbConnection, parentId, entityId, userId.Value);
+				{
+				    row = Common.GetChildArticlePermissionForUser(scope.DbConnection, parentId, entityId, userId.Value);
+				}
 				else if (groupId.HasValue)
-					row = Common.GetChildArticlePermissionForGroup(scope.DbConnection, parentId, entityId, groupId.Value);
+				{
+				    row = Common.GetChildArticlePermissionForGroup(scope.DbConnection, parentId, entityId, groupId.Value);
+				}
 				else
-					throw new ArgumentNullException("groupId, siteId");
+				{
+				    throw new ArgumentNullException("groupId, siteId");
+				}
 
-                if (row == null || !row.Field<decimal?>("LevelId").HasValue)
-					return null;
+			    if (row == null || !row.Field<decimal?>("LevelId").HasValue)
+			    {
+			        return null;
+			    }
 
-                return ChildEntityPermission.Create(null, parentId, userId, groupId, Convert.ToInt32(row.Field<decimal>("LevelId")), false, false);
+			    return ChildEntityPermission.Create(null, parentId, userId, groupId, Convert.ToInt32(row.Field<decimal>("LevelId")), false, false);
 			}
 		}
 

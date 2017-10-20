@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL.Repository.Results;
 using System.Data;
 using AutoMapper;
+using Quantumart.QP8.BLL.Repository.Results;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers

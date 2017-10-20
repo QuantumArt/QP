@@ -1,8 +1,5 @@
-﻿using Quantumart.QP8.Resources;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -12,10 +9,12 @@ namespace Quantumart.QP8.BLL.Helpers
 
 		public static IEnumerable<SortingItem> Deserialize(string stringToParse)
 		{
-			if(!string.IsNullOrWhiteSpace(stringToParse) && stringToParse != "[]")
-				return stringToParse.Split(delimeter).Select(x => SortingItem.CreatefromString(x));
-			else
-				return Enumerable.Empty<SortingItem>();
+		    if(!string.IsNullOrWhiteSpace(stringToParse) && stringToParse != "[]")
+			{
+			    return stringToParse.Split(delimeter).Select(x => SortingItem.CreatefromString(x));
+			}
+
+		    return Enumerable.Empty<SortingItem>();
 		}
 
 

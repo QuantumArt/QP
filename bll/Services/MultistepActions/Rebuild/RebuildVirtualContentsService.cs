@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -36,29 +36,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
             return base.Setup(siteId, contentId, boundToExternal);
         }
 
-        protected override MultistepActionSettings CreateActionSettings(int siteId, int contentId)
+        protected override MultistepActionSettings CreateActionSettings(int siteId, int contentId) => new MultistepActionSettings
         {
-            return new MultistepActionSettings
+            Stages = new[]
             {
-                Stages = new[]
-                {
-                    _rebuildViewsCommand.GetStageSettings(),
-                    _rebuildUserQueryCommand.GetStageSettings()
-                }
-            };
-        }
+                _rebuildViewsCommand.GetStageSettings(),
+                _rebuildUserQueryCommand.GetStageSettings()
+            }
+        };
 
-        protected override MultistepActionServiceContext CreateContext(int siteId, int contentId, bool? boundToExternal)
+        protected override MultistepActionServiceContext CreateContext(int siteId, int contentId, bool? boundToExternal) => new MultistepActionServiceContext
         {
-            return new MultistepActionServiceContext
+            CommandStates = new[]
             {
-                CommandStates = new[]
-                {
-                    _rebuildViewsCommand.GetState(),
-                    _rebuildUserQueryCommand.GetState()
-                }
-            };
-        }
+                _rebuildViewsCommand.GetState(),
+                _rebuildUserQueryCommand.GetState()
+            }
+        };
 
         protected override string ContextSessionKey => HttpContextSession.RebuildUserQueryProcessingContext;
 

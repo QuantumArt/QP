@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -30,10 +30,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Обновляет информацию о контенте
         /// </summary>
-        internal static Content Update(Content content)
-        {
-            return DefaultRepository.Update<Content, ContentDAL>(content);
-        }
+        internal static Content Update(Content content) => DefaultRepository.Update<Content, ContentDAL>(content);
 
         /// <summary>
         /// Возвращает данные о виртуальных полях JOIN-контента

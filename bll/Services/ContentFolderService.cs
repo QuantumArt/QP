@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -8,10 +8,7 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class ContentFolderService
     {
-        private static PathInfo _GetPathInfo(int id)
-        {
-            return ContentFolder.GetPathInfo(id);
-        }
+        private static PathInfo _GetPathInfo(int id) => ContentFolder.GetPathInfo(id);
 
         public static Folder GetById(int id)
         {
@@ -19,26 +16,17 @@ namespace Quantumart.QP8.BLL.Services
             var folder = factory.CreateRepository().GetById(id);
             if (folder == null)
             {
-                throw new Exception(String.Format(LibraryStrings.ContentFolderNotExists, id));
+                throw new Exception(string.Format(LibraryStrings.ContentFolderNotExists, id));
             }
 
             return folder;
         }
 
-        public static FolderFile GetFile(int id, string fileName)
-        {
-            return _GetPathInfo(id).GetFile(fileName);
-        }
+        public static FolderFile GetFile(int id, string fileName) => _GetPathInfo(id).GetFile(fileName);
 
-        public static string GetPath(int id, string fileName)
-        {
-            return _GetPathInfo(id).GetPath(fileName);
-        }
+        public static string GetPath(int id, string fileName) => _GetPathInfo(id).GetPath(fileName);
 
-        public static PathInfo GetPathInfo(int id)
-        {
-            return _GetPathInfo(id);
-        }
+        public static PathInfo GetPathInfo(int id) => _GetPathInfo(id);
 
         public static void SaveFile(FolderFile file)
         {
@@ -58,7 +46,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var info = _GetPathInfo(id);
-            foreach (string name in names)
+            foreach (var name in names)
             {
                 var file = info.GetFile(name);
                 if (file != null)
@@ -78,10 +66,7 @@ namespace Quantumart.QP8.BLL.Services
             return result;
         }
 
-        public static ContentFolder NewForSave(int contentId, int parentFolderId)
-        {
-            return New(contentId, parentFolderId);
-        }
+        public static ContentFolder NewForSave(int contentId, int parentFolderId) => New(contentId, parentFolderId);
 
         public static ContentFolder Save(ContentFolder folder)
         {
@@ -93,15 +78,9 @@ namespace Quantumart.QP8.BLL.Services
             return (ContentFolder)FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository().Create(folder.ParentEntityId, folder.ParentId, folder.Name);
         }
 
-        public static ContentFolder Read(int id)
-        {
-            return (ContentFolder)GetById(id);
-        }
+        public static ContentFolder Read(int id) => (ContentFolder)GetById(id);
 
-        public static ContentFolder ReadForUpdate(int id)
-        {
-            return Read(id);
-        }
+        public static ContentFolder ReadForUpdate(int id) => Read(id);
 
         public static ContentFolder Update(ContentFolder folder)
         {
@@ -119,9 +98,10 @@ namespace Quantumart.QP8.BLL.Services
             var folder = repository.GetById(id);
             if (folder == null)
             {
-                throw new ApplicationException(String.Format(FolderStrings.FolderNotFound, id));
+                throw new ApplicationException(string.Format(FolderStrings.FolderNotFound, id));
             }
-            else if (!folder.ParentId.HasValue)
+
+            if (!folder.ParentId.HasValue)
             {
                 throw new ApplicationException(FolderStrings.CanDeleteRootFolder);
             }
@@ -132,15 +112,13 @@ namespace Quantumart.QP8.BLL.Services
 
         public static MessageResult RemovePreAction(int id)
         {
-            Folder folder = FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository().GetById(id);
+            var folder = FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository().GetById(id);
             if (folder.IsEmpty)
             {
-                return MessageResult.Confirm(String.Format(FolderStrings.FolderIsNotEmptyConfirm, folder.Name), new[] { id });
+                return MessageResult.Confirm(string.Format(FolderStrings.FolderIsNotEmptyConfirm, folder.Name), new[] { id });
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
@@ -12,7 +12,7 @@ namespace Quantumart.QP8.BLL.Services
     {
         public ListResult<UserGroupListItem> List(ListCommand cmd, IEnumerable<int> selectedIds = null)
         {
-            var list = UserGroupRepository.List(cmd, out int totalRecords, selectedIds?.ToList() ?? new List<int>());
+            var list = UserGroupRepository.List(cmd, out var totalRecords, selectedIds?.ToList() ?? new List<int>());
             return new ListResult<UserGroupListItem>
             {
                 Data = list.ToList(),

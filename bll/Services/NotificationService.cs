@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.Assembling;
+using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.Resources;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -129,28 +129,16 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
-        public NotificationInitListResult InitList(int contentId)
+        public NotificationInitListResult InitList(int contentId) => new NotificationInitListResult
         {
-            return new NotificationInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewNotification) && SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update)
-            };
-        }
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewNotification) && SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update)
+        };
 
-        public Notification NewNotificationPropertiesForUpdate(int parentId)
-        {
-            return NewNotificationProperties(parentId);
-        }
+        public Notification NewNotificationPropertiesForUpdate(int parentId) => NewNotificationProperties(parentId);
 
-        public Notification ReadNotificationPropertiesForUpdate(int id)
-        {
-            return ReadNotificationProperties(id);
-        }
+        public Notification ReadNotificationPropertiesForUpdate(int id) => ReadNotificationProperties(id);
 
-        public NotificationObjectFormat ReadNotificationTemplateFormatForUpdate(int id)
-        {
-            return ReadNotificationTemplateFormat(id);
-        }
+        public NotificationObjectFormat ReadNotificationTemplateFormatForUpdate(int id) => ReadNotificationTemplateFormat(id);
 
         public NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item)
         {
@@ -162,10 +150,7 @@ namespace Quantumart.QP8.BLL.Services
             return ObjectFormatRepository.UpdateNotificationTemplateFormat(item);
         }
 
-        public NotificationObjectFormat ReadNotificationTemplateFormat(int id)
-        {
-            return ObjectFormatRepository.ReadNotificationTemplateFormat(id);
-        }
+        public NotificationObjectFormat ReadNotificationTemplateFormat(int id) => ObjectFormatRepository.ReadNotificationTemplateFormat(id);
 
         public MessageResult Remove(int id)
         {
@@ -188,10 +173,7 @@ namespace Quantumart.QP8.BLL.Services
             }).ToArray();
         }
 
-        public IEnumerable<ListItem> GetObjectFormatsAsListItemsByContentId(int contentId)
-        {
-            return ObjectFormatRepository.GetObjectFormats(0, contentId, new int[]{ });
-        }
+        public IEnumerable<ListItem> GetObjectFormatsAsListItemsByContentId(int contentId) => ObjectFormatRepository.GetObjectFormats(0, contentId, new int[]{ });
 
         public IEnumerable<ListItem> GetStatusesAsListItemsBySiteId(int siteId)
         {
@@ -234,14 +216,11 @@ namespace Quantumart.QP8.BLL.Services
             return notification;
         }
 
-        public Notification NewNotificationProperties(int contentId)
-        {
-            return Notification.Create(contentId);
-        }
+        public Notification NewNotificationProperties(int contentId) => Notification.Create(contentId);
 
         public ListResult<NotificationListItem> GetNotificationsByContentId(ListCommand cmd, int contentId)
         {
-            var list = NotificationRepository.List(cmd, contentId, out int totalRecords);
+            var list = NotificationRepository.List(cmd, contentId, out var totalRecords);
             return new ListResult<NotificationListItem>
             {
                 Data = list.ToList(),
@@ -279,15 +258,9 @@ namespace Quantumart.QP8.BLL.Services
             return MessageResult.Info(NotificationStrings.UnbindedMessage);
         }
 
-        public bool IsSiteDotNetByObjectFormatId(int objectFormatId)
-        {
-            return ObjectFormatRepository.IsSiteDotNeByObjectFormatId(objectFormatId);
-        }
+        public bool IsSiteDotNetByObjectFormatId(int objectFormatId) => ObjectFormatRepository.IsSiteDotNeByObjectFormatId(objectFormatId);
 
-        private static int CreateDefaultFormat(int contentId, string backendUrl, string currentCustomerCode)
-        {
-            return ObjectFormatRepository.CreateDefaultFormat(contentId, backendUrl, currentCustomerCode);
-        }
+        private static int CreateDefaultFormat(int contentId, string backendUrl, string currentCustomerCode) => ObjectFormatRepository.CreateDefaultFormat(contentId, backendUrl, currentCustomerCode);
 
         public PageTemplate ReadPageTemplateByObjectFormatId(int id)
         {

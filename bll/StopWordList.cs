@@ -1,9 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Quantumart.QP8.Utils.FullTextSearch;
-using System.Collections;
 
 namespace Quantumart.QP8.BLL
 {
@@ -18,20 +15,17 @@ namespace Quantumart.QP8.BLL
 				// если это 2008 или старше - то получить стоп-лист из sql server
 				if (version.Major >= 10)
 				{
-					IEnumerable<string> stopList = QPContext.EFContext.GetStopWordList();
+					var stopList = QPContext.EFContext.GetStopWordList();
 					return new HashSet<string>(stopList, StringComparer.InvariantCultureIgnoreCase);
 				}
-				else
-					return new HashSet<string>();
+
+		    return new HashSet<string>();
 		}		
 		
 		#region IStopWordList Members
 
-		public bool ContainsWord(string word)
-		{
-			return stopListHashSet.Value.Contains(word);			
-		}
+		public bool ContainsWord(string word) => stopListHashSet.Value.Contains(word);
 
-		#endregion
+	    #endregion
 	}
 }

@@ -1,7 +1,7 @@
-﻿using Quantumart.QP8.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.Resources;
 using C = Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL.ListItems
@@ -49,7 +49,7 @@ namespace Quantumart.QP8.BLL.ListItems
             get
             {
                 Func<int, string> getValue = (id => Translator.Translate(FieldType.AllFieldTypes.Single(f => f.Id == id).Name));
-                IDictionary<int, string> tn = new Dictionary<int, string>()
+                IDictionary<int, string> tn = new Dictionary<int, string>
                 {
                     {C.FieldTypeCodes.Boolean, getValue(C.FieldTypeCodes.Boolean)},
                     {C.FieldTypeCodes.Date, getValue(C.FieldTypeCodes.Date)},

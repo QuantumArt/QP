@@ -1,4 +1,4 @@
-﻿using System.DirectoryServices;
+using System.DirectoryServices;
 using System.Linq;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
@@ -21,9 +21,6 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
             MemberOf = entity.Properties["memberOf"].OfType<string>().ToArray();
         }
 
-        protected T GetValue<T>(SearchResult entity, string key)
-        {
-            return entity.Properties[key].OfType<T>().FirstOrDefault();
-        }
+        protected T GetValue<T>(SearchResult entity, string key) => entity.Properties[key].OfType<T>().FirstOrDefault();
     }
 }

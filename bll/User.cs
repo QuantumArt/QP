@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -20,10 +20,7 @@ namespace Quantumart.QP8.BLL
     [HasSelfValidation]
     public class User : EntityObject
     {
-        internal static User Create()
-        {
-            return new User { Groups = Enumerable.Empty<UserGroup>() };
-        }
+        internal static User Create() => new User { Groups = Enumerable.Empty<UserGroup>() };
 
         public User()
         {
@@ -136,8 +133,8 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public IEnumerable<UserDefaultFilter> ContentDefaultFilters
         {
-            get { return _contentDefaultFilters.Value; }
-            set { _contentDefaultFilters.Value = value; }
+            get => _contentDefaultFilters.Value;
+            set => _contentDefaultFilters.Value = value;
         }
 
         private static bool IsPasswordComplex(string password)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
@@ -79,7 +79,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ListResult<CustomActionListItem> List(ListCommand cmd)
         {
-            var list = CustomActionRepository.List(cmd, out int totalRecords);
+            var list = CustomActionRepository.List(cmd, out var totalRecords);
             return new ListResult<CustomActionListItem>
             {
                 Data = list.ToList(),
@@ -87,15 +87,9 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public IEnumerable<Site> GetSites(IEnumerable<int> siteIDs)
-        {
-            return SiteRepository.GetList(siteIDs);
-        }
+        public IEnumerable<Site> GetSites(IEnumerable<int> siteIDs) => SiteRepository.GetList(siteIDs);
 
-        public IEnumerable<Content> GetContents(IEnumerable<int> contentIDs)
-        {
-            return ContentRepository.GetList(contentIDs);
-        }
+        public IEnumerable<Content> GetContents(IEnumerable<int> contentIDs) => ContentRepository.GetList(contentIDs);
 
         public CustomAction Read(int id)
         {
@@ -108,10 +102,7 @@ namespace Quantumart.QP8.BLL.Services
             return action;
         }
 
-        public CustomAction ReadForUpdate(int id)
-        {
-            return Read(id);
-        }
+        public CustomAction ReadForUpdate(int id) => Read(id);
 
         public CustomAction Update(CustomAction customAction, int[] selectedActionsIds)
         {
@@ -232,15 +223,9 @@ namespace Quantumart.QP8.BLL.Services
             return customAction;
         }
 
-        public CustomAction New()
-        {
-            return CustomAction.CreateNew();
-        }
+        public CustomAction New() => CustomAction.CreateNew();
 
-        public CustomAction NewForSave()
-        {
-            return CustomAction.CreateNew();
-        }
+        public CustomAction NewForSave() => CustomAction.CreateNew();
 
         public CustomAction Save(CustomAction customAction, int[] selectedActionsIds)
         {
@@ -276,13 +261,10 @@ namespace Quantumart.QP8.BLL.Services
                 .ToArray();
         }
 
-        public CustomActionInitListResult InitList(int parentId)
+        public CustomActionInitListResult InitList(int parentId) => new CustomActionInitListResult
         {
-            return new CustomActionInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewCustomAction)
-            };
-        }
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewCustomAction)
+        };
 
         private static bool IsEntityTypeSiteDescendants(int entityTypeId)
         {

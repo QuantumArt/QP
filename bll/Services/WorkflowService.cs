@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.ListItems;
@@ -48,7 +48,7 @@ namespace Quantumart.QP8.BLL.Services
     {
         public ListResult<WorkflowListItem> GetWorkflowsBySiteId(ListCommand cmd, int siteId)
         {
-            var list = WorkflowRepository.GetSiteWorkflowsPage(cmd, siteId, out int totalRecords);
+            var list = WorkflowRepository.GetSiteWorkflowsPage(cmd, siteId, out var totalRecords);
             return new ListResult<WorkflowListItem>
             {
                 Data = list.ToList(),
@@ -56,14 +56,11 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public WorkflowInitListResult InitList(int parentId)
+        public WorkflowInitListResult InitList(int parentId) => new WorkflowInitListResult
         {
-            return new WorkflowInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewWorkflow) &&
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewWorkflow) &&
                 SecurityRepository.IsEntityAccessible(EntityTypeCode.Workflow, parentId, ActionTypeCode.Update)
-            };
-        }
+        };
 
         public Workflow ReadProperties(int id)
         {
@@ -76,10 +73,7 @@ namespace Quantumart.QP8.BLL.Services
             return workflow;
         }
 
-        public Workflow ReadPropertiesForUpdate(int id)
-        {
-            return ReadProperties(id);
-        }
+        public Workflow ReadPropertiesForUpdate(int id) => ReadProperties(id);
 
         public Workflow UpdateProperties(Workflow workflow, IEnumerable<int> activeContentsIds)
         {
@@ -87,31 +81,15 @@ namespace Quantumart.QP8.BLL.Services
             return WorkflowRepository.UpdateProperties(workflow);
         }
 
-        public IEnumerable<StatusType> GetStatusTypesBySiteId(int siteId)
-        {
-            return StatusTypeRepository.GetStatusList(siteId);
-        }
+        public IEnumerable<StatusType> GetStatusTypesBySiteId(int siteId) => StatusTypeRepository.GetStatusList(siteId);
 
+        public IEnumerable<Content> GetContentsBySiteId(int siteId) => ContentRepository.GetListBySiteId(siteId).ToList();
 
-        public IEnumerable<Content> GetContentsBySiteId(int siteId)
-        {
-            return ContentRepository.GetListBySiteId(siteId).ToList();
-        }
+        public IEnumerable<int> GetBindedContetnsIds(int workflowId) => WorkflowRepository.GetBindedContetnsIds(workflowId);
 
-        public IEnumerable<int> GetBindedContetnsIds(int workflowId)
-        {
-            return WorkflowRepository.GetBindedContetnsIds(workflowId);
-        }
+        public Workflow NewWorkflowProperties(int parentId) => Workflow.Create(parentId);
 
-        public Workflow NewWorkflowProperties(int parentId)
-        {
-            return Workflow.Create(parentId);
-        }
-
-        public Workflow NewWorkflowPropertiesForUpdate(int parentId)
-        {
-            return NewWorkflowProperties(parentId);
-        }
+        public Workflow NewWorkflowPropertiesForUpdate(int parentId) => NewWorkflowProperties(parentId);
 
         public Workflow SaveWorkflowProperties(Workflow workflow)
         {
@@ -130,10 +108,7 @@ namespace Quantumart.QP8.BLL.Services
             return new ContentInitListResult { ParentName = site.Name };
         }
 
-        public static ListResult<ContentListItem> GetAcceptableContentForWorkflow(ContentListFilter filter, ListCommand cmd, int[] selectedContentIDs)
-        {
-            return ContentRepository.GetList(filter, cmd, selectedContentIDs);
-        }
+        public static ListResult<ContentListItem> GetAcceptableContentForWorkflow(ContentListFilter filter, ListCommand cmd, int[] selectedContentIDs) => ContentRepository.GetList(filter, cmd, selectedContentIDs);
 
         public MessageResult Remove(int id)
         {
@@ -141,19 +116,10 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
-        public bool IsContentAccessibleForUser(int contentId, int userId)
-        {
-            return SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update, userId);
-        }
+        public bool IsContentAccessibleForUser(int contentId, int userId) => SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update, userId);
 
-        public bool IsContentAccessibleForUserGroup(int contentId, int userGroupId)
-        {
-            return SecurityRepository.IsEntityAccessibleForUserGroup(EntityTypeCode.Content, contentId, ActionTypeCode.Update, userGroupId);
-        }
+        public bool IsContentAccessibleForUserGroup(int contentId, int userGroupId) => SecurityRepository.IsEntityAccessibleForUserGroup(EntityTypeCode.Content, contentId, ActionTypeCode.Update, userGroupId);
 
-        public string GetContentNameById(int contentId)
-        {
-            return ContentRepository.GetById(contentId).Name;
-        }
+        public string GetContentNameById(int contentId) => ContentRepository.GetById(contentId).Name;
     }
 }

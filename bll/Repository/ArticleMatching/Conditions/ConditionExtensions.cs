@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
@@ -46,7 +46,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
         public static ConditionBase Where<T>(this ConditionBase source, Predicate<T> predicate)
             where T : ConditionBase
         {
-            source.Conditions = source.Conditions.Select(c => c.Where<T>(predicate)).Where(c => c != null).ToArray();
+            source.Conditions = source.Conditions.Select(c => c.Where(predicate)).Where(c => c != null).ToArray();
             var sourceT = source as T;
             if (sourceT != null)
             {

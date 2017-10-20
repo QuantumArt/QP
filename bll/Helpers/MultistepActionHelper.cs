@@ -40,7 +40,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
         public static string NumericCultureFormat(string value, string fromCulture, string toCulture)
         {
-            if (!double.TryParse(value, NumberStyles.Any, CultureInfo.GetCultureInfo(fromCulture).NumberFormat, out double result) && value != "NULL")
+            if (!double.TryParse(value, NumberStyles.Any, CultureInfo.GetCultureInfo(fromCulture).NumberFormat, out var result) && value != "NULL")
             {
                 throw new FormatException(string.Format(ImportStrings.NumberFormatError, value));
             }
@@ -55,7 +55,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
         public static string O2MFormat(string value)
         {
-            if (int.TryParse(value, out int res))
+            if (int.TryParse(value, out var res))
             {
                 return res.ToString();
             }
@@ -88,7 +88,7 @@ namespace Quantumart.QP8.BLL.Helpers
             var ids = value.Trim(',', '"', ';').Split(',', ';');
             foreach (var val in ids.Where(val => !string.IsNullOrEmpty(val)))
             {
-                if (int.TryParse(val, out int res))
+                if (int.TryParse(val, out var res))
                 {
                     yield return res;
                 }
@@ -101,7 +101,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
         public static string DateCultureFormat(string value, string fromCulture, string toCulture)
         {
-            if (!DateTime.TryParse(value, CultureInfo.GetCultureInfo(fromCulture).DateTimeFormat, DateTimeStyles.None, out DateTime result) && value != "NULL")
+            if (!DateTime.TryParse(value, CultureInfo.GetCultureInfo(fromCulture).DateTimeFormat, DateTimeStyles.None, out var result) && value != "NULL")
             {
                 throw new FormatException(string.Format(ImportStrings.DateTimeFormatError, value));
             }

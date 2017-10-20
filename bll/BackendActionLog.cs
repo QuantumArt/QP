@@ -1,13 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Quantumart.QP8.DAL;
 using Quantumart.QP8.BLL.Repository;
-using System.Data;
+using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
-using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL
 {

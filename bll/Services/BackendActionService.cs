@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -8,33 +8,18 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class BackendActionService
     {
-        public static BackendAction GetById(int actionId)
-        {
-            return BackendActionRepository.GetById(actionId);
-        }
+        public static BackendAction GetById(int actionId) => BackendActionRepository.GetById(actionId);
 
-        public static string GetCodeById(int actionId)
-        {
-            return BackendActionRepository.GetById(actionId)?.Code;
-        }
+        public static string GetCodeById(int actionId) => BackendActionRepository.GetById(actionId)?.Code;
 
-        public static BackendAction GetByCode(string actionCode)
-        {
-            return string.IsNullOrWhiteSpace(actionCode) ? null : BackendActionRepository.GetByCode(actionCode);
-        }
+        public static BackendAction GetByCode(string actionCode) => string.IsNullOrWhiteSpace(actionCode) ? null : BackendActionRepository.GetByCode(actionCode);
 
-        public static IEnumerable<BackendActionStatus> GetStatusesList(string actionCode, int entityId, int parentEntityId)
-        {
-            return ResolveStatusForCustomActions(actionCode, entityId, parentEntityId, BackendActionRepository.GetStatusesList(actionCode, entityId));
-        }
+        public static IEnumerable<BackendActionStatus> GetStatusesList(string actionCode, int entityId, int parentEntityId) => ResolveStatusForCustomActions(actionCode, entityId, parentEntityId, BackendActionRepository.GetStatusesList(actionCode, entityId));
 
         /// <summary>
         /// Устанавливает соответствующий статус элементам меню связанным с Custom Action
         /// </summary>
-        private static IEnumerable<BackendActionStatus> ResolveStatusForCustomActions(string actionCode, int entityId, int parentEntityId, IEnumerable<BackendActionStatus> statuses)
-        {
-            return CustomActionResolver.ResolveStatus(GetByCode(actionCode).EntityType.Code, entityId, parentEntityId, statuses.ToArray());
-        }
+        private static IEnumerable<BackendActionStatus> ResolveStatusForCustomActions(string actionCode, int entityId, int parentEntityId, IEnumerable<BackendActionStatus> statuses) => CustomActionResolver.ResolveStatus(GetByCode(actionCode).EntityType.Code, entityId, parentEntityId, statuses.ToArray());
 
         /// <summary>
         /// Возвращает словарь EntityTypeId -> Action ListItem Collection

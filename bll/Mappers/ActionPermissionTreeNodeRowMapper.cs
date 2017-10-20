@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL.Services.DTO;
 using System.Data;
 using AutoMapper;
-using Quantumart.QP8.Utils;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Mappers
@@ -22,13 +17,15 @@ namespace Quantumart.QP8.BLL.Mappers
 
 		private string FormatText(DataRow row)
 		{
-			string name = Translator.Translate(row.Field<string>("NAME"));
-			string levelName = Translator.Translate(row.Field<string>("PERMISSION_LEVEL_NAME"));
-			bool isExplicit = row.Field<bool>("IsExplicit");
+			var name = Translator.Translate(row.Field<string>("NAME"));
+			var levelName = Translator.Translate(row.Field<string>("PERMISSION_LEVEL_NAME"));
+			var isExplicit = row.Field<bool>("IsExplicit");
 			if (string.IsNullOrWhiteSpace(levelName))
-				return String.Format("{0} – {1}", name, EntityPermissionStrings.UndefinedPermissionLevel);
-			else
-				return String.Format("{0} – {1} ({2})", name, levelName, isExplicit ? EntityPermissionStrings.Explicit : EntityPermissionStrings.Implicit);
+			{
+			    return string.Format("{0} – {1}", name, EntityPermissionStrings.UndefinedPermissionLevel);
+			}
+
+		    return string.Format("{0} – {1} ({2})", name, levelName, isExplicit ? EntityPermissionStrings.Explicit : EntityPermissionStrings.Implicit);
 		}
 	}
 }

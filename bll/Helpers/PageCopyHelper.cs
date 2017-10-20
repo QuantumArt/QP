@@ -1,9 +1,5 @@
-﻿using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.DAL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -19,8 +15,8 @@ namespace Quantumart.QP8.BLL.Helpers
 
 		public PageCopyHelper(int sourceId, int destinationId)
 		{
-			this.SourceId = sourceId;
-			this.DestinationId = destinationId;
+			SourceId = sourceId;
+			DestinationId = destinationId;
 			Source = PageRepository.GetPagePropertiesById(sourceId);
 			Destination = PageRepository.GetPagePropertiesById(destinationId);
 		}		
@@ -36,19 +32,21 @@ namespace Quantumart.QP8.BLL.Helpers
 
 		private int CopyObject(BllObject sourceObj)
 		{
-			BllObject tempObj = ObjectRepository.GetObjectPropertiesById(sourceObj.Id);
+			var tempObj = ObjectRepository.GetObjectPropertiesById(sourceObj.Id);
 			tempObj.Id = 0;
 			tempObj.PageId = DestinationId;
 			tempObj.LockedBy = 0;
-			BllObject newObj = DefaultRepository.Save<BllObject, ObjectDAL>(tempObj);			
+			var newObj = DefaultRepository.Save<BllObject, ObjectDAL>(tempObj);			
 			if (sourceObj.IsObjectContainerType)
 			{
 				CopyContainer(newObj.Id, sourceObj.Container);
 				CopyContainerStatuses(newObj.Id, sourceObj.Id);			
 			}
 			else if (sourceObj.IsObjectFormType)
-				CopyContentForm(newObj.Id, sourceObj.ContentForm);			
-			var formats = ObjectFormatRepository.GetFormatsByObjectId(sourceObj.Id);
+			{
+			    CopyContentForm(newObj.Id, sourceObj.ContentForm);
+			}
+		    var formats = ObjectFormatRepository.GetFormatsByObjectId(sourceObj.Id);
 			var newDefFormatId = CopyObjectFormats(newObj.Id, sourceObj);
 			if (newDefFormatId != 0)
 			{
@@ -88,7 +86,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
 		private int CopyObjectFormats(int newObjId, BllObject oldObj)
 		{
-			int result = 0;
+			var result = 0;
 			var formats = ObjectFormatRepository.GetFormatsByObjectId(oldObj.Id);
 			foreach (var frmt in formats)
 			{

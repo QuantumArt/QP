@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL.Repository.ArticleMatching;
+using Quantumart.QP8.BLL.Repository.ArticleMatching;
 using Quantumart.QP8.BLL.Repository.ArticleMatching.Mappers;
 using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
 
@@ -25,9 +25,6 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public ArticleInfo[] MatchArticles(int contentId, T condition, MatchMode mode)
-        {
-            return MatchArticles(new[] { contentId }, condition, mode);
-        }
+        public ArticleInfo[] MatchArticles(int contentId, T condition, MatchMode mode) => MatchArticles(new[] { contentId }, condition, mode);
     }
 }

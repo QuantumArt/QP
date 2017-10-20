@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using QP8.Infrastructure.Web.Helpers;
@@ -15,13 +15,10 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
 
         internal VisualEditorPlugin() { }
 
-        internal static VisualEditorPlugin Create()
+        internal static VisualEditorPlugin Create() => new VisualEditorPlugin
         {
-            return new VisualEditorPlugin
-            {
-                Order = VisualEditorRepository.GetPluginMaxOrder() + 1
-            };
-        }
+            Order = VisualEditorRepository.GetPluginMaxOrder() + 1
+        };
 
         public override string EntityTypeCode => Constants.EntityTypeCode.VisualEditorPlugin;
 

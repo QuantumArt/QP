@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 
@@ -21,14 +21,8 @@ namespace Quantumart.QP8.BLL.ListItems
         [LocalizedDisplayName("LastComment", NameResourceType = typeof(ArticleStrings))]
         public string Comment
         {
-            get
-            {
-                return _comment;
-            }
-            set
-            {
-                _comment = value.Trim().EndsWith("Comment:") ? value.Replace("Comment: ", string.Empty) : value;
-            }
+            get => _comment;
+            set => _comment = value.Trim().EndsWith("Comment:") ? value.Replace("Comment: ", string.Empty) : value;
         }
     }
 }

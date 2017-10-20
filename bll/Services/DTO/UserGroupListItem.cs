@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {
@@ -21,6 +21,6 @@ namespace Quantumart.QP8.BLL.Services.DTO
 		public string LastModifiedByUser { get; set; }
 
 
-		public string SharedArticlesChecked { get { return SharedArticles ? "checked=\"checked\"" : null; } }
+		public string SharedArticlesChecked => SharedArticles ? "checked=\"checked\"" : null;
 	}
 }

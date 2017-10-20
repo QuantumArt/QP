@@ -1,8 +1,5 @@
-﻿using Quantumart.QP8.Resources;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -26,7 +23,7 @@ namespace Quantumart.QP8.BLL.Helpers
 		/// <returns></returns>
 		public static SortingItem CreatefromString(string inputString)
 		{
-			SortingItem result = new SortingItem();
+			var result = new SortingItem();
 			var parts = inputString.Contains("[") && inputString.Contains("]") ? inputString.Split(delimeter, StringSplitOptions.None) : inputString.Split(' ');
 			
 			if ((parts[0] == null || parts[1] == null) || (parts[1] != ascending && parts[1] != descending))
@@ -41,12 +38,6 @@ namespace Quantumart.QP8.BLL.Helpers
 			return result;
 		}
 
-		public string ShortSortingOrderName
-		{
-			get 
-			{
-				return Order == TemplateStrings.Ascending ? ascending : descending;
-			}
-		}		
+		public string ShortSortingOrderName => Order == TemplateStrings.Ascending ? ascending : descending;
 	}
 }

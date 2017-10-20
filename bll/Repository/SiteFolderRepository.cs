@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Objects;
 using System.Linq;
@@ -31,15 +31,9 @@ namespace Quantumart.QP8.BLL.Repository
             return CurrentMapper.GetBizObject(CurrentSet.SingleOrDefault(s => s.SiteId == parentEntityId && s.ParentId == null));
         }
 
-        public override Folder CreateInDb(Folder folder)
-        {
-            return DefaultRepository.Save<SiteFolder, SiteFolderDAL>((SiteFolder)folder);
-        }
+        public override Folder CreateInDb(Folder folder) => DefaultRepository.Save<SiteFolder, SiteFolderDAL>((SiteFolder)folder);
 
-        public override Folder CreateInDbAsAdmin(Folder folder)
-        {
-            return DefaultRepository.SaveAsAdmin<SiteFolder, SiteFolderDAL>((SiteFolder)folder);
-        }
+        public override Folder CreateInDbAsAdmin(Folder folder) => DefaultRepository.SaveAsAdmin<SiteFolder, SiteFolderDAL>((SiteFolder)folder);
 
         public override IEnumerable<Folder> GetAllChildrenFromDb(int parentId)
         {
@@ -47,10 +41,7 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
 
-        public override IEnumerable<Folder> GetChildrenFromDb(int parentEntityId, int parentId)
-        {
-            return CurrentMapper.GetBizList(QPContext.EFContext.GetChildSiteFoldersList(QPContext.CurrentUserId, parentEntityId, parentId, PermissionLevel.List, false, out int totalRecords));
-        }
+        public override IEnumerable<Folder> GetChildrenFromDb(int parentEntityId, int parentId) => CurrentMapper.GetBizList(QPContext.EFContext.GetChildSiteFoldersList(QPContext.CurrentUserId, parentEntityId, parentId, PermissionLevel.List, false, out var totalRecords));
 
         public override IEnumerable<Folder> GetChildrenWithSync(int parentEntityId, int? parentId)
         {
@@ -63,10 +54,7 @@ namespace Quantumart.QP8.BLL.Repository
             return CurrentSet.Where(n => n.SiteId == siteId).Select(n => new PathSecurityInfo { Id = (int)n.Id, Path = n.Path }).ToList();
         }
 
-        public override string FolderNotFoundMessage(int id)
-        {
-            return string.Format(LibraryStrings.SiteFolderNotExists);
-        }
+        public override string FolderNotFoundMessage(int id) => string.Format(LibraryStrings.SiteFolderNotExists);
 
         protected override Folder UpdateInDb(Folder folder)
         {

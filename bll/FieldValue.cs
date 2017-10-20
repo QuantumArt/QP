@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -16,8 +16,8 @@ namespace Quantumart.QP8.BLL
 
         public string Value
         {
-            get { return ObjectValue?.ToString() ?? string.Empty; }
-            set { ObjectValue = value; }
+            get => ObjectValue?.ToString() ?? string.Empty;
+            set => ObjectValue = value;
         }
 
         public object ObjectValue { get; set; }
@@ -56,7 +56,7 @@ namespace Quantumart.QP8.BLL
             }
             else if (Field.IsDateTime && !string.IsNullOrEmpty(Value))
             {
-                if (!DateTime.TryParse(Value, out DateTime dt))
+                if (!DateTime.TryParse(Value, out var dt))
                 {
                     errors.Error(Field.FormName, Value, string.Format(ArticleStrings.InvalidDateTimeFormat, Field.DisplayName));
                 }

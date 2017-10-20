@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -602,7 +602,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
             if (!string.IsNullOrWhiteSpace(timeToString))
             {
-                if (!Converter.TryConvertToSqlTimeString(timeToString, out string sqlTimeToString, out timeTo))
+                if (!Converter.TryConvertToSqlTimeString(timeToString, out var sqlTimeToString, out timeTo))
                 {
                     throw new FormatException("time To");
                 }

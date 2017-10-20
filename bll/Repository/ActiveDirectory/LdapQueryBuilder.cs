@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
@@ -14,17 +14,11 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 		private const string CnFilter = "(cn={0})";
 		#endregion
 
-		public static string Join(params string[] values)
-		{
-			return string.Join(string.Empty, values);
-		}
+		public static string Join(params string[] values) => string.Join(string.Empty, values);
 
-		public static string Apply(string filter, string value)
-		{
-			return string.Format(filter, value);
-		}
+	    public static string Apply(string filter, string value) => string.Format(filter, value);
 
-		public static string JoinAndApply(string filter, params string[] values)
+	    public static string JoinAndApply(string filter, params string[] values)
 		{
 			var valuesToBeApplied = values.Where(v => !string.IsNullOrEmpty(v)).ToArray();
 
@@ -32,10 +26,8 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 			{
 				return string.Format(filter, Join(valuesToBeApplied));
 			}
-			else
-			{
-				return Join(valuesToBeApplied);
-			}
+
+		    return Join(valuesToBeApplied);
 		}
 
 		public static string[] ApplyForEach(string filter, params string[] values)
@@ -43,29 +35,14 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 			return values.Where(v => !string.IsNullOrEmpty(v)).Select(v => Apply(filter, v)).ToArray();
 		}
 
-		public static string And(params string[] values)
-		{
-			return JoinAndApply(AndFilter, values);
-		}
+		public static string And(params string[] values) => JoinAndApply(AndFilter, values);
 
-		public static string Or(params string[] values)
-		{
-			return JoinAndApply(OrFilter, values);
-		}
+	    public static string Or(params string[] values) => JoinAndApply(OrFilter, values);
 
-		public static string MemberOf(params string[] groups)
-		{
-			return Or(ApplyForEach(MemberOfFilter, groups));
-		}
+	    public static string MemberOf(params string[] groups) => Or(ApplyForEach(MemberOfFilter, groups));
 
-		public static string UserOf(params string[] groups)
-		{
-			return And(PersonFilter, UserFilter, MemberOf(groups));
-		}
+	    public static string UserOf(params string[] groups) => And(PersonFilter, UserFilter, MemberOf(groups));
 
-		public static string GroupOf(string[] names ,params string[] groups)
-		{
-			return And(GroupFilter, Or(ApplyForEach(CnFilter, names)), MemberOf(groups));
-		}
+	    public static string GroupOf(string[] names ,params string[] groups) => And(GroupFilter, Or(ApplyForEach(CnFilter, names)), MemberOf(groups));
 	}
 }

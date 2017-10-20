@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
 
 namespace Quantumart.QP8.BLL
 {
@@ -18,13 +15,7 @@ namespace Quantumart.QP8.BLL
 		public string ParentEntityTypeCode { get; set; }
 		public long? ModifiedTicks { get; set; }
 
-		public DateTime? Modified 
-		{ 
-			get 
-			{ 
-				return ModifiedTicks.HasValue ? new DateTime(ModifiedTicks.Value) : new Nullable<DateTime>(); 
-			} 
-		}
-		public bool IsNew { get { return (EntityId == 0); } }
+		public DateTime? Modified => ModifiedTicks.HasValue ? new DateTime(ModifiedTicks.Value) : new DateTime?();
+	    public bool IsNew => (EntityId == 0);
 	}
 }

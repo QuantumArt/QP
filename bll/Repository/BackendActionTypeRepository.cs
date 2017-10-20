@@ -1,29 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data;
-using Quantumart.QP8;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.DAL;
 using System.Data.Objects;
+using System.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {
 	internal class BackendActionTypeRepository
 	{
-		private static ObjectQuery<ActionTypeDAL> DefaultActionTypeQuery
-		{
-			get
-			{
-				return QPContext.EFContext.ActionTypeSet
-					.Include("PermissionLevel");
-			}
-		}
+		private static ObjectQuery<ActionTypeDAL> DefaultActionTypeQuery => QPContext.EFContext.ActionTypeSet
+		    .Include("PermissionLevel");
 
-		private static Lazy<IEnumerable<BackendActionType>> actionTypesCache = new Lazy<IEnumerable<BackendActionType>>(() => LoadActionTypes());
+	    private static Lazy<IEnumerable<BackendActionType>> actionTypesCache = new Lazy<IEnumerable<BackendActionType>>(() => LoadActionTypes());
 
 		private static IEnumerable<BackendActionType> LoadActionTypes()
 		{
@@ -34,19 +23,16 @@ namespace Quantumart.QP8.BLL.Repository
 			return result;
 		}
 
-		internal static IEnumerable<BackendActionType> GetList()
-		{
-			return actionTypesCache.Value;
-		}
+		internal static IEnumerable<BackendActionType> GetList() => actionTypesCache.Value;
 
-		/// <summary>
+	    /// <summary>
 		/// Возвращает тип действия по его идентификатору
 		/// </summary>
 		/// <param name="actionTypeId">идентификатор типа действия</param>
 		/// <returns>тип действия</returns>
 		internal static BackendActionType GetById(int id)
 		{
-			BackendActionType actionType = MapperFacade.BackendActionTypeMapper.GetBizObject(DefaultActionTypeQuery.Single(r => r.Id == id));
+			var actionType = MapperFacade.BackendActionTypeMapper.GetBizObject(DefaultActionTypeQuery.Single(r => r.Id == id));
 			return actionType;
 		}		
 
@@ -57,7 +43,7 @@ namespace Quantumart.QP8.BLL.Repository
 		/// <returns>тип действия</returns>
 		internal static BackendActionType GetByCode(string code)
 		{
-			BackendActionType actionType = MapperFacade.BackendActionTypeMapper.GetBizObject(DefaultActionTypeQuery.Single(r => r.Code == code));
+			var actionType = MapperFacade.BackendActionTypeMapper.GetBizObject(DefaultActionTypeQuery.Single(r => r.Code == code));
 			return actionType;
 		}
 

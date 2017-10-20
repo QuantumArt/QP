@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using Quantumart.QP8;
-using Quantumart.QP8.BLL;
-
 namespace Quantumart.QP8.BLL
 {
 	public class ViewType

@@ -1,16 +1,16 @@
-﻿using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.DAL;
 using System.Collections.Generic;
 using System.Data.Objects;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {
     internal class ActionPermissionRepository : IPermissionRepository
     {
-        public IEnumerable<ListItems.EntityPermissionListItem> List(ListCommand cmd, int parentId, out int totalRecords)
+        public IEnumerable<EntityPermissionListItem> List(ListCommand cmd, int parentId, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -31,10 +31,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
             return MapperFacade.BackendActionPermissionMapper.GetBizObject(set.SingleOrDefault(g => g.Id == id));
         }
 
-        public EntityPermission Save(EntityPermission permission)
-        {
-            return DefaultRepository.Save<EntityPermission, BackendActionPermissionDAL>(permission);
-        }
+        public EntityPermission Save(EntityPermission permission) => DefaultRepository.Save<EntityPermission, BackendActionPermissionDAL>(permission);
 
         public bool CheckUnique(EntityPermission permission)
         {
@@ -44,10 +41,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
                 (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null));
         }
 
-        public EntityPermission Update(EntityPermission permission)
-        {
-            return DefaultRepository.Update<EntityPermission, BackendActionPermissionDAL>(permission);
-        }
+        public EntityPermission Update(EntityPermission permission) => DefaultRepository.Update<EntityPermission, BackendActionPermissionDAL>(permission);
 
         public void MultipleRemove(IEnumerable<int> ids)
         {

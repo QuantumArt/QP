@@ -1,5 +1,5 @@
-﻿using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.BLL.Services.EntityPermissions;
 
 namespace Quantumart.QP8.BLL.Services.ActionPermissions
 {

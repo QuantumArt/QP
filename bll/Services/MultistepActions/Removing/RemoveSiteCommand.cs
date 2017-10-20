@@ -1,6 +1,6 @@
-﻿using System;
-using Quantumart.QP8.Resources;
+using System;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
@@ -20,38 +20,35 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 			SiteName = sitetName;
 		}
 
-		public MultistepActionStageCommandState GetState()
+		public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
 		{
-			return new MultistepActionStageCommandState
-			{
-				Type = RemovingStageCommandTypes.RemoveSite,
-				ParentId = 0,
-				Id = SiteId
-			};
-		}
+		    Type = RemovingStageCommandTypes.RemoveSite,
+		    ParentId = 0,
+		    Id = SiteId
+		};
 
-		public MultistepStageSettings GetStageSettings()
-		{
-			return new MultistepStageSettings
-			{
-				ItemCount = 1,
-				StepCount = 1,
-				Name = String.Format(SiteStrings.RemoveSiteStageName, (SiteName ?? ""))
-			};
-		}
+	    public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
+	    {
+	        ItemCount = 1,
+	        StepCount = 1,
+	        Name = string.Format(SiteStrings.RemoveSiteStageName, (SiteName ?? ""))
+	    };
 
-		#region IRemovingStageCommand Members
+	    #region IRemovingStageCommand Members
 
 		public MultistepActionStepResult Step(int step)
 		{
-			Site site = SiteRepository.GetById(SiteId);
+			var site = SiteRepository.GetById(SiteId);
 			if (site == null)
-				throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, SiteId));
-			if (site.LockedByAnyoneElse)
-				throw new ApplicationException(String.Format(SiteStrings.LockedByAnyoneElse, site.LockedByDisplayName));
+			{
+			    throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, SiteId));
+			}
+		    if (site.LockedByAnyoneElse)
+		    {
+		        throw new ApplicationException(string.Format(SiteStrings.LockedByAnyoneElse, site.LockedByDisplayName));
+		    }
 
-
-			SiteRepository.Delete(SiteId);
+		    SiteRepository.Delete(SiteId);
 			return new MultistepActionStepResult { ProcessedItemsCount = 1 };
 		}
 		#endregion

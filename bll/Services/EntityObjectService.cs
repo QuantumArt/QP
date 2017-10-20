@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
@@ -21,10 +21,7 @@ namespace Quantumart.QP8.BLL.Services
         /// </summary>
         /// <param name="item">сущность</param>
         /// <returns>true или false</returns>
-        public static bool CheckNameUniqueness(EntityObject item)
-        {
-            return EntityObjectRepository.CheckNameUniqueness(item);
-        }
+        public static bool CheckNameUniqueness(EntityObject item) => EntityObjectRepository.CheckNameUniqueness(item);
 
         /// <summary>
         /// Возвращает сущность
@@ -56,10 +53,7 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
-        public static IList<EntityTreeItem> GetEntityTreeItems(string entityTypeCode, int? parentEntityId, int? entityId, bool returnSelf, string filter, string hostFilter, string selectItemIDs, IList<ArticleSearchQueryParam> searchQuery, IList<ArticleContextQueryParam> contextQuery, ArticleFullTextSearchQueryParser ftsParser)
-        {
-            return ArticleTreeFactory.Create(entityTypeCode, parentEntityId, entityId, returnSelf, filter, hostFilter, selectItemIDs, searchQuery, contextQuery, ftsParser).Process();
-        }
+        public static IList<EntityTreeItem> GetEntityTreeItems(string entityTypeCode, int? parentEntityId, int? entityId, bool returnSelf, string filter, string hostFilter, string selectItemIDs, IList<ArticleSearchQueryParam> searchQuery, IList<ArticleContextQueryParam> contextQuery, ArticleFullTextSearchQueryParser ftsParser) => ArticleTreeFactory.Create(entityTypeCode, parentEntityId, entityId, returnSelf, filter, hostFilter, selectItemIDs, searchQuery, contextQuery, ftsParser).Process();
 
         /// <summary>
         /// Возвращает упрощенный список сущностей
@@ -126,10 +120,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>
         /// <returns>результат проверки (true - существует; false - не существует)</returns>
-        public static bool CheckExistence(string entityTypeCode, int entityId)
-        {
-            return EntityObjectRepository.CheckExistence(entityTypeCode, entityId);
-        }
+        public static bool CheckExistence(string entityTypeCode, int entityId) => EntityObjectRepository.CheckExistence(entityTypeCode, entityId);
 
         /// <summary>
         /// Проверяет сущность на наличие рекурсивных связей
@@ -137,10 +128,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>
         /// <returns>результат проверки (true - есть рекурсивные связи; false - нет)</returns>
-        public static bool CheckPresenceSelfRelations(string entityTypeCode, int entityId)
-        {
-            return EntityObjectRepository.CheckPresenceSelfRelations(entityTypeCode, entityId);
-        }
+        public static bool CheckPresenceSelfRelations(string entityTypeCode, int entityId) => EntityObjectRepository.CheckPresenceSelfRelations(entityTypeCode, entityId);
 
         /// <summary>
         /// Проверяет сущность на наличие вариаций
@@ -148,10 +136,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>
         /// <returns>результат проверки (true - есть вариации; false - нет)</returns>
-        public static bool CheckForVariations(string entityTypeCode, int entityId)
-        {
-            return EntityObjectRepository.CheckForVariations(entityTypeCode, entityId);
-        }
+        public static bool CheckForVariations(string entityTypeCode, int entityId) => EntityObjectRepository.CheckForVariations(entityTypeCode, entityId);
 
         /// <summary>
         /// Возвращает название сущности
@@ -160,10 +145,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="entityId">идентификатор сущности</param>
         /// <param name="parentEntityId"></param>
         /// <returns>название сущности</returns>
-        public static string GetName(string entityTypeCode, int entityId, int parentEntityId)
-        {
-            return EntityObjectRepository.GetName(entityTypeCode, entityId, parentEntityId);
-        }
+        public static string GetName(string entityTypeCode, int entityId, int parentEntityId) => EntityObjectRepository.GetName(entityTypeCode, entityId, parentEntityId);
 
         /// <summary>
         /// Возвращает идентификатор родительской сущности
@@ -171,15 +153,9 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>
         /// <returns>идентификатор родительской сущности</returns>
-        public static int? GetParentId(string entityTypeCode, int entityId)
-        {
-            return EntityObjectRepository.GetParentId(entityTypeCode, entityId);
-        }
+        public static int? GetParentId(string entityTypeCode, int entityId) => EntityObjectRepository.GetParentId(entityTypeCode, entityId);
 
-        public static int[] GetParentIdsForTree(string entityTypeCode, int[] ids)
-        {
-            return EntityObjectRepository.GetParentIdsForTree(entityTypeCode, ids);
-        }
+        public static int[] GetParentIdsForTree(string entityTypeCode, int[] ids) => EntityObjectRepository.GetParentIdsForTree(entityTypeCode, ids);
 
         /// <summary>
         /// Возвращает цепочку сущностей для хлебных крошек
@@ -214,10 +190,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="entityId">идентификатор сущности</param>
         /// <param name="parentEntityId">идентификатор родительской сущности</param>
         /// <returns>информация о текущей и родительской сущности</returns>
-        public static IEnumerable<EntityInfo> GetParentInfo(string entityTypeCode, long entityId, long? parentEntityId)
-        {
-            return EntityObjectRepository.GetParentsChain(entityTypeCode, entityId, parentEntityId, true);
-        }
+        public static IEnumerable<EntityInfo> GetParentInfo(string entityTypeCode, long entityId, long? parentEntityId) => EntityObjectRepository.GetParentsChain(entityTypeCode, entityId, parentEntityId, true);
 
         /// <summary>
         /// Возвращает информацию о текущей сущности и всех предках
@@ -226,10 +199,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="entityId">идентификатор сущности</param>
         /// <param name="parentEntityId">идентификатор родительской сущности</param>
         /// <returns>информация о текущей и родительской сущности</returns>
-        public static IEnumerable<EntityInfo> GetParentsChain(string entityTypeCode, long entityId, long? parentEntityId)
-        {
-            return EntityObjectRepository.GetParentsChain(entityTypeCode, entityId, parentEntityId);
-        }
+        public static IEnumerable<EntityInfo> GetParentsChain(string entityTypeCode, long entityId, long? parentEntityId) => EntityObjectRepository.GetParentsChain(entityTypeCode, entityId, parentEntityId);
 
         public static void UnlockAllEntitiesLockedByCurrentUser()
         {
@@ -302,19 +272,10 @@ namespace Quantumart.QP8.BLL.Services
             return Enumerable.Empty<long>();
         }
 
-        public static string GetArticleFieldValue(int contentId, string fieldName, int articleId)
-        {
-            return ArticleRepository.GetFieldValue(articleId, contentId, fieldName);
-        }
+        public static string GetArticleFieldValue(int contentId, string fieldName, int articleId) => ArticleRepository.GetFieldValue(articleId, contentId, fieldName);
 
-        public static string GetArticleLinkedItems(int linkId, int articleId)
-        {
-            return ArticleRepository.GetLinkedItems(linkId, articleId);
-        }
+        public static string GetArticleLinkedItems(int linkId, int articleId) => ArticleRepository.GetLinkedItems(linkId, articleId);
 
-        public static int GetArticleIdByFieldValue(int contentId, string fieldName, string fieldValue)
-        {
-            return ArticleRepository.GetArticleIdByFieldValue(contentId, fieldName, fieldValue);
-        }
+        public static int GetArticleIdByFieldValue(int contentId, string fieldName, string fieldValue) => ArticleRepository.GetArticleIdByFieldValue(contentId, fieldName, fieldValue);
     }
 }

@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
 
@@ -22,7 +21,7 @@ namespace Quantumart.QP8.BLL.Services.Audit
 
 		public ListResult<ButtonTrace> GetPage(ListCommand cmd)
 		{
-            List<ButtonTrace> data = repository.GetPage(cmd, out int totalRecords).ToList();
+            var data = repository.GetPage(cmd, out var totalRecords).ToList();
             return new ListResult<ButtonTrace>
 			{
 				Data = data,

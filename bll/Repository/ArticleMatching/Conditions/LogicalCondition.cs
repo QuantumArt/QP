@@ -1,11 +1,8 @@
-﻿namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
+namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 {
 	public class LogicalCondition : ConditionBase
 	{
 		public string Operation { get; set; }
-		public override string GetCurrentExpression()
-		{
-			return "(" + string.Join(" " + Operation + " ", GetChildExpressions()) + ")";
-		}
+		public override string GetCurrentExpression() => "(" + string.Join(" " + Operation + " ", GetChildExpressions()) + ")";
 	}
 }

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Assembling;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {
@@ -22,36 +20,30 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
             AssemblingEntityName = assemblingEntityName;
         }
 
-        public MultistepActionStageCommandState GetState()
+        public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
         {
-            return new MultistepActionStageCommandState
-            {
-                Type = BuildSiteStageCommandTypes.BuildNotifications,
-                ParentId = 0,
-                Id = AssemblingEntityId
-            };
-        }
+            Type = BuildSiteStageCommandTypes.BuildNotifications,
+            ParentId = 0,
+            Id = AssemblingEntityId
+        };
 
-        public MultistepStageSettings GetStageSettings()
+        public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
         {
-            return new MultistepStageSettings
-            {
-                ItemCount = 1,
-                StepCount = 1,
-                Name = SiteOrTemplate ? 
-                String.Format(SiteStrings.AssembleNotificationStageName, (AssemblingEntityName ?? "")):
-                String.Format(TemplateStrings.AssembleNotificationsStageName, (AssemblingEntityName ?? ""))
-            };
-        }
+            ItemCount = 1,
+            StepCount = 1,
+            Name = SiteOrTemplate ? 
+                string.Format(SiteStrings.AssembleNotificationStageName, (AssemblingEntityName ?? "")):
+                string.Format(TemplateStrings.AssembleNotificationsStageName, (AssemblingEntityName ?? ""))
+        };
 
         #region IMultistepActionStageCommand Members
 
         public MultistepActionStepResult Step(int step)
         {
-            IEnumerable<int> notificationIds = SiteOrTemplate ? AssembleRepository.GetSiteFormatId(AssemblingEntityId) : AssembleRepository.GetTemplateFormatId(AssemblingEntityId);
+            var notificationIds = SiteOrTemplate ? AssembleRepository.GetSiteFormatId(AssemblingEntityId) : AssembleRepository.GetTemplateFormatId(AssemblingEntityId);
             if (notificationIds.Any())
             {
-                foreach (int id in notificationIds)
+                foreach (var id in notificationIds)
                 {
                     new AssembleFormatController(id, AssembleMode.Notification, QPContext.CurrentDbConnectionString).Assemble();
                 }

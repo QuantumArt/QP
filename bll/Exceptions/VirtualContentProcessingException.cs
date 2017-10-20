@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Exceptions
 {	
 	[Serializable]
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2240")]
+	[SuppressMessage("Microsoft.Usage", "CA2240")]
 	public class VirtualContentProcessingException : ApplicationException
 	{
 		private readonly Content virtualContent;
@@ -25,11 +23,11 @@ namespace Quantumart.QP8.BLL.Exceptions
 		{
 			get
 			{
-				string message = (InnerException != null) ? InnerException.Message : String.Empty;
-				return String.Format(ContentStrings.VirualSubContentProcessingError, VirtualContent.Id, VirtualContent.Name, message);
+				var message = (InnerException != null) ? InnerException.Message : string.Empty;
+				return string.Format(ContentStrings.VirualSubContentProcessingError, VirtualContent.Id, VirtualContent.Name, message);
 			}
 		}
 
-		public Content VirtualContent { get { return virtualContent; } }
+		public Content VirtualContent => virtualContent;
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System.Web;
+using System.Web;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants.Mvc;
@@ -46,24 +46,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             return result;
         }
 
-        public MultistepActionStageCommandState GetState()
+        public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
         {
-            return new MultistepActionStageCommandState
-            {
-                Id = SiteId,
-                ParentId = 0,
-                Type = CopySiteStageCommandTypes.CopySiteContents
-            };
-        }
+            Id = SiteId,
+            ParentId = 0,
+            Type = CopySiteStageCommandTypes.CopySiteContents
+        };
 
-        public MultistepStageSettings GetStageSettings()
+        public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
         {
-            return new MultistepStageSettings
-            {
-                ItemCount = ContentsCount,
-                StepCount = MultistepActionHelper.GetStepCount(ContentsCount, ItemsPerStep),
-                Name = string.Format(SiteStrings.CopySiteContents, SiteName ?? string.Empty)
-            };
-        }
+            ItemCount = ContentsCount,
+            StepCount = MultistepActionHelper.GetStepCount(ContentsCount, ItemsPerStep),
+            Name = string.Format(SiteStrings.CopySiteContents, SiteName ?? string.Empty)
+        };
     }
 }

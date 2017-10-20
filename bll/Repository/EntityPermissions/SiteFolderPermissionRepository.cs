@@ -1,11 +1,10 @@
-﻿using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.DAL;
 using System.Collections.Generic;
 using System.Data.Objects;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {
@@ -32,16 +31,9 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
             return MapperFacade.SiteFolderPermissionMapper.GetBizObject(set.SingleOrDefault(g => g.Id == id));
         }
 
-        public EntityPermission Save(EntityPermission permission)
-        {
-            return DefaultRepository.Save<EntityPermission, SiteFolderPermissionDAL>(permission);
-        }
+        public EntityPermission Save(EntityPermission permission) => DefaultRepository.Save<EntityPermission, SiteFolderPermissionDAL>(permission);
 
-        public EntityPermission Update(EntityPermission permission)
-        {
-            return DefaultRepository.Update<EntityPermission, SiteFolderPermissionDAL>(permission);
-        }
-
+        public EntityPermission Update(EntityPermission permission) => DefaultRepository.Update<EntityPermission, SiteFolderPermissionDAL>(permission);
 
         public bool CheckUnique(EntityPermission permission)
         {

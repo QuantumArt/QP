@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Validators;
+using System;
 using Quantumart.QP8.Resources;
-using System.Globalization;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -49,26 +45,27 @@ namespace Quantumart.QP8.BLL
 
 		#region Caulculated
 		[LocalizedDisplayName("FailedTime", NameResourceType = typeof(AuditStrings))]
-		public DateTime FailedTime { get { return StartTime; } }
+		public DateTime FailedTime => StartTime;
 
-		[LocalizedDisplayName("Duration", NameResourceType = typeof(AuditStrings))]
+	    [LocalizedDisplayName("Duration", NameResourceType = typeof(AuditStrings))]
 		public string Duration
 		{
 			get
 			{
-				if (EndTime.HasValue)
+			    if (EndTime.HasValue)
 				{					
 					return (EndTime.Value - StartTime).Duration().ToString(@"hh\:mm\:ss");
 				}
-				else
-					return null;
+
+			    return null;
 			}
 		}
 		
-		public string AutoLoggedChecked { get { return AutoLogged > 0 ? "checked=\"checked\"" : null; } }
+		public string AutoLoggedChecked => AutoLogged > 0 ? "checked=\"checked\"" : null;
 
-		public string IsQP7Checked { get { return IsQP7 ? "checked=\"checked\"" : null; } }				
-		#endregion	
+	    public string IsQP7Checked => IsQP7 ? "checked=\"checked\"" : null;
+
+	    #endregion	
 
 	}
 }

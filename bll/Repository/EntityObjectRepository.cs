@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -27,10 +27,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static DateTime? Lock(EntityObject item)
-        {
-            return Lock(item, QPContext.CurrentUserId);
-        }
+        internal static DateTime? Lock(EntityObject item) => Lock(item, QPContext.CurrentUserId);
 
         internal static void UnLock(EntityObject item)
         {
@@ -180,10 +177,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>
         /// <returns>результат проверки (true - существует; false - не существует)</returns>
-        internal static bool CheckExistence(string entityTypeCode, int entityId)
-        {
-            return QPContext.EFContext.CheckEntityExistence(entityTypeCode, entityId);
-        }
+        internal static bool CheckExistence(string entityTypeCode, int entityId) => QPContext.EFContext.CheckEntityExistence(entityTypeCode, entityId);
 
         /// <summary>
         /// Проверяет сущность на наличие рекурсивных связей
@@ -222,10 +216,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="entityId">идентификатор сущности</param>
         /// <param name="parentEntityId"></param>
         /// <returns>название сущности</returns>
-        internal static string GetName(string entityTypeCode, int entityId, int parentEntityId = 0)
-        {
-            return QPContext.EFContext.GetEntityName(entityTypeCode, entityId, parentEntityId);
-        }
+        internal static string GetName(string entityTypeCode, int entityId, int parentEntityId = 0) => QPContext.EFContext.GetEntityName(entityTypeCode, entityId, parentEntityId);
 
         /// <summary>
         /// Возвращает идентификатор родительской сущности

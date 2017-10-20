@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Data;
 using AutoMapper;
 using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.Utils;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -38,14 +38,22 @@ namespace Quantumart.QP8.BLL.Mappers
 			if (!bizObject.IsExternal)
 			{
 				if (bizObject.NoEmail)
-					bizObject.Receiver = NotificationStrings.RadioNone;
+				{
+				    bizObject.Receiver = NotificationStrings.RadioNone;
+				}
 				else if (string.IsNullOrEmpty(bizObject.Receiver))
-					bizObject.Receiver = NotificationStrings.RadioEveryone;
-				if (bizObject.FieldId.HasValue)
-					bizObject.Receiver = NotificationStrings.Field + " : " + bizObject.Receiver;
+				{
+				    bizObject.Receiver = NotificationStrings.RadioEveryone;
+				}
+			    if (bizObject.FieldId.HasValue)
+			    {
+			        bizObject.Receiver = NotificationStrings.Field + " : " + bizObject.Receiver;
+			    }
 			}
 			else
-				bizObject.Receiver = String.Empty;
+			{
+			    bizObject.Receiver = string.Empty;
+			}
 		}
     }
 }

@@ -1,7 +1,7 @@
-﻿using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.BLL.Repository.ActionPermissions;
 using Quantumart.QP8.BLL.Repository.EntityPermissions;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.BLL.Services.EntityPermissions;
 
 namespace Quantumart.QP8.BLL.Services.ActionPermissions
 {
@@ -12,29 +12,25 @@ namespace Quantumart.QP8.BLL.Services.ActionPermissions
 
 		#region IActionPermissionChangeService Members
 
-		public EntityPermission ReadOrDefault(int parentId, int? userId, int? groupId)
-		{
-			return InnerReadOrDefault(parentId, userId, groupId);
-		}
+		public EntityPermission ReadOrDefault(int parentId, int? userId, int? groupId) => InnerReadOrDefault(parentId, userId, groupId);
 
-		public EntityPermission ReadOrDefaultForChange(int parentId, int? userId, int? groupId)
-		{
-			return InnerReadOrDefault(parentId, userId, groupId);
-		}
+	    public EntityPermission ReadOrDefaultForChange(int parentId, int? userId, int? groupId) => InnerReadOrDefault(parentId, userId, groupId);
 
-		public abstract IPermissionViewModelSettings ViewModelSettings { get; }		
+	    public abstract IPermissionViewModelSettings ViewModelSettings { get; }		
 
 		public EntityPermission Change(EntityPermission entityPermission)
 		{
-			if (entityPermission.IsNew)
-				return PermissionRepository.Save(entityPermission);
-			else
-				return PermissionRepository.Update(entityPermission);
+		    if (entityPermission.IsNew)
+			{
+			    return PermissionRepository.Save(entityPermission);
+			}
+
+		    return PermissionRepository.Update(entityPermission);
 		}
 
 		public MessageResult Remove(int parentId, int? userId, int? groupId)
 		{
-			EntityPermission permission = Read(parentId, userId, groupId);
+			var permission = Read(parentId, userId, groupId);
 			if (permission != null)
 			{
 				PermissionRepository.Remove(permission.Id);
@@ -46,7 +42,7 @@ namespace Quantumart.QP8.BLL.Services.ActionPermissions
 
 		private EntityPermission InnerReadOrDefault(int parentId, int? userId, int? groupId)
 		{
-			EntityPermission permission = Read(parentId, userId, groupId);
+			var permission = Read(parentId, userId, groupId);
 			if (permission == null)
 			{
 				permission = EntityPermission.Create(parentId, PermissionRepository);				
@@ -61,12 +57,20 @@ namespace Quantumart.QP8.BLL.Services.ActionPermissions
 		{
 			EntityPermission permission = null;
 			if (!userId.HasValue && !groupId.HasValue)
-				return null;
-			else if (userId.HasValue)
-				permission = ChangeRepository.ReadForUser(parentId, userId.Value);
-			else if (groupId.HasValue)
-				permission = ChangeRepository.ReadForGroup(parentId, groupId.Value);
-			return permission;
+			{
+			    return null;
+			}
+
+		    if (userId.HasValue)
+		    {
+		        permission = ChangeRepository.ReadForUser(parentId, userId.Value);
+		    }
+		    else if (groupId.HasValue)
+		    {
+		        permission = ChangeRepository.ReadForGroup(parentId, groupId.Value);
+		    }
+
+		    return permission;
 		}
 	}
 }

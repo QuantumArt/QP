@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -16,22 +16,19 @@ namespace Quantumart.QP8.BLL
 
         public override string EntityTypeCode => Constants.EntityTypeCode.CustomAction;
 
-        internal static CustomAction CreateNew()
+        internal static CustomAction CreateNew() => new CustomAction
         {
-            return new CustomAction
+            Action = new BackendAction
             {
-                Action = new BackendAction
-                {
-                    IsCustom = true,
-                    IsInterface = true,
-                    WindowHeight = 300,
-                    WindowWidth = 500
-                },
-                ShowInMenu = true,
-                Sites = Enumerable.Empty<Site>(),
-                Contents = Enumerable.Empty<Content>()
-            };
-        }
+                IsCustom = true,
+                IsInterface = true,
+                WindowHeight = 300,
+                WindowWidth = 500
+            },
+            ShowInMenu = true,
+            Sites = Enumerable.Empty<Site>(),
+            Contents = Enumerable.Empty<Content>()
+        };
 
         public override void Validate()
         {
@@ -135,10 +132,7 @@ namespace Quantumart.QP8.BLL
 
         public BackendAction Action
         {
-            get
-            {
-                return _action;
-            }
+            get => _action;
             set
             {
                 _action = value;
@@ -171,7 +165,7 @@ namespace Quantumart.QP8.BLL
             var ids = Ids != null ? string.Join(",", Ids) : string.Empty;
             var paramName = Action.EntityType.ContextName ?? string.Empty;
             var sid = SessionId ?? string.Empty;
-            string result = $"{url ?? string.Empty}{symbol}{SidParamName}={sid}&{paramName}={ids}&param_name={paramName}&customerCode={QPContext.CurrentCustomerCode}&actionCode={Action.Code}";
+            var result = $"{url ?? string.Empty}{symbol}{SidParamName}={sid}&{paramName}={ids}&param_name={paramName}&customerCode={QPContext.CurrentCustomerCode}&actionCode={Action.Code}";
             if (parentContextName != null)
             {
                 result = result + $"&{parentContextName}={ParentId}&parent_param_name={parentContextName}";

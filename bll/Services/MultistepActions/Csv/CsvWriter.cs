@@ -316,12 +316,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             if (field != null && field.RelationType == RelationType.ManyToMany)
             {
                 value = string.Empty;
-                if (m2MValues.TryGetValue(field.LinkId.Value, out Dictionary<int, string> mappings) && mappings.Any())
+                if (m2MValues.TryGetValue(field.LinkId.Value, out var mappings) && mappings.Any())
                 {
                     var key = field.ContentId == _contentId ? IdentifierFieldName : string.Format(FieldNameHeaderTemplate, field.Content.Name, IdentifierFieldName);
-                    if (int.TryParse(article[key].ToString(), out int id))
+                    if (int.TryParse(article[key].ToString(), out var id))
                     {
-                        if (mappings.TryGetValue(id, out string items))
+                        if (mappings.TryGetValue(id, out var items))
                         {
                             value = items.Replace(",", ";");
                         }
@@ -369,20 +369,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return result.ToArray();
         }
 
-        private IEnumerable<Field> GetBaseFields()
-        {
-            return from f in FieldRepository.GetList(_settings.ContentId, false)
-                   where f.ExactType != FieldExactTypes.M2ORelation && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
-                   select f;
-        }
+        private IEnumerable<Field> GetBaseFields() => from f in FieldRepository.GetList(_settings.ContentId, false)
+            where f.ExactType != FieldExactTypes.M2ORelation && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
+            select f;
 
-        private IEnumerable<string> GetExtensionFields(Content content, string template)
-        {
-            return (from f in content.Fields
-                    where f.ExactType != FieldExactTypes.M2ORelation & !f.Aggregated && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
-                    select string.Format(template, content.Name, f.Name))
-                   .Concat(new[] { string.Format(template, content.Name, IdentifierFieldName) });
-        }
+        private IEnumerable<string> GetExtensionFields(Content content, string template) => (from f in content.Fields
+                where f.ExactType != FieldExactTypes.M2ORelation & !f.Aggregated && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
+                select string.Format(template, content.Name, f.Name))
+            .Concat(new[] { string.Format(template, content.Name, IdentifierFieldName) });
 
         private static string GetExtensions(IEnumerable<Content> extensionContents)
         {

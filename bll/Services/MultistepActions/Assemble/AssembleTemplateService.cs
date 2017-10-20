@@ -1,7 +1,7 @@
-﻿using Quantumart.QP8.BLL.Repository;
+using System;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
-using System;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {
@@ -13,21 +13,28 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 
 		public override MessageResult PreAction(int parentId, int templateId)
 		{
-			Site site = SiteRepository.GetById(parentId);
+			var site = SiteRepository.GetById(parentId);
 			if (site == null)
-				return MessageResult.Error(String.Format(SiteStrings.SiteNotFound, parentId), new[] { parentId });
-			if (site.IsLive)
-				return MessageResult.Confirm(TemplateStrings.AssembleLiveSiteTemplateConfirmation, new[] { parentId });
-			return null;
+			{
+			    return MessageResult.Error(string.Format(SiteStrings.SiteNotFound, parentId), new[] { parentId });
+			}
+		    if (site.IsLive)
+		    {
+		        return MessageResult.Confirm(TemplateStrings.AssembleLiveSiteTemplateConfirmation, new[] { parentId });
+		    }
+
+		    return null;
 		}
 
 		public override MultistepActionSettings Setup(int parentId, int templateId, bool? boundToExternal)
 		{
-			Site site = SiteRepository.GetById(parentId);
+			var site = SiteRepository.GetById(parentId);
 			if (site == null)
-				throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, parentId));
+			{
+			    throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, parentId));
+			}
 
-            PageTemplate template = PageTemplateRepository.GetPageTemplatePropertiesById(templateId);
+		    var template = PageTemplateRepository.GetPageTemplatePropertiesById(templateId);
 
             if (site.IsDotNet)
             {
@@ -49,11 +56,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 		
 		protected override MultistepActionSettings CreateActionSettings(int siteId, int templateId)
 		{
-            Site site = SiteRepository.GetById(siteId);
+            var site = SiteRepository.GetById(siteId);
             if (site == null)
-                throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, siteId));
+            {
+                throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, siteId));
+            }
 
-            if (site.IsDotNet)
+		    if (site.IsDotNet)
             {
                 return new MultistepActionSettings
                 {
@@ -65,25 +74,25 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                     }
                 };
 			}
-            else
-            {
-                return new MultistepActionSettings
-                {
-                    Stages = new[]
-                    {
-                        pagesCommand.GetStageSettings(),
-                    }
-                };
-            }
+
+		    return new MultistepActionSettings
+		    {
+		        Stages = new[]
+		        {
+		            pagesCommand.GetStageSettings()
+		        }
+		    };
 		}
 
 		protected override MultistepActionServiceContext CreateContext(int siteId, int templateId, bool? boundToExternal)
 		{
-            Site site = SiteRepository.GetById(siteId);
+            var site = SiteRepository.GetById(siteId);
             if (site == null)
-                throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, siteId));
+            {
+                throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, siteId));
+            }
 
-            if (site.IsDotNet)
+		    if (site.IsDotNet)
             {
                 return new MultistepActionServiceContext
                 {
@@ -95,30 +104,27 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                     }
                 };
             }
-            else
-            {
-                return new MultistepActionServiceContext
-                {
-                    CommandStates = new[]
-                    {
-                        pagesCommand.GetState(),
-                    }
-                };
-            }
+
+		    return new MultistepActionServiceContext
+		    {
+		        CommandStates = new[]
+		        {
+		            pagesCommand.GetState()
+		        }
+		    };
 		}
 
-		protected override string ContextSessionKey
-		{
-			get { return "BuildSiteService.ProcessingContext"; }
-		}
+		protected override string ContextSessionKey => "BuildSiteService.ProcessingContext";
 
-		protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
+	    protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
 		{
-            Site site = SiteRepository.GetByTemplateId(state.Id);
+            var site = SiteRepository.GetByTemplateId(state.Id);
             if (site == null)
-                throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, state.ParentId));
+            {
+                throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, state.ParentId));
+            }
 
-            switch (state.Type)
+		    switch (state.Type)
 			{
 				case BuildSiteStageCommandTypes.BuildTemplates:
 					return new AssembleTemplateCommand(state);

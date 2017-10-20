@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {

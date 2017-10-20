@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Configuration;
@@ -57,25 +57,21 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        private static bool DetectChanges(ArticleScheduleDAL originalItem, ArticleScheduleDAL dalItem)
-        {
-            return
-                originalItem.ActiveEndDate != dalItem.ActiveEndDate ||
-                originalItem.ActiveEndTime != dalItem.ActiveEndTime ||
-                originalItem.ActiveStartTime != dalItem.ActiveStartTime ||
-                originalItem.ActiveStartDate != dalItem.ActiveStartDate ||
-                originalItem.Duration != dalItem.Duration ||
-                originalItem.DurationUnits != dalItem.DurationUnits ||
-                originalItem.UseDuration != dalItem.UseDuration ||
-                originalItem.Occurences != dalItem.Occurences ||
-                originalItem.MaximumOccurences != dalItem.MaximumOccurences ||
-                originalItem.FreqType != dalItem.FreqType ||
-                originalItem.FreqSubdayType != dalItem.FreqSubdayType ||
-                originalItem.FreqSubdayInterval != dalItem.FreqSubdayInterval ||
-                originalItem.FreqRelativeInterval != dalItem.FreqRelativeInterval ||
-                originalItem.FreqRecurrenceFactor != dalItem.FreqRecurrenceFactor ||
-                originalItem.FreqInterval != dalItem.FreqInterval;
-        }
+        private static bool DetectChanges(ArticleScheduleDAL originalItem, ArticleScheduleDAL dalItem) => originalItem.ActiveEndDate != dalItem.ActiveEndDate ||
+            originalItem.ActiveEndTime != dalItem.ActiveEndTime ||
+            originalItem.ActiveStartTime != dalItem.ActiveStartTime ||
+            originalItem.ActiveStartDate != dalItem.ActiveStartDate ||
+            originalItem.Duration != dalItem.Duration ||
+            originalItem.DurationUnits != dalItem.DurationUnits ||
+            originalItem.UseDuration != dalItem.UseDuration ||
+            originalItem.Occurences != dalItem.Occurences ||
+            originalItem.MaximumOccurences != dalItem.MaximumOccurences ||
+            originalItem.FreqType != dalItem.FreqType ||
+            originalItem.FreqSubdayType != dalItem.FreqSubdayType ||
+            originalItem.FreqSubdayInterval != dalItem.FreqSubdayInterval ||
+            originalItem.FreqRelativeInterval != dalItem.FreqRelativeInterval ||
+            originalItem.FreqRecurrenceFactor != dalItem.FreqRecurrenceFactor ||
+            originalItem.FreqInterval != dalItem.FreqInterval;
 
         internal static ArticleScheduleDAL GetDalByArticleId(int id)
         {

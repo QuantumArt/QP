@@ -1,6 +1,6 @@
-﻿using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
 using System;
 using System.Collections.Generic;
+using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 {
@@ -8,7 +8,6 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 	{
 		#region Constructors
 		public ComparitionCondition()
-			: base()
 		{
 		}
 
@@ -21,7 +20,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 
 			if (left is QueryField[])
 			{
-				fieldConditions.Add(new FieldCondition() { Fields = (QueryField[])left });
+				fieldConditions.Add(new FieldCondition { Fields = (QueryField[])left });
 			}
 			else
 			{
@@ -30,7 +29,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 
 			if (right is string[])
 			{
-				fieldConditions.Add(new FieldCondition() { Fields = (QueryField[])right });
+				fieldConditions.Add(new FieldCondition { Fields = (QueryField[])right });
 			}
 			else
 			{
@@ -83,44 +82,40 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 
 		private object GetValue(object value)
 		{
-			if (value is bool)
+		    if (value is bool)
 			{
 				return (bool)value ? 1 : 0;
 			}
-			else
-			{
-				return value;
-			}
+
+		    return value;
 		}
 
 		private string GetType(object value)
 		{
-			if (value == null)
+		    if (value == null)
 			{
 				return null;
 			}
-			else if (value is string)
-			{
-				return "string";
-			}
-			else if (value is int || value is decimal || value is bool)
-			{
-				return "numeric";
-			}
-			else if (value is DateTime)
-			{
-				return "date";
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
+
+		    if (value is string)
+		    {
+		        return "string";
+		    }
+
+		    if (value is int || value is decimal || value is bool)
+		    {
+		        return "numeric";
+		    }
+
+		    if (value is DateTime)
+		    {
+		        return "date";
+		    }
+
+		    throw new NotImplementedException();
 		}
 
 		public string Operation { get; set; }
-		public override string GetCurrentExpression()
-		{
-			return string.Join(" " + Operation + " ", GetChildExpressions());
-		}
+		public override string GetCurrentExpression() => string.Join(" " + Operation + " ", GetChildExpressions());
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Web;
 using QP8.Infrastructure.Extensions;
@@ -57,33 +57,21 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new ImportException(ex.Message, ex, settings);
             }
         }
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id)
+        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
         {
-            return new MultistepActionSettings
+            Stages = new[]
             {
-                Stages = new[]
-                {
-                    _command.GetStageSettings()
-                }
-            };
-        }
+                _command.GetStageSettings()
+            }
+        };
 
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
-        {
-            return new MultistepActionServiceContext { CommandStates = new[] { _command.GetState() } };
-        }
+        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => new MultistepActionServiceContext { CommandStates = new[] { _command.GetState() } };
 
         protected override string ContextSessionKey => HttpContextSession.ImportContextSessionKey;
 
-        protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
-        {
-            return new ImportArticlesCommand(state);
-        }
+        protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state) => new ImportArticlesCommand(state);
 
-        public override IMultistepActionSettings MultistepActionSettings(int siteId, int contentId)
-        {
-            return new ImportArticlesParams(siteId, contentId);
-        }
+        public override IMultistepActionSettings MultistepActionSettings(int siteId, int contentId) => new ImportArticlesParams(siteId, contentId);
 
         public override void TearDown()
         {

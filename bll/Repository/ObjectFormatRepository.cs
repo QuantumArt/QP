@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 
@@ -122,10 +121,7 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.ObjectFormatMapper.GetBizObject(QPContext.EFContext.ObjectFormatSet.Include("LastModifiedByUser").SingleOrDefault(g => g.Id == id));
         }
 
-        internal static NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item)
-        {
-            return DefaultRepository.Update<NotificationObjectFormat, ObjectFormatDAL>(item);
-        }
+        internal static NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item) => DefaultRepository.Update<NotificationObjectFormat, ObjectFormatDAL>(item);
 
         internal static IEnumerable<ObjectFormat> GetFormatsByObjectId(int objectId)
         {

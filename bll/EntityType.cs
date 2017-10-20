@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Quantumart.QP8.Constants;
 
@@ -94,10 +94,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Проверка на автосохранение
         /// </summary>
-        public static bool CheckToAutosave(string code)
-        {
-            return AllowedToAutosaveCodes.Contains(code);
-        }
+        public static bool CheckToAutosave(string code) => AllowedToAutosaveCodes.Contains(code);
 
         private static readonly HashSet<string> AllowedToAutosaveCodes = new HashSet<string>(new[]
         {

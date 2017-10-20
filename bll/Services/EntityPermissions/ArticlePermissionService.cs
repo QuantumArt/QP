@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository;
@@ -62,18 +62,12 @@ namespace Quantumart.QP8.BLL.Services.EntityPermissions
             return base.Update(permission);
         }
 
-        public override MessageResult Remove(int parentId, int id)
-        {
-            return ArticleRepository.IsAnyAggregatedFields(parentId)
-                ? MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated)
-                : base.Remove(parentId, id);
-        }
+        public override MessageResult Remove(int parentId, int id) => ArticleRepository.IsAnyAggregatedFields(parentId)
+            ? MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated)
+            : base.Remove(parentId, id);
 
-        public override MessageResult MultipleRemove(int parentId, IEnumerable<int> ids)
-        {
-            return ArticleRepository.IsAnyAggregatedFields(parentId)
-                ? MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated)
-                : base.MultipleRemove(parentId, ids);
-        }
+        public override MessageResult MultipleRemove(int parentId, IEnumerable<int> ids) => ArticleRepository.IsAnyAggregatedFields(parentId)
+            ? MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated)
+            : base.MultipleRemove(parentId, ids);
     }
 }

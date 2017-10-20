@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -10,19 +10,13 @@ namespace Quantumart.QP8.BLL
     {
         public override int ParentEntityId
         {
-            get { return SiteId; }
-            set { SiteId = value; }
+            get => SiteId;
+            set => SiteId = value;
         }
 
-        protected override EntityObject GetParent()
-        {
-            return SiteRepository.GetById(ParentEntityId);
-        }
+        protected override EntityObject GetParent() => SiteRepository.GetById(ParentEntityId);
 
-        protected override FolderFactory GetFactory()
-        {
-            return new SiteFolderFactory();
-        }
+        protected override FolderFactory GetFactory() => new SiteFolderFactory();
 
         public override string EntityTypeCode => Constants.EntityTypeCode.SiteFolder;
 
@@ -53,7 +47,7 @@ namespace Quantumart.QP8.BLL
 
         public static PathInfo GetPathInfo(int id)
         {
-            var info = Folder.GetPathInfo(new SiteFolderFactory(), id);
+            var info = GetPathInfo(new SiteFolderFactory(), id);
             if (info == null)
             {
                 throw new Exception(string.Format(LibraryStrings.SiteFolderNotExists, id));

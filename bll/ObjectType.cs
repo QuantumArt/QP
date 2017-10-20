@@ -1,8 +1,4 @@
-﻿using Quantumart.QP8.BLL.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL
 {
@@ -14,29 +10,14 @@ namespace Quantumart.QP8.BLL
 		private const string _javaScript = "JavaScript";
 		private const string _css = "Style Sheet (CSS)";
 
-		public static ObjectType GetGeneric()
-		{
-			return ObjectTypeRepository.GetByName(_generic);
-		}
+		public static ObjectType GetGeneric() => ObjectTypeRepository.GetByName(_generic);
 
-		public static ObjectType GetContainer()
-		{
-			return ObjectTypeRepository.GetByName(_container);
-		}
+	    public static ObjectType GetContainer() => ObjectTypeRepository.GetByName(_container);
 
-		public static ObjectType GetForm()
-		{
-			return ObjectTypeRepository.GetByName(_form);
-		}
+	    public static ObjectType GetForm() => ObjectTypeRepository.GetByName(_form);
 
-		public static ObjectType GetJavaScript()
-		{
-			return ObjectTypeRepository.GetByName(_javaScript);
-		}
+	    public static ObjectType GetJavaScript() => ObjectTypeRepository.GetByName(_javaScript);
 
-		public static ObjectType GetCss()
-		{
-			return ObjectTypeRepository.GetByName(_css);
-		}
+	    public static ObjectType GetCss() => ObjectTypeRepository.GetByName(_css);
 	}
 }

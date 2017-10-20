@@ -39,14 +39,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             _importLogger = LogProvider.GetLogger(GetType());
         }
 
-        public MultistepActionStageCommandState GetState()
+        public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
         {
-            return new MultistepActionStageCommandState
-            {
-                ParentId = SiteId,
-                Id = ContentId
-            };
-        }
+            ParentId = SiteId,
+            Id = ContentId
+        };
 
         public MultistepActionStepResult Step(int step)
         {
@@ -61,7 +58,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 {
                     try
                     {
-                        reader.Process(step, ItemsPerStep, out int processedItemsCount);
+                        reader.Process(step, ItemsPerStep, out var processedItemsCount);
                         if (step * ItemsPerStep >= reader.ArticleCount - ItemsPerStep)
                         {
                             reader.PostUpdateM2MRelationAndO2MRelationFields();
@@ -91,14 +88,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             return result;
         }
 
-        public MultistepStageSettings GetStageSettings()
+        public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
         {
-            return new MultistepStageSettings
-            {
-                ItemCount = ItemCount,
-                StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
-                Name = ContentStrings.ImportArticles
-            };
-        }
+            ItemCount = ItemCount,
+            StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
+            Name = ContentStrings.ImportArticles
+        };
     }
 }

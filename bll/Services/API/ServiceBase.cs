@@ -40,14 +40,8 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public bool IsLive
         {
-            get
-            {
-                return QPContext.IsLive;
-            }
-            set
-            {
-                QPContext.IsLive = value;
-            }
+            get => QPContext.IsLive;
+            set => QPContext.IsLive = value;
         }
 
         public void LoadStructureCache()

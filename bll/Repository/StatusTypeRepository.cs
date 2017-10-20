@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
@@ -13,11 +13,13 @@ namespace Quantumart.QP8.BLL.Repository
     {
         internal static StatusType GetById(int id)
         {
-            StatusType result = GetByIdFromCache(id);
+            var result = GetByIdFromCache(id);
             if (result != null)
+            {
                 return result;
-            else
-                return GetRealById(id);
+            }
+
+            return GetRealById(id);
         }
 
         private static StatusType GetRealById(int id)
@@ -46,10 +48,7 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.StatusTypeMapper.GetBizList(QPContext.EFContext.StatusTypeSet.Where(s => (int)s.SiteId == siteId).OrderBy(n => n.Weight).ToList());
         }
 
-        internal static IEnumerable<StatusType> GetAll()
-        {
-            return MapperFacade.StatusTypeMapper.GetBizList(QPContext.EFContext.StatusTypeSet.ToList());
-        }
+        internal static IEnumerable<StatusType> GetAll() => MapperFacade.StatusTypeMapper.GetBizList(QPContext.EFContext.StatusTypeSet.ToList());
 
         internal static IEnumerable<StatusType> GetColouredStatuses()
         {
@@ -62,16 +61,20 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns></returns>
         internal static IEnumerable<StatusType> GetList(IEnumerable<int> IDs)
         {
-            List<StatusType> result = new List<StatusType>();
+            var result = new List<StatusType>();
             var cache = QPContext.GetStatusTypeCache();
             if (cache != null)
             {
                 foreach (var id in IDs)
                 {
                     if (cache.ContainsKey(id))
+                    {
                         result.Add(cache[id]);
+                    }
                     else
+                    {
                         result.Add(GetRealById(id));
+                    }
                 }
 
             }
@@ -91,15 +94,12 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                IEnumerable<DataRow> rows = Common.GetStatusTypePage(scope.DbConnection, siteId, "[WEIGHT]", out totalRecords, cmd.StartRecord, cmd.PageSize);
+                var rows = Common.GetStatusTypePage(scope.DbConnection, siteId, "[WEIGHT]", out totalRecords, cmd.StartRecord, cmd.PageSize);
                 return MapperFacade.StatusTypeListItemRowMapper.GetBizList(rows.ToList());
             }
         }
 
-        internal static StatusType UpdateProperties(StatusType statusType)
-        {
-            return DefaultRepository.Update<StatusType, StatusTypeDAL>(statusType);
-        }
+        internal static StatusType UpdateProperties(StatusType statusType) => DefaultRepository.Update<StatusType, StatusTypeDAL>(statusType);
 
         internal static StatusType SaveProperties(StatusType statusType)
         {
@@ -114,9 +114,12 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var result = new List<int>();
-                IEnumerable<DataRow> rows = Common.GetStatusTypeWeightsBySiteId(scope.DbConnection, siteId, exceptId);
+                var rows = Common.GetStatusTypeWeightsBySiteId(scope.DbConnection, siteId, exceptId);
                 foreach (var row in rows)
+                {
                     result.Add(Converter.ToInt32(row.Field<decimal>("WEIGHT")));
+                }
+
                 return result;
             }
         }
@@ -170,8 +173,8 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                int totalRecords = -1;
-                IEnumerable<DataRow> rows = Common.GetStatusPageForWorkflow(scope.DbConnection, workflowId, listCommand.SortExpression, out totalRecords, listCommand.StartRecord, listCommand.PageSize);
+                var totalRecords = -1;
+                var rows = Common.GetStatusPageForWorkflow(scope.DbConnection, workflowId, listCommand.SortExpression, out totalRecords, listCommand.StartRecord, listCommand.PageSize);
                 return new ListResult<StatusTypeListItem> { Data = MapperFacade.StatusTypeListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }
@@ -180,17 +183,17 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                IEnumerable<DataRow> rows = Common.GetAllStatusesForWorkflow(scope.DbConnection, workflowId);
+                var rows = Common.GetAllStatusesForWorkflow(scope.DbConnection, workflowId);
                 return MapperFacade.StatusTypeListItemRowMapper.GetBizList(rows.ToList());
             }
         }
 
         internal static IEnumerable<ListItem> GetStatusSimpleList(int[] selectedEntitiesIDs)
         {
-            IEnumerable<decimal> decStatusIDs = Converter.ToDecimalCollection(selectedEntitiesIDs);
+            var decStatusIDs = Converter.ToDecimalCollection(selectedEntitiesIDs);
             return QPContext.EFContext.StatusTypeSet
                 .Where(n => decStatusIDs.Contains(n.Id))
-                .Select(g => new { Id = g.Id, Name = g.Name })
+                .Select(g => new { g.Id, g.Name })
                 .ToArray()
                 .Select(g => new ListItem { Value = g.Id.ToString(), Text = g.Name })
                 ;
@@ -198,12 +201,12 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static int GetPublishedStatusIdBySiteId(int siteId)
         {
-            return (int)QPContext.EFContext.StatusTypeSet.SingleOrDefault(x => x.SiteId == siteId && x.Name == Constants.StatusName.Published).Id;
+            return (int)QPContext.EFContext.StatusTypeSet.SingleOrDefault(x => x.SiteId == siteId && x.Name == StatusName.Published).Id;
         }
 
         internal static int GetNoneStatusIdBySiteId(int siteId)
         {
-            return (int)QPContext.EFContext.StatusTypeSet.SingleOrDefault(x => x.SiteId == siteId && x.Name == Constants.StatusName.None).Id;
+            return (int)QPContext.EFContext.StatusTypeSet.SingleOrDefault(x => x.SiteId == siteId && x.Name == StatusName.None).Id;
         }
     }
 }

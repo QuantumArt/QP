@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -68,7 +68,7 @@ namespace Quantumart.QP8.BLL
             {
                 foreach (var item in result.Where(n => n.Field.IsClassifier))
                 {
-                    if (!string.IsNullOrEmpty(item.Value) && int.TryParse(item.Value, out int contentId))
+                    if (!string.IsNullOrEmpty(item.Value) && int.TryParse(item.Value, out var contentId))
                     {
                         var id = Article.AggregatedArticles.Where(n => n.ContentId == contentId).Select(n => n.Id).SingleOrDefault();
                         var aggArticle = new Article(ContentRepository.GetById(contentId)) { Id = id };
@@ -80,10 +80,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public Content GetAggregatedContent(string value)
-        {
-            return GetAggregatedArticle(Converter.ToInt32(value, 0))?.Content;
-        }
+        public Content GetAggregatedContent(string value) => GetAggregatedArticle(Converter.ToInt32(value, 0))?.Content;
 
         public Article GetAggregatedArticle(int contentId)
         {
@@ -227,8 +224,8 @@ namespace Quantumart.QP8.BLL
         [ScriptIgnore]
         public List<FieldValue> FieldValues
         {
-            get { return _fieldValues ?? LoadFieldValues(); }
-            set { _fieldValues = value; }
+            get => _fieldValues ?? LoadFieldValues();
+            set => _fieldValues = value;
         }
 
         private readonly Lazy<DataRow> _versionRowData;

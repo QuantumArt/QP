@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,21 +44,12 @@ namespace Quantumart.QP8.BLL
 
         public override PathInfo PathInfo => _pathInfo ?? (_pathInfo = CreatePathInfo(Path));
 
-        private PathInfo CreatePathInfo(string path)
-        {
-            return Parent.PathInfo.GetSubPathInfo(path);
-        }
+        private PathInfo CreatePathInfo(string path) => Parent.PathInfo.GetSubPathInfo(path);
 
         public override bool HasChildren
         {
-            get
-            {
-                return AutoLoadChildren ? Children.Any() : _hasChildren;
-            }
-            set
-            {
-                _hasChildren = value;
-            }
+            get => AutoLoadChildren ? Children.Any() : _hasChildren;
+            set => _hasChildren = value;
         }
 
         public override EntityObject Parent => _parent ?? (_parent = GetParent());
@@ -176,10 +167,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        internal static bool IsSpecialName(string name)
-        {
-            return name == ArticleVersion.RootFolder || name.StartsWith(Field.Prefix);
-        }
+        internal static bool IsSpecialName(string name) => name == ArticleVersion.RootFolder || name.StartsWith(Field.Prefix);
 
         public static void ForceDelete(string path)
         {
@@ -227,10 +215,7 @@ namespace Quantumart.QP8.BLL
             return new ListResult<FolderFile> { Data = filteredAndPaged, TotalRecords = filtered.Count() };
         }
 
-        internal static PathInfo GetPathInfo(FolderFactory factory, int id)
-        {
-            return factory.CreateRepository().GetById(id)?.PathInfo;
-        }
+        internal static PathInfo GetPathInfo(FolderFactory factory, int id) => factory.CreateRepository().GetById(id)?.PathInfo;
 
         internal Folder TraverseTree(string subFolder)
         {
@@ -257,9 +242,6 @@ namespace Quantumart.QP8.BLL
             Path = CreateComputedPath(Name);
         }
 
-        private string CreateComputedPath(string name)
-        {
-            return $@"{(ParentFolder == null ? string.Empty : ParentFolder.Path)}{name}\";
-        }
+        private string CreateComputedPath(string name) => $@"{(ParentFolder == null ? string.Empty : ParentFolder.Path)}{name}\";
     }
 }
