@@ -37,11 +37,13 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
     return null;
   },
 
-  setBlockState(state) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
+  setBlockState(state) {
     // default implementation
   },
 
-  restoreBlockState(state) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
+  restoreBlockState(state) {
     // default implementation
   },
 
@@ -59,7 +61,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
 
   _getText(entities, callback) {
     const count = 3;
-    const len = entities.length;
+    const { length: len } = entities;
     let ids = entities.slice(0, count);
     if (callback) {
       ids = ids.map(callback);
@@ -67,7 +69,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
 
     let result = ids.join('; ');
     if (len > count) {
-      result += `; ${$l.SearchBlock.etcText}, ${$l.SearchBlock.totalText}: ${length}`;
+      result += `; ${$l.SearchBlock.etcText}, ${$l.SearchBlock.totalText}: ${len}`;
     }
 
     return result;
@@ -85,6 +87,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.registerClass(
   'Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase', null, Sys.IDisposable
 );
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState = function (
   searchType, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, data
 ) {
