@@ -1,7 +1,4 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -9,23 +6,26 @@ namespace Quantumart.QP8.BLL.Helpers
 	{
 		public static string TranslateSortExpression(string sortExpression, Dictionary<string, string> replaces = null, string @default = "Id")
 		{
-            string result = sortExpression;
+            var result = sortExpression;
 			replaces = replaces ?? new Dictionary<string, string>(0);
-            if (!String.IsNullOrEmpty(result))
+            if (!string.IsNullOrEmpty(result))
             {
-                string[] parts = result.Split(' ');
+                var parts = result.Split(' ');
                 if (parts.Length == 2)
                 {
 					foreach (var replace in replaces)
 					{
 						parts[0] = parts[0].Replace(replace.Key, replace.Value);
 					}
-                    result = String.Join(" ", parts);
+                    result = string.Join(" ", parts);
                 }
             }
             else
-				result = @default;
-            return result;
+            {
+                result = @default;
+            }
+
+		    return result;
 		}
 	}
 }

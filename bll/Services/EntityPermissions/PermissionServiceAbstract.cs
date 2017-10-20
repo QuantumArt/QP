@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.BLL.Repository.EntityPermissions;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.Resources;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.EntityPermissions;
+using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.EntityPermissions
 {
@@ -18,14 +18,11 @@ namespace Quantumart.QP8.BLL.Services.EntityPermissions
 		public abstract IPermissionListViewModelSettings ListViewModelSettings { get; }
 		public abstract IPermissionViewModelSettings ViewModelSettings { get; }
 		
-		public IEnumerable<EntityPermissionLevel> GetPermissionLevels()
-		{
-			return CommonPermissionRepository.GetPermissionLevels();
-		}
+		public IEnumerable<EntityPermissionLevel> GetPermissionLevels() => CommonPermissionRepository.GetPermissionLevels();
 
-		public virtual ListResult<EntityPermissionListItem> List(int parentId, ListCommand cmd)
+	    public virtual ListResult<EntityPermissionListItem> List(int parentId, ListCommand cmd)
 		{
-            IEnumerable<EntityPermissionListItem> list = Repository.List(cmd, parentId, out int totalRecords);
+            var list = Repository.List(cmd, parentId, out var totalRecords);
             return new ListResult<EntityPermissionListItem>
 			{
 				Data = list.ToList(),
@@ -35,36 +32,33 @@ namespace Quantumart.QP8.BLL.Services.EntityPermissions
 
 		public virtual EntityPermission Read(int id)
 		{
-			EntityPermission permission = Repository.GetById(id);
+			var permission = Repository.GetById(id);
 			if (permission == null)
-				throw new ApplicationException(String.Format(EntityPermissionStrings.PermissionNotFound, id));
-			return permission;
+			{
+			    throw new ApplicationException(string.Format(EntityPermissionStrings.PermissionNotFound, id));
+			}
+
+		    return permission;
 		}
 
 		public EntityPermission ReadForUpdate(int id)
 		{
-			EntityPermission permission = Repository.GetById(id, false);
+			var permission = Repository.GetById(id, false);
 			if (permission == null)
-				throw new ApplicationException(String.Format(EntityPermissionStrings.PermissionNotFound, id));
-			return permission;
+			{
+			    throw new ApplicationException(string.Format(EntityPermissionStrings.PermissionNotFound, id));
+			}
+
+		    return permission;
 		}
 
-		public virtual EntityPermission New(int parentId)
-		{
-			return EntityPermission.Create(parentId, this.Repository);
-		}
+		public virtual EntityPermission New(int parentId) => EntityPermission.Create(parentId, Repository);
 
-		public virtual EntityPermission Save(EntityPermission permission)
-		{
-			return Repository.Save(permission);
-		}
+	    public virtual EntityPermission Save(EntityPermission permission) => Repository.Save(permission);
 
-		public virtual EntityPermission Update(EntityPermission permission)
-		{
-			return Repository.Update(permission);
-		}
+	    public virtual EntityPermission Update(EntityPermission permission) => Repository.Update(permission);
 
-		public virtual MessageResult Remove(int parentId, int id)
+	    public virtual MessageResult Remove(int parentId, int id)
 		{
 			Repository.Remove(id);
 			return null;
@@ -76,20 +70,13 @@ namespace Quantumart.QP8.BLL.Services.EntityPermissions
 			return null;
 		}
 
-		public Article GetParentArticle(int articleId)
-		{
-			return ArticleRepository.GetById(articleId);
-		}
-		
+		public Article GetParentArticle(int articleId) => ArticleRepository.GetById(articleId);
 
-		public virtual PermissionInitListResult InitList(int parentId)
+	    public virtual PermissionInitListResult InitList(int parentId) => new PermissionInitListResult
 		{
-			return new PermissionInitListResult
-			{
-				IsAddNewAccessable = SecurityRepository.IsActionAccessible(this.ListViewModelSettings.AddNewItemActionCode),				
-			};
-		}
+		    IsAddNewAccessable = SecurityRepository.IsActionAccessible(ListViewModelSettings.AddNewItemActionCode)				
+		};
 
-		#endregion
+	    #endregion
 	}
 }

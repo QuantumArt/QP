@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Quantumart.QP8.Validators;
-using Quantumart.QP8.Resources;
-using System.Data;
-using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -15,13 +15,7 @@ namespace Quantumart.QP8.BLL
     {
         private static readonly int ADMIN_GROUP_ID = 1;
 
-        public override string EntityTypeCode
-        {
-            get
-            {
-                return Constants.EntityTypeCode.UserGroup;
-            }
-        }
+        public override string EntityTypeCode => Constants.EntityTypeCode.UserGroup;
 
         #region Properties
         public bool BuiltIn { get; set; }
@@ -36,7 +30,7 @@ namespace Quantumart.QP8.BLL
         public bool CanUnlockItems { get; set; }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "NtGroupLengthExceeded", MessageTemplateResourceType = typeof(UserGroupStrings))]
-        [FormatValidator(Constants.RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NtGroupInvalidFormat", MessageTemplateResourceType = typeof(UserGroupStrings))]
+        [FormatValidator(RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NtGroupInvalidFormat", MessageTemplateResourceType = typeof(UserGroupStrings))]
         [LocalizedDisplayName("NtGroup", NameResourceType = typeof(UserGroupStrings))]
         public string NtGroup { get; set; }
 
@@ -50,16 +44,20 @@ namespace Quantumart.QP8.BLL
         #region Validation
         public override void Validate()
         {
-            RulesException<UserGroup> errors = new RulesException<UserGroup>();
+            var errors = new RulesException<UserGroup>();
             base.Validate(errors);
 
             // Группа не может иметь родительскую группу с параллельным Worfklow
             if (ParentGroup != null && ParentGroup.UseParallelWorkflow)
+            {
                 errors.ErrorFor(g => g.ParentGroup, UserGroupStrings.ParentCouldntUseWorkflow);
+            }
 
             // Если группа с параллельным Worfklow, то она не может иметь потомков
             if (UseParallelWorkflow && ChildGroups.Any())
+            {
                 errors.ErrorFor(g => g.UseParallelWorkflow, UserGroupStrings.GroupCouldntUseWorkflow);
+            }
 
             // Если группа с параллельным Worfklow то проверить, не являеться ли родительская группа потомком группы Администраторы
             if (UseParallelWorkflow &&
@@ -76,7 +74,9 @@ namespace Quantumart.QP8.BLL
             if (!IsNew && ParentGroup != null)
             {
                 if (UserGroupRepository.IsCyclePossible(Id, ParentGroup.Id))
+                {
                     errors.ErrorFor(g => g.ParentGroup, UserGroupStrings.IsGroupCycle);
+                }
             }
 
             // Группа с параллельным Worfklow не может содержать пользователей прямо или косвенно входящих в группу Администраторы
@@ -89,7 +89,9 @@ namespace Quantumart.QP8.BLL
             BuiltInUsersRemovingValidation(errors);
 
             if (!errors.IsEmpty)
+            {
                 throw errors;
+            }
         }
 
         /// <summary>
@@ -100,13 +102,13 @@ namespace Quantumart.QP8.BLL
         {
             if (IsAdminDescendant && Users.Any())
             {
-                IEnumerable<int> workflowGroupUsersIDs = UserGroupRepository.SelectWorkflowGroupUserIDs(Users.Select(u => u.Id).ToArray());
+                var workflowGroupUsersIDs = UserGroupRepository.SelectWorkflowGroupUserIDs(Users.Select(u => u.Id).ToArray());
                 if (workflowGroupUsersIDs.Any())
                 {
                     var logins = Users
                             .Where(u => workflowGroupUsersIDs.Contains(u.Id))
                             .Select(u => u.LogOn);
-                    string message = String.Format(UserGroupStrings.GroupCouldntBindWorkflowGroupUsers, String.Join(",", logins));
+                    var message = string.Format(UserGroupStrings.GroupCouldntBindWorkflowGroupUsers, string.Join(",", logins));
                     errors.ErrorForModel(message);
                 }
             }
@@ -120,13 +122,13 @@ namespace Quantumart.QP8.BLL
         {
             if (UseParallelWorkflow && Users.Any())
             {
-                IEnumerable<int> adminDescendantUsersIDs = UserGroupRepository.SelectAdminDescendantGroupUserIDs(Users.Select(u => u.Id).ToArray(), Id);
+                var adminDescendantUsersIDs = UserGroupRepository.SelectAdminDescendantGroupUserIDs(Users.Select(u => u.Id).ToArray(), Id);
                 if (adminDescendantUsersIDs.Any())
                 {
                     var logins = Users
                             .Where(u => adminDescendantUsersIDs.Contains(u.Id))
                             .Select(u => u.LogOn);
-                    string message = String.Format(UserGroupStrings.GroupCouldntBindAdminDescendantUsers, String.Join(",", logins));
+                    var message = string.Format(UserGroupStrings.GroupCouldntBindAdminDescendantUsers, string.Join(",", logins));
                     errors.ErrorForModel(message);
                 }
             }
@@ -140,19 +142,21 @@ namespace Quantumart.QP8.BLL
         {
             if (BuiltIn)
             {
-                UserGroup group = UserGroupRepository.GetPropertiesById(Id);
+                var group = UserGroupRepository.GetPropertiesById(Id);
                 if (group == null)
-                    throw new ApplicationException(String.Format(UserGroupStrings.GroupNotFound, Id));
+                {
+                    throw new ApplicationException(string.Format(UserGroupStrings.GroupNotFound, Id));
+                }
 
-                IEnumerable<int> dbBuiltInUserIDs = group.Users.Where(u => u.BuiltIn).Select(u => u.Id);
-                IEnumerable<int> builtInUserIDs = this.Users.Where(u => u.BuiltIn).Select(u => u.Id);
-                IEnumerable<int> undindedBuiltInUserIDs = dbBuiltInUserIDs.Except(builtInUserIDs);
+                var dbBuiltInUserIDs = group.Users.Where(u => u.BuiltIn).Select(u => u.Id);
+                var builtInUserIDs = Users.Where(u => u.BuiltIn).Select(u => u.Id);
+                var undindedBuiltInUserIDs = dbBuiltInUserIDs.Except(builtInUserIDs);
                 if (undindedBuiltInUserIDs.Any())
                 {
                     var logins = group.Users
                             .Where(u => undindedBuiltInUserIDs.Contains(u.Id))
                             .Select(u => u.LogOn);
-                    string message = String.Format(UserGroupStrings.BuiltInUsersCouldntBeRemoved, String.Join(",", logins));
+                    var message = string.Format(UserGroupStrings.BuiltInUsersCouldntBeRemoved, string.Join(",", logins));
                     errors.ErrorForModel(message);
                 }
             }
@@ -166,32 +170,28 @@ namespace Quantumart.QP8.BLL
             get
             {
                 if (IsNew)
+                {
                     return (ParentGroup != null && ParentGroup.IsAdminDescendant);
-                else
-                    return UserGroupRepository.IsGroupAdminDescendant(Id);
+                }
+
+                return UserGroupRepository.IsGroupAdminDescendant(Id);
             }
         }
 
-        public bool IsAdministrators
-        {
-            get { return Id == ADMIN_GROUP_ID; }
-        }
+        public bool IsAdministrators => Id == ADMIN_GROUP_ID;
 
         #endregion
 
-        internal static UserGroup Create()
+        internal static UserGroup Create() => new UserGroup
         {
-            return new UserGroup
-            {
-                ChildGroups = Enumerable.Empty<UserGroup>(),
-                Users = Enumerable.Empty<User>()
-            };
-        }
+            ChildGroups = Enumerable.Empty<UserGroup>(),
+            Users = Enumerable.Empty<User>()
+        };
 
         internal void MutateName()
         {
-            string name = Name;
-            int index = 0;
+            var name = Name;
+            var index = 0;
             do
             {
                 index++;

@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Quantumart.QP8.Utils;
 using System.Text.RegularExpressions;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL
 {
@@ -19,18 +18,13 @@ namespace Quantumart.QP8.BLL
 
 		public int? CharMaxLength { get; set; }
 
-		public string NumericScaleString {
-			get { return NumericScale.HasValue ? NumericScale.Value.ToString() : ""; }
-		}
+		public string NumericScaleString => NumericScale.HasValue ? NumericScale.Value.ToString() : "";
 
-		public string CharMaxLengthString
-		{
-			get { return CharMaxLength.HasValue ? CharMaxLength.Value.ToString() : ""; }
-		}
-		public string TableDbType { get; set; }
+	    public string CharMaxLengthString => CharMaxLength.HasValue ? CharMaxLength.Value.ToString() : "";
+	    public string TableDbType { get; set; }
 
 
-		bool isContentBasedReset = false;
+		bool isContentBasedReset;
 		public void ResetContentBased()
 		{
 			isContentBasedReset = true;
@@ -42,22 +36,18 @@ namespace Quantumart.QP8.BLL
 		/// </summary>
 		/// <param name="column"></param>
 		/// <returns></returns>
-		public bool IsColumnContentFieldBased
-		{
-			get
-			{
-				return !isContentBasedReset && !String.IsNullOrEmpty(TableName) && contentBasedFieldExpression.IsMatch(TableName);
-			}
-		}		
+		public bool IsColumnContentFieldBased => !isContentBasedReset && !string.IsNullOrEmpty(TableName) && contentBasedFieldExpression.IsMatch(TableName);
 
-		public int? ContentId
+	    public int? ContentId
 		{
 			get
 			{
-				if (IsColumnContentFieldBased)
-					return Converter.ToInt32(TableName.Remove(0, 8));
-				else
-					return null;
+			    if (IsColumnContentFieldBased)
+				{
+				    return Converter.ToInt32(TableName.Remove(0, 8));
+				}
+
+			    return null;
 			}
 		}
 
@@ -71,24 +61,24 @@ namespace Quantumart.QP8.BLL
 		/// <returns></returns>
 		private static int SelectColumnCompareTo(UserQueryColumn x, UserQueryColumn y)
 		{
-			if (x.IsColumnContentFieldBased && y.IsColumnContentFieldBased)
+		    if (x.IsColumnContentFieldBased && y.IsColumnContentFieldBased)
 			{
 				// обе колонки из контента
 				return y.ContentId.Value - x.ContentId.Value;
 			}
-			else if (x.IsColumnContentFieldBased && !y.IsColumnContentFieldBased)
-			{				
-				return 1;
-			}
-			else if (!x.IsColumnContentFieldBased && y.IsColumnContentFieldBased)
-			{
-				return -1;
-			}
-			else
-			{
-				// обе не из контента
-				return StringComparer.InvariantCultureIgnoreCase.Compare(x.TableName, y.TableName);
-			}			
+
+		    if (x.IsColumnContentFieldBased && !y.IsColumnContentFieldBased)
+		    {				
+		        return 1;
+		    }
+
+		    if (!x.IsColumnContentFieldBased && y.IsColumnContentFieldBased)
+		    {
+		        return -1;
+		    }
+
+		    // обе не из контента
+		    return StringComparer.InvariantCultureIgnoreCase.Compare(x.TableName, y.TableName);
 		}
 		/// <summary>
 		/// Сравнивает столбцы с выбирая наиболее подходящие в качестве основы для полей UQ-контента 
@@ -101,29 +91,32 @@ namespace Quantumart.QP8.BLL
 
 		public bool Equals(UserQueryColumn other)
 		{
-			if (other == null)
-				return false;
-			else
-				return Field.NameComparerPredicate(this.ColumnName, other.ColumnName) &&
-				       Field.NameComparerPredicate(this.DbType, other.DbType) &&
-				       Field.NameComparerPredicate(this.TableName, other.TableName) &&
-				       Field.NameComparerPredicate(this.NumericScaleString, other.NumericScaleString) &&
-					   Field.NameComparerPredicate(this.CharMaxLengthString, other.CharMaxLengthString);
+		    if (other == null)
+			{
+			    return false;
+			}
 
+		    return Field.NameComparerPredicate(ColumnName, other.ColumnName) &&
+		        Field.NameComparerPredicate(DbType, other.DbType) &&
+		        Field.NameComparerPredicate(TableName, other.TableName) &&
+		        Field.NameComparerPredicate(NumericScaleString, other.NumericScaleString) &&
+		        Field.NameComparerPredicate(CharMaxLengthString, other.CharMaxLengthString);
 		}
 
 		public override bool Equals(object obj)
 		{
-			UserQueryColumn other = obj as UserQueryColumn;
+			var other = obj as UserQueryColumn;
 			if (other == null)
-				return false;
-			else
-				return Equals(other);
+			{
+			    return false;
+			}
+
+		    return Equals(other);
 		}
 
 		public override int GetHashCode()
 		{
-			int hash = Field.GetNameHashCode(ColumnName);
+			var hash = Field.GetNameHashCode(ColumnName);
 			hash = _factor * hash + Field.GetNameHashCode(TableName);
 			hash = _factor * hash + Field.GetNameHashCode(DbType);
 			hash = _factor * hash + Field.GetNameHashCode(NumericScaleString);
@@ -137,7 +130,7 @@ namespace Quantumart.QP8.BLL
 					&& Field.NameComparerPredicate(c1.NumericScaleString, c2.NumericScaleString),
 				c =>
 				{
-					int hash = Field.GetNameHashCode(c.ColumnName);
+					var hash = Field.GetNameHashCode(c.ColumnName);
 					hash = _factor * hash + Field.GetNameHashCode(c.DbType);
 					hash = _factor * hash + Field.GetNameHashCode(c.NumericScaleString);
 					hash = _factor * hash + Field.GetNameHashCode(c.CharMaxLengthString);

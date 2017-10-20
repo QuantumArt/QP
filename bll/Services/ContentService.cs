@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -321,7 +321,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static void CopyContentLinks(int sourceSiteId, int destinationSiteId)
         {
-            ContentRepository.CopyContentLinks(sourceSiteId, destinationSiteId, out string relBetweenLinks);
+            ContentRepository.CopyContentLinks(sourceSiteId, destinationSiteId, out var relBetweenLinks);
             FieldRepository.UpdateAttributeLinkIdAndDefaultValue(sourceSiteId, destinationSiteId, relBetweenLinks);
         }
 
@@ -343,7 +343,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static int CopyContents(int sourceSiteId, int destinationSiteId, int startFrom, int endOn)
         {
-            var count = ContentRepository.CopyContents(sourceSiteId, destinationSiteId, startFrom, endOn, out string newContentIds);
+            var count = ContentRepository.CopyContents(sourceSiteId, destinationSiteId, startFrom, endOn, out var newContentIds);
 
             var relBetweenContents = ContentRepository.GetRelationsBetweenContentsXml(sourceSiteId, destinationSiteId, newContentIds);
             var relBetweenStatuses = ContentRepository.GetRelationsBetweenStatuses(sourceSiteId, destinationSiteId);
@@ -352,7 +352,7 @@ namespace Quantumart.QP8.BLL.Services
             var relBetweenAttributes = FieldRepository.GetRelationsBetweenAttributesXml(sourceSiteId, destinationSiteId, newContentIds, false, true);
             NotificationRepository.CopyContentNotifications(relBetweenContents, relBetweenStatuses, relBetweenAttributes);
 
-            ContentRepository.CopyContentConstraints(relBetweenContents, out string relBetweenConstraints);
+            ContentRepository.CopyContentConstraints(relBetweenContents, out var relBetweenConstraints);
             ContentConstraintRepository.CopyContentConstrainRules(relBetweenConstraints, relBetweenAttributes);
 
             FieldRepository.CopyDynamicImageAttributes(relBetweenAttributes);

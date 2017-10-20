@@ -234,7 +234,7 @@ namespace Quantumart.QP8.BLL.Services
 
         private static ListResult<ObjectFormatListItem> GetObjectFormatsByObjectId(ListCommand listCommand, int objectId, bool pageOrTemplate)
         {
-            var list = PageTemplateRepository.ListObjectFormats(listCommand, objectId, out int totalRecords, pageOrTemplate);
+            var list = PageTemplateRepository.ListObjectFormats(listCommand, objectId, out var totalRecords, pageOrTemplate);
             return new ListResult<ObjectFormatListItem>
             {
                 Data = list.ToList(),

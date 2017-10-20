@@ -1,11 +1,8 @@
-﻿using AutoMapper;
+using System;
+using System.Data;
+using AutoMapper;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Utils;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -23,8 +20,8 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.Created, opt => opt.MapFrom(row => row.Field<DateTime>("Created")))
                 .ForMember(biz => biz.Modified, opt => opt.MapFrom(row => row.Field<DateTime>("Modified")))
                 .ForMember(biz => biz.LastModifiedBy, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("LastModifiedBy"))))
-                .ForMember(biz => biz.LastModifiedByLogin, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("LastModifiedByLogin"), String.Empty)))
-                .ForMember(biz => biz.LockedByFullName, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("LockedByFullName"), String.Empty)))
+                .ForMember(biz => biz.LastModifiedByLogin, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("LastModifiedByLogin"), string.Empty)))
+                .ForMember(biz => biz.LockedByFullName, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("LockedByFullName"), string.Empty)))
                 .AfterMap(SetBizProperties);
         }
 
@@ -45,7 +42,7 @@ namespace Quantumart.QP8.BLL.Mappers
 					.ForMember(biz => biz.Description, opt => opt.Ignore())
 					.ForMember(biz => biz.Created, opt => opt.MapFrom(row => row.Field<DateTime>("Created")))
 					.ForMember(biz => biz.Modified, opt => opt.MapFrom(row => row.Field<DateTime>("Modified")))				
-					.ForMember(biz => biz.LastModifiedByLogin, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("LastModifiedByLogin"), String.Empty)))
+					.ForMember(biz => biz.LastModifiedByLogin, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("LastModifiedByLogin"), string.Empty)))
 					.ForMember(biz => biz.ParentId, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("ParentId"))))
 					.ForMember(biz => biz.ParentName, opt => opt.MapFrom(row => row.Field<string>("ParentName")))
 					;

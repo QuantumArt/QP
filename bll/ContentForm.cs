@@ -1,9 +1,6 @@
-﻿using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -25,15 +22,12 @@ namespace Quantumart.QP8.BLL
 
 		public Content Content { get; set; }
 
-		public Object Object { get; set; }
+		public object Object { get; set; }
 
 		public Page Page { get; set; }
 
 		public IEnumerable<NetLanguage> NetLanguages { get; set; }
 
-		public override string LockedByAnyoneElseMessage
-		{
-			get { return string.Format("Content Form is locked by user {0}", LockedByUser.Name); }
-		}
+		public override string LockedByAnyoneElseMessage => string.Format("Content Form is locked by user {0}", LockedByUser.Name);
 	}
 }

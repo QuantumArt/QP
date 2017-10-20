@@ -1,10 +1,6 @@
-﻿using AutoMapper;
-using Quantumart.QP8.BLL.Services.DTO;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
+using AutoMapper;
+using Quantumart.QP8.BLL.Services.DTO;
 
 namespace Quantumart.QP8.BLL.Mappers
 {

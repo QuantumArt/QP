@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Helpers;
@@ -36,26 +35,20 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             ExtensionContents = extensionContent;
         }
 
-        public MultistepActionStageCommandState GetState()
+        public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
         {
-            return new MultistepActionStageCommandState
-            {
-                ParentId = SiteId,
-                Id = ContentId,
-                Ids = Ids,
-                ExtensionContents = ExtensionContents
-            };
-        }
+            ParentId = SiteId,
+            Id = ContentId,
+            Ids = Ids,
+            ExtensionContents = ExtensionContents
+        };
 
-        public MultistepStageSettings GetStageSettings()
+        public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
         {
-            return new MultistepStageSettings
-            {
-                ItemCount = ItemCount,
-                StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
-                Name = ContentStrings.ExportArticles
-            };
-        }
+            ItemCount = ItemCount,
+            StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
+            Name = ContentStrings.ExportArticles
+        };
 
         public MultistepActionStepResult Step(int step)
         {

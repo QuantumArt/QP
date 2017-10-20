@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.Utils;
 using System;
 using System.Data;
+using AutoMapper;
+using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers.VisualEditor
 {

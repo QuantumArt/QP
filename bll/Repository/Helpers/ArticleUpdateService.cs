@@ -149,10 +149,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             return sqlResult;
         }
 
-        private static object GetParameterValue(string value)
-        {
-            return string.IsNullOrEmpty(value) ? DBNull.Value : (object)value;
-        }
+        private static object GetParameterValue(string value) => string.IsNullOrEmpty(value) ? DBNull.Value : (object)value;
 
         private string GetDynamicImageData(Field field)
         {

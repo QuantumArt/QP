@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 
@@ -21,10 +21,7 @@ namespace Quantumart.QP8.BLL.Repository
             return folder;
         }
 
-        private Folder CreateRoot(int parentEntityId, bool asAdmin = false)
-        {
-            return Create(parentEntityId, null, string.Empty, asAdmin);
-        }
+        private Folder CreateRoot(int parentEntityId, bool asAdmin = false) => Create(parentEntityId, null, string.Empty, asAdmin);
 
         private Folder Get(int parentEntityId, int? parentId)
         {
@@ -150,10 +147,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="parentEntityId">ID родительской сущности (сайта или контента)</param>
         /// <param name="subFolder">относительный путь от корня библиотеки (сайта или контента)</param>
         /// <returns>папка</returns>
-        public Folder GetBySubFolder(int parentEntityId, string subFolder)
-        {
-            return GetOrCreateRoot(parentEntityId).TraverseTree(subFolder);
-        }
+        public Folder GetBySubFolder(int parentEntityId, string subFolder) => GetOrCreateRoot(parentEntityId).TraverseTree(subFolder);
 
         /// <summary>
         /// Создание новой папки (в БД и в файловой системе)

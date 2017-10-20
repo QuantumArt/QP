@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using AutoMapper;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -9,9 +10,9 @@ namespace Quantumart.QP8.BLL.Mappers
         public override void CreateBizMapper()
         {
             Mapper.CreateMap<SiteDAL, Site>()
-                .ForMember(biz => biz.LockedBy, opt => opt.MapFrom(src => Utils.Converter.ToInt32(src.LockedBy)))
-                .ForMember(biz => biz.Locked, opt => opt.MapFrom(src => Utils.Converter.ToDateTime(src.Locked)))
-                .ForMember(biz => biz.IsLive, opt => opt.MapFrom(src => Utils.Converter.ToBoolean(src.IsLive)))
+                .ForMember(biz => biz.LockedBy, opt => opt.MapFrom(src => Converter.ToInt32(src.LockedBy)))
+                .ForMember(biz => biz.Locked, opt => opt.MapFrom(src => Converter.ToDateTime(src.Locked)))
+                .ForMember(biz => biz.IsLive, opt => opt.MapFrom(src => Converter.ToBoolean(src.IsLive)))
                 .ForMember(biz => biz.AssemblingType, opt => opt.MapFrom(src => src.ScriptLanguage))
                 .ForMember(biz => biz.SeparateDns, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.StageDns)))
                 .ForMember(biz => biz.ExternalCss, opt => opt.MapFrom(src => src.ExternalCss));
@@ -20,7 +21,7 @@ namespace Quantumart.QP8.BLL.Mappers
         public override void CreateDalMapper()
         {
             Mapper.CreateMap<Site, SiteDAL>()
-                .ForMember(data => data.IsLive, opt => opt.MapFrom(src => Utils.Converter.ToInt32(src.IsLive)))
+                .ForMember(data => data.IsLive, opt => opt.MapFrom(src => Converter.ToInt32(src.IsLive)))
                 .ForMember(data => data.ScriptLanguage, opt => opt.MapFrom(src => src.AssemblingType))
                 .ForMember(data => data.Locked, opt => opt.MapFrom(src => src.LockedBy == 0 ? null : (DateTime?)src.Locked))
                 .ForMember(data => data.LockedBy, opt => opt.MapFrom(src => src.LockedBy == 0 ? null : (int?)src.LockedBy))

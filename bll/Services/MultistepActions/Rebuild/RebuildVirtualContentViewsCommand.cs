@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -57,25 +57,19 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
             HttpContext.Current.Session[HttpContextSession.RebuildVirtualContentProcessingContext] = null;
         }
 
-        public MultistepActionStageCommandState GetState()
+        public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
         {
-            return new MultistepActionStageCommandState
-            {
-                Type = RebuildVirtualContentsCommandTypes.RebuildViews,
-                ParentId = 0,
-                Id = ContentId
-            };
-        }
+            Type = RebuildVirtualContentsCommandTypes.RebuildViews,
+            ParentId = 0,
+            Id = ContentId
+        };
 
-        public MultistepStageSettings GetStageSettings()
+        public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
         {
-            return new MultistepStageSettings
-            {
-                ItemCount = _itemCount,
-                StepCount = MultistepActionHelper.GetStepCount(_itemCount, ItemsPerStep),
-                Name = string.Format(ContentStrings.RebuildVirtualContentViewsStageName, ContentName ?? string.Empty)
-            };
-        }
+            ItemCount = _itemCount,
+            StepCount = MultistepActionHelper.GetStepCount(_itemCount, ItemsPerStep),
+            Name = string.Format(ContentStrings.RebuildVirtualContentViewsStageName, ContentName ?? string.Empty)
+        };
 
         public MultistepActionStepResult Step(int step)
         {

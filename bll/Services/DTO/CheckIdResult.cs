@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Constants;
-using System.Resources;
 using System.Globalization;
+using System.Linq;
+using System.Resources;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {
@@ -54,25 +54,28 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
 		private ResourceManager GetResourceManager()
 		{
-			if (typeof(T) == typeof(Article))
+		    if (typeof(T) == typeof(Article))
 			{
 				return new ResourceManager("Quantumart.QP8.Resources.ArticleStrings", typeof(ArticleStrings).Assembly);
 			}
-			else if (typeof(T) == typeof(Site))
-			{
-				return new ResourceManager("Quantumart.QP8.Resources.SiteStrings", typeof(SiteStrings).Assembly);
-			}
-			else if (typeof(T) == typeof(Field))
-			{
-				return new ResourceManager("Quantumart.QP8.Resources.FieldStrings", typeof(SiteStrings).Assembly);
-			}
-			else throw new Exception("Resource type is not supported");
+
+		    if (typeof(T) == typeof(Site))
+		    {
+		        return new ResourceManager("Quantumart.QP8.Resources.SiteStrings", typeof(SiteStrings).Assembly);
+		    }
+
+		    if (typeof(T) == typeof(Field))
+		    {
+		        return new ResourceManager("Quantumart.QP8.Resources.FieldStrings", typeof(SiteStrings).Assembly);
+		    }
+
+		    throw new Exception("Resource type is not supported");
 		}
 
 		private string ErrorMessage(string resourceKeyString, int[] ids)
 		{
-			string format = GetResourceManager().GetString(resourceKeyString, CultureInfo.CurrentUICulture);
-			return String.Format(format, String.Join(", ", ids));
+			var format = GetResourceManager().GetString(resourceKeyString, CultureInfo.CurrentUICulture);
+			return string.Format(format, string.Join(", ", ids));
 		}
 
 		private int[] LockedIds
@@ -88,10 +91,12 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
 		public static CheckIdResult<Article> CreateForPublish(int contentId, int[] ids, bool disableSecurityCheck)
 		{
-			CheckIdResult<Article> result = new CheckIdResult<Article>();
-			IEnumerable<Article> list = EntityObjectRepository.GetList(EntityTypeCode.Article, ids).Cast<Article>();
+			var result = new CheckIdResult<Article>();
+			var list = EntityObjectRepository.GetList(EntityTypeCode.Article, ids).Cast<Article>();
 			if (list == null)
-				result._NotFoundIds.AddRange(ids);
+			{
+			    result._NotFoundIds.AddRange(ids);
+			}
 			else
 			{
 				result._NotFoundIds.AddRange(ids.Except(list.Select(n => n.Id)));
@@ -100,17 +105,29 @@ namespace Quantumart.QP8.BLL.Services.DTO
 				foreach (var article in list)
 				{
 					if (article.StatusTypeId == article.Workflow.MaxStatus.Id && !article.Splitted)
-						result._RedundantIds.Add(article.Id);
+					{
+					    result._RedundantIds.Add(article.Id);
+					}
 					else if (article.LockedByAnyoneElse)
-						result._LockedItems.Add(article);
+					{
+					    result._LockedItems.Add(article);
+					}
 					else if (!checkResult[article.Id])
-						result._NotAccessedIds.Add(article.Id);
+					{
+					    result._NotAccessedIds.Add(article.Id);
+					}
 					else if (!article.IsPublishableWithWorkflow)
-						result._BlockedByWorkflowIds.Add(article.Id);
+					{
+					    result._BlockedByWorkflowIds.Add(article.Id);
+					}
 					else if (!relationCheckResult[article.Id])
-						result._BlockedByRelationSecurityIds.Add(article.Id);
+					{
+					    result._BlockedByRelationSecurityIds.Add(article.Id);
+					}
 					else
-						result._ValidItems.Add(article);
+					{
+					    result._ValidItems.Add(article);
+					}
 				}
 			}
 			return result;
@@ -118,10 +135,12 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
 		public static CheckIdResult<Article> CreateForRemove(int contentId, int[] ids, bool disableSecurityCheck)
 		{
-			CheckIdResult<Article> result = new CheckIdResult<Article>();
-			IEnumerable<Article> list = EntityObjectRepository.GetList(EntityTypeCode.Article, ids).Cast<Article>();
+			var result = new CheckIdResult<Article>();
+			var list = EntityObjectRepository.GetList(EntityTypeCode.Article, ids).Cast<Article>();
 			if (list == null)
-				result._NotFoundIds.AddRange(ids);
+			{
+			    result._NotFoundIds.AddRange(ids);
+			}
 			else
 			{
 				result._NotFoundIds.AddRange(ids.Except(list.Select(n => n.Id)));
@@ -131,15 +150,25 @@ namespace Quantumart.QP8.BLL.Services.DTO
 				foreach (var article in list)
 				{
 					if (article.LockedByAnyoneElse)
-						result._LockedItems.Add(article);
+					{
+					    result._LockedItems.Add(article);
+					}
 					else if (!checkResult[article.Id])
-						result._NotAccessedIds.Add(article.Id);
+					{
+					    result._NotAccessedIds.Add(article.Id);
+					}
 					else if (!article.IsRemovableWithWorkflow)
-						result._BlockedByWorkflowIds.Add(article.Id);
+					{
+					    result._BlockedByWorkflowIds.Add(article.Id);
+					}
 					else if (!relationCheckResult[article.Id])
-						result._BlockedByRelationSecurityIds.Add(article.Id);
+					{
+					    result._BlockedByRelationSecurityIds.Add(article.Id);
+					}
 					else
-						result._ValidItems.Add(article);
+					{
+					    result._ValidItems.Add(article);
+					}
 				}
 			}
 			return result;
@@ -147,10 +176,12 @@ namespace Quantumart.QP8.BLL.Services.DTO
 		
 		public static CheckIdResult<Article> CreateForUpdate(int contentId, int[] ids, bool disableSecurityCheck)
 		{
-			CheckIdResult<Article> result = new CheckIdResult<Article>();
-			IEnumerable<Article> list = EntityObjectRepository.GetList(EntityTypeCode.Article, ids).Cast<Article>();
+			var result = new CheckIdResult<Article>();
+			var list = EntityObjectRepository.GetList(EntityTypeCode.Article, ids).Cast<Article>();
 			if (list == null)
-				result._NotFoundIds.AddRange(ids);
+			{
+			    result._NotFoundIds.AddRange(ids);
+			}
 			else
 			{
 				result._NotFoundIds.AddRange(ids.Except(list.Select(n => n.Id)));
@@ -161,15 +192,25 @@ namespace Quantumart.QP8.BLL.Services.DTO
 				foreach (var article in list)
 				{
 					if (article.LockedByAnyoneElse)
-						result._LockedItems.Add(article);
+					{
+					    result._LockedItems.Add(article);
+					}
 					else if (!checkResult[article.Id])
-						result._NotAccessedIds.Add(article.Id);
+					{
+					    result._NotAccessedIds.Add(article.Id);
+					}
 					else if (!article.IsUpdatableWithWorkflow)
-						result._BlockedByWorkflowIds.Add(article.Id);
+					{
+					    result._BlockedByWorkflowIds.Add(article.Id);
+					}
 					else if (!relationCheckResult[article.Id])
-						result._BlockedByRelationSecurityIds.Add(article.Id);
+					{
+					    result._BlockedByRelationSecurityIds.Add(article.Id);
+					}
 					else
-						result._ValidItems.Add(article);
+					{
+					    result._ValidItems.Add(article);
+					}
 				}
 			}
 			return result;
@@ -177,41 +218,61 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
         public static CheckIdResult<T> Create(int[] ids, string actionTypeCode)
         {
-            CheckIdResult<T> result = new CheckIdResult<T>();
-            foreach (int id in ids)
+            var result = new CheckIdResult<T>();
+            foreach (var id in ids)
             {
-				EntityObject item = EntityObjectRepository.GetById<T>(id);
-                LockableEntityObject lockableItem = item as LockableEntityObject;
+				var item = EntityObjectRepository.GetById<T>(id);
+                var lockableItem = item as LockableEntityObject;
 				if (item == null)
-					result._NotFoundIds.Add(id);
+				{
+				    result._NotFoundIds.Add(id);
+				}
 				else if (item != null && !SecurityRepository.IsEntityAccessible(item.EntityTypeCode, id, actionTypeCode))
-					result._NotAccessedIds.Add(id);
+				{
+				    result._NotAccessedIds.Add(id);
+				}
 				else if (lockableItem != null && lockableItem.LockedByAnyoneElse)
-					result._LockedItems.Add(item);
+				{
+				    result._LockedItems.Add(item);
+				}
 				else
-					result._ValidItems.Add(item);
+				{
+				    result._ValidItems.Add(item);
+				}
             }
             return result;
         }
 
         public MessageResult GetServiceResult()
         {
-            List<string> strings = new List<string>();
+            var strings = new List<string>();
 
 			if (_NotFoundIds.Any())
-				strings.Add(ErrorMessage("SomeoneNotFound", _NotFoundIds.ToArray()));
-			if (_RedundantIds.Any())
-				strings.Add(ErrorMessage("SomeoneRedundant", _RedundantIds.ToArray()));
-			if (_LockedItems.Any())
-				strings.Add(ErrorMessage("SomeoneLocked", LockedIds));
-			if (_NotAccessedIds.Any())
-				strings.Add(ErrorMessage("SomeoneNotAccessed", _NotAccessedIds.ToArray()));
-			if (_BlockedByWorkflowIds.Any())
-				strings.Add(ErrorMessage("SomeoneBlockedByWorkflow", _BlockedByWorkflowIds.ToArray()));
-			if (_BlockedByRelationSecurityIds.Any())
-				strings.Add(ErrorMessage("SomeoneBlockedByRelationSecurity", _BlockedByRelationSecurityIds.ToArray()));
+			{
+			    strings.Add(ErrorMessage("SomeoneNotFound", _NotFoundIds.ToArray()));
+			}
+            if (_RedundantIds.Any())
+            {
+                strings.Add(ErrorMessage("SomeoneRedundant", _RedundantIds.ToArray()));
+            }
+            if (_LockedItems.Any())
+            {
+                strings.Add(ErrorMessage("SomeoneLocked", LockedIds));
+            }
+            if (_NotAccessedIds.Any())
+            {
+                strings.Add(ErrorMessage("SomeoneNotAccessed", _NotAccessedIds.ToArray()));
+            }
+            if (_BlockedByWorkflowIds.Any())
+            {
+                strings.Add(ErrorMessage("SomeoneBlockedByWorkflow", _BlockedByWorkflowIds.ToArray()));
+            }
+            if (_BlockedByRelationSecurityIds.Any())
+            {
+                strings.Add(ErrorMessage("SomeoneBlockedByRelationSecurity", _BlockedByRelationSecurityIds.ToArray()));
+            }
 
-			var failedIds = _NotFoundIds.Union(LockedIds).Union(_NotAccessedIds).Union(_BlockedByWorkflowIds).Union(_BlockedByRelationSecurityIds);
+            var failedIds = _NotFoundIds.Union(LockedIds).Union(_NotAccessedIds).Union(_BlockedByWorkflowIds).Union(_BlockedByRelationSecurityIds);
 			return (!strings.Any()) ? null : MessageResult.Info(string.Join(".\n", strings), failedIds.ToArray());
         }
 
@@ -223,13 +284,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
             }
         }
 
-		public EntityObject[] ValidItems
-		{
-			get
-			{
-				return _ValidItems.ToArray();
-			}
-		}
-    }
+		public EntityObject[] ValidItems => _ValidItems.ToArray();
+	}
  
 }

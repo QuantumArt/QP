@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 {
@@ -6,9 +6,6 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 	{
 		public object Value { get; set; }
 
-		public override string GetCurrentExpression()
-		{
-			throw new NotImplementedException();
-		}
+		public override string GetCurrentExpression() => throw new NotImplementedException();
 	}
 }

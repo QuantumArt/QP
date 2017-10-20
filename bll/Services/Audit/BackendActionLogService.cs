@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -42,7 +42,7 @@ namespace Quantumart.QP8.BLL.Services.Audit
 
         public ListResult<BackendActionLog> GetLogPage(ListCommand cmd, BackendActionLogFilter filter)
         {
-            List<BackendActionLog> data = repository.GetPage(cmd, filter, out int totalRecords).ToList();
+            var data = repository.GetPage(cmd, filter, out var totalRecords).ToList();
             return new ListResult<BackendActionLog>
             {
                 Data = data,
@@ -50,20 +50,11 @@ namespace Quantumart.QP8.BLL.Services.Audit
             };
         }				
 
-        public IEnumerable<BackendActionType> GetActionTypeList()
-        {
-            return repository.GetActionTypeList();
-        }
+        public IEnumerable<BackendActionType> GetActionTypeList() => repository.GetActionTypeList();
 
-        public IEnumerable<EntityType> GetEntityTypeList()
-        {
-            return repository.GetEntityTypeList();
-        }
+        public IEnumerable<EntityType> GetEntityTypeList() => repository.GetEntityTypeList();
 
-        public IEnumerable<BackendAction> GetActionList()
-        {
-            return repository.GetActionList();
-        }
+        public IEnumerable<BackendAction> GetActionList() => repository.GetActionList();
 
         #endregion
     }

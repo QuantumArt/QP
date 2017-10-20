@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators.Helpers;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -29,10 +28,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// Принимает 2 строки и возвращает лист ExternalCss из непустой строки
         /// </summary>
-        public static List<ExternalCss> GenerateExternalCss(string parentExtCss, string priorExtCss)
-        {
-            return string.IsNullOrEmpty(priorExtCss) ? GenerateExternalCss(parentExtCss) : GenerateExternalCss(priorExtCss);
-        }
+        public static List<ExternalCss> GenerateExternalCss(string parentExtCss, string priorExtCss) => string.IsNullOrEmpty(priorExtCss) ? GenerateExternalCss(parentExtCss) : GenerateExternalCss(priorExtCss);
 
         internal static void ValidateExternalCss(IEnumerable<ExternalCss> cssItems, RulesException errors)
         {

@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -16,9 +14,6 @@ namespace Quantumart.QP8.BLL.Repository
 		/// <summary>
 		/// Получить все шаблоны масок 
 		/// </summary>
-		public static IEnumerable<MaskTemplate> GetAllMaskTemplates()
-		{
-			return allMaskTemplates.Value;
-		}
+		public static IEnumerable<MaskTemplate> GetAllMaskTemplates() => allMaskTemplates.Value;
 	}
 }

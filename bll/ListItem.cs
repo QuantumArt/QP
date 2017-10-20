@@ -1,10 +1,8 @@
-﻿using System;
-
 namespace Quantumart.QP8.BLL
 {
     public class ListItem : SimpleListItem
     {
-        public ListItem() : base()
+        public ListItem()
         {
         }
 
@@ -23,7 +21,7 @@ namespace Quantumart.QP8.BLL
             DependentItemIDs = dependentIds;
         }
 
-        public ListItem(string value, string text, string dependentId) : this(value, text, (!String.IsNullOrWhiteSpace(dependentId) ? new[] { dependentId } : null))
+        public ListItem(string value, string text, string dependentId) : this(value, text, (!string.IsNullOrWhiteSpace(dependentId) ? new[] { dependentId } : null))
         {
         }
 

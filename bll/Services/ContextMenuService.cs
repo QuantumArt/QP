@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -10,10 +10,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <summary>
         /// Возвращает контекстное меню по его идентификатору
         /// </summary>
-        public static ContextMenu GetById(int menuId, bool loadItems = false)
-        {
-            return ContextMenuRepository.GetById(menuId, loadItems);
-        }
+        public static ContextMenu GetById(int menuId, bool loadItems = false) => ContextMenuRepository.GetById(menuId, loadItems);
 
         /// <summary>
         /// Возвращает контекстное меню по его коду
@@ -31,10 +28,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <summary>
         /// Возвращает список контекстных меню
         /// </summary>
-        public static List<ContextMenu> GetList()
-        {
-            return ContextMenuRepository.GetList();
-        }
+        public static List<ContextMenu> GetList() => ContextMenuRepository.GetList();
 
         public static IEnumerable<BackendActionStatus> GetStatusesList(string menuCode, int entityId, int parentEntityId, bool? boundToExternal)
         {

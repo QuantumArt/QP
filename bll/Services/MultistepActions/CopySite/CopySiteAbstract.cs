@@ -1,14 +1,11 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public abstract class CopySiteAbstract : MultistepActionServiceAbstract
     {
 
-        protected override string ContextSessionKey
-        {
-            get { return "CopySiteService.ProcessingContext"; }
-        }
+        protected override string ContextSessionKey => "CopySiteService.ProcessingContext";
 
         protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
         {

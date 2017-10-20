@@ -53,10 +53,8 @@ namespace Quantumart.QP8.BLL.Services
             return path;
         }
 
-        public QP7Token Authenticate()
-        {
-            return Authenticate(GetQP7Path());
-        }
+        public QP7Token Authenticate() => Authenticate(GetQP7Path());
+
         public QP7Token Authenticate(string applicationPath)
         {
             var customerCode = QPContext.CurrentCustomerCode;
@@ -127,7 +125,7 @@ namespace Quantumart.QP8.BLL.Services
             var path = string.Format(AssemblePageTemplate, token.ApplicationPath, pageId);
             var assemblyRequest = CreateHttpWebRequest(path);
             assemblyRequest.CookieContainer = token.Cookie;
-            CallPage(assemblyRequest, out string response);
+            CallPage(assemblyRequest, out var response);
 
             return response;
         }
@@ -144,10 +142,7 @@ namespace Quantumart.QP8.BLL.Services
             return request;
         }
 
-        private static HttpWebResponse CallPage(WebRequest request)
-        {
-            return CallPage(request, out string response);
-        }
+        private static HttpWebResponse CallPage(WebRequest request) => CallPage(request, out var response);
 
         private static HttpWebResponse CallPage(WebRequest request, out string responseValue)
         {

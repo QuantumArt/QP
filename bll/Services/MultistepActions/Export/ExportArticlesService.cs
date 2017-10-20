@@ -37,10 +37,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             SetupWithParams(parentId, 0, ids, settingsParams as ExportSettings);
         }
 
-        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
-        {
-            return Setup(parentId, id, null, boundToExternal);
-        }
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal) => Setup(parentId, id, null, boundToExternal);
 
         public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)
         {
@@ -58,17 +55,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             return base.Setup(content.SiteId, content.Id, boundToExternal);
         }
 
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id)
+        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
         {
-            return new MultistepActionSettings
+            Stages = new[]
             {
-                Stages = new[]
-                {
-                    _command.GetStageSettings()
-                },
-                ParentId = parentId
-            };
-        }
+                _command.GetStageSettings()
+            },
+            ParentId = parentId
+        };
 
         protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
         {
@@ -84,10 +78,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             base.TearDown();
         }
 
-        protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
-        {
-            return new ExportArticlesCommand(state);
-        }
+        protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state) => new ExportArticlesCommand(state);
 
         public override IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids)
         {
@@ -112,11 +103,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy);
         }
 
-        private static IEnumerable<Content> GetArticleExtensionContents(int[] ids, int contentId)
-        {
-            return ContentRepository.GetList(
-                ContentRepository.GetReferencedAggregatedContentIds(contentId, ids ?? new int[0])
-            ).ToArray();
-        }
+        private static IEnumerable<Content> GetArticleExtensionContents(int[] ids, int contentId) => ContentRepository.GetList(
+            ContentRepository.GetReferencedAggregatedContentIds(contentId, ids ?? new int[0])
+        ).ToArray();
     }
 }

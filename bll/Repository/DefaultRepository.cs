@@ -156,7 +156,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void SimpleDelete(EntityKey key)
         {
             var entities = QPContext.EFContext;
-            if (entities.TryGetObjectByKey(key, out object result))
+            if (entities.TryGetObjectByKey(key, out var result))
             {
                 entities.DeleteObject(result);
             }
@@ -170,7 +170,7 @@ namespace Quantumart.QP8.BLL.Repository
             var entities = QPContext.EFContext;
             foreach (var dalItem in dalItems)
             {
-                if (entities.TryGetObjectByKey(dalItem.EntityKey, out object result))
+                if (entities.TryGetObjectByKey(dalItem.EntityKey, out var result))
                 {
                     entities.DeleteObject(result);
                 }

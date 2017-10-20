@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.DAL;
 using System.Data;
+using System.Linq;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -18,7 +15,7 @@ namespace Quantumart.QP8.BLL.Repository
 		{
 			using (var scope = new QPConnectionScope())
 			{
-				IEnumerable<DataRow> data = Common.RemovingActions_GetContentsItemInfo(null, contentId, scope.DbConnection);
+				var data = Common.RemovingActions_GetContentsItemInfo(null, contentId, scope.DbConnection);
 				return data.SingleOrDefault();
 			}
 		}

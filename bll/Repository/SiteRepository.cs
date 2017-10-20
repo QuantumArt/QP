@@ -68,7 +68,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             using (var scope = new QPConnectionScope())
             {
-                var rows = Common.GetSitesPage(scope.DbConnection, options, out int totalRecords);
+                var rows = Common.GetSitesPage(scope.DbConnection, options, out var totalRecords);
                 return new ListResult<SiteListItem> { Data = MapperFacade.SiteListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }
@@ -96,10 +96,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         /// <param name="site">информация о сайте</param>
         /// <returns>информация о сайте</returns>
-        internal static Site Update(Site site)
-        {
-            return DefaultRepository.Update<Site, SiteDAL>(site);
-        }
+        internal static Site Update(Site site) => DefaultRepository.Update<Site, SiteDAL>(site);
 
         /// <summary>
         /// Удаляет сайт по его идентификатору

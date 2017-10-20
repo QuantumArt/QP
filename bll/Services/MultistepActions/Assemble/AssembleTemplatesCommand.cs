@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -44,25 +44,19 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
             HttpContext.Current.Session[HttpContextSession.AssembleTemplatesCommandProcessingContext] = null;
         }
 
-        public MultistepActionStageCommandState GetState()
+        public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
         {
-            return new MultistepActionStageCommandState
-            {
-                Type = BuildSiteStageCommandTypes.BuildTemplates,
-                ParentId = 0,
-                Id = SiteId
-            };
-        }
+            Type = BuildSiteStageCommandTypes.BuildTemplates,
+            ParentId = 0,
+            Id = SiteId
+        };
 
-        public MultistepStageSettings GetStageSettings()
+        public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
         {
-            return new MultistepStageSettings
-            {
-                ItemCount = _itemCount,
-                StepCount = MultistepActionHelper.GetStepCount(_itemCount, ItemsPerStep),
-                Name = string.Format(SiteStrings.AssembleTemplatesStageName, SiteName ?? string.Empty)
-            };
-        }
+            ItemCount = _itemCount,
+            StepCount = MultistepActionHelper.GetStepCount(_itemCount, ItemsPerStep),
+            Name = string.Format(SiteStrings.AssembleTemplatesStageName, SiteName ?? string.Empty)
+        };
 
         public MultistepActionStepResult Step(int step)
         {

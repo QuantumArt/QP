@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.DAL;
-using System.Data.Objects;
 using System.Data;
+using System.Data.Objects;
+using System.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository.Articles
 {
@@ -19,7 +18,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <returns>список версий статей</returns>
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
-            string eQuery = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
+            var eQuery = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
             var versionList = MapperFacade.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(eQuery, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
            
             return versionList;
@@ -62,7 +61,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             else
             {
                 var articleVersionDal = DefaultRepository.GetById<ArticleVersionDAL>(id);
-                if (articleVersionDal == null) return null;
+                if (articleVersionDal == null)
+                {
+                    return null;
+                }
+
                 articleVersionDal.LastModifiedByUserReference.Load();
 
                 articleVersion = MapperFacade.ArticleVersionMapper.GetBizObject(articleVersionDal);
@@ -186,9 +189,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <param name="versionId"></param>
         /// <param name="fieldId">ID поля</param>
         /// <returns>строка связанных ID через запятую</returns>
-        internal static string GetRelatedItems(int versionId, int fieldId)
-        {
-            return GetLinkedItems(versionId, fieldId);
-        }
+        internal static string GetRelatedItems(int versionId, int fieldId) => GetLinkedItems(versionId, fieldId);
     }
 }

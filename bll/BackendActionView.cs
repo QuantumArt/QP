@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Web.Script.Serialization;
-using Quantumart.QP8;
-using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.BLL
 {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
@@ -114,10 +114,7 @@ namespace Quantumart.QP8.BLL.Repository
             return BackendActionTypeRepository.GetList().Where(r => r.RequiredPermissionLevel >= PermissionLevel.Modify).ToArray();
         }
 
-        public IEnumerable<EntityType> GetEntityTypeList()
-        {
-            return EntityTypeRepository.GetList();
-        }
+        public IEnumerable<EntityType> GetEntityTypeList() => EntityTypeRepository.GetList();
 
         public IEnumerable<BackendAction> GetActionList()
         {

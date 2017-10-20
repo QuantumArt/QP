@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 
@@ -14,8 +13,8 @@ namespace Quantumart.QP8.BLL.SharedLogic
 	{
 		public static IEnumerable<BackendActionStatus> ResolveStatus(string entityTypeCode, int entityId, int parentEntityId, BackendActionStatus[] statuses)
 		{
-			string testEntityTypeCode = (entityTypeCode != EntityTypeCode.VirtualArticle) ? entityTypeCode : EntityTypeCode.VirtualContent;
-			int testEntityId = (entityTypeCode != EntityTypeCode.VirtualArticle) ? entityId : parentEntityId;
+			var testEntityTypeCode = (entityTypeCode != EntityTypeCode.VirtualArticle) ? entityTypeCode : EntityTypeCode.VirtualContent;
+			var testEntityId = (entityTypeCode != EntityTypeCode.VirtualArticle) ? entityId : parentEntityId;
 			// Получить родительский контент и сайт
 			IEnumerable<EntityInfo> bindableParentEntities =
 				EntityObjectRepository.GetParentsChain(testEntityTypeCode, testEntityId)
@@ -29,46 +28,56 @@ namespace Quantumart.QP8.BLL.SharedLogic
 				)
 				.ToArray();
 
-			IEnumerable<CustomAction> customActions = CustomActionRepository.GetListByCodes(statuses.Select(s => s.Code).ToArray());
+			var customActions = CustomActionRepository.GetListByCodes(statuses.Select(s => s.Code).ToArray());
 
 			// Если есть как минимум сайт - то проверяем							
 			if (customActions.Any())
 			{
 				if (bindableParentEntities.Any())
 				{
-					EntityInfo parentSiteInfo = bindableParentEntities.FirstOrDefault(ei => ei.Code.Equals(EntityTypeCode.Site, StringComparison.InvariantCultureIgnoreCase));
-					EntityInfo parentContentInfo = bindableParentEntities.FirstOrDefault(ei => ei.Code.Equals(EntityTypeCode.Content, StringComparison.InvariantCultureIgnoreCase)
+					var parentSiteInfo = bindableParentEntities.FirstOrDefault(ei => ei.Code.Equals(EntityTypeCode.Site, StringComparison.InvariantCultureIgnoreCase));
+					var parentContentInfo = bindableParentEntities.FirstOrDefault(ei => ei.Code.Equals(EntityTypeCode.Content, StringComparison.InvariantCultureIgnoreCase)
 						|| ei.Code.Equals(EntityTypeCode.VirtualContent, StringComparison.InvariantCultureIgnoreCase)
 					);
 
 					foreach (var ca in customActions)
 					{
-						BackendActionStatus status = statuses.Single(s => s.Code.Equals(ca.Action.Code, StringComparison.InvariantCultureIgnoreCase));
+						var status = statuses.Single(s => s.Code.Equals(ca.Action.Code, StringComparison.InvariantCultureIgnoreCase));
 						if (status.Visible)
 						{
 
-							bool visibleBySite = false;
-							bool visibleByContent = false;
+							var visibleBySite = false;
+							var visibleByContent = false;
 
 							if (ca.Sites.Any(s => s.Id == parentSiteInfo.Id)) // сайт выбран для текущего Custom Action
-								visibleBySite = ca.SiteExcluded;
+							{
+							    visibleBySite = ca.SiteExcluded;
+							}
 							else
-								visibleBySite = !ca.SiteExcluded;
+							{
+							    visibleBySite = !ca.SiteExcluded;
+							}
 
-							if (visibleBySite)
+						    if (visibleBySite)
 							{
 								if (parentContentInfo != null)
 								{
 									if (ca.Contents.Any(c => c.Id == parentContentInfo.Id)) // контент выбран для текущего Custom Action						
-										visibleByContent = ca.ContentExcluded;
+									{
+									    visibleByContent = ca.ContentExcluded;
+									}
+
 									//else if (!ca.Contents.Any())
 									//    visibleByContent = true;
 									else
-										visibleByContent = !ca.ContentExcluded;
-
+									{
+									    visibleByContent = !ca.ContentExcluded;
+									}
 								}
 								else
-									visibleByContent = visibleBySite;
+								{
+								    visibleByContent = visibleBySite;
+								}
 							}
 
 							// Побеждает всегда False если он есть
@@ -79,9 +88,11 @@ namespace Quantumart.QP8.BLL.SharedLogic
 							{
 								foreach (var code in ca.Action.ExcludeCodes)
 								{
-									BackendActionStatus excludedStatus = statuses.SingleOrDefault(s => s.Code.Equals(code, StringComparison.InvariantCultureIgnoreCase));
+									var excludedStatus = statuses.SingleOrDefault(s => s.Code.Equals(code, StringComparison.InvariantCultureIgnoreCase));
 									if (excludedStatus != null)
-										excludedStatus.Visible = false;
+									{
+									    excludedStatus.Visible = false;
+									}
 								}
 							}
 						}
@@ -91,7 +102,7 @@ namespace Quantumart.QP8.BLL.SharedLogic
 				{
 					foreach (var ca in customActions)
 					{
-						BackendActionStatus status = statuses.Single(s => s.Code.Equals(ca.Action.Code, StringComparison.InvariantCultureIgnoreCase));
+						var status = statuses.Single(s => s.Code.Equals(ca.Action.Code, StringComparison.InvariantCultureIgnoreCase));
 						status.Visible = false;
 					}
 				}
@@ -104,16 +115,13 @@ namespace Quantumart.QP8.BLL.SharedLogic
 		/// </summary>
 		/// <param name="code"></param>
 		/// <returns></returns>
-		internal static bool CanExecute(int entityId, CustomAction customAction)
-		{
-			return ResolveStatus(customAction.Action.EntityType.Code, entityId, 0, new[] 
-			{
-				new BackendActionStatus { Code = customAction.Action.Code, Visible = true }
-			})
-			.Single().Visible;
-		}
+		internal static bool CanExecute(int entityId, CustomAction customAction) => ResolveStatus(customAction.Action.EntityType.Code, entityId, 0, new[] 
+		    {
+		        new BackendActionStatus { Code = customAction.Action.Code, Visible = true }
+		    })
+		    .Single().Visible;
 
-		/// <summary>
+	    /// <summary>
 		/// Возвращает коды тех Action которые можно выполнить 
 		/// </summary>
 		/// <param name="code"></param>

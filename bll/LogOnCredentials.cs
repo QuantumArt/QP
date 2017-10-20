@@ -1,5 +1,3 @@
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
@@ -14,14 +12,8 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("UserName", NameResourceType = typeof(LogOnStrings))]
         public string UserName
         {
-            get
-            {
-                return UseAutoLogin ? NtUserName : _userName;
-            }
-            set
-            {
-                _userName = value;
-            }
+            get => UseAutoLogin ? NtUserName : _userName;
+            set => _userName = value;
         }
 
         [LocalizedDisplayName("Password", NameResourceType = typeof(LogOnStrings))]
@@ -70,7 +62,7 @@ namespace Quantumart.QP8.BLL
             if (errors.IsEmpty)
             {
                 var errorCode = QpAuthenticationErrorNumber.NoErrors;
-                User = QPContext.Authenticate(this, ref errorCode, out string message);
+                User = QPContext.Authenticate(this, ref errorCode, out var message);
 
                 if (User != null)
                 {

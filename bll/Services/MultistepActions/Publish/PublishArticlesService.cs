@@ -1,12 +1,9 @@
-﻿using Quantumart.QP8.BLL.Services.MultistepActions.Base;
+using Quantumart.QP8.BLL.Services.MultistepActions.Base;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Publish
 {
 	public class PublishArticlesService : MultistepActionServiceBase<PublishArticlesCommand>
 	{	
-		public override string ActionCode
-		{
-			get { return Constants.ActionCode.MultiplePublishArticles; }
-		}
+		public override string ActionCode => Constants.ActionCode.MultiplePublishArticles;
 	}
 }

@@ -145,7 +145,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var fieldValues = SplitToValues(_titleHeaders.Count, line.Value);
                 var baseArticle = InitializeArticle(_contentId);
 
-                if (int.TryParse(fieldValues.First(), out int articleId))
+                if (int.TryParse(fieldValues.First(), out var articleId))
                 {
                     baseArticle.Id = articleId;
                 }
@@ -157,7 +157,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 {
                     if (fv.Field.IsClassifier)
                     {
-                        if (int.TryParse(fv.Value, out int classifierContentId))
+                        if (int.TryParse(fv.Value, out var classifierContentId))
                         {
                             AddExtensionArticle(article, fv.Field, classifierContentId, fieldValues, line);
                         }
@@ -202,7 +202,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private void ReadLineFields(Article article, IReadOnlyList<string> fieldValues, int contentId, int lineNumber, bool isExtension = false)
         {
-            if (_fieldsMap.TryGetValue(contentId, out List<Field> fields))
+            if (_fieldsMap.TryGetValue(contentId, out var fields))
             {
                 foreach (var field in fields)
                 {
@@ -237,15 +237,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             ReadServiceFields(ref article, fieldValues, isExtension);
         }
 
-        private static bool IsEmpty(string value)
-        {
-            return string.IsNullOrWhiteSpace(value)
-                   || value == "NULL"
-                   || value.Length >= 2
-                   && value.First() == '"'
-                   && value.Last() == '"'
-                   && (value.Length == 2 || string.IsNullOrWhiteSpace(value.Substring(1, value.Length - 2)));
-        }
+        private static bool IsEmpty(string value) => string.IsNullOrWhiteSpace(value)
+            || value == "NULL"
+            || value.Length >= 2
+            && value.First() == '"'
+            && value.Last() == '"'
+            && (value.Length == 2 || string.IsNullOrWhiteSpace(value.Substring(1, value.Length - 2)));
 
         private static string PrepareValue(string inittialValue)
         {
@@ -885,15 +882,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = settings;
         }
 
-        private List<int> GetExistingArticleIds(List<int> articlesIdList)
-        {
-            return ArticleRepository.CheckForArticleExistence(articlesIdList, string.Empty, _contentId);
-        }
+        private List<int> GetExistingArticleIds(List<int> articlesIdList) => ArticleRepository.CheckForArticleExistence(articlesIdList, string.Empty, _contentId);
 
-        private Dictionary<string, int> GetExistingArticleIdsMap(List<string> values, string fieldName)
-        {
-            return ArticleRepository.GetExistingArticleIdsMap(values, fieldName, string.Empty, _contentId);
-        }
+        private Dictionary<string, int> GetExistingArticleIdsMap(List<string> values, string fieldName) => ArticleRepository.GetExistingArticleIdsMap(values, fieldName, string.Empty, _contentId);
 
         private static void UpdateArticlesDateTime(int[] articlesIds)
         {
@@ -913,10 +904,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             ArticleRepository.UpdateArticlesDateTime(doc.ToString(SaveOptions.None));
         }
 
-        private string[] SplitToValues(int countColumns, string line)
-        {
-            return line.Split(_importSettings.Delimiter).Length == countColumns ? line.Split(_importSettings.Delimiter) : ParseLine(line);
-        }
+        private string[] SplitToValues(int countColumns, string line) => line.Split(_importSettings.Delimiter).Length == countColumns ? line.Split(_importSettings.Delimiter) : ParseLine(line);
 
         private string[] ParseLine(string line)
         {
@@ -969,19 +957,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return sb.ToString();
         }
 
-        private Article InitializeArticle(int contentId)
+        private Article InitializeArticle(int contentId) => new Article
         {
-            return new Article
-            {
-                Status = _importSettings.IsWorkflowAssigned ? StatusType.GetNone(_siteId) : StatusType.GetPublished(_siteId),
-                StatusTypeId = _importSettings.IsWorkflowAssigned
-                                ? StatusTypeRepository.GetNoneStatusIdBySiteId(_siteId)
-                                : StatusTypeRepository.GetPublishedStatusIdBySiteId(_siteId),
-                Visible = true,
-                ContentId = contentId,
-                FieldValues = new List<FieldValue>()
-            };
-        }
+            Status = _importSettings.IsWorkflowAssigned ? StatusType.GetNone(_siteId) : StatusType.GetPublished(_siteId),
+            StatusTypeId = _importSettings.IsWorkflowAssigned
+                ? StatusTypeRepository.GetNoneStatusIdBySiteId(_siteId)
+                : StatusTypeRepository.GetPublishedStatusIdBySiteId(_siteId),
+            Visible = true,
+            ContentId = contentId,
+            FieldValues = new List<FieldValue>()
+        };
 
         public static List<string> GetFieldNames(IEnumerable<string> csvLines, char delimiter, bool noHeaders)
         {
@@ -1200,10 +1185,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return this.Select(a => a.Extensions[field]).ToList();
         }
 
-        public IEnumerable<List<Article>> GetAllAggregatedArticles()
-        {
-            return ExtensionFields.Select(GetAggregatedArticles);
-        }
+        public IEnumerable<List<Article>> GetAllAggregatedArticles() => ExtensionFields.Select(GetAggregatedArticles);
 
         public ExtendedArticleList Filter(Func<Article, bool> predicate)
         {

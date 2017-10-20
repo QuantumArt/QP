@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Web;
 using Quantumart.QP8.BLL.Repository;
@@ -61,48 +61,39 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         }
 
 
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id)
+        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
         {
-            return new MultistepActionSettings
+            Stages = new[]
             {
-                Stages = new[]
-                {
-                    _copySiteSettingsCommand.GetStageSettings(),
-                    _copySiteContentsCommand.GetStageSettings(),
-                    _copySiteVirtualContentsCommand.GetStageSettings(),
-                    _copySiteContentLinksCommand.GetStageSettings(),
-                    _copySiteArticlesCommand.GetStageSettings(),
-                    _copySiteUpdateArticleIdsCommand.GetStageSettings(),
-                    _copySiteTemplatesCommand.GetStageSettings(),
-                    _copySiteFilesCommand.GetStageSettings()
-                }
-            };
-        }
+                _copySiteSettingsCommand.GetStageSettings(),
+                _copySiteContentsCommand.GetStageSettings(),
+                _copySiteVirtualContentsCommand.GetStageSettings(),
+                _copySiteContentLinksCommand.GetStageSettings(),
+                _copySiteArticlesCommand.GetStageSettings(),
+                _copySiteUpdateArticleIdsCommand.GetStageSettings(),
+                _copySiteTemplatesCommand.GetStageSettings(),
+                _copySiteFilesCommand.GetStageSettings()
+            }
+        };
 
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
+        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => new MultistepActionServiceContext
         {
-            return new MultistepActionServiceContext
+            CommandStates = new[]
             {
-                CommandStates = new[]
-                {
-                    _copySiteSettingsCommand.GetState(),
-                    _copySiteContentsCommand.GetState(),
-                    _copySiteVirtualContentsCommand.GetState(),
-                    _copySiteContentLinksCommand.GetState(),
-                    _copySiteArticlesCommand.GetState(),
-                    _copySiteUpdateArticleIdsCommand.GetState(),
-                    _copySiteTemplatesCommand.GetState(),
-                    _copySiteFilesCommand.GetState()
-                }
-            };
-        }
+                _copySiteSettingsCommand.GetState(),
+                _copySiteContentsCommand.GetState(),
+                _copySiteVirtualContentsCommand.GetState(),
+                _copySiteContentLinksCommand.GetState(),
+                _copySiteArticlesCommand.GetState(),
+                _copySiteUpdateArticleIdsCommand.GetState(),
+                _copySiteTemplatesCommand.GetState(),
+                _copySiteFilesCommand.GetState()
+            }
+        };
 
         protected string CopySiteContextSessionKey => HttpContextSession.CopySiteServiceSettings;
 
-        public override IMultistepActionSettings MultistepActionSettings(int siteId, int contentId)
-        {
-            return new CopySiteParams();
-        }
+        public override IMultistepActionSettings MultistepActionSettings(int siteId, int contentId) => new CopySiteParams();
 
         public override void TearDown()
         {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data;
 using AutoMapper;
 using Quantumart.QP8.Utils;
@@ -14,15 +14,9 @@ namespace Quantumart.QP8.BLL.Mappers
 		}
 
 		public TModel Map<TModel>(DataRow row)
-			where TModel : class
-		{
-			return Mapper.Map<DataRow, TModel>(row);
-		}
+			where TModel : class => Mapper.Map<DataRow, TModel>(row);
 
-		public TModel[] Map<TModel>(IEnumerable<DataRow> rows)
-			where TModel : class
-		{
-			return Mapper.Map<IEnumerable<DataRow>, TModel[]>(rows);
-		}
+	    public TModel[] Map<TModel>(IEnumerable<DataRow> rows)
+			where TModel : class => Mapper.Map<IEnumerable<DataRow>, TModel[]>(rows);
 	}
 }

@@ -1,15 +1,12 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
 	public abstract class RemovingServiceAbstract : MultistepActionServiceAbstract
 	{
-		protected override string ContextSessionKey
-		{
-			get { return "RemovingService.ProcessingContext"; }
-		}
+		protected override string ContextSessionKey => "RemovingService.ProcessingContext";
 
-		protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
+	    protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
 		{
 			switch (state.Type)
 			{

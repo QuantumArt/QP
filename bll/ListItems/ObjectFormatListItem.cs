@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.BLL.ListItems
 {
@@ -41,8 +41,8 @@ namespace Quantumart.QP8.BLL.ListItems
 
 		public string ParentName { get; set; }
 
-		public string ActionCode { get { return string.IsNullOrEmpty(PageName) ? Constants.ActionCode.TemplateObjectFormatProperties : Constants.ActionCode.PageObjectFormatProperties; } }
+		public string ActionCode => string.IsNullOrEmpty(PageName) ? Constants.ActionCode.TemplateObjectFormatProperties : Constants.ActionCode.PageObjectFormatProperties;
 
-		public string EntityTypeCode { get { return string.IsNullOrEmpty(PageName) ? Constants.EntityTypeCode.TemplateObjectFormat : Constants.EntityTypeCode.PageObjectFormat; } }
+	    public string EntityTypeCode => string.IsNullOrEmpty(PageName) ? Constants.EntityTypeCode.TemplateObjectFormat : Constants.EntityTypeCode.PageObjectFormat;
 	}
 }

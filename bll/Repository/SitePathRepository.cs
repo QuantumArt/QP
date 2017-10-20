@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Web;
 using System.Web.Configuration;
@@ -27,7 +26,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static string GetCurrentRootUrl()
         {
             var qpConfig = WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
-            return (qpConfig == null) ? String.Empty : qpConfig.BackendUrl;
+            return (qpConfig == null) ? string.Empty : qpConfig.BackendUrl;
         }
 
         /// <summary>
@@ -38,7 +37,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static string GetDirectoryPathToCopy()
         {
             var rootUrl = GetCurrentRootUrl();
-            return (HttpContext.Current == null || String.IsNullOrEmpty(rootUrl)) ? String.Empty : HttpContext.Current.Server.MapPath(rootUrl + RELATIVE_PATH_TO_COPY);
+            return (HttpContext.Current == null || string.IsNullOrEmpty(rootUrl)) ? string.Empty : HttpContext.Current.Server.MapPath(rootUrl + RELATIVE_PATH_TO_COPY);
         }
 
         /// <summary>
@@ -49,10 +48,10 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void CopySiteDirectory(string destinationDirectoryPath, string relativeDirectoryPath)
         {
             var basePathToCopy = GetDirectoryPathToCopy();
-            if (!String.IsNullOrEmpty(basePathToCopy))
+            if (!string.IsNullOrEmpty(basePathToCopy))
             {
                 var directoryPath = PathUtility.Combine(basePathToCopy, relativeDirectoryPath);
-                foreach (string filePath in Directory.GetFiles(directoryPath))
+                foreach (var filePath in Directory.GetFiles(directoryPath))
                 {
                     var fileName = Path.GetFileName(filePath);
                     var fromFile = PathUtility.Combine(directoryPath, fileName);

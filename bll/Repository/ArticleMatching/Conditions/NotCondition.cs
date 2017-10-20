@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 {
@@ -6,12 +6,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 	{
 		public NotCondition(ConditionBase condition)
 		{
-			Conditions = new ConditionBase[] { condition };
+			Conditions = new[] { condition };
 		}
 
-		public override string GetCurrentExpression()
-		{
-			return "NOT (" + GetChildExpressions().Single() + ")";
-		}
+		public override string GetCurrentExpression() => "NOT (" + GetChildExpressions().Single() + ")";
 	}
 }

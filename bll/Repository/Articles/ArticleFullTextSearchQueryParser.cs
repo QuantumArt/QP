@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using QP8.Infrastructure;
@@ -82,7 +82,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return false;
             }
 
-            if (!_iSearchGrammarParser.TryParse(qString, out string sqlQString))
+            if (!_iSearchGrammarParser.TryParse(qString, out var sqlQString))
             {
                 hasError = true;
                 return true;

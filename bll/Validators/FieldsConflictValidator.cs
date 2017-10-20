@@ -1,12 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.Utils;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Validators
 {
@@ -15,22 +14,23 @@ namespace Quantumart.QP8.BLL.Validators
 	/// </summary>
 	internal class FieldsConflictValidator
 	{
-		public IEnumerable<RuleViolation> SubContentsCheck(Content content, Field checkedField)
-		{
-			return SubContentsCheck(content, new Field[] { checkedField });
-		}
+		public IEnumerable<RuleViolation> SubContentsCheck(Content content, Field checkedField) => SubContentsCheck(content, new[] { checkedField });
 
-		public IEnumerable<RuleViolation> SubContentsCheck(Content content, IEnumerable<Field> checkedFields)
+	    public IEnumerable<RuleViolation> SubContentsCheck(Content content, IEnumerable<Field> checkedFields)
 		{
 			if (content == null)
-				throw new ArgumentNullException("content");
-			if (checkedFields == null)
-				throw new ArgumentNullException("checkedFields");
+			{
+			    throw new ArgumentNullException("content");
+			}
+		    if (checkedFields == null)
+		    {
+		        throw new ArgumentNullException("checkedFields");
+		    }
 
-			List<RuleViolation> result = new List<RuleViolation>();
+		    var result = new List<RuleViolation>();
 
 			Action<Content> traverse = null;
-			traverse = (parentContent) => 
+			traverse = parentContent => 
 			{
 				foreach (var subContent in parentContent.VirtualSubContents)
 				{
@@ -59,16 +59,22 @@ namespace Quantumart.QP8.BLL.Validators
 		public IEnumerable<RuleViolation> SubContentsCheck(Content content, IEnumerable<Content.VirtualFieldNode> virtualJoinFieldNodes)
 		{
 			if (content == null)
-				throw new ArgumentNullException("content");
-			if (virtualJoinFieldNodes == null)
-				throw new ArgumentNullException("virtualJoinFieldNodes");
-			
-			if (content.VirtualType != VirtualType.Join)
-				throw new ApplicationException("Content Vitrual Type is not expected. Expected is Join. Actual Virtual Type Code is:" + content.VirtualType);
+			{
+			    throw new ArgumentNullException("content");
+			}
+		    if (virtualJoinFieldNodes == null)
+		    {
+		        throw new ArgumentNullException("virtualJoinFieldNodes");
+		    }
 
-			IEnumerable<int> virtualFieldsIDs = Content.VirtualFieldNode.Linearize(virtualJoinFieldNodes).Select(n => n.Id).Distinct().ToArray();
-			IEnumerable<Field> virtualFields = FieldRepository.GetList(virtualFieldsIDs);
-			Dictionary<int, Field> virtualFieldsDictionary = new Dictionary<int, Field>(virtualFields.Count());
+		    if (content.VirtualType != VirtualType.Join)
+		    {
+		        throw new ApplicationException("Content Vitrual Type is not expected. Expected is Join. Actual Virtual Type Code is:" + content.VirtualType);
+		    }
+
+		    IEnumerable<int> virtualFieldsIDs = Content.VirtualFieldNode.Linearize(virtualJoinFieldNodes).Select(n => n.Id).Distinct().ToArray();
+			var virtualFields = FieldRepository.GetList(virtualFieldsIDs);
+			var virtualFieldsDictionary = new Dictionary<int, Field>(virtualFields.Count());
 			foreach (var bs in virtualFields)
 			{
 				virtualFieldsDictionary.Add(bs.Id, bs);
@@ -76,18 +82,18 @@ namespace Quantumart.QP8.BLL.Validators
 
 
 			// Получить список новых виртуальных полей в Join-контент
-			List<Field> newVirtualFields = new List<Field>(virtualFields.Count());
+			var newVirtualFields = new List<Field>(virtualFields.Count());
 			Action<Field, IEnumerable<Content.VirtualFieldNode>> traverse = null;
 			traverse = (parentVirtualField, nodes) =>
 			{
 				foreach (var node in nodes)
 				{
-					Field virtualField = virtualFieldsDictionary[node.Id];
+					var virtualField = virtualFieldsDictionary[node.Id];
 					// Добавляем в коллекцию только новые виртуальные поля
 					// так как проверку достаточно выполнять только для них
 					if (!virtualField.PersistentId.HasValue)
 					{
-						Field newVirtualField = virtualField.GetVirtualCloneForJoin(content, parentVirtualField);
+						var newVirtualField = virtualField.GetVirtualCloneForJoin(content, parentVirtualField);
 						newVirtualFields.Add(virtualField);
 						// вниз по иерархии
 						traverse(newVirtualField, node.Children);						
@@ -111,14 +117,14 @@ namespace Quantumart.QP8.BLL.Validators
 		/// <returns></returns>
 		public IEnumerable<RuleViolation> UnionFieldsMatchCheck(IEnumerable<int> unionSourceContentIDs)
 		{
-			IEnumerable<Content> contents = ContentRepository.GetList(unionSourceContentIDs.Distinct());
-			Dictionary<int, string> contentNames = new Dictionary<int, string>(contents.Count());
+			var contents = ContentRepository.GetList(unionSourceContentIDs.Distinct());
+			var contentNames = new Dictionary<int, string>(contents.Count());
 			foreach (var c in contents)
 			{
 				contentNames.Add(c.Id, c.Name);
 			}
 						
-			IEnumerable<Field> unionBaseContentFields = VirtualContentRepository.GetFieldsOfContents(unionSourceContentIDs);
+			var unionBaseContentFields = VirtualContentRepository.GetFieldsOfContents(unionSourceContentIDs);
 
 			// Группируем по имени поля
 			var sameNameGroups = unionBaseContentFields
@@ -126,15 +132,17 @@ namespace Quantumart.QP8.BLL.Validators
 				.GroupBy(f => f.Name.ToLowerInvariant());
 
 
-			List<RuleViolation> result = new List<RuleViolation>();
+			var result = new List<RuleViolation>();
 			// Проверяет поля на соответствие
 			var matchComparer = new LambdaEqualityComparer<Field>(
 					(f1, f2) =>	
 						{
-							RuleViolation violation = СheckUnionMatchedFields(contentNames[f1.ContentId], contentNames[f2.ContentId], f1, f2);
+							var violation = СheckUnionMatchedFields(contentNames[f1.ContentId], contentNames[f2.ContentId], f1, f2);
 							if (violation != null)
-								result.Add(violation);
-							return true;
+							{
+							    result.Add(violation);
+							}
+						    return true;
 							
 						},
 					f => f.Name.ToLowerInvariant().GetHashCode()
@@ -161,16 +169,16 @@ namespace Quantumart.QP8.BLL.Validators
 			{
 				// проверить есть ли в ветках других контентов-источников поля с такими же именами
 				// если поле единственное - то можно смело обновлять Union								
-				IEnumerable<string> checkedFieldNames = checkedFields.Distinct(Field.NameComparer).Select(f => f.Name);
-				IEnumerable<Field> allUnionBaseFields = VirtualContentRepository.GetFieldsOfContents(unionSubContent.UnionSourceContentIDs)
+				var checkedFieldNames = checkedFields.Distinct(Field.NameComparer).Select(f => f.Name);
+				var allUnionBaseFields = VirtualContentRepository.GetFieldsOfContents(unionSubContent.UnionSourceContentIDs)
 					.Where(f => f.ContentId != parentContent.Id); 
-				int nameMatchedBaseFieldsCount = allUnionBaseFields
+				var nameMatchedBaseFieldsCount = allUnionBaseFields
 					.Where(f => checkedFieldNames.Contains(f.Name, Field.NameStringComparer))
 					.Count();
 
 				if (nameMatchedBaseFieldsCount > 0)
 				{
-					var checkedContentName = String.IsNullOrWhiteSpace(checkedContent.Name) ? ContentStrings.CurrentContent : checkedContent.Name;
+					var checkedContentName = string.IsNullOrWhiteSpace(checkedContent.Name) ? ContentStrings.CurrentContent : checkedContent.Name;
 					// получить пары полей с одинаковыми именами
 					var violations = (from scf in unionSubContent.Fields
 									  join f in checkedFields on scf.Name.ToLowerInvariant() equals f.Name.ToLowerInvariant()
@@ -198,18 +206,28 @@ namespace Quantumart.QP8.BLL.Validators
 			{
 				// Если тип Image или File - то должно совпадать свойство UseSiteLibrary
 				if ((existsField.ExactType == FieldExactTypes.Image || existsField.ExactType == FieldExactTypes.File) && existsField.UseSiteLibrary != checkedField.UseSiteLibrary)
-					result = new RuleViolation { Message = String.Format(FieldStrings.MatchUseSiteLibraryConflict, checkedField.Name, existsField.Name, contentName, subContentName) };					
+				{
+				    result = new RuleViolation { Message = string.Format(FieldStrings.MatchUseSiteLibraryConflict, checkedField.Name, existsField.Name, contentName, subContentName) };
+				}
+
 				// если тип поля Relation, то поля должны ссылаться на один и тот же контент
 				else if ((existsField.Type.Id == FieldTypeCodes.Relation || existsField.ExactType == FieldExactTypes.M2ORelation) && existsField.RelateToContentId != checkedField.RelateToContentId)
-					result = new RuleViolation { Message = String.Format(FieldStrings.RelateToContensMismatch, checkedField.Name, existsField.Name, contentName, subContentName) };
-                // Если тип поля - DynamicImage, то поля должны ссылаться на одни и тот же Image
+				{
+				    result = new RuleViolation { Message = string.Format(FieldStrings.RelateToContensMismatch, checkedField.Name, existsField.Name, contentName, subContentName) };
+				}
+
+				// Если тип поля - DynamicImage, то поля должны ссылаться на одни и тот же Image
 				else if (existsField.ExactType == FieldExactTypes.DynamicImage && existsField.BaseImageId != checkedField.BaseImageId)
-					result = new RuleViolation { Message = String.Format(FieldStrings.BaseImageIdMismatch, checkedField.Name, existsField.Name, contentName, subContentName) };
+				{
+				    result = new RuleViolation { Message = string.Format(FieldStrings.BaseImageIdMismatch, checkedField.Name, existsField.Name, contentName, subContentName) };
+				}
 			}
 			else
-				result = new RuleViolation { Message = String.Format(FieldStrings.MatchTypeConflict, checkedField.Name, existsField.Name, contentName, subContentName) };
+			{
+			    result = new RuleViolation { Message = string.Format(FieldStrings.MatchTypeConflict, checkedField.Name, existsField.Name, contentName, subContentName) };
+			}
 
-			return result;
+		    return result;
 		}
 
 		/// <summary>
@@ -218,9 +236,9 @@ namespace Quantumart.QP8.BLL.Validators
 		private void CheckForJoinAndUserQuery(Content parentContent, Content subContent, IEnumerable<Field> checkedFields, List<RuleViolation> ruleViolation)
 		{
 
-			IEqualityComparer<Field> fieldNameComparer = Field.NameComparer;
+			var fieldNameComparer = Field.NameComparer;
 
-			Func<Field, RuleViolation> newRuleViolation = (f => new RuleViolation { Message = String.Format(FieldStrings.MatchNameConflict, f.Name, subContent.Name) });
+			Func<Field, RuleViolation> newRuleViolation = (f => new RuleViolation { Message = string.Format(FieldStrings.MatchNameConflict, f.Name, subContent.Name) });
 
 			// "Простым" алгоритмом проверяем только новые поля. Сравниваем с полями (по имени) и Join и UserQuery контентов
 			ruleViolation.AddRange(
@@ -228,8 +246,10 @@ namespace Quantumart.QP8.BLL.Validators
 					.Intersect(checkedFields.Where(f => f.IsNew), fieldNameComparer)
 					.Select(newRuleViolation)
 			);
-			if (subContent.VirtualType == Constants.VirtualType.Join)		
-				CheckForJoin(parentContent, subContent, checkedFields, ruleViolation, fieldNameComparer, newRuleViolation);
+			if (subContent.VirtualType == VirtualType.Join)
+			{
+			    CheckForJoin(parentContent, subContent, checkedFields, ruleViolation, fieldNameComparer, newRuleViolation);
+			}
 		}
 
 		/// <summary>
@@ -244,7 +264,7 @@ namespace Quantumart.QP8.BLL.Validators
 		private void CheckForJoin(Content parentContent, Content subContent, IEnumerable<Field> checkedFields, List<RuleViolation> ruleViolation, IEqualityComparer<Field> fieldNameComparer, Func<Field, RuleViolation> newRuleViolation)
 		{
 			var helper = new VirtualContentHelper();
-			List<Field> virtualFieldsWithChangedName = helper.GetJoinVirtualFieldsWithChangedName(parentContent, subContent);
+			var virtualFieldsWithChangedName = helper.GetJoinVirtualFieldsWithChangedName(parentContent, subContent);
 
 			// А теперь сравнить имена полей 
 			ruleViolation.AddRange(

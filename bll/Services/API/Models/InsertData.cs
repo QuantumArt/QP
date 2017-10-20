@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.BLL.Services.API.Models
+namespace Quantumart.QP8.BLL.Services.API.Models
 {
     public class InsertData
     {
@@ -8,14 +8,11 @@
 
         public int ContentId { get; set; }
 
-        public override string ToString()
+        public override string ToString() => new
         {
-            return new
-            {
-                OriginalArticleId,
-                CreatedArticleId,
-                ContentId
-            }.ToString();
-        }
+            OriginalArticleId,
+            CreatedArticleId,
+            ContentId
+        }.ToString();
     }
 }

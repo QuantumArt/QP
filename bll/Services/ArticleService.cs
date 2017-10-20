@@ -20,14 +20,14 @@ namespace Quantumart.QP8.BLL.Services
     {
         private readonly IArticleRepository _articleRepository;
 
-        public ArticleService(IArticleRepository articleRepository)
+         public ArticleService(IArticleRepository articleRepository)
         {
             _articleRepository = articleRepository;
         }
 
         public int GetArticleIdByGuid(string rawGuid)
         {
-            if (!Guid.TryParse(rawGuid, out Guid guid))
+            if (!Guid.TryParse(rawGuid, out var guid))
             {
                 throw new Exception($"Неверный формат GUID: {rawGuid}");
             }
@@ -50,7 +50,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public Guid GetArticleGuidById(string rawId)
         {
-            if (!int.TryParse(rawId, out int id))
+            if (!int.TryParse(rawId, out var id))
             {
                 throw new Exception($"Неверный формат Id: {rawId}");
             }
@@ -139,26 +139,26 @@ namespace Quantumart.QP8.BLL.Services
 
         public static ListResult<SimpleDataRow> List(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds = null, int[] filterIds = null)
         {
-            var dt = ArticleRepository.GetList(contentId, selectedArticleIDs, cmd, searchQueryParams, contextQueryParams, filter, ftsParser, onlyIds, filterIds ?? new int[] { }, out int totalRecords);
+            var dt = ArticleRepository.GetList(contentId, selectedArticleIDs, cmd, searchQueryParams, contextQueryParams, filter, ftsParser, onlyIds, filterIds ?? new int[] { }, out var totalRecords);
             var result = ArticleListHelper.GetResult(dt, FieldRepository.GetList(contentId, true), onlyIds).ToList();
             return new ListResult<SimpleDataRow> { Data = result, TotalRecords = totalRecords };
         }
 
         public static ListResult<ArticleListItem> ListLocked(ListCommand cmd)
         {
-            var dt = ArticleRepository.GetLockedList(cmd, out int totalRecords);
+            var dt = ArticleRepository.GetLockedList(cmd, out var totalRecords);
             return new ListResult<ArticleListItem> { Data = dt, TotalRecords = totalRecords };
         }
 
         public static ListResult<ArticleListItem> ArticlesForApproval(ListCommand cmd)
         {
-            var dt = ArticleRepository.GetArticlesForApprovalList(cmd, out int totalRecords);
+            var dt = ArticleRepository.GetArticlesForApprovalList(cmd, out var totalRecords);
             return new ListResult<ArticleListItem> { Data = dt, TotalRecords = totalRecords };
         }
 
         public static ListResult<StatusHistoryListItem> ArticleStatusHistory(ListCommand cmd, int articleId)
         {
-            var dt = ArticleRepository.GetStatusHistoryListItems(cmd, articleId, out int totalRecords);
+            var dt = ArticleRepository.GetStatusHistoryListItems(cmd, articleId, out var totalRecords);
             return new ListResult<StatusHistoryListItem> { Data = dt, TotalRecords = totalRecords };
         }
 

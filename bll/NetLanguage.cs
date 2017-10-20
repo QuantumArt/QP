@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL
 {
@@ -7,14 +7,8 @@ namespace Quantumart.QP8.BLL
         private const string CSharp = "C#";
         private const string VbNet = "VB.NET";
 
-        public static NetLanguage GetcSharp()
-        {
-            return PageTemplateRepository.GetNetLanguageByName(CSharp);
-        }
+        public static NetLanguage GetcSharp() => PageTemplateRepository.GetNetLanguageByName(CSharp);
 
-        public static NetLanguage GetVbNet()
-        {
-            return PageTemplateRepository.GetNetLanguageByName(VbNet);
-        }
+        public static NetLanguage GetVbNet() => PageTemplateRepository.GetNetLanguageByName(VbNet);
     }
 }

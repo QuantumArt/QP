@@ -1,12 +1,12 @@
-﻿using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.Resources;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -72,10 +72,7 @@ namespace Quantumart.QP8.BLL.Services
             this.articleSearchRepository = articleSearchRepository;
         }
 
-		public IEnumerable<ListItem> GetSimpleList(Field field, IEnumerable<int> selectedArticleIDs)
-		{
-			return ArticleRepository.GetSimpleList(field.RelateToContentId.Value, (int?)null, field.Id, ListSelectionMode.OnlySelectedItems, selectedArticleIDs.ToArray(), field.RelationFilter, 0);
-		}
+		public IEnumerable<ListItem> GetSimpleList(Field field, IEnumerable<int> selectedArticleIDs) => ArticleRepository.GetSimpleList(field.RelateToContentId.Value, null, field.Id, ListSelectionMode.OnlySelectedItems, selectedArticleIDs.ToArray(), field.RelationFilter, 0);
 
         /// <summary>
         /// Возвращает список "текстовых" полей (по которым возможет полнотекстовый поиск)
@@ -99,12 +96,12 @@ namespace Quantumart.QP8.BLL.Services
 
 			if (ids.Any())
 			{
-				result = new ArticleSearchableField[]
+				result = new[]
 				{
-					new ArticleSearchableField()
+					new ArticleSearchableField
 					{
 						Name = ArticleStrings.SearchBlock_AllTextFields,
-						ID = String.Join(",", ids),
+						ID = string.Join(",", ids),
 						ColumnName = null,
 						ArticleFieldSearchType = ArticleFieldSearchType.FullText,
 						IsAll = true
@@ -113,9 +110,9 @@ namespace Quantumart.QP8.BLL.Services
 
 			}
 
-			result = new ArticleSearchableField[]
+			result = new[]
 				{
-					new ArticleSearchableField()
+					new ArticleSearchableField
 					{
 						Name = ArticleStrings.SearchBlock_AllFields,
 						ID = "",
@@ -131,12 +128,9 @@ namespace Quantumart.QP8.BLL.Services
 			return result;
 		}
 
-		public IEnumerable<IGrouping<string, ArticleSearchableField>> GetFullTextSearchableFieldGroups(int contentId)
-		{
-			return (from f in GetFullTextSearchableFieldList(contentId)
-					group f by f.GroupName into g
-					select g).ToArray();
-		}
+		public IEnumerable<IGrouping<string, ArticleSearchableField>> GetFullTextSearchableFieldGroups(int contentId) => (from f in GetFullTextSearchableFieldList(contentId)
+		    group f by f.GroupName into g
+		    select g).ToArray();
 
         /// <summary>
         /// Возвращает cписок полей по которым возможен поиск
@@ -157,19 +151,16 @@ namespace Quantumart.QP8.BLL.Services
 				.ToArray();
 		}
 
-		public IEnumerable<IGrouping<string, ArticleSearchableField>> GetSearchableFieldFieldGroups(int contentId)
-		{
-			return (from f in GetSearchableFieldList(contentId)
-				   group f by f.GroupName into g
-				   select g).ToArray();
-		}
+		public IEnumerable<IGrouping<string, ArticleSearchableField>> GetSearchableFieldFieldGroups(int contentId) => (from f in GetSearchableFieldList(contentId)
+		    group f by f.GroupName into g
+		    select g).ToArray();
 
-		private IEnumerable<ArticleSearchableField> GetArticleFieldList(IEnumerable<Field> fields, bool fillGroup, Func<Field, ArticleFieldSearchType> getFieldSearchType)
+        private IEnumerable<ArticleSearchableField> GetArticleFieldList(IEnumerable<Field> fields, bool fillGroup, Func<Field, ArticleFieldSearchType> getFieldSearchType)
 		{
 			return fields
 					.Where(f =>!fillGroup || !f.Aggregated)
-					.Select(f => new ArticleSearchableField()
-					{
+					.Select(f => new ArticleSearchableField
+			    {
 						ID = f.Id.ToString(),
 						ContentId = fillGroup ? f.ContentId.ToString() : null,
 						Name = f.DisplayName,
@@ -182,14 +173,12 @@ namespace Quantumart.QP8.BLL.Services
 
 		private IEnumerable<ArticleSearchableField> GetArticleFieldList(int contentId, bool fillGroup)
 		{
-			if (fillGroup)
+		    if (fillGroup)
 			{
 				return GetArticleFieldList(articleSearchRepository.GetAllArticleFields(contentId), fillGroup, GetFieldSearchType);
 			}
-			else
-			{
-				return GetContentRelatedFields(contentId);
-			}
+
+		    return GetContentRelatedFields(contentId);
 		}
 
 		private IEnumerable<ArticleSearchableField> GetContentRelatedFields(int contentId)
@@ -201,7 +190,7 @@ namespace Quantumart.QP8.BLL.Services
 				var field = entry.Key;
 				var relatedFields = entry.Value;
 
-				yield return new ArticleSearchableField()
+				yield return new ArticleSearchableField
 				{
 					ID = field.Id.ToString(),
 					ContentId = null,
@@ -214,7 +203,7 @@ namespace Quantumart.QP8.BLL.Services
 
 				foreach (var relatedField in relatedFields)
 				{
-					yield return new ArticleSearchableField()
+					yield return new ArticleSearchableField
 					{
 						ID = relatedField.Id.ToString(),
 						ContentId = relatedField.ContentId.ToString(),
@@ -231,8 +220,8 @@ namespace Quantumart.QP8.BLL.Services
 		private IEnumerable<ArticleSearchableField> GetArticleSystemFieldList()
 		{
 			return ServiceField.CreateAll() // служебные поля
-				.Select(f => new ArticleSearchableField()
-				{
+				.Select(f => new ArticleSearchableField
+			    {
 					ID = f.ID.ToString(),
 					Name = f.Name,
 					ColumnName = f.ColumnName,
@@ -240,10 +229,7 @@ namespace Quantumart.QP8.BLL.Services
 				});
 		}
 
-        public Field GetFieldByID(int fieldID)
-        {
-            return articleSearchRepository.GetFieldByID(fieldID);
-        }
+        public Field GetFieldByID(int fieldID) => articleSearchRepository.GetFieldByID(fieldID);
 
         /// <summary>
         /// Определяет тип поиска по полю
@@ -253,42 +239,70 @@ namespace Quantumart.QP8.BLL.Services
         private ArticleFieldSearchType GetFieldSearchType(Field field)
         {
             if (field.ExactType == FieldExactTypes.StringEnum)
+            {
                 return ArticleFieldSearchType.StringEnum;
-            else if (field.Type.Name == FieldTypeName.String ||
+            }
+
+            if (field.Type.Name == FieldTypeName.String ||
                 field.Type.Name == FieldTypeName.File ||
                 field.Type.Name == FieldTypeName.Image ||
                 field.Type.Name == FieldTypeName.Textbox ||
                 field.Type.Name == FieldTypeName.VisualEdit ||
                 field.Type.Name == FieldTypeName.DynamicImage)
+            {
                 return ArticleFieldSearchType.Text;
-            else if (field.IsClassifier)
+            }
+
+            if (field.IsClassifier)
+            {
                 return ArticleFieldSearchType.Classifier;
-            else if (field.Type.Name == FieldTypeName.Date)
+            }
+
+            if (field.Type.Name == FieldTypeName.Date)
+            {
                 return ArticleFieldSearchType.DateRange;
-            else if (field.Type.Name == FieldTypeName.DateTime)
+            }
+
+            if (field.Type.Name == FieldTypeName.DateTime)
+            {
                 return ArticleFieldSearchType.DateTimeRange;
-            else if (field.Type.Name == FieldTypeName.Time)
+            }
+
+            if (field.Type.Name == FieldTypeName.Time)
+            {
                 return ArticleFieldSearchType.TimeRange;
-            else if (field.Type.Name == FieldTypeName.Numeric)
+            }
+
+            if (field.Type.Name == FieldTypeName.Numeric)
+            {
                 return ArticleFieldSearchType.NumericRange;
-            else if (field.Type.Name == FieldTypeName.Boolean)
+            }
+
+            if (field.Type.Name == FieldTypeName.Boolean)
+            {
                 return ArticleFieldSearchType.Boolean;
-            else if (field.RelationType == RelationType.ManyToMany)
+            }
+
+            if (field.RelationType == RelationType.ManyToMany)
+            {
                 return ArticleFieldSearchType.M2MRelation;
-            else if (field.RelationType == RelationType.ManyToOne)
+            }
+
+            if (field.RelationType == RelationType.ManyToOne)
+            {
                 return ArticleFieldSearchType.M2ORelation;
-            else if (field.RelationType == RelationType.OneToMany)
+            }
+
+            if (field.RelationType == RelationType.OneToMany)
+            {
                 return ArticleFieldSearchType.O2MRelation;
-            else
-                return ArticleFieldSearchType.None;
+            }
+
+            return ArticleFieldSearchType.None;
         }
 
 
-        public IEnumerable<User> GetAllUsersList()
-        {
-            return articleSearchRepository.GetAllUsersList();
-        }
-
+        public IEnumerable<User> GetAllUsersList() => articleSearchRepository.GetAllUsersList();
 
         /// <summary>
         /// Получить список статусов сайта по ID контента
@@ -299,7 +313,10 @@ namespace Quantumart.QP8.BLL.Services
         {
             var content = articleSearchRepository.GetContentById(contentId);
             if (content == null)
+            {
                 return Enumerable.Empty<StatusType>();
+            }
+
             return articleSearchRepository.GetStatusList(content.SiteId);
         }
 
@@ -354,11 +371,11 @@ namespace Quantumart.QP8.BLL.Services
 						})
 						.ToArray();
 				}
-				else
-					return Enumerable.Empty<RelationSearchBlockState>();
+
+			    return Enumerable.Empty<RelationSearchBlockState>();
 			}
-			else
-				return Enumerable.Empty<RelationSearchBlockState>();
+
+		    return Enumerable.Empty<RelationSearchBlockState>();
 		}
 
     }

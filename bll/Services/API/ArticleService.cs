@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
@@ -263,10 +263,7 @@ namespace Quantumart.QP8.BLL.Services.API
             return BatchUpdate(articlesData, false);
         }
 
-        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles)
-        {
-            return BatchUpdate(articles, true);
-        }
+        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles) => BatchUpdate(articles, true);
 
         private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData)
         {
@@ -279,10 +276,7 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public IList<int> GetParentIds(int id, int fieldId)
-        {
-            return GetParentIds(new[] { id }, fieldId);
-        }
+        public IList<int> GetParentIds(int id, int fieldId) => GetParentIds(new[] { id }, fieldId);
 
         public IList<int> GetParentIds(IList<int> ids, int fieldId)
         {
@@ -293,10 +287,7 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public RulesException ValidateXamlById(int articleId)
-        {
-            return ValidateXamlById(articleId, null);
-        }
+        public RulesException ValidateXamlById(int articleId) => ValidateXamlById(articleId, null);
 
         public RulesException ValidateXamlById(int articleId, string customerCode)
         {

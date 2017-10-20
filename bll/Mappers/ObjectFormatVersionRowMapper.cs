@@ -1,11 +1,8 @@
-﻿using AutoMapper;
+using System;
+using System.Data;
+using AutoMapper;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Utils;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 
 namespace Quantumart.QP8.BLL.Mappers
 {	

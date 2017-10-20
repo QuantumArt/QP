@@ -1,7 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
 using AutoMapper;
 using Quantumart.QP8.BLL.Helpers;
@@ -40,7 +38,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 		public IEnumerable<SearchInArticlesResultItem> SearchInArticles(int siteId, int userId, string sqlSearchString, int? articleId, ListCommand listCmd, out int totalRecords)
 		{
 			// Получить данные из БД
-			DataTable dt = QPContext.EFContext.SearchInArticles(siteId, userId, sqlSearchString, articleId, TranslateSortExpression(listCmd.SortExpression), listCmd.StartRecord, listCmd.PageSize, out totalRecords);
+			var dt = QPContext.EFContext.SearchInArticles(siteId, userId, sqlSearchString, articleId, TranslateSortExpression(listCmd.SortExpression), listCmd.StartRecord, listCmd.PageSize, out totalRecords);
 
 			// Транформировать в Biz коллекцию			
 			var result = Mapper.Map<IDataReader, IEnumerable<SearchInArticlesResultItem>>(dt.CreateDataReader());
@@ -53,17 +51,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 			return result;
 		}
 
-		public Version GetSqlServerVersion()
-		{
-			return QPContext.EFContext.GetSqlServerVersion();
-		}
+		public Version GetSqlServerVersion() => QPContext.EFContext.GetSqlServerVersion();
 
-		public IEnumerable<string> GetWordForms(string sqlSearchString)
-		{
-			return QPContext.EFContext.GetWordForms(sqlSearchString);
-		}
+	    public IEnumerable<string> GetWordForms(string sqlSearchString) => QPContext.EFContext.GetWordForms(sqlSearchString);
 
-		#endregion
+	    #endregion
 
 		/// <summary>
 		/// Траслирует SortExpression 
@@ -72,14 +64,15 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 		/// <returns>SortExpression</returns>
 		private static string TranslateSortExpression(string sortExpression)
 		{
-			Dictionary<string, string> replaces = new Dictionary<string, string>() { 
+			var replaces = new Dictionary<string, string>
+			{ 
 				{ "Text", "data.[rank]" },
  				{ "Id" , "data.content_item_id" },
 				{ "Created" , "ci.created" },
 				{ "Modified" , "ci.modified" },
 				{ "LastModifiedByUser", "usr.[LOGIN]" },
 				{ "ParentName", "c.CONTENT_NAME" },
-				{ "StatusName", "st.STATUS_TYPE_NAME" },
+				{ "StatusName", "st.STATUS_TYPE_NAME" }
 			};
 			return TranslateHelper.TranslateSortExpression(sortExpression, replaces, "data.[rank] desc");
 		}		

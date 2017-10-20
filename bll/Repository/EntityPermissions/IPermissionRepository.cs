@@ -1,9 +1,5 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.ListItems;
-using System.Collections;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {

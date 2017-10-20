@@ -1,14 +1,11 @@
-﻿using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.DAL;
-using Quantumart.QP8.Utils;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -18,7 +15,7 @@ namespace Quantumart.QP8.BLL.Repository
 		{
 			using (var scope = new QPConnectionScope())
 			{
-				IEnumerable<DataRow> rows = Common.GetPagesByTemplateId(scope.DbConnection, templateId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
+				var rows = Common.GetPagesByTemplateId(scope.DbConnection, templateId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
 				return MapperFacade.PageRowMapper.GetBizList(rows.ToList());
 			}
 		}
@@ -30,17 +27,11 @@ namespace Quantumart.QP8.BLL.Repository
 			);
 		}
 
-		internal static Page UpdatePageProperties(Page page)
-		{
-			return DefaultRepository.Update<Page, PageDAL>(page);
-		}
+		internal static Page UpdatePageProperties(Page page) => DefaultRepository.Update<Page, PageDAL>(page);
 
-		internal static Page SavePageProperties(Page page)
-		{
-			return DefaultRepository.Save<Page, PageDAL>(page);
-		}
+	    internal static Page SavePageProperties(Page page) => DefaultRepository.Save<Page, PageDAL>(page);
 
-		internal static void DeletePage(int id)
+	    internal static void DeletePage(int id)
 		{
 			DefaultRepository.Delete<PageDAL>(id);
 		}
@@ -49,7 +40,7 @@ namespace Quantumart.QP8.BLL.Repository
 		{
 			using (var scope = new QPConnectionScope())
 			{
-				IEnumerable<DataRow> rows = Common.GetPagesBySiteId(scope.DbConnection, parentId, listCommand.SortExpression, out totalRecords, listCommand.StartRecord, listCommand.PageSize);
+				var rows = Common.GetPagesBySiteId(scope.DbConnection, parentId, listCommand.SortExpression, out totalRecords, listCommand.StartRecord, listCommand.PageSize);
 				return MapperFacade.PageRowMapper.GetBizList(rows.ToList());
 			}
 		}
@@ -60,11 +51,11 @@ namespace Quantumart.QP8.BLL.Repository
 		/// <param name="page"></param>
 		internal static int CopyPage(Page page, int currentUserId)
 		{
-			int oldId = page.Id;
+			var oldId = page.Id;
 			page.Id = 0;			
 			page.LockedBy = 0;
-			Page newPage = SavePageProperties(page);
-			int newId = newPage.Id;
+			var newPage = SavePageProperties(page);
+			var newId = newPage.Id;
 			var helper = new PageCopyHelper(oldId, newId);
 			helper.Proceed();
 			return newId;
@@ -86,7 +77,7 @@ namespace Quantumart.QP8.BLL.Repository
 		{
 			using (var scope = new QPConnectionScope())
 			{
-				string pathToCheck = page.PageTemplate.Site.LiveDirectory + page.PageTemplate.TemplateFolder + page.Folder + page.FileName;
+				var pathToCheck = page.PageTemplate.Site.LiveDirectory + page.PageTemplate.TemplateFolder + page.Folder + page.FileName;
 				return Common.PageFileNameExists(scope.DbConnection, pathToCheck, page.PageTemplate.SiteId);
 			}
 		}
@@ -105,7 +96,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                IEnumerable<DataRow> rows = Common.GetRelationsBetweenPages(scope.DbConnection, relationsBetweenTemplates);
+                var rows = Common.GetRelationsBetweenPages(scope.DbConnection, relationsBetweenTemplates);
                 return MultistepActionHelper.GetXmlFromDataRows(rows, "page");
             }
         }

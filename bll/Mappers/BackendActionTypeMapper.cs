@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.DAL;
 using AutoMapper;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers
@@ -11,19 +7,13 @@ namespace Quantumart.QP8.BLL.Mappers
 	internal class BackendActionTypeMapper : GenericMapper<BackendActionType, ActionTypeDAL>
 	{
 
-		private bool _DisableTranslations = false;
+		private bool _DisableTranslations;
 
 		public bool DisableTranslations
 		{
-			get
-			{
-				return _DisableTranslations;
-			}
+			get => _DisableTranslations;
 
-			set
-			{
-				_DisableTranslations = value;
-			}
+		    set => _DisableTranslations = value;
 		}
 
 		public override void CreateBizMapper()

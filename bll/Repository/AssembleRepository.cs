@@ -1,10 +1,6 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
-using Quantumart.QP8.BLL.Mappers;
 
 namespace Quantumart.QP8.BLL.Repository
 {

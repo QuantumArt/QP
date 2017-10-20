@@ -1,12 +1,6 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Data;
-using Quantumart.QP8;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -22,7 +16,7 @@ namespace Quantumart.QP8.BLL.Repository
 		{			
 			using (var scope = new QPConnectionScope())
 			{
-				IEnumerable<DataRow> rows = Common.GetToolbarButtonsForAction(scope.DbConnection, QPContext.CurrentUserId, actionCode, entityId);
+				var rows = Common.GetToolbarButtonsForAction(scope.DbConnection, QPContext.CurrentUserId, actionCode, entityId);
 				return MapperFacade.ToolbarButtonRowMapper.GetBizList(rows.ToList());
 			}						
 		}

@@ -1,6 +1,6 @@
-﻿using System;
-using Quantumart.QP8.BLL.Services.DTO;
+using System;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
@@ -12,8 +12,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
             var site = GetSite(siteId);
 
 			if (site.IsLive)
-				return MessageResult.Confirm(SiteStrings.AssembleLiveSiteConfirmation, new[] { siteId });
-			return null;
+			{
+			    return MessageResult.Confirm(SiteStrings.AssembleLiveSiteConfirmation, new[] { siteId });
+			}
+
+		    return null;
 		}
 
 		CreateFoldersCommand createFoldersCommand;
@@ -63,16 +66,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                     }
                 };
             }
-            else
-            {
-                return new MultistepActionSettings
-                {
-                    Stages = new[]
-                   {
-                        pagesCommand.GetStageSettings()
-                    }
-                };
-            }
+
+		    return new MultistepActionSettings
+		    {
+		        Stages = new[]
+		        {
+		            pagesCommand.GetStageSettings()
+		        }
+		    };
 		}
 
 		protected override MultistepActionServiceContext CreateContext(int dbId, int siteId, bool? boundToExternal)
@@ -92,30 +93,27 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                     }
                 };
             }
-            else
-            {
-                return new MultistepActionServiceContext
-                {
-                    CommandStates = new[]
-                    {
-                        pagesCommand.GetState(),
-                    }
-                };
-            }
+
+		    return new MultistepActionServiceContext
+		    {
+		        CommandStates = new[]
+		        {
+		            pagesCommand.GetState()
+		        }
+		    };
 		}
 
-		protected override string ContextSessionKey
-		{
-			get { return "BuildSiteService.ProcessingContext"; }
-		}
+		protected override string ContextSessionKey => "BuildSiteService.ProcessingContext";
 
-		protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
+	    protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
 		{
-            Site site = SiteRepository.GetById(state.Id);
+            var site = SiteRepository.GetById(state.Id);
             if (site == null)
-                throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, state.Id));
+            {
+                throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, state.Id));
+            }
 
-            switch (state.Type)
+		    switch (state.Type)
 			{
 				case BuildSiteStageCommandTypes.CreateFolders:
 					return new CreateFoldersCommand(state);
@@ -139,9 +137,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 
         private Site GetSite(int siteId)
         {
-            Site site = SiteRepository.GetById(siteId);
+            var site = SiteRepository.GetById(siteId);
             if (site == null)
-                throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, siteId));
+            {
+                throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, siteId));
+            }
 
             return site;
         }

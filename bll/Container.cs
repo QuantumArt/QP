@@ -1,10 +1,7 @@
-﻿using Quantumart.QP8.Constants;
+using System.Collections.Generic;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Quantumart.QP8.BLL
 {
@@ -84,12 +81,9 @@ namespace Quantumart.QP8.BLL
 		[LocalizedDisplayName("UseSecurity", NameResourceType = typeof(TemplateStrings))]
 		public bool ApplySecurity { get; set; }
 
-		public override string LockedByAnyoneElseMessage
-		{
-			get { return "Container is locked by user{0}"; }
-		}
+		public override string LockedByAnyoneElseMessage => "Container is locked by user{0}";
 
-		public string LockType { get; set; }
+	    public string LockType { get; set; }
 
 		public BllObject Object { get; set; }		
 
@@ -98,21 +92,25 @@ namespace Quantumart.QP8.BLL
 
 		public void DoCustomBinding(int selectionIsStarting, int selectionIncludes)
 		{
-			if (selectionIsStarting == Constants.ArticleSelectionMode.FromTheFirstArticle)
+			if (selectionIsStarting == ArticleSelectionMode.FromTheFirstArticle)
 			{
 				SelectStart = null;
 				StartsFromFirstArticle = true;
 			}
 			else
-				StartsFromFirstArticle = false;
+			{
+			    StartsFromFirstArticle = false;
+			}
 
-			if (selectionIncludes == Constants.ArticleSelectionIncludeMode.AllArticles)
+		    if (selectionIncludes == ArticleSelectionIncludeMode.AllArticles)
 			{
 				SelectTotal = null;
 				IncludesAllArticles = true;
 			}
 			else
-				IncludesAllArticles = false;
+		    {
+		        IncludesAllArticles = false;
+		    }
 		}
 
 

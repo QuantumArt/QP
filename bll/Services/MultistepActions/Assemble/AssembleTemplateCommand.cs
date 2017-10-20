@@ -1,7 +1,7 @@
-﻿using Quantumart.QP8.Assembling;
+using System;
+using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
-using System;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {
@@ -18,36 +18,35 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 			TemplateName = templateName;
 		}
 
-		public MultistepActionStageCommandState GetState()
+		public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
 		{
-			return new MultistepActionStageCommandState
-			{
-				Type = BuildSiteStageCommandTypes.BuildTemplates,
-				ParentId = 0,
-				Id = TemplateId
-			};
-		}
+		    Type = BuildSiteStageCommandTypes.BuildTemplates,
+		    ParentId = 0,
+		    Id = TemplateId
+		};
 
-		public MultistepStageSettings GetStageSettings()
-		{
-			return new MultistepStageSettings
-			{
-				ItemCount = 1,
-				StepCount = 1,
-				Name = String.Format(TemplateStrings.AssembleTemplateStageName, (TemplateName ?? ""))
-			};
-		}
-		
-		#region IMultistepActionStageCommand Members
+	    public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
+	    {
+	        ItemCount = 1,
+	        StepCount = 1,
+	        Name = string.Format(TemplateStrings.AssembleTemplateStageName, (TemplateName ?? ""))
+	    };
+
+	    #region IMultistepActionStageCommand Members
 
 		public MultistepActionStepResult Step(int step)
 		{
-			PageTemplate template = PageTemplateRepository.GetPageTemplatePropertiesById(TemplateId);
+			var template = PageTemplateRepository.GetPageTemplatePropertiesById(TemplateId);
 			if (template == null)
-				throw new ApplicationException(String.Format(TemplateStrings.TemplateNotFound, TemplateId));
-			if (!template.SiteIsDotNet)
-				throw new ApplicationException(String.Format(SiteStrings.ShouldBeDotNet));
-			new AssembleTemplateObjectsController(TemplateId, QPContext.CurrentDbConnectionString).Assemble();
+			{
+			    throw new ApplicationException(string.Format(TemplateStrings.TemplateNotFound, TemplateId));
+			}
+		    if (!template.SiteIsDotNet)
+		    {
+		        throw new ApplicationException(string.Format(SiteStrings.ShouldBeDotNet));
+		    }
+
+		    new AssembleTemplateObjectsController(TemplateId, QPContext.CurrentDbConnectionString).Assemble();
 
 			return new MultistepActionStepResult { ProcessedItemsCount = 1 };
 		}

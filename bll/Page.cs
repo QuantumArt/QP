@@ -1,14 +1,10 @@
-﻿using Quantumart.QP8.BLL.Helpers;
+using System;
+using System.Text.RegularExpressions;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Quantumart.QP8.BLL
 {
@@ -16,7 +12,7 @@ namespace Quantumart.QP8.BLL
     {
 		[RequiredValidator(MessageTemplateResourceName = "FileNameRequired", MessageTemplateResourceType = typeof(TemplateStrings))]		
 		[MaxLengthValidator(255, MessageTemplateResourceName = "FileNameMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
-		[FormatValidator(Constants.RegularExpressions.FileName, Negated = false, MessageTemplateResourceName = "FileNameInvalidFormat", MessageTemplateResourceType = typeof(TemplateStrings))]
+		[FormatValidator(RegularExpressions.FileName, Negated = false, MessageTemplateResourceName = "FileNameInvalidFormat", MessageTemplateResourceType = typeof(TemplateStrings))]
         [LocalizedDisplayName("FileName", NameResourceType = typeof(TemplateStrings))]
         public string FileName { get; set; }
 
@@ -57,10 +53,7 @@ namespace Quantumart.QP8.BLL
 		[LocalizedDisplayName("ExpiresIn", NameResourceType = typeof(TemplateStrings))]
 		public int CacheHours { get; set; }
 
-        public override string LockedByAnyoneElseMessage
-        {
-			get { return String.Format(TemplateStrings.PageLockedByAnyoneElse, LockedBy); }
-        }        
+        public override string LockedByAnyoneElseMessage => string.Format(TemplateStrings.PageLockedByAnyoneElse, LockedBy);
 
         internal static Page Create(int parentId)
         {
@@ -73,27 +66,15 @@ namespace Quantumart.QP8.BLL
 				EnableViewState = true,
 				Charset = parentTemplate.Charset,
 				Locale = parentTemplate.Locale,
-				SendNocacheHeaders = true,				
+				SendNocacheHeaders = true				
 			};
         }
 
-		public override string EntityTypeCode
-		{
-			get
-			{
-				return Constants.EntityTypeCode.Page;
-			}
-		}
+		public override string EntityTypeCode => Constants.EntityTypeCode.Page;
 
-		public override int ParentEntityId
-		{
-			get
-			{
-				return TemplateId;
-			}
-		}
+        public override int ParentEntityId => TemplateId;
 
-		[LocalizedDisplayName("ApplyToExistingObjects", NameResourceType = typeof(TemplateStrings))]
+        [LocalizedDisplayName("ApplyToExistingObjects", NameResourceType = typeof(TemplateStrings))]
 		public bool ApplyToExistingObjects { get; set; }
 
 		public PageTemplate PageTemplate { get; set; }
@@ -103,22 +84,28 @@ namespace Quantumart.QP8.BLL
 
 		public override void Validate()
 		{
-			RulesException<Page> errors = new RulesException<Page>();
+			var errors = new RulesException<Page>();
 			base.Validate(errors);
 
 			if (!PageTemplateRepository.PageFileNameUnique(FileName, PageTemplate.Id, Id))
-				errors.ErrorFor(x => x.FileName, TemplateStrings.NetNameNotUnique);
+			{
+			    errors.ErrorFor(x => x.FileName, TemplateStrings.NetNameNotUnique);
+			}
 
-			if (!string.IsNullOrWhiteSpace(CustomClass))
+		    if (!string.IsNullOrWhiteSpace(CustomClass))
 			{
 				if (!Regex.IsMatch(CustomClass, RegularExpressions.NetName))
-					errors.ErrorFor(x => x.CustomClass, TemplateStrings.CustomClassInvalidFormat);
+				{
+				    errors.ErrorFor(x => x.CustomClass, TemplateStrings.CustomClassInvalidFormat);
+				}
 			}
 
 			if (!string.IsNullOrWhiteSpace(Folder))
 			{
 				if (!Regex.IsMatch(Folder, RegularExpressions.RelativeWindowsFolderPath))
-					errors.ErrorFor(x => x.Folder, TemplateStrings.FolderNameInvalidFormat);
+				{
+				    errors.ErrorFor(x => x.Folder, TemplateStrings.FolderNameInvalidFormat);
+				}
 			}
 
 			if (PageTemplate.SiteIsDotNet)
@@ -126,27 +113,37 @@ namespace Quantumart.QP8.BLL
 				if (!string.IsNullOrWhiteSpace(CustomClass))
 				{
 					if (!Regex.IsMatch(CustomClass, RegularExpressions.NetName))
-						errors.ErrorFor(x => x.CustomClass, TemplateStrings.CustomClassInvalidFormat);
-					if(CustomClass.Length > 255)
-						errors.ErrorFor(x => x.CustomClass, TemplateStrings.CustomClassMaxLengthExceeded);					
+					{
+					    errors.ErrorFor(x => x.CustomClass, TemplateStrings.CustomClassInvalidFormat);
+					}
+				    if(CustomClass.Length > 255)
+				    {
+				        errors.ErrorFor(x => x.CustomClass, TemplateStrings.CustomClassMaxLengthExceeded);
+				    }
 				}
 
 				if (!string.IsNullOrWhiteSpace(Folder))
 				{
 					if (!Regex.IsMatch(Folder, RegularExpressions.RelativeWindowsFolderPath))
-						errors.ErrorFor(x => x.Folder, TemplateStrings.FolderNameInvalidFormat);
-					if (Folder.Length > 255)
-						errors.ErrorFor(x => x.Folder, TemplateStrings.FolderNameMaxLengthExceeded);
+					{
+					    errors.ErrorFor(x => x.Folder, TemplateStrings.FolderNameInvalidFormat);
+					}
+				    if (Folder.Length > 255)
+				    {
+				        errors.ErrorFor(x => x.Folder, TemplateStrings.FolderNameMaxLengthExceeded);
+				    }
 				}
 			}
 			if (!errors.IsEmpty)
-				throw errors;
+			{
+			    throw errors;
+			}
 		}
 
 		internal void MutatePage()
 		{
-			string name = Name;
-			int index = 0;
+			var name = Name;
+			var index = 0;
 			do
 			{
 				index++;
@@ -154,7 +151,7 @@ namespace Quantumart.QP8.BLL
 			}
 			while (PageRepository.NameExists(this));
 					
-			string fileName = FileName;
+			var fileName = FileName;
 
 			index = 0;
 

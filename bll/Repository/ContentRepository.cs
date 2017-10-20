@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Objects;
@@ -114,7 +114,7 @@ namespace Quantumart.QP8.BLL.Repository
                     CustomFilter = filter.CustomFilter
                 };
 
-                var rows = Common.GetContentsPage(scope.DbConnection, options, out int totalRecords);
+                var rows = Common.GetContentsPage(scope.DbConnection, options, out var totalRecords);
                 return new ListResult<ContentListItem> { Data = MapperFacade.ContentListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }

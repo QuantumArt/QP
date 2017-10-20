@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.BLL.Services.DTO
+namespace Quantumart.QP8.BLL.Services.DTO
 {
     public class ArticleInitTreeResult : ArticleResultBase
     {
@@ -8,11 +8,11 @@
 
 		public ArticleInitTreeResult(Content content, bool isMultipleSelection)
 		{
-			this.IsVirtual = content.IsVirtual;
-			this.ContentName = content.Name;
-			this.IsUpdatable = content.IsUpdatable;
-			this.Filter = content.SelfRelationFieldFilter;
-			this.AutoCheckChildren = (isMultipleSelection && content.TreeField != null) ? content.TreeField.AutoCheckChildren : false;
+			IsVirtual = content.IsVirtual;
+			ContentName = content.Name;
+			IsUpdatable = content.IsUpdatable;
+			Filter = content.SelfRelationFieldFilter;
+			AutoCheckChildren = (isMultipleSelection && content.TreeField != null) ? content.TreeField.AutoCheckChildren : false;
 
 		}
 

@@ -1,16 +1,9 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Data;
-using Quantumart.QP8;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.DAL;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -27,16 +20,18 @@ namespace Quantumart.QP8.BLL.Repository
 		/// <returns>узел дерева</returns>
 		internal static TreeNode GetNode(string entityTypeCode, int entityId, int? parentEntityId, bool isFolder, bool isGroup = false, string groupItemCode = null, bool loadChildNodes = false)
 		{
-			TreeNode node = GetChildNodeList(entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId).Single();
+			var node = GetChildNodeList(entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId).Single();
 			if (node != null)
 			{
 
-				if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder && String.IsNullOrEmpty(node.Title))
-					node.Title = LibraryStrings.RootFolder;
-
-				if (loadChildNodes)
+				if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder && string.IsNullOrEmpty(node.Title))
 				{
-					int? currentParentEntityId = (node.IsFolder) ? node.ParentId : node.Id;
+				    node.Title = LibraryStrings.RootFolder;
+				}
+
+			    if (loadChildNodes)
+				{
+					var currentParentEntityId = (node.IsFolder) ? node.ParentId : node.Id;
 
 					node.ChildNodes = GetChildNodeList(node.Code, currentParentEntityId, node.IsFolder, node.IsGroup, node.GroupItemCode);
 				}
@@ -54,8 +49,8 @@ namespace Quantumart.QP8.BLL.Repository
 		/// <returns>список дочерних узлов</returns>
 		internal static IEnumerable<TreeNode> GetChildNodeList(string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId = 0)
 		{
-			IEnumerable<TreeNode> nodesList = Enumerable.Empty<TreeNode>();
-			int userId = QPContext.CurrentUserId;
+			var nodesList = Enumerable.Empty<TreeNode>();
+			var userId = QPContext.CurrentUserId;
 
 			using (var scope = new QPConnectionScope())
 			{
@@ -66,9 +61,11 @@ namespace Quantumart.QP8.BLL.Repository
 
             if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder)
             {
-                TreeNode rootFolderNode = nodesList.Where(n => String.IsNullOrEmpty(n.Title)).SingleOrDefault();
+                var rootFolderNode = nodesList.Where(n => string.IsNullOrEmpty(n.Title)).SingleOrDefault();
                 if (rootFolderNode != null)
+                {
                     rootFolderNode.Title = LibraryStrings.RootFolder;
+                }
             }
 
 			// Не показываем не администратору контенты для которых запрещены операции редактирования
@@ -76,7 +73,7 @@ namespace Quantumart.QP8.BLL.Repository
 			{
 				if (!QPContext.IsAdmin)
 				{
-					IEnumerable<int> chdIDs = ContentRepository.GetChangeDisabledIDs();
+					var chdIDs = ContentRepository.GetChangeDisabledIDs();
 					if (chdIDs.Any())
 					{
 						nodesList = nodesList.Where(c => !chdIDs.Contains(c.Id)).ToArray();
@@ -85,12 +82,12 @@ namespace Quantumart.QP8.BLL.Repository
 
 				if (nodesList.Any())
 				{
-					TreeNode firstNode = nodesList.First();
+					var firstNode = nodesList.First();
 					if (firstNode.Code == EntityTypeCode.ContentGroup)
 					{
-						int siteId = firstNode.ParentId.Value;
-						int defaultGroupId = ContentRepository.GetDefaultGroupId(siteId);
-						TreeNode defaultNode = nodesList.Where(n => n.Id == defaultGroupId).SingleOrDefault();
+						var siteId = firstNode.ParentId.Value;
+						var defaultGroupId = ContentRepository.GetDefaultGroupId(siteId);
+						var defaultNode = nodesList.Where(n => n.Id == defaultGroupId).SingleOrDefault();
 						if (defaultNode != null)
 						{
 							defaultNode.Title = Translator.Translate(defaultNode.Title);
@@ -103,7 +100,7 @@ namespace Quantumart.QP8.BLL.Repository
 
 			if (entityTypeCode == null)
 			{
-				TreeNode rootNode = nodesList.Where(n => n.Code == Constants.EntityTypeCode.CustomerCode).SingleOrDefault();
+				var rootNode = nodesList.Where(n => n.Code == EntityTypeCode.CustomerCode).SingleOrDefault();
 				if (rootNode != null)
 				{
 					rootNode.Title = QPContext.CurrentCustomerCode;

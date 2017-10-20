@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
 using Quantumart.QP8.Configuration;
@@ -60,16 +60,13 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
             }
         }
 
-        protected DirectoryEntry GetConnection()
+        protected DirectoryEntry GetConnection() => new DirectoryEntry
         {
-            return new DirectoryEntry
-            {
-                Path = _path,
-                AuthenticationType = AuthenticationTypes.Secure,
-                Username = _userName,
-                Password = _password
-            };
-        }
+            Path = _path,
+            AuthenticationType = AuthenticationTypes.Secure,
+            Username = _userName,
+            Password = _password
+        };
 
         private static string[] GetGroupReferences(IEnumerable<ActiveDirectoryGroup> membership)
         {

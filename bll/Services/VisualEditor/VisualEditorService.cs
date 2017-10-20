@@ -1,36 +1,30 @@
-﻿using Quantumart.QP8.BLL.ListItems;
+using System;
+using System.Linq;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using System;
-using System.Linq;
 
 namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
     public class VisualEditorService : IVisualEditorService
     {
-        public VisualEditorStyleInitListResult InitVisualEditorStyleList(int parentId)
+        public VisualEditorStyleInitListResult InitVisualEditorStyleList(int parentId) => new VisualEditorStyleInitListResult
         {
-            return new VisualEditorStyleInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewVisualEditorStyle) &&
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewVisualEditorStyle) &&
                 SecurityRepository.IsEntityAccessible(EntityTypeCode.VisualEditorStyle, parentId, ActionTypeCode.Update)
-            };
-        }
+        };
 
-        public VisualEditorInitListResult InitList(int contentId)
+        public VisualEditorInitListResult InitList(int contentId) => new VisualEditorInitListResult
         {
-            return new VisualEditorInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewVisualEditorPlugin) &&
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewVisualEditorPlugin) &&
                 SecurityRepository.IsEntityAccessible(EntityTypeCode.VisualEditorPlugin, contentId, ActionTypeCode.Update)
-            };
-        }
+        };
 
         public ListResult<VisualEditorPluginListItem> GetVisualEditorPlugins(ListCommand cmd, int contentId)
         {
-            var list = VisualEditorRepository.List(cmd, contentId, out int totalRecords);
+            var list = VisualEditorRepository.List(cmd, contentId, out var totalRecords);
             return new ListResult<VisualEditorPluginListItem>
             {
                 Data = list.ToList(),
@@ -40,7 +34,7 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
 
         public ListResult<VisualEditorStyleListItem> GetVisualEditorStyles(ListCommand cmd, int contentId)
         {
-            var list = VisualEditorRepository.ListStyles(cmd, contentId, out int totalRecords);
+            var list = VisualEditorRepository.ListStyles(cmd, contentId, out var totalRecords);
             return new ListResult<VisualEditorStyleListItem>
             {
                 Data = list.ToList(),
@@ -59,15 +53,9 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
             return plugin;
         }
 
-        public VisualEditorPlugin ReadVisualEditorPluginPropertiesForUpdate(int id)
-        {
-            return ReadVisualEditorPluginProperties(id);
-        }
+        public VisualEditorPlugin ReadVisualEditorPluginPropertiesForUpdate(int id) => ReadVisualEditorPluginProperties(id);
 
-        public VisualEditorPlugin UpdateVisualEditorProperties(VisualEditorPlugin visualEditorPlugin)
-        {
-            return VisualEditorRepository.UpdatePluginProperties(visualEditorPlugin);
-        }
+        public VisualEditorPlugin UpdateVisualEditorProperties(VisualEditorPlugin visualEditorPlugin) => VisualEditorRepository.UpdatePluginProperties(visualEditorPlugin);
 
         public MessageResult Remove(int id)
         {
@@ -81,20 +69,11 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
             return null;
         }
 
-        public VisualEditorPlugin NewVisualEditorPluginProperties(int parentId)
-        {
-            return VisualEditorPlugin.Create();
-        }
+        public VisualEditorPlugin NewVisualEditorPluginProperties(int parentId) => VisualEditorPlugin.Create();
 
-        public VisualEditorPlugin NewVisualEditorPluginPropertiesForUpdate(int parentId)
-        {
-            return NewVisualEditorPluginProperties(parentId);
-        }
+        public VisualEditorPlugin NewVisualEditorPluginPropertiesForUpdate(int parentId) => NewVisualEditorPluginProperties(parentId);
 
-        public VisualEditorPlugin SaveVisualEditorPluginProperties(VisualEditorPlugin visualEditorPlugin)
-        {
-            return VisualEditorRepository.SavePluginProperties(visualEditorPlugin);
-        }
+        public VisualEditorPlugin SaveVisualEditorPluginProperties(VisualEditorPlugin visualEditorPlugin) => VisualEditorRepository.SavePluginProperties(visualEditorPlugin);
 
         public VisualEditorStyle ReadVisualEditorStyleProperties(int id)
         {
@@ -107,15 +86,9 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
             return style;
         }
 
-        public VisualEditorStyle ReadVisualEditorStylePropertiesForUpdate(int id)
-        {
-            return ReadVisualEditorStyleProperties(id);
-        }
+        public VisualEditorStyle ReadVisualEditorStylePropertiesForUpdate(int id) => ReadVisualEditorStyleProperties(id);
 
-        public VisualEditorStyle UpdateVisualEditorStyleProperties(VisualEditorStyle visualEditorStyle)
-        {
-            return VisualEditorRepository.UpdateStyleProperties(visualEditorStyle);
-        }
+        public VisualEditorStyle UpdateVisualEditorStyleProperties(VisualEditorStyle visualEditorStyle) => VisualEditorRepository.UpdateStyleProperties(visualEditorStyle);
 
         public MessageResult RemoveVisualEditorStyle(int id)
         {
@@ -134,19 +107,10 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
             return null;
         }
 
-        public VisualEditorStyle NewVisualEditorStyleProperties(int parentId)
-        {
-            return VisualEditorStyle.Create().Init();
-        }
+        public VisualEditorStyle NewVisualEditorStyleProperties(int parentId) => VisualEditorStyle.Create().Init();
 
-        public VisualEditorStyle NewVisualEditorStylePropertiesForUpdate(int parentId)
-        {
-            return NewVisualEditorStyleProperties(parentId);
-        }
+        public VisualEditorStyle NewVisualEditorStylePropertiesForUpdate(int parentId) => NewVisualEditorStyleProperties(parentId);
 
-        public VisualEditorStyle SaveVisualEditorStyleProperties(VisualEditorStyle visualEditorStyle)
-        {
-            return VisualEditorRepository.SaveStyleProperties(visualEditorStyle);
-        }
+        public VisualEditorStyle SaveVisualEditorStyleProperties(VisualEditorStyle visualEditorStyle) => VisualEditorRepository.SaveStyleProperties(visualEditorStyle);
     }
 }

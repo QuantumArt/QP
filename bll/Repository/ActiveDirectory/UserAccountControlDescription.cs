@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
@@ -26,5 +26,5 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 		DONT_REQUIRE_PREAUTH                   = 4194304,  // 0x400000
 		PASSWORD_EXPIRED                       = 8388608,  // 0x800000
 		TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION = 16777216  // 0x1000000
-	};
+	}
 }

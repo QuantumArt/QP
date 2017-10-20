@@ -1,5 +1,5 @@
-﻿using Quantumart.QP8.Constants;
 using System;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {
@@ -21,29 +21,14 @@ namespace Quantumart.QP8.BLL.Services.DTO
             FailedIds = failedIds;
         }
 
-        public static MessageResult Error(string message, int[] failedIds = null)
-        {
-            return new MessageResult(ActionMessageType.Error, message, failedIds);
-        }
+        public static MessageResult Error(string message, int[] failedIds = null) => new MessageResult(ActionMessageType.Error, message, failedIds);
 
-        public static MessageResult Info(string message, int[] failedIds = null)
-        {
-            return new MessageResult(ActionMessageType.Info, message, failedIds);
-        }
+        public static MessageResult Info(string message, int[] failedIds = null) => new MessageResult(ActionMessageType.Info, message, failedIds);
 
-        public static MessageResult Confirm(string message, int[] failedIds = null)
-        {
-            return new MessageResult(ActionMessageType.Confirm, message, failedIds);
-        }
+        public static MessageResult Confirm(string message, int[] failedIds = null) => new MessageResult(ActionMessageType.Confirm, message, failedIds);
 
-        public static MessageResult Warning(string message, int[] failedIds = null)
-        {
-            return new MessageResult(ActionMessageType.Warning, message, failedIds);
-        }
+        public static MessageResult Warning(string message, int[] failedIds = null) => new MessageResult(ActionMessageType.Warning, message, failedIds);
 
-        public static MessageResult Download(string url)
-        {
-            return new MessageResult(ActionMessageType.Download, "", null) { Url = url };
-        }
+        public static MessageResult Download(string url) => new MessageResult(ActionMessageType.Download, "", null) { Url = url };
     }
 }

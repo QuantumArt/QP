@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.BLL.Services.API.Models
+namespace Quantumart.QP8.BLL.Services.API.Models
 {
     public class RelationData
     {
@@ -18,19 +18,16 @@
 
         public int? LinkId { get; set; }
 
-        public override string ToString()
+        public override string ToString() => new
         {
-            return new
-            {
-                ArticleId,
-                ContentId,
-                FieldId,
-                FieldName,
-                FielValue,
-                RefContentId,
-                RefFieldId,
-                LinkId
-            }.ToString();
-        }
+            ArticleId,
+            ContentId,
+            FieldId,
+            FieldName,
+            FielValue,
+            RefContentId,
+            RefFieldId,
+            LinkId
+        }.ToString();
     }
 }

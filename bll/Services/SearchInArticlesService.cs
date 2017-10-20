@@ -1,8 +1,8 @@
-﻿using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.Utils.FullTextSearch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.Utils.FullTextSearch;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -33,7 +33,7 @@ namespace Quantumart.QP8.BLL.Services
         public IEnumerable<SearchInArticlesResultItem> SearchInArticles(int siteId, int userId, string searchString, ListCommand listCmd, out int totalRecords)
         {
             totalRecords = 0;
-            if (!grammaParser.TryParse(searchString, out string sqlSearchString))
+            if (!grammaParser.TryParse(searchString, out var sqlSearchString))
             {
                 return Enumerable.Empty<SearchInArticlesResultItem>();
             }
@@ -43,7 +43,7 @@ namespace Quantumart.QP8.BLL.Services
                 return Enumerable.Empty<SearchInArticlesResultItem>();
             }
 
-            Int32.TryParse(searchString, out int articleId);
+            int.TryParse(searchString, out var articleId);
             var result = siaRepository.SearchInArticles(siteId, userId, sqlSearchString, (articleId > 0 ? articleId : (int?)null), listCmd, out totalRecords);
             if (result.Any())
             {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Quantumart.QP8.BLL.Facades;
@@ -29,37 +29,31 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             }
         }
 
-        private static IEnumerable<BackendAction> LoadActions()
-        {
-            return MapperFacade.BackendActionMapper.GetBizList(
-                QPContext.EFContext.BackendActionSet
-                    .Include("EntityType")
-                    .Include("EntityType.Parent")
-                    .Include("EntityType.CancelAction")
-                    .Include("ActionType.PermissionLevel")
-                    .Include("DefaultViewType")
-                    .Include("Views.ViewType")
-                    .Include("NextSuccessfulAction")
-                    .Include("NextFailedAction")
-                    .Include("Excludes")
-                    .ToList()
-            );
-        }
+        private static IEnumerable<BackendAction> LoadActions() => MapperFacade.BackendActionMapper.GetBizList(
+            QPContext.EFContext.BackendActionSet
+                .Include("EntityType")
+                .Include("EntityType.Parent")
+                .Include("EntityType.CancelAction")
+                .Include("ActionType.PermissionLevel")
+                .Include("DefaultViewType")
+                .Include("Views.ViewType")
+                .Include("NextSuccessfulAction")
+                .Include("NextFailedAction")
+                .Include("Excludes")
+                .ToList()
+        );
 
-        private static IEnumerable<CustomAction> LoadCustomActions()
-        {
-            return MapperFacade.CustomActionMapper.GetBizList(
-                QPContext.EFContext.CustomActionSet
-                    .Include("Action.EntityType.ContextMenu")
-                    .Include("Action.ToolbarButtons")
-                    .Include("Action.ContextMenuItems")
-                    .Include("Action.ActionType.PermissionLevel")
-                    .Include("Action.Excludes")
-                    .Include("Contents.Site")
-                    .Include("Sites")
-                    .ToList()
-            );
-        }
+        private static IEnumerable<CustomAction> LoadCustomActions() => MapperFacade.CustomActionMapper.GetBizList(
+            QPContext.EFContext.CustomActionSet
+                .Include("Action.EntityType.ContextMenu")
+                .Include("Action.ToolbarButtons")
+                .Include("Action.ContextMenuItems")
+                .Include("Action.ActionType.PermissionLevel")
+                .Include("Action.Excludes")
+                .Include("Contents.Site")
+                .Include("Sites")
+                .ToList()
+        );
 
         public static IEnumerable<CustomAction> CustomActions
         {

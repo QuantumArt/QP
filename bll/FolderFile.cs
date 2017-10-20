@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Resources;
-using System.IO;
-using Quantumart.QP8.Validators;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -15,8 +14,8 @@ namespace Quantumart.QP8.BLL
 
 		static FolderFile()
 		{
-			Func<FolderFileType, string> createFileExtension = (type) => String.Join(";", fileTypeDictionary.Where(i => i.Value == type).Select(i => i.Key));	
-			fileExtensionsDictionary = new Dictionary<FolderFileType, string>() 
+			Func<FolderFileType, string> createFileExtension = type => string.Join(";", fileTypeDictionary.Where(i => i.Value == type).Select(i => i.Key));	
+			fileExtensionsDictionary = new Dictionary<FolderFileType, string>
 			{
 				{FolderFileType.Unknown, ""},
 				{FolderFileType.Image, createFileExtension(FolderFileType.Image)},
@@ -37,7 +36,7 @@ namespace Quantumart.QP8.BLL
 		{
 			OldName = info.Name;
 			Name = info.Name;
-			Path = info.FullName.Replace(info.Name, String.Empty);
+			Path = info.FullName.Replace(info.Name, string.Empty);
 			Extension = info.Extension;
 			Created = info.CreationTime;
 			Modified = info.LastWriteTime;
@@ -103,7 +102,7 @@ namespace Quantumart.QP8.BLL
 		/// <summary>
 		/// Словарь имен типов файлов по типу
 		/// </summary>
-		private static Dictionary<FolderFileType, string> fileTypeNameDictionary = new Dictionary<FolderFileType, string>() 
+		private static Dictionary<FolderFileType, string> fileTypeNameDictionary = new Dictionary<FolderFileType, string>
 		{			
 			#region словарь
 			{FolderFileType.Unknown, LibraryStrings.Unknown},
@@ -118,7 +117,7 @@ namespace Quantumart.QP8.BLL
 		};
 
 		
-		private static Dictionary<FolderFileType, string> fileExtensionsDictionary = null;		
+		private static Dictionary<FolderFileType, string> fileExtensionsDictionary;		
 
 		#endregion
 
@@ -159,19 +158,19 @@ namespace Quantumart.QP8.BLL
 			{
 				if (_Dimensions == null)
 				{
-					_Dimensions = String.Empty;
+					_Dimensions = string.Empty;
 					if (FileType == FolderFileType.Image)
 					{
 						try
 						{
-							using (Image image = Image.FromFile(FullName))
+							using (var image = Image.FromFile(FullName))
 							{
-								_Dimensions = String.Format("{0}x{1}", image.Width, image.Height);
+								_Dimensions = string.Format("{0}x{1}", image.Width, image.Height);
 							}
 						}
 						catch (OutOfMemoryException) // sic!!!
 						{
-							_Dimensions = String.Empty;
+							_Dimensions = string.Empty;
 						}
 					}
 				}
@@ -198,10 +197,12 @@ namespace Quantumart.QP8.BLL
 		{ 
 			get
 			{
-				if (!fileTypeDictionary.ContainsKey(this.Extension))
-					return FolderFileType.Unknown;
-				else
-					return fileTypeDictionary[this.Extension];
+			    if (!fileTypeDictionary.ContainsKey(Extension))
+				{
+				    return FolderFileType.Unknown;
+				}
+
+			    return fileTypeDictionary[Extension];
 			}
 		}
 
@@ -209,88 +210,69 @@ namespace Quantumart.QP8.BLL
 		/// Имя типа файла
 		/// </summary>
 		[LocalizedDisplayName("FileType", NameResourceType = typeof(LibraryStrings))]
-		public string FileTypeName
-		{
-			get
-			{
-				return FolderFile.GetTypeName(this.FileType);
-			}
-		}
-		
-		/// <summary>
+		public string FileTypeName => GetTypeName(FileType);
+
+	    /// <summary>
 		/// Возвращает имя типа файла по типу
 		/// </summary>
 		/// <param name="type">тип файла</param>
 		/// <returns>имя типа</returns>
-		public static string GetTypeName(FolderFileType type)
-		{
-			return fileTypeNameDictionary[type];
-		}
+		public static string GetTypeName(FolderFileType type) => fileTypeNameDictionary[type];
 
-		/// <summary>
+	    /// <summary>
 		/// Возвращает строку для фильтра по расширениям для конкретного типа
 		/// </summary>
 		/// <returns></returns>
-		public static string GetTypeExtensions(FolderFileType type)
-		{
-			return fileExtensionsDictionary[type];
-		}
+		public static string GetTypeExtensions(FolderFileType type) => fileExtensionsDictionary[type];
 
-
-		[LocalizedDisplayName("Size", NameResourceType = typeof(LibraryStrings))]
+	    [LocalizedDisplayName("Size", NameResourceType = typeof(LibraryStrings))]
 		public string Size
 		{
 			get
 			{
-				int m = 1024;
-				int kb = m;
-				int mb = m * m;
-				int gb = m * m * m;
-				string formatString = "{0:f2} {1}";
+				var m = 1024;
+				var kb = m;
+				var mb = m * m;
+				var gb = m * m * m;
+				var formatString = "{0:f2} {1}";
 				if (Length > gb)
-					return String.Format(formatString, Length / gb, LibraryStrings.GB);
-				else if (Length > mb)
-					return String.Format(formatString, Length / mb, LibraryStrings.MB);
-				else if (Length > kb)
-					return String.Format(formatString, Length / kb, LibraryStrings.KB);
-				else
-					return String.Format("{0} {1}", Length, LibraryStrings.Bytes);
+				{
+				    return string.Format(formatString, Length / gb, LibraryStrings.GB);
+				}
+
+			    if (Length > mb)
+			    {
+			        return string.Format(formatString, Length / mb, LibraryStrings.MB);
+			    }
+
+			    if (Length > kb)
+			    {
+			        return string.Format(formatString, Length / kb, LibraryStrings.KB);
+			    }
+
+			    return string.Format("{0} {1}", Length, LibraryStrings.Bytes);
 			}
 		}
 
-		internal bool NameChanged
-		{
-			get
-			{
-				return OldName != Name;
-			}
-		}
+		internal bool NameChanged => OldName != Name;
 
-		internal string FullName
-		{
-			get
-			{
-				return Path + Name;
-			}
-		}
+	    internal string FullName => Path + Name;
 
-		internal string OldFullName
-		{
-			get
-			{
-				return Path + OldName;
-			}
-		}
+	    internal string OldFullName => Path + OldName;
 
-		public void Validate()
+	    public void Validate()
 		{
-			RulesException<FolderFile> errors = new RulesException<FolderFile>();
+			var errors = new RulesException<FolderFile>();
 
 			if (NameChanged && File.Exists(FullName))
-				errors.ErrorFor(s => s.Name, String.Format(LibraryStrings.FileExists, FullName));
+			{
+			    errors.ErrorFor(s => s.Name, string.Format(LibraryStrings.FileExists, FullName));
+			}
 
-			if (!errors.IsEmpty)
-				throw errors;
+		    if (!errors.IsEmpty)
+		    {
+		        throw errors;
+		    }
 		}
 
 		internal void Rename()

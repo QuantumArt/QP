@@ -178,8 +178,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             using (new QPConnectionScope())
             {
                 var content = ContentRepository.GetById(contentId);
-                var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out bool useMainTable);
-                filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] extensionContentIds, out ContentReference[] contentReferences);
+                var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out var useMainTable);
+                filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
 
                 var sqlParams = new List<SqlParameter>();
                 var options = new ArticlePageOptions
@@ -346,7 +346,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         private static ArticleFullTextSearchParameter GetFtsSearchParameter(ArticleFullTextSearchQueryParser ftsParser, IEnumerable<ArticleSearchQueryParam> searchQueryParams, int searchResultLimit)
         {
-            if (!ftsParser.Parse(searchQueryParams, out bool? ftsHasError, out string ftsFieldIdList, out string ftsQueryString, out string rawQueryString))
+            if (!ftsParser.Parse(searchQueryParams, out var ftsHasError, out var ftsFieldIdList, out var ftsQueryString, out var rawQueryString))
             {
                 ftsHasError = null;
                 ftsFieldIdList = null;
@@ -1402,12 +1402,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var map = insertData.ToDictionary(d => d.OriginalArticleId, d => d.CreatedArticleId);
             foreach (var link in links)
             {
-                if (map.TryGetValue(link.ItemId, out int newItemId))
+                if (map.TryGetValue(link.ItemId, out var newItemId))
                 {
                     link.ItemId = newItemId;
                 }
 
-                if (link.LinkedItemId.HasValue && map.TryGetValue(link.LinkedItemId.Value, out int newLinkedItemId))
+                if (link.LinkedItemId.HasValue && map.TryGetValue(link.LinkedItemId.Value, out var newLinkedItemId))
                 {
                     link.LinkedItemId = newLinkedItemId;
                 }
@@ -1482,7 +1482,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var map = insertData.ToDictionary(d => d.OriginalArticleId, d => d.CreatedArticleId);
             foreach (var article in articles)
             {
-                if (map.TryGetValue(article.Id, out int newId))
+                if (map.TryGetValue(article.Id, out var newId))
                 {
                     article.Id = newId;
                 }

@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -47,11 +47,8 @@ namespace Quantumart.QP8.BLL
 
         public Content Content
         {
-            get { return _content ?? (_content = ContentRepository.GetById(LContentId)); }
-            set
-            {
-                _content = value;
-            }
+            get => _content ?? (_content = ContentRepository.GetById(LContentId));
+            set => _content = value;
         }
 
         internal void MutateNames()

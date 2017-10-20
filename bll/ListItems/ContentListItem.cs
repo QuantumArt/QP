@@ -1,9 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Quantumart.QP8.BLL.Helpers;
-
 namespace Quantumart.QP8.BLL.ListItems
 {
     public class ContentListItem 

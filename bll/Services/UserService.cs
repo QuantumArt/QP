@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
@@ -61,17 +61,14 @@ namespace Quantumart.QP8.BLL.Services
             return user;
         }
 
-        public UserInitListResult InitList(int parentId)
+        public UserInitListResult InitList(int parentId) => new UserInitListResult
         {
-            return new UserInitListResult
-            {
-                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewUser)
-            };
-        }
+            IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewUser)
+        };
 
         public ListResult<UserListItem> List(ListCommand cmd, UserListFilter filter, IEnumerable<int> selectedIDs = null)
         {
-            var list = UserRepository.List(cmd, filter, selectedIDs, out int totalRecords);
+            var list = UserRepository.List(cmd, filter, selectedIDs, out var totalRecords);
             return new ListResult<UserListItem>
             {
                 Data = list.ToList(),
@@ -100,20 +97,11 @@ namespace Quantumart.QP8.BLL.Services
             return updatedUser;
         }
 
-        public User UpdateProperties(User user)
-        {
-            return UserRepository.UpdateProperties(user);
-        }
+        public User UpdateProperties(User user) => UserRepository.UpdateProperties(user);
 
-        public User GetUserToAdd()
-        {
-            return User.Create();
-        }
+        public User GetUserToAdd() => User.Create();
 
-        public User SaveProperties(User user)
-        {
-            return UserRepository.SaveProperties(user);
-        }
+        public User SaveProperties(User user) => UserRepository.SaveProperties(user);
 
         public MessageResult Remove(int id)
         {
@@ -170,9 +158,6 @@ namespace Quantumart.QP8.BLL.Services
             return result;
         }
 
-        public IEnumerable<UserDefaultFilter> GetContentDefaultFilters(int userId)
-        {
-            return userId > 0 ? UserRepository.GetContentDefaultFilters(userId) : Enumerable.Empty<UserDefaultFilter>();
-        }
+        public IEnumerable<UserDefaultFilter> GetContentDefaultFilters(int userId) => userId > 0 ? UserRepository.GetContentDefaultFilters(userId) : Enumerable.Empty<UserDefaultFilter>();
     }
 }

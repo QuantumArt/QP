@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Text;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
-using System.Data;
-using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
 
 namespace Quantumart.QP8.BLL.Repository.ActionPermissions
 {
@@ -24,13 +22,19 @@ namespace Quantumart.QP8.BLL.Repository.ActionPermissions
 			{
 				IEnumerable<DataRow> rows = null;
 				if (userId.HasValue)
-					rows = Common.GetEntityTypePermissionsForUser(scope.DbConnection, userId.Value, entityTypeId);
+				{
+				    rows = Common.GetEntityTypePermissionsForUser(scope.DbConnection, userId.Value, entityTypeId);
+				}
 				else if (groupId.HasValue)
-					rows = Common.GetEntityTypePermissionsForGroup(scope.DbConnection, groupId.Value, entityTypeId);
+				{
+				    rows = Common.GetEntityTypePermissionsForGroup(scope.DbConnection, groupId.Value, entityTypeId);
+				}
 				else
-					throw new ArgumentNullException("groupId, siteId");
+				{
+				    throw new ArgumentNullException("groupId, siteId");
+				}
 
-				List<ActionPermissionTreeNode> result = MapperFacade.ActionPermissionTreeNodeRowMapper.GetBizList(rows.ToList());
+			    var result = MapperFacade.ActionPermissionTreeNodeRowMapper.GetBizList(rows.ToList());
 				result.ForEach(n =>
 				{
 					n.NodeType = ActionPermissionTreeNode.ENTITY_TYPE_NODE;
@@ -54,13 +58,19 @@ namespace Quantumart.QP8.BLL.Repository.ActionPermissions
 			{
 				IEnumerable<DataRow> rows = null;
 				if (userId.HasValue)
-					rows = Common.GetActionPermissionsForUser(scope.DbConnection, userId.Value, entityTypeId, actionId);
+				{
+				    rows = Common.GetActionPermissionsForUser(scope.DbConnection, userId.Value, entityTypeId, actionId);
+				}
 				else if (groupId.HasValue)
-					rows = Common.GetActionPermissionsForGroup(scope.DbConnection, groupId.Value, entityTypeId, actionId);
+				{
+				    rows = Common.GetActionPermissionsForGroup(scope.DbConnection, groupId.Value, entityTypeId, actionId);
+				}
 				else
-					throw new ArgumentNullException("groupId, siteId");
+				{
+				    throw new ArgumentNullException("groupId, siteId");
+				}
 
-				List<ActionPermissionTreeNode> result = MapperFacade.ActionPermissionTreeNodeRowMapper.GetBizList(rows.ToList());
+			    var result = MapperFacade.ActionPermissionTreeNodeRowMapper.GetBizList(rows.ToList());
 				result.ForEach(n =>
 				{
 					n.NodeType = ActionPermissionTreeNode.ACTION_NODE;

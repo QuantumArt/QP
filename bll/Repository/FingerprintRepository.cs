@@ -242,7 +242,7 @@ namespace Quantumart.QP8.BLL.Repository
                 @"select VE_STYLE_FIELD_BIND.* from CONTENT_ATTRIBUTE
 				JOIN VE_STYLE_FIELD_BIND ON VE_STYLE_FIELD_BIND.FIELD_ID = CONTENT_ATTRIBUTE.ATTRIBUTE_ID
 				{0}
-				order by CONTENT_ATTRIBUTE.ATTRIBUTE_ID",
+				order by CONTENT_ATTRIBUTE.ATTRIBUTE_ID"
             };
 
             var queries = AddFilterStatement("[CONTENT_ATTRIBUTE].[ATTRIBUTE_ID]", "[CONTENT_ATTRIBUTE].[CONTENT_ID]", querySetting, queryTemplates);
@@ -302,7 +302,7 @@ namespace Quantumart.QP8.BLL.Repository
 				FROM CONTENT_ITEM
 				JOIN WAITING_FOR_APPROVAL ON CONTENT_ITEM.CONTENT_ITEM_ID = WAITING_FOR_APPROVAL.CONTENT_ITEM_ID
 				{0}
-				order by CONTENT_ITEM.CONTENT_ITEM_ID",
+				order by CONTENT_ITEM.CONTENT_ITEM_ID"
             };
 
             var queries = AddFilterStatement("CONTENT_ITEM.CONTENT_ITEM_ID", "CONTENT_ITEM.CONTENT_ID", querySetting, queryTemplates);
@@ -738,7 +738,7 @@ namespace Quantumart.QP8.BLL.Repository
             // для всех у которых есть родитель - join
             // если нашли Settings, то генерим where и останавливаемся
             Action<FingerprintAncestorRestrictionTree> generateJoins = null;
-            generateJoins = (ar) =>
+            generateJoins = ar =>
             {
                 if (ar.Parent != null)
                 {

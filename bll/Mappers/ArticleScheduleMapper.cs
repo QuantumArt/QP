@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
 using AutoMapper;
-using Quantumart.QP8.DAL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
+using DayOfWeek = Quantumart.QP8.Constants.DayOfWeek;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -29,16 +27,16 @@ namespace Quantumart.QP8.BLL.Mappers
 
         public ArticleSchedule GetBizObject(ArticleScheduleDAL dataObject, Article item)
         {
-            ArticleSchedule result = GetBizObject(dataObject);
+            var result = GetBizObject(dataObject);
             result.Article = item;
-            ArticleScheduleMapper.ProceedComplexMappingToBiz(dataObject, result);
+            ProceedComplexMappingToBiz(dataObject, result);
             return result;
         }
 
         public override ArticleScheduleDAL GetDalObject(ArticleSchedule bizObject)
         {
-            ArticleScheduleDAL result = base.GetDalObject(bizObject);
-            ArticleScheduleMapper.ProceedComplexMappingToDal(bizObject, result);
+            var result = base.GetDalObject(bizObject);
+            ProceedComplexMappingToDal(bizObject, result);
             return result;
         }
 
@@ -61,11 +59,15 @@ namespace Quantumart.QP8.BLL.Mappers
 			result.ScheduleType = ParseFreqType(result.Article.Visible, dal.FreqType);			
 
 			if (result.ScheduleType == ScheduleTypeEnum.Recurring)
-				result.Recurring = ProceedDalToRecurringSchedule(dal);
+			{
+			    result.Recurring = ProceedDalToRecurringSchedule(dal);
+			}
 			else
-				result.Recurring = RecurringSchedule.Empty;
-			
-			ProceedDalToOneTimeSchedule(dal, result);
+			{
+			    result.Recurring = RecurringSchedule.Empty;
+			}
+
+		    ProceedDalToOneTimeSchedule(dal, result);
 			result.PublicationDate = (result.Article.Delayed) ? result.StartDate : ScheduleHelper.DefaultStartDate;
 		}
 
@@ -80,15 +82,17 @@ namespace Quantumart.QP8.BLL.Mappers
 				result.WithoutEndDate = true;
 			}
 			else
-				result.WithoutEndDate = false;
+			{
+			    result.WithoutEndDate = false;
+			}
 		}
 
 		private static void ProceedOneTimeScheduleToDal(ArticleSchedule item, ArticleScheduleDAL result)
 		{
-			Tuple<int, int> startValues = ScheduleHelper.GetSqlValuesFromScheduleDateTime(item.StartDate);
+			var startValues = ScheduleHelper.GetSqlValuesFromScheduleDateTime(item.StartDate);
 			result.ActiveStartDate = startValues.Item1;
 			result.ActiveStartTime = startValues.Item2;
-			Tuple<int, int> endValues = ScheduleHelper.GetSqlValuesFromScheduleDateTime(item.EndDate);
+			var endValues = ScheduleHelper.GetSqlValuesFromScheduleDateTime(item.EndDate);
 			result.ActiveEndDate = endValues.Item1;
 			result.ActiveEndTime = endValues.Item2;
 			result.Duration = 1M;
@@ -113,10 +117,11 @@ namespace Quantumart.QP8.BLL.Mappers
 				result.RepetitionNoEnd = true;
 			}
 			else
-				result.RepetitionNoEnd = false;
-				
+			{
+			    result.RepetitionNoEnd = false;
+			}
 
-			// Определение дней показа			
+		    // Определение дней показа			
 			if (dal.FreqType == ScheduleFreqTypes.RecurringDaily) // день
 			{
 				result.ScheduleRecurringType = ScheduleRecurringType.Daily;
@@ -157,7 +162,7 @@ namespace Quantumart.QP8.BLL.Mappers
 				{
 					result.DaySpecifyingType = DaySpecifyingType.DayOfWeek;					
 					result.WeekOfMonth = (WeekOfMonth)dal.FreqRelativeInterval;
-					result.DayOfWeek = (Constants.DayOfWeek)dal.FreqInterval;
+					result.DayOfWeek = (DayOfWeek)dal.FreqInterval;
 				}								
 			}
 			
@@ -204,19 +209,33 @@ namespace Quantumart.QP8.BLL.Mappers
 
 				result.FreqInterval = 0;
 				if(item.OnSunday)
-					result.FreqInterval = result.FreqInterval | 1;
-				if (item.OnMonday)
-					result.FreqInterval = result.FreqInterval | 2;
-				if (item.OnTuesday)
-					result.FreqInterval = result.FreqInterval | 4;
-				if (item.OnWednesday)
-					result.FreqInterval = result.FreqInterval | 8;
-				if (item.OnThursday)
-					result.FreqInterval = result.FreqInterval | 16;
-				if (item.OnFriday)
-					result.FreqInterval = result.FreqInterval | 32;
-				if (item.OnSaturday)
-					result.FreqInterval = result.FreqInterval | 64;					
+				{
+				    result.FreqInterval = result.FreqInterval | 1;
+				}
+			    if (item.OnMonday)
+			    {
+			        result.FreqInterval = result.FreqInterval | 2;
+			    }
+			    if (item.OnTuesday)
+			    {
+			        result.FreqInterval = result.FreqInterval | 4;
+			    }
+			    if (item.OnWednesday)
+			    {
+			        result.FreqInterval = result.FreqInterval | 8;
+			    }
+			    if (item.OnThursday)
+			    {
+			        result.FreqInterval = result.FreqInterval | 16;
+			    }
+			    if (item.OnFriday)
+			    {
+			        result.FreqInterval = result.FreqInterval | 32;
+			    }
+			    if (item.OnSaturday)
+			    {
+			        result.FreqInterval = result.FreqInterval | 64;
+			    }
 			}
 			else if (item.ScheduleRecurringType == ScheduleRecurringType.Monthly || item.ScheduleRecurringType == ScheduleRecurringType.Yearly)
 			{
@@ -226,8 +245,10 @@ namespace Quantumart.QP8.BLL.Mappers
 
 					var dt = new DateTime(item.RepetitionStartDate.Year, item.Month, 1);
 					if (dt < DateTime.Now.Date)
-						dt = dt.AddYears(1);
-					result.ActiveStartDate = ScheduleHelper.GetSqlValuesFromScheduleDate(dt);
+					{
+					    dt = dt.AddYears(1);
+					}
+				    result.ActiveStartDate = ScheduleHelper.GetSqlValuesFromScheduleDate(dt);
 				}
 				else if (item.ScheduleRecurringType == ScheduleRecurringType.Monthly)
 				{
@@ -255,14 +276,17 @@ namespace Quantumart.QP8.BLL.Mappers
 		/// <returns></returns>
 		private static ScheduleTypeEnum ParseFreqType(bool visible, int freqType) // item.Visible
 		{
-			if (freqType == ScheduleFreqTypes.None || freqType == ScheduleFreqTypes.Publishing)
+		    if (freqType == ScheduleFreqTypes.None || freqType == ScheduleFreqTypes.Publishing)
 			{
 				return visible ? ScheduleTypeEnum.Visible : ScheduleTypeEnum.Invisible;
 			}
-			else if (freqType == ScheduleFreqTypes.OneTime)
-				return ScheduleTypeEnum.OneTimeEvent;
-			else
-				return ScheduleTypeEnum.Recurring;
+
+		    if (freqType == ScheduleFreqTypes.OneTime)
+		    {
+		        return ScheduleTypeEnum.OneTimeEvent;
+		    }
+
+		    return ScheduleTypeEnum.Recurring;
 		}
 
 		/// <summary>
@@ -273,29 +297,49 @@ namespace Quantumart.QP8.BLL.Mappers
 		private static int GetFreqType(ArticleSchedule item)
 		{
 			if (item.Article.Delayed)
-				return ScheduleFreqTypes.Publishing;
-			else if (item.ScheduleType == ScheduleTypeEnum.Invisible || item.ScheduleType == ScheduleTypeEnum.Visible)
-				return ScheduleFreqTypes.None;
-			else if (item.ScheduleType == ScheduleTypeEnum.OneTimeEvent)
-				return ScheduleFreqTypes.OneTime;
-			else if (item.ScheduleType == ScheduleTypeEnum.Recurring)
 			{
-				if (item.Recurring.ScheduleRecurringType == ScheduleRecurringType.Daily)
-					return ScheduleFreqTypes.RecurringDaily;
-				else if (item.Recurring.ScheduleRecurringType == ScheduleRecurringType.Weekly)
-					return ScheduleFreqTypes.RecurringWeekly;
-				else if (item.Recurring.ScheduleRecurringType == ScheduleRecurringType.Monthly || item.Recurring.ScheduleRecurringType == ScheduleRecurringType.Yearly)
-				{
-					if (item.Recurring.DaySpecifyingType == DaySpecifyingType.Date)
-						return ScheduleFreqTypes.RecurringMonthly;
-					else if (item.Recurring.DaySpecifyingType == DaySpecifyingType.DayOfWeek)
-						return ScheduleFreqTypes.RecurringMonthlyRelative;
-
-					throw new ArgumentException("ScheduleRecurringType is undefined");
-				}
+			    return ScheduleFreqTypes.Publishing;
 			}
 
-			throw new ArgumentException("ScheduleType is undefined");
+		    if (item.ScheduleType == ScheduleTypeEnum.Invisible || item.ScheduleType == ScheduleTypeEnum.Visible)
+		    {
+		        return ScheduleFreqTypes.None;
+		    }
+
+		    if (item.ScheduleType == ScheduleTypeEnum.OneTimeEvent)
+		    {
+		        return ScheduleFreqTypes.OneTime;
+		    }
+
+		    if (item.ScheduleType == ScheduleTypeEnum.Recurring)
+		    {
+		        if (item.Recurring.ScheduleRecurringType == ScheduleRecurringType.Daily)
+		        {
+		            return ScheduleFreqTypes.RecurringDaily;
+		        }
+
+		        if (item.Recurring.ScheduleRecurringType == ScheduleRecurringType.Weekly)
+		        {
+		            return ScheduleFreqTypes.RecurringWeekly;
+		        }
+
+		        if (item.Recurring.ScheduleRecurringType == ScheduleRecurringType.Monthly || item.Recurring.ScheduleRecurringType == ScheduleRecurringType.Yearly)
+		        {
+		            if (item.Recurring.DaySpecifyingType == DaySpecifyingType.Date)
+		            {
+		                return ScheduleFreqTypes.RecurringMonthly;
+		            }
+
+		            if (item.Recurring.DaySpecifyingType == DaySpecifyingType.DayOfWeek)
+		            {
+		                return ScheduleFreqTypes.RecurringMonthlyRelative;
+		            }
+
+		            throw new ArgumentException("ScheduleRecurringType is undefined");
+		        }
+		    }
+
+		    throw new ArgumentException("ScheduleType is undefined");
 		}        
     }
 }

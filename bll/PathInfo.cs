@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Repository;
@@ -35,20 +35,11 @@ namespace Quantumart.QP8.BLL
             return new PathInfo { Path = $@"{Path}\{folderName}", Url = $@"{Url}{folderName.Replace(@"\", @"/")}/"};
         }
 
-        public string GetPath(string fileName)
-        {
-            return System.IO.Path.Combine(Path, ReplaceUp(fileName));
-        }
+        public string GetPath(string fileName) => System.IO.Path.Combine(Path, ReplaceUp(fileName));
 
-        public string GetUrl(string fileName)
-        {
-            return $"{Url}{ReplaceUp(fileName)}";
-        }
+        public string GetUrl(string fileName) => $"{Url}{ReplaceUp(fileName)}";
 
-        private static string ReplaceUp(string input)
-        {
-            return input.Replace("..", "");
-        }
+        private static string ReplaceUp(string input) => input.Replace("..", "");
 
         internal FolderFile GetFile(string fileName)
         {
@@ -61,10 +52,7 @@ namespace Quantumart.QP8.BLL
             return new FolderFile(new FileInfo(path));
         }
 
-        public static PathSecurityResult CheckSecurity(string path)
-        {
-            return PathSecurity.Check(path);
-        }
+        public static PathSecurityResult CheckSecurity(string path) => PathSecurity.Check(path);
 
         public static string ConvertToUrl(string path)
         {

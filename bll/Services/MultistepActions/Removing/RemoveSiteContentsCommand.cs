@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.Resources;
 using Quantumart.QP8.BLL.Repository;
-using System.IO;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
@@ -28,38 +28,34 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 			SiteName = sitetName;
 		}
 
-		public MultistepActionStageCommandState GetState()
+		public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
 		{
-			return new MultistepActionStageCommandState
-			{
-				Type = RemovingStageCommandTypes.RemoveSiteContents,
-				ParentId = 0,
-				Id = SiteId
-			};
-		}
+		    Type = RemovingStageCommandTypes.RemoveSiteContents,
+		    ParentId = 0,
+		    Id = SiteId
+		};
 
-		public MultistepStageSettings GetStageSettings()
-		{
-			return new MultistepStageSettings
-			{
-				ItemCount = ItemCount,
-				StepCount = MultistepActionHelper.GetStepCount(ItemCount, ITEMS_PER_STEP),
-				Name = String.Format(SiteStrings.RemoveSiteContentsStageName, (SiteName ?? ""))
-			};
-		}
+	    public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
+	    {
+	        ItemCount = ItemCount,
+	        StepCount = MultistepActionHelper.GetStepCount(ItemCount, ITEMS_PER_STEP),
+	        Name = string.Format(SiteStrings.RemoveSiteContentsStageName, (SiteName ?? ""))
+	    };
 
-		#region IRemovingStageCommand Members
+	    #region IRemovingStageCommand Members
 
 		public MultistepActionStepResult Step(int step)
 		{
-			Site site = SiteRepository.GetById(SiteId);
+			var site = SiteRepository.GetById(SiteId);
 			if (site == null)
-				throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, SiteId));
+			{
+			    throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, SiteId));
+			}
 
-			IEnumerable<int> deletedContentsIds = ContentRepository.BatchRemoveContents(SiteId, ITEMS_PER_STEP);				
-			HashSet<string> deletedContentsStrIds = new HashSet<string>(deletedContentsIds.Select(id => id.ToString()), StringComparer.InvariantCultureIgnoreCase);
+		    var deletedContentsIds = ContentRepository.BatchRemoveContents(SiteId, ITEMS_PER_STEP);				
+			var deletedContentsStrIds = new HashSet<string>(deletedContentsIds.Select(id => id.ToString()), StringComparer.InvariantCultureIgnoreCase);
 
-			string sitePath = site.BasePathInfo.GetSubPathInfo("contents").Path;
+			var sitePath = site.BasePathInfo.GetSubPathInfo("contents").Path;
 			if (Directory.Exists(sitePath))
 			{
 				foreach (var sd in new DirectoryInfo(sitePath).EnumerateDirectories().Where(i => deletedContentsStrIds.Contains(i.Name)))

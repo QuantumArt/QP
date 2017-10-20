@@ -1,7 +1,5 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
@@ -24,8 +22,10 @@ namespace Quantumart.QP8.BLL
 		internal void BindWithContent(IEnumerable<int> activeContentsIds)
 		{
 			WorkflowRepository.CleanWorkflowContentIds(Id);
-			foreach(int contentId in activeContentsIds)
-				WorkflowRepository.SetWorkflowBindedContentId(Id, contentId);
+			foreach(var contentId in activeContentsIds)
+			{
+			    WorkflowRepository.SetWorkflowBindedContentId(Id, contentId);
+			}
 		}
 
 		public void DoCustomBinding(List<WorkflowRuleItem> workflowRuleItems)
@@ -45,55 +45,43 @@ namespace Quantumart.QP8.BLL
 		public override void Validate()
 		{
 			WorkflowRules.ForEach(x => x.IsInvalid = false);
-			RulesException<Workflow> errors = new RulesException<Workflow>();
+			var errors = new RulesException<Workflow>();
 			base.Validate(errors);
 
-			var WorkflowRulesArray = WorkflowRules.ToArray();
+			var workflowRulesArray = WorkflowRules.ToArray();
+			foreach (var rule in workflowRulesArray)
+			{
+			    ValidateWorkflowRule(rule, errors);
+			}
 
-			for (int i = 0; i < WorkflowRulesArray.Length; i++)
-				ValidateWorkflowRule(WorkflowRulesArray[i], errors, i + 1);
-
-			if (!errors.IsEmpty)
-				throw errors;
+		    if (!errors.IsEmpty)
+		    {
+		        throw errors;
+		    }
 		}
 
-		private void ValidateWorkflowRule(WorkflowRule rule, RulesException<Workflow> errors, int index)
+		private static void ValidateWorkflowRule(WorkflowRule rule, RulesException errors)
 		{
 			if (rule.UserId == null && rule.GroupId == null)
 			{
-				errors.ErrorForModel(String.Format(WorkflowStrings.UserNotSelected, rule.StatusType.Name));
+				errors.ErrorForModel(string.Format(WorkflowStrings.UserNotSelected, rule.StatusType.Name));
 				rule.IsInvalid = true;
 			}
 
 			if (rule.Description.Length > 2000)
 			{
-				errors.ErrorForModel(String.Format(WorkflowStrings.CommentToLong, rule.StatusType.Name));
+				errors.ErrorForModel(string.Format(WorkflowStrings.CommentToLong, rule.StatusType.Name));
 				rule.IsInvalid = true;
 			}
 		
 		}
 
-		public static Workflow Create(int siteId)
-		{
-			return new Workflow() { SiteId = siteId, WorkflowRules = new List<WorkflowRule>()};
-		}
+		public static Workflow Create(int siteId) => new Workflow { SiteId = siteId, WorkflowRules = new List<WorkflowRule>()};
 
-		public override string EntityTypeCode
-		{
-			get
-			{
-				return Constants.EntityTypeCode.Workflow;
-			}
-		}
+	    public override string EntityTypeCode => Constants.EntityTypeCode.Workflow;
 
-		public override int ParentEntityId
-		{
-			get
-			{				
-				return SiteId;
-			}			
-		}
+	    public override int ParentEntityId => SiteId;
 
-		public int[] ForceRulesIds { get; set; }
+	    public int[] ForceRulesIds { get; set; }
 	}
 }

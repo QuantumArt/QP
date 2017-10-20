@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Validators;
-using Quantumart.QP8.BLL.Helpers;
+using System;
 
 namespace Quantumart.QP8.BLL.ListItems
 {

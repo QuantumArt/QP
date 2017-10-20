@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Resources;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
@@ -46,28 +46,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
             return base.Setup(siteId, contentId, boundToExternal);
         }
 
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id)
+        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
         {
-            return new MultistepActionSettings
+            Stages = new[]
             {
-                Stages = new[]
-                {
-                    _clearCommand.GetStageSettings(),
-                    _removeCommand.GetStageSettings()
-                }
-            };
-        }
+                _clearCommand.GetStageSettings(),
+                _removeCommand.GetStageSettings()
+            }
+        };
 
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
+        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => new MultistepActionServiceContext
         {
-            return new MultistepActionServiceContext
+            CommandStates = new[]
             {
-                CommandStates = new[]
-                {
-                    _clearCommand.GetState(),
-                    _removeCommand.GetState()
-                }
-            };
-        }
+                _clearCommand.GetState(),
+                _removeCommand.GetState()
+            }
+        };
     }
 }

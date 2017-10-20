@@ -1,15 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Repository;
-
 namespace Quantumart.QP8.BLL.Validators
 {
 	public static class SiteValidators
@@ -24,9 +12,11 @@ namespace Quantumart.QP8.BLL.Validators
 		{
             errorMessage = null;
             if (currentTarget.SeparateDns)
-                return !String.IsNullOrEmpty(objectToValidate);
-            else
-                return true;
+            {
+                return !string.IsNullOrEmpty(objectToValidate);
+            }
+
+		    return true;
 		}
 	}
 }

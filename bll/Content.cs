@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -1010,7 +1010,7 @@ namespace Quantumart.QP8.BLL
                 {
                     // проверить sql запросы на возможность выполнения
                     var areQueriesCorrect = true;
-                    if (!VirtualContentRepository.IsQueryQueryCorrect(UserQuery, out string userQueryErrorMsg))
+                    if (!VirtualContentRepository.IsQueryQueryCorrect(UserQuery, out var userQueryErrorMsg))
                     {
                         areQueriesCorrect = false;
                         errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.UserQueryIsInvalid, userQueryErrorMsg));

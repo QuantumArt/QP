@@ -1,8 +1,8 @@
 using System;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -10,7 +10,7 @@ namespace Quantumart.QP8.BLL
     {
         public static ArticleSchedule CreateSchedule(Article item)
         {
-            ArticleSchedule result = new ArticleSchedule();
+            var result = new ArticleSchedule();
             result.ScheduleType = item.Visible ? ScheduleTypeEnum.Visible : ScheduleTypeEnum.Invisible;
             result.ArticleId = item.Id;
             result.Article = item;
@@ -60,12 +60,6 @@ namespace Quantumart.QP8.BLL
 
         public RecurringSchedule Recurring { get; set; }
 
-        public bool IsVisible
-        {
-            get
-            {
-                return ScheduleType == ScheduleTypeEnum.Visible || ScheduleType == ScheduleTypeEnum.OneTimeEvent && StartRightNow;
-            }
-        }
+        public bool IsVisible => ScheduleType == ScheduleTypeEnum.Visible || ScheduleType == ScheduleTypeEnum.OneTimeEvent && StartRightNow;
     }
 }

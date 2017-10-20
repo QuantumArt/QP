@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -28,30 +28,21 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
             ItemCount = itemCount;
         }
 
-        public MultistepActionStageCommandState GetState()
+        public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
         {
-            return new MultistepActionStageCommandState
-            {
-                Type = RemovingStageCommandTypes.ClearContent,
-                ParentId = SiteId,
-                Id = ContentId
-            };
-        }
+            Type = RemovingStageCommandTypes.ClearContent,
+            ParentId = SiteId,
+            Id = ContentId
+        };
 
-        public MultistepStageSettings GetStageSettings()
+        public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
         {
-            return new MultistepStageSettings
-            {
-                ItemCount = ItemCount,
-                StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
-                Name = string.Format(ContentStrings.ClearContentStageName, ContentName ?? string.Empty)
-            };
-        }
+            ItemCount = ItemCount,
+            StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
+            Name = string.Format(ContentStrings.ClearContentStageName, ContentName ?? string.Empty)
+        };
 
-        public bool IsLastStep(int step)
-        {
-            return step == GetStageSettings().StepCount - 1;
-        }
+        public bool IsLastStep(int step) => step == GetStageSettings().StepCount - 1;
 
         public MultistepActionStepResult Step(int step)
         {

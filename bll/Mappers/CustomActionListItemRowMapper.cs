@@ -35,10 +35,11 @@ namespace Quantumart.QP8.BLL.Mappers
                 sortExpression = "[ORDER] ASC";
             }
 
-            var replaces = new Dictionary<string, string>() {
+            var replaces = new Dictionary<string, string>
+            {
                 {"LastModifiedByUser", "LOGIN"},
                 {"ActionTypeName", "ACTION_TYPE_NAME"},
-                {"EntityTypeName", "ENTITY_TYPE_NAME"},
+                {"EntityTypeName", "ENTITY_TYPE_NAME"}
             };
 
             return TranslateHelper.TranslateSortExpression(sortExpression, replaces);

@@ -122,10 +122,7 @@ namespace Quantumart.QP8.BLL
             return errors;
         }
 
-        public bool IsAccessible(string code)
-        {
-            return SecurityRepository.IsEntityAccessible(EntityTypeCode, Id, code);
-        }
+        public bool IsAccessible(string code) => SecurityRepository.IsEntityAccessible(EntityTypeCode, Id, code);
 
         public BackendAction SaveAndCloseAction
         {
@@ -174,10 +171,7 @@ namespace Quantumart.QP8.BLL
 
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         [SuppressMessage("ReSharper", "BaseObjectGetHashCodeCallInGetHashCode")]
-        public override int GetHashCode()
-        {
-            return Id == 0 ? base.GetHashCode() : Id;
-        }
+        public override int GetHashCode() => Id == 0 ? base.GetHashCode() : Id;
 
         protected virtual RulesException ValidateSecurity(RulesException errors)
         {

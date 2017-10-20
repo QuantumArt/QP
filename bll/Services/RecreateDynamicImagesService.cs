@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -10,6 +10,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
+using IsolationLevel = System.Transactions.IsolationLevel;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -91,12 +92,12 @@ namespace Quantumart.QP8.BLL.Services
             if (dataForStep.Any())
             {
                 var ids = dataForStep.Select(d => d.Item1).ToArray();
-                var notificationRepository = new NotificationPushRepository() { IgnoreInternal = true };
+                var notificationRepository = new NotificationPushRepository { IgnoreInternal = true };
                 notificationRepository.PrepareNotifications(context.ContentId, ids, NotificationCode.Update);
 
                 foreach (var dfs in dataForStep)
                 {
-                    using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted }))
+                    using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
                     {
                         var newValue = dimg.GetValue(dimg.GetDesiredFileName(dfs.Item2));
                         RecreateDynamicImagesRepository.UpdateDynamicFieldValue(dimg.Field.Id, dfs.Item1, newValue);
@@ -121,10 +122,7 @@ namespace Quantumart.QP8.BLL.Services
             HttpContext.Current.Session.Remove(HttpContextSession.RecreateDynamicImagesServiceProcessingContext);
         }
 
-        private static bool HasAlreadyRun()
-        {
-            return HttpContext.Current.Session[HttpContextSession.RecreateDynamicImagesServiceProcessingContext] != null;
-        }
+        private static bool HasAlreadyRun() => HttpContext.Current.Session[HttpContextSession.RecreateDynamicImagesServiceProcessingContext] != null;
 
         private static Tuple<Field, Field> GetFields(int fieldId)
         {

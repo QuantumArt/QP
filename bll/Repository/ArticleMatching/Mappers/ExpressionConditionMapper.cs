@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions;
 using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
+using FieldInfo = System.Reflection.FieldInfo;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Mappers
 {
@@ -25,11 +25,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Mappers
 		#endregion
 
 		#region IConditionMapper implementation
-		public ConditionBase Map(Expression<Predicate<IArticle>> source)
-		{
-			return Map(source.Body);
-		}
-		#endregion
+		public ConditionBase Map(Expression<Predicate<IArticle>> source) => Map(source.Body);
+
+	    #endregion
 
 		#region private methods
 		private static ConditionBase Map(Expression expression)
@@ -39,24 +37,25 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Mappers
 
 			if (binary != null)
 			{
-				if (_singleExpressionMap.ContainsKey(binary.NodeType))
+			    if (_singleExpressionMap.ContainsKey(binary.NodeType))
 				{
 					operation = _singleExpressionMap[binary.NodeType];
 					return new ComparitionCondition(GetValue(binary.Left), GetValue(binary.Right), operation);
 				}
-				else if (_binaryExpressionMap.ContainsKey(binary.NodeType))
-				{
-					operation = _binaryExpressionMap[binary.NodeType];
-					var condition = new LogicalCondition { Operation = operation };
 
-					condition.Conditions = new ConditionBase[]
-					{
-						Map(binary.Left),
-						Map(binary.Right)
-					};
+			    if (_binaryExpressionMap.ContainsKey(binary.NodeType))
+			    {
+			        operation = _binaryExpressionMap[binary.NodeType];
+			        var condition = new LogicalCondition { Operation = operation };
 
-					return condition;
-				}
+			        condition.Conditions = new[]
+			        {
+			            Map(binary.Left),
+			            Map(binary.Right)
+			        };
+
+			        return condition;
+			    }
 			}
 
 			return null;
@@ -68,27 +67,26 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Mappers
 			{
 				return (expression as ConstantExpression).Value;
 			}
-			else if (expression is MemberExpression)
-			{
-				var member = expression as MemberExpression;
 
-				if (member.Expression is ConstantExpression)
-				{
-					var obj = (member.Expression as ConstantExpression).Value;
-					MemberInfo t = member.Member;
-					var t2 = t as System.Reflection.FieldInfo;
-					var res = t2.GetValue(obj);
-					return res;
-				}
-				else
-				{
-					var call = member.Expression as MethodCallExpression;
-					var fields = GetFields(call).ToArray();
-					return fields;
-				}
-			}
+		    if (expression is MemberExpression)
+		    {
+		        var member = expression as MemberExpression;
 
-			return null;
+		        if (member.Expression is ConstantExpression)
+		        {
+		            var obj = (member.Expression as ConstantExpression).Value;
+		            var t = member.Member;
+		            var t2 = t as FieldInfo;
+		            var res = t2.GetValue(obj);
+		            return res;
+		        }
+
+		        var call = member.Expression as MethodCallExpression;
+		        var fields = GetFields(call).ToArray();
+		        return fields;
+		    }
+
+		    return null;
 		}
 
 		private static IEnumerable<QueryField> GetFields(MethodCallExpression call)

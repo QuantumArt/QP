@@ -1,5 +1,5 @@
-﻿using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
 using System.Text;
+using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 {
@@ -10,18 +10,17 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 		public bool CastToString { get; set; }
 
 		public FieldCondition()
-			: base()
 		{
 			CastToString = false;
 		}
 
 		public override string GetCurrentExpression()
 		{
-			if (Fields != null || Fields.Length > 0)
+		    if (Fields != null || Fields.Length > 0)
 			{
-				StringBuilder sb = new StringBuilder("root");
+				var sb = new StringBuilder("root");
 
-				for (int i = 0; i < Fields.Length; i++)
+				for (var i = 0; i < Fields.Length; i++)
 				{
 					if (i + 1 < Fields.Length)
 					{
@@ -39,15 +38,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 				{
 					return string.Format("CAST({0} AS NVARCHAR(MAX))", sb);
 				}
-				else
-				{
-					return sb.ToString();
-				}
+
+			    return sb.ToString();
 			}
-			else
-			{
-				return null;
-			}
+
+		    return null;
 		}
 	}
 }

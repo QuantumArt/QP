@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository.Articles;
 
@@ -130,7 +130,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
             public void SetLevel(int level, IDictionary<int, List<HierarchyItem>> levelItems)
             {
-                if (!levelItems.TryGetValue(level, out List<HierarchyItem> list))
+                if (!levelItems.TryGetValue(level, out var list))
                 {
                     list = new List<HierarchyItem>();
                     levelItems.Add(level, list);

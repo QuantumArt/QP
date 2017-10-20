@@ -1,10 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Quantumart.QP8.DAL;
-using Quantumart.QP8.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -48,12 +43,16 @@ namespace Quantumart.QP8.BLL.Mappers
 			}
 			
 			if (!bizObject.AllowOrderDynamic)
-				dataObject.OrderDynamic = null;
+			{
+			    dataObject.OrderDynamic = null;
+			}
 
-			if (!bizObject.AllowOrderDynamic)
-				dataObject.OrderDynamic = null;			
+		    if (!bizObject.AllowOrderDynamic)
+		    {
+		        dataObject.OrderDynamic = null;
+		    }
 
-			if (!bizObject.EnableDataCaching)
+		    if (!bizObject.EnableDataCaching)
 			{
 				dataObject.Duration = null;
 			}
