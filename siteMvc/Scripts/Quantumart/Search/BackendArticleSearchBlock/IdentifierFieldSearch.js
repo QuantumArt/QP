@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch = function (
   containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
   Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.initializeBase(
@@ -134,8 +135,8 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
   },
 
   _onByValueSelectorChanged(e) {
-    this._isByValue = $(e.currentTarget).val() === 0;
-    this._isByText = $(e.currentTarget).val() === 2;
+    this._isByValue = +$(e.currentTarget).val() === 0;
+    this._isByText = +$(e.currentTarget).val() === 2;
 
     if (this._isByText) {
       $(this._textAreaElement).closest('.row').show();

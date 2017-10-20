@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch = function (
   containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID
 ) {
@@ -159,7 +160,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
   },
 
   _onByValueSelectorChanged(e) {
-    this._isByValue = $(e.currentTarget).val() === 0;
+    this._isByValue = +$(e.currentTarget).val() === 0;
 
     if (this._isByValue === true) {
       $(this._numberToElement).data('tTextBox').disable();

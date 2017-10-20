@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (
   containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType
 ) {
@@ -213,7 +214,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   },
 
   _onSelectorChange(e) {
-    this._isEntity = $(e.currentTarget).val() === 0;
+    this._isEntity = +$(e.currentTarget).val() === 0;
     if (this._isEntity) {
       $(this._entityContainerElement).show();
       $(this._textAreaContainerElement).hide();
