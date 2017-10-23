@@ -45,7 +45,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                 return normalizedInput.StartsWith("<?xml") && normalizedInput.EndsWith("</actions>")
                     ? ConsoleKey.D1
                     : ConsoleKey.D2;
-
             }
 
             return ConsoleHelpers.AskUserToSelectUtilityMode();

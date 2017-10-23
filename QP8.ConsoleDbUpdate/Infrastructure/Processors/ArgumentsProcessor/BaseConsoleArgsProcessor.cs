@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Mono.Options;
 using QP8.Infrastructure;
+using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
@@ -32,7 +33,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal virtual void PrintEnteredData()
         {
-            Console.WriteLine($@"Customer Code: {CustomerCode}");
+            if (SqlHelpers.TryParseConnectionString(CustomerCode, out var _))
+            {
+                Console.WriteLine($@"Connection String: {CustomerCode}");
+            }
+            else
+            {
+                Console.WriteLine($@"Customer Code: {CustomerCode}");
+            }
+
             Console.WriteLine($@"File Pathes: {string.Join(", ", FilePathes)}");
             Console.WriteLine($@"Config: {(string.IsNullOrWhiteSpace(ConfigPath) ? "disabled" : ConfigPath)}");
             Console.WriteLine($@"Verbosity Level: {Program.VerboseLevel}");
@@ -103,7 +112,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         private static void ShowCommandLineHelp(OptionSet optionsSet)
         {
-            Console.WriteLine(@"USAGE: qpdbupdate [OPTIONS]+ <customer_code>" + Environment.NewLine);
+            Console.WriteLine(@"USAGE: qpdbupdate [OPTIONS]+ <customer_code|connection_string>" + Environment.NewLine);
             Console.WriteLine(@"OPTIONS:");
             optionsSet.WriteOptionDescriptions(Console.Out);
             ConsoleHelpers.ExitProgram(ExitCode.Success);

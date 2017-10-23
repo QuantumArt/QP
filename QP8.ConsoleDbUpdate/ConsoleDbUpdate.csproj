@@ -81,6 +81,7 @@
     <Compile Include="Infrastructure\Processors\ArgumentsProcessor\BaseConsoleArgsProcessor.cs" />
     <Compile Include="Infrastructure\Processors\ArgumentsProcessor\CsvConsoleArgsProcessor.cs" />
     <Compile Include="Infrastructure\Processors\ArgumentsProcessor\XmlConsoleArgsProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\DataProcessor\BaseDataProcessor.cs" />
     <Compile Include="Infrastructure\Processors\DataProcessor\CsvDataProcessor.cs" />
     <Compile Include="Infrastructure\Processors\DataProcessor\IDataProcessor.cs" />
     <Compile Include="Infrastructure\Processors\DataProcessor\XmlDataProcessor.cs" />
@@ -323,6 +324,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />

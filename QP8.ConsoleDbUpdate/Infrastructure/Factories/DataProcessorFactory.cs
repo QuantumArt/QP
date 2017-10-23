@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
@@ -13,25 +13,23 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
     {
         internal static IDataProcessor Create(BaseSettingsModel settings)
         {
-            if (settings is XmlSettingsModel xmlSettings)
+            switch (settings)
             {
-                return new XmlDataProcessor(
-                    xmlSettings,
-                    new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository()),
-                    new ApplicationInfoRepository(),
-                    new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())),
-                    new XmlDbUpdateHttpContextProcessor()
-                );
-            }
-
-            if (settings is CsvSettingsModel csvSettings)
-            {
-                return new CsvDataProcessor(
-                    csvSettings,
-                    new FieldRepository(),
-                    new ContentRepository(),
-                    new ArticleRepository()
-                );
+                case XmlSettingsModel xmlSettings:
+                    return new XmlDataProcessor(
+                        xmlSettings,
+                        new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository()),
+                        new ApplicationInfoRepository(),
+                        new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())),
+                        new XmlDbUpdateHttpContextProcessor()
+                    );
+                case CsvSettingsModel csvSettings:
+                    return new CsvDataProcessor(
+                        csvSettings,
+                        new FieldRepository(),
+                        new ContentRepository(),
+                        new ArticleRepository()
+                    );
             }
 
             throw new NotImplementedException($"Processor for current settings ({settings.GetType().Name}) is not implemented yet..");

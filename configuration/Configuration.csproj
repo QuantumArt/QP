@@ -78,10 +78,12 @@
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6E317F05-226C-4C9F-B918-FE71D743C3A3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
       <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
       <Name>QP8.Infrastructure</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
