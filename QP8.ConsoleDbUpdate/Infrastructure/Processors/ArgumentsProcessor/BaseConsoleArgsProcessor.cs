@@ -76,8 +76,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal OptionSet AddCommonOptions(OptionSet optionSet)
         {
-            optionSet.Add("p|path=", "single or multiple <path> to file|directory with xml|csv record actions to replay", p => FilePathes.Add(p));
-            optionSet.Add("c|config=", "the <path> of xml|csv config file to apply", c => ConfigPath = c);
+            if (!Console.IsInputRedirected)
+            {
+                optionSet.Add("p|path=", "single or multiple <path> to file|directory with xml|csv record actions to replay", p => FilePathes.Add(p));
+                optionSet.Add("c|config=", "the <path> of xml|csv config file to apply", c => ConfigPath = c);
+            }
+
             optionSet.Add("v|verbose", "increase debug message verbosity [v|vv|vvv]:[error|warning|info].", v => { });
             optionSet.Add("s|silent", "enable silent mode for automatization.", s => { });
             optionSet.Add("m|mode=", "single value which represents utility mode [xml|csv]", m => { });
@@ -88,9 +92,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
         private void ValidateInputData(ICollection<string> noNamedOptions)
         {
             Ensure.That<OptionException>(noNamedOptions.Count == 1, "Should specify single not named parameter <customer_code>", "customer_code");
-            Ensure.That<OptionException>(FilePathes.Any(), "Should specify at least one xml file or folder path", "path");
-            CustomerCode = noNamedOptions.Single();
+            if (!Console.IsInputRedirected)
+            {
+                Ensure.That<OptionException>(FilePathes.Any(), "Should specify at least one xml file or folder path", "path");
+            }
 
+            CustomerCode = noNamedOptions.Single();
             Logger.Log.SetGlobalContext(LoggerData.CustomerCodeCustomVariable, CustomerCode);
         }
 

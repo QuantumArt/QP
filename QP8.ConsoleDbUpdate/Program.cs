@@ -14,12 +14,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate
     {
         internal static int VerboseLevel;
         internal static bool IsSilentModeEnabled;
+        internal static string StandardInputData;
         internal static QpUpdateLoggingWrapper Logger;
 
         static Program()
         {
             try
             {
+                IsSilentModeEnabled = Console.IsInputRedirected;
                 EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
             }
             catch (Exception ex)
@@ -36,7 +38,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
             try
             {
+                ConsoleHelpers.SetupConsole();
                 ConsoleHelpers.PrintHelloMessage();
+                ConsoleHelpers.ReadFromStandardInput();
+
                 var selectedMode = ConsoleHelpers.GetUtilityMode(args);
                 Logger.SetLogLevel(VerboseLevel);
 
@@ -45,7 +50,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 Logger.Debug($"Parsed settings: {settings.ToJsonLog()}");
 
                 var dataProcessor = DataProcessorFactory.Create(settings);
-                dataProcessor.Process();
+                if (Console.IsInputRedirected)
+                {
+                    dataProcessor.Process(StandardInputData);
+                }
+                else
+                {
+                    dataProcessor.Process();
+                }
 
                 Logger.Debug("Processing successfuly finished...");
                 ConsoleHelpers.ExitProgram(ExitCode.Success);

@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text;
 using Mono.Options;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
@@ -7,6 +9,24 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 {
     internal static class ConsoleHelpers
     {
+        internal static void SetupConsole()
+        {
+            Console.InputEncoding = Encoding.UTF8;
+            Console.OutputEncoding = Encoding.UTF8;
+        }
+
+        internal static void ReadFromStandardInput()
+        {
+            if (Console.IsInputRedirected)
+            {
+                using (var inputStream = Console.OpenStandardInput())
+                using (var streamReader = new StreamReader(inputStream, Console.InputEncoding))
+                {
+                    Program.StandardInputData = streamReader.ReadToEnd();
+                }
+            }
+        }
+
         internal static void PrintHelloMessage()
         {
             WriteLineDebug();
@@ -59,26 +79,34 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 
         internal static ConsoleKey GetUtilityMode(string[] args)
         {
-            var utilityMode = "ask";
+            var utilityMode = "auto";
             var options = new OptionSet
             {
                 { "m|mode=", m => { utilityMode = m; } },
-                { "s|silent", "enable silent mode for automatization", s => Program.IsSilentModeEnabled = s != null },
                 { "v|verbose", "increase debug message verbosity. [v|vv|vvv]:[error|warning|info]", v => ++Program.VerboseLevel },
-                { "h|help", "show this message and exit", h => utilityMode = h != null ? "help" : utilityMode }
+                { "s|silent", "enable silent mode for automatization", s => Program.IsSilentModeEnabled = s != null }
             };
-
+            
             options.Parse(args);
             switch (utilityMode.ToLower())
             {
+                case "auto":
+                    return ConsoleKey.NumPad0;
                 case "xml":
                     return ConsoleKey.NumPad1;
                 case "csv":
                     return ConsoleKey.NumPad2;
-                case "help":
-                    return AskUserToSelectHelpMode();
-                case "ask":
-                    return AskUserToSelectUtilityMode();
+            }
+
+            if (!Console.IsInputRedirected)
+            {
+                switch (utilityMode.ToLower())
+                {
+                    case "help":
+                        return AskUserToSelectHelpMode();
+                    case "ask":
+                        return AskUserToSelectUtilityMode();
+                }
             }
 
             throw new OptionException("Unexpected utility mode was specified", "m|mode=");
@@ -118,20 +146,23 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
                     break;
                 case ExitCode.DbUpdateError:
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(warningMsg);
+                    Console.Error.WriteLine(warningMsg);
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine(successMsg);
                     break;
                 case ExitCode.Error:
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(errorMsg);
+                    Console.Error.WriteLine(errorMsg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(exitCode), exitCode, "Unknown exit code");
             }
 
             Console.ResetColor();
+            Console.Out.Flush();
+            Console.Error.Flush();
             Program.Logger.Dispose();
+
             Environment.Exit((int)exitCode);
         }
     }

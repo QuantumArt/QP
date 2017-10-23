@@ -38,12 +38,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             Program.Logger.Info($"Total files readed from disk: {orderedFilePathes.Count}.");
             Program.Logger.Debug($"Documents will be processed in next order: {orderedFilePathes.ToJsonLog()}.");
 
-            var filteredOrderedFilePathes = new List<string>();
-            Program.Logger.Info($"Skipped files count: {orderedFilePathes.Count - filteredOrderedFilePathes.Count}.");
-            Program.Logger.Info($"Total files will be processed: {filteredOrderedFilePathes.Count}.");
-            Program.Logger.Debug($"Documents will be processed in next order: {filteredOrderedFilePathes.ToJsonLog()}");
-
-            return CombineMultipleDocumentsWithSameRoot(filteredOrderedFilePathes.Select(XDocument.Load).ToList()).ToNormalizedString(SaveOptions.DisableFormatting);
+            return CombineMultipleDocumentsWithSameRoot(orderedFilePathes.Select(XDocument.Load).ToList()).ToNormalizedString(SaveOptions.DisableFormatting);
         }
 
         private static IEnumerable<string> GetOrderedDirectoryFilePathes(string absDirPath, string absOrRelativeConfigPath)
