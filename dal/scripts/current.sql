@@ -3617,8 +3617,8 @@ begin
 
     declare @ids2 Ids
     insert into @ids2
-    select id from @itemIds i inner join content_item ci on i.ID = ci.CONTENT_ITEM_ID
-    inner join CONTENT_ATTRIBUTE ca on ca.CONTENT_ID = ci.CONTENT_ID and ca.IS_CLASSIFIER = 1 and ci.SPLITTED = 0
+    select id from @itemIds i inner join content_item ci on i.ID = ci.CONTENT_ITEM_ID and ci.SPLITTED = 0
+	where exists(select * from CONTENT_ATTRIBUTE ca where ca.CONTENT_ID = ci.CONTENT_ID and ca.IS_CLASSIFIER = 1)
 
     if exists (select * from @ids2)
     begin
