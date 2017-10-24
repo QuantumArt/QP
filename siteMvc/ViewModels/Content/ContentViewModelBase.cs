@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using Quantumart.QP8.BLL;
@@ -15,14 +15,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public new BLL.Content Data
         {
-            get
-            {
-                return (BLL.Content)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.Content)EntityData;
+            set => EntityData = value;
         }
 
         public List<ListItem> Groups

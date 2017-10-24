@@ -1,9 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Quantumart.QP8.Scheduler.API;
+using Unity;
+using Unity.Extension;
+using Unity.Injection;
+using Unity.Lifetime;
 
 namespace Quantumart.QP8.Scheduler.Core
 {

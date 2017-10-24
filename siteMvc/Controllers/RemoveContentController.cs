@@ -21,19 +21,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveContent)]
         [BackendActionContext(ActionCode.RemoveContent)]
         [BackendActionLog]
-        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
-        {
-            return Json(_service.Setup(parentId, id, boundToExternal));
-        }
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal) => Json(_service.Setup(parentId, id, boundToExternal));
 
         [HttpPost]
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
 
-        public ActionResult Step(int stage, int step)
-        {
-            return Json(_service.Step(stage, step));
-        }
+        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
 
         [HttpPost]
         [BackendActionContext(ActionCode.RemoveContent)]

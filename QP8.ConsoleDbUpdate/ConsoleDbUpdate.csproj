@@ -130,18 +130,6 @@
     <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.Extensions.dll">
       <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Autofac.dll">
-      <Link>References\Autofac.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\NLog.QuantumArt.PrtgMonitoring.dll">
-      <Link>References\NLog.QuantumArt.PrtgMonitoring.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Flurl.dll">
-      <Link>References\Flurl.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Flurl.Http.dll">
-      <Link>References\Flurl.Http.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\binaries\DbUpdate\Microsoft.Practices.EnterpriseLibrary.Data.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
     </EmbeddedResource>
@@ -297,12 +285,12 @@
       <Name>WebMvc</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+    <ProjectReference Include="C:\ProxyDocuments\Projects\QP\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
+    <ProjectReference Include="C:\ProxyDocuments\Projects\QP\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
       <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
       <Name>QP8.Infrastructure</Name>
       <Private>False</Private>
@@ -325,6 +313,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SqlClient, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SqlClient.4.4.0\lib\net461\System.Data.SqlClient.dll</HintPath>
+    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />

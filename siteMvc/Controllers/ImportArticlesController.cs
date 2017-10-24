@@ -43,13 +43,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
-        public ActionResult Settings(string tabId, int parentId, int id)
+        public ActionResult Settings(string tabId, int parentId, int id) => JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel
         {
-            return JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel
-            {
-                ContentId = id
-            });
-        }
+            ContentId = id
+        });
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -70,10 +67,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
         [BackendActionLog]
-        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
-        {
-            return Json(_service.Setup(parentId, id, boundToExternal));
-        }
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal) => Json(_service.Setup(parentId, id, boundToExternal));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -94,10 +88,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step)
-        {
-            return Json(_service.Step(stage, step));
-        }
+        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
 
         [HttpPost]
         public ActionResult TearDown(bool isError)

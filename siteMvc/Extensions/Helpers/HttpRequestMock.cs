@@ -1,4 +1,4 @@
-﻿using System.Collections.Specialized;
+using System.Collections.Specialized;
 using System.Web;
 using Moq;
 
@@ -52,14 +52,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public override string ContentType
         {
-            get
-            {
-                return FormContentType;
-            }
-            set
-            {
-                base.ContentType = value;
-            }
+            get => FormContentType;
+            set => base.ContentType = value;
         }
 
         public override string UserAgent { get; } = "RecordReplayHelper";

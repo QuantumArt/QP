@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Helpers;
-using QP8.Infrastructure.Logging.IoC;
+using QP8.Infrastructure.Logging.Unity.Old;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Interfaces.Services;

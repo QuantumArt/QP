@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
 using System.Linq;
 using System.ServiceProcess;
-using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Scheduler.API;
+using Unity;
 
 namespace Quantumart.QP8.Scheduler.Service
 {
@@ -22,13 +23,13 @@ namespace Quantumart.QP8.Scheduler.Service
                     var processInstaller = new ServiceProcessInstaller { Account = ServiceAccount.LocalSystem };
                     var descriptors = container.Resolve<ServiceDescriptor[]>();
                     var serviceInstallers = from descriptor in descriptors
-                                            select new ServiceInstaller
-                                            {
-                                                StartType = ServiceStartMode.Manual,
-                                                DisplayName = descriptor.Name,
-                                                ServiceName = descriptor.Key,
-                                                Description = descriptor.Description
-                                            };
+                        select new ServiceInstaller
+                        {
+                            StartType = ServiceStartMode.Manual,
+                            DisplayName = descriptor.Name,
+                            ServiceName = descriptor.Key,
+                            Description = descriptor.Description
+                        };
 
                     Installers.Add(processInstaller);
                     Installers.AddRange(serviceInstallers.ToArray<Installer>());
@@ -43,28 +44,25 @@ namespace Quantumart.QP8.Scheduler.Service
             }
         }
 
-        protected override void OnAfterInstall(System.Collections.IDictionary savedState)
+        protected override void OnAfterInstall(IDictionary savedState)
         {
             Logger.Log.Info($"Version {GetVersion()} has been installed");
             base.OnAfterInstall(savedState);
         }
 
-        protected override void OnAfterRollback(System.Collections.IDictionary savedState)
+        protected override void OnAfterRollback(IDictionary savedState)
         {
             Logger.Log.Info($"Rollback for version {GetVersion()}");
             base.OnAfterRollback(savedState);
         }
 
-        protected override void OnAfterUninstall(System.Collections.IDictionary savedState)
+        protected override void OnAfterUninstall(IDictionary savedState)
         {
             Logger.Log.Info($"Version {GetVersion()} has been uninstalled");
             base.OnAfterUninstall(savedState);
         }
 
-        private Version GetVersion()
-        {
-            return GetType().Assembly.GetName().Version;
-        }
+        private Version GetVersion() => GetType().Assembly.GetName().Version;
 
         protected override void Dispose(bool disposing)
         {

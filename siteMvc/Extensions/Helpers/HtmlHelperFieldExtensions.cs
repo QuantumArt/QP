@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -681,8 +681,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 aggregatedArticle = article.GetAggregatedArticleByClassifier(classifierValue);
             }
 
-            string acticleHtmlElemId;
-            var sb = new StringBuilder(source.BeginClassifierFieldComponent(name, value, field, article, aggregatedArticle, out acticleHtmlElemId));
+            var sb = new StringBuilder(source.BeginClassifierFieldComponent(name, value, field, article, aggregatedArticle, out var acticleHtmlElemId));
 
             if (forceReadOnly)
             {
@@ -718,8 +717,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 aggregatedArticle = version?.AggregatedArticles.SingleOrDefault(n => n.ContentId == classifierValue);
             }
 
-            string acticleHtmlElemId;
-            var sb = new StringBuilder(source.BeginClassifierFieldComponent(name, value, field, article, aggregatedArticle, out acticleHtmlElemId));
+            var sb = new StringBuilder(source.BeginClassifierFieldComponent(name, value, field, article, aggregatedArticle, out string acticleHtmlElemId));
 
             if (forceReadOnly)
             {

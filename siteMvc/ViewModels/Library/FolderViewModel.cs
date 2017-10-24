@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Library
@@ -7,14 +7,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
     {
         public new Folder Data
         {
-            get
-            {
-                return (Folder)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (Folder)EntityData;
+            set => EntityData = value;
         }
     }
 }

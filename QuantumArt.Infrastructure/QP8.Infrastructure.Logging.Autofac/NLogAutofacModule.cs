@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Autofac;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
 
-namespace QP8.Infrastructure.Logging.IoC
+namespace QP8.Infrastructure.Logging.Autofac
 {
     public class NLogAutofacModule : Module
     {

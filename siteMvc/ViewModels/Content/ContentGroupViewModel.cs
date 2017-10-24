@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using B = Quantumart.QP8.BLL;
 using C = Quantumart.QP8.Constants;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
@@ -16,47 +8,30 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 	{
 		public new B.ContentGroup Data
 		{
-			get
-			{
-				return (B.ContentGroup)EntityData;
-			}
-			set
-			{
-				EntityData = value;
-			}
+			get => (B.ContentGroup)EntityData;
+		    set => EntityData = value;
 		}
 
 		#region creation
 
-		public static ContentGroupViewModel Create(ContentGroup group, string tabId, int parentId)
-		{
-			return EntityViewModel.Create<ContentGroupViewModel>(group, tabId, parentId);
-		}
+		public static ContentGroupViewModel Create(B.ContentGroup group, string tabId, int parentId) => Create<ContentGroupViewModel>(group, tabId, parentId);
 
-		#endregion
+	    #endregion
 
 		#region read-only members
 
-		public override string EntityTypeCode
-		{
-			get
-			{
-				return C.EntityTypeCode.ContentGroup;
-			}
-		}
+		public override string EntityTypeCode => C.EntityTypeCode.ContentGroup;
 
-		public override string ActionCode
+	    public override string ActionCode
 		{
 			get
 			{
-				if (IsNew)
+			    if (IsNew)
 				{
 					return C.ActionCode.AddNewContentGroup;
 				}
-				else
-				{
-					return C.ActionCode.ContentGroupProperties;
-				}
+
+			    return C.ActionCode.ContentGroupProperties;
 			}
 		}
 

@@ -1,8 +1,8 @@
-﻿using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
 
-namespace QP8.Infrastructure.Logging.IoC
+namespace QP8.Infrastructure.Logging.Unity.Old
 {
     public class NLogUnityContainerExtension : UnityContainerExtension
     {

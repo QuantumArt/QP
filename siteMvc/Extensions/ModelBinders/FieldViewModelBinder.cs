@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Web.Mvc;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
 
@@ -8,7 +10,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
     public class FieldViewModelBinder : QpModelBinder
     {
-        protected override void BindProperty(System.Web.Mvc.ControllerContext controllerContext, System.Web.Mvc.ModelBindingContext bindingContext, System.ComponentModel.PropertyDescriptor propertyDescriptor)
+        protected override void BindProperty(ControllerContext controllerContext, ModelBindingContext bindingContext, PropertyDescriptor propertyDescriptor)
         {
             var model = bindingContext.Model as FieldViewModel;
             Expression<Func<IEnumerable<int>>> p = () => model.DefaultArticleIds;
@@ -23,7 +25,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             }
         }
 
-        protected override void OnModelUpdated(System.Web.Mvc.ControllerContext controllerContext, System.Web.Mvc.ModelBindingContext bindingContext)
+        protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             base.OnModelUpdated(controllerContext, bindingContext);
             var model = bindingContext.Model as FieldViewModel;

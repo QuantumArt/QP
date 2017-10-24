@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
@@ -82,16 +82,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             {
                 if (key.StartsWith(IdPrefix))
                 {
-                    int contentId;
-                    if (int.TryParse(key.Replace(IdPrefix, string.Empty), out contentId))
+                    if (int.TryParse(key.Replace(IdPrefix, string.Empty), out var contentId))
                     {
                         UniqueAggregatedFieldsToUpdate[contentId] = collection[key];
                     }
                 }
                 else if (key.StartsWith(FieldPrefix))
                 {
-                    int fieldId;
-                    if (int.TryParse(key.Replace(FieldPrefix, string.Empty), out fieldId))
+                    if (int.TryParse(key.Replace(FieldPrefix, string.Empty), out var fieldId))
                     {
                         var field = FieldRepository.GetById(fieldId);
                         if (field != null)
@@ -102,30 +100,26 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
                 }
             }
 
-            int uniqueFieldId;
-            if (int.TryParse(UniqueContentFieldId, out uniqueFieldId))
+            if (int.TryParse(UniqueContentFieldId, out var uniqueFieldId))
             {
                 UniqueContentField = FieldRepository.GetById(uniqueFieldId);
             }
         }
 
-        public ImportSettings GetImportSettingsObject(int parentId, int id)
+        public ImportSettings GetImportSettingsObject(int parentId, int id) => new ImportSettings(parentId, id)
         {
-            return new ImportSettings(parentId, id)
-            {
-                Culture = ((CsvCulture)int.Parse(Culture)).Description(),
-                Delimiter = char.Parse(((CsvDelimiter)int.Parse(Delimiter)).Description()),
-                Encoding = ((CsvEncoding)int.Parse(Encoding)).Description(),
-                LineSeparator = ((CsvLineSeparator)int.Parse(LineSeparator)).Description(),
-                FileName = FileName,
-                UniqueFieldToUpdate = UniqueFieldToUpdate,
-                UniqueContentField = UniqueContentField,
-                NoHeaders = NoHeaders,
-                ImportAction = ImportAction,
-                FieldsList = NewFieldsList,
-                UniqueAggregatedFieldsToUpdate = UniqueAggregatedFieldsToUpdate
-            };
-        }
+            Culture = ((CsvCulture)int.Parse(Culture)).Description(),
+            Delimiter = char.Parse(((CsvDelimiter)int.Parse(Delimiter)).Description()),
+            Encoding = ((CsvEncoding)int.Parse(Encoding)).Description(),
+            LineSeparator = ((CsvLineSeparator)int.Parse(LineSeparator)).Description(),
+            FileName = FileName,
+            UniqueFieldToUpdate = UniqueFieldToUpdate,
+            UniqueContentField = UniqueContentField,
+            NoHeaders = NoHeaders,
+            ImportAction = ImportAction,
+            FieldsList = NewFieldsList,
+            UniqueAggregatedFieldsToUpdate = UniqueAggregatedFieldsToUpdate
+        };
 
         public ImportFieldGroupViewModel FieldGroup
         {
@@ -149,7 +143,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
                     Required = field.Required,
                     IsIdentifier = false,
                     IsAggregated = false,
-                    Unique = field.IsUnique,
+                    Unique = field.IsUnique
                 };
 
                 if (field.IsClassifier)
@@ -203,7 +197,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
                     Required = field.Required,
                     IsIdentifier = false,
                     IsAggregated = true,
-                    Unique = field.IsUnique,
+                    Unique = field.IsUnique
                 };
 
                 if (!field.Aggregated)
@@ -225,7 +219,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             Groups = new List<ImportFieldGroupViewModel>();
         }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
         public List<ExtendedListItem> Fields { get; }
 

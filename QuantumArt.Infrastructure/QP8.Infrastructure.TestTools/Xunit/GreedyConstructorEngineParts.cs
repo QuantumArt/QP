@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.Kernel;
+using System.Collections.Generic;
+using AutoFixture;
+using AutoFixture.Kernel;
 
 namespace QP8.Infrastructure.TestTools.Xunit
 {

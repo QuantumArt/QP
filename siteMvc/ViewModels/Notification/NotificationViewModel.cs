@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
@@ -22,14 +22,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
 
         public new BLL.Notification Data
         {
-            get
-            {
-                return (BLL.Notification)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.Notification)EntityData;
+            set => EntityData = value;
         }
 
         private List<ListItem> _formats;
@@ -46,10 +40,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
 
                 return _formats;
             }
-            set
-            {
-                _formats = value;
-            }
+            set => _formats = value;
         }
 
         private List<ListItem> _statuses;
@@ -103,17 +94,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
 
         public QPSelectListItem ToUserGroupListItem => Data.ToUserGroup != null ? new QPSelectListItem { Value = Data.ToUserGroup.Id.ToString(), Text = Data.ToUserGroup.Name, Selected = true } : null;
 
-        public IEnumerable<ListItem> GetReceiverTypes()
+        public IEnumerable<ListItem> GetReceiverTypes() => new[]
         {
-            return new[]
-            {
-                new ListItem(ReceiverType.User.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.User), "UserPanel"),
-                new ListItem(ReceiverType.UserGroup.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.UserGroup), "UserGroupPanel"),
-                new ListItem(ReceiverType.EveryoneInHistory.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EveryoneInHistory), "EmptyPanel"),
-                new ListItem(ReceiverType.EmailFromArticle.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EmailFromArticle), "FieldPanel"),
-                new ListItem(ReceiverType.None.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.None), "EmptyPanel")
-            };
-        }
+            new ListItem(ReceiverType.User.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.User), "UserPanel"),
+            new ListItem(ReceiverType.UserGroup.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.UserGroup), "UserGroupPanel"),
+            new ListItem(ReceiverType.EveryoneInHistory.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EveryoneInHistory), "EmptyPanel"),
+            new ListItem(ReceiverType.EmailFromArticle.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EmailFromArticle), "FieldPanel"),
+            new ListItem(ReceiverType.None.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.None), "EmptyPanel")
+        };
 
         public SelectOptions SelectFormatOptions
         {

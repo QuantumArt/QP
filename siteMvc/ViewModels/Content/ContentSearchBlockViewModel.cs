@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -33,9 +33,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
 
         public bool ShowGroupList => !ShowSiteList;
 
-        public string UniqueId(string id)
-        {
-            return HtmlHelperFieldExtensions.UniqueId(id, _hostId);
-        }
+        public string UniqueId(string id) => HtmlHelperFieldExtensions.UniqueId(id, _hostId);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Audit
 {
@@ -6,7 +6,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Audit
     {
         public static FailedSessionsAreaViewModel Create(string tabId, int parentId)
         {
-            var model = ViewModel.Create<FailedSessionsAreaViewModel>(tabId, parentId);
+            var model = Create<FailedSessionsAreaViewModel>(tabId, parentId);
             return model;
         }
 

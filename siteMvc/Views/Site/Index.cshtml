@@ -1,12 +1,7 @@
-﻿@model SiteListViewModel
-
-@using Quantumart.QP8
+﻿@using Quantumart.QP8.BLL.ListItems
 @using Quantumart.QP8.Constants
-@using Quantumart.QP8.Utils
-@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
-@using Quantumart.QP8.BLL.ListItems
+@model Quantumart.QP8.WebMvc.ViewModels.SiteListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
@@ -60,7 +55,7 @@
             c.Bound(s => s.LastModifiedByUser)
                 .Title(EntityObjectStrings.LastModifiedBy);
         })
-        .DataBinding(db => db.Ajax().Select(@Model.GettingDataActionName, "Site"))
+        .DataBinding(db => db.Ajax().Select(Model.GettingDataActionName, "Site"))
         .EnableCustomBinding(true)
         .Sortable()
         .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))

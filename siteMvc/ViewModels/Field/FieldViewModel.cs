@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         public static FieldViewModel Create(BLL.Field field, string tabId, int parentId)
         {
             var viewModel = Create<FieldViewModel>(field, tabId, parentId);
-            var allVeStylesAndFormats = SiteService.GetAllVeStyles();
+            var allVeStylesAndFormats = SiteService.GetAllVeStyles().ToList();
             viewModel.ActiveVeCommands = viewModel.Data.ActiveVeCommandIds.Select(c => new QPCheckedItem { Value = c.ToString() }).ToList();
             viewModel.DefaultCommandsListItems = FieldService.GetDefaultVisualEditorCommands().Select(c => new ListItem { Value = c.Id.ToString(), Text = c.Alias }).ToArray();
             viewModel.AllStylesListItems = allVeStylesAndFormats.Where(s => s.IsFormat == false).Select(x => new ListItem { Value = x.Id.ToString(), Text = x.Name }).ToArray();
@@ -35,23 +35,17 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public new BLL.Field Data
         {
-            get { return (BLL.Field)EntityData; }
-            set { EntityData = value; }
+            get => (BLL.Field)EntityData;
+            set => EntityData = value;
         }
-        private IEnumerable<ListItem> HighlightModes()
+        private IEnumerable<ListItem> HighlightModes() => new[]
         {
-            return new ListItem[]
-            {
-                new ListItem(TextAreaHighlightTypes.HtmlHighlightType, FieldStrings.HtmlHighlightMode),
-                new ListItem(TextAreaHighlightTypes.JsonHighlightType, FieldStrings.JsonHighlightMode),
-                new ListItem(TextAreaHighlightTypes.XmlHighlightType, FieldStrings.XmlHighlightMode)
-            };
-        }
+            new ListItem(TextAreaHighlightTypes.HtmlHighlightType, FieldStrings.HtmlHighlightMode),
+            new ListItem(TextAreaHighlightTypes.JsonHighlightType, FieldStrings.JsonHighlightMode),
+            new ListItem(TextAreaHighlightTypes.XmlHighlightType, FieldStrings.XmlHighlightMode)
+        };
 
-        public IEnumerable<ListItem> GetHighLightVariants()
-        {
-            return new[] { new ListItem("", "") }.Concat(HighlightModes());
-        }
+        public IEnumerable<ListItem> GetHighLightVariants() => new[] { new ListItem(string.Empty, string.Empty) }.Concat(HighlightModes());
 
         public int MaxArticleItemCount { get; set; }
 
@@ -441,32 +435,23 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         /// Возвращает список полей для связи O2M по выбранному контенту
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ListItem> GetAcceptableRelatedFields()
-        {
-            return Data.RelateToContentId != null ? ContentService.GetRelateableFields(Data.RelateToContentId.Value, Data.Id) : new[] { new ListItem("", FieldStrings.NoFields) };
-        }
+        public IEnumerable<ListItem> GetAcceptableRelatedFields() => Data.RelateToContentId != null ? ContentService.GetRelateableFields(Data.RelateToContentId.Value, Data.Id) : new[] { new ListItem("", FieldStrings.NoFields) };
 
         /// <summary>
         /// Возвращает список базовых полей для поля M2O
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ListItem> GetBaseFieldsForM2O()
-        {
-            return new[] { new ListItem("", FieldStrings.SelectField) }.Concat(FieldService.GetBaseFieldsForM2O(Data.ContentId, Data.Id));
-        }
+        public IEnumerable<ListItem> GetBaseFieldsForM2O() => new[] { new ListItem("", FieldStrings.SelectField) }.Concat(FieldService.GetBaseFieldsForM2O(Data.ContentId, Data.Id));
 
         /// <summary>
         /// Возвращает список типов маски ввода
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ListItem> GetInputMaskTypes()
+        public IEnumerable<ListItem> GetInputMaskTypes() => new[]
         {
-            return new[]
-            {
-                new ListItem(InputMaskTypes.Basic.ToString(), FieldStrings.BasicInputMask, true),
-                new ListItem(InputMaskTypes.Custom.ToString(), FieldStrings.CustomInputMask, true)
-            };
-        }
+            new ListItem(InputMaskTypes.Basic.ToString(), FieldStrings.BasicInputMask, true),
+            new ListItem(InputMaskTypes.Custom.ToString(), FieldStrings.CustomInputMask, true)
+        };
 
         /// <summary>
         /// Возвращает список типов маски ввода
@@ -490,29 +475,23 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         /// Возвращает список режимов ресайза Dynamic Image
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ListItem> GetDynamicImageModes()
+        public IEnumerable<ListItem> GetDynamicImageModes() => new[]
         {
-            return new[]
-            {
-                new ListItem(DynamicImageMode.Size.ToString(), FieldStrings.DynamicImageModeSize, true){DependentItemIDs = new[]{"HeightModePanel", "WidthModePanel"}},
-                new ListItem(DynamicImageMode.Height.ToString(), FieldStrings.DynamicImageModeHeight, true){DependentItemIDs = new[]{"HeightModePanel"}},
-                new ListItem(DynamicImageMode.Width.ToString(), FieldStrings.DynamicImageModeWidth, true){DependentItemIDs = new[]{"WidthModePanel"}}
-            };
-        }
+            new ListItem(DynamicImageMode.Size.ToString(), FieldStrings.DynamicImageModeSize, true){DependentItemIDs = new[]{"HeightModePanel", "WidthModePanel"}},
+            new ListItem(DynamicImageMode.Height.ToString(), FieldStrings.DynamicImageModeHeight, true){DependentItemIDs = new[]{"HeightModePanel"}},
+            new ListItem(DynamicImageMode.Width.ToString(), FieldStrings.DynamicImageModeWidth, true){DependentItemIDs = new[]{"WidthModePanel"}}
+        };
 
         /// <summary>
         /// Возвращает список типов файлов для Dynamic Image
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ListItem> GetDynamicImageFileTypes()
+        public IEnumerable<ListItem> GetDynamicImageFileTypes() => new[]
         {
-            return new[]
-            {
-                new ListItem(DynamicImage.JPG_EXTENSION, DynamicImage.JPG_EXTENSION, true),
-                new ListItem(DynamicImage.PNG_EXTENSION, DynamicImage.PNG_EXTENSION),
-                new ListItem(DynamicImage.GIF_EXTENSION, DynamicImage.GIF_EXTENSION)
-            };
-        }
+            new ListItem(DynamicImage.JPG_EXTENSION, DynamicImage.JPG_EXTENSION, true),
+            new ListItem(DynamicImage.PNG_EXTENSION, DynamicImage.PNG_EXTENSION),
+            new ListItem(DynamicImage.GIF_EXTENSION, DynamicImage.GIF_EXTENSION)
+        };
 
         /// <summary>
         /// Возвращает варианты размещения поля относительно других полей
@@ -565,10 +544,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public QPSelectListItem M2MDefaultValueListItem => Data.M2MDefaultValue != null ? new QPSelectListItem { Value = Data.M2MDefaultValue, Text = Data.O2MDefaultValueName, Selected = true } : null;
 
-        public IEnumerable<ListItem> GetAggregetableContentsForClassifier()
-        {
-            return FieldService.GetAggregetableContentsForClassifier(Data);
-        }
+        public IEnumerable<ListItem> GetAggregetableContentsForClassifier() => FieldService.GetAggregetableContentsForClassifier(Data);
 
         public IEnumerable<ListItem> GetFieldsForTreeOrder()
         {

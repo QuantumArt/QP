@@ -1,4 +1,4 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -12,14 +12,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
 
         public new BLL.ArticleVersion Data
         {
-            get
-            {
-                return (BLL.ArticleVersion)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.ArticleVersion)EntityData;
+            set => EntityData = value;
         }
 
         public ArticleVersionViewModel()
@@ -27,10 +21,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
             ViewType = ArticleVersionViewType.Preview;
         }
 
-        public static ArticleVersionViewModel Create(BLL.ArticleVersion version, string tabId, int parentId, bool? boundToExternal)
-        {
-            return Create(version, tabId, parentId, string.Empty, boundToExternal);
-        }
+        public static ArticleVersionViewModel Create(BLL.ArticleVersion version, string tabId, int parentId, bool? boundToExternal) => Create(version, tabId, parentId, string.Empty, boundToExternal);
 
         public static ArticleVersionViewModel Create(BLL.ArticleVersion version, string tabId, int parentId, string succesfulActionCode, bool? boundToExternal)
         {

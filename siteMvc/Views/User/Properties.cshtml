@@ -1,6 +1,6 @@
-﻿@model Quantumart.QP8.WebMvc.ViewModels.User.UserViewModel
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.Constants
+@model Quantumart.QP8.WebMvc.ViewModels.User.UserViewModel
 
 @using (Html.BeginTabForm(Model))
 {
@@ -27,7 +27,7 @@
         @Html.CheckboxListFieldFor(
             model => model.SelectedGroups,
             Html.List(Model.GroupListItems),
-            new EntityDataListArgs()
+            new EntityDataListArgs
             {
                 MaxListHeight = 200,
                 ShowIds = true,

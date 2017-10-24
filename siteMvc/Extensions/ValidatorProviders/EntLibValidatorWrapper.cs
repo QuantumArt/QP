@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 
@@ -13,10 +13,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ValidatorProviders
             _validator = validator;
         }
 
-        public override IEnumerable<ModelValidationResult> Validate(object container)
-        {
-            return ConvertResults(_validator.Validate(Metadata.Model));
-        }
+        public override IEnumerable<ModelValidationResult> Validate(object container) => ConvertResults(_validator.Validate(Metadata.Model));
 
         private static IEnumerable<ModelValidationResult> ConvertResults(IEnumerable<ValidationResult> validationResults)
         {

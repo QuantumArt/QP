@@ -31,18 +31,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ActionPermissionTree)]
         [BackendActionContext(ActionCode.ActionPermissionTree)]
-        public ActionResult GetTreeNodes(int? entityTypeId, int? userId, int? groupId)
-        {
-            return Json(_service.GetTreeNodes(entityTypeId, userId, groupId));
-        }
+        public ActionResult GetTreeNodes(int? entityTypeId, int? userId, int? groupId) => Json(_service.GetTreeNodes(entityTypeId, userId, groupId));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ActionPermissionTree)]
         [BackendActionContext(ActionCode.ActionPermissionTree)]
-        public ActionResult GetTreeNode(int? entityTypeId, int? actionId, int? userId, int? groupId)
-        {
-            return Json(_service.GetTreeNode(entityTypeId, actionId, userId, groupId));
-        }
+        public ActionResult GetTreeNode(int? entityTypeId, int? actionId, int? userId, int? groupId) => Json(_service.GetTreeNode(entityTypeId, actionId, userId, groupId));
     }
 }

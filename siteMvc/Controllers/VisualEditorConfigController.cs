@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
@@ -35,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
 
             var veCommands = FieldService.GetResultVisualEditorCommands(fieldId, siteId).Where(n => n.On).ToList();
-            var includedStyles = FieldService.GetResultStyles(fieldId, siteId).Where(ves => ves.On).OrderBy(ves => ves.Order);
+            var includedStyles = FieldService.GetResultStyles(fieldId, siteId).Where(ves => ves.On).OrderBy(ves => ves.Order).ToList();
             var model = new VisualEditorConfigVm
             {
                 StylesSet = includedStyles.Where(ves => !ves.IsFormat).Select(StyleMapFn),

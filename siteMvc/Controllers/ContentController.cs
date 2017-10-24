@@ -23,6 +23,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Content;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
+using Quantumart.QP8.WebMvc.ViewModels.Library;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
@@ -388,7 +389,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 };
             }
 
-            if (contentId == 0 && fieldId != null && fieldId.HasValue)
+            if (contentId == 0 && fieldId.HasValue)
             {
                 contentId = FieldService.Read(fieldId.Value).ContentId;
             }
@@ -614,8 +615,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult MultipleSelectForCustomAction(string tabId, int parentId, int[] IDs)
         {
             var result = ContentService.InitList(parentId);
-            ContentSelectableListViewModel model = new CustomActionContentViewModel(result, tabId, parentId, IDs);
-            model.IsMultiple = true;
+            var model = new CustomActionContentViewModel(result, tabId, parentId, IDs)
+            {
+                IsMultiple = true
+            };
+
             return JsonHtml("MultiSelectIndex", model);
         }
 

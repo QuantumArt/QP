@@ -1,10 +1,13 @@
-﻿using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.Interfaces;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
+using Unity;
+using Unity.Extension;
+using Unity.Injection;
+using Unity.Lifetime;
 
-namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.UnityExtensions
+namespace QP8.Infrastructure.Logging.PrtgMonitoring.Unity
 {
     public class PrtgNLogContainerExtension : UnityContainerExtension
     {

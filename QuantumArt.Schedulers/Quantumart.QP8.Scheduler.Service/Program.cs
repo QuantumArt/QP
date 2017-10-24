@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.Core;
+using Unity;
 
 namespace Quantumart.QP8.Scheduler.Service
 {

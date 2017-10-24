@@ -33,14 +33,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal virtual void PrintEnteredData()
         {
-            if (SqlHelpers.TryParseConnectionString(CustomerCode, out var _))
-            {
-                Console.WriteLine($@"Connection String: {CustomerCode}");
-            }
-            else
-            {
-                Console.WriteLine($@"Customer Code: {CustomerCode}");
-            }
+            Console.WriteLine(SqlHelpers.TryParseConnectionString(CustomerCode, out var _)
+                ? $@"Connection String: {CustomerCode}"
+                : $@"Customer Code: {CustomerCode}"
+            );
 
             Console.WriteLine($@"File Pathes: {string.Join(", ", FilePathes)}");
             Console.WriteLine($@"Config: {(string.IsNullOrWhiteSpace(ConfigPath) ? "disabled" : ConfigPath)}");

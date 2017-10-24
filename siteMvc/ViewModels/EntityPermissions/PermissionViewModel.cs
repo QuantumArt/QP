@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL;
@@ -26,14 +26,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
 
         public new EntityPermission Data
         {
-            get
-            {
-                return (EntityPermission)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (EntityPermission)EntityData;
+            set => EntityData = value;
         }
 
         private void Init()
@@ -67,14 +61,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
 
         public bool IsContentPermission => StringComparer.InvariantCultureIgnoreCase.Equals(EntityTypeCode, Constants.EntityTypeCode.ContentPermission);
 
-        public IEnumerable<ListItem> GetMemberTypes()
+        public IEnumerable<ListItem> GetMemberTypes() => new[]
         {
-            return new[]
-            {
-				new ListItem(EntityPermission.GroupMemberType, EntityPermissionStrings.Group, "GroupMemberPanel"),
-				new ListItem(EntityPermission.UserMemberType, EntityPermissionStrings.User, "UserMemberPanel")
-            };
-        }
+            new ListItem(EntityPermission.GroupMemberType, EntityPermissionStrings.Group, "GroupMemberPanel"),
+            new ListItem(EntityPermission.UserMemberType, EntityPermissionStrings.User, "UserMemberPanel")
+        };
 
         public IEnumerable<ListItem> GetPermissionLevels()
         {

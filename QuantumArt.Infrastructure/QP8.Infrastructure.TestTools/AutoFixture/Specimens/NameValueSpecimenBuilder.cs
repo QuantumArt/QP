@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Reflection;
-using Microsoft.Data.Extensions;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.Kernel;
+using AutoFixture;
+using AutoFixture.Kernel;
 
 namespace QP8.Infrastructure.TestTools.AutoFixture.Specimens
 {
@@ -17,7 +16,11 @@ namespace QP8.Infrastructure.TestTools.AutoFixture.Specimens
             {
                 var nvc = new NameValueCollection();
                 var dictionary = context.Create<Dictionary<string, string>>();
-                dictionary.ForEach(kvp => nvc.Add(kvp.Key, kvp.Value));
+                foreach (var kvp in dictionary)
+                {
+                    nvc.Add(kvp.Key, kvp.Value);
+                }
+
                 return nvc;
             }
 

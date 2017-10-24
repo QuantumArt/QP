@@ -1,10 +1,9 @@
-﻿using System.Web.Mvc;
-using Quantumart.QP8.BLL;
+using System.Web.Mvc;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
     public class CreateLikeSiteModel : EntityViewModel
     {
@@ -27,16 +26,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         [LocalizedDisplayName("DoNotCopyTemplates", NameResourceType = typeof(SiteStrings))]
         public bool DoNotCopyTemplates { get; set; }
 
-        public new Site Data
+        public new BLL.Site Data
         {
-            get
-            {
-                return (Site)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.Site)EntityData;
+            set => EntityData = value;
         }
 
         public override void Validate(ModelStateDictionary modelState)
@@ -45,7 +38,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             base.Validate(modelState);
         }
 
-        public static CreateLikeSiteModel Create(Site site, string tabId, int parentId)
+        public static CreateLikeSiteModel Create(BLL.Site site, string tabId, int parentId)
         {
             var model = Create<CreateLikeSiteModel>(site, tabId, parentId);
             return model;

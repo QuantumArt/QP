@@ -1,12 +1,12 @@
-﻿using Flurl.Http.Testing;
+using System.Net.Http;
+using AutoFixture;
+using AutoFixture.AutoMoq;
+using Flurl.Http.Testing;
 using Newtonsoft.Json;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring;
 using QP8.Infrastructure.Logging.PrtgMonitoring.Data;
 using QP8.Infrastructure.Tests.Infrastructure.Specimens;
-using System.Net.Http;
 using Xunit;
 
 namespace QP8.Infrastructure.Tests.PrtgMonitoringTests
