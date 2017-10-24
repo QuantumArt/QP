@@ -20,8 +20,6 @@ Quantumart.QP8.BackendLogin.prototype = {
   _useSavedCustomerCode: false,
 
   _initialize() {
-    jQuery('#IsSilverlightInstalled').val(Silverlight.isInstalled(null) ? 'True' : 'False');
-
     if (this._useSavedCustomerCode) {
       const notValid = jQuery('.validation-summary-errors').length > 0;
 

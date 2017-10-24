@@ -33,11 +33,13 @@ namespace Quantumart.QP8.BLL
         private string _name = string.Empty;
         private string _alias = string.Empty;
         private List<FieldValue> _fieldValues;
+        private List<FieldValue> _liveFieldValues;
         private int _displayContentId;
         private ArticleSchedule _schedule;
         private bool _scheduleLoaded;
         private ArticleWorkflowBind _workflowBinding;
         private readonly InitPropertyValue<IEnumerable<Article>> _aggregatedArticles;
+        private readonly InitPropertyValue<IEnumerable<Article>> _liveAggregatedArticles;
         private readonly InitPropertyValue<bool> _isUpdatableWithRelationSecurity;
         private readonly InitPropertyValue<bool> _isRemovableWithRelationSecurity;
         private readonly InitPropertyValue<StatusHistoryListItem> _statusHistoryListItem;
@@ -47,7 +49,8 @@ namespace Quantumart.QP8.BLL
 
         internal Article()
         {
-            _aggregatedArticles = new InitPropertyValue<IEnumerable<Article>>(() => ArticleRepository.LoadAggregatedArticles(this));
+            _aggregatedArticles = new InitPropertyValue<IEnumerable<Article>>(() => ArticleRepository.LoadAggregatedArticles(this, false));
+            _liveAggregatedArticles = new InitPropertyValue<IEnumerable<Article>>(() => ArticleRepository.LoadAggregatedArticles(this, true));
             _variationArticles = new InitPropertyValue<List<Article>>(() => ArticleRepository.LoadVariationArticles(this));
             _variationListItems = new InitPropertyValue<IEnumerable<ArticleVariationListItem>>(LoadVariationListForClient);
             _contextListItems = new InitPropertyValue<IEnumerable<ArticleContextListItem>>(LoadContextListForClient);
@@ -223,7 +226,13 @@ namespace Quantumart.QP8.BLL
 
         private IEnumerable<int> SelfAndAggregatedIds
         {
-            get { return Enumerable.Repeat(Id, 1).Union(AggregatedArticles.Select(n => n.Id)); }
+            get {
+                return
+                    Enumerable.Repeat(Id, 1)
+                    .Union(AggregatedArticles.Select(n => n.Id))
+                    .Union(LiveAggregatedArticles.Select(n => n.Id))
+                    ;
+            }
         }
 
         public int[] SelfAndChildIds
@@ -262,7 +271,38 @@ namespace Quantumart.QP8.BLL
             set => _fieldValues = value;
         }
 
-        internal List<FieldValue> LoadFieldValues() => _fieldValues ?? (_fieldValues = GetFieldValues());
+        [ScriptIgnore, JsonIgnore]
+        public List<FieldValue> LiveFieldValues
+        {
+            get 
+            {
+                LoadFieldValues();
+                return _liveFieldValues;
+            }
+            set => _liveFieldValues = value;
+        }
+
+        internal List<FieldValue> LoadFieldValues()
+        {
+            if (_fieldValues == null || _liveFieldValues == null)
+            {
+                var fields = FieldRepository.GetFullList(DisplayContentId);
+                if (_fieldValues == null)
+                {
+                    _fieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive), fields, this);
+                }
+                if (_liveFieldValues == null)
+                {
+                    _liveFieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, true), fields, this);
+                }
+            }
+            return _fieldValues;
+        }
+
+        internal List<FieldValue> GetFieldValues(bool isLive)
+        {
+            return (isLive) ? LiveFieldValues : FieldValues;
+        }
 
         public ArticleViewType ViewType { get; set; } = ArticleViewType.Normal;
 
@@ -291,6 +331,12 @@ namespace Quantumart.QP8.BLL
         {
             get => _aggregatedArticles.Value;
             set => _aggregatedArticles.Value = value;
+        }
+
+        public IEnumerable<Article> LiveAggregatedArticles
+        {
+            get => _liveAggregatedArticles.Value;
+            set => _liveAggregatedArticles.Value = value;
         }
 
         public List<Article> VariationArticles
@@ -387,15 +433,19 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void UpdateAggregatedCollection()
+        public static int[] GetClassifierValues(List<FieldValue> fieldValues)
         {
-            AggregatedArticles = FieldValues
+            return fieldValues
                 .Where(v => v.Field.IsClassifier)
                 .Select(v => Converter.ToNullableInt32(v.Value))
                 .Where(v => v.HasValue)
                 .Select(v => v.Value)
-                .Select(GetAggregatedArticleByClassifier)
                 .ToArray();
+        }
+
+        public void UpdateAggregatedCollection()
+        {
+            AggregatedArticles = GetClassifierValues(FieldValues).Select(GetAggregatedArticleByClassifier).ToArray();
         }
 
         public Article GetAggregatedArticleByClassifier(int classifierValue)
@@ -1277,13 +1327,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private List<FieldValue> GetFieldValues()
-        {
-            var data = ArticleRepository.GetData(Id, DisplayContentId);
-            var fields = FieldRepository.GetFullList(DisplayContentId);
-            return GetFieldValues(data, fields, this);
-        }
-
         protected override RulesException ValidateUnique(RulesException errors) => ValidateUnique(errors, 0);
 
         private void CopyArticleFiles(CopyFilesMode mode, string currentVersionPath, string versionPath = "")
@@ -1370,8 +1413,16 @@ namespace Quantumart.QP8.BLL
 
         private static void RemoveAggregates(Article currentArticle, Article previousArticle)
         {
+            var liveExtensionContents = GetClassifierValues(currentArticle.LiveFieldValues);
+            var stageExtensionContents = GetClassifierValues(currentArticle.FieldValues);
+            var protectedExtensionContents = liveExtensionContents.Except(stageExtensionContents).ToArray();
+
             var comparer = new LambdaEqualityComparer<Article>((x, y) => x.Id == y.Id, x => x.Id);
-            var deletingAggregated = previousArticle.AggregatedArticles.Except(currentArticle.AggregatedArticles, comparer).Select(a => a.Id).ToList();
+            var deletingAggregated = previousArticle
+                .AggregatedArticles
+                .Except(currentArticle.AggregatedArticles, comparer)
+                .Where(n => !protectedExtensionContents.Contains(n.ContentId))
+                .Select(a => a.Id).ToList();
             ArticleRepository.MultipleDelete(deletingAggregated);
         }
 

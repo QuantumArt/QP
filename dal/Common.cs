@@ -4660,9 +4660,9 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Возвращает id агрегированных статей для статьи контента
         /// </summary>
-        public static IEnumerable<decimal> GetAggregatedArticlesIDs(SqlConnection connection, int articleId, int[] classifierFields, int[] types)
+        public static IEnumerable<decimal> GetAggregatedArticlesIDs(SqlConnection connection, int articleId, int[] classifierFields, int[] types, bool isLive)
         {
-            const string query = @"
+            string query = $@"
             declare @attrIds table (attribute_id numeric primary key, content_id numeric, attribute_name nvarchar(255))
             declare @attribute_id numeric, @content_id numeric, @attribute_name nvarchar(255)
 
@@ -4676,7 +4676,7 @@ namespace Quantumart.QP8.DAL
                 print @attribute_id
                 if @sql <> ''
                     set @sql = @sql + ' union all '
-                set @sql = @sql + 'select content_item_id from content_' + cast(@content_id as nvarchar(30)) + '_united where [' + @attribute_name + '] = @article_id'
+                set @sql = @sql + 'select content_item_id from content_' + cast(@content_id as nvarchar(30)) + '{ (isLive ? "" : "_united") } where [' + @attribute_name + '] = @article_id'
                 delete from @attrIds where attribute_id = @attribute_id
             end
             exec sp_executesql @sql, N'@article_id numeric', @article_id = @article_id";

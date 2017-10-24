@@ -3607,6 +3607,93 @@ if not update(attribute_order) and
 END
 
 GO
+exec qp_drop_existing 'qp_aggregates_to_remove', 'IsTableFunction'
+GO
+
+CREATE function [dbo].[qp_aggregates_to_remove](@itemIds Ids READONLY)
+returns @ids table (id numeric primary key)
+as
+begin
+
+    declare @ids2 Ids
+    insert into @ids2
+    select id from @itemIds i inner join content_item ci on i.ID = ci.CONTENT_ITEM_ID and ci.SPLITTED = 0
+	where exists(select * from CONTENT_ATTRIBUTE ca where ca.CONTENT_ID = ci.CONTENT_ID and ca.IS_CLASSIFIER = 1)
+
+    if exists (select * from @ids2)
+    begin
+        insert into @ids
+
+        select AGG_DATA.CONTENT_ITEM_ID
+        from CONTENT_ATTRIBUTE ATT
+        JOIN CONTENT_ATTRIBUTE AGG_ATT ON AGG_ATT.CLASSIFIER_ATTRIBUTE_ID = ATT.ATTRIBUTE_ID
+        JOIN CONTENT_DATA AGG_DATA with(nolock) ON AGG_DATA.ATTRIBUTE_ID = AGG_ATT.ATTRIBUTE_ID
+        JOIN CONTENT_DATA CLF_DATA with(nolock) ON CLF_DATA.ATTRIBUTE_ID = ATT.ATTRIBUTE_ID AND cast(CLF_DATA.CONTENT_ITEM_ID as nvarchar(8)) = AGG_DATA.DATA
+        where ATT.IS_CLASSIFIER = 1 AND AGG_ATT.AGGREGATED = 1 AND CLF_DATA.DATA <> cast(AGG_ATT.CONTENT_ID as nvarchar(8))
+        and ATT.CONTENT_ID in (
+            select content_id from content_item with(nolock)
+            where content_item_id in (select id from @itemIds)
+        )
+        AND AGG_DATA.DATA in  (select cast(id as nvarchar(8)) from @ids2)
+    end
+
+    return
+end
+GO
+exec qp_drop_existing 'qp_merge_articles', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_merge_articles]
+@ids [Ids] READONLY,
+@last_modified_by numeric = 1,
+@force_merge bit = 0
+AS
+BEGIN
+  declare @ids2 [Ids], @ids2str nvarchar(max)
+
+  insert into @ids2 select id from @ids i inner join content_item ci with(nolock) on i.ID = ci.CONTENT_ITEM_ID and (SCHEDULE_NEW_VERSION_PUBLICATION = 1 or @force_merge = 1)
+
+  if exists(select * From @ids2)
+  begin
+    exec qp_merge_links_multiple @ids2, @force_merge
+    UPDATE content_item with(rowlock) set not_for_replication = 1 WHERE content_item_id in (select id from @ids2)
+    UPDATE content_item with(rowlock) set SCHEDULE_NEW_VERSION_PUBLICATION = 0, MODIFIED = GETDATE(), LAST_MODIFIED_BY = @last_modified_by, CANCEL_SPLIT = 0 where CONTENT_ITEM_ID in (select id from @ids2)
+    SELECT @ids2str = COALESCE(@ids2str + ',', '') + cast(id as nvarchar(20)) from @ids2
+    exec qp_replicate_items @ids2str
+    UPDATE content_item_schedule with(rowlock) set delete_job = 0 WHERE content_item_id in (select id from @ids2)
+    DELETE FROM content_item_schedule with(rowlock) WHERE content_item_id in (select id from @ids2)
+    delete from CHILD_DELAYS with(rowlock) WHERE id in (select id from @ids2)
+    delete from CHILD_DELAYS with(rowlock) WHERE child_id in (select id from @ids2)
+
+    delete from content_item with(rowlock) where content_item_id in (select id from dbo.qp_aggregates_to_remove(@ids2))
+
+  end
+END
+GO
+ALTER PROCEDURE [dbo].[qp_merge_article]
+@item_id numeric,
+@last_modified_by numeric = 1
+AS
+BEGIN
+	DECLARE @ids [Ids]
+	insert into @ids
+	select @item_id
+	EXEC qp_merge_articles @ids, @last_modified_by, 0
+END
+GO
+exec qp_drop_existing 'qp_remove_old_aggregates', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_remove_old_aggregates](@id numeric)
+as
+begin
+    DECLARE @ids [Ids]
+    INSERT INTO @ids VALUES(@id)
+    DELETE FROM content_item WITH(ROWLOCK) WHERE content_item_id IN (SELECT id FROM dbo.qp_aggregates_to_remove(@ids))
+end
+GO
+
+GO
   IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ATTRIBUTE' AND COLUMN_NAME = 'MAX_DATA_LIST_ITEM_COUNT')
   BEGIN
 	ALTER TABLE CONTENT_ATTRIBUTE ADD MAX_DATA_LIST_ITEM_COUNT numeric(18,0) NOT NULL
