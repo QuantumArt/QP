@@ -36,14 +36,13 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("Password", NameResourceType = typeof(UserStrings))]
         public string Password { get; set; }
-
-        [LocalizedDisplayName("OldPassword", NameResourceType = typeof(UserStrings))]
-        public string OldPassword { get; set; }
-
+        
         [LocalizedDisplayName("NewPassword", NameResourceType = typeof(UserStrings))]
+        [RequiredValidator("MustChangePassword", MessageTemplateResourceName = "NewPasswordNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
         public string NewPassword { get; set; }
 
         [LocalizedDisplayName("NewPasswordCopy", NameResourceType = typeof(UserStrings))]
+        [RequiredValidator("MustChangePassword", MessageTemplateResourceName = "NewPasswordCopyNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
         public string NewPasswordCopy { get; set; }
 
         [LocalizedDisplayName("Disabled", NameResourceType = typeof(UserStrings))]
@@ -72,6 +71,9 @@ namespace Quantumart.QP8.BLL
         [MaxLengthValidator(255, MessageTemplateResourceName = "NtLoginLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
         [FormatValidator(RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NtLoginInvalidFormat", MessageTemplateResourceType = typeof(UserStrings))]
         public string NtLogOn { get; set; }
+
+        [LocalizedDisplayName("MustChangePassword", NameResourceType = typeof(UserStrings))]
+        public bool MustChangePassword { get; set; }
 
         [LocalizedDisplayName("EnableContentGroupingInTree", NameResourceType = typeof(UserStrings))]
         public bool EnableContentGroupingInTree { get; set; }
@@ -150,15 +152,6 @@ namespace Quantumart.QP8.BLL
             base.Validate(errors);
             if (!string.IsNullOrEmpty(NewPassword))
             {
-                if (string.IsNullOrEmpty(OldPassword))
-                {
-                    errors.ErrorFor(u => u.OldPassword, UserStrings.OldPasswordNotEntered);
-                }
-                else if (!UserRepository.CheckAuthenticate(LogOn, OldPassword))
-                {
-                    errors.ErrorFor(u => u.OldPassword, UserStrings.OldPasswordIncorrect);
-                }
-
                 if (NewPassword.Length < 7 || NewPassword.Length > 20)
                 {
                     errors.ErrorFor(u => u.NewPassword, string.Format(UserStrings.PasswordLengthExceeded, 7, 20));
@@ -174,6 +167,11 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorFor(u => u.NewPassword, UserStrings.PasswordNotComplex);
                 }
 
+                if (CheckMatchingPassword(NewPassword, Id))
+                {
+                    errors.ErrorFor(u => u.NewPassword, UserStrings.NewPasswordMatchCurrentPassword);
+                }
+
                 if (NewPassword != NewPasswordCopy)
                 {
                     errors.ErrorFor(u => u.NewPasswordCopy, UserStrings.NewPasswordAndCopyDoesntMatch);
@@ -186,6 +184,11 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        public static bool CheckMatchingPassword(string newPassword, int userId)
+        {
+            return UserRepository.NewPasswordMathCurrentPassword(userId, newPassword);
+        }
+ 
         public void DoCustomBinding()
         {
             VMode = false;
@@ -238,10 +241,15 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorFor(u => u.NewPassword, UserStrings.PasswordNotComplex);
                 }
 
+                if (CheckMatchingPassword(NewPassword, Id))
+                {
+                    errors.ErrorFor(u => u.NewPassword, UserStrings.NewPasswordMatchCurrentPassword);
+                }
+
                 if (NewPassword != NewPasswordCopy)
                 {
                     errors.ErrorFor(u => u.NewPasswordCopy, UserStrings.NewPasswordAndCopyDoesntMatch);
-                }
+                }               
             }
 
             if (!errors.IsEmpty)

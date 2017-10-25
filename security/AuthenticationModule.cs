@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Web;
 using Quantumart.QP8.Configuration;
@@ -45,13 +45,14 @@ namespace Quantumart.QP8.Security
                         true,
                         userInformation.LanguageId,
                         userInformation.CultureName,
-                        userInformation.IsSilverlightInstalled);
+                        userInformation.IsSilverlightInstalled,
+                        userInformation.MustChangePassword);
 
                     roles = userInformation.Roles;
                 }
                 else
                 {
-                    identity = new QpIdentity(0, userName, string.Empty, "QP", false, 0, "neutral", false);
+                    identity = new QpIdentity(0, userName, string.Empty, "QP", false, 0, "neutral", false, false);
                 }
 
                 context.User = Thread.CurrentPrincipal = new QpPrincipal(identity, roles);

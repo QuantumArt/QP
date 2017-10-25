@@ -228,5 +228,35 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             return JsonHtml("Profile", model);
         }
+
+        [HttpGet]
+        public ActionResult ChangePassword()
+        {
+            string tabId = null; int parentId = 0;
+            var user = _service.ReadProfile(QPContext.CurrentUserId);
+            var model = ProfileViewModel.Create(user, tabId, parentId, _service);
+            return JsonHtml("ChangePasswordPopup", model);
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(string tabId, User currentUser)
+        {
+            var parentId = 0;
+            var user = _service.ReadProfile(QPContext.CurrentUserId);
+            user.NewPassword = currentUser.NewPassword;
+            user.NewPasswordCopy = currentUser.NewPasswordCopy;
+            var model = ProfileViewModel.Create(user, tabId, parentId, _service);
+            TryUpdateModel(model);
+            model.Validate(ModelState);
+            if (ModelState.IsValid)
+            {
+                model.Data.MustChangePassword = false;
+                var result = _service.UpdateProfile(model.Data);
+                model.SuccesfulActionCode = ActionCode.UpdateProfile;
+                return Json(new { success = true, isChanging = true });
+
+            }
+            return JsonHtml("ChangePasswordPopup", model);
+        }
     }
 }

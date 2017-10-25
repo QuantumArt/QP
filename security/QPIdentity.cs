@@ -1,4 +1,4 @@
-﻿using System.Security.Principal;
+using System.Security.Principal;
 
 namespace Quantumart.QP8.Security
 {
@@ -44,10 +44,12 @@ namespace Quantumart.QP8.Security
 		/// </summary>
 		public bool IsSilverlightInstalled { get; private set; }
 
+        public bool MustChangePassword { get; }
+
         /// <summary>
         /// Конструирует объект QPIdentity
         /// </summary>
-		public QpIdentity(int id, string name, string customerCode, string type, bool isAuthentificated, int languageId, string cultureName, bool isSilverlightInstalled)
+		public QpIdentity(int id, string name, string customerCode, string type, bool isAuthentificated, int languageId, string cultureName, bool isSilverlightInstalled, bool mustChangePassword)
         {
             Id = id;
             Name = name;
@@ -57,6 +59,7 @@ namespace Quantumart.QP8.Security
             LanguageId = languageId;
             CultureName = cultureName;
             IsSilverlightInstalled = isSilverlightInstalled;
+            MustChangePassword = mustChangePassword;
         }
     }
 }

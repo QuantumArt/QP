@@ -15,6 +15,10 @@ Quantumart.QP8.Backend = function (isDebugMode, options) {
       this._directLinkOptions = options.directLinkOptions;
     }
 
+    if (options.mustChangePassword) {
+      this._userMustChangePassword = options.mustChangePassword;
+    }
+
     if (options.autoLoadHome) {
       this._autoLoadHome = options.autoLoadHome;
     }
@@ -86,6 +90,7 @@ Quantumart.QP8.Backend.prototype = {
   _onActionExecutedHandler: null,
   _onEntityReadedHandler: null,
   _onHostExternalCallerContextsUnbindedHandler: null,
+  _userMustChangePassword: null,
 
   _initialize() {
     this._directLinkExecutor = new Quantumart.QP8.DirectLinkExecutor(
@@ -235,6 +240,9 @@ Quantumart.QP8.Backend.prototype = {
     }, this));
 
     this._initializeSignalrHubs();
+    if (this._userMustChangePassword) {
+      Quantumart.QP8.BackendChangePasswordWindow.changePassword();
+    }
   },
 
   _error() {

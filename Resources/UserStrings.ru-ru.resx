@@ -228,6 +228,9 @@
   <data name="MembershipData" xml:space="preserve">
     <value>Членство</value>
   </data>
+  <data name="MustChangePassword" xml:space="preserve">
+    <value>Пользователь должен сменить пароль при следующем входе</value>
+  </data>
   <data name="NewPassword" xml:space="preserve">
     <value>Новый пароль</value>
   </data>
@@ -236,6 +239,18 @@
   </data>
   <data name="NewPasswordCopy" xml:space="preserve">
     <value>Копия нового пароля</value>
+  </data>
+  <data name="NewPasswordCopyNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите копию нового пароля!</value>
+  </data>
+  <data name="NewPasswordIncorrect" xml:space="preserve">
+    <value>Некорректный новый пароль!</value>
+  </data>
+  <data name="NewPasswordMatchCurrentPassword" xml:space="preserve">
+    <value>Новый пароль не должен совпадать с текущим паролем</value>
+  </data>
+  <data name="NewPasswordNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите новый пароль!</value>
   </data>
   <data name="NotificationsExist" xml:space="preserve">
     <value>Вы не можете удалить пользователя, так как существуют уведомления которые получает пользователь. Уведомления: {0}</value>
@@ -251,15 +266,6 @@
   </data>
   <data name="NtLoginNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите NT-логин</value>
-  </data>
-  <data name="OldPassword" xml:space="preserve">
-    <value>Старый пароль</value>
-  </data>
-  <data name="OldPasswordIncorrect" xml:space="preserve">
-    <value>Некорректный старый пароль!</value>
-  </data>
-  <data name="OldPasswordNotEntered" xml:space="preserve">
-    <value>Пожалуйста, введите старый пароль!</value>
   </data>
   <data name="OnScreenData" xml:space="preserve">
     <value>Параметры OnScreen</value>

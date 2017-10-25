@@ -70,5 +70,7 @@
         public bool IsSilverlightInstalled { get; set; }
 
         private int _languageId;
+        
+        public bool MustChangePassword { get; set; }
     }
 }

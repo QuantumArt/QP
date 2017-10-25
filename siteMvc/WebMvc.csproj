@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -1401,6 +1401,7 @@
     <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
     <Content Include="Scripts\polyfills\array.find.polyfill.js" />
     <Content Include="Scripts\polyfills\object.assign.polyfill.js" />
+    <Content Include="Scripts\Quantumart\BackendChangePasswordWindow.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\dialogs\aspell.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\plugin.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\spellerpages\blank.html" />
@@ -2311,6 +2312,7 @@
     <Content Include="Views\User\ContentDefaultFilters.cshtml">
     </Content>
     <Content Include="Views\StatusType\MultiSelectIndex.cshtml" />
+    <Content Include="Views\User\ChangePasswordPopup.cshtml" />
     <None Include="Views\User\Profile.cshtml">
       <LastGenOutput>Profile.generated.cs</LastGenOutput>
     </None>

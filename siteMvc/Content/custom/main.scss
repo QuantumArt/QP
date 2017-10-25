@@ -1,7 +1,15 @@
-﻿.formLayout {
+.formLayout {
   .textbox,
   .versionText {
     width: 350px;
     font-family: Verdana, Arial, Helvetica, sans-serif;
+  }
+}
+
+.changePasswordContainerContent{
+  .textbox,
+  textarea {
+    width: 265px;
+    vertical-align: middle;
   }
 }

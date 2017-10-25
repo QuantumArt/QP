@@ -191,6 +191,7 @@ custom.paths = {
     'Scripts/Quantumart/List/BackendSettingsPopupWindow.js',
     'Scripts/Quantumart/BackendActionLink.js',
     'Scripts/Quantumart/BackendLogOnWindow.js',
+    'Scripts/Quantumart/BackendChangePasswordWindow.js',
     'Scripts/Quantumart/Library/BackendLibrary.js',
     'Scripts/Quantumart/Library/BackendPager.js',
     'Scripts/Quantumart/Library/BackendFileList.js',

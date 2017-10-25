@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.Validators
 {
@@ -13,6 +13,20 @@ namespace Quantumart.QP8.Validators
                     throw new ArgumentNullException(nameof(pattern));
                 }
             }
+        }
+        internal static bool CheckIsNeedtoValidate(string propertyName, bool inverse, object current)
+        {
+            if (propertyName != null)
+            {
+                var property = ValidationReflectionHelper.GetProperty(current.GetType(), propertyName, false);
+                bool result;
+                bool.TryParse(property.GetValue(current).ToString(), out result);
+                if (inverse)
+                    return !result;
+                return result;
+            }
+
+            return false;
         }
     }
 }

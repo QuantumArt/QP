@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -10059,6 +10059,28 @@ namespace Quantumart.QP8.DAL
                 }
 
                 return ids.Select(n => result[n]).ToArray();
+            }
+        }
+
+        public static bool NewPasswordMathCurrentPassword(SqlConnection connection, int userId, string password)
+        {
+            var query = @"declare @salt bigint, @hash binary(20), @old_hash binary(20), @result bit
+                          select @salt = salt, @old_hash = hash from users where USER_ID = @userId
+                          print @old_hash
+                          set @hash = dbo.qp_get_hash(@password, @salt)
+                          print @hash
+                          if @old_hash = @hash
+                             set @result = 1
+                          else 
+                             set @result = 0
+                          select @result";
+            using (var cmd = SqlCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.AddWithValue("@password", password);
+//                var obj = cmd.ExecuteScalar();
+                return (bool)cmd.ExecuteScalar();
             }
         }
     }

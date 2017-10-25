@@ -9,7 +9,6 @@
         @Html.TextBoxFieldFor(n => n.Data.LastName)
         @Html.TextBoxFieldFor(n => n.Data.Email)
         @Html.SelectFieldFor(n => n.Data.LanguageId, Html.List(Model.AvailableLanguages))
-        @Html.PasswordFieldFor(n => n.Data.OldPassword)
         @Html.PasswordFieldFor(n => n.Data.NewPassword)
         @Html.PasswordFieldFor(n => n.Data.NewPasswordCopy)
     }

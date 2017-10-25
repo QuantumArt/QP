@@ -1,10 +1,11 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
+using Quantumart.QP8.BLL.Services;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 {
@@ -45,6 +46,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
                 result.CurrentCustomerCode = QPContext.CurrentCustomerCode;
                 result.CurrentUserId = QPContext.CurrentUserId;
                 result.AutoLoadHome = Data.AutoOpenHome;
+
+                result.MustChangePassword = UserService.GetUserMustChangePassword(QPContext.CurrentUserId);
 
                 if (_directLinkOptions != null && _directLinkOptions.IsDefined())
                 {

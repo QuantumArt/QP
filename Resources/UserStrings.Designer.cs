@@ -394,6 +394,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User must change password at next logon.
+        /// </summary>
+        public static string MustChangePassword {
+            get {
+                return ResourceManager.GetString("MustChangePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New password.
         /// </summary>
         public static string NewPassword {
@@ -417,6 +426,42 @@ namespace Quantumart.QP8.Resources {
         public static string NewPasswordCopy {
             get {
                 return ResourceManager.GetString("NewPasswordCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter copy new password!.
+        /// </summary>
+        public static string NewPasswordCopyNotEntered {
+            get {
+                return ResourceManager.GetString("NewPasswordCopyNotEntered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incorrect new pasword!.
+        /// </summary>
+        public static string NewPasswordIncorrect {
+            get {
+                return ResourceManager.GetString("NewPasswordIncorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New password cannot match current password.
+        /// </summary>
+        public static string NewPasswordMatchCurrentPassword {
+            get {
+                return ResourceManager.GetString("NewPasswordMatchCurrentPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter new password!.
+        /// </summary>
+        public static string NewPasswordNotEntered {
+            get {
+                return ResourceManager.GetString("NewPasswordNotEntered", resourceCulture);
             }
         }
         
@@ -462,33 +507,6 @@ namespace Quantumart.QP8.Resources {
         public static string NtLoginNotEntered {
             get {
                 return ResourceManager.GetString("NtLoginNotEntered", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Old password.
-        /// </summary>
-        public static string OldPassword {
-            get {
-                return ResourceManager.GetString("OldPassword", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Incorrect old pasword!.
-        /// </summary>
-        public static string OldPasswordIncorrect {
-            get {
-                return ResourceManager.GetString("OldPasswordIncorrect", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please enter old password!.
-        /// </summary>
-        public static string OldPasswordNotEntered {
-            get {
-                return ResourceManager.GetString("OldPasswordNotEntered", resourceCulture);
             }
         }
         
