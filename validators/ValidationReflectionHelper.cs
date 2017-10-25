@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
@@ -38,10 +38,7 @@ namespace Quantumart.QP8.Validators
             return propertyInfo;
         }
 
-        internal static bool IsValidProperty(PropertyInfo propertyInfo)
-        {
-            return null != propertyInfo && propertyInfo.CanRead && propertyInfo.GetIndexParameters().Length == 0;
-        }
+        internal static bool IsValidProperty(PropertyInfo propertyInfo) => null != propertyInfo && propertyInfo.CanRead && propertyInfo.GetIndexParameters().Length == 0;
 
         internal static FieldInfo GetField(Type type, string fieldName, bool throwIfInvalid)
         {
@@ -64,10 +61,7 @@ namespace Quantumart.QP8.Validators
             return fieldInfo;
         }
 
-        internal static bool IsValidField(FieldInfo fieldInfo)
-        {
-            return null != fieldInfo;
-        }
+        internal static bool IsValidField(FieldInfo fieldInfo) => null != fieldInfo;
 
         internal static MethodInfo GetMethod(Type type, string methodName, bool throwIfInvalid)
         {
@@ -90,10 +84,7 @@ namespace Quantumart.QP8.Validators
             return methodInfo;
         }
 
-        internal static bool IsValidMethod(MethodInfo methodInfo)
-        {
-            return null != methodInfo && typeof(void) != methodInfo.ReturnType && methodInfo.GetParameters().Length == 0;
-        }
+        internal static bool IsValidMethod(MethodInfo methodInfo) => null != methodInfo && typeof(void) != methodInfo.ReturnType && methodInfo.GetParameters().Length == 0;
 
         internal static T ExtractValidationAttribute<T>(MemberInfo attributeProvider, string ruleset)
             where T : BaseValidationAttribute
@@ -115,14 +106,20 @@ namespace Quantumart.QP8.Validators
         /// Parameters specify the member, the type of the custom attribute to search
         /// for, and whether to search ancestors of the member.
         /// </summary>
-        /// <param name="element">An object derived from the <see cref="MemberInfo"/> class that describes a
-        /// constructor, event, field, method, or property member of a class.</param>
+        /// <param name="element">
+        /// An object derived from the <see cref="MemberInfo" /> class that describes a
+        /// constructor, event, field, method, or property member of a class.
+        /// </param>
         /// <param name="attributeType">The type, or a base type, of the custom attribute to search for.</param>
-        /// <param name="inherit">If <see langword="true"/>, specifies to also search the ancestors of element for
-        /// custom attributes.</param>
-        /// <returns>An <see cref="Attribute"/> array that contains the custom attributes of type type applied to
-        /// element, or an empty array if no such custom attributes exist.</returns>
-        /// <seealso cref="MetadataTypeAttribute"/>
+        /// <param name="inherit">
+        /// If <see langword="true" />, specifies to also search the ancestors of element for
+        /// custom attributes.
+        /// </param>
+        /// <returns>
+        /// An <see cref="Attribute" /> array that contains the custom attributes of type type applied to
+        /// element, or an empty array if no such custom attributes exist.
+        /// </returns>
+        /// <seealso cref="MetadataTypeAttribute" />
         public static Attribute[] GetCustomAttributes(MemberInfo element, Type attributeType, bool inherit)
         {
             var matchingElement = GetMatchingElement(element);

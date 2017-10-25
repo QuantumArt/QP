@@ -40,7 +40,7 @@ namespace Quantumart.QP8.BLL
             {
                 var result = new List<VirtualFieldNode>();
 
-                void Toggle(List<VirtualFieldNode> parentNodes)
+                void Toggle(IReadOnlyCollection<VirtualFieldNode> parentNodes)
                 {
                     result.AddRange(parentNodes);
                     foreach (var childNode in parentNodes)
@@ -97,6 +97,7 @@ namespace Quantumart.QP8.BLL
 
                 IEnumerable<VirtualFieldNode> AddChildFieldNodes(int? parentFieldId, string parentFieldTreeId)
                 {
+                    // ReSharper disable once AccessToModifiedClosure
                     var childFieldNodes = fields.Where(f => f.JoinId == parentFieldId).Select(f => new VirtualFieldNode { Id = f.Id }).ToArray();
                     foreach (var childFieldNode in childFieldNodes)
                     {
@@ -143,7 +144,7 @@ namespace Quantumart.QP8.BLL
                 if (fieldTreeId.StartsWith("[") && fieldTreeId.EndsWith("]"))
                 {
                     var fidStr = fieldTreeId.Trim('[', ']').Split('.').LastOrDefault();
-                    return int.Parse(fidStr);
+                    return int.Parse(fidStr ?? throw new InvalidOperationException());
                 }
 
                 throw new FormatException("Field Id format string");

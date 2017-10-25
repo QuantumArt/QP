@@ -113,7 +113,6 @@
     <Content Include="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_LF_endings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="app.config" />
     <Content Include="TestData\ConsoleDbUpdate\CsvData\mts_catalog2\content_2576_2016_10_7_13_24_43_ex1.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -135,6 +134,7 @@
     <Content Include="TestData\ConsoleDbUpdate\CsvData\qa_beeline_kz_copy\content_289_2016_9_27_13_30_50.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

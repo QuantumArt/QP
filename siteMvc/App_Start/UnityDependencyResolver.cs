@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Helpers;
-using QP8.Infrastructure.Logging.Unity.Old;
+using QP8.Infrastructure.Logging.Unity;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Interfaces.Services;
@@ -28,6 +27,8 @@ using Quantumart.QP8.WebMvc.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
+using Unity;
+using Unity.Injection;
 
 namespace Quantumart.QP8.WebMvc
 {

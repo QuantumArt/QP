@@ -1,4 +1,3 @@
-using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
 

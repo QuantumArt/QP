@@ -133,9 +133,6 @@
     <EmbeddedResource Include="..\binaries\DbUpdate\Microsoft.Practices.EnterpriseLibrary.Data.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\binaries\DbUpdate\Microsoft.Practices.ServiceLocation.dll">
-      <Link>References\Microsoft.Practices.ServiceLocation.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll">
       <Link>References\Mono.Options.dll</Link>
     </EmbeddedResource>
@@ -179,15 +176,6 @@
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.Validation.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.Unity.Configuration.dll">
-      <Link>References\Microsoft.Practices.Unity.Configuration.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.Unity.dll">
-      <Link>References\Microsoft.Practices.Unity.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.Unity.Interception.dll">
-      <Link>References\Microsoft.Practices.Unity.Interception.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.BLL.dll">
       <Link>References\Quantumart.QP8.BLL.dll</Link>
     </EmbeddedResource>
@@ -221,29 +209,6 @@
     <EmbeddedResource Include="..\siteMvc\bin\Telerik.Web.Mvc.dll">
       <Link>References\Telerik.Web.Mvc.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\WebActivatorEx.dll">
-      <Link>References\WebActivatorEx.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\siteMvc\bin\System.Web.Helpers.dll">
-      <Link>References\System.Web.Helpers.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\System.Web.Mvc.dll">
-      <Link>References\System.Web.Mvc.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\System.Web.Razor.dll">
-      <Link>References\System.Web.Razor.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\System.Web.WebPages.Deployment.dll">
-      <Link>References\System.Web.WebPages.Deployment.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\System.Web.WebPages.dll">
-      <Link>References\System.Web.WebPages.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\System.Web.WebPages.Razor.dll">
-      <Link>References\System.Web.WebPages.Razor.dll</Link>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.AspNet.SignalR.Core.dll">
@@ -258,9 +223,6 @@
   <ItemGroup>
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Merger.dll">
       <Link>References\Quantumart.QP8.Merger.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
-      <Link>References\Microsoft.Web.Infrastructure.dll</Link>
     </EmbeddedResource>
     <Content Include="favicon.ico" />
   </ItemGroup>

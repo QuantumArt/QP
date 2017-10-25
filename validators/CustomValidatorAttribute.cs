@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Quantumart.QP8.Validators
 {
     /// <summary>
-    /// Представляет реализацию <see cref="CustomValidator"/> в виде атрибута
+    /// Представляет реализацию <see cref="CustomValidator" /> в виде атрибута
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Parameter, AllowMultiple = true, Inherited = false)]
     public sealed class CustomValidatorAttribute : ValueValidatorAttribute
@@ -20,13 +20,10 @@ namespace Quantumart.QP8.Validators
         }
 
         /// <summary>
-        /// Создает описанный атрибутом объект <see cref="CustomValidator"/>
+        /// Создает описанный атрибутом объект <see cref="CustomValidator" />
         /// </summary>
         /// <param name="targetType">тип объекта, который должен быть проверен валидатором</param>
-        /// <returns>созданный <see cref="CustomValidator"/></returns>
-        protected override Validator DoCreateValidator(Type targetType)
-        {
-            return new CustomValidator(_validatorType, _method, Negated);
-        }
+        /// <returns>созданный <see cref="CustomValidator" /></returns>
+        protected override Validator DoCreateValidator(Type targetType) => new CustomValidator(_validatorType, _method, Negated);
     }
 }
