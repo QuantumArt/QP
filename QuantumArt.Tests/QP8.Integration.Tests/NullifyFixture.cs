@@ -17,7 +17,7 @@ namespace QP8.Integration.Tests
     [TestFixture]
     public class NullifyFixture
     {
-        public static DBConnector Cnn { get; private set; }
+        public static DBConnector DbConnector { get; private set; }
 
         public static int ContentId { get; private set; }
 
@@ -28,7 +28,7 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
+            DbConnector = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test unique";
             Clear();
 
@@ -38,10 +38,9 @@ namespace QP8.Integration.Tests
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
             service.Process(Global.GetXml(@"xmls\nullify.xml"));
-            ContentId = Global.GetContentId(Cnn, ContentName);
-            BaseArticlesIds = Global.GetIds(Cnn, ContentId);
+            ContentId = Global.GetContentId(DbConnector, ContentName);
+            BaseArticlesIds = Global.GetIds(DbConnector, ContentId);
         }
-
 
         [Test]
         public void MassUpdate_SaveNull_ForNull()
@@ -58,15 +57,15 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1));
             var id2 = int.Parse(article2[FieldName.ContentItemId]);
             var ids = new[] { id2 };
 
-            var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
-            var numBefore = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Number", ids)[0];
-            var parentBefore = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Parent", ids)[0];
-            var dateBefore = Global.GetFieldValues<DateTime?>(Cnn, ContentId, "Date", ids)[0];
-            var flagBefore = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Flag", ids)[0];
+            var titleBefore = Global.GetFieldValues<string>(DbConnector, ContentId, "Title", ids)[0];
+            var numBefore = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Number", ids)[0];
+            var parentBefore = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Parent", ids)[0];
+            var dateBefore = Global.GetFieldValues<DateTime?>(DbConnector, ContentId, "Date", ids)[0];
+            var flagBefore = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Flag", ids)[0];
 
             Assert.That(titleBefore, Is.Not.Null);
             Assert.That(numBefore, Is.Not.Null);
@@ -84,15 +83,15 @@ namespace QP8.Integration.Tests
                 ["Date"] = null,
                 ["Flag"] = null
             };
+
             values.Add(article3);
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1));
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
-
-            var titleAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
-            var numAfter = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Number", ids)[0];
-            var parentAfter = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Parent", ids)[0];
-            var dateAfter = Global.GetFieldValues<DateTime?>(Cnn, ContentId, "Date", ids)[0];
-            var flagAfter = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Flag", ids)[0];
+            var titleAfter = Global.GetFieldValues<string>(DbConnector, ContentId, "Title", ids)[0];
+            var numAfter = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Number", ids)[0];
+            var parentAfter = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Parent", ids)[0];
+            var dateAfter = Global.GetFieldValues<DateTime?>(DbConnector, ContentId, "Date", ids)[0];
+            var flagAfter = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Flag", ids)[0];
 
             Assert.That(titleAfter, Is.Null);
             Assert.That(numAfter, Is.Null);
@@ -116,15 +115,15 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values, 1));
+            Assert.DoesNotThrow(() => DbConnector.ImportToContent(ContentId, values));
             var id2 = int.Parse(article2[FieldName.ContentItemId]);
             var ids = new[] { id2 };
 
-            var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
-            var numBefore = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Number", ids)[0];
-            var parentBefore = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Parent", ids)[0];
-            var dateBefore = Global.GetFieldValues<DateTime?>(Cnn, ContentId, "Date", ids)[0];
-            var flagBefore = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Flag", ids)[0];
+            var titleBefore = Global.GetFieldValues<string>(DbConnector, ContentId, "Title", ids)[0];
+            var numBefore = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Number", ids)[0];
+            var parentBefore = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Parent", ids)[0];
+            var dateBefore = Global.GetFieldValues<DateTime?>(DbConnector, ContentId, "Date", ids)[0];
+            var flagBefore = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Flag", ids)[0];
 
             Assert.That(titleBefore, Is.Not.Null);
             Assert.That(numBefore, Is.Not.Null);
@@ -142,15 +141,15 @@ namespace QP8.Integration.Tests
                 ["Date"] = null,
                 ["Flag"] = null
             };
+
             values.Add(article3);
+            Assert.DoesNotThrow(() => DbConnector.ImportToContent(ContentId, values));
 
-            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values, 1));
-
-            var titleAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
-            var numAfter = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Number", ids)[0];
-            var parentAfter = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Parent", ids)[0];
-            var dateAfter = Global.GetFieldValues<DateTime?>(Cnn, ContentId, "Date", ids)[0];
-            var flagAfter = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Flag", ids)[0];
+            var titleAfter = Global.GetFieldValues<string>(DbConnector, ContentId, "Title", ids)[0];
+            var numAfter = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Number", ids)[0];
+            var parentAfter = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Parent", ids)[0];
+            var dateAfter = Global.GetFieldValues<DateTime?>(DbConnector, ContentId, "Date", ids)[0];
+            var flagAfter = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Flag", ids)[0];
 
             Assert.That(titleAfter, Is.Null);
             Assert.That(numAfter, Is.Null);
@@ -171,7 +170,7 @@ namespace QP8.Integration.Tests
             };
 
             values.Add(article2);
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1));
             var id2 = int.Parse(article2[FieldName.ContentItemId]);
             var ids = new[] { id2 };
 
@@ -179,20 +178,18 @@ namespace QP8.Integration.Tests
             var article3 = new Dictionary<string, string>
             {
                 [FieldName.ContentItemId] = id2.ToString(),
-                ["Title"] = "",
-                ["Number"] = ""
+                ["Title"] = string.Empty,
+                ["Number"] = string.Empty
             };
+
             values.Add(article3);
+            Assert.DoesNotThrow(() => DbConnector.MassUpdate(ContentId, values, 1));
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
-
-            var titleAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
-            var numAfter = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Number", ids)[0];
+            var titleAfter = Global.GetFieldValues<string>(DbConnector, ContentId, "Title", ids)[0];
+            var numAfter = Global.GetFieldValues<decimal?>(DbConnector, ContentId, "Number", ids)[0];
 
             Assert.That(titleAfter, Is.Null);
             Assert.That(numAfter, Is.Null);
-
-
         }
 
         [OneTimeTearDown]
@@ -203,7 +200,7 @@ namespace QP8.Integration.Tests
 
         private static void Clear()
         {
-            ContentId = Global.GetContentId(Cnn, ContentName);
+            ContentId = Global.GetContentId(DbConnector, ContentName);
             var srv = new ContentService(Global.ConnectionString, 1);
             if (srv.Exists(ContentId))
             {

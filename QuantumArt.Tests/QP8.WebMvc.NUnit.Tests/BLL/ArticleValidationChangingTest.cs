@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xaml;
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
@@ -13,7 +13,7 @@ using Quantumart.QP8.Utils;
 
 namespace QP8.WebMvc.NUnit.Tests.BLL
 {
-    [TestClass]
+    [TestFixture]
     public class ArticleValidationChangingTest
     {
         public static string ConnectionString => $"Initial Catalog=qp8_test_{Environment.MachineName.ToLowerInvariant()};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
@@ -36,7 +36,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
                 .Create();
         }
 
-        [TestMethod]
+        [Test]
         public void Check_That_Validator_Change_String_Field_Test()
         {
             const string oldValue = "old_value";
@@ -58,7 +58,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
             CollectionAssert.AreEqual(currentState, newModel);
         }
 
-        [TestMethod]
+        [Test]
         public void Check_That_Validator_Change_Bool_Field_Test()
         {
             var article = new Article { FieldValues = new List<FieldValue>() };
@@ -77,7 +77,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
             CollectionAssert.AreEqual(currentState, newModel);
         }
 
-        [TestMethod]
+        [Test]
         public void Check_That_Validator_Change_Numeric_Field_Test()
         {
             const int oldValue = 10;
@@ -98,7 +98,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
             CollectionAssert.AreEqual(currentState, newModel);
         }
 
-        [TestMethod]
+        [Test]
         public void Check_That_Validator_Change_NumericField_WithNonFormat_Value_Test()
         {
             const int oldValue = 10;
@@ -120,7 +120,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
             CollectionAssert.AreEqual(currentState, newModel);
         }
 
-        [TestMethod]
+        [Test]
         public void Check_That_Validator_Change_DateTimeField_WithNonFormat_Value_Test()
         {
             const string newValue = "value";
@@ -141,7 +141,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
             CollectionAssert.AreEqual(currentState, newModel);
         }
 
-        [TestMethod]
+        [Test]
         public void Check_That_Validator_Change_BoolField_WithNonFormat_Value_Test()
         {
             const string newValue = "value";

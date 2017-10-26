@@ -66,7 +66,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             dbLogService.Verify();
         }
 
-        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml", "3471C3F5D13C53877D1EB0C90E8061E5")]
+        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml")]
         [Theory, Trait("XmlDbUpdate", "XmlHashVerifier")]
         public void GivenXmlData_WhenContainsCorrectData_ShouldCallAllServices(string xmlString)
         {

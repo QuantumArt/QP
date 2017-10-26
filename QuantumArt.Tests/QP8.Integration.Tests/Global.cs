@@ -1,55 +1,55 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using QP8.Infrastructure.Helpers;
 using Quantumart.QPublishing.Database;
 
 namespace QP8.Integration.Tests
 {
-    internal partial class Global
+    internal static partial class Global
     {
         public static int SiteId => 35;
-
-        public static string GetXml(string fileName) => File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, fileName));
 
         public static string DbName => TestContext.Parameters.Get("qp8_test_ci_dbname", $"qp8_test_ci_{Environment.MachineName.ToLowerInvariant()}");
 
         public static string ConnectionString => $"Initial Catalog={DbName};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
-        
+
+        public static string GetXml(string fileName) => File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, fileName));
+
         public static int[] GetIds(DBConnector dbConnector, int contentId) => dbConnector.GetRealData($"select content_item_id from content_{contentId}_united")
-            .AsEnumerable()
-            .Select(n => (int)n.Field<decimal>("content_item_id"))
-            .OrderBy(n => n)
+            .Select()
+            .Select(row => Convert.ToInt32(row["content_item_id"]))
+            .OrderBy(row => row)
             .ToArray();
 
         public static int[] GetIdsFromArchive(DBConnector dbConnector, int[] ids)
         {
             return dbConnector.GetRealData($"select content_item_id from content_item where archive = 1 and content_item_id in ({string.Join(",", ids)})")
-                .AsEnumerable()
-                .Select(n => (int)n.Field<decimal>("content_item_id"))
-                .OrderBy(n => n)
+                .Select()
+                .Select(row => Convert.ToInt32(row["content_item_id"]))
+                .OrderBy(row => row)
                 .ToArray();
         }
 
         public static Dictionary<string, int> GetIdsWithTitles(DBConnector dbConnector, int contentId) => dbConnector.GetRealData($"select content_item_id, Title from content_{contentId}_united")
-            .AsEnumerable()
-            .Select(n => new { Id = (int)n.Field<decimal>("content_item_id"), Title = n.Field<string>("Title") })
-            .ToDictionary(n => n.Title, n => n.Id);
+            .Select()
+            .Select(row => new { Id = Convert.ToInt32(row["content_item_id"]), Title = Convert.ToString(row["Title"]) })
+            .ToDictionary(row => row.Title, row => row.Id);
 
         public static DateTime[] GetModified(DBConnector dbConnector, int contentId) => dbConnector.GetRealData($"select Modified from content_{contentId}_united")
-            .AsEnumerable()
-            .Select(n => n.Field<DateTime>("Modified"))
+            .Select()
+            .Select(row => Convert.ToDateTime(row["Modified"]))
             .ToArray();
 
         public static int CountLinks(DBConnector dbConnector, int[] ids, bool isAsync = false)
         {
             var asyncString = isAsync ? "_async" : string.Empty;
             return dbConnector.GetRealData($"select count(*) as cnt from item_link{asyncString} where item_id in ({string.Join(",", ids)})")
-                .AsEnumerable()
-                .Select(n => n.Field<int>("cnt"))
+                .Select()
+                .Select(row => Convert.ToInt32(row["cnt"]))
                 .Single();
         }
 
@@ -57,8 +57,8 @@ namespace QP8.Integration.Tests
         {
             var asyncString = isAsync ? "_async" : string.Empty;
             return dbConnector.GetRealData($"select count(*) as cnt from item_link_{contentId}{asyncString} where item_id in ({string.Join(",", ids)})")
-                .AsEnumerable()
-                .Select(n => n.Field<int>("cnt"))
+                .Select()
+                .Select(row => Convert.ToInt32(row["cnt"]))
                 .Single();
         }
 
@@ -66,9 +66,9 @@ namespace QP8.Integration.Tests
         {
             var asyncString = isAsync ? "_async" : string.Empty;
             return dbConnector.GetRealData($"select linked_item_id as id from item_link{asyncString} where item_id in ({string.Join(",", ids)})")
-                .AsEnumerable()
-                .Select(n => (int)n.Field<decimal>("id"))
-                .OrderBy(n => n)
+                .Select()
+                .Select(row => Convert.ToInt32(row["id"]))
+                .OrderBy(row => row)
                 .ToArray();
         }
 
@@ -76,9 +76,9 @@ namespace QP8.Integration.Tests
         {
             var asyncString = isAsync ? "_async" : string.Empty;
             return dbConnector.GetRealData($"select linked_item_id as id from item_link{contentId}{asyncString} where item_id in ({string.Join(",", ids)})")
-                .AsEnumerable()
-                .Select(n => (int)n.Field<decimal>("id"))
-                .OrderBy(n => n)
+                .Select()
+                .Select(row => Convert.ToInt32(row["id"]))
+                .OrderBy(row => row)
                 .ToArray();
         }
 
@@ -91,18 +91,18 @@ namespace QP8.Integration.Tests
         }
 
         public static int CountData(DBConnector dbConnector, int[] ids) => dbConnector.GetRealData($"select count(*) as cnt from content_data where content_item_id in ({string.Join(",", ids)})")
-            .AsEnumerable()
-            .Select(n => n.Field<int>("cnt"))
+            .Select()
+            .Select(row => Convert.ToInt32(row["cnt"]))
             .Single();
 
         public static int CountVersionData(DBConnector dbConnector, int[] ids) => dbConnector.GetRealData($"select count(*) as cnt from version_content_data where content_item_version_id in ({string.Join(",", ids)})")
-            .AsEnumerable()
-            .Select(n => n.Field<int>("cnt"))
+            .Select()
+            .Select(row => Convert.ToInt32(row["cnt"]))
             .Single();
 
         public static int CountVersionLinks(DBConnector dbConnector, int[] ids) => dbConnector.GetRealData($"select count(*) as cnt from item_to_item_version where content_item_version_id in ({string.Join(",", ids)})")
-            .AsEnumerable()
-            .Select(n => n.Field<int>("cnt"))
+            .Select()
+            .Select(row => Convert.ToInt32(row["cnt"]))
             .Single();
 
         public static int CountArticles(DBConnector dbConnector, int contentId, int[] ids = null, bool isAsync = false)
@@ -110,8 +110,8 @@ namespace QP8.Integration.Tests
             var asyncString = isAsync ? "_async" : string.Empty;
             var idsString = ids != null ? $"where content_item_id in ({string.Join(",", ids)})" : string.Empty;
             return dbConnector.GetRealData($"select count(*) as cnt from content_{contentId}{asyncString} {idsString}")
-                .AsEnumerable()
-                .Select(n => n.Field<int>("cnt"))
+                .Select()
+                .Select(row => Convert.ToInt32(row["cnt"]))
                 .Single();
         }
 
@@ -122,8 +122,8 @@ namespace QP8.Integration.Tests
             var asyncString = isAsync ? "_async" : string.Empty;
             var idsString = ids != null ? $"where content_item_id in ({string.Join(",", ids)})" : string.Empty;
             return localdbConnector.GetRealData($"select [{fieldName}] from content_{contentId}{asyncString} {idsString}")
-                .AsEnumerable()
-                .Select(n => n.Field<T>(fieldName))
+                .Select()
+                .Select(row => ConvertHelpers.ChangeType<T>(row[fieldName]))
                 .ToArray();
         }
 
@@ -132,13 +132,13 @@ namespace QP8.Integration.Tests
             .ToArray();
 
         public static int[] GetMaxVersions(DBConnector localdbConnector, int[] ids) => localdbConnector.GetRealData($"select max(content_item_version_id) as id from content_item_version where content_item_id in ({string.Join(",", ids)}) group by content_item_id")
-            .AsEnumerable()
-            .Select(n => (int)n.Field<decimal>("id"))
+            .Select()
+            .Select(row => Convert.ToInt32(row["id"]))
             .ToArray();
 
         public static int GetContentId(DBConnector dbConnector, string contentName) => dbConnector.GetRealData($"select content_id from content where site_id = {SiteId} and content_name = '{contentName}'")
-            .AsEnumerable()
-            .Select(n => (int)n.Field<decimal>("content_id"))
+            .Select()
+            .Select(row => Convert.ToInt32(row["content_id"]))
             .SingleOrDefault();
 
         public static int GetFieldId(DBConnector dbConnector, string contentName, string fieldName) => dbConnector.FieldID(SiteId, contentName, fieldName);
@@ -158,12 +158,12 @@ namespace QP8.Integration.Tests
             {
                 cmd.Parameters.AddWithValue("@id", articleId);
                 return dbConnector.GetRealData(cmd)
-                    .AsEnumerable()
-                    .Select(n => new ContentDataItem
+                    .Select()
+                    .Select(row => new ContentDataItem
                     {
-                        FieldId = (int)n.Field<decimal>("ATTRIBUTE_ID"),
-                        Data = n.Field<string>("DATA"),
-                        BlobData = n.Field<string>("BLOB_DATA")
+                        FieldId = Convert.ToInt32(row["ATTRIBUTE_ID"]),
+                        Data = Convert.ToString(row["DATA"]),
+                        BlobData = Convert.ToString(row["BLOB_DATA"])
                     }).ToArray();
             }
         }

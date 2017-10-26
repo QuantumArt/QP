@@ -403,7 +403,6 @@ namespace QP8.Integration.Tests
             using (new QPConnectionScope(Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
-
                 Assert.That(article, Is.Not.Null, CantReadArticle);
 
                 var keyFv = article.FieldValues.Single(fv => fv.Field.Name == DictionaryKey);
@@ -460,6 +459,7 @@ namespace QP8.Integration.Tests
 
             Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
+
             var extensionResult = result[0];
             Assert.That(extensionResult.ContentId, Is.EqualTo(Ex21ContentId));
             Assert.That(extensionResult.OriginalArticleId, Is.Not.EqualTo(extensionResult.CreatedArticleId));
@@ -467,8 +467,8 @@ namespace QP8.Integration.Tests
             var parentValues = Global.GetFieldValues<decimal>(Cnn, Ex21ContentId, Ex21Parent, new[] { extensionResult.CreatedArticleId });
             Assert.That(parentValues, Is.Not.Null, ValuesNotFound);
             Assert.That(parentValues, Has.Length.EqualTo(1));
-            var parentValue = parentValues[0];
 
+            var parentValue = parentValues[0];
             Assert.That(articleId, Is.EqualTo(parentValue));
         }
 
