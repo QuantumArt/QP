@@ -134,7 +134,7 @@ class BackendPlUploader extends Quantumart.QP8.BackendBaseUploader {
       }
 
       if (this._resolveName) {
-        file.name = this._resolveFileName(this._folderPath, file.name);
+        file.name = this._resolveFileName(file.name);
       } else if (this._checkFileExistence(file.name)
         && !$q.confirmMessage(String.format(window.UPLOAD_OVERWRITE_MESSAGE, file.name))) {
         up.removeFile(file);
