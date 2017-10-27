@@ -770,7 +770,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="BLL.nuspec">
       <SubType>Designer</SubType>
     </None>

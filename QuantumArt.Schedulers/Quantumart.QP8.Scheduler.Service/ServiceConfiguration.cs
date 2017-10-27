@@ -26,8 +26,6 @@ namespace Quantumart.QP8.Scheduler.Service
             {
                 Container.RegisterType<ServiceBase, SchedulerService>(descriptor.Name, new InjectionFactory(c => new SchedulerService(c.Resolve<Func<IUnityContainer>>(descriptor.Key), descriptor)));
             }
-
-            // QPContext.SetUnityContainer(Container);
         }
     }
 }

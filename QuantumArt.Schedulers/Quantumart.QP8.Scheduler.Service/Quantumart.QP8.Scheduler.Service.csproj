@@ -145,9 +145,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <Content Include="schedulers.unity.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\bll\BLL.csproj">

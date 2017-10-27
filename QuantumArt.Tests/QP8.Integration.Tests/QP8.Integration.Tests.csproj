@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\bll\BLL.csproj" />
+    <ProjectReference Include="..\..\constants\Constants.csproj" />
     <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
     <ProjectReference Include="..\..\siteMvc\WebMvc.csproj" />
   </ItemGroup>

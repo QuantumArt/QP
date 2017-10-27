@@ -31,6 +31,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\bll\BLL.csproj" />
+    <ProjectReference Include="..\..\constants\Constants.csproj" />
+    <ProjectReference Include="..\..\utils\Utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

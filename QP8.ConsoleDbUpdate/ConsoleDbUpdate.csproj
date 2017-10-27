@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quantumart.QP8.ConsoleDbUpdate</RootNamespace>
     <AssemblyName>qpdbupdate</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -130,14 +130,50 @@
     <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.Extensions.dll">
       <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\binaries\DbUpdate\Microsoft.Practices.EnterpriseLibrary.Data.dll">
-      <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll">
       <Link>References\Mono.Options.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll">
       <Link>References\CsvHelper.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.Mvc.dll">
+      <Link>References\System.Web.Mvc.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Abstractions.dll">
+      <Link>References\Unity.Abstractions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Configuration.dll">
+      <Link>References\Unity.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Container.dll">
+      <Link>References\Unity.Container.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Interception.Configuration.dll">
+      <Link>References\Unity.Interception.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Interception.dll">
+      <Link>References\Unity.Interception.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.ServiceLocation.dll">
+      <Link>References\Unity.ServiceLocation.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Logging.Unity.dll">
+      <Link>References\QP8.Infrastructure.Logging.Unity.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.WebPages.dll">
+      <Link>References\System.Web.WebPages.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\WebActivatorEx.dll">
+      <Link>References\WebActivatorEx.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
+      <Link>References\Microsoft.Web.Infrastructure.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Web.AspNet.dll">
+      <Link>References\QP8.Infrastructure.Web.AspNet.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\System.Data.SqlClient.4.4.0\lib\net461\System.Data.SqlClient.dll">
+      <Link>References\System.Data.SqlClient.dll</Link>
     </EmbeddedResource>
     <Content Include="App.config">
       <SubType>Designer</SubType>
@@ -247,13 +283,13 @@
       <Name>WebMvc</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="C:\ProxyDocuments\Projects\QP\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
-      <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{a1397fa6-f0ba-4695-af53-d03469013692}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="C:\ProxyDocuments\Projects\QP\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
-      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
+      <Project>{ef8cc04a-6ae2-4cf4-9367-31701651639b}</Project>
       <Name>QP8.Infrastructure</Name>
       <Private>False</Private>
     </ProjectReference>
@@ -269,6 +305,7 @@
       <Private>False</Private>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
+    <Reference Include="netstandard" />
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
@@ -277,6 +314,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SqlClient, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SqlClient.4.4.0\lib\net461\System.Data.SqlClient.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
