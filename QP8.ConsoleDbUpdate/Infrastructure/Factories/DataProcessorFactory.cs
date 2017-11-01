@@ -1,4 +1,5 @@
 using System;
+using Moq;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
@@ -6,6 +7,7 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
 {
@@ -13,12 +15,18 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
     {
         internal static IDataProcessor Create(BaseSettingsModel settings)
         {
+            Program.Logger.Debug("Init data processor..");
+
             switch (settings)
             {
                 case XmlSettingsModel xmlSettings:
+                    var dbLogService = xmlSettings.DisableDataIntegrity
+                        ? new Mock<IXmlDbUpdateLogService>().Object
+                        : new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
+
                     return new XmlDataProcessor(
                         xmlSettings,
-                        new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository()),
+                        dbLogService,
                         new ApplicationInfoRepository(),
                         new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())),
                         new XmlDbUpdateHttpContextProcessor()

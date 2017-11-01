@@ -17,7 +17,7 @@ using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 namespace QP8.Integration.Tests
 {
     [TestFixture]
-    public class HierarchyFixture
+    public class HierarchyTests
     {
         public static DBConnector DbConnector { get; private set; }
 
@@ -34,7 +34,7 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            DbConnector = new DBConnector(Global.ConnectionString)
+            DbConnector = new DBConnector(Infrastructure.Global.ConnectionString)
             {
                 DynamicImageCreator = new FakeDynamicImage(),
                 FileSystem = new FakeFileSystem(),
@@ -49,12 +49,12 @@ namespace QP8.Integration.Tests
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
-            service.Process(Global.GetXml(@"xmls\hierarchy.xml"));
+            var service = new XmlDbUpdateNonMvcReplayService(Infrastructure.Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
+            service.Process(Infrastructure.Global.GetXml(@"TestData\hierarchy.xml"));
 
-            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
-            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
-            BaseArticlesIds = Global.GetIdsWithTitles(DbConnector, RegionContentId);
+            RegionContentId = Infrastructure.Global.GetContentId(DbConnector, RegionContentName);
+            ProductContentId = Infrastructure.Global.GetContentId(DbConnector, ProductContentName);
+            BaseArticlesIds = Infrastructure.Global.GetIdsWithTitles(DbConnector, RegionContentId);
         }
 
         [Test]
@@ -62,9 +62,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["root"], BaseArticlesIds["macro1"], BaseArticlesIds["macro2"], BaseArticlesIds["region12"], BaseArticlesIds["district113"] };
             var ids2 = new[] { BaseArticlesIds["root"] };
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
             {
-                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Infrastructure.Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -81,9 +81,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["region12"], BaseArticlesIds["macro1"] };
             var ids2 = new[] { BaseArticlesIds["macro1"] };
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
             {
-                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Infrastructure.Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -100,9 +100,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["city111"], BaseArticlesIds["city112"], BaseArticlesIds["district113"], BaseArticlesIds["region12"], BaseArticlesIds["macro2"] };
             var ids2 = new[] { BaseArticlesIds["root"] };
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
             {
-                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Infrastructure.Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -119,9 +119,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["city111"], BaseArticlesIds["city112"], BaseArticlesIds["district113"], BaseArticlesIds["region12"] };
             var ids2 = new[] { BaseArticlesIds["macro1"] };
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
             {
-                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Infrastructure.Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -141,9 +141,9 @@ namespace QP8.Integration.Tests
 
         private static void Clear()
         {
-            var srv = new ContentService(Global.ConnectionString, 1);
-            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
-            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
+            var srv = new ContentService(Infrastructure.Global.ConnectionString, 1);
+            RegionContentId = Infrastructure.Global.GetContentId(DbConnector, RegionContentName);
+            ProductContentId = Infrastructure.Global.GetContentId(DbConnector, ProductContentName);
 
             if (srv.Exists(ProductContentId))
             {

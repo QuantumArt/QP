@@ -9,6 +9,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
     {
         internal static BaseConsoleArgsProcessor Create(ConsoleKey userSelectedMode)
         {
+            Program.Logger.Debug("Choose processor settings..");
+
             BaseConsoleArgsProcessor processor = null;
             switch (userSelectedMode)
             {
@@ -39,7 +41,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
 
         private static ConsoleKey GetProcessorBasedOnInput()
         {
-            if (Console.IsInputRedirected)
+            if (Console.IsInputRedirected && !Program.DisablePipedInput)
             {
                 var normalizedInput = Program.StandardInputData.Trim().ToLower();
                 return normalizedInput.StartsWith("<?xml") && normalizedInput.EndsWith("</actions>")

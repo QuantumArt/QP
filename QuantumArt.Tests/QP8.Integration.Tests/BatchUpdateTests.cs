@@ -18,7 +18,7 @@ using FieldService = Quantumart.QP8.BLL.Services.API.FieldService;
 namespace QP8.Integration.Tests
 {
     [TestFixture]
-    public class BatchUpdateFixture
+    public class BatchUpdateTests
     {
         public const string ArticlesNotFound = "Статьи для контента не найдены";
         public const string ValuesNotFound = "Значения не найдены";
@@ -68,7 +68,7 @@ namespace QP8.Integration.Tests
         public const string Ex22Content = "Test_BatchUpdate_Ex2_2";
         public const string Ex22Parent = "Parent";
 
-        public static DBConnector Cnn { get; private set; }
+        public static DBConnector DbConnector { get; private set; }
 
         public static ArticleApiService ArticleService { get; private set; }
 
@@ -143,74 +143,74 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            TestContext.WriteLine($"Using next database for tests: {Global.DbName}");
+            TestContext.WriteLine($"Using next database for tests: {Infrastructure.Global.DbName}");
 
-            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
-            DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
-            BaseContentId = Global.GetContentId(Cnn, BaseContent);
-            ArticleService = new ArticleApiService(Global.ConnectionString, 1);
+            DbConnector = new DBConnector(Infrastructure.Global.ConnectionString) { ForceLocalCache = true };
+            DictionaryContentId = Infrastructure.Global.GetContentId(DbConnector, DictionaryContent);
+            BaseContentId = Infrastructure.Global.GetContentId(DbConnector, BaseContent);
+            ArticleService = new ArticleApiService(Infrastructure.Global.ConnectionString, 1);
             Clear();
 
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
-            service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
+            var service = new XmlDbUpdateNonMvcReplayService(Infrastructure.Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
+            service.Process(Infrastructure.Global.GetXml(@"TestData\batchupdate.xml"));
 
             Random = new Random();
-            BaseContentId = Global.GetContentId(Cnn, BaseContent);
+            BaseContentId = Infrastructure.Global.GetContentId(DbConnector, BaseContent);
             InitBaseContentFields();
             InitExtensions();
 
-            DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
+            DictionaryContentId = Infrastructure.Global.GetContentId(DbConnector, DictionaryContent);
             InitDictionaryContentFields();
         }
 
         private static void InitExtensions()
         {
-            Ex11ContentId = Global.GetContentId(Cnn, Ex11Content);
-            Ex11ParentId = Global.GetFieldId(Cnn, Ex11Content, Ex11Parent);
-            Ex11Field1Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field1);
-            Ex11Field2Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field2);
+            Ex11ContentId = Infrastructure.Global.GetContentId(DbConnector, Ex11Content);
+            Ex11ParentId = Infrastructure.Global.GetFieldId(DbConnector, Ex11Content, Ex11Parent);
+            Ex11Field1Id = Infrastructure.Global.GetFieldId(DbConnector, Ex11Content, Ex11Field1);
+            Ex11Field2Id = Infrastructure.Global.GetFieldId(DbConnector, Ex11Content, Ex11Field2);
 
-            Ex12ContentId = Global.GetContentId(Cnn, Ex12Content);
-            Ex12ParentId = Global.GetFieldId(Cnn, Ex12Content, Ex12Parent);
-            Ex12Field1Id = Global.GetFieldId(Cnn, Ex12Content, Ex12Field1);
+            Ex12ContentId = Infrastructure.Global.GetContentId(DbConnector, Ex12Content);
+            Ex12ParentId = Infrastructure.Global.GetFieldId(DbConnector, Ex12Content, Ex12Parent);
+            Ex12Field1Id = Infrastructure.Global.GetFieldId(DbConnector, Ex12Content, Ex12Field1);
 
-            Ex21ContentId = Global.GetContentId(Cnn, Ex21Content);
-            Ex21ParentId = Global.GetFieldId(Cnn, Ex21Content, Ex21Parent);
+            Ex21ContentId = Infrastructure.Global.GetContentId(DbConnector, Ex21Content);
+            Ex21ParentId = Infrastructure.Global.GetFieldId(DbConnector, Ex21Content, Ex21Parent);
 
-            Ex22ContentId = Global.GetContentId(Cnn, Ex22Content);
-            Ex22ParentId = Global.GetFieldId(Cnn, Ex22Content, Ex22Parent);
+            Ex22ContentId = Infrastructure.Global.GetContentId(DbConnector, Ex22Content);
+            Ex22ParentId = Infrastructure.Global.GetFieldId(DbConnector, Ex22Content, Ex22Parent);
         }
 
         private static void InitDictionaryContentFields()
         {
-            DictionaryKeyId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryKey);
-            DictionaryValueId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryValue);
-            DictionaryFieldMtMBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtMBackward);
-            DictionaryFieldMtOBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtOBackward);
+            DictionaryKeyId = Infrastructure.Global.GetFieldId(DbConnector, DictionaryContent, DictionaryKey);
+            DictionaryValueId = Infrastructure.Global.GetFieldId(DbConnector, DictionaryContent, DictionaryValue);
+            DictionaryFieldMtMBackwardId = Infrastructure.Global.GetFieldId(DbConnector, DictionaryContent, DictionaryFieldMtMBackward);
+            DictionaryFieldMtOBackwardId = Infrastructure.Global.GetFieldId(DbConnector, DictionaryContent, DictionaryFieldMtOBackward);
         }
 
         private static void InitBaseContentFields()
         {
-            BaseFieldEx1Id = Global.GetFieldId(Cnn, BaseContent, BaseFieldEx1);
-            BaseFieldEx2Id = Global.GetFieldId(Cnn, BaseContent, BaseFieldEx2);
-            BaseFieldStringId = Global.GetFieldId(Cnn, BaseContent, BaseFieldString);
-            BaseFieldMtMId = Global.GetFieldId(Cnn, BaseContent, BaseFieldMtM);
-            BaseFieldOtMId = Global.GetFieldId(Cnn, BaseContent, BaseFieldOtM);
-            BaseFieldNumericIntegerId = Global.GetFieldId(Cnn, BaseContent, BaseFieldNumericInteger);
-            BaseFieldNumericDecimalId = Global.GetFieldId(Cnn, BaseContent, BaseFieldNumericDecimal);
-            BaseFieldDateId = Global.GetFieldId(Cnn, BaseContent, BaseFieldDate);
-            BaseFieldTimeId = Global.GetFieldId(Cnn, BaseContent, BaseFieldTime);
-            BaseFieldDateTimeId = Global.GetFieldId(Cnn, BaseContent, BaseFieldDateTime);
-            BaseFieldFileId = Global.GetFieldId(Cnn, BaseContent, BaseFieldFile);
-            BaseFieldImageId = Global.GetFieldId(Cnn, BaseContent, BaseFieldImage);
-            BaseFieldTextBoxId = Global.GetFieldId(Cnn, BaseContent, BaseFieldTextBox);
-            BaseFieldVisualEditId = Global.GetFieldId(Cnn, BaseContent, BaseFieldVisualEdit);
-            BaseFieldDynamicImageId = Global.GetFieldId(Cnn, BaseContent, BaseFieldDynamicImage);
-            BaseFieldEnumId = Global.GetFieldId(Cnn, BaseContent, BaseFieldEnum);
+            BaseFieldEx1Id = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldEx1);
+            BaseFieldEx2Id = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldEx2);
+            BaseFieldStringId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldString);
+            BaseFieldMtMId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldMtM);
+            BaseFieldOtMId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldOtM);
+            BaseFieldNumericIntegerId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldNumericInteger);
+            BaseFieldNumericDecimalId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldNumericDecimal);
+            BaseFieldDateId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldDate);
+            BaseFieldTimeId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldTime);
+            BaseFieldDateTimeId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldDateTime);
+            BaseFieldFileId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldFile);
+            BaseFieldImageId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldImage);
+            BaseFieldTextBoxId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldTextBox);
+            BaseFieldVisualEditId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldVisualEdit);
+            BaseFieldDynamicImageId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldDynamicImage);
+            BaseFieldEnumId = Infrastructure.Global.GetFieldId(DbConnector, BaseContent, BaseFieldEnum);
         }
 
         [OneTimeTearDown]
@@ -221,15 +221,15 @@ namespace QP8.Integration.Tests
 
         private static void Clear()
         {
-            var contentService = new ContentService(Global.ConnectionString, 1);
+            var contentService = new ContentService(Infrastructure.Global.ConnectionString, 1);
             var baseContentExists = contentService.Exists(BaseContentId);
             var dictionaryContentExists = contentService.Exists(DictionaryContentId);
-            var fieldService = new FieldService(Global.ConnectionString, 1);
+            var fieldService = new FieldService(Infrastructure.Global.ConnectionString, 1);
 
             if (dictionaryContentExists)
             {
                 InitDictionaryContentFields();
-                var dictionaryIds = Global.GetIds(Cnn, DictionaryContentId);
+                var dictionaryIds = Infrastructure.Global.GetIds(DbConnector, DictionaryContentId);
                 ArticleService.Delete(DictionaryContentId, dictionaryIds);
             }
 
@@ -238,7 +238,7 @@ namespace QP8.Integration.Tests
                 InitBaseContentFields();
                 InitExtensions();
 
-                var baseIds = Global.GetIds(Cnn, BaseContentId);
+                var baseIds = Infrastructure.Global.GetIds(DbConnector, BaseContentId);
                 ArticleService.Delete(BaseContentId, baseIds);
                 contentService.Delete(Ex11ContentId);
                 contentService.Delete(Ex12ContentId);
@@ -317,15 +317,15 @@ namespace QP8.Integration.Tests
             data[0].Fields[0].Value = key;
             data[0].Fields[1].Value = value;
 
-            Global.ClearContentData(Cnn, articleResult.CreatedArticleId);
+            Infrastructure.Global.ClearContentData(DbConnector, articleResult.CreatedArticleId);
             result = ArticleService.BatchUpdate(data);
             Assert.That(result, Is.Not.Null.And.Empty, BatchUpdateResultIncorrect);
 
-            var contentData = Global.GetContentData(Cnn, articleResult.CreatedArticleId);
+            var contentData = Infrastructure.Global.GetContentData(DbConnector, articleResult.CreatedArticleId);
             Assert.That(contentData, Is.Not.Null);
             Assert.That(contentData, Has.Length.EqualTo(4), ContentDataIsEmpty);
 
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);
@@ -400,7 +400,7 @@ namespace QP8.Integration.Tests
             Assert.That(DictionaryContentId, Is.EqualTo(articleResult.ContentId));
             Assert.That(articleResult.OriginalArticleId, Is.Not.EqualTo(articleResult.CreatedArticleId));
 
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);
@@ -464,7 +464,7 @@ namespace QP8.Integration.Tests
             Assert.That(extensionResult.ContentId, Is.EqualTo(Ex21ContentId));
             Assert.That(extensionResult.OriginalArticleId, Is.Not.EqualTo(extensionResult.CreatedArticleId));
 
-            var parentValues = Global.GetFieldValues<decimal>(Cnn, Ex21ContentId, Ex21Parent, new[] { extensionResult.CreatedArticleId });
+            var parentValues = Infrastructure.Global.GetFieldValues<decimal>(DbConnector, Ex21ContentId, Ex21Parent, new[] { extensionResult.CreatedArticleId });
             Assert.That(parentValues, Is.Not.Null, ValuesNotFound);
             Assert.That(parentValues, Has.Length.EqualTo(1));
 
@@ -593,7 +593,7 @@ namespace QP8.Integration.Tests
 
         private static void ClearClassifierField(int articleId)
         {
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);
@@ -608,7 +608,7 @@ namespace QP8.Integration.Tests
 
         private static T GetFieldValue<T>(int contentId, string fieldName, int articleId)
         {
-            var values = Global.GetFieldValues<T>(Cnn, contentId, fieldName, new[] { articleId });
+            var values = Infrastructure.Global.GetFieldValues<T>(DbConnector, contentId, fieldName, new[] { articleId });
             Assert.That(values, Is.Not.Null, ValuesNotFound);
             Assert.That(values, Has.Length.EqualTo(1), ValuesNotFound);
             return values[0];
@@ -616,7 +616,7 @@ namespace QP8.Integration.Tests
 
         private static int GetArticleId(int contentId)
         {
-            var ids = Global.GetIds(Cnn, contentId);
+            var ids = Infrastructure.Global.GetIds(DbConnector, contentId);
             Assert.That(ids, Is.Not.Null.And.Not.Empty, ArticlesNotFound);
             return ids[0];
         }

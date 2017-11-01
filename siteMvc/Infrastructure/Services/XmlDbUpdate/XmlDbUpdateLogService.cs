@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
@@ -17,8 +17,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         }
 
         public bool IsFileAlreadyReplayed(string hash) => _dbUpdateLogRepository.IsExist(hash);
-
-        public List<string> GetExistedHashes(List<string> hashes) => _dbUpdateLogRepository.GetExistedHashes(hashes);
 
         public int InsertFileLogEntry(XmlDbUpdateLogModel dbLogEntry) => _dbUpdateLogRepository.Insert(dbLogEntry);
 

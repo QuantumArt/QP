@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="xmls\batchupdate.xml">
+    <None Update="TestData\batchupdate.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="xmls\batchupdate2.xml">
@@ -46,10 +46,10 @@
     <None Update="xmls\files.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="xmls\group.xml">
+    <None Update="TestData\group.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="xmls\hierarchy.xml">
+    <None Update="TestData\hierarchy.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="xmls\m2m.xml">
