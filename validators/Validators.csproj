@@ -41,10 +41,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
-      <HintPath>..\packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -103,3 +103,4 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
+

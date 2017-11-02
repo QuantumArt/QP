@@ -37,7 +37,7 @@ namespace QP8.Infrastructure.Helpers
 
             return value == DBNull.Value
                 ? null
-                : Convert.ChangeType(value, type);
+                : Convert.ChangeType(value, type ?? throw new InvalidOperationException());
         }
     }
 }

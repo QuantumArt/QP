@@ -65,7 +65,7 @@
       <HintPath>$(SolutionDir)packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.1.2\lib\net47\CommonServiceLocator.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
@@ -87,20 +87,20 @@
       <HintPath>$(SolutionDir)packages\Microsoft.Owin.Security.3.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure">
-      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Moq, Version=4.7.142.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Moq.4.7.142\lib\net45\Moq.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
@@ -134,17 +134,17 @@
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Mvc">
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Razor">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Web.WebPages">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Razor">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -156,28 +156,28 @@
       <HintPath>$(SolutionDir)binaries\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.1.2\lib\net47\Unity.Abstractions.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Configuration, Version=5.0.2.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.1.2\lib\net47\Unity.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Container, Version=5.1.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.1.2\lib\net47\Unity.Container.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Container.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Interception, Version=5.0.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.1.2\lib\net47\Unity.Interception.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Interception.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Interception.Configuration, Version=5.0.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.1.2\lib\net47\Unity.Interception.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Interception.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RegistrationByConvention, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.1.2\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ServiceLocation, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.1.2\lib\net47\Unity.ServiceLocation.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="WebActivatorEx">
-      <HintPath>..\packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -2456,3 +2456,4 @@
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
   <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
+
