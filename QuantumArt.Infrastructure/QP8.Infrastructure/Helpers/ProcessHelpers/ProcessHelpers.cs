@@ -3,21 +3,26 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 
-namespace QP8.Infrastructure.Helpers
+namespace QP8.Infrastructure.Helpers.ProcessHelpers
 {
     public class ProcessHelpers
     {
-        public static int ExecuteFileAndReadOutput(string fileName, string arguments) => ExecuteFileAndReadOutput(fileName, arguments, out var _, out var _);
+        public static int ExecuteFileAndReadOutput(ProcessExecutionSettings processExecutionSettings) => ExecuteFileAndReadOutput(processExecutionSettings, out var _, out var _);
 
-        public static int ExecuteFileAndReadOutput(string fileName, string arguments, out string standardOutput, out string standardError, string standardInput = null)
+        public static int ExecuteFileAndReadOutput(ProcessExecutionSettings processExecutionSettings, out string standardOutput, out string standardError)
         {
+            Ensure.NotNullOrWhiteSpace(processExecutionSettings.ProcessExePath, "Should specify process executable file path");
+
             using (var outputWaitHandle = new AutoResetEvent(false))
             using (var errorWaitHandle = new AutoResetEvent(false))
             {
                 using (var dbUpdateProcess = new Process())
                 {
-                    dbUpdateProcess.StartInfo.FileName = fileName;
-                    dbUpdateProcess.StartInfo.Arguments = arguments;
+                    dbUpdateProcess.StartInfo.FileName = processExecutionSettings.ProcessExePath;
+                    if (!string.IsNullOrWhiteSpace(processExecutionSettings.Arguments))
+                    {
+                        dbUpdateProcess.StartInfo.Arguments = processExecutionSettings.Arguments;
+                    }
 
                     dbUpdateProcess.StartInfo.CreateNoWindow = true;
                     dbUpdateProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -26,16 +31,15 @@ namespace QP8.Infrastructure.Helpers
                     dbUpdateProcess.StartInfo.UseShellExecute = false;
                     dbUpdateProcess.StartInfo.RedirectStandardError = true;
                     dbUpdateProcess.StartInfo.RedirectStandardOutput = true;
-                    dbUpdateProcess.StartInfo.StandardErrorEncoding = Encoding.UTF8;
-                    dbUpdateProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                    if (!string.IsNullOrWhiteSpace(standardInput))
+                    dbUpdateProcess.StartInfo.StandardErrorEncoding = processExecutionSettings.OutputEncoding;
+                    dbUpdateProcess.StartInfo.StandardOutputEncoding = processExecutionSettings.OutputEncoding;
+                    if (!string.IsNullOrWhiteSpace(processExecutionSettings.StandardInputData))
                     {
                         dbUpdateProcess.StartInfo.RedirectStandardInput = true;
                     }
 
                     var outputBuilder = new StringBuilder();
                     var errorBuilder = new StringBuilder();
-
                     int exitCode;
                     try
                     {
@@ -68,17 +72,15 @@ namespace QP8.Infrastructure.Helpers
                         dbUpdateProcess.Start();
                         dbUpdateProcess.BeginErrorReadLine();
                         dbUpdateProcess.BeginOutputReadLine();
-                        dbUpdateProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                        if (!string.IsNullOrWhiteSpace(standardInput))
+                        if (!string.IsNullOrWhiteSpace(processExecutionSettings.StandardInputData))
                         {
                             using (var sw = dbUpdateProcess.StandardInput)
                             {
-                                sw.Write(standardInput.Trim());
+                                sw.Write(processExecutionSettings.StandardInputData.Trim());
                             }
                         }
 
-                        const int processTimeout = 60000;
-                        if (dbUpdateProcess.WaitForExit(processTimeout))
+                        if (dbUpdateProcess.WaitForExit(processExecutionSettings.ProcessTimeout))
                         {
                             exitCode = dbUpdateProcess.ExitCode;
                         }
@@ -92,9 +94,8 @@ namespace QP8.Infrastructure.Helpers
                     }
                     finally
                     {
-                        const int waitForOutputTimeout = 300;
-                        outputWaitHandle.WaitOne(waitForOutputTimeout);
-                        errorWaitHandle.WaitOne(waitForOutputTimeout);
+                        outputWaitHandle.WaitOne(processExecutionSettings.WaitForOutputTimeout);
+                        errorWaitHandle.WaitOne(processExecutionSettings.WaitForOutputTimeout);
                         if (!dbUpdateProcess.HasExited)
                         {
                             dbUpdateProcess.Kill();
