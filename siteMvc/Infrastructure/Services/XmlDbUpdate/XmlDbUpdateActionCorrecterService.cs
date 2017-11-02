@@ -188,8 +188,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private string CorrectIdValue(string entityTypeCode, string value)
         {
-            int result;
-            return int.TryParse(value, out result) ? CorrectIdValue(entityTypeCode, result).ToString() : value;
+            return int.TryParse(value, out var result) ? CorrectIdValue(entityTypeCode, result).ToString() : value;
         }
 
         private int CorrectIdValue(string entityTypeCode, int value)
@@ -334,8 +333,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var fieldRegexp = new Regex(@"^field_\d+$", RegexOptions.Compiled);
             foreach (var fieldName in form.AllKeys.Where(field => fieldRegexp.IsMatch(field)))
             {
-                int parsedFieldId;
-                if (!int.TryParse(fieldName.Replace("field_", string.Empty), out parsedFieldId))
+                if (!int.TryParse(fieldName.Replace("field_", string.Empty), out var parsedFieldId))
                 {
                     continue;
                 }
@@ -366,8 +364,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var uniqueFieldRegexp = new Regex(@"^field_uniqueid_\d+$", RegexOptions.Compiled);
             foreach (var fieldName in form.AllKeys.Where(field => uniqueFieldRegexp.IsMatch(field)))
             {
-                int parsedFieldId;
-                if (!int.TryParse(fieldName.Replace("field_uniqueid_", string.Empty), out parsedFieldId))
+                if (!int.TryParse(fieldName.Replace("field_uniqueid_", string.Empty), out var parsedFieldId))
                 {
                     continue;
                 }

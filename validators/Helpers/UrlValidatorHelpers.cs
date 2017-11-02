@@ -5,19 +5,10 @@ namespace Quantumart.QP8.Validators.Helpers
 {
     public static class UrlValidatorHelpers321
     {
-        public static bool IsWebFolderUrl321(string url)
-        {
-            return IsRelativeWebFolderUrl321(url) || IsAbsoluteWebFolderUrl321(url);
-        }
+        public static bool IsWebFolderUrl321(string url) => IsRelativeWebFolderUrl321(url) || IsAbsoluteWebFolderUrl321(url);
 
-        public static bool IsRelativeWebFolderUrl321(string url)
-        {
-            return Regex.IsMatch(url, RegularExpressions.RelativeWebFolderUrl);
-        }
+        public static bool IsRelativeWebFolderUrl321(string url) => Regex.IsMatch(url, RegularExpressions.RelativeWebFolderUrl);
 
-        public static bool IsAbsoluteWebFolderUrl321(string url)
-        {
-            return Regex.IsMatch(url, RegularExpressions.AbsoluteWebFolderUrl);
-        }
+        public static bool IsAbsoluteWebFolderUrl321(string url) => Regex.IsMatch(url, RegularExpressions.AbsoluteWebFolderUrl);
     }
 }

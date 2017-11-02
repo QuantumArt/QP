@@ -1,8 +1,6 @@
-﻿@model ChildEntityPermissionViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.Constants
+@model Quantumart.QP8.WebMvc.ViewModels.EntityPermissions.ChildEntityPermissionViewModel
 
 @using (Html.BeginTabForm(Model, Model.SaveActionName, Model.ControllerName, new { tabId = Model.TabId, parentId = Model.ParentEntityId }))
 {
@@ -12,7 +10,7 @@
             @Html.Label(Model.UniqueId("CopyParentPermission"), EntityPermissionStrings.CopyParentPermission)
         </dd>
     </dl>
-    using (@Html.BeginPanel("NewParamPanel"))
+    using (Html.BeginPanel("NewParamPanel"))
     {
         <dl><dd>@Html.QpRadioButtonListFor(s => s.Data.PermissionLevelId, Html.List(Model.GetPermissionLevels()))</dd></dl>
         if (Model.IsPropagateable)
@@ -57,7 +55,7 @@
         @Html.HiddenFor(m => m.Data.GroupId)
     }
 
-    foreach (int eid in Model.EntityIDs)
+    foreach (var eid in Model.EntityIDs)
     {
         @Html.Hidden("EntityIDs", eid);
     }

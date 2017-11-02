@@ -117,10 +117,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemovePage)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePage(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_pageService.MultipleRemovePage(IDs));
-        }
+        public ActionResult MultipleRemovePage(int parentId, int[] IDs) => JsonMessageResult(_pageService.MultipleRemovePage(IDs));
 
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -169,17 +166,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult AssemblePagePreAction(int id)
-        {
-            return JsonMessageResult(_pageService.AssemblePagePreAction(id));
-        }
+        public ActionResult AssemblePagePreAction(int id) => JsonMessageResult(_pageService.AssemblePagePreAction(id));
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePagePreAction(int[] IDs)
-        {
-            return JsonMessageResult(_pageService.MultipleAssemblePagePreAction(IDs));
-        }
+        public ActionResult MultipleAssemblePagePreAction(int[] IDs) => JsonMessageResult(_pageService.MultipleAssemblePagePreAction(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -187,10 +178,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePage)]
         [BackendActionContext(ActionCode.AssemblePage)]
         [BackendActionLog]
-        public ActionResult AssemblePage(int id)
-        {
-            return JsonMessageResult(_pageService.AssemblePage(id));
-        }
+        public ActionResult AssemblePage(int id) => JsonMessageResult(_pageService.AssemblePage(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -199,10 +187,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleAssemblePage)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePage(int[] IDs)
-        {
-            return JsonMessageResult(_pageService.MultipleAssemblePage(IDs));
-        }
+        public ActionResult MultipleAssemblePage(int[] IDs) => JsonMessageResult(_pageService.MultipleAssemblePage(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

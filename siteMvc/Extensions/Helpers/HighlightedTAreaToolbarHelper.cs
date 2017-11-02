@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
@@ -12,7 +13,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static Dictionary<string, string> Functions(int? netLanguageId, string assemblingType, bool presentationOrCodeBehind, bool isContainer)
         {
             var result = new Dictionary<string, string>();
-            if (assemblingType == Constants.AssemblingType.Asp)
+            if (assemblingType == AssemblingType.Asp)
             {
                 result.Add("GetContentItemLinkIDs", "GetContentItemLinkIDs(LinkFieldName, ItemID)");
                 result.Add("GetLinkIDs", "GetLinkIDs(LinkFieldName)");
@@ -44,7 +45,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 result.Add("OnScreenFlyEdit", "OnScreenFlyEdit(Value, ItemID, FieldName)");
             }
 
-            if (assemblingType == Constants.AssemblingType.AspDotNetLikeAsp)
+            if (assemblingType == AssemblingType.AspDotNetLikeAsp)
             {
                 result.Add("GetContentID", "GetContentID(content_name);");
                 result.Add("GetContentUploadUrl", "GetContentUploadUrl(content_name);");
@@ -68,7 +69,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 result.Add("GetSiteUrl", "GetSiteUrl();");
             }
 
-            if (assemblingType == Constants.AssemblingType.AspDotNet)
+            if (assemblingType == AssemblingType.AspDotNet)
             {
                 if (netLanguageId == NetLanguage.GetcSharp().Id)
                 {
@@ -186,7 +187,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static Dictionary<string, string> ContainerInfoProperties(int? netLanguageId, string assemblingType, bool presentationOrCodeBehind)
         {
             var result = new Dictionary<string, string>();
-            if (assemblingType == Constants.AssemblingType.Asp)
+            if (assemblingType == AssemblingType.Asp)
             {
                 //Case "containerInfoProperties"
                 result.Add("ContentID", "ContainerInfo.ContentID");
@@ -201,7 +202,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 result.Add("RecordSet", "ContainerInfo.RecordSet");
             }
 
-            if (assemblingType == Constants.AssemblingType.AspDotNetLikeAsp)
+            if (assemblingType == AssemblingType.AspDotNetLikeAsp)
             {
                 //Case "containerInfoProperties"
                 result.Add("ContentName", "ContainerInfo.ContentName");
@@ -213,7 +214,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 result.Add("RecordsPerPage", "ContainerInfo.RecordsPerPage");
             }
 
-            if (assemblingType == Constants.AssemblingType.AspDotNet)
+            if (assemblingType == AssemblingType.AspDotNet)
             {
                 if (netLanguageId == NetLanguage.GetcSharp().Id)
                 {

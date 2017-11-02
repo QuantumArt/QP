@@ -15,6 +15,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
         public static void LoadAssembliesAndAttachEvents()
         {
+            ConsoleHelpers.WriteLineDebug("Prepare to load embedded assemblies");
             var embeddedResourceNames = typeof(Program).Assembly.GetManifestResourceNames();
             var defaultNamespace = typeof(Program).Namespace ?? "ConsoleDbUpdate";
             foreach (var resourceName in embeddedResourceNames.Where(resourceName => resourceName.EndsWith(".dll")))

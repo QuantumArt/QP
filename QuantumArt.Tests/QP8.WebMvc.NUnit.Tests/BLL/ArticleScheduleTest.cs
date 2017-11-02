@@ -1,14 +1,14 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using NUnit.Framework;
 using Quantumart.QP8.BLL;
 using C = Quantumart.QP8.Constants;
 
 namespace QP8.WebMvc.NUnit.Tests.BLL
 {
-    [TestClass]
+    [TestFixture]
     public class ArticleScheduleTest
     {
-        [TestMethod]
+        [Test]
         public void CopyFromTest()
         {
             var srcArticle = new Article();
@@ -51,14 +51,11 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
                 Article = new Article(),
                 ArticleId = 20,
                 Id = 200,
-
                 Recurring = RecurringSchedule.Empty
             };
 
-
             dest.CopyFrom(source);
 
-            //ReferenceEquals(dest.Article, srcArticle);
             Assert.AreEqual(dest.ArticleId, 20);
             Assert.AreEqual(dest.Id, 200);
 

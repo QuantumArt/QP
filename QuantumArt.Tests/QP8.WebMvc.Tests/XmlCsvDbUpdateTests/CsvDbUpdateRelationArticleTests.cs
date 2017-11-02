@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using AutoFixture;
+using AutoFixture.AutoMoq;
+using AutoFixture.Dsl;
+using AutoFixture.Xunit2;
 using Moq;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
-using Ploeh.AutoFixture.Dsl;
-using Ploeh.AutoFixture.Xunit2;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.WebMvc.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;

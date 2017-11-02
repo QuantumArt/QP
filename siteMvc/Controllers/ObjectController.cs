@@ -147,10 +147,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.PromotePageObject)]
         [BackendActionLog]
         [Record]
-        public ActionResult PromotePageObject(string tabId, int parentId, int id)
-        {
-            return Json(_objectService.PromotePageObject(id));
-        }
+        public ActionResult PromotePageObject(string tabId, int parentId, int id) => Json(_objectService.PromotePageObject(id));
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -265,10 +262,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemovePageObject)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePageObject(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_objectService.MultipleRemovePageObject(IDs));
-        }
+        public ActionResult MultipleRemovePageObject(int parentId, int[] IDs) => JsonMessageResult(_objectService.MultipleRemovePageObject(IDs));
 
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -277,10 +271,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemoveTemplateObject)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemoveTemplateObject(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_objectService.MultipleRemoveTemplateObject(IDs));
-        }
+        public ActionResult MultipleRemoveTemplateObject(int parentId, int[] IDs) => JsonMessageResult(_objectService.MultipleRemoveTemplateObject(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -305,30 +296,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult AssemblePageObjectPreAction(int id)
-        {
-            return Json(_objectService.AssembleObjectPreAction(id));
-        }
+        public ActionResult AssemblePageObjectPreAction(int id) => Json(_objectService.AssembleObjectPreAction(id));
 
         [HttpPost]
-        public ActionResult AssembleTemplateObjectPreAction(int id)
-        {
-            return Json(_objectService.AssembleObjectPreAction(id));
-        }
+        public ActionResult AssembleTemplateObjectPreAction(int id) => Json(_objectService.AssembleObjectPreAction(id));
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePageObjectPreAction(int[] IDs)
-        {
-            return Json(_objectService.MultipleAssembleObjectPreAction(IDs));
-        }
+        public ActionResult MultipleAssemblePageObjectPreAction(int[] IDs) => Json(_objectService.MultipleAssembleObjectPreAction(IDs));
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssembleTemplateObjectPreAction(int[] IDs)
-        {
-            return Json(_objectService.MultipleAssembleObjectPreAction(IDs));
-        }
+        public ActionResult MultipleAssembleTemplateObjectPreAction(int[] IDs) => Json(_objectService.MultipleAssembleObjectPreAction(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -336,10 +315,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePageObject)]
         [BackendActionContext(ActionCode.AssemblePageObject)]
         [BackendActionLog]
-        public ActionResult AssemblePageObject(int id)
-        {
-            return Json(_objectService.AssembleObject(id));
-        }
+        public ActionResult AssemblePageObject(int id) => Json(_objectService.AssembleObject(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -347,10 +323,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleTemplateObject)]
         [BackendActionContext(ActionCode.AssembleTemplateObject)]
         [BackendActionLog]
-        public ActionResult AssembleTemplateObject(int id)
-        {
-            return Json(_objectService.AssembleObject(id));
-        }
+        public ActionResult AssembleTemplateObject(int id) => Json(_objectService.AssembleObject(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -359,10 +332,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleAssembleTemplateObject)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssembleTemplateObject(int[] IDs)
-        {
-            return Json(_objectService.MultipleAssembleObject(IDs));
-        }
+        public ActionResult MultipleAssembleTemplateObject(int[] IDs) => Json(_objectService.MultipleAssembleObject(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -371,10 +341,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleAssemblePageObject)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePageObject(int[] IDs)
-        {
-            return Json(_objectService.MultipleAssembleObject(IDs));
-        }
+        public ActionResult MultipleAssemblePageObject(int[] IDs) => Json(_objectService.MultipleAssembleObject(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

@@ -1,8 +1,5 @@
-﻿@model  VisualEditorStyleViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.VisualEditor
-@using Quantumart.QP8.Resources
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Resources
+@model  Quantumart.QP8.WebMvc.ViewModels.VisualEditor.VisualEditorStyleViewModel
 
 <script type="text/html" id="@Html.UniqueId("Data_AttributeItems_template")">
   <span data-bind="@(!Model.Data.IsSystem ? "click: addItem" : string.Empty)">

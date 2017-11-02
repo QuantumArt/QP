@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
@@ -14,12 +14,16 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
         [JsonProperty]
         internal readonly bool UseGuidSubstitution;
 
-        public XmlSettingsModel(IList<string> filePathes, string customerCode, string configPath, bool disableFieldIdentity, bool disableContentIdentity, bool useGuidSubstitution)
+        [JsonProperty]
+        internal readonly bool DisableDataIntegrity;
+
+        public XmlSettingsModel(IList<string> filePathes, string customerCode, string configPath, bool disableFieldIdentity, bool disableContentIdentity, bool useGuidSubstitution, bool disableDataIntegrity)
             : base(filePathes, customerCode, configPath)
         {
             DisableFieldIdentity = disableFieldIdentity;
             DisableContentIdentity = disableContentIdentity;
             UseGuidSubstitution = useGuidSubstitution;
+            DisableDataIntegrity = disableDataIntegrity;
         }
     }
 }

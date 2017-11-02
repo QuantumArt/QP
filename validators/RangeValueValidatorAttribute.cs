@@ -7,6 +7,7 @@ namespace Quantumart.QP8.Validators
     public class RangeValueValidatorAttribute : ValueValidatorAttribute
     {
         public int LowerBound { get; set; }
+
         public int UpperBound { get; set; }
 
         public RangeValueValidatorAttribute(int lowerBound, int upperBound)
@@ -19,10 +20,7 @@ namespace Quantumart.QP8.Validators
             LowerBound = lowerBound;
             UpperBound = upperBound;
         }
-        
-        protected override Validator DoCreateValidator(Type targetType)
-        {
-            return new RangeValueValidator(LowerBound, UpperBound);
-        }
+
+        protected override Validator DoCreateValidator(Type targetType) => new RangeValueValidator(LowerBound, UpperBound);
     }
 }

@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.Utils.FullTextSearch;
 
 namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
 {
-    [TestClass]
+    [TestFixture]
     public class ArticleFullTextSearchQueryParserTest
     {
         private class FullTextParserTestData
@@ -55,13 +55,13 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ParseTest_IncorrectParams_Exceptions()
         {
             var testParams = new[]
             {
-              new FullTextParserTestData
-              {
+                new FullTextParserTestData
+                {
                     Description = "FieldID has incorrect format 1",
                     SearchQueryParams = new[]
                     {
@@ -69,7 +69,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         {
                             SearchType = ArticleFieldSearchType.FullText,
                             FieldID = "1,string,222",
-                            QueryParams = new object[] {"test"}
+                            QueryParams = new object[] { "test" }
                         }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(),
@@ -86,7 +86,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         {
                             SearchType = ArticleFieldSearchType.FullText,
                             FieldID = "1,,222",
-                            QueryParams = new object[] {"test"}
+                            QueryParams = new object[] { "test" }
                         }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(),
@@ -119,7 +119,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         {
                             SearchType = ArticleFieldSearchType.FullText,
                             FieldID = "1,2,3",
-                            QueryParams = new object[]{}
+                            QueryParams = new object[] { }
                         }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(),
@@ -135,22 +135,22 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         {
                             SearchType = ArticleFieldSearchType.FullText,
                             FieldID = "1,2,3",
-                            QueryParams = new object[]{1}
+                            QueryParams = new object[] { 1 }
                         }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(),
 
                     ExpectedExceptionType = typeof(InvalidCastException)
                 }
-
             };
             ProcessParserTest(testParams);
         }
 
-        [TestMethod]
+        [Test]
         public void ParseTest_IronParserHasError_Exceptions()
         {
-            var testParams = new[]{
+            var testParams = new[]
+            {
                 new FullTextParserTestData
                 {
                     Description = "Iron Parser HasError",
@@ -160,7 +160,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         {
                             SearchType = ArticleFieldSearchType.FullText,
                             FieldID = "1,2,3",
-                            QueryParams = new object[] {"test"}
+                            QueryParams = new object[] { "test" }
                         }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(true, "test", null),
@@ -175,22 +175,23 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
             ProcessParserTest(testParams);
         }
 
-        [TestMethod]
+        [Test]
         public void ParseTest_NotProcessedSearchType_EmptyResult()
         {
-            var testParams = new[]{
+            var testParams = new[]
+            {
                 new FullTextParserTestData
                 {
                     Description = "SearchQueryParams contain only Not Processed Search Type",
                     SearchQueryParams = new[]
                     {
-                        new ArticleSearchQueryParam {SearchType = ArticleFieldSearchType.Boolean},
-                        new ArticleSearchQueryParam {SearchType = ArticleFieldSearchType.DateRange},
-                        new ArticleSearchQueryParam {SearchType = ArticleFieldSearchType.M2MRelation},
-                        new ArticleSearchQueryParam {SearchType = ArticleFieldSearchType.NumericRange},
-                        new ArticleSearchQueryParam {SearchType = ArticleFieldSearchType.O2MRelation},
-                        new ArticleSearchQueryParam {SearchType = ArticleFieldSearchType.Text},
-                        new ArticleSearchQueryParam {SearchType = ArticleFieldSearchType.TimeRange}
+                        new ArticleSearchQueryParam { SearchType = ArticleFieldSearchType.Boolean },
+                        new ArticleSearchQueryParam { SearchType = ArticleFieldSearchType.DateRange },
+                        new ArticleSearchQueryParam { SearchType = ArticleFieldSearchType.M2MRelation },
+                        new ArticleSearchQueryParam { SearchType = ArticleFieldSearchType.NumericRange },
+                        new ArticleSearchQueryParam { SearchType = ArticleFieldSearchType.O2MRelation },
+                        new ArticleSearchQueryParam { SearchType = ArticleFieldSearchType.Text },
+                        new ArticleSearchQueryParam { SearchType = ArticleFieldSearchType.TimeRange }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(),
 
@@ -200,10 +201,11 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
             ProcessParserTest(testParams);
         }
 
-        [TestMethod]
+        [Test]
         public void ParseTest_EmptyInput_EmptyQueryResult()
         {
-            var testParams = new[]{
+            var testParams = new[]
+            {
                 new FullTextParserTestData
                 {
                     Description = "SearchQueryParams is null",
@@ -215,7 +217,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                 new FullTextParserTestData
                 {
                     Description = "SearchQueryParams is empty",
-                    SearchQueryParams = new ArticleSearchQueryParam[]{},
+                    SearchQueryParams = new ArticleSearchQueryParam[] { },
                     SearchGrammarParser = new SearchGrammarParserMock(false, null, null),
 
                     ExpectedResult = false
@@ -229,7 +231,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         {
                             SearchType = ArticleFieldSearchType.FullText,
                             FieldID = "1,2,3",
-                            QueryParams = new object[] {null}
+                            QueryParams = new object[] { null }
                         }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(false, null, null),
@@ -246,7 +248,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         {
                             SearchType = ArticleFieldSearchType.FullText,
                             FieldID = "1,2,3",
-                            QueryParams = new object[] {""}
+                            QueryParams = new object[] { "" }
                         }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(false, "", null),
@@ -258,10 +260,11 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
             ProcessParserTest(testParams);
         }
 
-        [TestMethod]
+        [Test]
         public void ParseTest_CorrectInput_CorrectQuery()
         {
-            var testParams = new[]{
+            var testParams = new[]
+            {
                 new FullTextParserTestData
                 {
                     Description = "Input string is null",
@@ -271,7 +274,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         {
                             SearchType = ArticleFieldSearchType.FullText,
                             FieldID = " 1, 2,3 ",
-                            QueryParams = new object[] {"test"}
+                            QueryParams = new object[] { "test" }
                         }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(false, "test", "res'ult"),
@@ -290,7 +293,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         {
                             SearchType = ArticleFieldSearchType.FullText,
                             FieldID = "1",
-                            QueryParams = new object[] {"test"}
+                            QueryParams = new object[] { "test" }
                         }
                     },
                     SearchGrammarParser = new SearchGrammarParserMock(false, "test", "res'ult"),
@@ -311,12 +314,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
             {
                 try
                 {
-                    bool? hasError;
-                    string fieldIdList;
-                    string queryString;
-                    string rawQueryString;
-
-                    var result = new ArticleFullTextSearchQueryParser(testData.SearchGrammarParser).Parse(testData.SearchQueryParams, out hasError, out fieldIdList, out queryString, out rawQueryString);
+                    var result = new ArticleFullTextSearchQueryParser(testData.SearchGrammarParser).Parse(testData.SearchQueryParams, out var hasError, out var fieldIdList, out var queryString, out var _);
                     if (testData.ExpectedExceptionType != null)
                     {
                         Assert.Fail($"\"{testData.Description}\" test is failed. No thrown exception.");
@@ -327,15 +325,14 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     Assert.AreEqual(testData.ExpectedFieldIdList, fieldIdList, $"\"{testData.Description}\" test is failed.");
                     Assert.AreEqual(testData.ExpectedQueryString, queryString, $"\"{testData.Description}\" test is failed.");
                 }
-                catch (UnitTestAssertException) { throw; }
-                catch (Exception exp)
+                catch (Exception ex)
                 {
                     if (testData.ExpectedExceptionType == null)
                     {
                         Assert.Fail($"\"{testData.Description}\" test is failed. Unexpected exception.");
                     }
 
-                    Assert.IsInstanceOfType(exp, testData.ExpectedExceptionType, $"\"{testData.Description}\" test is failed. Unexpected exception type.");
+                    Assert.IsInstanceOf(testData.ExpectedExceptionType, ex, $"\"{testData.Description}\" test is failed. Unexpected exception type.");
                 }
             }
         }

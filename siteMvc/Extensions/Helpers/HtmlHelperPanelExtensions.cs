@@ -58,10 +58,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         }
 
 
-        public static Panel BeginPanel(this HtmlHelper html, string id)
-        {
-            return BeginPanel(html, id, false, false);
-        }
+        public static Panel BeginPanel(this HtmlHelper html, string id) => BeginPanel(html, id, false, false);
 
         public static Panel BeginPanel(this HtmlHelper html, string id, bool disableControls)
         {
@@ -87,10 +84,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return new Panel(html);
         }
 
-        public static Panel BeginDocumentPadding(this HtmlHelper html)
-        {
-            return BeginPanel(html, new Dictionary<string, object> { { "class", "documentPadding" } });
-        }
+        public static Panel BeginDocumentPadding(this HtmlHelper html) => BeginPanel(html, new Dictionary<string, object> { { "class", "documentPadding" } });
 
         /// <summary>
         /// Генерирует начальную часть панели для свертывания/развертывания

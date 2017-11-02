@@ -99,14 +99,8 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public virtual ActionResult MultipleRemove(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(Service.MultipleRemove(parentId, IDs));
-        }
+        public virtual ActionResult MultipleRemove(int parentId, int[] IDs) => JsonMessageResult(Service.MultipleRemove(parentId, IDs));
 
-        public virtual ActionResult Remove(int parentId, int id)
-        {
-            return JsonMessageResult(Service.Remove(parentId, id));
-        }
+        public virtual ActionResult Remove(int parentId, int id) => JsonMessageResult(Service.Remove(parentId, id));
     }
 }

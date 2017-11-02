@@ -1,4 +1,4 @@
-﻿using System.Web;
+using System.Web;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants.Mvc;
@@ -24,39 +24,27 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// </summary>
         /// <param name="url">URL хелпер</param>
         /// <returns>путь к директории, в которой хранятся изображения общие для всех тем</returns>
-        public static string GetCommonRootImageFolderUrl(this UrlHelper url)
-        {
-            return SitePathHelper.GetCommonRootImageFolderUrl();
-        }
+        public static string GetCommonRootImageFolderUrl(this UrlHelper url) => SitePathHelper.GetCommonRootImageFolderUrl();
 
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся изображения указанной темы
         /// </summary>
         /// <param name="url">URL хелпер</param>
         /// <returns>путь к директории, в которой хранятся изображения указанной темы</returns>
-        public static string GetThemeRootImageFolderUrl(this UrlHelper url)
-        {
-            return SitePathHelper.GetThemeRootImageFolderUrl(GetCurrentTheme());
-        }
+        public static string GetThemeRootImageFolderUrl(this UrlHelper url) => SitePathHelper.GetThemeRootImageFolderUrl(GetCurrentTheme());
 
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся маленькие пиктограммы указанной темы
         /// </summary>
         /// <param name="url">URL хелпер</param>
         /// <returns>путь к директории, в которой хранятся маленькие пиктограммы указанной темы</returns>
-        public static string GetThemeSmallIconsImageFolderUrl(this UrlHelper url)
-        {
-            return SitePathHelper.GetThemeSmallIconsImageFolderUrl(GetCurrentTheme());
-        }
+        public static string GetThemeSmallIconsImageFolderUrl(this UrlHelper url) => SitePathHelper.GetThemeSmallIconsImageFolderUrl(GetCurrentTheme());
 
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы
         /// </summary>
         /// <param name="url">URL хелпер</param>
         /// <returns>путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы</returns>
-        public static string GetThemeAjaxLoaderIconsImageFolderUrl(this UrlHelper url)
-        {
-            return SitePathHelper.GetThemeAjaxLoaderIconsImageFolderUrl(GetCurrentTheme());
-        }
+        public static string GetThemeAjaxLoaderIconsImageFolderUrl(this UrlHelper url) => SitePathHelper.GetThemeAjaxLoaderIconsImageFolderUrl(GetCurrentTheme());
     }
 }

@@ -18,28 +18,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         [HttpGet]
         [DisableBrowserCache]
-        public ActionResult Index(DirectLinkOptions directLinkOptions)
-        {
-            return View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
-        }
+        public ActionResult Index(DirectLinkOptions directLinkOptions) => View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
 
         [HttpGet]
-        public ActionResult Test()
-        {
-            return View();
-        }
+        public ActionResult Test() => View();
 
         [HttpGet]
-        public ActionResult JQueryTest()
-        {
-            return View();
-        }
+        public ActionResult JQueryTest() => View();
 
         [HttpPost]
-        public ActionResult JQueryTest(FormCollection formData)
-        {
-            return View();
-        }
+        public ActionResult JQueryTest(FormCollection formData) => View();
 
         [HttpGet]
         public ActionResult Home(string tabId, int parentId)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -65,8 +65,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ValueProviders
 
         private static void AddToBackingStore(EntryLimitedDictionary backingStore, string prefix, object value)
         {
-            var d = value as IDictionary<string, object>;
-            if (d != null)
+            if (value is IDictionary<string, object> d)
             {
                 foreach (var entry in d)
                 {
@@ -76,8 +75,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ValueProviders
                 return;
             }
 
-            var l = value as IList;
-            if (l != null)
+            if (value is IList l)
             {
                 for (var i = 0; i < l.Count; i++)
                 {
@@ -123,8 +121,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ValueProviders
                     var valueArray = appSettings.GetValues("aspnet:MaxJsonDeserializerMembers");
                     if (valueArray != null && valueArray.Length > 0)
                     {
-                        int result;
-                        if (int.TryParse(valueArray[0], out result))
+                        if (int.TryParse(valueArray[0], out var result))
                         {
                             return result;
                         }

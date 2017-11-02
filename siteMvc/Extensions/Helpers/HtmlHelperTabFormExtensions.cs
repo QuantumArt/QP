@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers

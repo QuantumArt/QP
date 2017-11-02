@@ -1,8 +1,5 @@
-﻿@model HomeViewModel
-
-@using Quantumart.QP8.Resources
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.WebMvc.ViewModels.HomePage
+﻿@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.HomePage.HomeViewModel
 
 @using (Html.BeginTabForm(Model))
 {
@@ -15,8 +12,8 @@
 
 	using (Html.BeginFieldGroup(HomeStrings.SearchInArticles))
 	{
-		@Html.SelectFieldFor(e => e.SiteId, Html.List(Model.Sites), new Dictionary<string, object>() { { "id", Model.SiteElementId } })
-		@Html.TextBoxFieldFor(e => e.Search, new Dictionary<string, object>() { { "id", Model.SearchElementId } })
+		@Html.SelectFieldFor(e => e.SiteId, Html.List(Model.Sites), new Dictionary<string, object> { { "id", Model.SiteElementId } })
+		@Html.TextBoxFieldFor(e => e.Search, new Dictionary<string, object> { { "id", Model.SearchElementId } })
 	}
 }
 

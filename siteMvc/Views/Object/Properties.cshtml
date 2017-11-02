@@ -1,8 +1,6 @@
-﻿@model  ObjectViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.Constants
+@model  Quantumart.QP8.WebMvc.ViewModels.PageTemplate.ObjectViewModel
 
 <script type="text/html" id="@Html.UniqueId("SortingItems_template")">
 	<span data-bind="click: addItem">
@@ -104,23 +102,20 @@
         using (Html.BeginFieldGroup(TemplateStrings.Source))
 	    {
             <div class="containerContentSelector">
-                @Html.SingleItemPickerFieldFor(s => s.Data.Container.ContentId,
-					     Model.ContainerContentListItem,
-				    new EntityDataListArgs
-				    {
-					    EntityTypeCode = EntityTypeCode.Content,
-					    ParentEntityId = Model.Data.PageTemplate.SiteId,
-					    SelectActionCode = ActionCode.SelectContentForObjectContainer,
-					    //ReadActionCode = ActionCode.ContentProperties,
-					    ListId = -1 * System.DateTime.Now.Millisecond,
-					    MaxListHeight = 200,
-					    MaxListWidth = 350,
-					    ShowIds = true,
-				    },
-				    new ControlOptions
-				    {
-				    }
-			    )
+              @Html.SingleItemPickerFieldFor(s => s.Data.Container.ContentId,
+                Model.ContainerContentListItem,
+                new EntityDataListArgs
+                {
+                  EntityTypeCode = EntityTypeCode.Content,
+                  ParentEntityId = Model.Data.PageTemplate.SiteId,
+                  SelectActionCode = ActionCode.SelectContentForObjectContainer,
+                  //ReadActionCode = ActionCode.ContentProperties,
+                  ListId = -1 * DateTime.Now.Millisecond,
+                  MaxListHeight = 200,
+                  MaxListWidth = 350,
+                  ShowIds = true
+                },
+                new ControlOptions())
             </div>
             @Html.CheckBoxFieldFor(s => s.Data.Container.AllowDynamicContentChanging, "AllowDynamicContentChangingPanel")
             using (Html.BeginPanel("AllowDynamicContentChangingPanel"))
@@ -223,45 +218,39 @@
         {                         
             using (Html.BeginFieldGroup("FormParameters"))
             {
-            @Html.SingleItemPickerFieldFor(s => s.Data.ContentForm.ContentId,
-					 Model.FormContentListItem,
-				new EntityDataListArgs
-				{
-					EntityTypeCode = EntityTypeCode.Content,
-					ParentEntityId = Model.Data.PageTemplate.SiteId,
-					SelectActionCode = ActionCode.SelectContentForObjectForm,
-					//ReadActionCode = ActionCode.ContentProperties,
-					ListId = -2 * System.DateTime.Now.Millisecond,
-					MaxListHeight = 200,
-					MaxListWidth = 350,
-					ShowIds = true,
-				},
-				new ControlOptions
-				{				
-				}
-			)
+              @Html.SingleItemPickerFieldFor(s => s.Data.ContentForm.ContentId,
+                Model.FormContentListItem,
+                new EntityDataListArgs
+                {
+                  EntityTypeCode = EntityTypeCode.Content,
+                  ParentEntityId = Model.Data.PageTemplate.SiteId,
+                  SelectActionCode = ActionCode.SelectContentForObjectForm,
+                  //ReadActionCode = ActionCode.ContentProperties,
+                  ListId = -2 * DateTime.Now.Millisecond,
+                  MaxListHeight = 200,
+                  MaxListWidth = 350,
+                  ShowIds = true
+                },
+                new ControlOptions())
 
-            @Html.CheckBoxFieldFor(s => s.Data.ContentForm.GenerateUpdateScript)
+              @Html.CheckBoxFieldFor(s => s.Data.ContentForm.GenerateUpdateScript)
 
-            @Html.SingleItemPickerFieldFor(s => s.Data.ContentForm.ThankYouPageId,
-					 Model.SitePageListItem,
-				new EntityDataListArgs
-				{
-					EntityTypeCode = EntityTypeCode.Page,
-					ParentEntityId = Model.Data.PageTemplate.Id,
-					SelectActionCode = ActionCode.SelectPageForObjectForm,
-					ReadActionCode = ActionCode.PageProperties,
-                    ListId = -3 * System.DateTime.Now.Millisecond,
-					MaxListHeight = 200,
-					MaxListWidth = 350,
-					ShowIds = true,
-				},
-				new ControlOptions
-				{
-				}
-			)
+              @Html.SingleItemPickerFieldFor(s => s.Data.ContentForm.ThankYouPageId,
+                Model.SitePageListItem,
+                new EntityDataListArgs
+                {
+                  EntityTypeCode = EntityTypeCode.Page,
+                  ParentEntityId = Model.Data.PageTemplate.Id,
+                  SelectActionCode = ActionCode.SelectPageForObjectForm,
+                  ReadActionCode = ActionCode.PageProperties,
+                  ListId = -3 * DateTime.Now.Millisecond,
+                  MaxListHeight = 200,
+                  MaxListWidth = 350,
+                  ShowIds = true
+                },
+                new ControlOptions())
 
-            @Html.SelectFieldFor(model => model.Data.ContentForm.NetLanguageId, Html.List(Model.NetLanguages))
+              @Html.SelectFieldFor(model => model.Data.ContentForm.NetLanguageId, Html.List(Model.NetLanguages))
             }
         }
         

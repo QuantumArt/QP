@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Mime;
@@ -13,6 +13,8 @@ using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
+using Quantumart.QP8.WebMvc.ViewModels.Library;
+using Quantumart.QP8.WebMvc.ViewModels.Site;
 using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -95,8 +97,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ValidateInput(false)]
         public ActionResult _SearchInArticles(string tabId, int parentId, int id, GridCommand command, string searchQuery)
         {
-            int totalRecord;
-            var seachResult = _searchInArticlesService.SearchInArticles(id, QPContext.CurrentUserId, searchQuery, command.GetListCommand(), out totalRecord);
+            var seachResult = _searchInArticlesService.SearchInArticles(id, QPContext.CurrentUserId, searchQuery, command.GetListCommand(), out var totalRecord);
             return View(new GridModel { Data = seachResult, Total = totalRecord });
         }
 
@@ -273,16 +274,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleContents)]
         [BackendActionContext(ActionCode.AssembleContents)]
         [BackendActionLog]
-        public ActionResult AssembleContents(int id)
-        {
-            return Json(SiteService.AssembleContents(id));
-        }
+        public ActionResult AssembleContents(int id) => Json(SiteService.AssembleContents(id));
 
         [HttpPost]
-        public ActionResult AssembleContentsPreAction(int id)
-        {
-            return Json(SiteService.AssembleContentsPreAction(id));
-        }
+        public ActionResult AssembleContentsPreAction(int id) => Json(SiteService.AssembleContentsPreAction(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

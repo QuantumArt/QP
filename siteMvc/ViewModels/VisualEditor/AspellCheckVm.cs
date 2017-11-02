@@ -24,8 +24,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
         {
             _textInputs = inputs;
 
-            var rgx = new Regex("<[^>]+>");
-            var text = rgx.Replace(HttpUtility.UrlDecode(_textInputs), " ");
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var text = new Regex("<[^>]+>").Replace(HttpUtility.UrlDecode(_textInputs), " ");
             var lines = text.Split(new[] { '\n' }, StringSplitOptions.None);
 
             var requestText = new StringBuilder();
@@ -83,8 +83,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
                 reqStream.Close();
             }
 
-            var resp = req.GetResponse();
-            var strmReader = new StreamReader(resp.GetResponseStream());
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var strmReader = new StreamReader(req.GetResponse().GetResponseStream());
             return strmReader.ReadToEnd().Trim();
         }
 
@@ -93,9 +93,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
             _checkerResults.AppendFormat("words[0][{0}] = '{1}';\n", index, EscapeQuote(word));
         }
 
-        private static string EscapeQuote(string input)
-        {
-            return new Regex("/'/").Replace(input, "\\'");
-        }
+        private static string EscapeQuote(string input) => new Regex("/'/").Replace(input, "\\'");
     }
 }

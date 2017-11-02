@@ -1,6 +1,6 @@
-﻿@model  Quantumart.QP8.WebMvc.ViewModels.UserGroup.UserGroupViewModel
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.Constants
+@model  Quantumart.QP8.WebMvc.ViewModels.UserGroup.UserGroupViewModel
 
 @using (Html.BeginTabForm(Model))
 {
@@ -17,19 +17,19 @@
             @Html.CheckBoxFieldFor(s => s.Data.CanUnlockItems)
         }
 
-        @Html.MultipleItemPickerFieldFor(model => model.BindedUserIDs, Model.BindedUserListItems, new EntityDataListArgs
-   {
-       EntityTypeCode = EntityTypeCode.User,
-       ParentEntityId = 0,
-       SelectActionCode = ActionCode.MultipleSelectUser,
-       ListId = -1 * System.DateTime.Now.Millisecond,
-       MaxListHeight = 200,
-       MaxListWidth = 350,
-       ShowIds = true,
-       ReadActionCode = ActionCode.UserProperties
-   })
+      @Html.MultipleItemPickerFieldFor(model => model.BindedUserIDs, Model.BindedUserListItems, new EntityDataListArgs
+      {
+        EntityTypeCode = EntityTypeCode.User,
+        ParentEntityId = 0,
+        SelectActionCode = ActionCode.MultipleSelectUser,
+        ListId = -1 * DateTime.Now.Millisecond,
+        MaxListHeight = 200,
+        MaxListWidth = 350,
+        ShowIds = true,
+        ReadActionCode = ActionCode.UserProperties
+      })
 
-        @Html.SelectFieldFor(model => model.ParentGroupId, Html.List(Model.GetGroupList()))
+      @Html.SelectFieldFor(model => model.ParentGroupId, Html.List(Model.GetGroupList()))
     }
 
     @Html.Partial("Version", Model.Data)

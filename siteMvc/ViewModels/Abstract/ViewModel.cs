@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
@@ -39,11 +40,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
         public abstract string ActionCode { get; }
 
-        public abstract Constants.MainComponentType MainComponentType { get; }
+        public abstract MainComponentType MainComponentType { get; }
 
         public abstract string MainComponentId { get; }
 
-        public virtual Constants.DocumentContextState DocumentContextState => Constants.DocumentContextState.None;
+        public virtual DocumentContextState DocumentContextState => DocumentContextState.None;
 
         public virtual ExpandoObject MainComponentParameters
         {
@@ -78,10 +79,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
         public bool IsWindow => HtmlHelperFieldExtensions.IsWindow(TabId);
 
-        public string UniqueId(string id)
-        {
-            return HtmlHelperFieldExtensions.UniqueId(id, TabId);
-        }
+        public string UniqueId(string id) => HtmlHelperFieldExtensions.UniqueId(id, TabId);
 
         public bool IsAdmin => QPContext.IsAdmin;
     }

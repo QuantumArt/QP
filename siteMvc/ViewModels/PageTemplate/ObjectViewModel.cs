@@ -87,14 +87,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public new BllObject Data
         {
-            get
-            {
-                return (BllObject)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BllObject)EntityData;
+            set => EntityData = value;
         }
 
         private InitPropertyValue<List<ListItem>> _netLanguages;
@@ -124,6 +118,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
             if (Data.OverrideTemplateObject)
             {
+                // ReSharper disable once PossibleInvalidOperationException
                 Data.ObjectInheritedFrom = _service.ReadObjectProperties(Data.ParentObjectId.Value, false);
                 Data.Name = Data.ObjectInheritedFrom.Name;
                 Data.NetName = Data.ObjectInheritedFrom.NetName;
@@ -235,8 +230,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
         [LocalizedDisplayName("DefaultSorting", NameResourceType = typeof(TemplateStrings))]
         public IEnumerable<SortingItem> SortingItems
         {
-            get { return _sortingItems.Value; }
-            set { _sortingItems.Value = value; }
+            get => _sortingItems.Value;
+            set => _sortingItems.Value = value;
         }
 
         public IEnumerable<ListItem> SelectionStartingModes => new List<ListItem>

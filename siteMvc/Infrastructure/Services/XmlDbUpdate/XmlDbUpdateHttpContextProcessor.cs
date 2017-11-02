@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Web;
 using System.Web.Routing;
 using QP8.Infrastructure;

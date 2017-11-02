@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -14,14 +14,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
 
         public new BLL.UserGroup Data
         {
-            get
-            {
-                return (BLL.UserGroup)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.UserGroup)EntityData;
+            set => EntityData = value;
         }
 
         public static UserGroupViewModel Create(BLL.UserGroup group, string tabId, int parentId, IUserGroupService service)

@@ -1,11 +1,7 @@
-﻿@model VirtualContentViewModel
-
-@using Quantumart.QP8
+﻿@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Constants
-@using Quantumart.QP8.Utils
-@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels.VirtualContent
+@model Quantumart.QP8.WebMvc.ViewModels.VirtualContent.VirtualContentViewModel
 
 @using (Html.BeginTabForm(Model))
 {
@@ -52,25 +48,24 @@
 		{ 			
 			@Html.RadioFieldFor(s => s.Data.VirtualType, Html.List(Model.GetVirtualTypes()))
 			using (Html.BeginPanel("JoinTypePanel"))
-			{ 				
-                
-                @Html.SingleItemPickerFieldFor(m => m.Data.JoinRootId, Model.JoinListItem, 
-                    new EntityDataListArgs
-                    {
-                        EntityTypeCode = EntityTypeCode.Content,
-                        ParentEntityId = Model.Data.SiteId,
-                        SelectActionCode = ActionCode.SelectContentForJoin,
-                        ReadActionCode = ActionCode.ContentProperties,
-                        ListId = -1 * System.DateTime.Now.Millisecond,
-                        ShowIds = true
-                    },
-		            new ControlOptions
-		            {
-			            HtmlAttributes = new Dictionary<string, object> { {"id", Model.JoinRootElementId}}
-		            }
-	            )
-                
-				@Html.VirtualFieldTreeFieldFor(s => s.JoinFields, Model.Data.JoinRootId, Model.Data.Id, new Dictionary<string, object> { { "id", Model.JoinFieldsElementId } })
+			{
+			  @Html.SingleItemPickerFieldFor(m => m.Data.JoinRootId, Model.JoinListItem, 
+			    new EntityDataListArgs
+			    {
+			      EntityTypeCode = EntityTypeCode.Content,
+			      ParentEntityId = Model.Data.SiteId,
+			      SelectActionCode = ActionCode.SelectContentForJoin,
+			      ReadActionCode = ActionCode.ContentProperties,
+			      ListId = -1 * DateTime.Now.Millisecond,
+			      ShowIds = true
+			    },
+			    new ControlOptions
+			    {
+			      HtmlAttributes = new Dictionary<string, object> { {"id", Model.JoinRootElementId}}
+			    }
+			    )
+
+			  @Html.VirtualFieldTreeFieldFor(s => s.JoinFields, Model.Data.JoinRootId, Model.Data.Id, new Dictionary<string, object> { { "id", Model.JoinFieldsElementId } })
 			}
 
 			using (Html.BeginPanel("UnionTypePanel"))

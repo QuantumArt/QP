@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
@@ -14,7 +14,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public static PageTemplateListViewModel Create(PageTemplateInitListResult result, string tabId, int parentId)
         {
-            var model = ViewModel.Create<PageTemplateListViewModel>(tabId, parentId);
+            var model = Create<PageTemplateListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;
             return model;
         }

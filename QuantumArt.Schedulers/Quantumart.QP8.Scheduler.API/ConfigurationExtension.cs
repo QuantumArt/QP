@@ -1,5 +1,7 @@
 using System;
-using Microsoft.Practices.Unity;
+using Unity;
+using Unity.Injection;
+using Unity.Lifetime;
 
 namespace Quantumart.QP8.Scheduler.API
 {

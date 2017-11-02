@@ -9,30 +9,32 @@ using Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 {
-    internal class CsvDataProcessor : IDataProcessor
+    internal class CsvDataProcessor : BaseDataProcessor
     {
         private readonly CsvSettingsModel _settings;
         private readonly ICsvDbUpdateService _csvDbUpdateService;
 
-        public CsvDataProcessor(CsvSettingsModel settings, IFieldRepository fieldRepository, IContentRepository contentRepository, IArticleRepository articleRepository)
+        public CsvDataProcessor(
+            CsvSettingsModel settings,
+            IFieldRepository fieldRepository,
+            IContentRepository contentRepository,
+            IArticleRepository articleRepository)
+            : base(settings)
         {
-            QPContext.CurrentCustomerCode = settings.CustomerCode;
-
             _settings = settings;
-            _csvDbUpdateService = new CsvDbUpdateService(new ArticleService(_settings.UserId), fieldRepository, contentRepository, articleRepository);
+            _csvDbUpdateService = new CsvDbUpdateService(new ArticleService(QPContext.CurrentDbConnectionString, _settings.UserId), fieldRepository, contentRepository, articleRepository);
         }
 
-        public void Process()
+        public override void Process()
         {
             var csvData = CsvReaderProcessor.Process(_settings.FilePathes, _settings.CsvConfiguration);
             _csvDbUpdateService.Process(csvData);
         }
 
-        public void Process(string csvData)
+        public override void Process(string csvRawData)
         {
-            const string validationMessage = "Cannot use pipes for processing csv data";
-            Logger.Log.Error(validationMessage);
-            throw new CsvBadDataException(validationMessage);
+            var csvData = CsvReaderProcessor.Process(csvRawData, _settings.CsvConfiguration);
+            _csvDbUpdateService.Process(csvData);
         }
     }
 }

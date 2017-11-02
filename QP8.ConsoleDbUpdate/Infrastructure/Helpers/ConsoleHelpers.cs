@@ -11,14 +11,16 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
     {
         internal static void SetupConsole()
         {
+            Program.Logger.Debug("Setup initial console settings..");
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
         }
 
         internal static void ReadFromStandardInput()
         {
-            if (Console.IsInputRedirected)
+            if (Console.IsInputRedirected && !Program.DisablePipedInput)
             {
+                Program.Logger.Debug("Read from redirected input..");
                 using (var inputStream = Console.OpenStandardInput())
                 using (var streamReader = new StreamReader(inputStream, Console.InputEncoding))
                 {
@@ -29,6 +31,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 
         internal static void PrintHelloMessage()
         {
+            Program.Logger.Debug("Print hello message..");
+
             WriteLineDebug();
             Console.WriteLine(@"QuantumArt DbUpdate for QP8 version 6.0.");
             Console.WriteLine($@"Assembly version {CommonHelpers.GetAssemblyVersion()}.");
@@ -79,15 +83,38 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 
         internal static ConsoleKey GetUtilityMode(string[] args)
         {
-            var utilityMode = "auto";
+            Program.Logger.Debug("Parse initial utility settings..");
+
+            var utilityMode = string.Empty;
             var options = new OptionSet
             {
-                { "m|mode=", m => { utilityMode = m; } },
+                { "m|mode=", m => { utilityMode = m?.Trim().ToLower(); } },
                 { "v|verbose", "increase debug message verbosity. [v|vv|vvv]:[error|warning|info]", v => ++Program.VerboseLevel },
                 { "s|silent", "enable silent mode for automatization", s => Program.IsSilentModeEnabled = s != null }
             };
-            
+
             options.Parse(args);
+            if (Program.IsSilentModeEnabled)
+            {
+                if (Console.IsInputRedirected && !Program.DisablePipedInput)
+                {
+                    utilityMode = string.IsNullOrWhiteSpace(utilityMode) ? "auto" : utilityMode;
+                }
+                else if (string.Equals("auto", utilityMode))
+                {
+                    throw new OptionException(@"You cannot choose ""auto"" mode (m|mode=) with ""-p"" flag (p|path=)", "m|mode=");
+                }
+
+                if (string.Equals("ask", utilityMode))
+                {
+                    throw new OptionException(@"You cannot choose ""ask"" mode (m|mode=) with ""-s"" flag (s|silent)", "m|mode=");
+                }
+            }
+            else
+            {
+                utilityMode = string.IsNullOrWhiteSpace(utilityMode) ? "ask" : utilityMode;
+            }
+
             switch (utilityMode.ToLower())
             {
                 case "auto":
@@ -96,33 +123,20 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
                     return ConsoleKey.NumPad1;
                 case "csv":
                     return ConsoleKey.NumPad2;
-            }
-
-            if (!Console.IsInputRedirected)
-            {
-                switch (utilityMode.ToLower())
-                {
-                    case "help":
-                        return AskUserToSelectHelpMode();
-                    case "ask":
-                        return AskUserToSelectUtilityMode();
-                }
+                case "ask":
+                    return AskUserToSelectUtilityMode();
             }
 
             throw new OptionException("Unexpected utility mode was specified", "m|mode=");
         }
 
-        internal static ConsoleKey AskUserToSelectHelpMode()
-        {
-            Console.WriteLine(@"1. Show help for XmlImport");
-            Console.WriteLine(@"2. Show help for CsvImport");
-            Console.WriteLine(@"3. Quit");
-
-            return Console.ReadKey().Key;
-        }
-
         internal static ConsoleKey AskUserToSelectUtilityMode()
         {
+            if (Program.IsSilentModeEnabled && !(Console.IsInputRedirected && !Program.DisablePipedInput))
+            {
+                throw new OptionException("You should specify mode for silent work or use piped input", "m|mode=");
+            }
+
             Console.WriteLine(@"Please choose option to process:");
             Console.WriteLine(@"1. Continue with XmlImport");
             Console.WriteLine(@"2. Continue with CsvImport");

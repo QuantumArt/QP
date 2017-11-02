@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Site
 {
     public class SiteViewModel : LockableEntityViewModel
     {
@@ -30,14 +32,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public new BLL.Site Data
         {
-            get
-            {
-                return (BLL.Site)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.Site)EntityData;
+            set => EntityData = value;
         }
 
         public static SiteViewModel Create(BLL.Site site, string tabId, int parentId)
@@ -52,7 +48,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             }
 
             model.ActiveVeCommands = allCommands.Where(c => c.On).Select(c => new QPCheckedItem { Value = c.Id.ToString() }).ToList();
-            model.DefaultCommandsListItems = allCommands.Select(c => new BLL.ListItem
+            model.DefaultCommandsListItems = allCommands.Select(c => new ListItem
             {
                 Value = c.Id.ToString(),
                 Text = c.Alias
@@ -65,8 +61,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels
                 allVeStylesAndFormats.Single(x => x.Id == bnd.Key).On = bnd.Value;
             }
 
-            model.AllStylesListItems = allVeStylesAndFormats.Where(s => s.IsFormat == false).Select(x => new BLL.ListItem { Value = x.Id.ToString(), Text = x.Name }).ToArray();
-            model.AllFormatsListItems = allVeStylesAndFormats.Where(s => s.IsFormat).Select(x => new BLL.ListItem { Value = x.Id.ToString(), Text = x.Name }).ToArray();
+            model.AllStylesListItems = allVeStylesAndFormats.Where(s => s.IsFormat == false).Select(x => new ListItem { Value = x.Id.ToString(), Text = x.Name }).ToArray();
+            model.AllFormatsListItems = allVeStylesAndFormats.Where(s => s.IsFormat).Select(x => new ListItem { Value = x.Id.ToString(), Text = x.Name }).ToArray();
             model.ActiveVeStyles = allVeStylesAndFormats.Where(s => s.IsFormat == false && s.On).Select(x => new QPCheckedItem { Value = x.Id.ToString() }).ToList();
             model.ActiveVeFormats = allVeStylesAndFormats.Where(s => s.IsFormat && s.On).Select(x => new QPCheckedItem { Value = x.Id.ToString() }).ToList();
             return model;
@@ -78,27 +74,27 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public override string CaptureLockActionCode => Constants.ActionCode.CaptureLockSite;
 
-        public List<BLL.ListItem> AssemblingTypes => new List<BLL.ListItem>
+        public List<ListItem> AssemblingTypes => new List<ListItem>
         {
-            new BLL.ListItem(Constants.AssemblingType.AspDotNet, SiteStrings.AspDotNet, new[]{ AssemblingNetOptionsBlock, BinBlock, LinqBlock, TestDirectoryBlock }),
-            new BLL.ListItem(Constants.AssemblingType.Asp, SiteStrings.Asp, OnScreenAspBlock)
+            new ListItem(AssemblingType.AspDotNet, SiteStrings.AspDotNet, new[]{ AssemblingNetOptionsBlock, BinBlock, LinqBlock, TestDirectoryBlock }),
+            new ListItem(AssemblingType.Asp, SiteStrings.Asp, OnScreenAspBlock)
         };
 
-        public List<BLL.ListItem> SiteModes => new List<BLL.ListItem>
+        public List<ListItem> SiteModes => new List<ListItem>
         {
-            new BLL.ListItem("true", SiteStrings.Live),
-            new BLL.ListItem("false", SiteStrings.Stage)
+            new ListItem("true", SiteStrings.Live),
+            new ListItem("false", SiteStrings.Stage)
         };
 
-        public List<BLL.ListItem> OnScreenModes => new List<BLL.ListItem>
+        public List<ListItem> OnScreenModes => new List<ListItem>
         {
-            new BLL.ListItem(Constants.OnScreenBorderMode.Always.ToString(), SiteStrings.Always),
-            new BLL.ListItem(Constants.OnScreenBorderMode.OnMouseOver.ToString(), SiteStrings.OnMouseOver),
-            new BLL.ListItem(Constants.OnScreenBorderMode.Never.ToString(),SiteStrings.Never)
+            new ListItem(OnScreenBorderMode.Always.ToString(), SiteStrings.Always),
+            new ListItem(OnScreenBorderMode.OnMouseOver.ToString(), SiteStrings.OnMouseOver),
+            new ListItem(OnScreenBorderMode.Never.ToString(),SiteStrings.Never)
         };
 
         [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
-        public IEnumerable<BLL.ListItem> DefaultCommandsListItems
+        public IEnumerable<ListItem> DefaultCommandsListItems
         {
             get;
             private set;
@@ -111,9 +107,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public int[] ActiveVeStyleIds { get { return ActiveVeStyles.Union(ActiveVeFormats).Select(c => int.Parse(c.Value)).ToArray(); } }
 
-        public IEnumerable<BLL.ListItem> AllStylesListItems { get; private set; }
+        public IEnumerable<ListItem> AllStylesListItems { get; private set; }
 
-        public IEnumerable<BLL.ListItem> AllFormatsListItems { get; private set; }
+        public IEnumerable<ListItem> AllFormatsListItems { get; private set; }
 
         [LocalizedDisplayName("Styles", NameResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeStyles { get; set; }

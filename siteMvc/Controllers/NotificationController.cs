@@ -202,16 +202,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemoveNotification)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemove(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_notificationService.MultipleRemove(IDs));
-        }
+        public ActionResult MultipleRemove(int parentId, int[] IDs) => JsonMessageResult(_notificationService.MultipleRemove(IDs));
 
         [HttpPost]
-        public ActionResult AssembleNotificationPreAction(int id)
-        {
-            return Json(_notificationService.AssembleNotificationPreAction(id));
-        }
+        public ActionResult AssembleNotificationPreAction(int id) => Json(_notificationService.AssembleNotificationPreAction(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -219,17 +213,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleNotification)]
         [BackendActionContext(ActionCode.AssembleNotification)]
         [BackendActionLog]
-        public ActionResult AssembleNotification(int id)
-        {
-            return Json(_notificationService.AssembleNotification(id));
-        }
+        public ActionResult AssembleNotification(int id) => Json(_notificationService.AssembleNotification(id));
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssembleNotificationPreAction(int[] IDs)
-        {
-            return Json(_notificationService.MultipleAssembleNotificationPreAction(IDs));
-        }
+        public ActionResult MultipleAssembleNotificationPreAction(int[] IDs) => Json(_notificationService.MultipleAssembleNotificationPreAction(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -238,9 +226,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleAssembleNotification)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssembleNotification(int[] IDs)
-        {
-            return Json(_notificationService.MultipleAssembleNotification(IDs));
-        }
+        public ActionResult MultipleAssembleNotification(int[] IDs) => Json(_notificationService.MultipleAssembleNotification(IDs));
     }
 }

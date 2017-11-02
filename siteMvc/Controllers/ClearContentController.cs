@@ -19,28 +19,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ClearContent)]
-        public ActionResult PreAction(int parentId, int id)
-        {
-            return Json(_service.PreAction(parentId, id));
-        }
+        public ActionResult PreAction(int parentId, int id) => Json(_service.PreAction(parentId, id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ClearContent)]
         [BackendActionContext(ActionCode.ClearContent)]
         [BackendActionLog]
-        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
-        {
-            return Json(_service.Setup(parentId, id, boundToExternal));
-        }
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal) => Json(_service.Setup(parentId, id, boundToExternal));
 
         [HttpPost]
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step)
-        {
-            return Json(_service.Step(stage, step));
-        }
+        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
 
         [HttpPost]
         public void TearDown(bool isError)

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
@@ -256,6 +256,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 try
                 {
                     model.Data = ArticleService.Create(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
+                    // ReSharper disable once PossibleInvalidOperationException
                     PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
@@ -307,6 +308,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var data = ArticleService.ReadForUpdate(id, parentId);
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
+
+            // ReSharper disable once PossibleInvalidOperationException
             PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
 
             TryUpdateModel(model);
@@ -316,10 +319,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 try
                 {
                     model.Data = ArticleService.Update(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
+
+                    // ReSharper disable once PossibleInvalidOperationException
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
                         ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f=>f.FieldValues))
                         : model.Data.FieldValues;
+
                     foreach (var fv in union.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
                     {
                         AppendFormGuidsFromIds($"field_{fv.Field.Id}", $"field_uniqueid_{fv.Field.Id}");
@@ -371,6 +377,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult Remove(int parentId, int id, bool? boundToExternal)
         {
             var articleToRemove = ArticleRepository.GetById(id);
+            // ReSharper disable once PossibleInvalidOperationException
             PersistFromId(articleToRemove.Id, articleToRemove.UniqueId.Value);
             return JsonMessageResult(ArticleService.Remove(parentId, articleToRemove, false, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
@@ -388,8 +395,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var articlesToRemove = ArticleRepository.GetByIds(IDs);
             var idsToRemove = articlesToRemove.Select(atr => atr.Id).ToArray();
+
+            // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToRemove.Select(atr => atr.UniqueId.Value).ToArray();
             PersistFromIds(idsToRemove, guidsToRemove);
+
             return JsonMessageResult(ArticleService.Remove(parentId, IDs, false, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
@@ -405,7 +415,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult RemoveFromArchive(int parentId, int id, bool? boundToExternal)
         {
             var articleToRemove = ArticleRepository.GetById(id);
+
+            // ReSharper disable once PossibleInvalidOperationException
             PersistFromId(articleToRemove.Id, articleToRemove.UniqueId.Value);
+
             var result = ArticleService.Remove(parentId, id, true, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
             return JsonMessageResult(result);
         }
@@ -421,6 +434,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var articlesToRemove = ArticleRepository.GetByIds(IDs);
             var idsToRemove = articlesToRemove.Select(atr => atr.Id).ToArray();
+
+            // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToRemove.Select(atr => atr.UniqueId.Value).ToArray();
             PersistFromIds(idsToRemove, guidsToRemove);
             return JsonMessageResult(ArticleService.Remove(parentId, IDs, true, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
@@ -435,7 +450,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult MoveToArchive(int id, bool? boundToExternal)
         {
             var articleToArchive = ArticleRepository.GetById(id);
+
+            // ReSharper disable once PossibleInvalidOperationException
             PersistFromId(articleToArchive.Id, articleToArchive.UniqueId.Value);
+
             return JsonMessageResult(ArticleService.MoveToArchive(id, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
@@ -450,7 +468,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult RestoreFromArchive(int id, bool? boundToExternal)
         {
             var articleToRestore = ArticleRepository.GetById(id);
+
+            // ReSharper disable once PossibleInvalidOperationException
             PersistFromId(articleToRestore.Id, articleToRestore.UniqueId.Value);
+
             return JsonMessageResult(ArticleService.RestoreFromArchive(articleToRestore, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
@@ -465,7 +486,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var articlesToRemove = ArticleRepository.GetByIds(IDs);
             var idsToRemove = articlesToRemove.Select(atr => atr.Id).ToArray();
+
+            // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToRemove.Select(atr => atr.UniqueId.Value).ToArray();
+
             PersistFromIds(idsToRemove, guidsToRemove);
             return JsonMessageResult(ArticleService.Publish(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
@@ -484,7 +508,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var articlesToArchive = ArticleRepository.GetByIds(IDs);
             var idsToRemove = articlesToArchive.Select(atr => atr.Id).ToArray();
+
+            // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToArchive.Select(atr => atr.UniqueId.Value).ToArray();
+
             PersistFromIds(idsToRemove, guidsToRemove);
             return JsonMessageResult(ArticleService.MoveToArchive(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
@@ -503,7 +530,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var articlesToRestore = ArticleRepository.GetByIds(IDs);
             var idsToRemove = articlesToRestore.Select(atr => atr.Id).ToArray();
+
+            // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToRestore.Select(atr => atr.UniqueId.Value).ToArray();
+
             PersistFromIds(idsToRemove, guidsToRemove);
             return JsonMessageResult(ArticleService.RestoreFromArchive(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }

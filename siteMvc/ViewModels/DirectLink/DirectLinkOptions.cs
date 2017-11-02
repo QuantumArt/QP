@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.DirectLink
@@ -57,9 +57,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.DirectLink
             return url;
         }
 
-        public bool IsDefined()
-        {
-            return !string.IsNullOrEmpty(ActionCode) && !string.IsNullOrEmpty(EntityTypeCode) && (EntityId.HasValue || ParentEntityId.HasValue);
-        }
+        public bool IsDefined() => !string.IsNullOrEmpty(ActionCode) && !string.IsNullOrEmpty(EntityTypeCode) && (EntityId.HasValue || ParentEntityId.HasValue);
     }
 }

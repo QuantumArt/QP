@@ -1,11 +1,7 @@
-﻿@model SearchInFormatsViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
-@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.BLL.ListItems
+@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
-@using Quantumart.QP8.Resources
-@using Quantumart.QP8.BLL.ListItems
+@model Quantumart.QP8.WebMvc.ViewModels.PageTemplate.SearchInFormatsViewModel
 
 @using (Html.BeginDocumentPadding())
 {
@@ -17,23 +13,21 @@
                 <div class="sic_templateSelector">                    
                 @Html.SelectFieldFor(model => model.TemplateId, Html.List(Model.Templates), new Dictionary<string, object> { { "style", "width:auto !important;" } }, new SelectOptions())
                 </div>
-                <div class="sic_pageSelector">                    			                        
-                @Html.SingleItemPickerFieldFor(s => s.PageId,
-					Model.PageListItem,
-				    new EntityDataListArgs
-				    {
-					    EntityTypeCode = Quantumart.QP8.Constants.EntityTypeCode.Page,
-					    ParentEntityId = Model.SiteAnyTemplateId,
-					    SelectActionCode = Quantumart.QP8.Constants.ActionCode.SelectPageForObjectForm,
-					    ReadActionCode = Quantumart.QP8.Constants.ActionCode.PageProperties,
-                        ListId = -3 * System.DateTime.Now.Millisecond,
-					    MaxListHeight = 200,
-					    MaxListWidth = 350,
-					    ShowIds = true,
-				    },
-				    new ControlOptions
-				    {
-				    })			            
+                <div class="sic_pageSelector">
+                  @Html.SingleItemPickerFieldFor(s => s.PageId,
+                    Model.PageListItem,
+                    new EntityDataListArgs
+                    {
+                      EntityTypeCode = EntityTypeCode.Page,
+                      ParentEntityId = Model.SiteAnyTemplateId,
+                      SelectActionCode = ActionCode.SelectPageForObjectForm,
+                      ReadActionCode = ActionCode.PageProperties,
+                      ListId = -3 * DateTime.Now.Millisecond,
+                      MaxListHeight = 200,
+                      MaxListWidth = 350,
+                      ShowIds = true
+                    },
+                    new ControlOptions())
                 </div>
                 <div class="sic_filter">                    
                     @Html.TextBoxFieldFor(s => s.Filter)

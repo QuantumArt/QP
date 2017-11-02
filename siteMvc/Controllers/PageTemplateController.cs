@@ -143,8 +143,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult GetFieldsByContentId(int contentId)
         {
             var content = _pageTemplateService.GetContentById(contentId);
-            bool hasWorkflow;
-            var statuses = _pageTemplateService.GetStatusIdsByContentId(contentId, out hasWorkflow);
+            var statuses = _pageTemplateService.GetStatusIdsByContentId(contentId, out var hasWorkflow);
             return new JsonResult
             {
                 Data = new
@@ -164,16 +163,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePageFromPageObject)]
         [BackendActionContext(ActionCode.AssemblePageFromPageObject)]
         [BackendActionLog]
-        public ActionResult AssemblePageFromPageObject(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObject(parentId));
-        }
+        public ActionResult AssemblePageFromPageObject(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObject(parentId));
 
         [HttpPost]
-        public ActionResult AssemblePageFromPageObjectPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectPreAction(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectPreAction(parentId));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -181,16 +174,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePageFromPageObjectFormat)]
         [BackendActionContext(ActionCode.AssemblePageFromPageObjectFormat)]
         [BackendActionLog]
-        public ActionResult AssemblePageFromPageObjectFormat(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectFormat(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectFormat(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectFormat(parentId));
 
         [HttpPost]
-        public ActionResult AssemblePageFromPageObjectFormatPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectFormatPreAction(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectFormatPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectFormatPreAction(parentId));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -198,16 +185,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePageFromPageObjectList)]
         [BackendActionContext(ActionCode.AssemblePageFromPageObjectList)]
         [BackendActionLog]
-        public ActionResult AssemblePageFromPageObjectList(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectList(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectList(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectList(parentId));
 
         [HttpPost]
-        public ActionResult AssemblePageFromPageObjectListPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectListPreAction(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectListPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectListPreAction(parentId));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -215,16 +196,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleObjectFromPageObjectFormat)]
         [BackendActionContext(ActionCode.AssembleObjectFromPageObjectFormat)]
         [BackendActionLog]
-        public ActionResult AssembleObjectFromPageObjectFormat(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssembleObjectFromPageObjectFormat(parentId));
-        }
+        public ActionResult AssembleObjectFromPageObjectFormat(string tabId, int parentId, int id) => Json(_pageTemplateService.AssembleObjectFromPageObjectFormat(parentId));
 
         [HttpPost]
-        public ActionResult AssembleObjectFromPageObjectFormatPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssembleObjectFromPageObjectFormatPreAction(parentId));
-        }
+        public ActionResult AssembleObjectFromPageObjectFormatPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssembleObjectFromPageObjectFormatPreAction(parentId));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -232,16 +207,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleObjectFromPageObjectFormat)]
         [BackendActionContext(ActionCode.AssembleObjectFromPageObjectFormat)]
         [BackendActionLog]
-        public ActionResult AssembleObjectFromTemplateObjectFormat(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssembleObjectFromTemplateObjectFormat(parentId));
-        }
+        public ActionResult AssembleObjectFromTemplateObjectFormat(string tabId, int parentId, int id) => Json(_pageTemplateService.AssembleObjectFromTemplateObjectFormat(parentId));
 
         [HttpPost]
-        public ActionResult AssembleObjectFromTemplateObjectFormatPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssembleObjectFromTemplateObjectFormatPreAction(parentId));
-        }
+        public ActionResult AssembleObjectFromTemplateObjectFormatPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssembleObjectFromTemplateObjectFormatPreAction(parentId));
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -404,16 +373,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public JsonResult GetHTAToolbarMarkUp(bool presentationOrCodeBehind, int? formatId, int? templateId)
+        public JsonResult GetHTAToolbarMarkUp(bool presentationOrCodeBehind, int? formatId, int? templateId) => new JsonResult
         {
-            return new JsonResult
+            Data = new
             {
-                Data = new
-                {
-                    html = RenderPartialView("HTAreaToolbar", new HtAreaToolbarViewModel(presentationOrCodeBehind, formatId, templateId))
-                },
-                JsonRequestBehavior = JsonRequestBehavior.DenyGet
-            };
-        }
+                html = RenderPartialView("HTAreaToolbar", new HtAreaToolbarViewModel(presentationOrCodeBehind, formatId, templateId))
+            },
+            JsonRequestBehavior = JsonRequestBehavior.DenyGet
+        };
     }
 }

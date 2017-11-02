@@ -1,4 +1,4 @@
-﻿using System.Web;
+using System.Web;
 using System.Web.Mvc;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Logging;

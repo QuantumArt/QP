@@ -127,17 +127,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveWorkflow)]
         [BackendActionContext(ActionCode.RemoveWorkflow)]
         [BackendActionLog]
-        public ActionResult Remove(int id)
-        {
-            return JsonMessageResult(_workflowService.Remove(id));
-        }
+        public ActionResult Remove(int id) => JsonMessageResult(_workflowService.Remove(id));
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult CheckUserOrGroupAccessOnContents(string statusName, string userIdString, string groupIdString, string contentIdsString)
         {
             var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(',').Select(x => int.Parse(x)).ToList();
-            int tempVal;
-            var userId = int.TryParse(userIdString, out tempVal) ? tempVal : (int?)null;
+            var userId = int.TryParse(userIdString, out var tempVal) ? tempVal : (int?)null;
             var groupId = int.TryParse(groupIdString, out tempVal) ? tempVal : (int?)null;
             var contentAccessSummary = new StringBuilder();
 
