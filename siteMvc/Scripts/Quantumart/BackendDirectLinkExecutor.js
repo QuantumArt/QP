@@ -20,21 +20,22 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
   _uid: null,
 
   _onDirectLinkOpenRequested(e) {
-    const evt = Object.assign({}, e);
-    if ($q.isNullOrEmpty(evt.key)) {
+    if ($q.isNullOrEmpty(e.key)) {
       const key = window.localStorage.getItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
       if (key) {
-        evt.key = key;
-        evt.newValue = window.localStorage.getItem(key);
+        // eslint-disable-next-line no-param-reassign
+        e.key = key;
+        // eslint-disable-next-line no-param-reassign
+        e.newValue = window.localStorage.getItem(key);
       }
     }
 
-    if (evt.key === this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM && $q.isString(evt.newValue)) {
-      const actionParams = jQuery.parseJSON(evt.newValue);
+    if (e.key === this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM && $q.isString(e.newValue)) {
+      const actionParams = jQuery.parseJSON(e.newValue);
       this._executeAction(actionParams, true);
-    } else if (evt.key === this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG && $.isNumeric(evt.newValue)) {
-      $q.warnIfEqDiff(evt.newValue, this._uid);
-      if (evt.newValue !== this._uid) {
+    } else if (e.key === this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG && $.isNumeric(e.newValue)) {
+      $q.warnIfEqDiff(e.newValue, this._uid);
+      if (e.newValue !== this._uid) {
         this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE, 'true');
       }
     }

@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (
   containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, rangeType
 ) {
@@ -150,7 +151,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
   },
 
   _onByValueSelectorChanged(e) {
-    this._isByValue = $(e.currentTarget).val() === 0;
+    this._isByValue = +$(e.currentTarget).val() === 0;
 
     if (this._isByValue) {
       $c.disableDateTimePicker(this._dateToElement);

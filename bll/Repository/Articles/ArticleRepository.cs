@@ -83,7 +83,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (new QPConnectionScope())
             {
-                var result = MapperFacade.ArticleRowMapper.GetBizObject(GetData(id, contentId));
+                var result = MapperFacade.ArticleRowMapper.GetBizObject(GetData(id, contentId, QPContext.IsLive));
                 if (result != null)
                 {
                     result.ContentId = contentId;
@@ -657,13 +657,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return orderExpression;
         }
 
-        internal static DataRow GetData(int id, int contentId)
+        internal static DataRow GetData(int id, int contentId, bool isLive)
         {
             using (new QPConnectionScope())
             {
                 return id == 0
                     ? Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId)
-                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, QPContext.IsLive);
+                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive);
             }
         }
 
@@ -976,7 +976,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static IEnumerable<Article> LoadAggregatedArticles(Article article)
+        internal static IEnumerable<Article> LoadAggregatedArticles(Article article, bool isLive)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -986,6 +986,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 }
 
                 var values = article.FieldValues.Where(n => n.Field.IsClassifier).ToList();
+                if (isLive)
+                {
+                    values = article.LiveFieldValues.Where(n => n.Field.IsClassifier).ToList();
+                }
+
                 if (!values.Any())
                 {
                     return Enumerable.Empty<Article>();
@@ -993,7 +998,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
                 var classifierFields = values.Select(n => n.Field.Id).ToArray();
                 var types = values.Where(n => !string.IsNullOrEmpty(n.Value)).Select(n => int.Parse(n.Value)).ToArray();
-                var aggregatedArticlesId = Common.GetAggregatedArticlesIDs(scope.DbConnection, article.Id, classifierFields, types).ToList();
+                var aggregatedArticlesId = Common.GetAggregatedArticlesIDs(scope.DbConnection, article.Id, classifierFields, types, isLive).ToList();
                 if (aggregatedArticlesId.Any())
                 {
                     return MapperFacade.ArticleMapper.GetBizList(

@@ -79,7 +79,7 @@ Quantumart.QP8.BackendFileField.prototype = {
   _useSiteLibrary: false,
   _libraryEntityId: 0,
   _libraryParentEntityId: 0,
-  _uploaderType: Quantumart.QP8.Enums.UploaderType.Silverlight,
+  _uploaderType: Quantumart.QP8.Enums.UploaderType.Html,
   _selectPopupWindowComponent: null,
   _uploaderComponent: null,
   _uploaderSubFolder: '',
