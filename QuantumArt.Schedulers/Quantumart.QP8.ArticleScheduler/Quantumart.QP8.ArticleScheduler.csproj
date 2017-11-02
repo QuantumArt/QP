@@ -121,7 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Unity">
-      <Version>5.0.2</Version>
+      <Version>5.1.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

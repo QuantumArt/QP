@@ -31,11 +31,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             _csvDbUpdateService.Process(csvData);
         }
 
-        public override void Process(string csvData)
+        public override void Process(string csvRawData)
         {
-            const string validationMessage = "Cannot use pipes for processing csv data";
-            Logger.Log.Error(validationMessage);
-            throw new CsvBadDataException(validationMessage);
+            var csvData = CsvReaderProcessor.Process(csvRawData, _settings.CsvConfiguration);
+            _csvDbUpdateService.Process(csvData);
         }
     }
 }

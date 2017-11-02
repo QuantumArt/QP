@@ -99,7 +99,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         private void ValidateInputData(ICollection<string> noNamedOptions)
         {
-            Ensure.That<OptionException>(noNamedOptions.Count == 1, "Should specify single not named parameter <customer_code>", "customer_code");
+            Ensure.That<OptionException>(noNamedOptions.Count == 1, $"Should specify single not named parameter <customer_code>, but was {string.Join(",", noNamedOptions)}", "customer_code");
             if (!(Console.IsInputRedirected && !Program.DisablePipedInput))
             {
                 Ensure.That<OptionException>(FilePathes.Any(), "Should specify at least one xml file or folder path", "path");

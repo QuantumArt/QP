@@ -40,6 +40,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             return ParseDocuments(orderedFilePathes, csvConfiguration);
         }
 
+        internal static IEnumerable<CsvDbUpdateModel> Process(string inputData, CsvConfiguration csvConfiguration)
+        {
+            using (var sr = new StringReader(inputData))
+            using (var csv = new CsvReader(sr, csvConfiguration))
+            {
+                yield return ParseCsvReader(csv);
+            }
+        }
+
         private static IEnumerable<CsvDbUpdateModel> ParseDocuments(IEnumerable<string> filePathes, CsvConfiguration csvConfiguration)
         {
             foreach (var path in filePathes)
@@ -47,23 +56,29 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                 using (var stream = new StreamReader(path, csvConfiguration.Encoding, true))
                 using (var csv = new CsvReader(stream, csvConfiguration))
                 {
-                    var csvFieldsData = new Dictionary<int, IList<CsvDbUpdateFieldModel>>();
-                    while (csv.Read())
-                    {
-                        csvFieldsData.Add(csv.Row, csv.FieldHeaders.Zip(csv.CurrentRecord, (fieldName, fieldValue) => new CsvDbUpdateFieldModel
-                        {
-                            Name = fieldName,
-                            Value = fieldValue == "NULL" ? null : fieldValue
-                        }).ToList());
-                    }
-
-                    yield return new CsvDbUpdateModel
-                    {
-                        ContentId = GetContentIdFromFileName(path),
-                        Fields = csvFieldsData
-                    };
+                    yield return ParseCsvReader(csv, path);
                 }
             }
+        }
+
+        private static CsvDbUpdateModel ParseCsvReader(CsvReader csv, string path = null)
+        {
+            var csvFieldsData = new Dictionary<int, IList<CsvDbUpdateFieldModel>>();
+            while (csv.Read())
+            {
+                csvFieldsData.Add(csv.Row, csv.FieldHeaders.Zip(csv.CurrentRecord, (fieldName, fieldValue) => new CsvDbUpdateFieldModel
+                {
+                    Name = fieldName,
+                    Value = fieldValue == "NULL" ? null : fieldValue
+                }).ToList());
+            }
+
+            var contentIdValue = csvFieldsData.SelectMany(f => f.Value).FirstOrDefault(f => f.Name.ToUpper() == "CONTENT_ID")?.Value;
+            return new CsvDbUpdateModel
+            {
+                ContentId = string.IsNullOrWhiteSpace(contentIdValue) ? GetContentIdFromFileName(path) : int.Parse(contentIdValue),
+                Fields = csvFieldsData
+            };
         }
 
         private static IEnumerable<string> GetOrderedDirectoryFilePathes(string absDirPath)
@@ -71,6 +86,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             return new CsvReaderSettings(Directory.EnumerateFiles(absDirPath, "*.csv", SearchOption.TopDirectoryOnly).OrderBy(fn => fn).ToList()).FilePathes;
         }
 
-        private static int GetContentIdFromFileName(string path) => Convert.ToInt32(Path.GetFileName(path)?.Split('_').Skip(1).First());
+        private static int GetContentIdFromFileName(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new CsvBadDataException("Should specify \"content_id\" either at a csv column or at a filename");
+            }
+
+            return Convert.ToInt32(Path.GetFileName(path).Split('_').Skip(1).First());
+        }
     }
 }

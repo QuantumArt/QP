@@ -44,6 +44,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 DisablePipedInput = true;
                 IsSilentModeEnabled = false;
             }
+
             // TODO: REMOVE AFTER RESHARPER FIX BUG https://youtrack.jetbrains.com/issue/RSRP-466882
 
             Logger = new QpUpdateLoggingWrapper();
