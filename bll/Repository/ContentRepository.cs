@@ -983,11 +983,11 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static int[] GetReferencedAggregatedContentIds(int contentId, int[] articleIds)
+        internal static int[] GetReferencedAggregatedContentIds(int contentId, int[] articleIds, bool isArchive = false)
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetReferencedAggregatedContentIds(scope.DbConnection, contentId, articleIds);
+                return Common.GetReferencedAggregatedContentIds(scope.DbConnection, contentId, articleIds, isArchive);
             }
         }
 

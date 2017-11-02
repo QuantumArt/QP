@@ -20,6 +20,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public int ContentId { get; set; }
 
+        public bool isArchive { get; set; }
+
         public string Encoding { get; set; }
 
         public string Culture { get; set; }

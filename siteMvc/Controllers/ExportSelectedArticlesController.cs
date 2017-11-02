@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
@@ -79,6 +79,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 settings.ExcludeSystemFields = model.ExcludeSystemFields;
             }
 
+            settings.isArchive = ExportArticlesService.CheckArticlesIsArchive(IDs);
             settings.FieldIdsToExpand = model.FieldsToExpand.ToArray();
             _service.SetupWithParams(parentId, IDs, settings);
             return Json(string.Empty);

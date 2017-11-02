@@ -173,6 +173,15 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
+        internal static bool CheckArticlesIsArchive(int[] ids)
+        {
+            using (new QPConnectionScope())
+            {
+                var articles = GetList(ids);
+                return articles.Select(s => s.Archived == true).Any();
+            }
+        }
+
         internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
         {
             using (new QPConnectionScope())
@@ -1286,11 +1295,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static int[] SortIdsByFieldName(int[] ids, int contentId, string fieldName)
+        internal static int[] SortIdsByFieldName(int[] ids, int contentId, string fieldName, bool isArchive = false)
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.SortIdsByFieldName(scope.DbConnection, ids, contentId, fieldName);
+                return Common.SortIdsByFieldName(scope.DbConnection, ids, contentId, fieldName, isArchive);
             }
         }
 

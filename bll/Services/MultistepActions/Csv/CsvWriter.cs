@@ -92,6 +92,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 _sb.Append(_settings.LineSeparator);
             }
 
+            _sb.Append(FieldName.ContentId);
+            _sb.Append(_settings.Delimiter);
             _sb.Append(FieldName.ContentItemId);
             if (_settings.HeaderNames.Any())
             {
@@ -145,6 +147,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
                 foreach (var article in articles)
                 {
+                    _sb.Append(_contentId);
+                    _sb.Append(_settings.Delimiter);
                     _sb.AppendFormat("{0}{1}", article["content_item_id"], _settings.Delimiter);
                     foreach (DataColumn column in article.Table.Columns)
                     {
@@ -220,7 +224,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             Array.Copy(_ids, StartFrom - 1, stepIds, 0, stepLength);
 
             var orderBy = string.IsNullOrEmpty(_settings.OrderByField) ? IdentifierFieldName : _settings.OrderByField;
-            var filter = $"base.content_item_id in ({string.Join(",", stepIds)}) and base.archive = 0";
+            var archive = _settings.isArchive ? "1": "0";
+            var filter = $"base.content_item_id in ({string.Join(",", stepIds)}) and base.archive = {archive}";
             return ArticleRepository.GetArticlesForExport(_contentId, _settings.Extensions, sb.ToString(), filter, 1, _itemsPerStep, orderBy, fieldsToExpand);
         }
 
