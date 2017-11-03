@@ -26,19 +26,19 @@ namespace Quantumart.QP8.BLL.ListItems
 
         public bool ForStatusPartiallyChanged { get; set; }
 
-		public bool ForDelayedPublication { get; set; }
+        public bool ForDelayedPublication { get; set; }
 
-		public bool IsExternal { get; set; }
+        public bool IsExternal { get; set; }
 
-		public bool NoEmail { get; set; }
+        public bool NoEmail { get; set; }
 
-		public int? FieldId { get; set; }		
+        public int? FieldId { get; set; }
 
         /// <summary>
         /// Запрос по требованию
         /// </summary>
         public bool ForFrontend { get; set; }
 
-		public string Receiver { get; set; }				
+        public string Receiver { get; set; }
     }
 }

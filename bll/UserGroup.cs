@@ -18,6 +18,7 @@ namespace Quantumart.QP8.BLL
         public override string EntityTypeCode => Constants.EntityTypeCode.UserGroup;
 
         #region Properties
+
         public bool BuiltIn { get; set; }
 
         [LocalizedDisplayName("SharedArticles", NameResourceType = typeof(UserGroupStrings))]
@@ -39,9 +40,11 @@ namespace Quantumart.QP8.BLL
         public UserGroup ParentGroup { get; set; }
 
         public IEnumerable<UserGroup> ChildGroups { get; set; }
+
         #endregion
 
         #region Validation
+
         public override void Validate()
         {
             var errors = new RulesException<UserGroup>();
@@ -62,13 +65,12 @@ namespace Quantumart.QP8.BLL
             // Если группа с параллельным Worfklow то проверить, не являеться ли родительская группа потомком группы Администраторы
             if (UseParallelWorkflow &&
                 (
-                    IsAdministrators || (ParentGroup != null && ParentGroup.IsAdminDescendant)
+                    IsAdministrators || ParentGroup != null && ParentGroup.IsAdminDescendant
                 )
             )
             {
                 errors.ErrorForModel(UserGroupStrings.GroupCouldntBeAdminDescendant);
             }
-
 
             // проверка на циклы 
             if (!IsNew && ParentGroup != null)
@@ -106,8 +108,8 @@ namespace Quantumart.QP8.BLL
                 if (workflowGroupUsersIDs.Any())
                 {
                     var logins = Users
-                            .Where(u => workflowGroupUsersIDs.Contains(u.Id))
-                            .Select(u => u.LogOn);
+                        .Where(u => workflowGroupUsersIDs.Contains(u.Id))
+                        .Select(u => u.LogOn);
                     var message = string.Format(UserGroupStrings.GroupCouldntBindWorkflowGroupUsers, string.Join(",", logins));
                     errors.ErrorForModel(message);
                 }
@@ -126,8 +128,8 @@ namespace Quantumart.QP8.BLL
                 if (adminDescendantUsersIDs.Any())
                 {
                     var logins = Users
-                            .Where(u => adminDescendantUsersIDs.Contains(u.Id))
-                            .Select(u => u.LogOn);
+                        .Where(u => adminDescendantUsersIDs.Contains(u.Id))
+                        .Select(u => u.LogOn);
                     var message = string.Format(UserGroupStrings.GroupCouldntBindAdminDescendantUsers, string.Join(",", logins));
                     errors.ErrorForModel(message);
                 }
@@ -154,8 +156,8 @@ namespace Quantumart.QP8.BLL
                 if (undindedBuiltInUserIDs.Any())
                 {
                     var logins = group.Users
-                            .Where(u => undindedBuiltInUserIDs.Contains(u.Id))
-                            .Select(u => u.LogOn);
+                        .Where(u => undindedBuiltInUserIDs.Contains(u.Id))
+                        .Select(u => u.LogOn);
                     var message = string.Format(UserGroupStrings.BuiltInUsersCouldntBeRemoved, string.Join(",", logins));
                     errors.ErrorForModel(message);
                 }
@@ -163,7 +165,7 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-        /// Является ли группа потомком группы Администраторы 
+        /// Является ли группа потомком группы Администраторы
         /// </summary>
         internal bool IsAdminDescendant
         {
@@ -171,7 +173,7 @@ namespace Quantumart.QP8.BLL
             {
                 if (IsNew)
                 {
-                    return (ParentGroup != null && ParentGroup.IsAdminDescendant);
+                    return ParentGroup != null && ParentGroup.IsAdminDescendant;
                 }
 
                 return UserGroupRepository.IsGroupAdminDescendant(Id);
@@ -196,8 +198,7 @@ namespace Quantumart.QP8.BLL
             {
                 index++;
                 Name = MutateHelper.MutateString(name, index);
-            }
-            while (EntityObjectRepository.CheckNameUniqueness(this));
+            } while (EntityObjectRepository.CheckNameUniqueness(this));
         }
     }
 }

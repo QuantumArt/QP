@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Transactions;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 

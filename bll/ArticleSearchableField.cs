@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.BLL
+namespace Quantumart.QP8.BLL
 {
     /// <summary>
     /// Информация о поле по которому можем искать статьи
@@ -11,19 +11,19 @@
 
         public string ColumnName { get; set; }
 
-		public string GroupName { get; set; }
+        public string GroupName { get; set; }
 
-		public string ContentId { get; set; }
+        public string ContentId { get; set; }
 
-		public string ReferenceFieldId { get; set; }
+        public string ReferenceFieldId { get; set; }
 
         public ArticleFieldSearchType ArticleFieldSearchType { get; set; }
 
-		public bool IsAll { get; set; }
+        public bool IsAll { get; set; }
 
-		public bool IsTitle => ColumnName == "Title";
+        public bool IsTitle => ColumnName == "Title";
 
-        public string Selected => (IsTitle) ? @"selected=""selected""" : string.Empty;
+        public string Selected => IsTitle ? @"selected=""selected""" : string.Empty;
 
         public string Value => !IsAll ? ID : string.Empty;
     }

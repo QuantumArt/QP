@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.EntityPermissions;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;

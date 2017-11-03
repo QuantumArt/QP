@@ -4,8 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Web.Script.Serialization;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Merger;
 using Quantumart.QP8.Resources;
@@ -134,7 +135,7 @@ namespace Quantumart.QP8.BLL
             var result = EntityObject.TranslateSortExpression(sortExpression);
             var replaces = new Dictionary<string, string>
             {
-                {"Name", "Id"}
+                { "Name", "Id" }
             };
 
             return TranslateHelper.TranslateSortExpression(result, replaces);
@@ -206,7 +207,6 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public int MergedId => VersionToMerge?.Id ?? 0;
 
-
         /// <summary>
         /// Имя версии (используется в табличном режиме)
         /// </summary>
@@ -229,6 +229,7 @@ namespace Quantumart.QP8.BLL
         }
 
         private readonly Lazy<DataRow> _versionRowData;
+
         //[ScriptIgnore]
         //public DataRow VersionRowData { get { return versionRowData.Value; } }
 

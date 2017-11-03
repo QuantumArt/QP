@@ -1,11 +1,10 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
-using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 
-namespace Quantumart.QP8.BLL.Services
+namespace Quantumart.QP8.BLL.Services.DbServices
 {
     public class DbService : IDbService
     {

@@ -6,7 +6,9 @@ using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL.Services.API.Models;
 
 namespace Quantumart.QP8.BLL.Services.API

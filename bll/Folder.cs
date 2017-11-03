@@ -202,15 +202,15 @@ namespace Quantumart.QP8.BLL
             var sort = string.IsNullOrEmpty(command.SortExpression) ? "Name ASC" : command.SortExpression;
             var typeFilter = filter.FileType.HasValue ? (Func<FolderFile, bool>)(f => f.FileType == filter.FileType.Value) : f => true;
             var filtered = files
-                            .Select(n => new FolderFile(n))
-                            .Where(typeFilter)
-                            .AsQueryable()
-                            .OrderBy(sort);
+                .Select(n => new FolderFile(n))
+                .Where(typeFilter)
+                .AsQueryable()
+                .OrderBy(sort);
 
             var filteredAndPaged = filtered
-                            .Skip((command.StartPage - 1) * command.PageSize)
-                            .Take(command.PageSize)
-                            .ToList();
+                .Skip((command.StartPage - 1) * command.PageSize)
+                .Take(command.PageSize)
+                .ToList();
 
             return new ListResult<FolderFile> { Data = filteredAndPaged, TotalRecords = filtered.Count() };
         }

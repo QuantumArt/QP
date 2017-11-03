@@ -18,10 +18,8 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("NAME")))
                 .ForMember(biz => biz.Url, opt => opt.MapFrom(row => row.Field<string>("URL")))
                 .ForMember(biz => biz.Order, opt => opt.MapFrom(row => row.Field<int>("ORDER")))
-
                 .ForMember(biz => biz.ActionTypeName, opt => opt.MapFrom(row => Translator.Translate(row.Field<string>("ACTION_TYPE_NAME"))))
                 .ForMember(biz => biz.EntityTypeName, opt => opt.MapFrom(row => Translator.Translate(row.Field<string>("ENTITY_TYPE_NAME"))))
-
                 .ForMember(biz => biz.Created, opt => opt.MapFrom(row => row.Field<DateTime>(FieldName.Created)))
                 .ForMember(biz => biz.Modified, opt => opt.MapFrom(row => row.Field<DateTime>(FieldName.Modified)))
                 .ForMember(biz => biz.LastModifiedByUserId, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("USER_ID"))))
@@ -37,9 +35,9 @@ namespace Quantumart.QP8.BLL.Mappers
 
             var replaces = new Dictionary<string, string>
             {
-                {"LastModifiedByUser", "LOGIN"},
-                {"ActionTypeName", "ACTION_TYPE_NAME"},
-                {"EntityTypeName", "ENTITY_TYPE_NAME"}
+                { "LastModifiedByUser", "LOGIN" },
+                { "ActionTypeName", "ACTION_TYPE_NAME" },
+                { "EntityTypeName", "ENTITY_TYPE_NAME" }
             };
 
             return TranslateHelper.TranslateSortExpression(sortExpression, replaces);

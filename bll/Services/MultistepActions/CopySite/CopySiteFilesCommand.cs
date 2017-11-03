@@ -21,7 +21,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         public int StepsCount { get; set; }
 
         public CopySiteFilesCommand(MultistepActionStageCommandState state)
-            : this(state.Id, null, false) { }
+            : this(state.Id, null, false)
+        {
+        }
 
         public CopySiteFilesCommand(int siteId, string siteName, bool doNotCopyFiles)
         {

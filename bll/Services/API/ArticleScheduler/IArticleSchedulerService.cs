@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Quantumart.QP8.BLL.Services.ArticleScheduler
+namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 {
     /// <summary>
     /// Интерфейс сервиса для работы с расписаниями

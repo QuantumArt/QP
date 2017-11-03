@@ -4,7 +4,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public abstract class CopySiteAbstract : MultistepActionServiceAbstract
     {
-
         protected override string ContextSessionKey => "CopySiteService.ProcessingContext";
 
         protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
@@ -15,8 +14,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                     return new CopySiteContentsCommand(state);
                 case CopySiteStageCommandTypes.CopySiteVirtualContents:
                     return new CopySiteVirtualContentsCommand(state);
-				case CopySiteStageCommandTypes.CopySiteContentLinks:
-					return new CopySiteContentLinksCommand(state);
+                case CopySiteStageCommandTypes.CopySiteContentLinks:
+                    return new CopySiteContentLinksCommand(state);
                 case CopySiteStageCommandTypes.CopySiteArticles:
                     return new CopySiteArticlesCommand(state);
                 case CopySiteStageCommandTypes.CopySiteTemplates:
@@ -32,12 +31,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             }
         }
     }
+
     internal class CopySiteStageCommandTypes
     {
         public const int CopySiteParams = 1;
         public const int CopySiteContents = 2;
         public const int CopySiteVirtualContents = 3;
-		public const int CopySiteContentLinks = 4;
+        public const int CopySiteContentLinks = 4;
         public const int CopySiteArticles = 5;
         public const int CopySiteTemplates = 6;
         public const int CopySiteFiles = 7;

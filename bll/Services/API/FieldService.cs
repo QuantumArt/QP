@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
     public class FieldService : ServiceBase
     {
-        public FieldService(string connectionString, int userId) : base(connectionString, userId)
+        public FieldService(string connectionString, int userId)
+            : base(connectionString, userId)
         {
         }
 
-        public FieldService(int userId) : base(userId)
+        public FieldService(int userId)
+            : base(userId)
         {
         }
 

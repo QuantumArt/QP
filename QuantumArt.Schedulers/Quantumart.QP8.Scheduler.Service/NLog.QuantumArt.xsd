@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="NLog" targetNamespace="http://www.nlog-project.org/schemas/NLog.xsd" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.nlog-project.org/schemas/NLog.xsd">
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<xs:schema id="NLog" targetNamespace="http://www.nlog-project.org/schemas/NLog.xsd" elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.nlog-project.org/schemas/NLog.xsd">
   <xs:complexType name="PrtgMonitoring">
     <xs:complexContent>
       <xs:extension base="Target">
@@ -13,21 +15,21 @@
           <xs:annotation>
             <xs:documentation>Name of the target.</xs:documentation>
           </xs:annotation>
-        <xs:attribute name="host" type="xs:string">
-          <xs:annotation>
-            <xs:documentation>Monitoring service base url (protocol://host:port/).</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="identificationToken" type="xs:string">
-          <xs:annotation>
-            <xs:documentation>Monitoring service sensor identification token.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="layout" type="SimpleLayoutAttribute">
-          <xs:annotation>
-            <xs:documentation>Text to be rendered.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+          <xs:attribute name="host" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Monitoring service base url (protocol://host:port/).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="identificationToken" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Monitoring service sensor identification token.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="layout" type="SimpleLayoutAttribute">
+            <xs:annotation>
+              <xs:documentation>Text to be rendered.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

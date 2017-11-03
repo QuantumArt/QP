@@ -18,12 +18,15 @@ namespace Quantumart.QP8.BLL
         LastModifiedBy = -4,
         StatusType = -5
     }
+
     /// <summary>
     /// Служебное поле статьи
     /// </summary>
     public class ServiceField
     {
-        private ServiceField() { }
+        private ServiceField()
+        {
+        }
 
         public ServiceFieldType Type { get; private set; }
         public int ID { get; private set; }
@@ -38,8 +41,7 @@ namespace Quantumart.QP8.BLL
         /// <returns></returns>
         public static ServiceField Create(ServiceFieldType type)
         {
-
-            switch(type)
+            switch (type)
             {
                 case ServiceFieldType.ID:
                     return new ServiceField

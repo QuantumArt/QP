@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -158,6 +158,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 {
                     rule.FieldId = _fieldsMap[rule.FieldId];
                 }
+
                 ContentConstraintRepository.Save(constraint);
             }
         }

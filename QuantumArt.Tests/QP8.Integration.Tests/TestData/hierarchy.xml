@@ -1,6 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <actions backendUrl="http://localhost:90/Backend/" dbVersion="7.9.9.0">
-  <action code="new_content" ids="1190" parentId="35" lcid="1049" executed="09/06/2016 13:09:20" executedBy="CelutP" fieldIds="4717">
+  <action code="new_content" ids="1190" parentId="35" lcid="1049" executed="09/06/2016 13:09:20" executedBy="CelutP"
+          fieldIds="4717">
     <field name="Data.Name">test regions</field>
     <field name="Data.Description"></field>
     <field name="Data.ParentContentId"></field>
@@ -78,7 +80,8 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field</field>
   </action>
-  <action code="new_content" ids="1191" parentId="35" lcid="1049" executed="09/06/2016 13:11:43" executedBy="CelutP" fieldIds="4719">
+  <action code="new_content" ids="1191" parentId="35" lcid="1049" executed="09/06/2016 13:11:43" executedBy="CelutP"
+          fieldIds="4719">
     <field name="Data.Name">test products</field>
     <field name="Data.Description"></field>
     <field name="Data.ParentContentId"></field>
@@ -109,7 +112,8 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">save_content</field>
   </action>
-  <action code="new_field" ids="4720" parentId="1191" lcid="1049" executed="09/06/2016 13:33:50" executedBy="CelutP" newLinkId="373">
+  <action code="new_field" ids="4720" parentId="1191" lcid="1049" executed="09/06/2016 13:33:50" executedBy="CelutP"
+          newLinkId="373">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Regions</field>
     <field name="Data.FriendlyName"></field>
@@ -164,19 +168,22 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field</field>
   </action>
-  <action code="new_article" ids="1985137" parentId="1190" lcid="1049" executed="09/06/2016 13:38:52" executedBy="CelutP">
+  <action code="new_article" ids="1985137" parentId="1190" lcid="1049" executed="09/06/2016 13:38:52"
+          executedBy="CelutP">
     <field name="field_4717">root</field>
     <field name="field_4718"></field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985138" parentId="1190" lcid="1049" executed="09/06/2016 13:39:08" executedBy="CelutP">
+  <action code="new_article" ids="1985138" parentId="1190" lcid="1049" executed="09/06/2016 13:39:08"
+          executedBy="CelutP">
     <field name="field_4717">macro1</field>
     <field name="field_4718">1985137</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985139" parentId="1190" lcid="1049" executed="09/06/2016 13:39:18" executedBy="CelutP">
+  <action code="new_article" ids="1985139" parentId="1190" lcid="1049" executed="09/06/2016 13:39:18"
+          executedBy="CelutP">
     <field name="field_4717">macro2</field>
     <field name="field_4718">1985137</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
@@ -231,144 +238,167 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="new_article" ids="1985140" parentId="1190" lcid="1049" executed="09/06/2016 13:39:58" executedBy="CelutP">
+  <action code="new_article" ids="1985140" parentId="1190" lcid="1049" executed="09/06/2016 13:39:58"
+          executedBy="CelutP">
     <field name="field_4717">region1</field>
     <field name="field_4718">1985138</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article</field>
   </action>
-  <action code="new_article" ids="1985141" parentId="1190" lcid="1049" executed="09/06/2016 13:40:21" executedBy="CelutP">
+  <action code="new_article" ids="1985141" parentId="1190" lcid="1049" executed="09/06/2016 13:40:21"
+          executedBy="CelutP">
     <field name="field_4717">region2</field>
     <field name="field_4718">1985138</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985142" parentId="1190" lcid="1049" executed="09/06/2016 13:40:54" executedBy="CelutP">
+  <action code="new_article" ids="1985142" parentId="1190" lcid="1049" executed="09/06/2016 13:40:54"
+          executedBy="CelutP">
     <field name="field_4717">region3</field>
     <field name="field_4718">1985139</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985143" parentId="1190" lcid="1049" executed="09/06/2016 13:41:09" executedBy="CelutP">
+  <action code="new_article" ids="1985143" parentId="1190" lcid="1049" executed="09/06/2016 13:41:09"
+          executedBy="CelutP">
     <field name="field_4717">region4</field>
     <field name="field_4718">1985139</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985144" parentId="1190" lcid="1049" executed="09/06/2016 13:41:42" executedBy="CelutP">
+  <action code="new_article" ids="1985144" parentId="1190" lcid="1049" executed="09/06/2016 13:41:42"
+          executedBy="CelutP">
     <field name="field_4717">region5</field>
     <field name="field_4718">1985139</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985145" parentId="1190" lcid="1049" executed="09/06/2016 13:42:05" executedBy="CelutP">
+  <action code="new_article" ids="1985145" parentId="1190" lcid="1049" executed="09/06/2016 13:42:05"
+          executedBy="CelutP">
     <field name="field_4717">city1</field>
     <field name="field_4718">1985140</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985146" parentId="1190" lcid="1049" executed="09/06/2016 13:42:15" executedBy="CelutP">
+  <action code="new_article" ids="1985146" parentId="1190" lcid="1049" executed="09/06/2016 13:42:15"
+          executedBy="CelutP">
     <field name="field_4717">city2</field>
     <field name="field_4718">1985140</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985147" parentId="1190" lcid="1049" executed="09/06/2016 13:42:33" executedBy="CelutP">
+  <action code="new_article" ids="1985147" parentId="1190" lcid="1049" executed="09/06/2016 13:42:33"
+          executedBy="CelutP">
     <field name="field_4717">district1</field>
     <field name="field_4718">1985140</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985140" parentId="1190" lcid="1049" executed="09/06/2016 13:42:54" executedBy="CelutP">
+  <action code="edit_article" ids="1985140" parentId="1190" lcid="1049" executed="09/06/2016 13:42:54"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">region11</field>
     <field name="field_4718">1985138</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985141" parentId="1190" lcid="1049" executed="09/06/2016 13:43:20" executedBy="CelutP">
+  <action code="edit_article" ids="1985141" parentId="1190" lcid="1049" executed="09/06/2016 13:43:20"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">region12</field>
     <field name="field_4718">1985138</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985142" parentId="1190" lcid="1049" executed="09/06/2016 13:43:44" executedBy="CelutP">
+  <action code="edit_article" ids="1985142" parentId="1190" lcid="1049" executed="09/06/2016 13:43:44"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">region23</field>
     <field name="field_4718">1985139</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985143" parentId="1190" lcid="1049" executed="09/06/2016 13:43:51" executedBy="CelutP">
+  <action code="edit_article" ids="1985143" parentId="1190" lcid="1049" executed="09/06/2016 13:43:51"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">region24</field>
     <field name="field_4718">1985139</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985144" parentId="1190" lcid="1049" executed="09/06/2016 13:43:58" executedBy="CelutP">
+  <action code="edit_article" ids="1985144" parentId="1190" lcid="1049" executed="09/06/2016 13:43:58"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">region25</field>
     <field name="field_4718">1985139</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985147" parentId="1190" lcid="1049" executed="09/06/2016 13:44:22" executedBy="CelutP">
+  <action code="edit_article" ids="1985147" parentId="1190" lcid="1049" executed="09/06/2016 13:44:22"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">district111</field>
     <field name="field_4718">1985140</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985146" parentId="1190" lcid="1049" executed="09/06/2016 13:44:32" executedBy="CelutP">
+  <action code="edit_article" ids="1985146" parentId="1190" lcid="1049" executed="09/06/2016 13:44:32"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">city112</field>
     <field name="field_4718">1985140</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985145" parentId="1190" lcid="1049" executed="09/06/2016 13:44:46" executedBy="CelutP">
+  <action code="edit_article" ids="1985145" parentId="1190" lcid="1049" executed="09/06/2016 13:44:46"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">city111</field>
     <field name="field_4718">1985140</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985148" parentId="1190" lcid="1049" executed="09/06/2016 13:47:02" executedBy="CelutP">
+  <action code="new_article" ids="1985148" parentId="1190" lcid="1049" executed="09/06/2016 13:47:02"
+          executedBy="CelutP">
     <field name="field_4717">city241</field>
     <field name="field_4718">1985143</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985149" parentId="1190" lcid="1049" executed="09/06/2016 13:47:38" executedBy="CelutP">
+  <action code="new_article" ids="1985149" parentId="1190" lcid="1049" executed="09/06/2016 13:47:38"
+          executedBy="CelutP">
     <field name="field_4717">city244</field>
     <field name="field_4718">1985143</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1985150" parentId="1190" lcid="1049" executed="09/06/2016 13:48:03" executedBy="CelutP">
+  <action code="new_article" ids="1985150" parentId="1190" lcid="1049" executed="09/06/2016 13:48:03"
+          executedBy="CelutP">
     <field name="field_4717">city243</field>
     <field name="field_4718">1985143</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985147" parentId="1190" lcid="1049" executed="09/06/2016 16:00:18" executedBy="CelutP">
+  <action code="edit_article" ids="1985147" parentId="1190" lcid="1049" executed="09/06/2016 16:00:18"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">district113</field>
     <field name="field_4718">1985140</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1985150" parentId="1190" lcid="1049" executed="09/06/2016 16:00:25" executedBy="CelutP">
+  <action code="edit_article" ids="1985150" parentId="1190" lcid="1049" executed="09/06/2016 16:00:25"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">city242</field>
     <field name="field_4718">1985143</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="copy_article" ids="1985150" parentId="1190" lcid="1049" executed="09/06/2016 16:00:35" executedBy="CelutP" resultId="1985151" />
-  <action code="edit_article" ids="1985151" parentId="1190" lcid="1049" executed="09/06/2016 16:00:43" executedBy="CelutP">
+  <action code="copy_article" ids="1985150" parentId="1190" lcid="1049" executed="09/06/2016 16:00:35"
+          executedBy="CelutP" resultId="1985151" />
+  <action code="edit_article" ids="1985151" parentId="1190" lcid="1049" executed="09/06/2016 16:00:43"
+          executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_4717">city243</field>
     <field name="field_4718">1985143</field>

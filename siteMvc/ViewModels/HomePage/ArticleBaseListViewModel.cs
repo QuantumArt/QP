@@ -1,4 +1,6 @@
-﻿namespace Quantumart.QP8.WebMvc.ViewModels
+﻿using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+
+namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 {
     public class ArticleBaseListViewModel : ListViewModel
     {

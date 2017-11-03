@@ -9,7 +9,8 @@ using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
 using Quantumart.QP8.Constants;
 
@@ -169,11 +170,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     {
                         foreach (var fieldValue in new[]
                         {
-                                MultistepActionHelper.DateCultureFormat(article[FieldName.Created].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
-                                MultistepActionHelper.DateCultureFormat(article[FieldName.Modified].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
-                                article[FieldName.UniqueId].ToString(),
-                                "0"
-                            })
+                            MultistepActionHelper.DateCultureFormat(article[FieldName.Created].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                            MultistepActionHelper.DateCultureFormat(article[FieldName.Modified].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                            article[FieldName.UniqueId].ToString(),
+                            "0"
+                        })
                         {
                             _sb.Append(fieldValue);
                             _sb.Append(_settings.Delimiter);
@@ -253,7 +254,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                                 FieldExactTypes.VisualEdit,
                                 FieldExactTypes.Numeric,
                                 FieldExactTypes.Classifier
-                            }.Contains(f.ExactType) ? $"isnull(cast ( {field.TableAlias}.[{f.Name}] as nvarchar(255)), '')" : $"isnull( {field.TableAlias}.[{f.Name}], '')");
+                            }.Contains(f.ExactType)
+                                ? $"isnull(cast ( {field.TableAlias}.[{f.Name}] as nvarchar(255)), '')"
+                                : $"isnull( {field.TableAlias}.[{f.Name}], '')");
                             break;
                     }
                 }
@@ -374,7 +377,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             select f;
 
         private IEnumerable<string> GetExtensionFields(Content content, string template) => (from f in content.Fields
-                where f.ExactType != FieldExactTypes.M2ORelation & !f.Aggregated && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
+                where (f.ExactType != FieldExactTypes.M2ORelation) & !f.Aggregated && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
                 select string.Format(template, content.Name, f.Name))
             .Concat(new[] { string.Format(template, content.Name, IdentifierFieldName) });
 

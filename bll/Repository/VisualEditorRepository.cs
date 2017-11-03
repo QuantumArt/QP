@@ -105,7 +105,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             // save and update
-            var forceIds = (plugin.ForceCommandIds == null) ? null : new Queue<int>(plugin.ForceCommandIds);
+            var forceIds = plugin.ForceCommandIds == null ? null : new Queue<int>(plugin.ForceCommandIds);
             foreach (var command in plugin.VeCommands)
             {
                 var dalCommand = MapperFacade.VisualEditorCommandMapper.GetDalObject(command);
@@ -128,7 +128,6 @@ namespace Quantumart.QP8.BLL.Repository
                     entities.VeCommandSet.Attach(dalCommand);
                     entities.ObjectStateManager.ChangeObjectState(dalCommand, EntityState.Modified);
                 }
-
             }
         }
 
@@ -162,7 +161,7 @@ namespace Quantumart.QP8.BLL.Repository
             entities.SaveChanges();
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.VisualEditorPlugin);
 
-            var forceIds = (plugin.ForceCommandIds == null) ? null : new Queue<int>(plugin.ForceCommandIds);
+            var forceIds = plugin.ForceCommandIds == null ? null : new Queue<int>(plugin.ForceCommandIds);
             foreach (var command in plugin.VeCommands)
             {
                 var dalCommand = MapperFacade.VisualEditorCommandMapper.GetDalObject(command);
@@ -451,7 +450,6 @@ namespace Quantumart.QP8.BLL.Repository
                 }
             }
         }
-
 
         internal static Dictionary<int, bool> GetCommandBindingBySiteId(int siteId)
         {

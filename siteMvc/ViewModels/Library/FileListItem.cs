@@ -3,7 +3,7 @@ using System.IO;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Utils;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Library
 {
     /// <summary>
     /// View Model элемента для списков файлов

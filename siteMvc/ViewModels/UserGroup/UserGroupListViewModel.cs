@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using C = Quantumart.QP8.Constants;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
 {
     public class UserGroupListViewModel : ListViewModel
     {

@@ -140,6 +140,7 @@
     <Compile Include="Factories\FolderFactory\ContentFolderFactory.cs" />
     <Compile Include="Factories\FolderFactory\SiteFolderFactory.cs" />
     <Compile Include="IContextStorage.cs" />
+    <Compile Include="Services\ContentServices\IContentService.cs" />
     <Compile Include="Mappers\GenericMapperBase.cs" />
     <Compile Include="Mappers\SystemNotificationMapper.cs" />
     <Compile Include="Models\NotificationSender\SystemNotificationBulkXmlSerilizableModel.cs" />
@@ -164,7 +165,7 @@
     <Compile Include="Models\NotificationSender\CdcTableTypeModel.cs" />
     <Compile Include="Repository\EntityPermissions\IChildContentPermissionRepository.cs" />
     <Compile Include="Services\FieldDefaultValueContext.cs" />
-    <Compile Include="Interfaces\Services\IDbService.cs" />
+    <Compile Include="Services\DbServices\IDbService.cs" />
     <Compile Include="Services\IFieldDefaultValueService.cs" />
     <Compile Include="Services\IUserGroupService.cs" />
     <Compile Include="Services\CdcImport\CdcElasticImportService.cs" />
@@ -179,12 +180,11 @@
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
     <Compile Include="Helpers\PlaceHolderHelper.cs" />
-    <Compile Include="Helpers\ReplayHelper.cs" />
     <Compile Include="Helpers\SiteUrlHelper.cs" />
     <Compile Include="Helpers\SortingItemHelper.cs" />
-    <Compile Include="Interfaces\Db\IArticleRepository.cs" />
-    <Compile Include="Interfaces\Db\IContentRepository.cs" />
-    <Compile Include="Interfaces\Db\IFieldRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\IArticleRepository.cs" />
+    <Compile Include="Repository\ContentRepositories\IContentRepository.cs" />
+    <Compile Include="Repository\FieldRepositories\IFieldRepository.cs" />
     <Compile Include="ListItems\ArticleListItem.cs" />
     <Compile Include="ArticleScheduleTask.cs" />
     <Compile Include="ArticleSearchQueryParam.cs" />
@@ -426,7 +426,7 @@
     <Compile Include="Services\API\Models\LinkData.cs" />
     <Compile Include="Services\API\Models\RelationData.cs" />
     <Compile Include="Services\API\ServiceBase.cs" />
-    <Compile Include="Services\DbService.cs" />
+    <Compile Include="Services\DbServices\DbService.cs" />
     <Compile Include="Services\DTO\ActionPermissionTreeNode.cs" />
     <Compile Include="Services\ChildEntityPermission.cs" />
     <Compile Include="Services\DTO\ArticleContextListItem.cs" />
@@ -479,7 +479,7 @@
     <Compile Include="Services\NotificationSender\ExternalInterfaceNotificationService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
-    <Compile Include="Interfaces\Services\IArticleService.cs" />
+    <Compile Include="Services\ArticleServices\IArticleService.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesCommand.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesService.cs" />
     <Compile Include="Services\MultistepActions\Archive\RestoreArticlesCommand.cs" />
@@ -542,7 +542,7 @@
     <Compile Include="RelationType.cs" />
     <Compile Include="RemovedEntity.cs" />
     <Compile Include="Repository\ApplicationInfoRepository.cs" />
-    <Compile Include="Repository\Articles\SearchInArticlesRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\SearchInArticlesRepository.cs" />
     <Compile Include="Repository\AuditRepository.cs" />
     <Compile Include="Repository\ContentConstraintRepository.cs" />
     <Compile Include="Repository\CustomActionRepository.cs" />
@@ -574,16 +574,16 @@
     <Compile Include="Factories\FolderFactory\FolderFactory.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="ContentFolder.cs" />
-    <Compile Include="Repository\Articles\ArticleFilterSearchQueryParser.cs" />
-    <Compile Include="Repository\Articles\ArticleFullTextSearchQueryParser.cs" />
-    <Compile Include="Repository\Articles\ArticleLinkSearchQueryParser.cs" />
-    <Compile Include="Repository\Articles\ArticleSearchRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\SearchParsers\ArticleFilterSearchQueryParser.cs" />
+    <Compile Include="Repository\ArticleRepositories\SearchParsers\ArticleFullTextSearchQueryParser.cs" />
+    <Compile Include="Repository\ArticleRepositories\SearchParsers\ArticleLinkSearchQueryParser.cs" />
+    <Compile Include="Repository\ArticleRepositories\ArticleSearchRepository.cs" />
     <Compile Include="Repository\Helpers\ArticleUpdateService.cs" />
     <Compile Include="Mappers\ContentFolderMapper.cs" />
     <Compile Include="Mappers\GenericMapper.cs" />
     <Compile Include="Mappers\SiteFolderMapper.cs" />
     <Compile Include="PathInfo.cs" />
-    <Compile Include="Repository\Articles\ArticleVersionRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\ArticleVersionRepository.cs" />
     <Compile Include="Repository\ContentFolderRepository.cs" />
     <Compile Include="Repository\SiteFolderRepository.cs" />
     <Compile Include="Repository\SitePathRepository.cs" />
@@ -629,13 +629,13 @@
     <Compile Include="Mappers\SimpleMappers.cs" />
     <Compile Include="Mappers\SiteMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />
-    <Compile Include="Repository\Articles\ArticleRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\ArticleRepository.cs" />
     <Compile Include="Repository\BackendActionRepository.cs" />
     <Compile Include="Repository\BackendActionTypeRepository.cs" />
-    <Compile Include="Repository\ContentRepository.cs" />
+    <Compile Include="Repository\ContentRepositories\ContentRepository.cs" />
     <Compile Include="Repository\ContextMenuRepository.cs" />
     <Compile Include="Repository\EntityTypeRepository.cs" />
-    <Compile Include="Repository\FieldRepository.cs" />
+    <Compile Include="Repository\FieldRepositories\FieldRepository.cs" />
     <Compile Include="Repository\EntityObjectRepository.cs" />
     <Compile Include="Repository\DefaultRepository.cs" />
     <Compile Include="Repository\ScheduleRepository.cs" />
@@ -646,8 +646,8 @@
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\WorkflowRepository.cs" />
     <Compile Include="RulesException.cs" />
-    <Compile Include="Services\ArticleService.cs" />
-    <Compile Include="Services\ContentService.cs" />
+    <Compile Include="Services\ArticleServices\ArticleService.cs" />
+    <Compile Include="Services\ContentServices\ContentService.cs" />
     <Compile Include="Services\DTO\CheckIdResult.cs" />
     <Compile Include="Services\DTO\ContentInitListResult.cs" />
     <Compile Include="ListResult.cs" />
@@ -791,4 +791,3 @@
   </Target>
   -->
 </Project>
-

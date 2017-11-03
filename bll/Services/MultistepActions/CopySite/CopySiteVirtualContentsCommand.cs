@@ -15,7 +15,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         public int ContentsCount { get; set; }
 
         public CopySiteVirtualContentsCommand(MultistepActionStageCommandState state)
-            : this(state.Id, null, 0) { }
+            : this(state.Id, null, 0)
+        {
+        }
 
         public CopySiteVirtualContentsCommand(int siteId, string siteName, int contentsCount)
         {

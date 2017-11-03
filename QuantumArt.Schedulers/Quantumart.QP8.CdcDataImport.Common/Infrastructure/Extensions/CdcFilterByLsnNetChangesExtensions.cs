@@ -19,7 +19,7 @@ namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions
 
         public static List<CdcTableTypeModel> GetCdcDataFilteredByLsnNetChangesWithColumnsCopy(this IEnumerable<CdcTableTypeModel> data, Func<CdcTableTypeModel, object> groupkey)
         {
-            return data.GetDataFilteredByLsnNetChanges(groupkey, (prev, curr)=>
+            return data.GetDataFilteredByLsnNetChanges(groupkey, (prev, curr) =>
                 string.CompareOrdinal(curr.SequenceLsn, prev.SequenceLsn) > 0
                     ? HandleContentDataTableTypeDataModifier(prev, curr)
                     : HandleContentDataTableTypeDataModifier(curr, prev));

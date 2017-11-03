@@ -15,7 +15,7 @@ namespace Quantumart.QP8.BLL
             RelationId = relationId;
         }
 
-                public string FormatFieldValue(string value)
+        public string FormatFieldValue(string value)
         {
             switch (ExactType)
             {

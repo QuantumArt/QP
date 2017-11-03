@@ -1,9 +1,9 @@
-﻿using Autofac;
+using Autofac;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
 using Quantumart.QP8.BLL.Logging;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.CdcImport;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Constants;
 

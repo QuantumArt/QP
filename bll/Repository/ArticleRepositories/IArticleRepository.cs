@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Quantumart.QP8.BLL.Interfaces.Db
+namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 {
     public interface IArticleRepository
     {

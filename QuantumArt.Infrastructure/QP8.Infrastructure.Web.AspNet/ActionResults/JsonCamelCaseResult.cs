@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace QP8.Infrastructure.Web.ActionResults
+namespace QP8.Infrastructure.Web.AspNet.ActionResults
 {
     public class JsonCamelCaseResult<T> : JsonNetResult<T>
     {

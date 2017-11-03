@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
-using Quantumart.QP8.BLL.Services;
+using Microsoft.AspNet.SignalR;
+using Quantumart.QP8.BLL.Services.DbServices;
 
 namespace Quantumart.QP8.WebMvc.Hubs
 {

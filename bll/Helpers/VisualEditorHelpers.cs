@@ -11,7 +11,8 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// Заменяет элементы defaultElements соотв по Id командами из priorElements
         /// </summary>
-        public static IEnumerable<T> Merge<T>(IEnumerable<T> defaultElements, IEnumerable<T> priorElements) where T : EntityObject
+        public static IEnumerable<T> Merge<T>(IEnumerable<T> defaultElements, IEnumerable<T> priorElements)
+            where T : EntityObject
         {
             var result = defaultElements.ToList();
             foreach (var element in priorElements)
@@ -26,7 +27,8 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// Вычитает из defaultElements элементы, чьи Id лежат в subElementIds
         /// </summary>
-        public static IEnumerable<T> Subtract<T>(IEnumerable<T> defaultElements, int[] subElementIds) where T : EntityObject
+        public static IEnumerable<T> Subtract<T>(IEnumerable<T> defaultElements, int[] subElementIds)
+            where T : EntityObject
         {
             var result = defaultElements.ToList();
             foreach (var cId in subElementIds)

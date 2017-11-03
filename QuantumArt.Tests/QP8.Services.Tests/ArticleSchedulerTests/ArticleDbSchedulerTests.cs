@@ -12,7 +12,7 @@ using Quantumart.QP8.ArticleScheduler.Onetime;
 using Quantumart.QP8.ArticleScheduler.Publishing;
 using Quantumart.QP8.ArticleScheduler.Recurring;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.Constants;
 using Xunit;
 

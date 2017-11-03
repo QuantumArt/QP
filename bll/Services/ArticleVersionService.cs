@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.Exceptions;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -60,6 +60,7 @@ namespace Quantumart.QP8.BLL.Services
 
                 return result.PathInfo;
             }
+
             var field = FieldRepository.GetById(fieldId);
             if (field == null)
             {
@@ -112,6 +113,7 @@ namespace Quantumart.QP8.BLL.Services
                     throw new Exception(string.Format(ArticleStrings.ArticleVersionNotFoundForArticle, result.Item2, parentId));
                 }
             }
+
             version1.MergeToVersion(version2);
             version1.Article.ViewType = ArticleViewType.CompareVersions;
             version1.AggregatedArticles.ForEach(x => { x.ViewType = ArticleViewType.CompareVersions; });
@@ -144,7 +146,6 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (ids == null)
             {
-
                 throw new ArgumentNullException(nameof(ids));
             }
 
@@ -192,4 +193,3 @@ namespace Quantumart.QP8.BLL.Services
         }
     }
 }
-

@@ -1,4 +1,6 @@
-﻿namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
+﻿using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+
+namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
 {
     public class ArticleVersionListViewModel : ListViewModel
     {

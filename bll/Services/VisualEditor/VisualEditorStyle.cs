@@ -16,7 +16,8 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
         private const string ItemSeparator = ":";
 
         internal VisualEditorStyle()
-        { }
+        {
+        }
 
         internal static VisualEditorStyle Create() => new VisualEditorStyle
         {
