@@ -237,16 +237,16 @@ Quantumart.QP8.BackendEntityObject.checkEntitiesForPresenceEmptyNames = function
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityIDsFromEntities = function (entities) {
-  return $.map(entities, elem => elem.Id);
+  return entities.map(elem => elem.Id);
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityNamesFromEntities = function (entities) {
-  return $.map(entities, elem => elem.Name);
+  return entities.map(elem => elem.Name);
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function (entities) {
   const count = entities.length;
-  return $.map(entities, (elem, index) => {
+  return entities.map((elem, index) => {
     let prefix = '';
     if (index > 0) {
       if (index == (count - 1)) {
