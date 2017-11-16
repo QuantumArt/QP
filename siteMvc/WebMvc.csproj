@@ -255,6 +255,7 @@
     <Compile Include="Infrastructure\ActionFilters\BackendActionLogAttribute.cs" />
     <Compile Include="Infrastructure\ActionFilters\ConnectionScopeAttribute.cs" />
     <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
+    <Compile Include="Infrastructure\ActionResults\TelerikResult.cs" />
     <Compile Include="Infrastructure\Adapters\ThreadStorageScopeContext.cs" />
     <Compile Include="Infrastructure\Constants\ConfigConstants.cs" />
     <Compile Include="Infrastructure\Constants\HttpContextFormConstants.cs" />
@@ -2456,4 +2457,3 @@
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
   <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
-

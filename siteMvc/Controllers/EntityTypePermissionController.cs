@@ -17,7 +17,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.EntityTypePermissions)]
         [BackendActionContext(ActionCode.EntityTypePermissions)]
@@ -29,7 +28,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.EntityTypePermissions)]
         public override ActionResult _Index(string tabId, int parentId, GridCommand command) => base._Index(tabId, parentId, command);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewEntityTypePermission)]
         [BackendActionContext(ActionCode.AddNewEntityTypePermission)]
@@ -44,7 +42,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public override ActionResult New(string tabId, int parentId, FormCollection collection) => base.New(tabId, parentId, collection);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.EntityTypePermissionProperties)]
         [BackendActionContext(ActionCode.EntityTypePermissionProperties)]
@@ -78,7 +75,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public override ActionResult Remove(int parentId, int id) => base.Remove(parentId, id);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeEntityTypePermission)]
         [BackendActionContext(ActionCode.ChangeEntityTypePermission)]

@@ -10,7 +10,7 @@
 		@Html.Warning(new[]
 		{
 			new MvcHtmlString(EntityPermissionStrings.ContentArticlePermissionIsDisabled),
-			Html.BackendActionLink(Model.UniqueId("eapActionLink"), EntityPermissionStrings.EnableContentArticlePermissionAction, Model.ParentArticle.ContentId, String.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.EnableArticlesPermissions)
+			Html.BackendActionLink(Model.UniqueId("eapActionLink"), EntityPermissionStrings.EnableContentArticlePermissionAction, Model.ParentArticle.ContentId, string.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.EnableArticlesPermissions)
 		})
 	}
 

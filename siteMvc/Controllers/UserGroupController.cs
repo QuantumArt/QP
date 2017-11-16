@@ -4,6 +4,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.UserGroup;
@@ -20,7 +21,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _service = service;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.UserGroups)]
         [BackendActionContext(ActionCode.UserGroups)]
@@ -38,10 +38,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _Index(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _service.List(command.GetListCommand());
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.UserGroups)]
         [BackendActionContext(ActionCode.UserGroups)]
@@ -52,7 +51,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Tree", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectUserGroup)]
         [BackendActionContext(ActionCode.SelectUserGroup)]
@@ -69,10 +67,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _Select(string tabId, int id, GridCommand command)
         {
             var serviceResult = _service.List(command.GetListCommand(), new[] { id });
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewUserGroup)]
         [BackendActionContext(ActionCode.AddNewUserGroup)]
@@ -120,7 +117,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result.Message);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.UserGroupProperties)]
         [BackendActionContext(ActionCode.UserGroupProperties)]

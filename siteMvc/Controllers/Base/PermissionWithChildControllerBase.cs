@@ -10,6 +10,7 @@ using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 using Telerik.Web.Mvc;
@@ -36,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
         public virtual ActionResult _ChildIndex(string tabId, int parentId, int? userId, int? groupId, GridCommand command)
         {
             var serviceResult = ChildContentService.List(parentId, groupId, userId, command.GetListCommand());
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -89,7 +90,6 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
 
         protected abstract string ChangeAction { get; }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult SaveAsChild(string tabId, int parentId)
         {

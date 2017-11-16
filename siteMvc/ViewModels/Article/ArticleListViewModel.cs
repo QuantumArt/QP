@@ -85,16 +85,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             IsVirtual = result.IsVirtual;
             ShowAddNewItemButton = result.IsUpdatable && result.IsAddNewAccessable && !IsWindow && !result.ContentDisableChangingActions;
 
-            var listResult = result as ArticleInitListResult;
-            if (listResult != null)
+            if (result is ArticleInitListResult listResult)
             {
                 TitleFieldName = listResult.TitleFieldName;
                 PageSize = listResult.PageSize;
                 DisplayFields = listResult.DisplayFields;
             }
 
-            var treeResult = result as ArticleInitTreeResult;
-            if (treeResult != null)
+            if (result is ArticleInitTreeResult treeResult)
             {
                 IsTree = true;
                 CustomFilter = treeResult.Filter;

@@ -5,7 +5,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class DiagnosticsController : QPController
     {
-        [HttpGet]
         public ActionResult Index() => JsonHtml("Index", new object());
     }
 }

@@ -17,6 +17,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
@@ -58,7 +59,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var serviceResult = ArticleService.List(parentId, new int[0], command.GetListCommand(), searchQuery, contextQuery, customFilter, ftsParser, onlyIds, filterIds);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -88,7 +89,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var serviceResult = ArticleService.List(parentId, new int[0], command.GetListCommand(), searchQuery, contextQuery, customFilter, ftsParser, onlyIds, filterIds);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -127,7 +128,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var serviceResult = ArticleService.List(parentId, new[] { id }, command.GetListCommand(), searchQuery, null, customFilter, ftsParser, onlyIds);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -169,7 +170,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var selectedArticleIDs = Converter.ToInt32Collection(IDs, ',');
             var serviceResult = ArticleService.List(parentId, selectedArticleIDs, command.GetListCommand(), searchQuery, null, customFilter, ftsParser, onlyIds);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -200,7 +201,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _StatusHistoryList(string tabId, int parentId, int id, GridCommand command)
         {
             var result = ArticleService.ArticleStatusHistory(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = result.Data, Total = result.TotalRecords });
+            return new TelerikResult(result.Data, result.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -256,12 +257,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 try
                 {
                     model.Data = ArticleService.Create(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
+
                     // ReSharper disable once PossibleInvalidOperationException
                     PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
-                      ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
-                      : model.Data.FieldValues;
+                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
+                        : model.Data.FieldValues;
                     foreach (var fv in union.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
                     {
                         AppendFormGuidsFromIds($"field_{fv.Field.Id}", $"field_uniqueid_{fv.Field.Id}");
@@ -323,7 +325,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     // ReSharper disable once PossibleInvalidOperationException
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
-                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f=>f.FieldValues))
+                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
                         : model.Data.FieldValues;
 
                     foreach (var fv in union.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
@@ -377,6 +379,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult Remove(int parentId, int id, bool? boundToExternal)
         {
             var articleToRemove = ArticleRepository.GetById(id);
+
             // ReSharper disable once PossibleInvalidOperationException
             PersistFromId(articleToRemove.Id, articleToRemove.UniqueId.Value);
             return JsonMessageResult(ArticleService.Remove(parentId, articleToRemove, false, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));

@@ -16,7 +16,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentPermissions)]
         [BackendActionContext(ActionCode.ContentPermissions)]
@@ -28,7 +27,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ContentPermissions)]
         public override ActionResult _Index(string tabId, int parentId, GridCommand command) => base._Index(tabId, parentId, command);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewContentPermission)]
         [BackendActionContext(ActionCode.AddNewContentPermission)]
@@ -43,7 +41,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public override ActionResult New(string tabId, int parentId, FormCollection collection) => base.New(tabId, parentId, collection);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentPermissionProperties)]
         [BackendActionContext(ActionCode.ContentPermissionProperties)]
@@ -77,7 +74,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public override ActionResult Remove(int parentId, int id) => base.Remove(parentId, id);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChildContentPermissions)]
         [BackendActionContext(ActionCode.ChildContentPermissions)]
@@ -105,7 +101,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record(ActionCode.MultipleChangeChildContentPermissions)]
         public override ActionResult SaveMultipleChangeAsChild(string tabId, int parentId, FormCollection collection) => base.SaveMultipleChangeAsChild(tabId, parentId, collection);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeAllChildContentPermissions)]
         [BackendActionContext(ActionCode.ChangeAllChildContentPermissions)]
@@ -120,7 +115,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record(ActionCode.ChangeAllChildContentPermissions)]
         public override ActionResult AllChangeAsChild(string tabId, int parentId, FormCollection collection) => base.AllChangeAsChild(tabId, parentId, collection);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeChildContentPermission)]
         [BackendActionContext(ActionCode.ChangeChildContentPermission)]

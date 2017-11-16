@@ -17,6 +17,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Telerik.Web.Mvc;
@@ -143,7 +144,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _Index(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _service.List(command.GetListCommand());
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]

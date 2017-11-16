@@ -24,7 +24,7 @@
             c.Bound(s => s.Disabled)
                     .Title("")
                     .Width(30)
-                    .ClientTemplate(String.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= DisabledIcon #>", "<#= DisabledText #>"))
+                    .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= DisabledIcon #>", "<#= DisabledText #>"))
                     .HtmlAttributes(new { style = "text-align: center;" });
 
             c.Bound(s => s.Login).Title(UserStrings.Login)
