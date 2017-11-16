@@ -1,28 +1,28 @@
 ﻿namespace Quantumart.QP8.BLL.Services.EntityPermissions
 {
-	/// <summary>
-	/// Определяет интерфейс стратегии для настроект ListViewModel списка сущностей
-	/// </summary>
-	public interface IPermissionViewModelSettings
-	{
-		string EntityTypeCode { get; }
-		string ActionCode { get; }
-		bool IsPropagateable { get; }
-		bool CanHide { get; set; }
-	}
+    /// <summary>
+    /// Определяет интерфейс стратегии для настроект ListViewModel списка сущностей
+    /// </summary>
+    public interface IPermissionViewModelSettings
+    {
+        string EntityTypeCode { get; }
+        string ActionCode { get; }
+        bool IsPropagateable { get; }
+        bool CanHide { get; set; }
+    }
 
-	internal class GenericPermissionViewModelSettings : IPermissionViewModelSettings
-	{
-		#region IPermissionListViewModelSettings Members
+    internal class GenericPermissionViewModelSettings : IPermissionViewModelSettings
+    {
+        #region IPermissionListViewModelSettings Members
 
-		public string EntityTypeCode { get; set; }
+        public string EntityTypeCode { get; set; }
 
-		public string ActionCode { get; set; }
+        public string ActionCode { get; set; }
 
-		public bool IsPropagateable { get; set; }
+        public bool IsPropagateable { get; set; }
 
-		public bool CanHide { get; set; }
+        public bool CanHide { get; set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -11,5 +11,4 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(data => Translator.Translate(data.Name)));
         }
     }
-
 }

@@ -2,7 +2,7 @@
 using Quantumart.QP8.WebMvc.ViewModels.Content;
 using C = Quantumart.QP8.Constants;
 
-namespace Quantumart.QP8.WebMvc.ViewModels.Field
+namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
 {
     public class JoinContentViewModel : ContentSelectableListViewModel
     {

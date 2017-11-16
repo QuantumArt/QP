@@ -6,7 +6,10 @@ namespace Quantumart.QP8.BLL
         {
         }
 
-        public ListItem(string value, string text) : base(value, text) { }
+        public ListItem(string value, string text)
+            : base(value, text)
+        {
+        }
 
         public ListItem(string value, string text, bool hasDependentItem)
             : this(value, text)
@@ -21,12 +24,13 @@ namespace Quantumart.QP8.BLL
             DependentItemIDs = dependentIds;
         }
 
-        public ListItem(string value, string text, string dependentId) : this(value, text, (!string.IsNullOrWhiteSpace(dependentId) ? new[] { dependentId } : null))
+        public ListItem(string value, string text, string dependentId)
+            : this(value, text, !string.IsNullOrWhiteSpace(dependentId) ? new[] { dependentId } : null)
         {
         }
 
         public ListItem(int value, string text, string dependentId)
-            : this(value.ToString(), text, (!string.IsNullOrWhiteSpace(dependentId) ? new[] { dependentId } : null))
+            : this(value.ToString(), text, !string.IsNullOrWhiteSpace(dependentId) ? new[] { dependentId } : null)
         {
         }
 

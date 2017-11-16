@@ -1,7 +1,6 @@
 ﻿using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 {
     public abstract class AreaViewModel : ViewModel
     {

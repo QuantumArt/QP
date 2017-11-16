@@ -21,17 +21,17 @@ namespace Quantumart.QP8.BLL
             private set => QPContext.BackendActionContext = value;
         }
 
-        public string ActionTypeCode { get; private set; }
+        public string ActionTypeCode { get; }
 
         public string ActionCode { get; }
 
-        public string EntityTypeCode { get; private set; }
+        public string EntityTypeCode { get; }
 
         public int FromEntityId { get; set; }
 
         public bool IsChanged { get; private set; }
 
-        public int? ParentEntityId { get; private set; }
+        public int? ParentEntityId { get; }
 
         public Entity[] Entities { get; private set; }
 
@@ -94,6 +94,7 @@ namespace Quantumart.QP8.BLL
                 Id = Converter.ToNullableInt32(sid)
             }).ToArray();
         }
+
         #endregion
     }
 }

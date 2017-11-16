@@ -4,11 +4,13 @@ namespace Quantumart.QP8.BLL.Services.API
 {
     public class CustomActionService : ServiceBase
     {
-        public CustomActionService(string connectionString, int userId) : base(connectionString, userId)
+        public CustomActionService(string connectionString, int userId)
+            : base(connectionString, userId)
         {
         }
 
-        public CustomActionService(int userId) : base(userId)
+        public CustomActionService(int userId)
+            : base(userId)
         {
         }
 

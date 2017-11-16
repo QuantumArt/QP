@@ -4,8 +4,8 @@ using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Enums.Csv;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -37,11 +37,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 
         public List<ListItem> ImportActions => new List<ListItem>
         {
-            new ListItem(((int) CsvImportMode.InsertAll).ToString(), UserStrings.ArticlesInsertAll),
-            new ListItem(((int) CsvImportMode.InsertNew).ToString(), UserStrings.ArticlesInsertNew),
-            new ListItem(((int) CsvImportMode.InsertAndUpdate).ToString(), UserStrings.ArticlesInsertAndUpdate),
-            new ListItem(((int) CsvImportMode.Update).ToString(), UserStrings.ArticlesUpdate),
-            new ListItem(((int) CsvImportMode.UpdateIfChanged).ToString(), UserStrings.ArticlesUpdateIfChanged)
+            new ListItem(((int)CsvImportMode.InsertAll).ToString(), UserStrings.ArticlesInsertAll),
+            new ListItem(((int)CsvImportMode.InsertNew).ToString(), UserStrings.ArticlesInsertNew),
+            new ListItem(((int)CsvImportMode.InsertAndUpdate).ToString(), UserStrings.ArticlesInsertAndUpdate),
+            new ListItem(((int)CsvImportMode.Update).ToString(), UserStrings.ArticlesUpdate),
+            new ListItem(((int)CsvImportMode.UpdateIfChanged).ToString(), UserStrings.ArticlesUpdateIfChanged)
         };
 
         [LocalizedDisplayName("UniqueFieldToUpdate", NameResourceType = typeof(MultistepActionStrings))]

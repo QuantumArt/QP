@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Quantumart.QP8.BLL.Services.ArticleScheduler
+namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 {
     public interface IArticlePublishingSchedulerService
     {

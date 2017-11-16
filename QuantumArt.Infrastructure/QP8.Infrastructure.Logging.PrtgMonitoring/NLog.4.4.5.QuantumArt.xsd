@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="NLog" targetNamespace="http://www.nlog-project.org/schemas/NLog.xsd" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.nlog-project.org/schemas/NLog.xsd">
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<xs:schema id="NLog" targetNamespace="http://www.nlog-project.org/schemas/NLog.xsd" elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.nlog-project.org/schemas/NLog.xsd">
   <xs:element name="nlog" type="NLogConfiguration" />
   <xs:complexType name="NLogConfiguration">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -271,7 +273,8 @@
           <xs:element name="name" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="batchSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="fullBatchSizeWriteLimit" minOccurs="0" maxOccurs="1" type="xs:integer" />
-          <xs:element name="overflowAction" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.AsyncTargetWrapperOverflowAction" />
+          <xs:element name="overflowAction" minOccurs="0" maxOccurs="1"
+                      type="NLog.Targets.Wrappers.AsyncTargetWrapperOverflowAction" />
           <xs:element name="queueLimit" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="timeToSleepBetweenBatches" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="optimizeBufferReuse" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -395,7 +398,8 @@
           <xs:element name="lineEnding" minOccurs="0" maxOccurs="1" type="LineEndingMode" />
           <xs:element name="maxMessageSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="newLine" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-          <xs:element name="onConnectionOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetConnectionsOverflowAction" />
+          <xs:element name="onConnectionOverflow" minOccurs="0" maxOccurs="1"
+                      type="NLog.Targets.NetworkTargetConnectionsOverflowAction" />
           <xs:element name="onOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetOverflowAction" />
           <xs:element name="maxConnections" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="keepConnection" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -559,8 +563,10 @@
           <xs:element name="header" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="footer" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="useDefaultRowHighlightingRules" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-          <xs:element name="highlight-row" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.ConsoleRowHighlightingRule" />
-          <xs:element name="highlight-word" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.ConsoleWordHighlightingRule" />
+          <xs:element name="highlight-row" minOccurs="0" maxOccurs="unbounded"
+                      type="NLog.Targets.ConsoleRowHighlightingRule" />
+          <xs:element name="highlight-word" minOccurs="0" maxOccurs="unbounded"
+                      type="NLog.Targets.ConsoleWordHighlightingRule" />
           <xs:element name="detectConsoleAvailable" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="encoding" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="errorStream" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -774,8 +780,10 @@
           <xs:element name="connectionString" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="dbHost" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="installConnectionString" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="install-command" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseCommandInfo" />
-          <xs:element name="uninstall-command" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseCommandInfo" />
+          <xs:element name="install-command" minOccurs="0" maxOccurs="unbounded"
+                      type="NLog.Targets.DatabaseCommandInfo" />
+          <xs:element name="uninstall-command" minOccurs="0" maxOccurs="unbounded"
+                      type="NLog.Targets.DatabaseCommandInfo" />
           <xs:element name="optimizeBufferReuse" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseParameterInfo" />
           <xs:element name="commandText" minOccurs="0" maxOccurs="1" type="Layout" />
@@ -1345,21 +1353,21 @@
           <xs:annotation>
             <xs:documentation>Name of the target.</xs:documentation>
           </xs:annotation>
-        <xs:attribute name="host" type="xs:string">
-          <xs:annotation>
-            <xs:documentation>Monitoring service base url (protocol://host:port/).</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="identificationToken" type="xs:string">
-          <xs:annotation>
-            <xs:documentation>Monitoring service sensor identification token.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="layout" type="SimpleLayoutAttribute">
-          <xs:annotation>
-            <xs:documentation>Text to be rendered.</xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+          <xs:attribute name="host" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Monitoring service base url (protocol://host:port/).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="identificationToken" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Monitoring service sensor identification token.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="layout" type="SimpleLayoutAttribute">
+            <xs:annotation>
+              <xs:documentation>Text to be rendered.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -1448,7 +1456,8 @@
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="name" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="domain" minOccurs="0" maxOccurs="1" type="xs:string" />
-          <xs:element name="impersonationLevel" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.SecurityImpersonationLevel" />
+          <xs:element name="impersonationLevel" minOccurs="0" maxOccurs="1"
+                      type="NLog.Targets.Wrappers.SecurityImpersonationLevel" />
           <xs:element name="logOnProvider" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.LogOnProviderType" />
           <xs:element name="logOnType" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.SecurityLogOnType" />
           <xs:element name="password" minOccurs="0" maxOccurs="1" type="xs:string" />
@@ -1959,7 +1968,8 @@
           <xs:element name="lineEnding" minOccurs="0" maxOccurs="1" type="LineEndingMode" />
           <xs:element name="maxMessageSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="newLine" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-          <xs:element name="onConnectionOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetConnectionsOverflowAction" />
+          <xs:element name="onConnectionOverflow" minOccurs="0" maxOccurs="1"
+                      type="NLog.Targets.NetworkTargetConnectionsOverflowAction" />
           <xs:element name="onOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetOverflowAction" />
           <xs:element name="address" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="connectionCacheSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
@@ -2051,7 +2061,8 @@
           <xs:element name="lineEnding" minOccurs="0" maxOccurs="1" type="LineEndingMode" />
           <xs:element name="maxMessageSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="newLine" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-          <xs:element name="onConnectionOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetConnectionsOverflowAction" />
+          <xs:element name="onConnectionOverflow" minOccurs="0" maxOccurs="1"
+                      type="NLog.Targets.NetworkTargetConnectionsOverflowAction" />
           <xs:element name="onOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetOverflowAction" />
           <xs:element name="maxConnections" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="keepConnection" minOccurs="0" maxOccurs="1" type="xs:boolean" />

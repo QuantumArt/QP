@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {

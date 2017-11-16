@@ -32,7 +32,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (file == null)
             {
-                throw new ArgumentNullException("file");
+                throw new ArgumentNullException(nameof(file));
             }
 
             file.Rename();
@@ -42,7 +42,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (names == null)
             {
-                throw new ArgumentNullException("names");
+                throw new ArgumentNullException(nameof(names));
             }
 
             var info = _GetPathInfo(id);
@@ -72,7 +72,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (folder == null)
             {
-                throw new ArgumentNullException("folder");
+                throw new ArgumentNullException(nameof(folder));
             }
 
             return (ContentFolder)FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository().Create(folder.ParentEntityId, folder.ParentId, folder.Name);
@@ -120,6 +120,5 @@ namespace Quantumart.QP8.BLL.Services
 
             return null;
         }
-
     }
 }

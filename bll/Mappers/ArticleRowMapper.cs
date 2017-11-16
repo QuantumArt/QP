@@ -17,7 +17,6 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.LastModifiedBy, opt => opt.MapFrom(row => row.Field<decimal>(FieldName.LastModifiedBy)))
                 .ForMember(biz => biz.Created, opt => opt.MapFrom(row => row.Field<DateTime>(FieldName.Created)))
                 .ForMember(biz => biz.Modified, opt => opt.MapFrom(row => row.Field<DateTime>(FieldName.Modified)));
-
         }
     }
 }

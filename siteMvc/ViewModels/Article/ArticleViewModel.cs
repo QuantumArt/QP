@@ -5,10 +5,13 @@ using System.Text;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ArticleServices;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {

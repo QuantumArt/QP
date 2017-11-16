@@ -123,11 +123,13 @@ namespace Quantumart.QP8.BLL.Repository
     public class FingerprintRepository : IFingerprintRepository
     {
         #region IFingerprintRepository Members
+
         public void IterateSite(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
             Debug.Assert(querySetting != null);
 
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 "SELECT * FROM [SITE] {0} ORDER BY [SITE].SITE_ID",
 
                 @"SELECT [SITE].SITE_ID, VE_COMMAND_SITE_BIND.* FROM [SITE]
@@ -151,7 +153,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateContentLink(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[] {
+            IEnumerable<string> queryTemplates = new[]
+            {
                 "SELECT * FROM [SITE_CONTENT_LINK] {0} ORDER BY [SITE_CONTENT_LINK].LINK_ID"
             };
 
@@ -165,7 +168,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateContent(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 "SELECT  * FROM [CONTENT] {0} ORDER BY [CONTENT].CONTENT_ID",
 
                 @"SELECT [CONTENT].CONTENT_ID,  content_group.* FROM [CONTENT]
@@ -206,7 +210,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateField(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"select * from CONTENT_ATTRIBUTE_TYPE as CONTENT_ATTRIBUTE {0} ORDER BY CONTENT_ATTRIBUTE.ATTRIBUTE_ID",
 
                 @"SELECT CONTENT_ATTRIBUTE.ATTRIBUTE_ID, content_to_content.* FROM CONTENT_ATTRIBUTE
@@ -255,7 +260,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateArticle(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"select * from CONTENT_ITEM {0} order by CONTENT_ITEM_ID",
 
                 @"select CONTENT_DATA.* from CONTENT_ITEM
@@ -273,7 +279,6 @@ namespace Quantumart.QP8.BLL.Repository
 				{0}
 				order by CONTENT_ITEM.CONTENT_ITEM_ID",
 
-
                 @"select CONTENT_ITEM.CONTENT_ITEM_ID, CONTENT_ITEM_VERSION.* FROM CONTENT_ITEM
 				JOIN CONTENT_ITEM_VERSION ON CONTENT_ITEM.CONTENT_ITEM_ID = CONTENT_ITEM_VERSION.CONTENT_ITEM_ID
 				{0}
@@ -290,7 +295,6 @@ namespace Quantumart.QP8.BLL.Repository
 				JOIN ITEM_TO_ITEM_VERSION ON CONTENT_ITEM_VERSION.CONTENT_ITEM_VERSION_ID = item_to_item_version.content_item_version_id
 				{0}
 				order by CONTENT_ITEM.CONTENT_ITEM_ID",
-
 
                 @"select CONTENT_ITEM.CONTENT_ITEM_ID, CONTENT_ITEM_SCHEDULE.*
 				FROM CONTENT_ITEM
@@ -315,7 +319,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateNotification(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM NOTIFICATIONS {0} ORDER BY NOTIFICATIONS.NOTIFICATION_ID",
 
                 @"SELECT notifications_sent.* FROM NOTIFICATIONS
@@ -334,7 +339,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateWorkflow(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM WORKFLOW
 				  LEFT JOIN WORKFLOW_RULES ON WORKFLOW.WORKFLOW_ID = WORKFLOW_RULES.WORKFLOW_ID
 				  {0}
@@ -351,7 +357,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateStatusType(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM STATUS_TYPE {0} ORDER BY STATUS_TYPE.STATUS_TYPE_ID"
             };
 
@@ -365,7 +372,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateCustomAction(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM CUSTOM_ACTION
 				{0}
 				ORDER BY CUSTOM_ACTION.ID",
@@ -401,7 +409,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateVePlugin(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM VE_PLUGIN
 				{0}
 				ORDER BY VE_PLUGIN.ID",
@@ -422,7 +431,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateVeStyle(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"select * from VE_STYLE {0} order BY VE_STYLE.ID"
             };
 
@@ -436,7 +446,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateUser(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM [USERS] {0} ORDER BY [USERS].[USER_ID]",
                 @"SELECT USER_GROUP_BIND.* FROM [USERS]
 				JOIN USER_GROUP_BIND ON USER_GROUP_BIND.[USER_ID] = USERS.[USER_ID]
@@ -459,7 +470,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateUserGroup(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM USER_GROUP {0} ORDER BY USER_GROUP.GROUP_ID"
             };
 
@@ -473,7 +485,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateSiteFolder(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM FOLDER {0} ORDER BY FOLDER.FOLDER_ID"
             };
             var queries = AddFilterStatement("FOLDER.FOLDER_ID", "FOLDER.SITE_ID", querySetting, queryTemplates);
@@ -486,7 +499,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateContentFolder(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM CONTENT_FOLDER {0} ORDER BY CONTENT_FOLDER.FOLDER_ID"
             };
 
@@ -500,7 +514,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateSitePermission(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM SITE_ACCESS {0} ORDER BY SITE_ACCESS_ID"
             };
             var queries = AddFilterStatement("SITE_ACCESS_ID", "SITE_ID", querySetting, queryTemplates);
@@ -513,7 +528,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateContentPermission(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM CONTENT_ACCESS {0} ORDER BY CONTENT_ACCESS_ID"
             };
 
@@ -527,7 +543,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateArticlePermission(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM CONTENT_ITEM_ACCESS {0} ORDER BY CONTENT_ITEM_ACCESS_ID"
             };
 
@@ -541,7 +558,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateWorkflowPermission(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM WORKFLOW_ACCESS {0} ORDER BY WORKFLOW_ACCESS_ACCESS_ID"
             };
 
@@ -555,7 +573,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateSiteFolderPermission(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM FOLDER_ACCESS {0} ORDER BY FOLDER_ACCESS_ID"
             };
 
@@ -569,7 +588,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateEntityTypePermission(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM ENTITY_TYPE_ACCESS {0} ORDER BY ENTITY_TYPE_ACCESS_ID"
             };
             var queries = AddFilterStatement("ENTITY_TYPE_ACCESS_ID", "ENTITY_TYPE_ID", querySetting, queryTemplates);
@@ -582,7 +602,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateActionPermission(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM ACTION_ACCESS {0} ORDER BY ACTION_ACCESS_ID"
             };
             var queries = AddFilterStatement("ACTION_ACCESS_ID", "ACTION_ID", querySetting, queryTemplates);
@@ -595,7 +616,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateTemplate(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"select * FROM [PAGE_TEMPLATE] {0} ORDER BY [PAGE_TEMPLATE].PAGE_TEMPLATE_ID"
             };
             var queries = AddFilterStatement("[PAGE_TEMPLATE].PAGE_TEMPLATE_ID", "[PAGE_TEMPLATE].SITE_ID", querySetting, queryTemplates);
@@ -608,7 +630,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateTemplateObject(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM [OBJECT] WHERE [OBJECT].PAGE_ID IS NULL {0} ORDER BY [OBJECT].[OBJECT_ID]"
             };
             var queries = AddFilterStatement("[OBJECT].[OBJECT_ID]", "[OBJECT].[PAGE_TEMPLATE_ID]", querySetting, queryTemplates, false);
@@ -621,12 +644,12 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IterateTemplateObjectFormat(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT OBJECT_FORMAT.* FROM OBJECT_FORMAT
 				JOIN [OBJECT] ON [OBJECT].[OBJECT_ID] = [OBJECT_FORMAT].[OBJECT_ID]
 				WHERE [OBJECT].PAGE_ID IS NULL {0}
 				ORDER BY [OBJECT_FORMAT].OBJECT_FORMAT_ID"
-
             };
             var queries = AddFilterStatement("[OBJECT_FORMAT].[OBJECT_FORMAT_ID]", "[OBJECT_FORMAT].[OBJECT_ID]", querySetting, queryTemplates, false);
             queries = AddCurrentIdentityStatement("[OBJECT_FORMAT]", querySetting, queries);
@@ -638,7 +661,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IteratePage(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM [PAGE] {0} ORDER BY [PAGE].PAGE_ID"
             };
             var queries = AddFilterStatement("[PAGE].PAGE_ID", "[PAGE].PAGE_TEMPLATE_ID", querySetting, queryTemplates);
@@ -651,7 +675,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IteratePageObject(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT * FROM [OBJECT] WHERE [OBJECT].PAGE_ID IS NOT NULL {0} ORDER BY [OBJECT].[OBJECT_ID]"
             };
             var queries = AddFilterStatement("[OBJECT].[OBJECT_ID]", "[OBJECT].[PAGE_ID]", querySetting, queryTemplates, false);
@@ -664,7 +689,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         public void IteratePageObjectFormat(FingerprintEntityTypeSettings querySetting, Action<IEnumerable<object>> rowIterator)
         {
-            IEnumerable<string> queryTemplates = new[]{
+            IEnumerable<string> queryTemplates = new[]
+            {
                 @"SELECT OBJECT_FORMAT.* FROM OBJECT_FORMAT
 				JOIN [OBJECT] ON [OBJECT].[OBJECT_ID] = [OBJECT_FORMAT].[OBJECT_ID]
 				WHERE [OBJECT].PAGE_ID IS NOT NULL {0}
@@ -682,6 +708,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             return EntityTypeRepository.GetList().ToDictionary(et => et.Code, StringComparer.CurrentCultureIgnoreCase);
         }
+
         #endregion
 
         private static void IterateQuery(string query, Action<IEnumerable<object>> rowIterator)
@@ -730,7 +757,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             // для первого ancestor - select
             sb.AppendFormat(" {0} IN (SELECT [{2}].[{1}] from [{2}] ",
-                 fieldParentId,
+                fieldParentId,
                 querySetting.AncestorRestrictionTree.EntityType.IdField,
                 querySetting.AncestorRestrictionTree.EntityType.Source
             );

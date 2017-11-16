@@ -4,23 +4,24 @@ using System.Linq;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Interfaces.Db;
-using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 
-namespace Quantumart.QP8.BLL.Services
+namespace Quantumart.QP8.BLL.Services.ArticleServices
 {
     public class ArticleService : IArticleService
     {
         private readonly IArticleRepository _articleRepository;
 
-         public ArticleService(IArticleRepository articleRepository)
+        public ArticleService(IArticleRepository articleRepository)
         {
             _articleRepository = articleRepository;
         }
@@ -139,7 +140,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static ListResult<SimpleDataRow> List(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds = null, int[] filterIds = null)
         {
-            var dt = ArticleRepository.GetList(contentId, selectedArticleIDs, cmd, searchQueryParams, contextQueryParams, filter, ftsParser, onlyIds, filterIds ?? new int[] { }, out var totalRecords);
+            var dt = ArticleRepository.GetList(contentId, selectedArticleIDs, cmd, searchQueryParams, contextQueryParams, filter, ftsParser, onlyIds, filterIds ?? new int[] { }, out var totalRecords).ToList();
             var result = ArticleListHelper.GetResult(dt, FieldRepository.GetList(contentId, true), onlyIds).ToList();
             return new ListResult<SimpleDataRow> { Data = result, TotalRecords = totalRecords };
         }

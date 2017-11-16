@@ -26,7 +26,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static string GetCurrentRootUrl()
         {
             var qpConfig = WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
-            return (qpConfig == null) ? string.Empty : qpConfig.BackendUrl;
+            return qpConfig == null ? string.Empty : qpConfig.BackendUrl;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static string GetDirectoryPathToCopy()
         {
             var rootUrl = GetCurrentRootUrl();
-            return (HttpContext.Current == null || string.IsNullOrEmpty(rootUrl)) ? string.Empty : HttpContext.Current.Server.MapPath(rootUrl + RELATIVE_PATH_TO_COPY);
+            return HttpContext.Current == null || string.IsNullOrEmpty(rootUrl) ? string.Empty : HttpContext.Current.Server.MapPath(rootUrl + RELATIVE_PATH_TO_COPY);
         }
 
         /// <summary>
@@ -155,14 +155,14 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся маленькие пиктограммы типов файлов
         /// </summary>
-        /// <param name="themeName">название темы</param>		
+        /// <param name="themeName">название темы</param>
         internal static string GetThemeSmallFileTypeIconFolderUrl(string themeName) =>
             Url.ToAbsolute("~/Content/" + themeName + "/icons/16x16/file_types/");
 
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся большие пиктограммы типов файлов
         /// </summary>
-        /// <param name="themeName">название темы</param>		
+        /// <param name="themeName">название темы</param>
         internal static string GetThemeBigFileTypeIconFolderUrl(string themeName) =>
             Url.ToAbsolute("~/Content/" + themeName + "/icons/64x64/file_types/");
 

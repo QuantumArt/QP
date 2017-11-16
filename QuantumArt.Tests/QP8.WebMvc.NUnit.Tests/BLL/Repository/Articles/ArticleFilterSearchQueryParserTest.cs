@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Threading;
 using NUnit.Framework;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 
 namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
 {

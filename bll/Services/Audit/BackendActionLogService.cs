@@ -15,11 +15,13 @@ namespace Quantumart.QP8.BLL.Services.Audit
         /// <param name="totalRecords"></param>
         /// <returns></returns>
         ListResult<BackendActionLog> GetLogPage(ListCommand cmd, BackendActionLogFilter filter);
+
         /// <summary>
         /// Получить список Action Type
         /// </summary>
         /// <returns></returns>
         IEnumerable<BackendActionType> GetActionTypeList();
+
         /// <summary>
         /// Получить список Entity Type
         /// </summary>
@@ -48,7 +50,7 @@ namespace Quantumart.QP8.BLL.Services.Audit
                 Data = data,
                 TotalRecords = totalRecords
             };
-        }				
+        }
 
         public IEnumerable<BackendActionType> GetActionTypeList() => repository.GetActionTypeList();
 

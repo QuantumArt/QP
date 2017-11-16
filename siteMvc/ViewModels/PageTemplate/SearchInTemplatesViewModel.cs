@@ -1,3 +1,5 @@
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
     public sealed class SearchInTemplatesViewModel : ListViewModel

@@ -5,7 +5,9 @@ using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -63,7 +65,7 @@ namespace Quantumart.QP8.BLL.Services
         bool IsSiteDotNetByObjectFormatId(int objectFormattId);
     }
 
-    public class NotificationService: INotificationService
+    public class NotificationService : INotificationService
     {
         public MessageResult AssembleNotificationPreAction(int id)
         {
@@ -173,24 +175,24 @@ namespace Quantumart.QP8.BLL.Services
             }).ToArray();
         }
 
-        public IEnumerable<ListItem> GetObjectFormatsAsListItemsByContentId(int contentId) => ObjectFormatRepository.GetObjectFormats(0, contentId, new int[]{ });
+        public IEnumerable<ListItem> GetObjectFormatsAsListItemsByContentId(int contentId) => ObjectFormatRepository.GetObjectFormats(0, contentId, new int[] { });
 
         public IEnumerable<ListItem> GetStatusesAsListItemsBySiteId(int siteId)
         {
-            return StatusTypeRepository.GetStatusList(siteId).Select(status => new ListItem { Text = status.Name, Value = status.Id.ToString()})
-                    .ToArray();
+            return StatusTypeRepository.GetStatusList(siteId).Select(status => new ListItem { Text = status.Name, Value = status.Id.ToString() })
+                .ToArray();
         }
 
         public Notification UpdateNotificationProperties(Notification notification, bool createDefaultFormat, string backendUrl)
         {
-            if (createDefaultFormat  && !notification.FormatId.HasValue && !notification.IsExternal)
+            if (createDefaultFormat && !notification.FormatId.HasValue && !notification.IsExternal)
             {
                 notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);
             }
             return NotificationRepository.UpdateProperties(notification);
         }
 
-        public Notification SaveNotificationProperties(Notification notification,  bool createDefaultFormat, string backendUrl)
+        public Notification SaveNotificationProperties(Notification notification, bool createDefaultFormat, string backendUrl)
         {
             if (ContentRepository.IsAnyAggregatedFields(notification.ParentEntityId))
             {
@@ -234,7 +236,7 @@ namespace Quantumart.QP8.BLL.Services
             using (new QPConnectionScope(connectionString))
             {
                 var article = ArticleRepository.GetById(id);
-                if(article == null)
+                if (article == null)
                 {
                     throw new ArgumentException(string.Format(ArticleStrings.ArticleNotFound, id));
                 }

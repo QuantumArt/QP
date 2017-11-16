@@ -2,6 +2,7 @@
 using Quantumart.QP8.Configuration.Authentication;
 using Quantumart.QP8.Configuration.Globalization;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.Configuration
 {
@@ -19,8 +20,8 @@ namespace Quantumart.QP8.Configuration
         [ConfigurationProperty("backendUrl", IsRequired = true)]
         public string BackendUrl
         {
-            get { return Utils.Url.ToAbsolute(base["backendUrl"].ToString()); }
-            set { base["backendUrl"] = value; }
+            get => Url.ToAbsolute(base["backendUrl"].ToString());
+            set => base["backendUrl"] = value;
         }
 
         /// <summary>
@@ -29,8 +30,8 @@ namespace Quantumart.QP8.Configuration
         [ConfigurationProperty("defaultTheme", IsRequired = true)]
         public string DefaultTheme
         {
-            get { return Utils.Url.ToAbsolute(base["defaultTheme"].ToString()); }
-            set { base["defaultTheme"] = value; }
+            get => Url.ToAbsolute(base["defaultTheme"].ToString());
+            set => base["defaultTheme"] = value;
         }
 
         /// <summary>
@@ -39,8 +40,8 @@ namespace Quantumart.QP8.Configuration
         [ConfigurationProperty("uploaderType", IsRequired = true)]
         public string UploaderTypeName
         {
-            get { return Utils.Url.ToAbsolute(base["uploaderType"].ToString()); }
-            set { base["uploaderType"] = value; }
+            get => Url.ToAbsolute(base["uploaderType"].ToString());
+            set => base["uploaderType"] = value;
         }
 
         [ConfigurationProperty("uploadMaxSize", DefaultValue = 100)]

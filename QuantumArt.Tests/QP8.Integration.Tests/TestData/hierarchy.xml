@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <actions backendUrl="http://localhost:90/Backend/" dbVersion="7.9.9.0">
   <action code="new_content" ids="1190" parentId="35" lcid="1049" executed="09/06/2016 13:09:20" executedBy="CelutP" fieldIds="4717">
     <field name="Data.Name">test regions</field>
@@ -109,7 +110,8 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">save_content</field>
   </action>
-  <action code="new_field" ids="4720" parentId="1191" lcid="1049" executed="09/06/2016 13:33:50" executedBy="CelutP" newLinkId="373">
+  <action code="new_field" ids="4720" parentId="1191" lcid="1049" executed="09/06/2016 13:33:50" executedBy="CelutP"
+          newLinkId="373">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Regions</field>
     <field name="Data.FriendlyName"></field>

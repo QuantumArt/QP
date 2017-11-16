@@ -6,6 +6,7 @@ using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;

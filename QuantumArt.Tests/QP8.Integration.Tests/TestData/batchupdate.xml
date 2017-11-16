@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <actions backendUrl="http://mscdev02:90/Backend/" dbVersion="7.9.9.0">
   <action code="new_content" ids="1647" parentId="35" lcid="1049" executed="11/07/2016 13:44:34" executedBy="KoryakinS" fieldIds="6112">
     <field name="Data.Name">Test_BatchUpdate_Base</field>
@@ -611,7 +612,8 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="new_field" ids="6129" parentId="1647" lcid="1049" executed="11/07/2016 15:11:05" executedBy="KoryakinS" newLinkId="558" newBackwardId="6130">
+  <action code="new_field" ids="6129" parentId="1647" lcid="1049" executed="11/07/2016 15:11:05" executedBy="KoryakinS"
+          newLinkId="558" newBackwardId="6130">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_MtM</field>
     <field name="Data.FriendlyName"></field>
@@ -665,7 +667,8 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6131" parentId="1647" lcid="1049" executed="11/07/2016 15:12:44" executedBy="KoryakinS" newBackwardId="6132">
+  <action code="new_field" ids="6131" parentId="1647" lcid="1049" executed="11/07/2016 15:12:44" executedBy="KoryakinS"
+          newBackwardId="6132">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_OtM</field>
     <field name="Data.FriendlyName"></field>

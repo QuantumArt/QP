@@ -1,7 +1,7 @@
 ﻿namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Models
 {
-	public interface IField : IArticle
-	{
-		object Value { get; }
-	}
+    public interface IField : IArticle
+    {
+        object Value { get; }
+    }
 }

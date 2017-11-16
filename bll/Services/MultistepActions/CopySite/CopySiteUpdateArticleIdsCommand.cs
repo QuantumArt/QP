@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -19,7 +20,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         public int SiteArticlesCount { get; set; }
 
         public CopySiteUpdateArticleIdsCommand(MultistepActionStageCommandState state)
-            : this(state.Id, 0) { }
+            : this(state.Id, 0)
+        {
+        }
 
         public CopySiteUpdateArticleIdsCommand(int sourceSiteId, int siteArticlesCount)
         {
