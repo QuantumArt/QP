@@ -175,7 +175,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
           fieldId: that._fieldID,
           filter: that._getEntityDataList()._filter
         }, data => {
-          that._selectedEntitiesIDs = $q.addRemoveToArrUniq(selectedIds, data);
+          that._selectedEntitiesIDs = [...new Set(selectedIds.concat(data))];
           that._replaceWithSelectedEntities();
         });
       }

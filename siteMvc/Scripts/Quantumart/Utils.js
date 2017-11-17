@@ -831,11 +831,6 @@ $q.collectGarbageInIE = function collectGarbageInIE() {
   }
 };
 
-$q.addRemoveToArrUniq = function addRemoveToArrUniq(arrToModify, valToAddRemove, shouldBeExcluded) {
-  const underscoreMethod = shouldBeExcluded ? 'difference' : 'union';
-  return _[underscoreMethod](arrToModify, valToAddRemove);
-};
-
 $q.bindProxies = function bindProxies(listOfFnNames, fnPostfix) {
   const postfix = fnPostfix || 'Handler';
   [].forEach.call(listOfFnNames, function eachFn(fnName) {

@@ -582,7 +582,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
         $q.processGenericAjaxError(jqXHR);
       });
 
-      return $.map(rowsData.data, item => {
+      return rowsData.data.map(item => {
         return { Id: item.CONTENT_ITEM_ID };
       });
     }
@@ -1093,7 +1093,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   onSelectionChanged(eventArgs) {
-    const selectedEntities = Array.clone(eventArgs.get_entities());
+    const selectedEntities = eventArgs.get_entities().slice();
     this._selectedEntities = selectedEntities;
     this.saveSelectionContext(eventArgs);
     this._saveSelectedEntitiesContext(eventArgs);

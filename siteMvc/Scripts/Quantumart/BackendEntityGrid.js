@@ -632,7 +632,13 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this.getChildEntityIds(parentArticleId).done(response => {
       const $rowsToModify = $(this.getRowsByEntityIds(response.data));
       this._setRowsSelectedState($rowsToModify, rowState);
-      this._selectedEntitiesIDs = $q.addRemoveToArrUniq(this._selectedEntitiesIDs, response.data, !rowState);
+      if (rowState) {
+        this._selectedEntitiesIDs = [...new Set(this._selectedEntitiesIDs.concat(response.data))];
+      } else {
+        const unselectedDataSet = new Set(response.data);
+        this._selectedEntitiesIDs = this._selectedEntitiesIDs.filter(el => !unselectedDataSet.has(el));
+      }
+
       this._saveRowSelectionState();
       this._executePostSelectActions();
     });
@@ -914,14 +920,19 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   _saveRowSelectionState() {
     const $rows = this.getRows();
+    const selectedRowEntityIdsSet = new Set(this._selectedEntitiesIDs);
+    const unselectedRowEntityIdsSet = new Set();
     for (let rowIndex = 0; rowIndex < $rows.length; rowIndex++) {
       const $row = $rows.eq(rowIndex);
-      this._selectedEntitiesIDs = $q.addRemoveToArrUniq(
-        this._selectedEntitiesIDs,
-        this.getEntityId($row),
-        !this.isRowSelected($row)
-      );
+      const rowEntityId = this.getEntityId($row);
+      if (this.isRowSelected($row)) {
+        selectedRowEntityIdsSet.add(rowEntityId);
+      } else {
+        unselectedRowEntityIdsSet.add(rowEntityId);
+      }
     }
+
+    this._selectedEntitiesIDs = [...selectedRowEntityIdsSet].filter(el => !unselectedRowEntityIdsSet.has(el));
   },
 
   _saveRowAllSelectionState() {
@@ -958,7 +969,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
       const that = this;
       if (rowsData) {
-        this._selectedEntitiesIDs = $.map(rowsData.data, dataItem => dataItem[that._keyColumnName]);
+        this._selectedEntitiesIDs = rowsData.data.map(item => item[that._keyColumnName]);
       }
     }
   },
@@ -968,16 +979,14 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     const selectedEntitiesIDs = this._selectedEntitiesIDs;
     const selectedRowElems = [];
 
-    this.getRows().each(
-      (rowIndex, rowElem) => {
-        const $row = $(rowElem);
-        const entityId = that.getEntityId($row);
+    this.getRows().each((rowIndex, rowElem) => {
+      const $row = $(rowElem);
+      const entityId = that.getEntityId($row);
 
-        if (Array.contains(selectedEntitiesIDs, entityId)) {
-          Array.add(selectedRowElems, rowElem);
-        }
+      if (Array.contains(selectedEntitiesIDs, entityId)) {
+        Array.add(selectedRowElems, rowElem);
       }
-    );
+    });
 
     this.selectRows(selectedRowElems);
   },

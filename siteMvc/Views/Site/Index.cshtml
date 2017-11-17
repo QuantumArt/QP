@@ -17,7 +17,7 @@
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
         {
-            c.Bound("")
+            c.Bound(string.Empty)
                 .Title(@"<input type='checkbox' />")
                 .Width(30)
                 .HeaderHtmlAttributes(new { @class = "t-select-header" })
@@ -29,9 +29,9 @@
                 .Width(30)
                 .HtmlAttributes(new { @class = "id" });
             c.Bound(s => s.IsLive)
-                .Title("")
+                .Title(string.Empty)
                 .Width(30)
-                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "site<#= IsLive #>.gif", ""))
+                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "site<#= IsLive #>.gif", string.Empty))
                 .HtmlAttributes(new { style = "text-align: center;" });
             c.Bound(s => s.LockedBy)
                 .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" alt=\"\" />", Url.GetThemeRootImageFolderUrl() + "/grid/header_icons/lock.gif"))
