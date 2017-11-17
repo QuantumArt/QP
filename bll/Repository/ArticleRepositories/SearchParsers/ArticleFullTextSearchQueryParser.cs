@@ -5,7 +5,7 @@ using QP8.Infrastructure;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Utils.FullTextSearch;
 
-namespace Quantumart.QP8.BLL.Repository.Articles
+namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 {
     /// <summary>
     /// Парсер Full Text Search параметров запроса для получения списка статей

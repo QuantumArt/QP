@@ -11,7 +11,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
         public int AssemblingEntityId { get; }
         public string AssemblingEntityName { get; }
 
-        public AssembleNotificationsCommand(MultistepActionStageCommandState state, bool siteOrTemplate) : this(state.Id, null, siteOrTemplate) { }
+        public AssembleNotificationsCommand(MultistepActionStageCommandState state, bool siteOrTemplate)
+            : this(state.Id, null, siteOrTemplate)
+        {
+        }
 
         public AssembleNotificationsCommand(int assemblingEntityId, string assemblingEntityName, bool siteOrTemplate)
         {
@@ -31,9 +34,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
         {
             ItemCount = 1,
             StepCount = 1,
-            Name = SiteOrTemplate ? 
-                string.Format(SiteStrings.AssembleNotificationStageName, (AssemblingEntityName ?? "")):
-                string.Format(TemplateStrings.AssembleNotificationsStageName, (AssemblingEntityName ?? ""))
+            Name = SiteOrTemplate ? string.Format(SiteStrings.AssembleNotificationStageName, AssemblingEntityName ?? "") : string.Format(TemplateStrings.AssembleNotificationsStageName, AssemblingEntityName ?? "")
         };
 
         #region IMultistepActionStageCommand Members
@@ -48,6 +49,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                     new AssembleFormatController(id, AssembleMode.Notification, QPContext.CurrentDbConnectionString).Assemble();
                 }
             }
+
             return new MultistepActionStepResult { ProcessedItemsCount = 1 };
         }
 

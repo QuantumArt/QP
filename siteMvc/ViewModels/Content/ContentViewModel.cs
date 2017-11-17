@@ -4,7 +4,7 @@ using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Content
 {
     public class ContentViewModel : ContentViewModelBase
     {

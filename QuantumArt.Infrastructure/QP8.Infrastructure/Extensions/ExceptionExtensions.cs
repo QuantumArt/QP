@@ -11,6 +11,7 @@ namespace QP8.Infrastructure.Extensions
             while (true)
             {
                 yield return ex;
+
                 if (ex.InnerException != null)
                 {
                     ex = ex.InnerException;

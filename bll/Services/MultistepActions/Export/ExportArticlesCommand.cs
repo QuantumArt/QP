@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Web;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -24,7 +24,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         private IEnumerable<Content> ExtensionContents { get; }
 
         public ExportArticlesCommand(MultistepActionStageCommandState state)
-            : this(state.ParentId, state.Id, 0, state.Ids, state.ExtensionContents) { }
+            : this(state.ParentId, state.Id, 0, state.Ids, state.ExtensionContents)
+        {
+        }
 
         public ExportArticlesCommand(int siteId, int contentId, int itemCount, int[] ids, IEnumerable<Content> extensionContent)
         {

@@ -9,7 +9,7 @@ namespace Quantumart.QP8.BLL
     /// <summary>
     /// Информация о физических и виртуальных путях заданной библиотеки
     /// </summary>
-	public class PathInfo
+    public class PathInfo
     {
         public string Path { get; set; }
 
@@ -32,7 +32,7 @@ namespace Quantumart.QP8.BLL
                 return new PathInfo { Path = Path, Url = Url };
             }
 
-            return new PathInfo { Path = $@"{Path}\{folderName}", Url = $@"{Url}{folderName.Replace(@"\", @"/")}/"};
+            return new PathInfo { Path = $@"{Path}\{folderName}", Url = $@"{Url}{folderName.Replace(@"\", @"/")}/" };
         }
 
         public string GetPath(string fileName) => System.IO.Path.Combine(Path, ReplaceUp(fileName));

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -24,7 +25,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
         private int _itemCount;
 
         public RebuildUserQueryCommand(MultistepActionStageCommandState state)
-            : this(state.Id, null) { }
+            : this(state.Id, null)
+        {
+        }
 
         public RebuildUserQueryCommand(int contentId, string contentName)
         {
@@ -42,12 +45,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
         {
             var contentsToRebuild =
                 RebuildedSubViewContents
-                .OrderBy(c => c.Level)
-                .Distinct(new LambdaEqualityComparer<Content.TreeItem>((x, y) => x.ContentId.Equals(y.ContentId), x => x.ContentId))
-                .Select(c => c.ContentId)
-                .ToArray();
+                    .OrderBy(c => c.Level)
+                    .Distinct(new LambdaEqualityComparer<Content.TreeItem>((x, y) => x.ContentId.Equals(y.ContentId), x => x.ContentId))
+                    .Select(c => c.ContentId)
+                    .ToArray();
 
-            _itemCount = contentsToRebuild.Count();
+            _itemCount = contentsToRebuild.Length;
             HttpContext.Current.Session[HttpContextSession.RebuildUserQueryCommandProcessingContext] = new RebuildUserQueryCommandContext
             {
                 ContentIdsToRebuild = contentsToRebuild.ToArray()

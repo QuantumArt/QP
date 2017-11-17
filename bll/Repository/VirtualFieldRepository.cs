@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.Results;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -19,11 +20,7 @@ namespace Quantumart.QP8.BLL.Repository
             return newItem;
         }
 
-        internal static Field Update(Field item)
-        {
-            var newItem = DefaultRepository.Update<Field, FieldDAL>(item);
-            return newItem;
-        }
+        internal static Field Update(Field item) => DefaultRepository.Update<Field, FieldDAL>(item);
 
         /// <summary>
         /// Определяет, существуют ли виртуальные поля в Join-контентах построенные на текущем поле

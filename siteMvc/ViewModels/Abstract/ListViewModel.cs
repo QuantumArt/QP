@@ -3,9 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 {
     public abstract class ListViewModel : ViewModel
     {

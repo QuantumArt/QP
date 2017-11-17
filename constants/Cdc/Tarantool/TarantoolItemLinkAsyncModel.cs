@@ -9,6 +9,6 @@
         public const string IsRev = "isRev";
         public const string IsSelf = "isSelf";
 
-        public static string GetInvariantName(decimal linkId, bool isRev) => isRev ?  $"item_link_{linkId}_async_rev" : $"item_link_{linkId}_async";
+        public static string GetInvariantName(decimal linkId, bool isRev) => isRev ? $"item_link_{linkId}_async_rev" : $"item_link_{linkId}_async";
     }
 }

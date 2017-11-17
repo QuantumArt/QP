@@ -12,9 +12,12 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("ImportEncoding", NameResourceType = typeof(MultistepActionStrings))]
         public int Encoding { get; set; }
 
-        private int _delimiter = 1;
+        private readonly int _delimiter = 1;
+
         [LocalizedDisplayName("SelectDelimiter", NameResourceType = typeof(MultistepActionStrings))]
-        public int Delimiter { get => _delimiter;
+        public int Delimiter
+        {
+            get => _delimiter;
             set => value = _delimiter;
         }
 
@@ -40,9 +43,11 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("ImportNoHeaders", NameResourceType = typeof(MultistepActionStrings))]
         public bool NoHeaders { get; set; }
 
-        private bool _updateAndInsert = false;
+        private readonly bool _updateAndInsert = false;
+
         [LocalizedDisplayName("UpdateAndInsert", NameResourceType = typeof(MultistepActionStrings))]
-        public bool UpdateAndInsert { 
+        public bool UpdateAndInsert
+        {
             get => _updateAndInsert;
             set => value = _updateAndInsert;
         }

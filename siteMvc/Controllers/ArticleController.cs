@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
-using QP8.Infrastructure.Web.ActionResults;
+using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
-using Quantumart.QP8.BLL.Interfaces.Services;
-using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
+using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Utils;
@@ -256,12 +256,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 try
                 {
                     model.Data = ArticleService.Create(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
+
                     // ReSharper disable once PossibleInvalidOperationException
                     PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
-                      ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
-                      : model.Data.FieldValues;
+                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
+                        : model.Data.FieldValues;
                     foreach (var fv in union.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
                     {
                         AppendFormGuidsFromIds($"field_{fv.Field.Id}", $"field_uniqueid_{fv.Field.Id}");
@@ -323,7 +324,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     // ReSharper disable once PossibleInvalidOperationException
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
-                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f=>f.FieldValues))
+                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
                         : model.Data.FieldValues;
 
                     foreach (var fv in union.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
@@ -377,6 +378,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult Remove(int parentId, int id, bool? boundToExternal)
         {
             var articleToRemove = ArticleRepository.GetById(id);
+
             // ReSharper disable once PossibleInvalidOperationException
             PersistFromId(articleToRemove.Id, articleToRemove.UniqueId.Value);
             return JsonMessageResult(ArticleService.Remove(parentId, articleToRemove, false, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));

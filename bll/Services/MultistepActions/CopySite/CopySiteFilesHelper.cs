@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants.Mvc;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
@@ -21,7 +23,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             _destination = destination;
         }
 
-        public static int FilesCount(Site source) => GetAllFilesPaths(source).Count();
+        public static int FilesCount(Site source) => GetAllFilesPaths(source).Count;
 
         private static CopySiteSettings Settings => (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
 
@@ -56,7 +58,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                 dirs.AddRange(Directory.GetDirectories(_source.UploadDir, ".", SearchOption.AllDirectories).Where(s => !s.Contains(ContentVersionFolder)));
             }
 
-            var contentsRelations = ContentRepository.GetRelationsBetweenContents(_source.Id, _destination.Id, string.Empty);
+            var contentsRelations = ContentRepository.GetRelationsBetweenContents(_source.Id, _destination.Id, string.Empty).ToList();
             var contentIds = Directory.GetDirectories($"{_source.UploadDir}\\contents", ".", SearchOption.TopDirectoryOnly);
             var contentIdsInt = contentIds.Select(s => s.Split('\\').Last());
             if (!contentIds.Any())
@@ -64,7 +66,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                 contentIds[0] = "0";
             }
 
-            var attributesRelations = FieldRepository.GetRelationsBetweenAttributes(_source.Id, _destination.Id, string.Join(", ", contentIdsInt), forVirtualContents: false, byNewContents: false);
+            var attributesRelations = FieldRepository.GetRelationsBetweenAttributes(_source.Id, _destination.Id, string.Join(", ", contentIdsInt), false, false).ToList();
             foreach (var dirPath in dirs)
             {
                 var path = ReplaceSourceContentDirsToNew(dirPath, contentsRelations, attributesRelations);
@@ -81,15 +83,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                 WriteAllFilesToBuffer();
             }
 
-            var contentsRelations = ContentRepository.GetRelationsBetweenContents(_source.Id, _destination.Id, string.Empty);
+            var contentsRelations = ContentRepository.GetRelationsBetweenContents(_source.Id, _destination.Id, string.Empty).ToList();
             var contentIds = Directory.GetDirectories($"{_source.UploadDir}\\contents", ".", SearchOption.TopDirectoryOnly);
             if (contentIds.Length == 0)
             {
-                contentIds = new string[1] { "0" };
+                contentIds = new[] { "0" };
             }
 
             var contentIdsInt = contentIds.Select(s => s.Split('\\').Last());
-            var attributesRelations = FieldRepository.GetRelationsBetweenAttributes(_source.Id, _destination.Id, string.Join(", ", contentIdsInt), forVirtualContents: false, byNewContents: false);
+            var attributesRelations = FieldRepository.GetRelationsBetweenAttributes(_source.Id, _destination.Id, string.Join(", ", contentIdsInt), false, false).ToList();
 
             var filePaths = GetAllFiles();
             long tempFilesSizeLimit = 0;
@@ -155,12 +157,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         private string ChangeFilePaths(string path, IEnumerable<DataRow> contentsRelations, IEnumerable<DataRow> attributesRelations)
         {
             var result = string.Empty;
-            if (path.IndexOf(_source.UploadDir) > -1)
+            if (path.IndexOf(_source.UploadDir, StringComparison.Ordinal) > -1)
             {
                 result = path.Replace(_source.UploadDir, _destination.UploadDir);
             }
 
-            if (!string.IsNullOrEmpty(_source.AssemblyPath) && path.IndexOf(_source.AssemblyPath) > -1)
+            if (!string.IsNullOrEmpty(_source.AssemblyPath) && path.IndexOf(_source.AssemblyPath, StringComparison.Ordinal) > -1)
             {
                 result = path.Replace(_source.AssemblyPath, _destination.AssemblyPath);
             }

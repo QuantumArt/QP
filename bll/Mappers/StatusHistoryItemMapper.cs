@@ -6,7 +6,7 @@ using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
-    class StatusHistoryItemMapper : GenericMapper<StatusHistoryListItem, DataRow>
+    internal class StatusHistoryItemMapper : GenericMapper<StatusHistoryListItem, DataRow>
     {
         public override void CreateBizMapper()
         {

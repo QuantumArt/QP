@@ -76,7 +76,6 @@ namespace Quantumart.QP8.BLL.Repository
                         result.Add(GetRealById(id));
                     }
                 }
-
             }
             else
             {
@@ -87,6 +86,7 @@ namespace Quantumart.QP8.BLL.Repository
                         .ToList()
                     );
             }
+
             return result;
         }
 
@@ -192,10 +192,10 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var decStatusIDs = Converter.ToDecimalCollection(selectedEntitiesIDs);
             return QPContext.EFContext.StatusTypeSet
-                .Where(n => decStatusIDs.Contains(n.Id))
-                .Select(g => new { g.Id, g.Name })
-                .ToArray()
-                .Select(g => new ListItem { Value = g.Id.ToString(), Text = g.Name })
+                    .Where(n => decStatusIDs.Contains(n.Id))
+                    .Select(g => new { g.Id, g.Name })
+                    .ToArray()
+                    .Select(g => new ListItem { Value = g.Id.ToString(), Text = g.Name })
                 ;
         }
 

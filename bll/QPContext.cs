@@ -9,6 +9,8 @@ using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;

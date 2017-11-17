@@ -8,290 +8,290 @@ using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
-	public class FolderFile
-	{
-		#region creation
+    public class FolderFile
+    {
+        #region creation
 
-		static FolderFile()
-		{
-			Func<FolderFileType, string> createFileExtension = type => string.Join(";", fileTypeDictionary.Where(i => i.Value == type).Select(i => i.Key));	
-			fileExtensionsDictionary = new Dictionary<FolderFileType, string>
-			{
-				{FolderFileType.Unknown, ""},
-				{FolderFileType.Image, createFileExtension(FolderFileType.Image)},
-				{FolderFileType.CSS, createFileExtension(FolderFileType.CSS)},
-				{FolderFileType.Javascript, createFileExtension(FolderFileType.Javascript)},
-				{FolderFileType.Flash, createFileExtension(FolderFileType.Flash)},
-				{FolderFileType.Media, createFileExtension(FolderFileType.Media)},
-				{FolderFileType.PDF, createFileExtension(FolderFileType.PDF)},
-				{FolderFileType.Office, createFileExtension(FolderFileType.Office)}
-			};
-		}
+        static FolderFile()
+        {
+            Func<FolderFileType, string> createFileExtension = type => string.Join(";", fileTypeDictionary.Where(i => i.Value == type).Select(i => i.Key));
+            fileExtensionsDictionary = new Dictionary<FolderFileType, string>
+            {
+                { FolderFileType.Unknown, "" },
+                { FolderFileType.Image, createFileExtension(FolderFileType.Image) },
+                { FolderFileType.CSS, createFileExtension(FolderFileType.CSS) },
+                { FolderFileType.Javascript, createFileExtension(FolderFileType.Javascript) },
+                { FolderFileType.Flash, createFileExtension(FolderFileType.Flash) },
+                { FolderFileType.Media, createFileExtension(FolderFileType.Media) },
+                { FolderFileType.PDF, createFileExtension(FolderFileType.PDF) },
+                { FolderFileType.Office, createFileExtension(FolderFileType.Office) }
+            };
+        }
 
-		public FolderFile()
-		{
-		}
-		
-		public FolderFile(FileInfo info)
-		{
-			OldName = info.Name;
-			Name = info.Name;
-			Path = info.FullName.Replace(info.Name, string.Empty);
-			Extension = info.Extension;
-			Created = info.CreationTime;
-			Modified = info.LastWriteTime;
-			Length = info.Length;
-		}
+        public FolderFile()
+        {
+        }
 
-		#endregion
+        public FolderFile(FileInfo info)
+        {
+            OldName = info.Name;
+            Name = info.Name;
+            Path = info.FullName.Replace(info.Name, string.Empty);
+            Extension = info.Extension;
+            Created = info.CreationTime;
+            Modified = info.LastWriteTime;
+            Length = info.Length;
+        }
 
-		#region private
+        #endregion
 
-		private string _Dimensions;
+        #region private
 
-		/// <summary>
-		/// Словарь типов файлов по расширениям
-		/// </summary>
-		private static Dictionary<string, FolderFileType> fileTypeDictionary = new Dictionary<string, FolderFileType>(StringComparer.OrdinalIgnoreCase) 
-		{			
-			#region словарь
-			{".gif", FolderFileType.Image},
-			{".jpg", FolderFileType.Image},
-			{".jpeg", FolderFileType.Image},
-			{".png", FolderFileType.Image},
-			{".bmp", FolderFileType.Image},
-            {".svg", FolderFileType.Image},
+        private string _Dimensions;
 
-            {".css", FolderFileType.CSS},
+        /// <summary>
+        /// Словарь типов файлов по расширениям
+        /// </summary>
+        private static readonly Dictionary<string, FolderFileType> fileTypeDictionary = new Dictionary<string, FolderFileType>(StringComparer.OrdinalIgnoreCase)
+        {
+            #region словарь
 
-			{".js", FolderFileType.Javascript},
+            { ".gif", FolderFileType.Image },
+            { ".jpg", FolderFileType.Image },
+            { ".jpeg", FolderFileType.Image },
+            { ".png", FolderFileType.Image },
+            { ".bmp", FolderFileType.Image },
+            { ".svg", FolderFileType.Image },
 
-			{".flv", FolderFileType.Flash},
-			{".swf", FolderFileType.Flash},
+            { ".css", FolderFileType.CSS },
 
-			{".avi", FolderFileType.Media},
-			{".mid", FolderFileType.Media},
-			{".mov", FolderFileType.Media},
-			{".mp3", FolderFileType.Media},
-			{".mp4", FolderFileType.Media},
-			{".mpc", FolderFileType.Media},
-			{".mpeg", FolderFileType.Media},
-			{".mpg", FolderFileType.Media},
-			{".ram", FolderFileType.Media},
-			{".rm", FolderFileType.Media},
-			{".rmi", FolderFileType.Media},
-			{".rmvb", FolderFileType.Media},
-			{".wav", FolderFileType.Media},
-			{".wma", FolderFileType.Media},
-			{".wmv", FolderFileType.Media},
-			
+            { ".js", FolderFileType.Javascript },
 
-			{".pdf", FolderFileType.PDF},
+            { ".flv", FolderFileType.Flash },
+            { ".swf", FolderFileType.Flash },
 
-			{".doc", FolderFileType.Office},
-			{".rtf", FolderFileType.Office},
-			{".docx", FolderFileType.Office},
-			{".xlsx", FolderFileType.Office},
-			{".xls", FolderFileType.Office},
-			{".ppt", FolderFileType.Office},
-			{".pptx", FolderFileType.Office},
-			#endregion		
-		};
-		
+            { ".avi", FolderFileType.Media },
+            { ".mid", FolderFileType.Media },
+            { ".mov", FolderFileType.Media },
+            { ".mp3", FolderFileType.Media },
+            { ".mp4", FolderFileType.Media },
+            { ".mpc", FolderFileType.Media },
+            { ".mpeg", FolderFileType.Media },
+            { ".mpg", FolderFileType.Media },
+            { ".ram", FolderFileType.Media },
+            { ".rm", FolderFileType.Media },
+            { ".rmi", FolderFileType.Media },
+            { ".rmvb", FolderFileType.Media },
+            { ".wav", FolderFileType.Media },
+            { ".wma", FolderFileType.Media },
+            { ".wmv", FolderFileType.Media },
 
-		/// <summary>
-		/// Словарь имен типов файлов по типу
-		/// </summary>
-		private static Dictionary<FolderFileType, string> fileTypeNameDictionary = new Dictionary<FolderFileType, string>
-		{			
-			#region словарь
-			{FolderFileType.Unknown, LibraryStrings.Unknown},
-			{FolderFileType.Image, LibraryStrings.Image},
-			{FolderFileType.CSS, LibraryStrings.CSS},
-			{FolderFileType.Javascript, LibraryStrings.Javascript},
-			{FolderFileType.Flash, LibraryStrings.Flash},
-			{FolderFileType.Media, LibraryStrings.Media},
-			{FolderFileType.PDF, LibraryStrings.PDF},
-			{FolderFileType.Office, LibraryStrings.Office}
-			#endregion		
-		};
+            { ".pdf", FolderFileType.PDF },
 
-		
-		private static Dictionary<FolderFileType, string> fileExtensionsDictionary;		
+            { ".doc", FolderFileType.Office },
+            { ".rtf", FolderFileType.Office },
+            { ".docx", FolderFileType.Office },
+            { ".xlsx", FolderFileType.Office },
+            { ".xls", FolderFileType.Office },
+            { ".ppt", FolderFileType.Office },
+            { ".pptx", FolderFileType.Office },
 
-		#endregion
+            #endregion
+        };
 
+        /// <summary>
+        /// Словарь имен типов файлов по типу
+        /// </summary>
+        private static readonly Dictionary<FolderFileType, string> fileTypeNameDictionary = new Dictionary<FolderFileType, string>
+        {
+            #region словарь
 
-		/// <summary>
-		/// исходное имя файла с расширением
-		/// </summary>
-		internal string OldName { get; set; }
-		
-		/// <summary>
-		/// имя файла с расширением
-		/// </summary>
-		[LocalizedDisplayName("FileName", NameResourceType = typeof(LibraryStrings))]
-		public string Name { get; set; }
+            { FolderFileType.Unknown, LibraryStrings.Unknown },
+            { FolderFileType.Image, LibraryStrings.Image },
+            { FolderFileType.CSS, LibraryStrings.CSS },
+            { FolderFileType.Javascript, LibraryStrings.Javascript },
+            { FolderFileType.Flash, LibraryStrings.Flash },
+            { FolderFileType.Media, LibraryStrings.Media },
+            { FolderFileType.PDF, LibraryStrings.PDF },
+            { FolderFileType.Office, LibraryStrings.Office }
 
-		/// <summary>
-		/// расширение файла (с точкой)
-		/// </summary>
-		[LocalizedDisplayName("Extension", NameResourceType = typeof(LibraryStrings))]
-		public string Extension { get; set; }
+            #endregion
+        };
 
-		/// <summary>
-		/// путь к файлу с завершающим слэшом
-		/// </summary>
-		internal string Path { get; set; }
+        private static readonly Dictionary<FolderFileType, string> fileExtensionsDictionary;
 
-		/// <summary>
-		/// размер файла (в байтах)
-		/// </summary>
-		public long Length { get; set; }
+        #endregion
 
-		/// <summary>
-		/// Размеры изображения (только для картинок)
-		/// </summary>
-		[LocalizedDisplayName("Dimensions", NameResourceType = typeof(LibraryStrings))]
-		public string Dimensions { 
-			get
-			{
-				if (_Dimensions == null)
-				{
-					_Dimensions = string.Empty;
-					if (FileType == FolderFileType.Image)
-					{
-						try
-						{
-							using (var image = Image.FromFile(FullName))
-							{
-								_Dimensions = string.Format("{0}x{1}", image.Width, image.Height);
-							}
-						}
-						catch (OutOfMemoryException) // sic!!!
-						{
-							_Dimensions = string.Empty;
-						}
-					}
-				}
-				return _Dimensions;
-			}
-		}
+        /// <summary>
+        /// исходное имя файла с расширением
+        /// </summary>
+        internal string OldName { get; set; }
 
-		/// <summary>
-		/// Дата создания файла
-		/// </summary>
-		[LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
-		public DateTime Created { get; set; }
+        /// <summary>
+        /// имя файла с расширением
+        /// </summary>
+        [LocalizedDisplayName("FileName", NameResourceType = typeof(LibraryStrings))]
+        public string Name { get; set; }
 
-		/// <summary>
-		/// Дата модификации файла
-		/// </summary>
-		[LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
-		public DateTime Modified { get; set; }
-		
-		/// <summary>
-		/// Тип файла
-		/// </summary>
-		public FolderFileType FileType 
-		{ 
-			get
-			{
-			    if (!fileTypeDictionary.ContainsKey(Extension))
-				{
-				    return FolderFileType.Unknown;
-				}
+        /// <summary>
+        /// расширение файла (с точкой)
+        /// </summary>
+        [LocalizedDisplayName("Extension", NameResourceType = typeof(LibraryStrings))]
+        public string Extension { get; set; }
 
-			    return fileTypeDictionary[Extension];
-			}
-		}
+        /// <summary>
+        /// путь к файлу с завершающим слэшом
+        /// </summary>
+        internal string Path { get; set; }
 
-		/// <summary>
-		/// Имя типа файла
-		/// </summary>
-		[LocalizedDisplayName("FileType", NameResourceType = typeof(LibraryStrings))]
-		public string FileTypeName => GetTypeName(FileType);
+        /// <summary>
+        /// размер файла (в байтах)
+        /// </summary>
+        public long Length { get; set; }
 
-	    /// <summary>
-		/// Возвращает имя типа файла по типу
-		/// </summary>
-		/// <param name="type">тип файла</param>
-		/// <returns>имя типа</returns>
-		public static string GetTypeName(FolderFileType type) => fileTypeNameDictionary[type];
+        /// <summary>
+        /// Размеры изображения (только для картинок)
+        /// </summary>
+        [LocalizedDisplayName("Dimensions", NameResourceType = typeof(LibraryStrings))]
+        public string Dimensions
+        {
+            get
+            {
+                if (_Dimensions == null)
+                {
+                    _Dimensions = string.Empty;
+                    if (FileType == FolderFileType.Image)
+                    {
+                        try
+                        {
+                            using (var image = Image.FromFile(FullName))
+                            {
+                                _Dimensions = string.Format("{0}x{1}", image.Width, image.Height);
+                            }
+                        }
+                        catch (OutOfMemoryException) // sic!!!
+                        {
+                            _Dimensions = string.Empty;
+                        }
+                    }
+                }
+                return _Dimensions;
+            }
+        }
 
-	    /// <summary>
-		/// Возвращает строку для фильтра по расширениям для конкретного типа
-		/// </summary>
-		/// <returns></returns>
-		public static string GetTypeExtensions(FolderFileType type) => fileExtensionsDictionary[type];
+        /// <summary>
+        /// Дата создания файла
+        /// </summary>
+        [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
+        public DateTime Created { get; set; }
 
-	    [LocalizedDisplayName("Size", NameResourceType = typeof(LibraryStrings))]
-		public string Size
-		{
-			get
-			{
-				var m = 1024;
-				var kb = m;
-				var mb = m * m;
-				var gb = m * m * m;
-				var formatString = "{0:f2} {1}";
-				if (Length > gb)
-				{
-				    return string.Format(formatString, Length / gb, LibraryStrings.GB);
-				}
+        /// <summary>
+        /// Дата модификации файла
+        /// </summary>
+        [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
+        public DateTime Modified { get; set; }
 
-			    if (Length > mb)
-			    {
-			        return string.Format(formatString, Length / mb, LibraryStrings.MB);
-			    }
+        /// <summary>
+        /// Тип файла
+        /// </summary>
+        public FolderFileType FileType
+        {
+            get
+            {
+                if (!fileTypeDictionary.ContainsKey(Extension))
+                {
+                    return FolderFileType.Unknown;
+                }
 
-			    if (Length > kb)
-			    {
-			        return string.Format(formatString, Length / kb, LibraryStrings.KB);
-			    }
+                return fileTypeDictionary[Extension];
+            }
+        }
 
-			    return string.Format("{0} {1}", Length, LibraryStrings.Bytes);
-			}
-		}
+        /// <summary>
+        /// Имя типа файла
+        /// </summary>
+        [LocalizedDisplayName("FileType", NameResourceType = typeof(LibraryStrings))]
+        public string FileTypeName => GetTypeName(FileType);
 
-		internal bool NameChanged => OldName != Name;
+        /// <summary>
+        /// Возвращает имя типа файла по типу
+        /// </summary>
+        /// <param name="type">тип файла</param>
+        /// <returns>имя типа</returns>
+        public static string GetTypeName(FolderFileType type) => fileTypeNameDictionary[type];
 
-	    internal string FullName => Path + Name;
+        /// <summary>
+        /// Возвращает строку для фильтра по расширениям для конкретного типа
+        /// </summary>
+        /// <returns></returns>
+        public static string GetTypeExtensions(FolderFileType type) => fileExtensionsDictionary[type];
 
-	    internal string OldFullName => Path + OldName;
+        [LocalizedDisplayName("Size", NameResourceType = typeof(LibraryStrings))]
+        public string Size
+        {
+            get
+            {
+                var m = 1024;
+                var kb = m;
+                var mb = m * m;
+                var gb = m * m * m;
+                var formatString = "{0:f2} {1}";
+                if (Length > gb)
+                {
+                    return string.Format(formatString, Length / gb, LibraryStrings.GB);
+                }
 
-	    public void Validate()
-		{
-			var errors = new RulesException<FolderFile>();
+                if (Length > mb)
+                {
+                    return string.Format(formatString, Length / mb, LibraryStrings.MB);
+                }
 
-			if (NameChanged && File.Exists(FullName))
-			{
-			    errors.ErrorFor(s => s.Name, string.Format(LibraryStrings.FileExists, FullName));
-			}
+                if (Length > kb)
+                {
+                    return string.Format(formatString, Length / kb, LibraryStrings.KB);
+                }
 
-		    if (!errors.IsEmpty)
-		    {
-		        throw errors;
-		    }
-		}
+                return string.Format("{0} {1}", Length, LibraryStrings.Bytes);
+            }
+        }
 
-		internal void Rename()
-		{
-			if (NameChanged)
-			{
-				File.SetAttributes(OldFullName, FileAttributes.Normal);
-				File.Move(OldFullName, FullName);
-			}
+        internal bool NameChanged => OldName != Name;
 
-		}
+        internal string FullName => Path + Name;
 
-		internal void Remove()
-		{
-			if (File.Exists(FullName))
-			{
-				File.SetAttributes(FullName, FileAttributes.Normal);
-				File.Delete(FullName);
-			}
-		}
-	}
+        internal string OldFullName => Path + OldName;
+
+        public void Validate()
+        {
+            var errors = new RulesException<FolderFile>();
+
+            if (NameChanged && File.Exists(FullName))
+            {
+                errors.ErrorFor(s => s.Name, string.Format(LibraryStrings.FileExists, FullName));
+            }
+
+            if (!errors.IsEmpty)
+            {
+                throw errors;
+            }
+        }
+
+        internal void Rename()
+        {
+            if (NameChanged)
+            {
+                File.SetAttributes(OldFullName, FileAttributes.Normal);
+                File.Move(OldFullName, FullName);
+            }
+        }
+
+        internal void Remove()
+        {
+            if (File.Exists(FullName))
+            {
+                File.SetAttributes(FullName, FileAttributes.Normal);
+                File.Delete(FullName);
+            }
+        }
+    }
 }

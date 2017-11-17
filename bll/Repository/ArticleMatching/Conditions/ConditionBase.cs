@@ -5,57 +5,60 @@ using System.Linq;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions
 {
-	public abstract class ConditionBase : IEnumerable<ConditionBase>, ICloneable
-	{
-		public ConditionBase()
-		{
-			Conditions = new ConditionBase[0];
-		}
+    public abstract class ConditionBase : IEnumerable<ConditionBase>, ICloneable
+    {
+        public ConditionBase()
+        {
+            Conditions = new ConditionBase[0];
+        }
 
-		public ConditionBase[] Conditions { get; set; }
-		public abstract string GetCurrentExpression();
+        public ConditionBase[] Conditions { get; set; }
+        public abstract string GetCurrentExpression();
 
-		public string[] GetChildExpressions()
-		{
-			return Conditions.Select(c => c.GetCurrentExpression()).ToArray();
-		}
+        public string[] GetChildExpressions()
+        {
+            return Conditions.Select(c => c.GetCurrentExpression()).ToArray();
+        }
 
-		#region IEnumerable<ConditionBase> implementation
-		public IEnumerator<ConditionBase> GetEnumerator()
-		{
-			yield return this;
+        #region IEnumerable<ConditionBase> implementation
 
-			if (Conditions != null)
-			{
-				foreach (var condition in Conditions)
-				{
-					foreach (var child in condition)
-					{
-						yield return child;
-					}
-				}
-			}
-		}
+        public IEnumerator<ConditionBase> GetEnumerator()
+        {
+            yield return this;
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			foreach (var child in this)
-			{
-				yield return child;
-			}
-		}
-		#endregion
+            if (Conditions != null)
+            {
+                foreach (var condition in Conditions)
+                {
+                    foreach (var child in condition)
+                    {
+                        yield return child;
+                    }
+                }
+            }
+        }
 
-		#region ICloneable implementation
-		public ConditionBase Clone()
-		{
-			var clone = (ConditionBase)MemberwiseClone();
-			clone.Conditions = clone.Conditions.Select(c => c.Clone()).ToArray();
-			return clone;
-		}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            foreach (var child in this)
+            {
+                yield return child;
+            }
+        }
 
-		object ICloneable.Clone() => Clone();
+        #endregion
 
-	    #endregion
-	}
+        #region ICloneable implementation
+
+        public ConditionBase Clone()
+        {
+            var clone = (ConditionBase)MemberwiseClone();
+            clone.Conditions = clone.Conditions.Select(c => c.Clone()).ToArray();
+            return clone;
+        }
+
+        object ICloneable.Clone() => Clone();
+
+        #endregion
+    }
 }

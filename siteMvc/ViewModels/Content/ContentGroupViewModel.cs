@@ -2,7 +2,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using B = Quantumart.QP8.BLL;
 using C = Quantumart.QP8.Constants;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Content
 {
 	public class ContentGroupViewModel : EntityViewModel
 	{

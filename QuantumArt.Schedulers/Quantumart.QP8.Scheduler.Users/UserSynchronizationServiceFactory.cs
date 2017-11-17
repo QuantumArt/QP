@@ -11,12 +11,12 @@ namespace Quantumart.QP8.Scheduler.Users
 
         public static UserSynchronizationService GetService(ILog logger)
         {
-            if (!int.TryParse(ConfigurationManager.AppSettings[CurrentUserIdKey], out int currentUserId))
+            if (!int.TryParse(ConfigurationManager.AppSettings[CurrentUserIdKey], out var currentUserId))
             {
                 currentUserId = 1;
             }
 
-            if (!int.TryParse(ConfigurationManager.AppSettings[UserLanguageIdKey], out int languageId))
+            if (!int.TryParse(ConfigurationManager.AppSettings[UserLanguageIdKey], out var languageId))
             {
                 languageId = 1;
             }

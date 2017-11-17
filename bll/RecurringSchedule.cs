@@ -6,105 +6,106 @@ using DayOfWeek = Quantumart.QP8.Constants.DayOfWeek;
 
 namespace Quantumart.QP8.BLL
 {
-	public class RecurringSchedule
-	{
-		
-		public RecurringSchedule Clone() => (RecurringSchedule)MemberwiseClone();
+    public class RecurringSchedule
+    {
+        public RecurringSchedule Clone() => (RecurringSchedule)MemberwiseClone();
 
-	    public static RecurringSchedule Empty
-		{
-			get
-			{
-				var result = new RecurringSchedule
-				{
-					RepetitionStartDate = DateTime.Now.Date,
-					RepetitionNoEnd = true,
-					RepetitionEndDate = DateTime.Now.Date.AddYears(1),
-					ScheduleRecurringType = ScheduleRecurringType.Daily,
-					ScheduleRecurringValue = 1,
-					DaySpecifyingType = DaySpecifyingType.Date,
-					Month = 0,
-					DayOfMonth = 1,
-					ShowStartTime = TimeSpan.Zero,
-					ShowEndTime = new TimeSpan(23, 59, 59),
-					ShowLimitationType = ShowLimitationType.EndTime,
-					DurationValue = 12,
-					DurationUnit = ShowDurationUnit.Hours					
-				};
+        public static RecurringSchedule Empty
+        {
+            get
+            {
+                var result = new RecurringSchedule
+                {
+                    RepetitionStartDate = DateTime.Now.Date,
+                    RepetitionNoEnd = true,
+                    RepetitionEndDate = DateTime.Now.Date.AddYears(1),
+                    ScheduleRecurringType = ScheduleRecurringType.Daily,
+                    ScheduleRecurringValue = 1,
+                    DaySpecifyingType = DaySpecifyingType.Date,
+                    Month = 0,
+                    DayOfMonth = 1,
+                    ShowStartTime = TimeSpan.Zero,
+                    ShowEndTime = new TimeSpan(23, 59, 59),
+                    ShowLimitationType = ShowLimitationType.EndTime,
+                    DurationValue = 12,
+                    DurationUnit = ShowDurationUnit.Hours
+                };
 
-				result.RepetitionEndDate = result.GetDefaultRepetitionEndDate();
-				return result;
-			}
-		}	
-		
-		public DateTime GetDefaultRepetitionEndDate() => RepetitionStartDate.Date.AddYears(1);
+                result.RepetitionEndDate = result.GetDefaultRepetitionEndDate();
+                return result;
+            }
+        }
 
-	    [LocalizedDisplayName("RepetitionStartDate", NameResourceType = typeof(ArticleStrings))]
-		public DateTime RepetitionStartDate { get; set; }
+        public DateTime GetDefaultRepetitionEndDate() => RepetitionStartDate.Date.AddYears(1);
 
-		[LocalizedDisplayName("RepetitionNoEnd", NameResourceType = typeof(ArticleStrings))]
-		public bool RepetitionNoEnd { get; set; }
+        [LocalizedDisplayName("RepetitionStartDate", NameResourceType = typeof(ArticleStrings))]
+        public DateTime RepetitionStartDate { get; set; }
 
-		[LocalizedDisplayName("RepetitionEndDate", NameResourceType = typeof(ArticleStrings))]
-		public DateTime RepetitionEndDate { get; set; }
+        [LocalizedDisplayName("RepetitionNoEnd", NameResourceType = typeof(ArticleStrings))]
+        public bool RepetitionNoEnd { get; set; }
 
-		[LocalizedDisplayName("ScheduleRecurringValue", NameResourceType = typeof(ArticleStrings))]
-		public int ScheduleRecurringValue { get; set; }
+        [LocalizedDisplayName("RepetitionEndDate", NameResourceType = typeof(ArticleStrings))]
+        public DateTime RepetitionEndDate { get; set; }
 
-		[LocalizedDisplayName("ScheduleRecurringType", NameResourceType = typeof(ArticleStrings))]
-		public ScheduleRecurringType ScheduleRecurringType { get; set; }
+        [LocalizedDisplayName("ScheduleRecurringValue", NameResourceType = typeof(ArticleStrings))]
+        public int ScheduleRecurringValue { get; set; }
 
-		#region Week Days
-		[LocalizedDisplayName("Monday", NameResourceType = typeof(ArticleStrings))]
-		public bool OnMonday { get; set; }
+        [LocalizedDisplayName("ScheduleRecurringType", NameResourceType = typeof(ArticleStrings))]
+        public ScheduleRecurringType ScheduleRecurringType { get; set; }
 
-		[LocalizedDisplayName("Tuesday", NameResourceType = typeof(ArticleStrings))]
-		public bool OnTuesday { get; set; }
+        #region Week Days
 
-		[LocalizedDisplayName("Wednesday", NameResourceType = typeof(ArticleStrings))]
-		public bool OnWednesday { get; set; }
+        [LocalizedDisplayName("Monday", NameResourceType = typeof(ArticleStrings))]
+        public bool OnMonday { get; set; }
 
-		[LocalizedDisplayName("Thursday", NameResourceType = typeof(ArticleStrings))]
-		public bool OnThursday { get; set; }
+        [LocalizedDisplayName("Tuesday", NameResourceType = typeof(ArticleStrings))]
+        public bool OnTuesday { get; set; }
 
-		[LocalizedDisplayName("Friday", NameResourceType = typeof(ArticleStrings))]
-		public bool OnFriday { get; set; }
+        [LocalizedDisplayName("Wednesday", NameResourceType = typeof(ArticleStrings))]
+        public bool OnWednesday { get; set; }
 
-		[LocalizedDisplayName("Saturday", NameResourceType = typeof(ArticleStrings))]
-		public bool OnSaturday { get; set; }
+        [LocalizedDisplayName("Thursday", NameResourceType = typeof(ArticleStrings))]
+        public bool OnThursday { get; set; }
 
-		[LocalizedDisplayName("Sunday", NameResourceType = typeof(ArticleStrings))]
-		public bool OnSunday { get; set; }
-		#endregion
+        [LocalizedDisplayName("Friday", NameResourceType = typeof(ArticleStrings))]
+        public bool OnFriday { get; set; }
 
-		[LocalizedDisplayName("DaySpecifyingType", NameResourceType = typeof(ArticleStrings))]
-		public DaySpecifyingType DaySpecifyingType { get; set; }
+        [LocalizedDisplayName("Saturday", NameResourceType = typeof(ArticleStrings))]
+        public bool OnSaturday { get; set; }
 
-		[LocalizedDisplayName("MonthNumber", NameResourceType = typeof(ArticleStrings))]
-		public int Month { get; set; }
+        [LocalizedDisplayName("Sunday", NameResourceType = typeof(ArticleStrings))]
+        public bool OnSunday { get; set; }
 
-		[LocalizedDisplayName("DayOfMonth", NameResourceType = typeof(ArticleStrings))]
-		public int DayOfMonth { get; set; }
+        #endregion
 
-		[LocalizedDisplayName("WeekOfMonth", NameResourceType = typeof(ArticleStrings))]
-		public WeekOfMonth WeekOfMonth { get; set; }
+        [LocalizedDisplayName("DaySpecifyingType", NameResourceType = typeof(ArticleStrings))]
+        public DaySpecifyingType DaySpecifyingType { get; set; }
 
-		[LocalizedDisplayName("DayOfWeek", NameResourceType = typeof(ArticleStrings))]
-		public DayOfWeek DayOfWeek { get; set; }
+        [LocalizedDisplayName("MonthNumber", NameResourceType = typeof(ArticleStrings))]
+        public int Month { get; set; }
 
-		[LocalizedDisplayName("ShowStartTime", NameResourceType = typeof(ArticleStrings))]
-		public TimeSpan ShowStartTime { get; set; }
+        [LocalizedDisplayName("DayOfMonth", NameResourceType = typeof(ArticleStrings))]
+        public int DayOfMonth { get; set; }
 
-		[LocalizedDisplayName("ShowEndTime", NameResourceType = typeof(ArticleStrings))]
-		public TimeSpan ShowEndTime { get; set; }
+        [LocalizedDisplayName("WeekOfMonth", NameResourceType = typeof(ArticleStrings))]
+        public WeekOfMonth WeekOfMonth { get; set; }
 
-		[LocalizedDisplayName("ShowIsLimitedBy", NameResourceType = typeof(ArticleStrings))]
-		public ShowLimitationType ShowLimitationType { get; set; }
+        [LocalizedDisplayName("DayOfWeek", NameResourceType = typeof(ArticleStrings))]
+        public DayOfWeek DayOfWeek { get; set; }
 
-		[LocalizedDisplayName("DurationValue", NameResourceType = typeof(ArticleStrings))]
-		public int DurationValue { get; set; }
+        [LocalizedDisplayName("ShowStartTime", NameResourceType = typeof(ArticleStrings))]
+        public TimeSpan ShowStartTime { get; set; }
 
-		[LocalizedDisplayName("DurationUnit", NameResourceType = typeof(ArticleStrings))]
-		public ShowDurationUnit DurationUnit { get; set; }		
-	}
+        [LocalizedDisplayName("ShowEndTime", NameResourceType = typeof(ArticleStrings))]
+        public TimeSpan ShowEndTime { get; set; }
+
+        [LocalizedDisplayName("ShowIsLimitedBy", NameResourceType = typeof(ArticleStrings))]
+        public ShowLimitationType ShowLimitationType { get; set; }
+
+        [LocalizedDisplayName("DurationValue", NameResourceType = typeof(ArticleStrings))]
+        public int DurationValue { get; set; }
+
+        [LocalizedDisplayName("DurationUnit", NameResourceType = typeof(ArticleStrings))]
+        public ShowDurationUnit DurationUnit { get; set; }
+    }
 }

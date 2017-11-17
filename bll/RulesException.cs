@@ -6,7 +6,6 @@ using System.Text;
 
 namespace Quantumart.QP8.BLL
 {
-
     public class RuleViolation
     {
         public RuleViolation()

@@ -1,9 +1,12 @@
 using System;
 using Moq;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ArticleServices;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
@@ -28,7 +31,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                         xmlSettings,
                         dbLogService,
                         new ApplicationInfoRepository(),
-                        new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())),
+                        new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
                         new XmlDbUpdateHttpContextProcessor()
                     );
                 case CsvSettingsModel csvSettings:

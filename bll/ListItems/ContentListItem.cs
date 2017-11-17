@@ -1,12 +1,12 @@
 namespace Quantumart.QP8.BLL.ListItems
 {
-    public class ContentListItem 
+    public class ContentListItem
     {
         public int Id { get; set; }
 
-		public string GroupName { get; set; }
-		
-		public string Name { get; set; }
+        public string GroupName { get; set; }
+
+        public string Name { get; set; }
 
         public string Description { get; set; }
 
@@ -18,6 +18,6 @@ namespace Quantumart.QP8.BLL.ListItems
 
         public string VirtualType { get; set; }
 
-		public string SiteName { get; set; }
+        public string SiteName { get; set; }
     }
 }

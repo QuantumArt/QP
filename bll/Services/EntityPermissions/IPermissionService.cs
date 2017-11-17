@@ -5,31 +5,32 @@ using Quantumart.QP8.BLL.Services.DTO;
 
 namespace Quantumart.QP8.BLL.Services.EntityPermissions
 {
-	/// <summary>
-	/// Интерфейс сервисов для EntityPermission
-	/// </summary>
-	public interface IPermissionService
-	{
-		/// <summary>
-		/// Стратегии, определяющая поведение View-моделей
-		/// </summary>
-		IPermissionListViewModelSettings ListViewModelSettings { get; }
-		IPermissionViewModelSettings ViewModelSettings { get; }
+    /// <summary>
+    /// Интерфейс сервисов для EntityPermission
+    /// </summary>
+    public interface IPermissionService
+    {
+        /// <summary>
+        /// Стратегии, определяющая поведение View-моделей
+        /// </summary>
+        IPermissionListViewModelSettings ListViewModelSettings { get; }
 
-		IPermissionRepository Repository { get; }
+        IPermissionViewModelSettings ViewModelSettings { get; }
 
-		PermissionInitListResult InitList(int parentEntityId);
-		ListResult<EntityPermissionListItem> List(int parentId, ListCommand cmd);
-		EntityPermission Read(int id);
-		EntityPermission ReadForUpdate(int id);
-		EntityPermission New(int parentId);
-		EntityPermission Save(EntityPermission permission);
-		EntityPermission Update(EntityPermission permission);
-		MessageResult Remove(int parentId, int id);
-		MessageResult MultipleRemove(int parentId, IEnumerable<int> IDs);
+        IPermissionRepository Repository { get; }
 
-		IEnumerable<EntityPermissionLevel> GetPermissionLevels();
+        PermissionInitListResult InitList(int parentEntityId);
+        ListResult<EntityPermissionListItem> List(int parentId, ListCommand cmd);
+        EntityPermission Read(int id);
+        EntityPermission ReadForUpdate(int id);
+        EntityPermission New(int parentId);
+        EntityPermission Save(EntityPermission permission);
+        EntityPermission Update(EntityPermission permission);
+        MessageResult Remove(int parentId, int id);
+        MessageResult MultipleRemove(int parentId, IEnumerable<int> IDs);
 
-		Article GetParentArticle(int parentEntityId);		
-	}
+        IEnumerable<EntityPermissionLevel> GetPermissionLevels();
+
+        Article GetParentArticle(int parentEntityId);
+    }
 }

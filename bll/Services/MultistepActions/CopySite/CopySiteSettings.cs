@@ -1,5 +1,5 @@
 using System;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite

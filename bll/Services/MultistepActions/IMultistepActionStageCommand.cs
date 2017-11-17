@@ -4,10 +4,10 @@
     /// Команда этапа удаление данных
     /// </summary>
     public interface IMultistepActionStageCommand
-	{
-		/// <summary>
-		/// Выполняет команду для шага
-		/// </summary>
-		MultistepActionStepResult Step(int step);
-	}
+    {
+        /// <summary>
+        /// Выполняет команду для шага
+        /// </summary>
+        MultistepActionStepResult Step(int step);
+    }
 }

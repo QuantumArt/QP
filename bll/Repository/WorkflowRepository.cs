@@ -82,14 +82,13 @@ namespace Quantumart.QP8.BLL.Repository
             return
                 MapperFacade.StatusTypeMapper.GetBizObject(
                     QPContext.EFContext.WorkflowRulesSet
-                    .Where(s => s.WorkflowId == workflowId)
-                    .Select(s => s.StatusType)
-                    .FirstOrDefault(s => s.Weight >= statusWeight) ?? QPContext.EFContext.WorkflowRulesSet
-                    .Where(s => s.WorkflowId == workflowId)
-                    .Select(s => s.StatusType).OrderByDescending(x => x.Weight).First()
+                        .Where(s => s.WorkflowId == workflowId)
+                        .Select(s => s.StatusType)
+                        .FirstOrDefault(s => s.Weight >= statusWeight) ?? QPContext.EFContext.WorkflowRulesSet
+                        .Where(s => s.WorkflowId == workflowId)
+                        .Select(s => s.StatusType).OrderByDescending(x => x.Weight).First()
                 );
         }
-
 
         internal static int GetCurrentUserMaxWeight(int workflowId)
         {
@@ -117,9 +116,9 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var efc = QPContext.EFContext;
             var q = (from w in efc.WorkflowSet
-                     join r in efc.WorkflowRulesSet on w.Id equals r.Workflow.Id
-                     where r.User.Id == userId
-                     select w).Distinct();
+                join r in efc.WorkflowRulesSet on w.Id equals r.Workflow.Id
+                where r.User.Id == userId
+                select w).Distinct();
 
             return MapperFacade.WorkflowMapper.GetBizList(q.ToList());
         }
@@ -128,9 +127,9 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var efc = QPContext.EFContext;
             var q = (from w in efc.WorkflowSet
-                     join r in efc.WorkflowRulesSet on w.Id equals r.Workflow.Id
-                     where r.UserGroup.Id == groupId
-                     select w).Distinct();
+                join r in efc.WorkflowRulesSet on w.Id equals r.Workflow.Id
+                where r.UserGroup.Id == groupId
+                select w).Distinct();
 
             return MapperFacade.WorkflowMapper.GetBizList(q.ToList());
         }
@@ -282,7 +281,6 @@ namespace Quantumart.QP8.BLL.Repository
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Workflow);
             foreach (var rule in workflow.WorkflowRules)
             {
-
                 var dalRule = MapperFacade.WorkFlowRuleMapper.GetDalObject(rule);
                 if (forceIds != null)
                 {

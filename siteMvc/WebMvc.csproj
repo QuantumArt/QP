@@ -753,7 +753,6 @@
     <Content Include="Content\ckeditor\skins\moono\images\refresh.png" />
     <Content Include="Content\ckeditor\skins\moono\images\spinner.gif" />
     <Content Include="Content\ckeditor\styles.js" />
-    <Content Include="Content\codemirror.css" />
     <Content Include="Content\codemirrorTheme.css" />
     <Content Include="Content\codemirror\addon\comment\comment.js" />
     <Content Include="Content\codemirror\addon\comment\continuecomment.js" />
@@ -2074,16 +2073,6 @@
     <Content Include="Scripts\telerik\telerik.treeview.js" />
     <Content Include="Scripts\telerik\telerik.upload.js" />
     <Content Include="Scripts\telerik\telerik.window.js" />
-    <Content Include="ToCopy\App_Data\Extensions.xslt">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ToCopy\App_Data\Many.xslt">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ToCopy\App_Data\Mapping.xslt" />
-    <Content Include="ToCopy\App_Data\Modifications.xslt">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Views\ArticleVersion\Compare.cshtml">
       <LastGenOutput>Compare.generated.cs</LastGenOutput>
     </Content>
@@ -2456,4 +2445,3 @@
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
   <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
-

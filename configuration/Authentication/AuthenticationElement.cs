@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Configuration;
-using System.Web;
-using System.Web.Configuration;
+﻿using System.Configuration;
 using Quantumart.QP8.Configuration.Authentication.WindowsAuthentication;
 
 namespace Quantumart.QP8.Configuration.Authentication
@@ -13,14 +8,11 @@ namespace Quantumart.QP8.Configuration.Authentication
         [ConfigurationProperty("allowSaveUserInformationInCookie", DefaultValue = true, IsRequired = true)]
         public bool AllowSaveUserInformationInCookie
         {
-            get { return (bool)base["allowSaveUserInformationInCookie"]; }
-            set { base["allowSaveUserInformationInCookie"] = value; }
+            get => (bool)base["allowSaveUserInformationInCookie"];
+            set => base["allowSaveUserInformationInCookie"] = value;
         }
 
         [ConfigurationProperty("windowsAuthentication", IsRequired = true)]
-        public WindowsAuthenticationElement WindowsAuthentication
-        {
-            get { return (WindowsAuthenticationElement)base["windowsAuthentication"]; }
-        }
+        public WindowsAuthenticationElement WindowsAuthentication => (WindowsAuthenticationElement)base["windowsAuthentication"];
     }
 }

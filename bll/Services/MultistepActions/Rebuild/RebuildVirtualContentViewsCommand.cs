@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -23,7 +23,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
         private int _itemCount;
 
         public RebuildVirtualContentViewsCommand(MultistepActionStageCommandState state)
-            : this(state.Id, null) { }
+            : this(state.Id, null)
+        {
+        }
 
         public RebuildVirtualContentViewsCommand(int contentId, string contentName)
         {
@@ -31,7 +33,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
             ContentName = contentName;
         }
 
-        public RebuildVirtualContentViewsCommand(int contentId, string contentName, List<Content.TreeItem> rebuildedSubViewContents) : this(contentId, contentName)
+        public RebuildVirtualContentViewsCommand(int contentId, string contentName, List<Content.TreeItem> rebuildedSubViewContents)
+            : this(contentId, contentName)
         {
             RebuildedSubViewContents = rebuildedSubViewContents;
         }
@@ -40,12 +43,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
         {
             var contentsToRebuild =
                 RebuildedSubViewContents
-                .OrderBy(c => c.Level)
-                .Distinct(new LambdaEqualityComparer<Content.TreeItem>((x, y) => x.ContentId.Equals(y.ContentId), x => x.ContentId))
-                .Select(c => c.ContentId)
-                .ToArray();
+                    .OrderBy(c => c.Level)
+                    .Distinct(new LambdaEqualityComparer<Content.TreeItem>((x, y) => x.ContentId.Equals(y.ContentId), x => x.ContentId))
+                    .Select(c => c.ContentId)
+                    .ToArray();
 
-            _itemCount = contentsToRebuild.Count();
+            _itemCount = contentsToRebuild.Length;
             HttpContext.Current.Session[HttpContextSession.RebuildVirtualContentProcessingContext] = new RebuildVirtualContentViewsCommandContext
             {
                 ContentIdsToRebuild = contentsToRebuild
@@ -75,9 +78,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
         {
             var context = HttpContext.Current.Session[HttpContextSession.RebuildVirtualContentProcessingContext] as RebuildVirtualContentViewsCommandContext;
             var ids = context.ContentIdsToRebuild
-                 .Skip(step * ItemsPerStep)
-                 .Take(ItemsPerStep)
-                 .ToArray();
+                .Skip(step * ItemsPerStep)
+                .Take(ItemsPerStep)
+                .ToArray();
 
             var helper = new VirtualContentHelper();
             var contents = ContentRepository.GetList(ids).ToDictionary(n => n.Id);

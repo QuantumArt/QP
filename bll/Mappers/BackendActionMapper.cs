@@ -27,7 +27,7 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(data => data.EntityType, opt => opt.Ignore())
                 .ForMember(data => data.CustomActions, opt => opt.Ignore())
                 .ForMember(data => data.ToolbarButtons, opt => opt.Ignore())
-                .ForMember(data => data.ContextMenuItems, opt => opt.Ignore())	
+                .ForMember(data => data.ContextMenuItems, opt => opt.Ignore())
                 .ForMember(data => data.DefaultViewType, opt => opt.Ignore())
                 .ForMember(data => data.NextFailedAction, opt => opt.Ignore())
                 .ForMember(data => data.NextSuccessfulAction, opt => opt.Ignore())
@@ -36,7 +36,7 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(data => data.ParentPreSuccessfulActions, opt => opt.Ignore())
                 .ForMember(data => data.ExcludedBy, opt => opt.Ignore())
                 .ForMember(data => data.Excludes, opt => opt.Ignore())
-                .ForMember(data => data.Views, opt => opt.Ignore());				
+                .ForMember(data => data.Views, opt => opt.Ignore());
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Quantumart.QP8.BLL
 
     public class PathSecurity
     {
-        private static StringComparison CompareOption = StringComparison.InvariantCultureIgnoreCase;
+        private static readonly StringComparison CompareOption = StringComparison.InvariantCultureIgnoreCase;
 
         private static PathSecurityInfo FindFirst(string path, List<PathSecurityInfo> input) => FindMatched(path, input).FirstOrDefault();
 

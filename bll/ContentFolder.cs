@@ -1,6 +1,6 @@
 using System;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL
