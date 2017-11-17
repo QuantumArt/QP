@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,7 +7,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.AspNet.SignalR;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
@@ -29,11 +28,13 @@ using Quantumart.QP8.WebMvc.ViewModels.Field;
 using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 using Quantumart.QP8.WebMvc.ViewModels.Notification;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
+using Quantumart.QP8.WebMvc.ViewModels.Site;
 using Quantumart.QP8.WebMvc.ViewModels.User;
 using Quantumart.QP8.WebMvc.ViewModels.UserGroup;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
+using QP8.Infrastructure.Logging;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -160,8 +161,7 @@ namespace Quantumart.QP8.WebMvc
 
         protected void Application_AcquireRequestState(object sender, EventArgs e)
         {
-            var userIdentity = HttpContext.Current.User.Identity as QpIdentity;
-            var cultureName = userIdentity != null
+            var cultureName = HttpContext.Current.User.Identity is QpIdentity userIdentity
                 ? userIdentity.CultureName
                 : QPConfiguration.WebConfigSection.Globalization.DefaultCulture;
 

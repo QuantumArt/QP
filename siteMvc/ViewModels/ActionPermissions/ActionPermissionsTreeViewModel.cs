@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -14,10 +14,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ActionPermissions
             IsViewChangable = false;
         }
 
-        public static ActionPermissionsTreeViewModel Create(string tabId)
-        {
-            return Create<ActionPermissionsTreeViewModel>(tabId, 0);
-        }
+        public static ActionPermissionsTreeViewModel Create(string tabId) => Create<ActionPermissionsTreeViewModel>(tabId, 0);
 
         public override MainComponentType MainComponentType => MainComponentType.ActionPermissionView;
 
@@ -27,15 +24,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ActionPermissions
 
         public override string ActionCode => Constants.ActionCode.ActionPermissionTree;
 
-        public IEnumerable<ListItem> GetMemberTypes()
+        public IEnumerable<ListItem> GetMemberTypes() => new[]
         {
-            return new[]
-            {
-				new ListItem(EntityPermission.GroupMemberType, EntityPermissionStrings.Group, "GroupMemberPanel"),
-				new ListItem(EntityPermission.UserMemberType, EntityPermissionStrings.User, "UserMemberPanel")
-            };
-        }
+            new ListItem(EntityPermission.GroupMemberType, EntityPermissionStrings.Group, "GroupMemberPanel"),
+            new ListItem(EntityPermission.UserMemberType, EntityPermissionStrings.User, "UserMemberPanel")
+        };
 
-		public int MemberType { get { return EntityPermission.GroupMemberType; } }
+        public int MemberType => EntityPermission.GroupMemberType;
     }
 }

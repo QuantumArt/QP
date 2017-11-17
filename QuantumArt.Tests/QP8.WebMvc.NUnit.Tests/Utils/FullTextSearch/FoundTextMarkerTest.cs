@@ -1,31 +1,34 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Quantumart.QP8.Utils.FullTextSearch;
 
 namespace QP8.WebMvc.NUnit.Tests.Utils.FullTextSearch
 {
-    [TestClass]
+    [TestFixture]
     public class FoundTextMarkerTest
     {
-        [TestMethod]
+        [Test]
         public void FindWordFormPositionDictionaryTest()
         {
-            IEnumerable<string> forms = new[] {"тарифы",
-                                                "тарифу",
-                                                "тарифом",
-                                                "тарифов",
-                                                "тарифе",
-                                                "тарифах",
-                                                "тарифами",
-                                                "тарифам",
-                                                "тарифа",
-                                                "тариф",
-                                                "интернету",
-                                                "интернетом",
-                                                "интернете",
-                                                "интернета",
-                                                "интернет"};
+            IEnumerable<string> forms = new[]
+            {
+                "тарифы",
+                "тарифу",
+                "тарифом",
+                "тарифов",
+                "тарифе",
+                "тарифах",
+                "тарифами",
+                "тарифам",
+                "тарифа",
+                "тариф",
+                "интернету",
+                "интернетом",
+                "интернете",
+                "интернета",
+                "интернет"
+            };
 
             var res = FoundTextMarker.GetRelevantMarkedText("ЭТОТ ТАРИФ НА ИНТЕРНЕТ ОЧЕНЬ ВЫГОДЕН", forms, 10, "<b>", "</b>");
             Assert.AreEqual("ЭТОТ <b>ТАРИФ</b> НА <b>ИНТЕРНЕТ</b>", res);

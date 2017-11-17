@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Enums.Csv;

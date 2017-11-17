@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Specialized;
 using Autofac;
 using Autofac.Extras.Quartz;
 using AutoMapper;
 using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.Autofac;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
-using QP8.Infrastructure.Logging.IoC;
 using Quantumart.QP8.CdcDataImport.Common;
 using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure;
 using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs;

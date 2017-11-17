@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Web.Mvc;
@@ -67,9 +67,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             return type != typeof(int) || Converter.CanParse<int>(attemptedValue);
         }
 
-        protected string GetModelPropertyName<T>(ModelBindingContext bindingContext, Expression<Func<T>> e)
-        {
-            return string.IsNullOrWhiteSpace(bindingContext.ModelName) ? e.GetPropertyName() : string.Concat(bindingContext.ModelName, ".", e.GetPropertyName());
-        }
+        protected string GetModelPropertyName<T>(ModelBindingContext bindingContext, Expression<Func<T>> e) => string.IsNullOrWhiteSpace(bindingContext.ModelName) ? e.GetPropertyName() : string.Concat(bindingContext.ModelName, ".", e.GetPropertyName());
     }
 }

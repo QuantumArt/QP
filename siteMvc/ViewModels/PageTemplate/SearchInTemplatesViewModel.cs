@@ -1,11 +1,8 @@
-﻿namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
     public sealed class SearchInTemplatesViewModel : ListViewModel
     {
-        public static SearchInTemplatesViewModel Create(string tabId, int parentId)
-        {
-            return Create<SearchInTemplatesViewModel>(tabId, parentId);
-        }
+        public static SearchInTemplatesViewModel Create(string tabId, int parentId) => Create<SearchInTemplatesViewModel>(tabId, parentId);
 
         public override string EntityTypeCode => Constants.EntityTypeCode.PageTemplate;
 

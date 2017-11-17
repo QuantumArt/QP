@@ -8,8 +8,8 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -20,12 +20,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public CopySiteController(IMultistepActionService multistepService)
         {
-            if (multistepService == null)
-            {
-                throw new ArgumentNullException(nameof(multistepService));
-            }
-
-            _multistepService = multistepService;
+            _multistepService = multistepService ?? throw new ArgumentNullException(nameof(multistepService));
         }
 
         [HttpPost]

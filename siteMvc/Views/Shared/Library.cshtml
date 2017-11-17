@@ -1,9 +1,7 @@
-﻿@model Quantumart.QP8.WebMvc.ViewModels.LibraryViewModel
-
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.WebMvc.ViewModels
+@model Quantumart.QP8.WebMvc.ViewModels.Library.LibraryViewModel
 
 
 <div class="library" id="@Model.MainComponentId">
@@ -11,7 +9,7 @@
 		.Name(Model.SplitterId)
 		.HtmlAttributes(new
 		{
-			@class = "l-splitter",
+			@class = "l-splitter"
 			//style = "height: 100%;"
 		})
 		.Orientation(SplitterOrientation.Horizontal)
@@ -47,7 +45,7 @@
 							HtmlAttributes = new Dictionary<string, object>
 							{
 								{ "class", "l-fileTypeList " },
-								{ "id", Html.UniqueId("fileTypeDropDownList") },
+								{ "id", Html.UniqueId("fileTypeDropDownList") }
 							},
 							Enabled = !Model.FilterFileTypeId.HasValue
 						})

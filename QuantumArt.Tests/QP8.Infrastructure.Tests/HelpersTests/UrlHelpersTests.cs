@@ -1,4 +1,4 @@
-﻿using QP8.Infrastructure.Tests.TestData;
+using QP8.Infrastructure.Tests.TestData;
 using QP8.Infrastructure.Web.Helpers;
 using Xunit;
 

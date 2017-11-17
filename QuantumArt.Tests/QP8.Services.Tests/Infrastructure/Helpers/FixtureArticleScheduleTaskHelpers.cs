@@ -1,5 +1,5 @@
-﻿using System;
-using Ploeh.AutoFixture;
+using System;
+using AutoFixture;
 using Quantumart.QP8.BLL;
 
 namespace QP8.Services.Tests.Infrastructure.Helpers

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
@@ -17,14 +17,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public new Db Data
         {
-            get
-            {
-                return (Db)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (Db)EntityData;
+            set => EntityData = value;
         }
 
         public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;

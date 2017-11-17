@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Notification
@@ -7,14 +7,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
     {
         public new NotificationObjectFormat Data
         {
-            get
-            {
-                return (NotificationObjectFormat)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (NotificationObjectFormat)EntityData;
+            set => EntityData = value;
         }
 
         public static NotificationTemplateFormatViewModel Create(NotificationObjectFormat format, string tabId, int parentId, int templateId, int siteId)

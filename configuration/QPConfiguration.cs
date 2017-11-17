@@ -52,7 +52,7 @@ namespace Quantumart.QP8.Configuration
                 var dbConnectionString = customerElement.Element("db");
                 if (dbConnectionString != null)
                 {
-                    return TuneConnectionString(dbConnectionString.Value, appName);
+                    return TuneConnectionString(dbConnectionString.Value, out var _, appName);
                 }
             }
 
@@ -64,7 +64,7 @@ namespace Quantumart.QP8.Configuration
             var customers = GetQaConfiguration().Customers.ToList();
             foreach (var entry in customers)
             {
-                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName);
+                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, out var _, appName);
             }
 
             return customers;
@@ -75,20 +75,26 @@ namespace Quantumart.QP8.Configuration
             return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
         }
 
-        private static string TuneConnectionString(string connectionString, string appName = null)
+        public static string TuneConnectionString(string connectionString, out SqlConnectionStringBuilder cnsBuilder, string appName = null)
         {
-            var builder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
+            cnsBuilder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
             if (!string.IsNullOrWhiteSpace(appName))
             {
-                builder.ApplicationName = appName;
+                cnsBuilder.ApplicationName = appName;
             }
-
-            if (builder.ConnectTimeout < 120)
+            else
             {
-                builder.ConnectTimeout = 120;
+                cnsBuilder.ApplicationName = string.IsNullOrWhiteSpace(appName)
+                    ? cnsBuilder.ApplicationName ?? "QpApp"
+                    : cnsBuilder.ApplicationName = appName;
             }
 
-            return builder.ToString();
+            if (cnsBuilder.ConnectTimeout < 120)
+            {
+                cnsBuilder.ConnectTimeout = 120;
+            }
+
+            return cnsBuilder.ToString();
         }
 
         public static string TempDirectory

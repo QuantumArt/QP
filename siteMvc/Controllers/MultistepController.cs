@@ -19,33 +19,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _getActionCode = getActionCode;
         }
 
-        protected override IActionInvoker CreateActionInvoker()
-        {
-            return new MultistepActionInvoker(_getActionCode);
-        }
+        protected override IActionInvoker CreateActionInvoker() => new MultistepActionInvoker(_getActionCode);
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult PreAction(string command, int parentId, int[] IDs)
-        {
-            return Json(_getService(command).PreAction(parentId, 0, IDs));
-        }
+        public ActionResult PreAction(string command, int parentId, int[] IDs) => Json(_getService(command).PreAction(parentId, 0, IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Setup(string command, int parentId, int[] IDs, bool? boundToExternal)
-        {
-            return Json(_getService(command).Setup(parentId, 0, IDs, boundToExternal));
-        }
+        public ActionResult Setup(string command, int parentId, int[] IDs, bool? boundToExternal) => Json(_getService(command).Setup(parentId, 0, IDs, boundToExternal));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(string command, int stage, int step)
-        {
-            return Json(_getService(command).Step(stage, step));
-        }
+        public ActionResult Step(string command, int stage, int step) => Json(_getService(command).Step(stage, step));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

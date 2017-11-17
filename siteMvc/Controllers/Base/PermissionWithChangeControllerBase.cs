@@ -1,4 +1,4 @@
-﻿using System.Web.Mvc;
+using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
@@ -47,9 +47,6 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return JsonHtml("ActionPermissionChange", model);
         }
 
-        public virtual ActionResult RemoveForNode(int parentId, int? userId, int? groupId)
-        {
-            return JsonMessageResult(ChangeService.Remove(parentId, userId, groupId));
-        }
+        public virtual ActionResult RemoveForNode(int parentId, int? userId, int? groupId) => JsonMessageResult(ChangeService.Remove(parentId, userId, groupId));
     }
 }

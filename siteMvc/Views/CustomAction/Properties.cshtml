@@ -1,11 +1,6 @@
-﻿@model CustomActionViewModel
-
-@using Quantumart.QP8
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.Utils
-@using Quantumart.QP8.BLL
-@using Quantumart.QP8.WebMvc.ViewModels.CustomAction
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.CustomAction.CustomActionViewModel
 
 @using (Html.BeginTabForm(Model))
 { 
@@ -14,38 +9,38 @@
 		@Html.TextBoxFieldFor(s => s.Data.Name)
 		@Html.TextAreaFieldFor(s => s.Data.Description)
 
-		@Html.SelectFieldFor(model => model.CustomActionTypeId, Html.List(Model.ActionTypeList), new SelectOptions() {DefaultOption = CustomActionStrings.DefaultActionTypeOption})
+		@Html.SelectFieldFor(model => model.CustomActionTypeId, Html.List(Model.ActionTypeList), new SelectOptions {DefaultOption = CustomActionStrings.DefaultActionTypeOption})
 		@Html.SelectFieldFor(model => model.CustomActionEntityTypeId, Html.List(Model.EntityTypeList), 
 			new Dictionary<string, object> { { "id", Model.CustomActionEntityTypesElementId } },
-			new SelectOptions() {DefaultOption = CustomActionStrings.DefaultEntityTypeOption}
+			new SelectOptions {DefaultOption = CustomActionStrings.DefaultEntityTypeOption}
 		)
 
 		using(Html.BeginPanel("siteSelectionModePanel"))
 		{
-			@Html.RadioFieldFor(model => model.SiteSelectionMode, Html.List(Model.SiteSelectionModes))			 
-			@Html.MultipleItemPickerFieldFor(model => model.SelectedSiteIDs, Model.SelectedSiteListItems, new EntityDataListArgs
-			{
-				EntityTypeCode = EntityTypeCode.Site,
-				ParentEntityId = 0,
-				SelectActionCode = ActionCode.MultipleSelectSites,
-				ListId = -1 * System.DateTime.Now.Millisecond,
-				MaxListHeight = 200,
-				MaxListWidth = 350
-			})			
+			@Html.RadioFieldFor(model => model.SiteSelectionMode, Html.List(Model.SiteSelectionModes))
+		  @Html.MultipleItemPickerFieldFor(model => model.SelectedSiteIDs, Model.SelectedSiteListItems, new EntityDataListArgs
+		  {
+		    EntityTypeCode = EntityTypeCode.Site,
+		    ParentEntityId = 0,
+		    SelectActionCode = ActionCode.MultipleSelectSites,
+		    ListId = -1 * DateTime.Now.Millisecond,
+		    MaxListHeight = 200,
+		    MaxListWidth = 350
+		  })
 		}
 
 		using (Html.BeginPanel("contentSelectionModePanel"))
 		{ 
 			@Html.RadioFieldFor(model => model.ContentSelectionMode, Html.List(Model.ContentSelectionModes))
-			@Html.MultipleItemPickerFieldFor(model => model.SelectedContentIDs, Model.SelectedContentListItems, new EntityDataListArgs
-			{
-				EntityTypeCode = EntityTypeCode.Content,
-				ParentEntityId = 0,
-				SelectActionCode = ActionCode.MultipleSelectContentForCustomAction,
-				ListId = -1 * System.DateTime.Now.Millisecond,
-				MaxListHeight = 200,
-				MaxListWidth = 350
-			}, new Dictionary<string, object> { { "id", Model.ContentsElementId } })
+		  @Html.MultipleItemPickerFieldFor(model => model.SelectedContentIDs, Model.SelectedContentListItems, new EntityDataListArgs
+		  {
+		    EntityTypeCode = EntityTypeCode.Content,
+		    ParentEntityId = 0,
+		    SelectActionCode = ActionCode.MultipleSelectContentForCustomAction,
+		    ListId = -1 * DateTime.Now.Millisecond,
+		    MaxListHeight = 200,
+		    MaxListWidth = 350
+		  }, new Dictionary<string, object> { { "id", Model.ContentsElementId } })
 		}
 		
 		@Html.TextBoxFieldFor(model => model.Data.Url)
@@ -58,7 +53,7 @@
 		@Html.CheckBoxFieldFor(model => model.Data.ShowInToolbar, "showOnToolbarForActionsPanel")
 		using (Html.BeginPanel("showOnToolbarForActionsPanel"))
 		{ 			
-			@Html.CheckboxListFieldFor(model => model.SelectedActions, Enumerable.Empty<QPSelectListItem>(), new EntityDataListArgs() { MaxListHeight = 200 }, new Dictionary<string, object> { { "id", Model.ToolbarButtonParentActionsElementId } })
+			@Html.CheckboxListFieldFor(model => model.SelectedActions, Enumerable.Empty<QPSelectListItem>(), new EntityDataListArgs { MaxListHeight = 200 }, new Dictionary<string, object> { { "id", Model.ToolbarButtonParentActionsElementId } })
 		}
 		
 		@Html.CheckBoxFieldFor(model => model.Data.Action.IsInterface, htmlAttributes: new Dictionary<string, object> { { "id", Model.IsInterfaceElementId } })

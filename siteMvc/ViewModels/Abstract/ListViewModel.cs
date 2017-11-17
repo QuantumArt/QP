@@ -62,15 +62,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public string ArticlesCountId => UniqueId("articlesCount");
 
-        public virtual string AddNewItemActionCode
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public virtual string AddNewItemActionCode => throw new NotImplementedException();
 
-        public virtual string AddNewItemText
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public virtual string AddNewItemText => throw new NotImplementedException();
 
         public virtual string ContextMenuCode => EntityTypeCode;
 

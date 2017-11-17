@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -8,7 +8,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
     {
         public static UserGroupTreeViewModel Create(UserGroupInitTreeResult result, string tabId, int parentId)
         {
-            var model = ViewModel.Create<UserGroupTreeViewModel>(tabId, parentId);
+            var model = Create<UserGroupTreeViewModel>(tabId, parentId);
             model.IsTree = true;
             model.AllowMultipleEntitySelection = false;
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;

@@ -1,25 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Quantumart.QP8.BLL.Helpers;
 
 namespace QP8.WebMvc.NUnit.Tests.BLL.Helpers
 {
-    /// <summary>
-    ///This is a test class for MultistepActionHelperTest and is intended
-    ///to contain all MultistepActionHelperTest Unit Tests
-    ///</summary>
-    [TestClass]
+    [TestFixture]
     public class MultistepActionHelperTest
     {
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext { get; set; }
-
-        /// <summary>
-        ///A test for GetStepCount
-        ///</summary>
-        [TestMethod]
+        [Test]
         public void GetStepCountTest()
         {
             Assert.AreEqual(0, MultistepActionHelper.GetStepCount(0, 20));

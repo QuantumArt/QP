@@ -1,9 +1,6 @@
-﻿@model  WorkflowViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.Workflow
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.WebMvc.Extensions.Helpers
+@model  Quantumart.QP8.WebMvc.ViewModels.Workflow.WorkflowViewModel
 
 <script type="text/html" id="@Html.UniqueId("WorkflowRulesDisplay_template")">
 	<div data-bind ="foreach: {data: items, afterRender: jQuery.proxy(initializePickers, $root), beforeRemove: disposePickers}">
@@ -36,26 +33,26 @@
 	            </dt>
                 <dd class="field">
                     @Html.QpSingleItemPicker("User", null,
-				        new ControlOptions
-				        {
-					        HtmlAttributes = new Dictionary<string, object>
-					        {
-						        {"class", "pep-user-selector"}
-					        }
-				        },
-				        new EntityDataListArgs
-				        {
-					        EntityTypeCode = EntityTypeCode.User,
-					        ParentEntityId = 0,
-					        SelectActionCode = ActionCode.SelectUser,
-					        ReadActionCode = ActionCode.UserProperties,
-					        ListId = -1 * System.DateTime.Now.Millisecond,
-					        MaxListHeight = 200,
-					        MaxListWidth = 350,
-					        ShowIds = true
-				        },
-                        true
-			        )
+                      new ControlOptions
+                      {
+                        HtmlAttributes = new Dictionary<string, object>
+                        {
+                          {"class", "pep-user-selector"}
+                        }
+                      },
+                      new EntityDataListArgs
+                      {
+                        EntityTypeCode = EntityTypeCode.User,
+                        ParentEntityId = 0,
+                        SelectActionCode = ActionCode.SelectUser,
+                        ReadActionCode = ActionCode.UserProperties,
+                        ListId = -1 * DateTime.Now.Millisecond,
+                        MaxListHeight = 200,
+                        MaxListWidth = 350,
+                        ShowIds = true
+                      },
+                      true
+                      )
                     <em class="validators">
 		                <span class="field-validation-error workflow_permission_message"></span>
 	                </em>
@@ -68,25 +65,25 @@
 	            </dt>
                 <dd class="field">
                     @Html.QpSingleItemPicker("Group", null,
-				        new ControlOptions
-				        {
-					        HtmlAttributes = new Dictionary<string, object>
-					        {
-						        {"class", "pep-user-selector"}
-					        }
-				        },
-				        new EntityDataListArgs
-				        {
-					        EntityTypeCode = EntityTypeCode.UserGroup,
-					        ParentEntityId = 0,
-					        SelectActionCode = ActionCode.SelectUserGroup,
-					        ReadActionCode = ActionCode.UserGroupProperties,
-					        ListId = -1 * System.DateTime.Now.Millisecond,
-					        MaxListHeight = 200,
-					        MaxListWidth = 350,
-					        ShowIds = true
-				        }, true
-			        )
+                      new ControlOptions
+                      {
+                        HtmlAttributes = new Dictionary<string, object>
+                        {
+                          {"class", "pep-user-selector"}
+                        }
+                      },
+                      new EntityDataListArgs
+                      {
+                        EntityTypeCode = EntityTypeCode.UserGroup,
+                        ParentEntityId = 0,
+                        SelectActionCode = ActionCode.SelectUserGroup,
+                        ReadActionCode = ActionCode.UserGroupProperties,
+                        ListId = -1 * DateTime.Now.Millisecond,
+                        MaxListHeight = 200,
+                        MaxListWidth = 350,
+                        ShowIds = true
+                      }, true
+                      )
                     <em class="validators">
 		                <span class="field-validation-error workflow_permission_message"></span>
 	                </em>

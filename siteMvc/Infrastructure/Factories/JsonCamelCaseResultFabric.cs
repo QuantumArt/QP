@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Web.ActionResults;

@@ -1,13 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using NUnit.Framework;
 using Quantumart.QP8.Utils;
 
 namespace QP8.WebMvc.NUnit.Tests.Utils
 {
-    /// <summary>
-    /// Summary description for InitPropertyValueTest
-    /// </summary>
-    [TestClass]
+    [TestFixture]
     public class InitPropertyValueTest
     {
         private readonly Func<int> _initializer;
@@ -19,38 +16,12 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
         public InitPropertyValueTest()
         {
             _initializer = () => InitializerResult;
-            _customSetter = (v) => CustomSetterResult;
+            _customSetter = v => CustomSetterResult;
         }
 
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
         public TestContext TestContext { get; set; }
 
-        #region Additional test attributes
-        //
-        // You can use the following additional attributes as you write your tests:
-        //
-        // Use ClassInitialize to run code before running the first test in the class
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
-        //
-        // Use ClassCleanup to run code after all tests in a class have run
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
-        // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
-        #endregion
-
-        [TestMethod]
+        [Test]
         public void GetterSetterCheck_InitializerIsDefinedAndCustomSetterIsNull_CorrectResult()
         {
             var value = new InitPropertyValue<int>(_initializer);
@@ -61,7 +32,7 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
             Assert.AreEqual(newValue, value.Value);
         }
 
-        [TestMethod]
+        [Test]
         public void GetterSetterCheck_InitializerAndCustomSetterIsDefined_CorrectResult()
         {
             var value = new InitPropertyValue<int>(_initializer, _customSetter);
@@ -72,7 +43,7 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
             Assert.AreEqual(CustomSetterResult, value.Value);
         }
 
-        [TestMethod]
+        [Test]
         public void GetterSetterCheck_InitializerAndCustomSetterIsUndefined_CorrectResult()
         {
             var value = new InitPropertyValue<int>();
@@ -90,7 +61,7 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
             Assert.AreEqual(newValue, value.Value);
         }
 
-        [TestMethod]
+        [Test]
         public void GetterSetterCheck_InitializerAndCustomSetterDefineLater_CorrectResult()
         {
             var value = new InitPropertyValue<int>();

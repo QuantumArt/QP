@@ -1,6 +1,5 @@
-﻿using System.Security;
+using System.Security;
 using System.Web.Mvc;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
@@ -18,13 +17,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
         public void OnAuthorization(AuthorizationContext filterContext)
         {
-            var identity = filterContext.HttpContext.User.Identity as QpIdentity;
-            if (identity == null || !identity.IsAuthenticated)
+            if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
             {
                 throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
             }
 
-            if (!DependencyResolver.Current.GetService<ISecurityService>().IsActionAccessible(_actionCode, out BackendAction action))
+            if (!DependencyResolver.Current.GetService<ISecurityService>().IsActionAccessible(_actionCode, out var action))
             {
                 throw new SecurityException(string.Format(GlobalStrings.ActionIsNotAccessible, action.Name));
             }

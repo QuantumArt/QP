@@ -168,9 +168,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result);
         }
 
-        public ActionResult RemovePreAction(int id)
-        {
-            return Json(_service.RemovePreAction(id));
-        }
+        public ActionResult RemovePreAction(int id) => Json(_service.RemovePreAction(id));
     }
 }

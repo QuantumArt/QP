@@ -1,12 +1,12 @@
-﻿using QP8.Infrastructure.Helpers;
-using QP8.Infrastructure.Logging;
-using QP8.Infrastructure.Logging.Factories;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using System;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using QP8.Infrastructure.Helpers;
+using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.Factories;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 
 namespace Quantumart.QP8.WebMvc.WinLogOn
 {

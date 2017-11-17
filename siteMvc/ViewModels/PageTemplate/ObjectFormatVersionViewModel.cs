@@ -1,4 +1,4 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
@@ -24,14 +24,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public new ObjectFormatVersion Data
         {
-            get
-            {
-                return (ObjectFormatVersion)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (ObjectFormatVersion)EntityData;
+            set => EntityData = value;
         }
     }
 
@@ -47,14 +41,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public new ObjectFormatVersion Data
         {
-            get
-            {
-                return (ObjectFormatVersion)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (ObjectFormatVersion)EntityData;
+            set => EntityData = value;
         }
 
         public override string Id => IsComparison ? "0" : base.Id;

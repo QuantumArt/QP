@@ -1,21 +1,19 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Quantumart.QP8.Utils;
 
 namespace QP8.WebMvc.NUnit.Tests.Utils
 {
-    [TestClass]
+    [TestFixture]
     public class ConverterTest
     {
-        [TestMethod]
+        [Test]
         public void TryConvertToSqlDateString_NotNullTimeAndCorrectFormat_CorrectResult()
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            string sqlDateString;
-            DateTime? dateTime;
-            var result = Converter.TryConvertToSqlDateString("5/17/2011", new TimeSpan(23, 59, 59), out sqlDateString, out dateTime);
+            var result = Converter.TryConvertToSqlDateString("5/17/2011", new TimeSpan(23, 59, 59), out var sqlDateString, out var dateTime);
 
             Assert.IsTrue(result);
             Assert.IsNotNull(dateTime);
@@ -23,15 +21,11 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
             Assert.AreEqual("20110517 23:59:59", sqlDateString);
         }
 
-        [TestMethod]
+        [Test]
         public void TryConvertToSqlDateString_NullTimeAndCorrectFormat_CorrectResult()
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-            string sqlDateString;
-            DateTime? dateTime;
-
-            var result = Converter.TryConvertToSqlDateString("5/17/2011", null, out sqlDateString, out dateTime);
+            var result = Converter.TryConvertToSqlDateString("5/17/2011", null, out var sqlDateString, out var dateTime);
 
             Assert.IsTrue(result);
             Assert.IsNotNull(dateTime);
@@ -39,25 +33,20 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
             Assert.AreEqual("20110517 00:00:00", sqlDateString);
         }
 
-        [TestMethod]
+        [Test]
         public void TryConvertToSqlDateString_IncorrectFormat_EmptyResult()
         {
-            string sqlDateString;
-            DateTime? dateTime;
-
-            var result = Converter.TryConvertToSqlDateString("2011/17/5", null, out sqlDateString, out dateTime);
+            var result = Converter.TryConvertToSqlDateString("2011/17/5", null, out var sqlDateString, out var dateTime);
 
             Assert.IsFalse(result);
             Assert.IsNull(dateTime);
             Assert.AreEqual(string.Empty, sqlDateString);
         }
 
-        [TestMethod]
+        [Test]
         public void TryConvertToSqlTimeString_CorrectFormat_CorrectResult()
         {
-            string sqlTimeString;
-            TimeSpan? timeSpan;
-            var result = Converter.TryConvertToSqlTimeString("10:58:41 PM", out sqlTimeString, out timeSpan);
+            var result = Converter.TryConvertToSqlTimeString("10:58:41 PM", out var sqlTimeString, out var timeSpan);
 
             Assert.IsTrue(result);
             Assert.IsNotNull(timeSpan);
@@ -65,12 +54,10 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
             Assert.AreEqual("22:58:41", sqlTimeString);
         }
 
-        [TestMethod]
+        [Test]
         public void TryConvertToSqlTimeString_IncorrectFormat_EmptyResult()
         {
-            string sqlTimeString;
-            TimeSpan? timeSpan;
-            var result = Converter.TryConvertToSqlTimeString("22:58 PM", out sqlTimeString, out timeSpan, "h:mm:ss tt");
+            var result = Converter.TryConvertToSqlTimeString("22:58 PM", out var sqlTimeString, out var timeSpan, "h:mm:ss tt");
 
             Assert.IsFalse(result);
             Assert.IsNull(timeSpan);

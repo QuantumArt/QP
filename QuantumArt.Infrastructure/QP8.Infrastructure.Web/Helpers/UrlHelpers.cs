@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace QP8.Infrastructure.Web.Helpers
 {
@@ -46,42 +45,6 @@ namespace QP8.Infrastructure.Web.Helpers
             Ensure.Argument.NotNull(url);
             Ensure.Argument.Is(IsValidWebFolderUrl(url, out uriResult), UrlInvalidFormat);
             return Regex.IsMatch(url, AbsoluteWebFolderUrl);
-        }
-
-        public static string ConvertToAbsoluteUrl(string url)
-        {
-            if (IsRelativeUrl(url))
-            {
-                var urlToProcess = url.Trim();
-                if (urlToProcess.StartsWith("~/"))
-                {
-                    urlToProcess = VirtualPathUtility.ToAbsolute(url);
-                }
-
-                var baseUri = new Uri(GetBaseUrl());
-                return new Uri(baseUri, urlToProcess).ToString();
-            }
-
-            return url;
-        }
-
-        public static string GetBaseUrl()
-        {
-            var httpContext = HttpContext.Current;
-            Ensure.NotNull(httpContext, "HttpContext not exists here");
-            return GetBaseUrl(httpContext.Request);
-        }
-
-        public static string GetBaseUrl(HttpContext context)
-        {
-            Ensure.Argument.NotNull(context, "HttpContext not exists here");
-            return GetBaseUrl(context.Request);
-        }
-
-        public static string GetBaseUrl(HttpRequest request)
-        {
-            Ensure.Argument.NotNull(request, "HttpRequest not exists here");
-            return request.Url.GetLeftPart(UriPartial.Path);
         }
     }
 }

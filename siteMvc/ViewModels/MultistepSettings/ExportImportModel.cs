@@ -53,22 +53,20 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             new ListItem(((int)CsvLineSeparator.Unix).ToString(), MultistepActionStrings.LF)
         };
 
-        public override string EntityTypeCode
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public override string EntityTypeCode => throw new NotImplementedException();
 
-        public override string ActionCode
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public override string ActionCode => throw new NotImplementedException();
 
         public IEnumerable<ListItem> GetList(IEnumerable<int> ids)
         {
             var result = Enumerable.Empty<ListItem>();
-            if (ids != null && ids.Any())
+            if (ids != null)
             {
-                result = FieldService.GetList(ids.ToArray()).Select(s => new ListItem(s.Id.ToString(), s.Name)).ToArray();
+                var idsList = ids.ToList();
+                if (idsList.Any())
+                {
+                    result = FieldService.GetList(idsList.ToArray()).Select(s => new ListItem(s.Id.ToString(), s.Name)).ToArray();
+                }
             }
 
             return result;

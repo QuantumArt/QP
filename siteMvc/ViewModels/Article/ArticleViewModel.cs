@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 
@@ -16,15 +17,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public new BLL.Article Data
         {
-            get
-            {
-                return (BLL.Article)EntityData;
-            }
+            get => (BLL.Article)EntityData;
 
-            set
-            {
-                EntityData = value;
-            }
+            set => EntityData = value;
         }
 
         private readonly InitPropertyValue<string> _variationModel;
@@ -62,36 +57,36 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return model;
         }
 
-        public bool IsReadOnly => Data.ViewType != Constants.ArticleViewType.Normal && Data.ViewType != Constants.ArticleViewType.PreviewVersion || Data.IsAggregated || IsChangingActionsProhibited;
+        public bool IsReadOnly => Data.ViewType != ArticleViewType.Normal && Data.ViewType != ArticleViewType.PreviewVersion || Data.IsAggregated || IsChangingActionsProhibited;
 
         public bool IsChangingActionsProhibited => !Data.IsArticleChangingActionsAllowed(BoundToExternal);
 
-        public bool ShowLockInfo => (Data.ViewType == Constants.ArticleViewType.Normal || Data.ViewType == Constants.ArticleViewType.LockedByOtherUser) && !Data.IsAggregated && !IsChangingActionsProhibited;
+        public bool ShowLockInfo => (Data.ViewType == ArticleViewType.Normal || Data.ViewType == ArticleViewType.LockedByOtherUser) && !Data.IsAggregated && !IsChangingActionsProhibited;
 
-        public bool ShowArchive => Data.ViewType == Constants.ArticleViewType.Archived;
+        public bool ShowArchive => Data.ViewType == ArticleViewType.Archived;
 
         public override string CaptureLockActionCode => Constants.ActionCode.CaptureLockArticle;
 
         public List<ListItem> ScheduleTypes => new List<ListItem>
         {
-            new ListItem(Constants.ScheduleTypeEnum.Invisible.ToString(), ArticleStrings.Invisible),
-            new ListItem(Constants.ScheduleTypeEnum.OneTimeEvent.ToString(), ArticleStrings.OneTimeEvent, true),
-            new ListItem(Constants.ScheduleTypeEnum.Recurring.ToString(), ArticleStrings.Recurring, true),
-            new ListItem(Constants.ScheduleTypeEnum.Visible.ToString(), ArticleStrings.Visible)
+            new ListItem(ScheduleTypeEnum.Invisible.ToString(), ArticleStrings.Invisible),
+            new ListItem(ScheduleTypeEnum.OneTimeEvent.ToString(), ArticleStrings.OneTimeEvent, true),
+            new ListItem(ScheduleTypeEnum.Recurring.ToString(), ArticleStrings.Recurring, true),
+            new ListItem(ScheduleTypeEnum.Visible.ToString(), ArticleStrings.Visible)
         };
 
         public List<ListItem> ScheduleRecurringTypes => new List<ListItem>
         {
-            new ListItem(Constants.ScheduleRecurringType.Daily.ToString(), ArticleStrings.Daily),
-            new ListItem(Constants.ScheduleRecurringType.Weekly.ToString(), ArticleStrings.Weekly, true),
-            new ListItem(Constants.ScheduleRecurringType.Monthly.ToString(), ArticleStrings.Monthly, "daySpecBy"),
-            new ListItem(Constants.ScheduleRecurringType.Yearly.ToString(), ArticleStrings.Yearly, "daySpecBy")
+            new ListItem(ScheduleRecurringType.Daily.ToString(), ArticleStrings.Daily),
+            new ListItem(ScheduleRecurringType.Weekly.ToString(), ArticleStrings.Weekly, true),
+            new ListItem(ScheduleRecurringType.Monthly.ToString(), ArticleStrings.Monthly, "daySpecBy"),
+            new ListItem(ScheduleRecurringType.Yearly.ToString(), ArticleStrings.Yearly, "daySpecBy")
         };
 
         public List<ListItem> DaySpecifyingTypes => new List<ListItem>
         {
-            new ListItem(Constants.DaySpecifyingType.Date.ToString(), ArticleStrings.DaySpecifyingByDate, true),
-            new ListItem(Constants.DaySpecifyingType.DayOfWeek.ToString(), ArticleStrings.DaySpecifyingByDayOfWeek, true)
+            new ListItem(DaySpecifyingType.Date.ToString(), ArticleStrings.DaySpecifyingByDate, true),
+            new ListItem(DaySpecifyingType.DayOfWeek.ToString(), ArticleStrings.DaySpecifyingByDayOfWeek, true)
         };
 
         public List<ListItem> Months
@@ -107,40 +102,40 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public List<ListItem> WeeksOfMonth => new List<ListItem>
         {
-            new ListItem(Constants.WeekOfMonth.FirstWeek.ToString(), ArticleStrings.FirstWeek),
-            new ListItem(Constants.WeekOfMonth.SecondWeek.ToString(), ArticleStrings.SecondWeek),
-            new ListItem(Constants.WeekOfMonth.ThirdWeek.ToString(), ArticleStrings.ThirdWeek),
-            new ListItem(Constants.WeekOfMonth.FourthWeek.ToString(), ArticleStrings.FourthWeek),
-            new ListItem(Constants.WeekOfMonth.LastWeek.ToString(), ArticleStrings.LastWeek)
+            new ListItem(WeekOfMonth.FirstWeek.ToString(), ArticleStrings.FirstWeek),
+            new ListItem(WeekOfMonth.SecondWeek.ToString(), ArticleStrings.SecondWeek),
+            new ListItem(WeekOfMonth.ThirdWeek.ToString(), ArticleStrings.ThirdWeek),
+            new ListItem(WeekOfMonth.FourthWeek.ToString(), ArticleStrings.FourthWeek),
+            new ListItem(WeekOfMonth.LastWeek.ToString(), ArticleStrings.LastWeek)
         };
 
         public List<ListItem> DaysOfWeek => new List<ListItem>
         {
-            new ListItem(Constants.DayOfWeek.Monday.ToString(), ArticleStrings.Monday),
-            new ListItem(Constants.DayOfWeek.Tuesday.ToString(), ArticleStrings.Tuesday),
-            new ListItem(Constants.DayOfWeek.Wednesday.ToString(), ArticleStrings.Wednesday),
-            new ListItem(Constants.DayOfWeek.Thursday.ToString(), ArticleStrings.Thursday),
-            new ListItem(Constants.DayOfWeek.Friday.ToString(), ArticleStrings.Friday),
-            new ListItem(Constants.DayOfWeek.Saturday.ToString(), ArticleStrings.Saturday),
-            new ListItem(Constants.DayOfWeek.Sunday.ToString(), ArticleStrings.Sunday),
-            new ListItem(Constants.DayOfWeek.Weekday.ToString(), ArticleStrings.Weekday),
-            new ListItem(Constants.DayOfWeek.Weekend.ToString(), ArticleStrings.Weekend)
+            new ListItem(DayOfWeek.Monday.ToString(), ArticleStrings.Monday),
+            new ListItem(DayOfWeek.Tuesday.ToString(), ArticleStrings.Tuesday),
+            new ListItem(DayOfWeek.Wednesday.ToString(), ArticleStrings.Wednesday),
+            new ListItem(DayOfWeek.Thursday.ToString(), ArticleStrings.Thursday),
+            new ListItem(DayOfWeek.Friday.ToString(), ArticleStrings.Friday),
+            new ListItem(DayOfWeek.Saturday.ToString(), ArticleStrings.Saturday),
+            new ListItem(DayOfWeek.Sunday.ToString(), ArticleStrings.Sunday),
+            new ListItem(DayOfWeek.Weekday.ToString(), ArticleStrings.Weekday),
+            new ListItem(DayOfWeek.Weekend.ToString(), ArticleStrings.Weekend)
         };
 
         public List<ListItem> ShowLimitationTypes => new List<ListItem>
         {
-            new ListItem(Constants.ShowLimitationType.EndTime.ToString(), ArticleStrings.LimitedByTime , true),
-            new ListItem(Constants.ShowLimitationType.Duration.ToString(), ArticleStrings.LimitedByDuration, true)
+            new ListItem(ShowLimitationType.EndTime.ToString(), ArticleStrings.LimitedByTime , true),
+            new ListItem(ShowLimitationType.Duration.ToString(), ArticleStrings.LimitedByDuration, true)
         };
 
         public List<ListItem> DurationUnits => new List<ListItem>
         {
-            new ListItem(Constants.ShowDurationUnit.Minutes.ToString(), ArticleStrings.MinutesLimitationUnit),
-            new ListItem(Constants.ShowDurationUnit.Hours.ToString(), ArticleStrings.HoursLimitationUnit),
-            new ListItem(Constants.ShowDurationUnit.Days.ToString(), ArticleStrings.DaysLimitationUnit),
-            new ListItem(Constants.ShowDurationUnit.Weeks.ToString(), ArticleStrings.WeeksLimitationUnit),
-            new ListItem(Constants.ShowDurationUnit.Months.ToString(), ArticleStrings.MonthsLimitationUnit),
-            new ListItem(Constants.ShowDurationUnit.Years.ToString(), ArticleStrings.YearsLimitationUnit)
+            new ListItem(ShowDurationUnit.Minutes.ToString(), ArticleStrings.MinutesLimitationUnit),
+            new ListItem(ShowDurationUnit.Hours.ToString(), ArticleStrings.HoursLimitationUnit),
+            new ListItem(ShowDurationUnit.Days.ToString(), ArticleStrings.DaysLimitationUnit),
+            new ListItem(ShowDurationUnit.Weeks.ToString(), ArticleStrings.WeeksLimitationUnit),
+            new ListItem(ShowDurationUnit.Months.ToString(), ArticleStrings.MonthsLimitationUnit),
+            new ListItem(ShowDurationUnit.Years.ToString(), ArticleStrings.YearsLimitationUnit)
         };
 
         public string WorkflowWarning => IsNew ? ArticleStrings.CannotAddBecauseOfWorkflow : ArticleStrings.CannotUpdateBecauseOfWorkflow;
@@ -149,8 +144,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public string VariationModel
         {
-            get { return _variationModel.Value; }
-            set { _variationModel.Value = value; }
+            get => _variationModel.Value;
+            set => _variationModel.Value = value;
         }
 
         public string ContextModel => _contextModel.Value;
@@ -242,7 +237,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             var filter = baseField.GetRelationFilter(articleId);
             var itemCount = ArticleService.Count(contentId, filter, false);
             var isListOverflow = field.MaxDataListItemCount == 0 || itemCount > field.MaxDataListItemCount ;
-            var mode = isListOverflow ? Constants.ListSelectionMode.OnlySelectedItems : Constants.ListSelectionMode.AllItems;
+            var mode = isListOverflow ? ListSelectionMode.OnlySelectedItems : ListSelectionMode.AllItems;
             var list = new List<ListItem>();
             if (!isListOverflow || selectedArticleIDs.Length != 0)
             {
@@ -252,15 +247,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return new RelationListResult { IsListOverflow = isListOverflow, Items = list };
         }
 
-        internal static IEnumerable<ListItem> GetAggregatableContentsForClassifier(BLL.Field classifier, string excludeValue)
-        {
-            return ArticleService.GetAggregetableContentsForClassifier(classifier, excludeValue);
-        }
+        internal static IEnumerable<ListItem> GetAggregatableContentsForClassifier(BLL.Field classifier, string excludeValue) => ArticleService.GetAggregetableContentsForClassifier(classifier, excludeValue);
 
-        internal static BLL.Content GetContentById(int? contentId)
-        {
-            return contentId.HasValue ? ContentService.Read(contentId.Value) : null;
-        }
+        internal static BLL.Content GetContentById(int? contentId) => contentId.HasValue ? ContentService.Read(contentId.Value) : null;
 
         public void DoCustomBinding()
         {

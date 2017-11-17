@@ -1,10 +1,7 @@
-﻿@model PermissionListViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
-@using Quantumart.QP8.BLL.Services.DTO
-@using Quantumart.QP8.Resources
+﻿@using Quantumart.QP8.BLL.ListItems
 @using Quantumart.QP8.Constants
-@using Quantumart.QP8.BLL.ListItems;
+@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.EntityPermissions.PermissionListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
@@ -13,7 +10,7 @@
 		@Html.Warning(new[]
 		{
 			new MvcHtmlString(EntityPermissionStrings.ContentArticlePermissionIsDisabled),
-			@Html.BackendActionLink(Model.UniqueId("eapActionLink"), EntityPermissionStrings.EnableContentArticlePermissionAction, Model.ParentArticle.ContentId, String.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.EnableArticlesPermissions)
+			Html.BackendActionLink(Model.UniqueId("eapActionLink"), EntityPermissionStrings.EnableContentArticlePermissionAction, Model.ParentArticle.ContentId, String.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.EnableArticlesPermissions)
 		})
 	}
 

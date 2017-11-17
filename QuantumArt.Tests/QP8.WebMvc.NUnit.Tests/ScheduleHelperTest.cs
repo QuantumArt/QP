@@ -1,13 +1,13 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using NUnit.Framework;
 using Quantumart.QP8.BLL.Helpers;
 
 namespace QP8.WebMvc.NUnit.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class ScheduleHelperTest
     {
-        [TestMethod]
+        [Test]
         public void GetSqlValuesFromScheduleDateTest()
         {
             var dt = new DateTime(2010, 3, 9, 5, 6, 7);
@@ -16,7 +16,7 @@ namespace QP8.WebMvc.NUnit.Tests
             Assert.AreEqual(50607, values.Item2);
         }
 
-        [TestMethod]
+        [Test]
         public void GetSqlValuesFromScheduleDateTest2()
         {
             var dt = new DateTime(2010, 3, 9, 15, 6, 7);
@@ -25,7 +25,7 @@ namespace QP8.WebMvc.NUnit.Tests
             Assert.AreEqual(150607, values.Item2);
         }
 
-        [TestMethod]
+        [Test]
         public void GetScheduleDateFromSqlValuesTest()
         {
             const int sqlDate = 20100309;
@@ -33,7 +33,7 @@ namespace QP8.WebMvc.NUnit.Tests
             Assert.AreEqual(new DateTime(2010, 3, 9), dt);
         }
 
-        [TestMethod]
+        [Test]
         public void GetScheduleTimeFromSqlValuesTest()
         {
             const int sqlTime = 50607;
@@ -42,7 +42,7 @@ namespace QP8.WebMvc.NUnit.Tests
             Assert.AreEqual(new TimeSpan(5, 6, 7), t);
         }
 
-        [TestMethod]
+        [Test]
         public void GetScheduleDateTimeFromSqlValuesTest()
         {
             const int sqlDate = 20100309;
@@ -56,7 +56,7 @@ namespace QP8.WebMvc.NUnit.Tests
             Assert.AreEqual(7, dt.Second);
         }
 
-        [TestMethod]
+        [Test]
         public void GetScheduleDateTimeFromSqlValuesTest2()
         {
             const int sqlDate = 20100309;
@@ -65,7 +65,7 @@ namespace QP8.WebMvc.NUnit.Tests
             Assert.AreEqual(15, dt.Hour);
         }
 
-        [TestMethod]
+        [Test]
         public void GetScheduleDateTimeFromSqlValuesTest3()
         {
             const int sqlDate = 20100309;
@@ -76,7 +76,7 @@ namespace QP8.WebMvc.NUnit.Tests
             Assert.AreEqual(0, dt.Second);
         }
 
-        [TestMethod]
+        [Test]
         public void GetDurationTest()
         {
             var duration = ScheduleHelper.GetDuration("mi", 1, DateTime.Now);

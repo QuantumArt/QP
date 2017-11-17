@@ -385,10 +385,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemoveTemplateObjectFormatVersion(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
-        }
+        public ActionResult MultipleRemoveTemplateObjectFormatVersion(int parentId, int[] IDs) => JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -397,10 +394,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.RestorePageObjectFormatVersion)]
         [BackendActionLog]
         [Record]
-        public ActionResult RestorePageObjectFormatVersion(string tabId, int parentId, int id)
-        {
-            return JsonMessageResult(_formatService.RestoreObjectFormatVersion(id));
-        }
+        public ActionResult RestorePageObjectFormatVersion(string tabId, int parentId, int id) => JsonMessageResult(_formatService.RestoreObjectFormatVersion(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -409,10 +403,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.RestoreTemplateObjectFormatVersion)]
         [BackendActionLog]
         [Record]
-        public ActionResult RestoreTemplateObjectFormatVersion(string tabId, int parentId, int id)
-        {
-            return JsonMessageResult(_formatService.RestoreObjectFormatVersion(id));
-        }
+        public ActionResult RestoreTemplateObjectFormatVersion(string tabId, int parentId, int id) => JsonMessageResult(_formatService.RestoreObjectFormatVersion(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -422,10 +413,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePageObjectFormatVersion(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
-        }
+        public ActionResult MultipleRemovePageObjectFormatVersion(int parentId, int[] IDs) => JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

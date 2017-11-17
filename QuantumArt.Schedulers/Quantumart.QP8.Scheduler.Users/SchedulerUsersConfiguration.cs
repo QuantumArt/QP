@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
-using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
@@ -10,6 +9,10 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.UserSynchronization;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Scheduler.API;
+using Unity;
+using Unity.Extension;
+using Unity.Injection;
+using Unity.Lifetime;
 
 namespace Quantumart.QP8.Scheduler.Users
 {
@@ -56,6 +59,6 @@ namespace Quantumart.QP8.Scheduler.Users
             LoggerData.DefaultPrtgServiceStatusVariableName
         );
 
-        private static string GetAbsolutePath(string relativePath) => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), relativePath);
+        private static string GetAbsolutePath(string relativePath) => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), relativePath);
     }
 }

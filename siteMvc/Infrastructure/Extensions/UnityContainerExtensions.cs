@@ -1,4 +1,6 @@
-﻿using Microsoft.Practices.Unity;
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
 {

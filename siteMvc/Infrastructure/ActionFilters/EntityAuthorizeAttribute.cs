@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Security;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services;
@@ -22,8 +22,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
         public void OnAuthorization(AuthorizationContext filterContext)
         {
-            var identity = filterContext.HttpContext.User.Identity as QpIdentity;
-            if (identity == null || !identity.IsAuthenticated)
+            if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
             {
                 throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
             }
@@ -34,7 +33,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 throw new ArgumentException($"Entity id field is not found: {_entityIdParamName}");
             }
 
-            if (!int.TryParse(entityIdResult.AttemptedValue, out int entityId))
+            if (!int.TryParse(entityIdResult.AttemptedValue, out var entityId))
             {
                 throw new ArgumentException($"Entity id is not a number: {entityIdResult.AttemptedValue}");
             }

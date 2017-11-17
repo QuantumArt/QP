@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -9,10 +9,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Audit
 {
     public sealed class ActionLogAreaViewModel : AreaViewModel
     {
-        public static ActionLogAreaViewModel Create(string tabId, int parentId)
-        {
-            return Create<ActionLogAreaViewModel>(tabId, parentId);
-        }
+        public static ActionLogAreaViewModel Create(string tabId, int parentId) => Create<ActionLogAreaViewModel>(tabId, parentId);
 
         public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;
 

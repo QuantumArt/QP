@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -16,7 +16,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
 
         public static PermissionListViewModel Create(PermissionInitListResult result, string tabId, int parentId, IPermissionService service, string controlerName)
         {
-            PermissionListViewModel model = Create<PermissionListViewModel>(tabId, parentId);
+            var model = Create<PermissionListViewModel>(tabId, parentId);
             model.Settings = service.ListViewModelSettings;
             model.ControlerName = controlerName;
             model._parentArticle = new Lazy<BLL.Article>(() => service.GetParentArticle(parentId));

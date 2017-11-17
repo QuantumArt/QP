@@ -18,10 +18,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class EntityObjectController : QPController
     {
         [HttpGet]
-        public JsonNetResult<bool> CheckExistence(string entityTypeCode, int entityId)
-        {
-            return EntityObjectService.CheckExistence(entityTypeCode, entityId);
-        }
+        public JsonNetResult<bool> CheckExistence(string entityTypeCode, int entityId) => EntityObjectService.CheckExistence(entityTypeCode, entityId);
 
         /// <summary>
         /// Проверяет сущность на наличие рекурсивных связей.
@@ -30,10 +27,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <param name="entityId">Идентификатор сущности.</param>
         /// <returns>Результат проверки (true - есть рекурсивные связи; false - нет).</returns>
         [HttpGet]
-        public JsonNetResult<bool> CheckPresenceSelfRelations(string entityTypeCode, int entityId)
-        {
-            return EntityObjectService.CheckPresenceSelfRelations(entityTypeCode, entityId);
-        }
+        public JsonNetResult<bool> CheckPresenceSelfRelations(string entityTypeCode, int entityId) => EntityObjectService.CheckPresenceSelfRelations(entityTypeCode, entityId);
 
         /// <summary>
         /// Проверяет сущность на наличие вариаций.
@@ -42,16 +36,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <param name="entityId">Идентификатор сущности.</param>
         /// <returns>Результат проверки (true - есть вариации; false - нет).</returns>
         [HttpGet]
-        public JsonNetResult<bool> CheckForVariations(string entityTypeCode, int entityId)
-        {
-            return EntityObjectService.CheckForVariations(entityTypeCode, entityId);
-        }
+        public JsonNetResult<bool> CheckForVariations(string entityTypeCode, int entityId) => EntityObjectService.CheckForVariations(entityTypeCode, entityId);
 
         [HttpGet]
-        public JsonNetResult<EntityTreeItem> GetByTypeAndIdForTree(string entityTypeCode, int entityId, bool loadChilds, string filter)
-        {
-            return EntityObjectService.GetByTypeAndIdForTree(entityTypeCode, entityId, loadChilds, filter);
-        }
+        public JsonNetResult<EntityTreeItem> GetByTypeAndIdForTree(string entityTypeCode, int entityId, bool loadChilds, string filter) => EntityObjectService.GetByTypeAndIdForTree(entityTypeCode, entityId, loadChilds, filter);
 
         /// <summary>
         /// Возвращает список дочерних сущностей.
@@ -96,28 +84,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает название сущности.
         /// </summary>
         [HttpGet]
-        public JsonNetResult<string> GetName(string entityTypeCode, int entityId, int? parentEntityId)
-        {
-            return EntityObjectService.GetName(entityTypeCode, entityId, parentEntityId ?? 0);
-        }
+        public JsonNetResult<string> GetName(string entityTypeCode, int entityId, int? parentEntityId) => EntityObjectService.GetName(entityTypeCode, entityId, parentEntityId ?? 0);
 
         [HttpGet]
-        public JsonNetResult<int?> GetParentId(string entityTypeCode, int entityId)
-        {
-            return EntityObjectService.GetParentId(entityTypeCode, entityId);
-        }
+        public JsonNetResult<int?> GetParentId(string entityTypeCode, int entityId) => EntityObjectService.GetParentId(entityTypeCode, entityId);
 
         [HttpPost]
-        public JsonNetResult<int[]> GetParentIdsForTree(string entityTypeCode, int[] ids)
-        {
-            return EntityObjectService.GetParentIdsForTree(entityTypeCode, ids);
-        }
+        public JsonNetResult<int[]> GetParentIdsForTree(string entityTypeCode, int[] ids) => EntityObjectService.GetParentIdsForTree(entityTypeCode, ids);
 
         [HttpGet]
-        public JsonNetResult<IEnumerable<EntityInfo>> GetBreadCrumbsList(string entityTypeCode, long entityId, long? parentEntityId, string actionCode)
-        {
-            return EntityObjectService.GetBreadCrumbsList(entityTypeCode, entityId, parentEntityId, actionCode).ToList();
-        }
+        public JsonNetResult<IEnumerable<EntityInfo>> GetBreadCrumbsList(string entityTypeCode, long entityId, long? parentEntityId, string actionCode) => EntityObjectService.GetBreadCrumbsList(entityTypeCode, entityId, parentEntityId, actionCode).ToList();
 
         [HttpGet]
         public JsonNetResult<IEnumerable<EntityInfo>> GetParentInfo(string entityTypeCode, long entityId, long? parentEntityId)
@@ -127,22 +103,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpGet]
-        public JsonNetResult<string> GetArticleFieldValue(int contentId, string fieldName, int articleId)
-        {
-            return EntityObjectService.GetArticleFieldValue(contentId, fieldName, articleId);
-        }
+        public JsonNetResult<string> GetArticleFieldValue(int contentId, string fieldName, int articleId) => EntityObjectService.GetArticleFieldValue(contentId, fieldName, articleId);
 
         [HttpGet]
-        public JsonNetResult<string> GetArticleLinkedItems(int linkId, int articleId)
-        {
-            return EntityObjectService.GetArticleLinkedItems(linkId, articleId);
-        }
+        public JsonNetResult<string> GetArticleLinkedItems(int linkId, int articleId) => EntityObjectService.GetArticleLinkedItems(linkId, articleId);
 
         [HttpGet]
-        public JsonNetResult<int> GetArticleIdByFieldValue(int contentId, string fieldName, string fieldValue)
-        {
-            return EntityObjectService.GetArticleIdByFieldValue(contentId, fieldName, fieldValue);
-        }
+        public JsonNetResult<int> GetArticleIdByFieldValue(int contentId, string fieldName, string fieldValue) => EntityObjectService.GetArticleIdByFieldValue(contentId, fieldName, fieldValue);
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -162,7 +129,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 success = true,
                 approvedRecordIDs = result
-            } as object;
+            };
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         public static WorkflowListViewModel Create(WorkflowInitListResult result, string tabId, int parentId)
         {
-            var model = ViewModel.Create<WorkflowListViewModel>(tabId, parentId);
+            var model = Create<WorkflowListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;
             return model;
         }

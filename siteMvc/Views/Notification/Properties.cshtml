@@ -1,8 +1,6 @@
-﻿@model  NotificationViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.Notification
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.Constants
+@model  Quantumart.QP8.WebMvc.ViewModels.Notification.NotificationViewModel
 
 @if (Model.Data.WorkFlowId.HasValue)
 {
@@ -11,7 +9,7 @@
 		@Html.Warning(new[] 
 		{
 			new MvcHtmlString(String.Format(NotificationStrings.WarningString, Model.Data.Workflow.Name)), 			
-			@Html.BackendActionLink(Model.UniqueId("eapActionLink"), NotificationStrings.Unbind, Model.Data.Id, String.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.UnbindNotification)
+			Html.BackendActionLink(Model.UniqueId("eapActionLink"), NotificationStrings.Unbind, Model.Data.Id, String.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.UnbindNotification)
 		})
 	}	
 }
@@ -75,24 +73,24 @@
 
 	 using (Html.BeginPanel("FromBackendUserPanel"))
 	 {
-        @Html.SingleItemPickerFieldFor(s => s.Data.FromBackenduserId,
-					 Model.FromUserListItem,
-				new EntityDataListArgs
-				{
-					EntityTypeCode = EntityTypeCode.User,
-					ParentEntityId = 0,
-					SelectActionCode = ActionCode.SelectUser,
-					ReadActionCode = ActionCode.UserProperties,
-					ListId = -1 * System.DateTime.Now.Millisecond,
-					MaxListHeight = 200,
-					MaxListWidth = 350,
-					ShowIds = true,
-				},
-				new ControlOptions
-				{
-					Enabled = !Model.Data.WorkFlowId.HasValue
-				}
-			)
+	   @Html.SingleItemPickerFieldFor(s => s.Data.FromBackenduserId,
+	     Model.FromUserListItem,
+	     new EntityDataListArgs
+	     {
+	       EntityTypeCode = EntityTypeCode.User,
+	       ParentEntityId = 0,
+	       SelectActionCode = ActionCode.SelectUser,
+	       ReadActionCode = ActionCode.UserProperties,
+	       ListId = -1 * DateTime.Now.Millisecond,
+	       MaxListHeight = 200,
+	       MaxListWidth = 350,
+	       ShowIds = true
+	     },
+	     new ControlOptions
+	     {
+	       Enabled = !Model.Data.WorkFlowId.HasValue
+	     }
+	     )
 	 }
         <div class = "nfp-senderEmailPanel">
             @Html.TextBoxFieldFor(s => s.Data.FromUserEmail)
@@ -106,45 +104,45 @@
 		</div>
 	 using (Html.BeginPanel("UserPanel"))
 	 {
-        @Html.SingleItemPickerFieldFor(s => s.Data.UserId,
-					 Model.ToUserListItem,
-				new EntityDataListArgs
-				{
-					EntityTypeCode = EntityTypeCode.User,
-					ParentEntityId = 0,
-					SelectActionCode = ActionCode.SelectUser,
-					ReadActionCode = ActionCode.UserProperties,
-					ListId = -1 * System.DateTime.Now.Millisecond,
-					MaxListHeight = 200,
-					MaxListWidth = 350,
-					ShowIds = true,
-				},
-				new ControlOptions
-				{
-					Enabled = !Model.Data.WorkFlowId.HasValue
-				}
-			)
+	   @Html.SingleItemPickerFieldFor(s => s.Data.UserId,
+	     Model.ToUserListItem,
+	     new EntityDataListArgs
+	     {
+	       EntityTypeCode = EntityTypeCode.User,
+	       ParentEntityId = 0,
+	       SelectActionCode = ActionCode.SelectUser,
+	       ReadActionCode = ActionCode.UserProperties,
+	       ListId = -1 * DateTime.Now.Millisecond,
+	       MaxListHeight = 200,
+	       MaxListWidth = 350,
+	       ShowIds = true
+	     },
+	     new ControlOptions
+	     {
+	       Enabled = !Model.Data.WorkFlowId.HasValue
+	     }
+	     )
 	 }
 	 using (Html.BeginPanel("UserGroupPanel"))
 	 {
-        @Html.SingleItemPickerFieldFor(s => s.Data.GroupId,
-					Model.ToUserGroupListItem,
-				new EntityDataListArgs
-				{
-					EntityTypeCode = EntityTypeCode.UserGroup,
-					ParentEntityId = 0,
-					SelectActionCode = ActionCode.SelectUserGroup,
-					ReadActionCode = ActionCode.UserGroupProperties,
-					ListId = -1 * System.DateTime.Now.Millisecond,
-					MaxListHeight = 200,
-					MaxListWidth = 350,
-					ShowIds = true
-				},
-				new ControlOptions
-				{
-					Enabled = !Model.Data.WorkFlowId.HasValue
-				}
-			)
+	   @Html.SingleItemPickerFieldFor(s => s.Data.GroupId,
+	     Model.ToUserGroupListItem,
+	     new EntityDataListArgs
+	     {
+	       EntityTypeCode = EntityTypeCode.UserGroup,
+	       ParentEntityId = 0,
+	       SelectActionCode = ActionCode.SelectUserGroup,
+	       ReadActionCode = ActionCode.UserGroupProperties,
+	       ListId = -1 * DateTime.Now.Millisecond,
+	       MaxListHeight = 200,
+	       MaxListWidth = 350,
+	       ShowIds = true
+	     },
+	     new ControlOptions
+	     {
+	       Enabled = !Model.Data.WorkFlowId.HasValue
+	     }
+	     )
 	 }
 	 using (Html.BeginPanel("FieldPanel"))
 	 {

@@ -23,10 +23,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.AssembleTemplate)]
-        public virtual ActionResult PreAction(int parentId, int id)
-        {
-            return Json(Service.PreAction(parentId, id));
-        }
+        public virtual ActionResult PreAction(int parentId, int id) => Json(Service.PreAction(parentId, id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

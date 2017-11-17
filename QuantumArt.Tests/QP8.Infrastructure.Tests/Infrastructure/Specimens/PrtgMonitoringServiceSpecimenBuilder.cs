@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using Ploeh.AutoFixture.Kernel;
+using System.Reflection;
+using AutoFixture.Kernel;
 
 namespace QP8.Infrastructure.Tests.Infrastructure.Specimens
 {
@@ -10,8 +10,7 @@ namespace QP8.Infrastructure.Tests.Infrastructure.Specimens
 
         public object Create(object request, ISpecimenContext context)
         {
-            var pi = request as ParameterInfo;
-            if (pi == null)
+            if (!(request is ParameterInfo pi))
             {
                 return new NoSpecimen();
             }

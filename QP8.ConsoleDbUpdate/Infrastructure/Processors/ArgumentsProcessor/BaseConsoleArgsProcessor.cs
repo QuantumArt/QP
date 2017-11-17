@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Mono.Options;
 using QP8.Infrastructure;
+using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
@@ -13,8 +14,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 {
     internal abstract class BaseConsoleArgsProcessor
     {
-        protected internal bool ShouldShowHelp;
-
         protected internal string CustomerCode;
 
         protected internal IList<string> FilePathes;
@@ -32,7 +31,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal virtual void PrintEnteredData()
         {
-            Console.WriteLine($@"Customer Code: {CustomerCode}");
+            Console.WriteLine(SqlHelpers.TryParseConnectionString(CustomerCode, out var _)
+                ? $@"Connection String: {CustomerCode}"
+                : $@"Customer Code: {CustomerCode}"
+            );
+
             Console.WriteLine($@"File Pathes: {string.Join(", ", FilePathes)}");
             Console.WriteLine($@"Config: {(string.IsNullOrWhiteSpace(ConfigPath) ? "disabled" : ConfigPath)}");
             Console.WriteLine($@"Verbosity Level: {Program.VerboseLevel}");
@@ -47,13 +50,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         public BaseSettingsModel ParseConsoleArguments(string[] args)
         {
+            Program.Logger.Debug("Parse utility settings for selected processor..");
+
             var optionSet = BuildOptionSet();
             optionSet = AddCommonOptions(optionSet);
 
             try
             {
                 var noNamedOptions = optionSet.Parse(args);
-                if (ShouldShowHelp)
+                if (Program.ShouldShowHelp)
                 {
                     ShowCommandLineHelp(optionSet);
                 }
@@ -76,7 +81,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal OptionSet AddCommonOptions(OptionSet optionSet)
         {
-            if (!Console.IsInputRedirected)
+            // TODO: REMOVE AFTER RESHARPER FIX BUG https://youtrack.jetbrains.com/issue/RSRP-466882
+            optionSet.Add("disablePipedInput", "internal temp mode for internal use only", i => { });
+
+            if (!(Console.IsInputRedirected && !Program.DisablePipedInput))
             {
                 optionSet.Add("p|path=", "single or multiple <path> to file|directory with xml|csv record actions to replay", p => FilePathes.Add(p));
                 optionSet.Add("c|config=", "the <path> of xml|csv config file to apply", c => ConfigPath = c);
@@ -85,14 +93,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             optionSet.Add("v|verbose", "increase debug message verbosity [v|vv|vvv]:[error|warning|info].", v => { });
             optionSet.Add("s|silent", "enable silent mode for automatization.", s => { });
             optionSet.Add("m|mode=", "single value which represents utility mode [xml|csv]", m => { });
-            optionSet.Add("h|help", "show this message and exit", h => ShouldShowHelp = h != null);
+            optionSet.Add("h|help", "show this message and exit", h => Program.ShouldShowHelp = h != null);
             return optionSet;
         }
 
         private void ValidateInputData(ICollection<string> noNamedOptions)
         {
-            Ensure.That<OptionException>(noNamedOptions.Count == 1, "Should specify single not named parameter <customer_code>", "customer_code");
-            if (!Console.IsInputRedirected)
+            Ensure.That<OptionException>(noNamedOptions.Count == 1, $"Should specify single not named parameter <customer_code>, but was {string.Join(",", noNamedOptions)}", "customer_code");
+            if (!(Console.IsInputRedirected && !Program.DisablePipedInput))
             {
                 Ensure.That<OptionException>(FilePathes.Any(), "Should specify at least one xml file or folder path", "path");
             }
@@ -103,7 +111,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         private static void ShowCommandLineHelp(OptionSet optionsSet)
         {
-            Console.WriteLine(@"USAGE: qpdbupdate [OPTIONS]+ <customer_code>" + Environment.NewLine);
+            Console.WriteLine(@"USAGE: qpdbupdate [OPTIONS]+ <customer_code|connection_string>" + Environment.NewLine);
             Console.WriteLine(@"OPTIONS:");
             optionsSet.WriteOptionDescriptions(Console.Out);
             ConsoleHelpers.ExitProgram(ExitCode.Success);

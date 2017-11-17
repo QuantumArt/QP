@@ -1,4 +1,4 @@
-﻿using Ploeh.AutoFixture;
+using AutoFixture;
 using Quantumart.QP8.BLL;
 
 namespace QP8.Services.Tests.Infrastructure.Helpers
