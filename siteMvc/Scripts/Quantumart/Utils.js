@@ -151,6 +151,11 @@ $q.hideLoader = function hideLoader() {
   }
 };
 
+$q.difference = (arr1, arr2) => arr1.filter(el => arr2.indexOf(el) === -1);
+$q.symetricDifference = (arr1, arr2) => arr1
+  .filter(el => arr2.indexOf(el) === -1)
+  .concat(arr2.filter(el => arr1.indexOf(el) === -1));
+
 $q.isBoolean = value =>
   typeof value === 'boolean' || (value && ['true', 'false'].includes(value.toString().toLowerCase().trim()));
 

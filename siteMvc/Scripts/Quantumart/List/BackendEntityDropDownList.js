@@ -42,9 +42,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
   },
 
   getSelectedEntityIDs() {
-    return $.grep(
-      $.map(this.getSelectedEntities(), item => $q.toString(item.Id)), item => item
-    );
+    return $.grep(this.getSelectedEntities().map(item => $q.toString(item.Id)), i => i);
   },
 
   selectEntities(entityID) {

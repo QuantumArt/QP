@@ -379,7 +379,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     $q.clearArray(levels);
 
     const that = this;
-    const parentNodeElems = $.map(parentNodeInfos, parentNodeInfo => that.getNode(parentNodeInfo.nodeCode).get(0));
+    const parentNodeElems = parentNodeInfos.map(parentNodeInfo => that.getNode(parentNodeInfo.nodeCode).get(0));
 
     $q.clearArray(parentNodeInfos);
     return $q.toJQuery(parentNodeElems);

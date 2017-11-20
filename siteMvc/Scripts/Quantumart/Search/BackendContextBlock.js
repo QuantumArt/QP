@@ -22,9 +22,10 @@ Quantumart.QP8.BackendContextBlock.prototype
 
     restoreSearchBlockState() {
       if (this._searchBlockState) {
-        const fieldValues = jQuery.map(this._searchBlockState, elem => {
-          return { fieldName: elem.Name, value: elem.Value };
+        const fieldValues = this._searchBlockState.map(el => {
+          return { fieldName: el.Name, value: el.Value };
         });
+
         $c.setAllEntityDataListValues(this._searchBlockElement, fieldValues);
       }
     },

@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.WebPages;
 using QP8.Infrastructure.Logging;
-using QP8.Infrastructure.Web.ActionResults;
+using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
@@ -125,8 +125,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
             return result;
         }
-
-        public JsonResult JsonError(string msg) => new JsonNetResult<object>(new { success = false, message = msg });
 
         private void PersistToHttpContext(string key, int item)
         {

@@ -173,10 +173,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
       if ($q.isArray(entityId) && entityId.length > 0) {
         this.selectEntities(entityId[0]);
       } else if ($.isNumeric(entityId)) {
-        const selectedEntityIds = $.map([entityId], id => {
-          return { Id: id };
-        });
-
+        const selectedEntityIds = { Id: entityId };
         this._loadSelectedItems(selectedEntityIds);
       }
     }

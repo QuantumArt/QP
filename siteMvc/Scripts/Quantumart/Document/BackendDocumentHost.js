@@ -382,7 +382,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       }
 
       if (!$q.isNullOrEmpty(filterStates) && $q.isArray(filterStates)) {
-        const fieldSearchBlockState = $.map(filterStates, item =>
+        const fieldSearchBlockState = filterStates.map(item =>
           new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
             item.SearchType,
             item.FieldId,
@@ -396,8 +396,8 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
           )
         );
 
-        const searchQuery = $.map(filterStates, item => {
-          const ids = $.map(item.SelectedEntities, ent => ent.Id);
+        const searchQuery = filterStates.map(item => {
+          const ids = item.SelectedEntities.map(ent => ent.Id);
           return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
             item.SearchType,
             item.FieldId,
@@ -493,7 +493,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
           $o.getEntityIDsFromEntities(unnamedEntities)
         );
 
-        const namedEntities = $.map(dataItems, item => {
+        const namedEntities = dataItems.map(item => {
           return { Id: $q.toInt(item.Value), Name: item.Text };
         });
 

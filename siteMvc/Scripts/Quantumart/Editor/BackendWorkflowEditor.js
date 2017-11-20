@@ -23,7 +23,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   initialize() {
     const workflow = this._componentElem;
     this._items = ko.observableArray(
-      $.map(workflow.data('workflow_list_data'), o => {
+      workflow.data('workflow_list_data').map(o => {
         const r = {};
         Object.assign(r, o || {}, {
           RadioChecked: ko.observable(o.RadioChecked),
@@ -31,6 +31,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
           UserId: ko.observable(o.UserId),
           GroupId: ko.observable(o.GroupId)
         });
+
         return r;
       })
     );
@@ -141,7 +142,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   checkAllPermisssions() {
     const activeContentsIds = this.getCheckedContentsIds();
 
-    const usersAndGroups = $.map(this._items(), elem => {
+    const usersAndGroups = this._items().map(elem => {
       return { StName: elem.StName, UserId: elem.UserId(), GroupId: elem.GroupId() };
     });
 

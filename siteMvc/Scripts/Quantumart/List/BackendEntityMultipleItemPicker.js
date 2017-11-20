@@ -116,7 +116,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     let result;
     if (this._isCountOverflow()) {
       const ids = $(this._countOverflowElement).val().split(',');
-      result = $.map(ids, id => {
+      result = ids.map(id => {
         return { Id: id, Name: '' };
       }) || [];
     } else {
@@ -138,29 +138,35 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _refreshListInner(dataItems, refreshOnly) {
-    const newSelectedIDs = $.map($.grep(dataItems, di => di.Value), di => $q.toInt(di.Value));
+    const newSelectedIds = $.grep(dataItems, di => di.Value).map(di => $q.toInt(di.Value));
+    const currentSelectedIds = this.getSelectedEntityIDs();
 
-    const currentSelectedIDs = this.getSelectedEntityIDs();
-    const selectedItemsIsChanged = newSelectedIDs.length !== currentSelectedIDs.length
-    || newSelectedIDs.length !== _.union(newSelectedIDs, currentSelectedIDs).length;
+    const [
+      { length: newSelectedIdsLength },
+      { length: currentSelectedIdsLength }
+    ] = [newSelectedIds, currentSelectedIds];
+
+    const checkedStateWasChanged = newSelectedIdsLength !== currentSelectedIdsLength;
+    const somethingNotUnderstandable = newSelectedIdsLength !== newSelectedIdsLength + currentSelectedIdsLength;
+    const selectedItemsIsChanged = checkedStateWasChanged || somethingNotUnderstandable;
 
     if (selectedItemsIsChanged) {
       const $list = $(this._listElement);
       const $ul = $list.find('UL');
 
-      if (newSelectedIDs.length < this._countLimit) {
+      if (newSelectedIdsLength < this._countLimit) {
         $ul.empty().html(this._getCheckBoxListHtml(dataItems));
         $(this._countOverflowElement).remove();
         this._countOverflowElement = null;
       } else {
         $ul.empty();
-        const value = newSelectedIDs.join();
+        const value = newSelectedIds.join();
         if (this._countOverflowElement) {
           $(this._countOverflowElement).val(value);
         } else {
           const ln = $list.data('list_item_name');
-          const cl = this.OVERFLOW_HIDDEN_CLASS;
-          const html = `<input type="hidden" class="${cl}" name="${ln}" value = "${value}" />`;
+          const { OVERFLOW_HIDDEN_CLASS: overflowClass } = this;
+          const html = `<input type="hidden" class="${overflowClass}" name="${ln}" value = "${value}" />`;
           $ul.before(html);
 
           this._countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`).get(0);

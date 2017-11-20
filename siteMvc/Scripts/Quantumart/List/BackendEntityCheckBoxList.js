@@ -107,21 +107,16 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   },
 
   _refreshListInner(dataItems, refreshOnly) {
-    const newSelectedIDs = $.map(
-      $.grep(dataItems, di => di.Selected),
-      di => $q.toInt(di.Value)
-    );
+    const newSelectedIDs = $.grep(dataItems, di => di.Selected).map(di => $q.toInt(di.Value));
     const currentSelectedIDs = this.getSelectedEntityIDs();
-    const selectedItemsIsChanged = _.union(
-      _.difference(newSelectedIDs, currentSelectedIDs),
-      _.difference(currentSelectedIDs, newSelectedIDs)
-    ).length > 0;
+    const selectedItemsIsChanged = $q.symetricDifference(newSelectedIDs, currentSelectedIDs).length > 0;
 
     const $list = $(this._listElement);
     const $ul = $list.find('UL:first');
     const listItemHtml = new $.telerik.stringBuilder();
+
     for (let dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
-      const dataItem = dataItems[dataItemIndex];
+      const { [dataItemIndex]: dataItem } = dataItems;
       this._getCheckBoxListItemHtml(listItemHtml, dataItem, dataItemIndex);
     }
 

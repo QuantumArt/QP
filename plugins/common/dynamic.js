@@ -133,7 +133,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.changeFilters = function (editor
 Quantumart.QP8.BackendDocumentContext.prototype.wrapFields = function (editor, inputNames, title) {
   var $form = jQuery(editor._formElement);
   var that = this;
-  var multiSelector = jQuery.map(inputNames, function (val) {
+  var multiSelector = inputNames.map(function (val) {
     return that.getRowSelector(val);
   }).join(', ');
   $form.find(multiSelector).wrapAll('<fieldset />');

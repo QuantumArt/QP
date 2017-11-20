@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
+using QP8.Infrastructure.Web.AspNet.ActionResults;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
@@ -28,30 +29,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult PreSettings(int parentId, int[] IDs) => Json(_service.MultistepActionSettings(parentId, 0, IDs));
+        public ActionResult PreSettings(int parentId, int[] IDs) => new JsonNetResult(_service.MultistepActionSettings(parentId, 0, IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Settings(string tabId, int parentId, int[] IDs)
+        public ActionResult Settings(string tabId, int parentId, int[] IDs) => JsonHtml($"{FolderForTemplate}/ExportTemplate", new ExportViewModel
         {
-            var model = new ExportViewModel
-            {
-                ContentId = parentId,
-                Ids = IDs
-            };
-
-            return JsonHtml($"{FolderForTemplate}/ExportTemplate", model);
-        }
+            ContentId = parentId,
+            Ids = IDs
+        });
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Setup(int parentId, int[] IDs, bool? boundToExternal) => Json(_service.Setup(parentId, 0, IDs, boundToExternal));
+        public ActionResult Setup(int parentId, int[] IDs, bool? boundToExternal) => new JsonNetResult(_service.Setup(parentId, 0, IDs, boundToExternal));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -87,7 +83,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
+        public ActionResult Step(int stage, int step) => new JsonNetResult(_service.Step(stage, step));
 
         [HttpPost]
         public ActionResult TearDown(bool isError)

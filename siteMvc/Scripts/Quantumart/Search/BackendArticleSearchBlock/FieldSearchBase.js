@@ -79,14 +79,14 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
     let ids = text.replace(/\r?\n|\r|;/g, ',').split(',');
     ids = ids.map(e => parseInt(e, 10));
     ids = $.grep(ids, e => e);
-    ids = _.uniq(ids);
-    return ids;
+    return [...new Set(ids)];
   }
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.registerClass(
   'Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase', null, Sys.IDisposable
 );
+
 // eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState = function (
   searchType, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, data

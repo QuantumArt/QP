@@ -316,11 +316,11 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   getSelectedEntityIDs() {
-    return $.grep($.map(this.getSelectedEntities(), item => $q.toInt(item.Id)), item => item);
+    return $.grep(this.getSelectedEntities().map(item => $q.toInt(item.Id)), i => i);
   },
 
   refreshList(testEntityId) {
-    const selectedEntitiesIDs = _.pluck(this.getSelectedEntities(), 'Id');
+    const selectedEntitiesIDs = this.getSelectedEntities().map(el => el.Id);
     const dataItems = $o.getSimpleEntityList(
       this._entityTypeCode, this._parentEntityId, this._entityId, this._listId,
       this._selectionMode, selectedEntitiesIDs, this._filter, testEntityId
@@ -608,7 +608,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     let dataItems;
     if (($o.checkEntitiesForPresenceEmptyNames(entities) || this._readDataOnInsert)
     && entities.length <= this._countLimit) {
-      const selectedEntitiesIDs = _.pluck(entities, 'Id');
+      const selectedEntitiesIDs = entities.map(el => el.Id);
       dataItems = $o.getSimpleEntityList(
         this._entityTypeCode, this._parentEntityId, this._entityId, this._listId,
         this._selectionMode, selectedEntitiesIDs, this._filter, 0

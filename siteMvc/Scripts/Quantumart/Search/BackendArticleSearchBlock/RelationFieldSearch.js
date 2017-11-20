@@ -61,7 +61,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   getSelectedIds() {
     let result;
     if (this._isEntity) {
-      result = $.map(this._getSelectedEntities(), item => item.Id);
+      result = this._getSelectedEntities().map(item => item.Id);
     } else {
       result = this._getIds($(this._textAreaElement).val());
     }
