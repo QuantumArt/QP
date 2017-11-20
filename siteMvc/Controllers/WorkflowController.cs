@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -158,7 +158,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var contentAccessSummary = new List<object>();
             var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(',').Select(int.Parse).ToList();
-            var model = new JavaScriptSerializer().Deserialize<List<WorkflowRuleSimpleItem>>(modelString);
+            var model = JsonConvert.DeserializeObject<List<WorkflowRuleSimpleItem>>(modelString);
 
             foreach (var stage in model)
             {

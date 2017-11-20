@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Interfaces.Services;
@@ -186,10 +186,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return ids.Select(id => CorrectIdValue(entityTypeCode, id));
         }
 
-        private string CorrectIdValue(string entityTypeCode, string value)
-        {
-            return int.TryParse(value, out var result) ? CorrectIdValue(entityTypeCode, result).ToString() : value;
-        }
+        private string CorrectIdValue(string entityTypeCode, string value) => int.TryParse(value, out var result) ? CorrectIdValue(entityTypeCode, result).ToString() : value;
 
         private int CorrectIdValue(string entityTypeCode, int value)
         {
@@ -379,14 +376,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var formValue = form[formKey];
             if (formValue != null)
             {
-                var serializer = new JavaScriptSerializer();
-                var collectionList = serializer.Deserialize<List<Dictionary<string, string>>>(formValue);
+                var collectionList = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(formValue);
                 foreach (var collection in collectionList.Where(collection => collection.ContainsKey(jsonKey)))
                 {
                     collection[jsonKey] = CorrectIdValue(entityTypeCode, collection[jsonKey]);
                 }
 
-                form[formKey] = serializer.Serialize(collectionList);
+                form[formKey] = JsonConvert.SerializeObject(collectionList);
             }
         }
 

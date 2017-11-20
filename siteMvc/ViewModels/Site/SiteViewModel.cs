@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
@@ -76,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
 
         public List<ListItem> AssemblingTypes => new List<ListItem>
         {
-            new ListItem(AssemblingType.AspDotNet, SiteStrings.AspDotNet, new[]{ AssemblingNetOptionsBlock, BinBlock, LinqBlock, TestDirectoryBlock }),
+            new ListItem(AssemblingType.AspDotNet, SiteStrings.AspDotNet, new[] { AssemblingNetOptionsBlock, BinBlock, LinqBlock, TestDirectoryBlock }),
             new ListItem(AssemblingType.Asp, SiteStrings.Asp, OnScreenAspBlock)
         };
 
@@ -90,22 +90,24 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
         {
             new ListItem(OnScreenBorderMode.Always.ToString(), SiteStrings.Always),
             new ListItem(OnScreenBorderMode.OnMouseOver.ToString(), SiteStrings.OnMouseOver),
-            new ListItem(OnScreenBorderMode.Never.ToString(),SiteStrings.Never)
+            new ListItem(OnScreenBorderMode.Never.ToString(), SiteStrings.Never)
         };
 
         [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
-        public IEnumerable<ListItem> DefaultCommandsListItems
-        {
-            get;
-            private set;
-        }
+        public IEnumerable<ListItem> DefaultCommandsListItems { get; private set; }
 
         [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeCommands { get; set; }
 
-        public int[] ActiveVeCommandsIds { get { return ActiveVeCommands.Select(c => int.Parse(c.Value)).ToArray(); } }
+        public int[] ActiveVeCommandsIds
+        {
+            get { return ActiveVeCommands.Select(c => int.Parse(c.Value)).ToArray(); }
+        }
 
-        public int[] ActiveVeStyleIds { get { return ActiveVeStyles.Union(ActiveVeFormats).Select(c => int.Parse(c.Value)).ToArray(); } }
+        public int[] ActiveVeStyleIds
+        {
+            get { return ActiveVeStyles.Union(ActiveVeFormats).Select(c => int.Parse(c.Value)).ToArray(); }
+        }
 
         public IEnumerable<ListItem> AllStylesListItems { get; private set; }
 
@@ -121,7 +123,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
         {
             if (!string.IsNullOrEmpty(AggregationListItemsDataExternalCssItems))
             {
-                Data.ExternalCssItems = new JavaScriptSerializer().Deserialize<List<ExternalCss>>(AggregationListItemsDataExternalCssItems);
+                Data.ExternalCssItems = JsonConvert.DeserializeObject<List<ExternalCss>>(AggregationListItemsDataExternalCssItems);
                 Data.ExternalCss = ExternalCssHelper.ConvertToString(Data.ExternalCssItems);
             }
         }
