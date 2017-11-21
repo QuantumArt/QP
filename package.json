@@ -58,10 +58,5 @@
     "lint": "eslint ./siteMvc/Scripts/Quantumart/"
   },
   "private": true,
-  "-vs-binding": {
-    "ProjectOpened": [
-      "install"
-    ]
-  },
   "version": "1.0.0"
 }

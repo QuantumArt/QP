@@ -6,288 +6,292 @@ window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR = 'OnEntityEditorSubmitte
 window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING = 'OnEntityEditorRefreshStarting';
 window.EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING = 'OnEntityEditorActionExecuting';
 
-Quantumart.QP8.BackendEntityEditor = function (
-  editorGroupCode,
-  documentWrapperElementId,
-  entityTypeCode,
-  entityId,
-  actionTypeCode,
-  options) {
-  Quantumart.QP8.BackendEntityEditor.initializeBase(this);
-
-  this._editorGroupCode = editorGroupCode;
-  this._entityTypeCode = entityTypeCode;
-  this._entityId = entityId;
-  this._parentEntityId = options.parentEntityId;
-  this._actionCode = options.actionCode;
-  this._actionTypeCode = actionTypeCode;
-  this._documentWrapperElementId = documentWrapperElementId;
-  if (!$q.isNull(options)) {
-    if (options.formElementId) {
-      this._formElementId = options.formElementId;
-    }
-
-    if (options.validationSummaryElementId) {
-      this._validationSummaryElementId = options.validationSummaryElementId;
-    }
-
-    if (options.isWindow) {
-      this._hostIsWindow = options.isWindow;
-    }
-
-    if (options.initFieldValues) {
-      this._initFieldValues = options.initFieldValues;
-    }
-
-    if (options.disabledFields) {
-      this._disabledFields = options.disabledFields;
-    }
-
-    if (options.hideFields) {
-      this._hideFields = options.hideFields;
-    }
-
-    if (options.restoring) {
-      this._restoring = true;
-    }
-
-    if (options.modifiedDateTime) {
-      this._modifiedDateTime = options.modifiedDateTime;
-    }
-
-    if (options.contextQuery) {
-      this._contextBlockState = JSON.parse(options.contextQuery);
-    }
-
-    if (options.needUp) {
-      this._needUp = options.needUp;
-    }
-
-    if (options.customButtonsSettings) {
-      this._customButtonsSettings = options.customButtonsSettings;
-    }
-
-    if (options.customLinkButtonsSettings) {
-      this._customLinkButtonsSettings = options.customLinkButtonsSettings;
-    }
-
-    if (!options.notifyCustomButtonExistence) {
-      this._notifyCustomButtonExistence = options.notifyCustomButtonExistence;
-    }
-
-    if (options.customHandlers) {
-      if (options.customHandlers.beforeSubmit) {
-        this._customBeforeSubmit = options.customHandlers.beforeSubmit;
-      }
-
-      if (options.customHandlers.init) {
-        this._customInit = options.customHandlers.init;
-      }
-
-      if (options.customHandlers.load) {
-        this._customLoad = options.customHandlers.load;
-      }
-
-      if (options.customHandlers.dispose) {
-        this._customDispose = options.customHandlers.dispose;
-      }
-
-      if (options.customHandlers.fieldValueChanged) {
-        this._customFieldValueChanged = options.customHandlers.fieldValueChanged;
-      }
-    }
-
-    this._entityTypeAllowedToAutosave = $q.toBoolean(options.entityTypeAllowedToAutosave, false);
-    this._isBindToExternal = $q.toBoolean(options.isBindToExternal, false);
+class BackendEntityEditor extends Quantumart.QP8.Observable {
+  static getComponent(componentElem) {
+    return $(componentElem).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey);
   }
 
-  this._onActionExecutingHandler = $.proxy(this._onActionExecuting, this);
-  this._onHtmlInputChangedHandler = $.proxy(this._onHtmlInputChanged, this);
-  this._onBeforeSubmitHandler = $.proxy(this._onBeforeSubmit, this);
-  this._onSuccessHandler = $.proxy(this._onSuccess, this);
-  this._onErrorHandler = $.proxy(this._onError, this);
-  this._onLibraryFilesUploadedHandler = $.proxy(this._onFileUploaded, this);
+  static get componentRefDataKey() {
+    return 'component_ref';
+  }
 
-  this._customButtons = [];
-  this._customLinkButtons = [];
+  constructor(
+    editorGroupCode,
+    documentWrapperElementId,
+    entityTypeCode,
+    entityId,
+    actionTypeCode,
+    options
+  ) {
+    super();
 
-  $(`#${this._documentWrapperElementId}`).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey, this);
-};
+    this.FIELD_SELECTORS = ':input';
+    this.FIELD_VALUE_SELECTORS = ":input[name ^= 'field_']";
+    this.FIELD_CHANGE_TRACK_SELECTORS = ':input:not(.qp-notChangeTrack)';
+    this.CHANGED_FIELD_SELECTOR = '.changed';
+    this.CHANGED_EXCEPT_VARMODEL_SELECTOR = '.changed:not(.variationModel)';
+    this.REAL_CHANGED_FIELD_SELECTOR = `.${window.CHANGED_FIELD_CLASS_NAME}:not(.${window.REFRESHED_FIELD_CLASS_NAME})`;
+    this.REAL_CHANGED_EXCEPT_VARMODEL_SELECTOR
+      = `.${window.CHANGED_FIELD_CLASS_NAME}:not(.${window.REFRESHED_FIELD_CLASS_NAME}):not(.variationModel)`;
 
-Quantumart.QP8.BackendEntityEditor.componentRefDataKey = 'component_ref';
-Quantumart.QP8.BackendEntityEditor.getComponent = function (componentElem) {
-  return $(componentElem).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey);
-};
+    this.CONTEXT_SELECTOR = '.currentContext';
+    this.CONTEXT_MODEL_SELECTOR = '.contextModel';
+    this.VARIATION_SELECTOR = '.variationModel';
+    this.VARIATION_INFO_SELECTOR = '.variationInfo';
+    this.ERROR_SELECTOR = '.errorModel';
+    this.OLD_CONTEXT_DATA_KEY = 'oldContext';
 
-Quantumart.QP8.BackendEntityEditor.prototype = {
-  _editorGroupCode: '',
-  _entityTypeCode: '',
-  _entityId: 0,
-  _parentEntityId: 0,
-  _actionCode: '',
-  _actionTypeCode: '',
-  _documentWrapperElementId: '',
-  _formElementId: '',
-  _formElement: null,
-  _validationSummaryElementId: '',
-  _validationSummaryElement: null,
-  _formHasErrors: false,
-  _editorManagerComponent: null,
-  _hostIsWindow: false,
-  _initFieldValues: null,
-  _disabledFields: null,
-  _hideFields: null,
-  _restoring: false,
-  _contextBlockState: null,
-  _variationsModel: null,
-  _errorModel: null,
-  _variationsModelChanged: false,
-  _contextModel: null,
-  _disableChangeTracking: false,
-  _needUp: false,
+    this.editorGroupCode = '';
+    this.entityTypeCode = '';
+    this.entityId = 0;
+    this.parentEntityId = 0;
+    this.actionCode = '';
+    this.actionTypeCode = '';
+    this.documentWrapperElementId = '';
+    this.formElementId = '';
+    this.formElement = null;
+    this.validationSummaryElementId = '';
+    this.validationSummaryElement = null;
+    this.formHasErrors = false;
+    this.editorManagerComponent = null;
+    this.hostIsWindow = false;
+    this.initFieldValues = null;
+    this.disabledFields = null;
+    this.hideFields = null;
+    this.restoring = false;
+    this.contextBlockState = null;
+    this.variationsModel = null;
+    this.errorModel = null;
+    this.variationsModelChanged = false;
+    this.contextModel = null;
+    this.disableChangeTracking = false;
+    this.needUp = false;
 
-  _modifiedDateTime: null,
-  _isBindToExternal: false,
-  _entityTypeAllowedToAutosave: false,
+    this.modifiedDateTime = null;
+    this.isBindToExternal = false;
+    this.entityTypeAllowedToAutosave = false;
 
-  _customBeforeSubmit: null,
-  _customInit: null,
-  _customDispose: null,
-  _customFieldValueChanged: null,
-  _customLoad: null,
-  _notifyCustomButtonExistence: true,
+    this.customBeforeSubmit = null;
+    this.customInit = null;
+    this.customDispose = null;
+    this.customFieldValueChanged = null;
+    this.customLoad = null;
+    this.notifyCustomButtonExistence = true;
 
-  _customButtons: null,
-  _customLinkButtons: null,
-  _customButtonsSettings: null,
-  _customLinkButtonsSettings: null,
+    this.customButtons = null;
+    this.customLinkButtons = null;
+    this.customButtonsSettings = null;
+    this.customLinkButtonsSettings = null;
 
-  FIELD_SELECTORS: ':input',
-  FIELD_VALUE_SELECTORS: ":input[name ^= 'field_']",
-  FIELD_CHANGE_TRACK_SELECTORS: ':input:not(.qp-notChangeTrack)',
-  CHANGED_FIELD_SELECTOR: '.changed',
-  CHANGED_EXCEPT_VARMODEL_SELECTOR: '.changed:not(.variationModel)',
-  REAL_CHANGED_FIELD_SELECTOR: `.${window.CHANGED_FIELD_CLASS_NAME}:not(.${window.REFRESHED_FIELD_CLASS_NAME})`,
-  REAL_CHANGED_EXCEPT_VARMODEL_SELECTOR:
-    `.${window.CHANGED_FIELD_CLASS_NAME}:not(.${window.REFRESHED_FIELD_CLASS_NAME}):not(.variationModel)`,
+    this._editorGroupCode = editorGroupCode;
+    this._entityTypeCode = entityTypeCode;
+    this._entityId = entityId;
+    this._parentEntityId = options.parentEntityId;
+    this._actionCode = options.actionCode;
+    this._actionTypeCode = actionTypeCode;
+    this._documentWrapperElementId = documentWrapperElementId;
 
-  CONTEXT_SELECTOR: '.currentContext',
-  CONTEXT_MODEL_SELECTOR: '.contextModel',
-  VARIATION_SELECTOR: '.variationModel',
-  VARIATION_INFO_SELECTOR: '.variationInfo',
-  ERROR_SELECTOR: '.errorModel',
+    if (!$q.isNull(options)) {
+      if (options.formElementId) {
+        this._formElementId = options.formElementId;
+      }
 
-  OLD_CONTEXT_DATA_KEY: 'oldContext',
+      if (options.validationSummaryElementId) {
+        this._validationSummaryElementId = options.validationSummaryElementId;
+      }
+
+      if (options.isWindow) {
+        this._hostIsWindow = options.isWindow;
+      }
+
+      if (options.initFieldValues) {
+        this._initFieldValues = options.initFieldValues;
+      }
+
+      if (options.disabledFields) {
+        this._disabledFields = options.disabledFields;
+      }
+
+      if (options.hideFields) {
+        this._hideFields = options.hideFields;
+      }
+
+      if (options.restoring) {
+        this._restoring = true;
+      }
+
+      if (options.modifiedDateTime) {
+        this._modifiedDateTime = options.modifiedDateTime;
+      }
+
+      if (options.contextQuery) {
+        this._contextBlockState = JSON.parse(options.contextQuery);
+      }
+
+      if (options.needUp) {
+        this._needUp = options.needUp;
+      }
+
+      if (options.customButtonsSettings) {
+        this._customButtonsSettings = options.customButtonsSettings;
+      }
+
+      if (options.customLinkButtonsSettings) {
+        this._customLinkButtonsSettings = options.customLinkButtonsSettings;
+      }
+
+      if (!options.notifyCustomButtonExistence) {
+        this._notifyCustomButtonExistence = options.notifyCustomButtonExistence;
+      }
+
+      if (options.customHandlers) {
+        if (options.customHandlers.beforeSubmit) {
+          this._customBeforeSubmit = options.customHandlers.beforeSubmit;
+        }
+
+        if (options.customHandlers.init) {
+          this._customInit = options.customHandlers.init;
+        }
+
+        if (options.customHandlers.load) {
+          this._customLoad = options.customHandlers.load;
+        }
+
+        if (options.customHandlers.dispose) {
+          this._customDispose = options.customHandlers.dispose;
+        }
+
+        if (options.customHandlers.fieldValueChanged) {
+          this._customFieldValueChanged = options.customHandlers.fieldValueChanged;
+        }
+      }
+
+      this._entityTypeAllowedToAutosave = $q.toBoolean(options.entityTypeAllowedToAutosave, false);
+      this._isBindToExternal = $q.toBoolean(options.isBindToExternal, false);
+    }
+
+    this._onActionExecutingHandler = $.proxy(this._onActionExecuting, this);
+    this._onHtmlInputChangedHandler = $.proxy(this._onHtmlInputChanged, this);
+    this._onBeforeSubmitHandler = $.proxy(this._onBeforeSubmit, this);
+    this._onSuccessHandler = $.proxy(this._onSuccess, this);
+    this._onErrorHandler = $.proxy(this._onError, this);
+    this._onLibraryFilesUploadedHandler = $.proxy(this._onFileUploaded, this);
+
+    this._customButtons = [];
+    this._customLinkButtons = [];
+
+    $(`#${this._documentWrapperElementId}`).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey, this);
+  }
 
   // eslint-disable-next-line camelcase
   get_editorGroupCode() {
     return this._editorGroupCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_editorGroupCode(value) {
     this._editorGroupCode = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_documentWrapperElementId() {
     return this._documentWrapperElementId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_documentWrapperElementId(value) {
     this._documentWrapperElementId = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_entityTypeCode() {
     return this._entityTypeCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_entityTypeCode(value) {
     this._entityTypeCode = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_entityId() {
     return this._entityId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_entityId(value) {
     this._entityId = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_actionTypeCode() {
     return this._actionTypeCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_actionTypeCode(value) {
     this._actionTypeCode = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_formElementId() {
     return this._formElementId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_formElementId(value) {
     this._formElementId = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_validationSummaryElementId() {
     return this._validationSummaryElementId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_validationSummaryElementId(value) {
     this._validationSummaryElementId = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_editorManagerComponent() {
     return this._editorManagerComponent;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_editorManagerComponent(value) {
     this._editorManagerComponent = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_fieldValues() {
     return $c.getAllFieldValues(this._formElement);
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_disabledFields() {
     return this._disabledFields;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_hideFields() {
     return this._hideFields;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_parentEntityId() {
     return this._parentEntityId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_actionCode() {
     return this._actionCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_modifiedDateTime() {
     return this._modifiedDateTime;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_contextQuery() {
@@ -296,15 +300,11 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     }
 
     return '';
-  },
+  }
 
   allowAutoSave() {
     return this._entityTypeAllowedToAutosave && !this._isBindToExternal;
-  },
-
-  _onHtmlInputChangedHandler: null,
-  _onActionExecutingHandler: null,
-  _onLibraryFilesUploadedHandler: null,
+  }
 
   initialize() {
     if (!this._needUp) {
@@ -337,15 +337,15 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       this._initAllFields();
       this._initAllFieldDescriptons();
     }
-  },
+  }
 
   getFields() {
     return $(this._formElement).find(this.FIELD_SELECTORS);
-  },
+  }
 
   _initAllFields() {
     if (this._formElement) {
-      let $form = $(this._formElement);
+      const $form = $(this._formElement);
       $c.initAllClassifierFields($form, this._onActionExecutingHandler, {
         hostIsWindow: this._hostIsWindow,
         initFieldValues: this._initFieldValues,
@@ -424,10 +424,8 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
           that.addCustomLinkButton(item);
         });
       }
-
-      $form = null;
     }
-  },
+  }
 
   _initAllFieldDescriptons() {
     $('span[data-field_description_text]', this._formElement).qtip({
@@ -445,11 +443,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
         delay: 0
       }
     });
-  },
-
-  _disposeAllFieldDescriptons() {
-    $('span[data-tooltip]').qtip('destroy', true);
-  },
+  }
 
   _disposeAllFields() {
     if (this._formElement && !this._needUp) {
@@ -481,7 +475,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       this._disposeVariationsModelField($form);
       this._disposeErrorModelField($form);
     }
-  },
+  }
 
   _initVariationsModelField($form) {
     const $modelElem = $(this.VARIATION_SELECTOR, $form);
@@ -494,23 +488,23 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       this._variationsModel = model;
       this._variationsModelChanged = false;
     }
-  },
+  }
 
   _disposeVariationsModelField() {
     this._variationsModel = null;
-  },
+  }
 
   _initVariationInfo($form) {
     const $infoElem = $(this.VARIATION_INFO_SELECTOR, $form);
     $infoElem.find('.removeVariation').on('click', $.proxy(this._onRemoveVariation, this));
     $infoElem.find('.currentInfo').html($l.EntityEditor.baseArticle);
     $infoElem.find('.currentTotal').html(this._getVariationModelCount());
-  },
+  }
 
   _disposeVariationInfo($form) {
     const $infoElem = $(this.VARIATION_INFO_SELECTOR, $form);
     $infoElem.find('.removeVariation').off('click');
-  },
+  }
 
   _onRemoveVariation() {
     const $form = $(this._formElement);
@@ -521,7 +515,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     this._saveVariationsModelData($form);
     this._restoreFromVariationsModel(contextValue);
     this._updateVariationInfo(contextValue);
-  },
+  }
 
   _updateVariationInfo(contextValue) {
     const model = this._variationsModel[contextValue];
@@ -543,22 +537,22 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     $infoElem.find('.currentInfo').html(message);
     $infoElem.find('.currentTotal').html(this._getVariationModelCount());
     $infoElem.find('.removeItem').toggle(exists);
-  },
+  }
 
   _getVariationModelCount() {
     return this._variationsModel ? Object.keys(this._variationsModel).length : 0;
-  },
+  }
 
   _initContextModelField($form) {
     const $modelElem = $(this.CONTEXT_MODEL_SELECTOR, $form);
     if ($modelElem.length === 1) {
       this._contextModel = JSON.parse($modelElem.val());
     }
-  },
+  }
 
   _disposeContextModelField() {
     this._contextModel = null;
-  },
+  }
 
   _initErrorModelField($form) {
     const $modelElem = $(this.ERROR_SELECTOR, $form);
@@ -570,11 +564,11 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
       this._errorModel = model;
     }
-  },
+  }
 
   _disposeErrorModelField() {
     this._errorModel = null;
-  },
+  }
 
   _saveVariationsModelData($form) {
     if (this._variationsModelChanged) {
@@ -589,7 +583,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
         this._variationsModelChanged = false;
       }
     }
-  },
+  }
 
   _copyCurrentDataToVariationsModel($form) {
     const $contextElem = $(this.CONTEXT_SELECTOR, $form);
@@ -597,16 +591,16 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       $c.saveDataOfAllVisualEditors(this._formElement);
       this._copyToVariationsModel($contextElem.val());
     }
-  },
+  }
 
   isFieldsValid() {
     return !this._formHasErrors;
-  },
+  }
 
   isFieldsChanged() {
     const $changedFields = $(this._formElement).find(this.REAL_CHANGED_FIELD_SELECTOR);
     return $changedFields.length > 0;
-  },
+  }
 
   isFieldValuesChanged() {
     const $changedFields = $(this._formElement)
@@ -615,7 +609,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       .find(this.REAL_CHANGED_EXCEPT_VARMODEL_SELECTOR);
 
     return $changedFields.length > 0;
-  },
+  }
 
   addCustomButton(settings, $parent) {
     if (!settings.name && !settings.onClick && !settings.suffix && !settings.title) {
@@ -679,7 +673,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     }
 
     return undefined;
-  },
+  }
 
   addCustomLinkButton(settings, $parent) {
     if (!settings.name && !settings.onClick && !settings.suffix && !settings.title) {
@@ -760,7 +754,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     }
 
     return undefined;
-  },
+  }
 
   saveEntity(actionCode) {
     $c.saveDataOfAllVisualEditors(this._formElement);
@@ -782,7 +776,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     $form.trigger('submit');
 
     return undefined;
-  },
+  }
 
   refreshEditor(options) {
     const message = options && options.confirmMessageText
@@ -793,37 +787,37 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       const eventArgs = new Quantumart.QP8.BackendEventArgs();
       this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING, eventArgs);
     }
-  },
+  }
 
   fixEntityDataListsOverflow() {
     if (this._formElement) {
       const $form = $(this._formElement);
       $c.fixAllEntityDataListsOverflow($form);
     }
-  },
+  }
 
   fixHtaInitializing() {
     if (this._formElement) {
       const $form = $(this._formElement);
       $c._refreshAllHta($form);
     }
-  },
+  }
 
   confirmRefresh() {
     return this._confirmAction($l.EntityEditor.refreshConfirmMessage);
-  },
+  }
 
   confirmChange() {
     return this._confirmAction($l.EntityEditor.changeConfirmMessage);
-  },
+  }
 
   confirmClose() {
     return this._confirmAction($l.EntityEditor.closeConfirmMessage);
-  },
+  }
 
   _confirmAction(message) {
     return !this.isFieldsChanged() || $q.confirmMessage(message);
-  },
+  }
 
   onLoad() {
     const $form = $(this._formElement);
@@ -854,16 +848,16 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     const $wrapper = $(`#${this._documentWrapperElementId}`);
     $wrapper.scrollTop(this._formHasErrors ? 0 : +$wrapper.data('scroll_position') || 0);
     this._editorManagerComponent.onEntityEditorReady(this._documentWrapperElementId);
-  },
+  }
 
   onSelect() {
     this.fixEntityDataListsOverflow();
     this.fixHtaInitializing();
-  },
+  }
 
   _onActionExecuting(eventType, sender, eventArgs) {
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING, eventArgs);
-  },
+  }
 
   _onHtmlInputChanged(e) {
     if (!this._disableChangeTracking) {
@@ -884,7 +878,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
         contentFieldName: $field.data('content_field_name')
       });
     }
-  },
+  }
 
   _onFieldValueChanged(e, data) {
     if (!this._disableChangeTracking) {
@@ -898,7 +892,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
         }, data));
       }
     }
-  },
+  }
 
   _onBeforeSubmit() {
     const $wrapper = $(`#${this._documentWrapperElementId}`);
@@ -910,7 +904,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     const eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING, eventArgs);
     return true;
-  },
+  }
 
   _onSuccess(data) {
     let eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
@@ -918,17 +912,17 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     eventArgs.set_data(data);
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED, eventArgs);
     eventArgs = null;
-  },
+  }
 
   _onError(jqXHR) {
     $q.processGenericAjaxError(jqXHR);
     const eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR, eventArgs);
-  },
+  }
 
   _onFileUploaded(eventType, sender, eventArgs) {
     this.notify(window.EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED, eventArgs);
-  },
+  }
 
   _onChangeContext() {
     const $form = $(this._formElement);
@@ -948,7 +942,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       this._updateVariationInfo(newContextValue);
       $form.data(this.OLD_CONTEXT_DATA_KEY, newContextValue);
     }
-  },
+  }
 
   _copyToVariationsModel(contextValue) {
     if (this.isFieldValuesChanged()) {
@@ -967,7 +961,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       this._variationsModel[contextValue].FieldValues = result;
       this._variationsModelChanged = true;
     }
-  },
+  }
 
   _getActualContext(contextValue) {
     if (this._contextModel && this._variationsModel) {
@@ -997,7 +991,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     }
 
     return undefined;
-  },
+  }
 
   _restoreFromVariationsModel(contextValue) {
     this._disableChangeTracking = true;
@@ -1034,7 +1028,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       .closest('fieldset')
       .find(this.CHANGED_EXCEPT_VARMODEL_SELECTOR)
       .removeClass(window.CHANGED_FIELD_CLASS_NAME);
-  },
+  }
 
   applyContext(contextState) {
     this._contextBlockState = contextState;
@@ -1048,11 +1042,12 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
     $(this.CONTEXT_SELECTOR, this._formElement).val(result.join());
     this._onChangeContext();
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendEntityEditor.callBaseMethod(this, 'dispose');
-    this._disposeAllFieldDescriptons();
+    super.dispose();
+    $('span[data-tooltip]').qtip('destroy', true);
+
     this._disposeAllFields();
     if (this._editorManagerComponent) {
       const editorCode = this._editorCode;
@@ -1075,40 +1070,19 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
     $(`#${this._documentWrapperElementId}`).removeData();
 
-    this._validationSummaryElement = null;
-    this._formElement = null;
+    $q.dispose.call(this, [
+      '_validationSummaryElement',
+      '_formElement',
 
-    this._onActionExecutingHandler = null;
-    this._onHtmlInputChangedHandler = null;
-    this._onBeforeSubmitHandler = null;
-    this._onSuccessHandler = null;
-    this._onErrorHandler = null;
+      '_onActionExecutingHandler',
+      '_onHtmlInputChangedHandler',
+      '_onBeforeSubmitHandler',
+      '_onSuccessHandler',
+      '_onErrorHandler'
+    ]);
 
     $q.collectGarbageInIE();
   }
-};
+}
 
-Quantumart.QP8.BackendEntityEditor.registerClass('Quantumart.QP8.BackendEntityEditor', Quantumart.QP8.Observable);
-
-Quantumart.QP8.BackendEntityEditorActionEventArgs = function () {
-  Quantumart.QP8.BackendEntityEditorActionEventArgs.initializeBase(this);
-};
-
-Quantumart.QP8.BackendEntityEditorActionEventArgs.prototype = {
-  _data: null,
-
-  // eslint-disable-next-line camelcase
-  get_data() {
-    return this._data;
-  },
-
-  // eslint-disable-next-line camelcase
-  set_data(value) {
-    this._data = value;
-  }
-};
-
-Quantumart.QP8.BackendEntityEditorActionEventArgs.registerClass(
-  'Quantumart.QP8.BackendEntityEditorActionEventArgs',
-  Quantumart.QP8.BackendEventArgs
-);
+Quantumart.QP8.BackendEntityEditor = BackendEntityEditor;

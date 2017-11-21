@@ -202,6 +202,7 @@ custom.paths = {
     'Scripts/Quantumart/Mediators/ContentDefaultFilters.js',
     'Scripts/Quantumart/Editor/BackendVirtualFieldTree.js',
     'Scripts/Quantumart/Editor/BackendEntityEditor.js',
+    'Scripts/Quantumart/Editor/BackendEntityEditorActionEventArgs.js',
     'Scripts/Quantumart/Mediators/BackendNotificationProperties.js',
     'Scripts/Quantumart/Mediators/BackendTemplateObjectProperties.js',
     'Scripts/Quantumart/Mediators/BackendPagePropertiesMediator.js',
