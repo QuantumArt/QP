@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -351,110 +351,6 @@ namespace Quantumart.QP8.DAL
                     result.AppendToContentMapping(clValue, id);
                 }
             }
-        }
-
-        public class RelationSecurityPathItem
-        {
-            public RelationSecurityPathItem()
-            {
-            }
-
-            public RelationSecurityPathItem(DataRow row)
-            {
-                AttributeName = row.Field<string>("attribute_name");
-                AggAttributeName = row.Field<string>("agg_attribute_name");
-                AttributeId = (int)row.Field<decimal>("attribute_id");
-                ContentId = (int)row.Field<decimal>("content_id");
-                RelContentId = (int?)row.Field<decimal?>("rel_content_id") ?? 0;
-                LinkId = (int?)row.Field<decimal?>("link_id");
-                IsClassifier = row.Field<bool>("is_classifier");
-            }
-
-            public int ContentId { get; set; }
-
-            public int RelContentId { get; set; }
-
-            public string AttributeName { get; set; }
-
-            public string AggAttributeName { get; set; }
-
-            public int AttributeId { get; set; }
-
-            public int? LinkId { get; set; }
-
-            public int Order { get; set; }
-
-            public int JoinOrder { get; set; }
-
-            public bool IsClassifier { get; set; }
-
-            public RelationSecurityPathItem[] Extensions { get; set; }
-
-            public RelationSecurityPathItem[] Secondary { get; set; }
-        }
-
-        public class RelationSecurityInfo
-        {
-            public RelationSecurityInfo()
-            {
-                Data = new Dictionary<int, Dictionary<int, int[]>>();
-                ContentData = new Dictionary<int, int>();
-            }
-
-            private Dictionary<int, Dictionary<int, int[]>> Data { get; set; }
-
-            private Dictionary<int, int> ContentData { get; }
-
-            public IEnumerable<int> ContentIds => Data.Keys;
-
-            public Dictionary<int, int[]> GetItemMapping(int contentId)
-            {
-                Dictionary<int, int[]> result;
-                if (Data.TryGetValue(contentId, out result))
-                {
-                    return result;
-                }
-
-                throw new ApplicationException("Security mapping not exists:" + contentId);
-            }
-
-            public bool IsEmpty => Data == null;
-
-            public void AddContentInItemMapping(int contentId, Dictionary<int, int[]> initValues)
-            {
-                Data.Add(contentId, initValues);
-            }
-
-            internal void AppendToItemMapping(int contentId, int id, int[] ids)
-            {
-                if (!Data[contentId].ContainsKey(id))
-                {
-                    Data[contentId].Add(id, ids);
-                }
-                else
-                {
-                    Data[contentId][id] = Data[contentId][id].Concat(ids).ToArray();
-                }
-            }
-
-            public bool IsItemMappingExists(int contentId, int id) => Data[contentId].ContainsKey(id);
-
-            public void MakeEmpty()
-            {
-                Data = null;
-            }
-
-            public void AppendToContentMapping(int contentId, int id)
-            {
-                ContentData.Add(id, contentId);
-            }
-
-            public int[] GetContentIdsFromContentMapping()
-            {
-                return ContentData.Select(n => n.Value).Distinct().ToArray();
-            }
-
-            public Dictionary<int, int> GetContentMapping() => ContentData;
         }
     }
 }
