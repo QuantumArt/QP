@@ -18,7 +18,7 @@ module.exports = {
   },
   rules: {
     // require braces in arrow function body
-    'arrow-body-style': ['error', 'as-needed', { requireReturnForObjectLiteral: true }],
+    'arrow-body-style': ['error', 'as-needed', { requireReturnForObjectLiteral: false }],
 
     // require parens in arrow function arguments
     'arrow-parens': ['error', 'as-needed', { requireForBlockBody: false }],

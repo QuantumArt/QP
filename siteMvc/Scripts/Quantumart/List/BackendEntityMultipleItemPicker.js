@@ -40,41 +40,42 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   // eslint-disable-next-line max-statements
   initialize() {
     Quantumart.QP8.BackendEntityMultipleItemPicker.callBaseMethod(this, 'initialize');
+    const $list = $(this._listElement);
+    const countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`);
 
     let $copyButton, $pasteButton;
-    let $list = $(this._listElement);
-    const countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`);
     if (countOverflowElement.length > 0) {
       this._countOverflowElement = countOverflowElement.get(0);
     }
 
     this._fixListOverflow();
 
-    const count = this.getSelectedEntities().length;
-    const hidden = count <= 1 || this._isCountOverflow();
-    this._addCountDiv(count, false);
+    const { length: selectedEntitiesLength } = this.getSelectedEntities();
+    const hidden = selectedEntitiesLength <= 1 || this._isCountOverflow();
+    this._addCountDiv(selectedEntitiesLength, false);
     this._addGroupCheckbox(hidden);
     this._syncGroupCheckbox();
 
-    let $pickButton = this._createToolbarButton(
+    const $pickButton = this._createToolbarButton(
       `${this._listElementId}_PickButton`, $l.EntityDataList.pickLinkButtonText, 'pick'
     );
-    this._addButtonToToolbar($pickButton);
 
-    let $clearButton = this._createToolbarButton(
+    this._addButtonToToolbar($pickButton);
+    const $clearButton = this._createToolbarButton(
       `${this._listElementId}_ClearButton`, $l.EntityDataList.clearUnmarkedLinkButtonText, 'deselectAll'
     );
-    this._addButtonToToolbar($clearButton);
 
+    this._addButtonToToolbar($clearButton);
     if (this._enableCopy) {
       $copyButton = this._createToolbarButton(
         `${this._listElementId}_CopyButton`, $l.EntityDataList.copyLinkButtonText, 'copy'
       );
-      this._addButtonToToolbar($copyButton);
 
+      this._addButtonToToolbar($copyButton);
       $pasteButton = this._createToolbarButton(
         `${this._listElementId}_PasteButton`, $l.EntityDataList.pasteLinkButtonText, 'paste'
       );
+
       this._addButtonToToolbar($pasteButton);
     }
 
@@ -98,10 +99,6 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     $list.delegate('LI INPUT:checkbox', 'change', $.proxy(this._onSelectedItemChangeHandler, this));
     $list.delegate('LI A', 'click', $.proxy(this._onItemClickHandler, this));
     $list.delegate('LI A', 'mouseup', $.proxy(this._onItemClickHandler, this));
-
-    $pickButton = null;
-    $clearButton = null;
-    $list = null;
   },
 
   getListItems() {
@@ -116,9 +113,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     let result;
     if (this._isCountOverflow()) {
       const ids = $(this._countOverflowElement).val().split(',');
-      result = ids.map(id => {
-        return { Id: id, Name: '' };
-      }) || [];
+      result = ids.map(id => ({ Id: id, Name: '' })) || [];
     } else {
       const $selectedListItems = this.getSelectedListItems();
       result = $selectedListItems.map((i, item) => {
@@ -182,10 +177,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   appendEntities(entityIds) {
     if (entityIds && entityIds.length) {
-      const selectedEntities = entityIds.map(i => {
-        return { Id: i };
-      });
-
+      const selectedEntities = entityIds.map(i => ({ Id: i }));
       this._loadSelectedItems(selectedEntities);
     }
   },
@@ -193,10 +185,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   selectEntities(entityIds) {
     this.deselectAllListItems();
     if (entityIds && entityIds.length) {
-      const selectedEntities = entityIds.map(i => {
-        return { Id: i };
-      });
-
+      const selectedEntities = entityIds.map(i => ({ Id: i }));
       this._loadSelectedItems(selectedEntities);
     }
   },
@@ -277,8 +266,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   _getCheckBoxListItemHtml(html, dataItem, dataItemIndex) {
     const itemElementName = this._listItemName;
     const itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
-    const itemValue = dataItem.Value;
-    const itemText = dataItem.Text;
+    const { Text: itemText, Value: itemValue } = dataItem;
 
     html
       .cat('<li>')

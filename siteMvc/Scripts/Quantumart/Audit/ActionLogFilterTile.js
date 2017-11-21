@@ -6,7 +6,7 @@ Quantumart.QP8.ActionLogFilterTile = function (containerElement, options) {
   this._options = Object.assign({
     title: 'Undefined',
     type: 0,
-    windowSize: { w: 350, h: 125 },
+    windowSize: { width: 350, height: 125 },
     createFilter($filterContainer) {
       return new Quantumart.QP8.ActionLogFilterBase($filterContainer);
     }

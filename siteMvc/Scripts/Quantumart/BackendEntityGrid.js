@@ -429,7 +429,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
     this._gridElement = $grid.get(0);
     this._gridComponent = gridComponent;
-    this._startingEntitiesIDs = Array.clone(this._selectedEntitiesIDs);
+    this._startingEntitiesIDs = this._selectedEntitiesIDs.slice();
 
     $grid
       .unbind('dataBinding', gridComponent.onDataBinding)
@@ -746,10 +746,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       const rows = this.getRowsByEntityIds(this._selectedEntitiesIDs);
       const that = this;
 
-      selectedEntities = rows.map(row => {
-        return { Id: that.getEntityId(row), Name: that.getEntityName(row) };
-      });
-
+      selectedEntities = rows.map(row => ({ Id: that.getEntityId(row), Name: that.getEntityName(row) }));
       const notFoundIds = $.grep(this._selectedEntitiesIDs, elem => {
         for (let i = 0; i < selectedEntities.length; i++) {
           if (selectedEntities[i].Id === elem) {

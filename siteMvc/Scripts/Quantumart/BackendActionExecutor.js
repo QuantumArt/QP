@@ -1,4 +1,6 @@
+/* eslint max-lines: 'off' */
 /* eslint max-statements: 0 */
+
 window.EVENT_TYPE_BACKEND_ACTION_EXECUTED = 'OnActionExecuted';
 window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING = 0;
 window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS = 1;

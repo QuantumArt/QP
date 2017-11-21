@@ -1,3 +1,5 @@
+/* eslint max-lines: 'off' */
+
 window.DOCUMENT_HOST_TYPE_EDITING_DOCUMENT = 1;
 window.DOCUMENT_HOST_TYPE_POPUP_WINDOW = 2;
 window.EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED = 'onHostExternalCallerContextsUnbinded';
@@ -252,7 +254,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     if (eventArgs) {
       const bindedContext = eventArgs.get_externalCallerContext();
       if (bindedContext) {
-        if ($.grep(this._externalCallerContexts, c => c.hostUID === bindedContext.hostUID).length === 0) {
+        if (!$.grep(this._externalCallerContexts, ctx => ctx.hostUID === bindedContext.hostUID).length) {
           this._externalCallerContexts.push(bindedContext);
         }
       }
@@ -459,7 +461,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
     let entities = null;
     if (isMultiple) {
-      entities = this._isMultipleEntities ? Array.clone(this._entities) : selectedEntities;
+      entities = this._isMultipleEntities ? this._entities.slice() : selectedEntities;
     }
 
     const actionTypeCode = action.ActionType.Code;
@@ -493,10 +495,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
           $o.getEntityIDsFromEntities(unnamedEntities)
         );
 
-        const namedEntities = dataItems.map(item => {
-          return { Id: $q.toInt(item.Value), Name: item.Text };
-        });
-
+        const namedEntities = dataItems.map(item => ({ Id: $q.toInt(item.Value), Name: item.Text }));
         $.each(namedEntities, (index, elem) => {
           for (let i = 0; i < entities.length; i++) {
             const entity = entities[i];
@@ -576,15 +575,19 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
       let rowsData = null;
 
-      $q.postDataToUrl(this._selectedEntitiesContext.url, queryData, false, data => {
-        rowsData = data;
-      }, jqXHR => {
-        $q.processGenericAjaxError(jqXHR);
-      });
+      $q.postDataToUrl(
+        this._selectedEntitiesContext.url,
+        queryData,
+        false,
+        data => {
+          rowsData = data;
+        },
+        jqXHR => {
+          $q.processGenericAjaxError(jqXHR);
+        }
+      );
 
-      return rowsData.data.map(item => {
-        return { Id: item.CONTENT_ITEM_ID };
-      });
+      return rowsData.data.map(item => ({ Id: item.CONTENT_ITEM_ID }));
     }
 
     return entities;
@@ -600,12 +603,10 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   getSearchQuery() {
     let result = '';
-
     if (this._searchBlockComponent) {
       result = this._searchBlockComponent.getSearchQuery();
     } else {
       const state = this.loadHostState();
-
       if (!$q.isNullOrEmpty(state) && !$q.isNullOrWhiteSpace(state.searchQuery)) {
         result = state.searchQuery;
       }

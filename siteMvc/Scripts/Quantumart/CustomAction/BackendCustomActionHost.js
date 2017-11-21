@@ -40,7 +40,6 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
 
   onSelect() {
     const id = this._options.iframeElementId;
-
     $(`#${id}`).css('marginLeft', '1px');
     setTimeout(() => {
       $(`#${id}`).css('marginLeft', '0');
@@ -97,10 +96,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     eventArgs.set_actionCode(message.data.selectActionCode);
 
     if ($q.isArray(message.data.selectedEntityIDs) && !$q.isNullOrEmpty(message.data.selectedEntityIDs)) {
-      const selectedEntities = message.data.selectedEntityIDs.map(id => {
-        return { Id: id };
-      });
-
+      const selectedEntities = message.data.selectedEntityIDs.map(id => ({ Id: id }));
       if (message.data.isMultiple) {
         eventArgs.set_entities(selectedEntities);
       } else {

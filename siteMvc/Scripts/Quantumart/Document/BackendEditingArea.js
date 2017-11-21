@@ -1,3 +1,5 @@
+/* eslint max-lines: 'off' */
+
 window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADING = 'OnEditingAreaDocumentLoading';
 window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADED = 'OnEditingAreaDocumentLoaded';
 window.EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSING = 'OnEditingAreaDocumentClosing';

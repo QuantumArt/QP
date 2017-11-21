@@ -1,3 +1,5 @@
+/* eslint max-lines: 'off' */
+
 Quantumart.QP8.BackendEditingDocument = function (tabId, editingArea, eventArgs, options) {
   if (!tabId) {
     throw new Error($l.EditingArea.tabIdNotSpecifiedInConstructor);

@@ -1,3 +1,5 @@
+/* eslint max-lines: 'off' */
+
 window.EVENT_TYPE_LIBRARY_DATA_BOUND = 'OnLibraryDataBound';
 window.EVENT_TYPE_LIBRARY_ACTION_EXECUTING = 'OnLibraryActionExecuting';
 window.EVENT_TYPE_LIBRARY_ENTITY_SELECTED = 'OnLibraryEntitySelected';

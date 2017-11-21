@@ -19,11 +19,14 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
         info => {
           const newFields = info.fields.split(',');
           const newStatuses = info.statuses;
-          const vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
+          const vm = $componentElem
+            .find('.sortingItems .aggregationList')
+            .data('component')
+            ._viewModel;
 
           if (vm.fields) {
             vm.fields.removeAll();
-            newFields.forEach(v => vm.fields.push(v));
+            newFields.forEach(fv => vm.fields.push(fv));
           }
 
           $statusSelector.data('entity_data_list_component').removeAllListItems();

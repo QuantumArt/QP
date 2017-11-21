@@ -136,8 +136,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
     this._popupWindowComponent = $.telerik.window.create({
       title: $l.SearchBlock.filterSettings + this._fieldName,
       html,
-      width: wndSize.w,
-      height: wndSize.h,
+      width: wndSize.width,
+      height: wndSize.height,
       modal: true,
       resizable: false,
       draggable: true,
@@ -346,26 +346,26 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
   _getWindowSize() {
     switch (this._fieldSearchType) {
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier:
-        return { w: 365, h: 150 };
+        return { width: 365, height: 150 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Text:
-        return { w: 410, h: 150 };
+        return { width: 410, height: 150 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum:
-        return { w: 410, h: 130 };
+        return { width: 410, height: 130 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean:
-        return { w: 350, h: 100 };
+        return { width: 350, height: 100 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.DateRange:
       case Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange:
       case Quantumart.QP8.Enums.ArticleFieldSearchType.TimeRange:
       case Quantumart.QP8.Enums.ArticleFieldSearchType.DateTimeRange:
-        return { w: 350, h: 200 };
+        return { width: 350, height: 200 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.O2MRelation:
       case Quantumart.QP8.Enums.ArticleFieldSearchType.M2MRelation:
       case Quantumart.QP8.Enums.ArticleFieldSearchType.M2ORelation:
-        return { w: 510, h: 290 };
+        return { width: 510, height: 290 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Classifier:
-        return { w: 400, h: 90 };
+        return { width: 400, height: 90 };
       default:
-        return { w: 350, h: 125 };
+        return { width: 350, height: 125 };
     }
   },
 

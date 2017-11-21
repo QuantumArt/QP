@@ -46,8 +46,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
         $q.processGenericAjaxError(jqXHR);
       }
     );
+
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      let $fieldSearchBlockElement = $(this._fieldSearchBlockElement);
+      const $fieldSearchBlockElement = $(this._fieldSearchBlockElement);
       $fieldSearchBlockElement.html(serverContent);
 
       this._fieldSearchListElement = $fieldSearchBlockElement.find(`#${this._elementIdPrefix}_FieldSearchList`).get(0);
@@ -79,6 +80,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   getBlockState() {
     const rh = $.grep(
+
+      // TODO: check
       // eslint-disable-next-line no-confusing-arrow
       this._fieldSearchContainerList.map(fsc => fsc ? fsc.getBlockState() : null),
       fsc => fsc
@@ -95,21 +98,22 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     if (state) {
       const that = this;
       const $options = $('option', this._fieldsComboElement);
-      $.each(state, (index, s) => {
-        if (s.fieldID && !that._fieldSearchContainerList[s.fieldID]) {
+      $.each(state, (index, st) => {
+        if (st.fieldID && !that._fieldSearchContainerList[st.fieldID]) {
           const is = $options.is(function () {
             const $option = $(this);
-            return s.fieldID === $option.data('field_id')
-                 && s.fieldName === $option.text()
-                 && s.searchType === $option.data('search_type')
-                 && s.fieldColumn === $option.data('field_column');
+            return st.fieldID === $option.data('field_id')
+                 && st.fieldName === $option.text()
+                 && st.searchType === $option.data('search_type')
+                 && st.fieldColumn === $option.data('field_column');
           });
           if (is) {
             const newContainer = that._createFieldSearchContainerInner(
-              s.fieldID, s.contentID, s.searchType, s.fieldName, s.fieldColumn, s.fieldGroup, s.referenceFieldID
+              st.fieldID, st.contentID, st.searchType, st.fieldName, st.fieldColumn, st.fieldGroup, st.referenceFieldID
             );
-            if (s.data) {
-              newContainer.restoreBlockState(s.data);
+
+            if (st.data) {
+              newContainer.restoreBlockState(st.data);
             }
           }
         }

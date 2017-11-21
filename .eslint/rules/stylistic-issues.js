@@ -57,7 +57,7 @@ module.exports = {
     'id-blacklist': 'error',
 
     // enforce minimum and maximum identifier lengths
-    'id-length': ['warn', { exceptions: ['e', 'i'] }],
+    'id-length': ['warn', { exceptions: ['e', 'i', 'j'] }],
 
     // require identifiers to match a specified regular expression
     'id-match': 'off',

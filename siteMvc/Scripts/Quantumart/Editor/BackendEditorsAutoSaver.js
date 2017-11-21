@@ -125,7 +125,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
         if ($q.isNullOrEmpty(editorState)) {
           editorState = this._getEditorComponentState(fieldChangeInfo.documentWrapperElementId);
         } else {
-          const fieldState = $.grep(editorState.fieldValues, v => v.fieldName === fieldChangeInfo.fieldName)[0];
+          const fieldState = $.grep(editorState.fieldValues, fv => fv.fieldName === fieldChangeInfo.fieldName)[0];
 
           if (fieldState) {
             fieldState.value = fieldChangeInfo.value;
@@ -188,16 +188,14 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
     const dfr = new $.Deferred();
     if ($q.isArray(stateRecords) && !$q.isNullOrEmpty(stateRecords)) {
       const requestData = {
-        recordHeaders: JSON.stringify(stateRecords.map(rh => {
-          return {
-            RecordId: rh.recordId,
-            ActionCode: rh.actionCode,
-            EntityTypeCode: rh.entityTypeCode,
-            EntityId: rh.entityId,
-            ParentEntityId: rh.parentEntityId,
-            ModifiedTicks: rh.modifiedDateTime
-          };
-        }))
+        recordHeaders: JSON.stringify(stateRecords.map(rh => ({
+          RecordId: rh.recordId,
+          ActionCode: rh.actionCode,
+          EntityTypeCode: rh.entityTypeCode,
+          EntityId: rh.entityId,
+          ParentEntityId: rh.parentEntityId,
+          ModifiedTicks: rh.modifiedDateTime
+        })))
       };
 
       $q.getJsonFromUrl(
@@ -211,11 +209,7 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
           if ($q.isNullOrEmpty(data.approvedRecordIDs)) {
             dfr.resolve([]);
           } else {
-            dfr.resolve(
-
-              // Оставить только те записи, которые прошли проверку на сервере
-              $.grep(stateRecords, rh => data.approvedRecordIDs.indexOf(rh.recordId) > -1)
-            );
+            dfr.resolve($.grep(stateRecords, rh => data.approvedRecordIDs.indexOf(rh.recordId) > -1));
           }
         } else {
           $q.alertError(data.Text);

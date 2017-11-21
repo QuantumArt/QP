@@ -342,7 +342,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
     ) {
       if (this._isMultipleEntities) {
-        this._selectedEntities = Array.clone(this._entities);
+        this._selectedEntities = this._entities.slice();
       } else if (this._entityId && this._entityName) {
         this._selectedEntities = [{ Id: this._entityId, Name: this._entityName }];
       } else {

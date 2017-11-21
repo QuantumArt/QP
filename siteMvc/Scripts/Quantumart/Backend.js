@@ -1,3 +1,5 @@
+/* eslint max-lines: 'off' */
+
 Quantumart.QP8.Backend = function (isDebugMode, options) {
   Quantumart.QP8.Backend.initializeBase(this);
   this._isDebugMode = isDebugMode;
