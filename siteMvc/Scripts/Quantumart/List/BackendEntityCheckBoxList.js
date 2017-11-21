@@ -109,7 +109,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
   _refreshListInner(dataItems, refreshOnly) {
     const newSelectedIDs = $.grep(dataItems, di => di.Selected).map(di => $q.toInt(di.Value));
     const currentSelectedIDs = this.getSelectedEntityIDs();
-    const selectedItemsIsChanged = $q.symetricDifference(newSelectedIDs, currentSelectedIDs).length > 0;
+    const selectedItemsIsChanged = $q.symmetricDifference(newSelectedIDs, currentSelectedIDs).length > 0;
 
     const $list = $(this._listElement);
     const $ul = $list.find('UL:first');

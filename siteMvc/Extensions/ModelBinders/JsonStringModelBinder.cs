@@ -1,5 +1,6 @@
 using System;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
@@ -35,6 +36,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 
             try
             {
+                var x = JsonConvert.DeserializeObject<T>(incomingString);
+                var y = new JavaScriptSerializer().Deserialize<T>(incomingString);
+
                 return JsonConvert.DeserializeObject<T>(incomingString);
             }
             catch (Exception exp)

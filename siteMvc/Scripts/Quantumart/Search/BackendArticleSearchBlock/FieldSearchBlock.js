@@ -79,16 +79,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   },
 
   getBlockState() {
-    const rh = $.grep(
-
-      // TODO: check
-      // eslint-disable-next-line no-confusing-arrow
-      this._fieldSearchContainerList.map(fsc => fsc ? fsc.getBlockState() : null),
-      fsc => fsc
-    );
-
-    if (rh && rh.length > 0) {
-      return rh;
+    const result = Object.values(this._fieldSearchContainerList).map(fsc => fsc.getBlockState());
+    if (result && result.length > 0) {
+      return result;
     }
 
     return undefined;

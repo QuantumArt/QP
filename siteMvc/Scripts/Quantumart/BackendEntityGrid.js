@@ -954,7 +954,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       }
 
       const that = this;
-      if (rowsData) {
+      if (rowsData && rowsData.data) {
         this._selectedEntitiesIDs = rowsData.data.map(item => item[that._keyColumnName]);
       }
     }

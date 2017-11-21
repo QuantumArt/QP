@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.Contracts;
 using System.Linq;
+using QP8.Infrastructure;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 
@@ -26,14 +26,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <summary>
         /// Возвращает значение параметра filter
         /// </summary>
-        public string GetFilter(IEnumerable<ArticleSearchQueryParam> searchQueryParams, IList<SqlParameter> sqlParams)
+        public string GetFilter(IList<ArticleSearchQueryParam> searchQueryParams, IList<SqlParameter> sqlParams)
         {
-            if (searchQueryParams == null)
-            {
-                return null;
-            }
-
-            if (!searchQueryParams.Any())
+            if (searchQueryParams == null || !searchQueryParams.Any())
             {
                 return null;
             }
@@ -51,7 +46,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 ArticleFieldSearchType.O2MRelation,
                 ArticleFieldSearchType.Classifier,
                 ArticleFieldSearchType.StringEnum
-            }.Contains(p.SearchType));
+            }.Contains(p.SearchType)).ToList();
 
             // если нет обрабатываемых параметров - то возвращаем null
             if (!processedSqlParams.Any())
@@ -93,8 +88,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         private static string ParseIdentifierParam(ArticleSearchQueryParam p, ICollection<SqlParameter> sqlParams)
         {
-            Contract.Requires(p != null);
-            Contract.Requires(p.SearchType == ArticleFieldSearchType.NumericRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.Identifier);
 
             if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
@@ -170,8 +165,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return string.Format(inverse ? "({1}.[{0}] NOT IN (select id from {2}) OR {1}.[{0}] IS NULL)" : "({1}.[{0}] IN (select id from {2}))", p.FieldColumn.ToLower(), GetTableAlias(p), paramName);
             }
 
+            // ReSharper disable MergeSequentialChecks
             var numberFrom = p.QueryParams[1] is int || p.QueryParams[1] == null ? (int?)p.QueryParams[1] : (long?)p.QueryParams[1];
             var numberTo = p.QueryParams[2] is int || p.QueryParams[2] == null ? (int?)p.QueryParams[2] : (long?)p.QueryParams[2];
+
+            // ReSharper restore MergeSequentialChecks
 
             if (isByValue)
             {
@@ -194,15 +192,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             if (numberFrom.Value < numberTo.Value)
             {
-                return string.Format("({1}.[{0}] {4} BETWEEN {2} AND {3})", p.FieldColumn.ToLower(), GetTableAlias(p), numberFrom, numberTo, inverse ? "NOT" : "");
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT" : "")} BETWEEN {numberFrom} AND {numberTo})";
             }
 
-            if (numberFrom.Value > numberTo.Value)
-            {
-                return string.Format("({1}.[{0}] {4} BETWEEN {2} AND {3})", p.FieldColumn.ToLower(), GetTableAlias(p), numberTo, numberFrom, inverse ? "NOT" : "");
-            }
-
-            return string.Format(inverse ? "({1}.[{0}] <> {2})" : "({1}.[{0}] = {2})", p.FieldColumn.ToLower(), GetTableAlias(p), numberFrom);
+            return numberFrom.Value > numberTo.Value
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT" : "")} BETWEEN {numberTo} AND {numberFrom})"
+                : string.Format(inverse ? "({1}.[{0}] <> {2})" : "({1}.[{0}] = {2})", p.FieldColumn.ToLower(), GetTableAlias(p), numberFrom);
         }
 
         /// <summary>
@@ -210,8 +205,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// </summary>
         private static string ParseTextParam(ArticleSearchQueryParam p)
         {
-            Contract.Requires(p != null);
-            Contract.Requires(p.SearchType == ArticleFieldSearchType.Text);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.Text);
 
             if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
@@ -262,21 +257,18 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var value = Cleaner.ToSafeSqlLikeCondition(((string)p.QueryParams[1]).Trim());
             if (exactMatch)
             {
-                return string.Format("({2}.[{0}] {3} '{1}')", p.FieldColumn.ToLower(), value, GetTableAlias(p), inverse ? "<> " : "=");
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<> " : "=")} '{value}')";
             }
 
-            if (startFromBegin)
-            {
-                return string.Format("({1}.[{0}] LIKE '{2}')", p.FieldColumn.ToLower(), GetTableAlias(p), inverse ? "%" + value : value + "%");
-            }
-
-            return string.Format("({2}.[{0}] {3}LIKE '%{1}%')", p.FieldColumn.ToLower(), value, GetTableAlias(p), inverse ? "NOT " : "");
+            return startFromBegin
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] LIKE '{(inverse ? "%" + value : value + "%")}')"
+                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}LIKE '%{value}%')";
         }
 
         private static string ParseDateRangeParam(ArticleSearchQueryParam p)
         {
-            Contract.Requires(p != null);
-            Contract.Requires(p.SearchType == ArticleFieldSearchType.DateRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.DateRange);
 
             if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
@@ -386,6 +378,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
 
             // From < To
+            // ReSharper disable PossibleInvalidOperationException
             if (dateFrom.Value.Date < dateTo.Value.Date)
             {
                 Converter.TryConvertToSqlDateString(dateFromString, null, out sqlDateFromString, out dateFrom);
@@ -393,6 +386,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
                 return string.Format("({1}.[{0}] BETWEEN '{2}' AND '{3}')", p.FieldColumn.ToLower(), GetTableAlias(p), sqlDateFromString, sqlDateToString);
             }
+
+            // ReSharper restore PossibleInvalidOperationException
 
             Converter.TryConvertToSqlDateString(dateFromString, new TimeSpan(23, 59, 59), out sqlDateFromString, out dateFrom);
             Converter.TryConvertToSqlDateString(dateToString, null, out sqlDateToString, out dateTo);
@@ -402,8 +397,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         private static string ParseDateTimeRangeParam(ArticleSearchQueryParam p)
         {
-            Contract.Requires(p != null);
-            Contract.Requires(p.SearchType == ArticleFieldSearchType.DateTimeRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.DateTimeRange);
 
             if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
@@ -509,18 +504,18 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
 
             // From < To
-            if (datetimeFrom.Value < datetimeTo.Value)
-            {
-                return string.Format("({1}.[{0}] BETWEEN '{2}' AND '{3}')", p.FieldColumn.ToLower(), GetTableAlias(p), sqlDateTimeFromString, sqlDateTimeToString);
-            }
+            // ReSharper disable PossibleInvalidOperationException
+            return datetimeFrom.Value < datetimeTo.Value
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateTimeFromString}' AND '{sqlDateTimeToString}')"
+                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateTimeToString}' AND '{sqlDateTimeFromString}')";
 
-            return string.Format("({1}.[{0}] BETWEEN '{2}' AND '{3}')", p.FieldColumn.ToLower(), GetTableAlias(p), sqlDateTimeToString, sqlDateTimeFromString);
+            // ReSharper restore PossibleInvalidOperationException
         }
 
         private static string ParseTimeRangeParam(ArticleSearchQueryParam p)
         {
-            Contract.Requires(p != null);
-            Contract.Requires(p.SearchType == ArticleFieldSearchType.TimeRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.TimeRange);
 
             if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
@@ -562,7 +557,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var timeToString = (string)p.QueryParams[2];
             var isByValue = (bool)p.QueryParams[3];
 
-            string sqlTimeFromString;
             TimeSpan? timeFrom = null;
             TimeSpan? timeTo = null;
 
@@ -579,12 +573,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     return null;
                 }
 
-                if (!Converter.TryConvertToSqlTimeString(timeFromString, out sqlTimeFromString, out timeFrom))
+                if (!Converter.TryConvertToSqlTimeString(timeFromString, out _, out timeFrom))
                 {
                     throw new FormatException("time From");
                 }
 
-                return string.Format("([dbo].[qp_abs_time_seconds]({1}.[{0}]) = {2})", p.FieldColumn.ToLower(), GetTableAlias(p), timeFrom.Value.TotalSeconds);
+                // ReSharper disable once PossibleInvalidOperationException
+                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) = {timeFrom.Value.TotalSeconds})";
             }
 
             // если обе даты пустые - то возвращаем null
@@ -595,14 +590,15 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             if (!string.IsNullOrWhiteSpace(timeFromString))
             {
-                if (!Converter.TryConvertToSqlTimeString(timeFromString, out sqlTimeFromString, out timeFrom))
+                if (!Converter.TryConvertToSqlTimeString(timeFromString, out _, out timeFrom))
                 {
                     throw new FormatException("time From");
                 }
             }
+
             if (!string.IsNullOrWhiteSpace(timeToString))
             {
-                if (!Converter.TryConvertToSqlTimeString(timeToString, out var sqlTimeToString, out timeTo))
+                if (!Converter.TryConvertToSqlTimeString(timeToString, out var _, out timeTo))
                 {
                     throw new FormatException("time To");
                 }
@@ -611,34 +607,36 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             // дата "до" пустая а "от" не пустая
             if (!string.IsNullOrWhiteSpace(timeFromString) && string.IsNullOrWhiteSpace(timeToString))
             {
-                return string.Format("([dbo].[qp_abs_time_seconds]({1}.[{0}]) >= {2})", p.FieldColumn.ToLower(), GetTableAlias(p), timeFrom.Value.TotalSeconds);
+                // ReSharper disable once PossibleInvalidOperationException
+                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) >= {timeFrom.Value.TotalSeconds})";
             }
 
             // дата "от" пустая а "до" не пустая
             if (string.IsNullOrWhiteSpace(timeFromString) && !string.IsNullOrWhiteSpace(timeToString))
             {
-                return string.Format("([dbo].[qp_abs_time_seconds]({1}.[{0}]) <= {2})", p.FieldColumn.ToLower(), GetTableAlias(p), timeTo.Value.TotalSeconds);
+                // ReSharper disable once PossibleInvalidOperationException
+                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) <= {timeTo.Value.TotalSeconds})";
             }
 
             // обе границы диапазона не пустые
             // From < To
+            // ReSharper disable PossibleInvalidOperationException
             if (timeFrom.Value < timeTo.Value)
             {
-                return string.Format("([dbo].[qp_abs_time_seconds]({1}.[{0}]) BETWEEN {2} AND {3})", p.FieldColumn.ToLower(), GetTableAlias(p), timeFrom.Value.TotalSeconds, timeTo.Value.TotalSeconds);
+                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) BETWEEN {timeFrom.Value.TotalSeconds} AND {timeTo.Value.TotalSeconds})";
             }
 
-            if (timeFrom.Value > timeTo.Value)
-            {
-                return string.Format("([dbo].[qp_abs_time_seconds]({1}.[{0}]) BETWEEN {2} AND {3})", p.FieldColumn.ToLower(), GetTableAlias(p), timeTo.Value.TotalSeconds, timeFrom.Value.TotalSeconds);
-            }
+            // ReSharper restore PossibleInvalidOperationException
 
-            return string.Format("([dbo].[qp_abs_time_seconds]({1}.[{0}]) = {2})", p.FieldColumn.ToLower(), GetTableAlias(p), timeFrom.Value.TotalSeconds);
+            return timeFrom.Value > timeTo.Value
+                ? $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) BETWEEN {timeTo.Value.TotalSeconds} AND {timeFrom.Value.TotalSeconds})"
+                : $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) = {timeFrom.Value.TotalSeconds})";
         }
 
         private static string ParseNumericRangeParam(ArticleSearchQueryParam p)
         {
-            Contract.Requires(p != null);
-            Contract.Requires(p.SearchType == ArticleFieldSearchType.NumericRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.NumericRange);
 
             if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
@@ -688,8 +686,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return string.Format("({1}.[{0}] IS {2}NULL)", p.FieldColumn.ToLower(), GetTableAlias(p), inverse ? "NOT " : "");
             }
 
+            // ReSharper disable MergeSequentialChecks
             var numberFrom = p.QueryParams[1] is int || p.QueryParams[1] == null ? (int?)p.QueryParams[1] : (long?)p.QueryParams[1];
             var numberTo = p.QueryParams[2] is int || p.QueryParams[2] == null ? (int?)p.QueryParams[2] : (long?)p.QueryParams[2];
+
+            // ReSharper restore MergeSequentialChecks
 
             if (isByValue)
             {
@@ -703,30 +704,27 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             if (numberFrom.HasValue && !numberTo.HasValue)
             {
-                return string.Format("({1}.[{0}] {3} {2})", p.FieldColumn.ToLower(), GetTableAlias(p), numberFrom, inverse ? "<" : ">=");
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<" : ">=")} {numberFrom})";
             }
             if (!numberFrom.HasValue)
             {
-                return string.Format("({1}.[{0}] {3} {2})", p.FieldColumn.ToLower(), GetTableAlias(p), numberTo, inverse ? ">" : "<=");
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? ">" : "<=")} {numberTo})";
             }
 
             if (numberFrom.Value < numberTo.Value)
             {
-                return string.Format("({1}.[{0}] {4}BETWEEN {2} AND {3})", p.FieldColumn.ToLower(), GetTableAlias(p), numberFrom, numberTo, inverse ? "NOT " : "");
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}BETWEEN {numberFrom} AND {numberTo})";
             }
 
-            if (numberFrom.Value > numberTo.Value)
-            {
-                return string.Format("({1}.[{0}] {4}BETWEEN {2} AND {3})", p.FieldColumn.ToLower(), GetTableAlias(p), numberTo, numberFrom, inverse ? "NOT " : "");
-            }
-
-            return string.Format("({1}.[{0}] {3} {2})", p.FieldColumn.ToLower(), GetTableAlias(p), numberFrom, inverse ? "<>" : "=");
+            return numberFrom.Value > numberTo.Value
+                ? string.Format($"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}BETWEEN {numberTo} AND {numberFrom})")
+                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<>" : "=")} {numberFrom})";
         }
 
         private static string ParseO2MRelationParam(ArticleSearchQueryParam p, ICollection<SqlParameter> sqlParams)
         {
-            Contract.Requires(p != null);
-            Contract.Requires(p.SearchType == ArticleFieldSearchType.O2MRelation || p.SearchType == ArticleFieldSearchType.Classifier);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.O2MRelation || p.SearchType == ArticleFieldSearchType.Classifier);
 
             if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
@@ -759,7 +757,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var isNull = (bool)p.QueryParams[1];
             var inverse = (bool)p.QueryParams[2];
 
-            var inverseString = inverse ? "NOT" : "";
+            var inverseString = inverse ? "NOT" : string.Empty;
 
             if (isNull)
             {
@@ -773,7 +771,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
 
             var values = ((object[])p.QueryParams[0]).Select(n => int.Parse(n.ToString())).ToArray();
-            var fieldId = p.FieldID ?? "";
+            var fieldId = p.FieldID ?? string.Empty;
             var paramName = "@field" + fieldId.Replace("-", "_");
 
             if (values.Length == 1)
@@ -788,8 +786,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         private static string ParseBooleanParam(ArticleSearchQueryParam p)
         {
-            Contract.Requires(p != null);
-            Contract.Requires(p.SearchType == ArticleFieldSearchType.Boolean);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.Boolean);
 
             if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
@@ -814,16 +812,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 throw new InvalidCastException();
             }
 
-            var isNull = (bool)p.QueryParams[0];
-
-            if (isNull)
-            {
-                return string.Format("({1}.[{0}] IS NULL)", p.FieldColumn.ToLower(), GetTableAlias(p));
-            }
-
-            var value = (bool)p.QueryParams[1];
-            return string.Format("({1}.[{0}] = {2})", p.FieldColumn.ToLower(), GetTableAlias(p), value ? 1 : 0);
-
+            return (bool)p.QueryParams[0]
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)"
+                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] = {((bool)p.QueryParams[1] ? 1 : 0)})";
         }
 
         private static string GetTableAlias(ArticleSearchQueryParam p)
@@ -833,12 +824,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return ContentTableAlias;
             }
 
-            if (string.IsNullOrEmpty(p.ReferenceFieldID))
-            {
-                return ContentTableAlias + "_" + p.ContentID;
-            }
-
-            return ContentTableAlias + "_" + p.ContentID + "_" + p.ReferenceFieldID;
+            return string.IsNullOrEmpty(p.ReferenceFieldID)
+                ? ContentTableAlias + "_" + p.ContentID
+                : ContentTableAlias + "_" + p.ContentID + "_" + p.ReferenceFieldID;
         }
     }
 }
