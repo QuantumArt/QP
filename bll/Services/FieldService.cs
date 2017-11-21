@@ -214,7 +214,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static IEnumerable<ListItem> GetAggregetableContentsForClassifier(Field classifier) => classifier.IsNew
             ? Enumerable.Empty<ListItem>()
-            : FieldRepository.GetAggregatableContentListItemsForClassifier(classifier);
+            : FieldRepository.GetAggregatableContentListItemsForClassifier(classifier, permissionLevel: PermissionLevel.List);
 
         public static IEnumerable<ListItem> GetFieldsForTreeOrder(int contentId, int id)
         {
