@@ -1,4 +1,5 @@
 using System.Data;
+using System.Linq;
 
 namespace Quantumart.QP8.DAL
 {
@@ -6,9 +7,11 @@ namespace Quantumart.QP8.DAL
     {
         public RelationSecurityPathItem()
         {
+            Extensions = new RelationSecurityPathItem[] { };
+            Secondary = new RelationSecurityPathItem[] { };
         }
 
-        public RelationSecurityPathItem(DataRow row)
+        public RelationSecurityPathItem(DataRow row) : this()
         {
             AttributeName = row.Field<string>("attribute_name");
             AggAttributeName = row.Field<string>("agg_attribute_name");
@@ -40,5 +43,13 @@ namespace Quantumart.QP8.DAL
         public RelationSecurityPathItem[] Extensions { get; set; }
 
         public RelationSecurityPathItem[] Secondary { get; set; }
+
+        public RelationSecurityPathItem Clone()
+        {
+            var result = (RelationSecurityPathItem)MemberwiseClone();
+            result.Extensions = Extensions.Select(n => (RelationSecurityPathItem)n.MemberwiseClone()).ToArray();
+            result.Secondary = Secondary.Select(n => (RelationSecurityPathItem)n.MemberwiseClone()).ToArray();
+            return result;
+        }
     }
 }

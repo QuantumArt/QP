@@ -36,73 +36,98 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static List<RelationSecurityPathItem> FindRelationSecurityPath(List<DataRow> pathRows, int contentId)
+        public class RelationSecurityPathFinder
         {
-            var result = new List<RelationSecurityPathItem>();
-
-            var currentContentId = contentId;
-
-            var oldI = 0;
-            var i = 1;
-
-            while (true)
+            public RelationSecurityPathFinder(List<DataRow> pathRows, int contentId, List<RelationSecurityPathItem> pathToCopy = null)
             {
-                var nextRows = pathRows
-                    .Where(n => (int)n.Field<decimal>("path_content_id") == currentContentId)
-                    .OrderBy(n => (int)n.Field<decimal>("attribute_id"))
-                    .ToArray();
-                if (!nextRows.Any())
-                {
-                    break;
-                }
+                PathRows = pathRows;
+                OldIndex = 0;
+                Index = 1;
+                CurrentContentId = contentId;
+                CurrentPath = pathToCopy?.Select(n => n.Clone()).ToList() ?? new List<RelationSecurityPathItem>();
+                ExtraFinders = new List<RelationSecurityPathFinder>();
+            }
 
-                if (nextRows.Any(n => n.Field<bool>("is_ext")))
+            public List<DataRow> PathRows { get; set; }
+
+            public int CurrentContentId { get; set; }
+
+            public int CurrentRelatedContentId { get; set; }
+
+            public int OldIndex { get; set; }
+
+            public int Index { get; set; }
+
+            public List<RelationSecurityPathItem> CurrentPath { get; }
+
+            public List<RelationSecurityPathFinder> ExtraFinders { get; private set; }
+
+            public void Compute()
+            {
+                while (true)
                 {
-                    if (!nextRows.All(n => n.Field<bool>("is_ext")))
+                    var nextRows = PathRows
+                        .Where(n => (int)n.Field<decimal>("path_content_id") == CurrentContentId
+                            && (CurrentRelatedContentId == 0 || (int?)n.Field<decimal?>("rel_content_id") == CurrentRelatedContentId))
+                        .OrderBy(n => (int)n.Field<decimal>("attribute_id"))
+                        .ToArray();
+                    if (!nextRows.Any())
                     {
-                        throw new Exception("Incorrect relation security settings: mixed extensions and normal");
+                        break;
                     }
 
-                    var nextIds = nextRows.Select(n => (int)n.Field<decimal>("rel_content_id")).Distinct();
-                    if (nextIds.Count() > 1)
+                    if (nextRows.Any(n => n.Field<bool>("is_ext")))
                     {
-                        throw new Exception("Incorrect relation security settings: extensions targets different contents");
-                    }
+                        if (!nextRows.All(n => n.Field<bool>("is_ext")))
+                        {
+                            throw new Exception("Incorrect relation security settings: mixed extensions and normal");
+                        }
 
-                    var param = new RelationSecurityPathItem
-                    {
-                        ContentId = (int)nextRows.First().Field<decimal>("path_content_id"),
-                        Extensions = nextRows.Select((n, k) => new RelationSecurityPathItem(n) { Order = i + k + 1, JoinOrder = oldI }).ToArray(),
-                        Order = i,
-                        JoinOrder = oldI
-                    };
+                        var nextIds = nextRows.Select(n => (int)n.Field<decimal>("rel_content_id")).Distinct().OrderBy(n => n).ToArray();
+                        if (nextIds.Length > 1)
+                        {
+                            nextRows = nextRows.Where(n => (int)n.Field<decimal>("rel_content_id") == nextIds[0]).ToArray();
+                        }
+                        
+                        ExtraFinders = nextIds.Skip(1).Select(n => new RelationSecurityPathFinder(PathRows, CurrentContentId, CurrentPath) { CurrentRelatedContentId = n}).ToList();
 
-                    oldI = i;
-                    i = i + 1 + param.Extensions.Length;
-                    result.Add(param);
-                }
-                else
-                {
-                    var param = new RelationSecurityPathItem(nextRows.First()) { Order = i, JoinOrder = oldI };
-                    oldI = i;
-                    i++;
+                        var param = new RelationSecurityPathItem
+                        {
+                            ContentId = (int)nextRows.First().Field<decimal>("path_content_id"),
+                            Extensions = nextRows.Select((n, k) => new RelationSecurityPathItem(n) { Order = Index + k + 1, JoinOrder = OldIndex }).ToArray(),
+                            Order = Index,
+                            JoinOrder = OldIndex
+                        };
 
-                    if (nextRows.Length > 1)
-                    {
-                        param.Secondary = nextRows.Skip(1).Select((n, j) => new RelationSecurityPathItem(n) { Order = i + j + 1, JoinOrder = param.JoinOrder }).ToArray();
-                        i = i + param.Secondary.Length;
+                        OldIndex = Index;
+                        Index = Index + 1 + param.Extensions.Length;
+                        CurrentPath.Add(param);
                     }
                     else
                     {
-                        param.Secondary = new RelationSecurityPathItem[] { };
+                        var param = new RelationSecurityPathItem(nextRows.First()) { Order = Index, JoinOrder = OldIndex };
+                        OldIndex = Index;
+                        Index++;
+
+                        if (nextRows.Length > 1)
+                        {
+                            param.Secondary = nextRows.Skip(1).Select((n, j) => new RelationSecurityPathItem(n) { Order = Index + j + 1, JoinOrder = param.JoinOrder }).ToArray();
+                            Index = Index + param.Secondary.Length;
+                        }
+                        else
+                        {
+                            param.Secondary = new RelationSecurityPathItem[] { };
+                        }
+                        CurrentPath.Add(param);
                     }
-                    result.Add(param);
+
+                    CurrentContentId = nextRows.Select(n => (int)(n.Field<decimal?>("rel_content_id") ?? 0)).First();
+                    CurrentRelatedContentId = 0;
                 }
 
-                currentContentId = nextRows.Select(n => (int)(n.Field<decimal?>("rel_content_id") ?? 0)).First();
+
             }
 
-            return result;
         }
 
         public static Dictionary<int, bool> CheckArticleSecurity(SqlConnection sqlConnection, int contentId, int[] testIds,
@@ -173,7 +198,7 @@ namespace Quantumart.QP8.DAL
                         throw new ApplicationException("Invalid security path settings: m2m");
                     }
 
-                    if (item.Secondary != null && item.Secondary.Any())
+                    if (item.Secondary.Any())
                     {
                         throw new ApplicationException("Invalid security path settings: secondary");
                     }
@@ -181,7 +206,7 @@ namespace Quantumart.QP8.DAL
 
                 if (!item.LinkId.HasValue)
                 {
-                    if (item.Extensions != null && item.Extensions.Any())
+                    if (item.Extensions.Any())
                     {
                         var first = item.Extensions.First();
                         var inner = string.Join("union all " + Environment.NewLine,
@@ -271,49 +296,63 @@ namespace Quantumart.QP8.DAL
         {
             var result = new RelationSecurityInfo();
             var pathRows = GetRelationSecurityFields(dbConnection);
-            var securityPath = FindRelationSecurityPath(pathRows.ToList(), contentId);
-            if (securityPath.Count <= 0)
-            {
-                var isEndNode = pathRows.Any(n => (int)(n.Field<decimal?>("rel_content_id") ?? 0) == contentId);
-                if (!isEndNode)
-                {
-                    result.MakeEmpty();
-                }
-                else
-                {
-                    result.AddContentInItemMapping(contentId, ids.ToDictionary(n => n, m => Enumerable.Repeat(m, 1).ToArray()));
-                }
 
-                return result;
+            var securityPathes = new List<List<RelationSecurityPathItem>>();
+            var finder = new RelationSecurityPathFinder(pathRows.ToList(), contentId);
+            finder.Compute();
+            securityPathes.Add(finder.CurrentPath);
+            foreach (var extra in finder.ExtraFinders)
+            {
+                extra.Compute();
+                securityPathes.Add(extra.CurrentPath);
             }
 
-            var lastItem = securityPath.Last();
-            var lastItemWithSecondary = Enumerable.Repeat(lastItem, 1).Concat(lastItem.Secondary).ToList();
-            var contentIds = lastItemWithSecondary.Where(n => !n.IsClassifier).Select(n => n.RelContentId).ToArray();
-            var attNames = lastItemWithSecondary.Where(n => n.IsClassifier).Select(n => n.AttributeName).ToArray();
-            foreach (var item in contentIds)
+            foreach (var securityPath in securityPathes)
             {
-                result.AddContentInItemMapping(item, new Dictionary<int, int[]>());
-            }
-
-            var sql = GetSecurityPathSql(securityPath, contentId);
-            using (var cmd = SqlCommandFactory.Create(sql, dbConnection))
-            {
-                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured)
+                if (securityPath.Count <= 0)
                 {
-                    TypeName = "Ids",
-                    Value = Common.IdsToDataTable(ids)
-                });
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
+                    var isEndNode = finder.PathRows.Any(n => (int)(n.Field<decimal?>("rel_content_id") ?? 0) == contentId);
+                    if (!isEndNode)
                     {
-                        ProcessSecurityPathSqlReader(reader, contentIds, attNames, result);
+                        result.MakeEmpty();
+                    }
+                    else
+                    {
+                        result.AddContentInItemMapping(contentId, ids.ToDictionary(n => n, m => Enumerable.Repeat(m, 1).ToArray()));
+                    }
+
+                    return result;
+                }
+
+                var lastItem = securityPath.Last();
+                var lastItemWithSecondary = Enumerable.Repeat(lastItem, 1).Concat(lastItem.Secondary).ToList();
+                var contentIds = lastItemWithSecondary.Where(n => !n.IsClassifier).Select(n => n.RelContentId).ToArray();
+                var attNames = lastItemWithSecondary.Where(n => n.IsClassifier).Select(n => n.AttributeName).ToArray();
+                foreach (var item in contentIds)
+                {
+                    result.AddContentInItemMapping(item, new Dictionary<int, int[]>());
+                }
+
+                var sql = GetSecurityPathSql(securityPath, contentId);
+                using (var cmd = SqlCommandFactory.Create(sql, dbConnection))
+                {
+                    cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured)
+                    {
+                        TypeName = "Ids",
+                        Value = Common.IdsToDataTable(ids)
+                    });
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ProcessSecurityPathSqlReader(reader, contentIds, attNames, result);
+                        }
                     }
                 }
+
+                AppendNotFound(ids, contentIds, result);
             }
 
-            AppendNotFound(ids, contentIds, result);
             return result;
         }
 

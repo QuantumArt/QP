@@ -1104,8 +1104,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     var granted = CommonSecurity.CheckArticleSecurity(scope.DbConnection, currentContentId, currentIds, QPContext.CurrentUserId, startLevel);
                     foreach (var t in currentMapping)
                     {
-                        var flag = t.Value != null && t.Value.All(n => granted[n]);
-                        partResult[t.Key] = partResult.ContainsKey(t.Key) ? partResult[t.Key] && flag : flag;
+                        if (t.Value != null)
+                        {
+                            var flag = t.Value.All(n => granted[n]);
+                            partResult[t.Key] = partResult.ContainsKey(t.Key) ? partResult[t.Key] && flag : flag;
+                        }
                     }
                 }
 

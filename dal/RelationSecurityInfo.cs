@@ -57,7 +57,10 @@ namespace Quantumart.QP8.DAL
 
         public void AppendToContentMapping(int contentId, int id)
         {
-            ContentData.Add(id, contentId);
+            if (!ContentData.ContainsKey(id))
+            {
+                ContentData.Add(id, contentId);
+            }
         }
 
         public int[] GetContentIdsFromContentMapping()
