@@ -247,13 +247,21 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.VersionText(id, resultValue);
         }
 
-        internal static MvcHtmlString VersionDateTime(this HtmlHelper source, string id, string value, string valueToMerge, ArticleViewType viewType)
-        {
-            var resultValue = viewType == ArticleViewType.PreviewVersion ? source.FormatAsDateTime(value) : ArticleVersion.Merge(source.FormatAsDateTime(value), source.FormatAsDateTime(valueToMerge));
-            return source.VersionText(id, resultValue);
-        }
+        internal static MvcHtmlString VersionDateTime(
+            this HtmlHelper source,
+            string id,
+            string value,
+            string valueToMerge,
+            ArticleViewType viewType
+        ) => source.VersionText(
+            id,
+            viewType == ArticleViewType.PreviewVersion
+                ? source.FormatAsDateTime(value)
+                : ArticleVersion.Merge(source.FormatAsDateTime(value), source.FormatAsDateTime(valueToMerge))
+        );
 
-        public static string UniqueId(this HtmlHelper html, string id, int index = -1) => UniqueId(id, html.ViewContext.RouteData.Values[SpecialKeys.TabId], index);
+        public static string UniqueId(this HtmlHelper html, string id, int index = -1) =>
+            UniqueId(id, html.ViewContext.RouteData.Values[SpecialKeys.TabId], index);
 
         public static string UniqueId(string id, object tabId, int index = -1)
         {
@@ -355,248 +363,233 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return $"<div class=\"articleWrapper_{extensionContentId}\">{html.AggregatedFieldValues(aggregatedArticle?.FieldValues.Where(n => !n.Field.Aggregated))}</div>"; // check;
         }
 
-        public static MvcHtmlString DisplayField(this HtmlHelper html, string id, string title, object value) => MvcHtmlString.Create(string.Format(html.FieldTemplate(id, title), html.Span(html.UniqueId(id), value)));
+        public static MvcHtmlString DisplayField(this HtmlHelper html, string id, string title, object value) =>
+            MvcHtmlString.Create(string.Format(html.FieldTemplate(id, title), html.Span(html.UniqueId(id), value)));
 
-        public static ModelMetadata GetMetaData<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression) => ModelMetadata.FromLambdaExpression(expression, html.ViewData);
+        public static ModelMetadata GetMetaData<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression) =>
+            ModelMetadata.FromLambdaExpression(expression, html.ViewData);
 
-        public static MvcHtmlString HtmlFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Func<TModel, object> content)
-        {
-            var data = html.GetMetaData(expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    content(html.ViewData.Model)
-                )
-            );
-        }
+        public static MvcHtmlString HtmlFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            Func<TModel, object> content
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), html.GetMetaData(expression).DisplayName),
+            content(html.ViewData.Model)
+        ));
 
-        public static MvcHtmlString TextBoxField<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, string defaultValue, Dictionary<string, object> htmlAttributes = null)
+        public static MvcHtmlString TextBoxField<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            string defaultValue,
+            Dictionary<string, object> htmlAttributes = null)
         {
             var fieldName = ExpressionHelper.GetExpressionText(expression);
-            var data = html.GetMetaData(expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(fieldName, data.DisplayName, false, HtmlHelpersExtensions.GetExampleText(data.ContainerType, data.PropertyName)),
-                    html.QpTextBox(fieldName, defaultValue, htmlAttributes).ToHtmlString()
-                )
-            );
+            var metaData = html.GetMetaData(expression);
+            return MvcHtmlString.Create(string.Format(
+                html.FieldTemplate(fieldName, metaData.DisplayName, false, HtmlHelpersExtensions.GetExampleText(metaData.ContainerType, metaData.PropertyName)),
+                html.QpTextBox(fieldName, defaultValue, htmlAttributes).ToHtmlString()
+            ));
         }
 
-        public static MvcHtmlString TextBoxField<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, string defaultValue, bool forceReadonly)
+        public static MvcHtmlString TextBoxField<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            string defaultValue,
+            bool forceReadonly)
         {
             var htmlAttributes = forceReadonly ? new Dictionary<string, object> { { "readonly", "readonly" } } : null;
             return html.TextBoxField(expression, defaultValue, htmlAttributes);
         }
 
-        public static MvcHtmlString TextBoxFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
+        public static MvcHtmlString TextBoxFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            Dictionary<string, object> htmlAttributes = null)
         {
-            var data = html.GetMetaData(expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName, false, HtmlHelpersExtensions.GetExampleText(data.ContainerType, data.PropertyName)),
-                    html.QpTextBoxFor(expression, htmlAttributes).ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString TextAreaFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = html.GetMetaData(expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.QpTextAreaFor(expression, htmlAttributes).ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString VisualEditorFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Field field)
-        {
-            var data = html.GetMetaData(expression);
-            var result = MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.VisualEditorFor(expression, field).ToHtmlString()
-                )
-            );
-
-            return result;
-        }
-
-        public static MvcHtmlString DateTimeFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.DateTimeFor(expression).ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString DateFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.DateFor(expression).ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString TimeFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.TimeFor(expression).ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString DisplayFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.DisplayFor(expression).ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString DisplayFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, string templateName)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.DisplayFor(expression, templateName).ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString SelectFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, SelectOptions options) => html.SelectFieldFor(expression, list, null, options);
-
-        public static MvcHtmlString SelectFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, Dictionary<string, object> htmlAttributes = null, SelectOptions options = null, bool required = false)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName, required: required),
-                    html.QpDropDownListFor(
-                        expression, list,
-                        htmlAttributes,
-                        options ?? new SelectOptions()
-                    ).ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString CheckBoxFieldFor<TModel>(this HtmlHelper<TModel> html, Expression<Func<TModel, bool>> expression, string toggleId = null, bool reverseToggle = false, Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = html.GetMetaData(expression);
-
-            var result = new StringBuilder(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName, true),
-                    html.QpCheckBoxFor(expression, toggleId, reverseToggle, htmlAttributes).ToHtmlString()
-                )
-            );
-
-            return MvcHtmlString.Create(result.ToString());
-        }
-
-        public static MvcHtmlString RadioFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection = RepeatDirection.Horizontal, EntityDataListArgs entityDataListArgs = null, ControlOptions options = null)
-        {
-            var data = GetMetaData(html, expression);
-
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.QpRadioButtonListFor(expression, list, repeatDirection, entityDataListArgs, options)
-                )
-            );
-        }
-
-        public static MvcHtmlString PasswordFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.PasswordFor(expression, html.QpHtmlProperties(expression, EditorType.Password))
-                )
-            );
-        }
-
-        public static MvcHtmlString NumericFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, double? minValue = null, double? maxValue = null, int decimalDigits = 0, Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.NumericFor(expression, decimalDigits, minValue, maxValue, htmlAttributes)
-                )
-            );
-        }
-
-        public static MvcHtmlString FileForFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Field field, Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.FileFor(expression, field, htmlAttributes)
-                )
-            );
-        }
-
-        public static MvcHtmlString SingleItemPickerFieldFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, QPSelectListItem selected, EntityDataListArgs entityDataListArgs, ControlOptions options)
-        {
-            var data = GetMetaData(source, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    source.SingleItemPickerFor(expression, selected, entityDataListArgs, options)
-                )
-            );
-        }
-
-        public static MvcHtmlString AggregationListFieldFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<TValue>>> expression, IEnumerable<TValue> list, string bindings, Dictionary<string, string> additionalData = null)
-        {
-            var data = GetMetaData(source, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    source.AggregationListFor(ExpressionHelper.GetExpressionText(expression), list, bindings, additionalData)
-                )
-            );
-        }
-
-        public static MvcHtmlString VersionTextFieldFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, TValue text)
-        {
-            var data = GetMetaData(source, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    source.VersionTextFor(ExpressionHelper.GetExpressionText(expression), text.ToString())
-                )
-            );
-        }
-
-        public static MvcHtmlString VersionAreaFieldFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, TValue text)
-        {
-            var data = GetMetaData(source, expression);
+            var metaData = html.GetMetaData(expression);
             return MvcHtmlString.Create(string.Format(
-                source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                source.VersionAreaFor(ExpressionHelper.GetExpressionText(expression), text.ToString())
+                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), metaData.DisplayName, false, HtmlHelpersExtensions.GetExampleText(metaData.ContainerType, metaData.PropertyName)),
+                html.QpTextBoxFor(expression, htmlAttributes).ToHtmlString()
             ));
         }
 
-        public static MvcHtmlString WorkflowFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<TValue>>> expression, IEnumerable<TValue> list) => source.WorkflowFor(ExpressionHelper.GetExpressionText(expression), list);
+        public static MvcHtmlString TextAreaFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            Dictionary<string, object> htmlAttributes = null
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), html.GetMetaData(expression).DisplayName),
+            html.QpTextAreaFor(expression, htmlAttributes).ToHtmlString()
+        ));
+
+        public static MvcHtmlString VisualEditorFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            Field field
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), html.GetMetaData(expression).DisplayName),
+            html.VisualEditorFor(expression, field).ToHtmlString()
+        ));
+
+        public static MvcHtmlString DateTimeFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.DateTimeFor(expression).ToHtmlString()
+        ));
+
+        public static MvcHtmlString DateFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.DateFor(expression).ToHtmlString()
+        ));
+
+        public static MvcHtmlString TimeFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.TimeFor(expression).ToHtmlString()
+        ));
+
+        public static MvcHtmlString DisplayFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.DisplayFor(expression).ToHtmlString()
+        ));
+
+        public static MvcHtmlString DisplayFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            string templateName
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.DisplayFor(expression, templateName).ToHtmlString()
+        ));
+
+        public static MvcHtmlString SelectFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            IEnumerable<QPSelectListItem> list,
+            SelectOptions options
+        ) => html.SelectFieldFor(expression, list, null, options);
+
+        public static MvcHtmlString SelectFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            IEnumerable<QPSelectListItem> list,
+            Dictionary<string, object> htmlAttributes = null,
+            SelectOptions options = null,
+            bool required = false
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName, required: required),
+            html.QpDropDownListFor(expression, list, htmlAttributes, options ?? new SelectOptions()).ToHtmlString()
+        ));
+
+        public static MvcHtmlString CheckBoxFieldFor<TModel>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, bool>> expression,
+            string toggleId = null,
+            bool reverseToggle = false,
+            Dictionary<string, object> htmlAttributes = null
+        ) => MvcHtmlString.Create(new StringBuilder(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), html.GetMetaData(expression).DisplayName, true),
+            html.QpCheckBoxFor(expression, toggleId, reverseToggle, htmlAttributes).ToHtmlString()
+        )).ToString());
+
+        public static MvcHtmlString RadioFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            IEnumerable<QPSelectListItem> list,
+            RepeatDirection repeatDirection = RepeatDirection.Horizontal,
+            EntityDataListArgs entityDataListArgs = null,
+            ControlOptions options = null
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.QpRadioButtonListFor(expression, list, repeatDirection, entityDataListArgs, options)
+        ));
+
+        public static MvcHtmlString PasswordFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.PasswordFor(expression, html.QpHtmlProperties(expression, EditorType.Password))
+        ));
+
+        public static MvcHtmlString NumericFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            double? minValue = null,
+            double? maxValue = null,
+            int decimalDigits = 0,
+            Dictionary<string, object> htmlAttributes = null
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.NumericFor(expression, decimalDigits, minValue, maxValue, htmlAttributes)
+        ));
+
+        public static MvcHtmlString FileForFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, TValue>> expression,
+            Field field,
+            Dictionary<string, object> htmlAttributes = null
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.FileFor(expression, field, htmlAttributes)
+        ));
+
+        public static MvcHtmlString SingleItemPickerFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> source,
+            Expression<Func<TModel, TValue>> expression,
+            QPSelectListItem selected,
+            EntityDataListArgs entityDataListArgs,
+            ControlOptions options
+        ) => MvcHtmlString.Create(string.Format(
+            source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(source, expression).DisplayName),
+            source.SingleItemPickerFor(expression, selected, entityDataListArgs, options)
+        ));
+
+        public static MvcHtmlString AggregationListFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> source,
+            Expression<Func<TModel, IEnumerable<TValue>>> expression,
+            IEnumerable<TValue> list,
+            string bindings,
+            Dictionary<string, string> additionalData = null
+        ) => MvcHtmlString.Create(string.Format(
+            source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(source, expression).DisplayName),
+            source.AggregationListFor(ExpressionHelper.GetExpressionText(expression), list, bindings, additionalData)
+        ));
+
+        public static MvcHtmlString VersionTextFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> source,
+            Expression<Func<TModel, TValue>> expression,
+            TValue text
+        ) => MvcHtmlString.Create(string.Format(
+            source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(source, expression).DisplayName),
+            source.VersionTextFor(ExpressionHelper.GetExpressionText(expression), text.ToString())
+        ));
+
+        public static MvcHtmlString VersionAreaFieldFor<TModel, TValue>(
+            this HtmlHelper<TModel> source,
+            Expression<Func<TModel, TValue>> expression,
+            TValue text
+        ) => MvcHtmlString.Create(string.Format(
+            source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(source, expression).DisplayName),
+            source.VersionAreaFor(ExpressionHelper.GetExpressionText(expression), text.ToString())
+        ));
+
+        public static MvcHtmlString WorkflowFor<TModel, TValue>(
+            this HtmlHelper<TModel> source,
+            Expression<Func<TModel, IEnumerable<TValue>>> expression,
+            IEnumerable<TValue> list
+        ) => source.WorkflowFor(ExpressionHelper.GetExpressionText(expression), list);
 
         public static MvcHtmlString CheckboxListFieldFor<TModel>(
             this HtmlHelper<TModel> html,
@@ -604,14 +597,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             IEnumerable<QPSelectListItem> list,
             EntityDataListArgs entityDataListArgs,
             Dictionary<string, object> htmlAttributes,
-            RepeatDirection repeatDirection = RepeatDirection.Vertical)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(string.Format(
-                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                html.QpCheckBoxListFor(expression, list, entityDataListArgs, htmlAttributes, repeatDirection)
-            ));
-        }
+            RepeatDirection repeatDirection = RepeatDirection.Vertical
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.QpCheckBoxListFor(expression, list, entityDataListArgs, htmlAttributes, repeatDirection)
+        ));
 
         public static MvcHtmlString CheckBoxTreeFieldFor<TModel>(
             this HtmlHelper<TModel> html,
@@ -620,57 +610,44 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             int? parentEntityId,
             string actionCode,
             bool allowGlobalSelection = false,
-            Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(string.Format(
-                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                html.CheckBoxTreeFor(expression, entityTypeCode, parentEntityId, actionCode, allowGlobalSelection, htmlAttributes).ToHtmlString()
-            ));
-        }
+            Dictionary<string, object> htmlAttributes = null
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.CheckBoxTreeFor(expression, entityTypeCode, parentEntityId, actionCode, allowGlobalSelection, htmlAttributes).ToHtmlString()
+        ));
 
         public static MvcHtmlString VirtualFieldTreeFieldFor<TModel>(
             this HtmlHelper<TModel> html,
             Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression,
             int? parentEntityId,
             int virtualContentId,
-            Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.VirtualFieldTreeFor(expression, parentEntityId, virtualContentId, htmlAttributes).ToHtmlString()
-                )
-            );
-        }
+            Dictionary<string, object> htmlAttributes = null
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.VirtualFieldTreeFor(expression, parentEntityId, virtualContentId, htmlAttributes).ToHtmlString()
+        ));
 
         public static MvcHtmlString UnionContentsFieldFor<TModel>(
             this HtmlHelper<TModel> html,
             Expression<Func<TModel, IEnumerable<int>>> expression,
             IEnumerable<ListItem> selectedItemList,
             int siteId,
-            Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(string.Format(
-                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                html.UnionContentsFor(expression, selectedItemList, siteId, htmlAttributes).ToHtmlString()
-            ));
-        }
+            Dictionary<string, object> htmlAttributes = null
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.UnionContentsFor(expression, selectedItemList, siteId, htmlAttributes).ToHtmlString()
+        ));
 
         public static MvcHtmlString MultipleItemPickerFieldFor<TModel>(
             this HtmlHelper<TModel> html,
             Expression<Func<TModel, IEnumerable<int>>> expression,
             IEnumerable<ListItem> selectedItemList,
             EntityDataListArgs entityDataListArgs,
-            Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(string.Format(
-                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                html.MultipleItemPickerFor(expression, selectedItemList, entityDataListArgs, htmlAttributes).ToHtmlString()
-            ));
-        }
+            Dictionary<string, object> htmlAttributes = null
+        ) => MvcHtmlString.Create(string.Format(
+            html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), GetMetaData(html, expression).DisplayName),
+            html.MultipleItemPickerFor(expression, selectedItemList, entityDataListArgs, htmlAttributes).ToHtmlString()
+        ));
 
         private static MvcHtmlString ClassifierField(this HtmlHelper source, string name, string value, Field field, Article article, bool forceReadOnly)
         {
@@ -681,7 +658,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 aggregatedArticle = article.GetAggregatedArticleByClassifier(classifierValue);
             }
 
-            var sb = new StringBuilder(source.BeginClassifierFieldComponent(name, value, field, article, aggregatedArticle, out var acticleHtmlElemId));
+            var sb = new StringBuilder(source.BeginClassifierFieldComponent(name, value, field, article, aggregatedArticle, out var _));
 
             if (forceReadOnly)
             {
@@ -717,7 +694,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 aggregatedArticle = version?.AggregatedArticles.SingleOrDefault(n => n.ContentId == classifierValue);
             }
 
-            var sb = new StringBuilder(source.BeginClassifierFieldComponent(name, value, field, article, aggregatedArticle, out string acticleHtmlElemId));
+            var sb = new StringBuilder(source.BeginClassifierFieldComponent(name, value, field, article, aggregatedArticle, out var _));
 
             if (forceReadOnly)
             {

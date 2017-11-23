@@ -17,8 +17,17 @@ Quantumart.QP8.Enums.DataListType.prototype = {
 };
 
 Quantumart.QP8.Enums.DataListType.registerEnum('Quantumart.QP8.Enums.DataListType');
+
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendEntityDataListBase = function (
-  listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
+  listGroupCode,
+  listElementId,
+  entityTypeCode,
+  parentEntityId,
+  entityId,
+  listType,
+  options
+) {
   Quantumart.QP8.BackendEntityDataListBase.initializeBase(this);
   this._listGroupCode = listGroupCode;
   this._listElementId = listElementId;
@@ -446,12 +455,9 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       if (actionTypeCode === window.ACTION_TYPE_CODE_READ) {
         const entities = this.getSelectedEntities();
         if (entities.length > 0) {
-          let entity = entities[0];
-
+          const [entity] = entities;
           entityId = entity.Id;
           entityName = $o.getEntityName(entityTypeCode, entityId, parentEntityId);
-
-          entity = null;
         }
 
         $q.clearArray(entities);
@@ -523,12 +529,9 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
           const entities = this.getSelectedEntities();
           if (entities.length > 0) {
-            let entity = entities[0];
-
+            const [entity] = entities;
             entityId = entity.Id;
             entityName = $o.getEntityName(this._entityTypeCode, entityId, this._parentEntityId);
-
-            entity = null;
           }
 
           $q.clearArray(entities);

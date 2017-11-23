@@ -16,6 +16,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
     }
   }
 
+  // eslint-disable-next-line max-statements, complexity, max-params
   constructor(
     gridGroupCodes,
     gridElementId,

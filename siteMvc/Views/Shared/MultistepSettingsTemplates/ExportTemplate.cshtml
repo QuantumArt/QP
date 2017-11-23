@@ -6,21 +6,18 @@
 {
     using (Html.BeginFieldGroup(TemplateStrings.RegionalAndLanguageSettings))
     {
-        @Html.SelectFieldFor(model => model.Encoding, Html.List(Model.Charsets))
-        @Html.SelectFieldFor(model => model.Culture, Html.List(Model.Locales))
+        @Html.SelectFieldFor(m => m.Encoding, Html.List(Model.Charsets))
+        @Html.SelectFieldFor(m => m.Culture, Html.List(Model.Locales))
     }
 
     using (Html.BeginFieldGroup(MultistepActionStrings.FormatSettings))
     {
-        @Html.RadioFieldFor(s => s.Delimiter, Html.List(Model.Delimiters))
-        @Html.SelectFieldFor(s => s.LineSeparator, Html.List(Model.LineSeparators))
-        @Html.SelectFieldFor(s => s.OrderByField, Html.List(Model.Fields))
+        @Html.RadioFieldFor(m => m.Delimiter, Html.List(Model.Delimiters))
+        @Html.SelectFieldFor(m => m.LineSeparator, Html.List(Model.LineSeparators))
+        @Html.SelectFieldFor(m => m.OrderByField, Html.List(Model.Fields))
         if (Model.Ids != null)
         {
-            foreach (var id in Model.Ids)
-            {
-                @Html.Hidden("IDs", id)
-            }
+          <input id="@Html.UniqueId("idsToExport")" data-ids="@string.Join(",", Model.Ids)" hidden="hidden" />
         }
     }
 
@@ -42,8 +39,8 @@
                 ShowIds = true
             };
 
-            @Html.CheckBoxFieldFor(s => s.ExcludeSystemFields)
-            @Html.MultipleItemPickerFieldFor(model => model.CustomFields, Model.GetList(Model.CustomFields), entityData, new Dictionary<string, object> { { "id", Model.CustomFieldsElementId } })
+            @Html.CheckBoxFieldFor(m => m.ExcludeSystemFields)
+            @Html.MultipleItemPickerFieldFor(m => m.CustomFields, Model.GetList(Model.CustomFields), entityData, new Dictionary<string, object> { { "id", Model.CustomFieldsElementId } })
         }
 
         entityData = new EntityDataListArgs
@@ -58,6 +55,6 @@
             ShowIds = true
         };
 
-        @Html.MultipleItemPickerFieldFor(model => model.FieldsToExpand, Model.GetList(Model.FieldsToExpand), entityData, new Dictionary<string, object> { { "id", Model.FieldsToExpandElementId } })
+        @Html.MultipleItemPickerFieldFor(m => m.FieldsToExpand, Model.GetList(Model.FieldsToExpand), entityData, new Dictionary<string, object> { { "id", Model.FieldsToExpandElementId } })
     }
 }

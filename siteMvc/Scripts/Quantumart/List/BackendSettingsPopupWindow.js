@@ -68,42 +68,44 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
     return this._settingsWindow.addButtons([]);
   },
 
-  _onPopupWindowToolbarButtonClicked(eventType, sender) {
-    let options, errors, btn, className, prms;
+  _onPopupWindowToolbarButtonClicked() {
     if (this._popupWindowComponent) {
-      options = Object.assign({}, this._eventsArgs, sender);
-      errors = this._settingsWindow.validate();
+      const errors = this._settingsWindow.validate();
       if (errors.length) {
         $q.alertError(errors);
       } else {
-        btn = $(`#${sender._toolbarElementId}> ul > li`);
-        className = 'disabled';
-        options.isSettingsSet = true;
-        prms = $(`#${
-          this._popupWindowComponent._documentWrapperElementId
-        } form input, #${
-          this._popupWindowComponent._documentWrapperElementId
-        } form select`).serialize();
+        this._isSettingsSet = true;
+        const parentContainer = document.getElementById(`${this._popupWindowId}_editingForm`);
+        const ajaxData = {
+          Encoding: +document.getElementById(`${this._popupWindowId}_Encoding`).value,
+          Culture: +document.getElementById(`${this._popupWindowId}_Culture`).value,
+          Delimiter: +parentContainer.querySelector(`input[name="Delimiter"]:checked`).value,
+          LineSeparator: +document.getElementById(`${this._popupWindowId}_LineSeparator`).value,
+          OrderByField: document.getElementById(`${this._popupWindowId}_OrderByField`).value,
+          AllFields: document.getElementById(`${this._popupWindowId}_AllFields`).checked,
+          ExcludeSystemFields: document.getElementById(`${this._popupWindowId}_ExcludeSystemFields`).checked,
+          CustomFields: [
+            ...parentContainer.querySelectorAll(`input[name="CustomFields"]:checked`)
+          ].map(el => +el.value),
+          FieldsToExpand: [
+            ...parentContainer.querySelectorAll(`input[name="FieldsToExpand"]:checked`)
+          ].map(el => +el.value)
+        };
 
-        const that = this;
-        $.ajax({
-          url: that._settingsActionUrl.replace('Settings', 'SetupWithParams'),
-          data: prms,
-          type: 'POST',
-          beforeSend() {
-            btn.addClass(className);
-          },
-          complete() {
-            btn.removeClass(className);
-          },
-          success(data) {
-            if (data.view) {
-              $(`#${that._popupWindowComponent._documentWrapperElementId}`).html(data.view);
-            } else {
-              that._popupWindowComponent.closeWindow();
-              $('.t-overlay').remove();
-              that._callback({ isSettingsSet: true });
-            }
+        const idsElement = document.getElementById(`${this._popupWindowId}_idsToExport`);
+        if (idsElement) {
+          Object.assign(ajaxData, {
+            ids: idsElement.getAttribute('data-ids').split(',').map(el => +el.value)
+          });
+        }
+
+        $q.postAjax(this._settingsActionUrl.replace('Settings', 'SetupWithParams'), ajaxData, data => {
+          if (data && data.view) {
+            $(`#${this._popupWindowComponent._documentWrapperElementId}`).html(data.view);
+          } else {
+            this._popupWindowComponent.closeWindow();
+            $('.t-overlay').remove();
+            this._callback({ isSettingsSet: true });
           }
         });
       }

@@ -65,9 +65,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    throw new AggregateException(ModelState.Values
-                        .SelectMany(x => x.Errors)
-                        .Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage)));
+                    throw new AggregateException(ModelState.Values.SelectMany(x => x.Errors).Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage)));
                 }
 
                 return null;
@@ -82,9 +80,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    throw new AggregateException(ModelState.Values
-                        .SelectMany(x => x.Errors)
-                        .Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage)));
+                    throw new AggregateException(ModelState.Values.SelectMany(x => x.Errors).Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage)));
                 }
 
                 return null;

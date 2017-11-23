@@ -83,7 +83,7 @@ module.exports = {
       array: true,
       object: true
     }, {
-      enforceForRenamedProperties: true
+      enforceForRenamedProperties: false
     }],
 
     // disallow parseint() in favor of binary, octal, and hexadecimal literals

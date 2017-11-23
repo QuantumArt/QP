@@ -54,10 +54,11 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   const onParentTemplateObjectChanged = function () {
     if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
       const objId = $parentObjectSelector.val();
-      const targetObj = $(this.data('objects')).filter(function () {
+      const [targetObj] = $(this.data('objects')).filter(function () {
         $q.warnIfEqDiff(this.id, objId);
         return this.Id === objId;
-      })[0];
+      });
+
       $nameField.val(targetObj.Name);
       $netNameField.val(targetObj.NetName);
     } else {

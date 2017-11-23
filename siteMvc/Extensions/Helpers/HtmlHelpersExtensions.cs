@@ -1246,11 +1246,18 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.Relation(name, selectedItemList, options, RelationType.ManyToMany, true, entityDataListArgs);
         }
 
-        public static MvcHtmlString MultipleItemPickerFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<int>>> expression, IEnumerable<ListItem> selectedItemList, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes = null)
-        {
-            var name = ExpressionHelper.GetExpressionText(expression);
-            return source.MultipleItemPickerFor(name, selectedItemList.Select(c => new QPSelectListItem { Selected = true, Text = c.Text, Value = c.Value }).ToArray(), entityDataListArgs, htmlAttributes);
-        }
+        public static MvcHtmlString MultipleItemPickerFor<TModel>(
+            this HtmlHelper<TModel> source,
+            Expression<Func<TModel, IEnumerable<int>>> expression,
+            IEnumerable<ListItem> selectedItemList,
+            EntityDataListArgs entityDataListArgs,
+            Dictionary<string, object> htmlAttributes = null
+        ) => source.MultipleItemPickerFor(
+            ExpressionHelper.GetExpressionText(expression),
+            selectedItemList.Select(c => new QPSelectListItem { Selected = true, Text = c.Text, Value = c.Value }).ToArray(),
+            entityDataListArgs,
+            htmlAttributes
+        );
 
         public static MvcHtmlString UnionContentsFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<int>>> expression, IEnumerable<ListItem> selectedItemList, int siteId, Dictionary<string, object> htmlAttributes = null)
         {
@@ -1267,18 +1274,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.MultipleItemPickerFor(expression, selectedItemList, entityDataListArgs, htmlAttributes);
         }
 
-        public static IEnumerable<QPSelectListItem> List(this HtmlHelper source, IEnumerable<ListItem> list)
+        public static IEnumerable<QPSelectListItem> List(this HtmlHelper source, IEnumerable<ListItem> list) => list.Select(n => new QPSelectListItem
         {
-            var src = source;
-            return list.Select(n => new QPSelectListItem
-            {
-                Text = n.Text,
-                Value = n.Value,
-                HasDependentItems = n.HasDependentItems,
-                DependentItemIDs = n.DependentItemIDs?.Select(s => src.UniqueId(s)).ToArray(),
-                Selected = n.Selected
-            });
-        }
+            Text = n.Text,
+            Value = n.Value,
+            HasDependentItems = n.HasDependentItems,
+            DependentItemIDs = n.DependentItemIDs?.Select(s => source.UniqueId(s)).ToArray(),
+            Selected = n.Selected
+        });
 
         public static string FormatAsTime(this HtmlHelper source, object value, DateTime? defaultValue = null) => DateTimePart(value, "T", defaultValue);
 

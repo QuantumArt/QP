@@ -9,6 +9,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
     return true;
   }
 
+  // eslint-disable-next-line max-statements, complexity
   constructor(popupWindowId, eventArgs, options) {
     super(eventArgs, options);
 
@@ -391,6 +392,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
     this._documentPostParams = params;
   }
 
+  // eslint-disable-next-line max-statements
   _createWindow() {
     const popupWindowId = this._popupWindowId;
     const actions = [];

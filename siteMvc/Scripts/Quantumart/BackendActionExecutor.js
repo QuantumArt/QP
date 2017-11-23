@@ -47,6 +47,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
           const actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(
             isMultiple, entityIDs, eventArgs.get_parentEntityId(), '0', actionCode, { additionalUrlParameters }
           );
+
           if (actionUrl) {
             const postParams = {
               IDs: entityIDs,
@@ -123,6 +124,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
               }
             };
 
+            // eslint-disable-next-line max-depth
             if (isCustom) {
               postParams.actionCode = actionCode;
               $q.getJsonFromUrl('POST', actionUrl, postParams, false, false, getCustomUrlCallback, errorCallback);
@@ -475,7 +477,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCo
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetByCode`, { actionCode }, false, false)
       .done(data => {
         if (data.success) {
-          action = data.action;
+          ({ action } = data);
         } else {
           action = null;
           $q.alertFail(data.Text);
@@ -499,7 +501,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) 
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetCodeById`, { actionId }, false, false)
       .done(data => {
         if (data.success) {
-          actionCode = data.actionCode;
+          ({ actionCode } = data);
         } else {
           actionCode = null;
           $q.alertError(data.Text);
@@ -706,7 +708,7 @@ Quantumart.QP8.BackendActionExecutor.getActionViewByViewTypeCode = function (act
   let actionView = null;
 
   if (!$q.isNullOrEmpty(actionViews)) {
-    actionView = $.grep(actionViews, view => view.ViewType.Code === viewTypeCode)[0];
+    [actionView] = $.grep(actionViews, view => view.ViewType.Code === viewTypeCode);
   }
 
   return actionView;

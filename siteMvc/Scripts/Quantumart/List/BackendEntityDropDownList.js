@@ -1,9 +1,26 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendEntityDropDownList = function (
-  listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options
+  listGroupCode,
+  listElementId,
+  entityTypeCode,
+  parentEntityId,
+  entityId,
+  listType,
+  options
 ) {
   Quantumart.QP8.BackendEntityDropDownList.initializeBase(
-    this, [listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]
+    this,
+    [
+      listGroupCode,
+      listElementId,
+      entityTypeCode,
+      parentEntityId,
+      entityId,
+      listType,
+      options
+    ]
   );
+
   this._allowMultipleItemSelection = false;
   this._selectionMode = Quantumart.QP8.Enums.ListSelectionMode.AllItems;
 };

@@ -1182,11 +1182,9 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         const entities = $tab.data('entities');
         for (let entityIndex = 0; entityIndex < entities.length; entityIndex++) {
           const entity = entities[entityIndex];
-          if (entity) {
-            if (!$o.checkEntityExistence(tabEntityTypeCode, entity.Id)) {
-              result = false;
-              break;
-            }
+          if (entity && !$o.checkEntityExistence(tabEntityTypeCode, entity.Id)) {
+            result = false;
+            break;
           }
         }
       } else {

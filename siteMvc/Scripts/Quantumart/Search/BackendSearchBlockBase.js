@@ -167,6 +167,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     this._isRendered = value;
   },
 
+  // eslint-disable-next-line max-statements
   initialize() {
     let $searchBlock = $(`#${this._searchBlockElementId}`);
     const searchBlockExist = !$q.isNullOrEmpty($searchBlock);

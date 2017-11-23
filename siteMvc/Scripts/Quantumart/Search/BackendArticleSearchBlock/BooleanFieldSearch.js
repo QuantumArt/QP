@@ -1,8 +1,26 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (
-  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID
+  containerElement,
+  parentEntityId,
+  fieldID,
+  contentID,
+  fieldColumn,
+  fieldName,
+  fieldGroup,
+  referenceFieldID
 ) {
   Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.initializeBase(
-    this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]
+    this,
+    [
+      containerElement,
+      parentEntityId,
+      fieldID,
+      contentID,
+      fieldColumn,
+      fieldName,
+      fieldGroup,
+      referenceFieldID
+    ]
   );
 
   this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);

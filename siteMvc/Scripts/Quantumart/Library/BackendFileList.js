@@ -10,8 +10,14 @@ window.EVENT_TYPE_FILE_LIST_DATA_BOUND = 'OnFileListDataBound';
 window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING = 'OnFileListActionExecuting';
 window.EVENT_TYPE_FILE_LIST_SELECTED = 'OnFileNameSelected';
 
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendFileList = function (
-  listElementId, fileEntityTypeCode, actionCode, contextMenuCode, viewMode, options
+  listElementId,
+  fileEntityTypeCode,
+  actionCode,
+  contextMenuCode,
+  viewMode,
+  options
 ) {
   Quantumart.QP8.BackendFileList.initializeBase(this);
 

@@ -117,16 +117,13 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
   onFieldChanged(fieldChangeInfo) {
     if (this.isRun) {
       const editor = Quantumart.QP8.BackendEntityEditor.getComponent($(`#${fieldChangeInfo.documentWrapperElementId}`));
-
       if (editor && editor.allowAutoSave()) {
         const key = this._createKey(fieldChangeInfo.documentWrapperElementId);
         let editorState = $.parseJSON(localStorage.getItem(key));
-
         if ($q.isNullOrEmpty(editorState)) {
           editorState = this._getEditorComponentState(fieldChangeInfo.documentWrapperElementId);
         } else {
-          const fieldState = $.grep(editorState.fieldValues, fv => fv.fieldName === fieldChangeInfo.fieldName)[0];
-
+          const [fieldState] = $.grep(editorState.fieldValues, fv => fv.fieldName === fieldChangeInfo.fieldName);
           if (fieldState) {
             fieldState.value = fieldChangeInfo.value;
           } else {

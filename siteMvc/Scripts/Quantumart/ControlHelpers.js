@@ -1402,7 +1402,6 @@ $c.openCropWindow = function (url, folderUrl, urlParams) {
     onCompleteCallback() {
       imgCropResize.closeWindow();
       imgCropResize.dispose();
-      $q.trace('image cropped');
 
       const newEventArgs = new Quantumart.QP8.BackendEventArgs();
       newEventArgs.set_entityTypeCode(urlParams.entityTypeCode);

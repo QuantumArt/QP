@@ -51,7 +51,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   },
 
   _onFileUploadedHandler(eventType, sender, eventArgs) {
-    this.fileName = eventArgs.getFileNames()[0];
+    [this.fileName] = eventArgs.getFileNames();
 
     $(`#${this.options._popupWindowId}_${this._fileNameId}`).val(this.fileName);
     $(`#${this._fileNameId}`).val(this.fileName);

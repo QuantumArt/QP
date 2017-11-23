@@ -16,12 +16,12 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
       docHostTitleTemplate = showTabNumber ? '{0} "{1}" - {2}-{3}' : '{0} "{1}" - {2}';
     } else if (
       actionTypeCode === window.ACTION_TYPE_CODE_LIST
-    || actionTypeCode === window.ACTION_TYPE_CODE_LIBRARY
-    || actionTypeCode === window.ACTION_TYPE_CODE_READ
-    || actionTypeCode === window.ACTION_TYPE_CODE_SEARCH
-    || actionTypeCode === window.ACTION_TYPE_CODE_SELECT
-    || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
-    || actionTypeCode === window.ACTION_TYPE_ACTION_PERMISSION_TREE
+        || actionTypeCode === window.ACTION_TYPE_CODE_LIBRARY
+        || actionTypeCode === window.ACTION_TYPE_CODE_READ
+        || actionTypeCode === window.ACTION_TYPE_CODE_SEARCH
+        || actionTypeCode === window.ACTION_TYPE_CODE_SELECT
+        || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
+        || actionTypeCode === window.ACTION_TYPE_ACTION_PERMISSION_TREE
     ) {
       docHostTitleTemplate = '{0} "{1}" - {2}';
     } else if (isMultipleEntities) {
@@ -31,6 +31,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     return docHostTitleTemplate;
   }
 
+  // eslint-disable-next-line max-statements, complexity
   static generateTitle(eventArgs, options) {
     const actionCode = eventArgs.get_actionCode();
     const action = $a.getBackendAction(actionCode);
@@ -45,7 +46,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
     if ($q.isObject(options)) {
       if ($.isNumeric(options.tabNumber)) {
-        tabNumber = options.tabNumber;
+        ({ tabNumber } = options);
       }
     }
 
@@ -158,6 +159,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     return result;
   }
 
+  // eslint-disable-next-line max-statements
   constructor(eventArgs, options) {
     super();
 
@@ -513,7 +515,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
           false,
           data => {
             if (data.success) {
-              filterStates = data.filterStates;
+              ({ filterStates } = data);
             } else {
               $q.alertFail(data.message);
             }
@@ -584,6 +586,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     return $documentWrapper.is(':visible');
   }
 
+  // eslint-disable-next-line max-statements, complexity
   executeAction(actionCode) {
     const action = $a.getBackendActionByCode(actionCode);
     if (!action) {
@@ -1263,6 +1266,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     this.onDocumentChanged(true);
   }
 
+  // eslint-disable-next-line complexity
   onGeneralEvent(eventType, sender, eventArgs) {
     if (eventType === window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING
       || eventType === window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING

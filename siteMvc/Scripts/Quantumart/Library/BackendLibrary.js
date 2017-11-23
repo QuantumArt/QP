@@ -7,8 +7,14 @@ window.EVENT_TYPE_LIBRARY_ENTITY_REMOVED = 'OnLibraryEntityRemoved';
 window.EVENT_TYPE_LIBRARY_REQUEST_VIEW_TYPE_CODE = 'OnLibraryRequestViewTypeCode';
 window.EVENT_TYPE_LIBRARY_RESIZED = 'OnLibraryResized';
 
+// eslint-disable-next-line max-statements, max-params
 Quantumart.QP8.BackendLibrary = function (
-  libraryGroupCode, libraryElementId, parentEntityId, actionCode, options, hostOptions
+  libraryGroupCode,
+  libraryElementId,
+  parentEntityId,
+  actionCode,
+  options,
+  hostOptions
 ) {
   Quantumart.QP8.BackendLibrary.initializeBase(this);
 
@@ -116,6 +122,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     return this._viewTypeCode;
   },
 
+  // eslint-disable-next-line max-statements
   initialize() {
     $(this._libraryElement).closest('.documentWrapper').addClass('libraryWrapper');
     this._folderTree = Quantumart.QP8.BackendEntityTreeManager.getInstance().createTree(
@@ -429,6 +436,7 @@ Quantumart.QP8.BackendLibrary.prototype = {
     $(`.${this.LIBRARY_VIRTUAL_PATH_CLASS_NAME}`, this._libraryElement).html(this._folderUrl);
   },
 
+  // eslint-disable-next-line max-statements
   dispose() {
     Quantumart.QP8.BackendLibraryManager.getInstance().removeLibrary(this._libraryElementId);
 

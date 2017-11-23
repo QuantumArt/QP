@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer = function (
   fieldSearchContainerElement,
   parentEntityId,

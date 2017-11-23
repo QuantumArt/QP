@@ -15,6 +15,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     return 'component_ref';
   }
 
+  // eslint-disable-next-line max-statements, complexity, max-params
   constructor(
     editorGroupCode,
     documentWrapperElementId,
@@ -343,6 +344,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     return $(this._formElement).find(this.FIELD_SELECTORS);
   }
 
+  // eslint-disable-next-line max-statements
   _initAllFields() {
     if (this._formElement) {
       const $form = $(this._formElement);
@@ -611,6 +613,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     return $changedFields.length > 0;
   }
 
+  // eslint-disable-next-line max-statements
   addCustomButton(settings, $parent) {
     if (!settings.name && !settings.onClick && !settings.suffix && !settings.title) {
       $q.alertError('One of the required settings is missed: name, title, suffix, onClick');
@@ -675,6 +678,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     return undefined;
   }
 
+  // eslint-disable-next-line max-statements
   addCustomLinkButton(settings, $parent) {
     if (!settings.name && !settings.onClick && !settings.suffix && !settings.title) {
       $q.alertError('One of the required settings is missed: name, title, suffix, onClick');

@@ -1,8 +1,25 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendEntityCheckBoxList = function (
-  listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options
+  listGroupCode,
+  listElementId,
+  entityTypeCode,
+  parentEntityId,
+  entityId,
+  listType,
+  options
 ) {
-  Quantumart.QP8.BackendEntityCheckBoxList.initializeBase(this,
-    [listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]);
+  Quantumart.QP8.BackendEntityCheckBoxList.initializeBase(
+    this,
+    [
+      listGroupCode,
+      listElementId,
+      entityTypeCode,
+      parentEntityId,
+      entityId,
+      listType,
+      options
+    ]
+  );
 
   this._allowMultipleItemSelection = true;
   this._selectionMode = Quantumart.QP8.Enums.ListSelectionMode.AllItems;

@@ -3,12 +3,7 @@
 
 class BackendEditingDocument extends Quantumart.QP8.BackendDocumentHost {
   constructor(tabId, editingArea, eventArgs, options) {
-    super(tabId, editingArea, eventArgs, options);
-
-    this._id = '';
-    this._tabId = '';
-    this._editingArea = null;
-    this._additionalUrlParameters = null;
+    super(eventArgs, options);
 
     if (!tabId) {
       throw new Error($l.EditingArea.tabIdNotSpecifiedInConstructor);

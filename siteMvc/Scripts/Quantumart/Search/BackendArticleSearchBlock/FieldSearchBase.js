@@ -1,5 +1,13 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase = function (
-  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID
+  containerElement,
+  parentEntityId,
+  fieldID,
+  contentID,
+  fieldColumn,
+  fieldName,
+  fieldGroup,
+  referenceFieldID
 ) {
   Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.initializeBase(this);
 
@@ -84,12 +92,21 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.registerClass(
-  'Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase', null, Sys.IDisposable
+  'Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase',
+  null,
+  Sys.IDisposable
 );
 
 // eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState = function (
-  searchType, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, data
+  searchType,
+  fieldID,
+  contentID,
+  fieldColumn,
+  fieldName,
+  fieldGroup,
+  referenceFieldID,
+  data
 ) {
   this.searchType = searchType;
   this.fieldID = fieldID;
