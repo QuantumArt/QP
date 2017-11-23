@@ -106,6 +106,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonNetResult<string> GetArticleFieldValue(int contentId, string fieldName, int articleId) => EntityObjectService.GetArticleFieldValue(contentId, fieldName, articleId);
 
         [HttpGet]
+        public JsonNetResult<Dictionary<int, string>> GetContentFieldValues(int contentId, string fieldName) => EntityObjectService.GetContentFieldValues(contentId, fieldName);
+        
+
+        [HttpGet]
         public JsonNetResult<string> GetArticleLinkedItems(int linkId, int articleId) => EntityObjectService.GetArticleLinkedItems(linkId, articleId);
 
         [HttpGet]

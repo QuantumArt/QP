@@ -687,6 +687,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
+        internal static Dictionary<int, string> GetContentFieldValues(int contentId, string name)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.GetContentFieldValues(QPConnectionScope.Current.DbConnection, contentId, name);
+            }
+        }
+
         internal static int GetArticleIdByFieldValue(int contentId, string name, string value)
         {
             using (new QPConnectionScope())
