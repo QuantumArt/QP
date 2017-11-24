@@ -119,10 +119,11 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
     const $list = $(this._listElement);
     const $ul = $list.find('UL:first');
+    const fieldName = $ul.closest('dl').data('field_name');
     const listItemHtml = new $.telerik.stringBuilder();
     for (let dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
       const dataItem = dataItems[dataItemIndex];
-      this._getCheckBoxListItemHtml(listItemHtml, dataItem, dataItemIndex);
+      this._getCheckBoxListItemHtml(listItemHtml, dataItem, dataItemIndex, fieldName);
     }
 
     $ul.empty()
@@ -178,7 +179,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
     });
   },
 
-  _getCheckBoxListItemHtml(html, dataItem, dataItemIndex) {
+  _getCheckBoxListItemHtml(html, dataItem, dataItemIndex, fieldName) {
     const itemElementName = this._listItemName;
     const itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
     const itemValue = dataItem.Value;
@@ -191,6 +192,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
       .cat(` id="${$q.htmlEncode(itemElementId)}"`)
       .cat(` value="${$q.htmlEncode(itemValue)}"`)
       .cat(' class="checkbox chb-list-item qp-notChangeTrack"')
+      .cat(` data-content_field_name="${$q.htmlEncode(fieldName)}"`)
       .catIf(' checked="checked"', isChecked)
       .catIf(' disabled ', this.isListDisabled())
       .cat('/> ')

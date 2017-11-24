@@ -149,7 +149,8 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
       const $ul = $list.find('UL');
 
       if (newSelectedIDs.length < this._countLimit) {
-        $ul.empty().html(this._getCheckBoxListHtml(dataItems));
+        const fieldName = $ul.closest('dl').data('field_name');
+        $ul.empty().html(this._getCheckBoxListHtml(dataItems, fieldName));
         $(this._countOverflowElement).remove();
         this._countOverflowElement = null;
       } else {
@@ -258,17 +259,17 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     });
   },
 
-  _getCheckBoxListHtml(dataItems) {
+  _getCheckBoxListHtml(dataItems, fieldName) {
     const html = new $.telerik.stringBuilder();
     for (let dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
       const dataItem = dataItems[dataItemIndex];
-      this._getCheckBoxListItemHtml(html, dataItem, dataItemIndex);
+      this._getCheckBoxListItemHtml(html, dataItem, dataItemIndex, fieldName);
     }
 
     return html.string();
   },
 
-  _getCheckBoxListItemHtml(html, dataItem, dataItemIndex) {
+  _getCheckBoxListItemHtml(html, dataItem, dataItemIndex, fieldName) {
     const itemElementName = this._listItemName;
     const itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
     const itemValue = dataItem.Value;
@@ -281,6 +282,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
       .cat(` id="${$q.htmlEncode(itemElementId)}"`)
       .cat(` value="${$q.htmlEncode(itemValue)}"`)
       .cat(' class="checkbox multi-picker-item qp-notChangeTrack"')
+      .cat(` data-content_field_name="${$q.htmlEncode(fieldName)}"`)
       .cat(' checked="checked"')
       .catIf(' disabled ', this.isListDisabled())
       .cat('/> ')
