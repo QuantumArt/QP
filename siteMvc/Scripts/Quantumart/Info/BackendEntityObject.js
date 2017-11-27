@@ -201,6 +201,13 @@ Quantumart.QP8.BackendEntityObject.getArticleFieldValue = function (contentId, f
   });
 };
 
+Quantumart.QP8.BackendEntityObject.getContentFieldValues = function (contentId, fieldName) {
+  return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetContentFieldValues`, {
+    contentId,
+    fieldName
+  });
+};
+
 Quantumart.QP8.BackendEntityObject.getArticleLinkedItems = function (linkId, articleId) {
   return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleLinkedItems`, {
     linkId, articleId
