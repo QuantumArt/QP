@@ -1,13 +1,11 @@
 using System;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.WebMvc.Infrastructure.Converters;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
-    /// <summary>
-    /// Custom Model Binder для десериализации из строки с JSON
-    /// </summary>
     public class JsonStringModelBinder<T> : IModelBinder
     {
         public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
@@ -36,10 +34,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 
             try
             {
-                var x = JsonConvert.DeserializeObject<T>(incomingString);
-                var y = new JavaScriptSerializer().Deserialize<T>(incomingString);
-
-                return JsonConvert.DeserializeObject<T>(incomingString);
+                return typeof(T).IsAssignableFrom(typeof(ArticleContextQueryParam))
+                    ? JsonConvert.DeserializeObject<T>(incomingString, new JsonQueryParamConverter())
+                    : JsonConvert.DeserializeObject<T>(incomingString);
             }
             catch (Exception exp)
             {
