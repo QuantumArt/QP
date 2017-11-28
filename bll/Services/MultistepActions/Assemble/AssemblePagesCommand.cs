@@ -30,7 +30,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 
         private int _itemCount;
 
-        public AssemblePagesCommand(MultistepActionStageCommandState state, bool siteOrTemplate, bool isDotNet) : this(state.Id, null, siteOrTemplate, isDotNet) { }
+        public AssemblePagesCommand(MultistepActionStageCommandState state, bool siteOrTemplate, bool isDotNet)
+            : this(state.Id, null, siteOrTemplate, isDotNet)
+        {
+        }
 
         public AssemblePagesCommand(int siteId, string sitetName, bool siteOrTemplate, bool isDotNet)
         {
@@ -76,8 +79,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
         {
             ItemCount = _itemCount,
             StepCount = MultistepActionHelper.GetStepCount(_itemCount, ItemsPerStep),
-            Name = SiteOrTemplate ? string.Format(SiteStrings.AssemblePagesStageName, AssemblingEntityName ?? string.Empty) :
-                string.Format(TemplateStrings.AssemblePagesStageName, AssemblingEntityName ?? string.Empty)
+            Name = SiteOrTemplate ? string.Format(SiteStrings.AssemblePagesStageName, AssemblingEntityName ?? string.Empty) : string.Format(TemplateStrings.AssemblePagesStageName, AssemblingEntityName ?? string.Empty)
         };
 
         public MultistepActionStepResult Step(int step)
@@ -131,7 +133,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                 }
             }
 
-            return new MultistepActionStepResult { ProcessedItemsCount = pages.Count(), AdditionalInfo = info.ToString() };
+            return new MultistepActionStepResult { ProcessedItemsCount = pages.Length, AdditionalInfo = info.ToString() };
         }
     }
 

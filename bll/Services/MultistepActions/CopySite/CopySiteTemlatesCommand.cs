@@ -18,7 +18,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         public int TemplatesElementsCount { get; set; }
 
         public CopySiteTemlatesCommand(MultistepActionStageCommandState state)
-            : this(state.Id, null, 0) { }
+            : this(state.Id, null, 0)
+        {
+        }
 
         public CopySiteTemlatesCommand(int siteId, string siteName, int elementsCount)
         {

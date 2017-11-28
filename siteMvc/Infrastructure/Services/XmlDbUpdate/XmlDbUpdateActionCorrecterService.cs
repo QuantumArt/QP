@@ -6,8 +6,8 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Newtonsoft.Json;
 using QP8.Infrastructure;
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Interfaces.Services;
+using Quantumart.QP8.BLL.Services.ArticleServices;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
@@ -23,10 +23,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private readonly Dictionary<string, Dictionary<int, int>> _idsToReplace = new Dictionary<string, Dictionary<int, int>>();
         private readonly Dictionary<string, Dictionary<Guid, Guid>> _uniqueIdsToReplace = new Dictionary<string, Dictionary<Guid, Guid>>();
         private readonly IArticleService _dbActionService;
+        private readonly IContentService _dbContentService;
 
-        public XmlDbUpdateActionCorrecterService(IArticleService dbActionService)
+        public XmlDbUpdateActionCorrecterService(IArticleService dbActionService, IContentService dbContentService)
         {
             _dbActionService = dbActionService;
+            _dbContentService = dbContentService;
         }
 
         public XmlDbUpdateRecordedAction PreActionCorrections(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
@@ -341,12 +343,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 if (fieldValues != null)
                 {
-                    if (ReplayHelper.IsRelation(contentId, correctedFieldId))
+                    if (_dbContentService.IsRelation(contentId, correctedFieldId))
                     {
                         fieldValues = CorrectIdsValue(EntityTypeCode.Article, fieldValues).ToList();
                     }
 
-                    if (ReplayHelper.IsClassifier(contentId, correctedFieldId))
+                    if (_dbContentService.IsClassifier(contentId, correctedFieldId))
                     {
                         fieldValues = CorrectIdsValue(EntityTypeCode.Content, fieldValues).ToList();
                     }

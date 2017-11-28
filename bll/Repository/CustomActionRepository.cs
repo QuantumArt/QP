@@ -77,7 +77,6 @@ namespace Quantumart.QP8.BLL.Repository
                 entities.ToolbarButtonSet.AddObject(t);
             }
 
-
             var refreshBtnDal = CreateRefreshButton(dal.ActionId);
             if (!customAction.Action.IsInterface)
             {

@@ -1,4 +1,5 @@
 using System.Web;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -14,7 +15,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         public int Count { get; set; }
 
-        public CopySiteContentLinksCommand(MultistepActionStageCommandState state) : this(state.Id, null, 0) { }
+        public CopySiteContentLinksCommand(MultistepActionStageCommandState state)
+            : this(state.Id, null, 0)
+        {
+        }
 
         public CopySiteContentLinksCommand(int siteId, string siteName, int count)
         {

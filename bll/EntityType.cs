@@ -116,5 +116,5 @@ namespace Quantumart.QP8.BLL
             EntityTypeCode.VirtualContent,
             EntityTypeCode.Page
         }, StringComparer.InvariantCultureIgnoreCase);
-        }
+    }
 }

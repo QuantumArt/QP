@@ -9,8 +9,10 @@ using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -22,7 +24,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Utils.Sorting;
 
-namespace Quantumart.QP8.BLL.Repository.Articles
+namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 {
     public class ArticleRepository : IArticleRepository
     {
@@ -603,11 +605,19 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 {
                     // ReSharper disable once PossibleInvalidOperationException
                     var content = ContentRepository.GetById(field.RelateToContentId.Value);
-                    var fieldIds = (content.UserQueryContentViewSchema.Any()
-                                  ? content.UserQueryContentViewSchema.SelectUniqContentIDs().OrderBy(i => i)
-                                  : content.JoinRootId.HasValue ? new[] { content.JoinRootId.Value }
-                                  : content.UnionSourceContentIDs.Any() ? content.UnionSourceContentIDs
-                                  : new[] { field.RelateToContentId.Value }).ToList();
+                    List<int> fieldIds;
+                    if (content.UserQueryContentViewSchema.Any())
+                    {
+                        fieldIds = content.UserQueryContentViewSchema.SelectUniqContentIDs().OrderBy(i => i).ToList();
+                    }
+                    else
+                    {
+                        fieldIds = content.JoinRootId.HasValue
+                            ? new[] { content.JoinRootId.Value }.ToList()
+                            : (content.UnionSourceContentIDs.Any()
+                                ? content.UnionSourceContentIDs
+                                : new[] { field.RelateToContentId.Value }).ToList();
+                    }
 
                     if (fieldIds.Any() && field.LinkId.HasValue)
                     {
@@ -682,6 +692,14 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             using (new QPConnectionScope())
             {
                 return Common.GetArticleFieldValue(QPConnectionScope.Current.DbConnection, id, contentId, name);
+            }
+        }
+
+        internal static Dictionary<int, string> GetContentFieldValues(int contentId, string name)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.GetContentFieldValues(QPConnectionScope.Current.DbConnection, contentId, name);
             }
         }
 
@@ -1104,8 +1122,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     var granted = CommonSecurity.CheckArticleSecurity(scope.DbConnection, currentContentId, currentIds, QPContext.CurrentUserId, startLevel);
                     foreach (var t in currentMapping)
                     {
-                        var flag = t.Value != null && t.Value.All(n => granted[n]);
-                        partResult[t.Key] = partResult.ContainsKey(t.Key) ? partResult[t.Key] && flag : flag;
+                        if (t.Value != null)
+                        {
+                            var flag = t.Value.All(n => granted[n]);
+                            partResult[t.Key] = partResult.ContainsKey(t.Key) ? partResult[t.Key] && flag : flag;
+                        }
                     }
                 }
 
@@ -1394,17 +1415,17 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         }
 
         private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations) => (from a in articles
-                                                                                                                              from f in a.Fields
-                                                                                                                              from linkedItemId in f.ArticleIds != null && f.ArticleIds.Any() ? f.ArticleIds : new[] { 0 }
-                                                                                                                              join r in relations on f.Id equals r.FieldId
-                                                                                                                              where r.LinkId.HasValue
-                                                                                                                              select new LinkData
-                                                                                                                              {
-                                                                                                                                  // ReSharper disable once PossibleInvalidOperationException
-                                                                                                                                  LinkId = r.LinkId.Value,
-                                                                                                                                  ItemId = a.Id,
-                                                                                                                                  LinkedItemId = linkedItemId != 0 ? linkedItemId : (int?)null
-                                                                                                                              })
+                from f in a.Fields
+                from linkedItemId in f.ArticleIds != null && f.ArticleIds.Any() ? f.ArticleIds : new[] { 0 }
+                join r in relations on f.Id equals r.FieldId
+                where r.LinkId.HasValue
+                select new LinkData
+                {
+                    // ReSharper disable once PossibleInvalidOperationException
+                    LinkId = r.LinkId.Value,
+                    ItemId = a.Id,
+                    LinkedItemId = linkedItemId != 0 ? linkedItemId : (int?)null
+                })
             .ToArray();
 
         private static LinkData[] UpdateLinkIds(LinkData[] links, IEnumerable<InsertData> insertData)
@@ -1429,13 +1450,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         private static ArticleData[] UpdateArticleRelations(ArticleData[] articles, IEnumerable<RelationData> relations)
         {
             var items = (from article in articles
-                         from field in article.Fields
-                         join relation in relations
-                         on new { articleId = article.Id, fieldId = field.Id }
-                         equals new { articleId = relation.ArticleId, fieldId = relation.FieldId }
-                         into r
-                         from relation in r.DefaultIfEmpty()
-                         select new { article, field, relation })
+                    from field in article.Fields
+                    join relation in relations
+                        on new { articleId = article.Id, fieldId = field.Id }
+                        equals new { articleId = relation.ArticleId, fieldId = relation.FieldId }
+                        into r
+                    from relation in r.DefaultIfEmpty()
+                    select new { article, field, relation })
                 .ToArray();
 
             foreach (var item in items)

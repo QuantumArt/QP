@@ -13,7 +13,9 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
     {
         internal const int BaseCommandOrder = 10;
 
-        internal VisualEditorPlugin() { }
+        internal VisualEditorPlugin()
+        {
+        }
 
         internal static VisualEditorPlugin Create() => new VisualEditorPlugin
         {
@@ -49,7 +51,6 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
 
             foreach (var command in jsonCommands)
             {
-
                 command.RowOrder = rowOrder;
                 command.ToolbarInRowOrder = toolbarInRowOrder;
                 command.GroupInToolbarOrder = 0;
@@ -93,6 +94,7 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
                     ValidateVeCommand(veCommandsArray[i], errors, i + 1, duplicateCurrentNames, duplicateCurrentAliases);
                 }
             }
+
             if (!errors.IsEmpty)
             {
                 throw errors;

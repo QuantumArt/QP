@@ -2,8 +2,8 @@ using Quantumart.QP8.BLL.Services.MultistepActions.Base;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Archive
 {
-	public class RestoreArticlesService : MultistepActionServiceBase<RestoreArticlesCommand>
-	{
-		public override string ActionCode => Constants.ActionCode.MultipleRestoreArticleFromArchive;
-	}
+    public class RestoreArticlesService : MultistepActionServiceBase<RestoreArticlesCommand>
+    {
+        public override string ActionCode => Constants.ActionCode.MultipleRestoreArticleFromArchive;
+    }
 }

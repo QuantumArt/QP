@@ -42,13 +42,13 @@ namespace Quantumart.QP8.BLL.Services.DTO
         {
             var replaces = new Dictionary<string, string>
             {
-                {"LastModifiedByUserId", FieldName.LastModifiedBy},
-                {"LastModifiedByUser", "LAST_MODIFIED_BY_LOGIN"},
-                {"FirstName", "FIRST_NAME"},
-                {"LastName", "LAST_NAME"},
-                {"LanguageId", "LANGUAGE_ID"},
-                {"Language", "LANGUAGE_NAME"},
-                {"LastLogOn", "LAST_LOGIN"}
+                { "LastModifiedByUserId", FieldName.LastModifiedBy },
+                { "LastModifiedByUser", "LAST_MODIFIED_BY_LOGIN" },
+                { "FirstName", "FIRST_NAME" },
+                { "LastName", "LAST_NAME" },
+                { "LanguageId", "LANGUAGE_ID" },
+                { "Language", "LANGUAGE_NAME" },
+                { "LastLogOn", "LAST_LOGIN" }
             };
 
             return TranslateHelper.TranslateSortExpression(sortExpression, replaces);

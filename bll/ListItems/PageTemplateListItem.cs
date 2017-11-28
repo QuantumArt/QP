@@ -6,7 +6,7 @@ namespace Quantumart.QP8.BLL.ListItems
     {
         public int Id { get; set; }
 
-        public bool IsSystem { get; set; }        
+        public bool IsSystem { get; set; }
 
         public string Name { get; set; }
 
@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.ListItems
 
         public int LastModifiedBy { get; set; }
 
-        public string LastModifiedByLogin { get; set; }        
+        public string LastModifiedByLogin { get; set; }
 
         public int LockedBy { get; set; }
 
@@ -31,10 +31,10 @@ namespace Quantumart.QP8.BLL.ListItems
         public string LockedByToolTip { get; set; }
     }
 
-	public class PageTemplateSearchListItem : PageTemplateListItem
-	{
-		public int ParentId { get; set; }
+    public class PageTemplateSearchListItem : PageTemplateListItem
+    {
+        public int ParentId { get; set; }
 
-		public string ParentName { get; set; }
-	}
+        public string ParentName { get; set; }
+    }
 }

@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Quantumart.QP8.BLL.Interfaces.Db;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 
@@ -40,7 +41,8 @@ namespace Quantumart.QP8.BLL.Repository
             return Lock(item);
         }
 
-        internal static EntityObject GetById<T>(int id) where T : EntityObject
+        internal static EntityObject GetById<T>(int id)
+            where T : EntityObject
         {
             if (typeof(T) == typeof(Article))
             {
@@ -169,7 +171,6 @@ namespace Quantumart.QP8.BLL.Repository
 
             return result;
         }
-
 
         /// <summary>
         /// Проверяет существование сущности

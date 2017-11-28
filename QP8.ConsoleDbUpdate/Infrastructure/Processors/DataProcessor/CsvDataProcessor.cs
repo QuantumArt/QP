@@ -1,7 +1,7 @@
-using CsvHelper;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Interfaces.Db;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;

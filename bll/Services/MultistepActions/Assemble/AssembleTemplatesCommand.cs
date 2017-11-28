@@ -20,7 +20,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 
         private int _itemCount;
 
-        public AssembleTemplatesCommand(MultistepActionStageCommandState state) : this(state.Id, null) { }
+        public AssembleTemplatesCommand(MultistepActionStageCommandState state)
+            : this(state.Id, null)
+        {
+        }
 
         public AssembleTemplatesCommand(int siteId, string sitetName)
         {

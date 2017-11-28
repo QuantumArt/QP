@@ -1,6 +1,6 @@
 ﻿namespace Quantumart.QP8.BLL.Services.DTO
 {
-	public class FormatInitListResult : InitListResultBase
-	{
-	}
+    public class FormatInitListResult : InitListResultBase
+    {
+    }
 }

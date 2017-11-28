@@ -3,31 +3,32 @@ using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL.Services.Audit
 {
-	public interface IRemovedEntitiesService
-	{
-		ListResult<RemovedEntity> GetPage(ListCommand cmd);
-	}
-	public class RemovedEntitiesService : IRemovedEntitiesService
-	{
-		private readonly IRemovedEntitiesPagesRepository repository;
+    public interface IRemovedEntitiesService
+    {
+        ListResult<RemovedEntity> GetPage(ListCommand cmd);
+    }
 
-		public RemovedEntitiesService(IRemovedEntitiesPagesRepository repository)
-		{
-			this.repository = repository;
-		}
+    public class RemovedEntitiesService : IRemovedEntitiesService
+    {
+        private readonly IRemovedEntitiesPagesRepository repository;
 
-		#region IRemovedEntitiesService Members
+        public RemovedEntitiesService(IRemovedEntitiesPagesRepository repository)
+        {
+            this.repository = repository;
+        }
 
-		public ListResult<RemovedEntity> GetPage(ListCommand cmd)
-		{
+        #region IRemovedEntitiesService Members
+
+        public ListResult<RemovedEntity> GetPage(ListCommand cmd)
+        {
             var data = repository.GetPage(cmd, out var totalRecords).ToList();
             return new ListResult<RemovedEntity>
-			{
-				Data = data,
-				TotalRecords = totalRecords
-			};
-		}
+            {
+                Data = data,
+                TotalRecords = totalRecords
+            };
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

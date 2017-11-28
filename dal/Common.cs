@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -86,6 +86,24 @@ namespace Quantumart.QP8.DAL
                 cmd.Parameters.AddWithValue("@id", id);
                 var value = cmd.ExecuteScalar();
                 return value?.ToString() ?? string.Empty;
+            }
+        }
+
+        public static Dictionary<int, string> GetContentFieldValues(SqlConnection connection, int contentId, string name)
+        {
+            var values = new Dictionary<int, string>();
+            using (var cmd = SqlCommandFactory.Create($"select content_item_id, [{name}] from content_{contentId}_united with(nolock) where [{name}] is not null", connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        values.Add((int)(decimal)dr[0], dr[1]?.ToString() ?? String.Empty);
+                    }
+                }
+
+                return values;
             }
         }
 

@@ -43,13 +43,8 @@ namespace Quantumart.QP8.BLL
         [SuppressMessage("ReSharper", "ValueParameterNotUsed")]
         public virtual int ParentEntityId
         {
-            get
-            {
-                return 0;
-            }
-            set
-            {
-            }
+            get { return 0; }
+            set { }
         }
 
         [LocalizedDisplayName("LastModifiedBy", NameResourceType = typeof(EntityObjectStrings))]
@@ -137,7 +132,7 @@ namespace Quantumart.QP8.BLL
         {
             var replaces = new Dictionary<string, string>
             {
-                {"ByUser", "ByUser.LogOn"}
+                { "ByUser", "ByUser.LogOn" }
             };
 
             return TranslateHelper.TranslateSortExpression(sortExpression, replaces);

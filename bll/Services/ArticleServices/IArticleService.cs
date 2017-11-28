@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Quantumart.QP8.BLL.Interfaces.Services
+namespace Quantumart.QP8.BLL.Services.ArticleServices
 {
     public interface IArticleService
     {

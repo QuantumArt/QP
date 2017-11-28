@@ -50,7 +50,6 @@ namespace Quantumart.QP8.BLL.Repository
             return result;
         }
 
-
         /// <summary>
         /// Возвращает список сайтов
         /// </summary>
@@ -201,6 +200,7 @@ namespace Quantumart.QP8.BLL.Repository
                 return MultistepActionHelper.GetXmlFromDataRows(rows, "folder");
             }
         }
+
         internal static void CopyFolderAccess(string relationsBetweenFoldersXml)
         {
             using (var scope = new QPConnectionScope())

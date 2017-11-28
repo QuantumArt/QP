@@ -165,6 +165,14 @@ Quantumart.QP8.BackendDocumentContext.prototype.getValue = function (editor, inp
   return this.getInput(editor, inputName).val();
 };
 
+Quantumart.QP8.BackendDocumentContext.prototype.getIds = function (editor, inputName) {
+  var $elem = this.getRow(editor, inputName);
+  var entities = $elem.find('.dataList').data('entity_data_list_component').getSelectedEntities();
+  return entities.map(function (elem) {
+    return elem.Id;
+  });
+};
+
 Quantumart.QP8.BackendDocumentContext.prototype.setValue = function (editor, inputName, value) {
   this.getInput(editor, inputName).val(value).trigger('change');
 };

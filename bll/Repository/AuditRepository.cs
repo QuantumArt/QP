@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -173,9 +173,9 @@ namespace Quantumart.QP8.BLL.Repository
             var uid = Converter.ToDecimal(QPContext.CurrentUserId);
             var slDal =
                 QPContext.EFContext.SessionsLogSet
-                .Where(s => !s.IsQP7 && s.UserId == uid)
-                .OrderByDescending(s => s.StartTime)
-                .FirstOrDefault();
+                    .Where(s => !s.IsQP7 && s.UserId == uid)
+                    .OrderByDescending(s => s.StartTime)
+                    .FirstOrDefault();
 
             return MapperFacade.SessionsLogMapper.GetBizObject(slDal);
         }

@@ -7,7 +7,7 @@ using QP8.Infrastructure;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 
-namespace Quantumart.QP8.BLL.Repository.Articles
+namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 {
     /// <summary>
     /// Парсер параметров запроса списка статей

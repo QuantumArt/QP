@@ -6,32 +6,18 @@ namespace Quantumart.QP8.BLL
 {
     public class ContextMenu
     {
-		public ContextMenu()
-		{
-			entityType = new Lazy<EntityType>(() => ContextMenuRepository.GetEntityType(Id));
-		}
-		
-		public int Id
+        public ContextMenu()
         {
-            get;
-            set;
-        }
-        
-        public string Code
-        {
-            get;
-            set;
+            entityType = new Lazy<EntityType>(() => ContextMenuRepository.GetEntityType(Id));
         }
 
+        public int Id { get; set; }
 
-        
-        public IEnumerable<ContextMenuItem> Items
-        {
-            get;
-            set;
-        }
+        public string Code { get; set; }
 
-		private Lazy<EntityType> entityType;
-		public EntityType EntityType => entityType.Value;
+        public IEnumerable<ContextMenuItem> Items { get; set; }
+
+        private readonly Lazy<EntityType> entityType;
+        public EntityType EntityType => entityType.Value;
     }
 }

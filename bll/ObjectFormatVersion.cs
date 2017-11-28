@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.Merger;
+using Quantumart.QP8.Merger;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
@@ -42,6 +42,7 @@ namespace Quantumart.QP8.BLL
         public string CodeBehindToMerge { get; set; }
 
         public int? NetLanguageId { get; set; }
+
         /// <summary>
         /// Фальшивый идентификатор для текущей версии
         /// </summary>
@@ -51,7 +52,7 @@ namespace Quantumart.QP8.BLL
         /// Версия, с которой происходит сравнение
         /// </summary>
         public ObjectFormatVersion VersionToMerge { get; set; }
-                
+
         /// <summary>
         /// ID версии, с которой происходит сравнение
         /// </summary>
@@ -62,7 +63,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         /// <param name="versionToMerge">версия для слияния</param>
         internal void MergeToVersion(ObjectFormatVersion versionToMerge)
-        {			
+        {
             NameToMerge = Merge(Formatter.ProtectHtml(Name), Formatter.ProtectHtml(versionToMerge.Name));
             NetFormatNameToMerge = Merge(Formatter.ProtectHtml(NetFormatName), Formatter.ProtectHtml(versionToMerge.NetFormatName));
             DescriptionToMerge = Merge(Formatter.ProtectHtml(Description), Formatter.ProtectHtml(versionToMerge.Description));
@@ -89,6 +90,6 @@ namespace Quantumart.QP8.BLL
         }
 
         [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
-        public string ExpandedName => (Id == CurrentVersionId || Id == 0) ? ArticleStrings.CurrentVersion : string.Format(ArticleStrings.VersionN, Id);
+        public string ExpandedName => Id == CurrentVersionId || Id == 0 ? ArticleStrings.CurrentVersion : string.Format(ArticleStrings.VersionN, Id);
     }
 }

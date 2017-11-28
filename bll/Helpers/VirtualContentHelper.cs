@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.Results;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;

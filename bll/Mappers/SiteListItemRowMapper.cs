@@ -19,18 +19,16 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.LastModifiedByUser, opt => opt.MapFrom(row => row.Field<string>("LastModifiedByUser")))
                 .ForMember(biz => biz.LockedBy, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal?>("LockedBy"), 0)))
                 .ForMember(biz => biz.LockedByFullName, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("LockedByFullName"), string.Empty)))
-
                 .ForMember(biz => biz.IsLive, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<string>("IsLive"))))
                 .ForMember(biz => biz.Dns, opt => opt.MapFrom(row => row.Field<string>("Dns")))
                 .ForMember(biz => biz.UploadUrl, opt => opt.MapFrom(row => row.Field<string>("UploadUrl")))
                 .AfterMap(SetBizProperties);
         }
 
-
         private static void SetBizProperties(DataRow dataObject, SiteListItem bizObject)
         {
-            bizObject.LockedByIcon = Site.GetLockedByIcon(bizObject.LockedBy);
-            bizObject.LockedByToolTip = Site.GetLockedByToolTip(bizObject.LockedBy, bizObject.LockedByFullName);
+            bizObject.LockedByIcon = LockableEntityObject.GetLockedByIcon(bizObject.LockedBy);
+            bizObject.LockedByToolTip = LockableEntityObject.GetLockedByToolTip(bizObject.LockedBy, bizObject.LockedByFullName);
         }
     }
 }

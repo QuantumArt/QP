@@ -4,7 +4,7 @@ using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.Configuration.Models;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring

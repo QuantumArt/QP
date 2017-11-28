@@ -6,7 +6,7 @@ using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -57,6 +57,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new ImportException(ex.Message, ex, settings);
             }
         }
+
         protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
         {
             Stages = new[]

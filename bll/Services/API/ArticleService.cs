@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -118,7 +119,7 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                var result = Services.ArticleService.Copy(article.Id, true, false);
+                var result = ArticleServices.ArticleService.Copy(article.Id, true, false);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -146,7 +147,7 @@ namespace Quantumart.QP8.BLL.Services.API
                     throw new ApplicationException(string.Format(ArticleStrings.ArticleNotFound, articleId));
                 }
 
-                var result = Services.ArticleService.Remove(articleToRemove.ContentId, articleId, false, true, false);
+                var result = ArticleServices.ArticleService.Remove(articleToRemove.ContentId, articleId, false, true, false);
 
                 QPContext.CurrentUserId = 0;
                 return result;
@@ -158,7 +159,7 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                var result = Services.ArticleService.Remove(contentId, articleIds, false, true, false);
+                var result = ArticleServices.ArticleService.Remove(contentId, articleIds, false, true, false);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -180,8 +181,8 @@ namespace Quantumart.QP8.BLL.Services.API
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var result = flag
-                    ? Services.ArticleService.MoveToArchive(contentId, articleIds, true, false)
-                    : Services.ArticleService.RestoreFromArchive(contentId, articleIds, true, false);
+                    ? ArticleServices.ArticleService.MoveToArchive(contentId, articleIds, true, false)
+                    : ArticleServices.ArticleService.RestoreFromArchive(contentId, articleIds, true, false);
 
                 QPContext.CurrentUserId = 0;
                 return result;
@@ -203,7 +204,7 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                var result = Services.ArticleService.Publish(contentId, articleIds, true, false);
+                var result = ArticleServices.ArticleService.Publish(contentId, articleIds, true, false);
                 QPContext.CurrentUserId = 0;
                 return result;
             }

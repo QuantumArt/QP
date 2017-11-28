@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -27,7 +28,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         private string ContentsToCopy { get; }
 
-        public CopySiteArticlesCommand(MultistepActionStageCommandState state) : this(state.Id, null, 0) { }
+        public CopySiteArticlesCommand(MultistepActionStageCommandState state)
+            : this(state.Id, null, 0)
+        {
+        }
 
         public CopySiteArticlesCommand(int copyFromSiteId, string siteName, int siteArticlesCount)
         {
@@ -44,7 +48,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         {
             var result = new MultistepActionStepResult();
             var startFrom = step * ItemsPerStep + 1;
-            var endOn = (startFrom - 1) + ItemsPerStep;
+            var endOn = startFrom - 1 + ItemsPerStep;
             var articlesLinks = ContentService.CopyContentsData(CopyFromSiteId, NewSiteId.Value, ContentsToCopy, startFrom, endOn);
             WriteToTempFile(articlesLinks);
             result.ProcessedItemsCount = articlesLinks.Count();
@@ -98,7 +102,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         {
             ItemCount = SiteArticlesCount,
             StepCount = MultistepActionHelper.GetStepCount(SiteArticlesCount, ItemsPerStep),
-            Name = string.Format(SiteStrings.CopySiteArticles, (SiteName ?? string.Empty))
+            Name = string.Format(SiteStrings.CopySiteArticles, SiteName ?? string.Empty)
         };
     }
 }

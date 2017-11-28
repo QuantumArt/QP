@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.Utils.FullTextSearch;
 
 namespace Quantumart.QP8.BLL.Services
@@ -21,13 +21,13 @@ namespace Quantumart.QP8.BLL.Services
 
     public class SearchInArticlesService : ISearchInArticlesService
     {
-        ISearchGrammarParser grammaParser;
-        ISearchInArticlesRepository siaRepository;
+        private readonly ISearchGrammarParser grammaParser;
+        private readonly ISearchInArticlesRepository siaRepository;
 
         public SearchInArticlesService(ISearchGrammarParser grammaParser, ISearchInArticlesRepository siaRepository)
         {
-            this.grammaParser = grammaParser ?? throw new ArgumentNullException("grammaParser");
-            this.siaRepository = siaRepository ?? throw new ArgumentNullException("siaRepository");
+            this.grammaParser = grammaParser ?? throw new ArgumentNullException(nameof(grammaParser));
+            this.siaRepository = siaRepository ?? throw new ArgumentNullException(nameof(siaRepository));
         }
 
         public IEnumerable<SearchInArticlesResultItem> SearchInArticles(int siteId, int userId, string searchString, ListCommand listCmd, out int totalRecords)
@@ -44,7 +44,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             int.TryParse(searchString, out var articleId);
-            var result = siaRepository.SearchInArticles(siteId, userId, sqlSearchString, (articleId > 0 ? articleId : (int?)null), listCmd, out totalRecords);
+            var result = siaRepository.SearchInArticles(siteId, userId, sqlSearchString, articleId > 0 ? articleId : (int?)null, listCmd, out totalRecords);
             if (result.Any())
             {
                 var wordForms = Enumerable.Empty<string>();

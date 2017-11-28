@@ -6,19 +6,19 @@ using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL.Services.ActionPermissions
 {
-	public class ActionPermissionChangeService : ActionPermissionChangeServiceAbstract
-	{
-		private Lazy<IPermissionRepository> permissionRepository = new Lazy<IPermissionRepository>(() => new ActionPermissionRepository());
-		public override IPermissionRepository PermissionRepository => permissionRepository.Value;
+    public class ActionPermissionChangeService : ActionPermissionChangeServiceAbstract
+    {
+        private readonly Lazy<IPermissionRepository> permissionRepository = new Lazy<IPermissionRepository>(() => new ActionPermissionRepository());
+        public override IPermissionRepository PermissionRepository => permissionRepository.Value;
 
-	    private Lazy<IActionPermissionChangeRepository> changeRepository = new Lazy<IActionPermissionChangeRepository>(() => new ActionPermissionChangeRepository());
-		public override IActionPermissionChangeRepository ChangeRepository => changeRepository.Value;
+        private readonly Lazy<IActionPermissionChangeRepository> changeRepository = new Lazy<IActionPermissionChangeRepository>(() => new ActionPermissionChangeRepository());
+        public override IActionPermissionChangeRepository ChangeRepository => changeRepository.Value;
 
-	    public override IPermissionViewModelSettings ViewModelSettings => new GenericPermissionViewModelSettings
-		{
-		    ActionCode = ActionCode.ChangeActionPermission,
-		    EntityTypeCode = EntityTypeCode.EntityTypePermission,
-		    IsPropagateable = false
-		};
-	}
+        public override IPermissionViewModelSettings ViewModelSettings => new GenericPermissionViewModelSettings
+        {
+            ActionCode = ActionCode.ChangeActionPermission,
+            EntityTypeCode = EntityTypeCode.EntityTypePermission,
+            IsPropagateable = false
+        };
+    }
 }

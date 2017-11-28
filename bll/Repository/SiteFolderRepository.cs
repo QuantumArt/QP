@@ -40,7 +40,6 @@ namespace Quantumart.QP8.BLL.Repository
             return CurrentMapper.GetBizList(CurrentSet.Where(c => c.ParentId == parentId).ToList());
         }
 
-
         public override IEnumerable<Folder> GetChildrenFromDb(int parentEntityId, int parentId) => CurrentMapper.GetBizList(QPContext.EFContext.GetChildSiteFoldersList(QPContext.CurrentUserId, parentEntityId, parentId, PermissionLevel.List, false, out var totalRecords));
 
         public override IEnumerable<Folder> GetChildrenWithSync(int parentEntityId, int? parentId)

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.Utils.FullTextSearch;
 
 namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles

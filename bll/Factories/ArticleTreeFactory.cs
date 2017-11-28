@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using Quantumart.QP8.BLL.Processors.TreeProcessors;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.DTO;
 
@@ -21,7 +22,7 @@ namespace Quantumart.QP8.BLL.Factories
                 if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.VirtualArticle)
                 {
                     var contentId = parentEntityId.GetValueOrDefault();
-                    commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
+                    commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out var ftsOptions, out var extensionContentIds, out var _);
 
                     var filterSqlParams = new List<SqlParameter>();
                     var sourceQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);

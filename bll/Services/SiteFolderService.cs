@@ -32,7 +32,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (file == null)
             {
-                throw new ArgumentNullException("file");
+                throw new ArgumentNullException(nameof(file));
             }
 
             file.Rename();
@@ -42,7 +42,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (names == null)
             {
-                throw new ArgumentNullException("names");
+                throw new ArgumentNullException(nameof(names));
             }
 
             var info = _GetPathInfo(id);
@@ -54,6 +54,7 @@ namespace Quantumart.QP8.BLL.Services
                     file.Remove();
                 }
             }
+
             return null;
         }
 
@@ -71,7 +72,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (folder == null)
             {
-                throw new ArgumentNullException("folder");
+                throw new ArgumentNullException(nameof(folder));
             }
 
             return (SiteFolder)FolderFactory.Create(EntityTypeCode.SiteFolder)
@@ -116,8 +117,8 @@ namespace Quantumart.QP8.BLL.Services
         public static MessageResult RemovePreAction(int id)
         {
             var folder = FolderFactory.Create(EntityTypeCode.SiteFolder)
-                    .CreateRepository()
-                    .GetById(id);
+                .CreateRepository()
+                .GetById(id);
             if (folder.IsEmpty)
             {
                 return MessageResult.Confirm(string.Format(FolderStrings.FolderIsNotEmptyConfirm, folder.Name), new[] { id });

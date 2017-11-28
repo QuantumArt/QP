@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Objects;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Utils;
 
-namespace Quantumart.QP8.BLL.Repository
+namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 {
     public class ContentRepository : IContentRepository
     {
@@ -189,7 +190,6 @@ namespace Quantumart.QP8.BLL.Repository
         internal static Content Save(Content content, bool createDefaultField)
         {
             var binding = content.WorkflowBinding;
-
             FieldRepository.ChangeCreateFieldsTriggerState(false);
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
 
@@ -397,6 +397,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<Field> GetDisplayFields(int contentId, Field field = null)
         {
+            // ReSharper disable once PossibleInvalidOperationException
             var excludeId = field != null && field.ExactType == FieldExactTypes.M2ORelation ? field.BackRelationId.Value : 0;
             var fields = field == null || field.ListFieldTitleCount <= 1 && field.ExactType == FieldExactTypes.O2MRelation || field.ListFieldTitleCount <= 0
                 ? null
@@ -405,7 +406,6 @@ namespace Quantumart.QP8.BLL.Repository
                 .Select(FieldRepository.GetById);
 
             var displayField = field?.Relation != null && field.ExactType == FieldExactTypes.O2MRelation ? field.Relation : GetTitleField(contentId);
-
             return fields ?? new[] { displayField };
         }
 
@@ -481,7 +481,7 @@ namespace Quantumart.QP8.BLL.Repository
                 .Select(c => new { c.Id, Text = c.Name })
                 .ToArray()
                 .OrderBy(c => c.Text, StringComparer.InvariantCultureIgnoreCase)
-                .Select(c => new ListItem { Value = c.Id.ToString(), Text = c.Text })
+                .Select(c => new ListItem { Value = c.Id.ToString(CultureInfo.InvariantCulture), Text = c.Text })
                 .ToArray();
         }
 

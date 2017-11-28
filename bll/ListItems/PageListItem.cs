@@ -32,14 +32,14 @@ namespace Quantumart.QP8.BLL.ListItems
 
         public string AssembledByLogin { get; set; }
 
-		public int LockedBy { get; set; }
+        public int LockedBy { get; set; }
 
-		public string LockedByFullName { get; set; }
+        public string LockedByFullName { get; set; }
 
-		public string LockedByIcon { get; set; }
+        public string LockedByIcon { get; set; }
 
-		public string LockedByToolTip { get; set; }
+        public string LockedByToolTip { get; set; }
 
-		public string TemplateName { get; set; }
+        public string TemplateName { get; set; }
     }
 }

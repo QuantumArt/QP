@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 
-namespace Quantumart.QP8.BLL.Interfaces.Db
+namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 {
     public interface IFieldRepository
     {

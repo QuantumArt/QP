@@ -1,38 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Configuration;
-using System.Web;
-using System.Web.Configuration;
+﻿using System.Configuration;
 
 namespace Quantumart.QP8.Configuration.Authentication.WindowsAuthentication
 {
-    [System.Configuration.ConfigurationCollectionAttribute(typeof(IpRangeElement))]
-    public class IpRangeCollection : System.Configuration.ConfigurationElementCollection
+    [ConfigurationCollection(typeof(IpRangeElement))]
+    public class IpRangeCollection : ConfigurationElementCollection
     {
-        protected override System.Configuration.ConfigurationElement CreateNewElement()
-        {
-            return new IpRangeElement();
-        }
+        protected override ConfigurationElement CreateNewElement() => new IpRangeElement();
 
-        protected override object GetElementKey(System.Configuration.ConfigurationElement element)
-        {
-            return ((IpRangeElement)(element)).Name;
-        }
+        protected override object GetElementKey(ConfigurationElement element) => ((IpRangeElement)element).Name;
 
         public void Add(IpRangeElement element)
         {
-            this.BaseAdd(element);
+            BaseAdd(element);
         }
 
         public void Remove(string key)
         {
-            this.BaseRemove(key);
+            BaseRemove(key);
         }
 
         public void Clear()
         {
-            this.BaseClear();
+            BaseClear();
         }
     }
 }

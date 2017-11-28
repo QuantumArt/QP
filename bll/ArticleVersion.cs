@@ -4,8 +4,9 @@ using System.Data;
 using System.Linq;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Merger;
 using Quantumart.QP8.Resources;
@@ -228,6 +229,7 @@ namespace Quantumart.QP8.BLL
         }
 
         private readonly Lazy<DataRow> _versionRowData;
+
 
         /// <summary>
         /// Библиотека версии

@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
@@ -36,7 +36,6 @@ namespace Quantumart.QP8.BLL.Services
 
                 // Обновить дочерние виртуальные контенты
                 helper.UpdateVirtualFields(newField);
-
                 return newField;
             }
         }

@@ -105,6 +105,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="folder"></param>
         /// <returns></returns>
         protected abstract Folder UpdateInDb(Folder folder);
+
         /// <summary>
         /// Удаляет папку из БД
         /// </summary>

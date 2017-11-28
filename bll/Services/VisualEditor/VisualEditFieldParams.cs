@@ -12,7 +12,9 @@
 
         public string RootElementClass { get; set; }
 
-        public VisualEditFieldParams() { }
+        public VisualEditFieldParams()
+        {
+        }
 
         public VisualEditFieldParams(Site site)
         {

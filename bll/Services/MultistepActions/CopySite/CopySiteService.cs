@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Web;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -59,7 +60,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
             return base.Setup(parentId, siteId, boundToExternal);
         }
-
 
         protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
         {

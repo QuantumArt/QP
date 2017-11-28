@@ -1,6 +1,6 @@
 ﻿using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.User
 {
     public class UserSearchBlockViewModel
     {

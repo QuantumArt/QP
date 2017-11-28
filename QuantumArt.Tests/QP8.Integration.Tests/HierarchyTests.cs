@@ -2,17 +2,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
+using QP8.Integration.Tests.Infrastructure;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Services.ArticleServices;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.FileSystem;
 using Quantumart.QPublishing.Resizer;
 using ArticleApiService = Quantumart.QP8.BLL.Services.API.ArticleService;
-using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
+using ContentApiService = Quantumart.QP8.BLL.Services.API.ContentService;
 
 namespace QP8.Integration.Tests
 {
@@ -34,7 +37,7 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            DbConnector = new DBConnector(Infrastructure.Global.ConnectionString)
+            DbConnector = new DBConnector(Global.ConnectionString)
             {
                 DynamicImageCreator = new FakeDynamicImage(),
                 FileSystem = new FakeFileSystem(),
@@ -49,12 +52,22 @@ namespace QP8.Integration.Tests
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Infrastructure.Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
-            service.Process(Infrastructure.Global.GetXml(@"TestData\hierarchy.xml"));
+            var service = new XmlDbUpdateNonMvcReplayService(
+                Global.ConnectionString,
+                1,
+                false,
+                dbLogService.Object,
+                new ApplicationInfoRepository(),
+                new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
+                new XmlDbUpdateHttpContextProcessor(),
+                false
+            );
 
-            RegionContentId = Infrastructure.Global.GetContentId(DbConnector, RegionContentName);
-            ProductContentId = Infrastructure.Global.GetContentId(DbConnector, ProductContentName);
-            BaseArticlesIds = Infrastructure.Global.GetIdsWithTitles(DbConnector, RegionContentId);
+            service.Process(Global.GetXml(@"TestData\hierarchy.xml"));
+
+            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
+            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
+            BaseArticlesIds = Global.GetIdsWithTitles(DbConnector, RegionContentId);
         }
 
         [Test]
@@ -62,9 +75,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["root"], BaseArticlesIds["macro1"], BaseArticlesIds["macro2"], BaseArticlesIds["region12"], BaseArticlesIds["district113"] };
             var ids2 = new[] { BaseArticlesIds["root"] };
-            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionString))
             {
-                var articleService = new ArticleApiService(Infrastructure.Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -81,9 +94,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["region12"], BaseArticlesIds["macro1"] };
             var ids2 = new[] { BaseArticlesIds["macro1"] };
-            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionString))
             {
-                var articleService = new ArticleApiService(Infrastructure.Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -100,9 +113,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["city111"], BaseArticlesIds["city112"], BaseArticlesIds["district113"], BaseArticlesIds["region12"], BaseArticlesIds["macro2"] };
             var ids2 = new[] { BaseArticlesIds["root"] };
-            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionString))
             {
-                var articleService = new ArticleApiService(Infrastructure.Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -119,9 +132,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["city111"], BaseArticlesIds["city112"], BaseArticlesIds["district113"], BaseArticlesIds["region12"] };
             var ids2 = new[] { BaseArticlesIds["macro1"] };
-            using (new QPConnectionScope(Infrastructure.Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionString))
             {
-                var articleService = new ArticleApiService(Infrastructure.Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -141,9 +154,9 @@ namespace QP8.Integration.Tests
 
         private static void Clear()
         {
-            var srv = new ContentService(Infrastructure.Global.ConnectionString, 1);
-            RegionContentId = Infrastructure.Global.GetContentId(DbConnector, RegionContentName);
-            ProductContentId = Infrastructure.Global.GetContentId(DbConnector, ProductContentName);
+            var srv = new ContentApiService(Global.ConnectionString, 1);
+            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
+            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
 
             if (srv.Exists(ProductContentId))
             {

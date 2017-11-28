@@ -6,7 +6,7 @@ using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
 
-namespace Quantumart.QP8.BLL.Repository.Articles
+namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 {
     internal class ArticleVersionRepository
     {
@@ -18,12 +18,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <returns>список версий статей</returns>
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
-            var eQuery = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
-            var versionList = MapperFacade.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(eQuery, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
-           
-            return versionList;
+            var query = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
+            return MapperFacade.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(query, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
         }
-
 
         /// <summary>
         /// Создает версию
@@ -36,7 +33,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 Common.CreateArticleVersion(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, articleId);
             }
         }
-
 
         /// <summary>
         /// Возвращает версию статьи
@@ -52,7 +48,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 if (articleId == 0)
                 {
-                    throw(new Exception("Article id is not specified!"));
+                    throw new Exception("Article id is not specified!");
                 }
 
                 var article = ArticleRepository.GetById(articleId);
@@ -78,7 +74,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return articleVersion;
         }
 
-
         /// <summary>
         /// Возвращает поля данных версии
         /// </summary>
@@ -92,7 +87,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return Common.GetArticleVersionRow(QPConnectionScope.Current.DbConnection, articleId, id);
             }
         }
-
 
         /// <summary>
         /// Удаляет версию статьи
@@ -112,7 +106,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             DefaultRepository.Delete<ArticleVersionDAL>(ids);
         }
 
-
         /// <summary>
         /// Получение связанных статей (для поля типа M2M)
         /// </summary>
@@ -127,7 +120,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-
         /// <summary>
         /// Восстанавливает версию
         /// </summary>
@@ -139,7 +131,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 Common.RestoreArticleVersion(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, id);
             }
         }
-
 
         /// <summary>
         /// Возвращает самую свежую версию для статьи
@@ -179,7 +170,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         internal static IEnumerable<int> GetIds(int[] ids)
         {
-            var decIds = ids.Select(n => (decimal)n).ToArray(); 
+            var decIds = ids.Select(n => (decimal)n).ToArray();
             return QPContext.EFContext.ArticleVersionSet.Where(n => decIds.Contains(n.ArticleId)).Select(n => (int)n.Id).ToArray();
         }
 

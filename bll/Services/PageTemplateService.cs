@@ -7,6 +7,7 @@ using System.Web;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -209,7 +210,7 @@ namespace Quantumart.QP8.BLL.Services
         public IEnumerable<ListItem> GetNetLanguagesAsListItems()
         {
             return PageTemplateRepository.GetNetLanguagesList().Select(lang => new ListItem { Text = lang.Name, Value = lang.Id.ToString() })
-                    .ToArray();
+                .ToArray();
         }
 
         public IEnumerable<ListItem> GetLocalesAsListItems()
@@ -477,6 +478,7 @@ namespace Quantumart.QP8.BLL.Services
                 new AssembleSelectedObjectsController(id.ToString(), QPContext.CurrentDbConnectionString).Assemble();
                 return null;
             }
+
             return MessageResult.Error(SiteStrings.ShouldBeDotNet);
         }
 
@@ -601,6 +603,7 @@ namespace Quantumart.QP8.BLL.Services
                         continue;
                     }
                 }
+
                 if (obj.Container != null)
                 {
                     if (!string.IsNullOrWhiteSpace(obj.Container.FilterValue) && obj.Container.FilterValue.Contains(filter))
@@ -683,8 +686,7 @@ namespace Quantumart.QP8.BLL.Services
             PageRepository.CopySiteTemplatePages(sourceSiteId, destinationSiteId, relBetweenTemplates);
 
             var relBetweenPages = PageRepository.GetRelationsBetweenPages(relBetweenTemplates);
-            var relBetweenObjects = string.Empty;
-            ObjectRepository.CopySiteTemplateObjects(relBetweenTemplates, relBetweenPages, ref relBetweenObjects);
+            ObjectRepository.CopySiteTemplateObjects(relBetweenTemplates, relBetweenPages, out var relBetweenObjects);
 
             ObjectFormatRepository.CopySiteTemplateObjectFormats(relBetweenObjects, out var relBetweenObjectFormats);
 

@@ -7,8 +7,8 @@ using System.Linq.Expressions;
 using AutoMapper;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -16,7 +16,7 @@ using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 
-namespace Quantumart.QP8.BLL.Repository
+namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 {
     public class FieldRepository : IFieldRepository
     {
@@ -136,6 +136,8 @@ namespace Quantumart.QP8.BLL.Repository
 
             // Существуют ли поля ссылающиеся на тот же контент что и данное поле и с таким же именем обратного Linq-свойства
             var relateContentFields = field.Relation.Content.Fields.Select(f => (decimal)f.Id).ToArray();
+
+            // ReSharper disable once PossibleInvalidOperationException
             var baseM2OFields = field.Content.Fields.Where(f => f.TypeId == FieldTypeCodes.M2ORelation).Select(f => (decimal)f.BackRelationId).ToArray();
             var existSameNetBackNameFields = QPContext.EFContext.FieldSet.Any(
                 f => f.TypeId == FieldTypeCodes.Relation &&
@@ -161,6 +163,8 @@ namespace Quantumart.QP8.BLL.Repository
 
             // Существуют ли поля ссылающиеся на контент данного поля и с именем обратного Linq-свойства равным имени прямого Linq-свойства данного поля
             var relateContentFields = field.Content.Fields.Select(f => (decimal)f.Id).ToArray();
+
+            // ReSharper disable once PossibleInvalidOperationException
             var baseM2OFields = field.Content.Fields.Where(f => f.TypeId == FieldTypeCodes.M2ORelation).Select(f => (decimal)f.BackRelationId.Value).ToArray();
             var existSameNetBackNameFields = QPContext.EFContext.FieldSet.Any(
                 f => f.TypeId == FieldTypeCodes.Relation &&
@@ -571,6 +575,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 using (var scope = new QPConnectionScope())
                 {
+                    // ReSharper disable once PossibleInvalidOperationException
                     Common.ChangeContentDataForRelation(scope.DbConnection, newItem.Id, newItem.BackRelationId.Value);
                 }
             }
@@ -581,6 +586,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 using (var scope = new QPConnectionScope())
                 {
+                    // ReSharper disable once PossibleInvalidOperationException
                     Common.ChangeContentDataForRelation(scope.DbConnection, newItem.Id, newItem.LinkId.Value);
                 }
             }
@@ -590,6 +596,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 using (var scope = new QPConnectionScope())
                 {
+                    // ReSharper disable once PossibleInvalidOperationException
                     Common.O2MtoM2MTranferData(scope.DbConnection, newItem.Id, newItem.LinkId.Value);
                 }
             }
@@ -599,6 +606,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 using (var scope = new QPConnectionScope())
                 {
+                    // ReSharper disable once PossibleInvalidOperationException
                     Common.M2MtoO2MTranferData(scope.DbConnection, newItem.Id, preUpdateField.LinkId.Value);
                 }
             }
@@ -766,34 +774,27 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Возвращает список контентов для классификатора
         /// </summary>
-        internal static IEnumerable<ListItem> GetAggregatableContentListItemsForClassifier(Field classifier, string excludeValue = null)
+        internal static IEnumerable<ListItem> GetAggregatableContentListItemsForClassifier(Field classifier, string excludeValue = null, int permissionLevel = PermissionLevel.Modify)
         {
             if (classifier != null && classifier.IsClassifier)
             {
-                return AggregatedContentListItems(classifier, excludeValue)
-                    .Select(c => new ListItem(c.Id.ToString(), c.Name))
-                    .ToArray();
+                return AggregatedContentListItems(classifier, excludeValue, permissionLevel).Select(c => new ListItem(c.Id.ToString(), c.Name)).ToArray();
             }
 
             return Enumerable.Empty<ListItem>();
         }
 
-        /// <summary>
-        /// Возвращает список контентов для классификатора
-        /// </summary>
         internal static int[] GetAggregatableContentIdsForClassifier(Field classifier)
         {
             if (classifier != null && classifier.IsClassifier)
             {
-                return AggregatedContentListItems(classifier, null)
-                    .Select(c => c.Id)
-                    .ToArray();
+                return AggregatedContentListItems(classifier, null, PermissionLevel.List).Select(c => c.Id).ToArray();
             }
 
             return new int[] { };
         }
 
-        private static IEnumerable<ContentListItem> AggregatedContentListItems(Field classifier, string excludeValue)
+        private static IEnumerable<ContentListItem> AggregatedContentListItems(Field classifier, string excludeValue, int permissionLevel)
         {
             var items = QPContext.EFContext.FieldSet
                 .Where(f => f.Id == classifier.Id)
@@ -810,8 +811,7 @@ namespace Quantumart.QP8.BLL.Repository
                 var excludeId = Converter.ToInt32(excludeValue, 0);
                 using (var scope = new QPConnectionScope())
                 {
-                    var result = CommonSecurity.CheckContentSecurity(scope.DbConnection, siteId, ids, QPContext.CurrentUserId,
-                        PermissionLevel.Modify);
+                    var result = CommonSecurity.CheckContentSecurity(scope.DbConnection, siteId, ids, QPContext.CurrentUserId, permissionLevel);
                     items = items.Where(n => result[n.Id] || n.Id == excludeId).ToArray();
                 }
             }
@@ -841,8 +841,7 @@ namespace Quantumart.QP8.BLL.Repository
                 field.SaveContentLink();
             }
 
-            var newField = field.PersistWithVirtualRebuild(true);
-            return newField;
+            return field.PersistWithVirtualRebuild(true);
         }
 
         internal static void MoveFieldOrders(int contentId, int newOrder)
