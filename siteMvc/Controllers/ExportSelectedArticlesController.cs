@@ -1,7 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
+using QP8.Infrastructure.Web.ActionResults;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
@@ -27,42 +29,30 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult PreSettings(int parentId, int[] IDs) => Json(_service.MultistepActionSettings(parentId, 0, IDs));
+        public ActionResult PreSettings(int parentId, int[] ids) => new JsonNetResult(_service.MultistepActionSettings(parentId, 0, ids));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Settings(string tabId, int parentId, int[] IDs)
+        public ActionResult Settings(string tabId, int parentId, [Bind(Prefix = "IDs")] int[] ids) => JsonHtml($"{FolderForTemplate}/ExportTemplate", new ExportViewModel
         {
-            var model = new ExportViewModel
-            {
-                ContentId = parentId,
-                Ids = IDs
-            };
-
-            return JsonHtml($"{FolderForTemplate}/ExportTemplate", model);
-        }
+            ContentId = parentId,
+            Ids = ids
+        });
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Setup(int parentId, int[] IDs, bool? boundToExternal) => Json(_service.Setup(parentId, 0, IDs, boundToExternal));
+        public ActionResult Setup(int parentId, [Bind(Prefix = "IDs")] int[] ids, bool? boundToExternal) => new JsonNetResult(_service.Setup(parentId, 0, ids, boundToExternal));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult SetupWithParams(int parentId, int[] IDs, FormCollection collection)
+        public JsonCamelCaseResult<JSendResponse> SetupWithParams(int parentId, int[] ids, ExportViewModel model)
         {
-            var model = new ExportViewModel();
-            TryUpdateModel(model);
-
             var settings = new ExportSettings
             {
                 Culture = ((CsvCulture)int.Parse(model.Culture)).Description(),
@@ -80,20 +70,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             settings.FieldIdsToExpand = model.FieldsToExpand.ToArray();
-            _service.SetupWithParams(parentId, IDs, settings);
-            return Json(string.Empty);
+            _service.SetupWithParams(parentId, ids, settings);
+            return new JSendResponse { Status = JSendStatus.Success };
         }
 
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
+        public ActionResult Step(int stage, int step) => new JsonNetResult(_service.Step(stage, step));
 
         [HttpPost]
-        public ActionResult TearDown(bool isError)
+        public void TearDown(bool isError)
         {
             _service.TearDown();
-            return null;
         }
     }
 }

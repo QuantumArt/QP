@@ -1,10 +1,23 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 
 namespace QP8.Infrastructure.Web.ActionResults
 {
+    public class JsonNetResult : JsonNetResult<object>
+    {
+        public JsonNetResult(object data)
+            : base(data)
+        {
+        }
+
+        public JsonNetResult(object data, JsonSerializerSettings settings)
+            : base(data, settings)
+        {
+        }
+    }
+
     public class JsonNetResult<T> : JsonResult
     {
         private readonly JsonSerializerSettings _settings;

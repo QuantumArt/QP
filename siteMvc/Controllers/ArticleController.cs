@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
-using Newtonsoft.Json;
 using QP8.Infrastructure.Web.ActionResults;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
@@ -52,8 +51,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string tabId,
             int parentId,
             GridCommand command,
-            [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<ArticleContextQueryParam[]>))] ArticleContextQueryParam[] contextQuery,
+            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
+            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleContextQueryParam>>))] IList<ArticleContextQueryParam> contextQuery,
             string customFilter,
             bool? onlyIds,
             int[] filterIds)
@@ -261,8 +260,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
-                      ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
-                      : model.Data.FieldValues;
+                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
+                        : model.Data.FieldValues;
                     foreach (var fv in union.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
                     {
                         AppendFormGuidsFromIds($"field_{fv.Field.Id}", $"field_uniqueid_{fv.Field.Id}");
@@ -320,7 +319,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     model.Data = ArticleService.Update(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     var union = model.Data.AggregatedArticles.Any()
-                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f=>f.FieldValues))
+                        ? model.Data.FieldValues.Union(model.Data.AggregatedArticles.SelectMany(f => f.FieldValues))
                         : model.Data.FieldValues;
                     foreach (var fv in union.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
                     {
