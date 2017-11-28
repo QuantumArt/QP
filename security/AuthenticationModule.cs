@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Web;
 using Quantumart.QP8.Configuration;
@@ -36,7 +36,6 @@ namespace Quantumart.QP8.Security
                 QpIdentity identity;
                 if (userInformation != null)
                 {
-
                     identity = new QpIdentity(
                         userInformation.Id,
                         userInformation.Name,

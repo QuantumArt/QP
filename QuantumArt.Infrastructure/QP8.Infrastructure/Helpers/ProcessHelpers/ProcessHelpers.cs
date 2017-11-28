@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace QP8.Infrastructure.Helpers.ProcessHelpers
 {
-    public class ProcessHelpers
+    public static class ProcessHelpers
     {
         public static int ExecuteFileAndReadOutput(ProcessExecutionSettings processExecutionSettings) => ExecuteFileAndReadOutput(processExecutionSettings, out var _, out var _);
 

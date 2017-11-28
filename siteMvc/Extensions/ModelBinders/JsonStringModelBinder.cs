@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
@@ -34,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 
             try
             {
-                return typeof(T).IsAssignableFrom(typeof(ArticleContextQueryParam))
+                return typeof(T) == typeof(IList<ArticleSearchQueryParam>)
                     ? JsonConvert.DeserializeObject<T>(incomingString, new JsonQueryParamConverter())
                     : JsonConvert.DeserializeObject<T>(incomingString);
             }

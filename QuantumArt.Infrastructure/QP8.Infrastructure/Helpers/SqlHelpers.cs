@@ -2,7 +2,7 @@ using System.Data.SqlClient;
 
 namespace QP8.Infrastructure.Helpers
 {
-    public class SqlHelpers
+    public static class SqlHelpers
     {
         public static bool TryParseConnectionString(string connectionString, out SqlConnectionStringBuilder connectionStringBuilder)
         {

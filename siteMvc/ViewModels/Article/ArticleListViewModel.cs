@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -103,6 +102,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
         }
 
         #region overrides
+
         public override bool IsReadOnly => base.IsReadOnly || ShowArchive;
 
         public override string EntityTypeCode
@@ -170,12 +170,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 return result;
             }
         }
+
         public int GetTreeFieldId()
         {
             if (ContentService.Read(ContentId).TreeField != null)
             {
                 return ContentService.Read(ContentId).TreeField.Id;
             }
+
             return 0;
         }
 

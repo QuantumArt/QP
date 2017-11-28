@@ -542,25 +542,22 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
           )
         );
 
-        const searchQuery = filterStates.map(item => {
-          const ids = item.SelectedEntities.map(ent => ent.Id);
-          return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
-            item.SearchType,
-            item.FieldId,
-            item.FieldColumnName,
-            null,
-            ids,
-            false,
-            false
-          );
-        });
+        const searchQuery = filterStates.map(item => Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+          item.SearchType,
+          item.FieldId,
+          item.FieldColumnName,
+          null,
+          item.SelectedEntities.map(ent => ent.Id),
+          false,
+          false
+        ));
 
         const defaultSearchBlockState = {
+          searchQuery: JSON.stringify(searchQuery),
           searchBlockState: {
             fieldSearchBlockState,
             defaultFieldSearchBlockState: fieldSearchBlockState
-          },
-          searchQuery: JSON.stringify(searchQuery)
+          }
         };
 
         this.saveHostState(defaultSearchBlockState);

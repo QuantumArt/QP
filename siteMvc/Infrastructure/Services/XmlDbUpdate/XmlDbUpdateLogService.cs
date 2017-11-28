@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;

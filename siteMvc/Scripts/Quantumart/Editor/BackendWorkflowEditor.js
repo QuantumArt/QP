@@ -23,7 +23,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   initialize() {
     const workflow = this._componentElem;
     this._items = ko.observableArray(
-      workflow.data('workflow_list_data').map(data => Object.assign(data || {}, {
+      workflow.data('workflow_list_data').map(data => Object.assign({}, data, {
         RadioChecked: ko.observable(data.RadioChecked),
         Description: ko.observable(data.Description),
         UserId: ko.observable(data.UserId),
