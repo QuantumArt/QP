@@ -95,7 +95,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
         private static string ParseIdentifierParam(ArticleSearchQueryParam param, ICollection<SqlParameter> sqlParams)
         {
             Ensure.NotNull(param);
-            Ensure.That(param.SearchType == ArticleFieldSearchType.NumericRange);
+            Ensure.That(param.SearchType == ArticleFieldSearchType.Identifier);
 
             if (string.IsNullOrWhiteSpace(param.FieldColumn))
             {
