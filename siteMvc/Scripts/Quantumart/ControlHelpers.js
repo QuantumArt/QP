@@ -20,7 +20,7 @@ $c.setFieldRowsVisibility = function (parentElement, fieldNames, visible) {
 
     const $rows = $q.toJQuery(parentElement).find('dl.row');
     $(fieldNames).each((i, fname) => {
-      const $r = $rows.filter(`[data-field_form_name="${fname}"]`).first();
+      const $r = $rows.filter(`[data-field_form_name="${fname}"],dl[data-field_name='${fname}']`).first();
       if (visible) {
         $r.show();
       } else {
