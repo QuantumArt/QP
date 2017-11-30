@@ -11,6 +11,16 @@ class BackendEntityEditorActionEventArgs extends Quantumart.QP8.BackendEventArgs
   set data(newData) {
     this._data = newData;
   }
+
+  // eslint-disable-next-line camelcase
+  get_data() {
+    return this.data;
+  }
+
+  // eslint-disable-next-line camelcase
+  set_data(newData) {
+    this.data = newData;
+  }
 }
 
 Quantumart.QP8.BackendEntityEditorActionEventArgs = BackendEntityEditorActionEventArgs;

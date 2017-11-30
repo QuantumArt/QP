@@ -1,6 +1,7 @@
 Quantumart.QP8.BackendEntityType = function () {
   // empty constructor
 };
+
 Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode) {
   const cacheKey = `EntityTypeByEntityTypeCode_${entityTypeCode}`;
   let entityType = Quantumart.QP8.Cache.getItem(cacheKey);
@@ -8,7 +9,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode)
   if (!entityType) {
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_ENTITY_TYPE}/GetByCode`,
+      `${window.CONTROLLER_URL_ENTITY_TYPE}GetByCode`,
       { entityTypeCode },
       false,
       false,
@@ -33,7 +34,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
   if (!entityTypeCode) {
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_ENTITY_TYPE}/GetCodeById`,
+      `${window.CONTROLLER_URL_ENTITY_TYPE}GetCodeById`,
       { entityTypeId },
       false,
       false,
@@ -58,7 +59,7 @@ Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entit
   if (!parentEntityTypeCode) {
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_ENTITY_TYPE}/GetParentCodeByCode`,
+      `${window.CONTROLLER_URL_ENTITY_TYPE}GetParentCodeByCode`,
       { entityTypeCode },
       false,
       false,
