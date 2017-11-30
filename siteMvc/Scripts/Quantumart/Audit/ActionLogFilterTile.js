@@ -76,8 +76,8 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     this._popupWindowComponent = $.telerik.window.create({
       title: $l.SearchBlock.filterSettings + this._options.title,
       html,
-      width: this._options.windowSize.w,
-      height: this._options.windowSize.h,
+      width: this._options.windowSize.width,
+      height: this._options.windowSize.height,
       modal: true,
       resizable: false,
       draggable: false,

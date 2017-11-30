@@ -81,7 +81,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     return null;
                 }
 
-                values = ((object[])param.QueryParams[0]).Cast<int>().ToArray();
+                values = ((object[])param.QueryParams[0]).Select(Convert.ToInt32);
             }
 
             var field = _articleSearchRepository.GetFieldByID(fieldId);
