@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schedule Service", "Schedule Service", "{F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}"
 EndProject
@@ -46,11 +46,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{214AED83-DC72-4279-A9F9-9BBA69CB785C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Integration.Tests", "QuantumArt.Tests\QP8.Integration.Tests\QP8.Integration.Tests.csproj", "{89D19F8D-069F-47CA-9655-5B4D6618F875}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Integration.Tests", "QuantumArt.Tests\QP8.Integration.Tests\QP8.Integration.Tests.csproj", "{89D19F8D-069F-47CA-9655-5B4D6618F875}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.WebMvc.NUnit.Tests", "QuantumArt.Tests\QP8.WebMvc.NUnit.Tests\QP8.WebMvc.NUnit.Tests.csproj", "{12E512D3-A0D4-4AC6-84FA-D434A6AF063A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.NUnit.Tests", "QuantumArt.Tests\QP8.WebMvc.NUnit.Tests\QP8.WebMvc.NUnit.Tests.csproj", "{12E512D3-A0D4-4AC6-84FA-D434A6AF063A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.WebMvc.Tests", "QuantumArt.Tests\QP8.WebMvc.Tests\QP8.WebMvc.Tests.csproj", "{1B992EFD-F6DC-45C2-948C-AF4027D05F65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.Tests", "QuantumArt.Tests\QP8.WebMvc.Tests\QP8.WebMvc.Tests.csproj", "{1B992EFD-F6DC-45C2-948C-AF4027D05F65}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{42BD44AF-78C8-4799-9EC5-113923D18639}"
 	ProjectSection(SolutionItems) = preProject
@@ -68,9 +68,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCustomActionsHost", "QP8.TestCustomActionsHost\TestCustomActionsHost.csproj", "{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastructure.Tests", "QuantumArt.Tests\QP8.Infrastructure.Tests\QP8.Infrastructure.Tests.csproj", "{0B42B98E-EC14-4306-9B1D-C0E2205747AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Tests", "QuantumArt.Tests\QP8.Infrastructure.Tests\QP8.Infrastructure.Tests.csproj", "{0B42B98E-EC14-4306-9B1D-C0E2205747AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Services.Tests", "QuantumArt.Tests\QP8.Services.Tests\QP8.Services.Tests.csproj", "{F41EA3C2-919A-4C4D-A56B-4DB42F07BB70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Services.Tests", "QuantumArt.Tests\QP8.Services.Tests\QP8.Services.Tests.csproj", "{F41EA3C2-919A-4C4D-A56B-4DB42F07BB70}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.CdcDataImport.Tarantool", "QuantumArt.Schedulers\Quantumart.QP8.CdcDataImport.Tarantool\Quantumart.QP8.CdcDataImport.Tarantool.csproj", "{E8E1D72A-60CF-475C-9A62-25150ACA26E6}"
 EndProject
@@ -91,8 +91,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Logging.PrtgMonitoring", "QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj", "{BD26AFAF-B07A-41DA-80D3-4B8BF6BC6589}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Logging.PrtgMonitoring.Unity", "QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring.Unity\QP8.Infrastructure.Logging.PrtgMonitoring.Unity.csproj", "{42975105-9837-4DBB-AA6D-E61309EE1CF8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Logging.PrtgMonitoring.Autofac", "QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring.Autofac\QP8.Infrastructure.Logging.PrtgMonitoring.Autofac.csproj", "{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Web", "QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj", "{C8D0F9D8-0F40-4480-B60F-C50791E9F8C1}"
 EndProject
@@ -1712,54 +1710,6 @@ Global
 		{42975105-9837-4DBB-AA6D-E61309EE1CF8}.Stage|Mixed Platforms.Build.0 = Debug|Any CPU
 		{42975105-9837-4DBB-AA6D-E61309EE1CF8}.Stage|x86.ActiveCfg = Debug|Any CPU
 		{42975105-9837-4DBB-AA6D-E61309EE1CF8}.Stage|x86.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug MVC2 NET35|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug MVC2 NET35|x86.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug MVC2 NET35|x86.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug_AspnetCore|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug_AspnetCore|Any CPU.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug_AspnetCore|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug_AspnetCore|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug_AspnetCore|x86.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug_AspnetCore|x86.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Debug|x86.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Live|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Live|Any CPU.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Live|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Live|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Live|x86.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Live|x86.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release MVC2 NET35|Any CPU.ActiveCfg = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release MVC2 NET35|Any CPU.Build.0 = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release MVC2 NET35|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release MVC2 NET35|Mixed Platforms.Build.0 = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release MVC2 NET35|x86.ActiveCfg = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release MVC2 NET35|x86.Build.0 = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release_AspnetCore|Any CPU.ActiveCfg = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release_AspnetCore|Any CPU.Build.0 = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release_AspnetCore|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release_AspnetCore|Mixed Platforms.Build.0 = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release_AspnetCore|x86.ActiveCfg = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release_AspnetCore|x86.Build.0 = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release|x86.ActiveCfg = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Release|x86.Build.0 = Release|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Stage|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Stage|Any CPU.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Stage|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Stage|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Stage|x86.ActiveCfg = Debug|Any CPU
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C}.Stage|x86.Build.0 = Debug|Any CPU
 		{C8D0F9D8-0F40-4480-B60F-C50791E9F8C1}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8D0F9D8-0F40-4480-B60F-C50791E9F8C1}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
 		{C8D0F9D8-0F40-4480-B60F-C50791E9F8C1}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -1932,14 +1882,13 @@ Global
 		{A1397FA6-F0BA-4695-AF53-D03469013692} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 		{BD26AFAF-B07A-41DA-80D3-4B8BF6BC6589} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 		{42975105-9837-4DBB-AA6D-E61309EE1CF8} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
-		{7EBCB750-2A8E-44DA-9B24-D8C41309AC3C} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 		{C8D0F9D8-0F40-4480-B60F-C50791E9F8C1} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 		{D303B005-9E08-427E-92E7-8C8DCC303C53} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 		{58BAD907-EC85-49D8-8E08-D7F15A6D60DB} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FD7B8CF1-31DF-4ACD-B743-E7E581B75B66}
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45
+		SolutionGuid = {FD7B8CF1-31DF-4ACD-B743-E7E581B75B66}
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
