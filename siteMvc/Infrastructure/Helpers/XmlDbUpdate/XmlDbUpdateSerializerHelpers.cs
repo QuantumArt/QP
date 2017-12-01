@@ -65,6 +65,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         internal static void ErasePreviouslyRecordedActions(string backendUrl, string currentDbVersion)
         {
+            RemoveRecordsXml();
             var root = GetOrCreateRoot(backendUrl, currentDbVersion);
             var doc = root.Document;
             if (doc != null)
@@ -165,6 +166,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         {
             var doc = File.Exists(QPContext.GetRecordXmlFilePath()) ? XDocument.Load(QPContext.GetRecordXmlFilePath()) : new XDocument(CreateActionsRoot(backendUrl, currentDbVersion));
             return doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();
+        }
+
+        private static void RemoveRecordsXml()
+        {
+            string path = QPContext.GetRecordXmlFilePath();
+            if (File.Exists(path))
+            {
+                File.SetAttributes(path, FileAttributes.Normal);
+                File.Delete(path);
+            }
         }
 
         private static string GetCode(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.ActionCodeAttribute)?.Value;
