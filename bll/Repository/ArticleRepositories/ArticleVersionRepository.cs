@@ -18,10 +18,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <returns>список версий статей</returns>
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
-            var eQuery = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
-            var versionList = MapperFacade.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(eQuery, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
-
-            return versionList;
+            var query = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
+            return MapperFacade.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(query, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
         }
 
         /// <summary>

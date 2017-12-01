@@ -35,7 +35,7 @@
 			c.Bound(s => s.TypeCode)
 				.Title("")
 				.Width(30)
-				.ClientTemplate(String.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= TypeIcon #>", "<#= Type #>"))
+				.ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= TypeIcon #>", "<#= Type #>"))
 				.HtmlAttributes(new { style = "text-align: center;" });
 
 			c.Bound(s => s.ContentName)

@@ -8,6 +8,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
@@ -36,10 +37,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var serviceResult = ArticleVersionService.List(parentId, command.GetListCommand());
             var result = Mapper.Map<List<ArticleVersion>, List<ArticleVersionListItem>>(serviceResult);
-            return View(new GridModel { Data = result, Total = result.Count });
+            return new TelerikResult(result, result.Count);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CompareArticleVersionWithCurrent)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]

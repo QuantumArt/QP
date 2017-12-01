@@ -265,16 +265,16 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     return this.getNode(this.convertEntityIdToNodeCode(entityId), parentNodeElem);
   },
 
-  getNodesByEntitiesIDs(entitiesIDs) {
+  getNodesByEntitiesIDs(entitiesIds) {
     const selectedNodeElems = [];
 
-    if (!$q.isNullOrEmpty(entitiesIDs)) {
+    if (!$q.isNullOrEmpty(entitiesIds)) {
       const that = this;
       const $nodes = this.getAllNodes();
 
       $nodes.each(
         (index, nodeElem) => {
-          if (Array.contains(entitiesIDs, $q.toString(that.getEntityId(nodeElem)))) {
+          if (Array.contains(entitiesIds, $q.toString(that.getEntityId(nodeElem)))) {
             Array.add(selectedNodeElems, nodeElem);
           }
         }
@@ -298,18 +298,15 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     return $parentNode;
   },
 
-  getParentNodesByEntitiesIDs(entitiesIDs) {
-    const entityCount = entitiesIDs.length;
-
-    if (entityCount <= 0) {
+  // eslint-disable-next-line max-statements
+  getParentNodesByEntitiesIDs(entitiesIds) {
+    if (entitiesIds.length <= 0) {
       return $([]);
     }
 
-    // Получаем коды родительских узлов
     let parentNodeCodes = [];
-
-    for (let entityIndex = 0; entityIndex < entityCount; entityIndex++) {
-      const entityId = entitiesIDs[entityIndex];
+    for (let entityIndex = 0; entityIndex < entitiesIds.length; entityIndex++) {
+      const entityId = entitiesIds[entityIndex];
       const $node = this.getNodeByEntityId(entityId);
 
       if (!$q.isNullOrEmpty($node)) {
@@ -339,7 +336,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     let levels = [];
     for (let parentNodeInfoIndex = 0; parentNodeInfoIndex < parentNodeInfos.length; parentNodeInfoIndex++) {
       const parentNodeInfo = parentNodeInfos[parentNodeInfoIndex];
-      const level = parentNodeInfo.level;
+      const { level } = parentNodeInfo;
       if (!Array.contains(levels, level)) {
         Array.add(levels, level);
       }
@@ -360,10 +357,12 @@ Quantumart.QP8.BackendEntityTree.prototype = {
             const nodeInfo = nodeInfos[nodeInfoIndex];
             const $node = this.getNode(nodeInfo.nodeCode);
 
+            // eslint-disable-next-line max-depth
             for (let childNodeInfoIndex = childNodeInfoCount - 1; childNodeInfoIndex >= 0; childNodeInfoIndex--) {
               const childNodeInfo = childNodeInfos[childNodeInfoIndex];
               const $childNode = this.getNode(childNodeInfo.nodeCode, $node);
 
+              // eslint-disable-next-line max-depth
               if (!$q.isNullOrEmpty($childNode)) {
                 Array.remove(parentNodeInfos, childNodeInfo);
               }
@@ -379,7 +378,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     $q.clearArray(levels);
 
     const that = this;
-    const parentNodeElems = $.map(parentNodeInfos, parentNodeInfo => that.getNode(parentNodeInfo.nodeCode).get(0));
+    const parentNodeElems = parentNodeInfos.map(parentNodeInfo => that.getNode(parentNodeInfo.nodeCode).get(0));
 
     $q.clearArray(parentNodeInfos);
     return $q.toJQuery(parentNodeElems);

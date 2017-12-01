@@ -20,7 +20,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(entityList, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewVirtualContents)]
@@ -90,7 +89,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.VirtualContentProperties)]

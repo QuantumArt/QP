@@ -255,9 +255,11 @@
     <Compile Include="Infrastructure\ActionFilters\BackendActionLogAttribute.cs" />
     <Compile Include="Infrastructure\ActionFilters\ConnectionScopeAttribute.cs" />
     <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
+    <Compile Include="Infrastructure\ActionResults\TelerikResult.cs" />
     <Compile Include="Infrastructure\Adapters\ThreadStorageScopeContext.cs" />
     <Compile Include="Infrastructure\Constants\ConfigConstants.cs" />
     <Compile Include="Infrastructure\Constants\HttpContextFormConstants.cs" />
+    <Compile Include="Infrastructure\Converters\JsonQueryParamConverter.cs" />
     <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
     <Compile Include="Infrastructure\ActionFilters\DisableBrowserCache.cs" />
     <Compile Include="Infrastructure\ActionFilters\EntityAuthorizeAttribute.cs" />
@@ -278,6 +280,7 @@
     <Compile Include="Infrastructure\Helpers\ConfigHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\GuidHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateQpActionHelpers.cs" />
+    <Compile Include="Infrastructure\Models\TelerikGridModel.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateActionCorrecterService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateHttpContextProcessor.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateLogService.cs" />
@@ -288,7 +291,6 @@
     <Compile Include="Infrastructure\Extensions\ArrayExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
-    <Compile Include="Infrastructure\Helpers\CultureHelpers.cs" />
     <Compile Include="Infrastructure\Adapters\FakeMvcApplicationContext.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateActionCorrecterService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\CsvDbUpdateService.cs" />
@@ -1539,6 +1541,7 @@
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\quotes.txt" />
+    <Content Include="Scripts\Quantumart\Editor\BackendEntityEditorActionEventArgs.js" />
     <Content Include="Scripts\Quantumart\Helpers\vanilla.helpers.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.js" />
@@ -2411,9 +2414,7 @@
   <ItemGroup>
     <Content Include="Scripts\Web.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Shared\EditorTemplates\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>

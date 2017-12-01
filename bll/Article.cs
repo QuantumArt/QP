@@ -4,7 +4,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
@@ -267,14 +266,14 @@ namespace Quantumart.QP8.BLL
             set => _workflowBinding = value;
         }
 
-        [ScriptIgnore, JsonIgnore]
+        [JsonIgnore]
         public List<FieldValue> FieldValues
         {
             get => _fieldValues ?? LoadFieldValues();
             set => _fieldValues = value;
         }
 
-        [ScriptIgnore, JsonIgnore]
+        [JsonIgnore]
         public List<FieldValue> LiveFieldValues
         {
             get

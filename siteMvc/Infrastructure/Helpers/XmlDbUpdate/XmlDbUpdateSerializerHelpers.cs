@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
@@ -23,7 +24,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute, string.Join(",", action.Ids)),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionParentIdAttribute, action.ParentId),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionLcidAttribute, action.Lcid),
-                new XAttribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute, action.Executed.ToString(CultureHelpers.GetCultureInfoByLcid(action.Lcid))),
+                new XAttribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute, action.Executed.ToString(CultureHelpers.GetCultureByLcid(action.Lcid))),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionExecutedByAttribute, action.ExecutedBy),
                 GetEntitySpecificAttributesForPersisting(action),
                 GetActionChildElements(action.Form));
@@ -286,7 +287,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         }
 
         private static DateTime GetExecuted(XElement action, int lcid) =>
-            Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute)?.Value, CultureHelpers.GetCultureInfoByLcid(lcid));
+            Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute)?.Value, CultureHelpers.GetCultureByLcid(lcid));
 
         private static string GetExecutedBy(XElement action) =>
             action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedByAttribute).GetValueOrDefault<string>();

@@ -189,6 +189,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
   },
 
+  // eslint-disable-next-line max-statements
   createMainComponent(host) {
     const hostOptions = {
       viewTypeCode: host.getViewTypeCode(),

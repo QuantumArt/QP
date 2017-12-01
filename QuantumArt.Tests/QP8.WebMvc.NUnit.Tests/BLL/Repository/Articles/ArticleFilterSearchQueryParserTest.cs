@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using NUnit.Framework;
 using Quantumart.QP8.BLL;
@@ -2277,7 +2278,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                 try
                 {
                     var sqlParams = new List<SqlParameter>();
-                    var actual = new ArticleFilterSearchQueryParser().GetFilter(testData.SearchQueryParams, sqlParams);
+                    var actual = new ArticleFilterSearchQueryParser().GetFilter(testData.SearchQueryParams?.ToList(), sqlParams);
                     if (testData.ExpectedExceptionType != null)
                     {
                         Assert.Fail($"\"{testData.Description}\" test is failed. No thrown exception.");
@@ -2292,11 +2293,11 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         try
                         {
                             var sqlParams = new List<SqlParameter>();
-                            new ArticleFilterSearchQueryParser().GetFilter(testData.SearchQueryParams, sqlParams);
+                            new ArticleFilterSearchQueryParser().GetFilter(testData.SearchQueryParams?.ToList(), sqlParams);
                         }
+                        // ReSharper disable once EmptyGeneralCatchClause
                         catch
                         {
-                            // ignored
                         }
 
                         Assert.Fail($"\"{testData.Description}\" test is failed. Unexpected exception: {ex.GetType()}.");

@@ -361,19 +361,19 @@ $c.setAllNumericBoxValues = function (parentElement, fieldValues) {
 
   if (!$q.isNullOrEmpty(fieldValues)) {
     const $boxes = $c.getAllNumericTextBoxes(parentElement);
-    $(fieldValues).each((i, v) => {
-      const $nbox = $boxes.filter(`[name="${v.fieldName}"]`).first();
+    $(fieldValues).each((i, fv) => {
+      const $nbox = $boxes.filter(`[name="${fv.fieldName}"]`).first();
       if ($nbox.length > 0) {
         let numericComponent = $nbox.data('tTextBox');
         if (numericComponent) {
-          numericComponent.value($q.toInt(v.value));
+          numericComponent.value($q.toInt(fv.value));
           $nbox.change();
         }
 
         numericComponent = null;
       }
 
-      $c.setValidator($nbox, v.errors);
+      $c.setValidator($nbox, fv.errors);
     });
   }
 };
@@ -385,13 +385,13 @@ $c.setAllDateTimePickersValues = function (parentElement, fieldValues) {
 
   if (!$q.isNullOrEmpty(fieldValues)) {
     const $dtPickers = $c.getAllDateTimePickers(parentElement);
-    $(fieldValues).each((i, v) => {
-      const $p = $dtPickers.filter(`[name="${v.fieldName}"]`).first();
+    $(fieldValues).each((i, fv) => {
+      const $p = $dtPickers.filter(`[name="${fv.fieldName}"]`).first();
       if ($p.length > 0) {
         const picker = $c.getDateTimePickerComponent($p);
         if (picker) {
-          if (v.value) {
-            picker.value(v.value);
+          if (fv.value) {
+            picker.value(fv.value);
           } else {
             picker.value(null);
           }
@@ -399,7 +399,7 @@ $c.setAllDateTimePickersValues = function (parentElement, fieldValues) {
           $p.change();
         }
 
-        $c.setValidator($p, v.errors);
+        $c.setValidator($p, fv.errors);
       }
     });
   }
@@ -417,20 +417,20 @@ $c.setAllVisualEditorValues = function (parentElement, fieldValues) {
   if (!$q.isNullOrEmpty(fieldValues)) {
     if (!$q.isNullOrEmpty(fieldValues)) {
       const $tareas = $c.getAllVisualEditorAreas(parentElement);
-      $(fieldValues).each((i, v) => {
-        const $ta = $tareas.filter(`[name="${v.fieldName}"]`).first();
+      $(fieldValues).each((i, fv) => {
+        const $ta = $tareas.filter(`[name="${fv.fieldName}"]`).first();
         if ($ta.length > 0) {
-          $ta.text(v.value);
+          $ta.text(fv.value);
           const $ve = $ta.closest('.visualEditorComponent');
           if ($ve.length > 0) {
             const component = Quantumart.QP8.BackendVisualEditor.getComponent($ve);
             if (component && component.getCkEditor()) {
-              component.getCkEditor().setData(v.value);
+              component.getCkEditor().setData(fv.value);
             }
           }
 
           $ta.change();
-          $c.setValidator($ta, v.errors);
+          $c.setValidator($ta, fv.errors);
         }
       });
     }
@@ -447,16 +447,17 @@ $c.setAllEntityDataListValues = function (parentElement, fieldValues) {
     let $lf = null;
     let listComponent = null;
 
-    $(fieldValues).each((i, v) => {
-      $lf = $lists.filter(`[data-list_item_name="${v.fieldName}"]`).first();
+    $(fieldValues).each((i, fv) => {
+      $lf = $lists.filter(`[data-list_item_name="${fv.fieldName}"]`).first();
       if ($lf.length > 0) {
         listComponent = $lf.data('entity_data_list_component');
         if (listComponent) {
-          const value = $q.isString(v.value) ? v.value.split(',') : v.value;
+          const value = $q.isString(fv.value) ? fv.value.split(',') : fv.value;
           listComponent.selectEntities(value);
         }
       }
-      $c.setValidator($lf, v.errors);
+
+      $c.setValidator($lf, fv.errors);
     });
   }
 };
@@ -467,27 +468,23 @@ $c.setAllClassifierFieldValues = function (parentElement, fieldValues, disableCh
   }
 
   if (!$q.isNullOrEmpty(fieldValues)) {
-    let $classifiers = $c.getAllClassifierFields(parentElement);
+    const $classifiers = $c.getAllClassifierFields(parentElement);
     let $cl = null;
     let component = null;
 
-    $(fieldValues).each((i, v) => {
-      $cl = $classifiers.filter(`[data-field_name="${v.fieldName}"]`).first();
+    $(fieldValues).each((i, fv) => {
+      $cl = $classifiers.filter(`[data-field_name="${fv.fieldName}"]`).first();
       if ($cl.length > 0) {
         component = Quantumart.QP8.BackendClassifierField.getComponent($cl);
         if (component) {
           component.setInitFieldValues(fieldValues);
           component.setDisableChangeTracking(disableChangeTracking);
-          component.selectContent(v.value);
+          component.selectContent(fv.value);
         }
       }
 
-      $c.setValidator($cl, v.errors);
+      $c.setValidator($cl, fv.errors);
     });
-
-    $classifiers = null;
-    $cl = null;
-    component = null;
   }
 };
 
@@ -513,25 +510,24 @@ $c.setAllHighlightedTextAreaValues = function (parentElement, fieldValues) {
     throw new Error($l.Common.parentDomElementNotSpecified);
   }
   if (!$q.isNullOrEmpty(fieldValues)) {
-    let $htas = $c.getAllHighlightedTextAreas(parentElement);
-    $(fieldValues).each((i, v) => {
-      const componentCM = $htas.filter(`[name="${v.fieldName}"]:first`).data('codeMirror');
-      const componentJE = $htas.filter(`[name="${v.fieldName}"]:first`).data('jsonEditor');
+    const $htas = $c.getAllHighlightedTextAreas(parentElement);
+    $(fieldValues).each((i, fv) => {
+      const componentCM = $htas.filter(`[name="${fv.fieldName}"]:first`).data('codeMirror');
+      const componentJE = $htas.filter(`[name="${fv.fieldName}"]:first`).data('jsonEditor');
       if (componentCM || componentJE) {
-        if ($q.isNullOrEmpty(v.value)) {
+        if ($q.isNullOrEmpty(fv.value)) {
           if (componentCM) {
             componentCM.setValue('');
           } else {
             componentJE.setText('');
           }
         } else if (componentCM) {
-          componentCM.setValue(v.value);
+          componentCM.setValue(fv.value);
         } else {
-          componentJE.setText(v.value);
+          componentJE.setText(fv.value);
         }
       }
     });
-    $htas = null;
   }
 };
 
@@ -1406,7 +1402,6 @@ $c.openCropWindow = function (url, folderUrl, urlParams) {
     onCompleteCallback() {
       imgCropResize.closeWindow();
       imgCropResize.dispose();
-      $q.trace('image cropped');
 
       const newEventArgs = new Quantumart.QP8.BackendEventArgs();
       newEventArgs.set_entityTypeCode(urlParams.entityTypeCode);

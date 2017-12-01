@@ -28,14 +28,14 @@
                    .Width(30)
                    .HtmlAttributes(new { @class = "id" });
             c.Bound(s => s.Icon)
-                .ClientTemplate(String.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= Icon #>", ""))
+                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= Icon #>", ""))
                 .Title("")
                 .Width(15);
             c.Bound(s => s.LockedBy)
-                .Title(String.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" alt=\"\" />", Url.GetThemeRootImageFolderUrl() + "/grid/header_icons/lock.gif"))
+                .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" alt=\"\" />", Url.GetThemeRootImageFolderUrl() + "/grid/header_icons/lock.gif"))
                 .Width(30)
                 .HeaderHtmlAttributes(new { @class = "t-image-header" })
-                .ClientTemplate(String.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= LockedByIcon #>", "<#= LockedByToolTip #>"))
+                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= LockedByIcon #>", "<#= LockedByToolTip #>"))
                 .HtmlAttributes(new { style = "text-align: center;" });
             if (!Model.IsTemplateObject)
                 c.Bound(s => s.ParentId)

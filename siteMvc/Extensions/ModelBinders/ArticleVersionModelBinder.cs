@@ -7,8 +7,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
     {
         protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
-            var model = bindingContext.Model as ArticleVersionViewModel;
-            if (model != null)
+            if (bindingContext.Model is ArticleVersionViewModel model)
             {
                 var version = model.Data;
                 var article = model.Data.Article;

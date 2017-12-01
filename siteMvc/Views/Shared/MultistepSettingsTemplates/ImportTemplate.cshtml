@@ -36,7 +36,7 @@
       @Html.HiddenFor(model => model.FileName)
     }
 
-    @Html.CheckBoxFieldFor(model => model.NoHeaders, String.Empty, false, new Dictionary<string, object> { { "class", "noPaddingForCheckbox" } })
+    @Html.CheckBoxFieldFor(model => model.NoHeaders, string.Empty, false, new Dictionary<string, object> { { "class", "noPaddingForCheckbox" } })
   }
 
   using (Html.BeginFieldGroup(TemplateStrings.RegionalAndLanguageSettings))

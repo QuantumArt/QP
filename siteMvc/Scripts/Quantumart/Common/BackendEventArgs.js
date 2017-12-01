@@ -283,7 +283,15 @@ Quantumart.QP8.BackendEventArgs.prototype = {
     this._startedByExternal = value;
   },
 
-  init(entityTypeCode, entities, parentEntityId, action, options, actionCode) {
+  // eslint-disable-next-line max-params
+  init(
+    entityTypeCode,
+    entities,
+    parentEntityId,
+    action,
+    options,
+    actionCode
+  ) {
     this._entityTypeCode = entityTypeCode;
     this._parentEntityId = parentEntityId;
     if (action.ActionType.IsMultiple) {

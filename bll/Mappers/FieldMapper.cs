@@ -1,6 +1,6 @@
 using System.Linq;
-using System.Web.Script.Serialization;
 using AutoMapper;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -195,7 +195,7 @@ namespace Quantumart.QP8.BLL.Mappers
 
             if (bizObject.StringEnumItems.Any())
             {
-                dataObject.EnumValues = new JavaScriptSerializer().Serialize(bizObject.StringEnumItems.Select(v => new
+                dataObject.EnumValues = JsonConvert.SerializeObject(bizObject.StringEnumItems.Select(v => new
                 {
                     v.Value,
                     v.Alias,

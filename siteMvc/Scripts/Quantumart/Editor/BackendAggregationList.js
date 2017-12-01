@@ -9,6 +9,7 @@ Quantumart.QP8.BackendAggregationList.getComponent = function (componentElem) {
   if (componentElem) {
     return $q.toJQuery(componentElem).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT);
   }
+
   return undefined;
 };
 
@@ -30,8 +31,8 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     $(aggrList).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT, this);
     this._items = ko.observableArray(aggrList.data('aggregation_list_data'));
     this._fields = aggrList.data('aggregation_list_item_fields').split(',');
-    this._addItemHandler = jQuery.proxy(this.addItem, this);
-    this._removeItemHandler = jQuery.proxy(this.removeItem, this);
+    this._addItemHandler = $.proxy(this.addItem, this);
+    this._removeItemHandler = $.proxy(this.removeItem, this);
     if (!$q.isNull(aggrList.data('additional_names'))) {
       this._additionalNames = aggrList.data('additional_names').split(',');
     }
@@ -39,7 +40,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
       items: this._items,
       addItem: this._addItemHandler,
       removeItem: this._removeItemHandler,
-      onItemChanged: jQuery.proxy(this._onItemChanged, this)
+      onItemChanged: $.proxy(this._onItemChanged, this)
     };
 
     if (this._additionalNames) {
@@ -68,7 +69,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
       this._items.removeAll();
       if (!$q.isNullOrEmpty(items) && $q.isArray(items)) {
         const that = this;
-        jQuery.each(items, function () {
+        $.each(items, function () {
           that._items.push(Object.assign({}, this));
         });
       }
@@ -77,8 +78,8 @@ Quantumart.QP8.BackendAggregationList.prototype = {
 
   addItem() {
     const item = {};
-    this._fields.forEach(f => {
-      item[f] = '';
+    this._fields.forEach(field => {
+      item[field] = '';
       return undefined;
     });
 

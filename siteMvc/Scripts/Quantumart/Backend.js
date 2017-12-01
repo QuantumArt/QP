@@ -1,3 +1,5 @@
+/* eslint max-lines: 'off' */
+
 Quantumart.QP8.Backend = function (isDebugMode, options) {
   Quantumart.QP8.Backend.initializeBase(this);
   this._isDebugMode = isDebugMode;
@@ -91,6 +93,8 @@ Quantumart.QP8.Backend.prototype = {
     this._directLinkExecutor = new Quantumart.QP8.DirectLinkExecutor(
       this._currentCustomerCode, this._directLinkOptions
     );
+
+    // eslint-disable-next-line max-statements
     this._directLinkExecutor.ready($.proxy(function (openByDirectLink) {
       this._directLinkExecutor.attachObserver(
         window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, this._onActionExecutingHandler
@@ -491,6 +495,7 @@ Quantumart.QP8.Backend.prototype = {
     this._onActionExecuting(null, this, eventArgs);
   },
 
+  // eslint-disable-next-line max-statements
   _dispose() {
     try {
       this._unlockAllEntities();

@@ -9,6 +9,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
@@ -26,7 +27,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _objectService = objectService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.TemplateObjects)]
         [BackendActionContext(ActionCode.TemplateObjects)]
@@ -44,10 +44,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexTemplateObjects(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _objectService.GetTemplateObjectsByTemplateId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageObjects)]
         [BackendActionContext(ActionCode.PageObjects)]
@@ -65,10 +64,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexPageObjects(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _objectService.GetPageObjectsByPageId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewPageObject)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.PageObject, "parentId")]
@@ -104,7 +102,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewTemplateObject)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.TemplateObject, "parentId")]
@@ -149,7 +146,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public ActionResult PromotePageObject(string tabId, int parentId, int id) => Json(_objectService.PromotePageObject(id));
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageObjectProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObject, "id")]
@@ -190,7 +186,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.TemplateObjectProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObject, "id")]

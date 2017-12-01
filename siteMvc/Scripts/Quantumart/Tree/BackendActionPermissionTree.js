@@ -276,7 +276,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
 
   _convertToTreeViewItems(items) {
     return $.isArray(items)
-      ? $.map(items, $.proxy(this._convertToTreeViewItem, this))
+      ? items.map($.proxy(this._convertToTreeViewItem, this))
       : undefined;
   },
 

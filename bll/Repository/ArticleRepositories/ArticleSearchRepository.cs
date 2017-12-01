@@ -22,35 +22,28 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <summary>
         /// Получить поле по ID
         /// </summary>
-        /// <param name="fieldId"></param>
-        /// <returns></returns>
+        // ReSharper disable once InconsistentNaming
         Field GetFieldByID(int fieldId);
 
         /// <summary>
         /// Получить LinkedID поля по его ID
         /// </summary>
-        /// <param name="fieldId"></param>
-        /// <returns></returns>
+        // ReSharper disable once InconsistentNaming
         int? GetFieldLinkedID(int fieldId);
 
         /// <summary>
         /// Возвращает список всех пользователей
         /// </summary>
-        /// <returns></returns>
         IEnumerable<User> GetAllUsersList();
 
         /// <summary>
         /// Получить контент по его ID
         /// </summary>
-        /// <param name="contentId"></param>
-        /// <returns></returns>
         Content GetContentById(int contentId);
 
         /// <summary>
         /// Получить список статусов по ID сайта
         /// </summary>
-        /// <param name="siteId"></param>
-        /// <returns></returns>
         IEnumerable<StatusType> GetStatusList(int siteId);
     }
 

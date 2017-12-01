@@ -2,8 +2,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Routing;
 using QP8.Infrastructure;
+using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
@@ -24,7 +24,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             );
 
             BackendActionContext.ResetCurrent();
-            XmlDbUpdateHttpContextHelpers.BuildController(requestContext, controllerName, CultureHelpers.GetCultureInfoByLcid(recordedAction.Lcid)).Execute(requestContext);
+            XmlDbUpdateHttpContextHelpers.BuildController(requestContext, controllerName, CultureHelpers.GetCultureByLcid(recordedAction.Lcid)).Execute(requestContext);
             return requestContext.HttpContext;
         }
     }

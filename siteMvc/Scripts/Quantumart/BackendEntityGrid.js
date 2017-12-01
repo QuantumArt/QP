@@ -6,234 +6,238 @@ window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING = 'OnEntityGridActionExecuting';
 window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED = 'OnEntityGridEntitySelected';
 window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK = 'OnEntityGridEntityTitleLinkClick';
 
-// eslint-disable-next-line max-statements
-Quantumart.QP8.BackendEntityGrid = function (
-  gridGroupCodes,
-  gridElementId,
-  entityTypeCode,
-  parentEntityId,
-  actionCode,
-  options,
-  hostOptions
-) {
-  Quantumart.QP8.BackendEntityGrid.initializeBase(this);
-
-  this._gridGroupCodes = gridGroupCodes;
-  this._gridElementId = gridElementId;
-  this._entityTypeCode = entityTypeCode;
-  this._parentEntityId = parentEntityId;
-  this._actionCode = actionCode;
-  if ($q.isObject(options)) {
-    if (options.selectedEntitiesIDs) {
-      this._selectedEntitiesIDs = options.selectedEntitiesIDs;
-    }
-
-    if (options.actionCodeForLink) {
-      this._actionCodeForLink = options.actionCodeForLink;
-    }
-
-    if (options.contextMenuCode) {
-      this._contextMenuCode = options.contextMenuCode;
-    }
-
-    if (!$q.isNull(options.allowMultipleRowSelection)) {
-      this._allowMultipleRowSelection = options.allowMultipleRowSelection;
-    }
-
-    if (!$q.isNull(options.allowGlobalSelection)) {
-      this._allowGlobalSelection = options.allowGlobalSelection;
-    }
-
-    if (options.keyColumnName) {
-      this._keyColumnName = options.keyColumnName;
-    }
-
-    if (options.titleColumnName) {
-      this._titleColumnName = options.titleColumnName;
-    }
-
-    if (options.parentKeyColumnName) {
-      this._parentKeyColumnName = options.parentKeyColumnName;
-    }
-
-    if (!$q.isNull(options.linkOpenNewTab)) {
-      this._linkOpenNewTab = options.linkOpenNewTab;
-    }
-
-    if (!$q.isNull(options.allowFilterSelectedEntities)) {
-      this._allowFilterSelectedEntities = options.allowFilterSelectedEntities;
-    }
-
-    if (options.autoGenerateLink) {
-      this._autoGenerateLink = options.autoGenerateLink;
-    }
-
-    if (options.generateLinkOnTitle) {
-      this._generateLinkOnTitle = options.generateLinkOnTitle;
-    }
-
-    if (!$q.isNull(options.autoLoad)) {
-      this._autoLoad = options.autoLoad;
-    }
-
-    if (!$q.isNull(options.delayAutoLoad)) {
-      this._delayAutoLoad = options.delayAutoLoad;
-    }
-
-    if (options.filter) {
-      this._filter = options.filter;
-    }
-
-    if (options.isWindow) {
-      this._hostIsWindow = options.isWindow;
-    }
-
-    if (options.treeFieldId) {
-      this._treeFieldId = options.treeFieldId;
-    }
-
-    if (options.selectAllId) {
-      this._selectAllId = options.selectAllId;
-    }
-
-    if (options.unselectId) {
-      this._deselectAllId = options.unselectId;
-    }
-
-    if (options.articlesCountId) {
-      this.articlesCountId = options.articlesCountId;
-    }
-
-    if (options.zIndex) {
-      this._zIndex = options.zIndex;
+class BackendEntityGrid extends Quantumart.QP8.Observable {
+  static applyStatusColor(row, item) {
+    if (item.STATUS_TYPE_COLOR) {
+      const $row = $(row);
+      const isAlt = $row.hasClass('t-alt');
+      const className = isAlt ? `t-alt-${item.STATUS_TYPE_COLOR}` : `t-${item.STATUS_TYPE_COLOR}`;
+      $row.removeClass('t-alt').addClass(className);
     }
   }
 
-  if (!$q.isNull(hostOptions)) {
-    if (hostOptions.searchQuery) {
-      this._searchQuery = hostOptions.searchQuery;
+  // eslint-disable-next-line max-statements, complexity, max-params
+  constructor(
+    gridGroupCodes,
+    gridElementId,
+    entityTypeCode,
+    parentEntityId,
+    actionCode,
+    options,
+    hostOptions
+  ) {
+    super();
+
+    this.GRID_BUSY_CLASS_NAME = 'busy';
+    this.ROW_SELECTED_CLASS_NAME = 't-state-selected';
+    this.TITLE_CELL_CLASS_NAME = 'title';
+    this.ID_CELL_CLASS_NAME = 'id';
+    this.ROW_CLICKABLE_SELECTORS = 'tbody tr:not(.t-grouping-row,.t-detail-row,.t-no-data,:has(> .t-edit-container))';
+    this.CHECKBOX_HEADER_SELECTORS = '.t-select-header input:checkbox';
+    this.CHECKBOX_CELL_SELECTORS = '.t-select-cell input:checkbox';
+
+    this._gridElement = null;
+    this._gridComponent = null;
+    this._currentRowId = -1;
+    this._allowMultipleRowSelection = false;
+    this._allowGlobalSelection = false;
+    this._actionCodeForLink = '';
+    this._contextMenuCode = '';
+    this._keyColumnName = 'Id';
+    this._titleColumnName = 'Name';
+    this._parentKeyColumnName = 'ParentId';
+    this._linkOpenNewTab = false;
+    this._startingEntitiesIDs = [];
+    this._selectedEntitiesIDs = [];
+    this._allowFilterSelectedEntities = false;
+    this._removedIds = [];
+    this._allowSaveRowsSelection = true;
+    this._stopDeferredOperations = false;
+    this._isDataLoaded = false;
+    this._searchQuery = null;
+    this._contextQuery = null;
+    this._autoGenerateLink = false;
+    this._generateLinkOnTitle = false;
+    this._contextMenuComponent = null;
+    this._gridManagerComponent = null;
+    this._autoLoad = true;
+    this._delayAutoLoad = false;
+    this._contextMenuActionCode = '';
+    this._filter = '';
+    this._hostIsWindow = false;
+    this._treeFieldId = 0;
+    this._isBindToExternal = false;
+    this._deselectAllId = '';
+    this._selectAllId = '';
+    this._zIndex = 0;
+
+    this._gridGroupCodes = gridGroupCodes;
+    this._gridElementId = gridElementId;
+    this._entityTypeCode = entityTypeCode;
+    this._parentEntityId = parentEntityId;
+    this._actionCode = actionCode;
+
+    if ($q.isObject(options)) {
+      if (options.selectedEntitiesIDs) {
+        this._selectedEntitiesIDs = options.selectedEntitiesIDs;
+      }
+
+      if (options.actionCodeForLink) {
+        this._actionCodeForLink = options.actionCodeForLink;
+      }
+
+      if (options.contextMenuCode) {
+        this._contextMenuCode = options.contextMenuCode;
+      }
+
+      if (!$q.isNull(options.allowMultipleRowSelection)) {
+        this._allowMultipleRowSelection = options.allowMultipleRowSelection;
+      }
+
+      if (!$q.isNull(options.allowGlobalSelection)) {
+        this._allowGlobalSelection = options.allowGlobalSelection;
+      }
+
+      if (options.keyColumnName) {
+        this._keyColumnName = options.keyColumnName;
+      }
+
+      if (options.titleColumnName) {
+        this._titleColumnName = options.titleColumnName;
+      }
+
+      if (options.parentKeyColumnName) {
+        this._parentKeyColumnName = options.parentKeyColumnName;
+      }
+
+      if (!$q.isNull(options.linkOpenNewTab)) {
+        this._linkOpenNewTab = options.linkOpenNewTab;
+      }
+
+      if (!$q.isNull(options.allowFilterSelectedEntities)) {
+        this._allowFilterSelectedEntities = options.allowFilterSelectedEntities;
+      }
+
+      if (options.autoGenerateLink) {
+        this._autoGenerateLink = options.autoGenerateLink;
+      }
+
+      if (options.generateLinkOnTitle) {
+        this._generateLinkOnTitle = options.generateLinkOnTitle;
+      }
+
+      if (!$q.isNull(options.autoLoad)) {
+        this._autoLoad = options.autoLoad;
+      }
+
+      if (!$q.isNull(options.delayAutoLoad)) {
+        this._delayAutoLoad = options.delayAutoLoad;
+      }
+
+      if (options.filter) {
+        this._filter = options.filter;
+      }
+
+      if (options.isWindow) {
+        this._hostIsWindow = options.isWindow;
+      }
+
+      if (options.treeFieldId) {
+        this._treeFieldId = options.treeFieldId;
+      }
+
+      if (options.selectAllId) {
+        this._selectAllId = options.selectAllId;
+      }
+
+      if (options.unselectId) {
+        this._deselectAllId = options.unselectId;
+      }
+
+      if (options.articlesCountId) {
+        this.articlesCountId = options.articlesCountId;
+      }
+
+      if (options.zIndex) {
+        this._zIndex = options.zIndex;
+      }
     }
 
-    if (hostOptions.contextQuery) {
-      this._contextQuery = hostOptions.contextQuery;
+    if (!$q.isNull(hostOptions)) {
+      if (hostOptions.searchQuery) {
+        this._searchQuery = hostOptions.searchQuery;
+      }
+
+      if (hostOptions.contextQuery) {
+        this._contextQuery = hostOptions.contextQuery;
+      }
+
+      if (hostOptions.filter) {
+        this._filter = hostOptions.filter;
+      }
+
+      if (hostOptions.currentPage) {
+        this._currentPage = hostOptions.currentPage;
+      }
+
+      if (hostOptions.orderBy) {
+        this._orderBy = hostOptions.orderBy;
+      }
+
+      this._isBindToExternal = $q.toBoolean(hostOptions.isBindToExternal, false);
     }
 
-    if (hostOptions.filter) {
-      this._filter = hostOptions.filter;
-    }
-
-    if (hostOptions.currentPage) {
-      this._currentPage = hostOptions.currentPage;
-    }
-
-    if (hostOptions.orderBy) {
-      this._orderBy = hostOptions.orderBy;
-    }
-
-    this._isBindToExternal = $q.toBoolean(hostOptions.isBindToExternal, false);
+    $q.bindProxies.call(this, [
+      '_onDataBinding',
+      '_onDataBound',
+      '_onRowDataBound',
+      '_onHeaderCheckboxClick',
+      '_onTitleLinkClick',
+      '_onRowCellClick',
+      '_onRowCheckboxCellClick',
+      '_onContextMenu',
+      '_onRowContextMenuShowing',
+      '_onRowContextMenuItemClicking',
+      '_onRowContextMenuHidden',
+      '_onSelectAllClick',
+      '_onDeselectAllClick'
+    ]);
   }
-
-  $q.bindProxies.call(this, [
-    '_onDataBinding',
-    '_onDataBound',
-    '_onRowDataBound',
-    '_onDataLoadError',
-    '_onHeaderCheckboxClick',
-    '_onTitleLinkClick',
-    '_onRowCellClick',
-    '_onRowCheckboxCellClick',
-    '_onContextMenu',
-    '_onRowContextMenuShowing',
-    '_onRowContextMenuItemClicking',
-    '_onRowContextMenuHidden',
-    '_onSelectAllClick',
-    '_onDeselectAllClick'
-  ]);
-};
-
-Quantumart.QP8.BackendEntityGrid.prototype = {
-  _gridGroupCodes: null,
-  _gridElementId: '',
-  _gridElement: null,
-  _gridComponent: null,
-  _currentRowId: -1,
-  _allowMultipleRowSelection: false,
-  _allowGlobalSelection: false,
-  _entityTypeCode: '',
-  _parentEntityId: 0,
-  _actionCode: '',
-  _actionCodeForLink: '',
-  _contextMenuCode: '',
-  _keyColumnName: 'Id',
-  _titleColumnName: 'Name',
-  _parentKeyColumnName: 'ParentId',
-  _linkOpenNewTab: false,
-  _startingEntitiesIDs: [],
-  _selectedEntitiesIDs: [],
-  _allowFilterSelectedEntities: false,
-  _removedIds: [],
-  _allowSaveRowsSelection: true,
-  _stopDeferredOperations: false,
-  _isDataLoaded: false,
-  _searchQuery: null,
-  _contextQuery: null,
-  _autoGenerateLink: false,
-  _generateLinkOnTitle: false,
-  _contextMenuComponent: null,
-  _gridManagerComponent: null,
-  _autoLoad: true,
-  _delayAutoLoad: false,
-  _contextMenuActionCode: '',
-  _filter: '',
-  _hostIsWindow: false,
-  _treeFieldId: 0,
-  _isBindToExternal: false,
-  _deselectAllId: '',
-  _selectAllId: '',
-  _zIndex: 0,
-
-  GRID_BUSY_CLASS_NAME: 'busy',
-  ROW_SELECTED_CLASS_NAME: 't-state-selected',
-  TITLE_CELL_CLASS_NAME: 'title',
-  ID_CELL_CLASS_NAME: 'id',
-  ROW_CLICKABLE_SELECTORS: 'tbody tr:not(.t-grouping-row,.t-detail-row,.t-no-data,:has(> .t-edit-container))',
-  CHECKBOX_HEADER_SELECTORS: '.t-select-header input:checkbox',
-  CHECKBOX_CELL_SELECTORS: '.t-select-cell input:checkbox',
 
   // eslint-disable-next-line camelcase
   get_gridGroupCodes() {
     return this._gridGroupCodes;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_gridElementId() {
     return this._gridElementId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_gridElementId(value) {
     this._gridElementId = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_gridElement() {
     return this._gridElement;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_gridElement(value) {
     this._gridElement = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_gridComponent() {
     return this._gridComponent;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_entityTypeCode() {
     return this._entityTypeCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_entityTypeFromRow(rowElem) {
@@ -243,7 +247,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (dataItem.EntityTypeCode) {
       this._entityTypeCode = dataItem.EntityTypeCode;
     }
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_actionCodeFromRow(rowElem) {
@@ -253,132 +257,132 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (dataItem.ActionCode) {
       this._actionCodeForLink = dataItem.ActionCode;
     }
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_entityTypeCode(value) {
     this._entityTypeCode = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_parentEntityId() {
     return this._parentEntityId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_parentEntityId(value) {
     this._parentEntityId = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_actionCode() {
     return this._actionCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_actionCode(value) {
     this._actionCode = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_actionCodeForLink() {
     return this._actionCodeForLink;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_actionCodeForLink(value) {
     this._actionCodeForLink = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_allowMultipleRowSelection() {
     return this._allowMultipleRowSelection;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_allowMultipleRowSelection(value) {
     this._allowMultipleRowSelection = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_allowGlobalSelection() {
     return this._allowGlobalSelection;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_allowGlobalSelection(value) {
     this._allowGlobalSelection = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_selectedEntitiesIDs() {
     return this._selectedEntitiesIDs;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_selectedEntitiesIDs(value) {
     this._selectedEntitiesIDs = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_contextMenuCode() {
     return this._contextMenuCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_contextMenuCode(value) {
     this._contextMenuCode = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_keyColumnName() {
     return this._keyColumnName;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_keyColumnName(value) {
     this._keyColumnName = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_titleColumnName() {
     return this._titleColumnName;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_titleColumnName(value) {
     this._titleColumnName = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_autoGenerateLink() {
     return this._autoGenerateLink;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_autoGenerateLink(value) {
     this._autoGenerateLink = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_gridManager() {
     return this._gridManagerComponent;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_gridManager(value) {
     this._gridManagerComponent = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_treeFieldId() {
     return this._treeFieldId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_treeFieldId(value) {
     this._treeFieldId = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_currentPage() {
@@ -387,7 +391,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     return undefined;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_orderBy() {
@@ -396,21 +400,8 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     return undefined;
-  },
+  }
 
-  _onDataBindingHandler: null,
-  _onDataBoundHandler: null,
-  _onRowDataBoundHandler: null,
-  _onHeaderCheckboxClickHandler: null,
-  _onTitleLinkClickHandler: null,
-  _onRowCellClickHandler: null,
-  _onRowCheckboxCellClickHandler: null,
-  _onContextMenuHandler: null,
-  _onRowContextMenuShowingHandler: null,
-  _onRowContextMenuItemClickingHandler: null,
-  _onRowContextMenuHiddenHandler: null,
-  _onSelectAllClickHandler: null,
-  _onDeselectAllClickHandler: null,
 
   // eslint-disable-next-line max-statements
   initialize() {
@@ -429,7 +420,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
     this._gridElement = $grid.get(0);
     this._gridComponent = gridComponent;
-    this._startingEntitiesIDs = Array.clone(this._selectedEntitiesIDs);
+    this._startingEntitiesIDs = this._selectedEntitiesIDs.slice();
 
     $grid
       .unbind('dataBinding', gridComponent.onDataBinding)
@@ -510,15 +501,15 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (this._selectAllId) {
       $(`#${this._selectAllId}`).bind('click', this._onSelectAllClickHandler);
     }
-  },
+  }
 
   _getCurrentAction() {
     return $a.getBackendActionByCode(this._actionCode);
-  },
+  }
 
   _getTitleLinks() {
     return this.getRows().find(`${this._getLinkCellSelector()} > A`);
-  },
+  }
 
   _addLinkToCell(rowElem) {
     let $row = $q.toJQuery(rowElem);
@@ -535,7 +526,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
     $titleCell = null;
     $row = null;
-  },
+  }
 
   _getLinkCellSelector() {
     let result = `TD.${this.ID_CELL_CLASS_NAME}`;
@@ -544,7 +535,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     return result;
-  },
+  }
 
   _removeLinksFromCells() {
     this._getTitleLinks()
@@ -552,7 +543,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       .unbind('mouseup', this._onTitleLinkClickHandler)
       .empty()
       .remove();
-  },
+  }
 
   getRows() {
     let $rows = [];
@@ -561,11 +552,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     return $rows;
-  },
+  }
 
   getSelectedRows() {
     return this.getRows().filter(`.${this.ROW_SELECTED_CLASS_NAME}`);
-  },
+  }
 
   getRow(row) {
     let $row = null;
@@ -578,19 +569,19 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     return $row;
-  },
+  }
 
   getRowByEntityId(entityId) {
     return [].find.call(this.getRows(), function (rowEl) {
       return this.getEntityId(rowEl) === +entityId;
     }, this);
-  },
+  }
 
   getRowsByEntityIds(entityIds) {
     return [].filter.call(this.getRows(), function (rowEl) {
       return entityIds.includes(this.getEntityId(rowEl), this);
     }, this);
-  },
+  }
 
   selectRow(rowElem, saveOtherRowsSelection) {
     if (!saveOtherRowsSelection) {
@@ -604,7 +595,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     this._setRowsSelectedState($row, !this.isRowSelected($row));
     this._saveRowSelectionState();
     this._executePostSelectActions();
-  },
+  }
 
   selectRows(rowElems) {
     this._setRowsSelectedState(this.getRows(), false);
@@ -614,52 +605,57 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
     this._saveRowSelectionState();
     this._executePostSelectActions();
-  },
+  }
 
   selectAllRows() {
     this._setRowsSelectedState(this.getRows(), true);
     this._saveRowAllSelectionState();
     this._executePostSelectActions();
-  },
+  }
 
   deselectAllRows() {
     this._setRowsSelectedState(this.getRows(), false);
     this._selectedEntitiesIDs = [];
     this._executePostSelectActions();
-  },
+  }
 
   toggleDirectChildRows(parentArticleId, rowState) {
     this.getChildEntityIds(parentArticleId).done(response => {
       const $rowsToModify = $(this.getRowsByEntityIds(response.data));
       this._setRowsSelectedState($rowsToModify, rowState);
-      this._selectedEntitiesIDs = $q.addRemoveToArrUniq(this._selectedEntitiesIDs, response.data, !rowState);
+      if (rowState) {
+        this._selectedEntitiesIDs = [...new Set(this._selectedEntitiesIDs.concat(response.data))];
+      } else {
+        this._selectedEntitiesIDs = $q.difference(this._selectedEntitiesIDs, response.data);
+      }
+
       this._saveRowSelectionState();
       this._executePostSelectActions();
     });
-  },
+  }
 
   selectPageRows(value) {
     this._setRowsSelectedState(this.getRows(), value);
     this._saveRowSelectionState();
     this._executePostSelectActions();
-  },
+  }
 
   isRowSelected(rowElem) {
     return this.getRow(rowElem).hasClass(this.ROW_SELECTED_CLASS_NAME);
-  },
+  }
 
   _setRowsSelectedState($rows, state) {
     $rows[state ? 'addClass' : 'removeClass'](this.ROW_SELECTED_CLASS_NAME);
     $rows.find(this.CHECKBOX_CELL_SELECTORS).prop('checked', state);
-  },
+  }
 
   _getHeaderCheckbox() {
     return $(this.CHECKBOX_HEADER_SELECTORS, this._gridComponent.$header);
-  },
+  }
 
   _refreshHeaderCheckbox() {
     this._getHeaderCheckbox().prop('checked', !!this._isAllRowsSelectedInCurrentPage());
-  },
+  }
 
   _refreshCancelSelection() {
     if (this._deselectAllId) {
@@ -674,27 +670,27 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         }
       }
     }
-  },
+  }
 
   getDataItem(rowElem) {
     const $row = this.getRow(rowElem);
     return $row ? this._gridComponent.dataItem($row.get(0)) : null;
-  },
+  }
 
   getEntityId(rowElem) {
     const dataItem = this.getDataItem(this.getRow(rowElem));
     return dataItem && dataItem[this._keyColumnName] ? dataItem[this._keyColumnName] : 0;
-  },
+  }
 
   getEntityName(rowElem) {
     const dataItem = this.getDataItem(this.getRow(rowElem));
     return dataItem && dataItem[this._titleColumnName] ? dataItem[this._titleColumnName] : '';
-  },
+  }
 
   getParentEntityId(rowElem) {
     const dataItem = this.getDataItem(this.getRow(rowElem));
     return dataItem && dataItem[this._parentKeyColumnName] ? dataItem[this._parentKeyColumnName] : this._parentEntityId;
-  },
+  }
 
   getChildEntityIds(parentArticleId) {
     return $q.getAjax(`${window.CONTROLLER_URL_ARTICLE}GetChildArticleIds`, {
@@ -702,11 +698,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       filter: this._filter,
       fieldId: this._treeFieldId
     });
-  },
+  }
 
   checkExistEntityInCurrentPage(entityId) {
     return !!this.getRowByEntityId(entityId);
-  },
+  }
 
   getEntitiesFromRows(rows) {
     const entities = [];
@@ -733,7 +729,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     return entities;
-  },
+  }
 
   getSelectedEntities() {
     let selectedEntities = [];
@@ -741,10 +737,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       const rows = this.getRowsByEntityIds(this._selectedEntitiesIDs);
       const that = this;
 
-      selectedEntities = $.map(rows, row => {
-        return { Id: that.getEntityId(row), Name: that.getEntityName(row) };
-      });
-
+      selectedEntities = rows.map(row => ({ Id: that.getEntityId(row), Name: that.getEntityName(row) }));
       const notFoundIds = $.grep(this._selectedEntitiesIDs, elem => {
         for (let i = 0; i < selectedEntities.length; i++) {
           if (selectedEntities[i].Id === elem) {
@@ -763,7 +756,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     return selectedEntities;
-  },
+  }
 
   resetGrid(options) {
     if ($q.isObject(options)) {
@@ -780,7 +773,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (this._gridComponent) {
       this._gridComponent.ajaxRequest();
     }
-  },
+  }
 
   refreshGrid(options) {
     if ($q.isObject(options)) {
@@ -805,19 +798,19 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (gridComponent) {
       gridComponent.ajaxRequest();
     }
-  },
+  }
 
   markGridAsBusy() {
     $(this._gridElement).addClass(this.GRID_BUSY_CLASS_NAME);
-  },
+  }
 
   unmarkGridAsBusy() {
     $(this._gridElement).removeClass(this.GRID_BUSY_CLASS_NAME);
-  },
+  }
 
   isGridBusy() {
     return $(this._gridElement).hasClass(this.GRID_BUSY_CLASS_NAME);
-  },
+  }
 
   executeAction(row, actionCode, followLink, ctrlKey) {
     const $row = this.getRow(row);
@@ -874,7 +867,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         this.notify(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
       }
     }
-  },
+  }
 
   _executePostSelectActions() {
     if (this.articlesCountId) {
@@ -882,7 +875,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     this._raiseSelectEvent();
-  },
+  }
 
   _raiseSelectEvent() {
     const action = this._getCurrentAction();
@@ -904,25 +897,30 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
     this._refreshHeaderCheckbox();
     this._refreshCancelSelection();
-  },
+  }
 
   _isAllRowsSelectedInCurrentPage() {
     const $rows = this.getRows();
     const $selectedRows = this.getSelectedRows();
     return $rows.length === $selectedRows.length;
-  },
+  }
 
   _saveRowSelectionState() {
     const $rows = this.getRows();
+    const selectedRowEntityIdsSet = new Set(this._selectedEntitiesIDs);
+    const unselectedRowEntityIdsSet = new Set();
     for (let rowIndex = 0; rowIndex < $rows.length; rowIndex++) {
       const $row = $rows.eq(rowIndex);
-      this._selectedEntitiesIDs = $q.addRemoveToArrUniq(
-        this._selectedEntitiesIDs,
-        this.getEntityId($row),
-        !this.isRowSelected($row)
-      );
+      const rowEntityId = this.getEntityId($row);
+      if (this.isRowSelected($row)) {
+        selectedRowEntityIdsSet.add(rowEntityId);
+      } else {
+        unselectedRowEntityIdsSet.add(rowEntityId);
+      }
     }
-  },
+
+    this._selectedEntitiesIDs = $q.difference([...selectedRowEntityIdsSet], [...unselectedRowEntityIdsSet]);
+  }
 
   _saveRowAllSelectionState() {
     let eventArgs = null;
@@ -957,34 +955,31 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       }
 
       const that = this;
-      if (rowsData) {
-        this._selectedEntitiesIDs = $.map(rowsData.data, dataItem => dataItem[that._keyColumnName]);
+      if (rowsData && rowsData.data) {
+        this._selectedEntitiesIDs = rowsData.data.map(item => item[that._keyColumnName]);
       }
     }
-  },
+  }
 
   _restoreRowSelectionState() {
     const that = this;
-    const selectedEntitiesIDs = this._selectedEntitiesIDs;
     const selectedRowElems = [];
 
-    this.getRows().each(
-      (rowIndex, rowElem) => {
-        const $row = $(rowElem);
-        const entityId = that.getEntityId($row);
+    this.getRows().each((rowIndex, rowElem) => {
+      const $row = $(rowElem);
+      const entityId = that.getEntityId($row);
 
-        if (Array.contains(selectedEntitiesIDs, entityId)) {
-          Array.add(selectedRowElems, rowElem);
-        }
+      if (Array.contains(that._selectedEntitiesIDs, entityId)) {
+        Array.add(selectedRowElems, rowElem);
       }
-    );
+    });
 
     this.selectRows(selectedRowElems);
-  },
+  }
 
   _resetRowSelectionState() {
     $q.clearArray(this._selectedEntitiesIDs);
-  },
+  }
 
   _fixGridWidth() {
     const gridElement = this.get_gridElement();
@@ -993,7 +988,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (tableElement.offsetWidth > gridElement.offsetWidth) {
       $(gridElement).css('width', `${tableElement.offsetWidth}px`);
     }
-  },
+  }
 
   _createDataQueryParams() {
     const params = { gridParentId: this._parentEntityId };
@@ -1015,7 +1010,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     return params;
-  },
+  }
 
   _onDataBinding(e) {
     const params = this._createDataQueryParams();
@@ -1044,7 +1039,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         contextMenuComponent.hideMenu();
       }
     }
-  },
+  }
 
   _onDataBound() {
     const grid = this._gridComponent;
@@ -1075,23 +1070,18 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (this._allowSaveRowsSelection) {
       this._restoreRowSelectionState();
     }
-  },
+  }
 
   _onRowDataBound(e) {
-    this._applyStatusColor(e.row, e.dataItem);
+    BackendEntityGrid.applyStatusColor(e.row, e.dataItem);
     if (this._autoGenerateLink) {
       this._addLinkToCell(e.row);
     }
-  },
-
-  _onDataLoadError(e) {
-    $q.processGenericAjaxError(e.XMLHttpRequest);
-    e.preventDefault();
-  },
+  }
 
   _onHeaderCheckboxClick(e) {
     this.selectPageRows($(e.currentTarget).is(':checked'));
-  },
+  }
 
   _onTitleLinkClick(e) {
     e.preventDefault();
@@ -1120,7 +1110,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     );
 
     return undefined;
-  },
+  }
 
   _onRowCellClick(e) {
     const $target = $(e.target);
@@ -1132,7 +1122,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (this._contextMenuComponent) {
       this._contextMenuComponent.hideMenu();
     }
-  },
+  }
 
   _onRowCheckboxCellClick(e) {
     const $checkbox = $(e.target).closest('INPUT:checkbox');
@@ -1140,7 +1130,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       const $row = $checkbox.parent().parent();
       this.selectRow($row, this._allowMultipleRowSelection);
     }
-  },
+  }
 
   _onContextMenu(e) {
     const $element = $(e.currentTarget);
@@ -1150,7 +1140,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     e.preventDefault();
-  },
+  }
 
   _onRowContextMenuShowing(eventType, sender, args) {
     const $element = $(args.get_targetElement());
@@ -1158,49 +1148,40 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (menuComponent && $element.length) {
       menuComponent.tuneMenuItems(this._currentRowId, this._parentEntityId);
     }
-  },
+  }
 
   _onRowContextMenuItemClicking(eventType, sender, args) {
     const $menuItem = $(args.get_menuItem());
     if ($menuItem.length) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
-  },
+  }
 
   _onRowContextMenuHidden(eventType, sender, args) {
     if (this._contextMenuActionCode) {
       this.executeAction($(args.get_targetElement()), this._contextMenuActionCode, false, false);
       this._contextMenuActionCode = '';
     }
-  },
+  }
 
   _onSelectAllClick() {
     this.selectAllRows();
-  },
+  }
 
   _onDeselectAllClick() {
     this.deselectAllRows();
-  },
-
-  _applyStatusColor(row, item) {
-    if (item.STATUS_TYPE_COLOR) {
-      const $row = $(row);
-      const isAlt = $row.hasClass('t-alt');
-      const className = isAlt ? `t-alt-${item.STATUS_TYPE_COLOR}` : `t-${item.STATUS_TYPE_COLOR}`;
-      $row.removeClass('t-alt').addClass(className);
-    }
-  },
+  }
 
   onLoad() {
     if (this._autoLoad && this._delayAutoLoad) {
       this.refreshGrid();
     }
-  },
+  }
 
   dispose() {
-    this._stopDeferredOperations = true;
-    Quantumart.QP8.BackendEntityGrid.callBaseMethod(this, 'dispose');
+    super.dispose();
 
+    this._stopDeferredOperations = true;
     if (this._autoGenerateLink) {
       this._removeLinksFromCells();
     }
@@ -1264,7 +1245,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     $grid.removeData('tGrid').empty();
-
     if (this._deselectAllId) {
       $(`#${this._deselectAllId}`).unbind('click', this._onDeselectAllClickHandler);
     }
@@ -1299,6 +1279,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
     $q.collectGarbageInIE();
   }
-};
+}
 
-Quantumart.QP8.BackendEntityGrid.registerClass('Quantumart.QP8.BackendEntityGrid', Quantumart.QP8.Observable);
+Quantumart.QP8.BackendEntityGrid = BackendEntityGrid;

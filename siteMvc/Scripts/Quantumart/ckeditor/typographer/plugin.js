@@ -170,9 +170,7 @@
           group: 'qp8'
         });
 
-        editor.contextMenu.addListener(() => {
-          return { typographer: CKEDITOR.TRISTATE_OFF };
-        });
+        editor.contextMenu.addListener(() => ({ typographer: CKEDITOR.TRISTATE_OFF }));
       }
 
       editor.addCommand(settings.pluginName, {

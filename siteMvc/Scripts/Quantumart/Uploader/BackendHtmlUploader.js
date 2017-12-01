@@ -94,7 +94,7 @@ class BackendHtmlUploader extends Quantumart.QP8.BackendBaseUploader {
     }
 
     if (this._extensions.length > 0) {
-      const extensions = $.map(this._extensions.split(';'), val => val.toLowerCase());
+      const extensions = this._extensions.split(';').map(val => val.toLowerCase());
 
       $.each(e.files, function () {
         if (Array.indexOf(extensions, this.extension.toLowerCase()) === -1) {

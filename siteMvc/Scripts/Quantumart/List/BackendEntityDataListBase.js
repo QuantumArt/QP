@@ -1,3 +1,5 @@
+/* eslint max-lines: 'off' */
+
 window.EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING = 'OnEntityListActionExecuting';
 window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED = 'OnEntityListSelectionChanged';
 
@@ -15,8 +17,17 @@ Quantumart.QP8.Enums.DataListType.prototype = {
 };
 
 Quantumart.QP8.Enums.DataListType.registerEnum('Quantumart.QP8.Enums.DataListType');
+
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendEntityDataListBase = function (
-  listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
+  listGroupCode,
+  listElementId,
+  entityTypeCode,
+  parentEntityId,
+  entityId,
+  listType,
+  options
+) {
   Quantumart.QP8.BackendEntityDataListBase.initializeBase(this);
   this._listGroupCode = listGroupCode;
   this._listElementId = listElementId;
@@ -316,11 +327,11 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   getSelectedEntityIDs() {
-    return $.grep($.map(this.getSelectedEntities(), item => $q.toInt(item.Id)), item => item);
+    return $.grep(this.getSelectedEntities().map(item => $q.toInt(item.Id)), i => i);
   },
 
   refreshList(testEntityId) {
-    const selectedEntitiesIDs = _.pluck(this.getSelectedEntities(), 'Id');
+    const selectedEntitiesIDs = this.getSelectedEntities().map(el => el.Id);
     const dataItems = $o.getSimpleEntityList(
       this._entityTypeCode, this._parentEntityId, this._entityId, this._listId,
       this._selectionMode, selectedEntitiesIDs, this._filter, testEntityId
@@ -444,12 +455,9 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
       if (actionTypeCode === window.ACTION_TYPE_CODE_READ) {
         const entities = this.getSelectedEntities();
         if (entities.length > 0) {
-          let entity = entities[0];
-
+          const [entity] = entities;
           entityId = entity.Id;
           entityName = $o.getEntityName(entityTypeCode, entityId, parentEntityId);
-
-          entity = null;
         }
 
         $q.clearArray(entities);
@@ -521,12 +529,9 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
           const entities = this.getSelectedEntities();
           if (entities.length > 0) {
-            let entity = entities[0];
-
+            const [entity] = entities;
             entityId = entity.Id;
             entityName = $o.getEntityName(this._entityTypeCode, entityId, this._parentEntityId);
-
-            entity = null;
           }
 
           $q.clearArray(entities);
@@ -608,7 +613,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     let dataItems;
     if (($o.checkEntitiesForPresenceEmptyNames(entities) || this._readDataOnInsert)
     && entities.length <= this._countLimit) {
-      const selectedEntitiesIDs = _.pluck(entities, 'Id');
+      const selectedEntitiesIDs = entities.map(el => el.Id);
       dataItems = $o.getSimpleEntityList(
         this._entityTypeCode, this._parentEntityId, this._entityId, this._listId,
         this._selectionMode, selectedEntitiesIDs, this._filter, 0

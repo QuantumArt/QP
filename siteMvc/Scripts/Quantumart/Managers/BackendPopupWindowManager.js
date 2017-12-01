@@ -94,6 +94,8 @@ Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager exten
           const entities = popupWindow.get_entities();
           for (let entityIndex = 0; entityIndex < entities.length; entityIndex++) {
             const entity = entities[entityIndex];
+
+            // eslint-disable-next-line max-depth
             if (entity && !$o.checkEntityExistence(entityTypeCode, entity.Id)) {
               popupWindow.closeWindow();
               break;

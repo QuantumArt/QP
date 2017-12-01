@@ -80,7 +80,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     let url, entities;
     this._closeLibrary();
     if (args) {
-      entities = args.entities;
+      ({ entities } = args);
       if (entities.length > 0) {
         url = $(`#${this._selectPopupWindowComponent._popupWindowId}_Library`).find('.l-virtual-path').text();
         url += entities[0].Name;

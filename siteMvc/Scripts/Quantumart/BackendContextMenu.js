@@ -1,3 +1,5 @@
+/* eslint max-lines: 'off' */
+
 window.EVENT_TYPE_CONTEXT_MENU_SHOWING = 'OnContextMenuShowing';
 window.EVENT_TYPE_CONTEXT_MENU_HIDING = 'OnContextMenuHiding';
 window.EVENT_TYPE_CONTEXT_MENU_HIDDEN = 'OnContextMenuHidden';
@@ -151,9 +153,9 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     }
   },
 
-  showMenuAt(e, targetElem, x, y) {
+  showMenuAt(e, targetElem, xc, yc) {
     if (this._contextMenuComponent._menuElement.childNodes.length > 0) {
-      this._contextMenuComponent.showAt(e, targetElem, x, y);
+      this._contextMenuComponent.showAt(e, targetElem, xc, yc);
     }
   },
 

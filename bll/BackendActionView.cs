@@ -1,4 +1,4 @@
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace Quantumart.QP8.BLL
 {
@@ -7,13 +7,13 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// идентификатор действия
         /// </summary>
-        [ScriptIgnore]
+        [JsonIgnore]
         public int ActionId { get; set; }
 
         /// <summary>
         /// идентификатор типа представления
         /// </summary>
-        [ScriptIgnore]
+        [JsonIgnore]
         public int ViewTypeId { get; set; }
 
         /// <summary>

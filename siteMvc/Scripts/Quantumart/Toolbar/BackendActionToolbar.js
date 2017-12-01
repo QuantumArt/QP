@@ -124,7 +124,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
       ).done(data => {
         if (!that._stopDeferredOperations) {
           if (data.success) {
-            const actionStatuses = data.actionStatuses;
+            const { actionStatuses } = data;
             if (!$q.isNullOrEmpty(actionStatuses)) {
               Quantumart.QP8.BackendActionToolbar.callBaseMethod(that, 'tuneToolbarItems', [actionStatuses]);
               $q.clearArray(actionStatuses);

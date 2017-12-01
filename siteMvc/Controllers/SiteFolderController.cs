@@ -11,7 +11,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class SiteFolderController : QPController
     {
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewSiteFolder)]
         [BackendActionContext(ActionCode.AddNewSiteFolder)]
@@ -95,7 +94,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SiteFileProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.SiteFolder, "parentId")]
