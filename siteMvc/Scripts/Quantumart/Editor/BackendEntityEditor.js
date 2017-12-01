@@ -50,39 +50,16 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     this.actionTypeCode = '';
     this.documentWrapperElementId = '';
     this.formElementId = '';
-    this.formElement = null;
     this.validationSummaryElementId = '';
-    this.validationSummaryElement = null;
     this.formHasErrors = false;
-    this.editorManagerComponent = null;
     this.hostIsWindow = false;
-    this.initFieldValues = null;
-    this.disabledFields = null;
-    this.hideFields = null;
     this.restoring = false;
-    this.contextBlockState = null;
-    this.variationsModel = null;
-    this.errorModel = null;
     this.variationsModelChanged = false;
-    this.contextModel = null;
     this.disableChangeTracking = false;
     this.needUp = false;
 
-    this.modifiedDateTime = null;
     this.isBindToExternal = false;
     this.entityTypeAllowedToAutosave = false;
-
-    this.customBeforeSubmit = null;
-    this.customInit = null;
-    this.customDispose = null;
-    this.customFieldValueChanged = null;
-    this.customLoad = null;
-    this.notifyCustomButtonExistence = true;
-
-    this.customButtons = null;
-    this.customLinkButtons = null;
-    this.customButtonsSettings = null;
-    this.customLinkButtonsSettings = null;
 
     this._editorGroupCode = editorGroupCode;
     this._entityTypeCode = entityTypeCode;

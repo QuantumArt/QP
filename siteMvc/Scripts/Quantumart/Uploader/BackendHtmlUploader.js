@@ -4,13 +4,12 @@ class BackendHtmlUploader extends Quantumart.QP8.BackendBaseUploader {
     this._parentElement = parentElement;
     this._extensions = options.extensions || '';
     this._resolveName = options.resolveName || false;
-    this._$telerikUpload = null;
     this._folderPath = '';
     this._uploadedFiles = [];
   }
 
   initialize() {
-    let $mvcUpload = $(".t-upload input[type='file']", this._parentElement).data('tUpload');
+    const $mvcUpload = $(".t-upload input[type='file']", this._parentElement).data('tUpload');
 
     $mvcUpload.wrapper.unbind('upload');
     $mvcUpload.wrapper.unbind('success');
@@ -24,7 +23,6 @@ class BackendHtmlUploader extends Quantumart.QP8.BackendBaseUploader {
     $mvcUpload.wrapper.bind('error', $.proxy(this._onUploadErrorHandler, this));
 
     this._$telerikUpload = $mvcUpload;
-    $mvcUpload = null;
   }
 
   dispose() {
