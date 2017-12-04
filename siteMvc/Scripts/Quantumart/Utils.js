@@ -909,35 +909,34 @@ $q.collectGarbageInIE = function collectGarbageInIE() {
   }
 };
 
-$q.defineAbstractMethods = listOfFnNames => {
-  [].forEach.call(listOfFnNames, function eachFn(fnName) {
-    try {
-      this[fnName] = $q.alertFail($l.Common.methodNotImplemented);
-    } catch (e) {
-      $q.alertFail(`Failed to register abstract method: ${fnName}`, e);
-    }
-  }, this);
+/**
+ * Define abstract methods that should be implemented at child classes
+ * @param  {string[]} listOfFnNames list of class method names to implement
+ */
+$q.defineAbstractMethods = function (listOfFnNames) {
+  listOfFnNames.forEach(fnName => {
+    this[fnName] = $q.alertFail.bind(this, `${fnName}: ${$l.Common.methodNotImplemented}`);
+  });
 };
 
-$q.bindProxies = function bindProxies(listOfFnNames, fnPostfix) {
+/**
+ * Bind class methods and "this" context, using bind function
+ * @param  {string[]} listOfFnNames list of class method names to bind
+ * @param  {string[]} fnPostfix     new function name with binded context
+ */
+$q.bindProxies = function (listOfFnNames, fnPostfix) {
   const postfix = fnPostfix || 'Handler';
-  [].forEach.call(listOfFnNames, function eachFn(fnName) {
-    try {
-      this[fnName + postfix] = this[fnName].bind(this);
-    } catch (e) {
-      $q.alertFail(`Failed to register proxy method: ${fnName}`, e);
-    }
-  }, this);
+  listOfFnNames.forEach(fnName => {
+    this[fnName + postfix] = this[fnName].bind(this);
+  });
 };
 
-$q.dispose = function dispose(listOfObjs) {
-  [].forEach.call(listOfObjs, function eachOb(obj) {
-    try {
-      if (this[obj]) {
-        this[obj] = null;
-      }
-    } catch (e) {
-      window.console.error(`Failed to dispose: ${obj}`, e);
-    }
-  }, this);
+/**
+ * Dispose class fields setting them to undefined
+ * @param  {string[]} listOfPropNames list of class property names to dispose
+ */
+$q.dispose = function (listOfPropNames) {
+  listOfPropNames.forEach(propName => {
+    this[propName] = this[propName] ? undefined : this[propName];
+  });
 };
