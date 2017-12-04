@@ -163,7 +163,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   constructor(eventArgs, options) {
     super();
 
-    $q.defineAbstractMethods([
+    $q.defineAbstractMethods(this, [
       'showLoadingLayer',
       'hideLoadingLayer',
       'onChangeContent',

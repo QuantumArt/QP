@@ -4,7 +4,7 @@ window.EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED = 'OnLibraryAllFilesUploaded';
 class BackendBaseUploader extends Quantumart.QP8.Observable {
   constructor() {
     super();
-    $q.defineAbstractMethods([
+    $q.defineAbstractMethods(this, [
       'initialize',
       'setFolderPath',
       'getFolderPath',

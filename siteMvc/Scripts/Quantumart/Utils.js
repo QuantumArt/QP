@@ -909,14 +909,12 @@ $q.collectGarbageInIE = function collectGarbageInIE() {
   }
 };
 
-$q.defineAbstractMethods = listOfFnNames => {
+$q.defineAbstractMethods = function defineAbstractMethods(obj, listOfFnNames) {
   [].forEach.call(listOfFnNames, function eachFn(fnName) {
-    try {
-      this[fnName] = $q.alertFail($l.Common.methodNotImplemented);
-    } catch (e) {
-      $q.alertFail(`Failed to register abstract method: ${fnName}`, e);
-    }
-  }, this);
+    this[fnName] = () => {
+      $q.alertFail($l.Common.methodNotImplemented);
+    };
+  }, obj);
 };
 
 $q.bindProxies = function bindProxies(listOfFnNames, fnPostfix) {
