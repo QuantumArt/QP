@@ -1717,9 +1717,5 @@ $c.destroyEntityDataTree = function (dataTreeElem) {
 
 // #endregion
 
-$c.notImplemented = function () {
-  $q.alertError($l.Common.methodNotImplemented);
-};
-
 Quantumart.QP8.ControlHelpers = window.$c;
 Quantumart.QP8.ControlHelpers.registerClass('Quantumart.QP8.ControlHelpers');

@@ -1561,6 +1561,7 @@
     <Content Include="Scripts\PlUpload\moxie.js" />
     <Content Include="Scripts\PlUpload\Moxie.swf" />
     <Content Include="Scripts\PlUpload\Moxie.xap" />
+    <Content Include="Scripts\Quantumart\Uploader\BackendUploaderEventArgs.js" />
     <Content Include="Scripts\Quantumart\Uploader\plupload\plupload.filters.js" />
     <Content Include="Scripts\PlUpload\plupload.dev.js" />
     <Content Include="Scripts\Quantumart\Home.js" />

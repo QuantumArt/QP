@@ -163,20 +163,6 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   constructor(eventArgs, options) {
     super();
 
-    $q.defineAbstractMethods(this, [
-      'showLoadingLayer',
-      'hideLoadingLayer',
-      'onChangeContent',
-      'onActionExecuting',
-      'onEntityReaded',
-      'onNeedUp',
-      'htmlLoadingMethod',
-      'resetSelectedEntities',
-      'saveSelectionContext',
-      'showErrorMessageInDocumentWrapper',
-      '_onLibraryResized'
-    ]);
-
     this._documentWrapperElementId = '';
     this._documentUrl = '';
     this._entityTypeCode = '';
@@ -1559,5 +1545,19 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     }
   }
 }
+
+$q.defineAbstractMethods.call(BackendDocumentHost.prototype, [
+  'showLoadingLayer',
+  'hideLoadingLayer',
+  'onChangeContent',
+  'onActionExecuting',
+  'onEntityReaded',
+  'onNeedUp',
+  'htmlLoadingMethod',
+  'resetSelectedEntities',
+  'saveSelectionContext',
+  'showErrorMessageInDocumentWrapper',
+  '_onLibraryResized'
+]);
 
 Quantumart.QP8.BackendDocumentHost = BackendDocumentHost;
