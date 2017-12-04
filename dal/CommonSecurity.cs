@@ -89,7 +89,7 @@ namespace Quantumart.QP8.DAL
                             nextRows = nextRows.Where(n => (int)n.Field<decimal>("rel_content_id") == nextIds[0]).ToArray();
                         }
                         
-                        ExtraFinders = nextIds.Skip(1).Select(n => new RelationSecurityPathFinder(PathRows, CurrentContentId, CurrentPath) { CurrentRelatedContentId = n}).ToList();
+                        ExtraFinders = nextIds.Skip(1).Select(n => new RelationSecurityPathFinder(PathRows, CurrentContentId, CurrentPath) { CurrentRelatedContentId = n, OldIndex = OldIndex, Index = Index}).ToList();
 
                         var param = new RelationSecurityPathItem
                         {
