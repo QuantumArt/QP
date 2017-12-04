@@ -211,7 +211,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
         private static string ParseTextParam(ArticleSearchQueryParam p)
         {
             Ensure.NotNull(p);
-            Ensure.That(p.SearchType == ArticleFieldSearchType.Text);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.Text || p.SearchType == ArticleFieldSearchType.StringEnum);
 
             if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {

@@ -36,8 +36,6 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
     this.CHECKBOX_HEADER_SELECTORS = '.t-select-header input:checkbox';
     this.CHECKBOX_CELL_SELECTORS = '.t-select-cell input:checkbox';
 
-    this._gridElement = null;
-    this._gridComponent = null;
     this._currentRowId = -1;
     this._allowMultipleRowSelection = false;
     this._allowGlobalSelection = false;
@@ -54,12 +52,8 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
     this._allowSaveRowsSelection = true;
     this._stopDeferredOperations = false;
     this._isDataLoaded = false;
-    this._searchQuery = null;
-    this._contextQuery = null;
     this._autoGenerateLink = false;
     this._generateLinkOnTitle = false;
-    this._contextMenuComponent = null;
-    this._gridManagerComponent = null;
     this._autoLoad = true;
     this._delayAutoLoad = false;
     this._contextMenuActionCode = '';

@@ -13,13 +13,8 @@ class BackendPlUploader extends Quantumart.QP8.BackendBaseUploader {
 
     super();
 
-    this._fileList = null;
     this._folderPath = '';
-    this._progress = null;
     this._filesNames = [];
-    this._libraryEntityId = null;
-    this._libraryParentEntityId = null;
-    this._uploader = null;
 
     this._container = $container.find('.l-pl-uploader-container').first();
     this._pickupButton = $container.find('.pl_upload_button').first();
@@ -33,6 +28,7 @@ class BackendPlUploader extends Quantumart.QP8.BackendBaseUploader {
     this._getFormScriptOptions = options.getFormScriptOptions || getFormScriptOptions;
     this._previewButton = $container.find('.previewButton').first();
   }
+
   setFolderPath(value) {
     this._folderPath = value;
   }

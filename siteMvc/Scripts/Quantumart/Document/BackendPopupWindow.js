@@ -14,18 +14,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
     super(eventArgs, options);
 
     this._popupWindowId = '';
-    this._popupWindowElement = null;
-    this._popupWindowComponent = null;
     this._showBreadCrumbs = false;
-    this._breadCrumbsWrapperElement = null;
-    this._toolbarWrapperElement = null;
-    this._actionToolbarWrapperElement = null;
-    this._viewToolbarWrapperElement = null;
-    this._searchBlockWrapperElement = null;
-    this._contextBlockWrapperElement = null;
-    this._documentAreaElement = null;
-    this._loadingLayerElement = null;
-    this._selectionContext = null;
     this._saveSelectionWhenChangingView = false;
     this._title = '';
     this._width = 400;
@@ -38,8 +27,6 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
     this._showRefreshButton = false;
     this._showCloseButton = true;
     this._showMaximizeButton = true;
-    this._popupWindowManagerComponent = null;
-    this._additionalUrlParameters = null;
     this._zIndex = 0;
     this._isMultiOpen = false;
 

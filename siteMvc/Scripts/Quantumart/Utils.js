@@ -909,13 +909,23 @@ $q.collectGarbageInIE = function collectGarbageInIE() {
   }
 };
 
+$q.defineAbstractMethods = listOfFnNames => {
+  [].forEach.call(listOfFnNames, function eachFn(fnName) {
+    try {
+      this[fnName] = $q.alertFail($l.Common.methodNotImplemented);
+    } catch (e) {
+      $q.alertFail(`Failed to register abstract method: ${fnName}`, e);
+    }
+  }, this);
+};
+
 $q.bindProxies = function bindProxies(listOfFnNames, fnPostfix) {
   const postfix = fnPostfix || 'Handler';
   [].forEach.call(listOfFnNames, function eachFn(fnName) {
     try {
       this[fnName + postfix] = this[fnName].bind(this);
     } catch (e) {
-      window.console.error(`Failed to register: ${fnName}`, e);
+      $q.alertFail(`Failed to register proxy method: ${fnName}`, e);
     }
   }, this);
 };

@@ -163,43 +163,36 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   constructor(eventArgs, options) {
     super();
 
-    this._documentWrapperElementId = '';
-    this._documentWrapperElement = null;
-    this._documentUrl = '';
-    this._documentPostParams = null;
-    this._documentContext = null;
+    $q.defineAbstractMethods([
+      'showLoadingLayer',
+      'hideLoadingLayer',
+      'onChangeContent',
+      'onActionExecuting',
+      'onEntityReaded',
+      'onNeedUp',
+      'htmlLoadingMethod',
+      'resetSelectedEntities',
+      'saveSelectionContext',
+      'showErrorMessageInDocumentWrapper',
+      '_onLibraryResized'
+    ]);
 
+    this._documentWrapperElementId = '';
+    this._documentUrl = '';
     this._entityTypeCode = '';
     this._entityId = 0;
     this._entityName = '';
     this._parentEntityId = 0;
     this._isMultipleEntities = false;
-    this._entities = null;
     this._actionCode = '';
     this._actionTypeCode = '';
     this._isCustomAction = false;
 
-    this._breadCrumbsComponent = null;
-    this._actionToolbarComponent = null;
     this._useCustomActionToolbar = false;
-    this._viewToolbarComponent = null;
-    this._searchBlockComponent = null;
     this._oldSearchBlockHeight = 0;
     this._isContextBlockVisible = false;
-    this._selectedEntities = null;
     this._selectedParentEntityId = 0;
     this._filter = '';
-
-    this._hostStateStorage = null;
-    this._callerContext = null;
-    this._externalCallerContexts = null;
-    this._eventArgsAdditionalData = null;
-    this._selectedEntitiesContext = null;
-
-    this._onSearchHandler = null;
-    this._onContextSwitchingHandler = null;
-    this._onSearchBlockResizeHandler = null;
-    this._onGeneralEventHandler = null;
 
     this._startedByExternal = false;
     this._isCloseForced = false;

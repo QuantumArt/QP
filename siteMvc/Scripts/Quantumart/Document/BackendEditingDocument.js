@@ -1,6 +1,5 @@
 /* eslint max-lines: 'off' */
 
-
 class BackendEditingDocument extends Quantumart.QP8.BackendDocumentHost {
   constructor(tabId, editingArea, eventArgs, options) {
     super(eventArgs, options);
