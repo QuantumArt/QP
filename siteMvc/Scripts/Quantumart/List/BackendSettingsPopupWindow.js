@@ -38,7 +38,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
         this._settingsWindow = new Quantumart.QP8.MultistepActionExportSettings(this);
         break;
       case 'copy_site':
-        this._settingsWindow = new Quantumart.QP8.MultistepActionCopySiteSettings();
+        this._settingsWindow = new Quantumart.QP8.MultistepActionCopySiteSettings(this);
         break;
       default:
         break;
@@ -75,39 +75,8 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
         $q.alertError(errors);
       } else {
         this._isSettingsSet = true;
-        const parentContainer = document.getElementById(`${this._popupWindowId}_editingForm`);
-        const ajaxData = {
-          Encoding: +document.getElementById(`${this._popupWindowId}_Encoding`).value,
-          Culture: +document.getElementById(`${this._popupWindowId}_Culture`).value,
-          Delimiter: +parentContainer.querySelector(`input[name="Delimiter"]:checked`).value,
-          LineSeparator: +document.getElementById(`${this._popupWindowId}_LineSeparator`).value,
-          OrderByField: document.getElementById(`${this._popupWindowId}_OrderByField`).value,
-          AllFields: document.getElementById(`${this._popupWindowId}_AllFields`).checked,
-          ExcludeSystemFields: document.getElementById(`${this._popupWindowId}_ExcludeSystemFields`).checked,
-          CustomFields: [
-            ...parentContainer.querySelectorAll(`input[name="CustomFields"]:checked`)
-          ].map(el => +el.value),
-          FieldsToExpand: [
-            ...parentContainer.querySelectorAll(`input[name="FieldsToExpand"]:checked`)
-          ].map(el => +el.value)
-        };
-
-        const idsElement = document.getElementById(`${this._popupWindowId}_idsToExport`);
-        if (idsElement) {
-          Object.assign(ajaxData, {
-            ids: idsElement.getAttribute('data-ids').split(',').map(el => +el.value)
-          });
-        }
-
-        $q.postAjax(this._settingsActionUrl.replace('Settings', 'SetupWithParams'), ajaxData, data => {
-          if (data && data.view) {
-            $(`#${this._popupWindowComponent._documentWrapperElementId}`).html(data.view);
-          } else {
-            this._popupWindowComponent.closeWindow();
-            $('.t-overlay').remove();
-            this._callback({ isSettingsSet: true });
-          }
-        });
+        const ajaxData = this._settingsWindow.serializeForm();
+        this._settingsWindow.submitForm.call(this, ajaxData);
       }
     }
   },
