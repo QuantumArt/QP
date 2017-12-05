@@ -368,9 +368,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return new ArticleFullTextSearchParameter { HasError = ftsHasError, FieldIdList = ftsFieldIdList, QueryString = ftsQueryString, RawQueryString = rawQueryString, SearchResultLimit = searchResultLimit };
         }
 
-        public static string GetCommonFilter(IEnumerable<ArticleSearchQueryParam> searchQueryParams, string filter, IList<SqlParameter> sqlParams) => SqlFilterComposer.Compose(new ArticleFilterSearchQueryParser().GetFilter(searchQueryParams, sqlParams), filter);
+        public static string GetCommonFilter(IList<ArticleSearchQueryParam> searchQueryParams, string filter, IList<SqlParameter> sqlParams)
+            => SqlFilterComposer.Compose(new ArticleFilterSearchQueryParser().GetFilter(searchQueryParams, sqlParams), filter);
 
-        public static IEnumerable<ArticleLinkSearchParameter> GetLinkSearchParameter(IEnumerable<ArticleSearchQueryParam> searchQueryParams) => new ArticleLinkSearchQueryParser(new ArticleSearchRepository()).Parse(searchQueryParams);
+        public static IEnumerable<ArticleLinkSearchParameter> GetLinkSearchParameter(IEnumerable<ArticleSearchQueryParam> searchQueryParams)
+            => new ArticleLinkSearchQueryParser(new ArticleSearchRepository()).Parse(searchQueryParams);
 
         private static string GetContextFilter(IList<ArticleContextQueryParam> contextQueryParams, IList<Field> fields, out bool useMainTable)
         {
@@ -610,16 +612,22 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             {
                 if (field.ExactType == FieldExactTypes.M2MRelation)
                 {
+                    // ReSharper disable once PossibleInvalidOperationException
                     var content = ContentRepository.GetById(field.RelateToContentId.Value);
-                    var fieldId = field.RelateToContentId.Value;
-
-                    var fieldIds = content.UserQueryContentViewSchema.Any()
-                        ? content.UserQueryContentViewSchema.SelectUniqContentIDs().OrderBy(i => i)
-                        : content.JoinRootId.HasValue
-                            ? new[] { content.JoinRootId.Value }
-                            : content.UnionSourceContentIDs.Any()
+                    List<int> fieldIds;
+                    if (content.UserQueryContentViewSchema.Any())
+                    {
+                        fieldIds = content.UserQueryContentViewSchema.SelectUniqContentIDs().OrderBy(i => i).ToList();
+                    }
+                    else
+                    {
+                        fieldIds = content.JoinRootId.HasValue
+                            ? new[] { content.JoinRootId.Value }.ToList()
+                            : (content.UnionSourceContentIDs.Any()
                                 ? content.UnionSourceContentIDs
-                                : new[] { field.RelateToContentId.Value };
+                                : new[] { field.RelateToContentId.Value }).ToList();
+                    }
+
                     if (fieldIds.Any() && field.LinkId.HasValue)
                     {
                         foreach (var id in fieldIds)
@@ -632,7 +640,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 else if (field.ExactType == FieldExactTypes.O2MRelation)
                 {
                     relCounter++;
-                    parts.Add(string.Format("isnull(cast ( rel_{1}.[{0}] as nvarchar(255)), '')", field.Relation.Name, relCounter));
+                    parts.Add($"isnull(cast ( rel_{relCounter}.[{field.Relation.Name}] as nvarchar(255)), '')");
                 }
                 else if (field.IsDateTime || field.IsBlob || field.Type.DbType == DbType.Decimal)
                 {
@@ -693,6 +701,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             using (new QPConnectionScope())
             {
                 return Common.GetArticleFieldValue(QPConnectionScope.Current.DbConnection, id, contentId, name);
+            }
+        }
+
+        internal static Dictionary<int, string> GetContentFieldValues(int contentId, string name)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.GetContentFieldValues(QPConnectionScope.Current.DbConnection, contentId, name);
             }
         }
 
@@ -1069,6 +1085,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     foreach (var item in article.GetRelationSecurityFields().Where(n => !string.IsNullOrEmpty(n.Value) && !n.Field.IsClassifier))
                     {
                         var testValues = new Dictionary<int, int[]> { { article.Id, Converter.ToInt32Collection(item.Value, ',') } };
+
+                        // ReSharper disable once PossibleInvalidOperationException
                         var checkResult = CheckRelationSecurity(item.Field.RelateToContentId.Value, testValues, isDeletable);
                         if (!checkResult[article.Id])
                         {
@@ -1113,8 +1131,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     var granted = CommonSecurity.CheckArticleSecurity(scope.DbConnection, currentContentId, currentIds, QPContext.CurrentUserId, startLevel);
                     foreach (var t in currentMapping)
                     {
-                        var flag = t.Value != null && t.Value.All(n => granted[n]);
-                        partResult[t.Key] = partResult.ContainsKey(t.Key) ? partResult[t.Key] && flag : flag;
+                        if (t.Value != null)
+                        {
+                            var flag = t.Value.All(n => granted[n]);
+                            partResult[t.Key] = partResult.ContainsKey(t.Key) ? partResult[t.Key] && flag : flag;
+                        }
                     }
                 }
 
@@ -1409,6 +1430,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 where r.LinkId.HasValue
                 select new LinkData
                 {
+                    // ReSharper disable once PossibleInvalidOperationException
                     LinkId = r.LinkId.Value,
                     ItemId = a.Id,
                     LinkedItemId = linkedItemId != 0 ? linkedItemId : (int?)null

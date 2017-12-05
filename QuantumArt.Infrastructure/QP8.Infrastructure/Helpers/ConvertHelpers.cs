@@ -2,7 +2,7 @@ using System;
 
 namespace QP8.Infrastructure.Helpers
 {
-    public class ConvertHelpers
+    public static class ConvertHelpers
     {
         public static T ChangeType<T>(object value)
         {

@@ -33,7 +33,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(prms);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.CreateLikeSite)]
         [BackendActionContext(ActionCode.CreateLikeSite)]

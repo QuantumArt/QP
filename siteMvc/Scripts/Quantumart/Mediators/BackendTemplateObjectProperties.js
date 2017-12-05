@@ -19,11 +19,14 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
         info => {
           const newFields = info.fields.split(',');
           const newStatuses = info.statuses;
-          const vm = $componentElem.find('.sortingItems .aggregationList').data('component')._viewModel;
+          const vm = $componentElem
+            .find('.sortingItems .aggregationList')
+            .data('component')
+            ._viewModel;
 
           if (vm.fields) {
             vm.fields.removeAll();
-            newFields.forEach(v => vm.fields.push(v));
+            newFields.forEach(fv => vm.fields.push(fv));
           }
 
           $statusSelector.data('entity_data_list_component').removeAllListItems();
@@ -51,10 +54,11 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   const onParentTemplateObjectChanged = function () {
     if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
       const objId = $parentObjectSelector.val();
-      const targetObj = $(this.data('objects')).filter(function () {
+      const [targetObj] = $(this.data('objects')).filter(function () {
         $q.warnIfEqDiff(this.id, objId);
         return this.Id === objId;
-      })[0];
+      });
+
       $nameField.val(targetObj.Name);
       $netNameField.val(targetObj.NetName);
     } else {

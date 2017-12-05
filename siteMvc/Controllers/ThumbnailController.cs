@@ -13,10 +13,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
     [SessionState(SessionStateBehavior.Disabled)]
     public class ThumbnailController : QPController
     {
-        [HttpGet]
         public FileResult _SiteFileThumbnail(int folderId, string fileName) => GetThumbnailResult(SiteFolderService.GetPath(folderId, fileName));
 
-        [HttpGet]
         public FileResult _ContentFileThumbnail(int folderId, string fileName) => GetThumbnailResult(ContentFolderService.GetPath(folderId, fileName));
 
         private FileResult GetThumbnailResult(string path)

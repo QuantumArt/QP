@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -17,11 +16,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
     public class ArticleViewModel : LockableEntityViewModel
     {
-
         public new BLL.Article Data
         {
             get => (BLL.Article)EntityData;
-
             set => EntityData = value;
         }
 
@@ -127,7 +124,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public List<ListItem> ShowLimitationTypes => new List<ListItem>
         {
-            new ListItem(ShowLimitationType.EndTime.ToString(), ArticleStrings.LimitedByTime , true),
+            new ListItem(ShowLimitationType.EndTime.ToString(), ArticleStrings.LimitedByTime, true),
             new ListItem(ShowLimitationType.Duration.ToString(), ArticleStrings.LimitedByDuration, true)
         };
 
@@ -239,7 +236,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             var selectedArticleIDs = Converter.ToInt32Collection(value, ',');
             var filter = baseField.GetRelationFilter(articleId);
             var itemCount = ArticleService.Count(contentId, filter, false);
-            var isListOverflow = field.MaxDataListItemCount == 0 || itemCount > field.MaxDataListItemCount ;
+            var isListOverflow = field.MaxDataListItemCount == 0 || itemCount > field.MaxDataListItemCount;
             var mode = isListOverflow ? ListSelectionMode.OnlySelectedItems : ListSelectionMode.AllItems;
             var list = new List<ListItem>();
             if (!isListOverflow || selectedArticleIDs.Length != 0)

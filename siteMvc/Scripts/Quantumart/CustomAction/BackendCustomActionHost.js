@@ -40,7 +40,6 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
 
   onSelect() {
     const id = this._options.iframeElementId;
-
     $(`#${id}`).css('marginLeft', '1px');
     setTimeout(() => {
       $(`#${id}`).css('marginLeft', '0');
@@ -97,9 +96,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     eventArgs.set_actionCode(message.data.selectActionCode);
 
     if ($q.isArray(message.data.selectedEntityIDs) && !$q.isNullOrEmpty(message.data.selectedEntityIDs)) {
-      const selectedEntities = $.map(message.data.selectedEntityIDs, id => {
-        return { Id: id };
-      });
+      const selectedEntities = message.data.selectedEntityIDs.map(id => ({ Id: id }));
       if (message.data.isMultiple) {
         eventArgs.set_entities(selectedEntities);
       } else {
@@ -124,8 +121,8 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   },
 
   _popupWindowSelectedHandler(eventType, sender, args) {
-    let selectedEntities = args.entities;
-    let selectedEntityIDs = _.pluck(selectedEntities, 'Id');
+    let { entities: selectedEntities } = args;
+    let selectedEntityIDs = selectedEntities.map(el => el.Id);
     if ($o.checkEntitiesForPresenceEmptyNames(selectedEntities)) {
       if (args.entityTypeCode && args.parentEntityId) {
         const dataItems = $o.getSimpleEntityList(
@@ -138,7 +135,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
         );
 
         selectedEntities = $c.getEntitiesFromListItemCollection(dataItems);
-        selectedEntityIDs = _.pluck(selectedEntities, 'Id');
+        selectedEntityIDs = selectedEntities.map(el => el.Id);
       }
     }
 

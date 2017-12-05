@@ -26,21 +26,15 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
         /// <summary>
         /// Возвращает значение параметра filter
         /// </summary>
-        public string GetFilter(IEnumerable<ArticleSearchQueryParam> searchQueryParams, IList<SqlParameter> sqlParams)
+        public string GetFilter(IList<ArticleSearchQueryParam> searchQueryParams, IList<SqlParameter> sqlParams)
         {
-            if (searchQueryParams == null)
-            {
-                return null;
-            }
-
-            var searchQueryParamsList = searchQueryParams.ToList();
-            if (!searchQueryParamsList.Any())
+            if (searchQueryParams == null || !searchQueryParams.Any())
             {
                 return null;
             }
 
             // оставляем параметры только тех типов которые обрабатываються данным методом
-            var processedSqlParams = searchQueryParamsList.Where(p => new[]
+            var processedSqlParams = searchQueryParams.Where(p => new[]
             {
                 ArticleFieldSearchType.Identifier,
                 ArticleFieldSearchType.Text,
@@ -92,94 +86,92 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             return string.IsNullOrWhiteSpace(result) ? null : result;
         }
 
-        private static string ParseIdentifierParam(ArticleSearchQueryParam param, ICollection<SqlParameter> sqlParams)
+        private static string ParseIdentifierParam(ArticleSearchQueryParam p, ICollection<SqlParameter> sqlParams)
         {
-            Ensure.NotNull(param);
-            Ensure.That(param.SearchType == ArticleFieldSearchType.NumericRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.Identifier);
 
-            if (string.IsNullOrWhiteSpace(param.FieldColumn))
+            if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
                 throw new ArgumentException("FieldColumn");
             }
 
             // параметры не пустые и их не меньше 4х (используем 1й, 2й, 3й и 4й - остальные отбрасываем)
-            if (param.QueryParams == null || param.QueryParams.Length < 4)
+            if (p.QueryParams == null || p.QueryParams.Length < 4)
             {
                 throw new ArgumentException();
             }
 
             // первый параметр должен быть bool
-            if (!(param.QueryParams[0] is bool))
+            if (!(p.QueryParams[0] is bool))
             {
                 throw new InvalidCastException();
             }
 
             // второй параметр должен быть int или long или null
-            if (param.QueryParams[1] != null && !(param.QueryParams[1] is int || param.QueryParams[1] is long))
+            if (p.QueryParams[1] != null && !(p.QueryParams[1] is int || p.QueryParams[1] is long))
             {
                 throw new InvalidCastException();
             }
 
             // третий параметр должен быть int или long или null
-            if (param.QueryParams[2] != null && !(param.QueryParams[2] is int || param.QueryParams[2] is long))
+            if (p.QueryParams[2] != null && !(p.QueryParams[2] is int || p.QueryParams[2] is long))
             {
                 throw new InvalidCastException();
             }
 
             // четвертый параметр должен быть bool
-            if (!(param.QueryParams[3] is bool))
+            if (!(p.QueryParams[3] is bool))
             {
                 throw new InvalidCastException();
             }
 
             // пятый параметр должен быть null или object[]
-            if (param.QueryParams[4] != null && !(param.QueryParams[4] is object[]))
+            if (p.QueryParams[4] != null && !(p.QueryParams[4] is object[]))
             {
                 throw new InvalidCastException();
             }
 
             // шестой параметр должен быть bool
-            if (!(param.QueryParams[5] is bool))
+            if (!(p.QueryParams[5] is bool))
             {
                 throw new InvalidCastException();
             }
 
-            var inverse = (bool)param.QueryParams[0];
-            var isByValue = (bool)param.QueryParams[3];
-            var isByText = (bool)param.QueryParams[5];
+            var inverse = (bool)p.QueryParams[0];
+            var isByValue = (bool)p.QueryParams[3];
+            var isByText = (bool)p.QueryParams[5];
 
             if (isByText)
             {
                 // Если массив null или пустой - то возвращаем null
-                if (param.QueryParams[4] == null || ((object[])param.QueryParams[4]).Length == 0)
+                if (p.QueryParams[4] == null || ((object[])p.QueryParams[4]).Length == 0)
                 {
                     return null;
                 }
 
-                var fieldId = param.FieldID ?? string.Empty;
+                var fieldId = p.FieldID ?? string.Empty;
                 var paramName = "@field" + fieldId.Replace("-", "_");
-
-                var values = ((object[])param.QueryParams[4]).Select(n => int.Parse(n.ToString())).ToArray();
-
+                var values = ((object[])p.QueryParams[4]).Select(n => int.Parse(n.ToString())).ToArray();
                 if (values.Length == 1)
                 {
                     sqlParams.Add(new SqlParameter(paramName, values[0]));
-                    return string.Format(inverse ? "({1}.[{0}] <> {2} OR {1}.[{0}] IS NULL)" : "({1}.[{0}] = {2})", param.FieldColumn.ToLower(), GetTableAlias(param), paramName);
+                    return string.Format(inverse ? "({1}.[{0}] <> {2} OR {1}.[{0}] IS NULL)" : "({1}.[{0}] = {2})", p.FieldColumn.ToLower(), GetTableAlias(p), paramName);
                 }
 
                 sqlParams.Add(new SqlParameter(paramName, SqlDbType.Structured) { TypeName = "Ids", Value = Common.IdsToDataTable(values) });
-                return string.Format(inverse ? "({1}.[{0}] NOT IN (select id from {2}) OR {1}.[{0}] IS NULL)" : "({1}.[{0}] IN (select id from {2}))", param.FieldColumn.ToLower(), GetTableAlias(param), paramName);
+                return string.Format(inverse ? "({1}.[{0}] NOT IN (select id from {2}) OR {1}.[{0}] IS NULL)" : "({1}.[{0}] IN (select id from {2}))", p.FieldColumn.ToLower(), GetTableAlias(p), paramName);
             }
 
-            // ReSharper disable once MergeSequentialChecks
-            var numberFrom = param.QueryParams[1] is int || param.QueryParams[1] == null ? (int?)param.QueryParams[1] : (long?)param.QueryParams[1];
+            // ReSharper disable MergeSequentialChecks
+            var numberFrom = p.QueryParams[1] is int || p.QueryParams[1] == null ? (int?)p.QueryParams[1] : (long?)p.QueryParams[1];
+            var numberTo = p.QueryParams[2] is int || p.QueryParams[2] == null ? (int?)p.QueryParams[2] : (long?)p.QueryParams[2];
 
-            // ReSharper disable once MergeSequentialChecks
-            var numberTo = param.QueryParams[2] is int || param.QueryParams[2] == null ? (int?)param.QueryParams[2] : (long?)param.QueryParams[2];
+            // ReSharper restore MergeSequentialChecks
 
             if (isByValue)
             {
-                return !numberFrom.HasValue ? null : string.Format(inverse ? "({1}.[{0}] <> {2} OR {1}.[{0}] IS NULL)" : "({1}.[{0}] = {2})", param.FieldColumn.ToLower(), GetTableAlias(param), numberFrom);
+                return !numberFrom.HasValue ? null : string.Format(inverse ? "({1}.[{0}] <> {2} OR {1}.[{0}] IS NULL)" : "({1}.[{0}] = {2})", p.FieldColumn.ToLower(), GetTableAlias(p), numberFrom);
             }
 
             if (!numberFrom.HasValue && !numberTo.HasValue)
@@ -189,135 +181,139 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             if (numberFrom.HasValue && !numberTo.HasValue)
             {
-                return string.Format(inverse ? "({1}.[{0}] < {2})" : "({1}.[{0}] >= {2})", param.FieldColumn.ToLower(), GetTableAlias(param), numberFrom);
+                return inverse
+                    ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] < {numberFrom})"
+                    : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] >= {numberFrom})";
             }
+
             if (!numberFrom.HasValue)
             {
-                return string.Format(inverse ? "({1}.[{0}] > {2})" : "({1}.[{0}] <= {2})", param.FieldColumn.ToLower(), GetTableAlias(param), numberTo);
+                return inverse
+                    ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] > {numberTo})"
+                    : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <= {numberTo})";
             }
 
             if (numberFrom.Value < numberTo.Value)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? "NOT" : "")} BETWEEN {numberFrom} AND {numberTo})";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT" : "")} BETWEEN {numberFrom} AND {numberTo})";
             }
 
-            if (numberFrom.Value > numberTo.Value)
-            {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? "NOT" : "")} BETWEEN {numberTo} AND {numberFrom})";
-            }
-
-            return string.Format(inverse ? "({1}.[{0}] <> {2})" : "({1}.[{0}] = {2})", param.FieldColumn.ToLower(), GetTableAlias(param), numberFrom);
+            return numberFrom.Value > numberTo.Value
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT" : "")} BETWEEN {numberTo} AND {numberFrom})"
+                : inverse
+                    ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <> {numberFrom})"
+                    : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] = {numberFrom})";
         }
 
         /// <summary>
         /// Парсинг параметра поиска по тексту
         /// </summary>
-        private static string ParseTextParam(ArticleSearchQueryParam param)
+        private static string ParseTextParam(ArticleSearchQueryParam p)
         {
-            Ensure.NotNull(param);
-            Ensure.That(param.SearchType == ArticleFieldSearchType.Text);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.Text || p.SearchType == ArticleFieldSearchType.StringEnum);
 
-            if (string.IsNullOrWhiteSpace(param.FieldColumn))
+            if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
                 throw new ArgumentException("FieldColumn is empty");
             }
 
             // параметры не пустые и их не меньше 2х (используем 1, 2, опциоально - 3)
-            if (param.QueryParams == null)
+            if (p.QueryParams == null)
             {
                 throw new ArgumentException("QueryParams is null");
             }
-            if (param.QueryParams.Length < 2)
+            if (p.QueryParams.Length < 2)
             {
                 throw new ArgumentException("QueryParams length < 2");
             }
 
             // первый параметр должен быть bool
-            if (!(param.QueryParams[0] is bool))
+            if (!(p.QueryParams[0] is bool))
             {
                 throw new InvalidCastException("param 0");
             }
 
             // второй параметр должен быть строкой или null
-            if (param.QueryParams[1] != null && !(param.QueryParams[1] is string))
+            if (p.QueryParams[1] != null && !(p.QueryParams[1] is string))
             {
                 throw new InvalidCastException("param 1");
             }
 
-            var isNull = (bool)param.QueryParams[0];
-            var inverse = param.QueryParams.Length > 2 && param.QueryParams[2] is bool && (bool)param.QueryParams[2];
+            var isNull = (bool)p.QueryParams[0];
+            var inverse = p.QueryParams.Length > 2 && p.QueryParams[2] is bool && (bool)p.QueryParams[2];
 
-            var exactMatch = param.QueryParams.Length > 3 && param.QueryParams[3] is bool && (bool)param.QueryParams[3];
-            var startFromBegin = param.QueryParams.Length > 4 && param.QueryParams[4] is bool && (bool)param.QueryParams[4];
+            var exactMatch = p.QueryParams.Length > 3 && p.QueryParams[3] is bool && (bool)p.QueryParams[3];
+            var startFromBegin = p.QueryParams.Length > 4 && p.QueryParams[4] is bool && (bool)p.QueryParams[4];
 
             // isnull == true
             if (isNull)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] IS {(inverse ? "NOT " : "")}NULL)";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS {(inverse ? "NOT " : "")}NULL)";
             }
 
             // isnull == false  строка пустая
-            if (string.IsNullOrEmpty((string)param.QueryParams[1]))
+            if (string.IsNullOrEmpty((string)p.QueryParams[1]))
             {
                 return null;
             }
 
             // Иначе формируем результат
-            var value = Cleaner.ToSafeSqlLikeCondition(((string)param.QueryParams[1]).Trim());
+            var value = Cleaner.ToSafeSqlLikeCondition(((string)p.QueryParams[1]).Trim());
             if (exactMatch)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? "<> " : "=")} '{value}')";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<> " : "=")} '{value}')";
             }
 
             return startFromBegin
-                ? $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] LIKE '{(inverse ? "%" + value : value + "%")}')"
-                : $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}LIKE '%{value}%')";
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] LIKE '{(inverse ? "%" + value : value + "%")}')"
+                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}LIKE '%{value}%')";
         }
 
-        private static string ParseDateRangeParam(ArticleSearchQueryParam param)
+        private static string ParseDateRangeParam(ArticleSearchQueryParam p)
         {
-            Ensure.NotNull(param);
-            Ensure.That(param.SearchType == ArticleFieldSearchType.DateRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.DateRange);
 
-            if (string.IsNullOrWhiteSpace(param.FieldColumn))
+            if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
                 throw new ArgumentException("FieldColumn");
             }
 
             // параметры не пустые и их не меньше 4х (используем 1й, 2й, 3й и 4й остальные отбрасываем)
-            if (param.QueryParams == null || param.QueryParams.Length < 4)
+            if (p.QueryParams == null || p.QueryParams.Length < 4)
             {
                 throw new ArgumentException();
             }
 
             // первый параметр должен быть bool
-            if (!(param.QueryParams[0] is bool))
+            if (!(p.QueryParams[0] is bool))
             {
                 throw new InvalidCastException();
             }
 
             // второй параметр должен быть строкой или null
-            if (param.QueryParams[1] != null && !(param.QueryParams[1] is string))
+            if (p.QueryParams[1] != null && !(p.QueryParams[1] is string))
             {
                 throw new InvalidCastException();
             }
 
             // третий параметр должен быть строкой или null
-            if (param.QueryParams[2] != null && !(param.QueryParams[2] is string))
+            if (p.QueryParams[2] != null && !(p.QueryParams[2] is string))
             {
                 throw new InvalidCastException();
             }
 
             // четвертый параметр должен быть bool
-            if (!(param.QueryParams[3] is bool))
+            if (!(p.QueryParams[3] is bool))
             {
                 throw new InvalidCastException();
             }
 
-            var isNull = (bool)param.QueryParams[0];
-            var dateFromString = (string)param.QueryParams[1];
-            var dateToString = (string)param.QueryParams[2];
-            var isByValue = (bool)param.QueryParams[3];
+            var isNull = (bool)p.QueryParams[0];
+            var dateFromString = (string)p.QueryParams[1];
+            var dateToString = (string)p.QueryParams[2];
+            var isByValue = (bool)p.QueryParams[3];
 
             string sqlDateFromString;
             DateTime? dateFrom;
@@ -326,7 +322,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             if (isNull)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] IS NULL)";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)";
             }
 
             if (isByValue)
@@ -346,7 +342,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("date From");
                 }
 
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] BETWEEN '{sqlDateFromString}' AND '{sqlDateToString}')";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateFromString}' AND '{sqlDateToString}')";
             }
 
             // если обе даты пустые - то возвращаем null
@@ -363,7 +359,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("date From");
                 }
 
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] >= '{sqlDateFromString}')";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] >= '{sqlDateFromString}')";
             }
 
             // дата "от" пустая а "до" не пустая
@@ -374,7 +370,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("date To");
                 }
 
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] <= '{sqlDateToString}')";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <= '{sqlDateToString}')";
             }
 
             // обе границы диапазона не пустые
@@ -382,7 +378,6 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             {
                 throw new FormatException("date From");
             }
-
             if (!Converter.TryConvertToSqlDateString(dateToString, null, out sqlDateToString, out dateTo))
             {
                 throw new FormatException("date To");
@@ -394,62 +389,59 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             {
                 Converter.TryConvertToSqlDateString(dateFromString, null, out sqlDateFromString, out dateFrom);
                 Converter.TryConvertToSqlDateString(dateToString, new TimeSpan(23, 59, 59), out sqlDateToString, out dateTo);
-
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] BETWEEN '{sqlDateFromString}' AND '{sqlDateToString}')";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateFromString}' AND '{sqlDateToString}')";
             }
-
-            // ReSharper restore PossibleInvalidOperationException
 
             Converter.TryConvertToSqlDateString(dateFromString, new TimeSpan(23, 59, 59), out sqlDateFromString, out dateFrom);
             Converter.TryConvertToSqlDateString(dateToString, null, out sqlDateToString, out dateTo);
 
-            return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] BETWEEN '{sqlDateToString}' AND '{sqlDateFromString}')";
+            return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateToString}' AND '{sqlDateFromString}')";
         }
 
-        private static string ParseDateTimeRangeParam(ArticleSearchQueryParam param)
+        private static string ParseDateTimeRangeParam(ArticleSearchQueryParam p)
         {
-            Ensure.NotNull(param);
-            Ensure.That(param.SearchType == ArticleFieldSearchType.DateTimeRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.DateTimeRange);
 
-            if (string.IsNullOrWhiteSpace(param.FieldColumn))
+            if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
                 throw new ArgumentException("FieldColumn");
             }
 
             // параметры не пустые и их не меньше 4х (используем 1й, 2й, 3й и 4й остальные отбрасываем)
-            if (param.QueryParams == null || param.QueryParams.Length < 4)
+            if (p.QueryParams == null || p.QueryParams.Length < 4)
             {
                 throw new ArgumentException();
             }
 
             // первый параметр должен быть bool
-            if (!(param.QueryParams[0] is bool))
+            if (!(p.QueryParams[0] is bool))
             {
                 throw new InvalidCastException();
             }
 
             // второй параметр должен быть строкой или null
-            if (param.QueryParams[1] != null && !(param.QueryParams[1] is string))
+            if (p.QueryParams[1] != null && !(p.QueryParams[1] is string))
             {
                 throw new InvalidCastException();
             }
 
             // третий параметр должен быть строкой или null
-            if (param.QueryParams[2] != null && !(param.QueryParams[2] is string))
+            if (p.QueryParams[2] != null && !(p.QueryParams[2] is string))
             {
                 throw new InvalidCastException();
             }
 
             // четвертый параметр должен быть bool
-            if (!(param.QueryParams[3] is bool))
+            if (!(p.QueryParams[3] is bool))
             {
                 throw new InvalidCastException();
             }
 
-            var isNull = (bool)param.QueryParams[0];
-            var datetimeFromString = (string)param.QueryParams[1];
-            var datetimeToString = (string)param.QueryParams[2];
-            var isByValue = (bool)param.QueryParams[3];
+            var isNull = (bool)p.QueryParams[0];
+            var datetimeFromString = (string)p.QueryParams[1];
+            var datetimeToString = (string)p.QueryParams[2];
+            var isByValue = (bool)p.QueryParams[3];
 
             string sqlDateTimeFromString;
             DateTime? datetimeFrom;
@@ -458,7 +450,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             if (isNull)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] IS NULL)";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)";
             }
 
             if (isByValue)
@@ -473,7 +465,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("datetime From");
                 }
 
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] = '{sqlDateTimeFromString}')";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] = '{sqlDateTimeFromString}')";
             }
 
             // если обе даты пустые - то возвращаем null
@@ -490,7 +482,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("datetime From");
                 }
 
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] >= '{sqlDateTimeFromString}')";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] >= '{sqlDateTimeFromString}')";
             }
 
             // дата "от" пустая а "до" не пустая
@@ -501,7 +493,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("datetime To");
                 }
 
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] <= '{sqlDateTimeToString}')";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <= '{sqlDateTimeToString}')";
             }
 
             // обе границы диапазона не пустые
@@ -509,6 +501,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             {
                 throw new FormatException("datetime From");
             }
+
             if (!Converter.TryConvertToSqlDateString(datetimeToString, null, out sqlDateTimeToString, out datetimeTo))
             {
                 throw new FormatException("datetime To");
@@ -517,56 +510,55 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             // From < To
             // ReSharper disable PossibleInvalidOperationException
             return datetimeFrom.Value < datetimeTo.Value
-                ? $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] BETWEEN '{sqlDateTimeFromString}' AND '{sqlDateTimeToString}')"
-                : $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] BETWEEN '{sqlDateTimeToString}' AND '{sqlDateTimeFromString}')";
-
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateTimeFromString}' AND '{sqlDateTimeToString}')"
+                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateTimeToString}' AND '{sqlDateTimeFromString}')";
             // ReSharper restore PossibleInvalidOperationException
         }
 
-        private static string ParseTimeRangeParam(ArticleSearchQueryParam param)
+        private static string ParseTimeRangeParam(ArticleSearchQueryParam p)
         {
-            Ensure.NotNull(param);
-            Ensure.That(param.SearchType == ArticleFieldSearchType.TimeRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.TimeRange);
 
-            if (string.IsNullOrWhiteSpace(param.FieldColumn))
+            if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
                 throw new ArgumentException("FieldColumn");
             }
 
             // параметры не пустые и их не меньше 3х (используем 1й, 2й, 3й и 4й- остальные отбрасываем)
-            if (param.QueryParams == null || param.QueryParams.Length < 4)
+            if (p.QueryParams == null || p.QueryParams.Length < 4)
             {
                 throw new ArgumentException();
             }
 
             // первый параметр должен быть bool
-            if (!(param.QueryParams[0] is bool))
+            if (!(p.QueryParams[0] is bool))
             {
                 throw new InvalidCastException();
             }
 
             // второй параметр должен быть строкой или null
-            if (param.QueryParams[1] != null && !(param.QueryParams[1] is string))
+            if (p.QueryParams[1] != null && !(p.QueryParams[1] is string))
             {
                 throw new InvalidCastException();
             }
 
             // третий параметр должен быть строкой или null
-            if (param.QueryParams[2] != null && !(param.QueryParams[2] is string))
+            if (p.QueryParams[2] != null && !(p.QueryParams[2] is string))
             {
                 throw new InvalidCastException();
             }
 
             // четвертый параметр должен быть bool
-            if (!(param.QueryParams[3] is bool))
+            if (!(p.QueryParams[3] is bool))
             {
                 throw new InvalidCastException();
             }
 
-            var isNull = (bool)param.QueryParams[0];
-            var timeFromString = (string)param.QueryParams[1];
-            var timeToString = (string)param.QueryParams[2];
-            var isByValue = (bool)param.QueryParams[3];
+            var isNull = (bool)p.QueryParams[0];
+            var timeFromString = (string)p.QueryParams[1];
+            var timeToString = (string)p.QueryParams[2];
+            var isByValue = (bool)p.QueryParams[3];
 
             TimeSpan? timeFrom = null;
             TimeSpan? timeTo = null;
@@ -574,7 +566,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             // isnull == true
             if (isNull)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] IS NULL)";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)";
             }
 
             if (isByValue)
@@ -590,7 +582,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 }
 
                 // ReSharper disable once PossibleInvalidOperationException
-                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}]) = {timeFrom.Value.TotalSeconds})";
+                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) = {timeFrom.Value.TotalSeconds})";
             }
 
             // если обе даты пустые - то возвращаем null
@@ -619,14 +611,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             if (!string.IsNullOrWhiteSpace(timeFromString) && string.IsNullOrWhiteSpace(timeToString))
             {
                 // ReSharper disable once PossibleInvalidOperationException
-                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}]) >= {timeFrom.Value.TotalSeconds})";
+                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) >= {timeFrom.Value.TotalSeconds})";
             }
 
             // дата "от" пустая а "до" не пустая
             if (string.IsNullOrWhiteSpace(timeFromString) && !string.IsNullOrWhiteSpace(timeToString))
             {
                 // ReSharper disable once PossibleInvalidOperationException
-                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}]) <= {timeTo.Value.TotalSeconds})";
+                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) <= {timeTo.Value.TotalSeconds})";
             }
 
             // обе границы диапазона не пустые
@@ -634,77 +626,76 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             // ReSharper disable PossibleInvalidOperationException
             if (timeFrom.Value < timeTo.Value)
             {
-                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}]) BETWEEN {timeFrom.Value.TotalSeconds} AND {timeTo.Value.TotalSeconds})";
+                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) BETWEEN {timeFrom.Value.TotalSeconds} AND {timeTo.Value.TotalSeconds})";
             }
 
             // ReSharper restore PossibleInvalidOperationException
 
             return timeFrom.Value > timeTo.Value
-                ? $"([dbo].[qp_abs_time_seconds]({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}]) BETWEEN {timeTo.Value.TotalSeconds} AND {timeFrom.Value.TotalSeconds})"
-                : $"([dbo].[qp_abs_time_seconds]({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}]) = {timeFrom.Value.TotalSeconds})";
+                ? $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) BETWEEN {timeTo.Value.TotalSeconds} AND {timeFrom.Value.TotalSeconds})"
+                : $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) = {timeFrom.Value.TotalSeconds})";
         }
 
-        private static string ParseNumericRangeParam(ArticleSearchQueryParam param)
+        private static string ParseNumericRangeParam(ArticleSearchQueryParam p)
         {
-            Ensure.NotNull(param);
-            Ensure.That(param.SearchType == ArticleFieldSearchType.NumericRange);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.NumericRange);
 
-            if (string.IsNullOrWhiteSpace(param.FieldColumn))
+            if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
                 throw new ArgumentException("FieldColumn");
             }
 
             // параметры не пустые и их не меньше 4х (используем 1й, 2й, 3й и 4й, 5-й опционально)
-            if (param.QueryParams == null)
+            if (p.QueryParams == null)
             {
                 throw new ArgumentException("QueryParams is null");
             }
-
-            if (param.QueryParams.Length < 4)
+            if (p.QueryParams.Length < 4)
             {
                 throw new ArgumentException("QueryParams length < 4");
             }
 
             // первый параметр должен быть bool
-            if (!(param.QueryParams[0] is bool))
+            if (!(p.QueryParams[0] is bool))
             {
                 throw new InvalidCastException("param 0");
             }
 
             // второй параметр должен быть int или long или null
-            if (param.QueryParams[1] != null && !(param.QueryParams[1] is int || param.QueryParams[1] is long))
+            if (p.QueryParams[1] != null && !(p.QueryParams[1] is int || p.QueryParams[1] is long))
             {
                 throw new InvalidCastException("param 1");
             }
 
             // третий параметр должен быть int или long или null
-            if (param.QueryParams[2] != null && !(param.QueryParams[2] is int || param.QueryParams[2] is long))
+            if (p.QueryParams[2] != null && !(p.QueryParams[2] is int || p.QueryParams[2] is long))
             {
                 throw new InvalidCastException("param 2");
             }
 
             // четвертый параметр должен быть bool
-            if (!(param.QueryParams[3] is bool))
+            if (!(p.QueryParams[3] is bool))
             {
                 throw new InvalidCastException("param 3");
             }
 
-            var isNull = (bool)param.QueryParams[0];
-            var isByValue = (bool)param.QueryParams[3];
-            var inverse = param.QueryParams.Length > 4 && param.QueryParams[4] is bool && (bool)param.QueryParams[4];
+            var isNull = (bool)p.QueryParams[0];
+            var isByValue = (bool)p.QueryParams[3];
+            var inverse = p.QueryParams.Length > 4 && p.QueryParams[4] is bool && (bool)p.QueryParams[4];
+
             if (isNull)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] IS {(inverse ? "NOT " : "")}NULL)";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS {(inverse ? "NOT " : "")}NULL)";
             }
 
-            // ReSharper disable once MergeSequentialChecks
-            var numberFrom = param.QueryParams[1] is int || param.QueryParams[1] == null ? (int?)param.QueryParams[1] : (long?)param.QueryParams[1];
+            // ReSharper disable MergeSequentialChecks
+            var numberFrom = p.QueryParams[1] is int || p.QueryParams[1] == null ? (int?)p.QueryParams[1] : (long?)p.QueryParams[1];
+            var numberTo = p.QueryParams[2] is int || p.QueryParams[2] == null ? (int?)p.QueryParams[2] : (long?)p.QueryParams[2];
 
-            // ReSharper disable once MergeSequentialChecks
-            var numberTo = param.QueryParams[2] is int || param.QueryParams[2] == null ? (int?)param.QueryParams[2] : (long?)param.QueryParams[2];
             if (isByValue)
             {
-                return !numberFrom.HasValue ? null : $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? "<>" : "=")} {numberFrom})";
+                return !numberFrom.HasValue ? null : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<>" : "=")} {numberFrom})";
             }
 
             if (!numberFrom.HasValue && !numberTo.HasValue)
@@ -714,124 +705,119 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             if (numberFrom.HasValue && !numberTo.HasValue)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? "<" : ">=")} {numberFrom})";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<" : ">=")} {numberFrom})";
             }
-
             if (!numberFrom.HasValue)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? ">" : "<=")} {numberTo})";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? ">" : "<=")} {numberTo})";
             }
 
             if (numberFrom.Value < numberTo.Value)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}BETWEEN {numberFrom} AND {numberTo})";
+                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}BETWEEN {numberFrom} AND {numberTo})";
             }
 
             return numberFrom.Value > numberTo.Value
-                ? $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}BETWEEN {numberTo} AND {numberFrom})"
-                : $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] {(inverse ? "<>" : "=")} {numberFrom})";
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}BETWEEN {numberTo} AND {numberFrom})"
+                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<>" : "=")} {numberFrom})";
         }
 
-        private static string ParseO2MRelationParam(ArticleSearchQueryParam param, ICollection<SqlParameter> sqlParams)
+        private static string ParseO2MRelationParam(ArticleSearchQueryParam p, ICollection<SqlParameter> sqlParams)
         {
-            Ensure.NotNull(param);
-            Ensure.That(param.SearchType == ArticleFieldSearchType.O2MRelation || param.SearchType == ArticleFieldSearchType.Classifier);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.O2MRelation || p.SearchType == ArticleFieldSearchType.Classifier);
 
-            if (string.IsNullOrWhiteSpace(param.FieldColumn))
+            if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
                 throw new ArgumentException("FieldColumn");
             }
 
             // параметры не пустые и их не меньше 2х (используем 1й и 2й - остальные отбрасываем)
-            if (param.QueryParams == null || param.QueryParams.Length < 3)
+            if (p.QueryParams == null || p.QueryParams.Length < 3)
             {
                 throw new ArgumentException();
             }
 
             // первый параметр должен быть null или object[]
-            if (param.QueryParams[0] != null && !(param.QueryParams[0] is object[]))
+            if (p.QueryParams[0] != null && !(p.QueryParams[0] is object[]))
             {
                 throw new InvalidCastException();
             }
 
             // второй параметр должен быть bool
-            if (!(param.QueryParams[1] is bool))
+            if (!(p.QueryParams[1] is bool))
             {
                 throw new InvalidCastException();
             }
 
-            if (!(param.QueryParams[2] is bool))
+            if (!(p.QueryParams[2] is bool))
             {
                 throw new InvalidCastException();
             }
 
-            var isNull = (bool)param.QueryParams[1];
-            var inverse = (bool)param.QueryParams[2];
-
-            var inverseString = inverse ? "NOT" : "";
-
+            var isNull = (bool)p.QueryParams[1];
+            var inverse = (bool)p.QueryParams[2];
+            var inverseString = inverse ? "NOT" : string.Empty;
             if (isNull)
             {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] IS {inverseString} NULL)";
+                return string.Format("({1}.[{0}] IS {2} NULL)", p.FieldColumn.ToLower(), GetTableAlias(p), inverseString);
             }
 
             // Если массив null или пустой - то возвращаем null
-            if (param.QueryParams[0] == null || ((object[])param.QueryParams[0]).Length == 0)
+            if (p.QueryParams[0] == null || ((object[])p.QueryParams[0]).Length == 0)
             {
                 return null;
             }
 
-            var values = ((object[])param.QueryParams[0]).Select(n => int.Parse(n.ToString())).ToArray();
-            var fieldId = param.FieldID ?? string.Empty;
+            var values = ((object[])p.QueryParams[0]).Select(n => int.Parse(n.ToString())).ToArray();
+            var fieldId = p.FieldID ?? string.Empty;
             var paramName = "@field" + fieldId.Replace("-", "_");
 
             if (values.Length == 1)
             {
                 sqlParams.Add(new SqlParameter(paramName, values[0]));
-                return string.Format(inverse ? "({1}.[{0}] <> {2} OR {1}.[{0}] IS NULL)" : "({1}.[{0}] = {2})", param.FieldColumn.ToLower(), GetTableAlias(param), paramName);
+                return inverse
+                    ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <> {paramName} OR {GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)"
+                    : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] = {paramName})";
             }
 
             sqlParams.Add(new SqlParameter(paramName, SqlDbType.Structured) { TypeName = "Ids", Value = Common.IdsToDataTable(values) });
-            return string.Format(inverse ? "({1}.[{0}] NOT IN (select id from {2}) OR {1}.[{0}] IS NULL)" : "({1}.[{0}] IN (select id from {2}))", param.FieldColumn.ToLower(), GetTableAlias(param), paramName);
+            return inverse
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] NOT IN (select id from {paramName}) OR {GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)"
+                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IN (select id from {paramName}))";
         }
 
-        private static string ParseBooleanParam(ArticleSearchQueryParam param)
+        private static string ParseBooleanParam(ArticleSearchQueryParam p)
         {
-            Ensure.NotNull(param);
-            Ensure.That(param.SearchType == ArticleFieldSearchType.Boolean);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.Boolean);
 
-            if (string.IsNullOrWhiteSpace(param.FieldColumn))
+            if (string.IsNullOrWhiteSpace(p.FieldColumn))
             {
                 throw new ArgumentException("FieldColumn");
             }
 
             // параметры не пустые и их не меньше 2х (используем 1й, 2й - остальные отбрасываем)
-            if (param.QueryParams == null || param.QueryParams.Length < 2)
+            if (p.QueryParams == null || p.QueryParams.Length < 2)
             {
                 throw new ArgumentException();
             }
 
             // первый параметр должен быть bool
-            if (!(param.QueryParams[0] is bool))
+            if (!(p.QueryParams[0] is bool))
             {
                 throw new InvalidCastException();
             }
 
             // второй параметр должен быть bool
-            if (!(param.QueryParams[1] is bool))
+            if (!(p.QueryParams[1] is bool))
             {
                 throw new InvalidCastException();
             }
 
-            var isNull = (bool)param.QueryParams[0];
-
-            if (isNull)
-            {
-                return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] IS NULL)";
-            }
-
-            var value = (bool)param.QueryParams[1];
-            return $"({GetTableAlias(param)}.[{param.FieldColumn.ToLower()}] = {(value ? 1 : 0)})";
+            return (bool)p.QueryParams[0]
+                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)"
+                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] = {((bool)p.QueryParams[1] ? 1 : 0)})";
         }
 
         private static string GetTableAlias(ArticleSearchQueryParam p)
@@ -841,12 +827,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 return ContentTableAlias;
             }
 
-            if (string.IsNullOrEmpty(p.ReferenceFieldID))
-            {
-                return ContentTableAlias + "_" + p.ContentID;
-            }
-
-            return ContentTableAlias + "_" + p.ContentID + "_" + p.ReferenceFieldID;
+            return string.IsNullOrEmpty(p.ReferenceFieldID)
+                ? ContentTableAlias + "_" + p.ContentID
+                : ContentTableAlias + "_" + p.ContentID + "_" + p.ReferenceFieldID;
         }
     }
 }

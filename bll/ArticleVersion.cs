@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -116,13 +116,13 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Вспомогательная структура для слияния
         /// </summary>
-        [ScriptIgnore]
+        [JsonIgnore]
         internal Dictionary<string, FieldValue> FieldHash => _fieldHash ?? (_fieldHash = GetFieldHash());
 
         /// <summary>
         /// Вспомогательная структура для слияния
         /// </summary>
-        [ScriptIgnore]
+        [JsonIgnore]
         internal Dictionary<int, Dictionary<string, FieldValue>> AggregatedArticlesHash => _aggregatedArticleHash ?? (_aggregatedArticleHash = GetAggregatedArticleHash());
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Поля данных версии
         /// </summary>
-        [ScriptIgnore]
+        [JsonIgnore]
         public List<FieldValue> FieldValues
         {
             get => _fieldValues ?? LoadFieldValues();
@@ -230,8 +230,6 @@ namespace Quantumart.QP8.BLL
 
         private readonly Lazy<DataRow> _versionRowData;
 
-        //[ScriptIgnore]
-        //public DataRow VersionRowData { get { return versionRowData.Value; } }
 
         /// <summary>
         /// Библиотека версии

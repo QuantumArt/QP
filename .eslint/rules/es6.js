@@ -18,7 +18,7 @@ module.exports = {
   },
   rules: {
     // require braces in arrow function body
-    'arrow-body-style': ['error', 'as-needed', { requireReturnForObjectLiteral: true }],
+    'arrow-body-style': ['error', 'as-needed', { requireReturnForObjectLiteral: false }],
 
     // require parens in arrow function arguments
     'arrow-parens': ['error', 'as-needed', { requireForBlockBody: false }],
@@ -83,7 +83,7 @@ module.exports = {
       array: true,
       object: true
     }, {
-      enforceForRenamedProperties: true
+      enforceForRenamedProperties: false
     }],
 
     // disallow parseint() in favor of binary, octal, and hexadecimal literals

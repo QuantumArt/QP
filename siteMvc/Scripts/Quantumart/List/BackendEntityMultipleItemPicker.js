@@ -40,41 +40,42 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   // eslint-disable-next-line max-statements
   initialize() {
     Quantumart.QP8.BackendEntityMultipleItemPicker.callBaseMethod(this, 'initialize');
+    const $list = $(this._listElement);
+    const countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`);
 
     let $copyButton, $pasteButton;
-    let $list = $(this._listElement);
-    const countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`);
     if (countOverflowElement.length > 0) {
       this._countOverflowElement = countOverflowElement.get(0);
     }
 
     this._fixListOverflow();
 
-    const count = this.getSelectedEntities().length;
-    const hidden = count <= 1 || this._isCountOverflow();
-    this._addCountDiv(count, false);
+    const { length: selectedEntitiesLength } = this.getSelectedEntities();
+    const hidden = selectedEntitiesLength <= 1 || this._isCountOverflow();
+    this._addCountDiv(selectedEntitiesLength, false);
     this._addGroupCheckbox(hidden);
     this._syncGroupCheckbox();
 
-    let $pickButton = this._createToolbarButton(
+    const $pickButton = this._createToolbarButton(
       `${this._listElementId}_PickButton`, $l.EntityDataList.pickLinkButtonText, 'pick'
     );
-    this._addButtonToToolbar($pickButton);
 
-    let $clearButton = this._createToolbarButton(
+    this._addButtonToToolbar($pickButton);
+    const $clearButton = this._createToolbarButton(
       `${this._listElementId}_ClearButton`, $l.EntityDataList.clearUnmarkedLinkButtonText, 'deselectAll'
     );
-    this._addButtonToToolbar($clearButton);
 
+    this._addButtonToToolbar($clearButton);
     if (this._enableCopy) {
       $copyButton = this._createToolbarButton(
         `${this._listElementId}_CopyButton`, $l.EntityDataList.copyLinkButtonText, 'copy'
       );
-      this._addButtonToToolbar($copyButton);
 
+      this._addButtonToToolbar($copyButton);
       $pasteButton = this._createToolbarButton(
         `${this._listElementId}_PasteButton`, $l.EntityDataList.pasteLinkButtonText, 'paste'
       );
+
       this._addButtonToToolbar($pasteButton);
     }
 
@@ -98,10 +99,6 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     $list.delegate('LI INPUT:checkbox', 'change', $.proxy(this._onSelectedItemChangeHandler, this));
     $list.delegate('LI A', 'click', $.proxy(this._onItemClickHandler, this));
     $list.delegate('LI A', 'mouseup', $.proxy(this._onItemClickHandler, this));
-
-    $pickButton = null;
-    $clearButton = null;
-    $list = null;
   },
 
   getListItems() {
@@ -116,9 +113,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     let result;
     if (this._isCountOverflow()) {
       const ids = $(this._countOverflowElement).val().split(',');
-      result = $.map(ids, id => {
-        return { Id: id, Name: '' };
-      }) || [];
+      result = ids.map(id => ({ Id: id, Name: '' })) || [];
     } else {
       const $selectedListItems = this.getSelectedListItems();
       result = $selectedListItems.map((i, item) => {
@@ -138,29 +133,36 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   _refreshListInner(dataItems, refreshOnly) {
-    const newSelectedIDs = $.map($.grep(dataItems, di => di.Value), di => $q.toInt(di.Value));
+    const newSelectedIds = $.grep(dataItems, di => di.Value).map(di => $q.toInt(di.Value));
+    const currentSelectedIds = this.getSelectedEntityIDs();
 
-    const currentSelectedIDs = this.getSelectedEntityIDs();
-    const selectedItemsIsChanged = newSelectedIDs.length !== currentSelectedIDs.length
-    || newSelectedIDs.length !== _.union(newSelectedIDs, currentSelectedIDs).length;
+    const [
+      { length: newSelectedIdsLength },
+      { length: currentSelectedIdsLength }
+    ] = [newSelectedIds, currentSelectedIds];
+
+    const checkedStateWasChanged = newSelectedIdsLength !== currentSelectedIdsLength;
+    const somethingNotUnderstandable = newSelectedIdsLength !== newSelectedIdsLength + currentSelectedIdsLength;
+    const selectedItemsIsChanged = checkedStateWasChanged || somethingNotUnderstandable;
 
     if (selectedItemsIsChanged) {
       const $list = $(this._listElement);
       const $ul = $list.find('UL');
 
-      if (newSelectedIDs.length < this._countLimit) {
-        $ul.empty().html(this._getCheckBoxListHtml(dataItems));
+      if (newSelectedIdsLength < this._countLimit) {
+        const fieldName = $ul.closest('dl').data('field_name');
+        $ul.empty().html(this._getCheckBoxListHtml(dataItems, fieldName));
         $(this._countOverflowElement).remove();
         this._countOverflowElement = null;
       } else {
         $ul.empty();
-        const value = newSelectedIDs.join();
+        const value = newSelectedIds.join();
         if (this._countOverflowElement) {
           $(this._countOverflowElement).val(value);
         } else {
           const ln = $list.data('list_item_name');
-          const cl = this.OVERFLOW_HIDDEN_CLASS;
-          const html = `<input type="hidden" class="${cl}" name="${ln}" value = "${value}" />`;
+          const { OVERFLOW_HIDDEN_CLASS: overflowClass } = this;
+          const html = `<input type="hidden" class="${overflowClass}" name="${ln}" value = "${value}" />`;
           $ul.before(html);
 
           this._countOverflowElement = $list.find(`.${this.OVERFLOW_HIDDEN_CLASS}`).get(0);
@@ -176,10 +178,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
   appendEntities(entityIds) {
     if (entityIds && entityIds.length) {
-      const selectedEntities = entityIds.map(i => {
-        return { Id: i };
-      });
-
+      const selectedEntities = entityIds.map(i => ({ Id: i }));
       this._loadSelectedItems(selectedEntities);
     }
   },
@@ -187,10 +186,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   selectEntities(entityIds) {
     this.deselectAllListItems();
     if (entityIds && entityIds.length) {
-      const selectedEntities = entityIds.map(i => {
-        return { Id: i };
-      });
-
+      const selectedEntities = entityIds.map(i => ({ Id: i }));
       this._loadSelectedItems(selectedEntities);
     }
   },
@@ -258,21 +254,20 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     });
   },
 
-  _getCheckBoxListHtml(dataItems) {
+  _getCheckBoxListHtml(dataItems, fieldName) {
     const html = new $.telerik.stringBuilder();
     for (let dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
       const dataItem = dataItems[dataItemIndex];
-      this._getCheckBoxListItemHtml(html, dataItem, dataItemIndex);
+      this._getCheckBoxListItemHtml(html, dataItem, dataItemIndex, fieldName);
     }
 
     return html.string();
   },
 
-  _getCheckBoxListItemHtml(html, dataItem, dataItemIndex) {
+  _getCheckBoxListItemHtml(html, dataItem, dataItemIndex, fieldName) {
     const itemElementName = this._listItemName;
     const itemElementId = String.format('{0}_{1}', this._listElementId, dataItemIndex);
-    const itemValue = dataItem.Value;
-    const itemText = dataItem.Text;
+    const { Text: itemText, Value: itemValue } = dataItem;
 
     html
       .cat('<li>')
@@ -281,6 +276,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
       .cat(` id="${$q.htmlEncode(itemElementId)}"`)
       .cat(` value="${$q.htmlEncode(itemValue)}"`)
       .cat(' class="checkbox multi-picker-item qp-notChangeTrack"')
+      .cat(` data-content_field_name="${$q.htmlEncode(fieldName)}"`)
       .cat(' checked="checked"')
       .catIf(' disabled ', this.isListDisabled())
       .cat('/> ')

@@ -7,6 +7,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Telerik.Web.Mvc;
@@ -23,7 +24,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _pageTemplateService = pageTemplateService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Templates)]
         [BackendActionContext(ActionCode.Templates)]
@@ -41,10 +41,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexTemplates(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _pageTemplateService.GetPageTemplatesBySiteId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewPageTemplate)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.PageTemplate, "parentId")]
@@ -212,7 +211,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         public ActionResult AssembleObjectFromTemplateObjectFormatPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssembleObjectFromTemplateObjectFormatPreAction(parentId));
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SearchInCode)]
         [BackendActionContext(ActionCode.SearchInCode)]
@@ -227,15 +225,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         public ActionResult _Formats(string tabId, int parentId, int id, int? templateId, int? pageId, string filterVal, GridCommand command)
         {
-            var list = _pageTemplateService.FormatSearch(command.GetListCommand(), id, templateId, pageId, filterVal);
-            return View(new GridModel
-            {
-                Data = list.Data,
-                Total = list.TotalRecords
-            });
+            var serviceResult = _pageTemplateService.FormatSearch(command.GetListCommand(), id, templateId, pageId, filterVal);
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SearchInTemplates)]
         [BackendActionContext(ActionCode.SearchInTemplates)]
@@ -250,15 +243,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         public ActionResult _Templates(string tabId, int parentId, int id, string filterVal, GridCommand command)
         {
-            var list = _pageTemplateService.TemplateSearch(command.GetListCommand(), id, filterVal);
-            return View(new GridModel
-            {
-                Data = list.Data,
-                Total = list.TotalRecords
-            });
+            var serviceResult = _pageTemplateService.TemplateSearch(command.GetListCommand(), id, filterVal);
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SearchInObjects)]
         [BackendActionContext(ActionCode.SearchInObjects)]
@@ -273,12 +261,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         public ActionResult _Parameters(string tabId, int parentId, int id, int? templateId, int? pageId, string filterVal, GridCommand command)
         {
-            var list = _pageTemplateService.ObjectSearch(command.GetListCommand(), id, templateId, pageId, filterVal);
-            return View(new GridModel
-            {
-                Data = list.Data,
-                Total = list.TotalRecords
-            });
+            var serviceResult = _pageTemplateService.ObjectSearch(command.GetListCommand(), id, templateId, pageId, filterVal);
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -299,11 +283,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var defaultCode = _pageTemplateService.ReadDefaultCode(formatId);
             return new JsonResult
             {
-                Data = new
-                {
-                    success = true,
-                    code = defaultCode
-                },
+                Data = new { success = true, code = defaultCode },
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
         }
@@ -314,11 +294,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var defaultCode = _pageTemplateService.ReadDefaultPresentation(formatId);
             return new JsonResult
             {
-                Data = new
-                {
-                    success = true,
-                    code = defaultCode
-                },
+                Data = new { success = true, code = defaultCode },
                 JsonRequestBehavior = JsonRequestBehavior.DenyGet
             };
         }

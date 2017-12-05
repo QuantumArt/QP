@@ -3,7 +3,7 @@ Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectEle
   const entityTreeComponent = Quantumart.QP8.BackendEntityTreeManager.getInstance().getTree(joinFieldsTreeElementId);
 
   const onRelatedToChanged = function () {
-    const selectedContentId = contentPicker.getSelectedEntityIDs()[0];
+    const [selectedContentId] = contentPicker.getSelectedEntityIDs();
     entityTreeComponent.set_parentEntityId(selectedContentId);
     entityTreeComponent.set_selectedEntitiesIDs([]);
     entityTreeComponent.refreshTree();
@@ -40,7 +40,5 @@ Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (
   $unionSourcePanelElement.bind('show', onUnionTypeSelected);
   $buildParamsPanelElement.bind('show', onUnionTypeSelected);
 
-  return {
-    dispose
-  };
+  return { dispose };
 };

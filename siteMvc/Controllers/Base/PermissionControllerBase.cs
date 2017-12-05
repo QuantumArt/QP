@@ -5,6 +5,7 @@ using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 using Telerik.Web.Mvc;
 
@@ -31,7 +32,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
         public virtual ActionResult _Index(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = Service.List(parentId, command.GetListCommand());
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         public virtual ActionResult New(string tabId, int parentId)

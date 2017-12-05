@@ -1,9 +1,21 @@
 Quantumart.QP8.BackendArticleSearchBlock = function (
-  searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options
+  searchBlockGroupCode,
+  searchBlockElementId,
+  entityTypeCode,
+  parentEntityId,
+  options
 ) {
   Quantumart.QP8.BackendArticleSearchBlock.initializeBase(
-    this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]
+    this,
+    [
+      searchBlockGroupCode,
+      searchBlockElementId,
+      entityTypeCode,
+      parentEntityId,
+      options
+    ]
   );
+
   this.isVirtual = options.isVirtual;
   this._minSearchBlockHeight = this.isVirtual ? 125 : 180;
 };
@@ -187,8 +199,14 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
   }
 };
 
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery = function (
-  searchType, fieldID, fieldColumn, contentId, referenceFieldId, ...params
+  searchType,
+  fieldID,
+  fieldColumn,
+  contentId,
+  referenceFieldId,
+  ...params
 ) {
   return {
     SearchType: searchType,

@@ -6,65 +6,108 @@
 /* eslint no-alert: 'off' */
 /* eslint no-sync: 'off' */
 
-
 window.$q = {
   isDebug: window.Sys.Debug.isDebug
 };
 
-$q.trace = function trace(...args) {
-  let firstArg, otherArgs;
+/**
+ * Trace function for logging debug messages
+ * @param  {string}    msg       message that should be logged
+ * @param  {...Object} otherArgs data that should be loggged
+ */
+$q.trace = (msg, ...otherArgs) => {
   if ($q.isDebug || window.Sys.Debug.isDebug) {
-    [firstArg, ...otherArgs] = args;
     if ($.isFunction(window.console.groupCollapsed)
       && $.isFunction(window.console.groupEnd)
       && $.isFunction(window.console.trace)) {
-      window.console.groupCollapsed(firstArg);
-      window.console.log(otherArgs);
+      window.console.groupCollapsed(msg);
+      if (otherArgs && otherArgs.length) {
+        window.console.log(otherArgs);
+      }
+
       window.console.trace('%cView tracing', 'color: darkblue;font-weight:bold;');
-      window.console.groupEnd(firstArg);
-    } else {
-      window.console.log(args);
+      window.console.groupEnd(msg);
+    } else if (otherArgs && otherArgs.length) {
+      window.console.log(msg, ...otherArgs);
     }
   }
 };
 
-$q.alertSuccess = function alertSuccess(msg, ...params) {
-  window.alert(msg);
-  if ($q.isDebug || window.Sys.Debug.isDebug) {
-    window.console.log([msg, ...params]);
+/**
+ * Trace function for logging error messages
+ * @param  {string}    msg       message that should be logged
+ * @param  {...Object} otherArgs data that should be loggged
+ */
+$q.traceError = (msg, ...otherArgs) => {
+  window.console.error('There was an critical error at application');
+  if ($.isFunction(window.console.groupCollapsed)
+    && $.isFunction(window.console.groupEnd)
+    && $.isFunction(window.console.trace)) {
+    window.console.groupCollapsed(msg);
+    if (otherArgs && otherArgs.length) {
+      window.console.log(otherArgs);
+    }
+
+    window.console.trace('%cView tracing', 'color: darkred;font-weight:bold;');
+    window.console.groupEnd(msg);
+  } else if (otherArgs && otherArgs.length) {
+    window.console.error(msg, ...otherArgs);
   }
 };
 
-$q.alertWarn = function alertWarn(msg) {
+/**
+ * Success message that should be shown to user
+ * @param  {string}    msg    message that should be shown to user
+ * @param  {...Object} params data that should be loggged
+ */
+$q.alertSuccess = (msg, ...otherArgs) => {
+  window.alert(msg);
+  if ($q.isDebug || window.Sys.Debug.isDebug) {
+    window.console.log(msg, ...otherArgs);
+  }
+};
+
+/**
+ * Warn message that should be shown to user
+ * @param  {string} msg message that should be shown to user
+ */
+$q.alertWarn = msg => {
   window.alert(msg);
   $q.trace(msg);
 };
 
-$q.alertError = function alertError(msg) {
+/**
+* Error message that should be shown to user
+ * @param  {string} msg message that should be shown at console
+ */
+$q.alertError = msg => {
   window.alert(msg);
   $q.trace(msg);
 };
 
-$q.alertFail = function alertFail(msg, ...params) {
+/**
+  * Critical or unexpected error at application
+  * @param  {string}    msg       message that should be logged
+  * @param  {...Object} otherArgs data that should be loggged
+  */
+$q.alertFail = (msg, ...otherArgs) => {
   window.alert(msg);
-  if ($q.isDebug || window.Sys.Debug.isDebug) {
-    window.console.warn([msg, ...params]);
-  }
+  $q.traceError(msg, ...otherArgs);
 };
 
-$q.doesImplicitEqDiffer = function doesImplicitEqDiffer(left, right) {
-  return (left == right) && (left !== right); // eslint-disable-line eqeqeq
-};
+/**
+ * Show confirmation message for user to confirm
+ * @param  {string}  msg message that should be shown to user
+ * @return {boolean}     whether user select 'Ok' or 'Cancel' button
+ */
+$q.confirmMessage = msg => window.confirm(msg);
 
-
-$q.warnIfEqDiff = function warnIfEqDiff(left, right) {
+// eslint-disable-next-line eqeqeq
+$q.doesImplicitEqDiffer = (left, right) => (left == right) && (left !== right);
+$q.warnIfEqDiff = (left, right) => {
   if ($q.doesImplicitEqDiffer(left, right)) {
     $q.alertFail(`Implicit and explicit equality operations produces different results for ${left} and ${right}`);
   }
-};
-
-$q.confirmMessage = function confirmMessage(msg) {
-  return window.confirm(msg);
 };
 
 /**
@@ -72,7 +115,7 @@ $q.confirmMessage = function confirmMessage(msg) {
  * @param  {Object} opts jQuery options for ajax request
  * @return {Object}      jQuery XHR deffered
  */
-$q.sendAjax = function sendAjax(opts) {
+$q.sendAjax = opts => {
   const defaultOptions = {
     type: 'GET',
     dataType: 'json',
@@ -98,6 +141,10 @@ $q.sendAjax = function sendAjax(opts) {
   $q.trace(`Sending ${debugMessage}`, 'Request object: ', options);
   return $.ajax(options).done(response => {
     $q.trace(`Parsing ${debugMessage}`, 'Response object: ', response);
+    if (!response.status) {
+      $q.alertFail(`Unrecognized response format receieved from "${options.url}"`);
+    }
+
     if (response.status.toUpperCase() === 'SUCCESS') {
       if (options.jsendSuccess) {
         options.jsendSuccess(response.data, response);
@@ -118,37 +165,69 @@ $q.sendAjax = function sendAjax(opts) {
   });
 };
 
-$q.getAjax = function getAjax(url, data, jsendSuccess, jsendFail, jsendError) {
-  return $q.sendAjax({
-    url,
-    data,
-    jsendSuccess,
-    jsendFail,
-    jsendError
-  });
-};
+/**
+ * Helper for jQuery 'GET' ajax reguest
+ * @param  {string}   url          url address to GET ajax request
+ * @param  {Object}   data         data which should be getted from server
+ * @param  {function} jsendSuccess callback function for jQuery ajax success
+ * @param  {function} jsendFail    callback function for jQuery ajax fail
+ * @param  {function} jsendError   callback function for jQuery ajax error
+ * @return {Object}                jQuery XHR deffered
+ */
+$q.getAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
+  url,
+  data,
+  jsendSuccess,
+  jsendFail,
+  jsendError
+});
 
-$q.postAjax = function postAjax(url, data, jsendSuccess, jsendFail, jsendError) {
-  return $q.sendAjax({
-    url,
-    type: 'POST',
-    data: JSON.stringify(data),
-    jsendSuccess,
-    jsendFail,
-    jsendError
-  });
-};
+/**
+ * Helper for jQuery 'POST' ajax reguest
+ * @param  {string}   url          url address to POST ajax request
+ * @param  {Object}   data         data which should be posted to server
+ * @param  {function} jsendSuccess callback function for jQuery ajax success
+ * @param  {function} jsendFail    callback function for jQuery ajax fail
+ * @param  {function} jsendError   callback function for jQuery ajax error
+ * @return {Object}                jQuery XHR deffered
+ */
+$q.postAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
+  url,
+  type: 'POST',
+  data: JSON.stringify(data),
+  jsendSuccess,
+  jsendFail,
+  jsendError
+});
 
-$q.showLoader = function showLoader() {
+/** Show global blocking loader screen */
+$q.showLoader = () => {
   if (Quantumart.QP8.BackendDocumentContext) {
     Quantumart.QP8.BackendDocumentContext.getArea().showAjaxLoadingLayer();
   }
 };
 
-$q.hideLoader = function hideLoader() {
+/** Hide global blocking loader screen */
+$q.hideLoader = () => {
   if (Quantumart.QP8.BackendDocumentContext) {
     Quantumart.QP8.BackendDocumentContext.getArea().hideAjaxLoadingLayer();
   }
+};
+
+$q.difference = (arr1, arr2) => arr1.filter(el => arr2.indexOf(el) === -1);
+$q.symmetricDifference = (arr1, arr2) => arr1
+  .filter(el => arr2.indexOf(el) === -1)
+  .concat(arr2.filter(el => arr1.indexOf(el) === -1));
+
+$q.chunks = (arr, chunkSize) => {
+  const result = [];
+  const nSize = chunkSize || arr.length;
+  const arrCopy = arr.slice();
+  while (arrCopy.length) {
+    result.push(arrCopy.splice(0, nSize));
+  }
+
+  return result;
 };
 
 $q.isBoolean = value =>
@@ -585,7 +664,6 @@ $q.decorateDeferred = function decorateDeferred(deferred, decorator, settings) {
   result.done = function (callback) {
     const currentCallback = decorator(callback, settings);
     const currentDeferred = this._doneBase(currentCallback);
-
     return $q.decorateDeferred(currentDeferred);
   };
 
@@ -831,30 +909,34 @@ $q.collectGarbageInIE = function collectGarbageInIE() {
   }
 };
 
-$q.addRemoveToArrUniq = function addRemoveToArrUniq(arrToModify, valToAddRemove, shouldBeExcluded) {
-  const underscoreMethod = shouldBeExcluded ? 'difference' : 'union';
-  return _[underscoreMethod](arrToModify, valToAddRemove);
+/**
+ * Define abstract methods that should be implemented at child classes
+ * @param  {string[]} listOfFnNames list of class method names to implement
+ */
+$q.defineAbstractMethods = function (listOfFnNames) {
+  listOfFnNames.forEach(fnName => {
+    this[fnName] = $q.alertFail.bind(this, `${fnName}: ${$l.Common.methodNotImplemented}`);
+  });
 };
 
-$q.bindProxies = function bindProxies(listOfFnNames, fnPostfix) {
+/**
+ * Bind class methods and "this" context, using bind function
+ * @param  {string[]} listOfFnNames list of class method names to bind
+ * @param  {string[]} fnPostfix     new function name with binded context
+ */
+$q.bindProxies = function (listOfFnNames, fnPostfix) {
   const postfix = fnPostfix || 'Handler';
-  [].forEach.call(listOfFnNames, function eachFn(fnName) {
-    try {
-      this[fnName + postfix] = this[fnName].bind(this);
-    } catch (e) {
-      window.console.error(`Failed to register: ${fnName}`, e);
-    }
-  }, this);
+  listOfFnNames.forEach(fnName => {
+    this[fnName + postfix] = this[fnName].bind(this);
+  });
 };
 
-$q.dispose = function dispose(listOfObjs) {
-  [].forEach.call(listOfObjs, function eachOb(obj) {
-    try {
-      if (this[obj]) {
-        this[obj] = null;
-      }
-    } catch (e) {
-      window.console.error(`Failed to dispose: ${obj}`, e);
-    }
-  }, this);
+/**
+ * Dispose class fields setting them to undefined
+ * @param  {string[]} listOfPropNames list of class property names to dispose
+ */
+$q.dispose = function (listOfPropNames) {
+  listOfPropNames.forEach(propName => {
+    this[propName] = this[propName] ? undefined : this[propName];
+  });
 };

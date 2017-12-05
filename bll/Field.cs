@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using QA.Validation.Xaml.ListTypes;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -2873,21 +2873,15 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        public string GetRelationFilter(int articleId)
-        {
-            if (ExactType != FieldExactTypes.M2ORelation)
-            {
-                return RelationFilter;
-            }
-
-            return string.Format("(c.[{0}] = {1} OR c.[{0}] IS NULL) AND c.[ARCHIVE] = 0", BackRelation.Name, articleId);
-        }
+        public string GetRelationFilter(int articleId) => ExactType != FieldExactTypes.M2ORelation
+            ? RelationFilter
+            : string.Format("(c.[{0}] = {1} OR c.[{0}] IS NULL) AND c.[ARCHIVE] = 0", BackRelation.Name, articleId);
 
         public void ParseStringEnumJson(string json)
         {
             if (!string.IsNullOrWhiteSpace(json))
             {
-                StringEnumItems = new JavaScriptSerializer().Deserialize<StringEnumItem[]>(json) ?? Enumerable.Empty<StringEnumItem>();
+                StringEnumItems = JsonConvert.DeserializeObject<StringEnumItem[]>(json) ?? Enumerable.Empty<StringEnumItem>();
             }
             else
             {

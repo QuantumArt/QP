@@ -276,6 +276,9 @@ namespace Quantumart.QP8.BLL.Services
 
         public static string GetArticleFieldValue(int contentId, string fieldName, int articleId) => ArticleRepository.GetFieldValue(articleId, contentId, fieldName);
 
+        public static Dictionary<int, string> GetContentFieldValues(int contentId, string fieldName) => ArticleRepository.GetContentFieldValues(contentId, fieldName);
+
+
         public static string GetArticleLinkedItems(int linkId, int articleId) => ArticleRepository.GetLinkedItems(linkId, articleId);
 
         public static int GetArticleIdByFieldValue(int contentId, string fieldName, string fieldValue) => ArticleRepository.GetArticleIdByFieldValue(contentId, fieldName, fieldValue);

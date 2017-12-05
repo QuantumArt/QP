@@ -18,9 +18,9 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Content;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
@@ -60,7 +60,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter = filter ?? ContentListFilter.Empty;
             filter.SiteId = parentId > 0 ? (int?)parentId : null;
             var serviceResult = ContentService.List(filter, command.GetListCommand());
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -82,7 +82,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var normFilter = ContentListFilter.Empty;
             normFilter.SiteId = parentId;
             var serviceResult = VirtualContentService.List(normFilter, command.GetListCommand());
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -320,7 +320,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _Files(GridCommand command, int gridParentId, [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery)
         {
             var serviceResult = ContentService.GetFileList(command.GetListCommand(), gridParentId, searchQuery);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -467,7 +467,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var serviceResult = ContentService.List(filter, command.GetListCommand(), id);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -494,7 +494,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var serviceResult = ContentService.ListForContainer(filter, command.GetListCommand(), id);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -521,7 +521,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var serviceResult = ContentService.ListForForm(filter, command.GetListCommand(), id);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -548,7 +548,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var serviceResult = ContentService.ListForJoin(filter, command.GetListCommand(), id);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -575,7 +575,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var serviceResult = ContentService.ListForField(filter, command.GetListCommand(), id);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -605,7 +605,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var serviceResult = ContentService.List(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -644,7 +644,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             var serviceResult = ContentService.ListForCustomAction(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -676,7 +676,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter.SiteId = parentId;
             filter.CustomFilter = customFilter;
             var serviceResult = ContentService.ListForWorkflow(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -706,7 +706,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var serviceResult = ContentService.ListForUnion(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ConnectionScope]

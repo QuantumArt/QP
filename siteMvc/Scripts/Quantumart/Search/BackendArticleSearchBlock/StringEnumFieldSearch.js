@@ -1,10 +1,29 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (
-  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID
+  containerElement,
+  parentEntityId,
+  fieldID,
+  contentID,
+  fieldColumn,
+  fieldName,
+  fieldGroup,
+  referenceFieldID
 ) {
   Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.initializeBase(
-    this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]
+    this,
+    [
+      containerElement,
+      parentEntityId,
+      fieldID,
+      contentID,
+      fieldColumn,
+      fieldName,
+      fieldGroup,
+      referenceFieldID
+    ]
   );
-  this._onIsNullCheckBoxChangeHandler = jQuery.proxy(this._onIsNullCheckBoxChange, this);
+
+  this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {

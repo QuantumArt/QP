@@ -17,7 +17,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _service = service;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ActionPermissionTree)]
         [BackendActionContext(ActionCode.ActionPermissionTree)]

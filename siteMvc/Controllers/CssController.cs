@@ -1,4 +1,4 @@
-﻿using System.Web.Mvc;
+using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -14,7 +14,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _statusTypeService = statusTypeService;
         }
 
-        [HttpGet]
         public ActionResult CustomCss()
         {
             HttpContext.Response.ContentType = "text/css";

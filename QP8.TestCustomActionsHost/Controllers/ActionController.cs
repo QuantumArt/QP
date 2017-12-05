@@ -34,7 +34,6 @@ namespace QP8.TestCustomActionsHost.Controllers
             });
         }
 
-        [HttpGet]
         public ActionResult NonInterface()
         {
             return new JsonpResult { Data = null, JsonRequestBehavior = JsonRequestBehavior.AllowGet };

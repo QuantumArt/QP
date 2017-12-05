@@ -1,10 +1,30 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (
-  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType
+  containerElement,
+  parentEntityId,
+  fieldID,
+  contentID,
+  fieldColumn,
+  fieldName,
+  fieldGroup,
+  referenceFieldID,
+  searchType
 ) {
-  Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.initializeBase(this, [
-    containerElement, parentEntityId, fieldID, contentID,
-    fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType
-  ]);
+  Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.initializeBase(
+    this,
+    [
+      containerElement,
+      parentEntityId,
+      fieldID,
+      contentID,
+      fieldColumn,
+      fieldName,
+      fieldGroup,
+      referenceFieldID,
+      searchType
+    ]
+  );
+
   this._searchType = searchType;
   this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
 };

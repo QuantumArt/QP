@@ -1,9 +1,12 @@
-﻿namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
+namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
     public class ExportArticlesParams : IMultistepActionSettings
     {
         public int SiteId;
+
         public int ContentId;
+
+        // ReSharper disable once InconsistentNaming
         public int[] IDs;
 
         public ExportArticlesParams(int siteId, int contentId, int[] ids)

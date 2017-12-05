@@ -67,6 +67,8 @@
     <Compile Include="CdcImport\CdcElasticImportDal.cs" />
     <Compile Include="CdcImport\CdcTarantoolImportDal.cs" />
     <Compile Include="CdcImport\CdcImportDal.cs" />
+    <Compile Include="RelationSecurityInfo.cs" />
+    <Compile Include="RelationSecurityPathItem.cs" />
     <Compile Include="NotificationSender\CommonSystemNotificationsDal.cs" />
     <Compile Include="NotificationSender\CommonExternalNotificationsDal.cs" />
     <Compile Include="CommonSecurity.cs" />

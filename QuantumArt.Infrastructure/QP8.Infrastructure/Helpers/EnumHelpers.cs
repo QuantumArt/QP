@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace QP8.Infrastructure.Helpers
 {
-    public class EnumHelpers
+    public static class EnumHelpers
     {
         /// <summary>
         /// Описание для Enum

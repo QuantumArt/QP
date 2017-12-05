@@ -774,30 +774,27 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
         /// <summary>
         /// Возвращает список контентов для классификатора
         /// </summary>
-        internal static IEnumerable<ListItem> GetAggregatableContentListItemsForClassifier(Field classifier, string excludeValue = null)
+        internal static IEnumerable<ListItem> GetAggregatableContentListItemsForClassifier(Field classifier, string excludeValue = null, int permissionLevel = PermissionLevel.Modify)
         {
             if (classifier != null && classifier.IsClassifier)
             {
-                return AggregatedContentListItems(classifier, excludeValue).Select(c => new ListItem(c.Id.ToString(), c.Name)).ToArray();
+                return AggregatedContentListItems(classifier, excludeValue, permissionLevel).Select(c => new ListItem(c.Id.ToString(), c.Name)).ToArray();
             }
 
             return Enumerable.Empty<ListItem>();
         }
 
-        /// <summary>
-        /// Возвращает список контентов для классификатора
-        /// </summary>
         internal static int[] GetAggregatableContentIdsForClassifier(Field classifier)
         {
             if (classifier != null && classifier.IsClassifier)
             {
-                return AggregatedContentListItems(classifier, null).Select(c => c.Id).ToArray();
+                return AggregatedContentListItems(classifier, null, PermissionLevel.List).Select(c => c.Id).ToArray();
             }
 
             return new int[] { };
         }
 
-        private static IEnumerable<ContentListItem> AggregatedContentListItems(Field classifier, string excludeValue)
+        private static IEnumerable<ContentListItem> AggregatedContentListItems(Field classifier, string excludeValue, int permissionLevel)
         {
             var items = QPContext.EFContext.FieldSet
                 .Where(f => f.Id == classifier.Id)
@@ -814,8 +811,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                 var excludeId = Converter.ToInt32(excludeValue, 0);
                 using (var scope = new QPConnectionScope())
                 {
-                    var result = CommonSecurity.CheckContentSecurity(scope.DbConnection, siteId, ids, QPContext.CurrentUserId,
-                        PermissionLevel.Modify);
+                    var result = CommonSecurity.CheckContentSecurity(scope.DbConnection, siteId, ids, QPContext.CurrentUserId, permissionLevel);
                     items = items.Where(n => result[n.Id] || n.Id == excludeId).ToArray();
                 }
             }

@@ -5,8 +5,8 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock = function (fieldSearc
 
   this._fieldSearchContainerList = {};
 
-  this._onAddFieldClickHandler = jQuery.proxy(this._onAddFieldClick, this);
-  this._onFieldSearchContainerCloseHandler = jQuery.proxy(this._onFieldSearchContainerClose, this);
+  this._onAddFieldClickHandler = $.proxy(this._onAddFieldClick, this);
+  this._onFieldSearchContainerCloseHandler = $.proxy(this._onFieldSearchContainerClose, this);
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
@@ -46,17 +46,18 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
         $q.processGenericAjaxError(jqXHR);
       }
     );
+
     if (!$q.isNullOrWhiteSpace(serverContent)) {
-      let $fieldSearchBlockElement = jQuery(this._fieldSearchBlockElement);
+      const $fieldSearchBlockElement = $(this._fieldSearchBlockElement);
       $fieldSearchBlockElement.html(serverContent);
 
       this._fieldSearchListElement = $fieldSearchBlockElement.find(`#${this._elementIdPrefix}_FieldSearchList`).get(0);
       this._fieldsComboElement = $fieldSearchBlockElement.find(`#${this._elementIdPrefix}_FieldsCombo`).get(0);
-      this._addFieldSearchButtonElement = $fieldSearchBlockElement.find(
-        `#${this._elementIdPrefix}_AddFieldSearchButton`).get(0);
-      this._attachFieldSearchBlockEventHandlers();
+      this._addFieldSearchButtonElement = $fieldSearchBlockElement
+        .find(`#${this._elementIdPrefix}_AddFieldSearchButton`)
+        .get(0);
 
-      $fieldSearchBlockElement = null;
+      this._attachFieldSearchBlockEventHandlers();
     }
   },
 
@@ -74,40 +75,40 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     if (result.length > 0) {
       return result;
     }
+
     return null;
   },
 
   getBlockState() {
-    const r = jQuery.grep(
-      // eslint-disable-next-line no-confusing-arrow
-      jQuery.map(this._fieldSearchContainerList, fsc => fsc ? fsc.getBlockState() : null),
-      fsc => fsc
-    );
-    if (r && r.length > 0) {
-      return r;
+    const result = Object.values(this._fieldSearchContainerList).map(fsc => fsc.getBlockState());
+    if (result && result.length > 0) {
+      return result;
     }
+
     return undefined;
   },
 
   restoreBlockState(state) {
     if (state) {
       const that = this;
-      const $options = jQuery('option', this._fieldsComboElement);
-      jQuery.each(state, (index, s) => {
-        if (s.fieldID && !that._fieldSearchContainerList[s.fieldID]) {
-          const is = $options.is(function () {
-            const $option = jQuery(this);
-            return s.fieldID === $option.data('field_id')
-                 && s.fieldName === $option.text()
-                 && s.searchType === $option.data('search_type')
-                 && s.fieldColumn === $option.data('field_column');
+      const $options = $('option', this._fieldsComboElement);
+      $.each(state, (index, st) => {
+        if (st.fieldID && !that._fieldSearchContainerList[st.fieldID]) {
+          const isValid = $options.is(function () {
+            const $option = $(this);
+            return st.fieldID === $option.data('field_id')
+                 && st.fieldName === $option.text()
+                 && st.searchType === $option.data('search_type')
+                 && st.fieldColumn === $option.data('field_column');
           });
-          if (is) {
+
+          if (isValid) {
             const newContainer = that._createFieldSearchContainerInner(
-              s.fieldID, s.contentID, s.searchType, s.fieldName, s.fieldColumn, s.fieldGroup, s.referenceFieldID
+              st.fieldID, st.contentID, st.searchType, st.fieldName, st.fieldColumn, st.fieldGroup, st.referenceFieldID
             );
-            if (s.data) {
-              newContainer.restoreBlockState(s.data);
+
+            if (st.data) {
+              newContainer.restoreBlockState(st.data);
             }
           }
         }
@@ -117,7 +118,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   clear() {
     if (this._fieldsComboElement) {
-      jQuery(this._fieldsComboElement).find('option:first').prop('selected', true);
+      $(this._fieldsComboElement).find('option:first').prop('selected', true);
     }
 
     this._destroyAllFieldSearchContainers();
@@ -125,27 +126,23 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
 
   _attachFieldSearchBlockEventHandlers() {
     if (this._fieldsComboElement) {
-      let $combo = jQuery(this._fieldsComboElement);
+      const $combo = $(this._fieldsComboElement);
       $combo.bind('change', this._onAddFieldClickHandler);
-      $combo = null;
     }
   },
 
   _detachFieldSearchBlockEventHandlers() {
     if (this._fieldsComboElement) {
-      let $combo = jQuery(this._fieldsComboElement);
+      const $combo = $(this._fieldsComboElement);
       $combo.unbind('change', this._onAddFieldClickHandler);
-      $combo = null;
     }
   },
 
   _createFieldSearchContainer() {
-    const $combo = jQuery(this._fieldsComboElement);
+    const $combo = $(this._fieldsComboElement);
     const $selectedField = $combo.find('option:selected');
-
     if ($selectedField) {
       const fieldID = $selectedField.data('field_id');
-
       if (fieldID && !this._fieldSearchContainerList[fieldID]) {
         const contentID = $selectedField.data('content_id');
         const fieldName = $selectedField.text();
@@ -154,7 +151,13 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
         const fieldGroup = $selectedField.data('field_group');
         const referenceFieldID = $selectedField.data('reference_field_id');
         this._createFieldSearchContainerInner(
-          fieldID, contentID, fieldSearchType, fieldName, fieldColumn, fieldGroup, referenceFieldID
+          fieldID,
+          contentID,
+          fieldSearchType,
+          fieldName,
+          fieldColumn,
+          fieldGroup,
+          referenceFieldID
         );
       }
 
@@ -162,36 +165,43 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
     }
   },
 
+  // eslint-disable-next-line max-params
   _createFieldSearchContainerInner(
-    fieldID, contentID, fieldSearchType, fieldName, fieldColumn, fieldGroup, referenceFieldID
+    fieldID,
+    contentID,
+    fieldSearchType,
+    fieldName,
+    fieldColumn,
+    fieldGroup,
+    referenceFieldID
   ) {
-    let $fieldSearchContainerElement = jQuery('<div />', { class: 'fieldSearchContainer' });
-    jQuery(this._fieldSearchListElement).append($fieldSearchContainerElement);
+    const $fieldSearchContainerElement = $('<div />', { class: 'fieldSearchContainer' });
+    $(this._fieldSearchListElement).append($fieldSearchContainerElement);
     const newFieldSearchContainer = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer(
       $fieldSearchContainerElement.get(0), this._parentEntityId,
       fieldID, contentID, fieldName, fieldSearchType, fieldColumn, fieldGroup, referenceFieldID
     );
+
     newFieldSearchContainer.initialize();
     newFieldSearchContainer.attachObserver(
       window.EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE, this._onFieldSearchContainerCloseHandler
     );
+
     this._fieldSearchContainerList[fieldID] = newFieldSearchContainer;
-    $fieldSearchContainerElement = null;
     return newFieldSearchContainer;
   },
 
   _destroyFieldSearchContainer(fieldID) {
     if (this._fieldSearchContainerList[fieldID]) {
-      let fieldSearchContainer = this._fieldSearchContainerList[fieldID];
-      let $fsContainer = jQuery(fieldSearchContainer.get_ContainerElement());
+      const fieldSearchContainer = this._fieldSearchContainerList[fieldID];
+      const $fsContainer = $(fieldSearchContainer.get_ContainerElement());
       fieldSearchContainer.detachObserver(
         window.EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE, this._onFieldSearchContainerCloseHandler
       );
+
       fieldSearchContainer.dispose();
       $q.removeProperty(this._fieldSearchContainerList, fieldID);
       $fsContainer.empty().remove();
-      $fsContainer = null;
-      fieldSearchContainer = null;
     }
   },
 
@@ -210,13 +220,18 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
   dispose() {
     this._detachFieldSearchBlockEventHandlers();
     this._destroyAllFieldSearchContainers();
-    this._fieldSearchContainerList = null;
-    this._fieldSearchBlockElement = null;
-    this._fieldSearchListElement = null;
-    this._fieldsComboElement = null;
-    this._addFieldSearchButtonElement = null;
-    this._onAddFieldClickHandler = null;
-    this._onFieldSearchContainerCloseHandler = null;
+
+    $q.dispose.call(this, [
+      '_fieldSearchContainerList',
+      '_fieldSearchBlockElement',
+      '_fieldSearchListElement',
+      '_fieldsComboElement',
+      '_addFieldSearchButtonElement',
+      '_onAddFieldClickHandler',
+      '_onFieldSearchContainerCloseHandler'
+    ]);
+
+    $q.collectGarbageInIE();
   }
 };
 

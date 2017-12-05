@@ -1,3 +1,5 @@
+/* eslint max-lines: 'off' */
+
 Quantumart.QP8.BackendTreeBase = function (treeElementId, options) {
   Quantumart.QP8.BackendTreeBase.initializeBase(this);
 

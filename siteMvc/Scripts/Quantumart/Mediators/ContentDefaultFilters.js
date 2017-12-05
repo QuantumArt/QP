@@ -15,7 +15,7 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
       articlePicker.removeAllListItems();
       articlePicker.set_parentEntityId(0);
     } else {
-      const selectedContent = contentPicker.getSelectedEntityIDs()[0];
+      const [selectedContent] = contentPicker.getSelectedEntityIDs();
       articlePicker.enableList();
       if (articlePicker.get_parentEntityId() !== selectedContent) {
         articlePicker.removeAllListItems();

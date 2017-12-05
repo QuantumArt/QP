@@ -8,8 +8,8 @@
 	{ 
 		@Html.Warning(new[] 
 		{
-			new MvcHtmlString(String.Format(NotificationStrings.WarningString, Model.Data.Workflow.Name)), 			
-			Html.BackendActionLink(Model.UniqueId("eapActionLink"), NotificationStrings.Unbind, Model.Data.Id, String.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.UnbindNotification)
+			new MvcHtmlString(string.Format(NotificationStrings.WarningString, Model.Data.Workflow.Name)), 			
+			Html.BackendActionLink(Model.UniqueId("eapActionLink"), NotificationStrings.Unbind, Model.Data.Id, string.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.UnbindNotification)
 		})
 	}	
 }

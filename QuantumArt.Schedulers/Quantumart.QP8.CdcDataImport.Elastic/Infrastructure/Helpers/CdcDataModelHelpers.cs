@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.Constants.Cdc.Tarantool;

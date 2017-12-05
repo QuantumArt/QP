@@ -1,4 +1,4 @@
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace Quantumart.QP8.BLL
 {
@@ -7,7 +7,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// идентификатор действия
         /// </summary>
-        [ScriptIgnore]
+        [JsonIgnore]
         public int ActionId { get; set; }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// идентификатор родительского действия
         /// </summary>
-        [ScriptIgnore]
+        [JsonIgnore]
         public int ParentActionId { get; set; }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// порядковый номер
         /// </summary>
-        [ScriptIgnore]
+        [JsonIgnore]
         public int Order { get; set; }
 
         /// <summary>

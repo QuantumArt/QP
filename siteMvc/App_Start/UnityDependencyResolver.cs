@@ -12,6 +12,7 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.Audit;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Assemble;
@@ -65,6 +66,7 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<IXmlDbUpdateActionsLogRepository, XmlDbUpdateActionsLogRepository>()
                 .RegisterType<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
                 .RegisterType<IArticleService, ArticleService>()
+                .RegisterType<IContentService, ContentService>()
                 .RegisterType<IXmlDbUpdateHttpContextProcessor, XmlDbUpdateHttpContextProcessor>()
                 .RegisterType<IXmlDbUpdateActionCorrecterService, XmlDbUpdateActionCorrecterService>()
                 .RegisterType<ClearContentController>(new InjectionFactory(c => new ClearContentController(new ClearContentService())))

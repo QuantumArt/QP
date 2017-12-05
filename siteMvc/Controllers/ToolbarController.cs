@@ -6,7 +6,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ToolbarController : QPController
     {
-        [HttpGet]
         public JsonResult GetToolbarButtonListByActionCode(string actionCode, string entityId, string parentEntityId, bool? boundToExternal)
         {
             int.TryParse(entityId, out var parsedId);

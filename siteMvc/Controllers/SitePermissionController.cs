@@ -16,7 +16,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SitePermissions)]
         [BackendActionContext(ActionCode.SitePermissions)]
@@ -28,7 +27,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.SitePermissions)]
         public override ActionResult _Index(string tabId, int parentId, GridCommand command) => base._Index(tabId, parentId, command);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewSitePermission)]
         [BackendActionContext(ActionCode.AddNewSitePermission)]
@@ -42,7 +40,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public override ActionResult New(string tabId, int parentId, FormCollection collection) => base.New(tabId, parentId, collection);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SitePermissionProperties)]
         [BackendActionContext(ActionCode.SitePermissionProperties)]

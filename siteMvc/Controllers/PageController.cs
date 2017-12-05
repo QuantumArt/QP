@@ -5,6 +5,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Telerik.Web.Mvc;
@@ -20,7 +21,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _pageService = pageService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Pages)]
         [BackendActionContext(ActionCode.Pages)]
@@ -38,10 +38,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexPages(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _pageService.GetPagesByTemplateId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewPage)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Page, "parentId")]
@@ -142,7 +141,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(null);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectPageForObjectForm)]
         [BackendActionContext(ActionCode.SelectPageForObjectForm)]
@@ -162,7 +160,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var template = _pageService.ReadPageTemplateProperties(parentId);
             var serviceResult = _pageService.ListPagesForSite(command.GetListCommand(), template.SiteId, id);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]

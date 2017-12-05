@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
@@ -52,7 +52,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
             if (AggregationListItemsDataAdditionalNamespaceItems != null)
             {
-                Data.AdditionalNamespaceItems = new JavaScriptSerializer().Deserialize<List<AdditionalNamespace>>(AggregationListItemsDataAdditionalNamespaceItems);
+                Data.AdditionalNamespaceItems = JsonConvert.DeserializeObject<List<AdditionalNamespace>>(AggregationListItemsDataAdditionalNamespaceItems);
             }
 
             Data.SetUsings();

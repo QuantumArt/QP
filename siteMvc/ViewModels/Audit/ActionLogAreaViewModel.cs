@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
@@ -28,15 +28,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Audit
         {
             get
             {
-                return MvcHtmlString.Create(
-                    new JavaScriptSerializer().Serialize(
-                        ActionTypeList.Select(at => new
-                        {
-                            value = at.Value,
-                            text = at.Text
-                        }).ToArray()
-                    )
-                );
+                return MvcHtmlString.Create(JsonConvert.SerializeObject(ActionTypeList.Select(at => new
+                {
+                    value = at.Value,
+                    text = at.Text
+                }).ToArray()));
             }
         }
 
@@ -44,50 +40,38 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Audit
         {
             get
             {
-                return MvcHtmlString.Create(
-                    new JavaScriptSerializer().Serialize(
-                        ActionList.Select(at => new
-                        {
-                            value = at.Value,
-                            text = at.Text
-                        }).ToArray()
-                    )
-                );
+                return MvcHtmlString.Create(JsonConvert.SerializeObject(ActionList.Select(at => new
+                {
+                    value = at.Value,
+                    text = at.Text
+                }).ToArray()));
             }
         }
 
-        public IEnumerable<QPSelectListItem> EntityTypeList
-        {
-            get;
-            internal set;
-        }
+        public IEnumerable<QPSelectListItem> EntityTypeList { get; internal set; }
 
         public MvcHtmlString EntityTypeListJson
         {
             get
             {
-                return MvcHtmlString.Create(
-                    new JavaScriptSerializer().Serialize(
-                        EntityTypeList.Select(at => new
-                        {
-                            value = at.Value,
-                            text = at.Text
-                        }).ToArray()
-                    )
-                );
+                return MvcHtmlString.Create(JsonConvert.SerializeObject(EntityTypeList.Select(at => new
+                {
+                    value = at.Value,
+                    text = at.Text
+                }).ToArray()));
             }
         }
 
         public IEnumerable<QPSelectListItem> FilterList => new[]
         {
-            new QPSelectListItem{Text = AuditStrings.ActionName,Value = ((int)FilteredColumnsEnum.ActionName).ToString(),Selected = false},
-            new QPSelectListItem{Text = AuditStrings.ActionTypeName,Value = ((int)FilteredColumnsEnum.ActionTypeName).ToString(),Selected = false},
-            new QPSelectListItem{Text = AuditStrings.EntityTypeName,Value = ((int)FilteredColumnsEnum.EntityTypeName).ToString(),Selected = false},
-            new QPSelectListItem{Text = AuditStrings.EntityStringId,Value = ((int)FilteredColumnsEnum.EntityStringId).ToString(),Selected = false},
-            new QPSelectListItem{Text = AuditStrings.EntityTitle,Value = ((int)FilteredColumnsEnum.EntityTitle).ToString(),Selected = false},
-            new QPSelectListItem{Text = AuditStrings.ParentEntityId,Value = ((int)FilteredColumnsEnum.ParentEntityId).ToString(),Selected = false},
-            new QPSelectListItem{Text = AuditStrings.ExecutionTime,Value = ((int)FilteredColumnsEnum.ExecutionTime).ToString(),Selected = false},
-            new QPSelectListItem{Text = AuditStrings.UserLogin,Value = ((int)FilteredColumnsEnum.UserLogin).ToString(),Selected = false}
+            new QPSelectListItem { Text = AuditStrings.ActionName, Value = ((int)FilteredColumnsEnum.ActionName).ToString(), Selected = false },
+            new QPSelectListItem { Text = AuditStrings.ActionTypeName, Value = ((int)FilteredColumnsEnum.ActionTypeName).ToString(), Selected = false },
+            new QPSelectListItem { Text = AuditStrings.EntityTypeName, Value = ((int)FilteredColumnsEnum.EntityTypeName).ToString(), Selected = false },
+            new QPSelectListItem { Text = AuditStrings.EntityStringId, Value = ((int)FilteredColumnsEnum.EntityStringId).ToString(), Selected = false },
+            new QPSelectListItem { Text = AuditStrings.EntityTitle, Value = ((int)FilteredColumnsEnum.EntityTitle).ToString(), Selected = false },
+            new QPSelectListItem { Text = AuditStrings.ParentEntityId, Value = ((int)FilteredColumnsEnum.ParentEntityId).ToString(), Selected = false },
+            new QPSelectListItem { Text = AuditStrings.ExecutionTime, Value = ((int)FilteredColumnsEnum.ExecutionTime).ToString(), Selected = false },
+            new QPSelectListItem { Text = AuditStrings.UserLogin, Value = ((int)FilteredColumnsEnum.UserLogin).ToString(), Selected = false }
         };
     }
 }

@@ -6,7 +6,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class BackendActionTypeController : QPController
     {
-        [HttpGet]
         public JsonResult GetCodeByActionCode(string actionCode) => Json(BackendActionTypeService.GetCodeByActionCode(actionCode), JsonRequestBehavior.AllowGet);
     }
 }

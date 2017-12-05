@@ -11,7 +11,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ContentFolderController : QPController
     {
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewContentFolder)]
         [BackendActionContext(ActionCode.AddNewContentFolder)]
@@ -46,7 +45,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("FolderProperties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentFolderProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "id")]
@@ -96,7 +94,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentFileProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "parentId")]

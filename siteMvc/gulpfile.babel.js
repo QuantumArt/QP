@@ -123,7 +123,7 @@ custom.paths = {
   vendorsjsLogon: [
     'Scripts/es5-shim.js',
     'Scripts/jquery/jquery-1.7.1.js',
-    'Scripts/microsoft/MicrosoftAjax.js',
+    'Scripts/microsoft/MicrosoftAjax.js'
   ],
   qpjs: [
     'Scripts/Quantumart/Helpers/vanilla.helpers.js',
@@ -202,6 +202,7 @@ custom.paths = {
     'Scripts/Quantumart/Mediators/ContentDefaultFilters.js',
     'Scripts/Quantumart/Editor/BackendVirtualFieldTree.js',
     'Scripts/Quantumart/Editor/BackendEntityEditor.js',
+    'Scripts/Quantumart/Editor/BackendEntityEditorActionEventArgs.js',
     'Scripts/Quantumart/Mediators/BackendNotificationProperties.js',
     'Scripts/Quantumart/Mediators/BackendTemplateObjectProperties.js',
     'Scripts/Quantumart/Mediators/BackendPagePropertiesMediator.js',
@@ -213,6 +214,7 @@ custom.paths = {
     'Scripts/Quantumart/Editor/BackendEditorsAutoSaver.js',
     'Scripts/Quantumart/Editor/BackendClassifierField.js',
     'Scripts/Quantumart/Uploader/BackendBaseUploader.js',
+    'Scripts/Quantumart/Uploader/BackendUploaderEventArgs.js',
     'Scripts/Quantumart/Uploader/BackendHtmlUploader.js',
     'Scripts/Quantumart/Uploader/BackendPlUploader.js',
     'Scripts/Quantumart/Audit/ActionLogComponent.js',
