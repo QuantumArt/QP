@@ -1,5 +1,8 @@
 using System;
 using System.Web.Mvc;
+using QP8.Infrastructure.Web.AspNet.ActionResults;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DbServices;
@@ -74,7 +77,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
         [BackendActionLog]
-        public ActionResult SetupWithParams(int parentId, int id, FormCollection collection)
+        public JsonCamelCaseResult<JSendResponse> SetupWithParams(int parentId, int id, FormCollection collection)
         {
             var model = new ImportViewModel();
             TryUpdateModel(model);
@@ -82,7 +85,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             model.SetCorrespondingFieldName(collection);
             IMultistepActionParams settings = model.GetImportSettingsObject(parentId, id);
             _service.SetupWithParams(parentId, id, settings);
-            return Json(string.Empty);
+            return new JSendResponse { Status = JSendStatus.Success };
         }
 
         [HttpPost]
