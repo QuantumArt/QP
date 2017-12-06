@@ -53,21 +53,21 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   _onFileUploadedHandler(eventType, sender, eventArgs) {
     [this.fileName] = eventArgs.getFileNames();
 
-    $(`#${this.options._popupWindowId}_${this._fileNameId}`).val(this.fileName);
+    $(`#${this.options.popupWindowId}_${this._fileNameId}`).val(this.fileName);
     $(`#${this._fileNameId}`).val(this.fileName);
-    $(`#${this.options._popupWindowId}_${this._noHeadersId}`).prop('disabled', true);
+    $(`#${this.options.popupWindowId}_${this._noHeadersId}`).prop('disabled', true);
 
-    this._loadFileFields(this.options);
+    this._loadFileFields();
   },
 
   _initValidation() {
     const that = this;
-    const id = this.options._popupWindowId;
+    const id = this.options.popupWindowId;
 
     this._$importAction = $(`#${id}_ImportAction`);
     this._$uniqueFieldToUpdate = $(`#${id}_UniqueFieldToUpdate`);
     this._$uniqueContentFieldId = $(`#${id}_UniqueContentFieldId`);
-    this._$fieldGroup = $(`#${this.options._popupWindowId}_mapping_fields_selects`);
+    this._$fieldGroup = $(`#${id}_mapping_fields_selects`);
     this._$fields = $("select[data-required='True']");
     this._$identifiers = $("select[data-identifier='True']");
     this._uniqueFieldToUpdatePredicate = function _uniqueFieldToUpdatePredicate() {
@@ -234,19 +234,6 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     return result;
   },
 
-  addButtons(dataItems) {
-    const importButton = {
-      Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
-      Value: this.IMPORT_BUTTON,
-      Text: $l.MultistepAction.importTitle,
-      Tooltip: $l.MultistepAction.importTitle,
-      AlwaysEnabled: false,
-      Icon: 'action.gif'
-    };
-
-    return dataItems.concat(importButton);
-  },
-
   initActions(object, options) {
     this._initFileUploader(object, options.UploadPath);
     this._initValidation();
@@ -292,77 +279,55 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     return errorMessage;
   },
 
-  _loadFileFields(options) {
-    const documentId = `#${options._popupWindowComponent._documentWrapperElementId} `;
-    const delim = $(`${documentId}input[name="Delimiter"]:radio:checked`).val();
+  _loadFileFields() {
+    const id = `#${this.options.wrapperElementId} `;
+    const delim = $(`${id}input[name="Delimiter"]:radio:checked`).val();
     const that = this;
 
-    $(`${documentId}input[name="Delimiter"]`).on('click', function onClick() {
-      that.loadFromFile(options, this.value);
+    $(`${id}input[name="Delimiter"]`).on('click', function onClick() {
+      that.loadFromFile(that.options, this.value);
     });
 
-    $(`#${options._popupWindowId}_Encoding, #${options._popupWindowId}_LineSeparator`)
+    $(`#${options.popupWindowId}_Encoding, #${options.popupWindowId}_LineSeparator`)
       .on('change', () => {
-        that.loadFromFile(options);
+        that.loadFromFile(that.options);
       }
       );
 
     if (!isNaN(delim)) {
-      that.loadFromFile(options);
+      that.loadFromFile(that.options);
     }
   },
 
   serializeForm() {
-    return $(`#${
-      this.options._popupWindowComponent._documentWrapperElementId
-    } form input, #${
-      this.options._popupWindowComponent._documentWrapperElementId
-    } form select`).serialize();
+    return $(this.getParamsSelector()).serialize();
   },
 
-  submitForm(ajaxData) {
-    const that = this;
-    $.ajax({
-      url: that._settingsActionUrl.replace('Settings', 'SetupWithParams'),
-      data: ajaxData,
-      type: 'POST',
-      success(response) {
-        if (response && response.data) {
-          $(`#${that._popupWindowComponent._documentWrapperElementId}`).html(response.data);
-        } else {
-          that._popupWindowComponent.closeWindow();
-          $('.t-overlay').remove();
-          that._callback({ isSettingsSet: true });
-        }
-      }
-    });
+  getParamsSelector() {
+    const id = this.options.wrapperElementId;
+    return `#${id} form input, #${id} form select`;
   },
 
-  loadFromFile(options) {
+  loadFromFile() {
     const that = this;
-    const paramsSelector = `#${
-      options._popupWindowComponent._documentWrapperElementId
-    } form input, #${
-      options._popupWindowComponent._documentWrapperElementId
-    } form select`;
 
     // eslint-disable-next-line new-cap
-    const act = new Quantumart.QP8.BackendActionExecutor.getBackendActionByCode(options._actionCode);
+    const act = new Quantumart.QP8.BackendActionExecutor.getBackendActionByCode(this.options.actionCode);
     let getFieldsUrl = String.format(
       '{0}FileFields/0/{1}/{2}/',
       act.ControllerActionUrl,
-      options._parentEntityId,
-      options._contentId
+      this.options.parentEntityId,
+      this.options.contentId
     );
 
     getFieldsUrl = getFieldsUrl.replace(/^~\//, window.APPLICATION_ROOT_URL);
     $.ajax({
       url: getFieldsUrl,
-      data: $(paramsSelector).serialize(),
+      data: this.serializeForm(),
       type: 'POST',
       success(fieldsFromFile) {
         if (fieldsFromFile.Type === 'Error') {
-          $(`#${that.options._popupWindowId}_mapping_fields_selects`).hide();
+          $(`#${that.options.popupWindowId}_mapping_fields_selects`).hide();
           $q.alert(fieldsFromFile.Text);
         } else if (fieldsFromFile) {
           that._fillOptionsFromFile(fieldsFromFile);
@@ -374,7 +339,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
 
   _fillOptionsFromFile(fields) {
     const fieldsClass = ' .dropDownList.dataList.fields';
-    const documentId = `#${this.options._popupWindowComponent._documentWrapperElementId} `;
+    const documentId = `#${this.options.wrapperElementId} `;
     $.each($(documentId + fieldsClass), (index, item) => {
       $(item).html('');
       $(item).append($('<option>', {
@@ -403,3 +368,18 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     }
   }
 };
+
+Quantumart.QP8.MultistepActionImportSettings.addButtons = function (dataItems) {
+  const importButton = {
+    Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
+    Value: 'Import',
+    Text: $l.MultistepAction.importTitle,
+    Tooltip: $l.MultistepAction.importTitle,
+    AlwaysEnabled: false,
+    Icon: 'action.gif'
+  };
+
+  return dataItems.concat(importButton);
+}
+
+
