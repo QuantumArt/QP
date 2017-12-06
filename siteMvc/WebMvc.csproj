@@ -332,7 +332,6 @@
     <Compile Include="Extensions\ModelBinders\ContentModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\CustomActionViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\DbViewModelBinder.cs" />
-    <Compile Include="Extensions\ModelBinders\ExportViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\FieldViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\JsonStringModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\NotificationViewModelBinder.cs" />
