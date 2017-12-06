@@ -170,7 +170,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         private static void RemoveRecordsXml()
         {
-            string path = QPContext.GetRecordXmlFilePath();
+            var path = QPContext.GetRecordXmlFilePath();
             if (File.Exists(path))
             {
                 File.SetAttributes(path, FileAttributes.Normal);

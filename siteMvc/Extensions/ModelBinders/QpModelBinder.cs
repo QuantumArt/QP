@@ -58,8 +58,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             if (type == typeof(DateTime) && !Converter.CanParse<DateTime>(attemptedValue)
                 || type == typeof(DateTime?) && !string.IsNullOrEmpty(attemptedValue) && !Converter.CanParse<DateTime>(attemptedValue)
                 || type == typeof(TimeSpan) && !Converter.CanParse<TimeSpan>(attemptedValue)
-                || type == typeof(TimeSpan?) && !string.IsNullOrEmpty(attemptedValue) && !Converter.CanParse<TimeSpan>(attemptedValue)
-            )
+                || type == typeof(TimeSpan?) && !string.IsNullOrEmpty(attemptedValue) && !Converter.CanParse<TimeSpan>(attemptedValue))
             {
                 return false;
             }
@@ -67,6 +66,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             return type != typeof(int) || Converter.CanParse<int>(attemptedValue);
         }
 
-        protected string GetModelPropertyName<T>(ModelBindingContext bindingContext, Expression<Func<T>> e) => string.IsNullOrWhiteSpace(bindingContext.ModelName) ? e.GetPropertyName() : string.Concat(bindingContext.ModelName, ".", e.GetPropertyName());
+        protected string GetModelPropertyName<T>(ModelBindingContext bindingContext, Expression<Func<T>> e) => string.IsNullOrWhiteSpace(bindingContext.ModelName)
+            ? e.GetPropertyName()
+            : string.Concat(bindingContext.ModelName, ".", e.GetPropertyName());
     }
 }

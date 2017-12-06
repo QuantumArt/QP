@@ -55,7 +55,7 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
     const idsElement = document.getElementById(`${this.options._popupWindowId}_idsToExport`);
     if (idsElement) {
       Object.assign(ajaxData, {
-        ids: idsElement.getAttribute('data-ids').split(',').map(el => +el.value)
+        ids: idsElement.getAttribute('data-ids').split(',').map(el => +el)
       });
     }
 

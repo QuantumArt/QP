@@ -70,7 +70,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
         public IEnumerable<ListItem> GetPermissionLevels()
         {
             return _service.GetPermissionLevels().Select(l => new ListItem { Value = l.Id.ToString(), Text = Translator.Translate(l.Name) }).ToArray();
-
         }
     }
 }

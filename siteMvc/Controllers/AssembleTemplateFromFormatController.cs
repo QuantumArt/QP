@@ -8,7 +8,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class AssembleTemplateFromFormatController : AssembleTemplateBaseController
     {
-        public AssembleTemplateFromFormatController(IMultistepActionService service) : base(service)
+        public AssembleTemplateFromFormatController(IMultistepActionService service)
+            : base(service)
         {
         }
 

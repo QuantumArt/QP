@@ -20,7 +20,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 }
 
                 return result;
-
             }
             set
             {

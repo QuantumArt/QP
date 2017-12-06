@@ -48,18 +48,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
 
         public IEnumerable<ListItem> SelectedDefaultFilterArticleListItems
         {
-            get
-            {
-                return ContentDefaultFilter.GetArticles().Select(a => new ListItem(a.Id.ToString(), a.Name));
-            }
+            get { return ContentDefaultFilter.GetArticles().Select(a => new ListItem(a.Id.ToString(), a.Name)); }
         }
 
         public IEnumerable<ListItem> AllSitesListItems
         {
-            get
-            {
-                return ContentDefaultFilter.GetAllSites().Select(a => new ListItem(a.Id.ToString(), a.Name));
-            }
+            get { return ContentDefaultFilter.GetAllSites().Select(a => new ListItem(a.Id.ToString(), a.Name)); }
         }
 
         public string ContentFilterElementId => UniqueId("contentFilterElementId");

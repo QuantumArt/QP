@@ -1,4 +1,3 @@
-
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Article

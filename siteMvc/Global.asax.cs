@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.AspNet.SignalR;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
@@ -25,7 +26,6 @@ using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
-using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 using Quantumart.QP8.WebMvc.ViewModels.Notification;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Quantumart.QP8.WebMvc.ViewModels.Site;
@@ -34,7 +34,6 @@ using Quantumart.QP8.WebMvc.ViewModels.UserGroup;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
-using QP8.Infrastructure.Logging;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -155,7 +154,7 @@ namespace Quantumart.QP8.WebMvc
             ModelBinders.Binders.Add(typeof(PageTemplateViewModel), new PageTemplateViewModelBinder());
             ModelBinders.Binders.Add(typeof(ObjectViewModel), new ObjectViewModelBinder());
             ModelBinders.Binders.Add(typeof(DbViewModel), new DbViewModelBinder());
-            ModelBinders.Binders.Add(typeof(ExportViewModel), new ExportViewModelBinder());
+
             ModelBinders.Binders.DefaultBinder = new QpModelBinder();
         }
 

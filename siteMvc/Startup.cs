@@ -4,6 +4,7 @@ using Owin;
 using Quantumart.QP8.WebMvc;
 
 [assembly: OwinStartup(typeof(Startup))]
+
 namespace Quantumart.QP8.WebMvc
 {
     public class Startup
