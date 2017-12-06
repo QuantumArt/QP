@@ -231,7 +231,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
                         var ext = Path.GetExtension(targetPath);
                         output.Save(fs, GetImageCodecInfo(ext), GetEncoderParameters(ext));
                     }
-
                 }
             }
 
@@ -286,9 +285,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 index++;
                 result = MutateHelper.MutateFileName(name, index);
-            }
+            } while (System.IO.File.Exists(Path.Combine(path, result)));
 
-            while (System.IO.File.Exists(Path.Combine(path, result)));
             return result;
         }
 
@@ -377,7 +375,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     return true;
                 }
             }
-            catch (OutOfMemoryException) { }
+            catch (OutOfMemoryException)
+            {
+            }
 
             return false;
         }

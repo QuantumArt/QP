@@ -25,7 +25,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
         private readonly Lazy<IEnumerable<ListItem>> _contentGroups;
         private readonly Lazy<IEnumerable<ListItem>> _sites;
 
-
         public IEnumerable<ListItem> ContentGroups => _contentGroups.Value;
 
         public IEnumerable<ListItem> Sites => _sites.Value;

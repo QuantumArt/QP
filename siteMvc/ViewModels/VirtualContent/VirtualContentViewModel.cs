@@ -26,6 +26,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
 
         [LocalizedDisplayName("JoinFields", NameResourceType = typeof(ContentStrings))]
         public IList<QPTreeCheckedNode> JoinFields { get; set; }
+
         [LocalizedDisplayName("ToRebuild", NameResourceType = typeof(ContentStrings))]
         public bool ToBuild { get; set; }
 
@@ -104,7 +105,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
         public IEnumerable<ListItem> GetAcceptableContentForVirtualJoin()
         {
             var currentContentSiteId = Data.SiteId;
-            var contentForJoin = VirtualContentService.GetAcceptableContentForVirtualJoin(currentContentSiteId).Select(c => { c.DependentItemIDs = new[] { "JoinFieldsPanel" }; c.HasDependentItems = true; return c; }).ToArray();
+            var contentForJoin = VirtualContentService.GetAcceptableContentForVirtualJoin(currentContentSiteId).Select(c =>
+            {
+                c.DependentItemIDs = new[] { "JoinFieldsPanel" };
+                c.HasDependentItems = true;
+                return c;
+            }).ToArray();
             return new[] { new ListItem(string.Empty, ContentStrings.SelectContent) }.Concat(contentForJoin);
         }
 

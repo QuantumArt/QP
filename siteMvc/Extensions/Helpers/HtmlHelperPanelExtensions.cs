@@ -57,7 +57,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return new Panel(html);
         }
 
-
         public static Panel BeginPanel(this HtmlHelper html, string id) => BeginPanel(html, id, false, false);
 
         public static Panel BeginPanel(this HtmlHelper html, string id, bool disableControls)
@@ -70,7 +69,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             return BeginPanel(html, id, false, false, htmlAttributes);
         }
-
 
         public static Panel BeginPanel(this HtmlHelper html, Dictionary<string, object> htmlAttributes = null)
         {
