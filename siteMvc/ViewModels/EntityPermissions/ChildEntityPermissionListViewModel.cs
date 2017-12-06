@@ -48,7 +48,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
 
         public override bool LinkOpenNewTab => true;
 
-		public int MemberType => EntityPermission.GroupMemberType;
+        public int MemberType => EntityPermission.GroupMemberType;
 
         public IEnumerable<ListItem> GetMemberTypes() => new[]
         {
@@ -59,6 +59,5 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
         public string SearchBlockId => UniqueId("SearchBlockId");
 
         public bool ShowParentPermissionButton { get; private set; }
-
     }
 }

@@ -37,9 +37,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public bool AllFields { get; set; }
 
         [LocalizedDisplayName("CustomFields", NameResourceType = typeof(ImportStrings))]
-        public IEnumerable<int> CustomFields { get; set; }
+        public int[] CustomFields { get; set; }
 
         [LocalizedDisplayName("FieldsToExpand", NameResourceType = typeof(ImportStrings))]
-        public IEnumerable<int> FieldsToExpand { get; set; }
+        public int[] FieldsToExpand { get; set; }
     }
 }

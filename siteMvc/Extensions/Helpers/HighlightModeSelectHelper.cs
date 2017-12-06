@@ -11,6 +11,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         private const string XmlMode = " highlightedTextarea hta-XmlTextArea";
         private const string JsonMode = " highlightedTextarea hta-JsonTextArea";
         private const string HtmlMode = " highlightedTextarea hta-htmlTextArea";
+
         public static string SelectMode(int? languageId)
         {
             if (NetLanguage.GetcSharp().Id == languageId)

@@ -42,7 +42,7 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
     const idsElement = document.getElementById(`${id}_idsToExport`);
     if (idsElement) {
       Object.assign(ajaxData, {
-        ids: idsElement.getAttribute('data-ids').split(',').map(el => +el.value)
+        ids: idsElement.getAttribute('data-ids').split(',').map(el => +el)
       });
     }
 

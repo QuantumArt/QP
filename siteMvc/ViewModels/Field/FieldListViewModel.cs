@@ -31,4 +31,3 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         public override string AddNewItemActionCode => Constants.ActionCode.AddNewField;
     }
 }
-

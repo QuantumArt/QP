@@ -54,5 +54,4 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 
         public string CustomerCode => QPContext.CurrentCustomerCode;
     }
-
 }

@@ -143,7 +143,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
         [LocalizedDisplayName("ToolbarButtonParentActionId", NameResourceType = typeof(CustomActionStrings))]
         public IList<QPCheckedItem> SelectedActions { get; set; }
 
-        public int[] SelectedActionsIds { get { return SelectedActions.Select(c => int.Parse(c.Value)).ToArray(); } }
+        public int[] SelectedActionsIds
+        {
+            get { return SelectedActions.Select(c => int.Parse(c.Value)).ToArray(); }
+        }
 
         public string SelectedActionsString => string.Join(",", SelectedActionsIds);
 

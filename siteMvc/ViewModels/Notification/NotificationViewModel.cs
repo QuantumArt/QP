@@ -44,6 +44,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
         }
 
         private List<ListItem> _statuses;
+
         public List<ListItem> Statuses
         {
             get
@@ -58,6 +59,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
         }
 
         private List<ListItem> _fields;
+
         public List<ListItem> Fields
         {
             get
@@ -84,9 +86,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
                     return null;
                 }
 
-                return Data.FromUser != null ?
-                    new QPSelectListItem { Value = Data.FromUser.Id.ToString(), Text = Data.FromUser.LogOn, Selected = true } :
-                    new QPSelectListItem { Value = SpecialIds.AdminUserId.ToString(), Text = @"admin", Selected = true };
+                return Data.FromUser != null ? new QPSelectListItem { Value = Data.FromUser.Id.ToString(), Text = Data.FromUser.LogOn, Selected = true } : new QPSelectListItem { Value = SpecialIds.AdminUserId.ToString(), Text = @"admin", Selected = true };
             }
         }
 

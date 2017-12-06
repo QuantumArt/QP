@@ -154,7 +154,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                         result.Add("upload_url", "upload_url");
                         result.Add("OnScreen", "OnScreen(Value, ItemID);");
                         result.Add("OnScreenFlyEdit", "OnScreenFlyEdit(Value, ItemID, FieldName);");
-
                     }
                     else
                     {

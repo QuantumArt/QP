@@ -26,7 +26,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-
         public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
 
         [HttpPost]

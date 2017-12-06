@@ -74,7 +74,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public bool IsPage => _pageId.HasValue;
 
-                private void InitDdls()
+        private void InitDdls()
         {
             BllTemplateObjects = _service.GetAllTemplateObjects(_templateId).OrderBy(x => x.Name);
             BllRestTemplateObjects = _service.GetRestTemplateObjects(_templateId);
