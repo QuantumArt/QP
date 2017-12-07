@@ -239,6 +239,10 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     this._initValidation();
   },
 
+  serializeForm() {
+    return $q.serializeForm(this.options.wrapperElementId);
+  },
+
   validate() {
     let content;
     const that = this;
@@ -281,31 +285,20 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
 
   _loadFileFields() {
     const id = `#${this.options.wrapperElementId} `;
+    const popupId = this.options.popupWindowId;
     const delim = $(`${id}input[name="Delimiter"]:radio:checked`).val();
     const that = this;
+    const loadLambda = () => {
+      that.loadFromFile();
+    };
 
-    $(`${id}input[name="Delimiter"]`).on('click', function onClick() {
-      that.loadFromFile(that.options, this.value);
-    });
+    $(`${id}input[name="Delimiter"]`).on('click', loadLambda);
 
-    $(`#${options.popupWindowId}_Encoding, #${options.popupWindowId}_LineSeparator`)
-      .on('change', () => {
-        that.loadFromFile(that.options);
-      }
-      );
+    $(`#${popupId}_Encoding, #${popupId}_LineSeparator`).on('change', loadLambda);
 
     if (!isNaN(delim)) {
-      that.loadFromFile(that.options);
+      loadLambda();
     }
-  },
-
-  serializeForm() {
-    return $(this.getParamsSelector()).serialize();
-  },
-
-  getParamsSelector() {
-    const id = this.options.wrapperElementId;
-    return `#${id} form input, #${id} form select`;
   },
 
   loadFromFile() {
@@ -380,6 +373,5 @@ Quantumart.QP8.MultistepActionImportSettings.addButtons = function (dataItems) {
   };
 
   return dataItems.concat(importButton);
-}
-
+};
 

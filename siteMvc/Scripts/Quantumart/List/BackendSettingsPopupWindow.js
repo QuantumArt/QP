@@ -50,7 +50,6 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   },
 
   _initializeSettingsWindow() {
-
     const options = {
       popupWindowComponent: this._popupWindowComponent,
       popupWindowId: this._popupWindowId,
@@ -102,7 +101,8 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   },
 
   submitForm(ajaxData) {
-    $q.postAjax(this._settingsActionUrl.replace('Settings', 'SetupWithParams'), ajaxData, response => {
+    const url = this._settingsActionUrl.replace('Settings', 'SetupWithParams');
+    const callback = response => {
       if (response && response.data) {
         $(`#${this._popupWindowComponent.get_documentWrapperElementId()}`).html(response.data);
       } else {
@@ -110,7 +110,9 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
         $('.t-overlay').remove();
         this._callback({ isSettingsSet: true });
       }
-    });
+    };
+
+    $q.postAjax(url, ajaxData, callback);
   },
 
   _popupWindowClosedHandler() {

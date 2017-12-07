@@ -13,8 +13,7 @@ Quantumart.QP8.MultistepActionCopySiteSettings.prototype = {
   },
 
   serializeForm() {
-    const id = this.options.wrapperElementId;
-    return $(`#${id} form input, #${id} form select`).serialize();
+    return $q.serializeForm(this.options.wrapperElementId);
   },
 
   dispose() {
@@ -33,4 +32,4 @@ Quantumart.QP8.MultistepActionCopySiteSettings.addButtons = function (dataItems)
   };
 
   return dataItems.concat(exportButton);
-}
+};
