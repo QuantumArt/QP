@@ -3159,12 +3159,20 @@ namespace Quantumart.QP8.DAL
 
         public static int RemovingActions_RemoveSiteArticles(int siteId, int articleToRemove, SqlConnection connection)
         {
-            var query =
-                "select 1 as A into #disable_td_delete_item_o2m_nullify; " +
-                "DELETE FROM content_item where content_item_id in (select top {0} I.content_item_id from CONTENT_ITEM I " +
-                "inner join CONTENT C ON C.CONTENT_ID = I.CONTENT_ID " +
-                "where C.SITE_ID = @site_id " +
-                "order by I.content_id ASC, I.content_item_id ASC) ";
+            var query = @"
+                select 1 as A into #disable_td_delete_item_o2m_nullify;
+                select 1 as A into #disable_td_item_to_item;
+
+                select top {0} I.content_item_id into #top_items
+                from CONTENT_ITEM I
+                inner join CONTENT C ON C.CONTENT_ID = I.CONTENT_ID
+                where C.SITE_ID = @site_id
+                order by I.content_id ASC, I.content_item_id ASC
+
+                DELETE FROM item_to_item where r_item_id in (select CONTENT_ITEM_ID from #top_items)
+                DELETE FROM content_item where content_item_id in (select CONTENT_ITEM_ID from #top_items)
+            ";
+
             query = string.Format(query, articleToRemove);
 
             using (var cmd = SqlCommandFactory.Create(query, connection))
@@ -7143,7 +7151,7 @@ namespace Quantumart.QP8.DAL
                                          ,doc.col.value('./@destinationId', 'int') newitemid
                                         from @xmlprmsItems.nodes('/item') doc(col)
                                 )
-                                insert into [dbo].[item_to_item]
+                                insert into [dbo].[item_to_item] (link_id, l_item_id, r_item_id)
                                 select r.destination_link_id, i1.l_item_id, i1.r_item_id
                                 from [dbo].[item_to_item] as i1 (nolock)
                                 inner join @relations_between_links as r
