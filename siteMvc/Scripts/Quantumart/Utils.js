@@ -903,6 +903,18 @@ $q.updateQueryStringParameter = function updateQueryStringParameter(uri, key, va
   return `${uri + separator + key}=${value}`;
 };
 
+$q.serializeForm = function serializeForm(wrapperId) {
+  const selector = `#${wrapperId} form`;
+  const items = $(selector).formToArray();
+  const result = {};
+  items.forEach(
+    pair => {
+      result[pair.name] = pair.value;
+    });
+  return result;
+};
+
+
 $q.collectGarbageInIE = function collectGarbageInIE() {
   if ($.browser.msie) {
     window.CollectGarbage();
