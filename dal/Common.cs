@@ -7162,8 +7162,8 @@ namespace Quantumart.QP8.DAL
             var query = $@"
                                 declare @xmlprmsLinks xml = '{relationsBetweenLinks}'
 
-                                if OBJECT_ID('tempdb..#disable_ti_item_to_item') IS NULL begin
-                                    select 1 as A into #disable_ti_item_to_item
+                                if OBJECT_ID('tempdb..#disable_tu_item_to_item') IS NULL begin
+                                    select 1 as A into #disable_tu_item_to_item
                                 end
 
                                 declare @relations_between_links table (

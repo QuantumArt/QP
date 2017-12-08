@@ -2375,44 +2375,49 @@ go
 CREATE TRIGGER [dbo].[tu_item_to_item] ON [dbo].[item_to_item] AFTER UPDATE
 AS
 BEGIN
-	if update(l_item_id) or update(r_item_id)
-	begin
 
-        declare @links table
-	    (
-		    id numeric primary key,
-		    item_id numeric
-	    )
+    if object_id('tempdb..#disable_tu_item_to_item') is null
+    BEGIN
 
-		insert into @links
-		select distinct link_id, l_item_id from inserted
+	    if update(l_item_id) or update(r_item_id)
+	    BEGIN
 
-		declare @link_id numeric, @item_id numeric , @query nvarchar(max)
+            declare @links table
+	        (
+	    	    id numeric primary key,
+	    	    item_id numeric
+	        )
 
-		while exists(select id from @links)
-		begin
+	    	insert into @links
+	    	select distinct link_id, l_item_id from inserted
 
-			select @link_id = id from @links
-			select 	@item_id = item_id from @links
+	    	declare @link_id numeric, @item_id numeric , @query nvarchar(max)
 
-			declare @table_name nvarchar(50), @table_name_rev nvarchar(50)
-			set @table_name = 'item_link_' + cast(@link_id as varchar)
-			set @table_name_rev = 'item_link_' + cast(@link_id as varchar) + '_rev'
+	    	while exists(select id from @links)
+	    	BEGIN
 
-			declare @linked_item numeric
-			select @linked_item = l_item_id from inserted
+	    		select @link_id = id from @links
+	    		select 	@item_id = item_id from @links
 
-			set @query = 'update ' + @table_name + ' set linked_id = @linked_item where id = @item_id'
-			print @query
-			exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+	    		declare @table_name nvarchar(50), @table_name_rev nvarchar(50)
+	    		set @table_name = 'item_link_' + cast(@link_id as varchar)
+	    		set @table_name_rev = 'item_link_' + cast(@link_id as varchar) + '_rev'
 
-			set @query = 'update ' + @table_name_rev + ' set linked_id = @linked_item where id = @item_id'
-			print @query
-			exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+	    		declare @linked_item numeric
+	    		select @linked_item = l_item_id from inserted
 
-			delete from @links where id = @link_id
-		end
-	END
+	    		set @query = 'update ' + @table_name + ' set linked_id = @linked_item where id = @item_id'
+	    		print @query
+	    		exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+
+	    		set @query = 'update ' + @table_name_rev + ' set linked_id = @linked_item where id = @item_id'
+	    		print @query
+	    		exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+
+	    		delete from @links where id = @link_id
+	    	END
+	    END
+    END
 END
 ;
 GO
