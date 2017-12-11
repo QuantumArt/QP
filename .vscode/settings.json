@@ -1,3 +1,46 @@
 {
-    "eslint.enable": true
+  "eslint.autoFixOnSave": true,
+  "javascript.validate.enable": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.vs": true,
+    "**/node_modules": true,
+    "binaries": true,
+    "bll": true,
+    "configuration": true,
+    "constants": true,
+    "dal": true,
+    "deploy": true,
+    "Merger": true,
+    "node_modules": true,
+    "packages": true,
+    "QA": true,
+    "QP.Custom": true,
+    "QP8.ConsoleDbUpdate": true,
+    "QP8.TestCustomActionsHost": true,
+    "QuantumArt.Infrastructure": true,
+    "QuantumArt.Schedulers": true,
+    "QuantumArt.Tests": true,
+    "Resources": true,
+    "security": true,
+    "siteMvc/App_Start": true,
+    "siteMvc/bin": true,
+    "siteMvc/Controllers": true,
+    "siteMvc/Extensions": true,
+    "siteMvc/Hubs": true,
+    "siteMvc/Infrastructure": true,
+    "siteMvc/obj": true,
+    "siteMvc/Properties": true,
+    "siteMvc/References": true,
+    "siteMvc/ToCopy": true,
+    "siteMvc/ViewModels": true,
+    "sites": true,
+    "utils": true,
+    "validators": true,
+    "winLogonMvc": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "siteMvc/Scripts/build": true
+  }
 }

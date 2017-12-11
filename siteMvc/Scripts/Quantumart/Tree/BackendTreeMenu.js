@@ -165,6 +165,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       }, nodes => {
         let dataItems = that.getTreeViewItemCollectionFromTreeNodes(nodes);
         if (dataItems.length === 0) {
+          that._hideAjaxLoadingIndicatorForNode($parentNode);
           dataItems = null;
           return;
         }
@@ -312,19 +313,23 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
   _expandToEntityNode(entityTypeCode, parentEntityId, entityId) {
     const that = this;
     Quantumart.QP8.BackendTreeMenu.getSubTreeToEntity(entityTypeCode, parentEntityId, entityId, data => {
-      if (data) {
+      if (!data) {
         return;
       }
 
       const findDeepest = function (node, toExpand) {
-        let tempNode = that.getNode(that.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder));
-        if (!node || $q.isNullOrEmpty(tempNode)) {
+        if (!node) {
+          return null;
+        }
+
+        const nodeCode = that.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder);
+        const $node = that.getNode(nodeCode);
+
+        if ($q.isNullOrEmpty($node)) {
           return null;
         }
 
         if (toExpand) {
-          tempNode = that.getNode(that.generateNodeCode(node.Code, node.Id, node.ParentId, node.IsFolder));
-          const $node = that.getNode(tempNode);
           if (that._isNodeCollapsed($node)) {
             that._treeComponent.nodeToggle(null, $node, true);
           }
@@ -334,21 +339,21 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       };
 
       let deepestExistedNode = findDeepest(data);
-      const findChildren = function (options) {
-        if (!parent || $q.isNullOrEmpty(parent.ChildNodes)) {
+
+      const findChildren = function (options, parentNode) {
+        if (!parentNode || $q.isNullOrEmpty(parentNode.ChildNodes)) {
           return [];
-        } else if (parent.Code === options.entityTypeCode
-          && ((parent.IsFolder && parent.ParentId === options.parentEntityId)
-            || (!parent.IsFolder && parent.Id === options.parentEntityId))
-          && parent.IsFolder === options.isFolder
-          && parent.IsGroup === options.isGroup
-          && parent.GroupItemCode === options.groupItemCode
+        } else if (parentNode.Code === options.entityTypeCode
+          && ((parentNode.IsFolder && parentNode.ParentId === options.parentEntityId)
+            || (!parentNode.IsFolder && parentNode.Id === options.parentEntityId))
+          && parentNode.IsFolder === options.isFolder
+          && parentNode.IsGroup === options.isGroup
+          && parentNode.GroupItemCode === options.groupItemCode
         ) {
-          deepestExistedNode = parent;
-          return parent.ChildNodes;
+          return parentNode.ChildNodes;
         }
 
-        return findChildren(options, $.grep(parent.ChildNodes || [], leaf => !!leaf.ChildNodes)[0]);
+        return findChildren(options, $.grep(parentNode.ChildNodes || [], leaf => !!leaf.ChildNodes)[0]);
       };
 
       if (deepestExistedNode) {
