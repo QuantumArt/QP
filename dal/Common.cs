@@ -7156,7 +7156,7 @@ namespace Quantumart.QP8.DAL
                                 from [dbo].[item_to_item] as i1 (nolock)
                                 inner join @relations_between_links as r
                                     on r.source_link_id = i1.link_id
-                                where i1.l_item_id in (select olditemid from relations_between_items) or i1.r_item_id in (select olditemid from relations_between_items)";
+                                where i1.l_item_id in (select olditemid from relations_between_items)";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
