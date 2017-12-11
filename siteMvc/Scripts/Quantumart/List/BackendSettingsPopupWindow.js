@@ -112,7 +112,16 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
       }
     };
 
-    $q.postAjax(url, ajaxData, callback);
+    if (this._settingsClass === Quantumart.QP8.MultistepActionImportSettings) {
+      $.ajax({
+        url,
+        data: ajaxData,
+        type: 'POST',
+        success: callback
+      });
+    } else {
+      $q.postAjax(url, ajaxData, callback);
+    }
   },
 
   _popupWindowClosedHandler() {
