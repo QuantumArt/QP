@@ -388,5 +388,5 @@
     }
   };
 
-  Quantumart.QP8.BackendVisualEditor.registerClass('Quantumart.QP8.BackendVisualEditor', null, window.Sys.IDisposable);
+  Quantumart.QP8.BackendVisualEditor.registerClass('Quantumart.QP8.BackendVisualEditor', null, Sys.IDisposable);
 }());
