@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace QP8.Infrastructure.Extensions
@@ -24,7 +24,8 @@ namespace QP8.Infrastructure.Extensions
             {
                 Formatting = formatting,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                ContractResolver = resolver
+                ContractResolver = resolver,
+                DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
             });
         }
     }
