@@ -1,6 +1,10 @@
-Quantumart.QP8.ImageCropResizeClient = Quantumart.QP8.ImageCropResizeClient || {};
-Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClient.Cache || {};
+/* eslint-disable max-lines */
+/* eslint-disable max-statements */
+/* eslint-disable max-len */
+Quantumart.QP8.ImageCropResizeClient = {};
+Quantumart.QP8.ImageCropResizeClient.Cache = {};
 
+// eslint-disable-next-line
 (function ($, imgCropResize) {
   let _parameters = null;
   let _$windowElement = null;
@@ -56,9 +60,10 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
   const displayErrors = function (errors) {
     _removeErrors();
-    for (const i in errors) {
-      _$errors.append($(`<li>${errors[i]}</li>`));
-    }
+
+    errors.forEach(error => {
+      _$errors.append($(`<li>${error}</li>`));
+    });
 
     _$errorsContainer.show();
     _setSize(_$img);
@@ -82,18 +87,18 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
   const _getExtension = function (url) {
     const index = url.lastIndexOf('.');
-    return index == -1 ? '' : url.substr(index, url.length - index);
+    return index === -1 ? '' : url.substr(index, url.length - index);
   };
 
   const readData = function () {
     let targetFileUrl = '';
-    const overwriteFile = _getSaveMode() == _saveMode.overwrite;
+    const overwriteFile = _getSaveMode() === _saveMode.overwrite;
 
     if (overwriteFile) {
       targetFileUrl = _parameters.sourceImageUrl;
     } else {
       let value = $.trim(_$inputUserFileName.val());
-      if (value != '' && value.lastIndexOf('.') == -1) {
+      if (value !== '' && value.lastIndexOf('.') === -1) {
         value += _getExtension(_parameters.sourceImageUrl);
       }
 
@@ -247,7 +252,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
   const _ensureSelection = function (selection) {
     setTimeout(() => {
-      if (_imgAreaSelect != null && (selection.width != _parameters.crop.width || selection.height != _parameters.crop.height)) {
+      if (_imgAreaSelect !== null && _imgAreaSelect !== undefined && (selection.width !== _parameters.crop.width || selection.height !== _parameters.crop.height)) {
         _imgAreaSelect.setSelection(selection.x1, selection.y1, selection.x1 + _parameters.crop.width, selection.y2 + _parameters.crop.height);
         _imgAreaSelect.update();
       }
@@ -265,7 +270,9 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
     const resizeWidth = _imgInitWidth * resize;
     const resizeHeight = _imgInitHeight * resize;
-    if (!_parameters.allowResizeCropArea) {
+    if (_parameters.allowResizeCropArea) {
+      _resizeImage(resizeWidth);
+    } else {
       const dx = resizeWidth - _parameters.crop.width;
       const dy = resizeHeight - _parameters.crop.height;
       if (dx > 0 && dy > 0) {
@@ -274,8 +281,6 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
       const selection = _imgAreaSelect.getSelection();
       _ensureSelection(selection);
-    } else {
-      _resizeImage(resizeWidth);
     }
   };
 
@@ -300,6 +305,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     });
 
     _$nouislider.on('mousewheel DOMMouseScroll', function (e) {
+      // eslint-disable-next-line
       const o = e.originalEvent;
       const delta = o && (o.wheelDelta || (o.detail && -o.detail));
 
@@ -307,9 +313,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         e.preventDefault();
         const currentvalue = parseFloat($(this).val());
         let step = 1;
-        step *= delta < 0
-          ? currentvalue < 1 ? -0.25 : -0.5
-          : currentvalue < 1 ? 0.25 : 0.5;
+        if (delta < 0) {
+          step *= currentvalue < 1 ? -0.25 : -0.5;
+        } else {
+          step *= currentvalue < 1 ? 0.25 : 0.5;
+        }
 
         const newValue = currentvalue + step;
         if (newValue >= 0 && newValue <= 3.5) {
@@ -477,7 +485,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         const message = response.message || $l.Crop.defaultErrorMessage;
         displayErrors([message]);
       } else if (typeof _parameters.onCompleteCallback === 'function') {
-        if (_getSaveMode() == _saveMode.saveAs) {
+        if (_getSaveMode() === _saveMode.saveAs) {
           _saveToCache();
         } else {
           _removeFromCache();
@@ -541,7 +549,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
 
   const _validate = function () {
     const saveMode = _getSaveMode();
-    if (saveMode == _saveMode.saveAs && !_$inputUserFileName.val()) {
+    if (saveMode === _saveMode.saveAs && !_$inputUserFileName.val()) {
       displayErrors([$l.Crop.enterFileName]);
       return false;
     }
@@ -554,7 +562,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     _$btnSave.click(() => {
       if (_validate()) {
         _removeErrors();
-        if (_getSaveMode() == _saveMode.overwrite) {
+        if (_getSaveMode() === _saveMode.overwrite) {
           _serverOperateImage();
         } else {
           const formOptions = readData();
@@ -569,7 +577,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
       return false;
     });
 
-    _$radioInputs.change(radio => {
+    _$radioInputs.change(() => {
       const saveCopy = _$radioSaveCopy.attr('checked');
       if (saveCopy) {
         _$inputUserFileName.removeAttr('disabled');
@@ -579,6 +587,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
     });
   };
 
+  // eslint-disable-next-line
   imgCropResize.create = function (parameters) {
     _parameters = {};
     Object.assign(_parameters, _defaultParameters);
