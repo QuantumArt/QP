@@ -1,4 +1,7 @@
-Quantumart.QP8.Interaction = (function Interaction() {
+window.Quantumart = window.Quantumart || {};
+window.Quantumart.QP8 = window.Quantumart.QP8 || {};
+window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || {};
+window.Quantumart.QP8.Interaction = (function Interaction() {
   /* eslint-disable no-empty-function */
   const ArticleFormState = function () { };
   const ExecuteActionOptions = function () { };
