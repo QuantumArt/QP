@@ -1,9 +1,10 @@
 /* eslint max-lines: 'off' */
 /* eslint no-empty-function: 'off' */
 
-window.$c = function () {};
+// eslint-disable-next-line no-shadow
+class $c { }
 
-window.$c.getAllFieldRows = function (parentElement) {
+$c.getAllFieldRows = function (parentElement) {
   window.console.error('TODO: SHOULD NOT USE THIS METHOD');
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -1340,8 +1341,8 @@ $c.initWorkflow = function (editorElem) {
 $c.saveDataOfAllWorkflows = function (editorElem) {
   window.console.error('TODO: SHOULD NOT USE THIS METHOD');
   const $workflows = $c.getAllWorkflows(editorElem);
-  $workflows.each(function () {
-    $c.saveWorkflowData($(this));
+  $workflows.each(() => {
+    $c.saveWorkflowData();
   });
 };
 
@@ -1443,6 +1444,7 @@ $c.downloadFile = function (url) {
     }).appendTo(document.body).get(0);
   }
 
+  // @ts-ignore
   iframe.src = url;
 };
 
@@ -1717,5 +1719,6 @@ $c.destroyEntityDataTree = function (dataTreeElem) {
 
 // #endregion
 
-Quantumart.QP8.ControlHelpers = window.$c;
-Quantumart.QP8.ControlHelpers.registerClass('Quantumart.QP8.ControlHelpers');
+Quantumart.QP8.ControlHelpers = $c;
+
+window.$c = $c;

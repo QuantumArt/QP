@@ -86,7 +86,8 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
   },
 
   _instanceExistenceCheck() {
-    const dfr = new jQuery.Deferred();
+    // eslint-disable-next-line new-cap
+    const dfr = jQuery.Deferred();
     if (window.localStorage.getItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG)) {
       this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, this._uid);
       const that = this;

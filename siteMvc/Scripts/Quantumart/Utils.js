@@ -1,14 +1,13 @@
-/* global _ */
-
 /* eslint no-extend-native: 'off' */
 /* eslint max-params: 'off' */
 /* eslint max-lines: 'off' */
 /* eslint no-alert: 'off' */
 /* eslint no-sync: 'off' */
 
-window.$q = {
-  isDebug: Sys.Debug.isDebug
-};
+// eslint-disable-next-line no-shadow
+class $q { }
+
+$q.isDebug = Sys.Debug.isDebug;
 
 /**
  * Trace function for logging debug messages
@@ -26,7 +25,7 @@ $q.trace = (msg, ...otherArgs) => {
       }
 
       window.console.trace('%cView tracing', 'color: darkblue;font-weight:bold;');
-      window.console.groupEnd(msg);
+      window.console.groupEnd();
     } else if (otherArgs && otherArgs.length) {
       window.console.log(msg, ...otherArgs);
     }
@@ -49,7 +48,7 @@ $q.traceError = (msg, ...otherArgs) => {
     }
 
     window.console.trace('%cView tracing', 'color: darkred;font-weight:bold;');
-    window.console.groupEnd(msg);
+    window.console.groupEnd();
   } else if (otherArgs && otherArgs.length) {
     window.console.error(msg, ...otherArgs);
   }
@@ -58,7 +57,7 @@ $q.traceError = (msg, ...otherArgs) => {
 /**
  * Success message that should be shown to user
  * @param  {string}    msg    message that should be shown to user
- * @param  {...Object} params data that should be loggged
+ * @param  {...Object} otherArgs data that should be loggged
  */
 $q.alertSuccess = (msg, ...otherArgs) => {
   window.alert(msg);
@@ -595,9 +594,9 @@ $q.getTypeNameForJson = function getTypeNameForJson(typeName) {
 
 $q.processGenericAjaxError = function processGenericAjaxError(jqXHR) {
   let errorMessage = String.format($l.Common.ajaxGenericErrorMessage, status);
-  if (status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
+  if (jqXHR.status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
     errorMessage = $l.Common.ajaxUserSessionExpiredErrorMessage;
-  } else if (status === 500) {
+  } else if (jqXHR.status === 500) {
     errorMessage = $l.Common.ajaxDataReceivingErrorMessage;
   }
 
@@ -682,7 +681,7 @@ $q.toFixed = function toFixed(number, digits) {
 if (typeof String.prototype.left !== 'function') {
   String.prototype.left = function (strLength) {
     if (!/\d+/.test(strLength)) {
-      return this;
+      return String(this);
     }
 
     return this.substr(0, strLength);
@@ -692,7 +691,7 @@ if (typeof String.prototype.left !== 'function') {
 if (typeof String.prototype.right !== 'function') {
   String.prototype.right = function (strLength) {
     if (!/\d+/.test(strLength)) {
-      return this;
+      return String(this);
     }
 
     return this.substr(this.length - strLength);
@@ -706,7 +705,7 @@ $q.generateRandomString = function generateRandomString(stringLength) {
   let result = '';
 
   for (i = 0; i < stringLength; i++) {
-    randomNumber = parseInt(symbolStringLength * Math.random(), 10);
+    randomNumber = parseInt(String(symbolStringLength * Math.random()), 10);
     randomSymbol = symbolString.substr(randomNumber, 1);
 
     result += randomSymbol;
@@ -808,7 +807,7 @@ $q.getHashKeysCount = function getHashKeysCount(hash) {
   let keysCount = 0;
   if (hash) {
     // eslint-disable-next-line guard-for-in, no-restricted-syntax, no-unused-vars
-    for (const key in hash) {
+    for (const _key in hash) {
       keysCount += 1;
     }
   }
@@ -952,3 +951,5 @@ $q.dispose = function (listOfPropNames) {
     this[propName] = this[propName] ? undefined : this[propName];
   });
 };
+
+window.$q = $q;

@@ -213,32 +213,37 @@ Quantumart.QP8.BackendEntityObject.getParentInfo = function (entityTypeCode, ent
 };
 
 Quantumart.QP8.BackendEntityObject.getArticleFieldValue = function (contentId, fieldName, articleId) {
-  return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleFieldValue`, {
-    contentId,
-    fieldName,
-    articleId
-  });
+  return Quantumart.QP8.BackendEntityObject.makeSimpleCall(
+    'GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleFieldValue`, {
+      contentId,
+      fieldName,
+      articleId
+    });
 };
 
 Quantumart.QP8.BackendEntityObject.getContentFieldValues = function (contentId, fieldName) {
-  return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetContentFieldValues`, {
-    contentId,
-    fieldName
-  });
+  return Quantumart.QP8.BackendEntityObject.makeSimpleCall(
+    'GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetContentFieldValues`, {
+      contentId,
+      fieldName
+    });
 };
 
 Quantumart.QP8.BackendEntityObject.getArticleLinkedItems = function (linkId, articleId) {
-  return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleLinkedItems`, {
-    linkId, articleId
-  });
+  return Quantumart.QP8.BackendEntityObject.makeSimpleCall(
+    'GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleLinkedItems`, {
+      linkId,
+      articleId
+    });
 };
 
 Quantumart.QP8.BackendEntityObject.getArticleIdByFieldValue = function (contentId, fieldName, fieldValue) {
-  return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleIdByFieldValue`, {
-    contentId,
-    fieldName,
-    fieldValue
-  });
+  return Quantumart.QP8.BackendEntityObject.makeSimpleCall(
+    'GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleIdByFieldValue`, {
+      contentId,
+      fieldName,
+      fieldValue
+    });
 };
 
 Quantumart.QP8.BackendEntityObject.getParentsChain = function (entityTypeCode, entityId, parentEntityId) {
@@ -332,4 +337,8 @@ Quantumart.QP8.BackendEntityObject.getContextQuery = function (contentId, curren
 };
 
 Quantumart.QP8.BackendEntityObject.registerClass('Quantumart.QP8.BackendEntityObject');
-window.$o = Quantumart.QP8.BackendEntityObject;
+
+// eslint-disable-next-line no-shadow
+const $o = Quantumart.QP8.BackendEntityObject;
+
+window.$o = $o;

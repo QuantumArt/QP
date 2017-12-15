@@ -354,7 +354,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     for (let tabIndex = 0, tabCount = $tabs.length; tabIndex < tabCount; tabIndex++) {
       const $tab = $tabs.eq(tabIndex);
       if ($tab.data('parent_entity_type_code') === parentEntityTypeCode
-         && $tab.data('parent_entity_id') === `${parentEntityId}`) {
+        && $tab.data('parent_entity_id') === `${parentEntityId}`) {
         Array.add(foundTabElems, $tab.get(0));
       }
     }
@@ -368,8 +368,8 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     for (let tabIndex = 0, tabCount = $tabs.length; tabIndex < tabCount; tabIndex++) {
       const $tab = $tabs.eq(tabIndex);
       if ($tab.data('entity_type_code') === eventArgs.get_entityTypeCode()
-          && $tab.data('entity_id') === `${eventArgs.get_entityId()}`
-          && $tab.data('action_code') === eventArgs.get_actionCode()) {
+        && $tab.data('entity_id') === `${eventArgs.get_entityId()}`
+        && $tab.data('action_code') === eventArgs.get_actionCode()) {
         Array.add(foundTabElems, $tab.get(0));
       }
     }
@@ -833,7 +833,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     if (scrollingHeight > 0) {
-      duration = parseFloat(scrollingHeight) * 1500 / 220;
+      duration = parseFloat(String(scrollingHeight)) * 1500 / 220;
     }
 
     return duration;
@@ -1031,7 +1031,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const $menuButton = $(this._tabMenuButtonElement);
     const menuHeight = $menu.outerHeight();
     const menuTop = $menuButton.offset().top + $menuButton.height()
-    + $menuButton.borderTopWidth() + $menuButton.borderBottomWidth();
+      + $menuButton.borderTopWidth() + $menuButton.borderBottomWidth();
     const menuRight = $(window).width() - $menuButton.offset().left - $menuButton.outerWidth();
 
     const $scrollable = $(this._tabMenuScrollableElement);

@@ -116,7 +116,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
 
             const getCustomUrlCallback = function (data) {
               if (data && data.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
-                $a.showResult(data);
+                Quantumart.QP8.BackendActionExecutor.showResult(data);
                 callback('', eventArgs);
               } else {
                 customData = data;
@@ -172,7 +172,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
       actionStatus = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
     } else if (
       (actionTypeCode === window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED
-       || actionTypeCode === window.ACTION_TYPE_CODE_FILE_CROPPED
+        || actionTypeCode === window.ACTION_TYPE_CODE_FILE_CROPPED
       ) && (entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_FILE
         || entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE
       )) {
@@ -182,7 +182,8 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
   },
 
   executeMultistepAction(eventArgs) {
-    const dfr = new $.Deferred();
+    // eslint-disable-next-line new-cap
+    const dfr = $.Deferred();
     const that = this;
 
     let additionalUrlParameters = null;
@@ -265,16 +266,16 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
           progressWindow.attachObserver(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED, disposeProgressWindow);
           progressWindow.initialize();
 
-          const errorCallback1 = function (jqXHR, textStatus, errorThrown) {
-            errorCallback(jqXHR, textStatus, errorThrown);
+          const errorCallback1 = function (jqXHR, textStatus) {
+            errorCallback(jqXHR, textStatus);
             progressWindow.setError();
             dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
           };
 
-          const errorCallback2 = function (jqXHR, textStatus, errorThrown) {
+          const errorCallback2 = function (jqXHR, textStatus) {
             $q.postDataToUrl(tearDownUrl, { isError: true }, true)
               .done(() => {
-                errorCallback1(jqXHR, textStatus, errorThrown);
+                errorCallback1(jqXHR, textStatus);
               })
               .fail(errorCallback1);
           };
@@ -711,10 +712,12 @@ Quantumart.QP8.BackendActionExecutor.getActionViewByViewTypeCode = function (act
   return actionView;
 };
 
-
 Quantumart.QP8.BackendActionExecutor.registerClass('Quantumart.QP8.BackendActionExecutor', Quantumart.QP8.Observable);
 
-window.$a = Quantumart.QP8.BackendActionExecutor;
+// eslint-disable-next-line no-shadow
+const $a = Quantumart.QP8.BackendActionExecutor;
+
+window.$a = $a;
 
 Quantumart.QP8.BackendActionParameters = function (options) {
   Quantumart.QP8.BackendActionParameters.initializeBase(this);
