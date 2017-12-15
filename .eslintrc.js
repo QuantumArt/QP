@@ -6,7 +6,7 @@ module.exports = {
     './.eslint/.eslintrc'
   ].map(require.resolve),
   globals: {
-    _: false,
+    // _: false,
     ko: false,
     $a: false,
     $c: false,
@@ -16,10 +16,9 @@ module.exports = {
     $q: false,
     Sys: false,
     Url: false,
-    $ctx: false,
+    // $ctx: false,
     pmrpc: false,
     Quantumart: false,
-    Silverlight: false
   },
   rules: {
     'no-invalid-this': 'off',
