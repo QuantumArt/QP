@@ -1,6 +1,5 @@
 {
   "eslint.autoFixOnSave": true,
-  "javascript.validate.enable": false,
   "files.exclude": {
     "**/.git": true,
     "**/.vs": true,
@@ -48,7 +47,14 @@
     "sites": true,
     "utils": true,
     "validators": true,
-    "winLogonMvc": true
+    "winLogonMvc": false,
+    "winLogonMvc/App_Start": true,
+    "winLogonMvc/bin": true,
+    "winLogonMvc/Controllers": true,
+    "winLogonMvc/obj": true,
+    "winLogonMvc/Properties": true,
+    "winLogonMvc/Scripts": false,
+    "winLogonMvc/Views": false
   },
   "search.exclude": {
     "**/node_modules": true,

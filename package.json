@@ -17,6 +17,10 @@
     "react-dom": "^15.5.4"
   },
   "devDependencies": {
+    "@types/jquery": "^1.10.33",
+    "@types/jquery.scrollto": "^1.4.28",
+    "@types/knockout": "^3.4.47",
+    "@types/signalr": "^2.2.35",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.0.2",
     "babel-preset-env": "^1.6.0",
