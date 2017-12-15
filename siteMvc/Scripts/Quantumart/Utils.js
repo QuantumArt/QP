@@ -7,7 +7,7 @@
 /* eslint no-sync: 'off' */
 
 window.$q = {
-  isDebug: window.Sys.Debug.isDebug
+  isDebug: Sys.Debug.isDebug
 };
 
 /**
@@ -16,7 +16,7 @@ window.$q = {
  * @param  {...Object} otherArgs data that should be loggged
  */
 $q.trace = (msg, ...otherArgs) => {
-  if ($q.isDebug || window.Sys.Debug.isDebug) {
+  if ($q.isDebug || Sys.Debug.isDebug) {
     if ($.isFunction(window.console.groupCollapsed)
       && $.isFunction(window.console.groupEnd)
       && $.isFunction(window.console.trace)) {
@@ -62,7 +62,7 @@ $q.traceError = (msg, ...otherArgs) => {
  */
 $q.alertSuccess = (msg, ...otherArgs) => {
   window.alert(msg);
-  if ($q.isDebug || window.Sys.Debug.isDebug) {
+  if ($q.isDebug || Sys.Debug.isDebug) {
     window.console.log(msg, ...otherArgs);
   }
 };
