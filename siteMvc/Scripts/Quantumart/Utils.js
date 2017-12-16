@@ -169,8 +169,8 @@ $q.sendAjax = opts => {
  * @param  {string}   url          url address to GET ajax request
  * @param  {Object}   data         data which should be getted from server
  * @param  {function} jsendSuccess callback function for jQuery ajax success
- * @param  {function} jsendFail    callback function for jQuery ajax fail
- * @param  {function} jsendError   callback function for jQuery ajax error
+ * @param  {function} [jsendFail]  callback function for jQuery ajax fail
+ * @param  {function} [jsendError] callback function for jQuery ajax error
  * @return {Object}                jQuery XHR deffered
  */
 $q.getAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
@@ -186,8 +186,8 @@ $q.getAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
  * @param  {string}   url          url address to POST ajax request
  * @param  {Object}   data         data which should be posted to server
  * @param  {function} jsendSuccess callback function for jQuery ajax success
- * @param  {function} jsendFail    callback function for jQuery ajax fail
- * @param  {function} jsendError   callback function for jQuery ajax error
+ * @param  {function} [jsendFail]  callback function for jQuery ajax fail
+ * @param  {function} [jsendError] callback function for jQuery ajax error
  * @return {Object}                jQuery XHR deffered
  */
 $q.postAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({

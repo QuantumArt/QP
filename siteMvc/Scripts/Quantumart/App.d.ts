@@ -83,3 +83,19 @@ interface EventTarget {
   attachEvent(eventNameWithOn: any, callback: any): any;
   detachEvent(eventNameWithOn: any, callback: any): any;
 }
+
+// Suppressed Warnings
+interface Element {
+  // TODO: fix jQuery.fn.each() usage
+  [name: string]: any;
+}
+
+// TODO: Set polyfill
+declare var Set: any;
+
+interface ObjectConstructor {
+  // TODO: Object.values polyfill
+  values(object: object): any[];
+  // TODO: Object.entries polyfill
+  entries(object: object): [string, any][];
+}
