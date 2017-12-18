@@ -42,34 +42,34 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestData\ConsoleDbUpdate\CsvData\mts_catalog2\content_2576_2016_10_7_13_24_43_ex1.csv">
+    <None Update="TestData\ConsoleDbUpdate\CsvData\catalog\content_2576_2016_10_7_13_24_43_ex1.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\ConsoleDbUpdate\CsvData\mts_catalog2\content_2577_2016_10_7_13_25_8_ex2.csv">
+    <None Update="TestData\ConsoleDbUpdate\CsvData\catalog\content_2577_2016_10_7_13_25_8_ex2.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\ConsoleDbUpdate\CsvData\mts_catalog2\content_2578_2016_10_7_13_23_42_base.csv">
+    <None Update="TestData\ConsoleDbUpdate\CsvData\catalog\content_2578_2016_10_7_13_23_42_base.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\ConsoleDbUpdate\CsvData\qa_beeline_kz_copy\content_10771_2016_9_27_13_31_10.csv">
+    <None Update="TestData\ConsoleDbUpdate\CsvData\kz_copy\content_10771_2016_9_27_13_31_10.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\ConsoleDbUpdate\CsvData\qa_beeline_kz_copy\content_10772_2016_9_27_13_31_20.csv">
+    <None Update="TestData\ConsoleDbUpdate\CsvData\kz_copy\content_10772_2016_9_27_13_31_20.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\ConsoleDbUpdate\CsvData\qa_beeline_kz_copy\content_10773_2016_9_27_13_31_2.csv">
+    <None Update="TestData\ConsoleDbUpdate\CsvData\kz_copy\content_10773_2016_9_27_13_31_2.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\ConsoleDbUpdate\CsvData\qa_beeline_kz_copy\content_289_2016_9_27_13_30_50.csv">
+    <None Update="TestData\ConsoleDbUpdate\CsvData\kz_copy\content_289_2016_9_27_13_30_50.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml">
+    <None Update="TestData\ConsoleDbUpdate\XmlData\catalog_2016-10-27_17-00-16.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\ConsoleDbUpdate\XmlData\mts_catalog2_guid_rename.xml">
+    <None Update="TestData\ConsoleDbUpdate\XmlData\catalog_guid_rename.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\ConsoleDbUpdate\XmlData\mts_catalog_with_five_actions.xml">
+    <None Update="TestData\ConsoleDbUpdate\XmlData\catalog_with_five_actions.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash.xml">
