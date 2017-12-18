@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyExtensions.cs" />
     <Compile Include="Cleaner.cs" />
     <Compile Include="ComparableExtensions.cs" />
     <Compile Include="Constants\JsTypeCode.cs" />
