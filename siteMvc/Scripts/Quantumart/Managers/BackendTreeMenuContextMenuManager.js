@@ -1,7 +1,7 @@
 class BackendTreeMenuContextMenuManager extends Quantumart.QP8.Observable {
-  static getInstance(options) {
+  static getInstance() {
     if (!BackendTreeMenuContextMenuManager._instance) {
-      BackendTreeMenuContextMenuManager._instance = new BackendTreeMenuContextMenuManager(options);
+      BackendTreeMenuContextMenuManager._instance = new BackendTreeMenuContextMenuManager();
     }
 
     return BackendTreeMenuContextMenuManager._instance;
@@ -15,6 +15,7 @@ class BackendTreeMenuContextMenuManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
+    // @ts-ignore
     super();
     this._сontextMenus = {};
   }

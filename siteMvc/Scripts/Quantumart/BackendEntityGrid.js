@@ -26,6 +26,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
     options,
     hostOptions
   ) {
+    // @ts-ignore
     super();
 
     this.GRID_BUSY_CLASS_NAME = 'busy';
@@ -713,7 +714,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
         if (dataItem[this._titleColumnName]) {
           entityName = `${dataItem[this._titleColumnName]}`;
         } else {
-          entityName = entityId;
+          entityName = String(entityId);
         }
 
         if (entityId) {

@@ -19,6 +19,7 @@ class BackendEntityGridManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
+    // @ts-ignore
     super();
     this._gridGroups = {};
   }

@@ -11,6 +11,7 @@ class BackendPlUploader extends Quantumart.QP8.BackendBaseUploader {
       };
     };
 
+    // @ts-ignore
     super();
 
     this._folderPath = '';

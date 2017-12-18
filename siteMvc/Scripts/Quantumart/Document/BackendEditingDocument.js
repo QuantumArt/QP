@@ -2,6 +2,7 @@
 
 class BackendEditingDocument extends Quantumart.QP8.BackendDocumentHost {
   constructor(tabId, editingArea, eventArgs, options) {
+    // @ts-ignore
     super(eventArgs, options);
 
     if (!tabId) {

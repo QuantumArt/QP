@@ -1707,6 +1707,7 @@ declare namespace Sys {
 
         //#endregion
 
+        [name: string]: any;
     }
 
     /**

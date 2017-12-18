@@ -19,6 +19,7 @@ class BackendEntityDataListManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
+    // @ts-ignore
     super();
     this._listGroups = {};
     this._valueStorage = {};

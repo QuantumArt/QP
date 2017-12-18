@@ -1,7 +1,7 @@
 class BackendEntityTreeManager extends Quantumart.QP8.Observable {
-  static getInstance(options) {
+  static getInstance() {
     if (!BackendEntityTreeManager._instance) {
-      BackendEntityTreeManager._instance = new BackendEntityTreeManager(options);
+      BackendEntityTreeManager._instance = new BackendEntityTreeManager();
     }
 
     return BackendEntityTreeManager._instance;
@@ -19,6 +19,7 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
+    // @ts-ignore
     super();
     this._treeGroups = {};
   }
@@ -177,7 +178,7 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
       const newParentEntityId = +$o.getParentEntityId(window.ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
       this.refreshNode(window.ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, {
         loadChildNodes:
-        true,
+          true,
         saveNodesSelection: false
       });
     }

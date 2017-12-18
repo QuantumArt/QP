@@ -11,6 +11,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
 
   // eslint-disable-next-line max-statements, complexity
   constructor(popupWindowId, eventArgs, options) {
+    // @ts-ignore
     super(eventArgs, options);
 
     this._popupWindowId = '';
@@ -549,13 +550,13 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
     const $toolbarWrapper = $(this._toolbarWrapperElement);
     const $area = $(this._documentAreaElement);
 
-    const contentHeight = parseInt($content.height(), 10);
+    const contentHeight = parseInt(String($content.height()), 10);
     let breadCrumbsWrapperHeight = 0;
     if (!$q.isNullOrEmpty($breadCrumbsWrapper)) {
-      breadCrumbsWrapperHeight = parseInt($breadCrumbsWrapper.outerHeight(), 10);
+      breadCrumbsWrapperHeight = parseInt(String($breadCrumbsWrapper.outerHeight()), 10);
     }
 
-    const toolbarWrapperHeight = parseInt($toolbarWrapper.outerHeight(), 10);
+    const toolbarWrapperHeight = parseInt(String($toolbarWrapper.outerHeight()), 10);
     const areaHeight = contentHeight - breadCrumbsWrapperHeight - toolbarWrapperHeight;
     $area.height(areaHeight);
 

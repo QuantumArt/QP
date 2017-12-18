@@ -24,6 +24,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     actionTypeCode,
     options
   ) {
+    // @ts-ignore
     super();
 
     this.FIELD_SELECTORS = ':input';
@@ -449,10 +450,10 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
         .off('change paste', this.FIELD_CHANGE_TRACK_SELECTORS)
         .off(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, this.CHANGED_FIELD_SELECTOR);
 
-      this._disposeContextModelField($form);
+      this._disposeContextModelField();
       this._disposeVariationInfo($form);
-      this._disposeVariationsModelField($form);
-      this._disposeErrorModelField($form);
+      this._disposeVariationsModelField();
+      this._disposeErrorModelField();
     }
   }
 
@@ -477,7 +478,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     const $infoElem = $(this.VARIATION_INFO_SELECTOR, $form);
     $infoElem.find('.removeVariation').on('click', $.proxy(this._onRemoveVariation, this));
     $infoElem.find('.currentInfo').html($l.EntityEditor.baseArticle);
-    $infoElem.find('.currentTotal').html(this._getVariationModelCount());
+    $infoElem.find('.currentTotal').html(String(this._getVariationModelCount()));
   }
 
   _disposeVariationInfo($form) {
@@ -514,7 +515,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     }
 
     $infoElem.find('.currentInfo').html(message);
-    $infoElem.find('.currentTotal').html(this._getVariationModelCount());
+    $infoElem.find('.currentTotal').html(String(this._getVariationModelCount()));
     $infoElem.find('.removeItem').toggle(exists);
   }
 

@@ -1,7 +1,7 @@
 Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager extends Quantumart.QP8.Observable {
-  static getInstance(options) {
+  static getInstance() {
     if (!BackendPopupWindowManager._instance) {
-      BackendPopupWindowManager._instance = new BackendPopupWindowManager(options);
+      BackendPopupWindowManager._instance = new BackendPopupWindowManager();
     }
 
     return BackendPopupWindowManager._instance;
@@ -15,6 +15,7 @@ Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager exten
   }
 
   constructor() {
+    // @ts-ignore
     super();
     this._popupWindows = {};
     this._hostStateStorage = new Quantumart.QP8.BackendDocumentHostStateStorage();

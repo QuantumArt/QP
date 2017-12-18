@@ -16,12 +16,12 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
       docHostTitleTemplate = showTabNumber ? '{0} "{1}" - {2}-{3}' : '{0} "{1}" - {2}';
     } else if (
       actionTypeCode === window.ACTION_TYPE_CODE_LIST
-        || actionTypeCode === window.ACTION_TYPE_CODE_LIBRARY
-        || actionTypeCode === window.ACTION_TYPE_CODE_READ
-        || actionTypeCode === window.ACTION_TYPE_CODE_SEARCH
-        || actionTypeCode === window.ACTION_TYPE_CODE_SELECT
-        || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
-        || actionTypeCode === window.ACTION_TYPE_ACTION_PERMISSION_TREE
+      || actionTypeCode === window.ACTION_TYPE_CODE_LIBRARY
+      || actionTypeCode === window.ACTION_TYPE_CODE_READ
+      || actionTypeCode === window.ACTION_TYPE_CODE_SEARCH
+      || actionTypeCode === window.ACTION_TYPE_CODE_SELECT
+      || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
+      || actionTypeCode === window.ACTION_TYPE_ACTION_PERMISSION_TREE
     ) {
       docHostTitleTemplate = '{0} "{1}" - {2}';
     } else if (isMultipleEntities) {
@@ -161,6 +161,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
   // eslint-disable-next-line max-statements
   constructor(eventArgs, options) {
+    // @ts-ignore
     super();
 
     this._documentWrapperElementId = '';
@@ -477,10 +478,10 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
       const entityTypeCode = this.get_entityTypeCode();
 
       if ((actionTypeCode === window.ACTION_TYPE_CODE_LIST
-          || actionTypeCode === window.ACTION_TYPE_CODE_SELECT
-          || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
+        || actionTypeCode === window.ACTION_TYPE_CODE_SELECT
+        || actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
       ) && (entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE
-          || entityTypeCode === window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE)
+        || entityTypeCode === window.ENTITY_TYPE_CODE_VIRTUAL_ARTICLE)
       ) {
         $q.getJsonFromUrl(
           'GET',
@@ -645,14 +646,14 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
         this.refresh();
       }
     } else if (!isCustomAction && !isMultistepAction
-    && (actionTypeCode === window.ACTION_TYPE_CODE_SAVE
-      || actionTypeCode === window.ACTION_TYPE_CODE_UPDATE
-      || actionTypeCode === window.ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE
-      || actionTypeCode === window.ACTION_TYPE_CODE_SAVE_AND_UP
-      || actionTypeCode === window.ACTION_TYPE_CODE_UPDATE_AND_UP
-      || (actionTypeCode === window.ACTION_TYPE_CODE_RESTORE
-        && action.EntityType.Code === window.ENTITY_TYPE_CODE_ARTICLE_VERSION)
-    )
+      && (actionTypeCode === window.ACTION_TYPE_CODE_SAVE
+        || actionTypeCode === window.ACTION_TYPE_CODE_UPDATE
+        || actionTypeCode === window.ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE
+        || actionTypeCode === window.ACTION_TYPE_CODE_SAVE_AND_UP
+        || actionTypeCode === window.ACTION_TYPE_CODE_UPDATE_AND_UP
+        || (actionTypeCode === window.ACTION_TYPE_CODE_RESTORE
+          && action.EntityType.Code === window.ENTITY_TYPE_CODE_ARTICLE_VERSION)
+      )
     ) {
       const main = this.getMainComponent();
       if (main && Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
@@ -904,7 +905,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
   _fixDocumentWrapperHeight(searchBlockHeight) {
     const $documentWrapper = $(this._documentWrapperElement);
-    const oldDocumentWrapperHeight = parseInt($documentWrapper.height(), 10);
+    const oldDocumentWrapperHeight = parseInt(String($documentWrapper.height()), 10);
     const oldSearchBlockHeight = this._oldSearchBlockHeight;
     let newSearchBlockHeight = oldSearchBlockHeight;
     let newDocumentWrapperHeight = 0;
@@ -1224,7 +1225,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
         this.onActionExecuting(eventArgs);
       }
     } else if (eventType === window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING) {
-      this.onDataBinding(eventArgs);
+      this.onDataBinding();
     } else if (eventType === window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND
       || eventType === window.EVENT_TYPE_LIBRARY_DATA_BOUND
       || eventType === window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND) {
@@ -1250,9 +1251,9 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     } else if (eventType === window.EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED) {
       this.onActionToolbarButtonClicked(eventType, sender, eventArgs);
     } else if (eventType === window.EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKED) {
-      this.onSearchViewToolbarButtonClicked(eventType, sender, eventArgs);
+      this.onSearchViewToolbarButtonClicked();
     } else if (eventType === window.EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKED) {
-      this.onContextViewToolbarButtonClicked(eventType, sender, eventArgs);
+      this.onContextViewToolbarButtonClicked();
     } else if (eventType === window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED) {
       this.initAllActionLinks(eventArgs.articleWrapper);
     } else if (eventType === window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING) {

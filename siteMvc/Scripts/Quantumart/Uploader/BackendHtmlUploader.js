@@ -1,5 +1,6 @@
 class BackendHtmlUploader extends Quantumart.QP8.BackendBaseUploader {
   constructor(parentElement, options) {
+    // @ts-ignore
     super();
     this._parentElement = parentElement;
     this._extensions = options.extensions || '';

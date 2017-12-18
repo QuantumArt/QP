@@ -32,6 +32,7 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
+    // @ts-ignore
     super();
     this._libraryGroups = {};
   }
@@ -126,7 +127,7 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
         || eventArgs.get_isUpdated()
         || eventArgs.get_isRemoving()
       ) || actionTypeCode === window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED
-      || actionTypeCode === window.ACTION_TYPE_CODE_FILE_CROPPED)
+        || actionTypeCode === window.ACTION_TYPE_CODE_FILE_CROPPED)
     ) {
       this.refreshLibraryGroup(entityTypeCode, eventArgs.get_parentEntityId());
     }
