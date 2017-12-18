@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
@@ -20,6 +20,9 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("UseDPC", NameResourceType = typeof(DBStrings))]
         public bool UseDpc { get; set; }
+
+        [LocalizedDisplayName("UseTokens", NameResourceType = typeof(DBStrings))]
+        public bool UseTokens { get; set; }
 
         [LocalizedDisplayName("UseCDC", NameResourceType = typeof(DBStrings))]
         public bool UseCdc { get; set; }

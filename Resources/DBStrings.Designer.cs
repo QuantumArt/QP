@@ -203,13 +203,22 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UseCDC", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Use internal DPC.
         /// </summary>
         public static string UseDPC {
             get {
                 return ResourceManager.GetString("UseDPC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use authentication tokens.
+        /// </summary>
+        public static string UseTokens {
+            get {
+                return ResourceManager.GetString("UseTokens", resourceCulture);
             }
         }
         
