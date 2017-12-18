@@ -177,4 +177,7 @@
   <data name="UseCDC" xml:space="preserve">
     <value>Use CDC for system notifications</value>
   </data>
+  <data name="UseTokens" xml:space="preserve">
+    <value>Use authentication tokens</value>
+  </data>
 </root>

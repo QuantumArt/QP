@@ -1,10 +1,11 @@
-@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.Utils
 @model Quantumart.QP8.WebMvc.ViewModels.HomePage.IndexViewModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string version = typeof(Startup).Assembly.GetCommitHash();
 }
 
 <head>
@@ -13,7 +14,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
   <link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
-  <link rel="stylesheet" href="@Url.Content("~/Content/build/app.css?rel=0.1.0.0")" />
+  <link rel="stylesheet" href="@Url.Content("~/Content/build/app.css?sha=" + version)" />
   <link rel="stylesheet" href="@Url.Action("CustomCss", "Css")" />
 
   <script>
@@ -87,13 +88,13 @@
     }
   </div>
 
-  <script src="@Url.Content("~/Scripts/build/vendors.js?rel=0.1.0.0")"></script>
+  <script src="@Url.Content("~/Scripts/build/vendors.js?sha=" + version)"></script>
 
   <script src="@Url.Content("~/Scripts/Quantumart/JsConstants.ashx")"></script>
   <script src="@Url.Content("~/Scripts/Quantumart/JsLanguage.ashx")"></script>
   <script src="@Url.Content("~/signalr/hubs")"></script>
 
-  <script src="@Url.Content("~/Scripts/build/app.js?rel=0.1.0.0")"></script>
+  <script src="@Url.Content("~/Scripts/build/app.js?sha=" + version)"></script>
   @(Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false)).Globalization(true))
 
   <script>

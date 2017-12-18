@@ -14,17 +14,12 @@ es6Promise.polyfill();
 const $ = loadPlugins(); // eslint-disable-line id-length, no-shadow
 
 const project = JSON.parse(fs.readFileSync('../package.json'));
-const assemblyInfo = fs.readFileSync('./properties/AssemblyInfo.cs');
-const assemblyMetadata = $.dotnetAssemblyInfo.getAssemblyMetadata(assemblyInfo);
 
 const custom = {
   project,
-  assemblyInfo,
-  assemblyMetadata,
   config: {
     name: project.name,
     version: project.version,
-    assemblyVersion: assemblyMetadata.AssemblyVersion,
     environment: 'development',
     commit: process.env.BUILD_SOURCEVERSION || '0',
     branchName: process.env.BUILD_SOURCEBRANCHNAME || '',
@@ -328,29 +323,13 @@ custom.reportError = function (error) {
   this.emit('end');
 };
 
-gulp.task('assets:revisions', () => gulp.src([
-  'Views/Home/Index.Template.cshtml',
-  'Views/LogOn/Index.Template.cshtml',
-  '../winLogonMvc/Views/WinLogOn/Index.Template.cshtml'
-], { base: './' })
-  .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.replaceTask({
-    patterns: [{
-      match: 'version',
-      replacement: custom.config.assemblyVersion
-    }]
-  }))
-  .pipe($.rename({ basename: 'Index' }))
-  .pipe(gulp.dest('.'))
-);
-
 gulp.task('assets:js', ['assets:vendorsjs', 'assets:qpjs'], () => gulp.src(custom.destPaths.scripts)
   .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true })));
 
 gulp.task('assets-logon:js', ['assets-logon:vendorsjs', 'assets-logon:qpjs'], () => gulp.src(custom.destPaths.scripts)
   .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:js task complete', onLast: true })));
 
-gulp.task('assets:vendorsjs', ['assets:revisions'], () => gulp.src(custom.paths.vendorsjs, { base: './' })
+gulp.task('assets:vendorsjs', () => gulp.src(custom.paths.vendorsjs, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
@@ -366,7 +345,7 @@ gulp.task('assets:vendorsjs', ['assets:revisions'], () => gulp.src(custom.paths.
   .pipe($.size({ title: 'assets:vendorsjs', showFiles: true }))
   .pipe($.notify({ title: 'Part task was completed', message: 'assets:vendorsjs task complete', onLast: true })));
 
-gulp.task('assets-logon:vendorsjs', ['assets:revisions'], () => gulp.src(custom.paths.vendorsjsLogon, { base: './' })
+gulp.task('assets-logon:vendorsjs', () => gulp.src(custom.paths.vendorsjsLogon, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
@@ -386,7 +365,7 @@ gulp.task('assets-logon:vendorsjs', ['assets:revisions'], () => gulp.src(custom.
     onLast: true
   })));
 
-gulp.task('assets:qpjs', ['assets:revisions'], () => gulp.src(custom.paths.qpjs, { base: './' })
+gulp.task('assets:qpjs', () => gulp.src(custom.paths.qpjs, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
@@ -402,7 +381,7 @@ gulp.task('assets:qpjs', ['assets:revisions'], () => gulp.src(custom.paths.qpjs,
   .pipe($.size({ title: 'assets:qpjs', showFiles: true }))
   .pipe($.notify({ title: 'Part task was completed', message: 'assets:qpjs task complete', onLast: true })));
 
-gulp.task('assets-logon:qpjs', ['assets:revisions'], () => gulp.src(custom.paths.qpjsLogon, { base: './' })
+gulp.task('assets-logon:qpjs', () => gulp.src(custom.paths.qpjsLogon, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
@@ -425,7 +404,7 @@ gulp.task('assets:img', () => gulp.src(custom.paths.images)
   .pipe(gulp.dest(custom.destPaths.images))
   .pipe($.notify({ title: 'Task was completed', message: 'assets:img task complete', onLast: true })));
 
-gulp.task('assets:css', ['assets:revisions'], () => gulp.src(custom.paths.styles)
+gulp.task('assets:css', () => gulp.src(custom.paths.styles)
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
@@ -474,9 +453,7 @@ gulp.task('watch', () => {
 
 gulp.task('serve', ['watch', 'browserSync']);
 gulp.task('default', ['clean'], () => {
-  const welcomeMsg = `\nGulp tasks were started in ${chalk.blue.underline.yellow(custom.config.environment)} mode.
-    Version: ${custom.config.assemblyVersion}.
-  `;
+  const welcomeMsg = `\nGulp tasks were started in ${chalk.blue.underline.yellow(custom.config.environment)} mode.\n`;
 
   global.console.log(welcomeMsg);
   notifier.notify({ title: welcomeMsg, message: 'gulp is running' });

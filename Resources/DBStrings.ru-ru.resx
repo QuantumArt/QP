@@ -177,4 +177,7 @@
   <data name="UseCDC" xml:space="preserve">
     <value>Использовать CDC для отправки системных уведомлений</value>
   </data>
+  <data name="UseTokens" xml:space="preserve">
+    <value>Использовать токены для аутентификации</value>
+  </data>
 </root>
