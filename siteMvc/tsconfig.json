@@ -1,4 +1,5 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
     "allowJs": true,
     "alwaysStrict": true,
@@ -26,7 +27,6 @@
     "Scripts/**/*.d.ts"
   ],
   "exclude": [
-    "Scripts/Quantumart/ckeditor/**/*",
-    "Scripts/Quantumart/jQueryExtensions.js"
+    "Scripts/Quantumart/ckeditor/**/*"
   ]
 }

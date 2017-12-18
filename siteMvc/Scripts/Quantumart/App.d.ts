@@ -64,6 +64,9 @@ interface JQuery {
 interface JQueryStatic {
   browser: any;
   telerik: any;
+
+  css(elem: any, name: any, extra?: any): any;
+  nodeName(elem: Element, name: string): boolean;
 }
 
 interface SignalR {
