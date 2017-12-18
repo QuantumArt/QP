@@ -182,7 +182,8 @@ Quantumart.QP8.EntityEditorAutoSaver.prototype = {
 
   // сортировка на предмет возможности восстановления
   _checkForRestoring(stateRecords) {
-    const dfr = new $.Deferred();
+    // eslint-disable-next-line new-cap
+    const dfr = $.Deferred();
     if ($q.isArray(stateRecords) && !$q.isNullOrEmpty(stateRecords)) {
       const requestData = {
         recordHeaders: JSON.stringify(stateRecords.map(rh => ({

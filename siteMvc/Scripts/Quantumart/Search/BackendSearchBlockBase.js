@@ -265,7 +265,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
         verticalResizerComponent.hideBottomHandle();
       }
 
-      this._lastSearchBlockHeight = parseInt($searchBlock.height(), 10);
+      this._lastSearchBlockHeight = parseInt(String($searchBlock.height()), 10);
       $searchBlock.height(0).hide().trigger('resize');
 
       if (verticalResizerComponent) {
@@ -285,15 +285,15 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
       $bottomHandle = $(this._verticalResizerComponent.get_bottomHandleElement());
     }
 
-    const searchBlockWidth = parseInt($searchBlock.width(), 10);
+    const searchBlockWidth = parseInt(String($searchBlock.width()), 10);
     let searchBlockHeight = 0;
     if (this._isVisible) {
-      searchBlockHeight = parseInt($searchBlock.outerHeight(), 10);
+      searchBlockHeight = parseInt(String($searchBlock.outerHeight()), 10);
       if (!$q.isNullOrEmpty($bottomHandle)) {
-        searchBlockHeight += parseInt($bottomHandle.outerHeight(), 10);
+        searchBlockHeight += parseInt(String($bottomHandle.outerHeight()), 10);
       }
     } else {
-      searchBlockHeight = parseInt($searchBlock.height(), 10);
+      searchBlockHeight = parseInt(String($searchBlock.height()), 10);
     }
 
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');

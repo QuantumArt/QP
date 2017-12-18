@@ -286,8 +286,9 @@ Quantumart.QP8.BackendEditingArea.prototype = {
     }
 
     let $documentsContainer = $(this._documentsContainerElement);
-    const oldDocumentsContainerHeight = parseInt($documentsContainer.height(), 10);
-    let newDocumentsContainerHeight = parseInt($(window).height(), 10) - this._documentsContainerHeightDifference;
+    const oldDocumentsContainerHeight = parseInt(String($documentsContainer.height()), 10);
+    // eslint-disable-next-line max-len
+    let newDocumentsContainerHeight = parseInt(String($(window).height()), 10) - this._documentsContainerHeightDifference;
 
     if (oldDocumentsContainerHeight !== newDocumentsContainerHeight) {
       if (newDocumentsContainerHeight < 300) {
@@ -509,7 +510,7 @@ Quantumart.QP8.BackendEditingArea.prototype = {
       if (eventArgs.get_isRemoving()
         || (viewInListAffected
           && (eventArgs.get_isUpdated()
-          || eventArgs.get_isSaved()))
+            || eventArgs.get_isSaved()))
       ) {
         Object.values(this._documents).forEach(doc => {
           if (

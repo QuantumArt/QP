@@ -103,9 +103,9 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
   refreshPermissionNode(entityTypeCode, nodeValueId) {
     let nodeType = '';
     if (entityTypeCode === window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION) {
-      nodeType = Quantumart.QP8.Enums.ActionPermissionTreeNodeType.EntityTypeNode;
+      nodeType = String(Quantumart.QP8.Enums.ActionPermissionTreeNodeType.EntityTypeNode);
     } else if (entityTypeCode === window.ENTITY_TYPE_CODE_ACTION_PERMISSION) {
-      nodeType = Quantumart.QP8.Enums.ActionPermissionTreeNodeType.ActionNode;
+      nodeType = String(Quantumart.QP8.Enums.ActionPermissionTreeNodeType.ActionNode);
     }
 
     const nodeValue = this._converToItemValue({ NodeType: nodeType, Id: nodeValueId });

@@ -59,6 +59,8 @@ interface String {
 interface JQuery {
   jeegoocontext: any;
   size(): number;
+  verticalResizer(options?: any): JQuery;
+  noVerticalResizer(): JQuery;
 }
 
 interface JQueryStatic {
