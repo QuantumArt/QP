@@ -41,7 +41,7 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
     contentsCss: opts.contentsCss,
     stylesSet: opts.stylesSet,
     toolbar: opts.toolbar,
-    specialChars: window.CKEDITOR.config.specialChars.concat([
+    specialChars: CKEDITOR.config.specialChars.concat([
       ['&#36;', 'Доллар США'],
       ['&#8364;', 'Евро'],
       ['&#8381;', 'Российский рубль'],
@@ -58,7 +58,7 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
   opts.extraPlugins.forEach(pl => {
     config.extraPlugins += `,${pl.name}`;
     if (pl.url) {
-      window.CKEDITOR.plugins.addExternal(pl.name, pl.url, 'plugin.js');
+      CKEDITOR.plugins.addExternal(pl.name, pl.url, 'plugin.js');
     }
   });
 
@@ -66,7 +66,7 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
     config[`format_${fs.element}`] = fs;
   });
 
-  config.listItems = Object.assign({}, window.CKEDITOR.dtd.$listItem, {
+  config.listItems = Object.assign({}, CKEDITOR.dtd.$listItem, {
     dd: 1,
     dt: 1,
     li: 1
@@ -81,7 +81,7 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
         delete CKEDITOR.dtd.$intermediate[key];
       } else {
         CKEDITOR.dtd.$listItem[key] = 1;
-        window.CKEDITOR.dtd.$intermediate[key] = 1;
+        CKEDITOR.dtd.$intermediate[key] = 1;
       }
     });
   });
@@ -90,16 +90,16 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
     instanceReady(ev) {
       ev.editor.filter.addElementCallback(el => {
         if (el.name === 'table' || el.name === 'img') {
-          return window.CKEDITOR.FILTER_SKIP_TREE;
+          return CKEDITOR.FILTER_SKIP_TREE;
         }
 
         return undefined;
       });
 
       Object.keys(Object.assign({},
-        window.CKEDITOR.dtd.$nonBodyContent,
-        window.CKEDITOR.dtd.$block,
-        window.CKEDITOR.dtd.$tableContent,
+        CKEDITOR.dtd.$nonBodyContent,
+        CKEDITOR.dtd.$block,
+        CKEDITOR.dtd.$tableContent,
         config.listItems
       )).forEach(function setIndenting(key) {
         this.dataProcessor.writer.setRules(key, {
@@ -220,7 +220,7 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
           if (instance) {
             that.disposeCKEditor(false);
           }
-          window.CKEDITOR.replace(that._editorElem.id, getCkEditorConfig(that, data));
+          CKEDITOR.replace(that._editorElem.id, getCkEditorConfig(that, data));
         });
       }
 
@@ -246,7 +246,7 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
   },
 
   getCkEditor() {
-    return window.CKEDITOR.instances[this._editorElem.id];
+    return CKEDITOR.instances[this._editorElem.id];
   },
 
   saveVisualEditorData() {

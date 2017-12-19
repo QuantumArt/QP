@@ -6,7 +6,6 @@ module.exports = {
     './.eslint/.eslintrc'
   ].map(require.resolve),
   globals: {
-    // _: false,
     ko: false,
     $a: false,
     $c: false,
@@ -14,9 +13,9 @@ module.exports = {
     $l: false,
     $o: false,
     $q: false,
+    $ctx: false,
     Sys: false,
     Url: false,
-    // $ctx: false,
     pmrpc: false,
     Quantumart: false,
   },

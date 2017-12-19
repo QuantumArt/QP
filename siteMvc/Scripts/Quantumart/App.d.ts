@@ -8,7 +8,7 @@ type Quantumart = {
 };
 
 type Constants = {
-  [CONSTANT: string]: string | number;
+  [CONSTANT: string]: any;
 }
 
 type Enums = {
@@ -41,6 +41,7 @@ interface Window {
   $o: any;
   $q: any;
   $ctx: any;
+  Url: any;
   Backend: Backend;
   Quantumart: Quantumart;
 }
@@ -57,6 +58,16 @@ interface String {
 
 // Vendors
 declare var pmrpc: any;
+declare var CodeMirror: any;
+declare var CKEDITOR: any;
+declare var JSONEditor: any;
+declare var plupload: any;
+declare var mOxie: any;
+
+interface Window {
+  plupload: typeof plupload;
+  mOxie: typeof mOxie;
+}
 
 interface JQuery {
   // jquery-1.7.1.js
