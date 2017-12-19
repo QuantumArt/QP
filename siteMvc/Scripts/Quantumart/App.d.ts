@@ -1,49 +1,41 @@
 // Quantumart
-type Quantumart = {
+declare var Quantumart: {
   QP8?: {
     [ClassName: string]: any;
-    Constants?: Constants;
-    Enums?: Enums;
+    Constants?: {
+      [CONSTANT: string]: any;
+    };
+    Enums?: {
+      [EnumName: string]: {
+        [MemberName: string]: number;
+      };
+    };
   };
 };
 
-type Constants = {
-  [CONSTANT: string]: any;
-}
-
-type Enums = {
-  [EnumName: string]: {
-    [MemberName: string]: number;
+declare var Backend: {
+  Lang?: {
+    [ModuleName: string]: {
+      [name: string]: string;
+    };
   };
-}
+};
 
-type Backend = {
-  Lang?: Lang;
-}
-
-type Lang = {
-  [ModuleName: string]: {
-    [name: string]: string;
-  };
-}
-
-declare var $e: Enums;
-declare var $l: Lang;
-declare var Backend: Backend;
-declare var Quantumart: Quantumart;
+declare var $e: typeof Quantumart.QP8.Enums;
+declare var $l: typeof Backend.Lang;
 
 interface Window {
   [CONSTANT: string]: any;
   $a: any;
   $c: any;
-  $e: Enums;
-  $l: Lang;
+  $e: typeof Quantumart.QP8.Enums;
+  $l: typeof Backend.Lang;
   $o: any;
   $q: any;
   $ctx: any;
   Url: any;
-  Backend: Backend;
-  Quantumart: Quantumart;
+  Backend: typeof Backend;
+  Quantumart: typeof Quantumart;
 }
 
 // Utils
