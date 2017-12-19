@@ -1,4 +1,4 @@
-﻿using System.Security.Principal;
+using System.Security.Principal;
 
 namespace Quantumart.QP8.Security
 {
@@ -8,6 +8,11 @@ namespace Quantumart.QP8.Security
         /// идентификатор пользователя
         /// </summary>
         public int Id { get; }
+
+        /// <summary>
+        /// идентификатор сессии
+        /// </summary>
+        public int SessionId { get; }
 
         /// <summary>
         /// логин пользователя
@@ -47,9 +52,10 @@ namespace Quantumart.QP8.Security
         /// <summary>
         /// Конструирует объект QPIdentity
         /// </summary>
-		public QpIdentity(int id, string name, string customerCode, string type, bool isAuthentificated, int languageId, string cultureName, bool isSilverlightInstalled)
+		public QpIdentity(int id, string name, string customerCode, string type, bool isAuthentificated, int languageId, string cultureName, bool isSilverlightInstalled, int sessionId = 0)
         {
             Id = id;
+            SessionId = sessionId;
             Name = name;
             CustomerCode = customerCode;
             AuthenticationType = type;
