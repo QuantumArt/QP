@@ -59,7 +59,6 @@ custom.paths = {
     'Scripts/polyfills/array.includes.polyfill.js',
     'Scripts/polyfills/array.find.polyfill.js',
     'Scripts/polyfills/console.fns.polyfill.js',
-    'Scripts/Quantumart/jQueryExtensions.js',
     'Scripts/microsoft/MicrosoftAjax.js',
     'Scripts/json2.js',
     'Scripts/pmrpc.js',
@@ -121,6 +120,7 @@ custom.paths = {
     'Scripts/microsoft/MicrosoftAjax.js'
   ],
   qpjs: [
+    'Scripts/Quantumart/jQueryExtensions.js',
     'Scripts/Quantumart/Helpers/vanilla.helpers.js',
     'Scripts/Quantumart/Uploader/plupload/plupload.filters.js',
 
