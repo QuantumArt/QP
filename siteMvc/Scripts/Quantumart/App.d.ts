@@ -56,26 +56,45 @@ interface String {
 }
 
 // Vendors
+declare var pmrpc: any;
+
 interface JQuery {
-  jeegoocontext: any;
+  // jquery-1.7.1.js
   size(): number;
+  live(events: string, handler: Function): JQuery;
+
+  // jquery.jeegoocontext.js
+  jeegoocontext: any;
+
+  // jquery.nouislider.js
+  val(value: any, noUiSliderOptions: object): JQuery;
+
+  // jquery.timer.js
+  everyTime(...args: any[]): JQuery;
+  oneTime(...args: any[]): JQuery;
+  stopTime(...args: any[]): JQuery;
+
+  // jquery.verticalResizer.js
   verticalResizer(options?: any): JQuery;
   noVerticalResizer(): JQuery;
 }
 
 interface JQueryStatic {
+  // jquery-1.7.1.js
   browser: any;
-  telerik: any;
-
   css(elem: any, name: any, extra?: any): any;
   nodeName(elem: Element, name: string): boolean;
+
+  // jquery.timer.js
+  timer: any;
+
+  // telerik.*.js
+  telerik: any;
 }
 
 interface SignalR {
   [name: string]: any;
 }
-
-declare var pmrpc: any;
 
 // Internet Explorer
 declare function escape(input: string): string;

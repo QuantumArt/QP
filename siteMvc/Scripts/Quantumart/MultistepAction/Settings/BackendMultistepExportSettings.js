@@ -31,12 +31,12 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
       OrderByField: document.getElementById(`${id}_OrderByField`).value,
       AllFields: document.getElementById(`${id}_AllFields`).checked,
       ExcludeSystemFields: document.getElementById(`${id}_ExcludeSystemFields`).checked,
-      CustomFields: [
-        ...parentContainer.querySelectorAll(`input[name="CustomFields"]:checked`)
-      ].map(el => +el.value),
-      FieldsToExpand: [
-        ...parentContainer.querySelectorAll(`input[name="FieldsToExpand"]:checked`)
-      ].map(el => +el.value)
+      CustomFields: Array
+        .from(parentContainer.querySelectorAll(`input[name="CustomFields"]:checked`))
+        .map(el => +el.value),
+      FieldsToExpand: Array
+        .from(parentContainer.querySelectorAll(`input[name="FieldsToExpand"]:checked`))
+        .map(el => +el.value)
     };
 
     const idsElement = document.getElementById(`${id}_idsToExport`);

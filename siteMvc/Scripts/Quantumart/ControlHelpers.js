@@ -1444,7 +1444,7 @@ $c.downloadFile = function (url) {
     }).appendTo(document.body).get(0);
   }
 
-  // @ts-ignore
+  // @ts-ignore: HTMLIFrameElement.src
   iframe.src = url;
 };
 

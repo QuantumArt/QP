@@ -3,10 +3,7 @@
 window.EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING = 'OnEntityListActionExecuting';
 window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED = 'OnEntityListSelectionChanged';
 
-Quantumart.QP8.Enums.DataListType = function () {
-  // default constructor
-};
-Quantumart.QP8.Enums.DataListType.prototype = {
+Quantumart.QP8.Enums.DataListType = {
   None: 0,
   DropDownList: 1,
   RadioButtonList: 2,
@@ -15,8 +12,6 @@ Quantumart.QP8.Enums.DataListType.prototype = {
   SingleItemPicker: 5,
   MultipleItemPicker: 6
 };
-
-Quantumart.QP8.Enums.DataListType.registerEnum('Quantumart.QP8.Enums.DataListType');
 
 // eslint-disable-next-line max-params
 Quantumart.QP8.BackendEntityDataListBase = function (
@@ -612,7 +607,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   _loadSelectedItems(entities) {
     let dataItems;
     if (($o.checkEntitiesForPresenceEmptyNames(entities) || this._readDataOnInsert)
-    && entities.length <= this._countLimit) {
+      && entities.length <= this._countLimit) {
       const selectedEntitiesIDs = entities.map(el => el.Id);
       dataItems = $o.getSimpleEntityList(
         this._entityTypeCode, this._parentEntityId, this._entityId, this._listId,
@@ -850,7 +845,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     this._destroyCountDiv();
 
     if (this._listWrapperElement) {
-      $(this._listElement).unwrap(this._listWrapperElement);
+      $(this._listElement).unwrap();
     }
 
     if (this._listManagerComponent) {

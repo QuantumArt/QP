@@ -278,22 +278,26 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
   },
 
   _onInsertCall() {
-    if (!this._insertPopUp.data('valToInsert') === '') {
-      if (this._insertPopUp.data('valType') === 'object') {
+    const valToInsert = this._insertPopUp.data('valToInsert');
+
+    if (valToInsert !== undefined && valToInsert !== null && valToInsert !== '') {
+      const valType = this._insertPopUp.data('valType');
+
+      if (valType === 'object') {
         this._insertObjectFunc(
-          this._insertPopUp.data('valToInsert'),
+          valToInsert,
           this._netLanguageId,
           !this._presentationOrCodeBehind
         );
-      } else if (this._insertPopUp.data('valType') === 'function') {
+      } else if (valType === 'function') {
         this._insertFunc(
-          this._insertPopUp.data('valToInsert'),
+          valToInsert,
           this._netLanguageId,
           !this._presentationOrCodeBehind
         );
-      } else if (this._insertPopUp.data('valType') === 'field') {
+      } else if (valType === 'field') {
         this._insertFieldFunc(
-          this._insertPopUp.data('valToInsert'),
+          valToInsert,
           this._netLanguageId,
           !this._presentationOrCodeBehind
         );

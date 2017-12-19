@@ -54,10 +54,10 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   const onParentTemplateObjectChanged = function () {
     if ($overrideChkbx.is(':checked') && $parentObjectSelector.children('option').size()) {
       const objId = $parentObjectSelector.val();
-      const [targetObj] = $(this.data('objects')).filter(function () {
+      const targetObj = $(this.data('objects')).filter(function () {
         $q.warnIfEqDiff(this.id, objId);
         return this.Id === objId;
-      });
+      }).get(0);
 
       $nameField.val(targetObj.Name);
       $netNameField.val(targetObj.NetName);
@@ -74,6 +74,8 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
   $overrideChkbx.click($.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
 
   $typeSelector.change(manageGlobalVisibility);
+
+  // @ts-ignore: JQuery.prop('checked', true) does not works correctly in jquery-1.7.1
   $statusSelector.find(`.multi-picker-item[value="${$statusSelector.data('published-id')}"]`).attr('checked', true);
   if ($statusSelector.data('has-workflow') === 'False') {
     $statusSelector.data('entity_data_list_component').disableList();

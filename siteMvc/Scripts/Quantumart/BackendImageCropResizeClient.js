@@ -472,15 +472,15 @@ Quantumart.QP8.ImageCropResizeClient.Cache = {};
   };
 
   const _serverOperateImage = function () {
-    let sendData = readData();
-    sendData = JSON.stringify(sendData);
+    const sendData = readData();
+    const sendDataJson = JSON.stringify(sendData);
 
     $.ajax(_parameters.cropResizeActionUrl, {
       contentType: 'application/json',
-      data: sendData,
+      data: sendDataJson,
       type: 'POST',
       dataType: 'json'
-    }).success(response => {
+    }).done(response => {
       if (!response.ok) {
         const message = response.message || $l.Crop.defaultErrorMessage;
         displayErrors([message]);
@@ -503,7 +503,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = {};
       data: { targetFileUrl: userInputFileName },
       type: 'POST',
       dataType: 'json'
-    }).success(response => {
+    }).done(response => {
       if (response.ok) {
         _serverOperateImage();
       } else {

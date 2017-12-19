@@ -210,7 +210,9 @@
 
     // Parse strings looking for color tuples [255,255,255]
     _getRGB(color) {
-      let result;
+      if (!color) {
+        return color;
+      }
 
       // Check if we're already dealing with an array of colors
       if (Array.isArray(color) && color.length === 3) {
@@ -218,7 +220,7 @@
       }
 
       // Look for rgb(num,num,num)
-      result = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(color);
+      let result = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(color);
       if (result) {
         return [parseInt(result[1], 10), parseInt(result[2], 10), parseInt(result[3], 10)];
       }

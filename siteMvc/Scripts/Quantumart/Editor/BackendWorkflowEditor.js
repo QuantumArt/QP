@@ -284,7 +284,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       $(elem).data('entity_data_list_component').detachObserver(
         window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkSinglePermisssionHandler
       );
-    }), this);
+    }, this));
 
     this._contentSelector
       .data('entity_data_list_component')

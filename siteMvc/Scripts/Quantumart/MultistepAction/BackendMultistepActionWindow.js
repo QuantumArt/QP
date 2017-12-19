@@ -154,8 +154,13 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   _formatTimeRange(milliseconds) {
     const secondsSpan = Math.floor(milliseconds / 1000);
     const hours = Math.floor(secondsSpan / 3600);
+
+    /** @type {string | number} */
     let minutes = Math.floor((secondsSpan - (hours * 3600)) / 60);
+
+    /** @type {string | number} */
     let seconds = Math.round(secondsSpan - (hours * 3600) - (minutes * 60));
+
     if (minutes < 10) {
       minutes = `0${minutes}`;
     }

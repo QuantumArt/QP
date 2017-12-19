@@ -274,7 +274,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
 
     const $requiredSelects = $('select[data-aggregated="False"]select[data-required="True"]');
     if (($requiredSelects.length === 0 || !this._fieldsPredicate(null))
-        && ($('select[data-aggregated="False"]select[value!="-1"]').length === 0
+      && ($('select[data-aggregated="False"]select[value!="-1"]').length === 0
         && $('select[data-aggregated="False"]select([data-excludeValid])').length === 0)) {
       errorMessage = that._addMessageLine(errorMessage);
       errorMessage += $l.MultistepAction.AnyFieldRequired;
@@ -321,7 +321,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       success(fieldsFromFile) {
         if (fieldsFromFile.Type === 'Error') {
           $(`#${that.options.popupWindowId}_mapping_fields_selects`).hide();
-          $q.alert(fieldsFromFile.Text);
+          $q.alertSuccess(fieldsFromFile.Text);
         } else if (fieldsFromFile) {
           that._fillOptionsFromFile(fieldsFromFile);
           that._validate();

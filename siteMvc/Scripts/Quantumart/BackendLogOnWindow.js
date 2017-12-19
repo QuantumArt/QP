@@ -190,6 +190,8 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
   _triggerDeferredCallcacks(isAuthenticated) {
     $(this).triggerHandler({
       type: this.AJAX_EVENT,
+
+      // @ts-ignore: JQueryEvent is used as business logic event
       value: isAuthenticated
     });
   },
@@ -197,6 +199,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
   _addDeferredCallcack(callback, settings) {
     this._updateZindex();
     $(this).on(this.AJAX_EVENT, e => {
+      // @ts-ignore: JQueryEvent is used as business logic event
       const isAuthenticated = e.value;
       if (isAuthenticated) {
         jQuery.ajax(settings).done(callback);
@@ -218,7 +221,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
   needLogon(jqXHR, url) {
     if (
       url.toUpperCase() === window.CONTROLLER_URL_LOGON.toUpperCase()
-            || url.toUpperCase() === window.CONTROLLER_URL_WINLOGON.toUpperCase()) {
+      || url.toUpperCase() === window.CONTROLLER_URL_WINLOGON.toUpperCase()) {
       return false;
     } else if (jqXHR.getResponseHeader('QP-Not-Authenticated')) {
       return true;
