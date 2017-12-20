@@ -619,7 +619,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       const $rowsToModify = $(this.getRowsByEntityIds(response.data));
       this._setRowsSelectedState($rowsToModify, rowState);
       if (rowState) {
-        this._selectedEntitiesIDs = [...new Set(this._selectedEntitiesIDs.concat(response.data))];
+        this._selectedEntitiesIDs = Array.distinct(this._selectedEntitiesIDs.concat(response.data));
       } else {
         this._selectedEntitiesIDs = $q.difference(this._selectedEntitiesIDs, response.data);
       }
@@ -902,19 +902,19 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
 
   _saveRowSelectionState() {
     const $rows = this.getRows();
-    const selectedRowEntityIdsSet = new Set(this._selectedEntitiesIDs);
-    const unselectedRowEntityIdsSet = new Set();
+    const selectedRowEntityIds = [...this._selectedEntitiesIDs];
+    const unselectedRowEntityIds = [];
     for (let rowIndex = 0; rowIndex < $rows.length; rowIndex++) {
       const $row = $rows.eq(rowIndex);
       const rowEntityId = this.getEntityId($row);
       if (this.isRowSelected($row)) {
-        selectedRowEntityIdsSet.add(rowEntityId);
+        selectedRowEntityIds.push(rowEntityId);
       } else {
-        unselectedRowEntityIdsSet.add(rowEntityId);
+        unselectedRowEntityIds.push(rowEntityId);
       }
     }
 
-    this._selectedEntitiesIDs = $q.difference([...selectedRowEntityIdsSet], [...unselectedRowEntityIdsSet]);
+    this._selectedEntitiesIDs = $q.difference(Array.distinct(selectedRowEntityIds), unselectedRowEntityIds);
   }
 
   _saveRowAllSelectionState() {

@@ -117,9 +117,6 @@ interface Element {
   [name: string]: any;
 }
 
-// TODO: Set polyfill
-declare var Set: any;
-
 interface ObjectConstructor {
   // TODO: Object.values polyfill
   values(object: object): any[];

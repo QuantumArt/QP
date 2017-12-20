@@ -264,11 +264,15 @@ interface String {
     //#region Extensions
 
     /**
-    * Formats a number by using the invariant culture.
+    * Determines whether the end of this string instance matches the specified string.
     * @returns true if the end of the String object matches suffix; otherwise, false.
     */
     endsWith(suffix: string): boolean;
-
+    /**
+    * Determines whether the beginning of this string instance matches the specified.
+    * @returns true if this instance begins with value; otherwise, false.
+    */
+    startsWith(prefix: string): boolean;
     /**
     * Removes leading and trailing white-space characters from a String object.
     * @returns A copy of the string with all white-space characters removed from the start and end of the string.
@@ -405,7 +409,7 @@ declare class Type {
     *           The fully qualified name of the class to test as a base class for the current instance.
     * @return true if the instance inherits from parentType; otherwise, false.
     */
-    inheritsFrom(parentType: string): boolean;
+    inheritsFrom(parentType: Type): boolean;
     /**
     * Initializes the base class and its members in the context of a given instance, which provides the model for inheritance and for initializing base members.
     * @param instance

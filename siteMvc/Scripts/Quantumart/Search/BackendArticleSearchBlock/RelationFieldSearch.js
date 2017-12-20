@@ -175,7 +175,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
           fieldId: that._fieldID,
           filter: that._getEntityDataList()._filter
         }, data => {
-          that._selectedEntitiesIDs = [...new Set(selectedIds.concat(data))];
+          that._selectedEntitiesIDs = Array.distinct(selectedIds.concat(data));
           that._replaceWithSelectedEntities();
         });
       }
