@@ -65,6 +65,7 @@ custom.paths = {
     'Scripts/polyfills/string/string.repeat.polyfill.js',
     'Scripts/polyfills/string/string.startsWith.polyfill.js',
     'Scripts/polyfills/console.fns.polyfill.js',
+    'Scripts/polyfills/promise.polyfill.js',
 
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/telerik/telerik.common.js',
