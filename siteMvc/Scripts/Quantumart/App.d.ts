@@ -116,10 +116,3 @@ interface Element {
   // TODO: fix jQuery.fn.each() usage
   [name: string]: any;
 }
-
-interface ObjectConstructor {
-  // TODO: Object.values polyfill
-  values(object: object): any[];
-  // TODO: Object.entries polyfill
-  entries(object: object): [string, any][];
-}
