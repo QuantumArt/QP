@@ -72,7 +72,8 @@ namespace Quantumart.QP8.Security
                     userInformation.LanguageId + "|" +
                     userInformation.CultureName + "|" +
                     userInformation.IsSilverlightInstalled + "|" +
-                    string.Join(";", userInformation.Roles);
+                    string.Join(";", userInformation.Roles) + "|" +
+                    userInformation.SessionId;
             }
 
             return userData;
@@ -93,7 +94,8 @@ namespace Quantumart.QP8.Security
                         CustomerCode = userDataCollection[2],
                         LanguageId = int.Parse(userDataCollection[3]),
                         IsSilverlightInstalled = bool.Parse(userDataCollection[5]),
-                        Roles = userDataCollection[6].Split(';')
+                        Roles = userDataCollection[6].Split(';'),
+                        SessionId = userDataCollection.Length >= 8 ? int.Parse(userDataCollection[7]) : 0
                     };
                 }
             }

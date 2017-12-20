@@ -356,6 +356,17 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
+        public static void ClearUserToken(SqlConnection dbConnection, int userId, int sessionId)
+        {
+            var sql = "delete from access_token where UserId = @userId and SessionId = @sessionId";
+            using (var cmd = SqlCommandFactory.Create(sql, dbConnection))
+            {
+                cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.AddWithValue("@sessionId", sessionId);
+                cmd.ExecuteNonQuery();              
+            }
+        }
+
         private static void AppendNotFound(int[] ids, int[] contentIds, RelationSecurityInfo result)
         {
             if (contentIds.Any())
