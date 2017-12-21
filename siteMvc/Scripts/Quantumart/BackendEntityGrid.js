@@ -941,6 +941,8 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       }
 
       let rowsData = null;
+
+      // synchronous AJAX call (sic!)
       $q.postDataToUrl(url, queryData, false, data => {
         rowsData = data;
       }, $q.processGenericAjaxError);
@@ -949,9 +951,10 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
         this.notify(window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND, eventArgs);
       }
 
-      const that = this;
+      // @ts-ignore: rowsData is assigned in synchronous AJAX call
       if (rowsData && rowsData.data) {
-        this._selectedEntitiesIDs = rowsData.data.map(item => item[that._keyColumnName]);
+        // @ts-ignore: rowsData is assigned in synchronous AJAX call
+        this._selectedEntitiesIDs = rowsData.data.map(item => item[this._keyColumnName]);
       }
     }
   }
