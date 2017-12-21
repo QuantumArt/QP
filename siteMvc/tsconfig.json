@@ -25,6 +25,6 @@
     "Scripts/**/*.d.ts"
   ],
   "exclude": [
-    "Scripts/Quantumart/ckeditor/**/*"
+    "Scripts/Quantumart/ckeditor/*/*/**/*"
   ]
 }
