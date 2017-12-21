@@ -1,4 +1,4 @@
-Quantumart.QP8.BackendVirtualFieldTree = class BackendVirtualFieldTree extends Quantumart.QP8.BackendEntityTree {
+class BackendVirtualFieldTree extends Quantumart.QP8.BackendEntityTree {
   static _getIcon(entity) {
     return entity.IconUrl;
   }
@@ -62,4 +62,11 @@ Quantumart.QP8.BackendVirtualFieldTree = class BackendVirtualFieldTree extends Q
       );
     }
   }
-};
+}
+
+// for MicrosoftAjax Type.isInstanceOfType
+BackendVirtualFieldTree.registerClass(
+  'Quantumart.QP8.BackendVirtualFieldTree', Quantumart.QP8.BackendEntityTree
+);
+
+Quantumart.QP8.BackendVirtualFieldTree = BackendVirtualFieldTree;

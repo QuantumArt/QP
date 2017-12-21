@@ -24,4 +24,9 @@ class BackendEntityEditorActionEventArgs extends Quantumart.QP8.BackendEventArgs
   }
 }
 
+// for MicrosoftAjax Type.isInstanceOfType
+BackendEntityEditorActionEventArgs.registerClass(
+  'Quantumart.QP8.BackendEntityEditorActionEventArgs', Quantumart.QP8.BackendEventArgs
+);
+
 Quantumart.QP8.BackendEntityEditorActionEventArgs = BackendEntityEditorActionEventArgs;
