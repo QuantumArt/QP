@@ -232,6 +232,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 
       this._pagerComponent.set(
         {
+          // @ts-ignore
           totalCount: data.TotalRecords,
           pageSize: this._currentDataQueryOptions.pageSize,
           currentPageNumber: this._currentDataQueryOptions.pageNumber

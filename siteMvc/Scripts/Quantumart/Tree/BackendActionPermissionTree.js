@@ -12,6 +12,8 @@ Quantumart.QP8.BackendActionPermissionTree = function (treeElementId) {
 Quantumart.QP8.BackendActionPermissionTree.prototype = {
   _userId: null,
   _groupId: null,
+
+  /** @type {string | number} */
   _currentNodeId: -1,
   _contextMenuActionCode: '',
 
