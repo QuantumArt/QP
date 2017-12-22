@@ -75,6 +75,9 @@
 ### BackendSearchBlockBase.js
 * Приведение типов
 
+### BackendSettingsPopupWindow.js
+* Перенес вызов базового конструктора в начало метода (!)
+
 ### BackendTabStrip.js
 * Приведение типов
 
