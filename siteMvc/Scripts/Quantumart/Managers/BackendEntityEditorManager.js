@@ -4,6 +4,9 @@ window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = 'OnEntityEditorFieldChanged';
 window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE = 'OnEntityEditorAllFieldInvalidate';
 
 class BackendEntityEditorManager extends Quantumart.QP8.Observable {
+  /** @type {BackendEntityEditorManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendEntityEditorManager._instance) {
       BackendEntityEditorManager._instance = new BackendEntityEditorManager();

@@ -1,4 +1,7 @@
 class BackendSearchBlockManager extends Quantumart.QP8.Observable {
+  /** @type {BackendSearchBlockManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendSearchBlockManager._instance) {
       BackendSearchBlockManager._instance = new BackendSearchBlockManager();

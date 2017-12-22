@@ -1,4 +1,7 @@
 class BackendEntityGridManager extends Quantumart.QP8.Observable {
+  /** @type {BackendEntityGridManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendEntityGridManager._instance) {
       BackendEntityGridManager._instance = new BackendEntityGridManager();

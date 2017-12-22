@@ -1,4 +1,7 @@
 class BackendLibraryManager extends Quantumart.QP8.Observable {
+  /** @type {BackendLibraryManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendLibraryManager._instance) {
       BackendLibraryManager._instance = new BackendLibraryManager();

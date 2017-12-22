@@ -1,4 +1,7 @@
 class BackendBreadCrumbsManager extends Quantumart.QP8.Observable {
+  /** @type {BackendBreadCrumbsManager} */
+  static _instance;
+
   static getInstance(breadCrumbsContainerElementId, options) {
     if (!BackendBreadCrumbsManager._instance) {
       BackendBreadCrumbsManager._instance = new BackendBreadCrumbsManager(breadCrumbsContainerElementId, options);

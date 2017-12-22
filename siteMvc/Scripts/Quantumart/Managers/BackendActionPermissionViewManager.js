@@ -1,4 +1,7 @@
 class BackendActionPermissionViewManager extends Quantumart.QP8.Observable {
+  /** @type {BackendActionPermissionViewManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendActionPermissionViewManager._instance) {
       BackendActionPermissionViewManager._instance = new BackendActionPermissionViewManager();

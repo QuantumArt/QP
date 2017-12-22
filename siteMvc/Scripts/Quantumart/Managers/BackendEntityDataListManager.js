@@ -1,4 +1,7 @@
 class BackendEntityDataListManager extends Quantumart.QP8.Observable {
+  /** @type {BackendEntityDataListManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendEntityDataListManager._instance) {
       BackendEntityDataListManager._instance = new BackendEntityDataListManager();

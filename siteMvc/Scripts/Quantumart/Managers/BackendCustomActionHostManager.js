@@ -1,5 +1,8 @@
 window.EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED = 'onCloseHostMessageReceived';
 class BackendCustomActionHostManager extends Quantumart.QP8.Observable {
+  /** @type {BackendCustomActionHostManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendCustomActionHostManager._instance) {
       BackendCustomActionHostManager._instance = new BackendCustomActionHostManager();

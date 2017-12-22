@@ -1,4 +1,7 @@
 class BackendBreadMenuContextMenuManager extends Quantumart.QP8.Observable {
+  /** @type {BackendBreadMenuContextMenuManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendBreadMenuContextMenuManager._instance) {
       BackendBreadMenuContextMenuManager._instance = new BackendBreadMenuContextMenuManager();

@@ -1,4 +1,7 @@
 class BackendEntityTreeManager extends Quantumart.QP8.Observable {
+  /** @type {BackendEntityTreeManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendEntityTreeManager._instance) {
       BackendEntityTreeManager._instance = new BackendEntityTreeManager();

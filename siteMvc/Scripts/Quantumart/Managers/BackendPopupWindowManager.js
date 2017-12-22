@@ -1,4 +1,7 @@
 Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager extends Quantumart.QP8.Observable {
+  /** @type {BackendPopupWindowManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendPopupWindowManager._instance) {
       BackendPopupWindowManager._instance = new BackendPopupWindowManager();
