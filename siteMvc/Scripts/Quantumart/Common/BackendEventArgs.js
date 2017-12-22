@@ -202,33 +202,33 @@ Quantumart.QP8.BackendEventArgs.prototype = {
 
   get_isLoaded() {
     return this._actionTypeCode === window.ACTION_TYPE_CODE_READ
-    && this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_NONE;
+      && this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_NONE;
   },
 
   get_isSaved() {
     return this._actionTypeCode === window.ACTION_TYPE_CODE_READ
-    && (
-      this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_SAVE
-      || this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_SAVE_AND_UP
-    );
+      && (
+        this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_SAVE
+        || this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_SAVE_AND_UP
+      );
   },
 
   get_isUpdated() {
     return this._actionTypeCode === window.ACTION_TYPE_CODE_READ
-    && (
-      this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_UPDATE
-      || this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_UPDATE_AND_UP
-    );
+      && (
+        this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_UPDATE
+        || this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_UPDATE_AND_UP
+      );
   },
 
   get_isRestored() {
     return this._actionTypeCode === window.ACTION_TYPE_CODE_READ
-    && this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_RESTORE;
+      && this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_RESTORE;
   },
 
   get_needUp() {
     return this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_SAVE_AND_UP
-    || this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_UPDATE_AND_UP;
+      || this.get_previousActionTypeCode() === window.ACTION_TYPE_CODE_UPDATE_AND_UP;
   },
 
   get_previousActionTypeCode() {
@@ -238,17 +238,17 @@ Quantumart.QP8.BackendEventArgs.prototype = {
 
   get_isArchiving() {
     return this._actionTypeCode === window.ACTION_TYPE_CODE_ARCHIVE
-    || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_ARCHIVE;
+      || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_ARCHIVE;
   },
 
   get_isRemoving() {
     return this._actionTypeCode === window.ACTION_TYPE_CODE_REMOVE
-    || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_REMOVE;
+      || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_REMOVE;
   },
 
   get_isRestoring() {
     return this._actionTypeCode === window.ACTION_TYPE_CODE_RESTORE
-    || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_RESTORE;
+      || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_RESTORE;
   },
 
   get_callerContext() {
@@ -339,8 +339,7 @@ Quantumart.QP8.BackendEventArgs.fillEventArgsFromOtherEventArgs = function (targ
     throw new Error($l.Common.sourceEventArgsNotSpecified);
   }
 
-  if (Quantumart.QP8.BackendEventArgs.isInstanceOfType(sourceArgs)
-  || Object.getType(sourceArgs).inheritsFrom(Quantumart.QP8.BackendEventArgs)) {
+  if (Quantumart.QP8.BackendEventArgs.isInstanceOfType(sourceArgs)) {
     targetArgs.set_entityTypeCode(sourceArgs.get_entityTypeCode());
     targetArgs.set_entityTypeName(sourceArgs.get_entityTypeName());
     targetArgs.set_parentEntityId(sourceArgs.get_parentEntityId());

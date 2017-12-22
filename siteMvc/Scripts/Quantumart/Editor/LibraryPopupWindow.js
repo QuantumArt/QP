@@ -13,8 +13,7 @@ Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
 };
 
 Quantumart.QP8.LibraryPopupWindow.prototype = {
-  _options:
-  {
+  _options: {
     entityName: '',
     isMultipleEntities: false,
     entities: [],
