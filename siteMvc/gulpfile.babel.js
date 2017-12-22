@@ -224,6 +224,7 @@ custom.paths = {
     'Scripts/Quantumart/CustomAction/QP8BackendApi.Interaction.js',
     'Scripts/Quantumart/CustomAction/BackendCustomActionHost.js',
     'Scripts/Quantumart/ActionPermissions/BackendActionPermissionView.js',
+    'Scripts/Quantumart/Managers/BackendBrowserHistoryManager.js',
     'Scripts/Quantumart/Managers/BackendBreadCrumbsManager.js',
     'Scripts/Quantumart/Managers/BackendEntityGridManager.js',
     'Scripts/Quantumart/Managers/BackendEntityTreeManager.js',
