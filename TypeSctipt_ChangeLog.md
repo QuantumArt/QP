@@ -21,6 +21,9 @@
 * Убрал использование `$q.bindProxies` (!)
 * Добавил в прототип поле `_contextMenuComponent`
 
+### BackendBreadCrumbsManager.js
+* Лишние аргументы в вызове `super`
+
 ### BackendEntityGrid.js
 * Убрал использование `$q.bindProxies` (!)
 
@@ -120,6 +123,10 @@
 * Приведение типов
 
 ### BackendTextAreaEditor.js
+* Убрал ошибочный вызов `$.proxy` вокруг вызова `this._insertLibraryTag(url)` (!)
+* Лишний аргумент `tArea` в вызове `this.getMode`
+* Лишний аргумент `cm` в вызове `this.initTemplateToolbar`
+* Форматирование кода
 * `_onInsertCall()` - заменил проверку на пустое значение для `valToInsert` (!)  
   (Александр допустил ошибку при рефакторинге, заменив `==` на `===`) 
 

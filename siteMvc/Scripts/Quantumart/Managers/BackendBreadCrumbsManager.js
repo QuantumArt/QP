@@ -28,7 +28,7 @@ class BackendBreadCrumbsManager extends Quantumart.QP8.Observable {
 
   constructor(breadCrumbsContainerElementId, options) {
     // @ts-ignore
-    super(breadCrumbsContainerElementId, options);
+    super();
     this._breadCrumbsContainerElementId = breadCrumbsContainerElementId;
 
     if (options) {

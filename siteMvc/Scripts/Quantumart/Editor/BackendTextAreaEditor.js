@@ -84,7 +84,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       if (entities.length > 0) {
         url = $(`#${this._selectPopupWindowComponent._popupWindowId}_Library`).find('.l-virtual-path').text();
         url += entities[0].Name;
-        $.proxy(this._insertLibraryTag(url), this);
+        this._insertLibraryTag(url);
       }
     }
   },
@@ -185,12 +185,12 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       lineNumbers: $q.toBoolean(tArea.data('hta_lineNumbers'), true),
       matchBrackets: $q.toBoolean(tArea.data('hta_matchBrackets'), true),
       lineWrapping: $q.toBoolean(tArea.data('hta_lineWrapping'), true),
-      mode: this.getMode(tArea),
+      mode: this.getMode(),
       readOnly: tArea.is('[readOnly]'),
       tabMode: 'indent'
     });
 
-    this.initTemplateToolbar(cm);
+    this.initTemplateToolbar();
     cm.setSize(this._editorWidth, this._editorHeight);
 
     if (!$q.isNull(tArea.data('height'))) {
@@ -255,13 +255,15 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       formatId: this._formatId
     }, true, false).done($.proxy(function ajaxDone(data) {
       if ($q.confirmMessage(window.HTA_DEFAULT_CONFIRM)) {
-        this._componentElem.data('codeMirror').replaceRange(data.code, {
-          line: 0,
-          ch: 0
-        }, {
-          line: this._componentElem.data('codeMirror').lastLine() + 1,
-          ch: 0
-        });
+        this._componentElem.data('codeMirror').replaceRange(data.code,
+          {
+            line: 0,
+            ch: 0
+          },
+          {
+            line: this._componentElem.data('codeMirror').lastLine() + 1,
+            ch: 0
+          });
 
         this._componentElem.addClass(window.CHANGED_FIELD_CLASS_NAME);
       }
@@ -326,8 +328,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     let strIns;
     if (netLanguage === '') {
       strIns = `<%=${fieldName}%>`;
-    } else
-    if (isCodeBehind === '0') {
+    } else if (isCodeBehind === '0') {
       strIns = `<%# ${fieldName}%>`;
     } else if (netLanguage === '1') {
       strIns = fieldName;
