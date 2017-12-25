@@ -1,4 +1,5 @@
 /* eslint max-lines: 'off' */
+/* eslint-disable class-methods-use-this */
 
 window.DOCUMENT_HOST_TYPE_EDITING_DOCUMENT = 1;
 window.DOCUMENT_HOST_TYPE_POPUP_WINDOW = 2;
@@ -340,6 +341,89 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   // eslint-disable-next-line camelcase
   set_eventArgsAdditionalData(value) {
     this._eventArgsAdditionalData = value;
+  }
+
+  /** @abstract */
+  showLoadingLayer() {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /** @abstract */
+  hideLoadingLayer() {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {string} _eventType
+   * @param {object} _sender
+   * @param {any} _eventArgs
+   */
+  _onLibraryResized(_eventType, _sender, _eventArgs) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {string} _eventType
+   * @param {object} _sender
+   * @param {any} _eventArgs
+   */
+  onChangeContent(_eventType, _sender, _eventArgs) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {any} _eventArgs
+   */
+  onActionExecuting(_eventArgs) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {any} _eventArgs
+   */
+  onEntityReaded(_eventArgs) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {any} _eventArgs
+   */
+  onNeedUp(_eventArgs) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @returns {'GET' | 'POST'}
+   */
+  htmlLoadingMethod() {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /** @abstract */
+  resetSelectedEntities() {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {any} _eventArgs
+   */
+  saveSelectionContext(_eventArgs) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {number} _xhrStatus
+   */
+  showErrorMessageInDocumentWrapper(_xhrStatus) {
+    throw new Error($l.Common.methodNotImplemented);
   }
 
   _applyEventArgs(eventArgs, saveCallerContext) {
@@ -770,7 +854,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     }
   }
 
-  unmarkPanelsAsBusy(hideLoadingLayer) {
+  unmarkPanelsAsBusy() {
     if (this._breadCrumbsComponent) {
       this._breadCrumbsComponent.unmarkBreadCrumbsAsBusy();
     }
@@ -783,7 +867,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
       this._viewToolbarComponent.unmarkToolbarAsBusy();
     }
 
-    this.hideLoadingLayer(hideLoadingLayer);
+    this.hideLoadingLayer();
   }
 
   loadHtmlContentToDocumentWrapper(callback, options) {
@@ -1512,19 +1596,5 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     }
   }
 }
-
-$q.defineAbstractMethods.call(BackendDocumentHost.prototype, [
-  'showLoadingLayer',
-  'hideLoadingLayer',
-  'onChangeContent',
-  'onActionExecuting',
-  'onEntityReaded',
-  'onNeedUp',
-  'htmlLoadingMethod',
-  'resetSelectedEntities',
-  'saveSelectionContext',
-  'showErrorMessageInDocumentWrapper',
-  '_onLibraryResized'
-]);
 
 Quantumart.QP8.BackendDocumentHost = BackendDocumentHost;

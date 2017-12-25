@@ -1,3 +1,6 @@
+### ActionLogFilterBase.js
+* Заменил `$q.defineAbstractMethods` на типизированные объявления методов (!)
+
 ### Backend.js
 * Убрал использование `$q.bindProxies` (!)  
   (иначе переменыне вида `_fooHandler` остаются необъявленными)
@@ -11,6 +14,9 @@
 ### BackendActionPermissionTree.js
 * Приведение типов
 
+### BackendBaseUploader.js
+* Заменил `$q.defineAbstractMethods` на типизированные объявления методов (!)
+
 ### BackendBreadCrumbs.js
 * Убрал использование `$q.bindProxies` (!)
 * Добавил в прототип поле `_contextMenuComponent`
@@ -21,6 +27,7 @@
 ### BackendEntityDataListBase.js
 * `Quantumart.QP8.Enums.DataListType` - переделал в plain object
 * Лишний аргумент `this._listWrapperElement` в вызове `$(...).unwrap`
+* Добавил типизированные объявления абстрактных методов
 
 ### BackendDireclLinkExecutor.js
 * `$.Deferred()` - не конструктор, а фабрика
@@ -29,9 +36,12 @@
 * Исправил опечатку `loadHanlder` => `loadHandler` (!)
 
 ### BackendDocumentHost.js
+* Заменил `$q.defineAbstractMethods` на типизированные объявления методов (!)
 * Лишний аргумент `eventArgs` в вызове `onDataBinding`
 * Лишние аргументы в вызове `onSearchViewToolbarButtonClicked`
 * Лишние аргументы в вызове `onContextViewToolbarButtonClicked`
+* Лишний аргумент `hideLoadingLayer` в вызове `this.hideLoadingLayer`
+* Неиспользуемый аргумент `hideLoadingLayer` в методе `this.unmarkPanelsAsBusy`
 * Приведение типов
 
 ### BackendEditingArea.js
@@ -112,6 +122,8 @@
 
 ### BackendTreeBase.js
 * Убрал использование `$q.bindProxies` (!)
+* Исправил объявления абстрактных методов (!)
+* Добавил типизацию для виртуальных методов
 
 ### BackendTreeMenu.js
 * Убрал использование `$q.bindProxies` (!)

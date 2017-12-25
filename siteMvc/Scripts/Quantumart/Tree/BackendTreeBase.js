@@ -32,10 +32,8 @@ Quantumart.QP8.BackendTreeBase = function (treeElementId, options) {
     }
   }
 
-  $q.bindProxies.call(this, [
-    '_onNodeClicking',
-    '_onIdClicking'
-  ]);
+  this._onNodeClickingHandler = this._onNodeClicking.bind(this);
+  this._onIdClickingHandler = this._onIdClicking.bind(this);
 };
 
 Quantumart.QP8.BackendTreeBase.prototype = {
@@ -226,8 +224,14 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  _refreshNodeInner() {
-    $q.alertFail($l.Common.methodNotImplemented);
+  /**
+   * @abstract
+   * @param {any} _node
+   * @param {boolean} _loadChildNodes
+   * @param {Function} _callback
+   */
+  _refreshNodeInner(_node, _loadChildNodes, _callback) {
+    throw new Error($l.Common.methodNotImplemented);
   },
 
   refreshNodes(nodes, options) {
@@ -301,6 +305,16 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
     $group.show();
     $group = null;
+  },
+
+  /**
+   * @abstract
+   * @param {any} _parentNode
+   * @param {number} _maxExpandLevel
+   * @param {Function} [_callback]
+   */
+  addNodesToParentNode(_parentNode, _maxExpandLevel, _callback) {
+    throw new Error($l.Common.methodNotImplemented);
   },
 
   _isSearchQueryEmpty() {
@@ -467,8 +481,14 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }
   },
 
-  executeAction() {
-    $q.alertFail($l.Common.methodNotImplemented);
+  /**
+   * @abstract
+   * @param {any} _node
+   * @param {string} _actionCode
+   * @param {{ctrlKey: boolean, shiftKey: boolean }} _event
+   */
+  executeAction(_node, _actionCode, _event) {
+    throw new Error($l.Common.methodNotImplemented);
   },
 
   _legacyNodeCheck(li, isChecked) {
@@ -536,11 +556,25 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }, li, isChecked, suppressAutoCheck, autoCheckChildren);
   },
 
-  beforeCustomNodeCheck() {
+  /**
+   * @virtual
+   * @param {any} _checkbox
+   * @param {boolean} _isChecked
+   * @param {any} _suppressAutoCheck
+   * @param {any} _autoCheckChildren
+   */
+  beforeCustomNodeCheck(_checkbox, _isChecked, _suppressAutoCheck, _autoCheckChildren) {
     // default implementation
   },
 
-  afterCustomNodeCheck() {
+  /**
+   * @virtual
+   * @param {any} _checkbox
+   * @param {boolean} _isChecked
+   * @param {any} _suppressAutoCheck
+   * @param {any} _autoCheckChildren
+   */
+  afterCustomNodeCheck(_checkbox, _isChecked, _suppressAutoCheck, _autoCheckChildren) {
     // default implementation
   },
 

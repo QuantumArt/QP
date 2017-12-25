@@ -38,7 +38,7 @@ module.exports = {
     'no-undefined': 'off',
 
     // disallow unused variables
-    'no-unused-vars': 'error',
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_.+' }],
 
     // disallow early use
     'no-use-before-define': 'error'

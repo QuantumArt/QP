@@ -923,6 +923,7 @@ $q.collectGarbageInIE = function collectGarbageInIE() {
 /**
  * Define abstract methods that should be implemented at child classes
  * @param  {string[]} listOfFnNames list of class method names to implement
+ * @deprecated
  */
 $q.defineAbstractMethods = function (listOfFnNames) {
   listOfFnNames.forEach(fnName => {

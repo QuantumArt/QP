@@ -101,7 +101,11 @@ module.exports = {
     'use-isnan': 'error',
 
     // enforce valid JSDoc comments
-    'valid-jsdoc': ['warn', { "requireReturn": false }],
+    'valid-jsdoc': ['warn', {
+      requireReturn: false,
+      requireParamDescription: false,
+      requireReturnDescription: false,
+    }],
 
     // enforce comparing typeof expressions against valid strings
     'valid-typeof': ['error', { requireStringLiterals: true }]

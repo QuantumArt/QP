@@ -301,6 +301,10 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     $list = null;
   },
 
+  /**
+   * @abstract
+   * @returns {JQuery}
+   */
   getListItems() {
     throw new Error($l.Common.methodNotImplemented);
   },
@@ -309,6 +313,10 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     return this.getListItems().length;
   },
 
+  /**
+   * @abstract
+   * @returns {JQuery}
+   */
   getSelectedListItems() {
     throw new Error($l.Common.methodNotImplemented);
   },
@@ -317,6 +325,10 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     return this.getSelectedListItems().length;
   },
 
+  /**
+   * @abstract
+   * @returns {{Id: number, Name: string}[]}}
+   */
   getSelectedEntities() {
     throw new Error($l.Common.methodNotImplemented);
   },
@@ -337,34 +349,52 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _refreshListInner() {
+  /**
+   * @abstract
+   * @param {any[]} _dataItems
+   * @param {boolean} _refreshOnly
+   */
+  _refreshListInner(_dataItems, _refreshOnly) {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /** @abstract */
   selectAllListItems() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /** @abstract */
   deselectAllListItems() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /** @abstract */
   enableList() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /** @abstract */
   disableList() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /** @abstract */
   makeReadonly() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /**
+   * @abstract
+   * @returns {boolean}
+   */
   isListChanged() {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /**
+   * @abstract
+   * @returns {boolean}
+   */
   isListOverflow() {
     throw new Error($l.Common.methodNotImplemented);
   },
