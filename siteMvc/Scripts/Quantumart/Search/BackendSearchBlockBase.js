@@ -167,6 +167,14 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     this._isRendered = value;
   },
 
+  /**
+   * @abstract
+   * @returns {string}
+   */
+  getSearchQuery() {
+    throw new Error($l.Common.methodNotImplemented);
+  },
+
   // eslint-disable-next-line max-statements
   initialize() {
     let $searchBlock = $(`#${this._searchBlockElementId}`);

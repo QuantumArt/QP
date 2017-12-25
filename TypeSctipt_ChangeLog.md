@@ -37,6 +37,8 @@
 
 ### BackendDocumentHost.js
 * Заменил `$q.defineAbstractMethods` на типизированные объявления методов (!)
+* Добавил пропущенные абстрактные методы (!)
+* Добавил определения виртуальных полей (задаваемых в классах-наследниках) (!)
 * Лишний аргумент `eventArgs` в вызове `onDataBinding`
 * Лишние аргументы в вызове `onSearchViewToolbarButtonClicked`
 * Лишние аргументы в вызове `onContextViewToolbarButtonClicked`
@@ -103,6 +105,7 @@
 * `BackendProgressBarComponent` - не конструктор, а фабрика
 
 ### BackendSearchBlockBase.js
+* Добавил абстрактный метод `getSearchQuery`
 * Приведение типов
 
 ### BackendSettingsPopupWindow.js

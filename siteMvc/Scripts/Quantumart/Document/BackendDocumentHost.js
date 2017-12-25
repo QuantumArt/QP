@@ -165,8 +165,12 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     // @ts-ignore
     super();
 
+    /** @type {HTMLElement} */
+    this._documentWrapperElement = null;
     this._documentWrapperElementId = '';
     this._documentUrl = '';
+    /** @type {object} */
+    this._documentPostParams = null;
     this._entityTypeCode = '';
     this._entityId = 0;
     this._entityName = '';
@@ -185,6 +189,22 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     this._startedByExternal = false;
     this._isCloseForced = false;
     this._unnamedEntitiesLimit = 1000;
+
+    // @ts-ignore
+    /** @type {Quantumart.QP8.BackendActionToolbar} */
+    this._actionToolbarComponent = null;
+    // @ts-ignore
+    /** @type {Quantumart.QP8.BackendViewToolbar} */
+    this._viewToolbarComponent = null;
+    // @ts-ignore
+    /** @type {Quantumart.QP8.BackendSearchBlockBase} */
+    this._searchBlockComponent = null;
+    // @ts-ignore
+    /** @type {Quantumart.QP8.BackendSearchBlockBase} */
+    this._contextBlockComponent = null;
+    // @ts-ignore
+    /** @type {Quantumart.QP8.BackendBreadCrumbs} */
+    this._breadCrumbsComponent = null;
 
     this._externalCallerContexts = [];
     this._onSearchHandler = $.proxy(this.onSearch, this);
@@ -355,11 +375,35 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
   /**
    * @abstract
+   * @param {Function} [_callback]
+   */
+  showPanels(_callback) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {Function} [_callback]
+   */
+  hidePanels(_callback) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
    * @param {string} _eventType
    * @param {object} _sender
    * @param {any} _eventArgs
    */
   _onLibraryResized(_eventType, _sender, _eventArgs) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {object} _unbindingEventArgs
+   */
+  _onExternalCallerContextsUnbinded(_unbindingEventArgs) {
     throw new Error($l.Common.methodNotImplemented);
   }
 
@@ -394,6 +438,63 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
    * @param {any} _eventArgs
    */
   onNeedUp(_eventArgs) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {boolean} [_isLocal]
+   */
+  onDocumentChanging(_isLocal) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {boolean} [_isLocal]
+   */
+  onDocumentChanged(_isLocal) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /** @virtual */
+  onSaveAndClose() {
+    // default implementation
+  }
+
+  /** @abstract */
+  createSearchBlock() {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /** @abstract */
+  destroySearchBlock() {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /** @abstract */
+  createContextBlock() {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /** @abstract */
+  destroyContextBlock() {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {object} [_options]
+   */
+  generateDocumentUrl(_options) {
+    throw new Error($l.Common.methodNotImplemented);
+  }
+
+  /**
+   * @abstract
+   * @param {object} _eventArgs
+   */
+  updateTitle(_eventArgs) {
     throw new Error($l.Common.methodNotImplemented);
   }
 
