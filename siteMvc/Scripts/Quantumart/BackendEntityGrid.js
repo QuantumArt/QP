@@ -442,9 +442,9 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
         .undelegate(this.ROW_CLICKABLE_SELECTORS, 'click')
         .delegate(`${this.ROW_CLICKABLE_SELECTORS} td`, 'click', this._onRowCellClickHandler)
         .delegate(
-        `${this.ROW_CLICKABLE_SELECTORS} ${this.CHECKBOX_CELL_SELECTORS}`,
-        'click',
-        this._onRowCheckboxCellClickHandler
+          `${this.ROW_CLICKABLE_SELECTORS} ${this.CHECKBOX_CELL_SELECTORS}`,
+          'click',
+          this._onRowCheckboxCellClickHandler
         );
     }
 
@@ -1200,14 +1200,14 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
 
           this._gridComponent.$tbody
             .undelegate(
-            `${this.ROW_CLICKABLE_SELECTORS} td`,
-            'click',
-            this._onRowCellClickHandler
+              `${this.ROW_CLICKABLE_SELECTORS} td`,
+              'click',
+              this._onRowCellClickHandler
             )
             .undelegate(
-            `${this.ROW_CLICKABLE_SELECTORS} ${this.CHECKBOX_CELL_SELECTORS}`,
-            'click',
-            this._onRowCheckboxCellClickHandler
+              `${this.ROW_CLICKABLE_SELECTORS} ${this.CHECKBOX_CELL_SELECTORS}`,
+              'click',
+              this._onRowCheckboxCellClickHandler
             );
         }
 
@@ -1216,9 +1216,9 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
           .unbind('dataBound')
           .unbind('rowDataBound')
           .undelegate(
-          this.ROW_CLICKABLE_SELECTORS,
-          $.fn.jeegoocontext.getContextMenuEventType(),
-          this._onContextMenuHandler
+            this.ROW_CLICKABLE_SELECTORS,
+            $.fn.jeegoocontext.getContextMenuEventType(),
+            this._onContextMenuHandler
           );
 
         this._contextMenuComponent.detachObserver(

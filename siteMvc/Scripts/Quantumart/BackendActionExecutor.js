@@ -320,25 +320,25 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                           stage: stageCounter,
                           step: stepCounter
                         }, true, false).done(stepData => {
-                          if (stepData) {
-                            if (stepData.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
-                              errorHandler(stepData);
-                            } else {
-                              progressWindow.completeStep(
-                                stepData.ProcessedItemsCount,
-                                stepData.AdditionalInfo,
-                                actionData.ParentId || parentEntityId
-                              );
-                              stepCounter += 1;
-                              if (stepCounter === stepLength) {
-                                progressWindow.completeStage();
-                                stageCounter += 1;
-                              }
-
-                              iterationCallback();
+                        if (stepData) {
+                          if (stepData.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
+                            errorHandler(stepData);
+                          } else {
+                            progressWindow.completeStep(
+                              stepData.ProcessedItemsCount,
+                              stepData.AdditionalInfo,
+                              actionData.ParentId || parentEntityId
+                            );
+                            stepCounter += 1;
+                            if (stepCounter === stepLength) {
+                              progressWindow.completeStage();
+                              stageCounter += 1;
                             }
+
+                            iterationCallback();
                           }
-                        }).fail(errorCallback2);
+                        }
+                      }).fail(errorCallback2);
                     } else {
                       if (stage && stepLength === 0) {
                         progressWindow.completeStage();

@@ -237,9 +237,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       this._detachEvents();
       let windowComponent = this._windowComponent;
       let $window = jQuery(windowComponent.element);
-      $window
-        .unbind('close', this._onCloseWindowHandler)
-        ;
+      $window.unbind('close', this._onCloseWindowHandler);
 
       $window = null;
       $c.destroyPopupWindow(windowComponent);
