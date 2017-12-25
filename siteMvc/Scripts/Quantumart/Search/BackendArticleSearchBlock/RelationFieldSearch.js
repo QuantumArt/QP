@@ -16,6 +16,10 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
+  _onLoadHandler: null,
+  _onSelectorChangeHandler: null,
+  _onListContentChangedHandler: null,
+
   initialize() {
     let serverContent;
     $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}RelationSearch`, {

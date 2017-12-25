@@ -42,6 +42,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   _breadCrumbsElement: null,
   _breadCrumbsItemListElement: null,
   _breadCrumbsContainerElementId: '',
+  _contextMenuComponent: null,
   _documentHost: null,
   _stopDeferredOperations: false,
   _addItemsCallback: null,

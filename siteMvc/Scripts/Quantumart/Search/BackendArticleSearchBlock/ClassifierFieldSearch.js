@@ -20,8 +20,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (
       fieldColumn,
       fieldName,
       fieldGroup,
-      referenceFieldID,
-      searchType
+      referenceFieldID
     ]
   );
 
@@ -64,8 +63,6 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
       // запомнить ссылку на dom-элементы
       this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
       this._contentElement = $content.get(0);
-
-      $(document).ready(this._onLoadHandler);
     }
   },
 

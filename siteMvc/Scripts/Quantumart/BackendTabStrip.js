@@ -54,6 +54,8 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _tabStripElementId: '',
   _tabStripElement: null,
   _tabStripScrollableElement: null,
+
+  /** @type {string | HTMLElement} */
   _tabListElement: '',
   _partialRemovedTabsContainerElement: null,
   _selectedTabId: '',
@@ -490,6 +492,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   getExistingTabId(eventArgs) {
+    /** @type {number | string} */
     let result = 0;
     if (eventArgs.get_actionTypeCode() !== window.ACTION_TYPE_CODE_ADD_NEW) {
       const $tab = this.getFirstTabByGroupCode(this.generateTabGroupCode(eventArgs, 0));
@@ -1573,6 +1576,7 @@ Quantumart.QP8.BackendTabEventArgs = function () {
 
 Quantumart.QP8.BackendTabEventArgs.prototype = {
   _tabId: '',
+  isExpandRequested: false,
   // eslint-disable-next-line camelcase
   get_tabId() {
     return this._tabId;

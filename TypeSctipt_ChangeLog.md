@@ -7,12 +7,18 @@
 ### BackendActionPermissionTree.js
 * Приведение типов
 
+### BackendBreadCrumbs.js
+* Добавил в прототип поле `_contextMenuComponent`
+
 ### BackendEntityDataListBase.js
 * `Quantumart.QP8.Enums.DataListType` - переделал в plain object
 * Лишний аргумент `this._listWrapperElement` в вызове `$(...).unwrap`
 
 ### BackendDireclLinkExecutor.js
 * `$.Deferred()` - не конструктор, а фабрика
+
+### BackendDocumentContext.js
+* Исправил опечатку `loadHanlder` => `loadHandler` (!)
 
 ### BackendDocumentHost.js
 * Лишний аргумент `eventArgs` в вызове `onDataBinding`
@@ -80,6 +86,7 @@
 
 ### BackendTabStrip.js
 * Приведение типов
+* Добавил поле `isExpandRequested` в класс `BackendTabEventArgs`
 
 ### BackendTemplateObjectProperties.js
 * Приведение типов
@@ -100,6 +107,10 @@
 ### BackendWorkflowEditor.js
 * `this` должен передаваться вторым аргументом в `jQuery.proxy` а не в `$(...).each` (!)
 
+### ClassifierFieldSearch.js
+* Убрал лишний параметр `searchType` из вызова конструктора `FieldSearchBase` (!
+* Убрал вызов отсутствующего метода `this._onLoadHandler` (!)
+
 ### ControlHelpers.js
 * Объявление как класс (для навигации по коду)
 * Лишний аргумент в вызове `$c.saveWorkflowData`
@@ -115,6 +126,8 @@
 * Переместил из `vendors.js` в `app.js`
 
 ### RelationFieldSearch.js
+* Добавил в прототип определения методов  (!)
+  `_onLoadHandler`, `_onSelectorChangeHandler`, `_onListContentChangedHandler`
 * Заменил ES6 `Set` на `Array.distinct` (!)
 
 ### Utils.js

@@ -78,7 +78,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   initHandler: null,
   disposeHandler: null,
   beforeSubmitHandler: null,
-  loadHanlder: null,
+  loadHandler: null,
   fieldValueChangedHandler: null,
 
   _options: null,

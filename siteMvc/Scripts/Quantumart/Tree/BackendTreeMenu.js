@@ -297,7 +297,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
               return;
             }
 
-            this._mergePartialTree(rootNode, true);
+            this._mergePartialTree(rootNode);
 
             const deepestTreeNode = this._findDeepestTreeNode(rootNode);
 

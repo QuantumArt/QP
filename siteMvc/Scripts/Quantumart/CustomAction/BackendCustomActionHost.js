@@ -46,7 +46,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     }, 0);
   },
 
-  _onCheckHostMessageReceived() {
+  _onCheckHostMessageReceived(_message) {
     return window.BACKEND_VERSION;
   },
 
