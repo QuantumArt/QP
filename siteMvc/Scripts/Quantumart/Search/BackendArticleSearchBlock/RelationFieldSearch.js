@@ -6,13 +6,12 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (
     this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
 
   this._searchType = searchType;
-  $q.bindProxies.call(this, [
-    '_onLoad',
-    '_onIsNullCheckBoxChange',
-    '_onSelectorChange',
-    '_onListContentChanged',
-    '_expandHierarchy'
-  ]);
+
+  this._onLoadHandler = this._onLoad.bind(this);
+  this._onIsNullCheckBoxChangeHandler = this._onIsNullCheckBoxChange.bind(this);
+  this._onSelectorChangeHandler = this._onSelectorChange.bind(this);
+  this._onListContentChangedHandler = this._onListContentChanged.bind(this);
+  this._expandHierarchyHandler = this._expandHierarchy.bind(this);
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {

@@ -72,14 +72,12 @@ Quantumart.QP8.BackendEntityTree = function (
     }
   }
 
-  $q.bindProxies.call(this, [
-    '_onDataBinding',
-    '_onNodeClicking',
-    '_onContextMenu',
-    '_onNodeContextMenuShowing',
-    '_onNodeContextMenuItemClicking',
-    '_onNodeContextMenuHidden'
-  ]);
+  this._onDataBindingHandler = this._onDataBinding.bind(this);
+  this._onNodeClickingHandler = this._onNodeClicking.bind(this);
+  this._onContextMenuHandler = this._onContextMenu.bind(this);
+  this._onNodeContextMenuShowingHandler = this._onNodeContextMenuShowing.bind(this);
+  this._onNodeContextMenuItemClickingHandler = this._onNodeContextMenuItemClicking.bind(this);
+  this._onNodeContextMenuHiddenHandler = this._onNodeContextMenuHidden.bind(this);
 };
 
 Quantumart.QP8.BackendEntityTree.prototype = {

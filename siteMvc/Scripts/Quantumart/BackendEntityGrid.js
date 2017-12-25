@@ -182,21 +182,19 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       this._isBindToExternal = $q.toBoolean(hostOptions.isBindToExternal, false);
     }
 
-    $q.bindProxies.call(this, [
-      '_onDataBinding',
-      '_onDataBound',
-      '_onRowDataBound',
-      '_onHeaderCheckboxClick',
-      '_onTitleLinkClick',
-      '_onRowCellClick',
-      '_onRowCheckboxCellClick',
-      '_onContextMenu',
-      '_onRowContextMenuShowing',
-      '_onRowContextMenuItemClicking',
-      '_onRowContextMenuHidden',
-      '_onSelectAllClick',
-      '_onDeselectAllClick'
-    ]);
+    this._onDataBindingHandler = this._onDataBinding.bind(this);
+    this._onDataBoundHandler = this._onDataBound.bind(this);
+    this._onRowDataBoundHandler = this._onRowDataBound.bind(this);
+    this._onHeaderCheckboxClickHandler = this._onHeaderCheckboxClick.bind(this);
+    this._onTitleLinkClickHandler = this._onTitleLinkClick.bind(this);
+    this._onRowCellClickHandler = this._onRowCellClick.bind(this);
+    this._onRowCheckboxCellClickHandler = this._onRowCheckboxCellClick.bind(this);
+    this._onContextMenuHandler = this._onContextMenu.bind(this);
+    this._onRowContextMenuShowingHandler = this._onRowContextMenuShowing.bind(this);
+    this._onRowContextMenuItemClickingHandler = this._onRowContextMenuItemClicking.bind(this);
+    this._onRowContextMenuHiddenHandler = this._onRowContextMenuHidden.bind(this);
+    this._onSelectAllClickHandler = this._onSelectAllClick.bind(this);
+    this._onDeselectAllClickHandler = this._onDeselectAllClick.bind(this);
   }
 
   // eslint-disable-next-line camelcase

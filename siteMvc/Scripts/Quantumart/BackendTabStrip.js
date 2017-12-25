@@ -23,28 +23,26 @@ Quantumart.QP8.BackendTabStrip = function (tabStripElementId, options) {
     }
   }
 
-  $q.bindProxies.call(this, [
-    '_onDocumentBodyClick',
-    '_onTabClicking',
-    '_onTabMiddleClick',
-    '_onContextMenuShow',
-    '_onWindowResized',
-    '_onTabStripOverflowEvoked',
-    '_onTabStripOverflowPrecluded',
-    '_onCloseButtonHovering',
-    '_onCloseButtonClicking',
-    '_onCloseButtonClicked',
-    '_onCloseButtonUnhovering',
-    '_onTabMenuItemClicking',
-    '_onTabMenuButtonHovered',
-    '_onTabMenuButtonUnhovered',
-    '_onTabMenuButtonClicking',
-    '_onTabMenuButtonClicked',
-    '_onTabMenuUpArrowHovered',
-    '_onTabMenuUpArrowUnhovered',
-    '_onTabMenuDownArrowHovered',
-    '_onTabMenuDownArrowUnhovered'
-  ]);
+  this._onDocumentBodyClickHandler = this._onDocumentBodyClick.bind(this);
+  this._onTabClickingHandler = this._onTabClicking.bind(this);
+  this._onTabMiddleClickHandler = this._onTabMiddleClick.bind(this);
+  this._onContextMenuShowHandler = this._onContextMenuShow.bind(this);
+  this._onWindowResizedHandler = this._onWindowResized.bind(this);
+  this._onTabStripOverflowEvokedHandler = this._onTabStripOverflowEvoked.bind(this);
+  this._onTabStripOverflowPrecludedHandler = this._onTabStripOverflowPrecluded.bind(this);
+  this._onCloseButtonHoveringHandler = this._onCloseButtonHovering.bind(this);
+  this._onCloseButtonClickingHandler = this._onCloseButtonClicking.bind(this);
+  this._onCloseButtonClickedHandler = this._onCloseButtonClicked.bind(this);
+  this._onCloseButtonUnhoveringHandler = this._onCloseButtonUnhovering.bind(this);
+  this._onTabMenuItemClickingHandler = this._onTabMenuItemClicking.bind(this);
+  this._onTabMenuButtonHoveredHandler = this._onTabMenuButtonHovered.bind(this);
+  this._onTabMenuButtonUnhoveredHandler = this._onTabMenuButtonUnhovered.bind(this);
+  this._onTabMenuButtonClickingHandler = this._onTabMenuButtonClicking.bind(this);
+  this._onTabMenuButtonClickedHandler = this._onTabMenuButtonClicked.bind(this);
+  this._onTabMenuUpArrowHoveredHandler = this._onTabMenuUpArrowHovered.bind(this);
+  this._onTabMenuUpArrowUnhoveredHandler = this._onTabMenuUpArrowUnhovered.bind(this);
+  this._onTabMenuDownArrowHoveredHandler = this._onTabMenuDownArrowHovered.bind(this);
+  this._onTabMenuDownArrowUnhoveredHandler = this._onTabMenuDownArrowUnhovered.bind(this);
 };
 
 Quantumart.QP8.BackendTabStrip.prototype = {

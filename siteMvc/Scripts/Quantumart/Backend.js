@@ -26,16 +26,14 @@ Quantumart.QP8.Backend = function (isDebugMode, options) {
   this._unloadHandler = $.proxy(this._dispose, this);
   this._errorHandler = $.proxy(this._error, this);
 
-  $q.bindProxies.call(this, [
-    '_onResizeSplitter',
-    '_onDragStartSplitter',
-    '_onDropSplitter',
-    '_onEditingAreaEvent',
-    '_onActionExecuting',
-    '_onActionExecuted',
-    '_onEntityReaded',
-    '_onHostExternalCallerContextsUnbinded'
-  ]);
+  this._onResizeSplitterHandler = this._onResizeSplitter.bind(this);
+  this._onDragStartSplitterHandler = this._onDragStartSplitter.bind(this);
+  this._onDropSplitterHandler = this._onDropSplitter.bind(this);
+  this._onEditingAreaEventHandler = this._onEditingAreaEvent.bind(this);
+  this._onActionExecutingHandler = this._onActionExecuting.bind(this);
+  this._onActionExecutedHandler = this._onActionExecuted.bind(this);
+  this._onEntityReadedHandler = this._onEntityReaded.bind(this);
+  this._onHostExternalCallerContextsUnbindedHandler = this._onHostExternalCallerContextsUnbinded.bind(this);
 
   $(document).bind('click', e => {
     if (e.which === 2) {

@@ -1,3 +1,7 @@
+### Backend.js
+* Убрал использование `$q.bindProxies` (!)  
+  (иначе переменыне вида `_fooHandler` остаются необъявленными)
+
 ### BackendActionExecutor.js
 * `$.Deferred()` - не конструктор, а фабрика
 * Лишний аргумент `errorThrown` в вызове `errorCallback`
@@ -8,7 +12,11 @@
 * Приведение типов
 
 ### BackendBreadCrumbs.js
+* Убрал использование `$q.bindProxies` (!)
 * Добавил в прототип поле `_contextMenuComponent`
+
+### BackendEntityGrid.js
+* Убрал использование `$q.bindProxies` (!)
 
 ### BackendEntityDataListBase.js
 * `Quantumart.QP8.Enums.DataListType` - переделал в plain object
@@ -46,12 +54,18 @@
 * Объявление как константа (для навигации по коду)
 * Приведение типов
 
+### BackendEntityTree.js
+* Убрал использование `$q.bindProxies` (!)
+
 ### BackendEntityTreeManager.js
 * Неиспользуемый аргумент `options` в сигнатуре `getInstance`
 
 ### BackendEventArgs.js
 * Удалил вызов `Object.getType().inheritsFrom()` так как вызов `Type.isInstanceOfType` (!)  
   уже содержит в себе вызов `Type.inheritsFrom`
+
+### BackendFieldSearch.js
+* Убрал использование `$q.bindProxies` (!)
 
 ### BackendImageCropResizeClient.js
 * `$.ajax().success` (deprecated) => `$.ajax().done`
@@ -85,6 +99,7 @@
 * Перенес вызов базового конструктора в начало метода (!)
 
 ### BackendTabStrip.js
+* Убрал использование `$q.bindProxies` (!)
 * Приведение типов
 * Добавил поле `isExpandRequested` в класс `BackendTabEventArgs`
 
@@ -94,6 +109,12 @@
 ### BackendTextAreaEditor.js
 * `_onInsertCall()` - заменил проверку на пустое значение для `valToInsert` (!)  
   (Александр допустил ошибку при рефакторинге, заменив `==` на `===`) 
+
+### BackendTreeBase.js
+* Убрал использование `$q.bindProxies` (!)
+
+### BackendTreeMenu.js
+* Убрал использование `$q.bindProxies` (!)
 
 ### BackendTreeMenuContextMenuManager.js
 * Неиспользуемый аргумент `options` в сигнатуре `getInstance`

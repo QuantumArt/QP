@@ -934,6 +934,7 @@ $q.defineAbstractMethods = function (listOfFnNames) {
  * Bind class methods and "this" context, using bind function
  * @param  {string[]} listOfFnNames list of class method names to bind
  * @param  {string[]} fnPostfix     new function name with binded context
+ * @deprecated
  */
 $q.bindProxies = function (listOfFnNames, fnPostfix) {
   const postfix = fnPostfix || 'Handler';

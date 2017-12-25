@@ -25,16 +25,13 @@ Quantumart.QP8.BackendBreadCrumbs = function (breadCrumbsElementId, options) {
     }
   }
 
-  $q.bindProxies.call(this, [
-    '_onBreadCrumbsItemClick',
-    '_onGetBreadCrumbsListSuccess',
-    '_onGetBreadCrumbsListError',
-
-    '_onContextMenu',
-    '_onContextMenuShowing',
-    '_onContextMenuItemClicking',
-    '_onContextMenuHidden'
-  ]);
+  this._onBreadCrumbsItemClickHandler = this._onBreadCrumbsItemClick.bind(this);
+  this._onGetBreadCrumbsListSuccessHandler = this._onGetBreadCrumbsListSuccess.bind(this);
+  this._onGetBreadCrumbsListErrorHandler = this._onGetBreadCrumbsListError.bind(this);
+  this._onContextMenuHandler = this._onContextMenu.bind(this);
+  this._onContextMenuShowingHandler = this._onContextMenuShowing.bind(this);
+  this._onContextMenuItemClickingHandler = this._onContextMenuItemClicking.bind(this);
+  this._onContextMenuHiddenHandler = this._onContextMenuHidden.bind(this);
 };
 
 Quantumart.QP8.BackendBreadCrumbs.prototype = {
