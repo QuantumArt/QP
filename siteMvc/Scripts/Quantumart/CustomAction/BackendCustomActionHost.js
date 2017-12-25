@@ -105,7 +105,9 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     }
 
     const selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, message.data.options);
+    // @ts-ignore FIXME
     selectPopupWindowComponent.callerCallback = message.data.callerCallback;
+    // @ts-ignore FIXME
     selectPopupWindowComponent.selectWindowUID = message.data.selectWindowUID;
     selectPopupWindowComponent.attachObserver(
       window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED,

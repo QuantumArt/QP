@@ -283,6 +283,7 @@ Quantumart.QP8.BackendFileField.prototype = {
 
   _getFormScriptOptions() {
     return {
+      // @ts-ignore FIXME
       imgFilterResolution: this.imgFilterResolution
     };
   },

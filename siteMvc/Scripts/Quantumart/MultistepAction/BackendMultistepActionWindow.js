@@ -332,6 +332,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
 
     const $popupWindow = $(popupWindowComponent.element);
     if (this._zIndex) {
+      // @ts-ignore FIXME
       $popupWindow.css('z-index', this._windowZIndex);
     }
 

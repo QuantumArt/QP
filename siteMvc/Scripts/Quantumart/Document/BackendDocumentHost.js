@@ -693,7 +693,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
       }
 
       if (!$q.isNullOrEmpty(filterStates) && $q.isArray(filterStates)) {
-        // @ts-ignore: filterStates is assigned in synchronous AJAX call
+        // @ts-ignore filterStates is assigned in synchronous AJAX call
         const fieldSearchBlockState = filterStates.map(item =>
           new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
             item.SearchType,
@@ -708,7 +708,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
           )
         );
 
-        // @ts-ignore: filterStates is assigned in synchronous AJAX call
+        // @ts-ignore filterStates is assigned in synchronous AJAX call
         const searchQuery = filterStates.map(item => Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
           item.SearchType,
           item.FieldId,
@@ -854,6 +854,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
         entities,
         entityId,
         entityName,
+        // @ts-ignore FIXME
         forceOpenWindow: this.isWindow
       });
 

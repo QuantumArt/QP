@@ -35,6 +35,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     }
 
     $filter.find('.sic_filter input').val('');
+    // @ts-ignore FIXME
     $('.sic_search_button', this.$filter).trigger('click');
   },
 

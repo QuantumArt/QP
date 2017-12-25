@@ -235,6 +235,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       this._options.customHandlers = this.getCustomHandlers();
       this._options.customButtonsSettings = this._customButtonsSettings;
       this._options.customLinkButtonsSettings = this._customLinkButtonsSettings;
+      // @ts-ignore FIXME
       this._options.notifyCustomButtonExistence = this.notifyCustomButtonExistence;
 
       mainComponent = Quantumart.QP8.BackendEntityEditorManager.getInstance().createEditor(

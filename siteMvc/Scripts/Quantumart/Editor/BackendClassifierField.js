@@ -104,6 +104,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
       }
     }
 
+    // @ts-ignore FIXME
     this._$contentList.addClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', true);
   },
 

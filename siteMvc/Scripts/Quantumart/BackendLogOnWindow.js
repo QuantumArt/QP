@@ -191,7 +191,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
     $(this).triggerHandler({
       type: this.AJAX_EVENT,
 
-      // @ts-ignore: JQueryEvent is used as business logic event
+      // @ts-ignore JQueryEvent is used as business logic event
       value: isAuthenticated
     });
   },
@@ -199,7 +199,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
   _addDeferredCallcack(callback, settings) {
     this._updateZindex();
     $(this).on(this.AJAX_EVENT, e => {
-      // @ts-ignore: JQueryEvent is used as business logic event
+      // @ts-ignore JQueryEvent is used as business logic event
       const isAuthenticated = e.value;
       if (isAuthenticated) {
         jQuery.ajax(settings).done(callback);
@@ -239,7 +239,7 @@ Quantumart.QP8.BackendLogOnWindow.prototype = {
       let $window = jQuery(windowComponent.element);
       $window
         .unbind('close', this._onCloseWindowHandler)
-      ;
+        ;
 
       $window = null;
       $c.destroyPopupWindow(windowComponent);

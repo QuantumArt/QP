@@ -75,7 +75,7 @@ Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId
 
   $typeSelector.change(manageGlobalVisibility);
 
-  // @ts-ignore: JQuery.prop('checked', true) does not works correctly in jquery-1.7.1
+  // @ts-ignore JQuery.prop('checked', true) does not works correctly in jquery-1.7.1
   $statusSelector.find(`.multi-picker-item[value="${$statusSelector.data('published-id')}"]`).attr('checked', true);
   if ($statusSelector.data('has-workflow') === 'False') {
     $statusSelector.data('entity_data_list_component').disableList();

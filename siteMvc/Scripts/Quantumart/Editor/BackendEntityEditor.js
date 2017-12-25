@@ -1032,6 +1032,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
 
     this._disposeAllFields();
     if (this._editorManagerComponent) {
+      // @ts-ignore FIXME
       const editorCode = this._editorCode;
 
       if (!$q.isNullOrWhiteSpace(editorCode)) {

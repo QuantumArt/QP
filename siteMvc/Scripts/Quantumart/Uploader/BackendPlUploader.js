@@ -110,6 +110,7 @@ class BackendPlUploader extends Quantumart.QP8.BackendBaseUploader {
 
   _showOrHidePreviewButton(filename) {
     const it = Quantumart.QP8.Enums.LibraryFileType.Image;
+    // @ts-ignore FIXME
     if (this._isImage || window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[it].split(';').filter(
       ext => filename.toLowerCase().endsWith(ext.toLowerCase())
     ).length > 0) {

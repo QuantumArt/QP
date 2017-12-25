@@ -319,6 +319,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
         .cat('>')
         .cat(dataItem.EntityTypeName)
         .cat(' "')
+        // @ts-ignore FIXME
         .cat($q.middleCutShort($q.htmlEncode(dataItem.Title), this._maxTitleLength))
         .cat('"</span>')
         .catIf('</a>', !isSelectedItem);

@@ -304,6 +304,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   loadFromFile() {
     const that = this;
 
+    // @ts-ignore FIXME
     // eslint-disable-next-line new-cap
     const act = new Quantumart.QP8.BackendActionExecutor.getBackendActionByCode(this.options.actionCode);
     let getFieldsUrl = String.format(

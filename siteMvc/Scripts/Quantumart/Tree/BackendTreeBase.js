@@ -492,6 +492,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   _legacyNodeCheck(li, isChecked) {
+    // @ts-ignore FIXME
     $(li, this.element).each($.proxy(function (index, item) {
       const $item = $(item).closest('.t-item');
       const $checkboxHolder = $('> div > .t-checkbox', $item);

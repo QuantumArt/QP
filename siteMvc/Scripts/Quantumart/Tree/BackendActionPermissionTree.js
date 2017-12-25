@@ -182,6 +182,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
           Quantumart.QP8.BackendActionExecutor.showResult(data);
         } else {
           const dataItems = that._convertToTreeViewItems(data);
+          // @ts-ignore FIXME
           that._renderChildNodes($parentNode, dataItems, isRootNode, false, true);
           $q.clearArray(dataItems);
 
@@ -230,6 +231,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
 
           if (data.Children) {
             const dataItems = that._convertToTreeViewItems(data.Children);
+            // @ts-ignore FIXME
             that._renderChildNodes($node, dataItems, false, false);
             $q.clearArray(dataItems);
           }

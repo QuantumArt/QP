@@ -19,6 +19,7 @@ class BackendActionPermissionViewManager extends Quantumart.QP8.Observable {
 
   createView(viewElementId, options, hostOptions) {
     if (!this._viewComponent) {
+      // @ts-ignore FIXME
       this._viewComponent = new Quantumart.QP8.BackendActionPermissionView(viewElementId, options, hostOptions);
     }
 

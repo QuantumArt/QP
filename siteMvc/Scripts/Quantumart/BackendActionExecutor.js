@@ -17,6 +17,7 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
     const isCustom = eventArgs.get_isCustomAction();
     let additionalUrlParameters = null;
     if (eventArgs.get_context() && eventArgs.get_context().additionalUrlParameters) {
+      // @ts-ignore FIXME
       additionalUrlParameters = Object.assign({}, this._additionalUrlParameters,
         eventArgs.get_context().additionalUrlParameters
       );
@@ -319,25 +320,25 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
                           stage: stageCounter,
                           step: stepCounter
                         }, true, false).done(stepData => {
-                        if (stepData) {
-                          if (stepData.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
-                            errorHandler(stepData);
-                          } else {
-                            progressWindow.completeStep(
-                              stepData.ProcessedItemsCount,
-                              stepData.AdditionalInfo,
-                              actionData.ParentId || parentEntityId
-                            );
-                            stepCounter += 1;
-                            if (stepCounter === stepLength) {
-                              progressWindow.completeStage();
-                              stageCounter += 1;
-                            }
+                          if (stepData) {
+                            if (stepData.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
+                              errorHandler(stepData);
+                            } else {
+                              progressWindow.completeStep(
+                                stepData.ProcessedItemsCount,
+                                stepData.AdditionalInfo,
+                                actionData.ParentId || parentEntityId
+                              );
+                              stepCounter += 1;
+                              if (stepCounter === stepLength) {
+                                progressWindow.completeStage();
+                                stageCounter += 1;
+                              }
 
-                            iterationCallback();
+                              iterationCallback();
+                            }
                           }
-                        }
-                      }).fail(errorCallback2);
+                        }).fail(errorCallback2);
                     } else {
                       if (stage && stepLength === 0) {
                         progressWindow.completeStage();
