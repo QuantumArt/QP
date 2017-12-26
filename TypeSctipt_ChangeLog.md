@@ -83,6 +83,7 @@
 * Убрал использование `$q.bindProxies` (!)
 
 ### BackendImageCropResizeClient.js
+* `ImageCropResizeClient.Cache` => `ImageCropResizeClient._cache` (это не публичное поле)
 * `$.ajax().success` (deprecated) => `$.ajax().done`
 * Приведение типов
 

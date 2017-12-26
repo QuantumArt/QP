@@ -2,7 +2,7 @@
 /* eslint-disable max-statements */
 /* eslint-disable max-len */
 Quantumart.QP8.ImageCropResizeClient = {};
-Quantumart.QP8.ImageCropResizeClient.Cache = {};
+Quantumart.QP8.ImageCropResizeClient._cache = {};
 
 // eslint-disable-next-line
 (function ($, imgCropResize) {
@@ -450,17 +450,17 @@ Quantumart.QP8.ImageCropResizeClient.Cache = {};
   };
 
   const _getFromCache = function () {
-    return Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl];
+    return Quantumart.QP8.ImageCropResizeClient._cache[_parameters.sourceImageUrl];
   };
 
   const _removeFromCache = function () {
-    delete Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl];
+    delete Quantumart.QP8.ImageCropResizeClient._cache[_parameters.sourceImageUrl];
   };
 
   const _saveToCache = function () {
     const sendData = readData();
     if (sendData.width && sendData.height) {
-      Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl] = {
+      Quantumart.QP8.ImageCropResizeClient._cache[_parameters.sourceImageUrl] = {
         crop: {
           top: sendData.top,
           left: sendData.left,
