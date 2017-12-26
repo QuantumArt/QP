@@ -1151,6 +1151,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const $tab = this.getTab(tab);
     const actionCode = $tab.data('action_code');
     const action = $a.getBackendActionByCode(actionCode);
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendTabEventArgs();
     eventArgs.set_entityTypeCode($tab.data('entity_type_code'));
     eventArgs.set_entityId($tab.data('entity_id'));

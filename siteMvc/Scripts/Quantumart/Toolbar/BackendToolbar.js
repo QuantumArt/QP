@@ -764,6 +764,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     const checkOnClick = $button.data('check_on_click');
     const checked = this.isToolbarButtonChecked($button);
 
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendToolbarButtonEventArgs();
     eventArgs.set_value(value);
     eventArgs.set_checkOnClick(checkOnClick);
@@ -786,6 +787,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     const value = this.getToolbarItemValue($button);
     const checkOnClick = $button.data('check_on_click');
     const checked = this.isToolbarButtonChecked($button);
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendToolbarButtonEventArgs();
     eventArgs.set_value(value);
     eventArgs.set_checkOnClick(checkOnClick);
@@ -882,6 +884,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
           this._applyClickedStyleToToolbarDropDownButton($item);
           this._hideDropDownList($item);
         } else {
+          // eslint-disable-next-line no-use-before-define
           let eventArgs = new Quantumart.QP8.BackendToolbarDropDownListEventArgs();
           eventArgs.set_itemValue(itemValue);
           eventArgs.set_oldSubItemValue(oldSubItemValue);
@@ -892,6 +895,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
           this._applyClickedStyleToToolbarDropDownButton($item);
           this._hideDropDownList($item);
 
+          // eslint-disable-next-line no-use-before-define
           eventArgs = new Quantumart.QP8.BackendToolbarDropDownListEventArgs();
           eventArgs.set_itemValue(itemValue);
           eventArgs.set_oldSubItemValue(oldSubItemValue);
@@ -919,6 +923,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
       const newSubItemValue = this._getToolbarDropDownListItemValue($listItem);
 
       if (oldSubItemValue !== newSubItemValue) {
+        // eslint-disable-next-line no-use-before-define
         const eventArgs = new Quantumart.QP8.BackendToolbarDropDownListEventArgs();
         eventArgs.set_itemValue(itemValue);
         eventArgs.set_oldSubItemValue(oldSubItemValue);
@@ -949,6 +954,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
         this._updateDropDownListButton($item, $listItem);
         this._hideDropDownList($item);
 
+        // eslint-disable-next-line no-use-before-define
         const eventArgs = new Quantumart.QP8.BackendToolbarDropDownListEventArgs();
         eventArgs.set_itemValue(itemValue);
         eventArgs.set_oldSubItemValue(oldSubItemValue);

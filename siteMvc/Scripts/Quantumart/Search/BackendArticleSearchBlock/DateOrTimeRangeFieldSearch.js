@@ -1,6 +1,14 @@
 // eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (
-  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, rangeType
+  containerElement,
+  parentEntityId,
+  fieldID,
+  contentID,
+  fieldColumn,
+  fieldName,
+  fieldGroup,
+  referenceFieldID,
+  rangeType
 ) {
   Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.initializeBase(this, [
     containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID

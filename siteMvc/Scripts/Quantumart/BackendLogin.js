@@ -1,6 +1,5 @@
 Quantumart.QP8.BackendLogin = function (options) {
   Quantumart.QP8.BackendLogin.initializeBase(this);
-
   if (options) {
     if (options.useSavedCustomerCode) {
       this._useSavedCustomerCode = options.useSavedCustomerCode;

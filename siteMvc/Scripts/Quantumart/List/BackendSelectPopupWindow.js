@@ -165,7 +165,6 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
       this._popupWindowComponent = null;
     }
   }
-
 };
 
 Quantumart.QP8.BackendSelectPopupWindow.registerClass(

@@ -1,7 +1,6 @@
 // eslint-disable-next-line max-statements
 Quantumart.QP8.BackendFileField = function (fileFieldElementId, fileWrapperElementId, options) {
   Quantumart.QP8.BackendFileField.initializeBase(this);
-
   this._fileFieldElementId = fileFieldElementId;
   this._fileWrapperElementId = fileWrapperElementId;
   if (!$q.isNull(options)) {

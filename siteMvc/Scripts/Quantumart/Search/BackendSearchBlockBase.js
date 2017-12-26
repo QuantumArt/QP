@@ -304,6 +304,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
       searchBlockHeight = parseInt(String($searchBlock.height()), 10);
     }
 
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     eventArgs.setSearchBlockWidth(searchBlockWidth);
     eventArgs.setSearchBlockHeight(searchBlockHeight);
@@ -311,11 +312,13 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
   },
 
   _onFindButtonClick() {
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 
   _onResetButtonClick() {
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
   },

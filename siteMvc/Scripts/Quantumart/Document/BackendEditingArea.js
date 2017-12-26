@@ -322,6 +322,7 @@ Quantumart.QP8.BackendEditingArea.prototype = {
 
     $documentsContainer = null;
     this._selectedDocumentId = '';
+    // eslint-disable-next-line no-use-before-define
     this.notify(window.EVENT_TYPE_EDITING_AREA_CLOSED, new Quantumart.QP8.BackendEditingAreaEventArgs());
   },
 
@@ -446,6 +447,7 @@ Quantumart.QP8.BackendEditingArea.prototype = {
   },
 
   raiseEvent(eventType, docId) {
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendEditingAreaEventArgs();
     const doc = this.getDocument(docId);
     if ($q.isObject(doc)) {

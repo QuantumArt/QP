@@ -722,7 +722,6 @@ window.$a = $a;
 
 Quantumart.QP8.BackendActionParameters = function (options) {
   Quantumart.QP8.BackendActionParameters.initializeBase(this);
-
   if ($q.isObject(options.eventArgs)) {
     if (options.eventArgs.get_isMultipleEntities()) {
       this._entities = options.eventArgs.get_entities();

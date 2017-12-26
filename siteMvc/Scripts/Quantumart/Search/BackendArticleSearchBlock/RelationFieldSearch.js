@@ -1,6 +1,14 @@
 // eslint-disable-next-line max-params
 Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (
-  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType
+  containerElement,
+  parentEntityId,
+  fieldID,
+  contentID,
+  fieldColumn,
+  fieldName,
+  fieldGroup,
+  referenceFieldID,
+  searchType
 ) {
   Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.initializeBase(
     this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);

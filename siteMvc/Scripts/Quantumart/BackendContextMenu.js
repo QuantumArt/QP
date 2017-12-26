@@ -388,6 +388,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   _onContextMenuTune(e, context) {
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendContextMenuEventArgs();
     eventArgs.set_menu(this);
     eventArgs.set_targetElement(context);
@@ -410,6 +411,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   _onContextMenuHiding(e, context) {
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendContextMenuEventArgs();
 
     eventArgs.set_menu(this);
@@ -422,6 +424,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   _onContextMenuHidden(e, context) {
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendContextMenuEventArgs();
 
     eventArgs.set_menu(this);
@@ -434,6 +437,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   _onContextMenuItemHovering(e, context) {
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendContextMenuItemEventArgs();
 
     eventArgs.set_menu(this);
@@ -447,6 +451,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   _onContextMenuItemClicking(e, context) {
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendContextMenuItemEventArgs();
 
     eventArgs.set_menu(this);

@@ -104,6 +104,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
     const firstPaneWidth = $firstPane.width();
     const firstPaneHeight = $firstPane.height();
 
+    // eslint-disable-next-line no-use-before-define
     let eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
     eventArgs.setFirstPane(this._firstPaneElement);
     eventArgs.setFirstPaneWidth(firstPaneWidth);
@@ -122,6 +123,7 @@ Quantumart.QP8.BackendSplitter.prototype = {
     const $firstPane = $(this._firstPaneElement);
     const firstPaneWidth = $firstPane.width();
     const firstPaneHeight = $firstPane.height();
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendSplitterEventArgs();
 
     eventArgs.setFirstPane(this._firstPaneElement);

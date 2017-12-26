@@ -163,6 +163,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 
   notifyToolbarButtonClicking(eventArgs) {
     const itemValue = eventArgs.get_value();
+    // eslint-disable-next-line no-use-before-define
     const newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs
       .getViewToolbarButtonEventArgsFromToolbarButtonEventArgs(eventArgs);
 
@@ -177,6 +178,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 
   notifyToolbarButtonClicked(eventArgs) {
     const itemValue = eventArgs.get_value();
+    // eslint-disable-next-line no-use-before-define
     const newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs
       .getViewToolbarButtonEventArgsFromToolbarButtonEventArgs(eventArgs);
 
@@ -192,6 +194,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   notifyDropDownSelectedIndexChanging(eventArgs) {
     const itemValue = eventArgs.get_itemValue();
     const subItemValue = eventArgs.get_newSubItemValue();
+    // eslint-disable-next-line no-use-before-define
     const newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs
       .getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
 
@@ -210,6 +213,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
   notifyDropDownSelectedIndexChanged(eventArgs) {
     const itemValue = eventArgs.get_itemValue();
     const subItemValue = eventArgs.get_newSubItemValue();
+    // eslint-disable-next-line no-use-before-define
     const newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs
       .getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
 

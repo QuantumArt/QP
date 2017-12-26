@@ -363,6 +363,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   },
 
   _cancel() {
+    // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
     this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, eventArgs);
     if (eventArgs.getCancel()) {
