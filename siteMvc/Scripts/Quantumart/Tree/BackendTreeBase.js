@@ -319,7 +319,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   /**
    * @virtual
-   * @param {string} _searchQuery
+   * @param {string} [_searchQuery]
    * @returns {boolean}
    */
   _isSearchQueryEmpty(_searchQuery) {

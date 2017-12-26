@@ -1,5 +1,4 @@
 Quantumart.QP8.BackendSettingsPopupWindow = function BackendSettingsPopupWindow(eventArgs, options, callback) {
-  Quantumart.QP8.BackendSettingsPopupWindow.initializeBase(this, [eventArgs, options]);
   this._eventsArgs = eventArgs;
   this._actionCode = eventArgs.get_actionCode();
   this._settingsActionUrl = eventArgs.settingsActionUrl;
@@ -12,6 +11,7 @@ Quantumart.QP8.BackendSettingsPopupWindow = function BackendSettingsPopupWindow(
   this._callback = callback;
 
   this._initializeSettingsClass();
+  Quantumart.QP8.BackendSettingsPopupWindow.initializeBase(this, [eventArgs, options]);
 
   this._initializeSettingsWindow();
   this._popupWindowToolbarComponent = this._createToolbar();
