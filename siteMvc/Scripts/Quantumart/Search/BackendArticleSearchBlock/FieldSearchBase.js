@@ -10,7 +10,6 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase = function (
   referenceFieldID
 ) {
   Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.initializeBase(this);
-
   this._containerElement = containerElement;
   this._parentEntityId = parentEntityId;
   this._fieldID = fieldID;
@@ -37,28 +36,48 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
     $(this._containerElement).append('Не реализовано');
   },
 
+  /**
+   * @virtual
+   * @returns {object}
+   */
   getSearchQuery() {
     return null;
   },
 
+  /**
+   * @virtual
+   // @ts-ignore
+   * @returns {Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState}
+   */
   getBlockState() {
     return null;
   },
 
-  // eslint-disable-next-line no-unused-vars
-  setBlockState(state) {
+  /**
+   * @virtual
+   * @param {object} _state
+   */
+  setBlockState(_state) {
     // default implementation
   },
 
-  // eslint-disable-next-line no-unused-vars
-  restoreBlockState(state) {
+  /**
+   * @virtual
+   * @param {object} _state
+   */
+  restoreBlockState(_state) {
     // default implementation
   },
 
+  /**
+   * @virtual
+   * @returns {string}
+   */
   getFilterDetails() {
     return '';
   },
 
+  /** @virtual */
   onOpen() {
     // default implementation
   },

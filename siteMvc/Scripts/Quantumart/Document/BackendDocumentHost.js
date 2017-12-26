@@ -1,6 +1,4 @@
 /* eslint max-lines: 'off' */
-/* eslint-disable class-methods-use-this */
-
 window.DOCUMENT_HOST_TYPE_EDITING_DOCUMENT = 1;
 window.DOCUMENT_HOST_TYPE_POPUP_WINDOW = 2;
 window.EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED = 'onHostExternalCallerContextsUnbinded';

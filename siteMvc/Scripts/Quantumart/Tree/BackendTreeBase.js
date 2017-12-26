@@ -317,7 +317,12 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     throw new Error($l.Common.methodNotImplemented);
   },
 
-  _isSearchQueryEmpty() {
+  /**
+   * @virtual
+   * @param {string} _searchQuery
+   * @returns {boolean}
+   */
+  _isSearchQueryEmpty(_searchQuery) {
     return true;
   },
 

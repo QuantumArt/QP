@@ -10,6 +10,7 @@ Quantumart.QP8.ActionLogFilterBase.prototype = {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /** @virtual */
   onOpen() {
     // default implementation
   },
@@ -22,6 +23,10 @@ Quantumart.QP8.ActionLogFilterBase.prototype = {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /**
+   * @virtual
+   * @returns {string}
+   */
   getFilterDetails() {
     return '?';
   },

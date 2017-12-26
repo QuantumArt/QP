@@ -23,6 +23,7 @@ module.exports = {
     'no-invalid-this': 'off',
     'no-underscore-dangle': 'off',
     'func-names': 'off',
-    'sort-imports': 'off'
+    'sort-imports': 'off',
+    'class-methods-use-this': 'off'
   }
 };

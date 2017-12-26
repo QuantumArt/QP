@@ -317,6 +317,7 @@ Quantumart.QP8.BackendSearchBlockBase.prototype = {
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
   },
 
+  /** @virtual */
   _onResetButtonClick() {
     // eslint-disable-next-line no-use-before-define
     const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, '');

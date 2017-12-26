@@ -309,6 +309,10 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     throw new Error($l.Common.methodNotImplemented);
   },
 
+  /**
+   * @virtual
+   * @returns {number}
+   */
   getListItemCount() {
     return this.getListItems().length;
   },
@@ -411,6 +415,10 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     $(this._toolbarElement).css('display', 'none');
   },
 
+  /**
+   * @virtual
+   * @returns {boolean}
+   */
   _checkAllowShowingToolbar() {
     return true;
   },
@@ -838,6 +846,10 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
+  /**
+   * @virtual
+   * @returns {boolean}
+   */
   _isCountOverflow() {
     return false;
   },
