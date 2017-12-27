@@ -9,6 +9,7 @@ import { argv } from 'yargs';
 import loadPlugins from 'gulp-load-plugins';
 import es6Promise from 'es6-promise';
 import notifier from 'node-notifier';
+import webpack from 'webpack-stream';
 
 es6Promise.polyfill();
 const $ = loadPlugins(); // eslint-disable-line id-length, no-shadow
@@ -129,141 +130,6 @@ custom.paths = {
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/microsoft/MicrosoftAjax.js'
   ],
-  qpjs: [
-    'Scripts/Quantumart/jQueryExtensions.js',
-    'Scripts/Quantumart/Helpers/vanilla.helpers.js',
-    'Scripts/Quantumart/Uploader/plupload/plupload.filters.js',
-
-    'Scripts/Quantumart/ckeditor/aspell/plugin.js',
-    'Scripts/Quantumart/ckeditor/typographer/plugin.js',
-    'Scripts/Quantumart/ckeditor/codemirror/plugin.js',
-    'Scripts/Quantumart/ckeditor/globalSettings.js',
-
-    'Scripts/Quantumart/App.js',
-    'Scripts/Quantumart/Utils.js',
-    'Scripts/Quantumart/Cache.js',
-    'Scripts/Quantumart/ControlHelpers.js',
-    'Scripts/Quantumart/Common/Observable.js',
-    'Scripts/Quantumart/Common/BackendPreviousAction.js',
-    'Scripts/Quantumart/Common/BackendEventArgs.js',
-    'Scripts/Quantumart/Info/BackendEntityType.js',
-    'Scripts/Quantumart/Info/BackendEntityObject.js',
-    'Scripts/Quantumart/Info/BackendActionType.js',
-    'Scripts/Quantumart/BackendActionExecutor.js',
-    'Scripts/Quantumart/BackendSplitter.js',
-    'Scripts/Quantumart/BackendContextMenu.js',
-    'Scripts/Quantumart/BackendBreadCrumbs.js',
-    'Scripts/Quantumart/Tree/BackendTreeBase.js',
-    'Scripts/Quantumart/Tree/BackendTreeMenu.js',
-    'Scripts/Quantumart/Tree/BackendEntityTree.js',
-    'Scripts/Quantumart/Tree/BackendActionPermissionTree.js',
-    'Scripts/Quantumart/BackendTabStrip.js',
-    'Scripts/Quantumart/Toolbar/BackendToolbar.js',
-    'Scripts/Quantumart/Toolbar/BackendActionToolbar.js',
-    'Scripts/Quantumart/Toolbar/BackendViewToolbar.js',
-    'Scripts/Quantumart/Search/BackendSearchBlockBase.js',
-    'Scripts/Quantumart/Search/BackendSearchInArticle.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/FieldSearchBase.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/IdentifierFieldSearch.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/BooleanFieldSearch.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/DateOrTimeRangeFieldSearch.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/NumericRangeFieldSearch.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/RelationFieldSearch.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/TextFieldSearch.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/StringEnumFieldSearch.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/ClassifierFieldSearch.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/FullTextBlock.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/FieldSearchBlock.js',
-    'Scripts/Quantumart/Search/BackendArticleSearchBlock/FieldSearchContainer.js',
-    'Scripts/Quantumart/Search/BackendContentSearchBlock.js',
-    'Scripts/Quantumart/Search/BackendUserSearchBlock.js',
-    'Scripts/Quantumart/Search/BackendUserAndGroupSearchBlock.js',
-    'Scripts/Quantumart/Search/BackendContextBlock.js',
-    'Scripts/Quantumart/Document/BackendDocumentHostStateStorage.js',
-    'Scripts/Quantumart/Document/BackendDocumentHost.js',
-    'Scripts/Quantumart/Document/BackendDocumentContext.js',
-    'Scripts/Quantumart/Document/BackendEditingDocument.js',
-    'Scripts/Quantumart/Document/BackendEditingArea.js',
-    'Scripts/Quantumart/Document/BackendPopupWindow.js',
-    'Scripts/Quantumart/BackendEntityGrid.js',
-    'Scripts/Quantumart/List/BackendEntityDataListBase.js',
-    'Scripts/Quantumart/List/BackendEntityDropDownList.js',
-    'Scripts/Quantumart/List/BackendEntityCheckBoxList.js',
-    'Scripts/Quantumart/List/BackendEntitySingleItemPicker.js',
-    'Scripts/Quantumart/List/BackendEntityMultipleItemPicker.js',
-    'Scripts/Quantumart/List/BackendSelectPopupWindow.js',
-    'Scripts/Quantumart/List/BackendSettingsPopupWindow.js',
-    'Scripts/Quantumart/BackendActionLink.js',
-    'Scripts/Quantumart/BackendLogOnWindow.js',
-    'Scripts/Quantumart/Library/BackendLibrary.js',
-    'Scripts/Quantumart/Library/BackendPager.js',
-    'Scripts/Quantumart/Library/BackendFileList.js',
-    'Scripts/Quantumart/Library/BackendFileNameListView.js',
-    'Scripts/Quantumart/Library/BackendFilePreviewListView.js',
-    'Scripts/Quantumart/Mediators/BackendFieldProperties.js',
-    'Scripts/Quantumart/Editor/BackendFileField.js',
-    'Scripts/Quantumart/Mediators/BackendVirtualContentProperties.js',
-    'Scripts/Quantumart/Mediators/ContentDefaultFilters.js',
-    'Scripts/Quantumart/Editor/BackendVirtualFieldTree.js',
-    'Scripts/Quantumart/Editor/BackendEntityEditor.js',
-    'Scripts/Quantumart/Editor/BackendEntityEditorActionEventArgs.js',
-    'Scripts/Quantumart/Mediators/BackendNotificationProperties.js',
-    'Scripts/Quantumart/Mediators/BackendTemplateObjectProperties.js',
-    'Scripts/Quantumart/Mediators/BackendPagePropertiesMediator.js',
-    'Scripts/Quantumart/Editor/LibraryPopupWindow.js',
-    'Scripts/Quantumart/Editor/BackendVisualEditor.js',
-    'Scripts/Quantumart/Editor/BackendAggregationList.js',
-    'Scripts/Quantumart/Editor/BackendWorkflowEditor.js',
-    'Scripts/Quantumart/Editor/BackendTextAreaEditor.js',
-    'Scripts/Quantumart/Editor/BackendEditorsAutoSaver.js',
-    'Scripts/Quantumart/Editor/BackendClassifierField.js',
-    'Scripts/Quantumart/Uploader/BackendBaseUploader.js',
-    'Scripts/Quantumart/Uploader/BackendUploaderEventArgs.js',
-    'Scripts/Quantumart/Uploader/BackendHtmlUploader.js',
-    'Scripts/Quantumart/Uploader/BackendPlUploader.js',
-    'Scripts/Quantumart/Audit/ActionLogComponent.js',
-    'Scripts/Quantumart/Audit/ActionLogFilterTile.js',
-    'Scripts/Quantumart/Audit/ActionLogFilterBase.js',
-    'Scripts/Quantumart/Audit/ActionLogTextFilter.js',
-    'Scripts/Quantumart/Audit/ActionLogDatetimeFilter.js',
-    'Scripts/Quantumart/Audit/ActionLogItemListFilter.js',
-    'Scripts/Quantumart/Audit/ActionLogUserFilter.js',
-    'Scripts/Quantumart/SearchInCodeComponent.js',
-    'Scripts/Quantumart/CustomAction/CustomActionProperties.js',
-    'Scripts/Quantumart/CustomAction/QP8BackendApi.Interaction.js',
-    'Scripts/Quantumart/CustomAction/BackendCustomActionHost.js',
-    'Scripts/Quantumart/ActionPermissions/BackendActionPermissionView.js',
-    'Scripts/Quantumart/Managers/BackendBrowserHistoryManager.js',
-    'Scripts/Quantumart/Managers/BackendBreadCrumbsManager.js',
-    'Scripts/Quantumart/Managers/BackendEntityGridManager.js',
-    'Scripts/Quantumart/Managers/BackendEntityTreeManager.js',
-    'Scripts/Quantumart/Managers/BackendEntityEditorManager.js',
-    'Scripts/Quantumart/Managers/BackendTreeMenuContextMenuManager.js',
-    'Scripts/Quantumart/Managers/BackendBreadMenuContextMenuManager.js',
-    'Scripts/Quantumart/Managers/BackendContextMenuManager.js',
-    'Scripts/Quantumart/Managers/BackendEntityDataListManager.js',
-    'Scripts/Quantumart/Managers/BackendPopupWindowManager.js',
-    'Scripts/Quantumart/Managers/BackendLibraryManager.js',
-    'Scripts/Quantumart/Managers/BackendSearchBlockManager.js',
-    'Scripts/Quantumart/Managers/BackendActionPermissionViewManager.js',
-    'Scripts/Quantumart/Managers/BackendCustomActionHostManager.js',
-    'Scripts/Quantumart/MultistepAction/BackendProgressBar.jquery.js',
-    'Scripts/Quantumart/MultistepAction/BackendMultistepActionWindow.js',
-    'Scripts/Quantumart/MultistepAction/Settings/BackendMultistepBaseSettings.js',
-    'Scripts/Quantumart/MultistepAction/Settings/BackendMultistepImportSettings.js',
-    'Scripts/Quantumart/MultistepAction/Settings/BackendMultistepExportSettings.js',
-    'Scripts/Quantumart/MultistepAction/Settings/BackendMultistepCopySiteSettings.js',
-    'Scripts/Quantumart/EntityPermissions/BackendChildEntityPermissionList.js',
-    'Scripts/Quantumart/BackendDirectLinkExecutor.js',
-    'Scripts/Quantumart/BackendExpandedContainer.js',
-    'Scripts/Quantumart/BackendLogin.js',
-    'Scripts/Quantumart/Backend.js',
-    'Scripts/Quantumart/BackendImageCropResizeClient.js',
-    'Scripts/Quantumart/Home.js',
-
-    '!Scripts/build/**/*.js'
-  ],
   qpjsLogon: [
     'Scripts/Quantumart/App.js',
     'Scripts/Quantumart/ControlHelpers.js',
@@ -351,7 +217,7 @@ gulp.task('assets:vendorsjs', () => gulp.src(custom.paths.vendorsjs, { base: './
     }
   }) : $.util.noop())
   .pipe($.concat('vendors.js'))
-  .pipe($.sourcemaps.write('maps'))
+  .pipe($.sourcemaps.write(''))
   .pipe(gulp.dest(custom.destPaths.scripts))
   .pipe($.size({ title: 'assets:vendorsjs', showFiles: true }))
   .pipe($.notify({ title: 'Part task was completed', message: 'assets:vendorsjs task complete', onLast: true })));
@@ -367,7 +233,7 @@ gulp.task('assets-logon:vendorsjs', () => gulp.src(custom.paths.vendorsjsLogon, 
     }
   }) : $.util.noop())
   .pipe($.concat('vendors-logon.js'))
-  .pipe($.sourcemaps.write('maps'))
+  .pipe($.sourcemaps.write(''))
   .pipe(gulp.dest(custom.destPaths.scripts))
   .pipe($.size({ title: 'assets-logon:vendorsjs', showFiles: true }))
   .pipe($.notify({
@@ -376,20 +242,10 @@ gulp.task('assets-logon:vendorsjs', () => gulp.src(custom.paths.vendorsjsLogon, 
     onLast: true
   })));
 
-gulp.task('assets:qpjs', () => gulp.src(custom.paths.qpjs, { base: './' })
+gulp.task('assets:qpjs', () => gulp.src('./Scripts/Quantumart/App.js')
   .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.sourcemaps.init({ loadMaps: false }))
-  .pipe($.sourcemaps.identityMap())
-  .pipe($.babel())
-  .pipe(custom.isProduction() ? $.uglify({
-    compress: {
-      sequences: false
-    }
-  }) : $.util.noop())
-  .pipe($.concat('app.js'))
-  .pipe($.sourcemaps.write('maps'))
+  .pipe(webpack(require('./webpack.config.js')))
   .pipe(gulp.dest(custom.destPaths.scripts))
-  .pipe($.size({ title: 'assets:qpjs', showFiles: true }))
   .pipe($.notify({ title: 'Part task was completed', message: 'assets:qpjs task complete', onLast: true })));
 
 gulp.task('assets-logon:qpjs', () => gulp.src(custom.paths.qpjsLogon, { base: './' })
@@ -403,7 +259,7 @@ gulp.task('assets-logon:qpjs', () => gulp.src(custom.paths.qpjsLogon, { base: '.
     }
   }) : $.util.noop())
   .pipe($.concat('app-logon.js'))
-  .pipe($.sourcemaps.write('maps'))
+  .pipe($.sourcemaps.write(''))
   .pipe(gulp.dest(custom.destPaths.scripts))
   .pipe($.size({ title: 'assets-logon:qpjs', showFiles: true }))
   .pipe($.notify({ title: 'Part task was completed', message: 'assets-logon:qpjs task complete', onLast: true })));
@@ -424,7 +280,7 @@ gulp.task('assets:css', () => gulp.src(custom.paths.styles)
   .pipe($.autoprefixer())
   .pipe($.cssnano({ zindex: false }))
   .pipe($.concat('app.css'))
-  .pipe($.sourcemaps.write('maps'))
+  .pipe($.sourcemaps.write(''))
   .pipe(gulp.dest(custom.destPaths.styles))
   .pipe(bs.stream({ match: '**/*.css' }))
   .pipe($.size({ title: 'assets:css', showFiles: true }))
@@ -439,7 +295,7 @@ gulp.task('assets-logon:css', () => gulp.src(custom.paths.stylesLogon)
   .pipe($.autoprefixer())
   .pipe($.cssnano({ zindex: false }))
   .pipe($.concat('app-logon.css'))
-  .pipe($.sourcemaps.write('maps'))
+  .pipe($.sourcemaps.write(''))
   .pipe(gulp.dest(custom.destPaths.styles))
   .pipe(bs.stream({ match: '**/*.css' }))
   .pipe($.size({ title: 'assets-logon:css', showFiles: true }))

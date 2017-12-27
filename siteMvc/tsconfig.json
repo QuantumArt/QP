@@ -6,7 +6,8 @@
     "baseUrl": "Scripts/Quantumart",
     "checkJs": true,
     "experimentalDecorators": true,
-    "importHelpers": false,
+    "importHelpers": true,
+    "jsx": "react",
     "lib": [
       "dom",
       "es5",
@@ -18,6 +19,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
+    "sourceMap": true,
     "target": "es5"
   },
   "include": [
