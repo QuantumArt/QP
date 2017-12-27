@@ -6,7 +6,7 @@
     "baseUrl": "Scripts/Quantumart",
     "checkJs": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
+    "importHelpers": false,
     "lib": [
       "dom",
       "es5",

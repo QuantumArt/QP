@@ -33,6 +33,8 @@
     "del": "^3.0.0",
     "es6-promise": "^4.1.1",
     "eslint": "^4.8.0",
+    "eslint-nibble": "^4.2.1",
+    "eslint-plugin-import": "^2.8.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-babel": "^7.0.0",
