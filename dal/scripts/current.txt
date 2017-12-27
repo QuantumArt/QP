@@ -18,6 +18,7 @@ DeleteSite
 UpdateWrongWFStatuses
 UpdateItemToItemTrigger
 AddProducts
+AddProductVersions
 CDC
 DPC
 ContextMenuAction
