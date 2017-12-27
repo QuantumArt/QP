@@ -114,6 +114,7 @@
 
 ### BackendSettingsPopupWindow.js
 * Перенес вызов базового конструктора в начало метода (!)
+* Заменил поле `_settingsClass` и метод `_initializeSettingsClass` на свойство `get SettingsClass` (!)
 
 ### BackendTabStrip.js
 * Убрал использование `$q.bindProxies` (!)

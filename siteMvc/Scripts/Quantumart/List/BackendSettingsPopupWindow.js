@@ -1,4 +1,5 @@
 Quantumart.QP8.BackendSettingsPopupWindow = function BackendSettingsPopupWindow(eventArgs, options, callback) {
+  Quantumart.QP8.BackendSettingsPopupWindow.initializeBase(this, [eventArgs, options]);
   this._eventsArgs = eventArgs;
   this._actionCode = eventArgs.get_actionCode();
   this._settingsActionUrl = eventArgs.settingsActionUrl;
@@ -9,9 +10,6 @@ Quantumart.QP8.BackendSettingsPopupWindow = function BackendSettingsPopupWindow(
   }
 
   this._callback = callback;
-
-  this._initializeSettingsClass();
-  Quantumart.QP8.BackendSettingsPopupWindow.initializeBase(this, [eventArgs, options]);
 
   this._initializeSettingsWindow();
   this._popupWindowToolbarComponent = this._createToolbar();
@@ -26,26 +24,22 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   _isSettingsSet: false,
   _callback: null,
   _settingsWindow: null,
-  _settingsClass: null,
   _settingsActionUrl: null,
   NEXT_BUTTON: 'Next',
 
-  _initializeSettingsClass() {
+  get SettingsClass() {
     switch (this._actionCode) {
       case 'import_articles':
-        this._settingsClass = Quantumart.QP8.MultistepActionImportSettings;
-        break;
+        return Quantumart.QP8.MultistepActionImportSettings;
       case 'export_articles':
       case 'multiple_export_article':
       case 'export_virtual_articles':
       case 'multiple_export_virtual_article':
-        this._settingsClass = Quantumart.QP8.MultistepActionExportSettings;
-        break;
+        return Quantumart.QP8.MultistepActionExportSettings;
       case 'copy_site':
-        this._settingsClass = Quantumart.QP8.MultistepActionCopySiteSettings;
-        break;
+        return Quantumart.QP8.MultistepActionCopySiteSettings;
       default:
-        break;
+        return null;
     }
   },
 
@@ -59,8 +53,8 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
       wrapperElementId: this._popupWindowComponent.get_documentWrapperElementId()
     };
 
-    if (this._settingsClass) {
-      this._settingsWindow = new this._settingsClass(options);
+    if (this.SettingsClass) {
+      this._settingsWindow = new this.SettingsClass(options);
     }
   },
 
@@ -84,7 +78,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   },
 
   _getToolbarItems() {
-    return this._settingsClass.addButtons([]);
+    return this.SettingsClass.addButtons([]);
   },
 
   _onPopupWindowToolbarButtonClicked() {
@@ -112,7 +106,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
       }
     };
 
-    if (this._settingsClass === Quantumart.QP8.MultistepActionImportSettings) {
+    if (this.SettingsClass === Quantumart.QP8.MultistepActionImportSettings) {
       $.ajax({
         url,
         data: ajaxData,
