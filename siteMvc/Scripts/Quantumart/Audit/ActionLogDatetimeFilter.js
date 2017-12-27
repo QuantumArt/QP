@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.ActionLogDatetimeFilter = function (filterContainer) {
   Quantumart.QP8.ActionLogDatetimeFilter.initializeBase(this, [filterContainer]);
 };

@@ -7,6 +7,7 @@ window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS = 1;
 window.BACKEND_ACTION_EXECUTION_STATUS_FAILED = 2;
 window.BACKEND_ACTION_EXECUTION_STATUS_ERROR = 3;
 
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendActionExecutor = function () {
   Quantumart.QP8.BackendActionExecutor.initializeBase(this);
 };

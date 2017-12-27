@@ -560,6 +560,7 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (
 
 Quantumart.QP8.BackendContextMenu.registerClass('Quantumart.QP8.BackendContextMenu', Quantumart.QP8.Observable);
 
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendContextMenuEventArgs = function () {
   Quantumart.QP8.BackendContextMenuEventArgs.initializeBase(this);
 };
@@ -587,6 +588,7 @@ Quantumart.QP8.BackendContextMenuEventArgs.prototype = {
 
 Quantumart.QP8.BackendContextMenuEventArgs.registerClass('Quantumart.QP8.BackendContextMenuEventArgs', Sys.EventArgs);
 
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendContextMenuItemEventArgs = function () {
   Quantumart.QP8.BackendContextMenuItemEventArgs.initializeBase(this);
 };

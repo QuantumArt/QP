@@ -171,6 +171,8 @@ Quantumart.QP8.BackendSplitter.prototype = {
 };
 
 Quantumart.QP8.BackendSplitter.registerClass('Quantumart.QP8.BackendSplitter', Quantumart.QP8.Observable);
+
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendSplitterEventArgs = function () {
   Quantumart.QP8.BackendSplitterEventArgs.initializeBase(this);
 };

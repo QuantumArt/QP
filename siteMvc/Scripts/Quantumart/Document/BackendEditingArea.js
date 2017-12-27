@@ -704,6 +704,8 @@ Quantumart.QP8.BackendEditingArea.destroyInstance = function () {
 };
 
 Quantumart.QP8.BackendEditingArea.registerClass('Quantumart.QP8.BackendEditingArea', Quantumart.QP8.Observable);
+
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendEditingAreaEventArgs = function () {
   Quantumart.QP8.BackendEditingAreaEventArgs.initializeBase(this);
 };

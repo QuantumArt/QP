@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendUserSearchBlock = function (
   searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
   Quantumart.QP8.BackendUserSearchBlock.initializeBase(

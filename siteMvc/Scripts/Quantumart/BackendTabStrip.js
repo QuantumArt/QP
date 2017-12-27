@@ -1569,6 +1569,8 @@ Quantumart.QP8.BackendTabStrip.getInstance = function (tabStripElementId, option
 };
 
 Quantumart.QP8.BackendTabStrip.registerClass('Quantumart.QP8.BackendTabStrip', Quantumart.QP8.Observable);
+
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendTabEventArgs = function () {
   Quantumart.QP8.BackendTabEventArgs.initializeBase(this);
 };

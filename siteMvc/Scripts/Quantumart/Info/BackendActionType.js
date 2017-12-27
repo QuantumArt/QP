@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendActionType = function () {
   // empty constructor
 };

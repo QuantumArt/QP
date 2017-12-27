@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendFilePreviewListView = function (fileListContentElement, contextMenuCode, selectMode, zIndex) {
   Quantumart.QP8.BackendFilePreviewListView.initializeBase(
     this, [fileListContentElement, contextMenuCode, selectMode, zIndex]

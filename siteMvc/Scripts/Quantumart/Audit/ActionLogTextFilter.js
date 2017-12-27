@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.ActionLogTextFilter = function (filterContainer) {
   Quantumart.QP8.ActionLogTextFilter.initializeBase(this, [filterContainer]);
 };

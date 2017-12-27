@@ -400,6 +400,7 @@ Quantumart.QP8.BackendMultistepActionWindow.registerClass(
   Quantumart.QP8.Observable
 );
 
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendMultistepActionWindowEventArgs = function BackendMultistepActionWindowEventArgs() {
   Quantumart.QP8.BackendMultistepActionWindowEventArgs.initializeBase(this);
 };

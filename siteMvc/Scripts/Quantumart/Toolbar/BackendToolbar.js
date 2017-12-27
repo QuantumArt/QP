@@ -999,6 +999,8 @@ Quantumart.QP8.BackendToolbar.prototype = {
 };
 
 Quantumart.QP8.BackendToolbar.registerClass('Quantumart.QP8.BackendToolbar', Quantumart.QP8.Observable);
+
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendToolbarButtonEventArgs = function () {
   Quantumart.QP8.BackendToolbarButtonEventArgs.initializeBase(this);
 };
@@ -1044,6 +1046,7 @@ Quantumart.QP8.BackendToolbarButtonEventArgs.registerClass(
   Sys.EventArgs
 );
 
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendToolbarDropDownListEventArgs = function () {
   Quantumart.QP8.BackendToolbarDropDownListEventArgs.initializeBase(this);
 };

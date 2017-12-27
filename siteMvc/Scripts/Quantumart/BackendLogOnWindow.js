@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-useless-constructor, FIXME
 Quantumart.QP8.BackendLogOnWindow = function () {
   Quantumart.QP8.BackendLogOnWindow.initializeBase(this);
 };
