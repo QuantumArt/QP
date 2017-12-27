@@ -473,7 +473,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendAction = function (action) {
 
 Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCode) {
   const cacheKey = `ActionByActionCode_${actionCode}`;
-  let action = Quantumart.QP8.Cache.getItem(cacheKey);
+  let action = Quantumart.QP8.GlobalCache.getItem(cacheKey);
 
   if (!action) {
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetByCode`, { actionCode }, false, false)
@@ -489,7 +489,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCo
         $q.processGenericAjaxError(jqXHR);
       });
 
-    Quantumart.QP8.Cache.addItem(cacheKey, action);
+    Quantumart.QP8.GlobalCache.addItem(cacheKey, action);
   }
 
   return action;
@@ -497,7 +497,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionByCode = function (actionCo
 
 Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) {
   const cacheKey = `ActionByActionId_${actionId}`;
-  let actionCode = Quantumart.QP8.Cache.getItem(cacheKey);
+  let actionCode = Quantumart.QP8.GlobalCache.getItem(cacheKey);
 
   if (!actionCode) {
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetCodeById`, { actionId }, false, false)
@@ -513,7 +513,7 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) 
         $q.processGenericAjaxError(jqXHR);
       });
 
-    Quantumart.QP8.Cache.addItem(cacheKey, actionCode);
+    Quantumart.QP8.GlobalCache.addItem(cacheKey, actionCode);
   }
 
   return Quantumart.QP8.BackendActionExecutor.getBackendActionByCode(actionCode);

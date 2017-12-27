@@ -3,7 +3,7 @@ Quantumart.QP8.BackendActionType = function () {
 };
 Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actionCode) {
   const cacheKey = `ActionTypeCodeByActionCode_${actionCode}`;
-  let actionTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
+  let actionTypeCode = Quantumart.QP8.GlobalCache.getItem(cacheKey);
 
   if (!actionTypeCode) {
     $q.getJsonFromUrl(
@@ -21,7 +21,7 @@ Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actio
       }
     );
 
-    Quantumart.QP8.Cache.addItem(cacheKey, actionTypeCode);
+    Quantumart.QP8.GlobalCache.addItem(cacheKey, actionTypeCode);
   }
 
   return actionTypeCode;

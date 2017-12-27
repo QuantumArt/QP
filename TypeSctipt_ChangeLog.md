@@ -152,6 +152,11 @@
 ### BackendWorkflowEditor.js
 * `this` должен передаваться вторым аргументом в `jQuery.proxy` а не в `$(...).each` (!)
 
+### Cache.js
+* Преобразовал к форме ES6-класса (!)
+* Переименовал `Cache` в `GlobalCache` (!)
+  иначе ESLint указывает, что имена конфликтуют с классом `Cache` из ServiceWorkers
+
 ### ClassifierFieldSearch.js
 * Убрал лишний параметр `searchType` из вызова конструктора `FieldSearchBase` (!
 * Убрал вызов отсутствующего метода `this._onLoadHandler` (!)

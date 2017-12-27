@@ -430,7 +430,7 @@ Quantumart.QP8.Backend.prototype = {
     this._backendActionPermissionViewManager.onActionExecuted(eventArgs);
 
     if (eventArgs.get_isUpdated() && eventArgs.get_entityTypeCode() === window.ENTITY_TYPE_CODE_CUSTOM_ACTION) {
-      Quantumart.QP8.Cache.clear();
+      Quantumart.QP8.GlobalCache.clear();
     }
   },
 
@@ -645,7 +645,7 @@ Quantumart.QP8.Backend.prototype = {
         window.onbeforeunload = null;
       }
 
-      Quantumart.QP8.Cache.dispose();
+      Quantumart.QP8.GlobalCache.dispose();
       this._loadHandler = null;
       this._unloadHandler = null;
       this._errorHandler = null;

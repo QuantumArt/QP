@@ -165,7 +165,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 
   refresh(hideRefreshMenuItem, successHandler, errorHandler) {
     const cacheKey = Quantumart.QP8.BackendContextMenu.getCacheKey(this._contextMenuCode, true, this._isBindToExternal);
-    Quantumart.QP8.Cache.removeItem(cacheKey);
+    Quantumart.QP8.GlobalCache.removeItem(cacheKey);
     this.addMenuItemsToMenu(hideRefreshMenuItem, successHandler, errorHandler);
   },
 
@@ -522,7 +522,7 @@ Quantumart.QP8.BackendContextMenu.getCacheKey = function (menuCode, loadItems, i
 Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (
   menuCode, loadItems, isBindToExternal, successHandler, errorHandler) {
   const cacheKey = Quantumart.QP8.BackendContextMenu.getCacheKey(menuCode, loadItems, isBindToExternal);
-  const contextMenuCachedData = Quantumart.QP8.Cache.getItem(cacheKey);
+  const contextMenuCachedData = Quantumart.QP8.GlobalCache.getItem(cacheKey);
 
   if (!contextMenuCachedData) {
     const actionUrl = `${window.CONTROLLER_URL_CONTEXT_MENU}GetByCode`;
@@ -534,14 +534,14 @@ Quantumart.QP8.BackendContextMenu.getContextMenuByCode = function (
 
     if ($q.isFunction(successHandler)) {
       $q.getJsonFromUrl('GET', actionUrl, params, false, false, (data, textStatus, jqXHR) => {
-        Quantumart.QP8.Cache.addItem(cacheKey, data);
+        Quantumart.QP8.GlobalCache.addItem(cacheKey, data);
         successHandler(data, textStatus, jqXHR);
       }, errorHandler);
     } else {
       let menu = null;
 
       $q.getJsonFromUrl('GET', actionUrl, params, false, false, data => {
-        Quantumart.QP8.Cache.addItem(cacheKey, data);
+        Quantumart.QP8.GlobalCache.addItem(cacheKey, data);
         menu = data;
       }, jqXHR => {
         menu = null;
