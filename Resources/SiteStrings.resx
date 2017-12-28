@@ -588,4 +588,7 @@
   <data name="DisableListAutoWrap" xml:space="preserve">
     <value>Disable list auto wrapping (ul, ol, dl)</value>
   </data>
+  <data name="CopySiteItemLinks" xml:space="preserve">
+    <value>Copying links between articles</value>
+  </data>
 </root>

@@ -9,7 +9,7 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
-    public class CopySiteUpdateArticleIdsCommand : IMultistepActionStageCommand
+    public class CopySiteItemLinksCommand : IMultistepActionStageCommand
     {
         private const int ItemsPerStep = 100;
 
@@ -19,12 +19,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         public int SiteArticlesCount { get; set; }
 
-        public CopySiteUpdateArticleIdsCommand(MultistepActionStageCommandState state)
+        public CopySiteItemLinksCommand(MultistepActionStageCommandState state)
             : this(state.Id, 0)
         {
         }
 
-        public CopySiteUpdateArticleIdsCommand(int sourceSiteId, int siteArticlesCount)
+        public CopySiteItemLinksCommand(int sourceSiteId, int siteArticlesCount)
         {
             SourceSiteId = sourceSiteId;
             SiteArticlesCount = siteArticlesCount;
@@ -40,15 +40,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             var skip = step * ItemsPerStep;
             var xDocument = XDocument.Load(prms.PathForFileWithLinks);
             var items = xDocument.Elements().Elements().Skip(skip).Take(ItemsPerStep).ToArray();
-            ContentService.UpdateArticlesLinks(SourceSiteId, DestinationSiteId, string.Concat(items.AsEnumerable()));
+            ContentService.CopyArticlesLinks(SourceSiteId, DestinationSiteId, string.Concat(items.AsEnumerable()));
             result.ProcessedItemsCount = items.Count();
-
-            var siteArticlesCount = xDocument.Elements().Elements().Count();
-            if (skip + 1 >= siteArticlesCount - ItemsPerStep)
-            {
-               ContentService.FillLinkTables(SourceSiteId, DestinationSiteId);
-               File.Delete(prms.PathForFileWithLinks);
-            }
 
             return result;
         }
@@ -57,14 +50,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         {
             Id = SourceSiteId,
             ParentId = 0,
-            Type = CopySiteStageCommandTypes.CopySiteUpdateArticleIds
+            Type = CopySiteStageCommandTypes.CopySiteItemLinks
         };
 
         public MultistepStageSettings GetStageSettings() => new MultistepStageSettings
         {
             ItemCount = SiteArticlesCount,
             StepCount = MultistepActionHelper.GetStepCount(SiteArticlesCount, ItemsPerStep),
-            Name = SiteStrings.CopySiteUpdateArticleIds
+            Name = SiteStrings.CopySiteItemLinks
         };
     }
 }

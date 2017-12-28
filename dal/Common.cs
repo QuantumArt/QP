@@ -7209,7 +7209,9 @@ namespace Quantumart.QP8.DAL
                                 inner join @relations_between_items as lr on
                                     ii.r_item_id = lr.source_item_id
                                 inner join @relations_between_links as r
-                                    on r.destination_link_id = ii.link_id";
+                                    on r.destination_link_id = ii.link_id
+                                where ii.r_item_id in (select source_item_id from @relations_between_items)
+";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
