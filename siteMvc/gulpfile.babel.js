@@ -54,7 +54,6 @@ custom.destPaths = {
 
 custom.paths = {
   vendorsjs: [
-    'Scripts/es5-shim.js',
     'Scripts/polyfills/array/array.find.polyfill.js',
     'Scripts/polyfills/array/array.findIndex.polyfill.js',
     'Scripts/polyfills/array/array.from.polyfill.js',
@@ -72,11 +71,8 @@ custom.paths = {
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/telerik/telerik.common.js',
     'Scripts/microsoft/MicrosoftAjax.js',
-    'Scripts/json2.js',
     'Scripts/pmrpc.js',
-    'Scripts/underscore.js',
     'Scripts/knockout.js',
-    'Scripts/immutablejs/immutable.js',
 
     'Scripts/jquery/jquery.cookie.js',
     'Scripts/jquery/jquery.timers.js',
@@ -127,7 +123,6 @@ custom.paths = {
     'Scripts/PlUpload/plupload.dev.js'
   ],
   vendorsjsLogon: [
-    'Scripts/es5-shim.js',
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/microsoft/MicrosoftAjax.js'
   ],

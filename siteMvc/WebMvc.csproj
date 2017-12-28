@@ -1393,8 +1393,6 @@
     </None>
     <None Include="packages.config" />
     <None Include="Settings.StyleCop" />
-    <Content Include="Scripts\immutablejs\immutable.js" />
-    <Content Include="Scripts\immutablejs\immutable.min.js" />
     <Content Include="Scripts\jquery\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
     <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
@@ -1546,7 +1544,6 @@
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.js" />
     <Content Include="Content\QpCodemirror.css" />
-    <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\jquery\jquery.imgareaselect.js" />
     <Content Include="Scripts\jquery\jquery.nouislider.js" />
     <Content Include="Scripts\Quantumart\languages\BackendDocumentHost.Lang.ru-ru.js" />
@@ -1747,7 +1744,6 @@
     <Content Include="Scripts\Quantumart\Search\BackendArticleSearchBlock\ClassifierFieldSearch.js" />
     <Content Include="Scripts\Quantumart\Search\BackendContextBlock.js" />
     <Content Include="Scripts\Quantumart\Uploader\BackendPlUploader.js" />
-    <Content Include="Scripts\underscore.js" />
     <Content Include="ToCopy\default\container_code_cs.txt" />
     <Content Include="ToCopy\default\container_code_vb.txt" />
     <Content Include="ToCopy\default\container_presentation.txt" />
@@ -2018,7 +2014,6 @@
     <Content Include="Scripts\jquery\jquery.scrollToElement.js" />
     <Content Include="Scripts\jquery\jquery.splitter.js" />
     <Content Include="Scripts\jquery\jquery.timers.js" />
-    <Content Include="Scripts\json2.js" />
     <Content Include="Scripts\Quantumart\languages\BackendActionExecutor.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendCommon.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendContextMenu.Lang.ru-ru.js" />
