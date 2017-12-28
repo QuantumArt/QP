@@ -3,13 +3,14 @@
 import fs from 'fs';
 import del from 'del';
 import gulp from 'gulp';
+import gutil from 'gulp-util';
 import chalk from 'chalk';
 import bs from 'browser-sync';
 import { argv } from 'yargs';
 import loadPlugins from 'gulp-load-plugins';
 import es6Promise from 'es6-promise';
 import notifier from 'node-notifier';
-import webpack from 'webpack-stream';
+import webpack from 'webpack';
 
 es6Promise.polyfill();
 const $ = loadPlugins(); // eslint-disable-line id-length, no-shadow
@@ -130,14 +131,6 @@ custom.paths = {
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/microsoft/MicrosoftAjax.js'
   ],
-  qpjsLogon: [
-    'Scripts/Quantumart/App.js',
-    'Scripts/Quantumart/ControlHelpers.js',
-    'Scripts/Quantumart/Common/Observable.js',
-    'Scripts/Quantumart/Common/BackendPreviousAction.js',
-    'Scripts/Quantumart/Common/BackendEventArgs.js',
-    'Scripts/Quantumart/BackendLogin.js'
-  ],
   styles: [
     'Content/basic.css',
     'Content/page.css',
@@ -200,10 +193,10 @@ custom.reportError = function (error) {
   this.emit('end');
 };
 
-gulp.task('assets:js', ['assets:vendorsjs', 'assets:qpjs'], () => gulp.src(custom.destPaths.scripts)
+gulp.task('assets:js', ['assets:vendorsjs', 'webpack:qpjs'], () => gulp.src(custom.destPaths.scripts)
   .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true })));
 
-gulp.task('assets-logon:js', ['assets-logon:vendorsjs', 'assets-logon:qpjs'], () => gulp.src(custom.destPaths.scripts)
+gulp.task('assets-logon:js', ['assets-logon:vendorsjs', 'webpack:qpjs'], () => gulp.src(custom.destPaths.scripts)
   .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:js task complete', onLast: true })));
 
 gulp.task('assets:vendorsjs', () => gulp.src(custom.paths.vendorsjs, { base: './' })
@@ -242,27 +235,16 @@ gulp.task('assets-logon:vendorsjs', () => gulp.src(custom.paths.vendorsjsLogon, 
     onLast: true
   })));
 
-gulp.task('assets:qpjs', () => gulp.src('./Scripts/Quantumart/App.js')
-  .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe(webpack(require('./webpack.config.js')))
-  .pipe(gulp.dest(custom.destPaths.scripts))
-  .pipe($.notify({ title: 'Part task was completed', message: 'assets:qpjs task complete', onLast: true })));
-
-gulp.task('assets-logon:qpjs', () => gulp.src(custom.paths.qpjsLogon, { base: './' })
-  .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.sourcemaps.init({ loadMaps: false }))
-  .pipe($.sourcemaps.identityMap())
-  .pipe($.babel())
-  .pipe(custom.isProduction() ? $.uglify({
-    compress: {
-      sequences: false
+gulp.task('webpack:qpjs', callback => {
+  webpack(require('./webpack.config.js'), (err, stats) => {
+    if (err) {
+      throw new gutil.PluginError('webpack:qpjs', err);
     }
-  }) : $.util.noop())
-  .pipe($.concat('app-logon.js'))
-  .pipe($.sourcemaps.write(''))
-  .pipe(gulp.dest(custom.destPaths.scripts))
-  .pipe($.size({ title: 'assets-logon:qpjs', showFiles: true }))
-  .pipe($.notify({ title: 'Part task was completed', message: 'assets-logon:qpjs task complete', onLast: true })));
+    gutil.log('[webpack:qpjs]', stats.toString({ colors: true }));
+    notifier.notify({ title: 'Part task was completed', message: 'webpack:qpjs task complete' });
+    callback();
+  });
+});
 
 gulp.task('assets:img', () => gulp.src(custom.paths.images)
   .pipe($.plumber({ errorHandler: custom.reportError }))

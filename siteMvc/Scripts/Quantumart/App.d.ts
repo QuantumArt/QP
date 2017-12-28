@@ -2,9 +2,6 @@
 declare var Quantumart: {
   QP8?: {
     [ClassName: string]: any;
-    Constants?: {
-      [CONSTANT: string]: any;
-    };
     Enums?: {
       [EnumName: string]: {
         [MemberName: string]: number;

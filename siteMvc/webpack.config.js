@@ -4,26 +4,20 @@ const { resolve } = require('path');
 
 const NODE_ENV = process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase();
 
-const RELEASE = ['relesase', 'production'].includes(NODE_ENV);
-
-const DEBUG = !RELEASE;
+const PRODUCTION = ['relesase', 'production'].includes(NODE_ENV);
 
 module.exports = {
-  devtool: 'source-map',
-  entry: resolve(__dirname, 'Scripts/Quantumart/App.js'),
+  devtool: PRODUCTION ? 'source-map' : 'eval-source-map',
+  entry: {
+    'app': resolve(__dirname, 'Scripts/Quantumart/App.js'),
+    'app-logon': resolve(__dirname, 'Scripts/Quantumart/AppLogon.js'),
+  },
   output: {
     path: resolve(__dirname, 'Scripts/build'),
-    filename: 'app.js',
+    filename: '[name].js',
   },
   module: {
-    rules: [/*{
-      test: /\.(js|jsx)?$/,
-      exclude: /node_modules/,
-      loader: 'babel-loader',
-      options: {
-        cacheDirectory: true
-      }
-    },*/ {
+    rules: [{
       test: /\.(js|jsx)?$/,
       exclude: /node_modules/,
       loader: 'ts-loader',
@@ -37,7 +31,7 @@ module.exports = {
     extensions: ['.js', '.jsx']
   },
   plugins: compact([
-    RELEASE && new webpack.optimize.UglifyJsPlugin({
+    PRODUCTION && new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,
       uglifyOptions: {
         compress: {
