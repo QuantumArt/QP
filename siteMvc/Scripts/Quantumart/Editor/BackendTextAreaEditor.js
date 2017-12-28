@@ -1,40 +1,44 @@
+import { BackendEventArgs } from '../Common/BackendEventArgs';
+import { BackendSelectPopupWindow } from '../List/BackendSelectPopupWindow';
+import { $q } from '../Utils';
+
 /* global CodeMirror, JSONEditor */
 
-Quantumart.QP8.BackendHighlightedTextArea = function BackendHighlightedTextArea(componentElem) {
-  this._componentElem = componentElem;
-};
+export class BackendHighlightedTextArea {
+  constructor(componentElem) {
+    this._componentElem = componentElem;
+  }
 
-Quantumart.QP8.BackendHighlightedTextArea.prototype = {
-  _selectPopupWindowComponent: null,
-  _libraryButton: null,
-  _restoreButton: null,
-  _insertButton: null,
-  _insertPopUp: null,
-  _onLibraryButtonClickHandler: null,
-  _onRestoreButtonClickHandler: null,
-  _onInsertButtonClickHandler: null,
-  _onInsertCallHandler: null,
+  _selectPopupWindowComponent = null;
+  _libraryButton = null;
+  _restoreButton = null;
+  _insertButton = null;
+  _insertPopUp = null;
+  _onLibraryButtonClickHandler = null;
+  _onRestoreButtonClickHandler = null;
+  _onInsertButtonClickHandler = null;
+  _onInsertCallHandler = null;
 
-  _libraryEntityId: 0,
-  _libraryParentEntityId: 0,
-  _templateId: null,
-  _formatId: null,
-  _netLanguageId: null,
-  _presentationOrCodeBehind: false,
+  _libraryEntityId = 0;
+  _libraryParentEntityId = 0;
+  _templateId = null;
+  _formatId = null;
+  _netLanguageId = null;
+  _presentationOrCodeBehind = false;
 
-  _insertWindowInitialized: false,
-  _insertWindowHtml: null,
-  _insertWindowComponent: null,
-  _storedTempValue: '',
-  _checkIntervalID: null,
+  _insertWindowInitialized = false;
+  _insertWindowHtml = null;
+  _insertWindowComponent = null;
+  _storedTempValue = '';
+  _checkIntervalID = null;
 
-  _editorWidth: null,
-  _editorHeight: null,
+  _editorWidth = null;
+  _editorHeight = null;
 
-  _minJsonEditorHeight: 190,
+  _minJsonEditorHeight = 190;
 
   _openLibrary() {
-    let eventArgs = new Quantumart.QP8.BackendEventArgs();
+    let eventArgs = new BackendEventArgs();
     let options = { isMultiOpen: true, additionalUrlParameters: { filterFileTypeId: '', allowUpload: true } };
     eventArgs.set_entityId(this._libraryEntityId);
     eventArgs.set_parentEntityId(this._libraryParentEntityId);
@@ -42,7 +46,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     eventArgs.set_entityTypeCode(window.ENTITY_TYPE_CODE_SITE);
     eventArgs.set_actionCode(window.ACTION_CODE_POPUP_SITE_LIBRARY);
     if (!this._selectPopupWindowComponent) {
-      this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, options);
+      this._selectPopupWindowComponent = new BackendSelectPopupWindow(eventArgs, options);
       this._selectPopupWindowComponent.attachObserver(
         window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED,
         $.proxy(this._librarySelectedHandler, this)
@@ -57,11 +61,11 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._selectPopupWindowComponent.openWindow();
     eventArgs = null;
     options = null;
-  },
+  }
 
   _closeLibrary() {
     this._selectPopupWindowComponent.closeWindow();
-  },
+  }
 
   _destroyLibrary() {
     if (this._selectPopupWindowComponent) {
@@ -70,11 +74,11 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       this._selectPopupWindowComponent.dispose();
       this._selectPopupWindowComponent = null;
     }
-  },
+  }
 
   _libraryClosedHandler() {
     this._closeLibrary();
-  },
+  }
 
   _librarySelectedHandler(eventType, sender, args) {
     let url, entities;
@@ -87,7 +91,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         this._insertLibraryTag(url);
       }
     }
-  },
+  }
 
   _onCheckChangesIntervalHandler() {
     let curVal;
@@ -114,7 +118,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         });
       }
     }
-  },
+  }
 
   _insertLibraryTag(url) {
     const sCurs = this._componentElem.data('codeMirror').getCursor('start');
@@ -126,7 +130,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
 
     this._componentElem.addClass(window.CHANGED_FIELD_CLASS_NAME);
-  },
+  }
 
   _insertCallText(callText) {
     const sCurs = this._componentElem.data('codeMirror').getCursor('start');
@@ -138,7 +142,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
 
     this._insertWindowComponent.close();
-  },
+  }
 
   _generateTag(url) {
     if (url.endsWith('.gif')
@@ -158,7 +162,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
 
     return $.telerik.formatString('<a  href="{0}">', url);
-  },
+  }
 
   initialize() {
     const tArea = this._componentElem;
@@ -176,7 +180,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
 
     this._checkIntervalID = setInterval($.proxy(this._onCheckChangesIntervalHandler, this), 10000);
-  },
+  }
 
   initCodeMirrorTArea(tArea) {
     let cm;
@@ -205,7 +209,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._storedTempValue = 'qweqwe';
     tArea.data('codeMirror', cm);
     cm = null;
-  },
+  }
 
   initJsonEditor(tArea) {
     let json;
@@ -243,11 +247,11 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
 
     this._storedTempValue = je.getText();
     tArea.data('jsonEditor', je);
-  },
+  }
 
   _onLibraryButtonClick() {
     this._openLibrary();
-  },
+  }
 
   _onRestoreButtonClick() {
     const actionName = this._presentationOrCodeBehind ? 'GetDefaultPresentation' : 'GetDefaultCode';
@@ -268,7 +272,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         this._componentElem.addClass(window.CHANGED_FIELD_CLASS_NAME);
       }
     }, this));
-  },
+  }
 
   _onInsertButtonClick() {
     if (this._insertWindowInitialized) {
@@ -277,7 +281,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       this.createInsertPopupWindow();
       this._insertWindowInitialized = true;
     }
-  },
+  }
 
   _onInsertCall() {
     const valToInsert = this._insertPopUp.data('valToInsert');
@@ -307,7 +311,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
 
       this._componentElem.addClass(window.CHANGED_FIELD_CLASS_NAME);
     }
-  },
+  }
 
   _insertObjectFunc(objectName, netLanguage, isCodeBehind) {
     let strIns;
@@ -322,7 +326,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
 
     this._insertCallText(strIns);
-  },
+  }
 
   _insertFunc(fieldName, netLanguage, isCodeBehind) {
     let strIns;
@@ -335,7 +339,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
 
     this._insertCallText(strIns);
-  },
+  }
 
   _insertFieldFunc(fieldName, netLanguage, isCodeBehind) {
     let strIns = `Field("${fieldName}")`;
@@ -354,7 +358,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
       }
     }
     this._insertFunc(strIns, netLanguage, isCodeBehind);
-  },
+  }
 
   createInsertPopupWindow() {
     this._insertWindowHtml = '';
@@ -395,7 +399,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         this._insertPopUp.data('valType', this.computeInsertType($(sender.target)));
       }, this));
     }, this));
-  },
+  }
 
   computeInsertType(elem) {
     const $elem = $(elem);
@@ -408,7 +412,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
 
     return undefined;
-  },
+  }
 
   saveData() {
     let jsonEditor;
@@ -428,7 +432,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         }
       }
     }
-  },
+  }
 
   getMode() {
     const tArea = this._componentElem;
@@ -449,7 +453,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     }
 
     return null;
-  },
+  }
 
   initTemplateToolbar() {
     $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetHTAToolbarMarkUp`, {
@@ -476,7 +480,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         this._insertButton.bind('click', this._onInsertButtonClickHandler);
       }
     }, this));
-  },
+  }
 
   destroy() {
     if (this._checkIntervalID) {
@@ -486,4 +490,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     this._destroyLibrary();
     this._componentElem = null;
   }
-};
+}
+
+
+Quantumart.QP8.BackendHighlightedTextArea = BackendHighlightedTextArea;

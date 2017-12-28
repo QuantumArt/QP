@@ -1,17 +1,26 @@
+import { BackendEventArgs } from '../Common/BackendEventArgs';
+import { BackendSelectPopupWindow } from '../List/BackendSelectPopupWindow';
+import { Observable } from '../Common/Observable';
+import { $a, BackendActionParameters } from '../BackendActionExecutor';
+import { $c } from '../ControlHelpers';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+import './QP8BackendApi.Interaction';
+
 window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING = 'OnExternalActionExecuting';
 
-Quantumart.QP8.BackendCustomActionHost = function (hostId, options, manager) {
-  Quantumart.QP8.BackendCustomActionHost.initializeBase(this);
+export class BackendCustomActionHost extends Observable {
+  constructor(hostId, options, manager) {
+    super();
 
-  this._hostId = hostId;
-  this._options = options;
-  this._manager = manager;
-};
+    this._hostId = hostId;
+    this._options = options;
+    this._manager = manager;
+  }
 
-Quantumart.QP8.BackendCustomActionHost.prototype = {
-  _options: null,
-  _hostId: '',
-  _manager: null,
+  _options = null;
+  _hostId = '';
+  _manager = null;
 
   initialize() {
     pmrpc.register({
@@ -21,7 +30,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     });
 
     $(`#${this._options.iframeElementId}`).attr('src', this._generateActionUrl());
-  },
+  }
 
   _onExternalMessageReceived(message, successCallback) {
     if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.ExecuteAction) {
@@ -36,7 +45,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.CheckHost) {
       successCallback(this._onCheckHostMessageReceived(message));
     }
-  },
+  }
 
   onSelect() {
     const id = this._options.iframeElementId;
@@ -44,19 +53,19 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     setTimeout(() => {
       $(`#${id}`).css('marginLeft', '0');
     }, 0);
-  },
+  }
 
   _onCheckHostMessageReceived(_message) {
     return window.BACKEND_VERSION;
-  },
+  }
 
   _onCloseHostMessageReceived(message) {
     this._manager.onCloseHostMessageReceived(message);
-  },
+  }
 
   _onExecuteActionMessageReceived(message) {
     const action = $a.getBackendActionByCode(message.data.actionCode);
-    const params = new Quantumart.QP8.BackendActionParameters({
+    const params = new BackendActionParameters({
       entityTypeCode: message.data.entityTypeCode,
       entityId: message.data.entityId,
       entityName: $o.getEntityName(message.data.entityTypeCode, message.data.entityId, message.data.parentEntityId),
@@ -86,10 +95,10 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     eventArgs.set_additionalData(message.data.options);
     eventArgs.set_startedByExternal(true);
     this.notify(window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, eventArgs);
-  },
+  }
 
   _onOpenSelectWindowMessageReceived(message) {
-    const eventArgs = new Quantumart.QP8.BackendEventArgs();
+    const eventArgs = new BackendEventArgs();
     eventArgs.set_isMultipleEntities(message.data.isMultiple);
     eventArgs.set_parentEntityId(message.data.parentEntityId);
     eventArgs.set_entityTypeCode(message.data.entityTypeCode);
@@ -104,7 +113,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
       }
     }
 
-    const selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, message.data.options);
+    const selectPopupWindowComponent = new BackendSelectPopupWindow(eventArgs, message.data.options);
     // @ts-ignore FIXME
     selectPopupWindowComponent.callerCallback = message.data.callerCallback;
     // @ts-ignore FIXME
@@ -120,7 +129,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     );
 
     selectPopupWindowComponent.openWindow();
-  },
+  }
 
   _popupWindowSelectedHandler(eventType, sender, args) {
     let { entities: selectedEntities } = args;
@@ -149,11 +158,11 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     });
 
     this._destroySelectPopupWindow(sender);
-  },
+  }
 
   _popupWindowClosedHandler(eventType, sender) {
     this._destroySelectPopupWindow(sender);
-  },
+  }
 
   _destroySelectPopupWindow(popupWindows) {
     if (!$q.isNull(popupWindows)) {
@@ -167,20 +176,20 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
         selectWindowUID: popupWindows.selectWindowUID
       });
     }
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_hostUID() {
     return this._options.hostUID;
-  },
+  }
 
   onExternalCallerContextsUnbinded(message) {
     this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.HostUnbinded, message);
-  },
+  }
 
   onChildHostActionExecuted(message) {
     this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.ActionExecuted, message);
-  },
+  }
 
   _invokeCallback(type, message) {
     const iframe = window.document.getElementById(this._options.iframeElementId);
@@ -194,11 +203,11 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
         params: [type, args]
       });
     }
-  },
+  }
 
   _getExecuteActionProcedureName() {
     return this._options.hostUID;
-  },
+  }
 
   _generateActionUrl() {
     let resultUrl = $q.updateQueryStringParameter(this._options.actionBaseUrl, 'hostUID', this._options.hostUID);
@@ -206,15 +215,13 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
       resultUrl += `&${$.param(this._options.additionalParams)}`;
     }
     return resultUrl;
-  },
+  }
 
   dispose() {
     pmrpc.unregister(this._getExecuteActionProcedureName());
     this._manager.removeComponent(this);
   }
-};
+}
 
-Quantumart.QP8.BackendCustomActionHost.registerClass(
-  'Quantumart.QP8.BackendCustomActionHost',
-  Quantumart.QP8.Observable
-);
+
+Quantumart.QP8.BackendCustomActionHost = BackendCustomActionHost;

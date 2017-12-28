@@ -1,19 +1,21 @@
-Quantumart.QP8.ActionLogFilterBase = function (filterContainer) {
-  this.$container = $(filterContainer);
-};
+import { $q } from '../Utils';
 
-Quantumart.QP8.ActionLogFilterBase.prototype = {
-  $container: null,
+export class ActionLogFilterBase {
+  constructor(filterContainer) {
+    this.$container = $(filterContainer);
+  }
+
+  $container = null;
 
   /** @abstract */
   initialize() {
     throw new Error($l.Common.methodNotImplemented);
-  },
+  }
 
   /** @virtual */
   onOpen() {
     // default implementation
-  },
+  }
 
   /**
    * @abstract
@@ -21,7 +23,7 @@ Quantumart.QP8.ActionLogFilterBase.prototype = {
    */
   getValue() {
     throw new Error($l.Common.methodNotImplemented);
-  },
+  }
 
   /**
    * @virtual
@@ -29,13 +31,14 @@ Quantumart.QP8.ActionLogFilterBase.prototype = {
    */
   getFilterDetails() {
     return '?';
-  },
+  }
 
   dispose() {
     $q.dispose.call(this, [
       '$container'
     ]);
   }
-};
+}
 
-Quantumart.QP8.ActionLogFilterBase.registerClass('Quantumart.QP8.ActionLogFilterBase');
+
+Quantumart.QP8.ActionLogFilterBase = ActionLogFilterBase;

@@ -1,5 +1,12 @@
+import { BackendCustomActionHost } from '../CustomAction/BackendCustomActionHost';
+import { BackendEditingArea } from '../Document/BackendEditingArea';
+import { BackendPopupWindowManager } from './BackendPopupWindowManager';
+import { Observable } from '../Common/Observable';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
 window.EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED = 'onCloseHostMessageReceived';
-class BackendCustomActionHostManager extends Quantumart.QP8.Observable {
+export class BackendCustomActionHostManager extends Observable {
   /** @type {BackendCustomActionHostManager} */
   static _instance;
 
@@ -19,7 +26,6 @@ class BackendCustomActionHostManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
-    // @ts-ignore
     super();
     this._components = {};
   }
@@ -27,7 +33,7 @@ class BackendCustomActionHostManager extends Quantumart.QP8.Observable {
   createComponent(hostId, options) {
     if (options && options.hostUID) {
       if ($q.isNull(this._components[options.hostUID])) {
-        this._components[options.hostUID] = new Quantumart.QP8.BackendCustomActionHost(hostId, options, this);
+        this._components[options.hostUID] = new BackendCustomActionHost(hostId, options, this);
       }
 
       return this._components[options.hostUID];
@@ -71,14 +77,14 @@ class BackendCustomActionHostManager extends Quantumart.QP8.Observable {
     $.merge(callerContexts, [eventArgs.get_externalCallerContext()]);
 
     let hosts = [];
-    $.merge(hosts, Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(eventArgs));
-    $.merge(hosts, [Quantumart.QP8.BackendEditingArea.getInstance().getDocumentByEventArgs(eventArgs)]);
+    $.merge(hosts, BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(eventArgs));
+    $.merge(hosts, [BackendEditingArea.getInstance().getDocumentByEventArgs(eventArgs)]);
     if (eventArgs.get_callerContext()) {
-      $.merge(hosts, Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(
+      $.merge(hosts, BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(
         eventArgs.get_callerContext().eventArgs
       ));
 
-      $.merge(hosts, [Quantumart.QP8.BackendEditingArea.getInstance().getDocumentByEventArgs(
+      $.merge(hosts, [BackendEditingArea.getInstance().getDocumentByEventArgs(
         eventArgs.get_callerContext().eventArgs
       )]);
     }

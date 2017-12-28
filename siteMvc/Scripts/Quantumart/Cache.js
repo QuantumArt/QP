@@ -1,4 +1,6 @@
-class GlobalCache {
+import { $q } from './Utils';
+
+export class GlobalCache {
   static _itemInfos = {};
 
   static getItem(key) {

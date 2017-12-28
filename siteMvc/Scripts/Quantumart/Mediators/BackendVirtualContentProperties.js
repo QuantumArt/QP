@@ -1,44 +1,54 @@
-Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectElementId, joinFieldsTreeElementId) {
-  const contentPicker = $(`#${joinContentSelectElementId}`).data('entity_data_list_component');
-  const entityTreeComponent = Quantumart.QP8.BackendEntityTreeManager.getInstance().getTree(joinFieldsTreeElementId);
+import { BackendEntityDataListManager } from '../Managers/BackendEntityDataListManager';
+import { BackendEntityTreeManager } from '../Managers/BackendEntityTreeManager';
 
-  const onRelatedToChanged = function () {
-    const [selectedContentId] = contentPicker.getSelectedEntityIDs();
-    entityTreeComponent.set_parentEntityId(selectedContentId);
-    entityTreeComponent.set_selectedEntitiesIDs([]);
-    entityTreeComponent.refreshTree();
-  };
+export class JoinContentAndJoinFieldsMediator {
+  constructor(joinContentSelectElementId, joinFieldsTreeElementId) {
+    const contentPicker = $(`#${joinContentSelectElementId}`).data('entity_data_list_component');
+    const entityTreeComponent = BackendEntityTreeManager.getInstance().getTree(joinFieldsTreeElementId);
 
-  const dispose = function () {
-    $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
-  };
+    const onRelatedToChanged = function () {
+      const [selectedContentId] = contentPicker.getSelectedEntityIDs();
+      entityTreeComponent.set_parentEntityId(selectedContentId);
+      entityTreeComponent.set_selectedEntitiesIDs([]);
+      entityTreeComponent.refreshTree();
+    };
 
-  $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
+    const dispose = function () {
+      $(contentPicker.getStateFieldElement()).off('change', onRelatedToChanged);
+    };
 
-  return {
-    dispose
-  };
-};
+    $(contentPicker.getStateFieldElement()).on('change', onRelatedToChanged);
 
-Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (
-  unionSourcePanelElementId, buildParamsPanelElementId, unionSourcesElementId
-) {
-  const $unionSourcePanelElement = $(`#${unionSourcePanelElementId}`);
-  const $buildParamsPanelElement = $(`#${buildParamsPanelElementId}`);
-  const unionSourcesComponent = Quantumart.QP8.BackendEntityDataListManager.getInstance()
-    .getList(`${unionSourcesElementId}_list`);
+    return {
+      dispose
+    };
+  }
+}
 
-  const onUnionTypeSelected = function () {
-    unionSourcesComponent._fixListOverflow();
-  };
+export class UnionRadioAndSourceContentsListMediator {
+  constructor(
+    unionSourcePanelElementId, buildParamsPanelElementId, unionSourcesElementId
+  ) {
+    const $unionSourcePanelElement = $(`#${unionSourcePanelElementId}`);
+    const $buildParamsPanelElement = $(`#${buildParamsPanelElementId}`);
+    const unionSourcesComponent = BackendEntityDataListManager.getInstance()
+      .getList(`${unionSourcesElementId}_list`);
 
-  const dispose = function () {
-    $unionSourcePanelElement.unbind();
-    $buildParamsPanelElement.unbind();
-  };
+    const onUnionTypeSelected = function () {
+      unionSourcesComponent._fixListOverflow();
+    };
 
-  $unionSourcePanelElement.bind('show', onUnionTypeSelected);
-  $buildParamsPanelElement.bind('show', onUnionTypeSelected);
+    const dispose = function () {
+      $unionSourcePanelElement.unbind();
+      $buildParamsPanelElement.unbind();
+    };
 
-  return { dispose };
-};
+    $unionSourcePanelElement.bind('show', onUnionTypeSelected);
+    $buildParamsPanelElement.bind('show', onUnionTypeSelected);
+
+    return { dispose };
+  }
+}
+
+Quantumart.QP8.JoinContentAndJoinFieldsMediator = JoinContentAndJoinFieldsMediator;
+Quantumart.QP8.UnionRadioAndSourceContentsListMediator = UnionRadioAndSourceContentsListMediator;

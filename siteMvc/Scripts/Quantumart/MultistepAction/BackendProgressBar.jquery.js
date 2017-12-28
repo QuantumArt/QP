@@ -1,3 +1,5 @@
+import { $q } from '../Utils';
+
 // based on: http://benogle.com/2009/06/16/simple-css-shiny-progress-bar-technique.html
 // eslint-disable-next-line no-extra-semi
 ; (function module() {

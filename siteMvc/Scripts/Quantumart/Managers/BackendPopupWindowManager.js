@@ -1,4 +1,10 @@
-class BackendPopupWindowManager extends Quantumart.QP8.Observable {
+import { BackendDocumentHostStateStorage } from '../Document/BackendDocumentHostStateStorage';
+import { BackendPopupWindow } from '../Document/BackendPopupWindow';
+import { Observable } from '../Common/Observable';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
+export class BackendPopupWindowManager extends Observable {
   /** @type {BackendPopupWindowManager} */
   static _instance;
 
@@ -18,10 +24,9 @@ class BackendPopupWindowManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
-    // @ts-ignore
     super();
     this._popupWindows = {};
-    this._hostStateStorage = new Quantumart.QP8.BackendDocumentHostStateStorage();
+    this._hostStateStorage = new BackendDocumentHostStateStorage();
   }
 
   generatePopupWindowId() {
@@ -71,7 +76,7 @@ class BackendPopupWindowManager extends Quantumart.QP8.Observable {
       hostStateStorage: this._hostStateStorage
     });
 
-    const popupWindow = new Quantumart.QP8.BackendPopupWindow(popupWindowId, eventArgs, newOptions);
+    const popupWindow = new BackendPopupWindow(popupWindowId, eventArgs, newOptions);
     popupWindow.set_popupWindowManager(this);
     popupWindow.initialize();
 

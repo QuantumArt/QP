@@ -1,9 +1,11 @@
-Quantumart.QP8.Observable = function () {
-  this._observerInfos = [];
-};
+import { $q } from '../Utils';
 
-Quantumart.QP8.Observable.prototype = {
-  _observerInfos: null,
+export class Observable {
+  constructor() {
+    this._observerInfos = [];
+  }
+
+  _observerInfos = null;
 
   _getObserverInfo(eventType, observer) {
     let observerInfo = null;
@@ -20,14 +22,14 @@ Quantumart.QP8.Observable.prototype = {
     }
 
     return observerInfo;
-  },
+  }
 
   _checkObserver(observer) {
     if (($q.isObject(observer) && $q.isFunction(observer.update)) || $q.isFunction(observer)) {
       return true;
     }
     throw new Error($l.Common.observerIsNotFunctionOrObject);
-  },
+  }
 
   attachObserver(eventType, observer, times = -1) {
     if (!this._checkObserver(observer)) {
@@ -45,7 +47,7 @@ Quantumart.QP8.Observable.prototype = {
     } else {
       observerInfo.times = times;
     }
-  },
+  }
 
   detachObserver(eventType, observer) {
     if (!$q.isNull(this._observerInfos)
@@ -59,12 +61,12 @@ Quantumart.QP8.Observable.prototype = {
         }
       }
     }
-  },
+  }
 
 
   oneTimeObserver(eventType, observer) {
     this.attachObserver(eventType, observer, 1);
-  },
+  }
 
   notify(eventType, eventArgs) {
     if ($q.isNullOrWhiteSpace(eventType)) {
@@ -106,7 +108,7 @@ Quantumart.QP8.Observable.prototype = {
         }
       }
     }
-  },
+  }
 
   _updateObserver(eventType, eventArgs, observer) {
     if ($q.isObject(observer)) {
@@ -116,11 +118,12 @@ Quantumart.QP8.Observable.prototype = {
     } else if ($q.isFunction(observer)) {
       observer(eventType, this, eventArgs);
     }
-  },
+  }
 
   dispose() {
     $q.clearArray(this._observerInfos);
   }
-};
+}
 
-Quantumart.QP8.Observable.registerClass('Quantumart.QP8.Observable', null);
+
+Quantumart.QP8.Observable = Observable;

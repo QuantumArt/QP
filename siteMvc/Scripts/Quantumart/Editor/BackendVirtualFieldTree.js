@@ -1,4 +1,7 @@
-class BackendVirtualFieldTree extends Quantumart.QP8.BackendEntityTree {
+import { BackendEntityTree } from '../Tree/BackendEntityTree';
+import { $q } from '../Utils';
+
+export class BackendVirtualFieldTree extends BackendEntityTree {
   static _getIcon(entity) {
     return entity.IconUrl;
   }
@@ -13,7 +16,6 @@ class BackendVirtualFieldTree extends Quantumart.QP8.BackendEntityTree {
     options,
     hostOptions
   ) {
-    // @ts-ignore
     super(
       treeGroupCode,
       treeElementId,

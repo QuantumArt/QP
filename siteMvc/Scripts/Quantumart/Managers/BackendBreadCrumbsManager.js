@@ -1,4 +1,9 @@
-class BackendBreadCrumbsManager extends Quantumart.QP8.Observable {
+import { BackendBreadCrumbs } from '../BackendBreadCrumbs';
+import { Observable } from '../Common/Observable';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
+export class BackendBreadCrumbsManager extends Observable {
   /** @type {BackendBreadCrumbsManager} */
   static _instance;
 
@@ -27,7 +32,6 @@ class BackendBreadCrumbsManager extends Quantumart.QP8.Observable {
   }
 
   constructor(breadCrumbsContainerElementId, options) {
-    // @ts-ignore
     super();
     this._breadCrumbsContainerElementId = breadCrumbsContainerElementId;
 
@@ -51,7 +55,7 @@ class BackendBreadCrumbsManager extends Quantumart.QP8.Observable {
   }
 
   createBreadCrumbs(breadCrumbsElementId, options) {
-    const breadCrumbs = new Quantumart.QP8.BackendBreadCrumbs(breadCrumbsElementId, options);
+    const breadCrumbs = new BackendBreadCrumbs(breadCrumbsElementId, options);
     breadCrumbs.set_manager(this);
     breadCrumbs.initialize();
 

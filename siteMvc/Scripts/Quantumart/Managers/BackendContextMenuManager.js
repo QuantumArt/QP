@@ -1,5 +1,8 @@
+import { Observable } from '../Common/Observable';
+import { $q } from '../Utils';
+
 window.EVENT_TYPE_CUSTOM_ACTION_CHANGED = 'OnCustomActionChanged';
-class BackendContextMenuManager extends Quantumart.QP8.Observable {
+export class BackendContextMenuManager extends Observable {
   /** @type {BackendContextMenuManager} */
   static _instance;
 

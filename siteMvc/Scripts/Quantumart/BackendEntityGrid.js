@@ -1,4 +1,10 @@
 /* eslint max-lines: 'off' */
+import { Backend } from './Backend';
+import { BackendContextMenu } from './BackendContextMenu';
+import { Observable } from './Common/Observable';
+import { $a, BackendActionParameters } from './BackendActionExecutor';
+import { $q } from './Utils';
+
 
 window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING = 'OnEntityGridDataBinding';
 window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND = 'OnEntityGridDataBound';
@@ -6,7 +12,7 @@ window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING = 'OnEntityGridActionExecuting';
 window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED = 'OnEntityGridEntitySelected';
 window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK = 'OnEntityGridEntityTitleLinkClick';
 
-class BackendEntityGrid extends Quantumart.QP8.Observable {
+export class BackendEntityGrid extends Observable {
   static applyStatusColor(row, item) {
     if (item.STATUS_TYPE_COLOR) {
       const $row = $(row);
@@ -26,7 +32,6 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
     options,
     hostOptions
   ) {
-    // @ts-ignore
     super();
 
     this.GRID_BUSY_CLASS_NAME = 'busy';
@@ -449,7 +454,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
     }
 
     if (this._contextMenuCode) {
-      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(
+      const contextMenuComponent = new BackendContextMenu(
         this._contextMenuCode,
         `${this._gridElementId}_ContextMenu`,
         {
@@ -833,7 +838,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       }
 
       const entityName = this.getEntityName($row);
-      const params = new Quantumart.QP8.BackendActionParameters({
+      const params = new BackendActionParameters({
         entityTypeCode: this._entityTypeCode,
         entityId,
         entityName,
@@ -846,7 +851,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
       eventArgs.set_startedByExternal(this._isBindToExternal);
 
-      const message = Quantumart.QP8.Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
+      const message = Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
       if (this._hostIsWindow) {
         if (message) {
           $q.alertError(message);

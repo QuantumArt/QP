@@ -1,4 +1,8 @@
-class BackendBreadMenuContextMenuManager extends Quantumart.QP8.Observable {
+import { BackendContextMenu } from '../BackendContextMenu';
+import { Observable } from '../Common/Observable';
+import { $q } from '../Utils';
+
+export class BackendBreadMenuContextMenuManager extends Observable {
   /** @type {BackendBreadMenuContextMenuManager} */
   static _instance;
 
@@ -18,7 +22,6 @@ class BackendBreadMenuContextMenuManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
-    // @ts-ignore
     super();
     this._сontextMenus = {};
   }
@@ -28,7 +31,7 @@ class BackendBreadMenuContextMenuManager extends Quantumart.QP8.Observable {
   }
 
   createContextMenu(contextMenuCode, contextMenuElementId, options) {
-    const contextMenu = new Quantumart.QP8.BackendContextMenu(contextMenuCode, contextMenuElementId, options);
+    const contextMenu = new BackendContextMenu(contextMenuCode, contextMenuElementId, options);
     contextMenu.set_contextMenuManager(this);
     contextMenu.initialize();
 

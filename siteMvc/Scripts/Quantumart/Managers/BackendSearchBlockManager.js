@@ -1,4 +1,12 @@
-class BackendSearchBlockManager extends Quantumart.QP8.Observable {
+import { BackendArticleSearchBlock } from '../Search/BackendArticleSearchBlock';
+import { BackendContentSearchBlock } from '../Search/BackendContentSearchBlock';
+import { BackendContextBlock } from '../Search/BackendContextBlock';
+import { BackendSearchBlockBase } from '../Search/BackendSearchBlockBase';
+import { BackendUserSearchBlock } from '../Search/BackendUserSearchBlock';
+import { Observable } from '../Common/Observable';
+import { $q } from '../Utils';
+
+export class BackendSearchBlockManager extends Observable {
   /** @type {BackendSearchBlockManager} */
   static _instance;
 
@@ -22,7 +30,6 @@ class BackendSearchBlockManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
-    // @ts-ignore
     super();
     this._searchBlockGroups = {};
   }
@@ -50,7 +57,7 @@ class BackendSearchBlockManager extends Quantumart.QP8.Observable {
 
     let searchBlock = null;
     if (options.contextSearch) {
-      searchBlock = new Quantumart.QP8.BackendContextBlock(
+      searchBlock = new BackendContextBlock(
         searchBlockGroupCode,
         searchBlockElementId,
         entityTypeCode,
@@ -69,7 +76,7 @@ class BackendSearchBlockManager extends Quantumart.QP8.Observable {
         Object.assign(options, { isVirtual: true });
       }
 
-      searchBlock = new Quantumart.QP8.BackendArticleSearchBlock(
+      searchBlock = new BackendArticleSearchBlock(
         searchBlockGroupCode,
         searchBlockElementId,
         entityTypeCode,
@@ -77,7 +84,7 @@ class BackendSearchBlockManager extends Quantumart.QP8.Observable {
         options
       );
     } else if (entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT) {
-      searchBlock = new Quantumart.QP8.BackendContentSearchBlock(
+      searchBlock = new BackendContentSearchBlock(
         searchBlockGroupCode,
         searchBlockElementId,
         entityTypeCode,
@@ -85,7 +92,7 @@ class BackendSearchBlockManager extends Quantumart.QP8.Observable {
         options
       );
     } else if (entityTypeCode === window.ENTITY_TYPE_CODE_USER) {
-      searchBlock = new Quantumart.QP8.BackendUserSearchBlock(
+      searchBlock = new BackendUserSearchBlock(
         searchBlockGroupCode,
         searchBlockElementId,
         entityTypeCode,
@@ -93,7 +100,7 @@ class BackendSearchBlockManager extends Quantumart.QP8.Observable {
         options
       );
     } else {
-      searchBlock = new Quantumart.QP8.BackendSearchBlockBase(
+      searchBlock = new BackendSearchBlockBase(
         searchBlockGroupCode,
         searchBlockElementId,
         entityTypeCode,

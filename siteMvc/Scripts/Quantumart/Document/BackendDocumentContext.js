@@ -1,126 +1,137 @@
-Quantumart.QP8.BackendDocumentContext = function (params, options) {
-  Quantumart.QP8.BackendDocumentContext.initializeBase(this);
-  this._hostId = params.hostId;
-  if ($q.isBoolean(params.isWindow)) {
-    this._isWindow = params.isWindow;
+import { BackendActionPermissionViewManager } from '../Managers/BackendActionPermissionViewManager';
+import { BackendCustomActionHostManager } from '../Managers/BackendCustomActionHostManager';
+import { BackendEditingArea } from './BackendEditingArea';
+import { BackendEntityEditorManager } from '../Managers/BackendEntityEditorManager';
+import { BackendEntityGridManager } from '../Managers/BackendEntityGridManager';
+import { BackendEntityTreeManager } from '../Managers/BackendEntityTreeManager';
+import { BackendLibraryManager } from '../Managers/BackendLibraryManager';
+import { BackendPopupWindowManager } from '../Managers/BackendPopupWindowManager';
+import { BackendPreviousAction } from '../Common/BackendPreviousAction';
+import { $a } from '../BackendActionExecutor';
+import { $q } from '../Utils';
+
+export class BackendDocumentContext {
+  constructor(params, options) {
+    this._hostId = params.hostId;
+    if ($q.isBoolean(params.isWindow)) {
+      this._isWindow = params.isWindow;
+    }
+
+    this._params = params;
+    if (params.entityId) {
+      this._entityId = params.entityId;
+    }
+
+    if (params.entityName) {
+      this._entityName = params.entityName;
+    }
+
+    if (params.entities) {
+      this._entities = params.entities;
+    }
+
+    if (params.parentEntityId) {
+      this._parentEntityId = params.parentEntityId;
+    }
+
+    if (params.entityTypeCode) {
+      this._entityTypeCode = params.entityTypeCode;
+    }
+
+    if (params.actionCode) {
+      this._actionCode = params.actionCode;
+    }
+
+    if (params.previousActionCode) {
+      this._previousActionCode = params.previousActionCode;
+    }
+
+    if (params.state) {
+      this._state = params.state;
+    }
+
+    if (params.mainComponentType) {
+      this._mainComponentType = params.mainComponentType;
+    }
+
+    if (params.mainComponentId) {
+      this._mainComponentId = params.mainComponentId;
+    }
+
+    this._options = options;
+    this._options.isWindow = this._isWindow;
+
+    this._customLinkButtonsSettings = [];
+    this._customButtonsSettings = [];
   }
 
-  this._params = params;
-  if (params.entityId) {
-    this._entityId = params.entityId;
-  }
+  _hostId = '';
+  _isWindow = false;
+  _entityId = 0;
+  _entityName = '';
+  _entities = null;
+  _parentEntityId = 0;
+  _entityTypeCode = '';
+  _actionCode = '';
+  _previousActionCode = '';
+  _state = $e.DocumentContextState.None;
+  _mainComponentType = $e.MainComponentType.Editor;
+  _mainComponentId = '';
+  _mainComponent = null;
+  _eventArgs = null;
+  _initializingCallback = null;
+  _initializedCallback = null;
+  _terminatingCallback = null;
+  _terminatedCallback = null;
+  _execSelectCallback = null;
+  _hostLoadedCallback = null;
 
-  if (params.entityName) {
-    this._entityName = params.entityName;
-  }
+  initHandler = null;
+  disposeHandler = null;
+  beforeSubmitHandler = null;
+  loadHandler = null;
+  fieldValueChangedHandler = null;
 
-  if (params.entities) {
-    this._entities = params.entities;
-  }
+  _options = null;
+  _params = null;
 
-  if (params.parentEntityId) {
-    this._parentEntityId = params.parentEntityId;
-  }
-
-  if (params.entityTypeCode) {
-    this._entityTypeCode = params.entityTypeCode;
-  }
-
-  if (params.actionCode) {
-    this._actionCode = params.actionCode;
-  }
-
-  if (params.previousActionCode) {
-    this._previousActionCode = params.previousActionCode;
-  }
-
-  if (params.state) {
-    this._state = params.state;
-  }
-
-  if (params.mainComponentType) {
-    this._mainComponentType = params.mainComponentType;
-  }
-
-  if (params.mainComponentId) {
-    this._mainComponentId = params.mainComponentId;
-  }
-
-  this._options = options;
-  this._options.isWindow = this._isWindow;
-
-  this._customLinkButtonsSettings = [];
-  this._customButtonsSettings = [];
-};
-
-Quantumart.QP8.BackendDocumentContext.prototype = {
-  _hostId: '',
-  _isWindow: false,
-  _entityId: 0,
-  _entityName: '',
-  _entities: null,
-  _parentEntityId: 0,
-  _entityTypeCode: '',
-  _actionCode: '',
-  _previousActionCode: '',
-  _state: $e.DocumentContextState.None,
-  _mainComponentType: $e.MainComponentType.Editor,
-  _mainComponentId: '',
-  _mainComponent: null,
-  _eventArgs: null,
-  _initializingCallback: null,
-  _initializedCallback: null,
-  _terminatingCallback: null,
-  _terminatedCallback: null,
-  _execSelectCallback: null,
-  _hostLoadedCallback: null,
-
-  initHandler: null,
-  disposeHandler: null,
-  beforeSubmitHandler: null,
-  loadHandler: null,
-  fieldValueChangedHandler: null,
-
-  _options: null,
-  _params: null,
-
-  _customLinkButtonsSettings: null,
-  _customButtonsSettings: null,
+  _customLinkButtonsSettings = null;
+  _customButtonsSettings = null;
 
   getMainComponent() {
     return this._mainComponent;
-  },
+  }
   getMainComponentType() {
     return this._mainComponentType;
-  },
+  }
 
   getState() {
     return this._state;
-  },
+  }
 
   setInitializingCallback(value) {
     this._initializingCallback = value;
-  },
+  }
 
   setInitializedCallback(value) {
     this._initializedCallback = value;
-  },
+  }
 
   setTerminatingCallback(value) {
     this._terminatingCallback = value;
-  },
+  }
 
   setTerminatedCallback(value) {
     this._terminatedCallback = value;
-  },
+  }
 
   setExecSelectCallback(value) {
     this._execSelectCallback = value;
-  },
+  }
 
   setHostLoadedCallback(value) {
     this._hostLoadedCallback = value;
-  },
+  }
 
   init() {
     if (!this.needUp()) {
@@ -138,26 +149,26 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     $q.trace(`Created document context: ${this._hostId}`, this);
-  },
+  }
 
   getHost() {
     if (this._isWindow) {
-      return Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindow(this._hostId);
+      return BackendPopupWindowManager.getInstance().getPopupWindow(this._hostId);
     }
     return this._getArea().getDocument(this._hostId);
-  },
+  }
 
   _getArea() {
-    return Quantumart.QP8.BackendEditingArea.getInstance();
-  },
+    return BackendEditingArea.getInstance();
+  }
 
   setGlobal(key, value) {
-    Quantumart.QP8.BackendDocumentContext.setGlobal(key, value);
-  },
+    BackendDocumentContext.setGlobal(key, value);
+  }
 
   getGlobal(key) {
-    return Quantumart.QP8.BackendDocumentContext.getGlobal(key);
-  },
+    return BackendDocumentContext.getGlobal(key);
+  }
 
   loadScript(url, key) {
     const resultKey = key || url;
@@ -173,21 +184,21 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
 
       this._getArea().setCustomScriptState(resultKey, true);
     }
-  },
+  }
 
   addCustomButton(settings) {
     this._customButtonsSettings.push(settings);
-  },
+  }
 
   addCustomLinkButton(settings) {
     this._customLinkButtonsSettings.push(settings);
-  },
+  }
 
   execSelect(eventArgs) {
     if (this._execSelectCallback) {
       this._execSelectCallback(eventArgs);
     }
-  },
+  }
 
   // eslint-disable-next-line max-statements
   createMainComponent(host) {
@@ -208,7 +219,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     let mainComponent = null;
 
     if (this._mainComponentType === $e.MainComponentType.Grid) {
-      mainComponent = Quantumart.QP8.BackendEntityGridManager.getInstance().createGrid(
+      mainComponent = BackendEntityGridManager.getInstance().createGrid(
         this._mainComponentId, this._entityTypeCode, this._parentEntityId, this._actionCode, this._options, hostOptions
       );
       mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING, hostHandler);
@@ -217,14 +228,14 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK, hostHandler);
       mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType === $e.MainComponentType.Tree) {
-      mainComponent = Quantumart.QP8.BackendEntityTreeManager.getInstance().createTree(
+      mainComponent = BackendEntityTreeManager.getInstance().createTree(
         this._mainComponentId, this._entityTypeCode, this._parentEntityId, this._actionCode, this._options, hostOptions
       );
       mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND, hostHandler);
       mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED, hostHandler);
       mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType === $e.MainComponentType.Library) {
-      mainComponent = Quantumart.QP8.BackendLibraryManager.getInstance().createLibrary(
+      mainComponent = BackendLibraryManager.getInstance().createLibrary(
         this._mainComponentId, this._parentEntityId, this._actionCode, this._options, hostOptions
       );
       mainComponent.attachObserver(window.EVENT_TYPE_LIBRARY_DATA_BOUND, hostHandler);
@@ -238,7 +249,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       // @ts-ignore FIXME
       this._options.notifyCustomButtonExistence = this.notifyCustomButtonExistence;
 
-      mainComponent = Quantumart.QP8.BackendEntityEditorManager.getInstance().createEditor(
+      mainComponent = BackendEntityEditorManager.getInstance().createEditor(
         host.get_documentWrapperElementId(), this._entityTypeCode, this._entityId, '', this._options, hostOptions
       );
       mainComponent.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING, hostHandler);
@@ -256,12 +267,12 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
         });
       }
 
-      mainComponent = Quantumart.QP8.BackendCustomActionHostManager.getInstance().createComponent(
+      mainComponent = BackendCustomActionHostManager.getInstance().createComponent(
         this._hostId, this._params
       );
       mainComponent.attachObserver(window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, hostHandler);
     } else if (this._mainComponentType === $e.MainComponentType.ActionPermissionView) {
-      mainComponent = Quantumart.QP8.BackendActionPermissionViewManager.getInstance().createView(
+      mainComponent = BackendActionPermissionViewManager.getInstance().createView(
         this._mainComponentId, this._options, hostOptions
       );
       mainComponent.attachObserver(window.EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING, hostHandler);
@@ -278,11 +289,11 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
 
     mainComponent.initialize();
     return mainComponent;
-  },
+  }
 
   onHostLoaded() {
     $q.callFunction(this._hostLoadedCallback, this);
-  },
+  }
 
   getEventArgs() {
     if (!this._eventArgs) {
@@ -300,7 +311,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     return this._eventArgs;
-  },
+  }
 
   getEventArgsContext() {
     const context = { orderChanged: false, groupChanged: false, viewInListAffected: false };
@@ -318,11 +329,11 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     return context;
-  },
+  }
 
   modifyEventArgsContext(eventArgsContext) {
     return eventArgsContext;
-  },
+  }
 
   getPreviousAction() {
     let previousAction = null;
@@ -331,7 +342,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       const action = $a.getBackendAction(this._previousActionCode);
 
       if (action) {
-        previousAction = new Quantumart.QP8.BackendPreviousAction({
+        previousAction = new BackendPreviousAction({
           entityTypeCode: action.EntityType.Code,
           actionTypeCode: action.ActionType.Code,
           actionCode: action.Code,
@@ -341,15 +352,15 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     return previousAction;
-  },
+  }
 
   getOptions() {
     return this._options;
-  },
+  }
 
   getParams() {
     return this._params;
-  },
+  }
 
   needUp() {
     let result = false;
@@ -363,7 +374,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     return result;
-  },
+  }
 
   disposeMainComponent(host) {
     const hostHandler = host._onGeneralEventHandler;
@@ -397,7 +408,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
 
     this._mainComponent.dispose();
     this._mainComponent = null;
-  },
+  }
 
   getCustomHandlers() {
     const result = {};
@@ -423,7 +434,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     return result;
-  },
+  }
 
   dispose() {
     Sys.Debug.trace(`terminatePage ${this._hostId}`);
@@ -441,20 +452,22 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
       $q.callFunction(this._terminatedCallback, this);
     }
   }
+}
+
+
+BackendDocumentContext.getArea = function () {
+  return BackendEditingArea.getInstance();
 };
 
-Quantumart.QP8.BackendDocumentContext.getArea = function () {
-  return Quantumart.QP8.BackendEditingArea.getInstance();
+BackendDocumentContext.getGlobal = function (key) {
+  return BackendDocumentContext.getArea().getGlobal(key);
 };
 
-Quantumart.QP8.BackendDocumentContext.getGlobal = function (key) {
-  return Quantumart.QP8.BackendDocumentContext.getArea().getGlobal(key);
+BackendDocumentContext.setGlobal = function (key, value) {
+  return BackendDocumentContext.getArea().setGlobal(key, value);
 };
 
-Quantumart.QP8.BackendDocumentContext.setGlobal = function (key, value) {
-  return Quantumart.QP8.BackendDocumentContext.getArea().setGlobal(key, value);
-};
 
-Quantumart.QP8.BackendDocumentContext.registerClass('Quantumart.QP8.BackendDocumentContext');
+window.$ctx = BackendDocumentContext;
 
-window.$ctx = Quantumart.QP8.BackendDocumentContext;
+Quantumart.QP8.BackendDocumentContext = BackendDocumentContext;

@@ -1,4 +1,9 @@
-class BackendLibraryManager extends Quantumart.QP8.Observable {
+import { BackendLibrary } from '../Library/BackendLibrary';
+import { Observable } from '../Common/Observable';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
+export class BackendLibraryManager extends Observable {
   /** @type {BackendLibraryManager} */
   static _instance;
 
@@ -35,7 +40,6 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
-    // @ts-ignore
     super();
     this._libraryGroups = {};
   }
@@ -79,7 +83,7 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
 
   createLibrary(libraryElementId, parentEntityId, actionCode, options, hostOptions) {
     const libraryGroupCode = BackendLibraryManager.generateLibraryGroupCode(actionCode, parentEntityId);
-    const library = new Quantumart.QP8.BackendLibrary(
+    const library = new BackendLibrary(
       libraryGroupCode,
       libraryElementId,
       parentEntityId,

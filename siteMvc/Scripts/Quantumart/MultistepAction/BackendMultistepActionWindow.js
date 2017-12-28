@@ -1,69 +1,74 @@
+import { BackendLibrary } from '../Library/BackendLibrary';
+import { Observable } from '../Common/Observable';
+import { $c } from '../ControlHelpers';
+import { $q } from '../Utils';
+
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING = 'OnMultistepActionWindowCanceling';
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED = 'OnMultistepActionWindowCanceled';
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED = 'OnMultistepActionWindowClosed';
 
-Quantumart.QP8.BackendMultistepActionWindow = function BackendMultistepActionWindow(actionName, shortActionName) {
-  Quantumart.QP8.BackendMultistepActionWindow.initializeBase(this);
+export class BackendMultistepActionWindow extends Observable {
+  constructor(actionName, shortActionName) {
+    super();
 
-  this._actionName = actionName;
-  this._shortActionName = shortActionName;
-  this._startStageTime = new Date();
-};
+    this._actionName = actionName;
+    this._shortActionName = shortActionName;
+    this._startStageTime = new Date();
+  }
 
-Quantumart.QP8.BackendMultistepActionWindow.prototype = {
   // название действия
-  _actionName: '',
+  _actionName = '';
 
   // краткое название действия
-  _shortActionName: '',
+  _shortActionName = '';
 
   // Всего этапов в действии
-  _stagesCount: 0,
+  _stagesCount = 0;
 
   // осталось этапов
-  _stagesRemaining: 0,
+  _stagesRemaining = 0;
 
   // имя текущего этапа
-  _stageName: '',
+  _stageName = '';
 
   // Количество шагов на текущем этапе
-  _stageStepsCount: 0,
+  _stageStepsCount = 0;
 
   // Осталось шагов на текущем этапе
-  _stageStepsRemaining: 0,
+  _stageStepsRemaining = 0;
 
   // Всего элементов на текущем этапе
-  _stageItemsCount: 0,
+  _stageItemsCount = 0;
 
   // Осталось элементов на этапе
-  _stageItemsRemaining: 0,
+  _stageItemsRemaining = 0;
 
   // используеться для вычисления времени
-  _startStageTime: null,
+  _startStageTime = null;
 
   // DOM-элемент, образующий всплывающее окно
-  _popupWindowElement: null,
+  _popupWindowElement = null;
 
   // компонент "Всплывающее окно"
-  _popupWindowComponent: null,
+  _popupWindowComponent = null;
 
   // progress bar
-  _progressBarComponent: null,
-  _progressBarElement: null,
+  _progressBarComponent = null;
+  _progressBarElement = null;
 
-  _stageNameElement: null,
-  _stageRemainingElement: null,
-  _stageItemsElement: null,
-  _stageElapsedTimeElement: null,
-  _stageTimeRemainingElement: null,
-  _stageAdditionalInfoElement: null,
+  _stageNameElement = null;
+  _stageRemainingElement = null;
+  _stageItemsElement = null;
+  _stageElapsedTimeElement = null;
+  _stageTimeRemainingElement = null;
+  _stageAdditionalInfoElement = null;
 
-  _additionalInfo: null,
-  _windowTitle: $l.MultistepAction.progressWindowTitle,
-  _windowWidth: 500,
-  _windowHeight: 250,
-  _zIndex: undefined,
-  _parentId: null,
+  _additionalInfo = null;
+  _windowTitle = $l.MultistepAction.progressWindowTitle;
+  _windowWidth = 500;
+  _windowHeight = 250;
+  _zIndex = undefined;
+  _parentId = null;
 
   initialize() {
     this._popupWindowComponent = this._createWindow();
@@ -93,7 +98,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
       .find('.lop-cancel-button')
       .click($.proxy(this._onCancelClicked, this))
       .get(0);
-  },
+  }
 
   _refreshView() {
     let timeRemaining;
@@ -149,7 +154,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     } else {
       $(this._stageTimeRemainingElement).text(this._formatTimeRange(0));
     }
-  },
+  }
 
   _formatTimeRange(milliseconds) {
     const secondsSpan = Math.floor(milliseconds / 1000);
@@ -170,12 +175,12 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     }
 
     return `${hours}:${minutes}:${seconds}`;
-  },
+  }
 
   startAction(stageCount) {
     this._stagesCount = stageCount;
     this._stagesRemaining = stageCount;
-  },
+  }
 
   // Начать этап
   startStage(stageName, stepsCount, itemsCount) {
@@ -186,7 +191,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     this._stageItemsRemaining = itemsCount;
     this._startStageTime = new Date();
     this._refreshView();
-  },
+  }
 
   // Закончить этап
   completeStage() {
@@ -202,17 +207,17 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     this._stageStepsRemaining = 0;
 
     this._refreshView();
-  },
+  }
   _createDownloadLink() {
     let url, urlParams;
     if (!$q.isNullOrWhiteSpace(this._additionalInfo)) {
       urlParams = { id: this._parentId, fileName: encodeURIComponent(this._additionalInfo) };
-      url = Quantumart.QP8.BackendLibrary.generateActionUrl('ExportFileDownload', urlParams);
+      url = BackendLibrary.generateActionUrl('ExportFileDownload', urlParams);
       $c.downloadFileWithChecking(url, this._additionalInfo);
     }
 
     return false;
-  },
+  }
 
   completeStep(processedItemsCount, additionalInfo, parentId) {
     this._stageItemsRemaining -= processedItemsCount;
@@ -228,9 +233,9 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     }
 
     this._refreshView();
-  },
+  }
 
-  _isInProcess: true,
+  _isInProcess = true;
   _stop() {
     this._isInProcess = false;
     $(this._cancelButtonElement).prop({
@@ -245,25 +250,25 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
       this._stageElapsedTimeElement,
       this._stageRemainingElement
     ]).text('');
-  },
+  }
 
   setError() {
     this._stop();
     this._progressBarComponent.setColor('red');
     this._progressBarComponent.setText($l.MultistepAction.errorStatus);
-  },
+  }
 
   setCancel() {
     this._stop();
     this._progressBarComponent.setColor('#BDBDBD');
     this._progressBarComponent.setText($l.MultistepAction.canceledStatus);
-  },
+  }
 
   setComplete() {
     this._stop();
     this._progressBarComponent.setColor('green');
     this._progressBarComponent.setText($l.MultistepAction.completeStatus);
-  },
+  }
 
   _createWindow() {
     let bottomPaddingFix;
@@ -346,7 +351,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
 
     $content.css('padding-bottom', `${bottomPaddingFix}px`);
     return popupWindowComponent;
-  },
+  }
 
   _onWindowClose() {
     if (this._isInProcess) {
@@ -356,15 +361,15 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
 
     this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED, {});
     return undefined;
-  },
+  }
 
   _onCancelClicked() {
     this._popupWindowComponent.close();
-  },
+  }
 
   _cancel() {
     // eslint-disable-next-line no-use-before-define
-    const eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
+    const eventArgs = new BackendMultistepActionWindowEventArgs();
     this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, eventArgs);
     if (eventArgs.getCancel()) {
       this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, eventArgs);
@@ -373,7 +378,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
     }
 
     return undefined;
-  },
+  }
 
   dispose() {
     let popupWindowComponent;
@@ -393,31 +398,26 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
       $c.destroyPopupWindow(popupWindowComponent);
     }
   }
-};
+}
 
-Quantumart.QP8.BackendMultistepActionWindow.registerClass(
-  'Quantumart.QP8.BackendMultistepActionWindow',
-  Quantumart.QP8.Observable
-);
 
-// eslint-disable-next-line no-useless-constructor, FIXME
-Quantumart.QP8.BackendMultistepActionWindowEventArgs = function BackendMultistepActionWindowEventArgs() {
-  Quantumart.QP8.BackendMultistepActionWindowEventArgs.initializeBase(this);
-};
+export class BackendMultistepActionWindowEventArgs extends Sys.EventArgs {
+  // eslint-disable-next-line no-useless-constructor, FIXME
+  constructor() {
+    super();
+  }
 
-Quantumart.QP8.BackendMultistepActionWindowEventArgs.prototype = {
-  _cancel: false,
+  _cancel = false;
 
   getCancel() {
     return this._cancel;
-  },
+  }
 
   setCancel(val) {
     this._cancel = val;
   }
-};
+}
 
-Quantumart.QP8.BackendMultistepActionWindowEventArgs.registerClass(
-  'Quantumart.QP8.BackendMultistepActionWindowEventArgs',
-  Sys.EventArgs
-);
+
+Quantumart.QP8.BackendMultistepActionWindow = BackendMultistepActionWindow;
+Quantumart.QP8.BackendMultistepActionWindowEventArgs = BackendMultistepActionWindowEventArgs;

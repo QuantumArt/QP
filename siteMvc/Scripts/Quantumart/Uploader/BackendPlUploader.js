@@ -1,5 +1,10 @@
 /* eslint camelcase: ["off", { properties: "never"}] */
-class BackendPlUploader extends Quantumart.QP8.BackendBaseUploader {
+import { BackendBaseUploader } from './BackendBaseUploader';
+import { BackendEventArgs } from '../Common/BackendEventArgs';
+import { BackendUploaderEventArgs } from './BackendUploaderEventArgs';
+import { $q } from '../Utils';
+
+export class BackendPlUploader extends BackendBaseUploader {
   constructor(containerBlock, options) {
     const $container = $(containerBlock);
     const getFormScriptOptions = function getFormScriptOptions() {
@@ -11,7 +16,6 @@ class BackendPlUploader extends Quantumart.QP8.BackendBaseUploader {
       };
     };
 
-    // @ts-ignore
     super();
 
     this._folderPath = '';
@@ -83,11 +87,11 @@ class BackendPlUploader extends Quantumart.QP8.BackendBaseUploader {
     } else {
       this._filesNames.push([file.name]);
 
-      eventArgs = new Quantumart.QP8.BackendUploaderEventArgs([file.name]);
+      eventArgs = new BackendUploaderEventArgs([file.name]);
       this.notify(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, eventArgs);
 
       if (up.total.uploaded === up.files.length) {
-        newEventArgs = new Quantumart.QP8.BackendEventArgs();
+        newEventArgs = new BackendEventArgs();
         newEventArgs.set_entityTypeCode(this._useSiteLibrary
           ? window.ENTITY_TYPE_CODE_SITE_FILE
           : window.ENTITY_TYPE_CODE_CONTENT_FILE);

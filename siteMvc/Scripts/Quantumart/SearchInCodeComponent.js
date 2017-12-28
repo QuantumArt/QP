@@ -1,14 +1,17 @@
-Quantumart.QP8.SearchInCodeComponent = function (filterElementId, gridElementId) {
-  this._filterElementId = filterElementId;
-  this._gridElementId = gridElementId;
-  this._onDataBindingHandler = $.proxy(this._onDataBinding, this);
-  this._onApplyFilterHandler = $.proxy(this._onApplyFilter, this);
-  this._onClearFilterHandler = $.proxy(this._onClearFilter, this);
-};
+import { ControlHelpers } from './ControlHelpers';
+import { $q } from './Utils';
 
-Quantumart.QP8.SearchInCodeComponent.prototype = {
-  _filterElementId: '',
-  _gridElementId: '',
+export class SearchInCodeComponent {
+  constructor(filterElementId, gridElementId) {
+    this._filterElementId = filterElementId;
+    this._gridElementId = gridElementId;
+    this._onDataBindingHandler = $.proxy(this._onDataBinding, this);
+    this._onApplyFilterHandler = $.proxy(this._onApplyFilter, this);
+    this._onClearFilterHandler = $.proxy(this._onClearFilter, this);
+  }
+
+  _filterElementId = '';
+  _gridElementId = '';
 
   _onDataBinding(e) {
     const $filter = $(`#${this._filterElementId}`);
@@ -19,13 +22,13 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     };
 
     Object.assign(e, { data: filter });
-  },
+  }
 
   _onApplyFilter() {
     const $grid = $(`#${this._gridElementId}`);
     const gridComponent = $grid.data('tGrid');
     gridComponent.ajaxRequest();
-  },
+  }
 
   _onClearFilter() {
     const $filter = $(`#${this._filterElementId}`);
@@ -37,14 +40,14 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     $filter.find('.sic_filter input').val('');
     // @ts-ignore FIXME
     $('.sic_search_button', this.$filter).trigger('click');
-  },
+  }
 
   initialize() {
     const $grid = $(`#${this._gridElementId}`);
     const gridComponent = $grid.data('tGrid');
     const $filter = $(`#${this._filterElementId}`);
 
-    Quantumart.QP8.ControlHelpers.initAllEntityDataLists($filter);
+    ControlHelpers.initAllEntityDataLists($filter);
 
     $grid
       .unbind('dataBinding', gridComponent.onDataBinding)
@@ -65,7 +68,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
 
       gridComponent.ajaxRequest();
     }
-  },
+  }
 
   dispose() {
     const $grid = $(`#${this._gridElementId}`);
@@ -79,7 +82,10 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
     this._onApplyFilterHandler = null;
     this._onDataBindingHandler = null;
 
-    Quantumart.QP8.ControlHelpers.destroyAllEntityDataLists($filter);
+    ControlHelpers.destroyAllEntityDataLists($filter);
     $q.collectGarbageInIE();
   }
-};
+}
+
+
+Quantumart.QP8.SearchInCodeComponent = SearchInCodeComponent;

@@ -1,6 +1,9 @@
-class BackendHtmlUploader extends Quantumart.QP8.BackendBaseUploader {
+import { BackendBaseUploader } from './BackendBaseUploader';
+import { BackendUploaderEventArgs } from './BackendUploaderEventArgs';
+import { $q } from '../Utils';
+
+export class BackendHtmlUploader extends BackendBaseUploader {
   constructor(parentElement, options) {
-    // @ts-ignore
     super();
     this._parentElement = parentElement;
     this._extensions = options.extensions || '';
@@ -66,7 +69,7 @@ class BackendHtmlUploader extends Quantumart.QP8.BackendBaseUploader {
         filenames.push(val);
       });
 
-      const eventArgs = new Quantumart.QP8.BackendUploaderEventArgs(filenames);
+      const eventArgs = new BackendUploaderEventArgs(filenames);
 
       this.notify(window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, eventArgs);
       this._uploadedFiles = [];

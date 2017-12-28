@@ -1,7 +1,9 @@
+import { Observable } from '../Common/Observable';
+
 window.EVENT_TYPE_LIBRARY_FILE_UPLOADED = 'OnLibraryFileUploaded';
 window.EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED = 'OnLibraryAllFilesUploaded';
 
-class BackendBaseUploader extends Quantumart.QP8.Observable {
+export class BackendBaseUploader extends Observable {
   /** @abstract */
   initialize() {
     throw new Error($l.Common.methodNotImplemented);

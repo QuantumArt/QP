@@ -1,14 +1,21 @@
-// eslint-disable-next-line no-useless-constructor, FIXME
-Quantumart.QP8.BackendUserSearchBlock = function (
-  searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
-  Quantumart.QP8.BackendUserSearchBlock.initializeBase(
-    this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]
-  );
-};
+import { BackendSearchBlockBase, BackendSearchBlockEventArgs } from './BackendSearchBlockBase';
+import { $q } from '../Utils';
 
-Quantumart.QP8.BackendUserSearchBlock.prototype = {
-  _minSearchBlockHeight: 145,
-  _maxSearchBlockHeight: 145,
+export class BackendUserSearchBlock extends BackendSearchBlockBase {
+  // eslint-disable-next-line no-useless-constructor, FIXME
+  constructor(
+    searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
+    super(
+      searchBlockGroupCode,
+      searchBlockElementId,
+      entityTypeCode,
+      parentEntityId,
+      options
+    );
+  }
+
+  _minSearchBlockHeight = 145;
+  _maxSearchBlockHeight = 145;
 
   getSearchQuery() {
     const $root = $(this._concreteSearchBlockElement);
@@ -26,7 +33,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
     });
 
     return query;
-  },
+  }
 
   renderSearchBlock() {
     if (!this.get_isRendered()) {
@@ -51,24 +58,23 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
           $q.processGenericAjaxError(jqXHR);
         });
     }
-  },
+  }
 
   _onFindButtonClick() {
-    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.getSearchQuery());
+    const eventArgs = new BackendSearchBlockEventArgs(0, this.getSearchQuery());
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
-  },
+  }
 
   _onResetButtonClick() {
     $('.csFilterTextbox', this._concreteSearchBlockElement).val('');
-    const eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
+    const eventArgs = new BackendSearchBlockEventArgs(0, null);
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendUserSearchBlock.callBaseMethod(this, 'dispose');
+    super.dispose();
   }
-};
+}
 
-Quantumart.QP8.BackendUserSearchBlock.registerClass(
-  'Quantumart.QP8.BackendUserSearchBlock', Quantumart.QP8.BackendSearchBlockBase
-);
+
+Quantumart.QP8.BackendUserSearchBlock = BackendUserSearchBlock;

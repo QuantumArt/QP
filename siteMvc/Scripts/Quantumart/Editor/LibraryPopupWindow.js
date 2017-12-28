@@ -1,43 +1,45 @@
-Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
-  Object.assign(this._options, options);
+import { BackendSelectPopupWindow } from '../List/BackendSelectPopupWindow';
 
-  this._eventArgs = eventArgs;
-  this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(this._eventArgs, this._options);
-  this._selectPopupWindowComponent.attachObserver(
-    window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this)
-  );
+export class LibraryPopupWindow {
+  constructor(eventArgs, options) {
+    Object.assign(this._options, options);
 
-  this._selectPopupWindowComponent.attachObserver(
-    window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._libraryClosedHandler, this)
-  );
-};
+    this._eventArgs = eventArgs;
+    this._selectPopupWindowComponent = new BackendSelectPopupWindow(this._eventArgs, this._options);
+    this._selectPopupWindowComponent.attachObserver(
+      window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this)
+    );
 
-Quantumart.QP8.LibraryPopupWindow.prototype = {
-  _options: {
+    this._selectPopupWindowComponent.attachObserver(
+      window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._libraryClosedHandler, this)
+    );
+  }
+
+  _options = {
     entityName: '',
     isMultipleEntities: false,
     entities: [],
     isMultiOpen: true,
     contentId: 0
-  },
-  _eventArgs: null,
-  _selectPopupWindowComponent: null,
+  }
+  _eventArgs = null;
+  _selectPopupWindowComponent = null;
 
   setContentId(_contentId) {
     this._options.contentId = _contentId;
-  },
+  }
 
   openWindow() {
     this._selectPopupWindowComponent.openWindow();
-  },
+  }
 
   closeWindow() {
     this._selectPopupWindowComponent.closeWindow();
-  },
+  }
 
   setSelectCallback(callback) {
     this._options.selectCallback = callback;
-  },
+  }
 
   _librarySelectedHandler(eventType, sender, args) {
     this.closeWindow();
@@ -62,11 +64,11 @@ Quantumart.QP8.LibraryPopupWindow.prototype = {
         }
       }
     }
-  },
+  }
 
   _libraryClosedHandler() {
     this.closeWindow();
-  },
+  }
 
 
   dispose() {
@@ -81,4 +83,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype = {
     this._eventArgs = null;
     this._options = null;
   }
-};
+}
+
+
+Quantumart.QP8.LibraryPopupWindow = LibraryPopupWindow;

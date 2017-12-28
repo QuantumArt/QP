@@ -1,23 +1,31 @@
-Quantumart.QP8.BackendContextBlock = function (
-  searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options
-) {
-  Quantumart.QP8.BackendContextBlock.initializeBase(
-    this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]
-  );
-  this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
-};
+import { BackendSearchBlockBase, BackendSearchBlockEventArgs } from './BackendSearchBlockBase';
+import { $c } from '../ControlHelpers';
+import { $q } from '../Utils';
 
-Quantumart.QP8.BackendContextBlock.prototype = {
-  _minSearchBlockHeight: 80,
-  _maxSearchBlockHeight: 80,
-  _contendGroupListElement: null,
-  _siteListElement: null,
-  _contentNameElement: null,
-  _searchBlockState: null,
+export class BackendContextBlock extends BackendSearchBlockBase {
+  constructor(
+    searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options
+  ) {
+    super(
+      searchBlockGroupCode,
+      searchBlockElementId,
+      entityTypeCode,
+      parentEntityId,
+      options
+    );
+    this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
+  }
+
+  _minSearchBlockHeight = 80;
+  _maxSearchBlockHeight = 80;
+  _contendGroupListElement = null;
+  _siteListElement = null;
+  _contentNameElement = null;
+  _searchBlockState = null;
 
   getSearchBlockState() {
     return this._searchBlockState;
-  },
+  }
 
   restoreSearchBlockState() {
     if (this._searchBlockState) {
@@ -25,7 +33,7 @@ Quantumart.QP8.BackendContextBlock.prototype = {
 
       $c.setAllEntityDataListValues(this._searchBlockElement, fieldValues);
     }
-  },
+  }
 
   _computeSearchBlockState() {
     const result = [];
@@ -39,12 +47,12 @@ Quantumart.QP8.BackendContextBlock.prototype = {
     });
 
     return result;
-  },
+  }
 
 
   getSearchQuery() {
     return JSON.stringify(this.getSearchBlockState());
-  },
+  }
 
   renderSearchBlock() {
     if (!this._isRendered) {
@@ -84,24 +92,24 @@ Quantumart.QP8.BackendContextBlock.prototype = {
 
       this._isRendered = true;
     }
-  },
+  }
 
   _onChangeCombo() {
     this._searchBlockState = this._computeSearchBlockState();
     $(this._findButtonElement).trigger('click');
-  },
+  }
 
   _onFindButtonClick() {
     const state = this.getSearchBlockState();
-    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, JSON.stringify(state));
+    let eventArgs = new BackendSearchBlockEventArgs(0, JSON.stringify(state));
     eventArgs.setSearchBlockState(state);
     this.notify(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, eventArgs);
     eventArgs = null;
-  },
+  }
 
   _onResetButtonClick() {
     // default implementation
-  },
+  }
 
   dispose() {
     const that = this;
@@ -111,10 +119,9 @@ Quantumart.QP8.BackendContextBlock.prototype = {
     });
 
     $c.destroyAllEntityDataLists(this._searchBlockElement);
-    Quantumart.QP8.BackendContextBlock.callBaseMethod(this, 'dispose');
+    super.dispose();
   }
-};
+}
 
-Quantumart.QP8.BackendContextBlock.registerClass(
-  'Quantumart.QP8.BackendContextBlock', Quantumart.QP8.BackendSearchBlockBase
-);
+
+Quantumart.QP8.BackendContextBlock = BackendContextBlock;

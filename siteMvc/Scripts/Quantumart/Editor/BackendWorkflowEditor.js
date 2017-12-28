@@ -1,24 +1,27 @@
 /* eslint new-cap: 0 */
 /* eslint camelcase: 0 */
-Quantumart.QP8.BackendWorkflow = function (componentElem) {
-  this._componentElem = componentElem;
-  this._containerElem = $('.workflowContainer', componentElem);
-  this._checkSinglePermisssionHandler = $.proxy(this.checkSinglePermission, this);
-  this._checkAllPermisssionsHandler = $.proxy(this.checkAllPermisssions, this);
-};
+import { ControlHelpers } from '../ControlHelpers';
+import { $q } from '../Utils';
 
-Quantumart.QP8.BackendWorkflow.prototype = {
-  _componentElem: null,
-  _resultElem: null,
-  _containerElem: null,
-  _addItemHandler: null,
-  _removeItemHandler: null,
-  _tableHeader: null,
-  _tableBody: null,
-  _items: null,
-  _contentSelector: null,
-  _checkSinglePermisssionHandler: null,
-  _checkAllPermisssionsHandler: null,
+export class BackendWorkflow {
+  constructor(componentElem) {
+    this._componentElem = componentElem;
+    this._containerElem = $('.workflowContainer', componentElem);
+    this._checkSinglePermisssionHandler = $.proxy(this.checkSinglePermission, this);
+    this._checkAllPermisssionsHandler = $.proxy(this.checkAllPermisssions, this);
+  }
+
+  _componentElem = null;
+  _resultElem = null;
+  _containerElem = null;
+  _addItemHandler = null;
+  _removeItemHandler = null;
+  _tableHeader = null;
+  _tableBody = null;
+  _items = null;
+  _contentSelector = null;
+  _checkSinglePermisssionHandler = null;
+  _checkAllPermisssionsHandler = null;
 
   initialize() {
     const workflow = this._componentElem;
@@ -37,7 +40,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       contentSelector: this._contentSelector,
       checkSinglePermisssionHandler: this._checkSinglePermisssionHandler,
       initializePickers(dom, element) {
-        Quantumart.QP8.ControlHelpers.initAllEntityDataLists($(dom));
+        ControlHelpers.initAllEntityDataLists($(dom));
         $(dom)
           .find('.pep-user-selector')
           .first()
@@ -90,7 +93,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       },
 
       disposePickers(dom) {
-        Quantumart.QP8.ControlHelpers.destroyAllEntityDataLists($(dom));
+        ControlHelpers.destroyAllEntityDataLists($(dom));
         $(dom).remove();
       }
     };
@@ -130,11 +133,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
     $('.workflow_radio').live('click', onRadioChanged);
     this._componentElem.data('workflow', this);
-  },
+  }
 
   getCheckedContentsIds() {
     return this._contentSelector.find('input:checkbox:checked').map((index, elem) => $(elem).val()).get().join();
-  },
+  }
 
   checkAllPermisssions() {
     const activeContentsIds = this.getCheckedContentsIds();
@@ -172,7 +175,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         }, this);
       }, this)
     );
-  },
+  }
 
   checkSinglePermission(eventType, eventArgs) {
     let userId, groupId;
@@ -206,7 +209,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         }
       }
     );
-  },
+  }
 
   manageItems(e) {
     let target = $(e.target);
@@ -231,7 +234,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     } else {
       this.removeItem(target.val());
     }
-  },
+  }
 
   addItem(statusId, statusName, weight) {
     const existingItem = ko.utils.arrayFirst(this._items(), item => item.StId === statusId);
@@ -259,7 +262,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       });
       this._setAsChanged();
     }
-  },
+  }
 
   removeItem(statusId) {
     const items = this._items();
@@ -270,13 +273,13 @@ Quantumart.QP8.BackendWorkflow.prototype = {
       }
     }
     this._setAsChanged();
-  },
+  }
 
   _setAsChanged() {
     const $field = $(this._resultElem);
     $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
     $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr('name'), value: this._items() });
-  },
+  }
 
   destroyWorkflow() {
     const containerElem = this._containerElem;
@@ -292,4 +295,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
     ko.cleanNode(containerElem.get(0));
   }
-};
+}
+
+
+Quantumart.QP8.BackendWorkflow = BackendWorkflow;

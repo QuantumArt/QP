@@ -1,9 +1,30 @@
 /* eslint max-lines: 'off' */
+/* eslint-disable no-unused-vars */
+import { BackendActionLink } from '../BackendActionLink';
+import { BackendActionToolbar } from '../Toolbar/BackendActionToolbar';
+import { BackendArticleSearchBlock } from '../Search/BackendArticleSearchBlock';
+import { BackendBreadCrumbs } from '../BackendBreadCrumbs';
+import { BackendCustomActionHost } from '../CustomAction/BackendCustomActionHost';
+import { BackendEntityEditor } from '../Editor/BackendEntityEditor';
+import { BackendEntityGrid } from '../BackendEntityGrid';
+import { BackendEntityTree } from '../Tree/BackendEntityTree';
+import { BackendEntityType } from '../Info/BackendEntityType';
+import { BackendEventArgs } from '../Common/BackendEventArgs';
+import { BackendLibrary } from '../Library/BackendLibrary';
+import { BackendSearchBlockBase } from '../Search/BackendSearchBlockBase';
+import { BackendViewToolbar } from '../Toolbar/BackendViewToolbar';
+import { FieldSearchState } from '../Search/BackendArticleSearchBlock/FieldSearchBase';
+import { Observable } from '../Common/Observable';
+import { $a, BackendActionParameters } from '../BackendActionExecutor';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+/* eslint-enable no-unused-vars */
+
 window.DOCUMENT_HOST_TYPE_EDITING_DOCUMENT = 1;
 window.DOCUMENT_HOST_TYPE_POPUP_WINDOW = 2;
 window.EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED = 'onHostExternalCallerContextsUnbinded';
 
-class BackendDocumentHost extends Quantumart.QP8.Observable {
+export class BackendDocumentHost extends Observable {
   static generateTitleTemplate(
     actionTypeCode,
     entityTypeCode,
@@ -75,7 +96,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     }
 
     if (entityTypeCode === window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION) {
-      const pet = Quantumart.QP8.BackendEntityType.getEntityTypeById(parentEntityId);
+      const pet = BackendEntityType.getEntityTypeById(parentEntityId);
 
       if (pet) {
         if (actionTypeCode === window.ACTION_TYPE_CODE_LIST) {
@@ -102,7 +123,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
       }
     }
 
-    const docHostTitleTemplate = Quantumart.QP8.BackendDocumentHost.generateTitleTemplate(
+    const docHostTitleTemplate = BackendDocumentHost.generateTitleTemplate(
       actionTypeCode,
       entityTypeCode,
       isMultipleEntities,
@@ -160,7 +181,6 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
   // eslint-disable-next-line max-statements
   constructor(eventArgs, options) {
-    // @ts-ignore
     super();
 
     /** @type {HTMLElement} */
@@ -188,20 +208,15 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     this._isCloseForced = false;
     this._unnamedEntitiesLimit = 1000;
 
-    // @ts-ignore
-    /** @type {Quantumart.QP8.BackendActionToolbar} */
+    /** @type {BackendActionToolbar} */
     this._actionToolbarComponent = null;
-    // @ts-ignore
-    /** @type {Quantumart.QP8.BackendViewToolbar} */
+    /** @type {BackendViewToolbar} */
     this._viewToolbarComponent = null;
-    // @ts-ignore
-    /** @type {Quantumart.QP8.BackendSearchBlockBase} */
+    /** @type {BackendSearchBlockBase} */
     this._searchBlockComponent = null;
-    // @ts-ignore
-    /** @type {Quantumart.QP8.BackendSearchBlockBase} */
+    /** @type {BackendSearchBlockBase} */
     this._contextBlockComponent = null;
-    // @ts-ignore
-    /** @type {Quantumart.QP8.BackendBreadCrumbs} */
+    /** @type {BackendBreadCrumbs} */
     this._breadCrumbsComponent = null;
 
     this._externalCallerContexts = [];
@@ -544,7 +559,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   }
 
   _getAppliedEventArgs() {
-    const eventArgs = new Quantumart.QP8.BackendEventArgs();
+    const eventArgs = new BackendEventArgs();
 
     eventArgs.set_entityTypeCode(this.get_entityTypeCode());
     eventArgs.set_entityId(this.get_entityId());
@@ -693,7 +708,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
       if (!$q.isNullOrEmpty(filterStates) && $q.isArray(filterStates)) {
         // @ts-ignore filterStates is assigned in synchronous AJAX call
         const fieldSearchBlockState = filterStates.map(item =>
-          new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+          new FieldSearchState(
             item.SearchType,
             item.FieldId,
             item.ContentId,
@@ -707,7 +722,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
         );
 
         // @ts-ignore filterStates is assigned in synchronous AJAX call
-        const searchQuery = filterStates.map(item => Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+        const searchQuery = filterStates.map(item => BackendArticleSearchBlock.createFieldSearchQuery(
           item.SearchType,
           item.FieldId,
           item.FieldColumnName,
@@ -759,8 +774,8 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     let entityId = this._entityId;
     let entityName = this._entityName;
     const isMultiple = action.ActionType.IsMultiple;
-    const isEditor = Quantumart.QP8.BackendEntityEditor.isInstanceOfType(this.getMainComponent());
-    const isCustomActionHost = Quantumart.QP8.BackendCustomActionHost.isInstanceOfType(this.getMainComponent());
+    const isEditor = this.getMainComponent() instanceof BackendEntityEditor;
+    const isCustomActionHost = this.getMainComponent() instanceof BackendCustomActionHost;
     const selectedEntities = !isEditor
       && !isCustomActionHost
       ? this._selectedEntities
@@ -828,7 +843,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
     if (!isCustomAction && !isMultistepAction && actionTypeCode === window.ACTION_TYPE_CODE_REFRESH) {
       const main = this.getMainComponent();
-      if (!main || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmRefresh()) {
+      if (!main || !(main instanceof BackendEntityEditor) || main.confirmRefresh()) {
         this.refresh();
       }
     } else if (!isCustomAction && !isMultistepAction
@@ -842,11 +857,11 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
       )
     ) {
       const main = this.getMainComponent();
-      if (main && Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
+      if (main && (main instanceof BackendEntityEditor)) {
         main.saveEntity(actionCode);
       }
     } else {
-      const params = new Quantumart.QP8.BackendActionParameters({
+      const params = new BackendActionParameters({
         entityTypeCode: this._entityTypeCode,
         parentEntityId: this._selectedParentEntityId || this._parentEntityId,
         entities,
@@ -912,7 +927,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   // eslint-disable-next-line camelcase
   get_currentPage() {
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendEntityGrid)) {
       return main.get_currentPage();
     }
 
@@ -927,7 +942,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   // eslint-disable-next-line camelcase
   get_orderBy() {
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendEntityGrid)) {
       return main.get_orderBy();
     }
 
@@ -1140,12 +1155,12 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   onLoadMainComponent() {
     const main = this.getMainComponent();
     if (main) {
-      if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
+      if (main instanceof BackendEntityEditor) {
         main.onLoad();
-      } else if (Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
+      } else if (main instanceof BackendLibrary) {
         main.attachObserver(window.EVENT_TYPE_LIBRARY_RESIZED, $.proxy(this._onLibraryResized, this));
         main.onLoad();
-      } else if (Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
+      } else if (main instanceof BackendEntityGrid) {
         main.onLoad();
       }
     }
@@ -1155,11 +1170,11 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     const main = this.getMainComponent();
 
     if (main) {
-      if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
+      if (main instanceof BackendEntityEditor) {
         main.onSelect();
-      } else if (Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
+      } else if (main instanceof BackendLibrary) {
         main.resize();
-      } else if (Quantumart.QP8.BackendCustomActionHost.isInstanceOfType(main)) {
+      } else if (main instanceof BackendCustomActionHost) {
         main.onSelect();
       }
     }
@@ -1177,14 +1192,14 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
   unmarkMainComponentAsBusy() {
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendEntityGrid)) {
       main.unmarkGridAsBusy();
     }
   }
 
   markMainComponentAsBusy() {
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendEntityGrid)) {
       main.markGridAsBusy();
     }
   }
@@ -1196,9 +1211,9 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   onContextSwitching(eventType, sender, args) {
     const main = this.getMainComponent();
     if (main) {
-      if (Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
+      if (main instanceof BackendEntityGrid) {
         main.resetGrid({ contextQuery: args.getSearchQuery() });
-      } else if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
+      } else if (main instanceof BackendEntityEditor) {
         main.applyContext(args.getSearchBlockState());
       }
     }
@@ -1206,8 +1221,8 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
   _getComponentSearchProcessor(options) {
     const main = this.getMainComponent();
-    const isGrid = Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main);
-    const isTree = Quantumart.QP8.BackendEntityTree.isInstanceOfType(main);
+    const isGrid = main instanceof BackendEntityGrid;
+    const isTree = main instanceof BackendEntityTree;
     if (main && (isGrid || isTree)) {
       if ($q.isNullOrEmpty(options.state.searchBlockState)) {
         $q.removeProperty(options.state, 'searchQuery');
@@ -1268,7 +1283,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     this.saveHostState(state);
 
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendLibrary)) {
       main.changeViewType(code);
     } else {
       this.changeView(args.getControllerActionUrl());
@@ -1317,7 +1332,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
   onDocumentUnloaded() {
     this.destroyAllActionLinks();
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendLibrary)) {
       main.detachObserver(window.EVENT_TYPE_LIBRARY_RESIZED);
     }
 
@@ -1368,7 +1383,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
   onDataBound(eventType, sender, eventArgs) {
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendEntityGrid)) {
       let state = this.loadHostState();
       if ($q.isNullOrEmpty(state)) {
         state = {};
@@ -1464,17 +1479,17 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
   allowChange() {
     const main = this.getMainComponent();
-    return !main || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmChange();
+    return !main || !(main instanceof BackendEntityEditor) || main.confirmChange();
   }
 
   allowClose() {
     const main = this.getMainComponent();
-    return !main || !Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main) || main.confirmClose();
+    return !main || !(main instanceof BackendEntityEditor) || main.confirmClose();
   }
 
   selectAllEntities() {
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendEntityGrid)) {
       main.selectAllRows();
     } else {
       $q.alertError($l.Toolbar.selectAllIsNotAllowed);
@@ -1483,7 +1498,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
   deselectAllEntities() {
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendEntityGrid)) {
       main.deselectAllRows();
     } else {
       $q.alertError($l.Toolbar.selectAllIsNotAllowed);
@@ -1503,7 +1518,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
         const actionCode = $link.data('action_code');
         const actionTargetType = $q.toInt($link.data('action_target_type'), null);
         const context = $link.data('context');
-        const actionLink = new Quantumart.QP8.BackendActionLink(linkId, {
+        const actionLink = new BackendActionLink(linkId, {
           entityId,
           entityName,
           parentEntityId,
@@ -1603,7 +1618,7 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
       eventArgs.set_entityName(this._entityName);
       eventArgs.set_parentEntityId(this._parentEntityId);
     } else {
-      eventArgs = new Quantumart.QP8.BackendEventArgs();
+      eventArgs = new BackendEventArgs();
     }
 
     return eventArgs;

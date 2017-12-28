@@ -1,22 +1,30 @@
-Quantumart.QP8.ActionLogComponent = function (filterElementId, gridElementId, actionTypes, entityTypes, actions) {
-  this._filterElementId = filterElementId;
-  this._gridElementId = gridElementId;
-  this._onDataBindingHandler = $.proxy(this._onDataBinding, this);
-  this._onApplyFilterHandler = $.proxy(this._onApplyFilter, this);
-  this._onClearFilterHandler = $.proxy(this._onClearFilter, this);
-  this._actionTypes = actionTypes;
-  this._entityTypes = entityTypes;
-  this._actions = actions;
-};
+import { ActionLogDatetimeFilter } from './ActionLogDatetimeFilter';
+import { ActionLogFilterBase } from './ActionLogFilterBase';
+import { ActionLogFilterTile } from './ActionLogFilterTile';
+import { ActionLogItemListFilter } from './ActionLogItemListFilter';
+import { ActionLogTextFilter } from './ActionLogTextFilter';
+import { ActionLogUserFilter } from './ActionLogUserFilter';
+import { $q } from '../Utils';
 
-Quantumart.QP8.ActionLogComponent.prototype = {
-  _filterElementId: '',
-  _gridElementId: '',
-  $filterCombo: null,
-  $tilesContainer: null,
-  _actionTypes: null,
-  _entityTypes: null,
-  _tiles: {},
+export class ActionLogComponent {
+  constructor(filterElementId, gridElementId, actionTypes, entityTypes, actions) {
+    this._filterElementId = filterElementId;
+    this._gridElementId = gridElementId;
+    this._onDataBindingHandler = $.proxy(this._onDataBinding, this);
+    this._onApplyFilterHandler = $.proxy(this._onApplyFilter, this);
+    this._onClearFilterHandler = $.proxy(this._onClearFilter, this);
+    this._actionTypes = actionTypes;
+    this._entityTypes = entityTypes;
+    this._actions = actions;
+  }
+
+  _filterElementId = '';
+  _gridElementId = '';
+  $filterCombo = null;
+  $tilesContainer = null;
+  _actionTypes = null;
+  _entityTypes = null;
+  _tiles = {};
 
   initialize() {
     const $grid = $(`#${this._gridElementId}`);
@@ -37,19 +45,19 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
     this.$tilesContainer = $filter.find('.alTilesContainer');
     gridComponent.ajaxRequest();
-  },
+  }
 
   _onApplyFilter() {
     $(`#${this._gridElementId}`)
       .data('tGrid')
       .ajaxRequest();
-  },
+  }
 
   _onClearFilter() {
     this._destroyAllTiles();
     // @ts-ignore FIXME
     $('.alSearchButton', this.$filter).trigger('click');
-  },
+  }
 
   _onDataBinding(e) {
     const filterData = this.getFilterData();
@@ -57,7 +65,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
       // eslint-disable-next-line no-param-reassign
       e.data = Object.assign({}, e.data, { searchQuery: JSON.stringify(filterData) });
     }
-  },
+  }
 
   getFilterData() {
     const filterData = {};
@@ -67,7 +75,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
       }
     });
     return filterData;
-  },
+  }
 
   _onFilterSelected() {
     const $selected = this.$filterCombo.find('option:selected');
@@ -76,17 +84,17 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     }
 
     this.$filterCombo.val('');
-  },
+  }
 
   _onTileClose(eventType, sender, args) {
     this._destroyTile(args.type);
-  },
+  }
 
   _createTile(options) {
     const that = this;
     if (options && options.value && !Object.prototype.hasOwnProperty.call(this._tiles, options.value)) {
       const ft = +options.value || 0;
-      const tileComponent = new Quantumart.QP8.ActionLogFilterTile(this.$tilesContainer,
+      const tileComponent = new ActionLogFilterTile(this.$tilesContainer,
         {
           title: options.text,
           type: ft,
@@ -111,19 +119,19 @@ Quantumart.QP8.ActionLogComponent.prototype = {
               case $e.ActionLogFilteredColumns.EntityStringId:
               case $e.ActionLogFilteredColumns.EntityTitle:
               case $e.ActionLogFilteredColumns.ParentEntityId:
-                return new Quantumart.QP8.ActionLogTextFilter($filterContainer);
+                return new ActionLogTextFilter($filterContainer);
               case $e.ActionLogFilteredColumns.ExecutionTime:
-                return new Quantumart.QP8.ActionLogDatetimeFilter($filterContainer);
+                return new ActionLogDatetimeFilter($filterContainer);
               case $e.ActionLogFilteredColumns.ActionTypeName:
-                return new Quantumart.QP8.ActionLogItemListFilter($filterContainer, that._actionTypes);
+                return new ActionLogItemListFilter($filterContainer, that._actionTypes);
               case $e.ActionLogFilteredColumns.ActionName:
-                return new Quantumart.QP8.ActionLogItemListFilter($filterContainer, that._actions);
+                return new ActionLogItemListFilter($filterContainer, that._actions);
               case $e.ActionLogFilteredColumns.EntityTypeName:
-                return new Quantumart.QP8.ActionLogItemListFilter($filterContainer, that._entityTypes);
+                return new ActionLogItemListFilter($filterContainer, that._entityTypes);
               case $e.ActionLogFilteredColumns.UserLogin:
-                return new Quantumart.QP8.ActionLogUserFilter($filterContainer);
+                return new ActionLogUserFilter($filterContainer);
               default:
-                return new Quantumart.QP8.ActionLogFilterBase($filterContainer);
+                return new ActionLogFilterBase($filterContainer);
             }
           },
           deriveFilterData(tile, filterData) {
@@ -168,7 +176,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
       tileComponent.initialize();
       this._tiles[options.value] = tileComponent;
     }
-  },
+  }
 
   _destroyTile(tileType) {
     if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
@@ -177,13 +185,13 @@ Quantumart.QP8.ActionLogComponent.prototype = {
       tileComponent.dispose();
       $q.removeProperty(this._tiles, tileType);
     }
-  },
+  }
 
   _destroyAllTiles() {
     Object.keys(this._tiles).forEach(tileType => {
       this._destroyTile(tileType);
     }, this);
-  },
+  }
 
   dispose() {
     this._destroyAllTiles();
@@ -205,6 +213,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
     $q.collectGarbageInIE();
   }
-};
+}
 
-Quantumart.QP8.ActionLogComponent.registerClass('Quantumart.QP8.ActionLogComponent');
+
+Quantumart.QP8.ActionLogComponent = ActionLogComponent;

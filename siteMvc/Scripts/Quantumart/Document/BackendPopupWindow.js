@@ -1,17 +1,28 @@
 /* eslint max-lines: 'off' */
+import { BackendActionToolbar } from '../Toolbar/BackendActionToolbar';
+import { BackendBreadCrumbsManager } from '../Managers/BackendBreadCrumbsManager';
+import { BackendDocumentHost } from './BackendDocumentHost';
+import { BackendEventArgs } from '../Common/BackendEventArgs';
+import { BackendLibrary } from '../Library/BackendLibrary';
+import { BackendSearchBlockManager } from '../Managers/BackendSearchBlockManager';
+import { BackendViewToolbar } from '../Toolbar/BackendViewToolbar';
+import { $a } from '../BackendActionExecutor';
+import { $c } from '../ControlHelpers';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
 
 window.EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING = 'OnPopupWindowActionExecuting';
 window.EVENT_TYPE_POPUP_WINDOW_ENTITY_READED = 'OnPopupWindowEntityReaded';
 window.EVENT_TYPE_POPUP_WINDOW_CLOSED = 'OnPopupWindowClosed';
 
-class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
+export class BackendPopupWindow extends BackendDocumentHost {
   static get isWindow() {
     return true;
   }
 
   // eslint-disable-next-line max-statements, complexity
   constructor(popupWindowId, eventArgs, options) {
-    // @ts-ignore
     super(eventArgs, options);
 
     this._popupWindowId = '';
@@ -303,13 +314,13 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
     this._initSelectedEntities();
     const action = this.getCurrentAction();
     if ($q.isNullOrWhiteSpace(this._title) && this._popupWindowManagerComponent && action) {
-      const eventArgs = new Quantumart.QP8.BackendEventArgs();
+      const eventArgs = new BackendEventArgs();
       eventArgs.set_entityTypeCode(this._entityTypeCode);
       eventArgs.set_entityId(this._entityId);
       eventArgs.set_entityName(this._entityName);
       eventArgs.set_parentEntityId(this._parentEntityId);
       eventArgs.set_actionCode(this._actionCode);
-      this._title = Quantumart.QP8.BackendDocumentHost.generateTitle(eventArgs, { isTab: false });
+      this._title = BackendDocumentHost.generateTitle(eventArgs, { isTab: false });
     }
 
     this.createPanels();
@@ -510,7 +521,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
       this.onDocumentUnloaded();
       this.unbindExternalCallerContexts('closed');
 
-      const eventArgs = new Quantumart.QP8.BackendEventArgs();
+      const eventArgs = new BackendEventArgs();
       this.notify(window.EVENT_TYPE_POPUP_WINDOW_CLOSED, eventArgs);
       this.dispose();
     }
@@ -561,7 +572,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
     $area.height(areaHeight);
 
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendLibrary)) {
       main.resize();
     }
   }
@@ -582,7 +593,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
 
   createPanels() {
     if (this._showBreadCrumbs) {
-      const breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs(
+      const breadCrumbsComponent = BackendBreadCrumbsManager.getInstance().createBreadCrumbs(
         `breadCrumbs_${this._popupWindowId}`,
         { documentHost: this }
       );
@@ -600,7 +611,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
         actionToolbarOptions = { disabledActionCodes: eventArgsAdditionalData.disabledActionCodes };
       }
 
-      const actionToolbarComponent = new Quantumart.QP8.BackendActionToolbar(
+      const actionToolbarComponent = new BackendActionToolbar(
         `actionToolbar_${this._popupWindowId}`,
         this._actionCode,
         this._parentEntityId,
@@ -622,7 +633,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
       viewToolbarOptions.viewTypeCode = state.viewTypeCode;
     }
 
-    const viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar(
+    const viewToolbarComponent = new BackendViewToolbar(
       `viewToolbar_${this._popupWindowId}`,
       this._actionCode,
       viewToolbarOptions
@@ -696,7 +707,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
 
 
       const breadCrumbsElementId = this._breadCrumbsComponent.get_breadCrumbsElementId();
-      Quantumart.QP8.BackendBreadCrumbsManager.getInstance().destroyBreadCrumbs(breadCrumbsElementId);
+      BackendBreadCrumbsManager.getInstance().destroyBreadCrumbs(breadCrumbsElementId);
       this._breadCrumbsComponent = null;
     }
 
@@ -734,7 +745,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
   }
 
   createSearchBlock() {
-    const searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(
+    const searchBlockComponent = BackendSearchBlockManager.getInstance().createSearchBlock(
       `searchBlock_${this._popupWindowId}`,
       this._entityTypeCode,
       this._parentEntityId,
@@ -766,7 +777,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
   }
 
   createContextBlock() {
-    const contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(
+    const contextBlockComponent = BackendSearchBlockManager.getInstance().createSearchBlock(
       `contextBlock_${this._popupWindowId}`,
       this._entityTypeCode,
       this._parentEntityId,
@@ -797,7 +808,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
 
       const searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
-      Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
+      BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
 
       this._searchBlockComponent = null;
     }
@@ -812,7 +823,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
       contextBlockComponent.detachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
 
       const searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
-      Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
+      BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
 
       this._contextBlockComponent = null;
       this._isContextBlockVisible = false;
@@ -825,7 +836,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
   }
 
   updateTitle(eventArgs) {
-    this.setWindowTitle(Quantumart.QP8.BackendDocumentHost.generateTitle(eventArgs, { isTab: false }));
+    this.setWindowTitle(BackendDocumentHost.generateTitle(eventArgs, { isTab: false }));
   }
 
   onChangeContent(eventType, sender, eventArgs) {
@@ -885,7 +896,7 @@ class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
 
   _onPopupWindowActivated() {
     const main = this.getMainComponent();
-    if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
+    if (main && (main instanceof BackendLibrary)) {
       main.resize();
     }
   }

@@ -1,4 +1,11 @@
 /* eslint max-lines: 'off' */
+import { BackendEntityEditorActionEventArgs } from './BackendEntityEditorActionEventArgs';
+import { BackendEventArgs } from '../Common/BackendEventArgs';
+import { BackendExpandedContainer } from '../BackendExpandedContainer';
+import { Observable } from '../Common/Observable';
+import { $c } from '../ControlHelpers';
+import { $q } from '../Utils';
+
 
 window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING = 'OnEntityEditorSubmitting';
 window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED = 'OnEntityEditorSubmitted';
@@ -6,9 +13,9 @@ window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR = 'OnEntityEditorSubmitte
 window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING = 'OnEntityEditorRefreshStarting';
 window.EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING = 'OnEntityEditorActionExecuting';
 
-class BackendEntityEditor extends Quantumart.QP8.Observable {
+export class BackendEntityEditor extends Observable {
   static getComponent(componentElem) {
-    return $(componentElem).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey);
+    return $(componentElem).data(BackendEntityEditor.componentRefDataKey);
   }
 
   static get componentRefDataKey() {
@@ -24,7 +31,6 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     actionTypeCode,
     options
   ) {
-    // @ts-ignore
     super();
 
     this.FIELD_SELECTORS = ':input';
@@ -159,7 +165,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     this._customButtons = [];
     this._customLinkButtons = [];
 
-    $(`#${this._documentWrapperElementId}`).data(Quantumart.QP8.BackendEntityEditor.componentRefDataKey, this);
+    $(`#${this._documentWrapperElementId}`).data(BackendEntityEditor.componentRefDataKey, this);
   }
 
   // eslint-disable-next-line camelcase
@@ -443,7 +449,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
       $c.destroyAllAggregationLists($form);
       $c.destroyAllHighlightedTextAreas($form);
 
-      Quantumart.QP8.BackendExpandedContainer.destroyAll($form);
+      BackendExpandedContainer.destroyAll($form);
       $c.destroyAllClassifierFields($form);
 
       $form
@@ -766,7 +772,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
       : $l.EntityEditor.autoRefreshConfirmMessage;
 
     if (this._confirmAction(message)) {
-      const eventArgs = new Quantumart.QP8.BackendEventArgs();
+      const eventArgs = new BackendEventArgs();
       this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_REFRESH_STARTING, eventArgs);
     }
   }
@@ -814,7 +820,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
     $c.initAllHighlightedTextAreas($form);
     $c.setAllHighlightedTextAreaValues($form, this._initFieldValues);
 
-    Quantumart.QP8.BackendExpandedContainer.initAll($form);
+    BackendExpandedContainer.initAll($form);
     $c.setFieldRowsVisibility($form, this._hideFields, false);
 
     if (this._customLoad) {
@@ -883,13 +889,13 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
       return false;
     }
 
-    const eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
+    const eventArgs = new BackendEntityEditorActionEventArgs();
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTING, eventArgs);
     return true;
   }
 
   _onSuccess(data) {
-    let eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
+    let eventArgs = new BackendEntityEditorActionEventArgs();
 
     eventArgs.set_data(data);
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED, eventArgs);
@@ -898,7 +904,7 @@ class BackendEntityEditor extends Quantumart.QP8.Observable {
 
   _onError(jqXHR) {
     $q.processGenericAjaxError(jqXHR);
-    const eventArgs = new Quantumart.QP8.BackendEntityEditorActionEventArgs();
+    const eventArgs = new BackendEntityEditorActionEventArgs();
     this.notify(window.EVENT_TYPE_ENTITY_EDITOR_ENTITY_SUBMITTED_ERROR, eventArgs);
   }
 

@@ -3,9 +3,12 @@
 /* eslint max-lines: 'off' */
 /* eslint no-alert: 'off' */
 /* eslint no-sync: 'off' */
+import { BackendDocumentContext } from './Document/BackendDocumentContext';
+import { BackendLogOnWindow } from './BackendLogOnWindow';
+
 
 // eslint-disable-next-line no-shadow
-class $q { }
+export class $q { }
 
 $q.isDebug = Sys.Debug.isDebug;
 
@@ -201,15 +204,15 @@ $q.postAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
 
 /** Show global blocking loader screen */
 $q.showLoader = () => {
-  if (Quantumart.QP8.BackendDocumentContext) {
-    Quantumart.QP8.BackendDocumentContext.getArea().showAjaxLoadingLayer();
+  if (BackendDocumentContext) {
+    BackendDocumentContext.getArea().showAjaxLoadingLayer();
   }
 };
 
 /** Hide global blocking loader screen */
 $q.hideLoader = () => {
-  if (Quantumart.QP8.BackendDocumentContext) {
-    Quantumart.QP8.BackendDocumentContext.getArea().hideAjaxLoadingLayer();
+  if (BackendDocumentContext) {
+    BackendDocumentContext.getArea().hideAjaxLoadingLayer();
   }
 };
 
@@ -646,7 +649,7 @@ $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
 $q.ajaxCallbackDecorator = function ajaxCallbackDecorator(callback, settings) {
   if (callback) {
     return function ajaxDecorator(data, textStatus, jqXHR) {
-      if (!Quantumart.QP8.BackendLogOnWindow.deferredExecution(data, jqXHR, callback, settings)) {
+      if (!BackendLogOnWindow.deferredExecution(data, jqXHR, callback, settings)) {
         return callback(data, textStatus, jqXHR);
       }
 

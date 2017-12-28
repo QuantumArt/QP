@@ -1,150 +1,158 @@
 /* eslint max-lines: 'off' */
+import { BackendDocumentHost } from './Document/BackendDocumentHost';
+import { BackendEntityType } from './Info/BackendEntityType';
+import { BackendEventArgs } from './Common/BackendEventArgs';
+import { Observable } from './Common/Observable';
+import { $a } from './BackendActionExecutor';
+import { $o } from './Info/BackendEntityObject';
+import { $q } from './Utils';
+
 
 window.EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST = 'OnTabSelectRequest';
 window.EVENT_TYPE_TAB_STRIP_TAB_CLOSE_REQUEST = 'OnTabCloseRequest';
 window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST = 'OnTabSaveAndCloseRequest';
 window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST = 'OnFindTabInTreeRequest';
 
-Quantumart.QP8.BackendTabStrip = function (tabStripElementId, options) {
-  Quantumart.QP8.BackendTabStrip.initializeBase(this);
+export class BackendTabStrip extends Observable {
+  constructor(tabStripElementId, options) {
+    super();
 
-  this._tabStripElementId = tabStripElementId;
-  if ($q.isObject(options)) {
-    if (options.maxTabTextLength) {
-      this._maxTabTextLength = options.maxTabTextLength;
+    this._tabStripElementId = tabStripElementId;
+    if ($q.isObject(options)) {
+      if (options.maxTabTextLength) {
+        this._maxTabTextLength = options.maxTabTextLength;
+      }
+
+      if (options.maxTabMenuHeight) {
+        this._maxTabMenuHeight = options.maxTabMenuHeight;
+      }
+
+      if (options.maxTabMenuItemTextLength) {
+        this._maxTabMenuItemTextLength = options.maxTabMenuItemTextLength;
+      }
     }
 
-    if (options.maxTabMenuHeight) {
-      this._maxTabMenuHeight = options.maxTabMenuHeight;
-    }
-
-    if (options.maxTabMenuItemTextLength) {
-      this._maxTabMenuItemTextLength = options.maxTabMenuItemTextLength;
-    }
+    this._onDocumentBodyClickHandler = this._onDocumentBodyClick.bind(this);
+    this._onTabClickingHandler = this._onTabClicking.bind(this);
+    this._onTabMiddleClickHandler = this._onTabMiddleClick.bind(this);
+    this._onContextMenuShowHandler = this._onContextMenuShow.bind(this);
+    this._onWindowResizedHandler = this._onWindowResized.bind(this);
+    this._onTabStripOverflowEvokedHandler = this._onTabStripOverflowEvoked.bind(this);
+    this._onTabStripOverflowPrecludedHandler = this._onTabStripOverflowPrecluded.bind(this);
+    this._onCloseButtonHoveringHandler = this._onCloseButtonHovering.bind(this);
+    this._onCloseButtonClickingHandler = this._onCloseButtonClicking.bind(this);
+    this._onCloseButtonClickedHandler = this._onCloseButtonClicked.bind(this);
+    this._onCloseButtonUnhoveringHandler = this._onCloseButtonUnhovering.bind(this);
+    this._onTabMenuItemClickingHandler = this._onTabMenuItemClicking.bind(this);
+    this._onTabMenuButtonHoveredHandler = this._onTabMenuButtonHovered.bind(this);
+    this._onTabMenuButtonUnhoveredHandler = this._onTabMenuButtonUnhovered.bind(this);
+    this._onTabMenuButtonClickingHandler = this._onTabMenuButtonClicking.bind(this);
+    this._onTabMenuButtonClickedHandler = this._onTabMenuButtonClicked.bind(this);
+    this._onTabMenuUpArrowHoveredHandler = this._onTabMenuUpArrowHovered.bind(this);
+    this._onTabMenuUpArrowUnhoveredHandler = this._onTabMenuUpArrowUnhovered.bind(this);
+    this._onTabMenuDownArrowHoveredHandler = this._onTabMenuDownArrowHovered.bind(this);
+    this._onTabMenuDownArrowUnhoveredHandler = this._onTabMenuDownArrowUnhovered.bind(this);
   }
 
-  this._onDocumentBodyClickHandler = this._onDocumentBodyClick.bind(this);
-  this._onTabClickingHandler = this._onTabClicking.bind(this);
-  this._onTabMiddleClickHandler = this._onTabMiddleClick.bind(this);
-  this._onContextMenuShowHandler = this._onContextMenuShow.bind(this);
-  this._onWindowResizedHandler = this._onWindowResized.bind(this);
-  this._onTabStripOverflowEvokedHandler = this._onTabStripOverflowEvoked.bind(this);
-  this._onTabStripOverflowPrecludedHandler = this._onTabStripOverflowPrecluded.bind(this);
-  this._onCloseButtonHoveringHandler = this._onCloseButtonHovering.bind(this);
-  this._onCloseButtonClickingHandler = this._onCloseButtonClicking.bind(this);
-  this._onCloseButtonClickedHandler = this._onCloseButtonClicked.bind(this);
-  this._onCloseButtonUnhoveringHandler = this._onCloseButtonUnhovering.bind(this);
-  this._onTabMenuItemClickingHandler = this._onTabMenuItemClicking.bind(this);
-  this._onTabMenuButtonHoveredHandler = this._onTabMenuButtonHovered.bind(this);
-  this._onTabMenuButtonUnhoveredHandler = this._onTabMenuButtonUnhovered.bind(this);
-  this._onTabMenuButtonClickingHandler = this._onTabMenuButtonClicking.bind(this);
-  this._onTabMenuButtonClickedHandler = this._onTabMenuButtonClicked.bind(this);
-  this._onTabMenuUpArrowHoveredHandler = this._onTabMenuUpArrowHovered.bind(this);
-  this._onTabMenuUpArrowUnhoveredHandler = this._onTabMenuUpArrowUnhovered.bind(this);
-  this._onTabMenuDownArrowHoveredHandler = this._onTabMenuDownArrowHovered.bind(this);
-  this._onTabMenuDownArrowUnhoveredHandler = this._onTabMenuDownArrowUnhovered.bind(this);
-};
+  _tabGroups = {};
+  _tabTypeCounters = {};
 
-Quantumart.QP8.BackendTabStrip.prototype = {
-  _tabGroups: {},
-  _tabTypeCounters: {},
-
-  _tabStripElementId: '',
-  _tabStripElement: null,
-  _tabStripScrollableElement: null,
+  _tabStripElementId = '';
+  _tabStripElement = null;
+  _tabStripScrollableElement = null;
 
   /** @type {string | HTMLElement} */
-  _tabListElement: '',
-  _partialRemovedTabsContainerElement: null,
-  _selectedTabId: '',
-  _previousSelectedTabId: '',
-  _leftSplitterPaneWidth: 0,
-  _maxTabTextLength: 35,
-  _tabMenuElement: null,
-  _tabMenuScrollableElement: null,
-  _tabMenuItemListElement: null,
-  _tabMenuUpArrowButtonElement: null,
-  _tabMenuDownArrowButtonElement: null,
-  _tabMenuButtonContainerElement: null,
-  _tabMenuButtonElement: null,
-  _maxTabMenuHeight: 400,
-  _maxTabMenuItemTextLength: 35,
-  _tabContextMenuComponent: null,
+  _tabListElement = '';
+  _partialRemovedTabsContainerElement = null;
+  _selectedTabId = '';
+  _previousSelectedTabId = '';
+  _leftSplitterPaneWidth = 0;
+  _maxTabTextLength = 35;
+  _tabMenuElement = null;
+  _tabMenuScrollableElement = null;
+  _tabMenuItemListElement = null;
+  _tabMenuUpArrowButtonElement = null;
+  _tabMenuDownArrowButtonElement = null;
+  _tabMenuButtonContainerElement = null;
+  _tabMenuButtonElement = null;
+  _maxTabMenuHeight = 400;
+  _maxTabMenuItemTextLength = 35;
+  _tabContextMenuComponent = null;
 
-  TAB_STRIP_BUSY_CLASS_NAME: 'busy',
-  TAB_SELECTED_CLASS_NAME: 'selected',
-  TAB_DISABLED_CLASS_NAME: 'disabled',
-  TAB_CLICKABLE_SELECTORS: 'DIV.scrollable UL.tabList > LI.tab',
-  CLOSE_BUTTON_CLICKABLE_SELECTORS: 'UL.tabList > LI.tab SPAN.closeButton',
+  TAB_STRIP_BUSY_CLASS_NAME = 'busy';
+  TAB_SELECTED_CLASS_NAME = 'selected';
+  TAB_DISABLED_CLASS_NAME = 'disabled';
+  TAB_CLICKABLE_SELECTORS = 'DIV.scrollable UL.tabList > LI.tab';
+  CLOSE_BUTTON_CLICKABLE_SELECTORS = 'UL.tabList > LI.tab SPAN.closeButton';
 
-  TAB_MENU_BUSY_CLASS_NAME: 'busy',
-  TAB_MENU_TIMER_ID: 'tabMenuTimer',
-  TAB_MENU_UP_ARROW_CLASS_NAME: 'upArrow',
-  TAB_MENU_UP_ARROW_HOVER_CLASS_NAME: 'upArrowHovered',
-  TAB_MENU_DOWN_ARROW_CLASS_NAME: 'downArrow',
-  TAB_MENU_DOWN_ARROW_HOVER_CLASS_NAME: 'downArrowHovered',
-  TAB_MENU_CLOSE_ALL_ITEM_CODE: 'CloseAll',
-  TAB_MENU_SAVE_CLOSE_ALL_ITEM_CODE: 'SaveAndCloseAll',
+  TAB_MENU_BUSY_CLASS_NAME = 'busy';
+  TAB_MENU_TIMER_ID = 'tabMenuTimer';
+  TAB_MENU_UP_ARROW_CLASS_NAME = 'upArrow';
+  TAB_MENU_UP_ARROW_HOVER_CLASS_NAME = 'upArrowHovered';
+  TAB_MENU_DOWN_ARROW_CLASS_NAME = 'downArrow';
+  TAB_MENU_DOWN_ARROW_HOVER_CLASS_NAME = 'downArrowHovered';
+  TAB_MENU_CLOSE_ALL_ITEM_CODE = 'CloseAll';
+  TAB_MENU_SAVE_CLOSE_ALL_ITEM_CODE = 'SaveAndCloseAll';
 
-  _onDocumentBodyClickHandler: null,
-  _onTabClickingHandler: null,
-  _onTabMiddleClickHandler: null,
-  _onContextMenuShowHandler: null,
-  _onWindowResizedHandler: null,
-  _onTabStripOverflowEvokedHandler: null,
-  _onTabStripOverflowPrecludedHandler: null,
-  _onCloseButtonHoveringHandler: null,
-  _onCloseButtonClickingHandler: null,
-  _onCloseButtonClickedHandler: null,
-  _onCloseButtonUnhoveringHandler: null,
-  _onTabMenuItemClickingHandler: null,
-  _onTabMenuButtonHoveredHandler: null,
-  _onTabMenuButtonUnhoveredHandler: null,
-  _onTabMenuButtonClickingHandler: null,
-  _onTabMenuButtonClickedHandler: null,
-  _onTabMenuUpArrowHoveredHandler: null,
-  _onTabMenuUpArrowUnhoveredHandler: null,
-  _onTabMenuDownArrowHoveredHandler: null,
-  _onTabMenuDownArrowUnhoveredHandler: null,
+  _onDocumentBodyClickHandler = null;
+  _onTabClickingHandler = null;
+  _onTabMiddleClickHandler = null;
+  _onContextMenuShowHandler = null;
+  _onWindowResizedHandler = null;
+  _onTabStripOverflowEvokedHandler = null;
+  _onTabStripOverflowPrecludedHandler = null;
+  _onCloseButtonHoveringHandler = null;
+  _onCloseButtonClickingHandler = null;
+  _onCloseButtonClickedHandler = null;
+  _onCloseButtonUnhoveringHandler = null;
+  _onTabMenuItemClickingHandler = null;
+  _onTabMenuButtonHoveredHandler = null;
+  _onTabMenuButtonUnhoveredHandler = null;
+  _onTabMenuButtonClickingHandler = null;
+  _onTabMenuButtonClickedHandler = null;
+  _onTabMenuUpArrowHoveredHandler = null;
+  _onTabMenuUpArrowUnhoveredHandler = null;
+  _onTabMenuDownArrowHoveredHandler = null;
+  _onTabMenuDownArrowUnhoveredHandler = null;
   // eslint-disable-next-line camelcase
   get_tabStripElementId() {
     return this._tabStripElementId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_tabStripElementId(value) {
     this._tabStripElementId = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_maxTabTextLength() {
     return this._maxTabTextLength;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_maxTabTextLength(value) {
     this._maxTabTextLength = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_maxTabMenuHeight() {
     return this._maxTabMenuHeight;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_maxTabMenuHeight(value) {
     this._maxTabMenuHeight = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_maxTabMenuItemTextLength() {
     return this._maxTabMenuItemTextLength;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_maxTabMenuItemTextLength(value) {
     this._maxTabMenuItemTextLength = value;
-  },
+  }
 
   initialize() {
     const $tabStrip = $(`#${this._tabStripElementId}`);
@@ -164,38 +172,38 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     this._attachTabStripEventHandlers();
     this._attachCloseButtonEventHandlers();
     this._createTabContextMenu();
-  },
+  }
 
   _attachTabStripEventHandlers() {
     $(this._tabStripElement)
       .on('click', this.TAB_CLICKABLE_SELECTORS, this._onTabClickingHandler)
       .on('mouseup', this.TAB_CLICKABLE_SELECTORS, this._onTabMiddleClickHandler)
       .on($.fn.jeegoocontext.getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShowHandler);
-  },
+  }
 
   _detachTabStripEventHandlers() {
     $(this._tabStripElement)
       .off('click', this.TAB_CLICKABLE_SELECTORS, this._onTabClickingHandler)
       .off('mouseup', this.TAB_CLICKABLE_SELECTORS, this._onTabMiddleClickHandler)
       .off($.fn.jeegoocontext.getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShowHandler);
-  },
+  }
 
   fixTabStripWidth() {
     const $tabStrip = $(this._tabStripElement);
     const $menuButtonContainer = $(this._tabMenuButtonContainerElement);
     const newScrollableWidth = $tabStrip.width() - $menuButtonContainer.width();
     $(this._tabStripScrollableElement).css('width', `${newScrollableWidth}px`);
-  },
+  }
 
   markAsBusy() {
     $(this._tabListElement).addClass(this.TAB_STRIP_BUSY_CLASS_NAME);
     $(this._tabMenuItemListElement).addClass(this.TAB_MENU_BUSY_CLASS_NAME);
-  },
+  }
 
   unmarkAsBusy() {
     $(this._tabListElement).removeClass(this.TAB_STRIP_BUSY_CLASS_NAME);
     $(this._tabMenuItemListElement).removeClass(this.TAB_MENU_BUSY_CLASS_NAME);
-  },
+  }
 
   isTabStripOverflow() {
     let result = false;
@@ -213,11 +221,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return result;
-  },
+  }
 
   isTabStripBusy() {
     return $(this._tabListElement).hasClass(this.TAB_STRIP_BUSY_CLASS_NAME);
-  },
+  }
 
   generateTabGroupCode(eventArgs, tabNumber) {
     const associatedAction = $a.getBackendAction(eventArgs.get_actionCode());
@@ -228,7 +236,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         ? tabNumber : this._getTabEntityId(eventArgs));
 
     return tabGroupCode;
-  },
+  }
 
   getTabGroup(tabGroupCode) {
     if (this._tabGroups[tabGroupCode]) {
@@ -236,7 +244,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return null;
-  },
+  }
 
   createTabGroup(tabGroupCode) {
     let tabGroup = this.getTabGroup(tabGroupCode);
@@ -246,7 +254,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return tabGroup;
-  },
+  }
 
   closeTabGroup(tabGroupCode) {
     const tabGroup = this.getTabGroup(tabGroupCode);
@@ -257,11 +265,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         this.closeTab(tabId);
       }
     }
-  },
+  }
 
   removeTabGroup(tabGroupCode) {
     $q.removeProperty(this._tabGroups, tabGroupCode);
-  },
+  }
 
   _removeEmptyTabGroup(tabGroupCode) {
     const tabGroup = this.getTabGroup(tabGroupCode);
@@ -270,7 +278,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         $q.removeProperty(this._tabGroups, tabGroupCode);
       }
     }
-  },
+  }
 
   _addTabToGroup(tab, tabGroupCode) {
     const $tab = this.getTab(tab);
@@ -282,7 +290,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         Array.add(tabGroup, tabId);
       }
     }
-  },
+  }
 
   _moveTabToGroup(tab, oldTabGroupCode, newTabGroupCode) {
     if (oldTabGroupCode !== newTabGroupCode) {
@@ -296,7 +304,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
       this._addTabToGroup(tab, newTabGroupCode);
     }
-  },
+  }
 
   _removeTabFromGroup(tab) {
     const $tab = this.getTab(tab);
@@ -308,7 +316,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       Array.remove(tabGroup, tabId);
       this._removeEmptyTabGroup(tabGroupCode);
     }
-  },
+  }
 
   generateTabId() {
     let tabNumber = 1;
@@ -326,27 +334,27 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return String.format('tab{0}', tabNumber);
-  },
+  }
 
   generateTabText(eventArgs, tabNumber) {
-    return Quantumart.QP8.BackendDocumentHost.generateTitle(eventArgs, { isTab: true, tabNumber });
-  },
+    return BackendDocumentHost.generateTitle(eventArgs, { isTab: true, tabNumber });
+  }
 
   getAllTabs() {
     return $('> LI.tab', this._tabListElement);
-  },
+  }
 
   getAllTabsCount() {
     return this.getAllTabs().length;
-  },
+  }
 
   getTabsByGroupCode(tabGroupCode) {
     return $(`> LI[groupCode='${tabGroupCode}'].tab`, this._tabListElement);
-  },
+  }
 
   getTabsCountByGroupCode(tabGroupCode) {
     return this.getTabsByGroupCode(tabGroupCode).length;
-  },
+  }
 
   getTabsByParentEntityTypeCodeAndParentEntityId(parentEntityTypeCode, parentEntityId) {
     const foundTabElems = [];
@@ -360,7 +368,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return $(foundTabElems);
-  },
+  }
 
   getTabsByEventArgs(eventArgs) {
     const foundTabElems = [];
@@ -375,7 +383,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return $(foundTabElems);
-  },
+  }
 
   getFirstTabByGroupCode(tabGroupCode) {
     let $tab = $(`> LI[groupCode='${tabGroupCode}'].tab:first`, this._tabListElement).eq(0);
@@ -384,7 +392,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return $tab;
-  },
+  }
 
   getTab(tab) {
     let $tab = null;
@@ -399,12 +407,12 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       return $tab;
     }
     return undefined;
-  },
+  }
 
   isLastTab(tab) {
     const $tab = this.getTab(tab);
     return $tab.next('LI').length === 0;
-  },
+  }
 
   getTabId(tabElem) {
     if (!$q.isObject(tabElem)) {
@@ -419,7 +427,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return tabId;
-  },
+  }
 
   getTabGroupCode(tabElem) {
     if (!$q.isObject(tabElem)) {
@@ -434,7 +442,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return tabValue;
-  },
+  }
 
   getTabText(tab) {
     const $tab = this.getTab(tab);
@@ -444,7 +452,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return tabText;
-  },
+  }
 
   setTabText(tab, tabText) {
     const $tab = this.getTab(tab);
@@ -460,19 +468,19 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
       $tab.data('tab_text', processedTabText).find('SPAN.text').text(truncatedTabText);
     }
-  },
+  }
 
   _getTabEntityTypeCode(eventArgs) {
     let result;
     const actionTypeCode = eventArgs.get_actionTypeCode();
     if (actionTypeCode === window.ACTION_TYPE_CODE_LIST) {
-      result = Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(eventArgs.get_entityTypeCode());
+      result = BackendEntityType.getParentEntityTypeCodeByCode(eventArgs.get_entityTypeCode());
     } else {
       result = eventArgs.get_entityTypeCode();
     }
 
     return result;
-  },
+  }
 
   _getTabEntityId(eventArgs) {
     let result;
@@ -487,7 +495,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return result;
-  },
+  }
 
   getExistingTabId(eventArgs) {
     /** @type {number | string} */
@@ -500,7 +508,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return result;
-  },
+  }
 
   addNewTab(eventArgs) {
     const associatedAction = $a.getBackendAction(eventArgs.get_actionCode());
@@ -542,7 +550,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
     this.fixTabStripWidth();
     return tabId;
-  },
+  }
 
   updateTab(tab, eventArgs) {
     const $tab = this.getTab(tab);
@@ -577,11 +585,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     if (newTabGroupCode !== oldTabGroupCode) {
       this._moveTabToGroup($tab, oldTabGroupCode, newTabGroupCode);
     }
-  },
+  }
 
   selfUpdateTab(tab) {
     this.updateTab(tab, this.getEventArgsFromTab(tab));
-  },
+  }
 
   selectTab(tab) {
     const $tab = this.getTab(tab);
@@ -599,7 +607,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       // Устанавливаем ширину группы табов
       this.fixTabStripWidth();
     }
-  },
+  }
 
   selectTabRequest(tab) {
     let eventArgs = this.getEventArgsFromTab(tab);
@@ -607,7 +615,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this.notify(window.EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST, eventArgs);
     }
     eventArgs = null;
-  },
+  }
 
   highlightTab(tab) {
     const $tab = this.getTab(tab);
@@ -621,7 +629,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
     // Прокручиваем группу табов до выделяемого таба
     this.scrollToTab($tab);
-  },
+  }
 
   scrollToTab(tab, duration) {
     let $tab = this.getTab(tab);
@@ -646,7 +654,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     $tab = null;
-  },
+  }
 
   closeTab(tab) {
     let $tab = this.getTab(tab);
@@ -671,14 +679,14 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     $tab = null;
-  },
+  }
 
   _partialRemoveTab(tab) {
     const $tab = this.getTab(tab);
     const $partialRemovedTabsContainer = $(this._partialRemovedTabsContainerElement);
 
     $tab.appendTo($partialRemovedTabsContainer);
-  },
+  }
 
   _removeTab(tab) {
     const $tab = this.getTab(tab);
@@ -689,7 +697,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     ;
 
     this._removeTabFromGroup($tab);
-  },
+  }
 
   _getTabHtml(tabId, tabGroupCode) {
     const html = new $.telerik.stringBuilder();
@@ -704,14 +712,14 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .cat('</li>\n');
 
     return html.string();
-  },
+  }
 
   _extendTabElement(tabElem, eventArgs, params) {
     const $tab = this.getTab(tabElem);
     $tab.data('entity_type_code', eventArgs.get_entityTypeCode());
     $tab.data('entity_id', eventArgs.get_entityId());
     $tab.data('entity_name', eventArgs.get_entityName());
-    $tab.data('parent_entity_type_code', Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(
+    $tab.data('parent_entity_type_code', BackendEntityType.getParentEntityTypeCodeByCode(
       eventArgs.get_entityTypeCode())
     );
     $tab.data('parent_entity_id', eventArgs.get_parentEntityId());
@@ -722,11 +730,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $tab.data('tab_type_code', params.TabTypeCode);
     $tab.data('tab_number', params.TabNumber);
     this.setTabText($tab, params.TabText);
-  },
+  }
 
   _getCloseButton(tab) {
     return this.getTab(tab).find('> a.tabLink > span.wrapper > span.closeButton');
-  },
+  }
 
   _attachCloseButtonEventHandlers() {
     const $tabStrip = $(this._tabStripElement);
@@ -735,7 +743,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .on('mousedown', this.CLOSE_BUTTON_CLICKABLE_SELECTORS, this._onCloseButtonClickingHandler)
       .on('mouseup', this.CLOSE_BUTTON_CLICKABLE_SELECTORS, this._onCloseButtonClickedHandler)
       .on('mouseout', this.CLOSE_BUTTON_CLICKABLE_SELECTORS, this._onCloseButtonUnhoveringHandler);
-  },
+  }
 
   _detachCloseButtonEventHandlers() {
     const $tabStrip = $(this._tabStripElement);
@@ -744,24 +752,24 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .off('mousedown', this.CLOSE_BUTTON_CLICKABLE_SELECTORS, this._onCloseButtonClickingHandler)
       .off('mouseup', this.CLOSE_BUTTON_CLICKABLE_SELECTORS, this._onCloseButtonClickedHandler)
       .off('mouseout', this.CLOSE_BUTTON_CLICKABLE_SELECTORS, this._onCloseButtonUnhoveringHandler);
-  },
+  }
 
   _applyHoveredStyleToCloseButton(closeButtonElem) {
     $('img', closeButtonElem).removeClass('clicked').addClass('hover');
-  },
+  }
 
   _applyClickedStyleToCloseButton(closeButtonElem) {
     $('img', closeButtonElem).removeClass('hover').addClass('clicked');
-  },
+  }
 
   _cancelAllStylesForCloseButton(closeButtonElem) {
     $('img', closeButtonElem).removeClass('hover').removeClass('clicked');
-  },
+  }
 
   isTabSelected(tab) {
     const $tab = this.getTab(tab);
     return this.getTabId($tab) === this._selectedTabId;
-  },
+  }
 
   _getTabTypeCounter(tabTypeCode) {
     let tabTypeCount = 0;
@@ -770,7 +778,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return tabTypeCount;
-  },
+  }
 
   _increaseTabTypeCounter(tabTypeCode) {
     if (this._tabTypeCounters[tabTypeCode]) {
@@ -778,7 +786,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     } else {
       this._tabTypeCounters[tabTypeCode] = 1;
     }
-  },
+  }
 
   _decreaseTabTypeCounter(tabTypeCode, tabNumber) {
     if (this._tabTypeCounters[tabTypeCode]) {
@@ -797,17 +805,17 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         this._tabTypeCounters[tabTypeCode] -= 1;
       }
     }
-  },
+  }
 
   _isTabMenuOverflow() {
     const menuItemListHeight = $(this._tabMenuItemListElement).outerHeight();
     const scrollableHeight = $(this._tabMenuScrollableElement).outerHeight();
     return (menuItemListHeight - scrollableHeight) > 1;
-  },
+  }
 
   _isTabMenuTopOverflow() {
     return $(this._tabMenuScrollableElement).scrollTop() > 0;
-  },
+  }
 
   _isTabMenuBottomOverflow() {
     const $scrollable = $(this._tabMenuScrollableElement);
@@ -816,7 +824,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const scrollableTopPosition = $scrollable.scrollTop();
 
     return scrollableTopPosition < (menuItemListHeight - scrollableHeight);
-  },
+  }
 
   _calculateTabMenuScrollingDuration(isUpScrolling) {
     let duration = 0;
@@ -838,7 +846,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return duration;
-  },
+  }
 
   _addTabMenuToTabStrip() {
     const $tabStrip = $(this._tabStripElement);
@@ -882,7 +890,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this._attachTabMenuEventHandlers();
       $tabStrip.append($menu);
     }
-  },
+  }
 
   _removeTabMenuFromTabStrip() {
     this._detachTabMenuButtonEventHandlers();
@@ -899,7 +907,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       '_tabMenuDownArrowButtonElement',
       '_tabMenuElement'
     ]);
-  },
+  }
 
   _attachTabMenuEventHandlers() {
     $(document.body)
@@ -915,7 +923,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $(this._tabMenuDownArrowButtonElement)
       .bind('mouseover', this._onTabMenuDownArrowHoveredHandler)
       .bind('mouseout', this._onTabMenuDownArrowUnhoveredHandler);
-  },
+  }
 
   _detachTabMenuEventHandlers() {
     $(document.body)
@@ -931,11 +939,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $(this._tabMenuDownArrowButtonElement)
       .unbind('mouseover', this._onTabMenuDownArrowHoveredHandler)
       .unbind('mouseout', this._onTabMenuDownArrowUnhoveredHandler);
-  },
+  }
 
   _getMenuItems() {
     return $('li.item', this._tabMenuItemListElement);
-  },
+  }
 
   _changeTabStripOverflowIndicator(isOverflow) {
     const $menuButtonContainer = $(this._tabMenuButtonContainerElement);
@@ -944,7 +952,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     } else {
       $menuButtonContainer.removeClass('tabOverflowMenuButton').addClass('tabMenuButton');
     }
-  },
+  }
 
   _loadItemsToTabMenu() {
     this._removeItemsFromTabMenu();
@@ -980,7 +988,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     });
 
     $menuList.html(menuItemsHtml.string());
-  },
+  }
 
   _getTabMenuItemHtml(html, dataItem) {
     const processedTabText = $q.toString(dataItem.TabText, '').trim();
@@ -1009,11 +1017,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .cat('</li>\n');
 
     return html;
-  },
+  }
 
   _removeItemsFromTabMenu() {
     $(this._tabMenuItemListElement).empty();
-  },
+  }
 
   _toggleTabMenu() {
     if ($(this._tabMenuElement).is(':hidden')) {
@@ -1021,7 +1029,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     } else {
       this._hideTabMenu();
     }
-  },
+  }
 
   _showTabMenu() {
     this._tabContextMenuComponent.hide();
@@ -1051,7 +1059,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         this._refreshTabMenuArrowButtons();
       });
     });
-  },
+  }
 
   _hideTabMenu() {
     const $menu = $(this._tabMenuElement);
@@ -1076,7 +1084,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .bind('mouseout', this._onTabMenuButtonUnhoveredHandler);
 
     this._removeItemsFromTabMenu();
-  },
+  }
 
   _refreshTabMenuArrowButtons() {
     const $upArrow = $(this._tabMenuUpArrowButtonElement);
@@ -1094,7 +1102,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     } else {
       $downArrow.fadeOut(30);
     }
-  },
+  }
 
   _scrollTabMenuToFirstItem(duration) {
     const $scrollable = $(this._tabMenuScrollableElement);
@@ -1102,18 +1110,18 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     const options = { axis: 'y', easing: 'swing' };
     options.duration = $q.isNull(duration) ? this._calculateTabMenuScrollingDuration(true) : duration;
     $scrollable.scrollTo($firstMenuItem, options);
-  },
+  }
 
   _scrollTabMenuToLastItem(duration) {
     const $lastMenuItem = this._getMenuItems().last();
     const options = { axis: 'y', easing: 'swing' };
     options.duration = $q.isNull(duration) ? this._calculateTabMenuScrollingDuration(false) : duration;
     $(this._tabMenuScrollableElement).scrollTo($lastMenuItem, options);
-  },
+  }
 
   _stopTabMenuScrolling() {
     $(this._tabMenuScrollableElement).stop();
-  },
+  }
 
   _attachTabMenuButtonEventHandlers() {
     $(this._tabMenuButtonElement)
@@ -1121,7 +1129,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .bind('mousedown', this._onTabMenuButtonClickingHandler)
       .bind('click', this._onTabMenuButtonClickedHandler)
       .bind('mouseout', this._onTabMenuButtonUnhoveredHandler);
-  },
+  }
 
   _detachTabMenuButtonEventHandlers() {
     $(this._tabMenuButtonElement)
@@ -1129,30 +1137,30 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       .unbind('mousedown', this._onTabMenuButtonClickingHandler)
       .unbind('click', this._onTabMenuButtonClickedHandler)
       .unbind('mouseout', this._onTabMenuButtonUnhoveredHandler);
-  },
+  }
 
   _applyHoveredStyleToTabMenuButton(buttonElem) {
     $(buttonElem).addClass('hover');
-  },
+  }
 
   _applyClickedStyleToTabMenuButton(buttonElem) {
     $(buttonElem).removeClass('hover').addClass('clicked');
-  },
+  }
 
   _cancelAllStylesForTabMenuButton(buttonElem) {
     $(buttonElem).removeClass('hover').removeClass('clicked');
-  },
+  }
 
   isTabMenuBusy() {
     return $(this._tabMenuItemListElement).hasClass(this.TAB_MENU_BUSY_CLASS_NAME);
-  },
+  }
 
   getEventArgsFromTab(tab) {
     const $tab = this.getTab(tab);
     const actionCode = $tab.data('action_code');
     const action = $a.getBackendActionByCode(actionCode);
     // eslint-disable-next-line no-use-before-define
-    const eventArgs = new Quantumart.QP8.BackendTabEventArgs();
+    const eventArgs = new BackendTabEventArgs();
     eventArgs.set_entityTypeCode($tab.data('entity_type_code'));
     eventArgs.set_entityId($tab.data('entity_id'));
     eventArgs.set_entityName($tab.data('entity_name'));
@@ -1163,7 +1171,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     eventArgs.set_isMultipleEntities($q.toBoolean($tab.data('is_multiple_entities'), false));
     eventArgs.set_tabId(this.getTabId($tab));
     return eventArgs;
-  },
+  }
 
   updateParentInfo(entityTypeCode, entityId) {
     const $tabs = this.getTabsByParentEntityTypeCodeAndParentEntityId(entityTypeCode, entityId);
@@ -1171,7 +1179,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       const $tab = $tabs.eq(tabIndex);
       this.selfUpdateTab($tab);
     }
-  },
+  }
 
   tabEntityExists($tab) {
     let result = true;
@@ -1195,7 +1203,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return result;
-  },
+  }
 
   getAnotherTabToSelect($tab) {
     let $tabToSelect = null;
@@ -1211,11 +1219,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     }
 
     return $tabToSelect;
-  },
+  }
 
   _onDocumentBodyClick() {
     this._hideTabMenu();
-  },
+  }
 
   _onTabClicking(e) {
     const $tab = $(e.currentTarget);
@@ -1226,7 +1234,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     } else {
       e.preventDefault();
     }
-  },
+  }
 
   _onTabMiddleClick(e) {
     if (e.which === 2) {
@@ -1235,28 +1243,28 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       e.preventDefault();
       e.stopPropagation();
     }
-  },
+  }
 
   _onContextMenuShow(e) {
     this._tabContextMenuComponent.show(e, e.currentTarget);
     e.preventDefault();
-  },
+  }
 
   _onWindowResized() {
     this.fixTabStripWidth();
-  },
+  }
 
   _onTabStripOverflowEvoked() {
     this._changeTabStripOverflowIndicator(true);
-  },
+  }
 
   _onTabStripOverflowPrecluded() {
     this._changeTabStripOverflowIndicator(false);
-  },
+  }
 
   _onCloseButtonHovering(e) {
     this._applyHoveredStyleToCloseButton(e.currentTarget);
-  },
+  }
 
   _onCloseButtonClicking(e) {
     if (this.isTabStripBusy()) {
@@ -1264,7 +1272,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     } else {
       this._applyClickedStyleToCloseButton(e.currentTarget);
     }
-  },
+  }
 
   _onCloseButtonClicked(e) {
     if (this.isTabStripBusy()) {
@@ -1278,7 +1286,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
       e.stopPropagation();
     }
-  },
+  }
 
   _closeTabRequest(tab) {
     if (!this.isTabStripBusy()) {
@@ -1288,7 +1296,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       }
       eventArgs = null;
     }
-  },
+  }
 
   _closeAllTabRequest() {
     if (!this.isTabStripBusy()) {
@@ -1300,7 +1308,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
           }, this)
         );
     }
-  },
+  }
 
   _saveAndCloseAllTabRequest() {
     if (!this.isTabStripBusy()) {
@@ -1315,7 +1323,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         }
         );
     }
-  },
+  }
 
   _closeButThisTabRequest($tab) {
     if (!this.isTabStripBusy()) {
@@ -1330,7 +1338,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this.scrollToTab($tab, 1);
       this.fixTabStripWidth();
     }
-  },
+  }
 
   _findInTreeRequest(tab) {
     let eventArgs = this.getEventArgsFromTab(tab);
@@ -1339,11 +1347,11 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       this.notify(window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST, eventArgs);
     }
     eventArgs = null;
-  },
+  }
 
   _onCloseButtonUnhovering(e) {
     this._cancelAllStylesForCloseButton(e.currentTarget);
-  },
+  }
 
   _onTabMenuItemClicking(e) {
     if (this.isTabMenuBusy()) {
@@ -1360,15 +1368,15 @@ Quantumart.QP8.BackendTabStrip.prototype = {
       }
       this._hideTabMenu();
     }
-  },
+  }
 
   _onTabMenuButtonHovered(e) {
     this._applyHoveredStyleToTabMenuButton(e.currentTarget);
-  },
+  }
 
   _onTabMenuButtonUnhovered(e) {
     this._cancelAllStylesForTabMenuButton(e.currentTarget);
-  },
+  }
 
   _onTabMenuButtonClicking(e) {
     if (this.isTabMenuBusy()) {
@@ -1378,7 +1386,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
       e.stopPropagation();
     }
-  },
+  }
 
   _onTabMenuButtonClicked(e) {
     if (this.isTabMenuBusy()) {
@@ -1396,7 +1404,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
       e.stopPropagation();
     }
-  },
+  }
 
   _onTabMenuUpArrowHovered(e) {
     let $upArrow = $(e.currentTarget);
@@ -1408,7 +1416,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     this._scrollTabMenuToFirstItem();
 
     $upArrow = null;
-  },
+  }
 
   _onTabMenuUpArrowUnhovered(e) {
     let $upArrow = $(e.currentTarget);
@@ -1420,7 +1428,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     this._stopTabMenuScrolling();
 
     $upArrow = null;
-  },
+  }
 
   _onTabMenuDownArrowHovered(e) {
     let $downArrow = $(e.currentTarget);
@@ -1432,7 +1440,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     this._scrollTabMenuToLastItem();
 
     $downArrow = null;
-  },
+  }
 
   _onTabMenuDownArrowUnhovered(e) {
     let $downArrow = $(e.currentTarget);
@@ -1444,7 +1452,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     this._stopTabMenuScrolling();
 
     $downArrow = null;
-  },
+  }
 
   _createTabContextMenu() {
     const CLOSE_CODE = 'close';
@@ -1501,10 +1509,10 @@ Quantumart.QP8.BackendTabStrip.prototype = {
         }
       }, this)
     }).data(`jeegoocontext_${tabContextMenuElementId}`);
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendTabStrip.callBaseMethod(this, 'dispose');
+    super.dispose();
     this._detachCloseButtonEventHandlers();
     this._detachTabStripEventHandlers();
 
@@ -1556,37 +1564,39 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
     $q.collectGarbageInIE();
   }
-};
+}
 
-Quantumart.QP8.BackendTabStrip._instance = null;
-Quantumart.QP8.BackendTabStrip.getInstance = function (tabStripElementId, options) {
-  if (Quantumart.QP8.BackendTabStrip._instance === null) {
-    const instance = new Quantumart.QP8.BackendTabStrip(tabStripElementId, options);
-    Quantumart.QP8.BackendTabStrip._instance = instance;
+
+BackendTabStrip._instance = null;
+BackendTabStrip.getInstance = function (tabStripElementId, options) {
+  if (BackendTabStrip._instance === null) {
+    const instance = new BackendTabStrip(tabStripElementId, options);
+    BackendTabStrip._instance = instance;
   }
 
-  return Quantumart.QP8.BackendTabStrip._instance;
+  return BackendTabStrip._instance;
 };
 
-Quantumart.QP8.BackendTabStrip.registerClass('Quantumart.QP8.BackendTabStrip', Quantumart.QP8.Observable);
 
-// eslint-disable-next-line no-useless-constructor, FIXME
-Quantumart.QP8.BackendTabEventArgs = function () {
-  Quantumart.QP8.BackendTabEventArgs.initializeBase(this);
-};
+export class BackendTabEventArgs extends BackendEventArgs {
+  // eslint-disable-next-line no-useless-constructor, FIXME
+  constructor() {
+    super();
+  }
 
-Quantumart.QP8.BackendTabEventArgs.prototype = {
-  _tabId: '',
-  isExpandRequested: false,
+  _tabId = '';
+  isExpandRequested = false;
   // eslint-disable-next-line camelcase
   get_tabId() {
     return this._tabId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_tabId(value) {
     this._tabId = value;
   }
-};
+}
 
-Quantumart.QP8.BackendTabEventArgs.registerClass('Quantumart.QP8.BackendTabEventArgs', Quantumart.QP8.BackendEventArgs);
+
+Quantumart.QP8.BackendTabStrip = BackendTabStrip;
+Quantumart.QP8.BackendTabEventArgs = BackendTabEventArgs;

@@ -1,8 +1,8 @@
 /* eslint-disable max-lines */
 /* eslint-disable max-statements */
 /* eslint-disable max-len */
-Quantumart.QP8.ImageCropResizeClient = {};
-Quantumart.QP8.ImageCropResizeClient._cache = {};
+export const ImageCropResizeClient = {};
+ImageCropResizeClient._cache = {};
 
 // eslint-disable-next-line
 (function ($, imgCropResize) {
@@ -450,17 +450,17 @@ Quantumart.QP8.ImageCropResizeClient._cache = {};
   };
 
   const _getFromCache = function () {
-    return Quantumart.QP8.ImageCropResizeClient._cache[_parameters.sourceImageUrl];
+    return ImageCropResizeClient._cache[_parameters.sourceImageUrl];
   };
 
   const _removeFromCache = function () {
-    delete Quantumart.QP8.ImageCropResizeClient._cache[_parameters.sourceImageUrl];
+    delete ImageCropResizeClient._cache[_parameters.sourceImageUrl];
   };
 
   const _saveToCache = function () {
     const sendData = readData();
     if (sendData.width && sendData.height) {
-      Quantumart.QP8.ImageCropResizeClient._cache[_parameters.sourceImageUrl] = {
+      ImageCropResizeClient._cache[_parameters.sourceImageUrl] = {
         crop: {
           top: sendData.top,
           left: sendData.left,
@@ -613,4 +613,6 @@ Quantumart.QP8.ImageCropResizeClient._cache = {};
       window: _$windowElement
     };
   };
-}(jQuery, Quantumart.QP8.ImageCropResizeClient));
+}(jQuery, ImageCropResizeClient));
+
+Quantumart.QP8.ImageCropResizeClient = ImageCropResizeClient;

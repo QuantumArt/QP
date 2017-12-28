@@ -1,54 +1,59 @@
+import { BackendContextMenu } from '../BackendContextMenu';
+import { BackendTreeBase } from './BackendTreeBase';
+import { $a, BackendActionExecutor } from '../BackendActionExecutor';
+import { $q } from '../Utils';
+
 window.EVENT_TYPE_ACTION_PERMISSIONS_TREE_EXECUTING = 'OnActionPermissionsTreeExecuting';
-Quantumart.QP8.BackendActionPermissionTree = function (treeElementId) {
-  Quantumart.QP8.BackendActionPermissionTree.initializeBase(this, [treeElementId]);
+export class BackendActionPermissionTree extends BackendTreeBase {
+  constructor(treeElementId) {
+    super(treeElementId);
 
-  this._onDataBindingHandler = $.proxy(this._onDataBinding, this);
-  this._onContextMenuHandler = $.proxy(this._onContextMenu, this);
-  this._onNodeContextMenuShowingHandler = $.proxy(this._onNodeContextMenuShowing, this);
-  this._onNodeContextMenuItemClickingHandler = $.proxy(this._onNodeContextMenuItemClicking, this);
-  this._onNodeContextMenuHiddenHandler = $.proxy(this._onNodeContextMenuHidden, this);
-};
+    this._onDataBindingHandler = $.proxy(this._onDataBinding, this);
+    this._onContextMenuHandler = $.proxy(this._onContextMenu, this);
+    this._onNodeContextMenuShowingHandler = $.proxy(this._onNodeContextMenuShowing, this);
+    this._onNodeContextMenuItemClickingHandler = $.proxy(this._onNodeContextMenuItemClicking, this);
+    this._onNodeContextMenuHiddenHandler = $.proxy(this._onNodeContextMenuHidden, this);
+  }
 
-Quantumart.QP8.BackendActionPermissionTree.prototype = {
-  _userId: null,
-  _groupId: null,
+  _userId = null;
+  _groupId = null;
 
   /** @type {string | number} */
-  _currentNodeId: -1,
-  _contextMenuActionCode: '',
+  _currentNodeId = -1;
+  _contextMenuActionCode = '';
 
-  _entityTypeContextMenuComponent: null,
-  _actionContextMenuComponent: null,
+  _entityTypeContextMenuComponent = null;
+  _actionContextMenuComponent = null;
 
-  _onContextMenuHandler: null,
-  _onNodeContextMenuItemClickingHandler: null,
-  _onNodeContextMenuHiddenHandler: null,
-  _onNodeContextMenuShowingHandler: null,
+  _onContextMenuHandler = null;
+  _onNodeContextMenuItemClickingHandler = null;
+  _onNodeContextMenuHiddenHandler = null;
+  _onNodeContextMenuShowingHandler = null;
 
   // eslint-disable-next-line camelcase
   set_userId(val) {
     this._userId = val;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_userId() {
     return this._userId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_groupId(val) {
     this._groupId = val;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_groupId() {
     return this._groupId;
-  },
+  }
 
   initialize() {
-    Quantumart.QP8.BackendActionPermissionTree.callBaseMethod(this, 'initialize');
+    super.initialize();
     const createContextMenu = $.proxy(function (contextMenuCode) {
-      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(
+      const contextMenuComponent = new BackendContextMenu(
         contextMenuCode,
         `${this._treeElementId}_${contextMenuCode}_ContextMenu`,
         {
@@ -82,7 +87,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
 
     const contextMenuEventType = $.fn.jeegoocontext.getContextMenuEventType();
     $(this._treeElement).on(contextMenuEventType, this.NODE_NEW_CLICKABLE_SELECTORS, this._onContextMenuHandler);
-  },
+  }
 
   executeAction($node, actionCode) {
     if ($node) {
@@ -100,7 +105,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
         this.notify(window.EVENT_TYPE_ACTION_PERMISSIONS_TREE_EXECUTING, eventArgs);
       }
     }
-  },
+  }
 
   refreshPermissionNode(entityTypeCode, nodeValueId) {
     let nodeType = '';
@@ -115,11 +120,11 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     if ($node) {
       this.refreshNode($node);
     }
-  },
+  }
 
   _onDataBinding(sender) {
     this.addNodesToParentNode(sender, 0);
-  },
+  }
 
   _onContextMenu(e) {
     const $element = $(e.currentTarget);
@@ -134,7 +139,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     }
 
     e.preventDefault();
-  },
+  }
 
   _onNodeContextMenuShowing(eventType, sender, args) {
     const menuComponent = args.get_menu();
@@ -143,21 +148,21 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     if ($node && !$q.isNullOrEmpty(menuComponent)) {
       menuComponent.tuneMenuItems(this._getNodeId($node.closest('.t-item')));
     }
-  },
+  }
 
   _onNodeContextMenuItemClicking(eventType, sender, args) {
     const $menuItem = $(args.get_menuItem());
     if (!$q.isNullOrEmpty($menuItem)) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
-  },
+  }
 
   _onNodeContextMenuHidden() {
     const $node = this.getNode(this._currentNodeId);
     if (!$q.isNullOrEmpty(this._contextMenuActionCode)) {
       this.executeAction($node, this._contextMenuActionCode);
     }
-  },
+  }
 
   addNodesToParentNode(parentNode, maxExpandLevel, callback) {
     const $parentNode = this.getNode(parentNode);
@@ -179,7 +184,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
 
       if (data) {
         if (data.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
-          Quantumart.QP8.BackendActionExecutor.showResult(data);
+          BackendActionExecutor.showResult(data);
         } else {
           const dataItems = that._convertToTreeViewItems(data);
           // @ts-ignore FIXME
@@ -200,7 +205,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
       $q.processGenericAjaxError(jqXHR);
       $q.callFunction(callback);
     });
-  },
+  }
 
   _refreshNodeInner($node, loadChildNodes, callback) {
     const isRootNode = this.isRootNode($node);
@@ -252,7 +257,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
         $q.callFunction(callback);
       });
     }
-  },
+  }
 
   _getNodeId($node) {
     let entityTypeId = null;
@@ -264,7 +269,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     }
 
     return entityTypeId;
-  },
+  }
 
   _getNodeType($node) {
     let nodeType = null;
@@ -276,13 +281,13 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     }
 
     return nodeType;
-  },
+  }
 
   _convertToTreeViewItems(items) {
     return $.isArray(items)
       ? items.map($.proxy(this._convertToTreeViewItem, this))
       : undefined;
-  },
+  }
 
   _convertToTreeViewItem(item) {
     let iconUrl = '';
@@ -298,11 +303,11 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
       Expanded: false,
       Enabled: true
     };
-  },
+  }
 
   _converToItemValue(item) {
     return item ? `${item.NodeType}-${item.Id}` : undefined;
-  },
+  }
 
   _extendNodeElement(nodeElem, item) {
     const $node = this.getNode(nodeElem);
@@ -310,7 +315,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
       $node.data('node_type', item.NodeType);
       $node.data('node_id', item.Id);
     }
-  },
+  }
 
   _extendNodeElements(parentNodeElem, items) {
     const that = this;
@@ -319,7 +324,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
       const $node = that.getNode(that._converToItemValue(item), $parentNode);
       that._extendNodeElement($node, item);
     });
-  },
+  }
 
   _loadChildNodes(entityTypeId) {
     return $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ACTION_PERMISSION_TREE}GetTreeNodes`, {
@@ -327,7 +332,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
       userId: this._userId,
       groupId: this._groupId
     }, true, false);
-  },
+  }
 
   _loadNode(entityTypeId, actionId) {
     return $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ACTION_PERMISSION_TREE}GetTreeNode`, {
@@ -336,7 +341,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
       userId: this._userId,
       groupId: this._groupId
     }, true, false);
-  },
+  }
 
   dispose() {
     $(this.NODE_NEW_CLICKABLE_SELECTORS, this._treeElement).off();
@@ -371,11 +376,9 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
     this._onNodeContextMenuItemClickingHandler = null;
     this._onNodeContextMenuHiddenHandler = null;
 
-    Quantumart.QP8.BackendActionPermissionTree.callBaseMethod(this, 'dispose');
+    super.dispose();
   }
-};
+}
 
-Quantumart.QP8.BackendActionPermissionTree.registerClass(
-  'Quantumart.QP8.BackendActionPermissionTree',
-  Quantumart.QP8.BackendTreeBase
-);
+
+Quantumart.QP8.BackendActionPermissionTree = BackendActionPermissionTree;

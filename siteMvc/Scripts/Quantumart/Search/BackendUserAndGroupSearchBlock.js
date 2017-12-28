@@ -1,4 +1,6 @@
-class BackendUserAndGroupSearchBlock {
+import { $c } from '../ControlHelpers';
+
+export class BackendUserAndGroupSearchBlock {
   constructor(searchBlockElementId, onApplyFilter) {
     this.onApplyFilter = onApplyFilter;
     this.$searchBlock = $(`#${searchBlockElementId}`);

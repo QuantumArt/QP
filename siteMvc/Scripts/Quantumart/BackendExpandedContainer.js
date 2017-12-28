@@ -1,17 +1,20 @@
-// eslint-disable-next-line no-useless-constructor, FIXME
-Quantumart.QP8.BackendExpandedContainer = function () {
-  // empty constructor
-};
-Quantumart.QP8.BackendExpandedContainer.prototype = {
-  $content: null,
+import { $q } from './Utils';
+
+export class BackendExpandedContainer {
+  // eslint-disable-next-line no-useless-constructor, FIXME
+  constructor() {
+    // empty constructor
+  }
+
+  $content = null;
 
   initialize(element) {
     this.$content = $q.toJQuery(element);
-    if (this.$content.data(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY)) {
+    if (this.$content.data(BackendExpandedContainer.DATA_ATTRIBUTE_KEY)) {
       return;
     }
 
-    this.$content.data(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY, this);
+    this.$content.data(BackendExpandedContainer.DATA_ATTRIBUTE_KEY, this);
 
     const html = new $.telerik.stringBuilder();
     html
@@ -70,11 +73,11 @@ Quantumart.QP8.BackendExpandedContainer.prototype = {
     }
 
     $component = null;
-  },
+  }
 
   dispose() {
     if (this.$content) {
-      this.$content.removeData(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY);
+      this.$content.removeData(BackendExpandedContainer.DATA_ATTRIBUTE_KEY);
       this.$content = null;
     }
 
@@ -88,19 +91,19 @@ Quantumart.QP8.BackendExpandedContainer.prototype = {
       this._$collapseLink = null;
     }
   }
-};
+}
 
-Quantumart.QP8.BackendExpandedContainer.initAll = function (parentElement) {
+BackendExpandedContainer.initAll = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
   }
 
-  Quantumart.QP8.BackendExpandedContainer.getAllElements(parentElement).each(function () {
-    new Quantumart.QP8.BackendExpandedContainer().initialize(this);
+  BackendExpandedContainer.getAllElements(parentElement).each(function () {
+    new BackendExpandedContainer().initialize(this);
   });
 };
 
-Quantumart.QP8.BackendExpandedContainer.getAllElements = function (parentElement) {
+BackendExpandedContainer.getAllElements = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
   }
@@ -108,13 +111,13 @@ Quantumart.QP8.BackendExpandedContainer.getAllElements = function (parentElement
   return $q.toJQuery(parentElement).find('.qp-expandedContent');
 };
 
-Quantumart.QP8.BackendExpandedContainer.destroyAll = function (parentElement) {
+BackendExpandedContainer.destroyAll = function (parentElement) {
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
   }
 
-  Quantumart.QP8.BackendExpandedContainer.getAllElements(parentElement).each(function () {
-    let component = $q.toJQuery(this).data(Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY);
+  BackendExpandedContainer.getAllElements(parentElement).each(function () {
+    let component = $q.toJQuery(this).data(BackendExpandedContainer.DATA_ATTRIBUTE_KEY);
     if (component) {
       component.dispose();
     }
@@ -123,5 +126,6 @@ Quantumart.QP8.BackendExpandedContainer.destroyAll = function (parentElement) {
   });
 };
 
-Quantumart.QP8.BackendExpandedContainer.DATA_ATTRIBUTE_KEY = 'QP8_ExpandedContainer';
-Quantumart.QP8.BackendExpandedContainer.registerClass('Quantumart.QP8.BackendExpandedContainer');
+BackendExpandedContainer.DATA_ATTRIBUTE_KEY = 'QP8_ExpandedContainer';
+
+Quantumart.QP8.BackendExpandedContainer = BackendExpandedContainer;

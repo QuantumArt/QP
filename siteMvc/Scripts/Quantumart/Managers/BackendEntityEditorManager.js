@@ -1,9 +1,14 @@
+import { BackendEntityEditor } from '../Editor/BackendEntityEditor';
+import { Observable } from '../Common/Observable';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
 window.EVENT_TYPE_ENTITY_EDITOR_IS_READY = 'OnEntityEditorIsReady';
 window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED = 'OnEntityEditorDisposed';
 window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = 'OnEntityEditorFieldChanged';
 window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE = 'OnEntityEditorAllFieldInvalidate';
 
-class BackendEntityEditorManager extends Quantumart.QP8.Observable {
+export class BackendEntityEditorManager extends Observable {
   /** @type {BackendEntityEditorManager} */
   static _instance;
 
@@ -27,7 +32,6 @@ class BackendEntityEditorManager extends Quantumart.QP8.Observable {
   }
 
   constructor() {
-    // @ts-ignore
     super();
     this._editorGroups = {};
   }
@@ -113,7 +117,7 @@ class BackendEntityEditorManager extends Quantumart.QP8.Observable {
       }
     }
 
-    const editor = new Quantumart.QP8.BackendEntityEditor(
+    const editor = new BackendEntityEditor(
       editorGroupCode,
       documentWrapperElementId,
       entityTypeCode,

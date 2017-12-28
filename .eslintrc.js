@@ -5,17 +5,20 @@ module.exports = {
   extends: [
     './.eslint/.eslintrc'
   ].map(require.resolve),
+  plugins: [
+    'import'
+  ],
   globals: {
     ko: false,
-    $a: false,
-    $c: false,
+    // $a: false,
+    // $c: false,
     $e: false,
     $l: false,
-    $o: false,
-    $q: false,
-    $ctx: false,
+    // $o: false,
+    // $q: false,
+    // $ctx: false,
     Sys: false,
-    Url: false,
+    // Url: false,
     pmrpc: false,
     Quantumart: false,
   },

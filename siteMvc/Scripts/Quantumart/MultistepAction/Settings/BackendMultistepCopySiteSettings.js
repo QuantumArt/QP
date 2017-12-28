@@ -1,27 +1,30 @@
-Quantumart.QP8.MultistepActionCopySiteSettings = function (options) {
-  this.options = options;
-};
+import { $q } from '../../Utils';
 
-Quantumart.QP8.MultistepActionCopySiteSettings.prototype = {
+export class MultistepActionCopySiteSettings {
+  constructor(options) {
+    this.options = options;
+  }
+
 
   initActions() {
     // empty fn
-  },
+  }
 
   validate() {
     return '';
-  },
+  }
 
   serializeForm() {
     return $q.serializeForm(this.options.wrapperElementId);
-  },
+  }
 
   dispose() {
     // empty fn
   }
-};
+}
 
-Quantumart.QP8.MultistepActionCopySiteSettings.addButtons = function (dataItems) {
+
+MultistepActionCopySiteSettings.addButtons = function (dataItems) {
   const exportButton = {
     Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
     Value: 'Create like site',
@@ -33,3 +36,5 @@ Quantumart.QP8.MultistepActionCopySiteSettings.addButtons = function (dataItems)
 
   return dataItems.concat(exportButton);
 };
+
+Quantumart.QP8.MultistepActionCopySiteSettings = MultistepActionCopySiteSettings;

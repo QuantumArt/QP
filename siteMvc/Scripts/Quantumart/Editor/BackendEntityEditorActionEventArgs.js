@@ -1,6 +1,7 @@
-class BackendEntityEditorActionEventArgs extends Quantumart.QP8.BackendEventArgs {
+import { BackendEventArgs } from '../Common/BackendEventArgs';
+
+export class BackendEntityEditorActionEventArgs extends BackendEventArgs {
   constructor() {
-    // @ts-ignore
     super();
     this._data = null;
   }

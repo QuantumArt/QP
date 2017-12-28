@@ -1,48 +1,54 @@
+import { BackendActionType } from '../Info/BackendActionType';
+import { BackendEventArgs } from '../Common/BackendEventArgs';
+import { BackendPopupWindowManager } from '../Managers/BackendPopupWindowManager';
+import { BackendToolbar } from '../Toolbar/BackendToolbar';
+import { Observable } from '../Common/Observable';
+
 window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED = 'OnSelectPopupWindowResultSelected';
 window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED = 'OnSelectPopupWindowClosed';
 
-Quantumart.QP8.BackendSelectPopupWindow = function (eventArgs, options) {
-  Quantumart.QP8.BackendSelectPopupWindow.initializeBase(this);
-  const manager = Quantumart.QP8.BackendPopupWindowManager.getInstance();
-  this._popupWindowId = manager.generatePopupWindowId();
-  this._isMultipleEntities = eventArgs.get_isMultipleEntities();
-  this._actionCode = eventArgs.get_actionCode();
-  this._entityTypeCode = eventArgs.get_entityTypeCode();
-  this._parentEntityId = eventArgs.get_parentEntityId();
-  this._popupWindowToolbarComponent = this._createToolbar();
+export class BackendSelectPopupWindow extends Observable {
+  constructor(eventArgs, options) {
+    super();
+    const manager = BackendPopupWindowManager.getInstance();
+    this._popupWindowId = manager.generatePopupWindowId();
+    this._isMultipleEntities = eventArgs.get_isMultipleEntities();
+    this._actionCode = eventArgs.get_actionCode();
+    this._entityTypeCode = eventArgs.get_entityTypeCode();
+    this._parentEntityId = eventArgs.get_parentEntityId();
+    this._popupWindowToolbarComponent = this._createToolbar();
 
 
-  const popupOptions = Object.assign({}, options, {
-    popupWindowId: this._popupWindowId,
-    showBreadCrumbs: false,
-    saveSelectionWhenChangingView: true,
-    customActionToolbarComponent: this._popupWindowToolbarComponent,
-    isModal: true,
-    allowResize: false,
-    allowDrag: false
-  });
+    const popupOptions = Object.assign({}, options, {
+      popupWindowId: this._popupWindowId,
+      showBreadCrumbs: false,
+      saveSelectionWhenChangingView: true,
+      customActionToolbarComponent: this._popupWindowToolbarComponent,
+      isModal: true,
+      allowResize: false,
+      allowDrag: false
+    });
 
-  eventArgs.set_actionTypeCode(Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode(this._actionCode));
-  this._popupWindowComponent = manager.createPopupWindow(eventArgs, popupOptions);
-  this._popupWindowComponent.attachObserver(
-    window.EVENT_TYPE_POPUP_WINDOW_CLOSED, $.proxy(this._onClosed, this)
-  );
-  this._popupWindowComponent.attachObserver(
-    window.EVENT_TYPE_POPUP_WINDOW_CLOSED, $.proxy(this._popupWindowClosedHandler, this)
-  );
-};
+    eventArgs.set_actionTypeCode(BackendActionType.getActionTypeCodeByActionCode(this._actionCode));
+    this._popupWindowComponent = manager.createPopupWindow(eventArgs, popupOptions);
+    this._popupWindowComponent.attachObserver(
+      window.EVENT_TYPE_POPUP_WINDOW_CLOSED, $.proxy(this._onClosed, this)
+    );
+    this._popupWindowComponent.attachObserver(
+      window.EVENT_TYPE_POPUP_WINDOW_CLOSED, $.proxy(this._popupWindowClosedHandler, this)
+    );
+  }
 
-Quantumart.QP8.BackendSelectPopupWindow.prototype = {
-  _isMultipleEntities: false,
-  _popupWindowId: '',
-  _popupWindowToolbarComponent: null,
-  _popupWindowComponent: null,
-  _allowMultipleItemSelection: false,
+  _isMultipleEntities = false;
+  _popupWindowId = '';
+  _popupWindowToolbarComponent = null;
+  _popupWindowComponent = null;
+  _allowMultipleItemSelection = false;
 
-  SELECT_BUTTON_CODE: 'select',
-  SELECT_ALL_BUTTON_CODE: 'select_all',
-  DESELECT_ALL_BUTTON_CODE: 'deselect_all',
-  REFRESH_BUTTON_CODE: 'refresh',
+  SELECT_BUTTON_CODE = 'select';
+  SELECT_ALL_BUTTON_CODE = 'select_all';
+  DESELECT_ALL_BUTTON_CODE = 'deselect_all';
+  REFRESH_BUTTON_CODE = 'refresh';
 
   _onPopupWindowToolbarButtonClicked(eventType, sender, args) {
     if (this._popupWindowComponent) {
@@ -67,17 +73,17 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
         this._popupWindowComponent.refresh();
       }
     }
-  },
+  }
 
   _onClosed() {
     this._popupWindowComponent = null;
-    let eventArgs = new Quantumart.QP8.BackendEventArgs();
+    let eventArgs = new BackendEventArgs();
     this.notify(window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, eventArgs);
     eventArgs = null;
-  },
+  }
 
   _createToolbar() {
-    const instance = new Quantumart.QP8.BackendToolbar();
+    const instance = new BackendToolbar();
     instance.set_toolbarElementId(`popupWindowToolbar_${this._popupWindowId}`);
     instance.initialize();
     instance.attachObserver(
@@ -85,7 +91,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
     );
     instance.addToolbarItemsToToolbar(this._getToolbarItems());
     return instance;
-  },
+  }
 
   _getToolbarItems() {
     const dataItems = [];
@@ -136,22 +142,22 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 
     Array.add(dataItems, refreshButton);
     return dataItems;
-  },
+  }
 
   openWindow() {
     if (this._popupWindowComponent) {
       this._popupWindowComponent.openWindow();
     }
-  },
+  }
 
   closeWindow() {
     if (this._popupWindowComponent) {
       this._popupWindowComponent.closeWindow();
     }
-  },
+  }
   _popupWindowClosedHandler() {
     this.dispose();
-  },
+  }
   dispose() {
     if (this._popupWindowToolbarComponent) {
       this._popupWindowToolbarComponent.detachObserver(window.EVENT_TYPE_TOOLBAR_BUTTON_CLICKED);
@@ -165,8 +171,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
       this._popupWindowComponent = null;
     }
   }
-};
+}
 
-Quantumart.QP8.BackendSelectPopupWindow.registerClass(
-  'Quantumart.QP8.BackendSelectPopupWindow', Quantumart.QP8.Observable
-);
+
+Quantumart.QP8.BackendSelectPopupWindow = BackendSelectPopupWindow;

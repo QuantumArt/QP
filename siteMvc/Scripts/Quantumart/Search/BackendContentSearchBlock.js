@@ -1,18 +1,25 @@
-Quantumart.QP8.BackendContentSearchBlock = function (
-  searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options
-) {
-  Quantumart.QP8.BackendContentSearchBlock.initializeBase(
-    this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]
-  );
-  this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
-};
+import { BackendSearchBlockBase, BackendSearchBlockEventArgs } from './BackendSearchBlockBase';
+import { $q } from '../Utils';
 
-Quantumart.QP8.BackendContentSearchBlock.prototype = {
-  _minSearchBlockHeight: 80,
-  _maxSearchBlockHeight: 80,
-  _contentGroupListElement: null,
-  _siteListElement: null,
-  _contentNameElement: null,
+export class BackendContentSearchBlock extends BackendSearchBlockBase {
+  constructor(
+    searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options
+  ) {
+    super(
+      searchBlockGroupCode,
+      searchBlockElementId,
+      entityTypeCode,
+      parentEntityId,
+      options
+    );
+    this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
+  }
+
+  _minSearchBlockHeight = 80;
+  _maxSearchBlockHeight = 80;
+  _contentGroupListElement = null;
+  _siteListElement = null;
+  _contentNameElement = null;
 
   getSearchQuery() {
     let groupId = null;
@@ -34,7 +41,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype = {
       SiteId: siteId,
       ContentName: contentName
     });
-  },
+  }
 
   renderSearchBlock() {
     if (!this.get_isRendered()) {
@@ -70,26 +77,26 @@ Quantumart.QP8.BackendContentSearchBlock.prototype = {
 
       this.set_isRendered(true);
     }
-  },
+  }
 
   _onChangeCombo() {
     $(this._findButtonElement).trigger('click');
-  },
+  }
 
   _onFindButtonClick() {
-    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, this.getSearchQuery());
+    let eventArgs = new BackendSearchBlockEventArgs(0, this.getSearchQuery());
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, eventArgs);
     eventArgs = null;
-  },
+  }
 
   _onResetButtonClick() {
     $('.csFilterCombo', this._searchBlockElement).find("option[value='']").prop('selected', true);
     $('.csFilterTextbox', this._searchBlockElement).val('');
 
-    let eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);
+    let eventArgs = new BackendSearchBlockEventArgs(0, null);
     this.notify(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, eventArgs);
     eventArgs = null;
-  },
+  }
 
   dispose() {
     $('.csFilterCombo', this._searchBlockElement).unbind();
@@ -99,10 +106,9 @@ Quantumart.QP8.BackendContentSearchBlock.prototype = {
     this._contentNameElement = null;
     this._onChangeComboHandler = null;
 
-    Quantumart.QP8.BackendContentSearchBlock.callBaseMethod(this, 'dispose');
+    super.dispose();
   }
-};
+}
 
-Quantumart.QP8.BackendContentSearchBlock.registerClass(
-  'Quantumart.QP8.BackendContentSearchBlock', Quantumart.QP8.BackendSearchBlockBase
-);
+
+Quantumart.QP8.BackendContentSearchBlock = BackendContentSearchBlock;
