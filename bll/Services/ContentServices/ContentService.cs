@@ -413,14 +413,18 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
 
         public static void UpdateArticlesLinks(int sourceSiteId, int destinationSiteId, string relationsBetweenArticles)
         {
-            ContentRepository.UpdateO2MValues(sourceSiteId, destinationSiteId, relationsBetweenArticles);
-            ContentRepository.CopyArticleWorkflowBind(sourceSiteId, destinationSiteId, relationsBetweenArticles);
-
             var relBetweenLinks = ContentRepository.GetRelationsBetweenLinks(sourceSiteId, destinationSiteId);
+            ContentRepository.UpdateO2MValues(sourceSiteId, destinationSiteId, relationsBetweenArticles);
             ContentRepository.UpdateContentDataAfterCopyingArticles(relationsBetweenArticles, relBetweenLinks);
-            ContentRepository.CopyItemToItems(relationsBetweenArticles, relBetweenLinks);
             ContentRepository.UpdateItemToItem(relationsBetweenArticles, relBetweenLinks);
             ContentRepository.UpdateAttributesAfterCopyingArticles(destinationSiteId, relationsBetweenArticles);
+        }
+
+        public static void CopyArticlesLinks(int sourceSiteId, int destinationSiteId, string relationsBetweenArticles)
+        {
+            var relBetweenLinks = ContentRepository.GetRelationsBetweenLinks(sourceSiteId, destinationSiteId);
+            ContentRepository.CopyArticleWorkflowBind(sourceSiteId, destinationSiteId, relationsBetweenArticles);
+            ContentRepository.CopyItemToItems(relationsBetweenArticles, relBetweenLinks);
         }
 
         public static void FillLinkTables(int sourceSiteId, int destinationSiteId)

@@ -3159,12 +3159,20 @@ namespace Quantumart.QP8.DAL
 
         public static int RemovingActions_RemoveSiteArticles(int siteId, int articleToRemove, SqlConnection connection)
         {
-            var query =
-                "select 1 as A into #disable_td_delete_item_o2m_nullify; " +
-                "DELETE FROM content_item where content_item_id in (select top {0} I.content_item_id from CONTENT_ITEM I " +
-                "inner join CONTENT C ON C.CONTENT_ID = I.CONTENT_ID " +
-                "where C.SITE_ID = @site_id " +
-                "order by I.content_id ASC, I.content_item_id ASC) ";
+            var query = @"
+                select 1 as A into #disable_td_delete_item_o2m_nullify;
+                select 1 as A into #disable_td_item_to_item;
+
+                select top {0} I.content_item_id into #top_items
+                from CONTENT_ITEM I
+                inner join CONTENT C ON C.CONTENT_ID = I.CONTENT_ID
+                where C.SITE_ID = @site_id
+                order by I.content_id ASC, I.content_item_id ASC
+
+                DELETE FROM item_to_item where r_item_id in (select CONTENT_ITEM_ID from #top_items)
+                DELETE FROM content_item where content_item_id in (select CONTENT_ITEM_ID from #top_items)
+            ";
+
             query = string.Format(query, articleToRemove);
 
             using (var cmd = SqlCommandFactory.Create(query, connection))
@@ -7143,12 +7151,12 @@ namespace Quantumart.QP8.DAL
                                          ,doc.col.value('./@destinationId', 'int') newitemid
                                         from @xmlprmsItems.nodes('/item') doc(col)
                                 )
-                                insert into [dbo].[item_to_item]
+                                insert into [dbo].[item_to_item] (link_id, l_item_id, r_item_id)
                                 select r.destination_link_id, i1.l_item_id, i1.r_item_id
                                 from [dbo].[item_to_item] as i1 (nolock)
                                 inner join @relations_between_links as r
                                     on r.source_link_id = i1.link_id
-                                where i1.l_item_id in (select olditemid from relations_between_items) or i1.r_item_id in (select olditemid from relations_between_items)";
+                                where i1.l_item_id in (select olditemid from relations_between_items)";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7162,8 +7170,8 @@ namespace Quantumart.QP8.DAL
             var query = $@"
                                 declare @xmlprmsLinks xml = '{relationsBetweenLinks}'
 
-                                if OBJECT_ID('tempdb..#disable_ti_item_to_item') IS NULL begin
-                                    select 1 as A into #disable_ti_item_to_item
+                                if OBJECT_ID('tempdb..#disable_tu_item_to_item') IS NULL begin
+                                    select 1 as A into #disable_tu_item_to_item
                                 end
 
                                 declare @relations_between_links table (
@@ -7201,7 +7209,9 @@ namespace Quantumart.QP8.DAL
                                 inner join @relations_between_items as lr on
                                     ii.r_item_id = lr.source_item_id
                                 inner join @relations_between_links as r
-                                    on r.destination_link_id = ii.link_id";
+                                    on r.destination_link_id = ii.link_id
+                                where ii.r_item_id in (select source_item_id from @relations_between_items)
+";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
