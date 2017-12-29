@@ -25,15 +25,15 @@ BEGIN
 END
 GO
 
-if exists (select * from sys.indexes where name = 'IX_ProductVersions')
-	DROP INDEX [dbo].[ProductVersions].[IX_ProductVersions]
-
-CREATE NONCLUSTERED INDEX [IX_ProductVersions] ON [dbo].[ProductVersions]
-(
-    [DpcId] ASC,
-    [IsLive] ASC,
-    [Language] ASC,
-    [Format] ASC,
-	[Modification] ASC
-)
+if not exists (select * from sys.indexes where name = 'IX_ProductVersions')
+BEGIN
+	CREATE NONCLUSTERED INDEX [IX_ProductVersions] ON [dbo].[ProductVersions]
+	(
+		[DpcId] ASC,
+		[IsLive] ASC,
+		[Language] ASC,
+		[Format] ASC,
+		[Modification] ASC
+	)
+END
 GO
