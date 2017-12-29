@@ -15,7 +15,8 @@ RETURN
 				and v2.[DpcId] = v.[DpcId]
 				and v2.[IsLive] = v.[IsLive]
 				and v2.[Language] = v.[Language]
-				and v2.[Format] = v.[Format])
+				and v2.[Format] = v.[Format]
+				and v2.[Modification] <= @date)
 		and v.[Deleted] = 0
 		and v.[Modification] <= @date
 )
