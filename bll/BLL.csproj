@@ -472,6 +472,7 @@
     <Compile Include="Services\EntityPermissions\PermissionServiceAbstract.cs" />
     <Compile Include="Services\EntityPermissions\SitePermissionService.cs" />
     <Compile Include="Services\ActionPermissions\ActionPermissionTreeService.cs" />
+    <Compile Include="Services\MultistepActions\CopySite\CopySiteItemLinksCommand.cs" />
     <Compile Include="Services\NotificationSender\ExternalInterfaceNotificationService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />

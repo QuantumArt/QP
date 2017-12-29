@@ -1768,50 +1768,6 @@ WHERE WORKFLOW_RULE_ID IN (SELECT WORKFLOW_RULE_ID FROM @workflow_rules_ids)
 END
 
 GO
-exec qp_drop_existing 'tu_item_to_item', 'IsTrigger'
-GO
-
-CREATE TRIGGER [dbo].[tu_item_to_item] ON [dbo].[item_to_item] AFTER UPDATE
-AS
-BEGIN
-declare @links table
-	(
-		id numeric primary key,
-		item_id numeric
-	)
-
-	insert into @links
-	select distinct link_id, l_item_id from inserted
-
-	declare @link_id numeric, @item_id numeric , @query nvarchar(max)
-
-	while exists(select id from @links)
-	begin
-
-		select @link_id = id from @links
-		select 	@item_id = item_id from @links
-
-		declare @table_name nvarchar(50), @table_name_rev nvarchar(50)
-		set @table_name = 'item_link_' + cast(@link_id as varchar)
-		set @table_name_rev = 'item_link_' + cast(@link_id as varchar) + '_rev'
-
-		declare @linked_item numeric
-		select @linked_item = l_item_id from inserted
-
-		set @query = 'update ' + @table_name + ' set linked_id = @linked_item where id = @item_id'
-		print @query
-		exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
-
-		set @query = 'update ' + @table_name_rev + ' set linked_id = @linked_item where id = @item_id'
-		print @query
-		exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
-
-		delete from @links where id = @link_id
-	end
-END
-GO
-
-GO
 
 exec qp_drop_existing 'RegionUpdates', 'IsUserTable'
 GO
@@ -2375,44 +2331,49 @@ go
 CREATE TRIGGER [dbo].[tu_item_to_item] ON [dbo].[item_to_item] AFTER UPDATE
 AS
 BEGIN
-	if update(l_item_id) or update(r_item_id)
-	begin
 
-        declare @links table
-	    (
-		    id numeric primary key,
-		    item_id numeric
-	    )
+    if object_id('tempdb..#disable_tu_item_to_item') is null
+    BEGIN
 
-		insert into @links
-		select distinct link_id, l_item_id from inserted
+	    if update(l_item_id) or update(r_item_id)
+	    BEGIN
 
-		declare @link_id numeric, @item_id numeric , @query nvarchar(max)
+            declare @links table
+	        (
+	    	    id numeric primary key,
+	    	    item_id numeric
+	        )
 
-		while exists(select id from @links)
-		begin
+	    	insert into @links
+	    	select distinct link_id, l_item_id from inserted
 
-			select @link_id = id from @links
-			select 	@item_id = item_id from @links
+	    	declare @link_id numeric, @item_id numeric , @query nvarchar(max)
 
-			declare @table_name nvarchar(50), @table_name_rev nvarchar(50)
-			set @table_name = 'item_link_' + cast(@link_id as varchar)
-			set @table_name_rev = 'item_link_' + cast(@link_id as varchar) + '_rev'
+	    	while exists(select id from @links)
+	    	BEGIN
 
-			declare @linked_item numeric
-			select @linked_item = l_item_id from inserted
+	    		select @link_id = id from @links
+	    		select 	@item_id = item_id from @links
 
-			set @query = 'update ' + @table_name + ' set linked_id = @linked_item where id = @item_id'
-			print @query
-			exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+	    		declare @table_name nvarchar(50), @table_name_rev nvarchar(50)
+	    		set @table_name = 'item_link_' + cast(@link_id as varchar)
+	    		set @table_name_rev = 'item_link_' + cast(@link_id as varchar) + '_rev'
 
-			set @query = 'update ' + @table_name_rev + ' set linked_id = @linked_item where id = @item_id'
-			print @query
-			exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+	    		declare @linked_item numeric
+	    		select @linked_item = l_item_id from inserted
 
-			delete from @links where id = @link_id
-		end
-	END
+	    		set @query = 'update ' + @table_name + ' set linked_id = @linked_item where id = @item_id'
+	    		print @query
+	    		exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+
+	    		set @query = 'update ' + @table_name_rev + ' set linked_id = @linked_item where id = @item_id'
+	    		print @query
+	    		exec sp_executesql @query, N'@item_id numeric, @linked_item numeric', @item_id = @item_id , @linked_item = @linked_item
+
+	    		delete from @links where id = @link_id
+	    	END
+	    END
+    END
 END
 ;
 GO
@@ -2515,6 +2476,30 @@ update CONTENT_DATA set SPLITTED = i.splitted
 from content_data cd inner join CONTENT_ITEM i on i.content_item_id = cd.CONTENT_ITEM_ID
 WHERE i.SPLITTED = 1
 GO
+
+update item_link set is_rev = 1
+from item_link il
+inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
+inner join content_to_content cc on il.link_id = cc.link_id and ci.CONTENT_ID <> cc.l_content_id
+and is_rev = 0
+GO
+
+update item_link_async set is_rev = 1
+from item_link_async il
+inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
+inner join content_to_content cc on il.link_id = cc.link_id and ci.CONTENT_ID <> cc.l_content_id
+and is_rev = 0
+GO
+
+update item_link set is_self = 1
+from item_link il inner join content_to_content cc on il.link_id = cc.link_id where cc.l_content_id = cc.r_content_id
+GO
+
+
+update item_link_async set is_self = 1
+from item_link_async il inner join content_to_content cc on il.link_id = cc.link_id where cc.l_content_id = cc.r_content_id
+GO
+
 
 GO
 IF NOT EXISTS(SELECT * FROM CONTEXT_MENU_ITEM WHERE NAME = 'Unselect Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
@@ -3095,8 +3080,8 @@ BEGIN
 
   if @r_content_id <> @l_content_id
   BEGIN
-    update item_link set is_rev = 1 from item_link il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID = @r_content_id and is_rev = 0
-    update item_link set is_rev = 1 from item_link_async il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID = @r_content_id and item_link.is_rev = 0
+    update item_link set is_rev = 1 from item_link il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID <> @l_content_id and is_rev = 0
+    update item_link_async set is_rev = 1 from item_link_async il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID <> @l_content_id and il.is_rev = 0
   END
 
   if @r_content_id = @l_content_id
@@ -3699,6 +3684,47 @@ GO
 	ALTER TABLE CONTENT_ATTRIBUTE ADD MAX_DATA_LIST_ITEM_COUNT numeric(18,0) NOT NULL
 	CONSTRAINT DF_MAX_DATA_LIST_ITEM_COUNT DEFAULT 10
   END
+
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_TOKENS')
+	ALTER TABLE [dbo].[DB] ADD [USE_TOKENS] [bit] NOT NULL DEFAULT ((0))
+GO
+if not exists(select * from sys.tables where name = 'ACCESS_TOKEN')
+BEGIN
+	CREATE TABLE [dbo].[ACCESS_TOKEN](
+		[Id] [int] IDENTITY(1,1) NOT NULL,
+		[UserId] [int] NOT NULL,
+		[Token] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+		[ExpirationDate] [datetime] NULL,
+		[Application] [nvarchar](200) NOT NULL,
+		[SessionId] [int] NOT NULL,
+	CONSTRAINT [PK_ACCESS_TOKEN] PRIMARY KEY CLUSTERED 
+	(
+		[Id] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]	
+END
+
+
+if not exists (select * from sys.indexes where name = 'IX_ACCESS_TOKEN_Session')
+BEGIN
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_ACCESS_TOKEN_Session] ON [dbo].[ACCESS_TOKEN]
+	(
+		[UserId] ASC,
+		[Application] ASC,
+		[SessionId] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+END
+
+if not exists (select * from sys.indexes where name = 'IX_ACCESS_TOKEN_Token')
+BEGIN
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_ACCESS_TOKEN_Token] ON [dbo].[ACCESS_TOKEN]
+	(
+		[Token] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[ACCESS_TOKEN] ADD  CONSTRAINT [DF_ACCESS_TOKEN_Token]  DEFAULT (newid()) FOR [Token]
+END
 
 GO
 
