@@ -20,10 +20,10 @@ BEGIN
 	 p.UserUpdated,
 	 p.UserUpdatedId,
 	 p.ProductType
-	from Products p with (nolock)
+	from Products p
 	where not exists (
 		select null
-		from ProductVersions v
+		from ProductVersions v with (nolock)
 		where
 			p.[Updated] = v.[Modification] and
 			p.[DpcId] = v.[DpcId] and
@@ -46,6 +46,6 @@ BEGIN
 		join ProductRegions r on
 			p.Id = r.ProductId
 	where
-		not exists (select null from ProductRegionVersions rv where rv.[ProductVersionId] = v.[Id])
+		not exists (select null from ProductRegionVersions rv with (nolock) where rv.[ProductVersionId] = v.[Id])
 END
 GO
