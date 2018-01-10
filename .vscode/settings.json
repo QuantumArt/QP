@@ -1,5 +1,6 @@
 {
   "eslint.autoFixOnSave": true,
+  "javascript.referencesCodeLens.enabled": true,
   "files.exclude": {
     "**/.git": true,
     "**/.vs": true,
