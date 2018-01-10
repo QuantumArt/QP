@@ -19,6 +19,7 @@
     <Configurations>Debug;Release</Configurations>
     <RootNamespace>QP8.Infrastructure.Web.AspNet</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,5 +35,4 @@
   <ItemGroup>
     <Reference Include="System.Web" />
   </ItemGroup>
-
 </Project>

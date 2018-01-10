@@ -16,6 +16,7 @@
     <PackageTags>QP</PackageTags>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <RootNamespace>QP8.WebMvc.NUnit.Tests</RootNamespace>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,5 +39,4 @@
   <ItemGroup>
     <Reference Include="System.Xaml" />
   </ItemGroup>
-
 </Project>
