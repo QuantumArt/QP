@@ -306,7 +306,6 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 
             if (!$q.isNullOrEmpty($highlightedNode)) {
               this._expandToExistingNode($highlightedNode);
-              this._expandToExistingNode($highlightedNode);
 
               this._deferredNodeCodeToHighlight = highlightedCode;
               this.highlightNode($highlightedNode);
@@ -329,7 +328,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
    * @param {TreeNode} treeNode корень частичного дерева
    */
   _mergePartialTree(treeNode) {
-    if (!treeNode || !treeNode.ChildNodes) {
+    if (!treeNode || !treeNode.ChildNodes || treeNode.ChildNodes.length === 0) {
       return;
     }
 
@@ -344,6 +343,9 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 
       this._renderChildNodes($domNode, childViewItems, this.isRootNode($domNode));
       this._extendNodeElements($domNode, treeNode.ChildNodes);
+
+      // collapse node children
+      this._treeComponent.nodeToggle(null, $domNode, true);
     }
 
     treeNode.ChildNodes.forEach(childNode => {
