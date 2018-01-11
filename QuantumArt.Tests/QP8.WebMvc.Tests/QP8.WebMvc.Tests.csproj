@@ -16,6 +16,7 @@
     <PackageTags>QP</PackageTags>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <RootNamespace>QP8.WebMvc.Tests</RootNamespace>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -85,5 +86,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>

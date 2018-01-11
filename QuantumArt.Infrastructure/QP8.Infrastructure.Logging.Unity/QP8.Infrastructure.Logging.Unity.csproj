@@ -19,6 +19,7 @@
     <Configurations>Debug;Release</Configurations>
     <RootNamespace>QP8.Infrastructure.Logging.Unity</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,5 +29,4 @@
   <ItemGroup>
     <ProjectReference Include="..\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
   </ItemGroup>
-
 </Project>
