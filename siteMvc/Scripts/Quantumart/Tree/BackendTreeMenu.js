@@ -309,7 +309,6 @@ export class BackendTreeMenu extends BackendTreeBase {
 
             if (!$q.isNullOrEmpty($highlightedNode)) {
               this._expandToExistingNode($highlightedNode);
-              this._expandToExistingNode($highlightedNode);
 
               this._deferredNodeCodeToHighlight = highlightedCode;
               this.highlightNode($highlightedNode);
@@ -332,7 +331,7 @@ export class BackendTreeMenu extends BackendTreeBase {
    * @param {TreeNode} treeNode корень частичного дерева
    */
   _mergePartialTree(treeNode) {
-    if (!treeNode || !treeNode.ChildNodes) {
+    if (!treeNode || !treeNode.ChildNodes || treeNode.ChildNodes.length === 0) {
       return;
     }
 
@@ -347,6 +346,9 @@ export class BackendTreeMenu extends BackendTreeBase {
 
       this._renderChildNodes($domNode, childViewItems, this.isRootNode($domNode));
       this._extendNodeElements($domNode, treeNode.ChildNodes);
+
+      // collapse node children
+      this._treeComponent.nodeToggle(null, $domNode, true);
     }
 
     treeNode.ChildNodes.forEach(childNode => {

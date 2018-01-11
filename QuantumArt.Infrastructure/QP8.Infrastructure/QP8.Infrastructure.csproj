@@ -19,11 +19,11 @@
     <Configurations>Debug;Release</Configurations>
     <RootNamespace>QP8.Infrastructure</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
   </ItemGroup>
-
 </Project>

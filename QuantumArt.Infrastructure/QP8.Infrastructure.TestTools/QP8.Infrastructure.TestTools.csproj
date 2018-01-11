@@ -19,6 +19,7 @@
     <Configurations>Debug;Release</Configurations>
     <RootNamespace>QP8.Infrastructure.TestTools</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,5 +36,4 @@
     <ProjectReference Include="..\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
     <ProjectReference Include="..\QP8.Infrastructure\QP8.Infrastructure.csproj" />
   </ItemGroup>
-
 </Project>

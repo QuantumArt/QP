@@ -16,6 +16,7 @@
     <PackageTags>QP</PackageTags>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <RootNamespace>QP8.Services.Tests</RootNamespace>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,5 +38,4 @@
     <ProjectReference Include="..\..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj" />
     <ProjectReference Include="..\..\QuantumArt.Schedulers\Quantumart.QP8.CdcDataImport.Common\Quantumart.QP8.CdcDataImport.Common.csproj" />
   </ItemGroup>
-
 </Project>
