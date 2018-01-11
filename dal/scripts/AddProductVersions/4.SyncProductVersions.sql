@@ -3,7 +3,7 @@ AS
 BEGIN
 	insert into ProductVersions(Deleted, Modification, DpcId, Version, IsLive, Language, Format, Data, Alias, Created, Updated, Hash, MarketingProductId, Title, UserUpdated, UserUpdatedId, ProductType)
 	select
-	 1 Deleted,
+	 0 Deleted,
 	 p.Updated Modification,
 	 p.DpcId,
 	 p.Version,
