@@ -66,13 +66,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
         public IEnumerable<ListItem> GetGroupList()
         {
             return new[]
-            {
-                new ListItem(string.Empty, UserGroupStrings.SelectParentGroup)
-            }
-            .Concat(_service.GetAllGroups()
-            .Where(g => g.Id != Data.Id && !g.UseParallelWorkflow)
-            .Select(g => new ListItem(g.Id.ToString(), g.Name)))
-            .ToArray();
+                {
+                    new ListItem(string.Empty, UserGroupStrings.SelectParentGroup)
+                }
+                .Concat(_service.GetAllGroups()
+                    .Where(g => g.Id != Data.Id && !g.UseParallelWorkflow)
+                    .Select(g => new ListItem(g.Id.ToString(), g.Name)))
+                .ToArray();
         }
     }
 }

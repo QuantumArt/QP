@@ -8,12 +8,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
 {
     public class ContentViewModel : ContentViewModelBase
     {
-
         public readonly string SplitBlock = "split";
         public readonly string VersionsBlock = "versions";
         public readonly string XamlValidationPanel = "xamlvalidation";
         public readonly string ContextBlock = "context";
-
 
         public static ContentViewModel Create(BLL.Content content, string tabId, int parentId) => Create<ContentViewModel>(content, tabId, parentId);
 

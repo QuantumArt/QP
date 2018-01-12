@@ -65,12 +65,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (!settings.AllFields)
             {
-                settings.CustomFieldIds = model.CustomFields.ToArray();
+                settings.CustomFieldIds = model.CustomFields ?? Enumerable.Empty<int>().ToArray();
                 settings.ExcludeSystemFields = model.ExcludeSystemFields;
             }
 
-            settings.isArchive = ExportArticlesService.CheckArticlesIsArchive(ids);
-            settings.FieldIdsToExpand = model.FieldsToExpand.ToArray();
+            settings.FieldIdsToExpand = model.FieldsToExpand ?? Enumerable.Empty<int>().ToArray();
             _service.SetupWithParams(parentId, ids, settings);
             return new JSendResponse { Status = JSendStatus.Success };
         }

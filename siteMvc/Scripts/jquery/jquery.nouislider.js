@@ -1,4 +1,3 @@
-/// <reference path="Quantumart/Link.js" />
 /**@preserve
 $.fn.noUiSlider - WTFPL - refreshless.com/nouislider/ */
 

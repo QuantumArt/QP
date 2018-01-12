@@ -411,5 +411,5 @@ Quantumart.QP8.BackendMultistepActionWindowEventArgs.prototype = {
 
 Quantumart.QP8.BackendMultistepActionWindowEventArgs.registerClass(
   'Quantumart.QP8.BackendMultistepActionWindowEventArgs',
-  window.Sys.EventArgs
+  Sys.EventArgs
 );

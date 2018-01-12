@@ -36,10 +36,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         {
             SetupWithParams(parentId, 0, ids, settingsParams as ExportSettings);
         }
-
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal) => Setup(parentId, id, null, boundToExternal);
+ 
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive) => Setup(parentId, id, null, boundToExternal, isArchive);
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => Setup(parentId, id, ids, null, false); 
 
-        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive)
         {
             var contentId = ids == null ? id : parentId;
             var content = ContentRepository.GetById(contentId);
@@ -47,19 +49,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             {
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, contentId));
             }
-            var isArchive = CheckArticlesIsArchive(ids);
 
             var articleIds = GetArticleIds(ids, content.Id, isArchive);
             var articleExtensionContents = GetArticleExtensionContents(articleIds, content.Id, isArchive);
             _command = new ExportArticlesCommand(content.SiteId, content.Id, articleIds.Length, articleIds, articleExtensionContents);
 
             return base.Setup(content.SiteId, content.Id, boundToExternal);
-        }
-
-        public static bool CheckArticlesIsArchive(int[] ids)
-        {
-            var articles = ArticleRepository.CheckArticlesIsArchive(ids);
-            return articles;
         }
 
         protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
@@ -98,6 +93,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             {
                 var content = ContentRepository.GetById(parentId);
                 prms = new ExportArticlesParams(content.SiteId, content.Id, ids);
+            }
+
+            return prms;
+        }
+
+        public override IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids, bool isArchive)
+        {
+            IMultistepActionSettings prms;
+            if (ids == null)
+            {
+                prms = new ExportArticlesParams(parentId, id, null, isArchive);
+            }
+            else
+            {
+                var content = ContentRepository.GetById(parentId);
+                prms = new ExportArticlesParams(content.SiteId, content.Id, ids, isArchive);
             }
 
             return prms;

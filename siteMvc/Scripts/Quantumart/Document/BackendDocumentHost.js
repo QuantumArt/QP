@@ -420,7 +420,6 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
       return result;
     }
-
     return undefined;
   }
 
@@ -587,11 +586,6 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
 
     const actionTypeCode = action.ActionType.Code;
     if (isMultiple) {
-      const filteredEntities = this._filterEntities(entities);
-      if (filteredEntities.length !== entities.length) {
-        entities = filteredEntities;
-      }
-
       if (entities.length === 0) {
         $q.alertError($l.DocumentHost.noEntitiesToExecuteActionErrorMessage);
         this.refresh();
@@ -682,37 +676,6 @@ class BackendDocumentHost extends Quantumart.QP8.Observable {
     }
   }
 
-  _filterEntities(entities) {
-    if (this._selectedEntitiesContext && this._selectedEntitiesContext.url) {
-      const queryData = Object.assign({
-        page: 1,
-        size: 0,
-        onlyIds: true
-      }, this._selectedEntitiesContext.dataQueryParams);
-
-      for (let i = 0; i < entities.length; i++) {
-        queryData[`filterIds[${i}]`] = entities[i].Id;
-      }
-
-      let rowsData = null;
-
-      $q.postDataToUrl(
-        this._selectedEntitiesContext.url,
-        queryData,
-        false,
-        data => {
-          rowsData = data;
-        },
-        jqXHR => {
-          $q.processGenericAjaxError(jqXHR);
-        }
-      );
-
-      return rowsData.data.map(item => ({ Id: item.CONTENT_ITEM_ID }));
-    }
-
-    return entities;
-  }
 
   getMainComponent() {
     return $q.isObject(this._documentContext) ? this._documentContext.getMainComponent() : null;

@@ -39,6 +39,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
             get => (BLL.Field)EntityData;
             set => EntityData = value;
         }
+
         private IEnumerable<ListItem> HighlightModes() => new[]
         {
             new ListItem(TextAreaHighlightTypes.HtmlHighlightType, FieldStrings.HtmlHighlightMode),
@@ -143,9 +144,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeCommands { get; set; }
 
-        public int[] ActiveVeCommandsIds { get { return ActiveVeCommands.Select(c => int.Parse(c.Value)).ToArray(); } }
+        public int[] ActiveVeCommandsIds
+        {
+            get { return ActiveVeCommands.Select(c => int.Parse(c.Value)).ToArray(); }
+        }
 
-        public int[] ActiveVeStyleIds { get { return ActiveVeStyles.Union(ActiveVeFormats).Select(c => int.Parse(c.Value)).ToArray(); } }
+        public int[] ActiveVeStyleIds
+        {
+            get { return ActiveVeStyles.Union(ActiveVeFormats).Select(c => int.Parse(c.Value)).ToArray(); }
+        }
 
         public IEnumerable<ListItem> AllStylesListItems { get; private set; }
 
@@ -182,7 +189,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         private void InitInputMask()
         {
-
             InputMaskType = InputMaskTypes.Basic;
             MaskTemplateId = null;
 
@@ -330,7 +336,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
                     ConstraintId = Data.Constraint.Id,
                     FieldId = Data.Id
                 });
-
             }
             else
             {
@@ -359,22 +364,22 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
             return new List<ListItem>
             {
-                new ListItem { Value = FieldExactTypes.String.ToString(), Text = getValue(FieldTypeCodes.String), HasDependentItems = true, DependentItemIDs = new[]{"Required", "Unique", "Indexed", "ViewInList", "OnScreen"} },
-                new ListItem { Value = FieldExactTypes.Numeric.ToString(), Text = getValue(FieldTypeCodes.Numeric), HasDependentItems = true, DependentItemIDs = new[]{"Required", "Unique", "Indexed", "ViewInList", "OnScreen", "IsNumericLong", "NumericIntegerProps"} },
-                new ListItem { Value = FieldExactTypes.Boolean.ToString(), Text = getValue(FieldTypeCodes.Boolean), HasDependentItems = true, DependentItemIDs = new[]{"Unique", "OnScreen", "ViewInList"} },
-                new ListItem { Value = FieldExactTypes.Date.ToString(), Text = getValue(FieldTypeCodes.Date), HasDependentItems = true, DependentItemIDs = new[]{"Required", "Indexed", "ViewInList", "OnScreen"} },
-                new ListItem { Value = FieldExactTypes.Time.ToString(), Text = getValue(FieldTypeCodes.Time), HasDependentItems = true, DependentItemIDs = new[]{"Required", "Indexed", "ViewInList", "OnScreen"} },
-                new ListItem { Value = FieldExactTypes.DateTime.ToString(), Text = getValue(FieldTypeCodes.DateTime), HasDependentItems = true, DependentItemIDs = new[]{"Required", "Indexed", "ViewInList", "OnScreen"} },
-                new ListItem { Value = FieldExactTypes.File.ToString(), Text = getValue(FieldTypeCodes.File), HasDependentItems = true, DependentItemIDs = new[]{"Required", "Unique", "Indexed", "ViewInList", "OnScreen", "FileOrImage"} },
-                new ListItem { Value = FieldExactTypes.Image.ToString(), Text = getValue(FieldTypeCodes.Image), HasDependentItems = true, DependentItemIDs = new[]{"Required", "Unique", "Indexed", "ViewInList", "OnScreen", "FileOrImage"} },
-                new ListItem { Value = FieldExactTypes.Textbox.ToString(), Text = getValue(FieldTypeCodes.Textbox), HasDependentItems = true, DependentItemIDs = new[]{"Required", "OnScreen", "ViewInList"} },
-                new ListItem { Value = FieldExactTypes.VisualEdit.ToString(), Text = getValue(FieldTypeCodes.VisualEdit), HasDependentItems = true, DependentItemIDs = new[]{"Required", "OnScreen", "ViewInList"} },
-                new ListItem { Value = FieldExactTypes.O2MRelation.ToString(), Text = FieldStrings.O2MRelation, HasDependentItems = true, DependentItemIDs = new[]{"Required", "Unique", "Indexed", "ViewInList", "OnScreen", "RelateTo", "LinqBackProperty", "O2MDefault", "O2MBackwardFieldName", "O2MMainProps", "RelationSecurity", "ListTitleOptions"} },
-                new ListItem { Value = FieldExactTypes.M2MRelation.ToString(), Text = FieldStrings.M2MRelation, HasDependentItems = true, DependentItemIDs = new[]{"Required", "RelateTo", "M2MMaplink", "M2MBackwardFieldName", "RelationSecurity", "ViewInList", "ListOrderOptions"} },
-                new ListItem { Value = FieldExactTypes.M2ORelation.ToString(), Text = getValue(FieldTypeCodes.M2ORelation), HasDependentItems = true, DependentItemIDs = new[]{"Required", "BaseRelation", "ViewInList", "ListOrderOptions" } },
+                new ListItem { Value = FieldExactTypes.String.ToString(), Text = getValue(FieldTypeCodes.String), HasDependentItems = true, DependentItemIDs = new[] { "Required", "Unique", "Indexed", "ViewInList", "OnScreen" } },
+                new ListItem { Value = FieldExactTypes.Numeric.ToString(), Text = getValue(FieldTypeCodes.Numeric), HasDependentItems = true, DependentItemIDs = new[] { "Required", "Unique", "Indexed", "ViewInList", "OnScreen", "IsNumericLong", "NumericIntegerProps" } },
+                new ListItem { Value = FieldExactTypes.Boolean.ToString(), Text = getValue(FieldTypeCodes.Boolean), HasDependentItems = true, DependentItemIDs = new[] { "Unique", "OnScreen", "ViewInList" } },
+                new ListItem { Value = FieldExactTypes.Date.ToString(), Text = getValue(FieldTypeCodes.Date), HasDependentItems = true, DependentItemIDs = new[] { "Required", "Indexed", "ViewInList", "OnScreen" } },
+                new ListItem { Value = FieldExactTypes.Time.ToString(), Text = getValue(FieldTypeCodes.Time), HasDependentItems = true, DependentItemIDs = new[] { "Required", "Indexed", "ViewInList", "OnScreen" } },
+                new ListItem { Value = FieldExactTypes.DateTime.ToString(), Text = getValue(FieldTypeCodes.DateTime), HasDependentItems = true, DependentItemIDs = new[] { "Required", "Indexed", "ViewInList", "OnScreen" } },
+                new ListItem { Value = FieldExactTypes.File.ToString(), Text = getValue(FieldTypeCodes.File), HasDependentItems = true, DependentItemIDs = new[] { "Required", "Unique", "Indexed", "ViewInList", "OnScreen", "FileOrImage" } },
+                new ListItem { Value = FieldExactTypes.Image.ToString(), Text = getValue(FieldTypeCodes.Image), HasDependentItems = true, DependentItemIDs = new[] { "Required", "Unique", "Indexed", "ViewInList", "OnScreen", "FileOrImage" } },
+                new ListItem { Value = FieldExactTypes.Textbox.ToString(), Text = getValue(FieldTypeCodes.Textbox), HasDependentItems = true, DependentItemIDs = new[] { "Required", "OnScreen", "ViewInList" } },
+                new ListItem { Value = FieldExactTypes.VisualEdit.ToString(), Text = getValue(FieldTypeCodes.VisualEdit), HasDependentItems = true, DependentItemIDs = new[] { "Required", "OnScreen", "ViewInList" } },
+                new ListItem { Value = FieldExactTypes.O2MRelation.ToString(), Text = FieldStrings.O2MRelation, HasDependentItems = true, DependentItemIDs = new[] { "Required", "Unique", "Indexed", "ViewInList", "OnScreen", "RelateTo", "LinqBackProperty", "O2MDefault", "O2MBackwardFieldName", "O2MMainProps", "RelationSecurity", "ListTitleOptions" } },
+                new ListItem { Value = FieldExactTypes.M2MRelation.ToString(), Text = FieldStrings.M2MRelation, HasDependentItems = true, DependentItemIDs = new[] { "Required", "RelateTo", "M2MMaplink", "M2MBackwardFieldName", "RelationSecurity", "ViewInList", "ListOrderOptions" } },
+                new ListItem { Value = FieldExactTypes.M2ORelation.ToString(), Text = getValue(FieldTypeCodes.M2ORelation), HasDependentItems = true, DependentItemIDs = new[] { "Required", "BaseRelation", "ViewInList", "ListOrderOptions" } },
                 new ListItem { Value = FieldExactTypes.DynamicImage.ToString(), Text = getValue(FieldTypeCodes.DynamicImage), HasDependentItems = true },
-                new ListItem { Value = FieldExactTypes.Classifier.ToString(), Text = FieldStrings.ClassifierId, HasDependentItems = true, DependentItemIDs = new[]{"Required", "Unique", "Indexed", "ViewInList", "OnScreen", "UseTypeSecurity" } },
-                new ListItem { Value = FieldExactTypes.StringEnum.ToString(), Text = FieldStrings.StringEnum, HasDependentItems = true, DependentItemIDs = new[]{"Required", "Unique", "Indexed", "ViewInList", "OnScreen"} }
+                new ListItem { Value = FieldExactTypes.Classifier.ToString(), Text = FieldStrings.ClassifierId, HasDependentItems = true, DependentItemIDs = new[] { "Required", "Unique", "Indexed", "ViewInList", "OnScreen", "UseTypeSecurity" } },
+                new ListItem { Value = FieldExactTypes.StringEnum.ToString(), Text = FieldStrings.StringEnum, HasDependentItems = true, DependentItemIDs = new[] { "Required", "Unique", "Indexed", "ViewInList", "OnScreen" } }
             }.Where(acceptableFilter).ToList();
         }
 
@@ -396,10 +401,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         {
             return Data.Constraint?.Rules.Where(r => r.FieldId != Data.Id).Select(r => r.Field).Distinct(BLL.Field.IdComparer).ToArray() ?? Enumerable.Empty<BLL.Field>();
         }
+
         /// <summary>
         /// Получить список полей в комбинации с которыми находится данное поле
         /// а также те, которые могут быть в комбинации с текущим полем
-        ///
         /// </summary>
         /// <returns></returns>
         public List<ListItem> GetAcceptableCombinationFields()
@@ -478,9 +483,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         /// <returns></returns>
         public IEnumerable<ListItem> GetDynamicImageModes() => new[]
         {
-            new ListItem(DynamicImageMode.Size.ToString(), FieldStrings.DynamicImageModeSize, true){DependentItemIDs = new[]{"HeightModePanel", "WidthModePanel"}},
-            new ListItem(DynamicImageMode.Height.ToString(), FieldStrings.DynamicImageModeHeight, true){DependentItemIDs = new[]{"HeightModePanel"}},
-            new ListItem(DynamicImageMode.Width.ToString(), FieldStrings.DynamicImageModeWidth, true){DependentItemIDs = new[]{"WidthModePanel"}}
+            new ListItem(DynamicImageMode.Size.ToString(), FieldStrings.DynamicImageModeSize, true) { DependentItemIDs = new[] { "HeightModePanel", "WidthModePanel" } },
+            new ListItem(DynamicImageMode.Height.ToString(), FieldStrings.DynamicImageModeHeight, true) { DependentItemIDs = new[] { "HeightModePanel" } },
+            new ListItem(DynamicImageMode.Width.ToString(), FieldStrings.DynamicImageModeWidth, true) { DependentItemIDs = new[] { "WidthModePanel" } }
         };
 
         /// <summary>

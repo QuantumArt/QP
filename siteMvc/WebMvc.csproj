@@ -208,7 +208,9 @@
     <Compile Include="Controllers\CssController.cs" />
     <Compile Include="Controllers\DbController.cs" />
     <Compile Include="Controllers\EntityTypePermissionController.cs" />
+    <Compile Include="Controllers\ExportArchiveArticlesController.cs" />
     <Compile Include="Controllers\ExportArticlesController.cs" />
+    <Compile Include="Controllers\ExportSelectedArchiveArticlesController.cs" />
     <Compile Include="Controllers\ExportSelectedArticlesController.cs" />
     <Compile Include="Controllers\FormatController.cs" />
     <Compile Include="Controllers\ImportArticlesController.cs" />
@@ -332,7 +334,6 @@
     <Compile Include="Extensions\ModelBinders\ContentModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\CustomActionViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\DbViewModelBinder.cs" />
-    <Compile Include="Extensions\ModelBinders\ExportViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\FieldViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\JsonStringModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\NotificationViewModelBinder.cs" />
@@ -2203,9 +2204,6 @@
     <None Include="Views\Article\Properties.cshtml">
       <LastGenOutput>Properties.generated.cs</LastGenOutput>
     </None>
-    <Content Include="Views\Home\Index.Template.cshtml">
-      <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </Content>
     <Content Include="Views\Home\Index.cshtml" />
     <None Include="Views\LogOn\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>

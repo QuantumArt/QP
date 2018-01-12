@@ -582,4 +582,7 @@
   <data name="DisableListAutoWrap" xml:space="preserve">
     <value>Отключить автоматическое оборачивание списков (ul, ol, dl)</value>
   </data>
+  <data name="CopySiteItemLinks" xml:space="preserve">
+    <value>Копирование ссылок между статьями</value>
+  </data>
 </root>

@@ -24,6 +24,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                     return new CopySiteFilesCommand(state);
                 case CopySiteStageCommandTypes.CopySiteSettings:
                     return new CopySiteSettingsCommand(state);
+                case CopySiteStageCommandTypes.CopySiteItemLinks:
+                    return new CopySiteItemLinksCommand(state);
                 case CopySiteStageCommandTypes.CopySiteUpdateArticleIds:
                     return new CopySiteUpdateArticleIdsCommand(state);
                 default:
@@ -42,6 +44,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         public const int CopySiteTemplates = 6;
         public const int CopySiteFiles = 7;
         public const int CopySiteSettings = 8;
-        public const int CopySiteUpdateArticleIds = 9;
+        public const int CopySiteItemLinks = 9;
+        public const int CopySiteUpdateArticleIds = 10;
     }
 }

@@ -44,7 +44,8 @@ namespace Quantumart.QP8.Security
                         true,
                         userInformation.LanguageId,
                         userInformation.CultureName,
-                        userInformation.IsSilverlightInstalled);
+                        userInformation.IsSilverlightInstalled,
+                        userInformation.SessionId);
 
                     roles = userInformation.Roles;
                 }

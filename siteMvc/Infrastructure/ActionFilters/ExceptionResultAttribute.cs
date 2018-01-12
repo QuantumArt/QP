@@ -65,7 +65,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 return false;
             }
 
-            if (filterContext.ExceptionHandled || !filterContext.HttpContext.IsCustomErrorEnabled)
+            // игнорируем <customErrors mode="Off" />
+            // все равно ошибки должны отображаться пользователю
+            if (filterContext.ExceptionHandled)
             {
                 return false;
             }

@@ -25,7 +25,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
 
         public static ArticleVersionViewModel Create(BLL.ArticleVersion version, string tabId, int parentId, string succesfulActionCode, bool? boundToExternal)
         {
-
             var model = Create<ArticleVersionViewModel>(version, tabId, parentId);
             model.SuccesfulActionCode = succesfulActionCode;
             model.BoundToExternal = boundToExternal;

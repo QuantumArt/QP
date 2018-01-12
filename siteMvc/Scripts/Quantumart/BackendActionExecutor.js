@@ -637,17 +637,14 @@ Quantumart.QP8.BackendActionExecutor.generateMultistepActionUrl = function (
 
 Quantumart.QP8.BackendActionExecutor.showResult = function (data) {
   if (data && data.Type) {
-    const messageType = data.Type;
-
-    if (messageType === window.ACTION_MESSAGE_TYPE_DOWNLOAD) {
+    if (data.Type === window.ACTION_MESSAGE_TYPE_DOWNLOAD) {
       $c.downloadFile(data.Url);
-    } else if (messageType === window.ACTION_MESSAGE_TYPE_INFO
-                || messageType === window.ACTION_MESSAGE_TYPE_WARNING
-                || messageType === window.ACTION_MESSAGE_TYPE_ERROR) {
-      const messageText = data.Text;
-      if (!$q.isNullOrWhiteSpace(messageText)) {
-        $q.alertFail(messageText);
-      }
+    } else if (data.Type === window.ACTION_MESSAGE_TYPE_INFO) {
+      $q.alertSuccess(data.Text);
+    } else if (data.Type === window.ACTION_MESSAGE_TYPE_WARNING) {
+      $q.alertWarn(data.Text);
+    } else if (data.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
+      $q.alertFail(data.Text);
     }
   }
 };

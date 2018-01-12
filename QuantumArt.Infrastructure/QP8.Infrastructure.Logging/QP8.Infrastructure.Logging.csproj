@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net47</TargetFramework>
-    <Version>2.0.1-rc1</Version>
+    <Version>2.0.1-rc2</Version>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
     <Product>QP8.Framework</Product>
@@ -19,6 +19,7 @@
     <Configurations>Debug;Release</Configurations>
     <RootNamespace>QP8.Infrastructure.Logging</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -32,5 +33,4 @@
   <ItemGroup>
     <ProjectReference Include="..\QP8.Infrastructure\QP8.Infrastructure.csproj" />
   </ItemGroup>
-
 </Project>

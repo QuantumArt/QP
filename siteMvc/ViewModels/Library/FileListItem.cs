@@ -12,26 +12,26 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
     {
         private static readonly Dictionary<FolderFileType, string> FileTypeSmallIconDictionary = new Dictionary<FolderFileType, string>
         {
-            {FolderFileType.CSS, "css_16.png"},
-            {FolderFileType.Flash, "flash_16.png"},
-            {FolderFileType.Image, "image_16.png"},
-            {FolderFileType.Javascript, "javascript_16.png"},
-            {FolderFileType.Media, "media_16.png"},
-            {FolderFileType.Office, "office_16.png"},
-            {FolderFileType.PDF, "pdf_16.png"},
-            {FolderFileType.Unknown, "unknown_16.png"}
+            { FolderFileType.CSS, "css_16.png" },
+            { FolderFileType.Flash, "flash_16.png" },
+            { FolderFileType.Image, "image_16.png" },
+            { FolderFileType.Javascript, "javascript_16.png" },
+            { FolderFileType.Media, "media_16.png" },
+            { FolderFileType.Office, "office_16.png" },
+            { FolderFileType.PDF, "pdf_16.png" },
+            { FolderFileType.Unknown, "unknown_16.png" }
         };
 
         private static readonly Dictionary<FolderFileType, string> FileTypeBigIconDictionary = new Dictionary<FolderFileType, string>
         {
-            {FolderFileType.CSS, "css_64.png"},
-            {FolderFileType.Flash, "flash_64.png"},
-            {FolderFileType.Image, "image_64.png"},
-            {FolderFileType.Javascript, "javascript_64.png"},
-            {FolderFileType.Media, "media_64.png"},
-            {FolderFileType.Office, "office_64.png"},
-            {FolderFileType.PDF, "pdf_64.png"},
-            {FolderFileType.Unknown, "unknown_64.png"}
+            { FolderFileType.CSS, "css_64.png" },
+            { FolderFileType.Flash, "flash_64.png" },
+            { FolderFileType.Image, "image_64.png" },
+            { FolderFileType.Javascript, "javascript_64.png" },
+            { FolderFileType.Media, "media_64.png" },
+            { FolderFileType.Office, "office_64.png" },
+            { FolderFileType.PDF, "pdf_64.png" },
+            { FolderFileType.Unknown, "unknown_64.png" }
         };
 
         public static FileListItem Create(FolderFile file, int fileShortNameLength)

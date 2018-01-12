@@ -30,13 +30,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public override bool AllowMultipleEntitySelection
         {
-            get
-            {
-                return IsMultiple;
-            }
-            set
-            {
-            }
+            get { return IsMultiple; }
+            set { }
         }
 
         private readonly string _actionCode;

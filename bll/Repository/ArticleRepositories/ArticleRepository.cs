@@ -175,15 +175,6 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static bool CheckArticlesIsArchive(int[] ids)
-        {
-            using (new QPConnectionScope())
-            {
-                var articles = GetList(ids);
-                return articles.Select(s => s.Archived == true).Any();
-            }
-        }
-
         internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
         {
             using (new QPConnectionScope())

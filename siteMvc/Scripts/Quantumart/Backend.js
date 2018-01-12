@@ -90,6 +90,8 @@ Quantumart.QP8.Backend.prototype = {
   _onHostExternalCallerContextsUnbindedHandler: null,
 
   _initialize() {
+    Quantumart.QP8.BackendBrowserHistoryManager.preventBrowserNavigateBack();
+
     this._directLinkExecutor = new Quantumart.QP8.DirectLinkExecutor(
       this._currentCustomerCode, this._directLinkOptions
     );

@@ -10,7 +10,8 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
     {
         protected readonly IActionPermissionChangeService ChangeService;
 
-        protected PermissionWithChangeControllerBase(IPermissionService service, IActionPermissionChangeService changeService) : base(service)
+        protected PermissionWithChangeControllerBase(IPermissionService service, IActionPermissionChangeService changeService)
+            : base(service)
         {
             ChangeService = changeService;
         }

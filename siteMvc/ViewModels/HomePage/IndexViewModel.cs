@@ -11,6 +11,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
     public class IndexViewModel
     {
         private readonly DirectLinkOptions _directLinkOptions;
+
         public IndexViewModel(DirectLinkOptions directLinkOptions, Db data, string dbHash)
         {
             Data = data;

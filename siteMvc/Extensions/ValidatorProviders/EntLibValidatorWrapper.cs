@@ -8,7 +8,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.ValidatorProviders
     {
         private readonly Validator _validator;
 
-        public EntLibValidatorWrapper(ModelMetadata metadata, ControllerContext context, Validator validator) : base(metadata, context)
+        public EntLibValidatorWrapper(ModelMetadata metadata, ControllerContext context, Validator validator)
+            : base(metadata, context)
         {
             _validator = validator;
         }

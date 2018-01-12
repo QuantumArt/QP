@@ -21,7 +21,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             set => EntityData = value;
         }
 
-        public static T Create<T>(EntityObject obj, string tabId, int parentId) where T : EntityViewModel, new()
+        public static T Create<T>(EntityObject obj, string tabId, int parentId)
+            where T : EntityViewModel, new()
         {
             var model = Create<T>(tabId, parentId);
             model.EntityData = obj;

@@ -66,10 +66,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
         /// </summary>
         public IEnumerable<ListItem> GroupListItems
         {
-            get
-            {
-                return Service.GetBindableUserGroups().Select(g => new ListItem { Value = g.Id.ToString(), Text = g.Name }).ToArray();
-            }
+            get { return Service.GetBindableUserGroups().Select(g => new ListItem { Value = g.Id.ToString(), Text = g.Name }).ToArray(); }
         }
 
         /// <summary>
