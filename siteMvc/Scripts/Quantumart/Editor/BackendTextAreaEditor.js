@@ -169,7 +169,7 @@ export class BackendHighlightedTextArea {
     this._presentationOrCodeBehind = tArea.data('is_presentation') === 'True';
     this._templateId = tArea.data('template_id');
     this._formatId = tArea.data('format_id');
-    this._netLanguageId = tArea.data('net_language');
+    this._netLanguageId = String(tArea.data('net_language'));
     this._libraryEntityId = tArea.data('site_id');
     if (tArea.hasClass('hta-JsonTextArea')) {
       if ($q.isNull(tArea.data('jsonEditor'))) {
