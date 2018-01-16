@@ -25,6 +25,12 @@ export declare function distinctWith<T>(
 
 /**
  * Creates a predicate function for Array `.filter()` to:
+ * Exclude all given values from an array.
+ */
+export declare function without<T>(values: T[]): (item: T) => boolean;
+
+/**
+ * Creates a predicate function for Array `.filter()` to:
  * Return elements from an array as long as a specified condition is true.
  */
 export declare function takeWhile<T>(

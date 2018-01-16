@@ -6,7 +6,6 @@
 import { BackendDocumentContext } from './Document/BackendDocumentContext';
 import { BackendLogOnWindow } from './BackendLogOnWindow';
 
-
 // eslint-disable-next-line no-shadow
 export class $q { }
 
@@ -216,7 +215,20 @@ $q.hideLoader = () => {
   }
 };
 
+/**
+ * @param {any[]} arr1
+ * @param {any[]} arr2
+ * @returns array
+ * @deprecated
+ */
 $q.difference = (arr1, arr2) => arr1.filter(el => arr2.indexOf(el) === -1);
+
+/**
+ * @param {any[]} arr1
+ * @param {any[]} arr2
+ * @returns array
+ * @deprecated
+ */
 $q.symmetricDifference = (arr1, arr2) => arr1
   .filter(el => arr2.indexOf(el) === -1)
   .concat(arr2.filter(el => arr1.indexOf(el) === -1));
@@ -321,6 +333,11 @@ $q._prepareNumber = function _prepareNumber(value, forCheck) {
   return number;
 };
 
+/**
+ * @param {any} value
+ * @param {number} [defaultValue]
+ * @returns {number}
+ */
 $q.toInt = function toInt(value, defaultValue) {
   let result = value;
   if (result === 'true' || result === 'false') {
@@ -822,21 +839,6 @@ $q.getHashKeysCount = function getHashKeysCount(hash) {
   }
 
   return keysCount;
-};
-
-Array.distinct = function distinct(array) {
-  let itemIndex, item;
-  const uniqueArray = [];
-  if ($q.isArray(array)) {
-    for (itemIndex = 0; itemIndex < array.length; itemIndex++) {
-      item = array[itemIndex];
-      if (!Array.contains(uniqueArray, item)) {
-        Array.add(uniqueArray, item);
-      }
-    }
-  }
-
-  return uniqueArray;
 };
 
 $q.clearArray = function clearArray(array) {

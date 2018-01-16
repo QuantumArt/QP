@@ -3,8 +3,8 @@ import { Backend } from './Backend';
 import { BackendContextMenu } from './BackendContextMenu';
 import { Observable } from './Common/Observable';
 import { $a, BackendActionParameters } from './BackendActionExecutor';
+import { distinct, without } from './Utils/Filter';
 import { $q } from './Utils';
-
 
 window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING = 'OnEntityGridDataBinding';
 window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND = 'OnEntityGridDataBound';
@@ -51,9 +51,12 @@ export class BackendEntityGrid extends Observable {
     this._titleColumnName = 'Name';
     this._parentKeyColumnName = 'ParentId';
     this._linkOpenNewTab = false;
+    /** @type {number[]} */
     this._startingEntitiesIDs = [];
+    /** @type {number[]} */
     this._selectedEntitiesIDs = [];
     this._allowFilterSelectedEntities = false;
+    /** @type {number[]} */
     this._removedIds = [];
     this._allowSaveRowsSelection = true;
     this._stopDeferredOperations = false;
@@ -622,9 +625,11 @@ export class BackendEntityGrid extends Observable {
       const $rowsToModify = $(this.getRowsByEntityIds(response.data));
       this._setRowsSelectedState($rowsToModify, rowState);
       if (rowState) {
-        this._selectedEntitiesIDs = Array.distinct(this._selectedEntitiesIDs.concat(response.data));
+        this._selectedEntitiesIDs = this._selectedEntitiesIDs
+          .concat(response.data)
+          .filter(distinct());
       } else {
-        this._selectedEntitiesIDs = $q.difference(this._selectedEntitiesIDs, response.data);
+        this._selectedEntitiesIDs = this._selectedEntitiesIDs.filter(without(response.data));
       }
 
       this._saveRowSelectionState();
@@ -917,7 +922,9 @@ export class BackendEntityGrid extends Observable {
       }
     }
 
-    this._selectedEntitiesIDs = $q.difference(Array.distinct(selectedRowEntityIds), unselectedRowEntityIds);
+    this._selectedEntitiesIDs = selectedRowEntityIds
+      .filter(without(unselectedRowEntityIds))
+      .filter(distinct());
   }
 
   _saveRowAllSelectionState() {

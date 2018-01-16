@@ -1,4 +1,5 @@
 import { BackendSearchBlockBase } from '../BackendSearchBlockBase';
+import { distinct } from '../../Utils/Filter';
 
 export class FieldSearchBase {
   // eslint-disable-next-line max-params
@@ -103,13 +104,12 @@ export class FieldSearchBase {
   }
 
   _getIds(/** @type {string} */ text) {
-    const ids = text
+    return text
       .replace(/\r?\n|\r|;/g, ',')
       .split(',')
       .map(str => parseInt(str, 10))
-      .filter(num => num);
-
-    return Array.distinct(ids);
+      .filter(num => num)
+      .filter(distinct());
   }
 }
 

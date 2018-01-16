@@ -347,7 +347,7 @@ export class BackendEntityDataListBase extends Observable {
   }
 
   getSelectedEntityIDs() {
-    return $.grep(this.getSelectedEntities().map(item => $q.toInt(item.Id)), i => i);
+    return this.getSelectedEntities().map(item => $q.toInt(item.Id)).filter(i => i);
   }
 
   refreshList(testEntityId) {

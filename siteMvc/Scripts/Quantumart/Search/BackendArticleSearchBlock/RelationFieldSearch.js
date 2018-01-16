@@ -1,6 +1,7 @@
 import { BackendArticleSearchBlock } from '../BackendArticleSearchBlock';
 import { FieldSearchBase, FieldSearchState } from './FieldSearchBase';
 import { $c } from '../../ControlHelpers';
+import { distinct } from '../../Utils/Filter';
 import { $q } from '../../Utils';
 
 export class RelationFieldSearch extends FieldSearchBase {
@@ -199,7 +200,9 @@ export class RelationFieldSearch extends FieldSearchBase {
           fieldId: that._fieldID,
           filter: that._getEntityDataList()._filter
         }, data => {
-          that._selectedEntitiesIDs = Array.distinct(selectedIds.concat(data));
+          that._selectedEntitiesIDs = selectedIds
+            .concat(data)
+            .filter(distinct());
           that._replaceWithSelectedEntities();
         });
       }

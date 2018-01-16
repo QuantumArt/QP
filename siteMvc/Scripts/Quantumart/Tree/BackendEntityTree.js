@@ -4,6 +4,7 @@ import { BackendContextMenu } from '../BackendContextMenu';
 import { BackendTreeBase } from './BackendTreeBase';
 import { $a, BackendActionParameters } from '../BackendActionExecutor';
 import { $o } from '../Info/BackendEntityObject';
+import { distinct } from '../Utils/Filter';
 import { $q } from '../Utils';
 
 
@@ -324,7 +325,7 @@ export class BackendEntityTree extends BackendTreeBase {
     }
 
     if (parentNodeCodes.length) {
-      parentNodeCodes = Array.distinct(parentNodeCodes);
+      parentNodeCodes = parentNodeCodes.filter(distinct());
     } else {
       parentNodeCodes = [this.ROOT_NODE_CODE];
     }

@@ -35,11 +35,6 @@ interface Window {
   Quantumart: typeof Quantumart;
 }
 
-// Utils
-interface ArrayConstructor {
-  distinct<T>(array: T[]): T[];
-}
-
 interface String {
   left(strLength: number): string;
   right(strLength: number): string;
