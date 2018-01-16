@@ -103,6 +103,7 @@ module.exports = {
     // enforce valid JSDoc comments
     'valid-jsdoc': ['warn', {
       requireReturn: false,
+      requireReturnType: false,
       requireParamDescription: false,
       requireReturnDescription: false,
     }],
