@@ -41,37 +41,40 @@ export class BackendBrowserHistoryManager extends Observable {
   }
 
   _onPopState({ state }) {
-    console.log('PopStateEvent', state);
+    console.log('POP', state);
 
     if (state === HISTORY_PREVENT_NAVIGATION_STATE) {
       window.history.forward();
     } else if (this._shouldPreventNavigation) {
       this._restorePreviousState(state);
     } else if (state.type === HISTORY_DEFAULT_STATE) {
-      console.log('POP ', state);
       this._stateId = state.stateId;
     } else if (state.type === HISTORY_TAB_EVENT_STATE) {
-      console.log('POP ', state);
       console.log('DENY NAVIGATION');
+      console.log('START EXECUTION', state);
       this._shouldPreventNavigation = true;
 
       const eventArgs = this._deserializeTabEvent(state);
       eventArgs.fromHistory = true;
       eventArgs.onExecutionFinished.attach(isNavigationPerformed => {
-        console.log('FINISH EXECUTION', state);
-        if (isNavigationPerformed) {
-          this._stateId = state.stateId;
-        } else {
-          this._restorePreviousState(state);
-        }
-        setTimeout(() => {
-          console.log('ALLOW NAVIGATION');
-          this._shouldPreventNavigation = false;
-        }, 0);
+        this._onExecutionFinished(state, isNavigationPerformed);
       });
 
       this.notify(window.EVENT_TYPE_HISTORY_POP_STATE, eventArgs);
     }
+  }
+
+  _onExecutionFinished(state, isNavigationPerformed) {
+    console.log('FINISH EXECUTION', state);
+    if (isNavigationPerformed) {
+      this._stateId = state.stateId;
+    } else {
+      this._restorePreviousState(state);
+    }
+    setTimeout(() => {
+      console.log('ALLOW NAVIGATION');
+      this._shouldPreventNavigation = false;
+    }, 0);
   }
 
   _restorePreviousState(state) {
@@ -82,7 +85,7 @@ export class BackendBrowserHistoryManager extends Observable {
       console.log('FORWARD');
       window.history.forward();
     } else {
-      console.log('SAME');
+      console.log('SAME STATE');
     }
   }
 
