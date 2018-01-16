@@ -10,7 +10,6 @@ const HISTORY_TAB_EVENT_STATE = 'HISTORY_TAB_EVENT_STATE';
 
 // TODO: HISTORY_MODAL_STATE (prevent navigation)
 // TODO: check for deleted entities
-// TODO: handle alert from modified document
 
 export class BackendBrowserHistoryManager extends Observable {
   /** @type {BackendBrowserHistoryManager} */
@@ -47,30 +46,43 @@ export class BackendBrowserHistoryManager extends Observable {
     if (state === HISTORY_PREVENT_NAVIGATION_STATE) {
       window.history.forward();
     } else if (this._shouldPreventNavigation) {
-      if (state.stateId > this._stateId) {
-        console.log('BACK');
-        window.history.back();
-      } else if (state.stateId < this._stateId) {
-        console.log('FORWARD');
-        window.history.forward();
-      } else {
-        console.log('SAME');
-      }
+      this._restorePreviousState(state);
     } else if (state.type === HISTORY_DEFAULT_STATE) {
       console.log('POP ', state);
       this._stateId = state.stateId;
     } else if (state.type === HISTORY_TAB_EVENT_STATE) {
       console.log('POP ', state);
-      this._stateId = state.stateId;
+      console.log('DENY NAVIGATION');
       this._shouldPreventNavigation = true;
 
       const eventArgs = this._deserializeTabEvent(state);
       eventArgs.fromHistory = true;
-      eventArgs.onExecutionFinished.attach(() => {
-        this._shouldPreventNavigation = false;
+      eventArgs.onExecutionFinished.attach(isNavigationPerformed => {
+        console.log('FINISH EXECUTION', state);
+        if (isNavigationPerformed) {
+          this._stateId = state.stateId;
+        } else {
+          this._restorePreviousState(state);
+        }
+        setTimeout(() => {
+          console.log('ALLOW NAVIGATION');
+          this._shouldPreventNavigation = false;
+        }, 0);
       });
 
       this.notify(window.EVENT_TYPE_HISTORY_POP_STATE, eventArgs);
+    }
+  }
+
+  _restorePreviousState(state) {
+    if (state.stateId > this._stateId) {
+      console.log('BACK');
+      window.history.back();
+    } else if (state.stateId < this._stateId) {
+      console.log('FORWARD');
+      window.history.forward();
+    } else {
+      console.log('SAME');
     }
   }
 

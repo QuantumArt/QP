@@ -7,7 +7,7 @@ export class BackendTabEventArgs extends BackendEventArgs {
   _tabId = '';
   isExpandRequested = false;
   fromHistory = false;
-  onExecutionFinished = event();
+  onExecutionFinished = event(Boolean);
 
   // eslint-disable-next-line camelcase
   get_tabId() {
@@ -19,8 +19,8 @@ export class BackendTabEventArgs extends BackendEventArgs {
     this._tabId = value;
   }
 
-  finishExecution() {
-    this.onExecutionFinished();
+  finishExecution(isNavigationPerformed = true) {
+    this.onExecutionFinished(isNavigationPerformed);
   }
 
   hasSameDocument(eventArgs) {

@@ -1089,6 +1089,8 @@ export class BackendDocumentHost extends Observable {
           eventArgs.finishExecution();
         }
       });
+    } else if (eventArgs.fromHistory) {
+      eventArgs.finishExecution(false);
     }
   }
 
