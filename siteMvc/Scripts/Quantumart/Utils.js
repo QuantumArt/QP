@@ -806,6 +806,12 @@ $q.hashToString = function hashToString(obj) {
   return result.substr(0, result.length - 1);
 };
 
+$q.uniqueId = function uniqueId() {
+  const date = Date.now().toString(36).slice(-8);
+  const random = Math.random().toString(36).slice(2, 12);
+  return date + random;
+};
+
 $q.getHashKeysCount = function getHashKeysCount(hash) {
   let keysCount = 0;
   if (hash) {
