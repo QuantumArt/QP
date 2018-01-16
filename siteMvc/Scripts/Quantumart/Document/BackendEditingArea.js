@@ -26,6 +26,7 @@ export class BackendEditingArea extends Observable {
     });
 
     this._editingAreaElementId = editingAreaElementId;
+    /** @type {{ [x: string]: BackendEditingDocument }} */
     this._documents = {};
     this._customVars = {};
     this._customScripts = {};
@@ -101,7 +102,6 @@ export class BackendEditingArea extends Observable {
   _searchBlockContainerElement = null;
   _contextBlockContainerElementId = '';
   _contextBlockContainerElement = null;
-  _documents = null;
   _tabStrip = null;
   _hostStateStorage = null;
   _customVars = null;
@@ -360,47 +360,89 @@ export class BackendEditingArea extends Observable {
     return this.getDocument(docId);
   }
 
+  // eslint-disable-next-line max-statements
   addDocument(eventArgs) {
-    if (!eventArgs.get_isWindow()) {
-      let tabId = this.getExistingTabId(eventArgs);
-      if (tabId === 0) {
-        this.onDocumentLoading();
-        if (this._tabStrip.getAllTabsCount() === 0) {
-          this.openArea();
-        }
+    if (eventArgs.get_isWindow()) {
+      return;
+    }
 
-        tabId = this._tabStrip.addNewTab(eventArgs);
-        const oldDoc = this.getSelectedDocument();
-        if (oldDoc) {
-          oldDoc.hidePanels();
-          oldDoc.hideDocumentWrapper();
-        }
+    if (eventArgs.fromHistory) {
+      const allTabs = this._tabStrip.getAllTabs().get();
 
-        const doc = new BackendEditingDocument(
-          tabId,
-          this,
-          eventArgs,
-          { hostStateStorage: this._hostStateStorage }
-        );
+      const sameDocumentTab = allTabs.find(tab => {
+        const tabEventArgs = this._tabStrip.getEventArgsFromTab(tab);
+        return eventArgs.hasSameDocument(tabEventArgs);
+      });
 
-        const docId = doc.get_id();
-        this._documents[docId] = doc;
-        this._selectedDocumentId = docId;
-
-        const that = this;
-        doc.initialize(() => {
-          that.onDocumentLoaded(that._selectedDocumentId);
-        });
-
-        if (eventArgs.get_context() && eventArgs.get_context().ctrlKey) {
-          this.selectDocument(this._tabStrip._previousSelectedTabId);
-        }
-      } else if ($.isEmptyObject(eventArgs.get_context()) || !eventArgs.get_context().ctrlKey) {
-        const selectedDocument = this.selectDocument(tabId);
+      if (sameDocumentTab) {
+        const sameDocumentTabId = this._tabStrip.getTabId(sameDocumentTab);
+        const selectedDocument = this.selectDocument(sameDocumentTabId);
         if (selectedDocument) {
           selectedDocument.onSelectedThroughExecution(eventArgs);
+          eventArgs.finishExecution();
         }
+        return;
       }
+
+      const eventTabId = eventArgs.get_tabId();
+      const existingTab = this._tabStrip.getTab(eventTabId);
+      if (existingTab) {
+        const selectedDocument = this.selectDocument(eventTabId);
+        if (selectedDocument) {
+          selectedDocument.onSelectedThroughExecution(eventArgs);
+
+          const tabEventArgs = this._tabStrip.getEventArgsFromTab(existingTab);
+          if (eventArgs.structurallyEquals(tabEventArgs)) {
+            eventArgs.finishExecution();
+          } else {
+            selectedDocument.changeContent(eventArgs);
+          }
+        }
+        return;
+      }
+    }
+
+    const tabId = this.getExistingTabId(eventArgs);
+    if (tabId === 0) {
+      this._addNewDocument(eventArgs);
+    } else if ($.isEmptyObject(eventArgs.get_context()) || !eventArgs.get_context().ctrlKey) {
+      const selectedDocument = this.selectDocument(tabId);
+      if (selectedDocument) {
+        selectedDocument.onSelectedThroughExecution(eventArgs);
+      }
+    }
+  }
+
+  _addNewDocument(eventArgs) {
+    this.onDocumentLoading();
+    if (this._tabStrip.getAllTabsCount() === 0) {
+      this.openArea();
+    }
+
+    const tabId = this._tabStrip.addNewTab(eventArgs);
+    const oldDoc = this.getSelectedDocument();
+    if (oldDoc) {
+      oldDoc.hidePanels();
+      oldDoc.hideDocumentWrapper();
+    }
+
+    const doc = new BackendEditingDocument(tabId, this, eventArgs, {
+      hostStateStorage: this._hostStateStorage
+    });
+
+    const docId = doc.get_id();
+    this._documents[docId] = doc;
+    this._selectedDocumentId = docId;
+
+    doc.initialize(() => {
+      this.onDocumentLoaded(this._selectedDocumentId);
+      if (eventArgs.fromHistory) {
+        eventArgs.finishExecution();
+      }
+    });
+
+    if (eventArgs.get_context() && eventArgs.get_context().ctrlKey) {
+      this.selectDocument(this._tabStrip._previousSelectedTabId);
     }
   }
 
@@ -554,7 +596,7 @@ export class BackendEditingArea extends Observable {
     const docId = this.getDocumentIdByTabId(eventArgs.get_tabId());
     const doc = this.getDocument(docId);
     if (doc) {
-      doc.saveAndCloseRequest(eventArgs);
+      doc.saveAndCloseRequest();
     }
   }
 

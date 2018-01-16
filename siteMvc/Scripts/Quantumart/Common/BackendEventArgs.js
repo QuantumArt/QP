@@ -1,13 +1,7 @@
 /* eslint camelcase: 0 */
 import { $q } from '../Utils';
 
-
 export class BackendEventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
-  constructor() {
-    // empty constructor
-  }
-
   _entityTypeCode = '';
   _entityTypeName = '';
   _parentEntityId = 0;
@@ -320,53 +314,51 @@ export class BackendEventArgs {
       this.set_actionCode(actionCode);
     }
   }
+
+  static getEventArgsFromOtherEventArgs(sourceArgs) {
+    if (!$q.isObject(sourceArgs)) {
+      throw new Error($l.Common.sourceEventArgsNotSpecified);
+    }
+
+    const targetArgs = new BackendEventArgs();
+    BackendEventArgs.fillEventArgsFromOtherEventArgs(targetArgs, sourceArgs);
+
+    return targetArgs;
+  }
+
+  static fillEventArgsFromOtherEventArgs(targetArgs, sourceArgs) {
+    if (!$q.isObject(targetArgs)) {
+      throw new Error($l.Common.targetEventArgsNotSpecified);
+    }
+
+    if (!$q.isObject(sourceArgs)) {
+      throw new Error($l.Common.sourceEventArgsNotSpecified);
+    }
+
+    if (sourceArgs instanceof BackendEventArgs) {
+      targetArgs.set_entityTypeCode(sourceArgs.get_entityTypeCode());
+      targetArgs.set_entityTypeName(sourceArgs.get_entityTypeName());
+      targetArgs.set_parentEntityId(sourceArgs.get_parentEntityId());
+      targetArgs.set_actionCode(sourceArgs.get_actionCode());
+      targetArgs.set_actionName(sourceArgs.get_actionName());
+      targetArgs.set_actionTypeCode(sourceArgs.get_actionTypeCode());
+      targetArgs.set_isInterface(sourceArgs.get_isInterface());
+      targetArgs.set_isWindow(sourceArgs.get_isWindow());
+      targetArgs.set_windowWidth(sourceArgs.get_windowWidth());
+      targetArgs.set_windowHeight(sourceArgs.get_windowHeight());
+      targetArgs.set_confirmPhrase(sourceArgs.get_confirmPhrase());
+      targetArgs.set_previousAction(sourceArgs.get_previousAction());
+      targetArgs.set_nextSuccessfulActionCode(sourceArgs.get_nextSuccessfulActionCode());
+      targetArgs.set_nextFailedActionCode(sourceArgs.get_nextFailedActionCode());
+      targetArgs.set_context(sourceArgs.get_context());
+      targetArgs.set_entityId(sourceArgs.get_entityId());
+      targetArgs.set_entityName(sourceArgs.get_entityName());
+      targetArgs.set_entities(sourceArgs.get_entities());
+      targetArgs.set_isMultipleEntities(sourceArgs.get_isMultipleEntities());
+    } else {
+      throw new Error($l.Common.sourceEventArgsIvalidType);
+    }
+  }
 }
-
-
-BackendEventArgs.getEventArgsFromOtherEventArgs = function (sourceArgs) {
-  if (!$q.isObject(sourceArgs)) {
-    throw new Error($l.Common.sourceEventArgsNotSpecified);
-  }
-
-  const targetArgs = new BackendEventArgs();
-  BackendEventArgs.fillEventArgsFromOtherEventArgs(targetArgs, sourceArgs);
-
-  return targetArgs;
-};
-
-BackendEventArgs.fillEventArgsFromOtherEventArgs = function (targetArgs, sourceArgs) {
-  if (!$q.isObject(targetArgs)) {
-    throw new Error($l.Common.targetEventArgsNotSpecified);
-  }
-
-  if (!$q.isObject(sourceArgs)) {
-    throw new Error($l.Common.sourceEventArgsNotSpecified);
-  }
-
-  if (sourceArgs instanceof BackendEventArgs) {
-    targetArgs.set_entityTypeCode(sourceArgs.get_entityTypeCode());
-    targetArgs.set_entityTypeName(sourceArgs.get_entityTypeName());
-    targetArgs.set_parentEntityId(sourceArgs.get_parentEntityId());
-    targetArgs.set_actionCode(sourceArgs.get_actionCode());
-    targetArgs.set_actionName(sourceArgs.get_actionName());
-    targetArgs.set_actionTypeCode(sourceArgs.get_actionTypeCode());
-    targetArgs.set_isInterface(sourceArgs.get_isInterface());
-    targetArgs.set_isWindow(sourceArgs.get_isWindow());
-    targetArgs.set_windowWidth(sourceArgs.get_windowWidth());
-    targetArgs.set_windowHeight(sourceArgs.get_windowHeight());
-    targetArgs.set_confirmPhrase(sourceArgs.get_confirmPhrase());
-    targetArgs.set_previousAction(sourceArgs.get_previousAction());
-    targetArgs.set_nextSuccessfulActionCode(sourceArgs.get_nextSuccessfulActionCode());
-    targetArgs.set_nextFailedActionCode(sourceArgs.get_nextFailedActionCode());
-    targetArgs.set_context(sourceArgs.get_context());
-    targetArgs.set_entityId(sourceArgs.get_entityId());
-    targetArgs.set_entityName(sourceArgs.get_entityName());
-    targetArgs.set_entities(sourceArgs.get_entities());
-    targetArgs.set_isMultipleEntities(sourceArgs.get_isMultipleEntities());
-  } else {
-    throw new Error($l.Common.sourceEventArgsIvalidType);
-  }
-};
-
 
 Quantumart.QP8.BackendEventArgs = BackendEventArgs;

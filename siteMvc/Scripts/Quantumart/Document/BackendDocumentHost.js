@@ -1073,18 +1073,21 @@ export class BackendDocumentHost extends Observable {
       this.updateDocument(eventArgs);
       this._externalCallerContexts = externalCallerContexts;
 
-      const that = this;
       this._loadDefaultSearchBlockState();
       this.loadHtmlContentToDocumentWrapper(success => {
-        that.unmarkMainComponentAsBusy();
+        this.unmarkMainComponentAsBusy();
         if (success) {
-          that.unbindExternalCallerContexts('changed');
+          this.unbindExternalCallerContexts('changed');
         } else {
-          that.updateDocument(appliedEventArgs);
+          this.updateDocument(appliedEventArgs);
         }
 
-        $(that._documentWrapperElement).scrollTo(0);
-        that.onDocumentChanged();
+        $(this._documentWrapperElement).scrollTo(0);
+        this.onDocumentChanged();
+
+        if (eventArgs.fromHistory) {
+          eventArgs.finishExecution();
+        }
       });
     }
   }
