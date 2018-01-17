@@ -4,12 +4,12 @@ import { Observable } from '../Common/Observable';
 
 window.EVENT_TYPE_HISTORY_POP_STATE = 'EVENT_TYPE_HISTORY_POP_STATE';
 
-const HISTORY_PREVENT_NAVIGATION_STATE = 'HISTORY_PREVENT_NAVIGATION_STATE';
+const HISTORY_INITIAL_STATE = 'HISTORY_INITIAL_STATE';
 const HISTORY_DEFAULT_STATE = 'HISTORY_DEFAULT_STATE';
 const HISTORY_TAB_EVENT_STATE = 'HISTORY_TAB_EVENT_STATE';
 
-// TODO: HISTORY_MODAL_STATE (prevent navigation)
-// TODO: check for deleted entities
+// TODO: what if user opens modal window or tab during history event execution ?
+// TODO: what if error was thrown (or warning is alerted) ?
 
 export class BackendBrowserHistoryManager extends Observable {
   /** @type {BackendBrowserHistoryManager} */
@@ -23,32 +23,47 @@ export class BackendBrowserHistoryManager extends Observable {
   }
 
   _shouldPreventNavigation = false;
-  _stateId = 0;
+  _modalWindowIsShown = false;
+  _currentStateId = 0;
+
+  constructor() {
+    super();
+
+    this._handlePopState = this._handlePopState.bind(this);
+    this._handleExecutionFinished = this._handleExecutionFinished.bind(this);
+    this.handleModalWindowOpen = this.handleModalWindowOpen.bind(this);
+    this.handleModalWindowClose = this.handleModalWindowClose.bind(this);
+  }
 
   initialize() {
     const { state } = window.history;
 
     if (state === null) {
-      window.history.replaceState(HISTORY_PREVENT_NAVIGATION_STATE, document.title);
+      window.history.replaceState({
+        type: HISTORY_INITIAL_STATE,
+        stateId: this._currentStateId
+      }, document.title);
+
       this.pushDefaultState();
     } else if (state.type === HISTORY_DEFAULT_STATE) {
-      this._stateId = state.stateId;
+      this._currentStateId = state.stateId;
     } else if (state.type === HISTORY_TAB_EVENT_STATE) {
-      this._stateId = state.stateId;
+      this._currentStateId = state.stateId;
       this.pushDefaultState();
     }
-    window.addEventListener('popstate', this._onPopState.bind(this));
+
+    window.addEventListener('popstate', this._handlePopState);
   }
 
-  _onPopState({ state }) {
+  _handlePopState({ state }) {
     console.log('POP', state);
 
-    if (state === HISTORY_PREVENT_NAVIGATION_STATE) {
+    if (state.type === HISTORY_INITIAL_STATE) {
       window.history.forward();
-    } else if (this._shouldPreventNavigation) {
+    } else if (this._shouldPreventNavigation || this._modalWindowIsShown) {
       this._restorePreviousState(state);
     } else if (state.type === HISTORY_DEFAULT_STATE) {
-      this._stateId = state.stateId;
+      this._currentStateId = state.stateId;
     } else if (state.type === HISTORY_TAB_EVENT_STATE) {
       console.log('DENY NAVIGATION');
       console.log('START EXECUTION', state);
@@ -56,20 +71,26 @@ export class BackendBrowserHistoryManager extends Observable {
 
       const eventArgs = this._deserializeTabEvent(state);
       eventArgs.fromHistory = true;
-      eventArgs.onExecutionFinished.attach(isNavigationPerformed => {
-        this._onExecutionFinished(state, isNavigationPerformed);
+      eventArgs.onExecutionFinished.attach((_sender, isNavigationPerformed) => {
+        this._handleExecutionFinished(state, isNavigationPerformed);
       });
 
       this.notify(window.EVENT_TYPE_HISTORY_POP_STATE, eventArgs);
     }
   }
 
-  _onExecutionFinished(state, isNavigationPerformed) {
+  /**
+   * @param {object} state
+   * @param {boolean} isNavigationPerformed
+   */
+  _handleExecutionFinished(state, isNavigationPerformed) {
     console.log('FINISH EXECUTION', state);
-    if (isNavigationPerformed) {
-      this._stateId = state.stateId;
-    } else {
-      this._restorePreviousState(state);
+    if (window.history.state.stateId === state.stateId) {
+      if (isNavigationPerformed) {
+        this._currentStateId = state.stateId;
+      } else {
+        this._restorePreviousState(state);
+      }
     }
     setTimeout(() => {
       console.log('ALLOW NAVIGATION');
@@ -77,16 +98,27 @@ export class BackendBrowserHistoryManager extends Observable {
     }, 0);
   }
 
+  /**
+   * @param {object} state
+   */
   _restorePreviousState(state) {
-    if (state.stateId > this._stateId) {
+    if (state.stateId > this._currentStateId) {
       console.log('BACK');
       window.history.back();
-    } else if (state.stateId < this._stateId) {
+    } else if (state.stateId < this._currentStateId) {
       console.log('FORWARD');
       window.history.forward();
     } else {
       console.log('SAME STATE');
     }
+  }
+
+  handleModalWindowOpen() {
+    this._modalWindowIsShown = true;
+  }
+
+  handleModalWindowClose() {
+    this._modalWindowIsShown = false;
   }
 
   /**
@@ -105,24 +137,23 @@ export class BackendBrowserHistoryManager extends Observable {
       }
     }
 
-    const eventState = this._serializeTabEvent(eventArgs);
+    this._currentStateId++;
 
-    this._stateId++;
-    eventState.stateId = this._stateId;
+    const eventState = this._serializeTabEvent(eventArgs);
+    eventState.stateId = this._currentStateId;
 
     window.history.pushState(eventState, document.title);
     console.log('PUSH', eventState);
   }
 
   pushDefaultState() {
-    this._stateId++;
-    const defaultState = {
-      type: HISTORY_DEFAULT_STATE,
-      stateId: this._stateId
-    };
+    this._currentStateId++;
 
-    window.history.pushState(defaultState, document.title);
-    console.log('PUSH', defaultState);
+    window.history.pushState({
+      type: HISTORY_DEFAULT_STATE,
+      stateId: this._currentStateId
+    }, document.title);
+    console.log('PUSH', window.history.state);
   }
 
   /**

@@ -7,7 +7,7 @@ export class BackendTabEventArgs extends BackendEventArgs {
   _tabId = '';
   isExpandRequested = false;
   fromHistory = false;
-  onExecutionFinished = event(Boolean);
+  onExecutionFinished = event(this, Boolean);
 
   // eslint-disable-next-line camelcase
   get_tabId() {

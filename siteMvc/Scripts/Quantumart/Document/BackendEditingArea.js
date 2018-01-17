@@ -378,7 +378,6 @@ export class BackendEditingArea extends Observable {
         const sameDocumentTabId = this._tabStrip.getTabId(sameDocumentTab);
         const selectedDocument = this.selectDocument(sameDocumentTabId);
         if (selectedDocument) {
-          selectedDocument.onSelectedThroughExecution(eventArgs);
           eventArgs.finishExecution();
         }
         return;
@@ -389,12 +388,11 @@ export class BackendEditingArea extends Observable {
       if (existingTab) {
         const selectedDocument = this.selectDocument(eventTabId);
         if (selectedDocument) {
-          selectedDocument.onSelectedThroughExecution(eventArgs);
-
           const tabEventArgs = this._tabStrip.getEventArgsFromTab(existingTab);
           if (eventArgs.structurallyEquals(tabEventArgs)) {
             eventArgs.finishExecution();
           } else {
+            selectedDocument.onSelectedThroughExecution(eventArgs);
             selectedDocument.changeContent(eventArgs);
           }
         }
