@@ -693,7 +693,7 @@ export class BackendTabStrip extends Observable {
       this._removeTab($tab);
 
       if ($(this._tabListElement).children().length === 0) {
-        BackendBrowserHistoryManager.getInstance().pushDefaultState();
+        this._backendBrowserHistoryManager.pushDefaultState();
       }
     }
 

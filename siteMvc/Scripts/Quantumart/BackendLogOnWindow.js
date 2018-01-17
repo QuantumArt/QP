@@ -1,12 +1,10 @@
+import { BackendBrowserHistoryManager } from './Managers/BackendBrowserHistoryManager';
 import { Observable } from './Common/Observable';
 import { $c } from './ControlHelpers';
 import { $q } from './Utils';
 
 export class BackendLogOnWindow extends Observable {
-  // eslint-disable-next-line no-useless-constructor, FIXME
-  constructor() {
-    super();
-  }
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
 
   _windowComponent = null;
   _isAuthenticated = null;
@@ -44,7 +42,9 @@ export class BackendLogOnWindow extends Observable {
       modal: true,
       resizable: false,
       draggable: false,
-      visible: true
+      visible: true,
+      onOpen: this._backendBrowserHistoryManager.handleModalWindowOpen,
+      onClose: this._backendBrowserHistoryManager.handleModalWindowClose
     }).data('tWindow').center();
 
     this._onLogonHandler = function (evt) {
