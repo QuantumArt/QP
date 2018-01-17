@@ -42,6 +42,8 @@ export class BackendSettingsPopupWindow extends BackendSelectPopupWindow {
       case 'multiple_export_article':
       case 'export_virtual_articles':
       case 'multiple_export_virtual_article':
+      case 'export_archive_article':
+      case 'multiple_export_archive_article':
         return MultistepActionExportSettings;
       case 'copy_site':
         return MultistepActionCopySiteSettings;
