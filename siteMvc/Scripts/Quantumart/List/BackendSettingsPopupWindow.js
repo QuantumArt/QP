@@ -39,6 +39,8 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
       case 'multiple_export_article':
       case 'export_virtual_articles':
       case 'multiple_export_virtual_article':
+      case 'export_archive_article':
+      case 'multiple_export_archive_article':
         this._settingsClass = Quantumart.QP8.MultistepActionExportSettings;
         break;
       case 'copy_site':

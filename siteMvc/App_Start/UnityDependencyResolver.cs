@@ -74,6 +74,7 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<ImportArticlesController>(new InjectionFactory(c => new ImportArticlesController(new ImportArticlesService())))
                 .RegisterType<ExportArticlesController>(new InjectionFactory(c => new ExportArticlesController(new ExportArticlesService())))
                 .RegisterType<ExportSelectedArticlesController>(new InjectionFactory(c => new ExportSelectedArticlesController(new ExportArticlesService())))
+                .RegisterType<ExportSelectedArchiveArticlesController>(new InjectionFactory(c => new ExportSelectedArchiveArticlesController(new ExportArticlesService())))
                 .RegisterType<MultistepController>(new InjectionFactory(c => new MultistepController(c.Resolve<Func<string, IMultistepActionService>>(), c.Resolve<Func<string, string>>())))
                 .RegisterType<CopySiteController>(new InjectionFactory(c => new CopySiteController(new CopySiteService())))
                 .RegisterType<RemoveSiteController>(new InjectionFactory(c => new RemoveSiteController(new RemoveSiteService())))

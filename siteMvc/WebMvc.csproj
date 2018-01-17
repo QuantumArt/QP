@@ -208,7 +208,9 @@
     <Compile Include="Controllers\CssController.cs" />
     <Compile Include="Controllers\DbController.cs" />
     <Compile Include="Controllers\EntityTypePermissionController.cs" />
+    <Compile Include="Controllers\ExportArchiveArticlesController.cs" />
     <Compile Include="Controllers\ExportArticlesController.cs" />
+    <Compile Include="Controllers\ExportSelectedArchiveArticlesController.cs" />
     <Compile Include="Controllers\ExportSelectedArticlesController.cs" />
     <Compile Include="Controllers\FormatController.cs" />
     <Compile Include="Controllers\ImportArticlesController.cs" />
