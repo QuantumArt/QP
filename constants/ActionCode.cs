@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.Constants
 {
@@ -69,6 +69,7 @@ namespace Quantumart.QP8.Constants
         public const string UnlockArticles = "unlock_articles";
         public const string ArticlesForApproval = "list_articles_for_approval";
         public const string ExportArticles = "export_articles";
+        public const string ExportArchiveArticles = "export_archive_article";
         public const string ImportArticles = "import_articles";
 
         public const string VirtualArticles = "list_virtual_article";

@@ -19,6 +19,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
 
         MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal);
 
+        MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive);
+
+        MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive);
+
         MultistepActionStepResult Step(int stage, int step);
 
         void TearDown();
@@ -26,6 +30,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
         IMultistepActionSettings MultistepActionSettings(int parentId, int id);
 
         IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids);
+
+        IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids, bool isArchive);
 
         void SetupWithParams(int parentId, int id, IMultistepActionParams settingsParams);
 
@@ -56,8 +62,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
             HttpContext.Current.Session[ContextSessionKey] = context;
             return CreateActionSettings(parentId, id);
         }
-
         public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => throw new NotImplementedException();
+
+        public virtual MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive) => throw new NotImplementedException();
+
+        public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive) => throw new NotImplementedException();
 
         public virtual void SetupWithParams(int parentId, int[] ids, IMultistepActionParams settingsParams)
         {
@@ -98,5 +107,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
         public virtual IMultistepActionSettings MultistepActionSettings(int parentId, int id) => null;
 
         public virtual IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids) => null;
+
+        public virtual IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids, bool isArchive) => null;
     }
 }

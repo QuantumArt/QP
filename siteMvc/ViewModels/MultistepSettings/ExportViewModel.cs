@@ -13,12 +13,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             AllFields = true;
         }
 
-        public override string ActionCode => Constants.ActionCode.ExportArticles;
+        public bool IsArchive { get; set; }
+
+        public override string ActionCode => IsArchive ? Constants.ActionCode.ExportArchiveArticles : Constants.ActionCode.ExportArticles;
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Content;
 
         public int ContentId { get; set; }
-
+        
         [LocalizedDisplayName("OrderByField", NameResourceType = typeof(MultistepActionStrings))]
         public string OrderByField { get; set; }
 
