@@ -17,9 +17,10 @@ export class BackendBrowserHistoryManager {
     return BackendBrowserHistoryManager._instance;
   }
 
-  _hasPendingTabChangedEvent = false;
+  _currentStateIndex = 0;
   _modalWindowIsShown = false;
-  _currentStateId = 0;
+  _hasPendingTabChangedEvent = false;
+  _pendingStateQueue = [];
 
   /** Переключение вкладки или навигация внутри вкладки */
   onPopStateTabChanged = event(this, BackendTabEventArgs);
@@ -29,7 +30,6 @@ export class BackendBrowserHistoryManager {
 
   constructor() {
     this._handlePopState = this._handlePopState.bind(this);
-    this._handleExecutionFinished = this._handleExecutionFinished.bind(this);
     this.handleModalWindowOpen = this.handleModalWindowOpen.bind(this);
     this.handleModalWindowClose = this.handleModalWindowClose.bind(this);
   }
@@ -40,14 +40,14 @@ export class BackendBrowserHistoryManager {
     if (state === null) {
       window.history.replaceState({
         type: HISTORY_INITIAL_STATE,
-        stateId: this._currentStateId
+        stateIndex: this._currentStateIndex
       }, document.title);
 
       this.pushStateAllTabsClosed();
     } else if (state.type === HISTORY_ALL_TABS_CLOSED_STATE) {
-      this._currentStateId = state.stateId;
+      this._currentStateIndex = state.stateIndex;
     } else if (state.type === HISTORY_TAB_CHANGED_STATE) {
-      this._currentStateId = state.stateId;
+      this._currentStateIndex = state.stateIndex;
       this.pushStateAllTabsClosed();
     }
 
@@ -57,61 +57,44 @@ export class BackendBrowserHistoryManager {
   _handlePopState({ state }) {
     console.log('POP', state);
 
-    if (state.type === HISTORY_INITIAL_STATE) {
-      window.history.forward();
-    } else if (this._hasPendingTabChangedEvent || this._modalWindowIsShown) {
-      this._restorePreviousState(state);
+    if (this._modalWindowIsShown
+      || this._hasPendingTabChangedEvent
+      || state.type === HISTORY_INITIAL_STATE
+    ) {
+      this._rollbackBrowserState();
     } else if (state.type === HISTORY_ALL_TABS_CLOSED_STATE) {
-      this._currentStateId = state.stateId;
+      this._currentStateIndex = state.stateIndex;
       this.onPopStateAllTabsClosed();
     } else if (state.type === HISTORY_TAB_CHANGED_STATE) {
-      console.log('DENY NAVIGATION');
       console.log('START EXECUTION', state);
+      const previousStateId = this._currentStateIndex;
+      this._currentStateIndex = state.stateIndex;
       this._hasPendingTabChangedEvent = true;
 
       const eventArgs = this._deserializeTabEvent(state);
       eventArgs.fromHistory = true;
+
       eventArgs.onExecutionFinished.attach((_sender, isNavigationPerformed) => {
-        this._handleExecutionFinished(state, isNavigationPerformed);
+        if (!isNavigationPerformed) {
+          this._currentStateIndex = previousStateId;
+          this._rollbackBrowserState();
+        }
+        this._hasPendingTabChangedEvent = false;
+        this._applyPendingStateQueue();
+        console.log('FINISH EXECUTION', state);
       });
 
       this.onPopStateTabChanged(eventArgs);
     }
   }
 
-  /**
-   * @param {object} state
-   * @param {boolean} isNavigationPerformed
-   */
-  _handleExecutionFinished(state, isNavigationPerformed) {
-    console.log('FINISH EXECUTION', state);
+  _rollbackBrowserState() {
+    const { state } = window.history;
 
-    // если за время обработки события навигации во вкладке
-    // пользователь не открыл другую вкладку вручную
-    if (window.history.state.stateId === state.stateId) {
-      if (isNavigationPerformed) {
-        this._currentStateId = state.stateId;
-      } else {
-        this._restorePreviousState(state);
-      }
-    }
-
-    // считаем, что событие навигации во вкладке обработано только после
-    // выполнения событий, которые вызваны в _restorePreviousState
-    setTimeout(() => {
-      console.log('ALLOW NAVIGATION');
-      this._hasPendingTabChangedEvent = false;
-    }, 0);
-  }
-
-  /**
-   * @param {object} state
-   */
-  _restorePreviousState(state) {
-    if (state.stateId > this._currentStateId) {
+    if (state.stateIndex > this._currentStateIndex) {
       console.log('BACK');
       window.history.back();
-    } else if (state.stateId < this._currentStateId) {
+    } else if (state.stateIndex < this._currentStateIndex) {
       console.log('FORWARD');
       window.history.forward();
     } else {
@@ -144,13 +127,7 @@ export class BackendBrowserHistoryManager {
       }
     }
 
-    this._currentStateId++;
-
-    const eventState = this._serializeTabEvent(eventArgs);
-    eventState.stateId = this._currentStateId;
-
-    window.history.pushState(eventState, document.title);
-    console.log('PUSH', eventState);
+    this._pushOrEnqueueState(this._serializeTabEvent(eventArgs));
   }
 
   pushStateAllTabsClosed() {
@@ -160,13 +137,37 @@ export class BackendBrowserHistoryManager {
       return;
     }
 
-    this._currentStateId++;
+    this._pushOrEnqueueState({ type: HISTORY_ALL_TABS_CLOSED_STATE });
+  }
 
-    window.history.pushState({
-      type: HISTORY_ALL_TABS_CLOSED_STATE,
-      stateId: this._currentStateId
-    }, document.title);
-    console.log('PUSH', window.history.state);
+  /**
+   * @param {object} state
+   */
+  _pushOrEnqueueState(state) {
+    if (this._hasPendingTabChangedEvent) {
+      this._pendingStateQueue.push(state);
+      console.log('ENQUEUE', state);
+    } else {
+      this._pushState(state);
+      console.log('PUSH', state);
+    }
+  }
+
+  _applyPendingStateQueue() {
+    this._pendingStateQueue.forEach(pendingState => {
+      this._pushState(pendingState);
+    });
+    this._pendingStateQueue = [];
+  }
+
+  /**
+   * @param {object} state
+   */
+  _pushState(state) {
+    this._currentStateIndex++;
+    // eslint-disable-next-line no-param-reassign
+    state.stateIndex = this._currentStateIndex;
+    window.history.pushState(state, document.title);
   }
 
   /**
