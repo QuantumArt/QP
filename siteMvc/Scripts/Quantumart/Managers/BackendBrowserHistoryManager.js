@@ -1,17 +1,12 @@
 /* eslint-disable no-plusplus */
 import { BackendTabEventArgs } from '../Common/BackendTabEventArgs';
-import { Observable } from '../Common/Observable';
-
-window.EVENT_TYPE_HISTORY_POP_STATE = 'EVENT_TYPE_HISTORY_POP_STATE';
+import { event } from '../Utils/Event';
 
 const HISTORY_INITIAL_STATE = 'HISTORY_INITIAL_STATE';
-const HISTORY_DEFAULT_STATE = 'HISTORY_DEFAULT_STATE';
-const HISTORY_TAB_EVENT_STATE = 'HISTORY_TAB_EVENT_STATE';
+const HISTORY_ALL_TABS_CLOSED_STATE = 'HISTORY_ALL_TABS_CLOSED_STATE';
+const HISTORY_TAB_CHANGED_STATE = 'HISTORY_TAB_CHANGED_STATE';
 
-// TODO: what if user opens modal window or tab during history event execution ?
-// TODO: what if error was thrown (or warning is alerted) ?
-
-export class BackendBrowserHistoryManager extends Observable {
+export class BackendBrowserHistoryManager {
   /** @type {BackendBrowserHistoryManager} */
   static _instance;
 
@@ -22,13 +17,17 @@ export class BackendBrowserHistoryManager extends Observable {
     return BackendBrowserHistoryManager._instance;
   }
 
-  _shouldPreventNavigation = false;
+  _hasPendingTabChangedEvent = false;
   _modalWindowIsShown = false;
   _currentStateId = 0;
 
-  constructor() {
-    super();
+  /** Переключение вкладки или навигация внутри вкладки */
+  onPopStateTabChanged = event(this, BackendTabEventArgs);
 
+  /** Переход к состоянию, когда ни одна вкладка не выбрана */
+  onPopStateAllTabsClosed = event(this);
+
+  constructor() {
     this._handlePopState = this._handlePopState.bind(this);
     this._handleExecutionFinished = this._handleExecutionFinished.bind(this);
     this.handleModalWindowOpen = this.handleModalWindowOpen.bind(this);
@@ -44,12 +43,12 @@ export class BackendBrowserHistoryManager extends Observable {
         stateId: this._currentStateId
       }, document.title);
 
-      this.pushDefaultState();
-    } else if (state.type === HISTORY_DEFAULT_STATE) {
+      this.pushStateAllTabsClosed();
+    } else if (state.type === HISTORY_ALL_TABS_CLOSED_STATE) {
       this._currentStateId = state.stateId;
-    } else if (state.type === HISTORY_TAB_EVENT_STATE) {
+    } else if (state.type === HISTORY_TAB_CHANGED_STATE) {
       this._currentStateId = state.stateId;
-      this.pushDefaultState();
+      this.pushStateAllTabsClosed();
     }
 
     window.addEventListener('popstate', this._handlePopState);
@@ -60,14 +59,15 @@ export class BackendBrowserHistoryManager extends Observable {
 
     if (state.type === HISTORY_INITIAL_STATE) {
       window.history.forward();
-    } else if (this._shouldPreventNavigation || this._modalWindowIsShown) {
+    } else if (this._hasPendingTabChangedEvent || this._modalWindowIsShown) {
       this._restorePreviousState(state);
-    } else if (state.type === HISTORY_DEFAULT_STATE) {
+    } else if (state.type === HISTORY_ALL_TABS_CLOSED_STATE) {
       this._currentStateId = state.stateId;
-    } else if (state.type === HISTORY_TAB_EVENT_STATE) {
+      this.onPopStateAllTabsClosed();
+    } else if (state.type === HISTORY_TAB_CHANGED_STATE) {
       console.log('DENY NAVIGATION');
       console.log('START EXECUTION', state);
-      this._shouldPreventNavigation = true;
+      this._hasPendingTabChangedEvent = true;
 
       const eventArgs = this._deserializeTabEvent(state);
       eventArgs.fromHistory = true;
@@ -75,7 +75,7 @@ export class BackendBrowserHistoryManager extends Observable {
         this._handleExecutionFinished(state, isNavigationPerformed);
       });
 
-      this.notify(window.EVENT_TYPE_HISTORY_POP_STATE, eventArgs);
+      this.onPopStateTabChanged(eventArgs);
     }
   }
 
@@ -85,6 +85,9 @@ export class BackendBrowserHistoryManager extends Observable {
    */
   _handleExecutionFinished(state, isNavigationPerformed) {
     console.log('FINISH EXECUTION', state);
+
+    // если за время обработки события навигации во вкладке
+    // пользователь не открыл другую вкладку вручную
     if (window.history.state.stateId === state.stateId) {
       if (isNavigationPerformed) {
         this._currentStateId = state.stateId;
@@ -92,9 +95,12 @@ export class BackendBrowserHistoryManager extends Observable {
         this._restorePreviousState(state);
       }
     }
+
+    // считаем, что событие навигации во вкладке обработано только после
+    // выполнения событий, которые вызваны в _restorePreviousState
     setTimeout(() => {
       console.log('ALLOW NAVIGATION');
-      this._shouldPreventNavigation = false;
+      this._hasPendingTabChangedEvent = false;
     }, 0);
   }
 
@@ -124,12 +130,13 @@ export class BackendBrowserHistoryManager extends Observable {
   /**
    * @param {BackendTabEventArgs} eventArgs
    */
-  pushTabEvent(eventArgs) {
+  pushStateTabChanged(eventArgs) {
+    const { state } = window.history;
+
     if (eventArgs.fromHistory) {
       return;
     }
-    const { state } = window.history;
-    if (state.type === HISTORY_TAB_EVENT_STATE) {
+    if (state.type === HISTORY_TAB_CHANGED_STATE) {
       const historyEventArgs = this._deserializeTabEvent(state);
 
       if (eventArgs.structurallyEquals(historyEventArgs)) {
@@ -146,11 +153,17 @@ export class BackendBrowserHistoryManager extends Observable {
     console.log('PUSH', eventState);
   }
 
-  pushDefaultState() {
+  pushStateAllTabsClosed() {
+    const { state } = window.history;
+
+    if (state.type === HISTORY_ALL_TABS_CLOSED_STATE) {
+      return;
+    }
+
     this._currentStateId++;
 
     window.history.pushState({
-      type: HISTORY_DEFAULT_STATE,
+      type: HISTORY_ALL_TABS_CLOSED_STATE,
       stateId: this._currentStateId
     }, document.title);
     console.log('PUSH', window.history.state);
@@ -162,7 +175,7 @@ export class BackendBrowserHistoryManager extends Observable {
    */
   _serializeTabEvent(eventArgs) {
     return {
-      type: HISTORY_TAB_EVENT_STATE,
+      type: HISTORY_TAB_CHANGED_STATE,
       entityTypeCode: eventArgs.get_entityTypeCode(),
       entityId: eventArgs.get_entityId(),
       entityName: eventArgs.get_entityName(),

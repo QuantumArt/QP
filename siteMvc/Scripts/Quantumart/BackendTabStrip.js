@@ -383,19 +383,20 @@ export class BackendTabStrip extends Observable {
     return $tab;
   }
 
+  /**
+   * @param {string | HTMLElement | JQuery} tab
+   * @returns {JQuery}
+   */
   getTab(tab) {
-    let $tab = null;
     if ($q.isObject(tab)) {
       return $q.toJQuery(tab);
-    } else if ($q.isString(tab)) {
-      $tab = $(this._tabListElement).find(`#${tab}`);
-      if ($tab.length === 0) {
-        $tab = null;
-      }
-
-      return $tab;
     }
-    return undefined;
+    if ($q.isString(tab) && tab !== '') {
+      const $tab = $(this._tabListElement).find(`#${tab}`);
+
+      return $tab.length > 0 ? $tab : null;
+    }
+    return null;
   }
 
   isLastTab(tab) {
@@ -542,7 +543,7 @@ export class BackendTabStrip extends Observable {
 
       if (!eventArgs.fromHistory) {
         this._backendBrowserHistoryManager
-          .pushTabEvent(this.getEventArgsFromTab($tab));
+          .pushStateTabChanged(this.getEventArgsFromTab($tab));
       }
     }
 
@@ -591,7 +592,7 @@ export class BackendTabStrip extends Observable {
     if (this._selectedTabId === tab) {
       if (!eventArgs.fromHistory) {
         this._backendBrowserHistoryManager
-          .pushTabEvent(this.getEventArgsFromTab(tab));
+          .pushStateTabChanged(this.getEventArgsFromTab(tab));
       }
     }
   }
@@ -617,8 +618,20 @@ export class BackendTabStrip extends Observable {
       this.fixTabStripWidth();
 
       this._backendBrowserHistoryManager
-        .pushTabEvent(this.getEventArgsFromTab(tab));
+        .pushStateTabChanged(this.getEventArgsFromTab(tab));
     }
+  }
+
+  deselectAllTabs() {
+    // Запоминаем код выбранного таба
+    this._previousSelectedTabId = this._selectedTabId;
+    this._selectedTabId = '';
+
+    // Снимаем выделение со всех табов
+    this.getAllTabs().removeClass(this.TAB_SELECTED_CLASS_NAME);
+
+    // Устанавливаем ширину группы табов
+    this.fixTabStripWidth();
   }
 
   selectTabRequest(tab) {
@@ -693,7 +706,7 @@ export class BackendTabStrip extends Observable {
       this._removeTab($tab);
 
       if ($(this._tabListElement).children().length === 0) {
-        this._backendBrowserHistoryManager.pushDefaultState();
+        this._backendBrowserHistoryManager.pushStateAllTabsClosed();
       }
     }
 

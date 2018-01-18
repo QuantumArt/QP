@@ -112,9 +112,6 @@ export class Backend {
 
   _initialize() {
     this._backendBrowserHistoryManager.initialize();
-    this._backendBrowserHistoryManager.attachObserver(
-      window.EVENT_TYPE_HISTORY_POP_STATE, this._onActionExecutingHandler
-    );
 
     this._directLinkExecutor = new DirectLinkExecutor(
       this._currentCustomerCode, this._directLinkOptions
@@ -525,10 +522,6 @@ export class Backend {
   _dispose() {
     try {
       this._unlockAllEntities();
-
-      this._backendBrowserHistoryManager.detachObserver(
-        window.EVENT_TYPE_HISTORY_POP_STATE, this._onActionExecutingHandler
-      );
 
       if (this._entityEditorAutoSaver) {
         this._entityEditorAutoSaver.detachObserver(window.EVENT_TYPE_AUTO_SAVER_ACTION_EXECUTING);

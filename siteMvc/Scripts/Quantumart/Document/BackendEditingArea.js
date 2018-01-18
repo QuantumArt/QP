@@ -1,6 +1,7 @@
 /* eslint max-lines: 'off' */
 import { BackendDocumentHostStateStorage } from './BackendDocumentHostStateStorage';
 import { BackendEditingDocument } from './BackendEditingDocument';
+import { BackendBrowserHistoryManager } from '../Managers/BackendBrowserHistoryManager';
 import { BackendEventArgs } from '../Common/BackendEventArgs';
 import { Observable } from '../Common/Observable';
 import { $q } from '../Utils';
@@ -17,6 +18,9 @@ window.EVENT_TYPE_EDITING_AREA_ENTITY_READED = 'OnEditingAreaEntityReaded';
 window.EVENT_TYPE_EDITING_AREA_FIND_TAB_IN_TREE = 'OnEditingAreaFindTabInTree';
 
 export class BackendEditingArea extends Observable {
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
+
+  // eslint-disable-next-line max-statements
   constructor(editingAreaElementId, options) {
     super();
 
@@ -83,6 +87,12 @@ export class BackendEditingArea extends Observable {
     }
 
     this._onWindowResizedHandler = $.proxy(this.onWindowResized, this);
+
+    this.handlePopStateTabChanged = this.handlePopStateTabChanged.bind(this);
+    this.handlePopStateAllTabsClosed = this.handlePopStateAllTabsClosed.bind(this);
+
+    this._backendBrowserHistoryManager.onPopStateTabChanged.attach(this.handlePopStateTabChanged);
+    this._backendBrowserHistoryManager.onPopStateAllTabsClosed.attach(this.handlePopStateAllTabsClosed);
   }
 
   _editingAreaElementId = '';
@@ -307,18 +317,16 @@ export class BackendEditingArea extends Observable {
     $documentsContainer = null;
   }
 
-  openArea() {
-    let $editingArea = $(this._editingAreaElement);
-    $editingArea.css('display', 'block');
+  showArea() {
+    $(this._editingAreaElement).css('display', 'block');
+  }
 
-    $editingArea = null;
+  hideArea() {
+    $(this._editingAreaElement).css('display', 'none');
   }
 
   closeArea() {
-    let $editingArea = $(this._editingAreaElement);
-    $editingArea.css('display', 'none');
-
-    $editingArea = null;
+    this.hideArea();
 
     let $documentsContainer = $(this._documentsContainerElement);
     $documentsContainer
@@ -365,6 +373,8 @@ export class BackendEditingArea extends Observable {
     if (eventArgs.get_isWindow()) {
       return;
     }
+
+    this.showArea();
 
     if (eventArgs.fromHistory) {
       const allTabs = this._tabStrip.getAllTabs().get();
@@ -413,9 +423,6 @@ export class BackendEditingArea extends Observable {
 
   _addNewDocument(eventArgs) {
     this.onDocumentLoading();
-    if (this._tabStrip.getAllTabsCount() === 0) {
-      this.openArea();
-    }
 
     const tabId = this._tabStrip.addNewTab(eventArgs);
     const oldDoc = this.getSelectedDocument();
@@ -445,6 +452,8 @@ export class BackendEditingArea extends Observable {
   }
 
   selectDocument(tabId) {
+    this.showArea();
+
     const docId = this.getDocumentIdByTabId(tabId);
     const doc = this.getDocument(docId);
     const oldDoc = this.getSelectedDocument();
@@ -468,6 +477,19 @@ export class BackendEditingArea extends Observable {
     }
 
     return undefined;
+  }
+
+  deselectAllDocuments() {
+    this.hideArea();
+
+    const oldDoc = this.getSelectedDocument();
+
+    if (oldDoc) {
+      oldDoc.hidePanels();
+      oldDoc.hideDocumentWrapper();
+    }
+
+    this._tabStrip.deselectAllTabs();
   }
 
   removeDocument(docId) {
@@ -513,6 +535,14 @@ export class BackendEditingArea extends Observable {
   unmarkAsBusy() {
     this._tabStrip.unmarkAsBusy();
     Object.values(this._documents).forEach(doc => doc.unmarkPanelsAsBusy());
+  }
+
+  handlePopStateTabChanged(sender, eventArgs) {
+    this.addDocument(eventArgs);
+  }
+
+  handlePopStateAllTabsClosed() {
+    this.deselectAllDocuments();
   }
 
   onDocumentError(docId) {
@@ -725,6 +755,9 @@ export class BackendEditingArea extends Observable {
       this._tabStrip.detachObserver(window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST);
       this._tabStrip.detachObserver(window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST);
     }
+
+    this._backendBrowserHistoryManager.onPopStateTabChanged.detach(this.handlePopStateTabChanged);
+    this._backendBrowserHistoryManager.onPopStateAllTabsClosed.detach(this.handlePopStateAllTabsClosed);
 
     $(window).unbind('resize', this._onWindowResizedHandler);
     $q.collectGarbageInIE();
