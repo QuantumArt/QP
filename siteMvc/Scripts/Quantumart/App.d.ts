@@ -79,6 +79,8 @@ interface JQueryStatic {
   browser: any;
   css(elem: any, name: any, extra?: any): any;
   nodeName(elem: Element, name: string): boolean;
+  grep<T>(array: ArrayLike<T>, func: (elementOfArray?: T, indexInArray?: number) => any, invert?: boolean): T[];
+  merge<T, TArray extends ArrayLike<T>>(first: TArray, second: ArrayLike<T>): TArray;
 
   // jquery.timer.js
   timer: any;

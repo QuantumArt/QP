@@ -168,15 +168,12 @@ export class BackendDocumentHost extends Observable {
 
   static getAllActionLinks(documentWrapperElement) {
     const $wrapper = $q.toJQuery(documentWrapperElement);
-    let result;
 
-    if ($wrapper) {
-      result = $wrapper.find('.actionLink');
-    } else {
-      result = [];
+    if (!$wrapper) {
+      return $q.toJQuery([]);
     }
 
-    return result;
+    return $wrapper.find('.actionLink');
   }
 
   // eslint-disable-next-line max-statements
