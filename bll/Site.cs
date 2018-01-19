@@ -429,6 +429,15 @@ namespace Quantumart.QP8.BLL
 
             UploadUrlPrefix = PathUtility.CorrectSlashes(UploadUrlPrefix, absUrlMode);
 
+            if (CreateDefaultXamlDictionary)
+            {
+                XamlDictionaries = GenerateDefaultXamlDictionary();
+            }
+            else
+            {
+                XamlDictionaries = string.IsNullOrWhiteSpace(XamlDictionaries) ? null : XamlDictionaries;
+            }
+
             if (!IsDotNet)
             {
                 ForceTestDirectory = false;
@@ -479,15 +488,6 @@ namespace Quantumart.QP8.BLL
                 if (!UseAbsoluteUploadUrl)
                 {
                     UploadUrlPrefix = null;
-                }
-
-                if (CreateDefaultXamlDictionary)
-                {
-                    XamlDictionaries = GenerateDefaultXamlDictionary();
-                }
-                else
-                {
-                    XamlDictionaries = string.IsNullOrWhiteSpace(XamlDictionaries) ? null : XamlDictionaries;
                 }
             }
         }
