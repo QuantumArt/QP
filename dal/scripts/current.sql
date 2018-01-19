@@ -545,7 +545,10 @@ BEGIN
     delete from @contentIds where id = @content_id
   end
 
-  insert into item_link_async select * from item_to_item ii where l_item_id in (select id from @ids) and not exists (select * from item_link_async ila where ila.item_id = ii.l_item_id)
+  insert into item_link_async select * from item_to_item ii where l_item_id in (select id from @ids)
+  and link_id in (select link_id from content_attribute where content_id = @content_id)
+  and not exists (select * from item_link_async ila where ila.item_id = ii.l_item_id)
+
 END
 GO
 exec qp_drop_existing 'qp_merge_links_multiple', 'IsProcedure'
@@ -1453,35 +1456,138 @@ CREATE PROCEDURE [dbo].[qp_update_m2o]
 @update_archive bit = 1
 AS
 BEGIN
-	declare @ids table (id numeric primary key)
-	declare @new_ids table (id numeric primary key);
-	declare @cross_ids table (id numeric primary key);
+    declare @ids table (id numeric primary key)
+    declare @new_ids table (id numeric primary key);
+    declare @cross_ids table (id numeric primary key);
 
-	declare @contentId numeric, @fieldName nvarchar(255)
-	select @contentId = content_id, @fieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @fieldId
+    declare @contentId numeric, @fieldName nvarchar(255)
+    select @contentId = content_id, @fieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @fieldId
 
-	insert into @ids
-	exec qp_get_m2o_ids @contentId, @fieldName, @id
+    insert into @ids
+    exec qp_get_m2o_ids @contentId, @fieldName, @id
 
-	select content_item_id
-	from content_data where ATTRIBUTE_ID = @fieldId and DATA = CAST(@id as nvarchar)
+    select content_item_id
+    from content_data where ATTRIBUTE_ID = @fieldId and DATA = CAST(@id as nvarchar)
 
-	insert into @new_ids select * from dbo.split(@value, ',');
+    insert into @new_ids select * from dbo.split(@value, ',');
 
-	insert into @cross_ids select t1.id from @ids t1 inner join @new_ids t2 on t1.id = t2.id
-	delete from @ids where id in (select id from @cross_ids);
-	delete from @new_ids where id in (select id from @cross_ids);
+    insert into @cross_ids select t1.id from @ids t1 inner join @new_ids t2 on t1.id = t2.id
+    delete from @ids where id in (select id from @cross_ids);
+    delete from @new_ids where id in (select id from @cross_ids);
 
-	if @update_archive = 0
-	begin
-		delete from @ids where id in (select content_item_id from content_item where ARCHIVE = 1)
-	end
+    if @update_archive = 0
+    begin
+        delete from @ids where id in (select content_item_id from content_item where ARCHIVE = 1)
+    end
 
-	insert into #resultIds(id, attribute_id, to_remove)
-	select id, @fieldId as attribute_id, 1 as to_remove from @ids
-	union all
-	select id, @fieldId as attribute_id, 0 as to_remove from @new_ids
+    insert into #resultIds(id, attribute_id, to_remove)
+    select id, @fieldId as attribute_id, 1 as to_remove from @ids
+    union all
+    select id, @fieldId as attribute_id, 0 as to_remove from @new_ids
 END
+GO
+EXEC qp_drop_existing 'qp_merge_delays', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_merge_delays]
+@ids [Ids] READONLY,
+@lastModifiedBy int
+AS
+BEGIN
+    if exists(select * from CHILD_DELAYS cd inner join @ids i on cd.id = i.ID)
+    BEGIN
+        declare @ids_to_merge [Ids]
+
+        insert into @ids_to_merge
+        select child_id from CHILD_DELAYS cd1 where id in (select id from @ids)
+        and not exists(select * from CHILD_DELAYS cd2 where cd2.child_id = cd1.child_id and cd2.id <> cd1.id)
+
+        exec qp_merge_articles @ids_to_merge, @lastModifiedBy
+
+        delete from child_delays where id in (select id from @ids)
+    END
+END
+GO
+exec qp_drop_existing 'qp_update_m2o_final', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_update_m2o_final]
+@id numeric
+AS
+BEGIN
+    if exists(select * from #resultIds) or exists(select * from CHILD_DELAYS where id = @id)
+    begin
+        declare @statusId numeric
+        declare @splitted bit
+        declare @lastModifiedBy numeric
+        declare @ids table (id numeric, attribute_id numeric not null, to_remove bit not null default 0, remove_delays bit not null default 0, primary key(id, attribute_id))
+        declare @ids_to_split [Ids]
+        declare @ids_to_process [Ids]
+        declare @ids_to_merge [Ids]
+        declare @idsstr nvarchar(max)
+        declare @maxStatus numeric
+
+        select @statusId = STATUS_TYPE_ID, @splitted = SPLITTED, @lastModifiedBy = LAST_MODIFIED_BY from content_item where CONTENT_ITEM_ID = @id
+        select @maxStatus = max_status_type_id from content_item_workflow ciw left join workflow_max_statuses wms on ciw.workflow_id = wms.workflow_id where ciw.content_item_id = @id
+
+        if @statusId = @maxStatus and @splitted = 0 begin
+            insert @ids_to_merge
+            select @id
+
+            exec qp_merge_delays @ids_to_merge, @lastModifiedBy
+        end
+
+        if not exists(select * from #resultIds)
+            return
+
+        insert into @ids(id, attribute_id, to_remove, remove_delays)
+        select r.*, case when cd.id is null then 0 else 1 end as remove_delays
+		from #resultIds r left join CHILD_DELAYS cd on cd.id = @id and r.id = cd.child_id
+
+        update content_item set modified = getdate(), last_modified_by = @lastModifiedBy, not_for_replication = 1
+        where content_item_id in (select id from @ids)
+
+        update content_data set content_data.data = @id, content_data.blob_data = null, content_data.modified = getdate()
+        from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id
+        where r.to_remove = 0
+
+        insert into content_data (CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA, BLOB_DATA, MODIFIED)
+        select r.id, r.attribute_id, @id, NULL, getdate()
+        from @ids r left join content_data cd on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id
+        where r.to_remove = 0 and cd.CONTENT_DATA_ID is null
+
+        update content_data set content_data.data = null, content_data.blob_data = null, content_data.modified = getdate()
+        from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id
+        where r.to_remove = 1
+
+		delete from CHILD_DELAYS where id = @id and child_id in (select id from @ids where remove_delays = 1)
+
+        declare @resultId numeric
+
+        if (@statusId <> @maxStatus and @maxStatus is not null or @splitted = 1) begin
+            insert into child_delays (id, child_id) select @id, r.id from @ids r
+            inner join content_item ci on r.id = ci.content_item_id
+            left join child_delays ex on ex.child_id = ci.content_item_id and ex.id = @id
+            left join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id
+            left join workflow_max_statuses wms on ciw.workflow_id = wms.workflow_id
+            where ex.child_id is null and ci.status_type_id = wms.max_status_type_id
+                and (ci.splitted = 0 or ci.splitted = 1 and exists(select * from CHILD_DELAYS where child_id = ci.CONTENT_ITEM_ID and id <> @id))
+				and r.remove_delays = 0
+
+            insert into @ids_to_split
+            select content_item_id from content_item with(nolock) where content_item_id in (select child_id from child_delays where id = @id) and splitted = 0
+
+            exec qp_split_articles @ids_to_split
+
+            update content_item set schedule_new_version_publication = 1 where content_item_id in (select child_id from child_delays where id = @id)
+        end
+
+        select @idsstr = COALESCE(@idsstr + ', ', '') + CAST(id as nvarchar) from @ids
+
+        exec qp_replicate_items @idsstr
+    end
+END
+GO
 
 GO
 exec qp_drop_existing 'qp_GetPermittedItemsAsQuery', 'IsProcedure'
@@ -1892,6 +1998,136 @@ BEGIN
     else
      insert into RegionUpdates (RegionId, Updated) values (@regionId, getdate())
 
+END
+GO
+
+GO
+
+exec qp_drop_existing  'GetProducts', 'IsTableFunction'
+exec qp_drop_existing  'SyncProductVersions', 'IsProcedure'
+GO
+if not exists(select * from sys.tables where name = 'ProductVersions')
+BEGIN
+	CREATE TABLE [dbo].[ProductVersions](
+		[Id] [int] IDENTITY(1,1) NOT NULL,
+		[Deleted] [bit] NOT NULL,
+		[Modification] [datetime] NOT NULL,
+		[DpcId] [int] NOT NULL,
+		[Slug] [nvarchar](50) NULL,
+		[Version] [int] NOT NULL,
+		[IsLive] [bit] NOT NULL,
+		[Language] [nvarchar](10) NULL,
+		[Format] [nvarchar](10) NOT NULL,
+		[Data] [nvarchar](max) NOT NULL,
+		[Alias] [nvarchar](250) NULL,
+		[Created] [datetime] NOT NULL,
+		[Updated] [datetime] NOT NULL,
+		[Hash] [nvarchar](2000) NOT NULL,
+		[MarketingProductId] [int] NULL,
+		[Title] [nvarchar](500) NULL,
+		[UserUpdated] [nvarchar](50) NULL,
+		[UserUpdatedId] [int] NULL,
+		[ProductType] [nvarchar](250) NULL
+		CONSTRAINT [PK_ProductVersions] PRIMARY KEY CLUSTERED ([Id] ASC )	
+	)
+END
+GO
+
+if not exists (select * from sys.indexes where name = 'IX_ProductVersions')
+BEGIN
+	CREATE NONCLUSTERED INDEX [IX_ProductVersions] ON [dbo].[ProductVersions]
+	(
+		[DpcId] ASC,
+		[IsLive] ASC,
+		[Language] ASC,
+		[Format] ASC,
+		[Modification] ASC
+	)
+END
+GO
+if not exists(select * from sys.tables where name = 'ProductRegionVersions')
+BEGIN
+	CREATE TABLE [dbo].[ProductRegionVersions](
+		[Id] [int] IDENTITY(1,1) NOT NULL,
+		[ProductVersionId] [int] NOT NULL,
+		[RegionId] [int] NOT NULL
+		CONSTRAINT [PK_ProductRegionVersions] PRIMARY KEY CLUSTERED ([Id] ASC)
+		CONSTRAINT [FK_ProductRegionVersions_ProductVersions] FOREIGN KEY([ProductVersionId]) REFERENCES [dbo].[ProductVersions] ([Id])
+	)
+END
+GO
+CREATE FUNCTION GetProducts(@date datetime)
+RETURNS TABLE
+AS
+RETURN
+(
+	select *
+	from
+		ProductVersions v with (nolock)
+	where
+		not exists (
+			select null
+			from ProductVersions v2 with (nolock)
+			where
+				v2.[Id] > v.[Id]
+				and v2.[DpcId] = v.[DpcId]
+				and v2.[IsLive] = v.[IsLive]
+				and v2.[Language] = v.[Language]
+				and v2.[Format] = v.[Format]
+				and v2.[Modification] <= @date)
+		and v.[Deleted] = 0
+		and v.[Modification] <= @date
+)
+GO
+CREATE PROCEDURE SyncProductVersions
+AS
+BEGIN
+	insert into ProductVersions(Deleted, Modification, DpcId, Version, IsLive, Language, Format, Data, Alias, Created, Updated, Hash, MarketingProductId, Title, UserUpdated, UserUpdatedId, ProductType)
+	select
+	 0 Deleted,
+	 p.Updated Modification,
+	 p.DpcId,
+	 p.Version,
+	 p.IsLive,
+	 p.Language,
+	 p.Format,
+	 p.Data,
+	 p.Alias,
+	 p.Created,
+	 p.Updated,
+	 p.Hash,
+	 p.MarketingProductId,
+	 p.Title,
+	 p.UserUpdated,
+	 p.UserUpdatedId,
+	 p.ProductType
+	from Products p
+	where not exists (
+		select null
+		from ProductVersions v with (nolock)
+		where
+			p.[Updated] = v.[Modification] and
+			p.[DpcId] = v.[DpcId] and
+			p.[IsLive] = v.[IsLive] and
+			p.[Language] = v.[Language]
+			and p.[Format] = v.[Format]
+		)
+
+
+	insert ProductRegionVersions([ProductVersionId], [RegionId])
+	select v.[Id], r.[RegionId]
+	from
+		Products p
+		join ProductVersions v on
+			p.[Updated] = v.[Modification] and
+			p.[DpcId] = v.[DpcId] and
+			p.[IsLive] = v.[IsLive] and
+			p.[Language] = v.[Language]
+			and p.[Format] = v.[Format]
+		join ProductRegions r on
+			p.Id = r.ProductId
+	where
+		not exists (select null from ProductRegionVersions rv with (nolock) where rv.[ProductVersionId] = v.[Id])
 END
 GO
 
@@ -3723,10 +3959,10 @@ BEGIN
 		[Token] ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-
 	ALTER TABLE [dbo].[ACCESS_TOKEN] ADD  CONSTRAINT [DF_ACCESS_TOKEN_Token]  DEFAULT (newid()) FOR [Token]
 END
 
+GO
 if not exists (select * from BACKEND_ACTION where code = 'export_archive_article')
 insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
 VALUES(dbo.qp_action_type_id('export'), dbo.qp_entity_type_id('archive_article'), 'Export Archive Articles', 'export_archive_article', '~/ExportArchiveArticles/', 1, 600, 400, 1, 1)
