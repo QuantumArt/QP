@@ -747,6 +747,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     var grantedIds = field.UseRelationSecurity
                         ? new HashSet<int>(ArticleRepository.CheckRelationSecurity(contentId, validatedIds.ToArray(), false).Where(n => n.Value).Select(m => m.Key))
                         : validatedIds;
+                                        
+                    var archiveArticles = ArticleRepository.CheckArchiveArticles(relatedIds.ToArray());
 
                     foreach (var item in filteredValues)
                     {
@@ -764,7 +766,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                             {
                                 throw new ArgumentException(string.Format(ImportStrings.InaccessibleM2M, item.Key, item.Value.Field.Name, string.Join(",", notGrantedIds)));
                             }
-
+                            item.Value.NewRelatedItems = item.Value.NewRelatedItems.Where(w=> !archiveArticles.Contains(w)).ToArray();
                             value = string.Join(",", item.Value.NewRelatedItems);
                         }
 

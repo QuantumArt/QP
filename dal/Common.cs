@@ -469,9 +469,15 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<int, string> GetLinkedArticlesMultiple(SqlConnection connection, int linkId, IEnumerable<int> ids, bool isLive)
+        public static Dictionary<int, string> GetLinkedArticlesMultiple(SqlConnection connection, int linkId, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
-            var sql = " select ii.r_item_id as linked_item_id, ii.l_item_id as item_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id where link_id = @lid";
+            var sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id 
+                        where link_id = @lid ";
+            if (excludeArchive)
+            {
+                sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id  
+                         inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = ii.r_item_id where link_id = @lid and ci.ARCHIVE = 0";
+            }
             if (!isLive)
             {
                 var sb = new StringBuilder();
@@ -518,6 +524,22 @@ namespace Quantumart.QP8.DAL
         public static int[] ExcludeArchived(SqlConnection connection, int[] ids)
         {
             using (var cmd = SqlCommandFactory.Create("select content_item_id from content_item with(nolock) where content_item_id in (select id from @itemIds) and archive = 0", connection))
+            {
+                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
+                {
+                    TypeName = "Ids",
+                    Value = IdsToDataTable(ids)
+                });
+
+                var dt = new DataTable();
+                new SqlDataAdapter(cmd).Fill(dt);
+                return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+            }
+        }
+
+        public static int[] CheckArchiveArticle(SqlConnection connection, int[] ids)
+        {
+            using (var cmd = SqlCommandFactory.Create("select content_item_id from content_item with(nolock) where content_item_id in (select id from @itemIds) and archive = 1", connection))
             {
                 cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
                 {
