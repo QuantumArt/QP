@@ -1,9 +1,7 @@
-﻿@model Quantumart.QP8.WebMvc.ViewModels.PageTemplate.ObjectFormatListViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
-@using Quantumart.QP8.Resources
+﻿@using Quantumart.QP8.BLL.ListItems
 @using Quantumart.QP8.Constants
-@using Quantumart.QP8.BLL.ListItems
+@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.PageTemplate.ObjectFormatListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
@@ -27,10 +25,10 @@
                 .Title("")
                 .Width(15);
             c.Bound(s => s.LockedBy)
-                .Title(String.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" alt=\"\" />", Url.GetThemeRootImageFolderUrl() + "/grid/header_icons/lock.gif"))
+                .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" alt=\"\" />", Url.GetThemeRootImageFolderUrl() + "/grid/header_icons/lock.gif"))
                 .Width(30)
                 .HeaderHtmlAttributes(new { @class = "t-image-header" })
-                .ClientTemplate(String.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= LockedByIcon #>", "<#= LockedByToolTip #>"))
+                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= LockedByIcon #>", "<#= LockedByToolTip #>"))
                 .HtmlAttributes(new { style = "text-align: center;" });
             c.Bound(s => s.Name).Title(EntityObjectStrings.Name)
                 .HtmlAttributes(new { @class = "title" });

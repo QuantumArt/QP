@@ -2,18 +2,17 @@
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {
-	public class FieldInitListResult : InitListResultBase
-	{
+    public class FieldInitListResult : InitListResultBase
+    {
+        public FieldInitListResult()
+        {
+            IsVirtual = false;
+        }
 
-		public FieldInitListResult()
-		{
-			IsVirtual = false;
-		}
+        public List<Field> Data { get; set; }
 
-		public List<Field> Data { get; set; }
+        public string ParentName { get; set; }
 
-		public string ParentName { get; set; }
-
-		public bool IsVirtual { get; set; }		
-	}
+        public bool IsVirtual { get; set; }
+    }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -19,7 +20,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         public int SiteArticlesCount { get; set; }
 
         public CopySiteUpdateArticleIdsCommand(MultistepActionStageCommandState state)
-            : this(state.Id, 0) { }
+            : this(state.Id, 0)
+        {
+        }
 
         public CopySiteUpdateArticleIdsCommand(int sourceSiteId, int siteArticlesCount)
         {
@@ -34,18 +37,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         {
             var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
             var result = new MultistepActionStepResult();
-            var startFrom = step * ItemsPerStep + 1;
+            var skip = step * ItemsPerStep;
             var xDocument = XDocument.Load(prms.PathForFileWithLinks);
-            var elements = string.Concat(xDocument.Elements().Elements().Skip(startFrom).Take(ItemsPerStep));
-
-            ContentService.UpdateArticlesLinks(SourceSiteId, DestinationSiteId, elements);
-            result.ProcessedItemsCount = xDocument.Elements().Elements().Skip(startFrom).Take(ItemsPerStep).Count();
+            var items = xDocument.Elements().Elements().Skip(skip).Take(ItemsPerStep).ToArray();
+            ContentService.UpdateArticlesLinks(SourceSiteId, DestinationSiteId, string.Concat(items.AsEnumerable()));
+            result.ProcessedItemsCount = items.Count();
 
             var siteArticlesCount = xDocument.Elements().Elements().Count();
-            if (startFrom >= siteArticlesCount - ItemsPerStep)
+            if (skip + 1 >= siteArticlesCount - ItemsPerStep)
             {
-                ContentService.FillLinkTables(SourceSiteId, DestinationSiteId);
-                File.Delete(prms.PathForFileWithLinks);
+               ContentService.FillLinkTables(SourceSiteId, DestinationSiteId);
+               File.Delete(prms.PathForFileWithLinks);
             }
 
             return result;

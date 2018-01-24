@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.UnityExtensions
 {

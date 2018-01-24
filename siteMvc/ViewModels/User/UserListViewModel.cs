@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.User
 {
     public class UserListViewModel : ListViewModel
     {
@@ -13,7 +13,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public static UserListViewModel Create(UserInitListResult result, string tabId, int parentId)
         {
-            var model = ViewModel.Create<UserListViewModel>(tabId, parentId);
+            var model = Create<UserListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;
             return model;
         }

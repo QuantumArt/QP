@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Mono.Options;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
@@ -13,9 +14,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate
     internal class Program
     {
         internal static int VerboseLevel;
+        internal static bool ShouldShowHelp;
         internal static bool IsSilentModeEnabled;
         internal static string StandardInputData;
         internal static QpUpdateLoggingWrapper Logger;
+
+        // TODO: REMOVE AFTER RESHARPER FIX BUG https://youtrack.jetbrains.com/issue/RSRP-466882
+        internal static bool DisablePipedInput;
 
         static Program()
         {
@@ -33,6 +38,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
         public static void Main(string[] args)
         {
+            // TODO: REMOVE AFTER RESHARPER FIX BUG https://youtrack.jetbrains.com/issue/RSRP-466882
+            if (args.Contains("--disablePipedInput"))
+            {
+                DisablePipedInput = true;
+                IsSilentModeEnabled = false;
+            }
+
+            // TODO: REMOVE AFTER RESHARPER FIX BUG https://youtrack.jetbrains.com/issue/RSRP-466882
+
             Logger = new QpUpdateLoggingWrapper();
             Logger.Info($"QuantumArt DbUpdate for QP8 version 6.0. Version: {CommonHelpers.GetAssemblyVersion()}. Args: {args.ToJsonLog()}");
 
@@ -50,7 +64,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 Logger.Debug($"Parsed settings: {settings.ToJsonLog()}");
 
                 var dataProcessor = DataProcessorFactory.Create(settings);
-                if (Console.IsInputRedirected)
+                if (Console.IsInputRedirected && !DisablePipedInput)
                 {
                     dataProcessor.Process(StandardInputData);
                 }
@@ -59,7 +73,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                     dataProcessor.Process();
                 }
 
-                Logger.Debug("Processing successfuly finished...");
+                Logger.Debug("Processing successfuly finished..");
                 ConsoleHelpers.ExitProgram(ExitCode.Success);
             }
             catch (OptionException ex)

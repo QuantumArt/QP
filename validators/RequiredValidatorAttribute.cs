@@ -5,7 +5,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 namespace Quantumart.QP8.Validators
 {
     /// <summary>
-    /// Представляет реализацию <see cref="RequiredValidator"/> в виде атрибута
+    /// Представляет реализацию <see cref="RequiredValidator" /> в виде атрибута
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Parameter, AllowMultiple = true, Inherited = false)]
     public sealed class RequiredValidatorAttribute : ValueValidatorAttribute
@@ -22,7 +22,7 @@ namespace Quantumart.QP8.Validators
             _dependPropertyName = dependPropertyName;
         }
         /// <summary>
-        /// Создает описанный атрибутом объект <see cref="RequiredValidator"/>
+        /// Создает описанный атрибутом объект <see cref="RequiredValidator" />
         /// </summary>
         /// <param name="targetType">тип объекта, который должен быть проверен валидатором</param>
         /// <returns>созданный <see cref="RequiredValidator"/></returns>

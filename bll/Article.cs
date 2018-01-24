@@ -4,7 +4,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
@@ -12,7 +11,9 @@ using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -226,11 +227,12 @@ namespace Quantumart.QP8.BLL
 
         private IEnumerable<int> SelfAndAggregatedIds
         {
-            get {
+            get
+            {
                 return
                     Enumerable.Repeat(Id, 1)
-                    .Union(AggregatedArticles.Select(n => n.Id))
-                    .Union(LiveAggregatedArticles.Select(n => n.Id))
+                        .Union(AggregatedArticles.Select(n => n.Id))
+                        .Union(LiveAggregatedArticles.Select(n => n.Id))
                     ;
             }
         }
@@ -264,17 +266,17 @@ namespace Quantumart.QP8.BLL
             set => _workflowBinding = value;
         }
 
-        [ScriptIgnore, JsonIgnore]
+        [JsonIgnore]
         public List<FieldValue> FieldValues
         {
             get => _fieldValues ?? LoadFieldValues();
             set => _fieldValues = value;
         }
 
-        [ScriptIgnore, JsonIgnore]
+        [JsonIgnore]
         public List<FieldValue> LiveFieldValues
         {
-            get 
+            get
             {
                 LoadFieldValues();
                 return _liveFieldValues;
@@ -299,10 +301,7 @@ namespace Quantumart.QP8.BLL
             return _fieldValues;
         }
 
-        internal List<FieldValue> GetFieldValues(bool isLive)
-        {
-            return (isLive) ? LiveFieldValues : FieldValues;
-        }
+        internal List<FieldValue> GetFieldValues(bool isLive) => isLive ? LiveFieldValues : FieldValues;
 
         public ArticleViewType ViewType { get; set; } = ArticleViewType.Normal;
 

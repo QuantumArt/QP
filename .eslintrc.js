@@ -22,8 +22,7 @@ module.exports = {
     Silverlight: false
   },
   rules: {
-    // 'func-name-matching': 'off',
-    'no-invalid-this': 'warn',
+    'no-invalid-this': 'off',
     'no-underscore-dangle': 'off',
     'func-names': 'off',
     'sort-imports': 'off'

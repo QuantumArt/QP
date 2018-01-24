@@ -1,0 +1,23 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
+              GeneratedClassNamespace="Quantumart.QP8.Scheduler.Core.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="UserSynchronizationSchedule" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:00:30</Value>
+    </Setting>
+    <Setting Name="SystemNotifications" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:00:30</Value>
+    </Setting>
+    <Setting Name="InterfaceNotifications" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:00:30</Value>
+    </Setting>
+    <Setting Name="SystemNotificationsCleanup" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:05:00</Value>
+    </Setting>
+    <Setting Name="InterfaceNotificationsCleanup" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:05:00</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

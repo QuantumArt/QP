@@ -132,7 +132,6 @@ namespace Quantumart.QP8.BLL.Services
 
             UserRepository.Delete(id);
             return null;
-
         }
 
         public CopyResult Copy(int id)

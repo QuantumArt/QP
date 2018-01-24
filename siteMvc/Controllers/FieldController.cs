@@ -1,13 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Exceptions;
-using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
@@ -37,7 +38,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _Index(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = FieldService.List(parentId, command.GetListCommand());
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -307,7 +308,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _MultipleSelectForExport(string tabId, int parentId, string IDs, GridCommand command)
         {
             var serviceResult = FieldService.ListForExport(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -334,7 +335,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _MultipleSelectForExportExpanded(string tabId, int parentId, string IDs, GridCommand command)
         {
             var serviceResult = FieldService.ListForExportExpanded(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost, Record]

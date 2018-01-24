@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ContentServices;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.ViewModels.Content;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
 {
@@ -22,6 +26,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
 
         [LocalizedDisplayName("JoinFields", NameResourceType = typeof(ContentStrings))]
         public IList<QPTreeCheckedNode> JoinFields { get; set; }
+
         [LocalizedDisplayName("ToRebuild", NameResourceType = typeof(ContentStrings))]
         public bool ToBuild { get; set; }
 
@@ -43,11 +48,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
         {
             if (Data.IsNew)
             {
-                Data.VirtualType = Constants.VirtualType.Join;
+                Data.VirtualType = VirtualType.Join;
             }
 
             JoinFields = new List<QPTreeCheckedNode>(0);
-            if (Data.VirtualType == Constants.VirtualType.Join)
+            if (Data.VirtualType == VirtualType.Join)
             {
                 JoinFields = BLL.Content.VirtualFieldNode.Linearize(Data.VirtualJoinFieldNodes).Select(vfn => new QPTreeCheckedNode { Value = vfn.TreeId }).ToList();
             }
@@ -66,7 +71,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
             }
             else
             {
-                if (Data.VirtualType == Constants.VirtualType.Join)
+                if (Data.VirtualType == VirtualType.Join)
                 {
                     Data.VirtualJoinFieldNodes = BLL.Content.VirtualFieldNode.Parse(BLL.Content.VirtualFieldNode.NormalizeFieldTreeIdSeq(JoinFields.Select(f => f.Value)));
                 }
@@ -77,17 +82,17 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
                     Data.JoinRootId = null;
                 }
 
-                if (Data.VirtualType != Constants.VirtualType.Union)
+                if (Data.VirtualType != VirtualType.Union)
                 {
                     Data.UnionSourceContentIDs = Enumerable.Empty<int>();
                 }
 
-                if (Data.VirtualType != Constants.VirtualType.UserQuery)
+                if (Data.VirtualType != VirtualType.UserQuery)
                 {
                     Data.UserQuery = null;
                     Data.UserQueryAlternative = null;
                 }
-                else if (Data.VirtualType == Constants.VirtualType.UserQuery && !IsAltUserQueryUsed)
+                else if (Data.VirtualType == VirtualType.UserQuery && !IsAltUserQueryUsed)
                 {
                     Data.UserQueryAlternative = null;
                 }
@@ -97,24 +102,26 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
         /// <summary>
         /// Возвращает список контентов доступных для связи с текущим контентом
         /// </summary>
-        public IEnumerable<BLL.ListItem> GetAcceptableContentForVirtualJoin()
+        public IEnumerable<ListItem> GetAcceptableContentForVirtualJoin()
         {
             var currentContentSiteId = Data.SiteId;
-            var contentForJoin = VirtualContentService.GetAcceptableContentForVirtualJoin(currentContentSiteId).Select(c => { c.DependentItemIDs = new[] { "JoinFieldsPanel" }; c.HasDependentItems = true; return c; }).ToArray();
-            return new[] { new BLL.ListItem(string.Empty, ContentStrings.SelectContent) }.Concat(contentForJoin);
-        }
-
-        public IEnumerable<BLL.ListItem> GetVirtualTypes()
-        {
-            return new[]
+            var contentForJoin = VirtualContentService.GetAcceptableContentForVirtualJoin(currentContentSiteId).Select(c =>
             {
-                new BLL.ListItem(Constants.VirtualType.Join.ToString(), BLL.Content.GetVirtualTypeString(Constants.VirtualType.Join), "JoinTypePanel"),
-                new BLL.ListItem(Constants.VirtualType.Union.ToString(), BLL.Content.GetVirtualTypeString(Constants.VirtualType.Union), "UnionTypePanel"),
-                new BLL.ListItem(Constants.VirtualType.UserQuery.ToString(), BLL.Content.GetVirtualTypeString(Constants.VirtualType.UserQuery), "UserQueryTypePanel")
-            };
+                c.DependentItemIDs = new[] { "JoinFieldsPanel" };
+                c.HasDependentItems = true;
+                return c;
+            }).ToArray();
+            return new[] { new ListItem(string.Empty, ContentStrings.SelectContent) }.Concat(contentForJoin);
         }
 
-        public IEnumerable<BLL.ListItem> GetContentsForUnion()
+        public IEnumerable<ListItem> GetVirtualTypes() => new[]
+        {
+            new ListItem(VirtualType.Join.ToString(), BLL.Content.GetVirtualTypeString(VirtualType.Join), "JoinTypePanel"),
+            new ListItem(VirtualType.Union.ToString(), BLL.Content.GetVirtualTypeString(VirtualType.Union), "UnionTypePanel"),
+            new ListItem(VirtualType.UserQuery.ToString(), BLL.Content.GetVirtualTypeString(VirtualType.UserQuery), "UserQueryTypePanel")
+        };
+
+        public IEnumerable<ListItem> GetContentsForUnion()
         {
             var callIds = new List<int>();
             if (Data.UnionSourceContentIDs != null)

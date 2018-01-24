@@ -1,23 +1,19 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Content
 {
     public class ContentViewModel : ContentViewModelBase
     {
-
         public readonly string SplitBlock = "split";
         public readonly string VersionsBlock = "versions";
         public readonly string XamlValidationPanel = "xamlvalidation";
         public readonly string ContextBlock = "context";
 
-
-        public static ContentViewModel Create(BLL.Content content, string tabId, int parentId)
-        {
-            return Create<ContentViewModel>(content, tabId, parentId);
-        }
+        public static ContentViewModel Create(BLL.Content content, string tabId, int parentId) => Create<ContentViewModel>(content, tabId, parentId);
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Content;
 
@@ -25,12 +21,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public string SiteName => Data.Site.Name;
 
-        public List<BLL.ListItem> Workflows
+        public List<ListItem> Workflows
         {
             get
             {
-                var result = Data.Site.Workflows.Select(n => new BLL.ListItem(n.Id.ToString(), n.Name, SplitBlock)).ToList();
-                result.Add(new BLL.ListItem(BLL.WorkflowBind.UnassignedId.ToString(), ContentStrings.NoWorkflow));
+                var result = Data.Site.Workflows.Select(n => new ListItem(n.Id.ToString(), n.Name, SplitBlock)).ToList();
+                result.Add(new ListItem(WorkflowBind.UnassignedId.ToString(), ContentStrings.NoWorkflow));
                 return result;
             }
         }

@@ -20,8 +20,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public new VisualEditorStyle Data
         {
-            get { return (VisualEditorStyle)EntityData; }
-            set { EntityData = value; }
+            get => (VisualEditorStyle)EntityData;
+            set => EntityData = value;
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -30,10 +30,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public string AggregationListItemsDataStylesItems { get; set; }
 
-        public static VisualEditorStyleViewModel Create(VisualEditorStyle style, string tabId, int parentId)
-        {
-            return Create<VisualEditorStyleViewModel>(style, tabId, parentId);
-        }
+        public static VisualEditorStyleViewModel Create(VisualEditorStyle style, string tabId, int parentId) => Create<VisualEditorStyleViewModel>(style, tabId, parentId);
 
         internal void DoCustomBinding()
         {

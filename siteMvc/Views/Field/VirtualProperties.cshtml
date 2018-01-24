@@ -1,12 +1,6 @@
-﻿@model FieldViewModel
-
-@using Quantumart.QP8
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.Utils
-@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
-@using Quantumart.QP8.WebMvc.ViewModels.Field
+@model Quantumart.QP8.WebMvc.ViewModels.Field.FieldViewModel
 
 @using (Html.BeginTabForm(Model))
 {
@@ -20,7 +14,7 @@
         @Html.SelectFieldFor(s => s.Data.ExactType,
             Html.List(Model.GetAcceptableExactFieldTypes()),
             new Dictionary<string, object> { { "id", Model.ExactSelectElementId } },
-            new SelectOptions() { ReadOnly = true }
+            new SelectOptions { ReadOnly = true }
         )
         @Html.SelectFieldFor(s => s.Data.Order, Html.List(Model.GetOrderOptions()));
 
@@ -39,7 +33,7 @@
   }
 
 
-  using (Html.BeginPanel("LinqGroup", Model.Data.Content.Site.AssemblingType == Quantumart.QP8.Constants.AssemblingType.AspDotNet, false))
+  using (Html.BeginPanel("LinqGroup", Model.Data.Content.Site.AssemblingType == AssemblingType.AspDotNet, false))
   {
     using (Html.BeginFieldGroup(FieldStrings.LinqParamsGroup))
     {

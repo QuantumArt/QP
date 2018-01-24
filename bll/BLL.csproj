@@ -46,29 +46,17 @@
       <HintPath>$(SolutionDir)packages\AutoMapper.1.1.2\lib\net35\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\CommonServiceLocator.2.0.1\lib\net47\CommonServiceLocator.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="EFExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SolutionDir)binaries\EFExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -83,10 +71,10 @@
       <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.Extensions.1.1.0\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Quantumart, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Quantumart.3.0.0\lib\net47\Quantumart.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.3.0.1\lib\net47\Quantumart.dll</HintPath>
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Quantumart.3.0.0\lib\net47\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.3.0.1\lib\net47\Quantumart.QP8.Assembling.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -96,9 +84,7 @@
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
@@ -110,6 +96,27 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Unity.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Configuration, Version=5.0.2.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Container, Version=5.1.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Container.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Interception, Version=5.0.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Interception.Configuration, Version=5.0.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Interception.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RegistrationByConvention, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.ServiceLocation, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.ServiceLocation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\NonQpEnvironmentContext.cs" />
@@ -129,6 +136,7 @@
     <Compile Include="Factories\FolderFactory\ContentFolderFactory.cs" />
     <Compile Include="Factories\FolderFactory\SiteFolderFactory.cs" />
     <Compile Include="IContextStorage.cs" />
+    <Compile Include="Services\ContentServices\IContentService.cs" />
     <Compile Include="Mappers\GenericMapperBase.cs" />
     <Compile Include="Mappers\SystemNotificationMapper.cs" />
     <Compile Include="Models\NotificationSender\SystemNotificationBulkXmlSerilizableModel.cs" />
@@ -153,7 +161,7 @@
     <Compile Include="Models\NotificationSender\CdcTableTypeModel.cs" />
     <Compile Include="Repository\EntityPermissions\IChildContentPermissionRepository.cs" />
     <Compile Include="Services\FieldDefaultValueContext.cs" />
-    <Compile Include="Interfaces\Services\IDbService.cs" />
+    <Compile Include="Services\DbServices\IDbService.cs" />
     <Compile Include="Services\IFieldDefaultValueService.cs" />
     <Compile Include="Services\IUserGroupService.cs" />
     <Compile Include="Services\CdcImport\CdcElasticImportService.cs" />
@@ -168,12 +176,11 @@
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
     <Compile Include="Helpers\PlaceHolderHelper.cs" />
-    <Compile Include="Helpers\ReplayHelper.cs" />
     <Compile Include="Helpers\SiteUrlHelper.cs" />
     <Compile Include="Helpers\SortingItemHelper.cs" />
-    <Compile Include="Interfaces\Db\IArticleRepository.cs" />
-    <Compile Include="Interfaces\Db\IContentRepository.cs" />
-    <Compile Include="Interfaces\Db\IFieldRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\IArticleRepository.cs" />
+    <Compile Include="Repository\ContentRepositories\IContentRepository.cs" />
+    <Compile Include="Repository\FieldRepositories\IFieldRepository.cs" />
     <Compile Include="ListItems\ArticleListItem.cs" />
     <Compile Include="ArticleScheduleTask.cs" />
     <Compile Include="ArticleSearchQueryParam.cs" />
@@ -415,7 +422,7 @@
     <Compile Include="Services\API\Models\LinkData.cs" />
     <Compile Include="Services\API\Models\RelationData.cs" />
     <Compile Include="Services\API\ServiceBase.cs" />
-    <Compile Include="Services\DbService.cs" />
+    <Compile Include="Services\DbServices\DbService.cs" />
     <Compile Include="Services\DTO\ActionPermissionTreeNode.cs" />
     <Compile Include="Services\ChildEntityPermission.cs" />
     <Compile Include="Services\DTO\ArticleContextListItem.cs" />
@@ -465,10 +472,11 @@
     <Compile Include="Services\EntityPermissions\PermissionServiceAbstract.cs" />
     <Compile Include="Services\EntityPermissions\SitePermissionService.cs" />
     <Compile Include="Services\ActionPermissions\ActionPermissionTreeService.cs" />
+    <Compile Include="Services\MultistepActions\CopySite\CopySiteItemLinksCommand.cs" />
     <Compile Include="Services\NotificationSender\ExternalInterfaceNotificationService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
-    <Compile Include="Interfaces\Services\IArticleService.cs" />
+    <Compile Include="Services\ArticleServices\IArticleService.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesCommand.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesService.cs" />
     <Compile Include="Services\MultistepActions\Archive\RestoreArticlesCommand.cs" />
@@ -531,7 +539,7 @@
     <Compile Include="RelationType.cs" />
     <Compile Include="RemovedEntity.cs" />
     <Compile Include="Repository\ApplicationInfoRepository.cs" />
-    <Compile Include="Repository\Articles\SearchInArticlesRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\SearchInArticlesRepository.cs" />
     <Compile Include="Repository\AuditRepository.cs" />
     <Compile Include="Repository\ContentConstraintRepository.cs" />
     <Compile Include="Repository\CustomActionRepository.cs" />
@@ -563,16 +571,16 @@
     <Compile Include="Factories\FolderFactory\FolderFactory.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="ContentFolder.cs" />
-    <Compile Include="Repository\Articles\ArticleFilterSearchQueryParser.cs" />
-    <Compile Include="Repository\Articles\ArticleFullTextSearchQueryParser.cs" />
-    <Compile Include="Repository\Articles\ArticleLinkSearchQueryParser.cs" />
-    <Compile Include="Repository\Articles\ArticleSearchRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\SearchParsers\ArticleFilterSearchQueryParser.cs" />
+    <Compile Include="Repository\ArticleRepositories\SearchParsers\ArticleFullTextSearchQueryParser.cs" />
+    <Compile Include="Repository\ArticleRepositories\SearchParsers\ArticleLinkSearchQueryParser.cs" />
+    <Compile Include="Repository\ArticleRepositories\ArticleSearchRepository.cs" />
     <Compile Include="Repository\Helpers\ArticleUpdateService.cs" />
     <Compile Include="Mappers\ContentFolderMapper.cs" />
     <Compile Include="Mappers\GenericMapper.cs" />
     <Compile Include="Mappers\SiteFolderMapper.cs" />
     <Compile Include="PathInfo.cs" />
-    <Compile Include="Repository\Articles\ArticleVersionRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\ArticleVersionRepository.cs" />
     <Compile Include="Repository\ContentFolderRepository.cs" />
     <Compile Include="Repository\SiteFolderRepository.cs" />
     <Compile Include="Repository\SitePathRepository.cs" />
@@ -618,13 +626,13 @@
     <Compile Include="Mappers\SimpleMappers.cs" />
     <Compile Include="Mappers\SiteMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />
-    <Compile Include="Repository\Articles\ArticleRepository.cs" />
+    <Compile Include="Repository\ArticleRepositories\ArticleRepository.cs" />
     <Compile Include="Repository\BackendActionRepository.cs" />
     <Compile Include="Repository\BackendActionTypeRepository.cs" />
-    <Compile Include="Repository\ContentRepository.cs" />
+    <Compile Include="Repository\ContentRepositories\ContentRepository.cs" />
     <Compile Include="Repository\ContextMenuRepository.cs" />
     <Compile Include="Repository\EntityTypeRepository.cs" />
-    <Compile Include="Repository\FieldRepository.cs" />
+    <Compile Include="Repository\FieldRepositories\FieldRepository.cs" />
     <Compile Include="Repository\EntityObjectRepository.cs" />
     <Compile Include="Repository\DefaultRepository.cs" />
     <Compile Include="Repository\ScheduleRepository.cs" />
@@ -635,8 +643,8 @@
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\WorkflowRepository.cs" />
     <Compile Include="RulesException.cs" />
-    <Compile Include="Services\ArticleService.cs" />
-    <Compile Include="Services\ContentService.cs" />
+    <Compile Include="Services\ArticleServices\ArticleService.cs" />
+    <Compile Include="Services\ContentServices\ContentService.cs" />
     <Compile Include="Services\DTO\CheckIdResult.cs" />
     <Compile Include="Services\DTO\ContentInitListResult.cs" />
     <Compile Include="ListResult.cs" />
@@ -748,25 +756,24 @@
       <Name>Validators</Name>
     </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
-      <Project>{060eb6fe-8c9e-4b81-b17c-d2d3884f0aec}</Project>
+      <Project>{BD26AFAF-B07A-41DA-80D3-4B8BF6BC6589}</Project>
       <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>
     </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
-      <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
+      <Project>{A1397FA6-F0BA-4695-AF53-D03469013692}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj">
-      <Project>{DBBEC146-E74E-45DF-A7FE-16701669A0F2}</Project>
+      <Project>{C8D0F9D8-0F40-4480-B60F-C50791E9F8C1}</Project>
       <Name>QP8.Infrastructure.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
-      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
+      <Project>{EF8CC04A-6AE2-4CF4-9367-31701651639B}</Project>
       <Name>QP8.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="BLL.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -781,4 +788,3 @@
   </Target>
   -->
 </Project>
-

@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -28,14 +29,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
 
         public new ChildEntityPermission Data
         {
-            get
-            {
-                return (ChildEntityPermission)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (ChildEntityPermission)EntityData;
+            set => EntityData = value;
         }
 
         public override string EntityTypeCode => _settings.EntityTypeCode;

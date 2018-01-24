@@ -1,13 +1,13 @@
-﻿using System;
+using System;
+using AutoFixture;
+using AutoFixture.AutoMoq;
+using AutoFixture.Xunit2;
 using Moq;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
-using Ploeh.AutoFixture.Xunit2;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Services.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.ArticleScheduler.Publishing;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Xunit;
 
 namespace QP8.Services.Tests.ArticleSchedulerTests.Publishing

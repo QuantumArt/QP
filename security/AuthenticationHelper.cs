@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
@@ -72,7 +72,8 @@ namespace Quantumart.QP8.Security
                     userInformation.LanguageId + "|" +
                     userInformation.CultureName + "|" +
                     userInformation.IsSilverlightInstalled + "|" +
-                    string.Join(";", userInformation.Roles) + "|"+
+                    string.Join(";", userInformation.Roles) + "|" +
+                    userInformation.SessionId + "|" +
                     userInformation.MustChangePassword;
             }
 
@@ -95,6 +96,7 @@ namespace Quantumart.QP8.Security
                         LanguageId = int.Parse(userDataCollection[3]),
                         IsSilverlightInstalled = bool.Parse(userDataCollection[5]),
                         Roles = userDataCollection[6].Split(';'),
+                        SessionId = userDataCollection.Length >= 8 ? int.Parse(userDataCollection[7]) : 0,
                         MustChangePassword = bool.Parse(userDataCollection[7])
                     };
                 }

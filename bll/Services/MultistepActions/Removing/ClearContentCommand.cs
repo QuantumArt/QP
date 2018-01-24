@@ -2,6 +2,7 @@ using System;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
@@ -18,7 +19,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 
         public string ContentName { get; }
 
-        public ClearContentCommand(MultistepActionStageCommandState state) : this(state.ParentId, state.Id, null, 0) { }
+        public ClearContentCommand(MultistepActionStageCommandState state)
+            : this(state.ParentId, state.Id, null, 0)
+        {
+        }
 
         public ClearContentCommand(int siteId, int contentId, string contentName, int itemCount)
         {

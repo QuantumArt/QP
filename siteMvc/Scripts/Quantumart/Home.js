@@ -1,9 +1,22 @@
+// eslint-disable-next-line max-params
 Quantumart.QP8.Home = function (
-  documentContext, siteElementId, searchElementId, lockedElementId, approvalElementId, loggedAsElementId, customerCode
+  documentContext,
+  siteElementId,
+  searchElementId,
+  lockedElementId,
+  approvalElementId,
+  loggedAsElementId,
+  customerCode
 ) {
   const initialize = function () {
+    // eslint-disable-next-line max-params
     const executeAction = function (
-      actionCode, entityTypeCode, entityId, entityName, parentEntityId, additionalUrlParameters
+      actionCode,
+      entityTypeCode,
+      entityId,
+      entityName,
+      parentEntityId,
+      additionalUrlParameters
     ) {
       const action = $a.getBackendActionByCode(actionCode);
       const params = new Quantumart.QP8.BackendActionParameters({

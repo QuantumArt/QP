@@ -1,8 +1,6 @@
-﻿@model DbViewModel
-
-@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
+@model Quantumart.QP8.WebMvc.ViewModels.DbViewModel
 
 @using (Html.BeginTabForm(Model))
 {
@@ -21,6 +19,7 @@
 
     @Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome)
     @Html.CheckBoxFieldFor(s => s.Data.UseAdSyncService)
+    @Html.CheckBoxFieldFor(s => s.Data.UseTokens)
     @Html.CheckBoxFieldFor(s => s.Data.UseDpc)
 	  @Html.CheckBoxFieldFor(s => s.Data.UseCdc)
 

@@ -129,8 +129,8 @@ BEGIN
 
   if @r_content_id <> @l_content_id
   BEGIN
-    update item_link set is_rev = 1 from item_link il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID = @r_content_id and is_rev = 0
-    update item_link set is_rev = 1 from item_link_async il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID = @r_content_id and item_link.is_rev = 0
+    update item_link set is_rev = 1 from item_link il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID <> @l_content_id and is_rev = 0
+    update item_link_async set is_rev = 1 from item_link_async il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID where il.link_id = @link_id and ci.CONTENT_ID <> @l_content_id and il.is_rev = 0
   END
 
   if @r_content_id = @l_content_id

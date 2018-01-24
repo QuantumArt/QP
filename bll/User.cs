@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.Unity;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
@@ -14,6 +13,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
+using Unity;
 
 namespace Quantumart.QP8.BLL
 {
@@ -214,15 +214,14 @@ namespace Quantumart.QP8.BLL
                 var groupIDs = Groups.Select(g => g.Id);
                 var userInAdminDescGroups =
                     UserGroupRepository.GetAdministratorsHierarhy()
-                    .Select(r => Convert.ToInt32(r.Field<decimal>("CHILD")))
-                    .Intersect(groupIDs)
-                    .Any();
+                        .Select(r => Convert.ToInt32(r.Field<decimal>("CHILD")))
+                        .Intersect(groupIDs)
+                        .Any();
                 if (userInAdminDescGroups)
                 {
                     errors.ErrorForModel(UserStrings.UserCouldntBindToWFAndAdminDescGroups);
                 }
             }
-
 
             if (!string.IsNullOrEmpty(NewPassword))
             {
@@ -278,8 +277,7 @@ namespace Quantumart.QP8.BLL
             {
                 index++;
                 LogOn = MutateHelper.MutateUserLogin(login, index);
-            }
-            while (EntityObjectRepository.CheckNameUniqueness(this));
+            } while (EntityObjectRepository.CheckNameUniqueness(this));
         }
     }
 }

@@ -1,12 +1,10 @@
-﻿
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+
 namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
     public class ArticleStatusHistoryListViewModel : ListViewModel
     {
-        public static ArticleStatusHistoryListViewModel Create(string tabId, int parentId)
-        {
-            return Create<ArticleStatusHistoryListViewModel>(tabId, parentId);
-        }
+        public static ArticleStatusHistoryListViewModel Create(string tabId, int parentId) => Create<ArticleStatusHistoryListViewModel>(tabId, parentId);
 
         public string DataBindingActionName => "_StatusHistoryList";
 

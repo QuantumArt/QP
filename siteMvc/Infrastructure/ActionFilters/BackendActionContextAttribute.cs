@@ -55,8 +55,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             vpr = filterContext.Controller.ValueProvider.GetValue(_parentEntityIdParamName);
             if (!string.IsNullOrEmpty(vpr?.AttemptedValue))
             {
-                int peid;
-                if (int.TryParse(vpr.AttemptedValue, out peid))
+                if (int.TryParse(vpr.AttemptedValue, out var peid))
                 {
                     parentEntityId = peid;
                 }

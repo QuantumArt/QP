@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -26,9 +26,9 @@ using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
-using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 using Quantumart.QP8.WebMvc.ViewModels.Notification;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
+using Quantumart.QP8.WebMvc.ViewModels.Site;
 using Quantumart.QP8.WebMvc.ViewModels.User;
 using Quantumart.QP8.WebMvc.ViewModels.UserGroup;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
@@ -154,14 +154,13 @@ namespace Quantumart.QP8.WebMvc
             ModelBinders.Binders.Add(typeof(PageTemplateViewModel), new PageTemplateViewModelBinder());
             ModelBinders.Binders.Add(typeof(ObjectViewModel), new ObjectViewModelBinder());
             ModelBinders.Binders.Add(typeof(DbViewModel), new DbViewModelBinder());
-            ModelBinders.Binders.Add(typeof(ExportViewModel), new ExportViewModelBinder());
+
             ModelBinders.Binders.DefaultBinder = new QpModelBinder();
         }
 
         protected void Application_AcquireRequestState(object sender, EventArgs e)
         {
-            var userIdentity = HttpContext.Current.User.Identity as QpIdentity;
-            var cultureName = userIdentity != null
+            var cultureName = HttpContext.Current.User.Identity is QpIdentity userIdentity
                 ? userIdentity.CultureName
                 : QPConfiguration.WebConfigSection.Globalization.DefaultCulture;
 

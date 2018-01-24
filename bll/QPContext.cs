@@ -5,17 +5,19 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 using System.Web;
-using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.Utils;
+using Unity;
 
 namespace Quantumart.QP8.BLL
 {
@@ -212,6 +214,9 @@ namespace Quantumart.QP8.BLL
         private static int? _currentUserId;
 
         [ThreadStatic]
+        private static int? _currentSessionId;
+
+        [ThreadStatic]
         private static bool? _isAdmin;
 
         [ThreadStatic]
@@ -262,6 +267,11 @@ namespace Quantumart.QP8.BLL
         private static void SetCurrentUserIdValueToStorage(int? value)
         {
             SetValueToStorage(ref _currentUserId, value, HttpContextItems.CurrentUserIdKey);
+        }
+
+        private static void SetCurrentSessionIdValueToStorage(int? value)
+        {
+            SetValueToStorage(ref _currentSessionId, value, HttpContextItems.CurrentSessionIdKey);
         }
 
         private static void SetCurrentGroupIdsValueToStorage(int[] value)
@@ -319,6 +329,21 @@ namespace Quantumart.QP8.BLL
                         SetCurrentGroupIdsValueToStorage(Common.GetGroupIds(QPConnectionScope.Current.DbConnection, value));
                     }
                 }
+            }
+        }
+
+        public static int CurrentSessionId
+        {
+            get
+            {
+                var result = GetValueFromStorage(_currentSessionId, HttpContextItems.CurrentSessionIdKey);
+                if (result == null)
+                {
+                    result = (HttpContext.Current.User.Identity as QpIdentity)?.SessionId;
+                    SetCurrentSessionIdValueToStorage(result);
+                }
+
+                return result ?? 0;
             }
         }
 
@@ -496,7 +521,7 @@ namespace Quantumart.QP8.BLL
                         }
 
                         dbUser.LastLogOn = DateTime.Now;
-                        CreateSuccessfulSession(user, dbContext);
+                        resultUser.SessionId = CreateSuccessfulSession(user, dbContext);
                         var context = HttpContext.Current;
                         if (context != null)
                         {
@@ -524,11 +549,13 @@ namespace Quantumart.QP8.BLL
         {
             using (var transaction = new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-                using (new QPConnectionScope())
+                using (var scope = new QPConnectionScope())
                 {
                     var dbContext = EFContext;
                     CloseUserSessions(CurrentUserId, dbContext, DateTime.Now);
                     dbContext.SaveChanges();
+
+                    CommonSecurity.ClearUserToken(scope.DbConnection, CurrentUserId, CurrentSessionId);
                 }
 
                 var loginUrl = AuthenticationHelper.LogOut();
@@ -538,7 +565,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private static void CreateSuccessfulSession(User user, QP8Entities dbContext)
+        private static int CreateSuccessfulSession(User user, QP8Entities dbContext)
         {
             // сбросить sid и установить EndTime для всех сессий пользователя
             var currentDt = DateTime.Now;
@@ -562,8 +589,11 @@ namespace Quantumart.QP8.BLL
             var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
             dbContext.AddToSessionsLogSet(sessionsLogDal);
             dbContext.SaveChanges();
+            sessionsLog = MapperFacade.SessionsLogMapper.GetBizObject(sessionsLogDal);
 
             Logger.Log.Debug($"User successfully authenticated: {sessionsLog.ToJsonLog()}");
+
+            return sessionsLog.SessionId;
         }
 
         private static void CloseUserSessions(decimal userId, QP8Entities dbContext, DateTime currentDt)

@@ -14948,9 +14948,10 @@ namespace Quantumart.QP8.DAL
         /// <param name="lastModifiedBy">Initial value of the LastModifiedBy property.</param>
         /// <param name="useADSyncService">Initial value of the UseADSyncService property.</param>
         /// <param name="useDpc">Initial value of the UseDpc property.</param>
+        /// <param name="useTokens">Initial value of the UseTokens property.</param>
         /// <param name="autoOpenHome">Initial value of the AutoOpenHome property.</param>
         /// <param name="useCdc">Initial value of the UseCdc property.</param>
-        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDpc, global::System.Boolean autoOpenHome, global::System.Boolean useCdc)
+        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDpc, global::System.Boolean useTokens, global::System.Boolean autoOpenHome, global::System.Boolean useCdc)
         {
             DbDAL dbDAL = new DbDAL();
             dbDAL.Id = id;
@@ -14960,6 +14961,7 @@ namespace Quantumart.QP8.DAL
             dbDAL.LastModifiedBy = lastModifiedBy;
             dbDAL.UseADSyncService = useADSyncService;
             dbDAL.UseDpc = useDpc;
+            dbDAL.UseTokens = useTokens;
             dbDAL.AutoOpenHome = autoOpenHome;
             dbDAL.UseCdc = useCdc;
             return dbDAL;
@@ -15163,6 +15165,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseDpc;
         partial void OnUseDpcChanging(global::System.Boolean value);
         partial void OnUseDpcChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean UseTokens
+        {
+            get
+            {
+                return _UseTokens;
+            }
+            set
+            {
+                OnUseTokensChanging(value);
+                ReportPropertyChanging("UseTokens");
+                _UseTokens = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UseTokens");
+                OnUseTokensChanged();
+            }
+        }
+        private global::System.Boolean _UseTokens;
+        partial void OnUseTokensChanging(global::System.Boolean value);
+        partial void OnUseTokensChanged();
     
         /// <summary>
         /// No Metadata Documentation available.

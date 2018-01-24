@@ -1,16 +1,14 @@
-﻿@model SearchInArticlesListViewModel
-
-@using Quantumart.QP8.Resources
+﻿@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Constants
-@using Quantumart.QP8.WebMvc.ViewModels
-@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.Site.SearchInArticlesListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
 
     <form class="formLayout" id="@Model.SearchLayoutFormElementId">
         <div id="@Model.SeachBlockElementId" class="simpleSeachBlock">
-            @Html.TextBox(@Model.SearchTextBoxElementId, String.Empty, new { @class = "textbox" })
+            @Html.TextBox(Model.SearchTextBoxElementId, string.Empty, new { @class = "textbox" })
             <input type="button" id="@Model.SearchButtonElementId" value="@ArticleStrings.Find" class="button" />
         </div>
     </form>

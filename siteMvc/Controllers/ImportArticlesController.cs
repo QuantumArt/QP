@@ -1,8 +1,11 @@
 using System;
 using System.Web.Mvc;
+using QP8.Infrastructure.Web.AspNet.ActionResults;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants;
@@ -43,13 +46,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
-        public ActionResult Settings(string tabId, int parentId, int id)
+        public ActionResult Settings(string tabId, int parentId, int id) => JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel
         {
-            return JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel
-            {
-                ContentId = id
-            });
-        }
+            ContentId = id
+        });
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -70,17 +70,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
         [BackendActionLog]
-        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
-        {
-            return Json(_service.Setup(parentId, id, boundToExternal));
-        }
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal) => Json(_service.Setup(parentId, id, boundToExternal));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
         [BackendActionLog]
-        public ActionResult SetupWithParams(int parentId, int id, FormCollection collection)
+        public JsonCamelCaseResult<JSendResponse> SetupWithParams(int parentId, int id, FormCollection collection)
         {
             var model = new ImportViewModel();
             TryUpdateModel(model);
@@ -88,16 +85,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             model.SetCorrespondingFieldName(collection);
             IMultistepActionParams settings = model.GetImportSettingsObject(parentId, id);
             _service.SetupWithParams(parentId, id, settings);
-            return Json(string.Empty);
+            return new JSendResponse { Status = JSendStatus.Success };
         }
 
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step)
-        {
-            return Json(_service.Step(stage, step));
-        }
+        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
 
         [HttpPost]
         public ActionResult TearDown(bool isError)

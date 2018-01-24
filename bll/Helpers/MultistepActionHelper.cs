@@ -44,6 +44,7 @@ namespace Quantumart.QP8.BLL.Helpers
             {
                 throw new FormatException(string.Format(ImportStrings.NumberFormatError, value));
             }
+
             if (value == "NULL")
             {
                 return string.Empty;

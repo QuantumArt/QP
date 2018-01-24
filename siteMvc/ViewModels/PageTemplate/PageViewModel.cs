@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
@@ -8,7 +10,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
     {
         private IPageService _service;
 
-        internal static PageViewModel Create(BLL.Page page, string tabId, int parentId, IPageService pageService)
+        internal static PageViewModel Create(Page page, string tabId, int parentId, IPageService pageService)
         {
             var model = Create<PageViewModel>(page, tabId, parentId);
             model._service = pageService;
@@ -21,24 +23,18 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public override string CaptureLockActionCode => Constants.ActionCode.CaptureLockPage;
 
-        public new BLL.Page Data
+        public new Page Data
         {
-            get
-            {
-                return (BLL.Page)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (Page)EntityData;
+            set => EntityData = value;
         }
 
-        private List<BLL.ListItem> _charsets;
+        private List<ListItem> _charsets;
 
-        public List<BLL.ListItem> Charsets => _charsets ?? (_charsets = _service.GetCharsetsAsListItems().ToList());
+        public List<ListItem> Charsets => _charsets ?? (_charsets = _service.GetCharsetsAsListItems().ToList());
 
-        private List<BLL.ListItem> _locales;
+        private List<ListItem> _locales;
 
-        public List<BLL.ListItem> Locales => _locales ?? (_locales = _service.GetLocalesAsListItems().ToList());
+        public List<ListItem> Locales => _locales ?? (_locales = _service.GetLocalesAsListItems().ToList());
     }
 }

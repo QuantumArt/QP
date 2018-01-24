@@ -4,11 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using AutoFixture;
+using AutoFixture.AutoMoq;
+using AutoFixture.Xunit2;
 using FluentAssertions;
 using Moq;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
-using Ploeh.AutoFixture.Xunit2;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.TestTools.AutoFixture.Specimens;
 using QP8.WebMvc.Tests.Infrastructure.Attributes;
@@ -44,8 +44,8 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
         [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_CR_endings.xml", "ACADB78E0CE686C60564A71F1F595993")]
         [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_LF_endings.xml", "ACADB78E0CE686C60564A71F1F595993")]
         [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_with_duplicates.xml", "ACADB78E0CE686C60564A71F1F595993")]
-        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_guid_rename.xml", "C763A682C267481D897ECB6E95B5469D")]
-        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml", "3471C3F5D13C53877D1EB0C90E8061E5")]
+        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\catalog_guid_rename.xml", "C763A682C267481D897ECB6E95B5469D")]
+        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\catalog_2016-10-27_17-00-16.xml", "3471C3F5D13C53877D1EB0C90E8061E5")]
         [Theory, Trait("XmlDbUpdate", "XmlHashVerifier")]
         public void GivenXmlData_WhenContainsSpacesDuplicatesAndDifferentLineEndings_ShouldCorrectlyCalculateHash(string xmlString, string expectedHash)
         {
@@ -66,7 +66,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             dbLogService.Verify();
         }
 
-        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml", "3471C3F5D13C53877D1EB0C90E8061E5")]
+        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\catalog_2016-10-27_17-00-16.xml")]
         [Theory, Trait("XmlDbUpdate", "XmlHashVerifier")]
         public void GivenXmlData_WhenContainsCorrectData_ShouldCallAllServices(string xmlString)
         {
@@ -101,7 +101,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             actionsCorrecterService.Verify();
         }
 
-        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml")]
+        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\catalog_2016-10-27_17-00-16.xml")]
         [Theory, Trait("XmlDbUpdate", "DbValidation")]
         public void GivenXmlData_WhenDbRecordingIsOn_ShouldThrowException(string xmlString)
         {
@@ -121,7 +121,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             appInfoRepository.Verify();
         }
 
-        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml")]
+        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\catalog_2016-10-27_17-00-16.xml")]
         [Theory, Trait("XmlDbUpdate", "DbValidation")]
         public void GivenXmlData_WhenDbVersionDifferentFromXml_ShouldThrowException(string xmlString)
         {
@@ -141,7 +141,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             appInfoRepository.Verify();
         }
 
-        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml")]
+        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\catalog_2016-10-27_17-00-16.xml")]
         [Theory, Trait("XmlDbUpdate", "DbLogging")]
         public void GivenXmlData_WhenFileWasAlreadyReplayed_ShouldThrowException(string xmlString)
         {
@@ -163,7 +163,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             dbLogService.Verify(m => m.InsertFileLogEntry(It.IsAny<XmlDbUpdateLogModel>()), Times.Never());
         }
 
-        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml", "3471C3F5D13C53877D1EB0C90E8061E5")]
+        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\catalog_2016-10-27_17-00-16.xml", "3471C3F5D13C53877D1EB0C90E8061E5")]
         [Theory, Trait("XmlDbUpdate", "DbLogging")]
         public void GivenXmlData_WhenFileWasNotReplayedBefore_ShouldInsertDbEntry(string xmlString, string expectedHash)
         {
@@ -185,7 +185,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             dbLogService.Verify();
         }
 
-        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\mts_catalog_with_five_actions.xml")]
+        [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\catalog_with_five_actions.xml")]
         [Theory, Trait("XmlDbUpdate", "DbLogging")]
         public void GivenXmlData_WhenActionsWasNotReplayedBefore_ShouldSkipAndProcessOtherActions(string xmlString)
         {

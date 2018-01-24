@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
@@ -50,8 +51,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
 
         public IEnumerable<ListItem> AvailableLanguages => new List<ListItem>
         {
-            new ListItem(Constants.LanguageId.English.ToString(), UserStrings.English),
-            new ListItem(Constants.LanguageId.Russian.ToString(), UserStrings.Russian)
+            new ListItem(LanguageId.English.ToString(), UserStrings.English),
+            new ListItem(LanguageId.Russian.ToString(), UserStrings.Russian)
         };
 
         /// <summary>
@@ -65,10 +66,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
         /// </summary>
         public IEnumerable<ListItem> GroupListItems
         {
-            get
-            {
-                return Service.GetBindableUserGroups().Select(g => new ListItem { Value = g.Id.ToString(), Text = g.Name }).ToArray();
-            }
+            get { return Service.GetBindableUserGroups().Select(g => new ListItem { Value = g.Id.ToString(), Text = g.Name }).ToArray(); }
         }
 
         /// <summary>

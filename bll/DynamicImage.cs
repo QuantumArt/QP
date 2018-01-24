@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 
@@ -15,7 +15,6 @@ namespace Quantumart.QP8.BLL
 {
     public class DynamicImage
     {
-
         public const string JPG_EXTENSION = "JPG";
         public const string PNG_EXTENSION = "PNG";
         public const string GIF_EXTENSION = "GIF";
@@ -25,7 +24,6 @@ namespace Quantumart.QP8.BLL
         public const short MaxImageSize = 9999;
         public const short MinQuality = 50;
         public const short MaxQuality = 100;
-
 
         public static DynamicImage Load(Field field)
         {
@@ -74,7 +72,7 @@ namespace Quantumart.QP8.BLL
 
                 if (Width != 0 && Height != 0)
                 {
-                    return (MaxSize) ? ImageResizeMode.Fit : ImageResizeMode.Absolute;
+                    return MaxSize ? ImageResizeMode.Fit : ImageResizeMode.Absolute;
                 }
 
                 return ImageResizeMode.None;
@@ -116,7 +114,7 @@ namespace Quantumart.QP8.BLL
             }
             else if (ResizeMode == ImageResizeMode.Fit)
             {
-                targetCoef = (heightCoef >= 1 && widthCoef >= 1) ? 1 : Math.Min(heightCoef, widthCoef);
+                targetCoef = heightCoef >= 1 && widthCoef >= 1 ? 1 : Math.Min(heightCoef, widthCoef);
             }
             else
             {
@@ -151,10 +149,7 @@ namespace Quantumart.QP8.BLL
 
         private ImageCodecInfo ImageCodecInfo
         {
-            get
-            {
-                return ImageCodecInfo.GetImageEncoders().Where(n => n.MimeType == MimeType).SingleOrDefault();
-            }
+            get { return ImageCodecInfo.GetImageEncoders().Where(n => n.MimeType == MimeType).SingleOrDefault(); }
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
@@ -207,7 +202,6 @@ namespace Quantumart.QP8.BLL
             }
 
             return string.Format("{0}/{1}", SubFolder, GetDesiredFileName(baseFileName));
-
         }
 
         public void CreateDynamicImage(string baseImagePath, string imageValue)
@@ -222,7 +216,7 @@ namespace Quantumart.QP8.BLL
                         using (var output = new Bitmap(desiredSize.Width, desiredSize.Height))
                         {
                             var resizer = Graphics.FromImage(output);
-                            resizer.InterpolationMode = (output.Width < input.Width && output.Height < input.Height) ? InterpolationMode.HighQualityBicubic : InterpolationMode.HighQualityBilinear;
+                            resizer.InterpolationMode = output.Width < input.Width && output.Height < input.Height ? InterpolationMode.HighQualityBicubic : InterpolationMode.HighQualityBilinear;
                             resizer.DrawImage(input, 0, 0, desiredSize.Width, desiredSize.Height);
                             var resultPath = Path.Combine(PathInfo.Path, GetDesiredFileName(imageValue).Replace(@"/", @"\"));
                             Directory.CreateDirectory(Path.GetDirectoryName(resultPath));
@@ -269,9 +263,7 @@ namespace Quantumart.QP8.BLL
                     xmlDocument.Save(filename);
                 }
             }
-
         }
-
 
         public void DeleteDirectory()
         {
@@ -279,7 +271,6 @@ namespace Quantumart.QP8.BLL
             {
                 Folder.ForceDelete(PathInfo.Path);
             }
-
         }
 
         public DynamicImage Clone(Field field)

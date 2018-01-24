@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
@@ -42,10 +41,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         }
 
         /// <summary>
-		/// Генерирует начальную часть контейнера стандартной формы QP8
+        /// Генерирует начальную часть контейнера стандартной формы QP8
         /// </summary>
-		/// <returns>объект типа TabForm</returns>
-		public static TabForm BeginTabForm(this HtmlHelper html, ViewModel model, string actionName = null, string controlerName = null, object routeValues = null)
+        /// <returns>объект типа TabForm</returns>
+        public static TabForm BeginTabForm(this HtmlHelper html, ViewModel model, string actionName = null, string controlerName = null, object routeValues = null)
         {
             if (string.IsNullOrWhiteSpace(actionName) || string.IsNullOrWhiteSpace(controlerName))
             {

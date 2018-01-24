@@ -3,9 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 {
     public abstract class ListViewModel : ViewModel
     {
@@ -62,15 +61,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public string ArticlesCountId => UniqueId("articlesCount");
 
-        public virtual string AddNewItemActionCode
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public virtual string AddNewItemActionCode => throw new NotImplementedException();
 
-        public virtual string AddNewItemText
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public virtual string AddNewItemText => throw new NotImplementedException();
 
         public virtual string ContextMenuCode => EntityTypeCode;
 

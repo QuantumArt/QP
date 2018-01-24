@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.Interfaces;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
@@ -47,20 +48,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
 
         public override bool LinkOpenNewTab => true;
 
-		public int MemberType { get { return EntityPermission.GroupMemberType; } }
+        public int MemberType => EntityPermission.GroupMemberType;
 
-        public IEnumerable<ListItem> GetMemberTypes()
+        public IEnumerable<ListItem> GetMemberTypes() => new[]
         {
-            return new[]
-            {
-				new ListItem(EntityPermission.GroupMemberType, EntityPermissionStrings.Group, "GroupMemberPanel"),
-				new ListItem(EntityPermission.UserMemberType, EntityPermissionStrings.User, "UserMemberPanel")
-            };
-        }
+            new ListItem(EntityPermission.GroupMemberType, EntityPermissionStrings.Group, "GroupMemberPanel"),
+            new ListItem(EntityPermission.UserMemberType, EntityPermissionStrings.User, "UserMemberPanel")
+        };
 
         public string SearchBlockId => UniqueId("SearchBlockId");
 
         public bool ShowParentPermissionButton { get; private set; }
-
     }
 }

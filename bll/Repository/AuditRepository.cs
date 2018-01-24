@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -171,11 +171,16 @@ namespace Quantumart.QP8.BLL.Repository
         public SessionsLog GetCurrent()
         {
             var uid = Converter.ToDecimal(QPContext.CurrentUserId);
+            var sid = Converter.ToDecimal(QPContext.CurrentSessionId);
+
             var slDal =
                 QPContext.EFContext.SessionsLogSet
-                .Where(s => !s.IsQP7 && s.UserId == uid)
-                .OrderByDescending(s => s.StartTime)
-                .FirstOrDefault();
+                    .Where(s => !s.IsQP7 && s.UserId == uid && s.SessionId == sid)                
+                    .FirstOrDefault() ??
+                QPContext.EFContext.SessionsLogSet
+                    .Where(s => !s.IsQP7 && s.UserId == uid)
+                    .OrderByDescending(s => s.StartTime)
+                    .FirstOrDefault();
 
             return MapperFacade.SessionsLogMapper.GetBizObject(slDal);
         }
@@ -186,5 +191,14 @@ namespace Quantumart.QP8.BLL.Repository
             sessionsLogDal = DefaultRepository.SimpleUpdate(sessionsLogDal);
             return MapperFacade.SessionsLogMapper.GetBizObject(sessionsLogDal);
         }
+
+        public void ClearUserToken(int userId, int sessionId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                CommonSecurity.ClearUserToken(scope.DbConnection, userId, sessionId);
+            }
+        }
+
     }
 }

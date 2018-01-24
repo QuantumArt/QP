@@ -7,6 +7,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Telerik.Web.Mvc;
@@ -23,7 +24,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _pageTemplateService = pageTemplateService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Templates)]
         [BackendActionContext(ActionCode.Templates)]
@@ -41,10 +41,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexTemplates(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _pageTemplateService.GetPageTemplatesBySiteId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewPageTemplate)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.PageTemplate, "parentId")]
@@ -143,8 +142,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult GetFieldsByContentId(int contentId)
         {
             var content = _pageTemplateService.GetContentById(contentId);
-            bool hasWorkflow;
-            var statuses = _pageTemplateService.GetStatusIdsByContentId(contentId, out hasWorkflow);
+            var statuses = _pageTemplateService.GetStatusIdsByContentId(contentId, out var hasWorkflow);
             return new JsonResult
             {
                 Data = new
@@ -164,16 +162,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePageFromPageObject)]
         [BackendActionContext(ActionCode.AssemblePageFromPageObject)]
         [BackendActionLog]
-        public ActionResult AssemblePageFromPageObject(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObject(parentId));
-        }
+        public ActionResult AssemblePageFromPageObject(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObject(parentId));
 
         [HttpPost]
-        public ActionResult AssemblePageFromPageObjectPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectPreAction(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectPreAction(parentId));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -181,16 +173,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePageFromPageObjectFormat)]
         [BackendActionContext(ActionCode.AssemblePageFromPageObjectFormat)]
         [BackendActionLog]
-        public ActionResult AssemblePageFromPageObjectFormat(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectFormat(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectFormat(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectFormat(parentId));
 
         [HttpPost]
-        public ActionResult AssemblePageFromPageObjectFormatPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectFormatPreAction(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectFormatPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectFormatPreAction(parentId));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -198,16 +184,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePageFromPageObjectList)]
         [BackendActionContext(ActionCode.AssemblePageFromPageObjectList)]
         [BackendActionLog]
-        public ActionResult AssemblePageFromPageObjectList(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectList(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectList(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectList(parentId));
 
         [HttpPost]
-        public ActionResult AssemblePageFromPageObjectListPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssemblePageFromPageObjectListPreAction(parentId));
-        }
+        public ActionResult AssemblePageFromPageObjectListPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssemblePageFromPageObjectListPreAction(parentId));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -215,16 +195,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleObjectFromPageObjectFormat)]
         [BackendActionContext(ActionCode.AssembleObjectFromPageObjectFormat)]
         [BackendActionLog]
-        public ActionResult AssembleObjectFromPageObjectFormat(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssembleObjectFromPageObjectFormat(parentId));
-        }
+        public ActionResult AssembleObjectFromPageObjectFormat(string tabId, int parentId, int id) => Json(_pageTemplateService.AssembleObjectFromPageObjectFormat(parentId));
 
         [HttpPost]
-        public ActionResult AssembleObjectFromPageObjectFormatPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssembleObjectFromPageObjectFormatPreAction(parentId));
-        }
+        public ActionResult AssembleObjectFromPageObjectFormatPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssembleObjectFromPageObjectFormatPreAction(parentId));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -232,18 +206,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleObjectFromPageObjectFormat)]
         [BackendActionContext(ActionCode.AssembleObjectFromPageObjectFormat)]
         [BackendActionLog]
-        public ActionResult AssembleObjectFromTemplateObjectFormat(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssembleObjectFromTemplateObjectFormat(parentId));
-        }
+        public ActionResult AssembleObjectFromTemplateObjectFormat(string tabId, int parentId, int id) => Json(_pageTemplateService.AssembleObjectFromTemplateObjectFormat(parentId));
 
         [HttpPost]
-        public ActionResult AssembleObjectFromTemplateObjectFormatPreAction(string tabId, int parentId, int id)
-        {
-            return Json(_pageTemplateService.AssembleObjectFromTemplateObjectFormatPreAction(parentId));
-        }
+        public ActionResult AssembleObjectFromTemplateObjectFormatPreAction(string tabId, int parentId, int id) => Json(_pageTemplateService.AssembleObjectFromTemplateObjectFormatPreAction(parentId));
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SearchInCode)]
         [BackendActionContext(ActionCode.SearchInCode)]
@@ -258,15 +225,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         public ActionResult _Formats(string tabId, int parentId, int id, int? templateId, int? pageId, string filterVal, GridCommand command)
         {
-            var list = _pageTemplateService.FormatSearch(command.GetListCommand(), id, templateId, pageId, filterVal);
-            return View(new GridModel
-            {
-                Data = list.Data,
-                Total = list.TotalRecords
-            });
+            var serviceResult = _pageTemplateService.FormatSearch(command.GetListCommand(), id, templateId, pageId, filterVal);
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SearchInTemplates)]
         [BackendActionContext(ActionCode.SearchInTemplates)]
@@ -281,15 +243,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         public ActionResult _Templates(string tabId, int parentId, int id, string filterVal, GridCommand command)
         {
-            var list = _pageTemplateService.TemplateSearch(command.GetListCommand(), id, filterVal);
-            return View(new GridModel
-            {
-                Data = list.Data,
-                Total = list.TotalRecords
-            });
+            var serviceResult = _pageTemplateService.TemplateSearch(command.GetListCommand(), id, filterVal);
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SearchInObjects)]
         [BackendActionContext(ActionCode.SearchInObjects)]
@@ -304,12 +261,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         public ActionResult _Parameters(string tabId, int parentId, int id, int? templateId, int? pageId, string filterVal, GridCommand command)
         {
-            var list = _pageTemplateService.ObjectSearch(command.GetListCommand(), id, templateId, pageId, filterVal);
-            return View(new GridModel
-            {
-                Data = list.Data,
-                Total = list.TotalRecords
-            });
+            var serviceResult = _pageTemplateService.ObjectSearch(command.GetListCommand(), id, templateId, pageId, filterVal);
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -330,11 +283,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var defaultCode = _pageTemplateService.ReadDefaultCode(formatId);
             return new JsonResult
             {
-                Data = new
-                {
-                    success = true,
-                    code = defaultCode
-                },
+                Data = new { success = true, code = defaultCode },
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
         }
@@ -345,11 +294,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var defaultCode = _pageTemplateService.ReadDefaultPresentation(formatId);
             return new JsonResult
             {
-                Data = new
-                {
-                    success = true,
-                    code = defaultCode
-                },
+                Data = new { success = true, code = defaultCode },
                 JsonRequestBehavior = JsonRequestBehavior.DenyGet
             };
         }
@@ -404,16 +349,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public JsonResult GetHTAToolbarMarkUp(bool presentationOrCodeBehind, int? formatId, int? templateId)
+        public JsonResult GetHTAToolbarMarkUp(bool presentationOrCodeBehind, int? formatId, int? templateId) => new JsonResult
         {
-            return new JsonResult
+            Data = new
             {
-                Data = new
-                {
-                    html = RenderPartialView("HTAreaToolbar", new HtAreaToolbarViewModel(presentationOrCodeBehind, formatId, templateId))
-                },
-                JsonRequestBehavior = JsonRequestBehavior.DenyGet
-            };
-        }
+                html = RenderPartialView("HTAreaToolbar", new HtAreaToolbarViewModel(presentationOrCodeBehind, formatId, templateId))
+            },
+            JsonRequestBehavior = JsonRequestBehavior.DenyGet
+        };
     }
 }

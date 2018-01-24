@@ -1,12 +1,11 @@
-﻿using Microsoft.Practices.Unity;
-using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.UnityExtensions;
+using QP8.Infrastructure.Logging.PrtgMonitoring.Unity;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.ArticleScheduler.Onetime;
 using Quantumart.QP8.ArticleScheduler.Publishing;
 using Quantumart.QP8.ArticleScheduler.Recurring;
 using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
-using Quantumart.QP8.BLL.Services.ArticleScheduler;
 using Quantumart.QP8.Constants;
+using Unity;
 
 namespace Quantumart.QP8.ArticleScheduler
 {

@@ -1,15 +1,14 @@
-﻿using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 {
     public abstract class LockableEntityViewModel : EntityViewModel
     {
         public new LockableEntityObject Data
         {
-            get { return (LockableEntityObject)EntityData; }
-            set { EntityData = value; }
+            get => (LockableEntityObject)EntityData;
+            set => EntityData = value;
         }
 
         public string UnlockId => UniqueId("unlock");

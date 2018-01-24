@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.Constants
 {
@@ -69,6 +69,7 @@ namespace Quantumart.QP8.Constants
         public const string UnlockArticles = "unlock_articles";
         public const string ArticlesForApproval = "list_articles_for_approval";
         public const string ExportArticles = "export_articles";
+        public const string ExportArchiveArticles = "export_archive_article";
         public const string ImportArticles = "import_articles";
 
         public const string VirtualArticles = "list_virtual_article";
@@ -132,7 +133,6 @@ namespace Quantumart.QP8.Constants
         public const string CreateLikeField = "copy_field";
         public const string MultipleSelectFieldForExport = "multiple_select_field_for_export";
         public const string MultipleSelectFieldForExportExpanded = "multiple_select_field_for_export_expanded";
-
 
         public const string VirtualFields = "list_virtual_field";
         public const string VirtualFieldProperties = "edit_virtual_field";
@@ -206,7 +206,6 @@ namespace Quantumart.QP8.Constants
         public const string UpdateUserGroup = "update_user_group";
         public const string RemoveUserGroup = "remove_user_group";
         public const string SelectUserGroup = "select_user_group";
-
 
         public const string SitePermissions = "list_site_permission";
         public const string AddNewSitePermission = "new_site_permission";

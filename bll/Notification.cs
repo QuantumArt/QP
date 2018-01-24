@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;

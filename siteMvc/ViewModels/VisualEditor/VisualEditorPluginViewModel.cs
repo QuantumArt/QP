@@ -25,14 +25,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public new VisualEditorPlugin Data
         {
-            get { return (VisualEditorPlugin)EntityData; }
-            set { EntityData = value; }
+            get => (VisualEditorPlugin)EntityData;
+            set => EntityData = value;
         }
 
-        public static VisualEditorPluginViewModel Create(VisualEditorPlugin plugin, string tabId, int parentId)
-        {
-            return Create<VisualEditorPluginViewModel>(plugin, tabId, parentId);
-        }
+        public static VisualEditorPluginViewModel Create(VisualEditorPlugin plugin, string tabId, int parentId) => Create<VisualEditorPluginViewModel>(plugin, tabId, parentId);
 
         [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<object> VeCommandsDisplay

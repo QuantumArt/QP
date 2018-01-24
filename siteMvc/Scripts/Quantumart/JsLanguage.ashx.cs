@@ -14,7 +14,8 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
 
         public bool IsReusable => false;
 
-        private readonly List<string> _scriptFileNames = new List<string>() {
+        private readonly List<string> _scriptFileNames = new List<string>
+        {
             "BackendCommon.Lang.js",
             "BackendActionExecutor.Lang.js",
             "BackendHome.Lang.js",
@@ -100,9 +101,6 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
             return File.Exists(neutralScriptPath) ? neutralScriptPath : scriptPath;
         }
 
-        public string GetPhysicalFilePath(HttpServerUtility server, string scriptName)
-        {
-            return server.MapPath(PathUtility.Combine(SitePathHelper.GetCurrentRootUrl(), LangScriptFolderPath, scriptName));
-        }
+        public string GetPhysicalFilePath(HttpServerUtility server, string scriptName) => server.MapPath(PathUtility.Combine(SitePathHelper.GetCurrentRootUrl(), LangScriptFolderPath, scriptName));
     }
 }

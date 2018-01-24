@@ -23,15 +23,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 .Concat(dependentList));
         }
 
-        public static string GetDependentPanelId(string id, string value)
-        {
-            return $"{id}_{value}_Panel";
-        }
+        public static string GetDependentPanelId(string id, string value) => $"{id}_{value}_Panel";
 
-        private static string GetDependentPanelHtmlId(string id, string value)
-        {
-            return $"#{id}_{value}_Panel";
-        }
+        private static string GetDependentPanelHtmlId(string id, string value) => $"#{id}_{value}_Panel";
 
         private static string GetDependentPanelHtmlIDs(string id, string value, string[] dependentItemIds)
         {
@@ -39,10 +33,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return string.Join(",", GetDependentPanelHtmlId(id, value), string.Join(",", dims));
         }
 
-        public static string GetHashItem(string id, string value)
-        {
-            return $@"""{id}"" : ""{value}""";
-        }
+        public static string GetHashItem(string id, string value) => $@"""{id}"" : ""{value}""";
 
         public string TextWithId => $"(#{Value}) - {Text}";
 

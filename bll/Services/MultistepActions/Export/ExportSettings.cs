@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 
@@ -19,6 +20,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         }
 
         public int ContentId { get; set; }
+
+        public bool isArchive { get; set; }
 
         public string Encoding { get; set; }
 

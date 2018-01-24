@@ -5,7 +5,10 @@ using AutoMapper;
 using Quantumart.QP8.BLL.Factories;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 
@@ -182,7 +185,6 @@ namespace Quantumart.QP8.BLL.Services
             return EntityObjectRepository.GetParentsChain(entityTypeCode, entityId, parentEntityId);
         }
 
-
         /// <summary>
         /// Возвращает информацию о текущей и родительской сущности
         /// </summary>
@@ -231,8 +233,8 @@ namespace Quantumart.QP8.BLL.Services
                         var rh = recordHeaders.First(h => h.EntityId == e.Id && h.EntityTypeCode.Equals(e.EntityTypeCode, StringComparison.InvariantCultureIgnoreCase));
                         return rh.Modified.Value <= e.Modified
                             && ( // проверка на lock
-                                (e is LockableEntityObject
-                                && !((LockableEntityObject)e).LockedByAnyoneElse)
+                                e is LockableEntityObject
+                                && !((LockableEntityObject)e).LockedByAnyoneElse
                                 || !(e is LockableEntityObject)
                             )
                             && !e.IsReadOnly;
@@ -273,6 +275,9 @@ namespace Quantumart.QP8.BLL.Services
         }
 
         public static string GetArticleFieldValue(int contentId, string fieldName, int articleId) => ArticleRepository.GetFieldValue(articleId, contentId, fieldName);
+
+        public static Dictionary<int, string> GetContentFieldValues(int contentId, string fieldName) => ArticleRepository.GetContentFieldValues(contentId, fieldName);
+
 
         public static string GetArticleLinkedItems(int linkId, int articleId) => ArticleRepository.GetLinkedItems(linkId, articleId);
 

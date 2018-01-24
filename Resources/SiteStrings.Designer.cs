@@ -313,6 +313,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copying links between articles.
+        /// </summary>
+        public static string CopySiteItemLinks {
+            get {
+                return ResourceManager.GetString("CopySiteItemLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copying settings of site {0}.
         /// </summary>
         public static string CopySiteSettings {

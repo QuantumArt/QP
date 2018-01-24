@@ -7,6 +7,7 @@ using QA.Validation.Xaml;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -311,6 +312,7 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("ExternalDevelopment", NameResourceType = typeof(SiteStrings))]
         public bool ExternalDevelopment { get; set; }
+
         public override string EntityTypeCode => Constants.EntityTypeCode.Site;
 
         public override string LockedByAnyoneElseMessage => SiteStrings.LockedByAnyoneElse;
@@ -427,6 +429,15 @@ namespace Quantumart.QP8.BLL
 
             UploadUrlPrefix = PathUtility.CorrectSlashes(UploadUrlPrefix, absUrlMode);
 
+            if (CreateDefaultXamlDictionary)
+            {
+                XamlDictionaries = GenerateDefaultXamlDictionary();
+            }
+            else
+            {
+                XamlDictionaries = string.IsNullOrWhiteSpace(XamlDictionaries) ? null : XamlDictionaries;
+            }
+
             if (!IsDotNet)
             {
                 ForceTestDirectory = false;
@@ -478,15 +489,6 @@ namespace Quantumart.QP8.BLL
                 {
                     UploadUrlPrefix = null;
                 }
-
-                if (CreateDefaultXamlDictionary)
-                {
-                    XamlDictionaries = GenerateDefaultXamlDictionary();
-                }
-                else
-                {
-                    XamlDictionaries = string.IsNullOrWhiteSpace(XamlDictionaries) ? null : XamlDictionaries;
-                }
             }
         }
 
@@ -507,8 +509,8 @@ namespace Quantumart.QP8.BLL
 
         public void SaveVisualEditorCommands(int[] activeVeCommands)
         {
-            var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToList();//все возможные команды
-            var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, activeVeCommands).Select(c => c.Id).ToArray();//opposite to activeVecommands
+            var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToList(); //все возможные команды
+            var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, activeVeCommands).Select(c => c.Id).ToArray(); //opposite to activeVecommands
             var oldSiteCommandIdsOn = new HashSet<int>(VisualEditorRepository.GetResultCommands(Id).Where(n => n.On).Select(n => n.Id)); // с этим нужно сравнивать на предмет измененеий
 
             var defaultCommandsDictionary = defaultCommands.ToDictionary(c => c.Id, c => c.On);
@@ -578,7 +580,6 @@ namespace Quantumart.QP8.BLL
                     Directory.CreateDirectory(TestDirectory);
                     SitePathRepository.CreateBinDirectory(TestBinDirectory);
                 }
-
             }
         }
 

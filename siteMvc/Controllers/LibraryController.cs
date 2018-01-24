@@ -35,15 +35,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
         }
 
-        public JsonResult FullNameFileExists(string name)
-        {
-            return Json(new { result = name != null && System.IO.File.Exists(name) }, JsonRequestBehavior.AllowGet);
-        }
+        public JsonResult FullNameFileExists(string name) => Json(new { result = name != null && System.IO.File.Exists(name) }, JsonRequestBehavior.AllowGet);
 
-        public JsonResult FileExists(string path, string name)
-        {
-            return new JsonResult { Data = new { result = name != null && System.IO.File.Exists(Path.Combine(path, name)) }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
-        }
+        public JsonResult FileExists(string path, string name) => new JsonResult { Data = new { result = name != null && System.IO.File.Exists(Path.Combine(path, name)) }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
 
         public JsonResult ResolveFileName(string path, string name)
         {
@@ -237,7 +231,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
                         var ext = Path.GetExtension(targetPath);
                         output.Save(fs, GetImageCodecInfo(ext), GetEncoderParameters(ext));
                     }
-
                 }
             }
 
@@ -292,9 +285,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 index++;
                 result = MutateHelper.MutateFileName(name, index);
-            }
+            } while (System.IO.File.Exists(Path.Combine(path, result)));
 
-            while (System.IO.File.Exists(Path.Combine(path, result)));
             return result;
         }
 
@@ -333,12 +325,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return key;
         }
 
-        private static PathInfo GetFilePathInfo(int fieldId, int? entityId, bool isVersion)
-        {
-            return !isVersion
-                ? FieldService.GetPathInfo(fieldId, entityId)
-                : ArticleVersionService.GetPathInfo(fieldId, (int)entityId);
-        }
+        private static PathInfo GetFilePathInfo(int fieldId, int? entityId, bool isVersion) => !isVersion
+            ? FieldService.GetPathInfo(fieldId, entityId)
+            : ArticleVersionService.GetPathInfo(fieldId, (int)entityId);
 
         private JsonResult GetFileProperties(PathInfo pathInfo, string fileName, FilePropertiesOptions options)
         {
@@ -386,7 +375,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     return true;
                 }
             }
-            catch (OutOfMemoryException) { }
+            catch (OutOfMemoryException)
+            {
+            }
 
             return false;
         }

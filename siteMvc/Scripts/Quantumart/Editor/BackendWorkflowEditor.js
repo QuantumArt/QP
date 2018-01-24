@@ -23,20 +23,15 @@ Quantumart.QP8.BackendWorkflow.prototype = {
   initialize() {
     const workflow = this._componentElem;
     this._items = ko.observableArray(
-      $.map(workflow.data('workflow_list_data'), o => {
-        const r = {};
-        Object.assign(r, o || {}, {
-          RadioChecked: ko.observable(o.RadioChecked),
-          Description: ko.observable(o.Description),
-          UserId: ko.observable(o.UserId),
-          GroupId: ko.observable(o.GroupId)
-        });
-        return r;
-      })
+      workflow.data('workflow_list_data').map(data => Object.assign({}, data, {
+        RadioChecked: ko.observable(data.RadioChecked),
+        Description: ko.observable(data.Description),
+        UserId: ko.observable(data.UserId),
+        GroupId: ko.observable(data.GroupId)
+      }))
     );
 
     this._contentSelector = this._componentElem.closest('form').find('.workflow_content_selector');
-
     const viewModel = {
       items: this._items,
       contentSelector: this._contentSelector,
@@ -59,8 +54,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
           .find(`.${window.CHANGED_FIELD_CLASS_NAME}`)
           .removeClass(window.CHANGED_FIELD_CLASS_NAME);
 
-        const activeContentsIds = this.contentSelector.find('input:checkbox:checked')
-          .map((index, elem) => $(elem).val()).get().join();
+        const activeContentsIds = this.contentSelector
+          .find('input:checkbox:checked')
+          .map((index, elem) => $(elem).val())
+          .get()
+          .join();
 
         if ($q.isNull(element.UserId()) && $q.isNull(element.GroupId())) {
           $(dom).find('.singleItemPicker').each(jQuery.proxy(function (index, elem) {
@@ -140,10 +138,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
   checkAllPermisssions() {
     const activeContentsIds = this.getCheckedContentsIds();
-
-    const usersAndGroups = $.map(this._items(), elem => {
-      return { StName: elem.StName, UserId: elem.UserId(), GroupId: elem.GroupId() };
-    });
+    const usersAndGroups = this._items().map(elem => ({
+      StName: elem.StName,
+      UserId: elem.UserId(),
+      GroupId: elem.GroupId()
+    }));
 
     $q.getJsonFromUrl(
       'GET',
@@ -214,8 +213,12 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     if (target.size() === 0) {
       target = $(e);
     }
+
     if (target.parent('div').hasClass('groupCheckbox')) {
-      target.parent('.groupCheckbox').siblings('.workflow_control_selector').find('.checkbox')
+      target
+        .parent('.groupCheckbox')
+        .siblings('.workflow_control_selector')
+        .find('.checkbox')
         .each(jQuery.proxy(function (index, item) {
           this.manageItems($(item));
         }, this));

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -13,17 +13,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
     [SessionState(SessionStateBehavior.Disabled)]
     public class ThumbnailController : QPController
     {
-        [HttpGet]
-        public FileResult _SiteFileThumbnail(int folderId, string fileName)
-        {
-            return GetThumbnailResult(SiteFolderService.GetPath(folderId, fileName));
-        }
+        public FileResult _SiteFileThumbnail(int folderId, string fileName) => GetThumbnailResult(SiteFolderService.GetPath(folderId, fileName));
 
-        [HttpGet]
-        public FileResult _ContentFileThumbnail(int folderId, string fileName)
-        {
-            return GetThumbnailResult(ContentFolderService.GetPath(folderId, fileName));
-        }
+        public FileResult _ContentFileThumbnail(int folderId, string fileName) => GetThumbnailResult(ContentFolderService.GetPath(folderId, fileName));
 
         private FileResult GetThumbnailResult(string path)
         {

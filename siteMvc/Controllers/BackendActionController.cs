@@ -8,7 +8,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class BackendActionController : QPController
     {
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public JsonResult GetByCode(string actionCode)
         {
@@ -24,7 +23,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public JsonResult GetCodeById(int actionId)
         {
@@ -40,7 +38,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public JsonResult GetEntityTypeIdToActionListItemsDictionary()
         {
@@ -56,12 +53,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public JsonResult GetStatusesList(string actionCode, string entityId, int parentEntityId, bool? boundToExternal)
         {
-            int idResult;
-            var result = int.TryParse(entityId, out idResult) ? BackendActionService.GetStatusesList(actionCode, idResult, parentEntityId) : null;
+            var result = int.TryParse(entityId, out var idResult) ? BackendActionService.GetStatusesList(actionCode, idResult, parentEntityId) : null;
             return new JsonResult
             {
                 Data = new

@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-statements
 Quantumart.QP8.BackendFileField = function (fileFieldElementId, fileWrapperElementId, options) {
   Quantumart.QP8.BackendFileField.initializeBase(this);
 
@@ -188,11 +189,9 @@ Quantumart.QP8.BackendFileField.prototype = {
   _librarySelectedHandler(eventType, sender, args) {
     this._closeLibrary();
     if (args) {
-      const entities = args.entities;
-
+      const { entities } = args;
       if (entities.length > 0) {
         let url = args.context;
-
         if (url === '\\') {
           url = '';
         }
@@ -404,6 +403,7 @@ Quantumart.QP8.BackendFileField.prototype = {
     this._openLibrary();
   },
 
+  // eslint-disable-next-line max-statements
   dispose() {
     this._destroyLibrary();
 

@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Transactions;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.Results;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -109,7 +112,7 @@ namespace Quantumart.QP8.BLL.Repository
                 .Select(c => new { c.Id, Text = c.Name })
                 .ToArray()
                 .OrderBy(c => c.Text, StringComparer.InvariantCultureIgnoreCase)
-                .Select(c => new ListItem { Value = c.Id.ToString(), Text = c.Text })
+                .Select(c => new ListItem { Value = c.Id.ToString(CultureInfo.InvariantCulture), Text = c.Text })
                 .ToArray();
         }
 
@@ -120,9 +123,9 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var dContentIDs = Converter.ToDecimalCollection(contentIds);
             return MapperFacade.FieldMapper.GetBizList(FieldRepository.DefaultFieldQuery
-                    .Where(f => dContentIDs.Contains(f.ContentId))
-                    .OrderBy(f => f.ContentId)
-                    .ToList()
+                .Where(f => dContentIDs.Contains(f.ContentId))
+                .OrderBy(f => f.ContentId)
+                .ToList()
             );
         }
 

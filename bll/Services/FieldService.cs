@@ -1,8 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
@@ -211,7 +214,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static IEnumerable<ListItem> GetAggregetableContentsForClassifier(Field classifier) => classifier.IsNew
             ? Enumerable.Empty<ListItem>()
-            : FieldRepository.GetAggregatableContentListItemsForClassifier(classifier);
+            : FieldRepository.GetAggregatableContentListItemsForClassifier(classifier, permissionLevel: PermissionLevel.List);
 
         public static IEnumerable<ListItem> GetFieldsForTreeOrder(int contentId, int id)
         {

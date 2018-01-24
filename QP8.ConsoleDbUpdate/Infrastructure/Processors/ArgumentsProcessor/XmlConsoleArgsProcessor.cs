@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Mono.Options;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 
@@ -9,18 +9,20 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
         private bool _disableFieldIdentity;
         private bool _disableContentIdentity;
         private bool _useGuidSubstitution;
+        private bool _disableDataIntegrity;
 
         protected internal override OptionSet BuildOptionSet()
         {
             return new OptionSet
             {
                 { "d|disable=", "disable identity options: [field|content]", ParseDisableOption },
-                { "useGuid", "enable guid substitution mode", ug => _useGuidSubstitution = ug != null }
+                { "useGuid", "enable guid substitution mode", ug => _useGuidSubstitution = ug != null },
+                { "disableDataIntegrity", "enable guid substitution mode", ug => _disableDataIntegrity = ug != null }
             };
         }
 
         protected internal override BaseSettingsModel CreateSettingsFromArguments() =>
-            new XmlSettingsModel(FilePathes, CustomerCode, ConfigPath, _disableFieldIdentity, _disableContentIdentity, _useGuidSubstitution);
+            new XmlSettingsModel(FilePathes, CustomerCode, ConfigPath, _disableFieldIdentity, _disableContentIdentity, _useGuidSubstitution, _disableDataIntegrity);
 
         protected internal override void PrintEnteredData()
         {

@@ -21,17 +21,17 @@ namespace Quantumart.QP8.BLL
             private set => QPContext.BackendActionContext = value;
         }
 
-        public string ActionTypeCode { get; private set; }
+        public string ActionTypeCode { get; }
 
         public string ActionCode { get; }
 
-        public string EntityTypeCode { get; private set; }
+        public string EntityTypeCode { get; }
 
         public int FromEntityId { get; set; }
 
         public bool IsChanged { get; private set; }
 
-        public int? ParentEntityId { get; private set; }
+        public int? ParentEntityId { get; }
 
         public Entity[] Entities { get; private set; }
 
@@ -47,8 +47,6 @@ namespace Quantumart.QP8.BLL
                 }
             };
         }
-
-        #region Creating Thread Singelton
 
         public static void SetCurrent(string actionCode, IEnumerable<string> stringEntiryIDs, int? parentEntityId)
         {
@@ -79,14 +77,10 @@ namespace Quantumart.QP8.BLL
             }
 
             var cacheRow = BackendActionRepository.GetActionContextCacheData().SingleOrDefault(a => a.ActionCode.Equals(actionCode, StringComparison.InvariantCultureIgnoreCase));
-            if (cacheRow == null)
-            {
-                throw new ApplicationException("Backend action was not found by code: " + actionCode);
-            }
 
             ActionCode = actionCode;
             ParentEntityId = parentEntityId;
-            ActionTypeCode = cacheRow.ActionTypeCode;
+            ActionTypeCode = cacheRow?.ActionTypeCode ?? throw new ApplicationException("Backend action was not found by code: " + actionCode);
             EntityTypeCode = cacheRow.EntityTypeCode;
             Entities = stringEntiryIDs.Select(sid => new Entity
             {
@@ -94,6 +88,5 @@ namespace Quantumart.QP8.BLL
                 Id = Converter.ToNullableInt32(sid)
             }).ToArray();
         }
-        #endregion
     }
 }

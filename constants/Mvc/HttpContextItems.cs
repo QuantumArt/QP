@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.Constants.Mvc
+namespace Quantumart.QP8.Constants.Mvc
 {
     public class HttpContextItems
     {
@@ -18,6 +18,7 @@
         public const string ActionCode = "ACTION_CODE";
         public const string ContentCache = "_ContentCache";
         public const string CurrentUserIdKey = "CurrentUserId";
+        public const string CurrentSessionIdKey = "CurrentSessionId";
         public const string CanUnlockItemsKey = "CanUnlockItems";
         public const string CurrentGroupIdsKey = "CurrentGroupIds";
         public const string ContentFieldCache = "_ContentFieldCache";

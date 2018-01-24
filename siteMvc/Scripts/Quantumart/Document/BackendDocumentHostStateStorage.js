@@ -24,6 +24,7 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
     if (key) {
       return JSON.parse(localStorage.getItem(key));
     }
+
     return undefined;
   },
 
@@ -54,6 +55,7 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
 
       return key.string();
     }
+
     return undefined;
   }
 };

@@ -1,11 +1,10 @@
-﻿namespace Quantumart.QP8.WebMvc.ViewModels.Audit
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+
+namespace Quantumart.QP8.WebMvc.ViewModels.Audit
 {
     public sealed class ButtonTraceAreaViewModel : AreaViewModel
     {
-        public static ButtonTraceAreaViewModel Create(string tabId, int parentId)
-        {
-            return Create<ButtonTraceAreaViewModel>(tabId, parentId);
-        }
+        public static ButtonTraceAreaViewModel Create(string tabId, int parentId) => Create<ButtonTraceAreaViewModel>(tabId, parentId);
 
         public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;
 

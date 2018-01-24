@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.User
 {
     public class UserSelectableListViewModel : ListViewModel
     {

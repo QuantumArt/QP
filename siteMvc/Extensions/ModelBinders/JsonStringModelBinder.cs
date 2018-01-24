@@ -1,49 +1,49 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.WebMvc.Infrastructure.Converters;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
-    /// <summary>
-    /// Custom Model Binder для десериализации из строки с JSON
-    /// </summary>
     public class JsonStringModelBinder<T> : IModelBinder
     {
         public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             var key = bindingContext.ModelName;
             var val = bindingContext.ValueProvider.GetValue(key);
-            if (!string.IsNullOrEmpty(val?.AttemptedValue))
+            if (string.IsNullOrEmpty(val?.AttemptedValue))
             {
-                bindingContext.ModelState.SetModelValue(key, val);
-
-                string incomingString;
-                var value = val.RawValue as string[];
-                if (value != null)
-                {
-                    incomingString = value[0];
-                }
-                else if (val.RawValue is string)
-                {
-                    incomingString = (string)val.RawValue;
-                }
-                else
-                {
-                    throw new InvalidCastException(key + " is not string[] or string");
-                }
-
-                try
-                {
-                    return new JavaScriptSerializer().Deserialize<T>(incomingString);
-                }
-                catch (Exception exp)
-                {
-                    bindingContext.ModelState.AddModelError(key, String.Format("{2} is not valid.{1}{0}", exp.Message, Environment.NewLine, key));
-                    return null;
-                }
+                return null;
             }
 
-            return null;
+            bindingContext.ModelState.SetModelValue(key, val);
+
+            string incomingString;
+            switch (val.RawValue)
+            {
+                case string[] value:
+                    incomingString = value[0];
+                    break;
+                case string _:
+                    incomingString = (string)val.RawValue;
+                    break;
+                default:
+                    throw new InvalidCastException($"{key} is not string[] or string");
+            }
+
+            try
+            {
+                return typeof(T) == typeof(IList<ArticleSearchQueryParam>)
+                    ? JsonConvert.DeserializeObject<T>(incomingString, new JsonQueryParamConverter())
+                    : JsonConvert.DeserializeObject<T>(incomingString);
+            }
+            catch (Exception exp)
+            {
+                bindingContext.ModelState.AddModelError(key, string.Format($"{key} is not valid.{Environment.NewLine}{exp.Message}"));
+                return null;
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Field
 {
@@ -30,4 +31,3 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         public override string AddNewItemActionCode => Constants.ActionCode.AddNewField;
     }
 }
-

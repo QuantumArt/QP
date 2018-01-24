@@ -22,9 +22,8 @@ Quantumart.QP8.BackendContextBlock.prototype
 
     restoreSearchBlockState() {
       if (this._searchBlockState) {
-        const fieldValues = jQuery.map(this._searchBlockState, elem => {
-          return { fieldName: elem.Name, value: elem.Value };
-        });
+        const fieldValues = this._searchBlockState.map(el => ({ fieldName: el.Name, value: el.Value }));
+
         $c.setAllEntityDataListValues(this._searchBlockElement, fieldValues);
       }
     },
@@ -39,6 +38,7 @@ Quantumart.QP8.BackendContextBlock.prototype
           FieldId: $item.closest('.contextSwitcher').data('list_id')
         });
       });
+
       return result;
     },
 
@@ -73,9 +73,7 @@ Quantumart.QP8.BackendContextBlock.prototype
           });
         if (!$q.isNullOrWhiteSpace(serverContent)) {
           $(this._concreteSearchBlockElement).html(serverContent);
-
           $c.initAllEntityDataLists(this._searchBlockElement);
-
           this.restoreSearchBlockState();
 
           const that = this;
@@ -89,12 +87,10 @@ Quantumart.QP8.BackendContextBlock.prototype
       }
     },
 
-
     _onChangeCombo() {
       this._searchBlockState = this._computeSearchBlockState();
       $(this._findButtonElement).trigger('click');
     },
-
 
     _onFindButtonClick() {
       const state = this.getSearchBlockState();

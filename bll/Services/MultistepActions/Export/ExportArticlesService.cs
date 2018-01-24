@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -36,10 +36,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         {
             SetupWithParams(parentId, 0, ids, settingsParams as ExportSettings);
         }
-
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal) => Setup(parentId, id, null, boundToExternal);
+ 
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive) => Setup(parentId, id, null, boundToExternal, isArchive);
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => Setup(parentId, id, ids, null, false); 
 
-        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive)
         {
             var contentId = ids == null ? id : parentId;
             var content = ContentRepository.GetById(contentId);
@@ -48,8 +50,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, contentId));
             }
 
-            var articleIds = GetArticleIds(ids, content.Id);
-            var articleExtensionContents = GetArticleExtensionContents(articleIds, content.Id);
+            var articleIds = GetArticleIds(ids, content.Id, isArchive);
+            var articleExtensionContents = GetArticleExtensionContents(articleIds, content.Id, isArchive);
             _command = new ExportArticlesCommand(content.SiteId, content.Id, articleIds.Length, articleIds, articleExtensionContents);
 
             return base.Setup(content.SiteId, content.Id, boundToExternal);
@@ -96,15 +98,31 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             return prms;
         }
 
-        private static int[] GetArticleIds(int[] ids, int contentId)
+        public override IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids, bool isArchive)
+        {
+            IMultistepActionSettings prms;
+            if (ids == null)
+            {
+                prms = new ExportArticlesParams(parentId, id, null, isArchive);
+            }
+            else
+            {
+                var content = ContentRepository.GetById(parentId);
+                prms = new ExportArticlesParams(content.SiteId, content.Id, ids, isArchive);
+            }
+
+            return prms;
+        }
+
+        private static int[] GetArticleIds(int[] ids, int contentId, bool isArchive = false)
         {
             var settings = HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] as ExportSettings;
             var orderBy = string.IsNullOrEmpty(settings.OrderByField) ? FieldName.ContentItemId : settings.OrderByField;
-            return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy);
+            return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy, isArchive);
         }
 
-        private static IEnumerable<Content> GetArticleExtensionContents(int[] ids, int contentId) => ContentRepository.GetList(
-            ContentRepository.GetReferencedAggregatedContentIds(contentId, ids ?? new int[0])
+        private static IEnumerable<Content> GetArticleExtensionContents(int[] ids, int contentId, bool isArchive) => ContentRepository.GetList(
+            ContentRepository.GetReferencedAggregatedContentIds(contentId, ids ?? new int[0], isArchive)
         ).ToArray();
     }
 }

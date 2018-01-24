@@ -1,12 +1,12 @@
-﻿@using Quantumart.QP8.Resources
-
+﻿@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
 <fieldset>
 	<legend>@ArticleStrings.SearchBlock_FieldSearchBlockTitle</legend>
 	<div class="fieldSearchSelector group" id="@((string)ViewBag.FieldSearchSelectorElementID)">
 		<div class="fieldList">
 			<select id="@ViewBag.FieldsComboID" class="dropDownList">
 				<option value="">@ArticleStrings.SearchBlock_SelectFieldToFilter</option>
-                @{var groups = (IEnumerable<IGrouping<string, Quantumart.QP8.BLL.ArticleSearchableField>>)ViewBag.SearchableFieldList;}
+                @{var groups = (IEnumerable<IGrouping<string, ArticleSearchableField>>)ViewBag.SearchableFieldList;}
 				@foreach (var g in groups)
 				{
                     if (g.Key == null || groups.Count() <= 1)

@@ -1,6 +1,9 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
+using QP8.Infrastructure.Web.AspNet.ActionResults;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
@@ -31,15 +34,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        public ActionResult Settings(string tabId, int parentId, int id)
+        public ActionResult Settings(string tabId, int parentId, int id) => JsonHtml($"{FolderForTemplate}/ExportTemplate", new ExportViewModel
         {
-            var model = new ExportViewModel
-            {
-                ContentId = id
-            };
-
-            return JsonHtml($"{FolderForTemplate}/ExportTemplate", model);
-        }
+            ContentId = id
+        });
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -51,11 +49,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        public ActionResult SetupWithParams(int parentId, int id, FormCollection collection)
+        public JsonCamelCaseResult<JSendResponse> SetupWithParams(int parentId, int id, ExportViewModel model)
         {
-            var model = new ExportViewModel();
-            TryUpdateModel(model);
-
             var settings = new ExportSettings
             {
                 Culture = ((CsvCulture)int.Parse(model.Culture)).Description(),
@@ -74,7 +69,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             _service.SetupWithParams(parentId, id, settings);
-            return Json(string.Empty);
+            return new JSendResponse { Status = JSendStatus.Success };
         }
 
         [HttpPost]
@@ -83,10 +78,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
 
         [HttpPost]
-        public ActionResult TearDown(bool isError)
+        public void TearDown(bool isError)
         {
             _service.TearDown();
-            return null;
         }
     }
 }

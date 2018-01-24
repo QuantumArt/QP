@@ -68,8 +68,8 @@
     <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Flurl, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Flurl.2.5.0\lib\net40\Flurl.dll</HintPath>
+    <Reference Include="Flurl, Version=2.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Flurl.2.5.1\lib\net40\Flurl.dll</HintPath>
     </Reference>
     <Reference Include="Flurl.Http, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Flurl.Http.2.0.1\lib\net45\Flurl.Http.dll</HintPath>
@@ -89,16 +89,12 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
-    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
     <Reference Include="Topshelf, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
@@ -169,25 +165,29 @@
       <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
       <Name>Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
-      <Project>{060eb6fe-8c9e-4b81-b17c-d2d3884f0aec}</Project>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.Autofac\QP8.Infrastructure.Logging.Autofac.csproj">
+      <Project>{942CDCEF-C34E-46B0-9C18-513ADAA82A43}</Project>
+      <Name>QP8.Infrastructure.Logging.Autofac</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
+      <Project>{bd26afaf-b07a-41da-80d3-4b8bf6bc6589}</Project>
       <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
-      <Project>{6E317F05-226C-4C9F-B918-FE71D743C3A3}</Project>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{a1397fa6-f0ba-4695-af53-d03469013692}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj">
+      <Project>{C8D0F9D8-0F40-4480-B60F-C50791E9F8C1}</Project>
+      <Name>QP8.Infrastructure.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
+      <Project>{EF8CC04A-6AE2-4CF4-9367-31701651639B}</Project>
+      <Name>QP8.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\dal\DAL.csproj">
       <Project>{3FF8834B-FB47-4855-B1E2-3B88C0DB1A94}</Project>
       <Name>DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj">
-      <Project>{DBBEC146-E74E-45DF-A7FE-16701669A0F2}</Project>
-      <Name>QP8.Infrastructure.Web</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
-      <Project>{27BD20E7-1133-4D13-90C6-6565489DA612}</Project>
-      <Name>QP8.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\Quantumart.QP8.CdcDataImport.Common\Quantumart.QP8.CdcDataImport.Common.csproj">
       <Project>{01f1f98e-3b89-4ae1-8d50-07a2d765bd61}</Project>
@@ -196,3 +196,4 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
+

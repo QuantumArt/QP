@@ -1,8 +1,16 @@
 Quantumart.QP8.BackendEntityObject = function () {
   // empty constructor
 };
+
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function (
-  entityTypeCode, entityId, loadChilds, filter, successHandler, errorHandler) {
+  entityTypeCode,
+  entityId,
+  loadChilds,
+  filter,
+  successHandler,
+  errorHandler
+) {
   const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetByTypeAndIdForTree`;
   const params = { entityTypeCode, entityId, loadChilds, filter };
   if ($q.isFunction(successHandler)) {
@@ -18,6 +26,7 @@ Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function (
 
     return entity;
   }
+
   return undefined;
 };
 
@@ -42,11 +51,21 @@ Quantumart.QP8.BackendEntityObject.getEntityChildList = function (ajaxParams, su
 
     return entities;
   }
+
   return undefined;
 };
 
+// eslint-disable-next-line max-params
 Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function (
-  entityTypeCode, parentEntityId, entityId, listId, selectionMode, selectedEntitiesIDs, filter, testEntityId) {
+  entityTypeCode,
+  parentEntityId,
+  entityId,
+  listId,
+  selectionMode,
+  selectedEntitiesIDs,
+  filter,
+  testEntityId
+) {
   const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetSimpleList`;
   const params = {
     entityTypeCode,
@@ -201,6 +220,13 @@ Quantumart.QP8.BackendEntityObject.getArticleFieldValue = function (contentId, f
   });
 };
 
+Quantumart.QP8.BackendEntityObject.getContentFieldValues = function (contentId, fieldName) {
+  return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetContentFieldValues`, {
+    contentId,
+    fieldName
+  });
+};
+
 Quantumart.QP8.BackendEntityObject.getArticleLinkedItems = function (linkId, articleId) {
   return $o.makeSimpleCall('GET', `${window.CONTROLLER_URL_ENTITY_OBJECT}GetArticleLinkedItems`, {
     linkId, articleId
@@ -245,16 +271,16 @@ Quantumart.QP8.BackendEntityObject.checkEntitiesForPresenceEmptyNames = function
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityIDsFromEntities = function (entities) {
-  return $.map(entities, elem => elem.Id);
+  return entities.map(elem => elem.Id);
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityNamesFromEntities = function (entities) {
-  return $.map(entities, elem => elem.Name);
+  return entities.map(elem => elem.Name);
 };
 
 Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function (entities) {
   const count = entities.length;
-  return $.map(entities, (elem, index) => {
+  return entities.map((elem, index) => {
     let prefix = '';
     if (index > 0) {
       if (index === (count - 1)) {

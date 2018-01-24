@@ -6,8 +6,9 @@ using System.Linq;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -40,7 +41,7 @@ namespace Quantumart.QP8.BLL
             {
                 var result = new List<VirtualFieldNode>();
 
-                void Toggle(List<VirtualFieldNode> parentNodes)
+                void Toggle(IReadOnlyCollection<VirtualFieldNode> parentNodes)
                 {
                     result.AddRange(parentNodes);
                     foreach (var childNode in parentNodes)
@@ -97,6 +98,7 @@ namespace Quantumart.QP8.BLL
 
                 IEnumerable<VirtualFieldNode> AddChildFieldNodes(int? parentFieldId, string parentFieldTreeId)
                 {
+                    // ReSharper disable once AccessToModifiedClosure
                     var childFieldNodes = fields.Where(f => f.JoinId == parentFieldId).Select(f => new VirtualFieldNode { Id = f.Id }).ToArray();
                     foreach (var childFieldNode in childFieldNodes)
                     {
@@ -143,7 +145,7 @@ namespace Quantumart.QP8.BLL
                 if (fieldTreeId.StartsWith("[") && fieldTreeId.EndsWith("]"))
                 {
                     var fidStr = fieldTreeId.Trim('[', ']').Split('.').LastOrDefault();
-                    return int.Parse(fidStr);
+                    return int.Parse(fidStr ?? throw new InvalidOperationException());
                 }
 
                 throw new FormatException("Field Id format string");
@@ -985,7 +987,7 @@ namespace Quantumart.QP8.BLL
                 else
                 {
                     // проверить соответствие полей базовых контентов
-                    var violations = new FieldsConflictValidator().UnionFieldsMatchCheck(UnionSourceContentIDs);
+                    var violations = new FieldsConflictValidator().UnionFieldsMatchCheck(UnionSourceContentIDs.ToList());
                     foreach (var violation in violations)
                     {
                         errors.ErrorFor(c => c.UnionSourceContentIDs, violation.Message);

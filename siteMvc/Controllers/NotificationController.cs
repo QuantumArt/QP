@@ -6,6 +6,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Notification;
@@ -23,7 +24,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _notificationService = notificationService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Notifications)]
         [BackendActionContext(ActionCode.Notifications)]
@@ -41,10 +41,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _Index(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _notificationService.GetNotificationsByContentId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.NotificationObjectFormatProperties)]
@@ -82,7 +81,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("NotificationTemplateFormatProperties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewNotification)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "parentId")]
@@ -129,7 +127,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.NotificationProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Notification, "id")]
@@ -202,16 +199,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemoveNotification)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemove(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_notificationService.MultipleRemove(IDs));
-        }
+        public ActionResult MultipleRemove(int parentId, int[] IDs) => JsonMessageResult(_notificationService.MultipleRemove(IDs));
 
         [HttpPost]
-        public ActionResult AssembleNotificationPreAction(int id)
-        {
-            return Json(_notificationService.AssembleNotificationPreAction(id));
-        }
+        public ActionResult AssembleNotificationPreAction(int id) => Json(_notificationService.AssembleNotificationPreAction(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -219,17 +210,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleNotification)]
         [BackendActionContext(ActionCode.AssembleNotification)]
         [BackendActionLog]
-        public ActionResult AssembleNotification(int id)
-        {
-            return Json(_notificationService.AssembleNotification(id));
-        }
+        public ActionResult AssembleNotification(int id) => Json(_notificationService.AssembleNotification(id));
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssembleNotificationPreAction(int[] IDs)
-        {
-            return Json(_notificationService.MultipleAssembleNotificationPreAction(IDs));
-        }
+        public ActionResult MultipleAssembleNotificationPreAction(int[] IDs) => Json(_notificationService.MultipleAssembleNotificationPreAction(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -238,9 +223,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleAssembleNotification)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssembleNotification(int[] IDs)
-        {
-            return Json(_notificationService.MultipleAssembleNotification(IDs));
-        }
+        public ActionResult MultipleAssembleNotification(int[] IDs) => Json(_notificationService.MultipleAssembleNotification(IDs));
     }
 }

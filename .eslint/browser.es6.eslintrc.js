@@ -9,7 +9,7 @@ module.exports = {
     './browser.es5.eslintrc',
     './rules/es6'
   ].map(require.resolve),
-  parser: 'espree',
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
       impliedStrict: true

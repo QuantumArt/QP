@@ -3,7 +3,7 @@ using System.Web.Mvc;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;

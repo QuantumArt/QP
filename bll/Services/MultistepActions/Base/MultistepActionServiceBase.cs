@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Web;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Base

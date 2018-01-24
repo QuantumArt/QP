@@ -36,7 +36,6 @@ namespace Quantumart.QP8.Security
                 QpIdentity identity;
                 if (userInformation != null)
                 {
-
                     identity = new QpIdentity(
                         userInformation.Id,
                         userInformation.Name,
@@ -46,6 +45,7 @@ namespace Quantumart.QP8.Security
                         userInformation.LanguageId,
                         userInformation.CultureName,
                         userInformation.IsSilverlightInstalled,
+                        userInformation.SessionId,
                         userInformation.MustChangePassword);
 
                     roles = userInformation.Roles;

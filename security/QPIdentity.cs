@@ -10,6 +10,11 @@ namespace Quantumart.QP8.Security
         public int Id { get; }
 
         /// <summary>
+        /// идентификатор сессии
+        /// </summary>
+        public int SessionId { get; }
+
+        /// <summary>
         /// логин пользователя
         /// </summary>
         public string Name { get; }
@@ -49,9 +54,10 @@ namespace Quantumart.QP8.Security
         /// <summary>
         /// Конструирует объект QPIdentity
         /// </summary>
-		public QpIdentity(int id, string name, string customerCode, string type, bool isAuthentificated, int languageId, string cultureName, bool isSilverlightInstalled, bool mustChangePassword)
+		public QpIdentity(int id, string name, string customerCode, string type, bool isAuthentificated, int languageId, string cultureName, bool isSilverlightInstalled, bool mustChangePassword, int sessionId = 0)
         {
             Id = id;
+            SessionId = sessionId;
             Name = name;
             CustomerCode = customerCode;
             AuthenticationType = type;

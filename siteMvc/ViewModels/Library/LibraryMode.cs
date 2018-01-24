@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.WebMvc.ViewModels
+﻿namespace Quantumart.QP8.WebMvc.ViewModels.Library
 {
     public enum LibraryMode
     {

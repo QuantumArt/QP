@@ -1,11 +1,11 @@
-﻿using System.Net.Mime;
+using System.Net.Mime;
 using System.Web.Mvc;
-using QP8.Infrastructure.Web.ActionResults;
+using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;

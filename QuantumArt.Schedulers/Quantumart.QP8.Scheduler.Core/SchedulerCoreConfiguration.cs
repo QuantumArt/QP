@@ -1,9 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.Configuration;
 using Quantumart.QP8.Scheduler.API;
+using Quantumart.QP8.Scheduler.Core.Properties;
+using Unity;
+using Unity.Extension;
+using Unity.Injection;
+using Unity.Lifetime;
 
 namespace Quantumart.QP8.Scheduler.Core
 {
@@ -23,7 +26,12 @@ namespace Quantumart.QP8.Scheduler.Core
                     IUnityContainer Factory()
                     {
                         var container = parent.CreateChildContainer();
-                        container.LoadConfiguration();
+                        container.RegisterType<ISchedule, IntervalSchedule>("UserSynchronizationSchedule", new HierarchicalLifetimeManager(), new InjectionConstructor(Settings.Default.UserSynchronizationSchedule));
+                        container.RegisterType<ISchedule, IntervalSchedule>("System.Notifications", new HierarchicalLifetimeManager(), new InjectionConstructor(Settings.Default.SystemNotifications));
+                        container.RegisterType<ISchedule, IntervalSchedule>("Interface.Notifications", new HierarchicalLifetimeManager(), new InjectionConstructor(Settings.Default.InterfaceNotifications));
+                        container.RegisterType<ISchedule, IntervalSchedule>("System.Notifications.Cleanup", new HierarchicalLifetimeManager(), new InjectionConstructor(Settings.Default.SystemNotificationsCleanup));
+                        container.RegisterType<ISchedule, IntervalSchedule>("Interface.Notifications.Cleanup", new HierarchicalLifetimeManager(), new InjectionConstructor(Settings.Default.InterfaceNotificationsCleanup));
+
                         container.RegisterType<ServiceDescriptor>(new InjectionFactory(c => c.Resolve<ServiceDescriptor>(service)));
                         container.RegisterType<IScheduler, Scheduler>(new HierarchicalLifetimeManager(), new InjectionFactory(c => new Scheduler(c.Resolve<IEnumerable<IProcessor>>())));
                         Container.RegisterType<IEnumerable<IProcessor>>(new InjectionFactory(c => descriptors.Where(d => d.Service == service).Select(d => new ScheduledProcessor(c.Resolve<Func<IProcessor>>(d.Processor), c.Resolve<Func<ISchedule>>(d.Schedule)))));

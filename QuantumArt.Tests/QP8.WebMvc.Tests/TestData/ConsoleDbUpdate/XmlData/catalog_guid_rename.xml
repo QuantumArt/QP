@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<actions backendUrl="http://localhost:90/Backend/" dbVersion="7.9.9.0">
+  <action code="new_article" ids="2006096" parentId="2578" lcid="1049" executed="27.10.2016 14:56:07"
+          executedBy="KostyukovA" uniqueId="31512f50-5865-41b2-abce-ef6096570e7c" resultId="2006096"
+          resultUniqueId="31512f50-5865-41b2-abce-ef6096570e7c">
+    <field name="field_10367">1</field>
+    <field name="field_10368"></field>
+    <field name="Data.UniqueId">31512f50-5865-41b2-abce-ef6096570e7c</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">save_article_and_up</field>
+  </action>
+  <action code="new_article" ids="2006097" parentId="2578" lcid="1049" executed="27.10.2016 14:56:12"
+          executedBy="KostyukovA" uniqueId="5411c30c-9086-45e7-ba1f-fb52dba41ba4" resultId="2006097"
+          resultUniqueId="5411c30c-9086-45e7-ba1f-fb52dba41ba4">
+    <field name="field_10367">2</field>
+    <field name="field_10368"></field>
+    <field name="Data.UniqueId">5411c30c-9086-45e7-ba1f-fb52dba41ba4</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">save_article_and_up</field>
+  </action>
+  <action code="new_article" ids="2006098" parentId="2578" lcid="1049" executed="27.10.2016 14:56:21"
+          executedBy="KostyukovA" uniqueId="e206e961-5a57-42aa-8608-c24c2c28610a" resultId="2006098"
+          resultUniqueId="e206e961-5a57-42aa-8608-c24c2c28610a">
+    <field name="field_10367">3</field>
+    <field name="field_10368"></field>
+    <field name="Data.UniqueId">e206e961-5a57-42aa-8608-c24c2c28610a</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">save_article_and_up</field>
+  </action>
+  <action code="edit_article" ids="2006098" parentId="2578" lcid="1049" executed="27.10.2016 14:57:22"
+          executedBy="KostyukovA" uniqueId="e206e961-5a57-42aa-8608-c24c2c28610a" resultId="2006098"
+          resultUniqueId="e206e961-5a57-42aa-8608-c24c2c28610f">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">3</field>
+    <field name="Data.UniqueId">e206e961-5a57-42aa-8608-c24c2c28610f</field>
+    <field name="Data.Schedule.ScheduleType">Visible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="copy_article" ids="2006098" parentId="2578" lcid="1049" executed="27.10.2016 14:57:28"
+          executedBy="KostyukovA" uniqueId="e206e961-5a57-42aa-8608-c24c2c28610f" resultId="2006099"
+          resultUniqueId="88f9a6f6-732d-470c-948b-d11c8b26da22" />
+  <action code="edit_article" ids="2006099" parentId="2578" lcid="1049" executed="27.10.2016 14:57:36"
+          executedBy="KostyukovA" uniqueId="88f9a6f6-732d-470c-948b-d11c8b26da22" resultId="2006099"
+          resultUniqueId="88f9a6f6-732d-470c-948b-d11c8b26da21">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">3_copy</field>
+    <field name="Data.UniqueId">88f9a6f6-732d-470c-948b-d11c8b26da21</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="move_to_archive_article" ids="2006098" parentId="2578" lcid="1049" executed="27.10.2016 14:57:56"
+          executedBy="KostyukovA" uniqueId="e206e961-5a57-42aa-8608-c24c2c28610f" />
+  <action code="remove_article" ids="2006099" parentId="2578" lcid="1049" executed="27.10.2016 14:58:00"
+          executedBy="KostyukovA" uniqueId="88f9a6f6-732d-470c-948b-d11c8b26da21" />
+  <action code="remove_article" ids="2006098" parentId="2578" lcid="1049" executed="27.10.2016 14:58:11"
+          executedBy="KostyukovA" uniqueId="e206e961-5a57-42aa-8608-c24c2c28610f" />
+  <action code="edit_article" ids="2006096" parentId="2578" lcid="1049" executed="27.10.2016 14:58:18"
+          executedBy="KostyukovA" uniqueId="31512f50-5865-41b2-abce-ef6096570e7c" resultId="2006096"
+          resultUniqueId="11512f50-5865-41b2-abce-ef6096570e7c">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">1</field>
+    <field name="Data.UniqueId">11512f50-5865-41b2-abce-ef6096570e7c</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="edit_article" ids="2006097" parentId="2578" lcid="1049" executed="27.10.2016 14:58:23"
+          executedBy="KostyukovA" uniqueId="5411c30c-9086-45e7-ba1f-fb52dba41ba4" resultId="2006097"
+          resultUniqueId="1411c30c-9086-45e7-ba1f-fb52dba41ba4">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">2</field>
+    <field name="Data.UniqueId">1411c30c-9086-45e7-ba1f-fb52dba41ba4</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="multiple_move_to_archive_article" ids="2006096,2006097" parentId="2578" lcid="1049"
+          executed="27.10.2016 14:58:28" executedBy="KostyukovA"
+          uniqueId="11512f50-5865-41b2-abce-ef6096570e7c,1411c30c-9086-45e7-ba1f-fb52dba41ba4" />
+  <action code="multiple_restore_from_archive_article" ids="2006096,2006097" parentId="2578" lcid="1049"
+          executed="27.10.2016 14:58:34" executedBy="KostyukovA"
+          uniqueId="11512f50-5865-41b2-abce-ef6096570e7c,1411c30c-9086-45e7-ba1f-fb52dba41ba4" />
+  <action code="copy_article" ids="2006097" parentId="2578" lcid="1049" executed="27.10.2016 14:58:47"
+          executedBy="KostyukovA" uniqueId="1411c30c-9086-45e7-ba1f-fb52dba41ba4" resultId="2006100"
+          resultUniqueId="803e7010-cf76-4fd3-bf1c-264de759e0db" />
+  <action code="edit_article" ids="2006097" parentId="2578" lcid="1049" executed="27.10.2016 14:59:05"
+          executedBy="KostyukovA" uniqueId="1411c30c-9086-45e7-ba1f-fb52dba41ba4" resultId="2006097"
+          resultUniqueId="1411c30c-9086-45e7-ba1f-fb52dba41ba1">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">2_before</field>
+    <field name="Data.UniqueId">1411c30c-9086-45e7-ba1f-fb52dba41ba1</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="edit_article" ids="2006100" parentId="2578" lcid="1049" executed="27.10.2016 14:59:15"
+          executedBy="KostyukovA" uniqueId="803e7010-cf76-4fd3-bf1c-264de759e0db" resultId="2006100"
+          resultUniqueId="203e7010-cf76-4fd3-bf1c-264de759e0db">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">2_after</field>
+    <field name="Data.UniqueId">203e7010-cf76-4fd3-bf1c-264de759e0db</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="copy_article" ids="2006096" parentId="2578" lcid="1049" executed="27.10.2016 14:59:18"
+          executedBy="KostyukovA" uniqueId="11512f50-5865-41b2-abce-ef6096570e7c" resultId="2006101"
+          resultUniqueId="5d9ab1f7-5990-4ed6-9f6f-ba69c31a1bcc" />
+  <action code="multiple_remove_article" ids="2006096,2006101" parentId="2578" lcid="1049"
+          executed="27.10.2016 14:59:25" executedBy="KostyukovA"
+          uniqueId="11512f50-5865-41b2-abce-ef6096570e7c,5d9ab1f7-5990-4ed6-9f6f-ba69c31a1bcc" />
+  <action code="multiple_move_to_archive_article" ids="2006097,2006100" parentId="2578" lcid="1049"
+          executed="27.10.2016 14:59:29" executedBy="KostyukovA"
+          uniqueId="1411c30c-9086-45e7-ba1f-fb52dba41ba1,203e7010-cf76-4fd3-bf1c-264de759e0db" />
+</actions>

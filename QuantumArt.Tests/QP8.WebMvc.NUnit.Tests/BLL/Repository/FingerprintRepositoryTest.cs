@@ -1,13 +1,13 @@
-﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
+using NUnit.Framework;
 using Quantumart.QP8.BLL.Repository;
 
 namespace QP8.WebMvc.NUnit.Tests.BLL.Repository
 {
-    [TestClass]
+    [TestFixture]
     public class FingerprintRepositoryTest
     {
-        [TestMethod]
+        [Test]
         public void AddFilterStatement_ThereAreIdAndParentFieldNamesIncludedAndExceptedIdsAndParentIds()
         {
             var actual = FingerprintRepository.AddFilterStatement("ID", "PARENT_ID", new FingerprintEntityTypeSettings
@@ -19,11 +19,11 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository
             }, new[] { "1:{0}", "2:{0}" }).ToArray();
 
             Assert.AreEqual(2, actual.Length);
-            Assert.AreEqual("1: WHERE ID IN (1,2) AND PARENT_ID IN (3,4) ", actual[0], true);
-            Assert.AreEqual("2: WHERE ID IN (1,2) AND PARENT_ID IN (3,4) ", actual[1], true);
+            Assert.AreEqual("1: WHERE ID IN (1,2) AND PARENT_ID IN (3,4) ", actual[0]);
+            Assert.AreEqual("2: WHERE ID IN (1,2) AND PARENT_ID IN (3,4) ", actual[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void AddFilterStatement_ThereAreIdAndParentFieldNamesOnlyExceptedIdsAndParentIds()
         {
             var actual = FingerprintRepository.AddFilterStatement("ID", "PARENT_ID", new FingerprintEntityTypeSettings
@@ -33,11 +33,11 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository
             }, new[] { "1:{0}", "2:{0}" }).ToArray();
 
             Assert.AreEqual(2, actual.Length);
-            Assert.AreEqual("1: WHERE ID NOT IN (10,20) AND PARENT_ID NOT IN (30,40) ", actual[0], true);
-            Assert.AreEqual("2: WHERE ID NOT IN (10,20) AND PARENT_ID NOT IN (30,40) ", actual[1], true);
+            Assert.AreEqual("1: WHERE ID NOT IN (10,20) AND PARENT_ID NOT IN (30,40) ", actual[0]);
+            Assert.AreEqual("2: WHERE ID NOT IN (10,20) AND PARENT_ID NOT IN (30,40) ", actual[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void AddFilterStatement_ThereAreOnlyIdFieldNamesIncludedAndExceptedIdsAndParentIds()
         {
             var actual = FingerprintRepository.AddFilterStatement("ID", null, new FingerprintEntityTypeSettings
@@ -49,11 +49,11 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository
             }, new[] { "1:{0}", "2:{0}" }).ToArray();
 
             Assert.AreEqual(2, actual.Length);
-            Assert.AreEqual("1: WHERE ID IN (1,2) ", actual[0], true);
-            Assert.AreEqual("2: WHERE ID IN (1,2) ", actual[1], true);
+            Assert.AreEqual("1: WHERE ID IN (1,2) ", actual[0]);
+            Assert.AreEqual("2: WHERE ID IN (1,2) ", actual[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void AddFilterStatement_ThereAreOnlyParentIdFieldNameOnlyExceptedParentIds()
         {
             var actual = FingerprintRepository.AddFilterStatement("ID", "PARENT_ID", new FingerprintEntityTypeSettings
@@ -62,21 +62,21 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository
             }, new[] { "1:{0}", "2:{0}" }).ToArray();
 
             Assert.AreEqual(2, actual.Length);
-            Assert.AreEqual("1: WHERE PARENT_ID NOT IN (30,40) ", actual[0], true);
-            Assert.AreEqual("2: WHERE PARENT_ID NOT IN (30,40) ", actual[1], true);
+            Assert.AreEqual("1: WHERE PARENT_ID NOT IN (30,40) ", actual[0]);
+            Assert.AreEqual("2: WHERE PARENT_ID NOT IN (30,40) ", actual[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void AddFilterStatement_ThereAreIdAndParentFieldNamesNoIds()
         {
             var actual = FingerprintRepository.AddFilterStatement("ID", "PARENT_ID", new FingerprintEntityTypeSettings(), new[] { "1:{0}", "2:{0}" }).ToArray();
 
             Assert.AreEqual(2, actual.Length);
-            Assert.AreEqual("1: ", actual[0], true);
-            Assert.AreEqual("2: ", actual[1], true);
+            Assert.AreEqual("1: ", actual[0]);
+            Assert.AreEqual("2: ", actual[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void AddFilterStatement_ThereAreIdAndParentFieldNamesIncludedAndExceptedIdsAndParentIdsAddWereIsFalse()
         {
             var actual = FingerprintRepository.AddFilterStatement("ID", "PARENT_ID", new FingerprintEntityTypeSettings
@@ -88,11 +88,11 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository
             }, new[] { "1:{0}", "2:{0}" }, false).ToArray();
 
             Assert.AreEqual(2, actual.Length);
-            Assert.AreEqual("1: AND ID IN (1,2) AND PARENT_ID IN (3,4) ", actual[0], true);
-            Assert.AreEqual("2: AND ID IN (1,2) AND PARENT_ID IN (3,4) ", actual[1], true);
+            Assert.AreEqual("1: AND ID IN (1,2) AND PARENT_ID IN (3,4) ", actual[0]);
+            Assert.AreEqual("2: AND ID IN (1,2) AND PARENT_ID IN (3,4) ", actual[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void AddFilterStatement_ThereAreOnlyIdFieldNamesIncludedAndExceptedIdsAndParentIdsAddWereIsFalse()
         {
             var actual = FingerprintRepository.AddFilterStatement("ID", null, new FingerprintEntityTypeSettings
@@ -104,18 +104,18 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository
             }, new[] { "1:{0}", "2:{0}" }, false).ToArray();
 
             Assert.AreEqual(2, actual.Length);
-            Assert.AreEqual("1: AND ID IN (1,2) ", actual[0], true);
-            Assert.AreEqual("2: AND ID IN (1,2) ", actual[1], true);
+            Assert.AreEqual("1: AND ID IN (1,2) ", actual[0]);
+            Assert.AreEqual("2: AND ID IN (1,2) ", actual[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void AddFilterStatement_ThereAreIdAndParentFieldNamesNoIdsAddWereIsFalse()
         {
             var actual = FingerprintRepository.AddFilterStatement("ID", "PARENT_ID", new FingerprintEntityTypeSettings(), new[] { "1:{0}", "2:{0}" }, false).ToArray();
 
             Assert.AreEqual(2, actual.Length);
-            Assert.AreEqual("1: ", actual[0], true);
-            Assert.AreEqual("2: ", actual[1], true);
+            Assert.AreEqual("1: ", actual[0]);
+            Assert.AreEqual("2: ", actual[1]);
         }
     }
 }

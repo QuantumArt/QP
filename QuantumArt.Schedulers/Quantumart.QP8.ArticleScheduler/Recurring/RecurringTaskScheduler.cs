@@ -1,9 +1,10 @@
-﻿using System;
+using System;
+using QP8.Infrastructure;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.Configuration.Models;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring
@@ -79,9 +80,12 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         private static int GetNearestComparison(RecurringTask task, DateTime currentTime)
         {
             var recurringCalculator = RecurringStartCalculatorFactory.Create(task);
-            var nearestStartDate = recurringCalculator.GetNearestStartDateBeforeSpecifiedDate(currentTime).Value;
-            var nearestEndDate = GetNearestEndDate(task, nearestStartDate + task.Duration);
-            var nearestTaskRangeToShowArticle = GetTaskRange(nearestStartDate, nearestEndDate);
+            var nearestStartDate = recurringCalculator.GetNearestStartDateBeforeSpecifiedDate(currentTime);
+            Ensure.NotNull(nearestStartDate);
+
+            // ReSharper disable once PossibleInvalidOperationException
+            var nearestEndDate = GetNearestEndDate(task, nearestStartDate.Value + task.Duration);
+            var nearestTaskRangeToShowArticle = GetTaskRange(nearestStartDate.Value, nearestEndDate);
             return nearestTaskRangeToShowArticle.CompareRangeTo(currentTime);
         }
 

@@ -1,4 +1,4 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
@@ -17,11 +17,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
         public EntityObject Data
         {
-            get { return EntityData; }
-            set { EntityData = value; }
+            get => EntityData;
+            set => EntityData = value;
         }
 
-        public static T Create<T>(EntityObject obj, string tabId, int parentId) where T : EntityViewModel, new()
+        public static T Create<T>(EntityObject obj, string tabId, int parentId)
+            where T : EntityViewModel, new()
         {
             var model = Create<T>(tabId, parentId);
             model.EntityData = obj;
@@ -78,8 +79,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
         {
             get
             {
-                int entityId;
-                if (!int.TryParse(Id, out entityId))
+                if (!int.TryParse(Id, out var entityId))
                 {
                     entityId = 0;
                 }

@@ -1,6 +1,6 @@
-﻿using System;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.Kernel;
+using System;
+using AutoFixture;
+using AutoFixture.Kernel;
 
 namespace QP8.Infrastructure.TestTools.AutoFixture.Helpers
 {

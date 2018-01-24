@@ -21,10 +21,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ApplyFieldDefaultValue)]
         [BackendActionContext(ActionCode.ApplyFieldDefaultValue)]
         [BackendActionLog]
-        public ActionResult PreAction(int parentId, int id)
-        {
-            return Json(_service.PreAction(id));
-        }
+        public ActionResult PreAction(int parentId, int id) => Json(_service.PreAction(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

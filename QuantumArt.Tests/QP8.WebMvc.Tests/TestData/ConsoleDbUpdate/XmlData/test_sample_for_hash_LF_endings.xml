@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <actions backendUrl="http://qp8.artq.com:80/Backend/" dbVersion="7.9.9.0">
-  <action code="new_field" ids="173625" parentId="427" lcid="1033" executed="11/2/2016 6:14:48 PM" executedBy="KuprianovG" newLinkId="0" newBackwardId="0">
+  <action code="new_field" ids="173625" parentId="427" lcid="1033" executed="11/2/2016 6:14:48 PM"
+          executedBy="KuprianovG" newLinkId="0" newBackwardId="0">
     <field name="Data.Id">0</field>
     <field name="Data.Name">RedirectItem</field>
     <field name="Data.FriendlyName">RedirectItem</field>
@@ -46,7 +48,8 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="173626" parentId="427" lcid="1033" executed="11/2/2016 6:15:17 PM" executedBy="KuprianovG" newLinkId="0" newBackwardId="0">
+  <action code="new_field" ids="173626" parentId="427" lcid="1033" executed="11/2/2016 6:15:17 PM"
+          executedBy="KuprianovG" newLinkId="0" newBackwardId="0">
     <field name="Data.Id">0</field>
     <field name="Data.Name">IconName</field>
     <field name="Data.FriendlyName">Имя иконки в реакте</field>
@@ -78,7 +81,8 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="173627" parentId="427" lcid="1033" executed="11/2/2016 6:15:48 PM" executedBy="KuprianovG" newLinkId="0" newBackwardId="0">
+  <action code="new_field" ids="173627" parentId="427" lcid="1033" executed="11/2/2016 6:15:48 PM"
+          executedBy="KuprianovG" newLinkId="0" newBackwardId="0">
     <field name="Data.Id">0</field>
     <field name="Data.Name">SubTitle</field>
     <field name="Data.FriendlyName">Подзаголовок</field>
@@ -110,7 +114,8 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="173628" parentId="427" lcid="1033" executed="11/2/2016 6:17:40 PM" executedBy="KuprianovG" newLinkId="0" newBackwardId="0">
+  <action code="new_field" ids="173628" parentId="427" lcid="1033" executed="11/2/2016 6:17:40 PM"
+          executedBy="KuprianovG" newLinkId="0" newBackwardId="0">
     <field name="Data.Id">0</field>
     <field name="Data.Name">PageType</field>
     <field name="Data.FriendlyName">Тип страницы</field>

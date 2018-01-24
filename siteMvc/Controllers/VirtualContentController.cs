@@ -5,8 +5,8 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -20,7 +20,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(entityList, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewVirtualContents)]
@@ -90,7 +89,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.VirtualContentProperties)]
@@ -168,9 +166,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveVirtualContent)]
         [BackendActionContext(ActionCode.RemoveVirtualContent)]
         [BackendActionLog]
-        public ActionResult Remove(int id)
-        {
-            return JsonMessageResult(VirtualContentService.Remove(id));
-        }
+        public ActionResult Remove(int id) => JsonMessageResult(VirtualContentService.Remove(id));
     }
 }

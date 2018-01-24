@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Content
 {
     public abstract class ContentViewModelBase : EntityViewModel
     {
@@ -15,22 +15,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public new BLL.Content Data
         {
-            get
-            {
-                return (BLL.Content)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.Content)EntityData;
+            set => EntityData = value;
         }
 
         public List<ListItem> Groups
         {
-            get
-            {
-                return Data.Site.ContentGroups.Select(n => new ListItem(n.Id.ToString(), n.Name)).ToList();
-            }
+            get { return Data.Site.ContentGroups.Select(n => new ListItem(n.Id.ToString(), n.Name)).ToList(); }
         }
 
         public bool GroupChanged { get; set; }
@@ -45,13 +36,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             }
         }
 
-        /// <summary>
-        /// Возвращает список контентов доступных для выбора в качестве родительского
-        /// </summary>
         public IEnumerable<ListItem> GetContentsForParent()
         {
             var contents = ContentService.GetContentsForParentContent(Data.SiteId, Data.Id).ToArray();
-            return new[] { new ListItem("", ContentStrings.SelectParentContent) }.Concat(contents);
+            return new[] { new ListItem(string.Empty, ContentStrings.SelectParentContent) }.Concat(contents);
         }
 
         public SelectOptions SelectParentOptions => new SelectOptions { ReadOnly = !Data.IsNew };

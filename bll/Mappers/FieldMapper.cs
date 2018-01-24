@@ -1,6 +1,6 @@
 using System.Linq;
-using System.Web.Script.Serialization;
 using AutoMapper;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -80,44 +80,44 @@ namespace Quantumart.QP8.BLL.Mappers
         public override void CreateDalMapper()
         {
             Mapper.CreateMap<Field, FieldDAL>()
-              .ForMember(data => data.IndexFlag, opt => opt.MapFrom(src => Converter.ToDecimal(src.Indexed)))
-              .ForMember(data => data.AllowStageEdit, opt => opt.MapFrom(src => Converter.ToDecimal(src.OnScreen)))
-              .ForMember(data => data.NetName, opt => opt.MapFrom(src => src.LinqPropertyName))
-              .ForMember(data => data.NetBackName, opt => opt.MapFrom(src => src.LinqBackPropertyName))
-              .ForMember(data => data.JoinId, opt => opt.MapFrom(src => src.JoinId))
-              .ForMember(data => data.ReadonlyFlag, opt => opt.MapFrom(src => src.ReadOnly))
-              .ForMember(data => data.BaseImage, opt => opt.Ignore())
-              .ForMember(data => data.ConstraintRule, opt => opt.Ignore())
-              .ForMember(data => data.Content, opt => opt.Ignore())
-              .ForMember(data => data.ContentData, opt => opt.Ignore())
-              .ForMember(data => data.ContentToContent, opt => opt.Ignore())
-              .ForMember(data => data.DependentNotifications, opt => opt.Ignore())
-              .ForMember(data => data.DynamicImageSettings, opt => opt.Ignore())
-              .ForMember(data => data.ItemToItemVersion, opt => opt.Ignore())
-              .ForMember(data => data.JoinedFields, opt => opt.Ignore())
-              .ForMember(data => data.JoinKeyField, opt => opt.Ignore())
-              .ForMember(data => data.JoinSourceField, opt => opt.Ignore())
-              .ForMember(data => data.JoinVirtualFields, opt => opt.Ignore())
-              .ForMember(data => data.LastModifiedBy, opt => opt.Ignore())
-              .ForMember(data => data.RelatedFields, opt => opt.Ignore())
-              .ForMember(data => data.RelationField, opt => opt.Ignore())
-              .ForMember(data => data.Thumbnails, opt => opt.Ignore())
-              .ForMember(data => data.Type, opt => opt.Ignore())
-              .ForMember(data => data.VersionContentData, opt => opt.Ignore())
-              .ForMember(data => data.Size, opt => opt.Ignore())
-              .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
-              .ForMember(data => data.PEnterMode, opt => opt.Ignore())
-              .ForMember(data => data.UseEnglishQuotes, opt => opt.Ignore())
-              .ForMember(data => data.DisableListAutoWrap, opt => opt.Ignore())
-              .ForMember(data => data.ExternalCss, opt => opt.Ignore())
-              .ForMember(data => data.RootElementClass, opt => opt.Ignore())
-              .ForMember(data => data.Aggregators, opt => opt.Ignore())
-              .ForMember(data => data.Classifier, opt => opt.Ignore())
-              .ForMember(data => data.ClassifierId, opt => opt.MapFrom(src => src.ClassifierId))
-              .ForMember(data => data.ParentField, opt => opt.Ignore())
-              .ForMember(data => data.ChildFields, opt => opt.Ignore())
-              .ForMember(data => data.OrderField, opt => opt.Ignore())
-              .AfterMap(SetDalProperties);
+                .ForMember(data => data.IndexFlag, opt => opt.MapFrom(src => Converter.ToDecimal(src.Indexed)))
+                .ForMember(data => data.AllowStageEdit, opt => opt.MapFrom(src => Converter.ToDecimal(src.OnScreen)))
+                .ForMember(data => data.NetName, opt => opt.MapFrom(src => src.LinqPropertyName))
+                .ForMember(data => data.NetBackName, opt => opt.MapFrom(src => src.LinqBackPropertyName))
+                .ForMember(data => data.JoinId, opt => opt.MapFrom(src => src.JoinId))
+                .ForMember(data => data.ReadonlyFlag, opt => opt.MapFrom(src => src.ReadOnly))
+                .ForMember(data => data.BaseImage, opt => opt.Ignore())
+                .ForMember(data => data.ConstraintRule, opt => opt.Ignore())
+                .ForMember(data => data.Content, opt => opt.Ignore())
+                .ForMember(data => data.ContentData, opt => opt.Ignore())
+                .ForMember(data => data.ContentToContent, opt => opt.Ignore())
+                .ForMember(data => data.DependentNotifications, opt => opt.Ignore())
+                .ForMember(data => data.DynamicImageSettings, opt => opt.Ignore())
+                .ForMember(data => data.ItemToItemVersion, opt => opt.Ignore())
+                .ForMember(data => data.JoinedFields, opt => opt.Ignore())
+                .ForMember(data => data.JoinKeyField, opt => opt.Ignore())
+                .ForMember(data => data.JoinSourceField, opt => opt.Ignore())
+                .ForMember(data => data.JoinVirtualFields, opt => opt.Ignore())
+                .ForMember(data => data.LastModifiedBy, opt => opt.Ignore())
+                .ForMember(data => data.RelatedFields, opt => opt.Ignore())
+                .ForMember(data => data.RelationField, opt => opt.Ignore())
+                .ForMember(data => data.Thumbnails, opt => opt.Ignore())
+                .ForMember(data => data.Type, opt => opt.Ignore())
+                .ForMember(data => data.VersionContentData, opt => opt.Ignore())
+                .ForMember(data => data.Size, opt => opt.Ignore())
+                .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
+                .ForMember(data => data.PEnterMode, opt => opt.Ignore())
+                .ForMember(data => data.UseEnglishQuotes, opt => opt.Ignore())
+                .ForMember(data => data.DisableListAutoWrap, opt => opt.Ignore())
+                .ForMember(data => data.ExternalCss, opt => opt.Ignore())
+                .ForMember(data => data.RootElementClass, opt => opt.Ignore())
+                .ForMember(data => data.Aggregators, opt => opt.Ignore())
+                .ForMember(data => data.Classifier, opt => opt.Ignore())
+                .ForMember(data => data.ClassifierId, opt => opt.MapFrom(src => src.ClassifierId))
+                .ForMember(data => data.ParentField, opt => opt.Ignore())
+                .ForMember(data => data.ChildFields, opt => opt.Ignore())
+                .ForMember(data => data.OrderField, opt => opt.Ignore())
+                .AfterMap(SetDalProperties);
         }
 
         private static void SetDalProperties(Field bizObject, FieldDAL dataObject)
@@ -195,7 +195,7 @@ namespace Quantumart.QP8.BLL.Mappers
 
             if (bizObject.StringEnumItems.Any())
             {
-                dataObject.EnumValues = new JavaScriptSerializer().Serialize(bizObject.StringEnumItems.Select(v => new
+                dataObject.EnumValues = JsonConvert.SerializeObject(bizObject.StringEnumItems.Select(v => new
                 {
                     v.Value,
                     v.Alias,

@@ -1,12 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ArticleServices;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 using Quantumart.QP8.WebMvc.ViewModels.HomePage;
@@ -16,46 +17,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class HomeController : QPController
     {
-        [HttpGet]
         [DisableBrowserCache]
-        public ActionResult Index(DirectLinkOptions directLinkOptions)
-        {
-            return View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
-        }
+        public ActionResult Index(DirectLinkOptions directLinkOptions) => View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
 
-        [HttpGet]
-        public ActionResult Test()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public ActionResult JQueryTest()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult JQueryTest(FormCollection formData)
-        {
-            return View();
-        }
-
-        [HttpGet]
         public ActionResult Home(string tabId, int parentId)
         {
             var model = HomeViewModel.Create(tabId, parentId, DbService.Home());
             return JsonHtml("Home", model);
         }
 
-        [HttpGet]
         public ActionResult About(string tabId, int parentId)
         {
             var model = ViewModel.Create<AboutViewModel>(tabId, parentId);
             return JsonHtml("About", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.LockedArticles)]
         [BackendActionContext(ActionCode.LockedArticles)]
@@ -72,11 +48,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.LockedArticles)]
         public ActionResult _LockedArticles(string tabId, int parentId, int id, GridCommand command)
         {
-            var result = ArticleService.ListLocked(command.GetListCommand());
-            return View(new GridModel { Data = result.Data, Total = result.TotalRecords });
+            var serviceResult = ArticleService.ListLocked(command.GetListCommand());
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticlesForApproval)]
         [BackendActionContext(ActionCode.ArticlesForApproval)]
@@ -94,8 +69,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ArticlesForApproval)]
         public ActionResult _ArticlesForApproval(string tabId, int parentId, int id, GridCommand command)
         {
-            var result = ArticleService.ArticlesForApproval(command.GetListCommand());
-            return View(new GridModel { Data = result.Data, Total = result.TotalRecords });
+            var serviceResult = ArticleService.ArticlesForApproval(command.GetListCommand());
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]

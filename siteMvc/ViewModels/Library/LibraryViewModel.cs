@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using Quantumart.QP8.BLL;
@@ -7,7 +7,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Library
 {
     public class LibraryViewModel : ViewModel
     {
@@ -29,14 +29,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             return list;
         }
 
-        private static QPSelectListItem GetFileTypeListItem(FolderFileType type)
+        private static QPSelectListItem GetFileTypeListItem(FolderFileType type) => new QPSelectListItem
         {
-            return new QPSelectListItem
-            {
-                Text = FolderFile.GetTypeName(type),
-                Value = ((int)type).ToString()
-            };
-        }
+            Text = FolderFile.GetTypeName(type),
+            Value = ((int)type).ToString()
+        };
 
         public LibraryViewModel()
         {
@@ -98,10 +95,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public IEnumerable<QPSelectListItem> FileTypes
         {
-            get
-            {
-                return FileTypeList.OrderBy(i => i.Value).ToArray();
-            }
+            get { return FileTypeList.OrderBy(i => i.Value).ToArray(); }
         }
 
         public UploaderType UploaderType => UploaderTypeHelper.UploaderType;

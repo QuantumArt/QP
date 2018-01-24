@@ -435,9 +435,9 @@ Quantumart.QP8.BackendToolbar.prototype = {
     const subItems = dataItem.Items;
 
     if (subItems.length > 1) {
-      let selectedSubItem = $.grep(subItems, subItem => subItem.Value === selectedSubItemValue)[0];
+      let [selectedSubItem] = $.grep(subItems, subItem => subItem.Value === selectedSubItemValue);
       if (!selectedSubItem) {
-        selectedSubItem = subItems[0];
+        [selectedSubItem] = subItems;
       }
 
       html

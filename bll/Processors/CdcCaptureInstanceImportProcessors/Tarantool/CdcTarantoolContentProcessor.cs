@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -30,7 +30,7 @@ namespace Quantumart.QP8.BLL.Processors.CdcCaptureInstanceImportProcessors.Taran
                     return new CdcTableTypeModel
                     {
                         ChangeType = CdcActionType.Schema,
-                        Action = (CdcOperationType)Enum.Parse(typeof(CdcOperationType), row[CdcCommonConstants.Operation] as string),
+                        Action = (CdcOperationType)Enum.Parse(typeof(CdcOperationType), Convert.ToString(row[CdcCommonConstants.Operation])),
                         TransactionDate = (DateTime)row[CdcCommonConstants.TransactionDate],
                         TransactionLsn = row[CdcCommonConstants.TransactionLsn] as string,
                         SequenceLsn = row[CdcCommonConstants.SequenceLsn] as string,

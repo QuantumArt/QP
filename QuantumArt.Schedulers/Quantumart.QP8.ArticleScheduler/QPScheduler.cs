@@ -1,11 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.Configuration.Models;
+using Unity;
+using Unity.Resolution;
 
 namespace Quantumart.QP8.ArticleScheduler
 {

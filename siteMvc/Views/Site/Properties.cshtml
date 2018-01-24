@@ -1,8 +1,5 @@
-﻿@model SiteViewModel
-
-@using Quantumart.QP8.Resources
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.WebMvc.ViewModels
+﻿@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.Site.SiteViewModel
 
 <script type="text/html" id="@Html.UniqueId("Data_ExternalCssItems_template")">
 	<span data-bind="click: addItem">
@@ -40,7 +37,7 @@
 
 	using (Html.BeginFieldGroup(SiteStrings.Legend_AssemblingParameters))
 	{
-		@Html.SelectFieldFor(s => s.Data.AssemblingType, Html.List(Model.AssemblingTypes), new SelectOptions() { ReadOnly = !Model.IsNew })
+		@Html.SelectFieldFor(s => s.Data.AssemblingType, Html.List(Model.AssemblingTypes), new SelectOptions { ReadOnly = !Model.IsNew })
 		@Html.CheckBoxFieldFor(s => s.Data.AllowUserSessions)
 		using (Html.BeginPanel(Model.AssemblingNetOptionsBlock))
 		{
@@ -123,7 +120,7 @@
 		@Html.CheckboxListFieldFor(
 			model => model.ActiveVeCommands,
 			Html.List(Model.DefaultCommandsListItems),
-			new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
+			new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
 					new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeCommands") } }
 		)
 
@@ -134,14 +131,14 @@
 		@Html.CheckboxListFieldFor(
 			model => model.ActiveVeStyles,
 			Html.List(Model.AllStylesListItems),
-			new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
+			new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
 					new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeStyles") } }
 		)
 
 		@Html.CheckboxListFieldFor(
 			model => model.ActiveVeFormats,
 			Html.List(Model.AllFormatsListItems),
-			new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
+			new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
 					new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeFormats") } }
 		)
 	}

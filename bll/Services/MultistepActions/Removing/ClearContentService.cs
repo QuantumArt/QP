@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 

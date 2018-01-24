@@ -4,313 +4,299 @@ window.EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING = 'OnPopupWindowActionExecuting'
 window.EVENT_TYPE_POPUP_WINDOW_ENTITY_READED = 'OnPopupWindowEntityReaded';
 window.EVENT_TYPE_POPUP_WINDOW_CLOSED = 'OnPopupWindowClosed';
 
-// eslint-disable-next-line max-statements, complexity
-Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options) {
-  Quantumart.QP8.BackendPopupWindow.initializeBase(this, [eventArgs, options]);
-
-  const $currentWindow = $(window);
-  const currentWindowWidth = $currentWindow.width();
-  const currentWindowHeight = $currentWindow.height();
-
-  this._popupWindowId = popupWindowId;
-  if ($q.isObject(eventArgs)) {
-    this._applyEventArgs(eventArgs, true);
-    this.bindExternalCallerContext(eventArgs);
+class BackendPopupWindow extends Quantumart.QP8.BackendDocumentHost {
+  static get isWindow() {
+    return true;
   }
 
-  this._loadDefaultSearchBlockState();
-  if ($q.isObject(options)) {
-    if (!$q.isNull(options.showBreadCrumbs)) {
-      this._showBreadCrumbs = options.showBreadCrumbs;
+  // eslint-disable-next-line max-statements, complexity
+  constructor(popupWindowId, eventArgs, options) {
+    super(eventArgs, options);
+
+    this._popupWindowId = '';
+    this._showBreadCrumbs = false;
+    this._saveSelectionWhenChangingView = false;
+    this._title = '';
+    this._width = 400;
+    this._height = 300;
+    this._minWidth = 400;
+    this._minHeight = 300;
+    this._isModal = true;
+    this._allowResize = true;
+    this._allowDrag = true;
+    this._showRefreshButton = false;
+    this._showCloseButton = true;
+    this._showMaximizeButton = true;
+    this._zIndex = 0;
+    this._isMultiOpen = false;
+
+    const $currentWindow = $(window);
+    const currentWindowWidth = $currentWindow.width();
+    const currentWindowHeight = $currentWindow.height();
+
+    this._popupWindowId = popupWindowId;
+    if ($q.isObject(eventArgs)) {
+      this._applyEventArgs(eventArgs, true);
+      this.bindExternalCallerContext(eventArgs);
     }
 
-    if (options.customActionToolbarComponent) {
-      this._actionToolbarComponent = options.customActionToolbarComponent;
-      this._useCustomActionToolbar = true;
+    this._loadDefaultSearchBlockState();
+    if ($q.isObject(options)) {
+      if (!$q.isNull(options.showBreadCrumbs)) {
+        this._showBreadCrumbs = options.showBreadCrumbs;
+      }
+
+      if (options.customActionToolbarComponent) {
+        this._actionToolbarComponent = options.customActionToolbarComponent;
+        this._useCustomActionToolbar = true;
+      }
+
+      if (!$q.isNull(options.saveSelectionWhenChangingView)) {
+        this._saveSelectionWhenChangingView = options.saveSelectionWhenChangingView;
+      }
+
+      if (options.title) {
+        this._title = options.title;
+      }
+
+      if (options.width) {
+        this._width = options.width;
+      } else {
+        this._width = Math.floor(currentWindowWidth * 0.8);
+      }
+
+      if (options.height) {
+        this._height = options.height;
+      } else {
+        this._height = Math.floor(currentWindowHeight * 0.8);
+      }
+
+      if (options.minWidth) {
+        this._minWidth = options.minWidth;
+      } else {
+        this._minWidth = Math.floor(currentWindowWidth * 0.2);
+      }
+
+      if (options.minHeight) {
+        this._minHeight = options.minHeight;
+      } else {
+        this._minHeight = Math.floor(currentWindowHeight * 0.2);
+      }
+
+      if (!$q.isNull(options.isModal)) {
+        this._isModal = options.isModal;
+      }
+
+      if (!$q.isNull(options.allowResize)) {
+        this._allowResize = options.allowResize;
+      }
+
+      if (!$q.isNull(options.allowDrag)) {
+        this._allowDrag = options.allowDrag;
+      }
+
+      if (!$q.isNull(options.showCloseButton)) {
+        this._showCloseButton = options.showCloseButton;
+      }
+
+      if (!$q.isNull(options.showMinimizeButton)) {
+        this._showMinimizeButton = options.showMinimizeButton;
+      }
+
+      if (!$q.isNull(options.showMaximizeButton)) {
+        this._showMaximizeButton = options.showMaximizeButton;
+      }
+
+      if (options.additionalUrlParameters) {
+        this._additionalUrlParameters = options.additionalUrlParameters;
+      }
+      if (eventArgs.get_context() && eventArgs.get_context().additionalUrlParameters) {
+        this._additionalUrlParameters = Object.assign(
+          {},
+          this._additionalUrlParameters,
+          eventArgs.get_context().additionalUrlParameters
+        );
+      }
+
+      if (options.zIndex) {
+        this._zIndex = $q.toInt(options.zIndex);
+      }
+
+      if (options.filter) {
+        this._filter = options.filter;
+      }
+
+      if (options.isMultiOpen) {
+        this._isMultiOpen = options.isMultiOpen;
+      }
     }
 
-    if (!$q.isNull(options.saveSelectionWhenChangingView)) {
-      this._saveSelectionWhenChangingView = options.saveSelectionWhenChangingView;
-    }
-
-    if (options.title) {
-      this._title = options.title;
-    }
-
-    if (options.width) {
-      this._width = options.width;
-    } else {
-      this._width = Math.floor(currentWindowWidth * 0.8);
-    }
-
-    if (options.height) {
-      this._height = options.height;
-    } else {
-      this._height = Math.floor(currentWindowHeight * 0.8);
-    }
-
-    if (options.minWidth) {
-      this._minWidth = options.minWidth;
-    } else {
-      this._minWidth = Math.floor(currentWindowWidth * 0.2);
-    }
-
-    if (options.minHeight) {
-      this._minHeight = options.minHeight;
-    } else {
-      this._minHeight = Math.floor(currentWindowHeight * 0.2);
-    }
-
-    if (!$q.isNull(options.isModal)) {
-      this._isModal = options.isModal;
-    }
-
-    if (!$q.isNull(options.allowResize)) {
-      this._allowResize = options.allowResize;
-    }
-
-    if (!$q.isNull(options.allowDrag)) {
-      this._allowDrag = options.allowDrag;
-    }
-
-    if (!$q.isNull(options.showCloseButton)) {
-      this._showCloseButton = options.showCloseButton;
-    }
-
-    if (!$q.isNull(options.showMinimizeButton)) {
-      this._showMinimizeButton = options.showMinimizeButton;
-    }
-
-    if (!$q.isNull(options.showMaximizeButton)) {
-      this._showMaximizeButton = options.showMaximizeButton;
-    }
-
-    if (options.additionalUrlParameters) {
-      this._additionalUrlParameters = options.additionalUrlParameters;
-    }
-    if (eventArgs.get_context() && eventArgs.get_context().additionalUrlParameters) {
-      this._additionalUrlParameters = Object.assign(
-        {},
-        this._additionalUrlParameters,
-        eventArgs.get_context().additionalUrlParameters
-      );
-    }
-
-    if (options.zIndex) {
-      this._zIndex = $q.toInt(options.zIndex);
-    }
-
-    if (options.filter) {
-      this._filter = options.filter;
-    }
-
-    if (options.isMultiOpen) {
-      this._isMultiOpen = options.isMultiOpen;
-    }
+    this._selectedEntities = [];
+    this._onPopupWindowResizeHandler = $.proxy(this._onPopupWindowResize, this);
+    this._onPopupWindowOpenHandler = $.proxy(this._onPopupWindowOpen, this);
+    this._onPopupWindowCloseHandler = $.proxy(this._onPopupWindowClose, this);
+    this._onPopupWindowActivatedHandler = $.proxy(this._onPopupWindowActivated, this);
   }
-
-  this._selectedEntities = [];
-  this._onPopupWindowResizeHandler = $.proxy(this._onPopupWindowResize, this);
-  this._onPopupWindowOpenHandler = $.proxy(this._onPopupWindowOpen, this);
-  this._onPopupWindowCloseHandler = $.proxy(this._onPopupWindowClose, this);
-  this._onPopupWindowActivatedHandler = $.proxy(this._onPopupWindowActivated, this);
-};
-
-Quantumart.QP8.BackendPopupWindow.prototype = {
-  _popupWindowId: '',
-  _popupWindowElement: null,
-  _popupWindowComponent: null,
-  _showBreadCrumbs: false,
-  _breadCrumbsWrapperElement: null,
-  _toolbarWrapperElement: null,
-  _actionToolbarWrapperElement: null,
-  _viewToolbarWrapperElement: null,
-  _searchBlockWrapperElement: null,
-  _contextBlockWrapperElement: null,
-  _documentAreaElement: null,
-  _loadingLayerElement: null,
-  _selectionContext: null,
-  _saveSelectionWhenChangingView: false,
-  _title: '',
-  _width: 400,
-  _height: 300,
-  _minWidth: 400,
-  _minHeight: 300,
-  _isModal: true,
-  _allowResize: true,
-  _allowDrag: true,
-  _showRefreshButton: false,
-  _showCloseButton: true,
-  _showMaximizeButton: true,
-  _popupWindowManagerComponent: null,
-  _additionalUrlParameters: null,
-  _zIndex: 0,
-  _isMultiOpen: false,
 
   // eslint-disable-next-line camelcase
   get_popupWindowId() {
     return this._popupWindowId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_showBreadCrumbs() {
     return this._showBreadCrumbs;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_saveSelectionWhenChangingView() {
     return this._saveSelectionWhenChangingView;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_saveSelectionWhenChangingView(value) {
     this._saveSelectionWhenChangingView = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_title() {
     return this._title;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_title(value) {
     this._title = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_width() {
     return this._width;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_width(value) {
     this._width = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_height() {
     return this._height;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_height(value) {
     this._height = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_minWidth() {
     return this._minWidth;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_minWidth(value) {
     this._minWidth = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_minHeight() {
     return this._minHeight;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_minHeight(value) {
     this._minHeight = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_isModal() {
     return this._isModal;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_isModal(value) {
     this._isModal = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_allowResize() {
     return this._allowResize;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_allowResize(value) {
     this._allowResize = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_allowDrag() {
     return this._allowDrag;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_allowDrag(value) {
     this._allowDrag = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_showRefreshButton() {
     return this._showRefreshButton;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_showRefreshButton(value) {
     this._showRefreshButton = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_showCloseButton() {
     return this._showCloseButton;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_showCloseButton(value) {
     this._showCloseButton = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_showMaximizeButton() {
     return this._showMaximizeButton;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_showMaximizeButton(value) {
     this._showMaximizeButton = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_popupWindowManager() {
     return this._popupWindowManagerComponent;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_popupWindowManager(value) {
     this._popupWindowManagerComponent = value;
-  },
+  }
 
-  // eslint-disable-next-line camelcase
+  // eslint-disable-next-line camelcase, class-methods-use-this
   get_hostType() {
     return window.DOCUMENT_HOST_TYPE_POPUP_WINDOW;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_zIndex() {
     return parseInt($(this._popupWindowElement).css('z-index'), 10);
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_selectionContext() {
     return this._selectionContext;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_selectionContext(value) {
     this._selectionContext = value;
-  },
-
-  _onPopupWindowResizeHandler: null,
-  _onPopupWindowOpenHandler: null,
-  _onPopupWindowCloseHandler: null,
-  _onPopupWindowActivatedHandler: null,
+  }
 
   initialize() {
     this._initSelectedEntities();
@@ -335,21 +321,21 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this._popupWindowElement = $popupWindow.get(0);
     this._popupWindowComponent = popupWindowComponent;
     this._attachPopupWindowEventHandlers();
-  },
+  }
 
   _initSelectedEntities() {
     if (this._actionTypeCode === window.ACTION_TYPE_CODE_SELECT
       || this._actionTypeCode === window.ACTION_TYPE_CODE_MULTIPLE_SELECT
     ) {
       if (this._isMultipleEntities) {
-        this._selectedEntities = Array.clone(this._entities);
+        this._selectedEntities = this._entities.slice();
       } else if (this._entityId && this._entityName) {
         this._selectedEntities = [{ Id: this._entityId, Name: this._entityName }];
       } else {
         this._selectedEntities = [];
       }
     }
-  },
+  }
 
   generateDocumentUrl(options) {
     const isSelectAction = this._actionTypeCode === window.ACTION_TYPE_CODE_SELECT
@@ -391,8 +377,9 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
 
     this._documentPostParams = params;
-  },
+  }
 
+  // eslint-disable-next-line max-statements
   _createWindow() {
     const popupWindowId = this._popupWindowId;
     const actions = [];
@@ -499,7 +486,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     this._documentWrapperElement = $documentWrapper.get(0);
 
     return popupWindowComponent;
-  },
+  }
 
   openWindow(options) {
     if (this._isMultiOpen && this._isContentLoaded()) {
@@ -511,7 +498,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       this.renderPanels();
       this.loadHtmlContentToDocumentWrapper(this.onDocumentChanged.bind(this), options);
     }
-  },
+  }
 
   closeWindow() {
     if (this._isMultiOpen) {
@@ -526,12 +513,12 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       this.notify(window.EVENT_TYPE_POPUP_WINDOW_CLOSED, eventArgs);
       this.dispose();
     }
-  },
+  }
 
   setWindowTitle(titleText) {
     $c.setPopupWindowTitle(this._popupWindowComponent, titleText);
     this._title = titleText;
-  },
+  }
 
   _attachPopupWindowEventHandlers() {
     const $popupWindow = $(this._popupWindowElement);
@@ -540,7 +527,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       .bind('resize', this._onPopupWindowResizeHandler)
       .bind('close', this._onPopupWindowCloseHandler)
       .bind('activated', this._onPopupWindowActivatedHandler);
-  },
+  }
 
   _detachPopupWindowEventHandlers() {
     const $popupWindow = $(this._popupWindowElement);
@@ -549,7 +536,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       .unbind('resize', this._onPopupWindowResizeHandler)
       .unbind('close', this._onPopupWindowCloseHandler)
       .unbind('activated', this._onPopupWindowActivatedHandler);
-  },
+  }
 
   _fixDocumentAreaHeight() {
     const $popupWindow = $(this._popupWindowElement);
@@ -576,21 +563,21 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.resize();
     }
-  },
+  }
 
   showLoadingLayer() {
     const $loadingLayer = $(this._loadingLayerElement);
     $loadingLayer.show();
-  },
+  }
 
   hideLoadingLayer() {
     const $loadingLayer = $(this._loadingLayerElement);
     $loadingLayer.hide();
-  },
+  }
 
   htmlLoadingMethod() {
     return this._isMultipleEntities || this._isCustomAction ? 'POST' : 'GET';
-  },
+  }
 
   createPanels() {
     if (this._showBreadCrumbs) {
@@ -657,7 +644,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     );
 
     this._viewToolbarComponent = viewToolbarComponent;
-  },
+  }
 
   hidePanels(callback) {
     if (this._breadCrumbsComponent) {
@@ -674,7 +661,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     if (this._isContextBlockVisible && this._contextBlockComponent) {
       this._contextBlockComponent.hideSearchBlock();
     }
-  },
+  }
 
   showPanels(callback) {
     if (this._breadCrumbsComponent) {
@@ -692,7 +679,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     if (this._isContextBlockVisible && this._contextBlockComponent) {
       this._contextBlockComponent.showSearchBlock();
     }
-  },
+  }
 
   destroyPanels() {
     if (this._breadCrumbsComponent) {
@@ -743,7 +730,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       this._viewToolbarComponent.dispose();
       this._viewToolbarComponent = null;
     }
-  },
+  }
 
   createSearchBlock() {
     const searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(
@@ -775,7 +762,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     );
 
     this._searchBlockComponent = searchBlockComponent;
-  },
+  }
 
   createContextBlock() {
     const contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance().createSearchBlock(
@@ -797,7 +784,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     contextBlockComponent.attachObserver(window.EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
 
     this._contextBlockComponent = contextBlockComponent;
-  },
+  }
 
   destroySearchBlock() {
     const searchBlockComponent = this._searchBlockComponent;
@@ -813,7 +800,7 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
 
       this._searchBlockComponent = null;
     }
-  },
+  }
 
   destroyContextBlock() {
     const searchBlockComponent = this._searchBlockComponent;
@@ -829,62 +816,62 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       this._contextBlockComponent = null;
       this._isContextBlockVisible = false;
     }
-  },
+  }
 
   showErrorMessageInDocumentWrapper() {
     const $documentWrapper = $(this._documentWrapperElement);
     $documentWrapper.html($q.generateErrorMessageText());
-  },
+  }
 
   updateTitle(eventArgs) {
     this.setWindowTitle(Quantumart.QP8.BackendDocumentHost.generateTitle(eventArgs, { isTab: false }));
-  },
+  }
 
   onChangeContent(eventType, sender, eventArgs) {
     this.changeContent(eventArgs);
-  },
+  }
 
   saveSelectionContext(eventArgs) {
     this._selectionContext = eventArgs.get_context();
-  },
+  }
 
   onActionExecuting(eventArgs) {
     this._copyCurrentContextToEventArgs(eventArgs);
     return this._popupWindowManagerComponent.notify(window.EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING, eventArgs);
-  },
+  }
 
   onEntityReaded(eventArgs) {
     return this._popupWindowManagerComponent.notify(window.EVENT_TYPE_POPUP_WINDOW_ENTITY_READED, eventArgs);
-  },
+  }
 
   onDocumentChanging() {
     this.markPanelsAsBusy();
-  },
+  }
 
   onDocumentChanged() {
     this.unmarkPanelsAsBusy();
-  },
+  }
 
   onNeedUp(eventArgs) {
     this._popupWindowManagerComponent.onNeedUp(eventArgs, this.get_popupWindowId());
-  },
+  }
 
   resetSelectedEntities() {
     this._initSelectedEntities();
-  },
+  }
 
   _onLibraryResized(eventType, sender) {
     const elHeight = $(this._documentAreaElement).height();
     $(sender._libraryElement).height(elHeight + 8);
-  },
+  }
 
   _onPopupWindowResize() {
     this._fixDocumentAreaHeight();
-  },
+  }
 
   _onPopupWindowOpen() {
     this._fixDocumentAreaHeight();
-  },
+  }
 
   _onPopupWindowClose() {
     const $active = $(document.activeElement);
@@ -893,50 +880,36 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
     }
 
     this.closeWindow();
-  },
+  }
 
   _onPopupWindowActivated() {
     const main = this.getMainComponent();
     if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
       main.resize();
     }
-  },
+  }
 
   _onExternalCallerContextsUnbinded(unbindingEventArgs) {
     this.get_popupWindowManager().hostExternalCallerContextsUnbinded(unbindingEventArgs);
-  },
+  }
 
   _isContentLoaded() {
     const $wrapper = $(this._documentWrapperElement);
     return $wrapper && $wrapper.html();
-  },
+  }
 
   onDocumentError() {
     this.closeWindow();
-  },
-
-  _isWindow() {
-    return true;
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendPopupWindow.callBaseMethod(this, 'dispose');
+    super.dispose();
 
     this._detachPopupWindowEventHandlers();
-    this._breadCrumbsWrapperElement = null;
-    this._toolbarWrapperElement = null;
-    this._actionToolbarWrapperElement = null;
-    this._viewToolbarWrapperElement = null;
-    this._searchBlockWrapperElement = null;
-    this._contextBlockWrapperElement = null;
-    this._documentAreaElement = null;
-    this._documentWrapperElement = null;
-
     if (this._loadingLayerElement) {
       const $loadingLayer = $(this._loadingLayerElement);
       $loadingLayer.empty();
       $loadingLayer.remove();
-      this._loadingLayerElement = null;
     }
 
     this.destroyPanels();
@@ -948,24 +921,33 @@ Quantumart.QP8.BackendPopupWindow.prototype = {
       if (!$q.isNullOrWhiteSpace(popupWindowId)) {
         this._popupWindowManagerComponent.removePopupWindow(popupWindowId);
       }
-
-      this._popupWindowManagerComponent = null;
     }
 
     if (this._popupWindowComponent) {
       $c.destroyPopupWindow(this._popupWindowComponent);
-      this._popupWindowComponent = null;
     }
 
-    this._popupWindowElement = null;
-    this._onPopupWindowResizeHandler = null;
-    this._onPopupWindowOpenHandler = null;
-    this._onPopupWindowCloseHandler = null;
-    this._onPopupWindowActivatedHandler = null;
-  }
-};
+    $q.dispose.call(this, [
+      '_popupWindowElement',
+      '_onPopupWindowResizeHandler',
+      '_onPopupWindowOpenHandler',
+      '_onPopupWindowCloseHandler',
+      '_onPopupWindowActivatedHandler',
+      '_breadCrumbsWrapperElement',
+      '_toolbarWrapperElement',
+      '_actionToolbarWrapperElement',
+      '_viewToolbarWrapperElement',
+      '_searchBlockWrapperElement',
+      '_contextBlockWrapperElement',
+      '_documentAreaElement',
+      '_documentWrapperElement',
+      '_loadingLayerElement',
+      '_popupWindowManagerComponent',
+      '_popupWindowComponent'
+    ]);
 
-Quantumart.QP8.BackendPopupWindow.registerClass(
-  'Quantumart.QP8.BackendPopupWindow',
-  Quantumart.QP8.BackendDocumentHost
-);
+    $q.collectGarbageInIE();
+  }
+}
+
+Quantumart.QP8.BackendPopupWindow = BackendPopupWindow;

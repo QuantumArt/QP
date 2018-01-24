@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
@@ -24,7 +25,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
         private readonly Lazy<IEnumerable<ListItem>> _contentGroups;
         private readonly Lazy<IEnumerable<ListItem>> _sites;
 
-
         public IEnumerable<ListItem> ContentGroups => _contentGroups.Value;
 
         public IEnumerable<ListItem> Sites => _sites.Value;
@@ -33,9 +33,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
 
         public bool ShowGroupList => !ShowSiteList;
 
-        public string UniqueId(string id)
-        {
-            return HtmlHelperFieldExtensions.UniqueId(id, _hostId);
-        }
+        public string UniqueId(string id) => HtmlHelperFieldExtensions.UniqueId(id, _hostId);
     }
 }

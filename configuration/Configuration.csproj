@@ -76,16 +76,13 @@
       <Name>Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
-      <Project>{6E317F05-226C-4C9F-B918-FE71D743C3A3}</Project>
+      <Project>{a1397fa6-f0ba-4695-af53-d03469013692}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
-      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
+      <Project>{EF8CC04A-6AE2-4CF4-9367-31701651639B}</Project>
       <Name>QP8.Infrastructure</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

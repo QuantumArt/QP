@@ -16,32 +16,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SitePermissions)]
         [BackendActionContext(ActionCode.SitePermissions)]
-        public override ActionResult Index(string tabId, int parentId)
-        {
-            return base.Index(tabId, parentId);
-        }
+        public override ActionResult Index(string tabId, int parentId) => base.Index(tabId, parentId);
 
         [HttpPost]
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SitePermissions)]
         [BackendActionContext(ActionCode.SitePermissions)]
-        public override ActionResult _Index(string tabId, int parentId, GridCommand command)
-        {
-            return base._Index(tabId, parentId, command);
-        }
+        public override ActionResult _Index(string tabId, int parentId, GridCommand command) => base._Index(tabId, parentId, command);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewSitePermission)]
         [BackendActionContext(ActionCode.AddNewSitePermission)]
-        public override ActionResult New(string tabId, int parentId)
-        {
-            return base.New(tabId, parentId);
-        }
+        public override ActionResult New(string tabId, int parentId) => base.New(tabId, parentId);
 
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -49,19 +38,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewSitePermission)]
         [BackendActionContext(ActionCode.AddNewSitePermission)]
         [BackendActionLog]
-        public override ActionResult New(string tabId, int parentId, FormCollection collection)
-        {
-            return base.New(tabId, parentId, collection);
-        }
+        public override ActionResult New(string tabId, int parentId, FormCollection collection) => base.New(tabId, parentId, collection);
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SitePermissionProperties)]
         [BackendActionContext(ActionCode.SitePermissionProperties)]
-        public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
-        {
-            return base.Properties(tabId, parentId, id, successfulActionCode);
-        }
+        public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode) => base.Properties(tabId, parentId, id, successfulActionCode);
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -70,10 +52,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateSitePermission)]
         [BackendActionLog]
         [Record(ActionCode.SitePermissionProperties)]
-        public override ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
-        {
-            return base.Properties(tabId, parentId, id, collection);
-        }
+        public override ActionResult Properties(string tabId, int parentId, int id, FormCollection collection) => base.Properties(tabId, parentId, id, collection);
 
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -82,10 +61,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemoveSitePermission)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public override ActionResult MultipleRemove(int parentId, int[] IDs)
-        {
-            return base.MultipleRemove(parentId, IDs);
-        }
+        public override ActionResult MultipleRemove(int parentId, int[] IDs) => base.MultipleRemove(parentId, IDs);
 
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -93,10 +69,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveSitePermission)]
         [BackendActionContext(ActionCode.RemoveSitePermission)]
         [BackendActionLog]
-        public override ActionResult Remove(int parentId, int id)
-        {
-            return base.Remove(parentId, id);
-        }
+        public override ActionResult Remove(int parentId, int id) => base.Remove(parentId, id);
 
         protected override string ControllerName => "SitePermission";
     }

@@ -61,7 +61,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
   getSelectedIds() {
     let result;
     if (this._isEntity) {
-      result = $.map(this._getSelectedEntities(), item => item.Id);
+      result = this._getSelectedEntities().map(item => item.Id);
     } else {
       result = this._getIds($(this._textAreaElement).val());
     }
@@ -175,7 +175,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
           fieldId: that._fieldID,
           filter: that._getEntityDataList()._filter
         }, data => {
-          that._selectedEntitiesIDs = $q.addRemoveToArrUniq(selectedIds, data);
+          that._selectedEntitiesIDs = [...new Set(selectedIds.concat(data))];
           that._replaceWithSelectedEntities();
         });
       }

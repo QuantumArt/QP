@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -11,6 +11,7 @@ using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
 using Telerik.Web.Mvc;
@@ -43,7 +44,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _Index(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _workflowService.GetWorkflowsBySiteId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -127,17 +128,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveWorkflow)]
         [BackendActionContext(ActionCode.RemoveWorkflow)]
         [BackendActionLog]
-        public ActionResult Remove(int id)
-        {
-            return JsonMessageResult(_workflowService.Remove(id));
-        }
+        public ActionResult Remove(int id) => JsonMessageResult(_workflowService.Remove(id));
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult CheckUserOrGroupAccessOnContents(string statusName, string userIdString, string groupIdString, string contentIdsString)
         {
             var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(',').Select(x => int.Parse(x)).ToList();
-            int tempVal;
-            var userId = int.TryParse(userIdString, out tempVal) ? tempVal : (int?)null;
+            var userId = int.TryParse(userIdString, out var tempVal) ? tempVal : (int?)null;
             var groupId = int.TryParse(groupIdString, out tempVal) ? tempVal : (int?)null;
             var contentAccessSummary = new StringBuilder();
 
@@ -161,7 +158,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var contentAccessSummary = new List<object>();
             var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(',').Select(int.Parse).ToList();
-            var model = new JavaScriptSerializer().Deserialize<List<WorkflowRuleSimpleItem>>(modelString);
+            var model = JsonConvert.DeserializeObject<List<WorkflowRuleSimpleItem>>(modelString);
 
             foreach (var stage in model)
             {

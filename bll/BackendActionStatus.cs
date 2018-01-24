@@ -1,19 +1,9 @@
 namespace Quantumart.QP8.BLL
 {
-	public class BackendActionStatus
-	{
+    public class BackendActionStatus
+    {
+        public string Code { get; set; }
 
-		public string Code
-		{
-			get;
-			set;
-		}
-
-
-		public bool Visible
-		{
-			get;
-			set;
-		}
-	}
+        public bool Visible { get; set; }
+    }
 }

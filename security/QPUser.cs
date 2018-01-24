@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.Security
+namespace Quantumart.QP8.Security
 {
     public class QpUser
     {
@@ -6,6 +6,11 @@
         /// идентификатор пользователя
         /// </summary>
         public int Id { get; set; } = default(int);
+
+        /// <summary>
+        /// идентификатор сессии
+        /// </summary>
+        public int SessionId { get; set; } = default(int);
 
         /// <summary>
         /// логин пользователя

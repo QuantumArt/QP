@@ -10,7 +10,8 @@ using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -57,10 +58,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public int ArticleCount
         {
-            get
-            {
-                return _reader.Lines.Count(s => !s.Skip);
-            }
+            get { return _reader.Lines.Count(s => !s.Skip); }
         }
 
         public string LastProcessed
@@ -167,6 +165,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         }
                     }
                 }
+
                 if (!article.BaseArticle.FieldValues.Any() && _aggregatedContentsMap.Where(w => w.Key != article.BaseArticle.Id).Any())
                 {
                     var classifierFields = _importSettings.FieldsList.Where(w => w.Value.IsClassifier).Select(s => s.Value);
@@ -198,7 +197,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             article.Extensions[fv] = extensionArticle;
             _articlesListFromCsv.ExtensionFields.Add(fv);
         }
-
 
         private void ReadLineFields(Article article, IReadOnlyList<string> fieldValues, int contentId, int lineNumber, bool isExtension = false)
         {
@@ -468,7 +466,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     {
                         var currentId = extensionsMap[article.BaseArticle.Id][fieldId];
                         if (currentId != aggregatedArticle.Id)
-                        {                       
+                        {
                             aggregatedArticle.Id = currentId;
                         }
                         idsToUpdate.Add(aggregatedArticle.Id);
@@ -898,7 +896,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 itemXml.Add(new XAttribute("id", id));
                 itemXml.Add(new XAttribute("modifiedBy", QPContext.CurrentUserId));
                 doc.Root?.Add(itemXml);
-
             }
 
             ArticleRepository.UpdateArticlesDateTime(doc.ToString(SaveOptions.None));
@@ -1125,6 +1122,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
                 lastCh = (char)c;
             } while ((c = Read()) != -1);
+
             return sb.ToString();
         }
     }

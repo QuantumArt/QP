@@ -1,4 +1,4 @@
-﻿FixContentItemTriggers
+FixContentItemTriggers
 MultipleUpdate
 OptimizeHierarchy
 VisualEditor
@@ -18,10 +18,13 @@ DeleteSite
 UpdateWrongWFStatuses
 UpdateItemToItemTrigger
 AddProducts
+AddProductVersions
 CDC
 DPC
 ContextMenuAction
 EFTablesViews
 AggregatesToRemove
 AddMaxItemCountColumn
+Tokens
+AddExportArchiveArticlesToToolbar
 AddColumns

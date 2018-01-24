@@ -1,6 +1,7 @@
 using System.Web;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -19,7 +20,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         public int ContentsCount { get; set; }
 
         public CopySiteContentsCommand(MultistepActionStageCommandState state)
-            : this(state.Id, null, 0) { }
+            : this(state.Id, null, 0)
+        {
+        }
 
         public CopySiteContentsCommand(int siteId, string siteName, int contentsCount)
         {
@@ -30,6 +33,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
             NewSiteId = prms.DestinationSiteId;
         }
+
         public MultistepActionStepResult Step(int step)
         {
             var result = new MultistepActionStepResult();

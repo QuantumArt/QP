@@ -5,14 +5,12 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Library;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ContentFolderController : QPController
     {
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewContentFolder)]
         [BackendActionContext(ActionCode.AddNewContentFolder)]
@@ -47,7 +45,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("FolderProperties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentFolderProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "id")]
@@ -82,10 +79,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("FolderProperties", model);
         }
 
-        public ActionResult RemovePreAction(int parentId, int id)
-        {
-            return Json(ContentFolderService.RemovePreAction(id));
-        }
+        public ActionResult RemovePreAction(int parentId, int id) => Json(ContentFolderService.RemovePreAction(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -100,7 +94,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentFileProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "parentId")]

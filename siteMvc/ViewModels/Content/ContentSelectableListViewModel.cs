@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Content
 {
@@ -28,13 +29,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
 
         public override bool AllowMultipleEntitySelection
         {
-            get
-            {
-                return IsMultiple;
-            }
-            set
-            {
-            }
+            get { return IsMultiple; }
+            set { }
         }
 
         public override string ActionCode => IsMultiple ? Constants.ActionCode.MultipleSelectContent : Constants.ActionCode.SelectContent;

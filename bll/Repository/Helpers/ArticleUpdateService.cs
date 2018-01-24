@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 
@@ -99,6 +99,8 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         {
             var linkParamName = $"@link{Counter}";
             var linkValueParamName = $"@linkValue{Counter}";
+
+            // ReSharper disable once PossibleInvalidOperationException
             Parameters.Add(new SqlParameter(linkParamName, SqlDbType.Int) { Value = field.LinkId.Value });
             Parameters.Add(new SqlParameter(linkValueParamName, SqlDbType.NVarChar, -1) { Value = !string.IsNullOrEmpty(value) ? (object)value : DBNull.Value });
             sqlResult.AppendLine($"EXEC qp_update_m2m {ContentItemId}, {linkParamName}, {linkValueParamName}, {SplittedParamName}, 0;");
@@ -109,6 +111,8 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         {
             var backFieldParamName = $"@backField{Counter}";
             var backFieldValueParamName = $"@backFieldValue{Counter}";
+
+            // ReSharper disable once PossibleInvalidOperationException
             Parameters.Add(new SqlParameter(backFieldParamName, SqlDbType.Int) { Value = field.BackRelationId.Value });
             Parameters.Add(new SqlParameter(backFieldValueParamName, SqlDbType.NVarChar, -1) { Value = !string.IsNullOrEmpty(value) ? (object)value : DBNull.Value });
             sqlResult.AppendLine($"EXEC qp_update_m2o {ContentItemId}, {backFieldParamName}, {backFieldValueParamName}, 0;");

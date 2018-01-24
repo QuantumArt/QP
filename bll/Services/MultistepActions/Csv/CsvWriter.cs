@@ -9,7 +9,8 @@ using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
 using Quantumart.QP8.Constants;
 
@@ -92,6 +93,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 _sb.Append(_settings.LineSeparator);
             }
 
+            _sb.Append(FieldName.ContentId);
+            _sb.Append(_settings.Delimiter);
             _sb.Append(FieldName.ContentItemId);
             if (_settings.HeaderNames.Any())
             {
@@ -145,6 +148,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
                 foreach (var article in articles)
                 {
+                    _sb.Append(_contentId);
+                    _sb.Append(_settings.Delimiter);
                     _sb.AppendFormat("{0}{1}", article["content_item_id"], _settings.Delimiter);
                     foreach (DataColumn column in article.Table.Columns)
                     {
@@ -169,11 +174,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     {
                         foreach (var fieldValue in new[]
                         {
-                                MultistepActionHelper.DateCultureFormat(article[FieldName.Created].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
-                                MultistepActionHelper.DateCultureFormat(article[FieldName.Modified].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
-                                article[FieldName.UniqueId].ToString(),
-                                "0"
-                            })
+                            MultistepActionHelper.DateCultureFormat(article[FieldName.Created].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                            MultistepActionHelper.DateCultureFormat(article[FieldName.Modified].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                            article[FieldName.UniqueId].ToString(),
+                            "0"
+                        })
                         {
                             _sb.Append(fieldValue);
                             _sb.Append(_settings.Delimiter);
@@ -220,7 +225,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             Array.Copy(_ids, StartFrom - 1, stepIds, 0, stepLength);
 
             var orderBy = string.IsNullOrEmpty(_settings.OrderByField) ? IdentifierFieldName : _settings.OrderByField;
-            var filter = $"base.content_item_id in ({string.Join(",", stepIds)}) and base.archive = 0";
+            var archive = _settings.isArchive ? "1": "0";
+            var filter = $"base.content_item_id in ({string.Join(",", stepIds)}) and base.archive = {archive}";
             return ArticleRepository.GetArticlesForExport(_contentId, _settings.Extensions, sb.ToString(), filter, 1, _itemsPerStep, orderBy, fieldsToExpand);
         }
 
@@ -253,7 +259,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                                 FieldExactTypes.VisualEdit,
                                 FieldExactTypes.Numeric,
                                 FieldExactTypes.Classifier
-                            }.Contains(f.ExactType) ? $"isnull(cast ( {field.TableAlias}.[{f.Name}] as nvarchar(255)), '')" : $"isnull( {field.TableAlias}.[{f.Name}], '')");
+                            }.Contains(f.ExactType)
+                                ? $"isnull(cast ( {field.TableAlias}.[{f.Name}] as nvarchar(255)), '')"
+                                : $"isnull( {field.TableAlias}.[{f.Name}], '')");
                             break;
                     }
                 }
@@ -374,7 +382,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             select f;
 
         private IEnumerable<string> GetExtensionFields(Content content, string template) => (from f in content.Fields
-                where f.ExactType != FieldExactTypes.M2ORelation & !f.Aggregated && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
+                where (f.ExactType != FieldExactTypes.M2ORelation) & !f.Aggregated && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
                 select string.Format(template, content.Name, f.Name))
             .Concat(new[] { string.Format(template, content.Name, IdentifierFieldName) });
 

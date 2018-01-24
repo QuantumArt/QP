@@ -1,6 +1,6 @@
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Interfaces.Db;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
@@ -61,8 +61,7 @@ namespace Quantumart.QP8.BLL
                 {
                     index++;
                     NetLinkName = MutateHelper.MutateNetName(name, index);
-                }
-                while (((IFieldRepository)new FieldRepository()).NetNameExists(this));
+                } while (((IFieldRepository)new FieldRepository()).NetNameExists(this));
             }
 
             if (!string.IsNullOrEmpty(NetPluralLinkName))
@@ -73,8 +72,7 @@ namespace Quantumart.QP8.BLL
                 {
                     index++;
                     NetPluralLinkName = MutateHelper.MutateNetName(name, index);
-                }
-                while (((IFieldRepository)new FieldRepository()).NetPluralNameExists(this));
+                } while (((IFieldRepository)new FieldRepository()).NetPluralNameExists(this));
             }
         }
 

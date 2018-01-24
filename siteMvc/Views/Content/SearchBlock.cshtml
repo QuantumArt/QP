@@ -1,7 +1,5 @@
-﻿@model ContentSearchBlockViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.Content
-@using Quantumart.QP8.Resources
+﻿@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.Content.ContentSearchBlockViewModel
 
 <div class="contentSearchBlock">
 	@if (Model.ShowGroupList)
@@ -11,14 +9,14 @@
 			<div>
 		
 					@Html.QpDropDownList("contentGroupDropDownList",
-						@Html.List(Model.ContentGroups),
+						Html.List(Model.ContentGroups),
 						ContentStrings.AllContentGroups,
 						new ControlOptions
 						{
 							HtmlAttributes = new Dictionary<string, object> 
 								{ 
 									{ "class", "contentGroupList csFilterCombo" }, 				
-									{ "id", @Model.UniqueId("contentGroupDropDownList") } 
+									{ "id", Model.UniqueId("contentGroupDropDownList") } 
 								}
 						})
 			 </div>
@@ -31,14 +29,14 @@
 			<div>
 		
 					@Html.QpDropDownList("siteDropDownList",
-						@Html.List(Model.Sites),
+						Html.List(Model.Sites),
 						ContentStrings.AllSites,
 						new ControlOptions
 						{
 							HtmlAttributes = new Dictionary<string, object> 
 								{ 
 									{ "class", "siteList csFilterCombo" }, 				
-									{ "id", @Model.UniqueId("siteDropDownList") } 
+									{ "id", Model.UniqueId("siteDropDownList") } 
 								}
 						})
 			 </div>
@@ -48,7 +46,7 @@
 	<fieldset>
 		<legend>@ContentStrings.Name</legend>	
 		<div>
-			@Html.TextBox(@Model.UniqueId("contentNameText"), String.Empty, new { @class = "textbox contentNameText csFilterTextbox" })
+			@Html.TextBox(Model.UniqueId("contentNameText"), string.Empty, new { @class = "textbox contentNameText csFilterTextbox" })
 		</div>
 	</fieldset>	
 </div>

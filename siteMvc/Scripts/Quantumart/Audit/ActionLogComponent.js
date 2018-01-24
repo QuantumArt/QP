@@ -85,7 +85,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     const that = this;
     if (options && options.value && !Object.prototype.hasOwnProperty.call(this._tiles, options.value)) {
       const ft = +options.value || 0;
-      let tileComponent = new Quantumart.QP8.ActionLogFilterTile(this.$tilesContainer,
+      const tileComponent = new Quantumart.QP8.ActionLogFilterTile(this.$tilesContainer,
         {
           title: options.text,
           type: ft,
@@ -95,14 +95,14 @@ Quantumart.QP8.ActionLogComponent.prototype = {
               case $e.ActionLogFilteredColumns.EntityTitle:
               case $e.ActionLogFilteredColumns.ParentEntityId:
               case $e.ActionLogFilteredColumns.EntityTypeName:
-                return { w: 350, h: 65 };
+                return { width: 350, height: 65 };
               case $e.ActionLogFilteredColumns.ActionTypeName:
               case $e.ActionLogFilteredColumns.ActionName:
-                return { w: 400, h: 65 };
+                return { width: 400, height: 65 };
               case $e.ActionLogFilteredColumns.ExecutionTime:
-                return { w: 350, h: 112 };
+                return { width: 350, height: 112 };
               default:
-                return { w: 350, h: 125 };
+                return { width: 350, height: 125 };
             }
           }()),
           createFilter($filterContainer) {
@@ -126,34 +126,34 @@ Quantumart.QP8.ActionLogComponent.prototype = {
             }
           },
           deriveFilterData(tile, filterData) {
-            const v = tile.getValue();
-            if (v) {
+            const tileValue = tile.getValue();
+            if (tileValue) {
               switch (tile.getOptions().type) {
                 case $e.ActionLogFilteredColumns.EntityStringId:
-                  filterData.entityStringId = v; // eslint-disable-line no-param-reassign
+                  filterData.entityStringId = tileValue; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.EntityTitle:
-                  filterData.entityTitle = v; // eslint-disable-line no-param-reassign
+                  filterData.entityTitle = tileValue; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ParentEntityId:
-                  filterData.parentEntityId = v; // eslint-disable-line no-param-reassign
+                  filterData.parentEntityId = tileValue; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ExecutionTime:
-                  filterData.from = v.from; // eslint-disable-line no-param-reassign
-                  filterData.to = v.to; // eslint-disable-line no-param-reassign
+                  filterData.from = tileValue.from; // eslint-disable-line no-param-reassign
+                  filterData.to = tileValue.to; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ActionTypeName:
-                  filterData.actionTypeCode = v; // eslint-disable-line no-param-reassign
+                  filterData.actionTypeCode = tileValue; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.ActionName:
-                  filterData.actionCode = v; // eslint-disable-line no-param-reassign
+                  filterData.actionCode = tileValue; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.EntityTypeName:
-                  filterData.entityTypeCode = v; // eslint-disable-line no-param-reassign
+                  filterData.entityTypeCode = tileValue; // eslint-disable-line no-param-reassign
                   break;
                 case $e.ActionLogFilteredColumns.UserLogin:
-                  if ($.isArray(v) && v.length > 0) {
-                    filterData.userIDs = v; // eslint-disable-line no-param-reassign
+                  if ($.isArray(tileValue) && tileValue.length > 0) {
+                    filterData.userIDs = tileValue; // eslint-disable-line no-param-reassign
                   }
                   break;
                 default:
@@ -166,17 +166,15 @@ Quantumart.QP8.ActionLogComponent.prototype = {
       tileComponent.attachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE, $.proxy(this._onTileClose, this));
       tileComponent.initialize();
       this._tiles[options.value] = tileComponent;
-      tileComponent = null;
     }
   },
 
   _destroyTile(tileType) {
     if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
-      let tileComponent = this._tiles[tileType];
+      const tileComponent = this._tiles[tileType];
       tileComponent.detachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE);
       tileComponent.dispose();
       $q.removeProperty(this._tiles, tileType);
-      tileComponent = null;
     }
   },
 
@@ -189,8 +187,8 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   dispose() {
     this._destroyAllTiles();
 
-    let $grid = $(`#${this._gridElementId}`);
-    let $filter = $(`#${this._filterElementId}`);
+    const $grid = $(`#${this._gridElementId}`);
+    const $filter = $(`#${this._filterElementId}`);
 
     $grid.unbind('dataBinding');
     this._onDataBindingHandler = null;
@@ -202,12 +200,10 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
     this.$filterCombo.off('change');
     this.$filterCombo = null;
-
     this.$tilesContainer = null;
 
-    $grid = null;
-    $filter = null;
     $q.collectGarbageInIE();
   }
 };
+
 Quantumart.QP8.ActionLogComponent.registerClass('Quantumart.QP8.ActionLogComponent');

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -18,10 +18,9 @@ namespace Quantumart.QP8.BLL.Helpers
         private const string LockedByYouIcon = "locked.gif";
         private const string LockedNotByYouIcon = "locked_by_user.gif";
 
-
-        internal static IEnumerable<SimpleDataRow> GetResult(IEnumerable<DataRow> rows, IEnumerable<Field> fieldList, bool? onlyIds)
+        internal static IEnumerable<SimpleDataRow> GetResult(List<DataRow> rows, List<Field> fieldList, bool? onlyIds)
         {
-            var articleIds = rows.Select(x => (int)x.Field<decimal>(FieldName.ContentItemId));
+            var articleIds = rows.Select(x => (int)x.Field<decimal>(FieldName.ContentItemId)).ToList();
             if (onlyIds.HasValue && onlyIds.Value)
             {
                 foreach (var id in articleIds)
@@ -49,7 +48,10 @@ namespace Quantumart.QP8.BLL.Helpers
 
                 foreach (var field in m2MFields)
                 {
+                    // ReSharper disable once PossibleInvalidOperationException
                     var m2MDisplayFieldName = ArticleService.GetTitleName(field.RelateToContentId.Value);
+
+                    // ReSharper disable once PossibleInvalidOperationException
                     var m2MValues = ArticleService.GetM2MValuesBatch(articleIds, field.LinkId.Value, m2MDisplayFieldName, field.RelateToContentId.Value);
                     foreach (var val in m2MValues)
                     {
@@ -62,7 +64,6 @@ namespace Quantumart.QP8.BLL.Helpers
                 foreach (var row in rows)
                 {
                     var dr = new SimpleDataRow();
-
                     CopyValue(dr, row, FieldName.ContentItemId);
                     CopyValue(dr, row, FieldName.StatusTypeName);
                     CopyValue(dr, row, "STATUS_TYPE_COLOR");
@@ -75,8 +76,8 @@ namespace Quantumart.QP8.BLL.Helpers
                     AddSplittedIcon(dr, row);
                     AddInvisibleIcon(dr, row);
                     AddScheduledIcon(dr, row);
-                    var currentArticleId = (int)row.Field<decimal>(FieldName.ContentItemId);
 
+                    var currentArticleId = (int)row.Field<decimal>(FieldName.ContentItemId);
                     var relationCounters = new Dictionary<int, int>();
                     foreach (var field in fieldList)
                     {
@@ -170,7 +171,6 @@ namespace Quantumart.QP8.BLL.Helpers
             newRow.Add(FieldName.VisibleTooltip, toolTip);
         }
 
-
         private static void CopyValue(SimpleDataRow newRow, DataRow oldRow, string key)
         {
             newRow.Add(key, oldRow[key]);
@@ -250,6 +250,7 @@ namespace Quantumart.QP8.BLL.Helpers
             {
                 if (field.ExactType == FieldExactTypes.M2MRelation)
                 {
+                    // ReSharper disable once PossibleInvalidOperationException
                     if (fieldValues.TryGetValue(articleId + "_" + field.LinkId.Value, out var result))
                     {
                         var addDots = result.Count - 1 > Default.MaxViewInListArticleNumber;
@@ -277,7 +278,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 {
                     if (fieldValues.TryGetValue(articleId + "_" + field.Id, out var result))
                     {
-                        var addDots = result.Count() - 1 > Default.MaxViewInListArticleNumber;
+                        var addDots = result.Count - 1 > Default.MaxViewInListArticleNumber;
                         if (addDots)
                         {
                             result.RemoveAt(Default.MaxViewInListArticleNumber);
@@ -294,7 +295,7 @@ namespace Quantumart.QP8.BLL.Helpers
                     }
                     else
                     {
-                        fieldFormattedValue = "";
+                        fieldFormattedValue = string.Empty;
                     }
                 }
                 else

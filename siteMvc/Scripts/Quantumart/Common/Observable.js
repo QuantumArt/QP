@@ -16,7 +16,7 @@ Quantumart.QP8.Observable.prototype = {
     });
 
     if (observerInfos && observerInfos.length > 0) {
-      observerInfo = observerInfos[0];
+      [observerInfo] = observerInfos;
     }
 
     return observerInfo;
@@ -89,14 +89,14 @@ Quantumart.QP8.Observable.prototype = {
     if (observerInfoCount > 0) {
       for (let observerInfoIndex = observerInfoCount - 1; observerInfoIndex >= 0; observerInfoIndex--) {
         const observerInfo = observerInfos[observerInfoIndex];
-
         if (observerInfo) {
-          const observer = observerInfo.observer;
-
+          const { observer } = observerInfo;
           if (observerInfo.times === -1) {
             this._updateObserver(eventType, eventArgs, observer);
           } else if (observerInfo.times > 0) {
             observerInfo.times -= 1;
+
+            // eslint-disable-next-line max-depth
             if (observerInfo.times === 0) {
               this.detachObserver(eventType, observer);
             }

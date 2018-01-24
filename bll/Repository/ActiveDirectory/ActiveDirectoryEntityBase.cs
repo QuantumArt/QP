@@ -7,11 +7,11 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
     {
         public string Path { get; }
 
-        public string ReferencedPath { get; private set; }
+        public string ReferencedPath { get; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public string[] MemberOf { get; private set; }
+        public string[] MemberOf { get; }
 
         protected ActiveDirectoryEntityBase(SearchResult entity)
         {

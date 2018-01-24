@@ -48,21 +48,21 @@ namespace Quantumart.QP8.BLL.ListItems
         {
             get
             {
-                Func<int, string> getValue = (id => Translator.Translate(FieldType.AllFieldTypes.Single(f => f.Id == id).Name));
+                Func<int, string> getValue = id => Translator.Translate(FieldType.AllFieldTypes.Single(f => f.Id == id).Name);
                 IDictionary<int, string> tn = new Dictionary<int, string>
                 {
-                    {C.FieldTypeCodes.Boolean, getValue(C.FieldTypeCodes.Boolean)},
-                    {C.FieldTypeCodes.Date, getValue(C.FieldTypeCodes.Date)},
-                    {C.FieldTypeCodes.DateTime, getValue(C.FieldTypeCodes.DateTime)},
-                    {C.FieldTypeCodes.DynamicImage, getValue(C.FieldTypeCodes.DynamicImage)},
-                    {C.FieldTypeCodes.File, getValue(C.FieldTypeCodes.File)},
-                    {C.FieldTypeCodes.Image, getValue(C.FieldTypeCodes.Image)},
-                    {C.FieldTypeCodes.Numeric, getValue(C.FieldTypeCodes.Numeric)},
-                    {C.FieldTypeCodes.M2ORelation, getValue(C.FieldTypeCodes.M2ORelation)},
-                    {C.FieldTypeCodes.String, getValue(C.FieldTypeCodes.String)},
-                    {C.FieldTypeCodes.Textbox, getValue(C.FieldTypeCodes.Textbox)},
-                    {C.FieldTypeCodes.Time, getValue(C.FieldTypeCodes.Time)},
-                    {C.FieldTypeCodes.VisualEdit, getValue(C.FieldTypeCodes.VisualEdit)}
+                    { C.FieldTypeCodes.Boolean, getValue(C.FieldTypeCodes.Boolean) },
+                    { C.FieldTypeCodes.Date, getValue(C.FieldTypeCodes.Date) },
+                    { C.FieldTypeCodes.DateTime, getValue(C.FieldTypeCodes.DateTime) },
+                    { C.FieldTypeCodes.DynamicImage, getValue(C.FieldTypeCodes.DynamicImage) },
+                    { C.FieldTypeCodes.File, getValue(C.FieldTypeCodes.File) },
+                    { C.FieldTypeCodes.Image, getValue(C.FieldTypeCodes.Image) },
+                    { C.FieldTypeCodes.Numeric, getValue(C.FieldTypeCodes.Numeric) },
+                    { C.FieldTypeCodes.M2ORelation, getValue(C.FieldTypeCodes.M2ORelation) },
+                    { C.FieldTypeCodes.String, getValue(C.FieldTypeCodes.String) },
+                    { C.FieldTypeCodes.Textbox, getValue(C.FieldTypeCodes.Textbox) },
+                    { C.FieldTypeCodes.Time, getValue(C.FieldTypeCodes.Time) },
+                    { C.FieldTypeCodes.VisualEdit, getValue(C.FieldTypeCodes.VisualEdit) }
                 };
                 if (tn.ContainsKey(TypeCode))
                 {

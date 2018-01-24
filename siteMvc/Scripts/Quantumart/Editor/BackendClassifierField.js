@@ -175,6 +175,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
+  // eslint-disable-next-line max-statements
   _initAllFields() {
     const $form = this._$articleWrapper;
 

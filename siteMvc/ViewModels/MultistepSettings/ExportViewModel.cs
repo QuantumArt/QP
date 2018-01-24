@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 
@@ -13,12 +13,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             AllFields = true;
         }
 
-        public override string ActionCode => Constants.ActionCode.ExportArticles;
+        public bool IsArchive { get; set; }
+
+        public override string ActionCode => IsArchive ? Constants.ActionCode.ExportArchiveArticles : Constants.ActionCode.ExportArticles;
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Content;
 
         public int ContentId { get; set; }
-
+        
         [LocalizedDisplayName("OrderByField", NameResourceType = typeof(MultistepActionStrings))]
         public string OrderByField { get; set; }
 
@@ -37,9 +39,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public bool AllFields { get; set; }
 
         [LocalizedDisplayName("CustomFields", NameResourceType = typeof(ImportStrings))]
-        public IEnumerable<int> CustomFields { get; set; }
+        public int[] CustomFields { get; set; }
 
         [LocalizedDisplayName("FieldsToExpand", NameResourceType = typeof(ImportStrings))]
-        public IEnumerable<int> FieldsToExpand { get; set; }
+        public int[] FieldsToExpand { get; set; }
     }
 }

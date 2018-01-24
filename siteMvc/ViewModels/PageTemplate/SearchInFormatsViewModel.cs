@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
@@ -54,10 +55,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
                 return _templates;
             }
-            set
-            {
-                _templates = value;
-            }
+            set => _templates = value;
         }
 
         public override string ContextMenuCode => string.Empty;

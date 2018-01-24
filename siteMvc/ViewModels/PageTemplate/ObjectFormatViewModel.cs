@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
@@ -23,14 +24,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public new ObjectFormat Data
         {
-            get
-            {
-                return (ObjectFormat)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (ObjectFormat)EntityData;
+            set => EntityData = value;
         }
 
         public override string ActionCode

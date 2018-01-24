@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -17,26 +17,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
 
         public new BLL.User Data
         {
-            get
-            {
-                return (BLL.User)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.User)EntityData;
+            set => EntityData = value;
         }
 
         public UserDefaultFilter ContentDefaultFilter
         {
-            get
-            {
-                return Data.ContentDefaultFilters.FirstOrDefault() ?? new UserDefaultFilter { UserId = QPContext.CurrentUserId };
-            }
-            set
-            {
-                Data.ContentDefaultFilters = new[] { value };
-            }
+            get => Data.ContentDefaultFilters.FirstOrDefault() ?? new UserDefaultFilter { UserId = QPContext.CurrentUserId };
+            set => Data.ContentDefaultFilters = new[] { value };
         }
 
         public QPSelectListItem SelectedDefaultFilterContentListItem
@@ -60,18 +48,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
 
         public IEnumerable<ListItem> SelectedDefaultFilterArticleListItems
         {
-            get
-            {
-                return ContentDefaultFilter.GetArticles().Select(a => new ListItem(a.Id.ToString(), a.Name));
-            }
+            get { return ContentDefaultFilter.GetArticles().Select(a => new ListItem(a.Id.ToString(), a.Name)); }
         }
 
         public IEnumerable<ListItem> AllSitesListItems
         {
-            get
-            {
-                return ContentDefaultFilter.GetAllSites().Select(a => new ListItem(a.Id.ToString(), a.Name));
-            }
+            get { return ContentDefaultFilter.GetAllSites().Select(a => new ListItem(a.Id.ToString(), a.Name)); }
         }
 
         public string ContentFilterElementId => UniqueId("contentFilterElementId");

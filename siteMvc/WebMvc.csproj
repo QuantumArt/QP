@@ -65,7 +65,7 @@
       <HintPath>$(SolutionDir)packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\CommonServiceLocator.2.0.1\lib\net47\CommonServiceLocator.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
@@ -86,35 +86,20 @@
     <Reference Include="Microsoft.Owin.Security, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Microsoft.Owin.Security.3.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)binaries\DbUpdate\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Web.Infrastructure">
       <HintPath>$(SolutionDir)packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Moq, Version=4.7.142.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Moq.4.7.142\lib\net45\Moq.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
@@ -134,7 +119,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Linq.Expressions" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Activation" />
@@ -149,23 +133,17 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Mvc">
       <HintPath>$(SolutionDir)packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Razor">
       <HintPath>$(SolutionDir)packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Routing" />
-    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.WebPages">
       <HintPath>$(SolutionDir)packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.WebPages.Razor">
       <HintPath>$(SolutionDir)packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
@@ -177,7 +155,28 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SolutionDir)binaries\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+    <Reference Include="Unity.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Configuration, Version=5.0.2.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Container, Version=5.1.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Container.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Interception, Version=5.0.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Interception.Configuration, Version=5.0.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.Interception.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RegistrationByConvention, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.ServiceLocation, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="WebActivatorEx">
       <HintPath>$(SolutionDir)packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -209,7 +208,9 @@
     <Compile Include="Controllers\CssController.cs" />
     <Compile Include="Controllers\DbController.cs" />
     <Compile Include="Controllers\EntityTypePermissionController.cs" />
+    <Compile Include="Controllers\ExportArchiveArticlesController.cs" />
     <Compile Include="Controllers\ExportArticlesController.cs" />
+    <Compile Include="Controllers\ExportSelectedArchiveArticlesController.cs" />
     <Compile Include="Controllers\ExportSelectedArticlesController.cs" />
     <Compile Include="Controllers\FormatController.cs" />
     <Compile Include="Controllers\ImportArticlesController.cs" />
@@ -256,9 +257,11 @@
     <Compile Include="Infrastructure\ActionFilters\BackendActionLogAttribute.cs" />
     <Compile Include="Infrastructure\ActionFilters\ConnectionScopeAttribute.cs" />
     <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
+    <Compile Include="Infrastructure\ActionResults\TelerikResult.cs" />
     <Compile Include="Infrastructure\Adapters\ThreadStorageScopeContext.cs" />
     <Compile Include="Infrastructure\Constants\ConfigConstants.cs" />
     <Compile Include="Infrastructure\Constants\HttpContextFormConstants.cs" />
+    <Compile Include="Infrastructure\Converters\JsonQueryParamConverter.cs" />
     <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
     <Compile Include="Infrastructure\ActionFilters\DisableBrowserCache.cs" />
     <Compile Include="Infrastructure\ActionFilters\EntityAuthorizeAttribute.cs" />
@@ -279,6 +282,7 @@
     <Compile Include="Infrastructure\Helpers\ConfigHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\GuidHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateQpActionHelpers.cs" />
+    <Compile Include="Infrastructure\Models\TelerikGridModel.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateActionCorrecterService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateHttpContextProcessor.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateLogService.cs" />
@@ -289,7 +293,6 @@
     <Compile Include="Infrastructure\Extensions\ArrayExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
-    <Compile Include="Infrastructure\Helpers\CultureHelpers.cs" />
     <Compile Include="Infrastructure\Adapters\FakeMvcApplicationContext.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateActionCorrecterService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\CsvDbUpdateService.cs" />
@@ -331,7 +334,6 @@
     <Compile Include="Extensions\ModelBinders\ContentModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\CustomActionViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\DbViewModelBinder.cs" />
-    <Compile Include="Extensions\ModelBinders\ExportViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\FieldViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\JsonStringModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\NotificationViewModelBinder.cs" />
@@ -375,7 +377,6 @@
       <DependentUpon>JsConstants.ashx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="App_Readme\Elmah.txt" />
     <Content Include="Content\ckeditor\adapters\jquery.js" />
     <Content Include="Content\ckeditor\build-config.js" />
     <Content Include="Content\ckeditor\ckeditor.js" />
@@ -755,7 +756,6 @@
     <Content Include="Content\ckeditor\skins\moono\images\refresh.png" />
     <Content Include="Content\ckeditor\skins\moono\images\spinner.gif" />
     <Content Include="Content\ckeditor\styles.js" />
-    <Content Include="Content\codemirror.css" />
     <Content Include="Content\codemirrorTheme.css" />
     <Content Include="Content\codemirror\addon\comment\comment.js" />
     <Content Include="Content\codemirror\addon\comment\continuecomment.js" />
@@ -1543,6 +1543,7 @@
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\quotes.txt" />
+    <Content Include="Scripts\Quantumart\Editor\BackendEntityEditorActionEventArgs.js" />
     <Content Include="Scripts\Quantumart\Helpers\vanilla.helpers.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.js" />
@@ -1562,6 +1563,7 @@
     <Content Include="Scripts\PlUpload\moxie.js" />
     <Content Include="Scripts\PlUpload\Moxie.swf" />
     <Content Include="Scripts\PlUpload\Moxie.xap" />
+    <Content Include="Scripts\Quantumart\Uploader\BackendUploaderEventArgs.js" />
     <Content Include="Scripts\Quantumart\Uploader\plupload\plupload.filters.js" />
     <Content Include="Scripts\PlUpload\plupload.dev.js" />
     <Content Include="Scripts\Quantumart\Home.js" />
@@ -2077,16 +2079,6 @@
     <Content Include="Scripts\telerik\telerik.treeview.js" />
     <Content Include="Scripts\telerik\telerik.upload.js" />
     <Content Include="Scripts\telerik\telerik.window.js" />
-    <Content Include="ToCopy\App_Data\Extensions.xslt">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ToCopy\App_Data\Many.xslt">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ToCopy\App_Data\Mapping.xslt" />
-    <Content Include="ToCopy\App_Data\Modifications.xslt">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Views\ArticleVersion\Compare.cshtml">
       <LastGenOutput>Compare.generated.cs</LastGenOutput>
     </Content>
@@ -2213,9 +2205,6 @@
     <None Include="Views\Article\Properties.cshtml">
       <LastGenOutput>Properties.generated.cs</LastGenOutput>
     </None>
-    <Content Include="Views\Home\Index.Template.cshtml">
-      <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </Content>
     <Content Include="Views\Home\Index.cshtml" />
     <None Include="Views\LogOn\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
@@ -2396,16 +2385,24 @@
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
-      <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.Unity\QP8.Infrastructure.Logging.Unity.csproj">
+      <Project>{7107f5a8-bcae-40bb-b136-65ed821c0443}</Project>
+      <Name>QP8.Infrastructure.Logging.Unity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{a1397fa6-f0ba-4695-af53-d03469013692}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj">
-      <Project>{dbbec146-e74e-45df-a7fe-16701669a0f2}</Project>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web.AspNet\QP8.Infrastructure.Web.AspNet.csproj">
+      <Project>{58bad907-ec85-49d8-8e08-d7f15a6d60db}</Project>
+      <Name>QP8.Infrastructure.Web.AspNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj">
+      <Project>{c8d0f9d8-0f40-4480-b60f-c50791e9f8c1}</Project>
       <Name>QP8.Infrastructure.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
-      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
+      <Project>{ef8cc04a-6ae2-4cf4-9367-31701651639b}</Project>
       <Name>QP8.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
@@ -2418,9 +2415,7 @@
   <ItemGroup>
     <Content Include="Scripts\Web.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Shared\EditorTemplates\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>

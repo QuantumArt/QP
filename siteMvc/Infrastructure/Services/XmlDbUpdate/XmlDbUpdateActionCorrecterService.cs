@@ -4,10 +4,10 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using QP8.Infrastructure;
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Interfaces.Services;
+using Quantumart.QP8.BLL.Services.ArticleServices;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
@@ -23,10 +23,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private readonly Dictionary<string, Dictionary<int, int>> _idsToReplace = new Dictionary<string, Dictionary<int, int>>();
         private readonly Dictionary<string, Dictionary<Guid, Guid>> _uniqueIdsToReplace = new Dictionary<string, Dictionary<Guid, Guid>>();
         private readonly IArticleService _dbActionService;
+        private readonly IContentService _dbContentService;
 
-        public XmlDbUpdateActionCorrecterService(IArticleService dbActionService)
+        public XmlDbUpdateActionCorrecterService(IArticleService dbActionService, IContentService dbContentService)
         {
             _dbActionService = dbActionService;
+            _dbContentService = dbContentService;
         }
 
         public XmlDbUpdateRecordedAction PreActionCorrections(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
@@ -186,11 +188,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return ids.Select(id => CorrectIdValue(entityTypeCode, id));
         }
 
-        private string CorrectIdValue(string entityTypeCode, string value)
-        {
-            int result;
-            return int.TryParse(value, out result) ? CorrectIdValue(entityTypeCode, result).ToString() : value;
-        }
+        private string CorrectIdValue(string entityTypeCode, string value) => int.TryParse(value, out var result) ? CorrectIdValue(entityTypeCode, result).ToString() : value;
 
         private int CorrectIdValue(string entityTypeCode, int value)
         {
@@ -334,8 +332,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var fieldRegexp = new Regex(@"^field_\d+$", RegexOptions.Compiled);
             foreach (var fieldName in form.AllKeys.Where(field => fieldRegexp.IsMatch(field)))
             {
-                int parsedFieldId;
-                if (!int.TryParse(fieldName.Replace("field_", string.Empty), out parsedFieldId))
+                if (!int.TryParse(fieldName.Replace("field_", string.Empty), out var parsedFieldId))
                 {
                     continue;
                 }
@@ -346,12 +343,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 if (fieldValues != null)
                 {
-                    if (ReplayHelper.IsRelation(contentId, correctedFieldId))
+                    if (_dbContentService.IsRelation(contentId, correctedFieldId))
                     {
                         fieldValues = CorrectIdsValue(EntityTypeCode.Article, fieldValues).ToList();
                     }
 
-                    if (ReplayHelper.IsClassifier(contentId, correctedFieldId))
+                    if (_dbContentService.IsClassifier(contentId, correctedFieldId))
                     {
                         fieldValues = CorrectIdsValue(EntityTypeCode.Content, fieldValues).ToList();
                     }
@@ -366,8 +363,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var uniqueFieldRegexp = new Regex(@"^field_uniqueid_\d+$", RegexOptions.Compiled);
             foreach (var fieldName in form.AllKeys.Where(field => uniqueFieldRegexp.IsMatch(field)))
             {
-                int parsedFieldId;
-                if (!int.TryParse(fieldName.Replace("field_uniqueid_", string.Empty), out parsedFieldId))
+                if (!int.TryParse(fieldName.Replace("field_uniqueid_", string.Empty), out var parsedFieldId))
                 {
                     continue;
                 }
@@ -382,14 +378,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var formValue = form[formKey];
             if (formValue != null)
             {
-                var serializer = new JavaScriptSerializer();
-                var collectionList = serializer.Deserialize<List<Dictionary<string, string>>>(formValue);
+                var collectionList = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(formValue);
                 foreach (var collection in collectionList.Where(collection => collection.ContainsKey(jsonKey)))
                 {
                     collection[jsonKey] = CorrectIdValue(entityTypeCode, collection[jsonKey]);
                 }
 
-                form[formKey] = serializer.Serialize(collectionList);
+                form[formKey] = JsonConvert.SerializeObject(collectionList);
             }
         }
 

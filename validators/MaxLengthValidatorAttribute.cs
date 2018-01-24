@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
@@ -13,9 +13,6 @@ namespace Quantumart.QP8.Validators
             UpperBound = upperBound;
         }
 
-        protected override Validator DoCreateValidator(Type targetType)
-        {
-            return new MaxLengthValidator(UpperBound);
-        }
+        protected override Validator DoCreateValidator(Type targetType) => new MaxLengthValidator(UpperBound);
     }
 }

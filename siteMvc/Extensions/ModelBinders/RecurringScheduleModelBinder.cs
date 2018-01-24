@@ -1,5 +1,6 @@
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
@@ -13,7 +14,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
                 bindingContext.ModelState.Remove(GetModelPropertyName(bindingContext, () => item.RepetitionEndDate));
             }
 
-            if (item.ShowLimitationType != Constants.ShowLimitationType.EndTime)
+            if (item.ShowLimitationType != ShowLimitationType.EndTime)
             {
                 bindingContext.ModelState.Remove(GetModelPropertyName(bindingContext, () => item.ShowEndTime));
             }

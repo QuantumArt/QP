@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Mime;
@@ -11,8 +11,10 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.ViewModels;
+using Quantumart.QP8.WebMvc.ViewModels.Library;
+using Quantumart.QP8.WebMvc.ViewModels.Site;
 using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -23,15 +25,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public SiteController(ISearchInArticlesService searchInArticlesService)
         {
-            if (searchInArticlesService == null)
-            {
-                throw new ArgumentNullException(nameof(searchInArticlesService));
-            }
-
-            _searchInArticlesService = searchInArticlesService;
+            _searchInArticlesService = searchInArticlesService ?? throw new ArgumentNullException(nameof(searchInArticlesService));
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Sites)]
         [BackendActionContext(ActionCode.Sites)]
@@ -49,7 +45,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _Index(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = SiteService.List(command.GetListCommand());
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -73,10 +69,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var selectedSiteIDs = Converter.ToInt32Collection(IDs, ',');
             var serviceResult = SiteService.List(command.GetListCommand(), selectedSiteIDs);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SearchInArticles)]
         [EntityAuthorize(ActionTypeCode.Search, EntityTypeCode.Site, "id")]
@@ -95,12 +90,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ValidateInput(false)]
         public ActionResult _SearchInArticles(string tabId, int parentId, int id, GridCommand command, string searchQuery)
         {
-            int totalRecord;
-            var seachResult = _searchInArticlesService.SearchInArticles(id, QPContext.CurrentUserId, searchQuery, command.GetListCommand(), out totalRecord);
-            return View(new GridModel { Data = seachResult, Total = totalRecord });
+            var searchResult = _searchInArticlesService.SearchInArticles(id, QPContext.CurrentUserId, searchQuery, command.GetListCommand(), out var totalRecord);
+            return new TelerikResult(searchResult, totalRecord);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewSite)]
         [BackendActionContext(ActionCode.AddNewSite)]
@@ -172,7 +165,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SiteLibrary)]
         [BackendActionContext(ActionCode.SiteLibrary)]
@@ -188,10 +180,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _Files(GridCommand command, int gridParentId, [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery)
         {
             var serviceResult = SiteService.GetFileList(command.GetListCommand(), gridParentId, searchQuery);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "folderId")]
         public JsonResult _FileList(int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
@@ -224,7 +215,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.SiteFolder, "folderId")]
         public JsonResult _FolderPath(int folderId)
@@ -273,16 +263,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleContents)]
         [BackendActionContext(ActionCode.AssembleContents)]
         [BackendActionLog]
-        public ActionResult AssembleContents(int id)
-        {
-            return Json(SiteService.AssembleContents(id));
-        }
+        public ActionResult AssembleContents(int id) => Json(SiteService.AssembleContents(id));
 
         [HttpPost]
-        public ActionResult AssembleContentsPreAction(int id)
-        {
-            return Json(SiteService.AssembleContentsPreAction(id));
-        }
+        public ActionResult AssembleContentsPreAction(int id) => Json(SiteService.AssembleContentsPreAction(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

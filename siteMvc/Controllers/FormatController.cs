@@ -6,6 +6,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Telerik.Web.Mvc;
@@ -22,7 +23,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _formatService = formatService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageObjectFormats)]
         [BackendActionContext(ActionCode.PageObjectFormats)]
@@ -40,10 +40,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexPageObjectFormats(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _formatService.GetPageObjectFormatsByObjectId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.TemplateObjectFormats)]
         [BackendActionContext(ActionCode.TemplateObjectFormats)]
@@ -61,10 +60,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexTemplateObjectFormats(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _formatService.GetTemplateObjectFormatsByObjectId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageObjectFormatVersions)]
         [BackendActionContext(ActionCode.PageObjectFormatVersions)]
@@ -82,10 +80,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexPageObjectFormatVersions(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _formatService.GetPageObjectFormatVersionsByFormatId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.TemplateObjectFormatVersions)]
         [BackendActionContext(ActionCode.TemplateObjectFormatVersions)]
@@ -103,7 +100,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexTemplateObjectFormatVersions(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _formatService.GetTemplateObjectFormatVersionsByFormatId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
@@ -128,7 +125,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(null);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewPageObjectFormat)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.PageObjectFormat, "parentId")]
@@ -230,7 +226,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.TemplateObjectFormatProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObjectFormat, "id")]
@@ -266,7 +261,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.TemplateObjectFormatVersionProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObjectFormatVersion, "id")]
@@ -280,7 +274,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("VersionProperties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageObjectFormatVersionProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObjectFormatVersion, "parentId")]
@@ -294,7 +287,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("VersionProperties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CompareWithCurrentTemplateObjectFormatVersion)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObjectFormat, "parentId")]
@@ -308,7 +300,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("CompareObjectFormatVersionProperties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CompareWithCurrentPageObjectFormatVersion)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObjectFormat, "parentId")]
@@ -385,10 +376,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemoveTemplateObjectFormatVersion(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
-        }
+        public ActionResult MultipleRemoveTemplateObjectFormatVersion(int parentId, int[] IDs) => JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -397,10 +385,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.RestorePageObjectFormatVersion)]
         [BackendActionLog]
         [Record]
-        public ActionResult RestorePageObjectFormatVersion(string tabId, int parentId, int id)
-        {
-            return JsonMessageResult(_formatService.RestoreObjectFormatVersion(id));
-        }
+        public ActionResult RestorePageObjectFormatVersion(string tabId, int parentId, int id) => JsonMessageResult(_formatService.RestoreObjectFormatVersion(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -409,10 +394,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.RestoreTemplateObjectFormatVersion)]
         [BackendActionLog]
         [Record]
-        public ActionResult RestoreTemplateObjectFormatVersion(string tabId, int parentId, int id)
-        {
-            return JsonMessageResult(_formatService.RestoreObjectFormatVersion(id));
-        }
+        public ActionResult RestoreTemplateObjectFormatVersion(string tabId, int parentId, int id) => JsonMessageResult(_formatService.RestoreObjectFormatVersion(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -422,10 +404,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePageObjectFormatVersion(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
-        }
+        public ActionResult MultipleRemovePageObjectFormatVersion(int parentId, int[] IDs) => JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

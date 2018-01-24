@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.ObjectBuilder2;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler
@@ -32,9 +31,20 @@ namespace Quantumart.QP8.ArticleScheduler
         public void Run()
         {
             var dbTasks = GetDbScheduleTaskActions();
-            dbTasks.Where(FilterOnetimeTasksPredicate).ForEach(_onetimeScheduler.Run);
-            dbTasks.Where(FilterRecurringTasksPredicate).ForEach(_recurringScheduler.Run);
-            dbTasks.Where(FilterPublishingTasksPredicate).ForEach(_publishingScheduler.Run);
+            foreach (var onetimeTask in dbTasks.Where(FilterOnetimeTasksPredicate))
+            {
+                _onetimeScheduler.Run(onetimeTask);
+            }
+
+            foreach (var recurringTask in dbTasks.Where(FilterRecurringTasksPredicate))
+            {
+                _recurringScheduler.Run(recurringTask);
+            }
+
+            foreach (var publishingTask in dbTasks.Where(FilterPublishingTasksPredicate))
+            {
+                _publishingScheduler.Run(publishingTask);
+            }
         }
 
         public List<ArticleScheduleTask> GetDbScheduleTaskActions() => _articleSchedulerService.GetScheduleTaskList().ToList();

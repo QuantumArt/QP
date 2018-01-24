@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
@@ -15,14 +16,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
 
         public new BLL.CustomAction Data
         {
-            get
-            {
-                return (BLL.CustomAction)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.CustomAction)EntityData;
+            set => EntityData = value;
         }
 
         public static CustomActionViewModel Create(BLL.CustomAction customAction, string tabId, int parentId, ICustomActionService service)
@@ -69,38 +64,38 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewCustomAction : Constants.ActionCode.CustomActionsProperties;
 
-        public IEnumerable<BLL.ListItem> ActionTypeList => _service.GetActionTypeList();
+        public IEnumerable<ListItem> ActionTypeList => _service.GetActionTypeList();
 
-        public IEnumerable<BLL.ListItem> EntityTypeList => _service.GetEntityTypeList();
+        public IEnumerable<ListItem> EntityTypeList => _service.GetEntityTypeList();
 
-        public List<BLL.ListItem> SiteSelectionModes => new List<BLL.ListItem>
+        public List<ListItem> SiteSelectionModes => new List<ListItem>
         {
-            new BLL.ListItem(SelectionMode.ShowExpectSelected.ToString(), CustomActionStrings.ShowExpectSelectedSites),
-            new BLL.ListItem(SelectionMode.HideExceptSelected.ToString(), CustomActionStrings.HideExceptSelectedSites)
+            new ListItem(SelectionMode.ShowExpectSelected.ToString(), CustomActionStrings.ShowExpectSelectedSites),
+            new ListItem(SelectionMode.HideExceptSelected.ToString(), CustomActionStrings.HideExceptSelectedSites)
         };
 
-        public List<BLL.ListItem> ContentSelectionModes => new List<BLL.ListItem>
+        public List<ListItem> ContentSelectionModes => new List<ListItem>
         {
-            new BLL.ListItem(SelectionMode.ShowExpectSelected.ToString(), CustomActionStrings.ShowExpectSelectedContents),
-            new BLL.ListItem(SelectionMode.HideExceptSelected.ToString(), CustomActionStrings.HideExceptSelectedContents)
+            new ListItem(SelectionMode.ShowExpectSelected.ToString(), CustomActionStrings.ShowExpectSelectedContents),
+            new ListItem(SelectionMode.HideExceptSelected.ToString(), CustomActionStrings.HideExceptSelectedContents)
         };
 
-        public IEnumerable<BLL.ListItem> SelectedSiteListItems
+        public IEnumerable<ListItem> SelectedSiteListItems
         {
             get
             {
                 return Data.Sites
-                    .Select(s => new BLL.ListItem(s.Id.ToString(), s.Name))
+                    .Select(s => new ListItem(s.Id.ToString(), s.Name))
                     .ToArray();
             }
         }
 
-        public IEnumerable<BLL.ListItem> SelectedContentListItems
+        public IEnumerable<ListItem> SelectedContentListItems
         {
             get
             {
                 return Data.Contents
-                    .Select(s => new BLL.ListItem(s.Id.ToString(), $"{s.Site.Name}.{s.Name}"))
+                    .Select(s => new ListItem(s.Id.ToString(), $"{s.Site.Name}.{s.Name}"))
                     .ToArray();
             }
         }
@@ -128,15 +123,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
         [LocalizedDisplayName("SiteSelectionMode", NameResourceType = typeof(CustomActionStrings))]
         public SelectionMode SiteSelectionMode
         {
-            get { return Data.SiteExcluded ? SelectionMode.HideExceptSelected : SelectionMode.ShowExpectSelected; }
-            set { Data.SiteExcluded = value == SelectionMode.HideExceptSelected; }
+            get => Data.SiteExcluded ? SelectionMode.HideExceptSelected : SelectionMode.ShowExpectSelected;
+            set => Data.SiteExcluded = value == SelectionMode.HideExceptSelected;
         }
 
         [LocalizedDisplayName("ContentSelectionMode", NameResourceType = typeof(CustomActionStrings))]
         public SelectionMode ContentSelectionMode
         {
-            get { return Data.ContentExcluded ? SelectionMode.HideExceptSelected : SelectionMode.ShowExpectSelected; }
-            set { Data.ContentExcluded = value == SelectionMode.HideExceptSelected; }
+            get => Data.ContentExcluded ? SelectionMode.HideExceptSelected : SelectionMode.ShowExpectSelected;
+            set => Data.ContentExcluded = value == SelectionMode.HideExceptSelected;
         }
 
         [LocalizedDisplayName("SelectedSiteIDs", NameResourceType = typeof(CustomActionStrings))]
@@ -148,7 +143,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
         [LocalizedDisplayName("ToolbarButtonParentActionId", NameResourceType = typeof(CustomActionStrings))]
         public IList<QPCheckedItem> SelectedActions { get; set; }
 
-        public int[] SelectedActionsIds { get { return SelectedActions.Select(c => int.Parse(c.Value)).ToArray(); } }
+        public int[] SelectedActionsIds
+        {
+            get { return SelectedActions.Select(c => int.Parse(c.Value)).ToArray(); }
+        }
 
         public string SelectedActionsString => string.Join(",", SelectedActionsIds);
 

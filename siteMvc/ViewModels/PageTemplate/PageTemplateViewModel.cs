@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
@@ -25,27 +27,21 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public new BLL.PageTemplate Data
         {
-            get
-            {
-                return (BLL.PageTemplate)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BLL.PageTemplate)EntityData;
+            set => EntityData = value;
         }
 
-        private List<BLL.ListItem> _languages;
+        private List<ListItem> _languages;
 
-        public List<BLL.ListItem> Languages => _languages ?? (_languages = _service.GetNetLanguagesAsListItems().ToList());
+        public List<ListItem> Languages => _languages ?? (_languages = _service.GetNetLanguagesAsListItems().ToList());
 
-        private List<BLL.ListItem> _charsets;
+        private List<ListItem> _charsets;
 
-        public List<BLL.ListItem> Charsets => _charsets ?? (_charsets = _service.GetCharsetsAsListItems().ToList());
+        public List<ListItem> Charsets => _charsets ?? (_charsets = _service.GetCharsetsAsListItems().ToList());
 
-        private List<BLL.ListItem> _locales;
+        private List<ListItem> _locales;
 
-        public List<BLL.ListItem> Locales => _locales ?? (_locales = _service.GetLocalesAsListItems().ToList());
+        public List<ListItem> Locales => _locales ?? (_locales = _service.GetLocalesAsListItems().ToList());
 
         internal void DoCustomBinding()
         {
@@ -56,7 +52,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
             if (AggregationListItemsDataAdditionalNamespaceItems != null)
             {
-                Data.AdditionalNamespaceItems = new JavaScriptSerializer().Deserialize<List<AdditionalNamespace>>(AggregationListItemsDataAdditionalNamespaceItems);
+                Data.AdditionalNamespaceItems = JsonConvert.DeserializeObject<List<AdditionalNamespace>>(AggregationListItemsDataAdditionalNamespaceItems);
             }
 
             Data.SetUsings();

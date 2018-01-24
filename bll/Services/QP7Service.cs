@@ -27,8 +27,10 @@ namespace Quantumart.QP8.BLL.Services
     public class QP7Service : IQP7Service
     {
         #region Constants and fields
+
         private const string Qp7PathSettringKey = "QP7Path";
         private const string AssemblePageTemplate = "{0}assemble.asp?pageId={1}&skipTemplate=1";
+
         #endregion
 
         public string GetQP7Path()

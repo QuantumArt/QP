@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Helpers;
-using QP8.Infrastructure.Logging.IoC;
+using QP8.Infrastructure.Logging.Unity;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Interfaces.Db;
-using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
+using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.Audit;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Assemble;
@@ -28,6 +28,8 @@ using Quantumart.QP8.WebMvc.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
+using Unity;
+using Unity.Injection;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -64,6 +66,7 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<IXmlDbUpdateActionsLogRepository, XmlDbUpdateActionsLogRepository>()
                 .RegisterType<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
                 .RegisterType<IArticleService, ArticleService>()
+                .RegisterType<IContentService, ContentService>()
                 .RegisterType<IXmlDbUpdateHttpContextProcessor, XmlDbUpdateHttpContextProcessor>()
                 .RegisterType<IXmlDbUpdateActionCorrecterService, XmlDbUpdateActionCorrecterService>()
                 .RegisterType<ClearContentController>(new InjectionFactory(c => new ClearContentController(new ClearContentService())))
@@ -71,6 +74,7 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<ImportArticlesController>(new InjectionFactory(c => new ImportArticlesController(new ImportArticlesService())))
                 .RegisterType<ExportArticlesController>(new InjectionFactory(c => new ExportArticlesController(new ExportArticlesService())))
                 .RegisterType<ExportSelectedArticlesController>(new InjectionFactory(c => new ExportSelectedArticlesController(new ExportArticlesService())))
+                .RegisterType<ExportSelectedArchiveArticlesController>(new InjectionFactory(c => new ExportSelectedArchiveArticlesController(new ExportArticlesService())))
                 .RegisterType<MultistepController>(new InjectionFactory(c => new MultistepController(c.Resolve<Func<string, IMultistepActionService>>(), c.Resolve<Func<string, string>>())))
                 .RegisterType<CopySiteController>(new InjectionFactory(c => new CopySiteController(new CopySiteService())))
                 .RegisterType<RemoveSiteController>(new InjectionFactory(c => new RemoveSiteController(new RemoveSiteService())))

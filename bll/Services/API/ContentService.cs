@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Quantumart.QP8.BLL.Repository;
+using System.Collections.Generic;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
@@ -10,7 +10,8 @@ namespace Quantumart.QP8.BLL.Services.API
         {
         }
 
-        public ContentService(int userId) : base(userId)
+        public ContentService(int userId)
+            : base(userId)
         {
         }
 
@@ -52,7 +53,6 @@ namespace Quantumart.QP8.BLL.Services.API
                     content.Die();
                     QPContext.CurrentUserId = 0;
                 }
-
             }
         }
 

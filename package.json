@@ -18,11 +18,13 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-eslint": "^8.0.2",
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "browser-sync": "^2.18.13",
     "chalk": "^2.1.0",
+    "cross-env": "^5.1.1",
     "del": "^3.0.0",
     "es6-promise": "^4.1.1",
     "eslint": "^4.8.0",
@@ -31,7 +33,6 @@
     "gulp-babel": "^7.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-cssnano": "^2.1.2",
-    "gulp-dotnet-assembly-info": "^0.1.12",
     "gulp-imagemin": "^3.3.0",
     "gulp-load-plugins": "^1.5.0",
     "gulp-newer": "^1.3.0",
@@ -58,10 +59,5 @@
     "lint": "eslint ./siteMvc/Scripts/Quantumart/"
   },
   "private": true,
-  "-vs-binding": {
-    "ProjectOpened": [
-      "install"
-    ]
-  },
   "version": "1.0.0"
 }

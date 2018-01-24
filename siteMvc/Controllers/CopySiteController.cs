@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using QP8.Infrastructure.Web.AspNet.ActionResults;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.CopySite;
@@ -8,8 +11,8 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -20,12 +23,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public CopySiteController(IMultistepActionService multistepService)
         {
-            if (multistepService == null)
-            {
-                throw new ArgumentNullException(nameof(multistepService));
-            }
-
-            _multistepService = multistepService;
+            _multistepService = multistepService ?? throw new ArgumentNullException(nameof(multistepService));
         }
 
         [HttpPost]
@@ -38,7 +36,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(prms);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.CreateLikeSite)]
         [BackendActionContext(ActionCode.CreateLikeSite)]
@@ -69,7 +66,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         [ValidateInput(false)]
         [Record]
-        public ActionResult SetupWithParams(string tabId, int parentId, int id, FormCollection collection)
+        public JsonCamelCaseResult<JSendResponse> SetupWithParams(string tabId, int parentId, int id, FormCollection collection)
         {
             var newSite = SiteService.NewForSave();
             var model = CreateLikeSiteModel.Create(newSite, tabId, parentId);
@@ -90,16 +87,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("Exception", ex.Message);
-                    return JsonHtml(viewName, model);
+                    return JsonCamelCaseHtml(viewName, model);
                 }
 
                 var settings = new CopySiteSettings(newSite.Id, id, DateTime.Now, model.DoNotCopyArticles, model.DoNotCopyTemplates, model.DoNotCopyFiles);
                 _multistepService.SetupWithParams(parentId, id, settings);
-
-                return Json(string.Empty);
+                return new JSendResponse { Status = JSendStatus.Success };
             }
 
-            return JsonHtml(viewName, model);
+            return JsonCamelCaseHtml(viewName, model);
         }
 
         [HttpPost]

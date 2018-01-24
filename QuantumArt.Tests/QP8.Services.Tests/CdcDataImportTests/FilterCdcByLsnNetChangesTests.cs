@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
+using AutoFixture;
+using AutoFixture.AutoMoq;
+using AutoFixture.Xunit2;
 using AutoMapper;
 using FluentAssertions;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
-using Ploeh.AutoFixture.Xunit2;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.TestTools.AutoFixture.Specimens;
 using Quantumart.QP8.BLL;
@@ -330,7 +330,6 @@ namespace QP8.Services.Tests.CdcDataImportTests
             expectedColumnsFromSecondTable.Should().BeSubsetOf(actual.Single().Entity.Columns);
             expectedColumnsFromThirdTable.Should().BeSubsetOf(actual.Single().Entity.Columns);
         }
-
 
         [Theory, AutoData, Trait("CdcTarantool", "DataImportJob")]
         public void GivenLinkIdList_WhenContainsInsertUpdate_ShouldReturnCorrectAndFilteredData(decimal linkId, decimal leftId, decimal rightId, string transactionLsn)

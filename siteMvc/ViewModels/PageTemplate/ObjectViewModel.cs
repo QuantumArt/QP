@@ -11,6 +11,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
@@ -79,7 +80,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
         {
             get
             {
-                if (IsNew) { return Data.PageOrTemplate ? Constants.ActionCode.AddNewPageObject : Constants.ActionCode.AddNewTemplateObject; }
+                if (IsNew)
+                {
+                    return Data.PageOrTemplate ? Constants.ActionCode.AddNewPageObject : Constants.ActionCode.AddNewTemplateObject;
+                }
 
                 return Data.PageOrTemplate ? Constants.ActionCode.PageObjectProperties : Constants.ActionCode.TemplateObjectProperties;
             }
@@ -87,14 +91,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public new BllObject Data
         {
-            get
-            {
-                return (BllObject)EntityData;
-            }
-            set
-            {
-                EntityData = value;
-            }
+            get => (BllObject)EntityData;
+            set => EntityData = value;
         }
 
         private InitPropertyValue<List<ListItem>> _netLanguages;
@@ -105,10 +103,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public List<ListItem> ParentTemplateObjectsAsListItems
         {
-            get
-            {
-                return ParentTemplateObjects.Select(x => new ListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
-            }
+            get { return ParentTemplateObjects.Select(x => new ListItem { Value = x.Id.ToString(), Text = x.Name }).ToList(); }
         }
 
         private List<ListItem> _types;
@@ -124,6 +119,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
             if (Data.OverrideTemplateObject)
             {
+                // ReSharper disable once PossibleInvalidOperationException
                 Data.ObjectInheritedFrom = _service.ReadObjectProperties(Data.ParentObjectId.Value, false);
                 Data.Name = Data.ObjectInheritedFrom.Name;
                 Data.NetName = Data.ObjectInheritedFrom.NetName;
@@ -144,10 +140,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public List<ListItem> DefaultFormats
         {
-            get
-            {
-                return Data.ChildObjectFormats.Select(x => new ListItem { Text = x.Name, Value = x.Id.ToString(), Selected = x.Id == Data.DefaultFormatId }).ToList();
-            }
+            get { return Data.ChildObjectFormats.Select(x => new ListItem { Text = x.Name, Value = x.Id.ToString(), Selected = x.Id == Data.DefaultFormatId }).ToList(); }
         }
 
         public SelectOptions SelectDefaultFormatOptions
@@ -235,20 +228,20 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
         [LocalizedDisplayName("DefaultSorting", NameResourceType = typeof(TemplateStrings))]
         public IEnumerable<SortingItem> SortingItems
         {
-            get { return _sortingItems.Value; }
-            set { _sortingItems.Value = value; }
+            get => _sortingItems.Value;
+            set => _sortingItems.Value = value;
         }
 
         public IEnumerable<ListItem> SelectionStartingModes => new List<ListItem>
         {
-            new ListItem(ArticleSelectionMode.FromTheFirstArticle.ToString(), TemplateStrings.FromTheFirstArticle){HasDependentItems = true, DependentItemIDs = new[]{"FromTheFirstPanel"}},
-            new ListItem(ArticleSelectionMode.FromTheSpecifiedArticle.ToString(), TemplateStrings.FromTheSpecifiedArticle){HasDependentItems = true, DependentItemIDs = new[]{"FromTheSpecialPanel"}}
+            new ListItem(ArticleSelectionMode.FromTheFirstArticle.ToString(), TemplateStrings.FromTheFirstArticle) { HasDependentItems = true, DependentItemIDs = new[] { "FromTheFirstPanel" } },
+            new ListItem(ArticleSelectionMode.FromTheSpecifiedArticle.ToString(), TemplateStrings.FromTheSpecifiedArticle) { HasDependentItems = true, DependentItemIDs = new[] { "FromTheSpecialPanel" } }
         };
 
         public IEnumerable<ListItem> SelectionIncludeModes => new List<ListItem>
         {
-            new ListItem(ArticleSelectionIncludeMode.AllArticles.ToString(), TemplateStrings.AllArticles){HasDependentItems = true, DependentItemIDs = new[]{"AllArticlesPanel"}},
-            new ListItem(ArticleSelectionIncludeMode.SpecifiedNumberOfArticles.ToString(), TemplateStrings.SpecifiedNumberOfArticles){HasDependentItems = true, DependentItemIDs = new[]{"SpecialArticlesPanel"}}
+            new ListItem(ArticleSelectionIncludeMode.AllArticles.ToString(), TemplateStrings.AllArticles) { HasDependentItems = true, DependentItemIDs = new[] { "AllArticlesPanel" } },
+            new ListItem(ArticleSelectionIncludeMode.SpecifiedNumberOfArticles.ToString(), TemplateStrings.SpecifiedNumberOfArticles) { HasDependentItems = true, DependentItemIDs = new[] { "SpecialArticlesPanel" } }
         };
 
         public override void Validate(ModelStateDictionary modelState)
@@ -273,10 +266,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public string ParentTemplateObjectsData
         {
-            get
-            {
-                return JsonConvert.SerializeObject(ParentTemplateObjects.Select(x => new { x.Name, x.NetName, x.Id }));
-            }
+            get { return JsonConvert.SerializeObject(ParentTemplateObjects.Select(x => new { x.Name, x.NetName, x.Id })); }
         }
 
         public string ShowGlobalTypeIds => ObjectType.GetCss().Id + "," + ObjectType.GetJavaScript().Id;

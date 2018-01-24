@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
@@ -63,7 +63,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         public string StatusWeightsDictionary
         {
-            get { return new JavaScriptSerializer().Serialize(Statuses.ToDictionary(x => x.Id.ToString(), x => x.Weight)); }
+            get { return JsonConvert.SerializeObject(Statuses.ToDictionary(x => x.Id.ToString(), x => x.Weight)); }
         }
 
         public IEnumerable<ListItem> AllStatusListItems
@@ -143,7 +143,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         internal void DoCustomBinding()
         {
-            _workflowRules = new JavaScriptSerializer().Deserialize<List<WorkflowRuleItem>>(WorkflowsWorkflowRulesDisplay);
+            _workflowRules = JsonConvert.DeserializeObject<List<WorkflowRuleItem>>(WorkflowsWorkflowRulesDisplay);
             Data.DoCustomBinding(_workflowRules);
         }
     }

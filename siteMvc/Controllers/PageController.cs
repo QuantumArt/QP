@@ -5,6 +5,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Telerik.Web.Mvc;
@@ -20,7 +21,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _pageService = pageService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Pages)]
         [BackendActionContext(ActionCode.Pages)]
@@ -38,10 +38,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _IndexPages(string tabId, int parentId, GridCommand command)
         {
             var serviceResult = _pageService.GetPagesByTemplateId(command.GetListCommand(), parentId);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewPage)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Page, "parentId")]
@@ -117,10 +116,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemovePage)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePage(int parentId, int[] IDs)
-        {
-            return JsonMessageResult(_pageService.MultipleRemovePage(IDs));
-        }
+        public ActionResult MultipleRemovePage(int parentId, int[] IDs) => JsonMessageResult(_pageService.MultipleRemovePage(IDs));
 
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -145,7 +141,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(null);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectPageForObjectForm)]
         [BackendActionContext(ActionCode.SelectPageForObjectForm)]
@@ -165,21 +160,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var template = _pageService.ReadPageTemplateProperties(parentId);
             var serviceResult = _pageService.ListPagesForSite(command.GetListCommand(), template.SiteId, id);
-            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [HttpPost]
-        public ActionResult AssemblePagePreAction(int id)
-        {
-            return JsonMessageResult(_pageService.AssemblePagePreAction(id));
-        }
+        public ActionResult AssemblePagePreAction(int id) => JsonMessageResult(_pageService.AssemblePagePreAction(id));
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePagePreAction(int[] IDs)
-        {
-            return JsonMessageResult(_pageService.MultipleAssemblePagePreAction(IDs));
-        }
+        public ActionResult MultipleAssemblePagePreAction(int[] IDs) => JsonMessageResult(_pageService.MultipleAssemblePagePreAction(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -187,10 +176,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePage)]
         [BackendActionContext(ActionCode.AssemblePage)]
         [BackendActionLog]
-        public ActionResult AssemblePage(int id)
-        {
-            return JsonMessageResult(_pageService.AssemblePage(id));
-        }
+        public ActionResult AssemblePage(int id) => JsonMessageResult(_pageService.AssemblePage(id));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -199,10 +185,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleAssemblePage)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePage(int[] IDs)
-        {
-            return JsonMessageResult(_pageService.MultipleAssemblePage(IDs));
-        }
+        public ActionResult MultipleAssemblePage(int[] IDs) => JsonMessageResult(_pageService.MultipleAssemblePage(IDs));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

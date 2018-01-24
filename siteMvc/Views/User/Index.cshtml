@@ -1,9 +1,7 @@
-﻿@model UserListViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels
-@using Quantumart.QP8.BLL.Services.DTO
-@using Quantumart.QP8.Resources
+﻿@using Quantumart.QP8.BLL.Services.DTO
 @using Quantumart.QP8.Constants
+@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.User.UserListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
@@ -26,7 +24,7 @@
             c.Bound(s => s.Disabled)
                     .Title("")
                     .Width(30)
-                    .ClientTemplate(String.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= DisabledIcon #>", "<#= DisabledText #>"))
+                    .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= DisabledIcon #>", "<#= DisabledText #>"))
                     .HtmlAttributes(new { style = "text-align: center;" });
 
             c.Bound(s => s.Login).Title(UserStrings.Login)
