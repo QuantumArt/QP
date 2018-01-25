@@ -1,23 +1,22 @@
-Quantumart.QP8.BackendDocumentHostStateStorage = function (options) {
-  if (options) {
-    if (options.currentCustomerCode) {
-      this._currentCustomerCode = options.currentCustomerCode;
+export class BackendDocumentHostStateStorage {
+  constructor(options) {
+    if (options) {
+      if (options.currentCustomerCode) {
+        this._currentCustomerCode = options.currentCustomerCode;
+      }
+
+      if (options.currentUserId) {
+        this._currentUserId = options.currentUserId;
+      }
     }
 
-    if (options.currentUserId) {
-      this._currentUserId = options.currentUserId;
-    }
+    const root = BackendDocumentHostStateStorage._keyNameRoot;
+    this._keyPrefix = `${root}.${this._currentCustomerCode}.${this._currentUserId}`;
   }
 
-  const root = Quantumart.QP8.BackendDocumentHostStateStorage._keyNameRoot;
-  this._keyPrefix = `${root}.${this._currentCustomerCode}.${this._currentUserId}`;
-};
-
-Quantumart.QP8.BackendDocumentHostStateStorage._keyNameRoot = 'Quantumart.QP8.BackendDocumentHostStateStorage';
-Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
-  _currentCustomerCode: '',
-  _currentUserId: '',
-  _keyPrefix: '',
+  _currentCustomerCode = '';
+  _currentUserId = '';
+  _keyPrefix = '';
 
   loadHostState(hostParams) {
     const key = this.getHostKey(hostParams);
@@ -26,7 +25,7 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
     }
 
     return undefined;
-  },
+  }
 
   saveHostState(hostParams, hostState) {
     const key = this.getHostKey(hostParams);
@@ -37,7 +36,7 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
         localStorage.setItem(key, JSON.stringify(hostState));
       }
     }
-  },
+  }
 
   getHostKey(hostParams) {
     if (hostParams && !$.isEmptyObject(hostParams)) {
@@ -58,4 +57,8 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
 
     return undefined;
   }
-};
+}
+
+BackendDocumentHostStateStorage._keyNameRoot = 'Quantumart.QP8.BackendDocumentHostStateStorage';
+
+Quantumart.QP8.BackendDocumentHostStateStorage = BackendDocumentHostStateStorage;

@@ -1,34 +1,27 @@
-Quantumart.QP8.BackendAggregationList = function (componentElem) {
-  this._componentElem = componentElem;
-  this._containerElem = $('.aggregationListContainer', componentElem);
-  this._resultElem = $('.aggregationListResult', componentElem);
-};
+import { $q } from '../Utils';
 
-Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT = 'aggregation_list_component';
-Quantumart.QP8.BackendAggregationList.getComponent = function (componentElem) {
-  if (componentElem) {
-    return $q.toJQuery(componentElem).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT);
+export class BackendAggregationList {
+  constructor(componentElem) {
+    this._componentElem = componentElem;
+    this._containerElem = $('.aggregationListContainer', componentElem);
+    this._resultElem = $('.aggregationListResult', componentElem);
   }
 
-  return undefined;
-};
-
-Quantumart.QP8.BackendAggregationList.prototype = {
-  _componentElem: null,
-  _resultElem: null,
-  _containerElem: null,
-  _items: null,
-  _fields: null,
-  _addItemHandler: null,
-  _removeItemHandler: null,
-  _tableHeader: null,
-  _tableBody: null,
-  _additionalNames: null,
-  _viewModel: null,
+  _componentElem = null;
+  _resultElem = null;
+  _containerElem = null;
+  _items = null;
+  _fields = null;
+  _addItemHandler = null;
+  _removeItemHandler = null;
+  _tableHeader = null;
+  _tableBody = null;
+  _additionalNames = null;
+  _viewModel = null;
 
   initialize() {
     const aggrList = this._componentElem;
-    $(aggrList).data(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT, this);
+    $(aggrList).data(BackendAggregationList.DATA_KEY_COMPONENT, this);
     this._items = ko.observableArray(aggrList.data('aggregation_list_data'));
     this._fields = aggrList.data('aggregation_list_item_fields').split(',');
     this._addItemHandler = $.proxy(this.addItem, this);
@@ -58,11 +51,11 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this._tableBody = $('tbody', this._componentElem);
     this.checkHeaders();
     this._componentElem.data('component', this);
-  },
+  }
 
   getItems() {
     return this._items();
-  },
+  }
 
   setItems(items) {
     if (this._items()) {
@@ -74,7 +67,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
         });
       }
     }
-  },
+  }
 
   addItem() {
     const item = {};
@@ -87,18 +80,18 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this._items.push(item);
     this._setAsChanged();
     this.checkHeaders();
-  },
+  }
 
   removeItem(item) {
     this._items.remove(item);
     this._setAsChanged();
     this.checkHeaders();
-  },
+  }
 
   _onItemChanged() {
     this._setAsChanged();
     return true;
-  },
+  }
 
   _setAsChanged() {
     let $field = $(this._resultElem);
@@ -108,7 +101,7 @@ Quantumart.QP8.BackendAggregationList.prototype = {
       { fieldName, value: this._items(), contentFieldName: $field.closest('dl').data('field_name') }
     );
     $field = null;
-  },
+  }
 
   checkHeaders() {
     if (this._tableBody.children('tr').size() === 0) {
@@ -116,19 +109,19 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     } else {
       this._tableHeader.show();
     }
-  },
+  }
 
   saveAggregationListData() {
     const aggrList = this._componentElem;
     this._resultElem.val(JSON.stringify(aggrList.data('aggregation_list_data')));
-  },
+  }
 
   destroyAggregationList() {
     const containerElem = this._containerElem;
     ko.cleanNode(containerElem.get(0));
 
     if (this._componentElem) {
-      $(this._componentElem).removeData(Quantumart.QP8.BackendAggregationList.DATA_KEY_COMPONENT);
+      $(this._componentElem).removeData(BackendAggregationList.DATA_KEY_COMPONENT);
       this._componentElem = null;
     }
     this._containerElem = null;
@@ -141,4 +134,16 @@ Quantumart.QP8.BackendAggregationList.prototype = {
     this._tableBody = null;
     this._viewModel = null;
   }
+}
+
+BackendAggregationList.DATA_KEY_COMPONENT = 'aggregation_list_component';
+BackendAggregationList.getComponent = function (componentElem) {
+  if (componentElem) {
+    return $q.toJQuery(componentElem).data(BackendAggregationList.DATA_KEY_COMPONENT);
+  }
+
+  return undefined;
 };
+
+
+Quantumart.QP8.BackendAggregationList = BackendAggregationList;

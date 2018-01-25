@@ -1,10 +1,12 @@
-Quantumart.QP8.ActionLogItemListFilter = function (filterContainer, items) {
-  Quantumart.QP8.ActionLogItemListFilter.initializeBase(this, [filterContainer]);
-  this._items = items;
-};
+import { ActionLogFilterBase } from './ActionLogFilterBase';
 
-Quantumart.QP8.ActionLogItemListFilter.prototype = {
-  _items: null,
+export class ActionLogItemListFilter extends ActionLogFilterBase {
+  constructor(filterContainer, items) {
+    super(filterContainer);
+    this._items = items;
+  }
+
+  _items = null;
   initialize() {
     const html = new $.telerik.stringBuilder();
 
@@ -26,21 +28,20 @@ Quantumart.QP8.ActionLogItemListFilter.prototype = {
     this.$container.append(html.string());
 
     this.$container.find('select.dropDownList').focus();
-  },
+  }
 
   onOpen() {
     this.$container.find('select.dropDownList').focus();
-  },
+  }
 
   getValue() {
     return this.$container.find('select.dropDownList option:selected').val();
-  },
+  }
 
   getFilterDetails() {
     return this.$container.find('select.dropDownList option:selected').text();
   }
-};
+}
 
-Quantumart.QP8.ActionLogItemListFilter.registerClass(
-  'Quantumart.QP8.ActionLogItemListFilter', Quantumart.QP8.ActionLogFilterBase
-);
+
+Quantumart.QP8.ActionLogItemListFilter = ActionLogItemListFilter;

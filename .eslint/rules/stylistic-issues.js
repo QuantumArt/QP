@@ -98,6 +98,7 @@ module.exports = {
 
     // require empty lines around comments
     'lines-around-comment': ['error', {
+      ignorePattern: '@type|@ts-ignore',
       beforeLineComment: true,
       allowBlockStart: true,
       allowObjectStart: true,

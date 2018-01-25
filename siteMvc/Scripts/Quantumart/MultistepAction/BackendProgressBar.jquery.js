@@ -1,8 +1,12 @@
+import { $q } from '../Utils';
+
 // based on: http://benogle.com/2009/06/16/simple-css-shiny-progress-bar-technique.html
 // eslint-disable-next-line no-extra-semi
 ; (function module() {
   const BackendProgressBarComponent = function BackendProgressBarComponent($we, options) {
     let $wrapElement = $we;
+
+    /** @type {{total: number, value: number, digits: number }} */
     const settings = Object.assign({
       total: 0,
       value: 0,
@@ -41,15 +45,15 @@
       return currentValue;
     };
 
-    const setTotal = function setTotal(val, dfr) {
+    const setTotal = function setTotal(val) {
       let result = val;
       if ($q.isNull(result)) {
-        result = settings.total();
+        result = settings.total;
       }
 
       if ($.isNumeric(result)) {
         settings.total = result;
-        setValue(result, dfr);
+        setValue(result);
       }
     };
 
@@ -129,7 +133,8 @@
     init(options) {
       return this.filter('div').each(function each() {
         let $this = $(this);
-        let component = new BackendProgressBarComponent($this, options);
+        // eslint-disable-next-line new-cap
+        let component = BackendProgressBarComponent($this, options);
         $this.data('backendProgressBar', component);
         $this = null;
         component = null;

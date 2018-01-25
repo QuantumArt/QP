@@ -1,4 +1,14 @@
-class BackendEntityDataListManager extends Quantumart.QP8.Observable {
+import { BackendEntityCheckBoxList } from '../List/BackendEntityCheckBoxList';
+import { BackendEntityDropDownList } from '../List/BackendEntityDropDownList';
+import { BackendEntityMultipleItemPicker } from '../List/BackendEntityMultipleItemPicker';
+import { BackendEntitySingleItemPicker } from '../List/BackendEntitySingleItemPicker';
+import { Observable } from '../Common/Observable';
+import { $q } from '../Utils';
+
+export class BackendEntityDataListManager extends Observable {
+  /** @type {BackendEntityDataListManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendEntityDataListManager._instance) {
       BackendEntityDataListManager._instance = new BackendEntityDataListManager();
@@ -57,7 +67,7 @@ class BackendEntityDataListManager extends Quantumart.QP8.Observable {
 
     let list;
     if (listType === Quantumart.QP8.Enums.DataListType.DropDownList) {
-      list = new Quantumart.QP8.BackendEntityDropDownList(
+      list = new BackendEntityDropDownList(
         listGroupCode,
         listElementId,
         entityTypeCode,
@@ -67,7 +77,7 @@ class BackendEntityDataListManager extends Quantumart.QP8.Observable {
         options
       );
     } else if (listType === Quantumart.QP8.Enums.DataListType.CheckBoxList) {
-      list = new Quantumart.QP8.BackendEntityCheckBoxList(
+      list = new BackendEntityCheckBoxList(
         listGroupCode,
         listElementId,
         entityTypeCode,
@@ -77,7 +87,7 @@ class BackendEntityDataListManager extends Quantumart.QP8.Observable {
         options
       );
     } else if (listType === Quantumart.QP8.Enums.DataListType.SingleItemPicker) {
-      list = new Quantumart.QP8.BackendEntitySingleItemPicker(
+      list = new BackendEntitySingleItemPicker(
         listGroupCode,
         listElementId,
         entityTypeCode,
@@ -87,7 +97,7 @@ class BackendEntityDataListManager extends Quantumart.QP8.Observable {
         options
       );
     } else if (listType === Quantumart.QP8.Enums.DataListType.MultipleItemPicker) {
-      list = new Quantumart.QP8.BackendEntityMultipleItemPicker(
+      list = new BackendEntityMultipleItemPicker(
         listGroupCode,
         listElementId,
         entityTypeCode,

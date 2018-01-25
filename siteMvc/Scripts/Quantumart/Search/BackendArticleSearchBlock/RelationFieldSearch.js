@@ -1,21 +1,46 @@
-// eslint-disable-next-line max-params
-Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (
-  containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType
-) {
-  Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.initializeBase(
-    this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
+import { BackendArticleSearchBlock } from '../BackendArticleSearchBlock';
+import { FieldSearchBase, FieldSearchState } from './FieldSearchBase';
+import { $c } from '../../ControlHelpers';
+import { distinct } from '../../Utils/Filter';
+import { $q } from '../../Utils';
 
-  this._searchType = searchType;
-  $q.bindProxies.call(this, [
-    '_onLoad',
-    '_onIsNullCheckBoxChange',
-    '_onSelectorChange',
-    '_onListContentChanged',
-    '_expandHierarchy'
-  ]);
-};
+export class RelationFieldSearch extends FieldSearchBase {
+  // eslint-disable-next-line max-params
+  constructor(
+    containerElement,
+    parentEntityId,
+    fieldID,
+    contentID,
+    fieldColumn,
+    fieldName,
+    fieldGroup,
+    referenceFieldID,
+    searchType
+  ) {
+    super(
+      containerElement,
+      parentEntityId,
+      fieldID,
+      contentID,
+      fieldColumn,
+      fieldName,
+      fieldGroup,
+      referenceFieldID
+    );
 
-Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
+    this._searchType = searchType;
+
+    this._onLoadHandler = this._onLoad.bind(this);
+    this._onIsNullCheckBoxChangeHandler = this._onIsNullCheckBoxChange.bind(this);
+    this._onSelectorChangeHandler = this._onSelectorChange.bind(this);
+    this._onListContentChangedHandler = this._onListContentChanged.bind(this);
+    this._expandHierarchyHandler = this._expandHierarchy.bind(this);
+  }
+
+  _onLoadHandler = null;
+  _onSelectorChangeHandler = null;
+  _onListContentChangedHandler = null;
+
   initialize() {
     let serverContent;
     $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}RelationSearch`, {
@@ -56,7 +81,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
 
       $(document).ready(this._onLoadHandler);
     }
-  },
+  }
 
   getSelectedIds() {
     let result;
@@ -67,10 +92,10 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     }
 
     return result;
-  },
+  }
 
   getSearchQuery() {
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+    return BackendArticleSearchBlock.createFieldSearchQuery(
       this._searchType,
       this._fieldID,
       this._fieldColumn,
@@ -81,10 +106,10 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       $(this._inverseCheckBoxElement).is(':checked'),
       $(this._unionAllCheckBoxElement).is(':checked')
     );
-  },
+  }
 
   getBlockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+    return new FieldSearchState(
       this._searchType, this._fieldID, this._contentID, this._fieldColumn
       , this._fieldName, this._fieldGroup, this._referenceFieldID, {
         isNull: $(this._isNullCheckBoxElement).is(':checked'),
@@ -94,9 +119,9 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
         text: $(this._textAreaElement).val(),
         isEntity: this._isEntity
       });
-  },
+  }
 
-  _selectedEntitiesIDs: null,
+  _selectedEntitiesIDs = null;
 
   setBlockState(state) {
     if (state && !$q.isNullOrEmpty(state.entities)) {
@@ -104,7 +129,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     } else {
       this._selectedEntitiesIDs = null;
     }
-  },
+  }
 
   getFilterDetails() {
     const stateData = this.getBlockState().data;
@@ -126,7 +151,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     }
 
     return result;
-  },
+  }
 
   restoreBlockState(state, isRestoreByClose) {
     if (state) {
@@ -154,16 +179,16 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       $(`.radioButtonsList input:radio[value=${state.isEntity ? 0 : 1}]`, this._containerElement)
         .prop('checked', true).trigger('click');
     }
-  },
+  }
 
   _onListContentChanged(eventArgs, data) {
     this._toggleLinkVisibility(data.value);
-  },
+  }
 
   _toggleLinkVisibility(selectedIds) {
     $('.expandParentsButton > a, .expandChildsButton > a', $(this._containerElement))
       .toggleClass('disabled', !selectedIds.length);
-  },
+  }
 
   _expandHierarchy(url) {
     const that = this;
@@ -175,26 +200,28 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
           fieldId: that._fieldID,
           filter: that._getEntityDataList()._filter
         }, data => {
-          that._selectedEntitiesIDs = [...new Set(selectedIds.concat(data))];
+          that._selectedEntitiesIDs = selectedIds
+            .concat(data)
+            .filter(distinct());
           that._replaceWithSelectedEntities();
         });
       }
     };
-  },
+  }
 
   _getEntityDataList() {
     return $(this._entityDataListElement).data('entity_data_list_component');
-  },
+  }
 
   _getSelectedEntities() {
     return this._getEntityDataList().getSelectedEntities();
-  },
+  }
 
   _replaceWithSelectedEntities() {
     if (this._entityDataListElement) {
       this._getEntityDataList().selectEntities(this._selectedEntitiesIDs);
     }
-  },
+  }
 
   _onIsNullCheckBoxChange() {
     const edlComponent = this._getEntityDataList();
@@ -205,13 +232,13 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       edlComponent.enableList();
       $(this._textAreaElement).prop('disabled', false);
     }
-  },
+  }
 
   _onLoad() {
     $c.initAllEntityDataLists(this._containerElement);
     this._entityDataListElement = $c.getAllEntityDataLists(this._containerElement).get(0);
     this._toggleLinkVisibility(this.getSelectedIds());
-  },
+  }
 
   _onSelectorChange(e) {
     this._isEntity = +$(e.currentTarget).val() === 0;
@@ -223,11 +250,11 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       $(this._entityContainerElement).hide();
       $(this._textAreaContainerElement).show();
     }
-  },
+  }
 
   onOpen() {
     $c.fixAllEntityDataListsOverflow(this._containerElement);
-  },
+  }
 
   dispose() {
     $c.destroyAllEntityDataLists(this._containerElement);
@@ -247,25 +274,25 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       '_onLoadHandler'
     ]);
 
-    Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.callBaseMethod(this, 'dispose');
-  },
+    super.dispose();
+  }
 
-  _searchType: 0,
-  _isEntity: true,
+  _searchType = 0;
+  _isEntity = true;
 
-  _onIsNullCheckBoxChangeHandler: null,
+  _onIsNullCheckBoxChangeHandler = null;
 
-  _isNullCheckBoxElement: null,
-  _inverseCheckBoxElement: null,
-  _unionAllCheckBoxElement: null,
-  _entityDataListElement: null,
+  _isNullCheckBoxElement = null;
+  _inverseCheckBoxElement = null;
+  _unionAllCheckBoxElement = null;
+  _entityDataListElement = null;
 
-  _entityContainerElement: null,
-  _textAreaContainerElement: null,
-  _textAreaElement: null
-};
+  _entityContainerElement = null;
+  _textAreaContainerElement = null;
+  _textAreaElement = null;
+}
 
-Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.registerClass(
-  'Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch',
-  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
-);
+
+import('../BackendArticleSearchBlock').then(() => {
+  Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = RelationFieldSearch;
+});

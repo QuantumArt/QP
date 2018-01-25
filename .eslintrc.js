@@ -5,26 +5,28 @@ module.exports = {
   extends: [
     './.eslint/.eslintrc'
   ].map(require.resolve),
+  plugins: [
+    'import'
+  ],
   globals: {
-    _: false,
     ko: false,
-    $a: false,
-    $c: false,
+    // $a: false,
+    // $c: false,
     $e: false,
     $l: false,
-    $o: false,
-    $q: false,
+    // $o: false,
+    // $q: false,
+    // $ctx: false,
     Sys: false,
-    Url: false,
-    $ctx: false,
+    // Url: false,
     pmrpc: false,
     Quantumart: false,
-    Silverlight: false
   },
   rules: {
     'no-invalid-this': 'off',
     'no-underscore-dangle': 'off',
     'func-names': 'off',
-    'sort-imports': 'off'
+    'sort-imports': 'off',
+    'class-methods-use-this': 'off'
   }
 };

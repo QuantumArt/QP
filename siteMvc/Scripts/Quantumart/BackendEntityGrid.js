@@ -1,4 +1,10 @@
 /* eslint max-lines: 'off' */
+import { Backend } from './Backend';
+import { BackendContextMenu } from './BackendContextMenu';
+import { Observable } from './Common/Observable';
+import { $a, BackendActionParameters } from './BackendActionExecutor';
+import { distinct, without } from './Utils/Filter';
+import { $q } from './Utils';
 
 window.EVENT_TYPE_ENTITY_GRID_DATA_BINDING = 'OnEntityGridDataBinding';
 window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND = 'OnEntityGridDataBound';
@@ -6,7 +12,7 @@ window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING = 'OnEntityGridActionExecuting';
 window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED = 'OnEntityGridEntitySelected';
 window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK = 'OnEntityGridEntityTitleLinkClick';
 
-class BackendEntityGrid extends Quantumart.QP8.Observable {
+export class BackendEntityGrid extends Observable {
   static applyStatusColor(row, item) {
     if (item.STATUS_TYPE_COLOR) {
       const $row = $(row);
@@ -45,9 +51,12 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
     this._titleColumnName = 'Name';
     this._parentKeyColumnName = 'ParentId';
     this._linkOpenNewTab = false;
+    /** @type {number[]} */
     this._startingEntitiesIDs = [];
+    /** @type {number[]} */
     this._selectedEntitiesIDs = [];
     this._allowFilterSelectedEntities = false;
+    /** @type {number[]} */
     this._removedIds = [];
     this._allowSaveRowsSelection = true;
     this._stopDeferredOperations = false;
@@ -181,21 +190,19 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       this._isBindToExternal = $q.toBoolean(hostOptions.isBindToExternal, false);
     }
 
-    $q.bindProxies.call(this, [
-      '_onDataBinding',
-      '_onDataBound',
-      '_onRowDataBound',
-      '_onHeaderCheckboxClick',
-      '_onTitleLinkClick',
-      '_onRowCellClick',
-      '_onRowCheckboxCellClick',
-      '_onContextMenu',
-      '_onRowContextMenuShowing',
-      '_onRowContextMenuItemClicking',
-      '_onRowContextMenuHidden',
-      '_onSelectAllClick',
-      '_onDeselectAllClick'
-    ]);
+    this._onDataBindingHandler = this._onDataBinding.bind(this);
+    this._onDataBoundHandler = this._onDataBound.bind(this);
+    this._onRowDataBoundHandler = this._onRowDataBound.bind(this);
+    this._onHeaderCheckboxClickHandler = this._onHeaderCheckboxClick.bind(this);
+    this._onTitleLinkClickHandler = this._onTitleLinkClick.bind(this);
+    this._onRowCellClickHandler = this._onRowCellClick.bind(this);
+    this._onRowCheckboxCellClickHandler = this._onRowCheckboxCellClick.bind(this);
+    this._onContextMenuHandler = this._onContextMenu.bind(this);
+    this._onRowContextMenuShowingHandler = this._onRowContextMenuShowing.bind(this);
+    this._onRowContextMenuItemClickingHandler = this._onRowContextMenuItemClicking.bind(this);
+    this._onRowContextMenuHiddenHandler = this._onRowContextMenuHidden.bind(this);
+    this._onSelectAllClickHandler = this._onSelectAllClick.bind(this);
+    this._onDeselectAllClickHandler = this._onDeselectAllClick.bind(this);
   }
 
   // eslint-disable-next-line camelcase
@@ -450,7 +457,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
     }
 
     if (this._contextMenuCode) {
-      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(
+      const contextMenuComponent = new BackendContextMenu(
         this._contextMenuCode,
         `${this._gridElementId}_ContextMenu`,
         {
@@ -618,9 +625,11 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       const $rowsToModify = $(this.getRowsByEntityIds(response.data));
       this._setRowsSelectedState($rowsToModify, rowState);
       if (rowState) {
-        this._selectedEntitiesIDs = [...new Set(this._selectedEntitiesIDs.concat(response.data))];
+        this._selectedEntitiesIDs = this._selectedEntitiesIDs
+          .concat(response.data)
+          .filter(distinct());
       } else {
-        this._selectedEntitiesIDs = $q.difference(this._selectedEntitiesIDs, response.data);
+        this._selectedEntitiesIDs = this._selectedEntitiesIDs.filter(without(response.data));
       }
 
       this._saveRowSelectionState();
@@ -713,7 +722,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
         if (dataItem[this._titleColumnName]) {
           entityName = `${dataItem[this._titleColumnName]}`;
         } else {
-          entityName = entityId;
+          entityName = String(entityId);
         }
 
         if (entityId) {
@@ -834,7 +843,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       }
 
       const entityName = this.getEntityName($row);
-      const params = new Quantumart.QP8.BackendActionParameters({
+      const params = new BackendActionParameters({
         entityTypeCode: this._entityTypeCode,
         entityId,
         entityName,
@@ -847,7 +856,7 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
       eventArgs.set_startedByExternal(this._isBindToExternal);
 
-      const message = Quantumart.QP8.Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
+      const message = Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
       if (this._hostIsWindow) {
         if (message) {
           $q.alertError(message);
@@ -901,19 +910,21 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
 
   _saveRowSelectionState() {
     const $rows = this.getRows();
-    const selectedRowEntityIdsSet = new Set(this._selectedEntitiesIDs);
-    const unselectedRowEntityIdsSet = new Set();
+    const selectedRowEntityIds = [...this._selectedEntitiesIDs];
+    const unselectedRowEntityIds = [];
     for (let rowIndex = 0; rowIndex < $rows.length; rowIndex++) {
       const $row = $rows.eq(rowIndex);
       const rowEntityId = this.getEntityId($row);
       if (this.isRowSelected($row)) {
-        selectedRowEntityIdsSet.add(rowEntityId);
+        selectedRowEntityIds.push(rowEntityId);
       } else {
-        unselectedRowEntityIdsSet.add(rowEntityId);
+        unselectedRowEntityIds.push(rowEntityId);
       }
     }
 
-    this._selectedEntitiesIDs = $q.difference([...selectedRowEntityIdsSet], [...unselectedRowEntityIdsSet]);
+    this._selectedEntitiesIDs = selectedRowEntityIds
+      .filter(without(unselectedRowEntityIds))
+      .filter(distinct());
   }
 
   _saveRowAllSelectionState() {
@@ -940,6 +951,8 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
       }
 
       let rowsData = null;
+
+      // synchronous AJAX call (sic!)
       $q.postDataToUrl(url, queryData, false, data => {
         rowsData = data;
       }, $q.processGenericAjaxError);
@@ -948,9 +961,10 @@ class BackendEntityGrid extends Quantumart.QP8.Observable {
         this.notify(window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND, eventArgs);
       }
 
-      const that = this;
+      // @ts-ignore rowsData is assigned in synchronous AJAX call
       if (rowsData && rowsData.data) {
-        this._selectedEntitiesIDs = rowsData.data.map(item => item[that._keyColumnName]);
+        // @ts-ignore rowsData is assigned in synchronous AJAX call
+        this._selectedEntitiesIDs = rowsData.data.map(item => item[this._keyColumnName]);
       }
     }
   }

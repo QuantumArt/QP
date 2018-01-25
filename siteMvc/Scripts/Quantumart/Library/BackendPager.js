@@ -1,47 +1,50 @@
-window.EVENT_TYPE_PAGE_NUMBER_CHANGED = 'OnPageNumberChanged';
-Quantumart.QP8.BackendPagerEventArgs = function (pageNumber) {
-  Quantumart.QP8.BackendPagerEventArgs.initializeBase(this);
-  this._pageNumber = pageNumber;
-};
+import { Observable } from '../Common/Observable';
+import { $q } from '../Utils';
 
-Quantumart.QP8.BackendPagerEventArgs.prototype = {
-  _pageNumber: 0,
+window.EVENT_TYPE_PAGE_NUMBER_CHANGED = 'OnPageNumberChanged';
+export class BackendPagerEventArgs extends Sys.EventArgs {
+  constructor(pageNumber) {
+    super();
+    this._pageNumber = pageNumber;
+  }
+
+  _pageNumber = 0;
   getPageNumber() {
     return this._pageNumber;
   }
-};
+}
 
-Quantumart.QP8.BackendPagerEventArgs.registerClass('Quantumart.QP8.BackendPagerEventArgs', Sys.EventArgs);
-Quantumart.QP8.BackendPager = function (pagerElement) {
-  Quantumart.QP8.BackendPager.initializeBase(this);
 
-  this._pagerElement = pagerElement;
-  this._onPageClickHandler = $.proxy(this._onPageClick, this);
-  this._onInHoverHandler = $.proxy(this._onInHover, this);
-  this._onOutHoverHandler = $.proxy(this._onOutHover, this);
-};
+export class BackendPager extends Observable {
+  constructor(pagerElement) {
+    super();
 
-Quantumart.QP8.BackendPager.prototype = {
-  _pagerElement: null,
-  _arrowFirstElement: null,
-  _arrowPrevElement: null,
-  _arrowLastElement: null,
-  _arrowNextElement: null,
-  _pageFrameElement: null,
-  _statusTextElement: null,
+    this._pagerElement = pagerElement;
+    this._onPageClickHandler = $.proxy(this._onPageClick, this);
+    this._onInHoverHandler = $.proxy(this._onInHover, this);
+    this._onOutHoverHandler = $.proxy(this._onOutHover, this);
+  }
 
-  _totalCount: 0,
-  _pageSize: 10,
-  _pageFrameSize: 10,
+  _pagerElement = null;
+  _arrowFirstElement = null;
+  _arrowPrevElement = null;
+  _arrowLastElement = null;
+  _arrowNextElement = null;
+  _pageFrameElement = null;
+  _statusTextElement = null;
 
-  _pageCount: 0,
-  _pageFrameCount: 0,
+  _totalCount = 0;
+  _pageSize = 10;
+  _pageFrameSize = 10;
 
-  _currentPageNumber: 0,
-  _currentPageFrameNumber: 0,
+  _pageCount = 0;
+  _pageFrameCount = 0;
 
-  _currentFrameStartPageNumber: 0,
-  _currentFrameEndPageNumber: 0,
+  _currentPageNumber = 0;
+  _currentPageFrameNumber = 0;
+
+  _currentFrameStartPageNumber = 0;
+  _currentFrameEndPageNumber = 0;
 
   _pageFrameRedraw() {
     let $pageFrameElement = $(this._pageFrameElement);
@@ -66,12 +69,12 @@ Quantumart.QP8.BackendPager.prototype = {
 
     $pageFrameElement = null;
     html = null;
-  },
+  }
 
   _setPageNumber(pageNumber) {
     this.set({ currentPageNumber: pageNumber });
     this.redraw();
-  },
+  }
 
   initialize() {
     let $pagerElement = $(this._pagerElement);
@@ -111,7 +114,7 @@ Quantumart.QP8.BackendPager.prototype = {
     this.redraw();
 
     $pagerElement = null;
-  },
+  }
 
   set(options) {
     if ($q.isObject(options)) {
@@ -141,13 +144,13 @@ Quantumart.QP8.BackendPager.prototype = {
     this._pageFrameCount = Math.floor(this._pageCount / this._pageFrameSize)
      + (this._pageCount % this._pageFrameSize === 0 ? 0 : 1);
     this._currentPageFrameNumber = Math.floor(this._currentPageNumber / this._pageFrameSize);
-    this._currentFrameStartPageNumber = Quantumart.QP8.BackendPager.getFrameStartPageNumber(
+    this._currentFrameStartPageNumber = BackendPager.getFrameStartPageNumber(
       this._currentPageFrameNumber, this._pageFrameSize
     );
-    this._currentFrameEndPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(
+    this._currentFrameEndPageNumber = BackendPager.getFrameEndPageNumber(
       this._currentPageFrameNumber, this._pageFrameSize, this._pageCount
     );
-  },
+  }
 
   redraw() {
     if (this._currentPageNumber === 0) {
@@ -179,19 +182,19 @@ Quantumart.QP8.BackendPager.prototype = {
     }
 
     this._pageFrameRedraw();
-  },
+  }
 
   getPageCount() {
     return this._pageCount;
-  },
+  }
 
   getPageNumber() {
     return this._currentPageNumber;
-  },
+  }
 
   getPageSize() {
     return this._pageSize;
-  },
+  }
 
 
   _onInHover(e) {
@@ -199,11 +202,11 @@ Quantumart.QP8.BackendPager.prototype = {
     if (!$evt.hasClass('t-state-disabled')) {
       $evt.addClass('t-state-hover');
     }
-  },
+  }
 
   _onOutHover(e) {
     $(e.currentTarget).removeClass('t-state-hover');
-  },
+  }
 
   _onPageClick(e) {
     let $selectedPage = $(e.currentTarget);
@@ -220,24 +223,24 @@ Quantumart.QP8.BackendPager.prototype = {
       } else if ($selectedPage.hasClass('qp-link-arrow-last')) {
         newPageNumber = this._pageCount - 1;
       } else if ($selectedPage.hasClass('qp-link-prev-frame')) {
-        newPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(
+        newPageNumber = BackendPager.getFrameEndPageNumber(
           this._currentPageFrameNumber - 1, this._pageFrameSize, this._pageCount
         );
       } else if ($selectedPage.hasClass('qp-link-next-frame')) {
-        newPageNumber = Quantumart.QP8.BackendPager.getFrameStartPageNumber(
+        newPageNumber = BackendPager.getFrameStartPageNumber(
           this._currentPageFrameNumber + 1, this._pageFrameSize
         );
       } else {
         newPageNumber = $q.toInt($selectedPage.html()) - 1;
       }
 
-      let eventArgs = new Quantumart.QP8.BackendPagerEventArgs(newPageNumber);
+      let eventArgs = new BackendPagerEventArgs(newPageNumber);
       this.notify(window.EVENT_TYPE_PAGE_NUMBER_CHANGED, eventArgs);
       eventArgs = null;
     }
 
     $selectedPage = null;
-  },
+  }
 
   dispose() {
     let $pagerElement = $(this._pagerElement);
@@ -256,17 +259,20 @@ Quantumart.QP8.BackendPager.prototype = {
     this._onInHoverHandler = null;
     this._onOutHoverHandler = null;
   }
-};
+}
 
-Quantumart.QP8.BackendPager.getFrameStartPageNumber = function (pageFrameNumber, pageFrameSize) {
+
+BackendPager.getFrameStartPageNumber = function (pageFrameNumber, pageFrameSize) {
   return pageFrameNumber * pageFrameSize;
 };
 
-Quantumart.QP8.BackendPager.getFrameEndPageNumber = function (pageFrameNumber, pageFrameSize, pageCount) {
+BackendPager.getFrameEndPageNumber = function (pageFrameNumber, pageFrameSize, pageCount) {
   return Math.min(
     (pageFrameNumber * pageFrameSize) + (pageFrameSize === 0 ? 0 : pageFrameSize - 1),
     pageCount === 0 ? 0 : pageCount - 1
   );
 };
 
-Quantumart.QP8.BackendPager.registerClass('Quantumart.QP8.BackendPager', Quantumart.QP8.Observable);
+
+Quantumart.QP8.BackendPagerEventArgs = BackendPagerEventArgs;
+Quantumart.QP8.BackendPager = BackendPager;

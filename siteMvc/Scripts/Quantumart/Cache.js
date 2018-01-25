@@ -1,38 +1,39 @@
-Quantumart.QP8.Cache = function () {
-  // empty constructor
-};
+import { $q } from './Utils';
 
-Quantumart.QP8.Cache._itemInfos = {};
-Quantumart.QP8.Cache.getItem = function (key) {
-  let item = null;
-  if (Quantumart.QP8.Cache._itemInfos[key]) {
-    item = Quantumart.QP8.Cache._itemInfos[key].Value;
+export class GlobalCache {
+  static _itemInfos = {};
+
+  static getItem(key) {
+    let item = null;
+    if (GlobalCache._itemInfos[key]) {
+      item = GlobalCache._itemInfos[key].Value;
+    }
+
+    return item;
   }
 
-  return item;
-};
-
-Quantumart.QP8.Cache.addItem = function (key, value) {
-  const itemInfo = { Value: value };
-  Quantumart.QP8.Cache._itemInfos[key] = itemInfo;
-};
-
-Quantumart.QP8.Cache.removeItem = function (key) {
-  $q.removeProperty(Quantumart.QP8.Cache._itemInfos, key);
-};
-
-Quantumart.QP8.Cache.clear = function () {
-  Object.keys(Quantumart.QP8.Cache._itemInfos).forEach(key => {
-    Quantumart.QP8.Cache.removeItem(key);
-  });
-};
-
-Quantumart.QP8.Cache.dispose = function () {
-  if ($q.getHashKeysCount(Quantumart.QP8.Cache._itemInfos) > 0) {
-    Quantumart.QP8.Cache.clear();
+  static addItem(key, value) {
+    const itemInfo = { Value: value };
+    GlobalCache._itemInfos[key] = itemInfo;
   }
 
-  Quantumart.QP8.Cache._itemInfos = null;
-};
+  static removeItem(key) {
+    $q.removeProperty(GlobalCache._itemInfos, key);
+  }
 
-Quantumart.QP8.Cache.registerClass('Quantumart.QP8.Cache');
+  static clear() {
+    Object.keys(GlobalCache._itemInfos).forEach(key => {
+      GlobalCache.removeItem(key);
+    });
+  }
+
+  static dispose() {
+    if ($q.getHashKeysCount(GlobalCache._itemInfos) > 0) {
+      GlobalCache.clear();
+    }
+
+    GlobalCache._itemInfos = null;
+  }
+}
+
+Quantumart.QP8.GlobalCache = GlobalCache;

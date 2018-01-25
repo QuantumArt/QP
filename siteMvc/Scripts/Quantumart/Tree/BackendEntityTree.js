@@ -1,217 +1,223 @@
 /* eslint max-lines: 'off' */
+import { Backend } from '../Backend';
+import { BackendContextMenu } from '../BackendContextMenu';
+import { BackendTreeBase } from './BackendTreeBase';
+import { $a, BackendActionParameters } from '../BackendActionExecutor';
+import { $o } from '../Info/BackendEntityObject';
+import { distinct } from '../Utils/Filter';
+import { $q } from '../Utils';
+
 
 window.EVENT_TYPE_ENTITY_TREE_DATA_BINDING = 'OnEntityTreeDataBinding';
 window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND = 'OnEntityTreeDataBound';
 window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING = 'OnEntityTreeActionExecuting';
 window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED = 'OnEntityTreeEntitySelected';
 
-// eslint-disable-next-line max-params, max-statements
-Quantumart.QP8.BackendEntityTree = function (
-  treeGroupCode,
-  treeElementId,
-  entityTypeCode,
-  parentEntityId,
-  actionCode,
-  options,
-  hostOptions
-) {
-  Quantumart.QP8.BackendEntityTree.initializeBase(this, [treeElementId, options]);
-  this._treeGroupCode = treeGroupCode;
-  this._entityTypeCode = entityTypeCode;
-  this._parentEntityId = parentEntityId;
-  this._actionCode = actionCode;
-  if ($q.isObject(options)) {
-    if (options.selectedEntitiesIDs) {
-      this._selectedEntitiesIDs = options.selectedEntitiesIDs;
+export class BackendEntityTree extends BackendTreeBase {
+  // eslint-disable-next-line max-params, max-statements
+  constructor(
+    treeGroupCode,
+    treeElementId,
+    entityTypeCode,
+    parentEntityId,
+    actionCode,
+    options,
+    hostOptions
+  ) {
+    super(treeElementId, options);
+    this._treeGroupCode = treeGroupCode;
+    this._entityTypeCode = entityTypeCode;
+    this._parentEntityId = parentEntityId;
+    this._actionCode = actionCode;
+    if ($q.isObject(options)) {
+      if (options.selectedEntitiesIDs) {
+        this._selectedEntitiesIDs = options.selectedEntitiesIDs;
+      }
+
+      if (options.contextMenuCode) {
+        this._contextMenuCode = options.contextMenuCode;
+      }
+
+      if (options.rootEntityId) {
+        this._rootEntityId = options.rootEntityId;
+      }
+
+      if (!$q.isNull(options.allowMultipleNodeSelection)) {
+        this._allowMultipleNodeSelection = options.allowMultipleNodeSelection;
+      }
+
+      if (!$q.isNull(options.allowGlobalSelection)) {
+        this._allowGlobalSelection = options.allowGlobalSelection;
+      }
+
+      if (!$q.isNull(options.treeName)) {
+        this._treeElementName = options.treeName;
+      }
+
+      if (options.filter) {
+        this._filter = options.filter;
+      }
+
+      if (options.treeFieldId) {
+        this._treeFieldId = options.treeFieldId;
+      }
+
+      if (options.zIndex) {
+        this._zIndex = options.zIndex;
+      }
+
+      if (options.articlesCountId) {
+        this.articlesCountId = options.articlesCountId;
+      }
     }
 
-    if (options.contextMenuCode) {
-      this._contextMenuCode = options.contextMenuCode;
+    if ($q.isObject(hostOptions)) {
+      if (hostOptions.searchQuery) {
+        this._searchQuery = hostOptions.searchQuery;
+      }
+
+      if (hostOptions.filter) {
+        this._hostFilter = hostOptions.filter;
+      }
     }
 
-    if (options.rootEntityId) {
-      this._rootEntityId = options.rootEntityId;
-    }
-
-    if (!$q.isNull(options.allowMultipleNodeSelection)) {
-      this._allowMultipleNodeSelection = options.allowMultipleNodeSelection;
-    }
-
-    if (!$q.isNull(options.allowGlobalSelection)) {
-      this._allowGlobalSelection = options.allowGlobalSelection;
-    }
-
-    if (!$q.isNull(options.treeName)) {
-      this._treeElementName = options.treeName;
-    }
-
-    if (options.filter) {
-      this._filter = options.filter;
-    }
-
-    if (options.treeFieldId) {
-      this._treeFieldId = options.treeFieldId;
-    }
-
-    if (options.zIndex) {
-      this._zIndex = options.zIndex;
-    }
-
-    if (options.articlesCountId) {
-      this.articlesCountId = options.articlesCountId;
-    }
+    this._onDataBindingHandler = this._onDataBinding.bind(this);
+    this._onNodeClickingHandler = this._onNodeClicking.bind(this);
+    this._onContextMenuHandler = this._onContextMenu.bind(this);
+    this._onNodeContextMenuShowingHandler = this._onNodeContextMenuShowing.bind(this);
+    this._onNodeContextMenuItemClickingHandler = this._onNodeContextMenuItemClicking.bind(this);
+    this._onNodeContextMenuHiddenHandler = this._onNodeContextMenuHidden.bind(this);
   }
 
-  if ($q.isObject(hostOptions)) {
-    if (hostOptions.searchQuery) {
-      this._searchQuery = hostOptions.searchQuery;
-    }
-
-    if (hostOptions.filter) {
-      this._hostFilter = hostOptions.filter;
-    }
-  }
-
-  $q.bindProxies.call(this, [
-    '_onDataBinding',
-    '_onNodeClicking',
-    '_onContextMenu',
-    '_onNodeContextMenuShowing',
-    '_onNodeContextMenuItemClicking',
-    '_onNodeContextMenuHidden'
-  ]);
-};
-
-Quantumart.QP8.BackendEntityTree.prototype = {
-  _treeGroupCode: '',
-  _currentNodeId: -1,
-  _allowMultipleNodeSelection: false,
-  _allowGlobalSelection: false,
-  _entityTypeCode: '',
-  _parentEntityId: 0,
-  _actionCode: '',
-  _contextMenuCode: '',
-  _selectedEntitiesIDs: [],
-  _allowSaveNodesSelection: true,
-  _isDataLoaded: false,
-  _contextMenuComponent: null,
-  _treeManagerComponent: null,
-  _rootEntityId: null,
-  _contextMenuActionCode: '',
-  _filter: '',
-  _hostFilter: '',
-  _zIndex: 0,
+  _treeGroupCode = '';
+  _currentNodeId = -1;
+  _allowMultipleNodeSelection = false;
+  _allowGlobalSelection = false;
+  _entityTypeCode = '';
+  _parentEntityId = 0;
+  _actionCode = '';
+  _contextMenuCode = '';
+  _selectedEntitiesIDs = [];
+  _allowSaveNodesSelection = true;
+  _isDataLoaded = false;
+  _contextMenuComponent = null;
+  _treeManagerComponent = null;
+  _rootEntityId = null;
+  _contextMenuActionCode = '';
+  _filter = '';
+  _hostFilter = '';
+  _zIndex = 0;
 
   // eslint-disable-next-line camelcase
   get_treeGroupCode() {
     return this._treeGroupCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_treeGroupCode() {
     window.console.error('TODO: delete this call');
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_entityTypeCode() {
     return this._entityTypeCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_entityTypeCode(value) {
     this._entityTypeCode = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_parentEntityId() {
     return this._parentEntityId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_parentEntityId(value) {
     this._parentEntityId = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_actionCode() {
     return this._actionCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_actionCode(value) {
     this._actionCode = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_allowMultipleNodeSelection() {
     return this._allowMultipleNodeSelection;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_allowMultipleNodeSelection(value) {
     this._allowMultipleNodeSelection = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_allowGlobalSelection() {
     return this._allowGlobalSelection;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_allowGlobalSelection(value) {
     this._allowGlobalSelection = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_selectedEntitiesIDs() {
     return this._selectedEntitiesIDs;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_selectedEntitiesIDs(value) {
     this._selectedEntitiesIDs = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_contextMenuCode() {
     return this._contextMenuCode;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_contextMenuCode(value) {
     this._contextMenuCode = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_treeManager() {
     return this._treeManagerComponent;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_treeManager(value) {
     this._treeManagerComponent = value;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_treeFieldId() {
     return this._treeFieldId;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   set_treeFieldId(value) {
     this._treeFieldId = value;
-  },
+  }
 
-  _onDataBindingHandler: null,
-  _onDataBoundHandler: null,
-  _onNodeClickingHandler: null,
-  _onContextMenuHandler: null,
-  _onNodeContextMenuShowingHandler: null,
-  _onNodeContextMenuItemClickingHandler: null,
-  _onNodeContextMenuHiddenHandler: null,
+  _onDataBindingHandler = null;
+  _onDataBoundHandler = null;
+  _onNodeClickingHandler = null;
+  _onContextMenuHandler = null;
+  _onNodeContextMenuShowingHandler = null;
+  _onNodeContextMenuItemClickingHandler = null;
+  _onNodeContextMenuHiddenHandler = null;
 
   initialize() {
-    Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'initialize');
+    super.initialize();
     $('.fullTextBlock label').removeClass('hidden');
 
     const treeComponent = this._treeComponent;
@@ -220,7 +226,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     const $tree = $(this._treeElement);
     $tree.bind('dataBound', this._onDataBoundHandler);
     if (!$q.isNullOrWhiteSpace(this._contextMenuCode)) {
-      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(
+      const contextMenuComponent = new BackendContextMenu(
         this._contextMenuCode,
         `${this._treeElementId}_ContextMenu`,
         {
@@ -255,15 +261,15 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     this.refreshTree();
-  },
+  }
 
   _getCurrentAction() {
     return $a.getBackendActionByCode(this._actionCode);
-  },
+  }
 
   getNodeByEntityId(entityId, parentNodeElem) {
     return this.getNode(this.convertEntityIdToNodeCode(entityId), parentNodeElem);
-  },
+  }
 
   getNodesByEntitiesIDs(entitiesIds) {
     const selectedNodeElems = [];
@@ -282,10 +288,10 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return selectedNodeElems;
-  },
+  }
 
   getParentNode(node) {
-    let $parentNode = Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'getParentNode', [node]);
+    let $parentNode = super.getParentNode(node);
     if ($q.isNullOrEmpty($parentNode) && $q.isString(node)) {
       const entityTypeCode = this._entityTypeCode;
       const entityId = this.convertNodeCodeToEntityId(node);
@@ -296,7 +302,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return $parentNode;
-  },
+  }
 
   // eslint-disable-next-line max-statements
   getParentNodesByEntitiesIDs(entitiesIds) {
@@ -319,7 +325,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     if (parentNodeCodes.length) {
-      parentNodeCodes = Array.distinct(parentNodeCodes);
+      parentNodeCodes = parentNodeCodes.filter(distinct());
     } else {
       parentNodeCodes = [this.ROOT_NODE_CODE];
     }
@@ -382,7 +388,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     $q.clearArray(parentNodeInfos);
     return $q.toJQuery(parentNodeElems);
-  },
+  }
 
   _isSearchQueryEmpty(searchQuery) {
     const query = searchQuery || this._searchQuery;
@@ -403,7 +409,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return true;
-  },
+  }
 
   _drawData(entities, $parentNode, irn) {
     if ($q.isNullOrEmpty(entities)) {
@@ -434,7 +440,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         }
       }
     });
-  },
+  }
 
   _getEntityChildListSuccess(options, data) {
     if (!this._stopDeferredOperations) {
@@ -452,7 +458,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         $q.callFunction(options.callback);
       }
     }
-  },
+  }
 
   _getEntityChildListError(options, jqXHR) {
     if (!this._stopDeferredOperations) {
@@ -460,7 +466,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       $q.processGenericAjaxError(jqXHR);
       $q.callFunction(options.callback);
     }
-  },
+  }
 
   addNodesToParentNode(parentNode, maxExpandLevel, callback) {
     const $parentNode = this.getNode(parentNode);
@@ -496,7 +502,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     } else {
       $q.callFunction(callback);
     }
-  },
+  }
 
   _refreshNodeInner($node, loadChildNodes, callback) {
     const isRootNode = this.isRootNode($node);
@@ -553,7 +559,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         }
       );
     }
-  },
+  }
 
   removeNode(node) {
     const parentNode = this.getParentNode(node);
@@ -569,12 +575,12 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     if ($node) {
       if ($node.siblings().length) {
-        Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'removeNode', [node]);
+        super.removeNode(node);
       } else {
         this.refreshNode(parentNode, options);
       }
     }
-  },
+  }
 
   selectNode(nodeElem, saveOtherNodesSelection) {
     const $node = this.getNode(nodeElem);
@@ -603,7 +609,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     this._saveNodeSelectionState();
     this._executePostSelectActions();
-  },
+  }
 
   deselectNode(node) {
     const $node = this.getNode(node);
@@ -613,7 +619,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     this._saveNodeSelectionState();
     this._executePostSelectActions();
-  },
+  }
 
   selectNodes(nodeElems) {
     this
@@ -635,7 +641,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     this._saveNodeSelectionState();
     this._executePostSelectActions();
-  },
+  }
 
   selectAllNodes(value) {
     this
@@ -648,7 +654,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     this._saveNodeSelectionState();
     this._executePostSelectActions();
-  },
+  }
 
   isNodeSelected(node) {
     const $node = this.getNode(node);
@@ -658,11 +664,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return isSelected;
-  },
+  }
 
   selectRoot() {
     this.selectNode(this.getNodeByEntityId(this._rootEntityId));
-  },
+  }
 
   convertNodeCodeToEntityId(nodeCode) {
     let entityId = -1;
@@ -673,7 +679,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return entityId;
-  },
+  }
 
   convertEntityIdToNodeCode(entityId) {
     let nodeCode = '';
@@ -684,7 +690,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return nodeCode;
-  },
+  }
 
   getEntityId(nodeElem) {
     let entityId = -1;
@@ -696,7 +702,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return entityId;
-  },
+  }
 
   getEntityName(nodeElem) {
     let entityName = '';
@@ -707,7 +713,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return entityName;
-  },
+  }
 
   getEntitiesFromNodes(nodeElems) {
     const entities = [];
@@ -724,16 +730,16 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     });
 
     return entities;
-  },
+  }
 
   getSelectedEntities() {
     return this.getEntitiesFromNodes(this.getSelectedNodes());
-  },
+  }
 
   checkExistEntityInCurrentPage(entityId) {
     const nodeCode = this.convertEntityIdToNodeCode(entityId);
     return !!this.getNode(nodeCode);
-  },
+  }
 
   searchByTerm(options) {
     if (options && $q.isObject(options)) {
@@ -743,7 +749,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     if (this._treeComponent) {
       this.refreshTree();
     }
-  },
+  }
 
   _saveNodeSelectionState() {
     const that = this;
@@ -760,7 +766,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         Array.add(that._selectedEntitiesIDs, entityId);
       }
     });
-  },
+  }
 
   _restoreNodeSelectionState() {
     const that = this;
@@ -774,11 +780,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     });
 
     this.selectNodes(selectedNodeElems);
-  },
+  }
 
   _resetNodeSelectionState() {
     $q.clearArray(this._selectedEntitiesIDs);
-  },
+  }
 
   fillTreeViewItemFromEntityObject(dataItem, entity) {
     const icon = this._getIcon(entity);
@@ -800,11 +806,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return result;
-  },
+  }
 
   getTreeViewItemFromEntityObject(entity) {
     return this.fillTreeViewItemFromEntityObject({}, entity);
-  },
+  }
 
   fillTreeViewItemCollectionFromEntityObjects(dataItems, entities) {
     const that = this;
@@ -819,13 +825,13 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         Array.add(dataItems, dataItem);
       });
     }
-  },
+  }
 
   getTreeViewItemCollectionFromEntityObjects(entities) {
     const dataItems = [];
     this.fillTreeViewItemCollectionFromEntityObjects(dataItems, entities);
     return dataItems;
-  },
+  }
 
   _extendNodeElement(nodeElem, entity) {
     const $node = this.getNode(nodeElem);
@@ -836,7 +842,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       const $icon = $node.find('> DIV > SPAN.t-in > IMG.t-image');
       $icon.attr('title', entity.LockedByToolTip);
     }
-  },
+  }
 
   _extendNodeElements(parentNodeElem, entities) {
     const that = this;
@@ -847,7 +853,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         that._extendNodeElement($node, entity);
       }
     );
-  },
+  }
 
   _raiseDataBindingEvent() {
     const action = this._getCurrentAction();
@@ -872,7 +878,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
       this._allowSaveNodesSelection = true;
     }
-  },
+  }
 
   _raiseDataBoundEvent() {
     this._isDataLoaded = true;
@@ -887,7 +893,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     this._restoreNodeSelectionState();
-  },
+  }
 
   _executePostSelectActions() {
     if (this.articlesCountId) {
@@ -895,7 +901,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     this._raiseSelectEvent();
-  },
+  }
 
   _raiseSelectEvent() {
     const action = this._getCurrentAction();
@@ -907,7 +913,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       eventArgs.set_parentEntityId(this._parentEntityId);
       this.notify(window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED, eventArgs);
     }
-  },
+  }
 
   _getEntityChildList(entityId, returnSelf, succ, fail) {
     return $o.getEntityChildList({
@@ -920,7 +926,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       selectItemIDs: this._selectedEntitiesIDs,
       searchQuery: this._searchQuery
     }, succ, fail);
-  },
+  }
 
   _getIcon(entity) {
     if ($q.isNullOrEmpty(entity.IconUrl)) {
@@ -937,7 +943,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     return entity.IconUrl;
-  },
+  }
 
   executeAction(node, actionCode) {
     const $node = this.getNode(node);
@@ -969,7 +975,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         }
       } : null;
 
-      const params = new Quantumart.QP8.BackendActionParameters({
+      const params = new BackendActionParameters({
         entityTypeCode: this._entityTypeCode,
         entityId: this.getEntityId($node),
         entityName: this.getEntityName($node),
@@ -980,7 +986,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       params.correct(action);
       const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
       if (this._hostIsWindow) {
-        const message = Quantumart.QP8.Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
+        const message = Backend.getInstance().checkOpenDocumentByEventArgs(eventArgs);
 
         if (message) {
           $q.alertError(message);
@@ -992,11 +998,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         this.notify(window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, eventArgs);
       }
     }
-  },
+  }
 
   _onDataBinding(sender) {
     this.addNodesToParentNode(sender, 0);
-  },
+  }
 
   _onNodeClicking(e) {
     const $element = $(e.currentTarget);
@@ -1010,7 +1016,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     $node.find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_HOVER_CLASS_NAME);
     this.selectNode($node, saveOtherNodesSelection);
     return undefined;
-  },
+  }
 
   beforeCustomNodeCheck(checkbox, isChecked) {
     const that = this;
@@ -1027,7 +1033,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         });
       }
     }
-  },
+  }
 
   _onContextMenu(e) {
     const $element = $(e.currentTarget);
@@ -1038,7 +1044,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     e.preventDefault();
-  },
+  }
 
   _onNodeContextMenuShowing(eventType, sender, args) {
     const menuComponent = args.get_menu();
@@ -1046,21 +1052,21 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     if (!$q.isNullOrEmpty($node) && !$q.isNullOrEmpty(menuComponent)) {
       menuComponent.tuneMenuItems(this._currentNodeId, this._parentEntityId);
     }
-  },
+  }
 
   _onNodeContextMenuItemClicking(eventType, sender, args) {
     const $menuItem = $(args.get_menuItem());
     if (!$q.isNullOrEmpty($menuItem)) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
-  },
+  }
 
   _onNodeContextMenuHidden() {
     if (!$q.isNullOrEmpty(this._contextMenuActionCode)) {
       this.executeAction(this.getNode(this._currentNodeId), this._contextMenuActionCode);
       this._contextMenuActionCode = null;
     }
-  },
+  }
 
   dispose() {
     this._stopDeferredOperations = true;
@@ -1110,8 +1116,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       '_onNodeContextMenuHiddenHandler'
     ]);
 
-    Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'dispose');
+    super.dispose();
   }
-};
+}
 
-Quantumart.QP8.BackendEntityTree.registerClass('Quantumart.QP8.BackendEntityTree', Quantumart.QP8.BackendTreeBase);
+
+Quantumart.QP8.BackendEntityTree = BackendEntityTree;

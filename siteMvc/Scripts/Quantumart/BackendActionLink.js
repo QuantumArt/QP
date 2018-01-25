@@ -1,111 +1,115 @@
+import { Observable } from './Common/Observable';
+import { $a, BackendActionParameters } from './BackendActionExecutor';
+import { $q } from './Utils';
+
 window.EVENT_TYPE_ACTION_LINK_CLICK = 'OnActionLinkClick';
 window.EVENT_TYPE_ACTION_LINK_SELF_CLICK = 'OnActionLinkSelfClick';
 
-Quantumart.QP8.BackendActionLink = function (actionLinkElementId, options) {
-  Quantumart.QP8.BackendActionLink.initializeBase(this);
+export class BackendActionLink extends Observable {
+  constructor(actionLinkElementId, options) {
+    super();
 
-  this._actionLinkElementId = actionLinkElementId;
-  if ($q.isObject(options)) {
-    if (options.entityId) {
-      this._entityId = options.entityId;
+    this._actionLinkElementId = actionLinkElementId;
+    if ($q.isObject(options)) {
+      if (options.entityId) {
+        this._entityId = options.entityId;
+      }
+
+      if (options.entityName) {
+        this._entityName = options.entityName;
+      }
+
+      if (options.parentEntityId) {
+        this._parentEntityId = options.parentEntityId;
+      }
+
+      if (options.actionTypeCode) {
+        this._actionTypeCode = options.actionTypeCode;
+      }
+
+      if (options.actionCode) {
+        this._actionCode = options.actionCode;
+      }
+
+      if (options.context) {
+        this._context = options.context;
+      }
+
+      if ($q.isNull(options.actionTargetType)) {
+        this._actionTargetType = Quantumart.QP8.Enums.ActionTargetType.NewTab;
+      } else {
+        this._actionTargetType = options.actionTargetType;
+      }
     }
 
-    if (options.entityName) {
-      this._entityName = options.entityName;
-    }
-
-    if (options.parentEntityId) {
-      this._parentEntityId = options.parentEntityId;
-    }
-
-    if (options.actionTypeCode) {
-      this._actionTypeCode = options.actionTypeCode;
-    }
-
-    if (options.actionCode) {
-      this._actionCode = options.actionCode;
-    }
-
-    if (options.context) {
-      this._context = options.context;
-    }
-
-    if ($q.isNull(options.actionTargetType)) {
-      this._actionTargetType = Quantumart.QP8.Enums.ActionTargetType.NewTab;
-    } else {
-      this._actionTargetType = options.actionTargetType;
-    }
+    this._onActionExecutingHandler = jQuery.proxy(this.onActionExecuting, this);
   }
 
-  this._onActionExecutingHandler = jQuery.proxy(this.onActionExecuting, this);
-};
+  _actionLinkElementId = '';
+  _actionLinkElement = null;
+  _iconWrapperElement = null;
+  _captionElement = null;
+  _entityId = 0;
+  _entityName = '';
+  _parentEntityId = 0;
+  _actionTypeCode = '';
+  _actionCode = '';
+  _actionTargetType = null;
+  _context = null;
 
-Quantumart.QP8.BackendActionLink.prototype = {
-  _actionLinkElementId: '',
-  _actionLinkElement: null,
-  _iconWrapperElement: null,
-  _captionElement: null,
-  _entityId: 0,
-  _entityName: '',
-  _parentEntityId: 0,
-  _actionTypeCode: '',
-  _actionCode: '',
-  _actionTargetType: null,
-  _context: null,
-
-  ACTION_LINK_DISABLED_CLASS_NAME: 'disabled',
-  ACTION_LINK_BUSY_CLASS_NAME: 'busy',
+  ACTION_LINK_DISABLED_CLASS_NAME = 'disabled';
+  ACTION_LINK_BUSY_CLASS_NAME = 'busy';
 
   get_entityId() { // eslint-disable-line camelcase
     return this._entityId;
-  },
+  }
 
   set_entityId(value) { // eslint-disable-line camelcase
     this._entityId = value;
-  },
+  }
 
   get_entityName() { // eslint-disable-line camelcase
     return this._entityName;
-  },
+  }
 
   set_entityName(value) { // eslint-disable-line camelcase
     this._entityName = value;
-  },
+  }
 
   get_parentEntityId() { // eslint-disable-line camelcase
     return this._parentEntityId;
-  },
+  }
 
   set_parentEntityId(value) { // eslint-disable-line camelcase
     this._parentEntityId = value;
-  },
+  }
 
   get_actionTypeCode() { // eslint-disable-line camelcase
     return this._actionTypeCode;
-  },
+  }
 
   set_actionTypeCode(value) { // eslint-disable-line camelcase
     this._actionTypeCode = value;
-  },
+  }
 
   get_actionCode() { // eslint-disable-line camelcase
     return this._actionCode;
-  },
+  }
 
   set_actionCode(value) { // eslint-disable-line camelcase
     this._actionCode = value;
-  },
+  }
 
   get_actionTargetType() { // eslint-disable-line camelcase
     return this._actionTargetType;
-  },
+  }
 
   set_actionTargetType(value) { // eslint-disable-line camelcase
     this._actionTargetType = value;
-  },
+  }
 
 
-  _onActionExecutingHandler: null,
+  _onActionExecutingHandler = null;
 
   initialize() {
     const $actionLink = jQuery(`#${this._actionLinkElementId}`);
@@ -117,7 +121,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
     this._captionElement = $caption.get(0);
 
     this._attachActionLinkEventHandlers();
-  },
+  }
 
   _attachActionLinkEventHandlers() {
     let $link = jQuery(this._actionLinkElement);
@@ -125,7 +129,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
     $link.bind('mouseup', this._onActionExecutingHandler);
 
     $link = null;
-  },
+  }
 
   _detachActionLinkEventHandlers() {
     let $link = jQuery(this._actionLinkElement);
@@ -133,21 +137,21 @@ Quantumart.QP8.BackendActionLink.prototype = {
     $link.unbind('mouseup', this._onActionExecutingHandler);
 
     $link = null;
-  },
+  }
 
   markActionLinkAsBusy() {
     let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').addClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
-  },
+  }
 
   unmarkActionLinkAsBusy() {
     let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').removeClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
     $link = null;
-  },
+  }
 
   isActionLinkBusy() {
     let $link = jQuery(this._actionLinkElement);
@@ -156,21 +160,21 @@ Quantumart.QP8.BackendActionLink.prototype = {
     $link = null;
 
     return isBusy;
-  },
+  }
 
   enableActionLink() {
     let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').removeClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
 
     $link = null;
-  },
+  }
 
   disableActionLink() {
     let $link = jQuery(this._actionLinkElement);
     $link.find('A:first').addClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
 
     $link = null;
-  },
+  }
 
   isActionLinkDisabled() {
     let $link = jQuery(this._actionLinkElement);
@@ -179,7 +183,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
     $link = null;
 
     return isDisabled;
-  },
+  }
 
   onActionExecuting(e) {
     e.preventDefault();
@@ -193,7 +197,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
         const actionCode = this._actionCode;
         const action = $a.getBackendActionByCode(actionCode);
         if (action) {
-          let params = new Quantumart.QP8.BackendActionParameters({
+          let params = new BackendActionParameters({
             entityId: this._entityId,
             entityName: this._entityName,
             parentEntityId: this._parentEntityId,
@@ -220,10 +224,10 @@ Quantumart.QP8.BackendActionLink.prototype = {
         }
       }
     }
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendActionLink.callBaseMethod(this, 'dispose');
+    super.dispose();
 
     this._detachActionLinkEventHandlers();
 
@@ -239,6 +243,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
 
     $q.collectGarbageInIE();
   }
-};
+}
 
-Quantumart.QP8.BackendActionLink.registerClass('Quantumart.QP8.BackendActionLink', Quantumart.QP8.Observable);
+
+Quantumart.QP8.BackendActionLink = BackendActionLink;

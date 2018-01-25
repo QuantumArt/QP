@@ -104,8 +104,6 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Scripts\jquery-1.7.1.js" />
-    <Content Include="Scripts\json2.js" />
-    <Content Include="Scripts\json2.min.js" />
     <Content Include="Scripts\pmrpc.js" />
     <Content Include="Scripts\QP8BackendApi.Interaction.js" />
     <Content Include="Web.config" />
@@ -154,4 +152,3 @@
     </VisualStudio>
   </ProjectExtensions>
 </Project>
-
