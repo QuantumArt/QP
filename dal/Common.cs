@@ -2126,7 +2126,7 @@ namespace Quantumart.QP8.DAL
             AddDynamicColumnsToQuery(sqlConnection, options, selectBuilder, fromBuilder, Default.MaxViewInListFieldLength + 1);
 
             var useFullText = AddFullTextFilteringToQuery(sqlConnection, options.FullTextSearch, options.ContentId, options.ExtensionContentIds, fromBuilder);
-            AddLinkFilteringToQuery(options.LinkFilters, whereBuilder, sqlParams);
+            AddLinkFilteringToQuery(options.LinkFilters, whereBuilder, sqlParams, fieldMap, referenceMap);
             AddRelationSecurityFilteringToQuery(sqlConnection, options, fromBuilder, whereBuilder);
             if (options.FilterIds != null && options.FilterIds.Any())
             {
@@ -2161,7 +2161,12 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static void AddLinkFilteringToQuery(IEnumerable<ArticleLinkSearchParameter> linkFilters, StringBuilder whereBuilder, ICollection<SqlParameter> sqlParams)
+        public static void AddLinkFilteringToQuery(
+            IEnumerable<ArticleLinkSearchParameter> linkFilters,
+            StringBuilder whereBuilder,
+            ICollection<SqlParameter> sqlParams,
+            IDictionary<int, string> fieldMap = null,
+            IDictionary<int, string> referenceMap = null)
         {
             if (linkFilters == null)
             {
@@ -2171,10 +2176,10 @@ namespace Quantumart.QP8.DAL
             foreach (var linkFilter in linkFilters)
             {
                 var tableAlias = "c";
-                if (linkFilter.ExtensionContentId != 0)
+                if (fieldMap != null && fieldMap.ContainsKey(linkFilter.ExtensionContentId))
                 {
                     tableAlias += "_" + linkFilter.ExtensionContentId;
-                    if (linkFilter.ReferenceFieldId != 0)
+                    if (referenceMap != null && referenceMap.ContainsKey(linkFilter.ReferenceFieldId))
                     {
                         tableAlias += "_" + linkFilter.ReferenceFieldId;
                     }
@@ -2618,21 +2623,27 @@ namespace Quantumart.QP8.DAL
                 case ContentSelectMode.ForUnion:
                     filterBuilder.AppendFormat("((C.SITE_ID = {0} or c.is_shared = 1) AND VIRTUAL_TYPE IN (0, 1))", options.SiteId);
                     break;
+
                 case ContentSelectMode.ForJoin:
                     filterBuilder.AppendFormat("((C.SITE_ID = {0} or c.is_shared = 1) AND VIRTUAL_TYPE = 0)", options.SiteId);
                     break;
+
                 case ContentSelectMode.ForField:
                     filterBuilder.AppendFormat("(C.SITE_ID = {0})", options.SiteId);
                     break;
+
                 case ContentSelectMode.ForContainer:
                     filterBuilder.AppendFormat("(C.SITE_ID = {0} or c.is_shared = 1) ", options.SiteId);
                     break;
+
                 case ContentSelectMode.ForForm:
                     filterBuilder.AppendFormat("((C.SITE_ID = {0} or c.is_shared = 1) AND c.VIRTUAL_TYPE = 0) ", options.SiteId);
                     break;
+
                 case ContentSelectMode.ForCustomAction:
                     filterBuilder.AppendFormat("1 = 1");
                     break;
+
                 default:
                     if (options.SiteId.HasValue)
                     {
@@ -6651,7 +6662,6 @@ namespace Quantumart.QP8.DAL
                                          ,doc.col.value('./@destinationId', 'int') destination_content_id
                                         from @xmlprmsContents.nodes('/items/item') doc(col)
 
-
                                 declare @xmlprmsStatuses xml = '{relationsBetweenStatusesXml}'
 
                                 declare @relations_between_statuses table (
@@ -6915,8 +6925,6 @@ namespace Quantumart.QP8.DAL
                                         on ca.ATTRIBUTE_TYPE_ID = at.ATTRIBUTE_TYPE_ID
                                     left join @relations_between_attributes ra1 on CAST(ra1.source_attribute_id as nvarchar) = cd.DATA;
 
-
-
                                 declare @ids varchar(max)
                                 select @ids = COALESCE(@ids + ', ', '') + CAST(destination_content_item_id as nvarchar) from @relations_between_content_items
                                 if @ids is not null
@@ -7022,7 +7030,6 @@ namespace Quantumart.QP8.DAL
                             select doc.col.value('./@oldId', 'int') olditemid
                                      ,doc.col.value('./@newId', 'int') newitemid
                                     from @xmlprms.nodes('/item') doc(col)
-
 
                             ;with relations_between_workflows
                                     as
@@ -7241,7 +7248,7 @@ namespace Quantumart.QP8.DAL
                                         from @xmlprmsLinks.nodes('/items/item') doc(col)
 
                                 declare @i int, @count int, @link_id numeric
-	
+
 	                                set @i = 1
 	                                select @count = count(id) from @relations_between_links
 
@@ -7482,7 +7489,6 @@ namespace Quantumart.QP8.DAL
         {
             const string query = @"declare @todaysDate datetime
                                     set @todaysDate = GETDATE()
-
 
                                     declare @relations_between_folders table(
                                         old_folder_id int,
@@ -7798,7 +7804,6 @@ namespace Quantumart.QP8.DAL
                                          ,doc.col.value('./@destinationId', 'int') destination_content_id
                                         from @xmlprms.nodes('/items/item') doc(col)
 
-
                                     ;with relations_between_workflows
                                     as
                                     (
@@ -7998,7 +8003,6 @@ namespace Quantumart.QP8.DAL
                                output src.[content_id], inserted.content_id, inserted.virtual_type, inserted.query, inserted.alt_query
                                 into @newvirtualcontents;
 
-
                             select  content_id_old
                                 , content_id_new
                                 , virtual_type
@@ -8082,7 +8086,6 @@ namespace Quantumart.QP8.DAL
                                 delete from [dbo].[page_template]
                                 where SITE_ID = @newSiteId
                             end
-
 
                             declare @new_templates table(new_template_id int)
                             ;with templates_with_row_number as
@@ -8193,7 +8196,6 @@ namespace Quantumart.QP8.DAL
                                   ,[send_nocache_headers]
                             from templates_with_row_number as pt
                             where row_number = @templateNumber
-
 
                             select new_template_id from @new_templates";
 
@@ -8322,7 +8324,6 @@ namespace Quantumart.QP8.DAL
                                   ,[permanent_lock]
                             from [dbo].[page] as p (nolock)
                             inner join relations_between_templates as rbt on p.page_template_id = rbt.source_page_template_id
-
 
                             select page_id, page_template_id from @new_pages_added";
 
@@ -8800,7 +8801,6 @@ namespace Quantumart.QP8.DAL
                         where c.site_id = @source_site_id and {(isContentsVirtual ? "c.virtual_type != 0" : "c.virtual_type = 0")}
                     ) as rbc on ca.CONTENT_ID = rbc.source_content_id and rbc.destination_content_id in (select id from @content_ids)
 
-
                     if exists(select * from sys.procedures where name = 'qp_content_new_views_recreate')
                     begin
                         declare @content_id numeric
@@ -8816,7 +8816,6 @@ namespace Quantumart.QP8.DAL
                     end
 
                     drop table #disable_create_new_views
-
 
             end";
             using (var cmd = new SqlCommand(query, sqlConnection))
@@ -9180,7 +9179,6 @@ namespace Quantumart.QP8.DAL
                                     select doc.col.value('./@sourceId', 'int') source_content_id
                                      ,doc.col.value('./@destinationId', 'int') destination_content_id
                                     from @xmlprmsContents.nodes('/items/item') doc(col)
-
 
                                 ;with relations_between_folders as (
                                   SELECT cf.folder_id as source_folder_id, cf1.folder_id as destination_folder_id
