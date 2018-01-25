@@ -1,0 +1,32 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "allowJs": true,
+    "alwaysStrict": true,
+    "baseUrl": "Scripts/Quantumart",
+    "checkJs": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es5",
+      "es2015.promise",
+      "scripthost"
+    ],
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "sourceMap": true,
+    "target": "es5"
+  },
+  "include": [
+    "Scripts/Quantumart/**/*",
+    "Scripts/**/*.d.ts"
+  ],
+  "exclude": [
+    "Scripts/Quantumart/ckeditor/*/*/**/*"
+  ]
+}

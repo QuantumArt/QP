@@ -1,14 +1,32 @@
-Quantumart.QP8.BackendVirtualFieldTree = class BackendVirtualFieldTree extends Quantumart.QP8.BackendEntityTree {
+import { BackendEntityTree } from '../Tree/BackendEntityTree';
+import { $q } from '../Utils';
+
+export class BackendVirtualFieldTree extends BackendEntityTree {
   static _getIcon(entity) {
     return entity.IconUrl;
   }
 
-  constructor(...props) {
-    super(...props);
-    const [,,,,, options] = props;
-    this._virtualContentId = options
-      ? options.virtualContentId
-      : null;
+  // eslint-disable-next-line max-params
+  constructor(
+    treeGroupCode,
+    treeElementId,
+    entityTypeCode,
+    parentEntityId,
+    actionCode,
+    options,
+    hostOptions
+  ) {
+    super(
+      treeGroupCode,
+      treeElementId,
+      entityTypeCode,
+      parentEntityId,
+      actionCode,
+      options,
+      hostOptions
+    );
+
+    this._virtualContentId = options ? options.virtualContentId : null;
   }
 
   convertNodeCodeToEntityId(nodeCode) {
@@ -46,4 +64,6 @@ Quantumart.QP8.BackendVirtualFieldTree = class BackendVirtualFieldTree extends Q
       );
     }
   }
-};
+}
+
+Quantumart.QP8.BackendVirtualFieldTree = BackendVirtualFieldTree;

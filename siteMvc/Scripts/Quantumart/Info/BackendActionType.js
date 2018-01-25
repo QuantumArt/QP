@@ -1,9 +1,15 @@
-Quantumart.QP8.BackendActionType = function () {
-  // empty constructor
-};
-Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actionCode) {
+import { GlobalCache } from '../Cache';
+import { $q } from '../Utils';
+
+export class BackendActionType {
+  // eslint-disable-next-line no-useless-constructor, FIXME
+  constructor() {
+    // empty constructor
+  }
+}
+BackendActionType.getActionTypeCodeByActionCode = function (actionCode) {
   const cacheKey = `ActionTypeCodeByActionCode_${actionCode}`;
-  let actionTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
+  let actionTypeCode = GlobalCache.getItem(cacheKey);
 
   if (!actionTypeCode) {
     $q.getJsonFromUrl(
@@ -21,10 +27,11 @@ Quantumart.QP8.BackendActionType.getActionTypeCodeByActionCode = function (actio
       }
     );
 
-    Quantumart.QP8.Cache.addItem(cacheKey, actionTypeCode);
+    GlobalCache.addItem(cacheKey, actionTypeCode);
   }
 
   return actionTypeCode;
 };
 
-Quantumart.QP8.BackendActionType.registerClass('Quantumart.QP8.BackendActionType');
+
+Quantumart.QP8.BackendActionType = BackendActionType;

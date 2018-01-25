@@ -1,4 +1,6 @@
-Quantumart.QP8.BackendUserAndGroupSearchBlock = class BackendUserAndGroupSearchBlock {
+import { $c } from '../ControlHelpers';
+
+export class BackendUserAndGroupSearchBlock {
   constructor(searchBlockElementId, onApplyFilter) {
     this.onApplyFilter = onApplyFilter;
     this.$searchBlock = $(`#${searchBlockElementId}`);
@@ -43,4 +45,6 @@ Quantumart.QP8.BackendUserAndGroupSearchBlock = class BackendUserAndGroupSearchB
     $('li input', this.$radioGroup).off();
     this.$btnSearch.off();
   }
-};
+}
+
+Quantumart.QP8.BackendUserAndGroupSearchBlock = BackendUserAndGroupSearchBlock;

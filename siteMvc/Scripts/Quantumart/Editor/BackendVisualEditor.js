@@ -1,3 +1,5 @@
+import { $q } from '../Utils';
+
 /* global CKEDITOR */
 /* eslint camelcase: ["off", { properties: "never"}] */
 
@@ -41,7 +43,7 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
     contentsCss: opts.contentsCss,
     stylesSet: opts.stylesSet,
     toolbar: opts.toolbar,
-    specialChars: window.CKEDITOR.config.specialChars.concat([
+    specialChars: CKEDITOR.config.specialChars.concat([
       ['&#36;', 'Доллар США'],
       ['&#8364;', 'Евро'],
       ['&#8381;', 'Российский рубль'],
@@ -58,7 +60,7 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
   opts.extraPlugins.forEach(pl => {
     config.extraPlugins += `,${pl.name}`;
     if (pl.url) {
-      window.CKEDITOR.plugins.addExternal(pl.name, pl.url, 'plugin.js');
+      CKEDITOR.plugins.addExternal(pl.name, pl.url, 'plugin.js');
     }
   });
 
@@ -66,7 +68,7 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
     config[`format_${fs.element}`] = fs;
   });
 
-  config.listItems = Object.assign({}, window.CKEDITOR.dtd.$listItem, {
+  config.listItems = Object.assign({}, CKEDITOR.dtd.$listItem, {
     dd: 1,
     dt: 1,
     li: 1
@@ -81,7 +83,7 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
         delete CKEDITOR.dtd.$intermediate[key];
       } else {
         CKEDITOR.dtd.$listItem[key] = 1;
-        window.CKEDITOR.dtd.$intermediate[key] = 1;
+        CKEDITOR.dtd.$intermediate[key] = 1;
       }
     });
   });
@@ -90,16 +92,16 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
     instanceReady(ev) {
       ev.editor.filter.addElementCallback(el => {
         if (el.name === 'table' || el.name === 'img') {
-          return window.CKEDITOR.FILTER_SKIP_TREE;
+          return CKEDITOR.FILTER_SKIP_TREE;
         }
 
         return undefined;
       });
 
       Object.keys(Object.assign({},
-        window.CKEDITOR.dtd.$nonBodyContent,
-        window.CKEDITOR.dtd.$block,
-        window.CKEDITOR.dtd.$tableContent,
+        CKEDITOR.dtd.$nonBodyContent,
+        CKEDITOR.dtd.$block,
+        CKEDITOR.dtd.$tableContent,
         config.listItems
       )).forEach(function setIndenting(key) {
         this.dataProcessor.writer.setRules(key, {
@@ -161,42 +163,33 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
   return config;
 };
 
-Quantumart.QP8.BackendVisualEditor = function BackendVisualEditor(componentElem) {
-  const $componentElem = $(componentElem);
-  this._$containerElem = $('.visualEditorContainer', $componentElem);
-  this._componentElem = $componentElem.get(0);
-  this._editorElem = $('.visualEditor', $componentElem).get(0);
-};
-
-Quantumart.QP8.BackendVisualEditor.DATA_KEY_COMPONENT = 've_data_key';
-Quantumart.QP8.BackendVisualEditor.getComponent = function getComponent(editorElem) {
-  if (editorElem) {
-    return $(editorElem).data(Quantumart.QP8.BackendVisualEditor.DATA_KEY_COMPONENT);
+export class BackendVisualEditor {
+  constructor(componentElem) {
+    const $componentElem = $(componentElem);
+    this._$containerElem = $('.visualEditorContainer', $componentElem);
+    this._componentElem = $componentElem.get(0);
+    this._editorElem = $('.visualEditor', $componentElem).get(0);
   }
 
-  return undefined;
-};
-
-Quantumart.QP8.BackendVisualEditor.prototype = {
-  _componentElem: null,
-  _editorElem: null,
-  _$containerElem: null,
-  _onChangeDataInDesignModeHandlerProxy: null,
-  _isInitialized: false,
-  _$expandLink: null,
-  _$collapseLink: null,
-  _$textEditorLink: null,
-  _$visualEditorLink: null,
-  _siteId: null,
-  _fieldId: null,
-  _isExpanded: null,
-  _isTextEditor: null,
-  _storedTempValue: '',
-  _checkIntervalID: null,
+  _componentElem = null;
+  _editorElem = null;
+  _$containerElem = null;
+  _onChangeDataInDesignModeHandlerProxy = null;
+  _isInitialized = false;
+  _$expandLink = null;
+  _$collapseLink = null;
+  _$textEditorLink = null;
+  _$visualEditorLink = null;
+  _siteId = null;
+  _fieldId = null;
+  _isExpanded = null;
+  _isTextEditor = null;
+  _storedTempValue = '';
+  _checkIntervalID = null;
 
   initialize() {
     const that = this;
-    $(this._componentElem).data(Quantumart.QP8.BackendVisualEditor.DATA_KEY_COMPONENT, this);
+    $(this._componentElem).data(BackendVisualEditor.DATA_KEY_COMPONENT, this);
     this._onChangeDataInDesignModeHandlerProxy = this._onChangeDataInDesignModeHandler.bind(this);
 
     this._$expandLink = $('.visualEditorToolbar LI.expand', this._componentElem);
@@ -220,7 +213,7 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
           if (instance) {
             that.disposeCKEditor(false);
           }
-          window.CKEDITOR.replace(that._editorElem.id, getCkEditorConfig(that, data));
+          CKEDITOR.replace(that._editorElem.id, getCkEditorConfig(that, data));
         });
       }
 
@@ -243,11 +236,11 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
     } else if (this._isExpanded) {
       this._$expandLink.trigger('click');
     }
-  },
+  }
 
   getCkEditor() {
-    return window.CKEDITOR.instances[this._editorElem.id];
-  },
+    return CKEDITOR.instances[this._editorElem.id];
+  }
 
   saveVisualEditorData() {
     const editor = this.getCkEditor();
@@ -255,13 +248,13 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
     if (editor) {
       editor.updateElement();
     }
-  },
+  }
 
   getZIndex() {
     const $window = $(this._componentElem).closest('.t-window');
     const zIndex = $window.length > 0 ? parseInt($window.css('zIndex'), 10) : 0;
     return zIndex + 10000;
-  },
+  }
 
   dispose() {
     this.disposeCKEditor(false);
@@ -282,7 +275,7 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
       '_$visualEditorLink',
       '_$containerElem'
     ]);
-  },
+  }
 
   disposeCKEditor(noUpdate) {
     if (this._checkIntervalID) {
@@ -313,7 +306,7 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
     }
 
     $editor.removeData();
-  },
+  }
 
   _onCheckChangesIntervalHandler() {
     let $field;
@@ -332,7 +325,7 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
         }
       }
     }
-  },
+  }
 
   _onChangeDataInDesignModeHandler() {
     const editor = this.getCkEditor();
@@ -344,17 +337,17 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
 
       $(`#${editor.name}`).addClass(window.CHANGED_FIELD_CLASS_NAME);
     }
-  },
+  }
 
   _onChangeDataInSourceModeHandler() {
     $(`#${this.getCkEditor().name}`).addClass(window.CHANGED_FIELD_CLASS_NAME);
-  },
+  }
 
   _destroyVisualEditorWindow($editor, dataName) {
     if ($editor.data(dataName)) {
       $editor.data(dataName).dispose();
     }
-  },
+  }
 
   _onCKEEditorInitialized(sender) {
     const that = this;
@@ -385,6 +378,16 @@ Quantumart.QP8.BackendVisualEditor.prototype = {
       this._$expandLink.hide();
     }
   }
+}
+
+BackendVisualEditor.DATA_KEY_COMPONENT = 've_data_key';
+BackendVisualEditor.getComponent = function getComponent(editorElem) {
+  if (editorElem) {
+    return $(editorElem).data(BackendVisualEditor.DATA_KEY_COMPONENT);
+  }
+
+  return undefined;
 };
 
-Quantumart.QP8.BackendVisualEditor.registerClass('Quantumart.QP8.BackendVisualEditor', null, Sys.IDisposable);
+
+Quantumart.QP8.BackendVisualEditor = BackendVisualEditor;

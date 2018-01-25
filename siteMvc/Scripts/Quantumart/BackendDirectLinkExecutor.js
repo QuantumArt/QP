@@ -1,23 +1,27 @@
+import { Observable } from './Common/Observable';
+import { $a, BackendActionParameters } from './BackendActionExecutor';
+import { $q } from './Utils';
+
 window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING = 'OnDirectLinkActionExecuting';
 
-Quantumart.QP8.DirectLinkExecutor = function (currentCustomerCode, directLinkOptions) {
-  Quantumart.QP8.DirectLinkExecutor.initializeBase(this);
+export class DirectLinkExecutor extends Observable {
+  constructor(currentCustomerCode, directLinkOptions) {
+    super();
 
-  this._currentCustomerCode = currentCustomerCode;
-  this._urlLinkParams = directLinkOptions;
-  this._uid = new Date().getTime();
-};
+    this._currentCustomerCode = currentCustomerCode;
+    this._urlLinkParams = directLinkOptions;
+    this._uid = new Date().getTime();
+  }
 
-Quantumart.QP8.DirectLinkExecutor.prototype = {
-  LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG: 'Quantumart.QP8.DirectLinkExecutor.BackendIsAllreadyExists',
-  LOCAL_STORAGE_KEY_OBSERVABLE_ITEM: 'Quantumart.QP8.DirectLinkExecutor.DirectLinkData',
-  LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE: 'Quantumart.QP8.DirectLinkExecutor.ExistingRespose',
-  LOCAL_STORAGE_KEY_SENT_KEY_NAME: 'Quantumart.QP8.DirectLinkExecutor.LastKeyName',
+  LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG = 'Quantumart.QP8.DirectLinkExecutor.BackendIsAllreadyExists';
+  LOCAL_STORAGE_KEY_OBSERVABLE_ITEM = 'Quantumart.QP8.DirectLinkExecutor.DirectLinkData';
+  LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE = 'Quantumart.QP8.DirectLinkExecutor.ExistingRespose';
+  LOCAL_STORAGE_KEY_SENT_KEY_NAME = 'Quantumart.QP8.DirectLinkExecutor.LastKeyName';
 
-  _currentCustomerCode: null,
-  _urlLinkParams: null,
-  _imFirst: false,
-  _uid: null,
+  _currentCustomerCode = null;
+  _urlLinkParams = null;
+  _imFirst = false;
+  _uid = null;
 
   _onDirectLinkOpenRequested(e) {
     if ($q.isNullOrEmpty(e.key)) {
@@ -39,9 +43,9 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
         this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE, 'true');
       }
     }
-  },
+  }
 
-  _onDirectLinkOpenRequestedHandler: null,
+  _onDirectLinkOpenRequestedHandler = null;
 
   _executeAction(actionParams, byRequest) {
     const newParams = Object.assign({}, actionParams);
@@ -56,7 +60,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
           if ($q.isNullOrEmpty(action)) {
             $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
           } else {
-            const params = new Quantumart.QP8.BackendActionParameters({
+            const params = new BackendActionParameters({
               entityTypeCode: newParams.entityTypeCode,
               entityId: newParams.entityId,
               parentEntityId: newParams.parentEntityId
@@ -75,7 +79,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
         window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM);
       }
     }
-  },
+  }
 
   _send(type, message) {
     window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
@@ -83,10 +87,11 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     if ('onstorage' in document) {
       window.localStorage.setItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME, type);
     }
-  },
+  }
 
   _instanceExistenceCheck() {
-    const dfr = new jQuery.Deferred();
+    // eslint-disable-next-line new-cap
+    const dfr = jQuery.Deferred();
     if (window.localStorage.getItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG)) {
       this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, this._uid);
       const that = this;
@@ -100,15 +105,15 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     }
 
     return dfr.promise();
-  },
+  }
 
   _registerInstance() {
     this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, 'true');
-  },
+  }
 
   _unregisterInstance() {
     window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG);
-  },
+  }
 
   ready(callback) {
     this._instanceExistenceCheck().done(function (instanceExists) {
@@ -143,7 +148,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
         }
       }
     });
-  },
+  }
 
   dispose() {
     if (this._imFirst) {
@@ -159,6 +164,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
       }
     }
   }
-};
+}
 
-Quantumart.QP8.DirectLinkExecutor.registerClass('Quantumart.QP8.DirectLinkExecutor', Quantumart.QP8.Observable);
+
+Quantumart.QP8.DirectLinkExecutor = DirectLinkExecutor;

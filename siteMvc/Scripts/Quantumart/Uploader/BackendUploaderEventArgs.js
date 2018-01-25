@@ -1,4 +1,4 @@
-class BackendUploaderEventArgs extends Sys.EventArgs {
+export class BackendUploaderEventArgs extends Sys.EventArgs {
   constructor(fileNames) {
     super();
     this._fileNames = fileNames || [];

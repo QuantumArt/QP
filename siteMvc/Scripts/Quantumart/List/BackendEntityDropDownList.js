@@ -1,16 +1,18 @@
-// eslint-disable-next-line max-params
-Quantumart.QP8.BackendEntityDropDownList = function (
-  listGroupCode,
-  listElementId,
-  entityTypeCode,
-  parentEntityId,
-  entityId,
-  listType,
-  options
-) {
-  Quantumart.QP8.BackendEntityDropDownList.initializeBase(
-    this,
-    [
+import { BackendEntityDataListBase } from './BackendEntityDataListBase';
+import { $q } from '../Utils';
+
+export class BackendEntityDropDownList extends BackendEntityDataListBase {
+  // eslint-disable-next-line max-params
+  constructor(
+    listGroupCode,
+    listElementId,
+    entityTypeCode,
+    parentEntityId,
+    entityId,
+    listType,
+    options
+  ) {
+    super(
       listGroupCode,
       listElementId,
       entityTypeCode,
@@ -18,32 +20,30 @@ Quantumart.QP8.BackendEntityDropDownList = function (
       entityId,
       listType,
       options
-    ]
-  );
+    );
 
-  this._allowMultipleItemSelection = false;
-  this._selectionMode = Quantumart.QP8.Enums.ListSelectionMode.AllItems;
-};
+    this._allowMultipleItemSelection = false;
+    this._selectionMode = Quantumart.QP8.Enums.ListSelectionMode.AllItems;
+  }
 
-Quantumart.QP8.BackendEntityDropDownList.prototype = {
   initialize() {
-    Quantumart.QP8.BackendEntityDropDownList.callBaseMethod(this, 'initialize');
+    super.initialize();
     this._addReadButtonToToolbar();
     this._addNewButtonToToolbar();
     this._attachListItemEventHandlers();
-  },
+  }
 
   _attachListItemEventHandlers() {
     $(this._listElement).bind('change', $.proxy(this._onSelectedItemChangeHandler, this));
-  },
+  }
 
   _detachListItemEventHandlers() {
     $(this._listElement).unbind('change');
-  },
+  }
 
   getSelectedListItems() {
     return $(this._listElement).find("OPTION[value!='']:selected");
-  },
+  }
 
   getSelectedEntities() {
     const entities = [];
@@ -56,11 +56,11 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
     }
 
     return entities;
-  },
+  }
 
   getSelectedEntityIDs() {
     return $.grep(this.getSelectedEntities().map(item => $q.toString(item.Id)), i => i);
-  },
+  }
 
   selectEntities(entityID) {
     this.deselectAllListItems();
@@ -71,15 +71,15 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
         $(this._listElement).find(`OPTION[value="${$q.toString(entityID, '')}"]`).prop('selected', true).change();
       }
     }
-  },
+  }
 
   deselectAllListItems() {
     $(this._listElement).find('OPTION:selected').prop('selected', false).change();
-  },
+  }
 
   _checkAllowShowingToolbar() {
     return this._addNewActionCode !== window.ACTION_CODE_NONE || this._readActionCode !== window.ACTION_CODE_NONE;
-  },
+  }
 
   _refreshListInner(dataItems, refreshOnly) {
     const $list = $(this._listElement);
@@ -107,17 +107,17 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
         { fieldName: $list.data('list_item_name'), value, contentFieldName: $list.data('content_field_name') }
       );
     }
-  },
+  }
 
   enableList() {
     $(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', false);
     this._enableAllToolbarButtons();
-  },
+  }
 
   disableList() {
     $(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME).prop('disabled', true);
     this._disableAllToolbarButtons();
-  },
+  }
 
   makeReadonly() {
     const $listElement = $(this._listElement);
@@ -132,7 +132,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
     }
 
     this.disableList();
-  },
+  }
 
   _getDropDownListItemHtml(html, dataItem, saveChanges, listState) {
     const itemValue = dataItem.Value;
@@ -156,29 +156,28 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
       .cat('>')
       .cat(itemText)
       .cat('</option>\n');
-  },
+  }
 
   isListChanged() {
     return $(this._listElement).hasClass(window.CHANGED_FIELD_CLASS_NAME);
-  },
+  }
 
   _onSelectedItemChangeHandler() {
     if (!this.isListDisabled()) {
       this._refreshReadToolbarButton(true);
     }
-  },
+  }
 
   getListItems() {
     return $(this._listElement).find('OPTION');
-  },
+  }
 
   dispose() {
     this._stopDeferredOperations = true;
     this._detachListItemEventHandlers();
-    Quantumart.QP8.BackendEntityDropDownList.callBaseMethod(this, 'dispose');
+    super.dispose();
   }
-};
+}
 
-Quantumart.QP8.BackendEntityDropDownList.registerClass(
-  'Quantumart.QP8.BackendEntityDropDownList', Quantumart.QP8.BackendEntityDataListBase
-);
+
+Quantumart.QP8.BackendEntityDropDownList = BackendEntityDropDownList;

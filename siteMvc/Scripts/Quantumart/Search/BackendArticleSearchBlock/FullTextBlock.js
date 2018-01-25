@@ -1,15 +1,19 @@
-Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock = function (fullTextBlockElement, parentEntityId) {
-  this._fullTextBlockElement = fullTextBlockElement;
-  this._parentEntityId = parentEntityId;
-  this._elementIdPrefix = Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix();
-};
+import { BackendArticleSearchBlock } from '../BackendArticleSearchBlock';
+import { BackendSearchBlockBase } from '../BackendSearchBlockBase';
+import { $q } from '../../Utils';
 
-Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
-  _fullTextBlockElement: null,
-  _textFieldsComboElement: null,
-  _queryTextBoxElement: null,
-  _parentEntityId: 0,
-  _elementIdPrefix: '',
+export class FullTextBlock {
+  constructor(fullTextBlockElement, parentEntityId) {
+    this._fullTextBlockElement = fullTextBlockElement;
+    this._parentEntityId = parentEntityId;
+    this._elementIdPrefix = BackendSearchBlockBase.generateElementPrefix();
+  }
+
+  _fullTextBlockElement = null;
+  _textFieldsComboElement = null;
+  _queryTextBoxElement = null;
+  _parentEntityId = 0;
+  _elementIdPrefix = '';
 
   initialize() {
     let serverContent;
@@ -37,19 +41,19 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
       this._queryTextBoxElement = $fullTextBlockElement.find(`#${this._elementIdPrefix}_QueryTextBox`).get(0);
       $fullTextBlockElement = null;
     }
-  },
+  }
 
   getSearchQuery() {
     const data = this.getSearchData();
     if (data) {
-      return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+      return BackendArticleSearchBlock.createFieldSearchQuery(
         Quantumart.QP8.Enums.ArticleFieldSearchType.FullText,
         data.fieldID, data.fieldColumn, data.contentID, data.referenceFieldID, data.text
       );
     }
 
     return null;
-  },
+  }
 
   getBlockState() {
     const data = this.getSearchData();
@@ -72,7 +76,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     }
 
     return null;
-  },
+  }
 
   restoreBlockState(state) {
     if (state) {
@@ -88,7 +92,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
 
       $selectedField.prop('selected', true);
     }
-  },
+  }
 
   getSearchData() {
     if (this._textFieldsComboElement) {
@@ -113,7 +117,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
       return null;
     }
     return null;
-  },
+  }
   clear() {
     let $resetElem;
     if (this._textFieldsComboElement) {
@@ -129,13 +133,13 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     if (this._queryTextBoxElement) {
       $(this._queryTextBoxElement).val('');
     }
-  },
+  }
 
   onFieldChanged() {
     if ($(this._queryTextBoxElement).val()) {
       $(this._fullTextBlockElement).closest('form').trigger('submit');
     }
-  },
+  }
 
   dispose() {
     $(this._textFieldsComboElement).unbind('change');
@@ -143,8 +147,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.prototype = {
     this._queryTextBoxElement = null;
     this._textFieldsComboElement = null;
   }
-};
+}
 
-Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock.registerClass(
-  'Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock', null, Sys.IDisposable
-);
+
+import('../BackendArticleSearchBlock').then(() => {
+  Quantumart.QP8.BackendArticleSearchBlock.FullTextBlock = FullTextBlock;
+});

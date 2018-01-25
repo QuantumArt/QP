@@ -1,30 +1,35 @@
+import { ActionLogFilterBase } from './ActionLogFilterBase';
+import { Observable } from '../Common/Observable';
+import { $c } from '../ControlHelpers';
+import { $q } from '../Utils';
+
 window.EVENT_TYPE_FILTER_TILE_CLOSE = 'Quantumart.QP8.ActionLogFilterTile.onFilterTileClose';
 
-Quantumart.QP8.ActionLogFilterTile = function (containerElement, options) {
-  Quantumart.QP8.ActionLogFilterTile.initializeBase(this);
-  this._containerElement = containerElement;
-  this._options = Object.assign({
-    title: 'Undefined',
-    type: 0,
-    windowSize: { width: 350, height: 125 },
-    createFilter($filterContainer) {
-      return new Quantumart.QP8.ActionLogFilterBase($filterContainer);
-    }
-  }, options);
-};
+export class ActionLogFilterTile extends Observable {
+  constructor(containerElement, options) {
+    super();
+    this._containerElement = containerElement;
+    this._options = Object.assign({
+      title: 'Undefined',
+      type: 0,
+      windowSize: { width: 350, height: 125 },
+      createFilter($filterContainer) {
+        return new ActionLogFilterBase($filterContainer);
+      }
+    }, options);
+  }
 
-Quantumart.QP8.ActionLogFilterTile.prototype = {
-  _containerElement: null,
-  _options: null,
+  _containerElement = null;
+  _options = null;
 
-  $tile: null,
-  $closeButton: null,
-  $windowOpenLink: null,
+  $tile = null;
+  $closeButton = null;
+  $windowOpenLink = null;
 
-  _popupWindowComponent: null,
-  _filterComponent: null,
+  _popupWindowComponent = null;
+  _filterComponent = null;
 
-  _currentValue: null,
+  _currentValue = null;
 
   initialize() {
     const containerHeaderHtml = new $.telerik.stringBuilder();
@@ -51,15 +56,15 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     this.$filterDetailsSpanElement = $('.filter-details', this.$tile);
 
     $(this._containerElement).append(this.$tile);
-  },
+  }
 
   getValue() {
     return this._currentValue;
-  },
+  }
 
   getOptions() {
     return this._options;
-  },
+  }
 
   _createFilter() {
     const applyText = $l.SearchBlock.closeAndApplyWndButtonText;
@@ -92,11 +97,11 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 
     this._filterComponent = this._options.createFilter($('.filterContainer', this._popupWindowComponent.element));
     this._filterComponent.initialize();
-  },
+  }
 
   _onCloseTileClick() {
     this.notify(window.EVENT_TYPE_FILTER_TILE_CLOSE, { type: this._options.type });
-  },
+  }
 
   _onOpenFilterWndClick() {
     if (this._popupWindowComponent) {
@@ -105,27 +110,27 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
     } else {
       this._createFilter();
     }
-  },
+  }
 
   _onCloseFilterWndClick() {
     this._currentValue = this._filterComponent.getValue();
     this.$filterDetailsSpanElement.html(`: ${this._filterComponent.getFilterDetails()}`);
     this._popupWindowComponent.close();
-  },
+  }
 
   _onCloseAndApplyFilterWndClick() {
     this._onCloseFilterWndClick();
     $(this._containerElement).closest('form').find('.alSearchButton').trigger('click');
-  },
+  }
 
   _onFilterFormSubmitted(e) {
     e.preventDefault();
     $('.closeAndApplyFilter', this._popupWindowComponent.element).trigger('click');
     return false;
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.ActionLogFilterTile.callBaseMethod(this, 'dispose');
+    super.dispose();
 
     if (this.$closeButton) {
       this.$closeButton.off('click');
@@ -148,6 +153,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 
     this.$tile.empty().remove();
   }
-};
+}
 
-Quantumart.QP8.ActionLogFilterTile.registerClass('Quantumart.QP8.ActionLogFilterTile', Quantumart.QP8.Observable);
+
+Quantumart.QP8.ActionLogFilterTile = ActionLogFilterTile;

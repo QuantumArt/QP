@@ -26,7 +26,7 @@ module.exports = {
     'no-shadow-restricted-names': 'error',
 
     // disallow declaration of variables already declared in the outer scope
-    'no-shadow': ['error', { builtinGlobals: true }],
+    'no-shadow': ['error', { builtinGlobals: false }],
 
     // disallow initializing to undefined
     'no-undef-init': 'error',
@@ -38,7 +38,7 @@ module.exports = {
     'no-undefined': 'off',
 
     // disallow unused variables
-    'no-unused-vars': 'error',
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_.+' }],
 
     // disallow early use
     'no-use-before-define': 'error'

@@ -1,34 +1,43 @@
-// eslint-disable-next-line max-params
-Quantumart.QP8.BackendEntitySingleItemPicker = function (
-  listGroupCode,
-  listElementId,
-  entityTypeCode,
-  parentEntityId,
-  entityId,
-  listType,
-  options
-) {
-  Quantumart.QP8.BackendEntitySingleItemPicker.initializeBase(
-    this,
-    [listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]
-  );
+import { BackendEntityDataListBase } from './BackendEntityDataListBase';
+import { BackendEventArgs } from '../Common/BackendEventArgs';
+import { $q } from '../Utils';
 
-  this._allowMultipleItemSelection = false;
-  this._selectionMode = Quantumart.QP8.Enums.ListSelectionMode.OnlySelectedItems;
-};
+export class BackendEntitySingleItemPicker extends BackendEntityDataListBase {
+  // eslint-disable-next-line max-params
+  constructor(
+    listGroupCode,
+    listElementId,
+    entityTypeCode,
+    parentEntityId,
+    entityId,
+    listType,
+    options
+  ) {
+    super(
+      listGroupCode,
+      listElementId,
+      entityTypeCode,
+      parentEntityId,
+      entityId,
+      listType,
+      options
+    );
 
-Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
-  _displayFieldElement: null,
-  _stateFieldElement: null,
-  _pickButtonElement: null,
-  _deselectButtonElement: null,
+    this._allowMultipleItemSelection = false;
+    this._selectionMode = Quantumart.QP8.Enums.ListSelectionMode.OnlySelectedItems;
+  }
 
-  DISPLAY_FIELD_CLASS_NAME: 'displayField',
-  STATE_FIELD_CLASS_NAME: 'stateField',
+  _displayFieldElement = null;
+  _stateFieldElement = null;
+  _pickButtonElement = null;
+  _deselectButtonElement = null;
+
+  DISPLAY_FIELD_CLASS_NAME = 'displayField';
+  STATE_FIELD_CLASS_NAME = 'stateField';
 
   // eslint-disable-next-line max-statements
   initialize() {
-    Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, 'initialize');
+    super.initialize();
 
     let $copyButton, $pasteButton;
     const $list = $(this._listElement);
@@ -91,11 +100,11 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     }
 
     this._addNewButtonToToolbar();
-  },
+  }
 
   getListItemCount() {
     return 1;
-  },
+  }
 
   getSelectedListItemCount() {
     let selectedListItemCount = 0;
@@ -109,7 +118,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     }
 
     return selectedListItemCount;
-  },
+  }
 
   getSelectedEntities() {
     const entities = [];
@@ -126,11 +135,11 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     }
 
     return entities;
-  },
+  }
 
   getStateFieldElement() {
     return this._stateFieldElement;
-  },
+  }
 
   _refreshListInner(dataItems, refreshOnly) {
     let html = '';
@@ -159,13 +168,13 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 
       $stateField.change();
     }
-  },
+  }
 
   deselectAllListItems() {
     this._refreshListInner([]);
-    const eventArgs = new Quantumart.QP8.BackendEventArgs();
+    const eventArgs = new BackendEventArgs();
     this.notify(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, eventArgs);
-  },
+  }
 
   selectEntities(entityId) {
     this.deselectAllListItems();
@@ -176,34 +185,34 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
         this._loadSelectedItems([{ Id: entityId }]);
       }
     }
-  },
+  }
 
   enableList() {
     $(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
     $(this._stateFieldElement).prop('disabled', false);
     this._enableAllToolbarButtons();
-  },
+  }
 
   disableList() {
     $(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
     $(this._stateFieldElement).prop('disabled', true);
     this._disableAllToolbarButtons();
-  },
+  }
 
   makeReadonly() {
     this.disableList();
     $(this._stateFieldElement).prop('disabled', false);
-  },
+  }
 
   isListChanged() {
     return $(this._stateFieldElement).hasClass(window.CHANGED_FIELD_CLASS_NAME);
-  },
+  }
 
   _onSelectedItemChangeHandler() {
     if (!this.isListDisabled()) {
       this._refreshReadToolbarButton(true);
     }
-  },
+  }
 
   _onPickButtonClickHandler(ev) {
     if (!this.isListDisabled()) {
@@ -211,7 +220,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     }
 
     ev.stopImmediatePropagation();
-  },
+  }
 
   _onDeselectButtonClickHandler(ev) {
     if (!this.isListDisabled()) {
@@ -219,7 +228,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     }
 
     ev.stopImmediatePropagation();
-  },
+  }
 
   dispose() {
     this._stopDeferredOperations = true;
@@ -242,11 +251,9 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
     this._copyButtonElement = null;
     this._pasteButtonElement = null;
 
-    Quantumart.QP8.BackendEntitySingleItemPicker.callBaseMethod(this, 'dispose');
+    super.dispose();
   }
-};
+}
 
-Quantumart.QP8.BackendEntitySingleItemPicker.registerClass(
-  'Quantumart.QP8.BackendEntitySingleItemPicker',
-  Quantumart.QP8.BackendEntityDataListBase
-);
+
+Quantumart.QP8.BackendEntitySingleItemPicker = BackendEntitySingleItemPicker;

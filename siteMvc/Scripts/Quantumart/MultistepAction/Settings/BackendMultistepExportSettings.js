@@ -1,8 +1,10 @@
-Quantumart.QP8.MultistepActionExportSettings = function (options) {
-  this.options = options;
-};
+import { $c } from '../../ControlHelpers';
 
-Quantumart.QP8.MultistepActionExportSettings.prototype = {
+export class MultistepActionExportSettings {
+  constructor(options) {
+    this.options = options;
+  }
+
   initActions() {
     const fieldValues = this.options.popupWindowComponent.loadHostState();
     const $root = $(`#${this.options.popupWindowId}_editingForm`);
@@ -11,14 +13,14 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
     $c.initAllCheckboxToggles($root);
     $c.initAllEntityDataLists($root);
     $c.setAllEntityDataListValues($root, fieldValues);
-  },
+  }
 
   validate() {
     const $root = $(`#${this.options.popupWindowId}_editingForm`);
     const fieldValues = $c.getAllFieldValues($root);
     this.options.popupWindowComponent.saveHostState(fieldValues);
     return '';
-  },
+  }
 
   serializeForm() {
     const id = this.options.popupWindowId;
@@ -31,12 +33,12 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
       OrderByField: document.getElementById(`${id}_OrderByField`).value,
       AllFields: document.getElementById(`${id}_AllFields`).checked,
       ExcludeSystemFields: document.getElementById(`${id}_ExcludeSystemFields`).checked,
-      CustomFields: [
-        ...parentContainer.querySelectorAll(`input[name="CustomFields"]:checked`)
-      ].map(el => +el.value),
-      FieldsToExpand: [
-        ...parentContainer.querySelectorAll(`input[name="FieldsToExpand"]:checked`)
-      ].map(el => +el.value)
+      CustomFields: Array
+        .from(parentContainer.querySelectorAll(`input[name="CustomFields"]:checked`))
+        .map(el => +el.value),
+      FieldsToExpand: Array
+        .from(parentContainer.querySelectorAll(`input[name="FieldsToExpand"]:checked`))
+        .map(el => +el.value)
     };
 
     const idsElement = document.getElementById(`${id}_idsToExport`);
@@ -47,16 +49,17 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
     }
 
     return ajaxData;
-  },
+  }
 
   dispose() {
     const $root = $(`#${this.options.popupWindowId}_editingForm`);
     $c.destroyAllEntityDataLists($root);
     $c.destroyAllCheckboxToggles($root);
   }
-};
+}
 
-Quantumart.QP8.MultistepActionExportSettings.addButtons = function (dataItems) {
+
+MultistepActionExportSettings.addButtons = function (dataItems) {
   const exportButton = {
     Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
     Value: 'Export',
@@ -69,3 +72,5 @@ Quantumart.QP8.MultistepActionExportSettings.addButtons = function (dataItems) {
   return dataItems.concat(exportButton);
 };
 
+
+Quantumart.QP8.MultistepActionExportSettings = MultistepActionExportSettings;

@@ -1,7 +1,16 @@
-class BackendEntityTreeManager extends Quantumart.QP8.Observable {
-  static getInstance(options) {
+import { BackendEntityTree } from '../Tree/BackendEntityTree';
+import { BackendVirtualFieldTree } from '../Editor/BackendVirtualFieldTree';
+import { Observable } from '../Common/Observable';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
+export class BackendEntityTreeManager extends Observable {
+  /** @type {BackendEntityTreeManager} */
+  static _instance;
+
+  static getInstance() {
     if (!BackendEntityTreeManager._instance) {
-      BackendEntityTreeManager._instance = new BackendEntityTreeManager(options);
+      BackendEntityTreeManager._instance = new BackendEntityTreeManager();
     }
 
     return BackendEntityTreeManager._instance;
@@ -53,7 +62,7 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
   createTree(treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions) {
     const treeGroupCode = BackendEntityTreeManager.generateTreeGroupCode(entityTypeCode, parentEntityId);
     const tree = options.virtualContentId >= 0
-      ? new Quantumart.QP8.BackendVirtualFieldTree(
+      ? new BackendVirtualFieldTree(
         treeGroupCode,
         treeElementId,
         entityTypeCode,
@@ -61,7 +70,7 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
         actionCode,
         options
       )
-      : new Quantumart.QP8.BackendEntityTree(
+      : new BackendEntityTree(
         treeGroupCode,
         treeElementId,
         entityTypeCode,
@@ -177,7 +186,7 @@ class BackendEntityTreeManager extends Quantumart.QP8.Observable {
       const newParentEntityId = +$o.getParentEntityId(window.ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
       this.refreshNode(window.ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, {
         loadChildNodes:
-        true,
+          true,
         saveNodesSelection: false
       });
     }

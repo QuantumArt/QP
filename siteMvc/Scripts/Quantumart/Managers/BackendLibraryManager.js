@@ -1,4 +1,12 @@
-class BackendLibraryManager extends Quantumart.QP8.Observable {
+import { BackendLibrary } from '../Library/BackendLibrary';
+import { Observable } from '../Common/Observable';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
+export class BackendLibraryManager extends Observable {
+  /** @type {BackendLibraryManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendLibraryManager._instance) {
       BackendLibraryManager._instance = new BackendLibraryManager();
@@ -75,7 +83,7 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
 
   createLibrary(libraryElementId, parentEntityId, actionCode, options, hostOptions) {
     const libraryGroupCode = BackendLibraryManager.generateLibraryGroupCode(actionCode, parentEntityId);
-    const library = new Quantumart.QP8.BackendLibrary(
+    const library = new BackendLibrary(
       libraryGroupCode,
       libraryElementId,
       parentEntityId,
@@ -126,7 +134,7 @@ class BackendLibraryManager extends Quantumart.QP8.Observable {
         || eventArgs.get_isUpdated()
         || eventArgs.get_isRemoving()
       ) || actionTypeCode === window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED
-      || actionTypeCode === window.ACTION_TYPE_CODE_FILE_CROPPED)
+        || actionTypeCode === window.ACTION_TYPE_CODE_FILE_CROPPED)
     ) {
       this.refreshLibraryGroup(entityTypeCode, eventArgs.get_parentEntityId());
     }

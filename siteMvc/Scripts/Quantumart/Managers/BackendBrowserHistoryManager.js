@@ -1,7 +1,7 @@
 window.HISTORY_PREVENT_NAVIGATION_STATE = 'HISTORY_PREVENT_NAVIGATION_STATE';
 window.HISTORY_INITIAL_STATE = 'HISTORY_INITIAL_STATE';
 
-class BackendBrowserHistoryManager {
+export class BackendBrowserHistoryManager {
   static preventBrowserNavigateBack() {
     if (window.history.state === null) {
       window.history.replaceState(window.HISTORY_PREVENT_NAVIGATION_STATE, document.title);

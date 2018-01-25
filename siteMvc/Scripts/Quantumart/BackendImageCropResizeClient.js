@@ -1,8 +1,8 @@
 /* eslint-disable max-lines */
 /* eslint-disable max-statements */
 /* eslint-disable max-len */
-Quantumart.QP8.ImageCropResizeClient = {};
-Quantumart.QP8.ImageCropResizeClient.Cache = {};
+export const ImageCropResizeClient = {};
+ImageCropResizeClient._cache = {};
 
 // eslint-disable-next-line
 (function ($, imgCropResize) {
@@ -450,17 +450,17 @@ Quantumart.QP8.ImageCropResizeClient.Cache = {};
   };
 
   const _getFromCache = function () {
-    return Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl];
+    return ImageCropResizeClient._cache[_parameters.sourceImageUrl];
   };
 
   const _removeFromCache = function () {
-    delete Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl];
+    delete ImageCropResizeClient._cache[_parameters.sourceImageUrl];
   };
 
   const _saveToCache = function () {
     const sendData = readData();
     if (sendData.width && sendData.height) {
-      Quantumart.QP8.ImageCropResizeClient.Cache[_parameters.sourceImageUrl] = {
+      ImageCropResizeClient._cache[_parameters.sourceImageUrl] = {
         crop: {
           top: sendData.top,
           left: sendData.left,
@@ -472,15 +472,15 @@ Quantumart.QP8.ImageCropResizeClient.Cache = {};
   };
 
   const _serverOperateImage = function () {
-    let sendData = readData();
-    sendData = JSON.stringify(sendData);
+    const sendData = readData();
+    const sendDataJson = JSON.stringify(sendData);
 
     $.ajax(_parameters.cropResizeActionUrl, {
       contentType: 'application/json',
-      data: sendData,
+      data: sendDataJson,
       type: 'POST',
       dataType: 'json'
-    }).success(response => {
+    }).done(response => {
       if (!response.ok) {
         const message = response.message || $l.Crop.defaultErrorMessage;
         displayErrors([message]);
@@ -503,7 +503,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = {};
       data: { targetFileUrl: userInputFileName },
       type: 'POST',
       dataType: 'json'
-    }).success(response => {
+    }).done(response => {
       if (response.ok) {
         _serverOperateImage();
       } else {
@@ -613,4 +613,6 @@ Quantumart.QP8.ImageCropResizeClient.Cache = {};
       window: _$windowElement
     };
   };
-}(jQuery, Quantumart.QP8.ImageCropResizeClient));
+}(jQuery, ImageCropResizeClient));
+
+Quantumart.QP8.ImageCropResizeClient = ImageCropResizeClient;

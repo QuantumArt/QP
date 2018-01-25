@@ -1,14 +1,15 @@
-/* global _ */
-
 /* eslint no-extend-native: 'off' */
 /* eslint max-params: 'off' */
 /* eslint max-lines: 'off' */
 /* eslint no-alert: 'off' */
 /* eslint no-sync: 'off' */
+import { BackendDocumentContext } from './Document/BackendDocumentContext';
+import { BackendLogOnWindow } from './BackendLogOnWindow';
 
-window.$q = {
-  isDebug: Sys.Debug.isDebug
-};
+// eslint-disable-next-line no-shadow
+export class $q { }
+
+$q.isDebug = Sys.Debug.isDebug;
 
 /**
  * Trace function for logging debug messages
@@ -26,7 +27,7 @@ $q.trace = (msg, ...otherArgs) => {
       }
 
       window.console.trace('%cView tracing', 'color: darkblue;font-weight:bold;');
-      window.console.groupEnd(msg);
+      window.console.groupEnd();
     } else if (otherArgs && otherArgs.length) {
       window.console.log(msg, ...otherArgs);
     }
@@ -49,7 +50,7 @@ $q.traceError = (msg, ...otherArgs) => {
     }
 
     window.console.trace('%cView tracing', 'color: darkred;font-weight:bold;');
-    window.console.groupEnd(msg);
+    window.console.groupEnd();
   } else if (otherArgs && otherArgs.length) {
     window.console.error(msg, ...otherArgs);
   }
@@ -58,7 +59,7 @@ $q.traceError = (msg, ...otherArgs) => {
 /**
  * Success message that should be shown to user
  * @param  {string}    msg    message that should be shown to user
- * @param  {...Object} params data that should be loggged
+ * @param  {...Object} otherArgs data that should be loggged
  */
 $q.alertSuccess = (msg, ...otherArgs) => {
   window.alert(msg);
@@ -167,12 +168,12 @@ $q.sendAjax = opts => {
 
 /**
  * Helper for jQuery 'GET' ajax reguest
- * @param  {string}   url          url address to GET ajax request
- * @param  {Object}   data         data which should be getted from server
- * @param  {function} jsendSuccess callback function for jQuery ajax success
- * @param  {function} jsendFail    callback function for jQuery ajax fail
- * @param  {function} jsendError   callback function for jQuery ajax error
- * @return {Object}                jQuery XHR deffered
+ * @param  {string}   url             url address to GET ajax request
+ * @param  {Object}   data            data which should be getted from server
+ * @param  {function} [jsendSuccess]  callback function for jQuery ajax success
+ * @param  {function} [jsendFail]     callback function for jQuery ajax fail
+ * @param  {function} [jsendError]    callback function for jQuery ajax error
+ * @return {Object}                   jQuery XHR deffered
  */
 $q.getAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
   url,
@@ -184,12 +185,12 @@ $q.getAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
 
 /**
  * Helper for jQuery 'POST' ajax reguest
- * @param  {string}   url          url address to POST ajax request
- * @param  {Object}   data         data which should be posted to server
- * @param  {function} jsendSuccess callback function for jQuery ajax success
- * @param  {function} jsendFail    callback function for jQuery ajax fail
- * @param  {function} jsendError   callback function for jQuery ajax error
- * @return {Object}                jQuery XHR deffered
+ * @param  {string}   url             url address to POST ajax request
+ * @param  {Object}   data            data which should be posted to server
+ * @param  {function} [jsendSuccess]  callback function for jQuery ajax success
+ * @param  {function} [jsendFail]     callback function for jQuery ajax fail
+ * @param  {function} [jsendError]    callback function for jQuery ajax error
+ * @return {Object}                   jQuery XHR deffered
  */
 $q.postAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
   url,
@@ -202,19 +203,32 @@ $q.postAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
 
 /** Show global blocking loader screen */
 $q.showLoader = () => {
-  if (Quantumart.QP8.BackendDocumentContext) {
-    Quantumart.QP8.BackendDocumentContext.getArea().showAjaxLoadingLayer();
+  if (BackendDocumentContext) {
+    BackendDocumentContext.getArea().showAjaxLoadingLayer();
   }
 };
 
 /** Hide global blocking loader screen */
 $q.hideLoader = () => {
-  if (Quantumart.QP8.BackendDocumentContext) {
-    Quantumart.QP8.BackendDocumentContext.getArea().hideAjaxLoadingLayer();
+  if (BackendDocumentContext) {
+    BackendDocumentContext.getArea().hideAjaxLoadingLayer();
   }
 };
 
+/**
+ * @param {any[]} arr1
+ * @param {any[]} arr2
+ * @returns array
+ * @deprecated
+ */
 $q.difference = (arr1, arr2) => arr1.filter(el => arr2.indexOf(el) === -1);
+
+/**
+ * @param {any[]} arr1
+ * @param {any[]} arr2
+ * @returns array
+ * @deprecated
+ */
 $q.symmetricDifference = (arr1, arr2) => arr1
   .filter(el => arr2.indexOf(el) === -1)
   .concat(arr2.filter(el => arr1.indexOf(el) === -1));
@@ -319,6 +333,11 @@ $q._prepareNumber = function _prepareNumber(value, forCheck) {
   return number;
 };
 
+/**
+ * @param {any} value
+ * @param {number} [defaultValue]
+ * @returns {number}
+ */
 $q.toInt = function toInt(value, defaultValue) {
   let result = value;
   if (result === 'true' || result === 'false') {
@@ -595,9 +614,9 @@ $q.getTypeNameForJson = function getTypeNameForJson(typeName) {
 
 $q.processGenericAjaxError = function processGenericAjaxError(jqXHR) {
   let errorMessage = String.format($l.Common.ajaxGenericErrorMessage, status);
-  if (status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
+  if (jqXHR.status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
     errorMessage = $l.Common.ajaxUserSessionExpiredErrorMessage;
-  } else if (status === 500) {
+  } else if (jqXHR.status === 500) {
     errorMessage = $l.Common.ajaxDataReceivingErrorMessage;
   }
 
@@ -647,7 +666,7 @@ $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
 $q.ajaxCallbackDecorator = function ajaxCallbackDecorator(callback, settings) {
   if (callback) {
     return function ajaxDecorator(data, textStatus, jqXHR) {
-      if (!Quantumart.QP8.BackendLogOnWindow.deferredExecution(data, jqXHR, callback, settings)) {
+      if (!BackendLogOnWindow.deferredExecution(data, jqXHR, callback, settings)) {
         return callback(data, textStatus, jqXHR);
       }
 
@@ -682,7 +701,7 @@ $q.toFixed = function toFixed(number, digits) {
 if (typeof String.prototype.left !== 'function') {
   String.prototype.left = function (strLength) {
     if (!/\d+/.test(strLength)) {
-      return this;
+      return String(this);
     }
 
     return this.substr(0, strLength);
@@ -692,7 +711,7 @@ if (typeof String.prototype.left !== 'function') {
 if (typeof String.prototype.right !== 'function') {
   String.prototype.right = function (strLength) {
     if (!/\d+/.test(strLength)) {
-      return this;
+      return String(this);
     }
 
     return this.substr(this.length - strLength);
@@ -706,7 +725,7 @@ $q.generateRandomString = function generateRandomString(stringLength) {
   let result = '';
 
   for (i = 0; i < stringLength; i++) {
-    randomNumber = parseInt(symbolStringLength * Math.random(), 10);
+    randomNumber = parseInt(String(symbolStringLength * Math.random()), 10);
     randomSymbol = symbolString.substr(randomNumber, 1);
 
     result += randomSymbol;
@@ -804,31 +823,22 @@ $q.hashToString = function hashToString(obj) {
   return result.substr(0, result.length - 1);
 };
 
+$q.uniqueId = function uniqueId() {
+  const date = Date.now().toString(36).slice(-8);
+  const random = Math.random().toString(36).slice(2, 12);
+  return date + random;
+};
+
 $q.getHashKeysCount = function getHashKeysCount(hash) {
   let keysCount = 0;
   if (hash) {
     // eslint-disable-next-line guard-for-in, no-restricted-syntax, no-unused-vars
-    for (const key in hash) {
+    for (const _key in hash) {
       keysCount += 1;
     }
   }
 
   return keysCount;
-};
-
-Array.distinct = function distinct(array) {
-  let itemIndex, item;
-  const uniqueArray = [];
-  if ($q.isArray(array)) {
-    for (itemIndex = 0; itemIndex < array.length; itemIndex++) {
-      item = array[itemIndex];
-      if (!Array.contains(uniqueArray, item)) {
-        Array.add(uniqueArray, item);
-      }
-    }
-  }
-
-  return uniqueArray;
 };
 
 $q.clearArray = function clearArray(array) {
@@ -924,6 +934,7 @@ $q.collectGarbageInIE = function collectGarbageInIE() {
 /**
  * Define abstract methods that should be implemented at child classes
  * @param  {string[]} listOfFnNames list of class method names to implement
+ * @deprecated
  */
 $q.defineAbstractMethods = function (listOfFnNames) {
   listOfFnNames.forEach(fnName => {
@@ -935,6 +946,7 @@ $q.defineAbstractMethods = function (listOfFnNames) {
  * Bind class methods and "this" context, using bind function
  * @param  {string[]} listOfFnNames list of class method names to bind
  * @param  {string[]} fnPostfix     new function name with binded context
+ * @deprecated
  */
 $q.bindProxies = function (listOfFnNames, fnPostfix) {
   const postfix = fnPostfix || 'Handler';
@@ -952,3 +964,5 @@ $q.dispose = function (listOfPropNames) {
     this[propName] = this[propName] ? undefined : this[propName];
   });
 };
+
+window.$q = $q;

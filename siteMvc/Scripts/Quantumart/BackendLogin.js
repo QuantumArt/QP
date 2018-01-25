@@ -1,23 +1,16 @@
-Quantumart.QP8.BackendLogin = function (options) {
-  Quantumart.QP8.BackendLogin.initializeBase(this);
-
-  if (options) {
-    if (options.useSavedCustomerCode) {
-      this._useSavedCustomerCode = options.useSavedCustomerCode;
+export class BackendLogin {
+  constructor(options) {
+    if (options) {
+      if (options.useSavedCustomerCode) {
+        this._useSavedCustomerCode = options.useSavedCustomerCode;
+      }
     }
+
+    jQuery(document).ready(jQuery.proxy(this._initialize, this));
   }
 
-  jQuery(document).ready(jQuery.proxy(this._initialize, this));
-};
-
-Quantumart.QP8.BackendLogin.storageKey = 'Quantumart.QP8.BackendLogin.CustomerCode';
-Quantumart.QP8.BackendLogin.removeCustomerCode = function () {
-  localStorage.removeItem(Quantumart.QP8.BackendLogin.storageKey);
-};
-
-Quantumart.QP8.BackendLogin.prototype = {
-  storageKey: Quantumart.QP8.BackendLogin.storageKey,
-  _useSavedCustomerCode: false,
+  storageKey = BackendLogin.storageKey;
+  _useSavedCustomerCode = false;
 
   _initialize() {
     if (this._useSavedCustomerCode) {
@@ -39,13 +32,19 @@ Quantumart.QP8.BackendLogin.prototype = {
         }
       }
     }
-  },
+  }
 
   _loginClick() {
     localStorage.setItem(this.storageKey, jQuery('#CustomerCode').val());
-  },
+  }
 
-  removeCustomerCode: Quantumart.QP8.BackendLogin.removeCustomerCode
+  removeCustomerCode = BackendLogin.removeCustomerCode;
+}
+
+BackendLogin.storageKey = 'Quantumart.QP8.BackendLogin.CustomerCode';
+BackendLogin.removeCustomerCode = function () {
+  localStorage.removeItem(BackendLogin.storageKey);
 };
 
-Quantumart.QP8.BackendLogin.registerClass('Quantumart.QP8.BackendLogin');
+
+Quantumart.QP8.BackendLogin = BackendLogin;

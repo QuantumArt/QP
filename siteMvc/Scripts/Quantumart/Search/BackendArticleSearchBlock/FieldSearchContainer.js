@@ -1,56 +1,70 @@
-// eslint-disable-next-line max-params
-Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer = function (
-  fieldSearchContainerElement,
-  parentEntityId,
-  fieldID,
-  contentID,
-  fieldName,
-  fieldSearchType,
-  fieldColumn,
-  fieldGroup,
-  referenceFieldId
-) {
-  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.initializeBase(this);
+import { BackendSearchBlockBase } from '../BackendSearchBlockBase';
+import { BooleanFieldSearch } from './BooleanFieldSearch';
+import { ClassifierFieldSearch } from './ClassifierFieldSearch';
+import { DateOrTimeRangeFieldSearch } from './DateOrTimeRangeFieldSearch';
+import { FieldSearchBase } from './FieldSearchBase';
+import { IdentifierFieldSearch } from './IdentifierFieldSearch';
+import { NumericRangeFieldSearch } from './NumericRangeFieldSearch';
+import { Observable } from '../../Common/Observable';
+import { RelationFieldSearch } from './RelationFieldSearch';
+import { StringEnumFieldSearch } from './StringEnumFieldSearch';
+import { TextFieldSearch } from './TextFieldSearch';
+import { $c } from '../../ControlHelpers';
+import { $q } from '../../Utils';
 
-  this._containerElement = fieldSearchContainerElement;
-  this._fieldID = fieldID;
-  this._contentID = contentID;
-  this._fieldName = fieldName;
-  this._fieldSearchType = +fieldSearchType || 0;
-  this._fieldColumn = fieldColumn;
-  this._fieldGroup = fieldGroup;
-  this._referenceFieldId = referenceFieldId;
-  this._parentEntityId = parentEntityId;
-  this._elementIdPrefix = Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix();
-  this._onCloseButtonClickHandler = $.proxy(this._onCloseButtonClick, this);
-  this._onContentOpenWindowClickHandler = $.proxy(this._onContentOpenWindowClick, this);
-  this._onCloseWndClickHandler = $.proxy(this._onCloseWndClick, this);
-};
+export class FieldSearchContainer extends Observable {
+  // eslint-disable-next-line max-params
+  constructor(
+    fieldSearchContainerElement,
+    parentEntityId,
+    fieldID,
+    contentID,
+    fieldName,
+    fieldSearchType,
+    fieldColumn,
+    fieldGroup,
+    referenceFieldId
+  ) {
+    super();
 
-Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
-  _containerElement: null,
-  _fieldID: null,
-  _contentID: null,
-  _fieldName: null,
-  _fieldSearchType: 0,
-  _fieldColumn: null,
-  _fieldGroup: null,
-  _referenceFieldId: null,
-  _parentEntityId: 0,
+    this._containerElement = fieldSearchContainerElement;
+    this._fieldID = fieldID;
+    this._contentID = contentID;
+    this._fieldName = fieldName;
+    this._fieldSearchType = +fieldSearchType || 0;
+    this._fieldColumn = fieldColumn;
+    this._fieldGroup = fieldGroup;
+    this._referenceFieldId = referenceFieldId;
+    this._parentEntityId = parentEntityId;
+    this._elementIdPrefix = BackendSearchBlockBase.generateElementPrefix();
+    this._onCloseButtonClickHandler = $.proxy(this._onCloseButtonClick, this);
+    this._onContentOpenWindowClickHandler = $.proxy(this._onContentOpenWindowClick, this);
+    this._onCloseWndClickHandler = $.proxy(this._onCloseWndClick, this);
+  }
 
-  _elementIdPrefix: '',
+  _containerElement = null;
+  _fieldID = null;
+  _contentID = null;
+  _fieldName = null;
+  _fieldSearchType = 0;
+  _fieldColumn = null;
+  _fieldGroup = null;
+  _referenceFieldId = null;
+  _parentEntityId = 0;
 
-  _closeButtonElement: null,
-  _closeAndApplyButton: null,
-  _contentContainerElement: null,
-  _contentWindowOpenLinkElement: null,
-  $filterDetailsSpanElement: null,
+  _elementIdPrefix = '';
 
-  _fieldSearch: null,
-  _popupWindowComponent: null,
+  _closeButtonElement = null;
+  _closeAndApplyButton = null;
+  _contentContainerElement = null;
+  _contentWindowOpenLinkElement = null;
+  $filterDetailsSpanElement = null;
 
-  _onCloseButtonClickHandler: null,
-  _onContentOpenWindowClickHandler: null,
+  _fieldSearch = null;
+  _popupWindowComponent = null;
+
+  _onCloseButtonClickHandler = null;
+  _onContentOpenWindowClickHandler = null;
 
   initialize() {
     // создать заголовок контейнера
@@ -79,12 +93,12 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
     this.$filterDetailsSpanElement = $('.filter-details', $containerHeader);
 
     $(this._containerElement).append($containerHeader);
-  },
+  }
 
   // eslint-disable-next-line camelcase
   get_ContainerElement() {
     return this._containerElement;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   getSearchQuery() {
@@ -93,7 +107,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
     }
 
     return null;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   getBlockState() {
@@ -102,7 +116,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
     }
 
     return undefined;
-  },
+  }
 
   // eslint-disable-next-line camelcase
   restoreBlockState(state) {
@@ -118,7 +132,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
     }
 
     return undefined;
-  },
+  }
 
   _createFieldSearchComponent(isOpened) {
     const inputCloseAndApplyHtml = `<input
@@ -160,12 +174,12 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
     $closeAndApplyWndButton = null;
 
     this._createFieldSearch();
-  },
+  }
 
   _createFieldSearch() {
     switch (this._fieldSearchType) {
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch(
+        this._fieldSearch = new IdentifierFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -178,7 +192,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch(
+        this._fieldSearch = new BooleanFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -191,7 +205,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.DateRange:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch(
+        this._fieldSearch = new DateOrTimeRangeFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -205,7 +219,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.M2MRelation:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch(
+        this._fieldSearch = new RelationFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -219,7 +233,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.NumericRange:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch(
+        this._fieldSearch = new NumericRangeFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -232,7 +246,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.O2MRelation:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch(
+        this._fieldSearch = new RelationFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -246,7 +260,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.M2ORelation:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch(
+        this._fieldSearch = new RelationFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -260,7 +274,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Text:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch(
+        this._fieldSearch = new TextFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -273,7 +287,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.TimeRange:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch(
+        this._fieldSearch = new DateOrTimeRangeFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -287,7 +301,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.DateTimeRange:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch(
+        this._fieldSearch = new DateOrTimeRangeFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -301,7 +315,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Classifier:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch(
+        this._fieldSearch = new ClassifierFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -315,7 +329,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       case Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch(
+        this._fieldSearch = new StringEnumFieldSearch(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -328,7 +342,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
       default:
-        this._fieldSearch = new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase(
+        this._fieldSearch = new FieldSearchBase(
           this._contentContainerElement,
           this._parentEntityId,
           this._fieldID,
@@ -341,7 +355,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
         break;
     }
-  },
+  }
 
   // создает объект класса который реализует сбор параметров поиска по данному полю
   _getWindowSize() {
@@ -368,29 +382,29 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
       default:
         return { width: 350, height: 125 };
     }
-  },
+  }
 
   _onCloseButtonClick() {
     this.notify(window.EVENT_TYPE_CONRETE_FIELD_SEARCH_CONTAINER_CLOSE, { fieldID: this._fieldID });
-  },
+  }
 
   _onCloseWndClick() {
     this.$filterDetailsSpanElement.html(`: ${this._fieldSearch.getFilterDetails()}`);
     this._savedWindowState = this._fieldSearch.getBlockState();
     this._restoreWindowStateOnClosing = false;
     this._popupWindowComponent.close();
-  },
+  }
 
   _onCloseAndApplyWndClick() {
     this._onCloseWndClick();
     $(this._containerElement).closest('form').trigger('submit');
-  },
+  }
 
   _onFilterFormSubmitted(e) {
     e.preventDefault();
     $(this._closeAndApplyButton).trigger('click');
     return false;
-  },
+  }
 
   _onContentOpenWindowClick() {
     if (this._popupWindowComponent) {
@@ -403,16 +417,16 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
 
     this._savedWindowState = this._fieldSearch.getBlockState();
     this._restoreWindowStateOnClosing = true;
-  },
+  }
 
   _onPopupWindowClose() {
     if (this._restoreWindowStateOnClosing) {
       this._fieldSearch.restoreBlockState(this._savedWindowState.data, true);
     }
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.callBaseMethod(this, 'dispose');
+    super.dispose();
 
     this.$filterDetailsSpanElement = null;
     if (this._fieldSearch) {
@@ -442,9 +456,9 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
     this._onContentOpenWindowClickHandler = null;
     this._onCloseWndClickHandler = null;
   }
-};
+}
 
-Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.registerClass(
-  'Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer',
-  Quantumart.QP8.Observable
-);
+
+import('../BackendArticleSearchBlock').then(() => {
+  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer = FieldSearchContainer;
+});

@@ -1,17 +1,20 @@
-// eslint-disable-next-line max-params
-Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (
-  containerElement,
-  parentEntityId,
-  fieldID,
-  contentID,
-  fieldColumn,
-  fieldName,
-  fieldGroup,
-  referenceFieldID
-) {
-  Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.initializeBase(
-    this,
-    [
+import { BackendArticleSearchBlock } from '../BackendArticleSearchBlock';
+import { FieldSearchBase, FieldSearchState } from './FieldSearchBase';
+import { $q } from '../../Utils';
+
+export class StringEnumFieldSearch extends FieldSearchBase {
+  // eslint-disable-next-line max-params
+  constructor(
+    containerElement,
+    parentEntityId,
+    fieldID,
+    contentID,
+    fieldColumn,
+    fieldName,
+    fieldGroup,
+    referenceFieldID
+  ) {
+    super(
       containerElement,
       parentEntityId,
       fieldID,
@@ -20,13 +23,11 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (
       fieldName,
       fieldGroup,
       referenceFieldID
-    ]
-  );
+    );
 
-  this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
-};
+    this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
+  }
 
-Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
   initialize() {
     const queryDropDownListID = `${this._elementIdPrefix}_queryDropDownList`;
     const isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
@@ -65,17 +66,17 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
       $containerElement = null;
       $isNullCheckBoxElement = null;
     }
-  },
+  }
 
   getSearchQuery() {
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+    return BackendArticleSearchBlock.createFieldSearchQuery(
       Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
       this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.getIsNull(),
       $(this._queryDropDownListElement).val());
-  },
+  }
 
   getBlockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+    return new FieldSearchState(
       Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum,
       this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
@@ -83,7 +84,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         text: $(this._queryDropDownListElement).val(),
         alias: $(this._queryDropDownListElement).find('option:selected').text()
       });
-  },
+  }
 
   getFilterDetails() {
     const stateData = this.getBlockState().data;
@@ -93,7 +94,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
       return `"${$q.cutShort(stateData.alias, 8)}"`;
     }
     return '""';
-  },
+  }
 
   restoreBlockState(state) {
     if (state) {
@@ -106,11 +107,11 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
 
       $(this._queryDropDownListElement).val(state.text);
     }
-  },
+  }
 
   _onIsNullCheckBoxChange() {
     $(this._queryDropDownListElement).prop('disabled', this.getIsNull());
-  },
+  }
 
   dispose() {
     if (this._isNullCheckBoxElement) {
@@ -123,21 +124,21 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     this._queryDropDownListElement = null;
     this._onIsNullCheckBoxChangeHandler = null;
 
-    Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.callBaseMethod(this, 'dispose');
-  },
+    super.dispose();
+  }
 
-  _onIsNullCheckBoxChangeHandler: null,
+  _onIsNullCheckBoxChangeHandler = null;
   getIsNull() {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
     return false;
-  },
-  _queryDropDownListElement: null,
-  _isNullCheckBoxElement: null
-};
+  }
+  _queryDropDownListElement = null;
+  _isNullCheckBoxElement = null;
+}
 
-Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.registerClass(
-  'Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch',
-  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
-);
+
+import('../BackendArticleSearchBlock').then(() => {
+  Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = StringEnumFieldSearch;
+});
