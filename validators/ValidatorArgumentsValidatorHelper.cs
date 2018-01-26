@@ -14,6 +14,7 @@ namespace Quantumart.QP8.Validators
                 }
             }
         }
+
         internal static bool CheckIsNeedtoValidate(string propertyName, bool inverse, object current)
         {
             if (propertyName != null)
@@ -22,7 +23,9 @@ namespace Quantumart.QP8.Validators
                 bool result;
                 bool.TryParse(property.GetValue(current).ToString(), out result);
                 if (inverse)
+                {
                     return !result;
+                }
                 return result;
             }
 

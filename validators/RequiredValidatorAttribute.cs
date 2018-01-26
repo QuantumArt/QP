@@ -21,6 +21,7 @@ namespace Quantumart.QP8.Validators
         {
             _dependPropertyName = dependPropertyName;
         }
+
         /// <summary>
         /// Создает описанный атрибутом объект <see cref="RequiredValidator" />
         /// </summary>

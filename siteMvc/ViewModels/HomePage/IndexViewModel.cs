@@ -47,7 +47,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
                 result.CurrentCustomerCode = QPContext.CurrentCustomerCode;
                 result.CurrentUserId = QPContext.CurrentUserId;
                 result.AutoLoadHome = Data.AutoOpenHome;
-
                 result.MustChangePassword = UserService.GetUserMustChangePassword(QPContext.CurrentUserId);
 
                 if (_directLinkOptions != null && _directLinkOptions.IsDefined())

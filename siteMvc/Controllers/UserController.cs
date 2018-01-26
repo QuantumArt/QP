@@ -232,7 +232,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpGet]
         public ActionResult ChangePassword()
         {
-            string tabId = null; int parentId = 0;
+            string tabId = "0"; int parentId = 0;
             var user = _service.ReadProfile(QPContext.CurrentUserId);
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
             return JsonHtml("ChangePasswordPopup", model);

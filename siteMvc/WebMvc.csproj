@@ -1394,6 +1394,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <Content Include="Scripts\Quantumart\languages\BackendChangePasswordWindow.Lang.js" />
     <None Include="Settings.StyleCop" />
     <Content Include="Scripts\jquery\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
@@ -1544,6 +1545,7 @@
     <Content Include="Scripts\Quantumart\ckeditor\typographer\quotes.txt" />
     <Content Include="Scripts\Quantumart\Editor\BackendEntityEditorActionEventArgs.js" />
     <Content Include="Scripts\Quantumart\Helpers\vanilla.helpers.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendChangePasswordWindow.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendTextArea.Lang.js" />
     <Content Include="Content\QpCodemirror.css" />

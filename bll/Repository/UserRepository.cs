@@ -118,7 +118,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (new QPConnectionScope())
             {
-                return Common.NewPasswordMathCurrentPassword(QPConnectionScope.Current.DbConnection, userId, newPassword);
+                return Common.NewPasswordMatchCurrentPassword(QPConnectionScope.Current.DbConnection, userId, newPassword);
             }
         }
 
