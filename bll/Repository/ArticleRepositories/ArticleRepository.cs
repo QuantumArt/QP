@@ -585,10 +585,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             var sb = new StringBuilder();
             foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
             {
-                sb.AppendFormatLine(" left join content_{0} as {1} on base.[{2}] = {1}.content_item_id ", field.RelatedContentId, field.TableAlias, field.Name);
+                sb.AppendFormatLine(" left join content_{0}_united as {1} on base.[{2}] = {1}.content_item_id ", field.RelatedContentId, field.TableAlias, field.Name);
                 foreach (var f in field.Related.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
                 {
-                    sb.AppendFormatLine(" left join content_{0} as {1} on {3}.[{2}] = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, f.Name, field.TableAlias);
+                    sb.AppendFormatLine(" left join content_{0}_united as {1} on {3}.[{2}] = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, f.Name, field.TableAlias);
                 }
             }
 
