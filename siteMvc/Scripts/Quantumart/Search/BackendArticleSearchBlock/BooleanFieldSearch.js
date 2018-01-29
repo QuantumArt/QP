@@ -1,17 +1,20 @@
-// eslint-disable-next-line max-params
-Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (
-  containerElement,
-  parentEntityId,
-  fieldID,
-  contentID,
-  fieldColumn,
-  fieldName,
-  fieldGroup,
-  referenceFieldID
-) {
-  Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.initializeBase(
-    this,
-    [
+import { BackendArticleSearchBlock } from '../BackendArticleSearchBlock';
+import { FieldSearchBase, FieldSearchState } from './FieldSearchBase';
+import { $q } from '../../Utils';
+
+export class BooleanFieldSearch extends FieldSearchBase {
+  // eslint-disable-next-line max-params
+  constructor(
+    containerElement,
+    parentEntityId,
+    fieldID,
+    contentID,
+    fieldColumn,
+    fieldName,
+    fieldGroup,
+    referenceFieldID
+  ) {
+    super(
       containerElement,
       parentEntityId,
       fieldID,
@@ -20,13 +23,11 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (
       fieldName,
       fieldGroup,
       referenceFieldID
-    ]
-  );
+    );
 
-  this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
-};
+    this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
+  }
 
-Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
   initialize() {
     const isNullCheckBoxID = `${this._elementIdPrefix}_isNullCheckBox`;
     const radioGroupName = `${this._elementIdPrefix}_radioGroup`;
@@ -84,24 +85,24 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     $isNullCheckBoxElement = null;
     $containerElement = null;
     html = null;
-  },
+  }
 
   getSearchQuery() {
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+    return BackendArticleSearchBlock.createFieldSearchQuery(
       Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean,
       this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID,
       this.getIsNull(), this._getValue());
-  },
+  }
 
   getBlockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+    return new FieldSearchState(
       Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean,
       this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
       {
         isNull: this.getIsNull(),
         value: this._getValue()
       });
-  },
+  }
 
   getFilterDetails() {
     const stateData = this.getBlockState().data;
@@ -109,7 +110,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
       return $l.SearchBlock.isNullCheckBoxLabelText;
     }
     return stateData.value ? $l.SearchBlock.trueText : $l.SearchBlock.falseText;
-  },
+  }
 
   restoreBlockState(state) {
     if (state) {
@@ -127,7 +128,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
         }
       }
     }
-  },
+  }
 
   _getValue() {
     let result = null;
@@ -138,13 +139,13 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
       result = false;
     }
     return result;
-  },
+  }
 
   _onIsNullCheckBoxChange() {
     $(this._containerElement)
       .find(`#${this._elementIdPrefix}_disablingContainer *`)
       .prop('disabled', this.getIsNull());
-  },
+  }
 
   dispose() {
     if (this._isNullCheckBoxElement) {
@@ -156,21 +157,21 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
     this._isNullCheckBoxElement = null;
     this._onIsNullCheckBoxChangeHandler = null;
 
-    Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.callBaseMethod(this, 'dispose');
-  },
+    super.dispose();
+  }
 
-  _onIsNullCheckBoxChangeHandler: null,
+  _onIsNullCheckBoxChangeHandler = null;
   getIsNull() {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
     return false;
-  },
+  }
 
-  _isNullCheckBoxElement: null
-};
+  _isNullCheckBoxElement = null;
+}
 
-Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.registerClass(
-  'Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch',
-  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
-);
+
+import('../BackendArticleSearchBlock').then(() => {
+  Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = BooleanFieldSearch;
+});

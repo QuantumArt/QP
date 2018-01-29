@@ -1,10 +1,13 @@
-Quantumart.QP8.BackendFilePreviewListView = function (fileListContentElement, contextMenuCode, selectMode, zIndex) {
-  Quantumart.QP8.BackendFilePreviewListView.initializeBase(
-    this, [fileListContentElement, contextMenuCode, selectMode, zIndex]
-  );
-};
+import { BackendContextMenu } from '../BackendContextMenu';
+import { BackendFileNameListView } from './BackendFileNameListView';
+import { $q } from '../Utils';
 
-Quantumart.QP8.BackendFilePreviewListView.prototype = {
+export class BackendFilePreviewListView extends BackendFileNameListView {
+  // eslint-disable-next-line no-useless-constructor, FIXME
+  constructor(fileListContentElement, contextMenuCode, selectMode, zIndex) {
+    super(fileListContentElement, contextMenuCode, selectMode, zIndex);
+  }
+
   initialize() {
     const $fileListContentElement = jQuery(this._fileListContentElement);
     $fileListContentElement.html('<div class="fileListPreviewContainer"></div>');
@@ -17,7 +20,7 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
     );
 
     if (!$q.isNullOrWhiteSpace(this._contextMenuCode)) {
-      const contextMenuComponent = new Quantumart.QP8.BackendContextMenu(
+      const contextMenuComponent = new BackendContextMenu(
         this._contextMenuCode, String.format('{0}_ContextMenu', $fileListContentElement.attr('id')),
         { targetElements: this._fileListContentElement, allowManualShowing: true, zIndex: this._zIndex }
       );
@@ -35,7 +38,7 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
       );
       this._contextMenuComponent = contextMenuComponent;
     }
-  },
+  }
 
   redraw(data, options) {
     let $fileListContentElement = jQuery(this._fileListContentElement);
@@ -65,13 +68,13 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
     $fileListContentElement = null;
     html = null;
     this._raiseSelectEvent();
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendFilePreviewListView.callBaseMethod(this, 'dispose');
-  },
+    super.dispose();
+  }
 
-  shortNameLength: 15,
+  shortNameLength = 15;
   _getThumbnailLink(item, options) {
     if (item.FileType === Quantumart.QP8.Enums.LibraryFileType.Image) {
       let url = '';
@@ -90,8 +93,7 @@ Quantumart.QP8.BackendFilePreviewListView.prototype = {
       "'{0}{1}'", window.THEME_IMAGE_FOLDER_URL_BIG_FILE_TYPE_ICONS, item.BigIconLink
     ));
   }
-};
+}
 
-Quantumart.QP8.BackendFilePreviewListView.registerClass(
-  'Quantumart.QP8.BackendFilePreviewListView', Quantumart.QP8.BackendFileNameListView
-);
+
+Quantumart.QP8.BackendFilePreviewListView = BackendFilePreviewListView;

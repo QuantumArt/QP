@@ -1,53 +1,56 @@
-Quantumart.QP8.BackendSettingsPopupWindow = function BackendSettingsPopupWindow(eventArgs, options, callback) {
-  this._eventsArgs = eventArgs;
-  this._actionCode = eventArgs.get_actionCode();
-  this._settingsActionUrl = eventArgs.settingsActionUrl;
+import { BackendSelectPopupWindow } from './BackendSelectPopupWindow';
+import { BackendToolbar } from '../Toolbar/BackendToolbar';
+import { MultistepActionCopySiteSettings } from '../MultistepAction/Settings/BackendMultistepCopySiteSettings';
+import { MultistepActionExportSettings } from '../MultistepAction/Settings/BackendMultistepExportSettings';
+import { MultistepActionImportSettings } from '../MultistepAction/Settings/BackendMultistepImportSettings';
+import { $q } from '../Utils';
 
-  if (options) {
-    this._isSettingsSet = options.isSettingsSet;
-    this._contentId = options.ContentId;
+export class BackendSettingsPopupWindow extends BackendSelectPopupWindow {
+  constructor(eventArgs, options, callback) {
+    super(eventArgs, options);
+    this._eventsArgs = eventArgs;
+    this._actionCode = eventArgs.get_actionCode();
+    this._settingsActionUrl = eventArgs.settingsActionUrl;
+
+    if (options) {
+      this._isSettingsSet = options.isSettingsSet;
+      this._contentId = options.ContentId;
+    }
+
+    this._callback = callback;
+
+    this._initializeSettingsWindow();
+    this._popupWindowToolbarComponent = this._createToolbar();
+    this.openWindow();
+
+    this._settingsWindow.initActions(this, options);
   }
 
-  this._callback = callback;
+  _contentId = 0;
+  _eventsArgs = null;
+  _isSettingsSet = false;
+  _callback = null;
+  _settingsWindow = null;
+  _settingsActionUrl = null;
+  NEXT_BUTTON = 'Next';
 
-  this._initializeSettingsClass();
-  Quantumart.QP8.BackendSettingsPopupWindow.initializeBase(this, [eventArgs, options]);
-
-  this._initializeSettingsWindow();
-  this._popupWindowToolbarComponent = this._createToolbar();
-  this.openWindow();
-
-  this._settingsWindow.initActions(this, options);
-};
-
-Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
-  _contentId: 0,
-  _eventsArgs: null,
-  _isSettingsSet: false,
-  _callback: null,
-  _settingsWindow: null,
-  _settingsClass: null,
-  _settingsActionUrl: null,
-  NEXT_BUTTON: 'Next',
-
-  _initializeSettingsClass() {
+  get SettingsClass() {
     switch (this._actionCode) {
       case 'import_articles':
-        this._settingsClass = Quantumart.QP8.MultistepActionImportSettings;
-        break;
+        return MultistepActionImportSettings;
       case 'export_articles':
       case 'multiple_export_article':
       case 'export_virtual_articles':
       case 'multiple_export_virtual_article':
-        this._settingsClass = Quantumart.QP8.MultistepActionExportSettings;
-        break;
+      case 'export_archive_article':
+      case 'multiple_export_archive_article':
+        return MultistepActionExportSettings;
       case 'copy_site':
-        this._settingsClass = Quantumart.QP8.MultistepActionCopySiteSettings;
-        break;
+        return MultistepActionCopySiteSettings;
       default:
-        break;
+        return null;
     }
-  },
+  }
 
   _initializeSettingsWindow() {
     const options = {
@@ -59,13 +62,13 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
       wrapperElementId: this._popupWindowComponent.get_documentWrapperElementId()
     };
 
-    if (this._settingsClass) {
-      this._settingsWindow = new this._settingsClass(options);
+    if (this.SettingsClass) {
+      this._settingsWindow = new this.SettingsClass(options);
     }
-  },
+  }
 
   _createToolbar() {
-    const backendToolbar = new Quantumart.QP8.BackendToolbar();
+    const backendToolbar = new BackendToolbar();
     backendToolbar.set_toolbarElementId(`popupWindowToolbar_${this._popupWindowId}`);
     backendToolbar.initialize();
     backendToolbar.attachObserver(
@@ -75,17 +78,17 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
 
     backendToolbar.addToolbarItemsToToolbar(this._getToolbarItems());
     return backendToolbar;
-  },
+  }
 
   openWindow() {
     if (this._popupWindowComponent) {
       this._popupWindowComponent.openWindow({ hasSettings: true, isSettingsSet: this._isSettingsSet, asyncReq: false });
     }
-  },
+  }
 
   _getToolbarItems() {
-    return this._settingsClass.addButtons([]);
-  },
+    return this.SettingsClass.addButtons([]);
+  }
 
   _onPopupWindowToolbarButtonClicked() {
     if (this._popupWindowComponent) {
@@ -98,7 +101,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
         this.submitForm(ajaxData);
       }
     }
-  },
+  }
 
   submitForm(ajaxData) {
     const url = this._settingsActionUrl.replace('Settings', 'SetupWithParams');
@@ -112,7 +115,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
       }
     };
 
-    if (this._settingsClass === Quantumart.QP8.MultistepActionImportSettings) {
+    if (this.SettingsClass === MultistepActionImportSettings) {
       $.ajax({
         url,
         data: ajaxData,
@@ -122,15 +125,13 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
     } else {
       $q.postAjax(url, ajaxData, callback);
     }
-  },
+  }
 
   _popupWindowClosedHandler() {
     this._settingsWindow.dispose();
-    Quantumart.QP8.BackendSettingsPopupWindow.callBaseMethod(this, 'dispose');
+    super.dispose();
   }
-};
+}
 
-Quantumart.QP8.BackendSettingsPopupWindow.registerClass(
-  'Quantumart.QP8.BackendSettingsPopupWindow',
-  Quantumart.QP8.BackendSelectPopupWindow
-);
+
+Quantumart.QP8.BackendSettingsPopupWindow = BackendSettingsPopupWindow;

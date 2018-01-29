@@ -4,6 +4,8 @@ namespace Quantumart.QP8.Constants
     {
         public const string Id = "ID";
 
+        public const string ContentId = "CONTENT_ID";
+
         public const string ContentItemId = "CONTENT_ITEM_ID";
         public const string StatusTypeId = "STATUS_TYPE_ID";
         public const string StatusTypeName = "STATUS_TYPE_NAME";

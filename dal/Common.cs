@@ -380,9 +380,13 @@ namespace Quantumart.QP8.DAL
 
                     update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 0;
                     update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId, schedule_new_version_publication = 1 where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 1;
+
+                    exec qp_merge_delays @ids2, @userId
+
                     delete i from @ids2 i inner join content_item ci with(nolock) on ci.content_item_id = i.id where ci.splitted = 0 and ci.schedule_new_version_publication = 0
 
                     exec qp_merge_articles @ids2, @userId
+
                     ", connection
             ))
             {
@@ -5183,7 +5187,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Находит все контенты-расширения, задействованные в статьях заданного контента
         /// </summary>
-        public static int[] GetReferencedAggregatedContentIds(SqlConnection sqlConnection, int contentId, int[] articleIds)
+        public static int[] GetReferencedAggregatedContentIds(SqlConnection sqlConnection, int contentId, int[] articleIds, bool isArchive = false)
         {
             const string query = @"
                 DECLARE @query NVARCHAR(1000)
@@ -5203,7 +5207,7 @@ namespace Quantumart.QP8.DAL
                     DECLARE @queryWithoutLastComma NVARCHAR(1000) = SUBSTRING(@query, 0, LEN(@query));
                     SET @query =
                         'SELECT DISTINCT ' + @queryWithoutLastComma + ' FROM CONTENT_' + LTRIM(STR(@contentId))  +
-                        ' WHERE ARCHIVE = 0'
+                        ' WHERE ARCHIVE = ' + CAST(@archive AS CHAR(1))
 
                     IF EXISTS (SELECT NULL FROM @articleIds)
                         SET @query = @query + ' AND CONTENT_ITEM_ID IN (SELECT Id FROM @articleIds)'
@@ -5216,6 +5220,7 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@contentId", contentId);
                 cmd.Parameters.Add(GetIdsDatatableParam("@articleIds", articleIds));
+                cmd.Parameters.AddWithValue("@archive", isArchive);
                 using (var reader = cmd.ExecuteReader())
                 {
                     var result = new List<int>();
@@ -9500,7 +9505,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int[] SortIdsByFieldName(SqlConnection sqlConnection, int[] ids, int contentId, string fieldName)
+        public static int[] SortIdsByFieldName(SqlConnection sqlConnection, int[] ids, int contentId, string fieldName, bool isArchive)
         {
             const string template = @"
                 select
@@ -9508,7 +9513,7 @@ namespace Quantumart.QP8.DAL
                 from
                     content_{0}_united a with(nolock) {1}
                 WHERE
-                    a.archive = 0
+                   a.archive = @archive
                 ORDER BY
                     a.[{2}]";
 
@@ -9521,7 +9526,7 @@ namespace Quantumart.QP8.DAL
                 {
                     cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
                 }
-
+                cmd.Parameters.AddWithValue("@archive", isArchive);
                 var result = new List<int>();
                 using (var dr = cmd.ExecuteReader())
                 {

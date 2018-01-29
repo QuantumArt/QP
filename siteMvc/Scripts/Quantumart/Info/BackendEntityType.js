@@ -1,10 +1,16 @@
-Quantumart.QP8.BackendEntityType = function () {
-  // empty constructor
-};
+import { GlobalCache } from '../Cache';
+import { $q } from '../Utils';
 
-Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode) {
+export class BackendEntityType {
+  // eslint-disable-next-line no-useless-constructor, FIXME
+  constructor() {
+    // empty constructor
+  }
+}
+
+BackendEntityType.getEntityTypeByCode = function (entityTypeCode) {
   const cacheKey = `EntityTypeByEntityTypeCode_${entityTypeCode}`;
-  let entityType = Quantumart.QP8.Cache.getItem(cacheKey);
+  let entityType = GlobalCache.getItem(cacheKey);
 
   if (!entityType) {
     $q.getJsonFromUrl(
@@ -21,15 +27,15 @@ Quantumart.QP8.BackendEntityType.getEntityTypeByCode = function (entityTypeCode)
       }
     );
 
-    Quantumart.QP8.Cache.addItem(cacheKey, entityType);
+    GlobalCache.addItem(cacheKey, entityType);
   }
 
   return entityType;
 };
 
-Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
+BackendEntityType.getEntityTypeById = function (entityTypeId) {
   const cacheKey = `EntityTypeByEntityTypeId_${entityTypeId}`;
-  let entityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
+  let entityTypeCode = GlobalCache.getItem(cacheKey);
 
   if (!entityTypeCode) {
     $q.getJsonFromUrl(
@@ -46,15 +52,15 @@ Quantumart.QP8.BackendEntityType.getEntityTypeById = function (entityTypeId) {
       }
     );
 
-    Quantumart.QP8.Cache.addItem(cacheKey, entityTypeCode);
+    GlobalCache.addItem(cacheKey, entityTypeCode);
   }
 
-  return Quantumart.QP8.BackendEntityType.getEntityTypeByCode(entityTypeCode);
+  return BackendEntityType.getEntityTypeByCode(entityTypeCode);
 };
 
-Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entityTypeCode) {
+BackendEntityType.getParentEntityTypeCodeByCode = function (entityTypeCode) {
   const cacheKey = `ParentEntityTypeCodeByEntityTypeCode_${entityTypeCode}`;
-  let parentEntityTypeCode = Quantumart.QP8.Cache.getItem(cacheKey);
+  let parentEntityTypeCode = GlobalCache.getItem(cacheKey);
 
   if (!parentEntityTypeCode) {
     $q.getJsonFromUrl(
@@ -72,15 +78,15 @@ Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode = function (entit
       }
     );
 
-    Quantumart.QP8.Cache.addItem(cacheKey, parentEntityTypeCode);
+    GlobalCache.addItem(cacheKey, parentEntityTypeCode);
   }
 
   return parentEntityTypeCode;
 };
 
-Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = function () {
+BackendEntityType.getEntityTypeIdToActionListItemDictionary = function () {
   const cacheKey = 'EntityTypeIdToActionListItemDictionary';
-  let dictionary = Quantumart.QP8.Cache.getItem(cacheKey);
+  let dictionary = GlobalCache.getItem(cacheKey);
 
   if (!dictionary) {
     $q.getJsonFromUrl(
@@ -94,7 +100,7 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
         data => {
           if (data.success) {
             ({ dictionary } = data);
-            Quantumart.QP8.Cache.addItem(cacheKey, data.dictionary);
+            GlobalCache.addItem(cacheKey, data.dictionary);
           } else {
             dictionary = null;
             $q.alertError(data.Text);
@@ -109,4 +115,5 @@ Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary = fun
   return dictionary;
 };
 
-Quantumart.QP8.BackendEntityType.registerClass('Quantumart.QP8.BackendEntityType');
+
+Quantumart.QP8.BackendEntityType = BackendEntityType;

@@ -1,35 +1,41 @@
+import { BackendActionPermissionTree } from '../Tree/BackendActionPermissionTree';
+import { BackendActionPermissionViewManager } from '../Managers/BackendActionPermissionViewManager';
+import { BackendUserAndGroupSearchBlock } from '../Search/BackendUserAndGroupSearchBlock';
+import { Observable } from '../Common/Observable';
+import { $a } from '../BackendActionExecutor';
+
 window.EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING = 'OnActionPermissionsViewExecuting';
 
-Quantumart.QP8.BackendActionPermissionView = function (viewElementId) {
-  Quantumart.QP8.BackendActionPermissionView.initializeBase(this);
+export class BackendActionPermissionView extends Observable {
+  constructor(viewElementId) {
+    super();
 
-  this._viewElementId = viewElementId;
-};
+    this._viewElementId = viewElementId;
+  }
 
-Quantumart.QP8.BackendActionPermissionView.prototype = {
-  _viewElementId: '',
-  _treeComponent: null,
-  _searchBlockComponent: null,
+  _viewElementId = '';
+  _treeComponent = null;
+  _searchBlockComponent = null;
 
   initialize() {
     const treeElementId = $('.treeContainer .t-treeview').attr('id');
 
-    this._treeComponent = new Quantumart.QP8.BackendActionPermissionTree(treeElementId);
+    this._treeComponent = new BackendActionPermissionTree(treeElementId);
     this._treeComponent.attachObserver(
       window.EVENT_TYPE_ACTION_PERMISSIONS_TREE_EXECUTING, jQuery.proxy(this._onActionExecuting, this)
     );
     this._treeComponent.initialize();
-    this._searchBlockComponent = new Quantumart.QP8.BackendUserAndGroupSearchBlock(
+    this._searchBlockComponent = new BackendUserAndGroupSearchBlock(
       this._viewElementId, jQuery.proxy(this._onApplyFilter, this)
     );
-  },
+  }
 
   _onApplyFilter() {
     const searchData = this._searchBlockComponent.getSearchData();
     this._treeComponent.set_userId(searchData.userId);
     this._treeComponent.set_groupId(searchData.groupId);
     this._treeComponent.refreshTree();
-  },
+  }
 
   _onActionExecuting(eventType, sender, eventArgs) {
     const actionCode = eventArgs.get_actionCode();
@@ -48,14 +54,14 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
     if (action) {
       this.notify(window.EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING, eventArgs);
     }
-  },
+  }
 
   getTree() {
     return this._treeComponent;
-  },
+  }
 
   dispose() {
-    Quantumart.QP8.BackendActionPermissionViewManager.getInstance().dispose();
+    BackendActionPermissionViewManager.getInstance().dispose();
 
     if (this._searchBlockComponent) {
       this._searchBlockComponent.dispose();
@@ -68,8 +74,7 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
       this._treeComponent = null;
     }
   }
-};
+}
 
-Quantumart.QP8.BackendActionPermissionView.registerClass(
-  'Quantumart.QP8.BackendActionPermissionView', Quantumart.QP8.Observable
-);
+
+Quantumart.QP8.BackendActionPermissionView = BackendActionPermissionView;

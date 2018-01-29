@@ -1,7 +1,16 @@
-Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager extends Quantumart.QP8.Observable {
-  static getInstance(options) {
+import { BackendDocumentHostStateStorage } from '../Document/BackendDocumentHostStateStorage';
+import { BackendPopupWindow } from '../Document/BackendPopupWindow';
+import { Observable } from '../Common/Observable';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
+export class BackendPopupWindowManager extends Observable {
+  /** @type {BackendPopupWindowManager} */
+  static _instance;
+
+  static getInstance() {
     if (!BackendPopupWindowManager._instance) {
-      BackendPopupWindowManager._instance = new BackendPopupWindowManager(options);
+      BackendPopupWindowManager._instance = new BackendPopupWindowManager();
     }
 
     return BackendPopupWindowManager._instance;
@@ -17,7 +26,7 @@ Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager exten
   constructor() {
     super();
     this._popupWindows = {};
-    this._hostStateStorage = new Quantumart.QP8.BackendDocumentHostStateStorage();
+    this._hostStateStorage = new BackendDocumentHostStateStorage();
   }
 
   generatePopupWindowId() {
@@ -67,7 +76,7 @@ Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager exten
       hostStateStorage: this._hostStateStorage
     });
 
-    const popupWindow = new Quantumart.QP8.BackendPopupWindow(popupWindowId, eventArgs, newOptions);
+    const popupWindow = new BackendPopupWindow(popupWindowId, eventArgs, newOptions);
     popupWindow.set_popupWindowManager(this);
     popupWindow.initialize();
 
@@ -144,4 +153,6 @@ Quantumart.QP8.BackendPopupWindowManager = class BackendPopupWindowManager exten
 
     $q.collectGarbageInIE();
   }
-};
+}
+
+Quantumart.QP8.BackendPopupWindowManager = BackendPopupWindowManager;

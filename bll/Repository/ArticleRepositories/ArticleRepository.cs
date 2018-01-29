@@ -1311,11 +1311,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static int[] SortIdsByFieldName(int[] ids, int contentId, string fieldName)
+        internal static int[] SortIdsByFieldName(int[] ids, int contentId, string fieldName, bool isArchive = false)
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.SortIdsByFieldName(scope.DbConnection, ids, contentId, fieldName);
+                return Common.SortIdsByFieldName(scope.DbConnection, ids, contentId, fieldName, isArchive);
             }
         }
 

@@ -1,4 +1,12 @@
-class BackendEntityGridManager extends Quantumart.QP8.Observable {
+import { BackendEntityGrid } from '../BackendEntityGrid';
+import { Observable } from '../Common/Observable';
+import { $o } from '../Info/BackendEntityObject';
+import { $q } from '../Utils';
+
+export class BackendEntityGridManager extends Observable {
+  /** @type {BackendEntityGridManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendEntityGridManager._instance) {
       BackendEntityGridManager._instance = new BackendEntityGridManager();
@@ -77,7 +85,7 @@ class BackendEntityGridManager extends Quantumart.QP8.Observable {
     const actionGroupCode = BackendEntityGridManager.generateGridGroupCode(actionCode, parentEntityId);
     const actionSimpleGroupCode = BackendEntityGridManager.generateGridGroupCode(actionCode);
 
-    const grid = new Quantumart.QP8.BackendEntityGrid([
+    const grid = new BackendEntityGrid([
       gridGroupCode,
       actionGroupCode,
       actionSimpleGroupCode

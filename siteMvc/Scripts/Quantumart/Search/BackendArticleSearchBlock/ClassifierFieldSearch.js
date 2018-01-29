@@ -1,18 +1,22 @@
-// eslint-disable-next-line max-params
-Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (
-  containerElement,
-  parentEntityId,
-  fieldID,
-  contentID,
-  fieldColumn,
-  fieldName,
-  fieldGroup,
-  referenceFieldID,
-  searchType
-) {
-  Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.initializeBase(
-    this,
-    [
+import { BackendArticleSearchBlock } from '../BackendArticleSearchBlock';
+import { FieldSearchBase, FieldSearchState } from './FieldSearchBase';
+import { $c } from '../../ControlHelpers';
+import { $q } from '../../Utils';
+
+export class ClassifierFieldSearch extends FieldSearchBase {
+  // eslint-disable-next-line max-params
+  constructor(
+    containerElement,
+    parentEntityId,
+    fieldID,
+    contentID,
+    fieldColumn,
+    fieldName,
+    fieldGroup,
+    referenceFieldID,
+    searchType
+  ) {
+    super(
       containerElement,
       parentEntityId,
       fieldID,
@@ -20,17 +24,14 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (
       fieldColumn,
       fieldName,
       fieldGroup,
-      referenceFieldID,
-      searchType
-    ]
-  );
+      referenceFieldID
+    );
 
-  this._searchType = searchType;
-  this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
-};
+    this._searchType = searchType;
+    this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
+  }
 
-Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
-  _contentElement: null,
+  _contentElement = null;
   initialize() {
     let serverContent;
     $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK}ContentsListForClassifier`, {
@@ -64,27 +65,25 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
       // запомнить ссылку на dom-элементы
       this._isNullCheckBoxElement = $isNullCheckBoxElement.get(0);
       this._contentElement = $content.get(0);
-
-      $(document).ready(this._onLoadHandler);
     }
-  },
+  }
 
   getSearchQuery() {
     const contentObj = new Array($(this._contentElement).val());
-    return Quantumart.QP8.BackendArticleSearchBlock.createFieldSearchQuery(
+    return BackendArticleSearchBlock.createFieldSearchQuery(
       this._searchType, this._fieldID, this._fieldColumn, this._contentID,
       this._referenceFieldID, contentObj, this.getIsNull(), false
     );
-  },
+  }
 
   getBlockState() {
-    return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(
+    return new FieldSearchState(
       this._searchType, this._fieldID, this._contentID, this._fieldColumn,
       this._fieldName, this._fieldGroup, this._referenceFieldID, {
         isNull: this.getIsNull(),
         contentID: $(this._contentElement).val()
       });
-  },
+  }
 
   getFilterDetails() {
     const stateData = this.getBlockState().data;
@@ -94,7 +93,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
       return $q.cutShort($(this._contentElement).find(`[value=${stateData.contentID}]`).text(), 12);
     }
     return '';
-  },
+  }
 
   restoreBlockState(state) {
     if (state) {
@@ -110,15 +109,15 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
         $(this._contentElement).val(state.contentID);
       }
     }
-  },
+  }
 
-  _onIsNullCheckBoxChangeHandler: null,
+  _onIsNullCheckBoxChangeHandler = null;
   getIsNull() {
     if (this._isNullCheckBoxElement) {
       return $(this._isNullCheckBoxElement).is(':checked');
     }
     return false;
-  },
+  }
 
   _onIsNullCheckBoxChange() {
     if (this.getIsNull()) {
@@ -126,7 +125,7 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     } else {
       $(this._contentElement).prop('disabled', false);
     }
-  },
+  }
 
   dispose() {
     if (this._isNullCheckBoxElement) {
@@ -139,15 +138,15 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
     this._onIsNullCheckBoxChangeHandler = null;
     this._contentElement = null;
 
-    Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.callBaseMethod(this, 'dispose');
-  },
+    super.dispose();
+  }
 
-  _searchType: 0,
-  _isNullCheckBoxElement: null,
-  _contentID: null
-};
+  _searchType = 0;
+  _isNullCheckBoxElement = null;
+  _contentID = null;
+}
 
-Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.registerClass(
-  'Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch',
-  Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase
-);
+
+import('../BackendArticleSearchBlock').then(() => {
+  Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = ClassifierFieldSearch;
+});

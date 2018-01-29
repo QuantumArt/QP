@@ -1,4 +1,11 @@
-class BackendActionPermissionViewManager extends Quantumart.QP8.Observable {
+import { BackendActionPermissionView } from '../ActionPermissions/BackendActionPermissionView';
+import { Observable } from '../Common/Observable';
+import { $q } from '../Utils';
+
+export class BackendActionPermissionViewManager extends Observable {
+  /** @type {BackendActionPermissionViewManager} */
+  static _instance;
+
   static getInstance() {
     if (!BackendActionPermissionViewManager._instance) {
       BackendActionPermissionViewManager._instance = new BackendActionPermissionViewManager();
@@ -16,7 +23,8 @@ class BackendActionPermissionViewManager extends Quantumart.QP8.Observable {
 
   createView(viewElementId, options, hostOptions) {
     if (!this._viewComponent) {
-      this._viewComponent = new Quantumart.QP8.BackendActionPermissionView(viewElementId, options, hostOptions);
+      // @ts-ignore FIXME
+      this._viewComponent = new BackendActionPermissionView(viewElementId, options, hostOptions);
     }
 
     return this._viewComponent;

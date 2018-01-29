@@ -1,9 +1,24 @@
 /* eslint max-lines: 'off' */
 /* eslint no-empty-function: 'off' */
+import { Backend } from './Backend';
+import { BackendAggregationList } from './Editor/BackendAggregationList';
+import { BackendClassifierField } from './Editor/BackendClassifierField';
+import { BackendEntityDataListManager } from './Managers/BackendEntityDataListManager';
+import { BackendEntityTreeManager } from './Managers/BackendEntityTreeManager';
+import { BackendEventArgs } from './Common/BackendEventArgs';
+import { BackendFileField } from './Editor/BackendFileField';
+import { BackendHighlightedTextArea } from './Editor/BackendTextAreaEditor';
+import { BackendLibrary } from './Library/BackendLibrary';
+import { BackendVisualEditor } from './Editor/BackendVisualEditor';
+import { BackendWorkflow } from './Editor/BackendWorkflowEditor';
+import { ImageCropResizeClient } from './BackendImageCropResizeClient';
+import { $q } from './Utils';
 
-window.$c = function () {};
 
-window.$c.getAllFieldRows = function (parentElement) {
+// eslint-disable-next-line no-shadow
+export class $c { }
+
+$c.getAllFieldRows = function (parentElement) {
   window.console.error('TODO: SHOULD NOT USE THIS METHOD');
   if (!parentElement) {
     throw new Error($l.Common.parentDomElementNotSpecified);
@@ -423,7 +438,7 @@ $c.setAllVisualEditorValues = function (parentElement, fieldValues) {
           $ta.text(fv.value);
           const $ve = $ta.closest('.visualEditorComponent');
           if ($ve.length > 0) {
-            const component = Quantumart.QP8.BackendVisualEditor.getComponent($ve);
+            const component = BackendVisualEditor.getComponent($ve);
             if (component && component.getCkEditor()) {
               component.getCkEditor().setData(fv.value);
             }
@@ -475,7 +490,7 @@ $c.setAllClassifierFieldValues = function (parentElement, fieldValues, disableCh
     $(fieldValues).each((i, fv) => {
       $cl = $classifiers.filter(`[data-field_name="${fv.fieldName}"]`).first();
       if ($cl.length > 0) {
-        component = Quantumart.QP8.BackendClassifierField.getComponent($cl);
+        component = BackendClassifierField.getComponent($cl);
         if (component) {
           component.setInitFieldValues(fieldValues);
           component.setDisableChangeTracking(disableChangeTracking);
@@ -497,7 +512,7 @@ $c.setAllAggregationListValues = function (parentElement, fieldValues) {
     const $lists = $c.getAllAggregationLists(parentElement);
     $(fieldValues).each((i, fv) => {
       const $lf = $lists.filter(`[data-field_name="${fv.fieldName}"]:first`);
-      const component = Quantumart.QP8.BackendAggregationList.getComponent($lf);
+      const component = BackendAggregationList.getComponent($lf);
       if (component) {
         component.setItems(fv.value);
       }
@@ -603,7 +618,7 @@ $c.getAllVisualEditorValues = function (parentElement) {
     .map(function () {
       const $ve = $(this);
       const $ta = $ve.find('.visualEditor');
-      const editor = Quantumart.QP8.BackendVisualEditor.getComponent($ve);
+      const editor = BackendVisualEditor.getComponent($ve);
       if (editor) {
         if (editor.getCkEditor()) {
           return {
@@ -640,7 +655,7 @@ $c.getAllEntityDataListValues = function (parentElement) {
 $c.getAllClassifierFieldValues = function (parentElement) {
   return $c.getAllClassifierFields(parentElement).filter('[data-field_name]').map(function () {
     const $that = $(this);
-    const component = Quantumart.QP8.BackendClassifierField.getComponent($that);
+    const component = BackendClassifierField.getComponent($that);
     if (component) {
       return {
         fieldName: $that.data('field_name'),
@@ -655,7 +670,7 @@ $c.getAllClassifierFieldValues = function (parentElement) {
 $c.getAllAggregationListValues = function (parentElement) {
   return $c.getAllAggregationLists(parentElement).filter('[data-field_name]').map(function () {
     const $that = $(this);
-    const component = Quantumart.QP8.BackendAggregationList.getComponent($that);
+    const component = BackendAggregationList.getComponent($that);
     if (component) {
       return {
         fieldName: $that.data('field_name'),
@@ -839,7 +854,7 @@ $c.makeReadonlyClassifierFields = function (parentElement, fieldNames) {
     $(fieldNames).each((i, fname) => {
       $cl = $classifiers.filter(`[data-field_name="${fname}"]`).first();
       if ($cl.length > 0) {
-        component = Quantumart.QP8.BackendClassifierField.getComponent($cl);
+        component = BackendClassifierField.getComponent($cl);
         if (component) {
           component.makeReadonly();
         }
@@ -1066,7 +1081,7 @@ $c.initFileField = function (fieldElem, actionExecutingHandler) {
       options.uploaderType = $q.toInt($field.data('uploader_type'), Quantumart.QP8.Enums.UploaderType.Silverlight);
     }
 
-    const fileField = new Quantumart.QP8.BackendFileField(fieldId, wrapperId, options);
+    const fileField = new BackendFileField(fieldId, wrapperId, options);
 
     fileField.initialize();
 
@@ -1124,7 +1139,7 @@ $c.initAllClassifierFields = function (parentElement, actionExecutingHandler, ed
 };
 
 $c.initClassifierField = function (componentElem, actionExecutingHandler, editorOptions, onClassifierEventHandler) {
-  const component = new Quantumart.QP8.BackendClassifierField(componentElem, actionExecutingHandler, editorOptions);
+  const component = new BackendClassifierField(componentElem, actionExecutingHandler, editorOptions);
   component.initialize();
   if ($q.isFunction(onClassifierEventHandler)) {
     component.attachObserver(window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED, onClassifierEventHandler);
@@ -1143,7 +1158,7 @@ $c.destroyAllClassifierFields = function (parentElement) {
 };
 
 $c.destroyClassifierField = function (componentElem) {
-  const component = Quantumart.QP8.BackendClassifierField.getComponent(componentElem);
+  const component = BackendClassifierField.getComponent(componentElem);
   if (component) {
     component.detachObserver(window.EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED);
     component.dispose();
@@ -1172,7 +1187,7 @@ $c.initAllVisualEditors = function (parentElement) {
 };
 
 $c.initVisualEditor = function (editorElem) {
-  const editor = new Quantumart.QP8.BackendVisualEditor(editorElem);
+  const editor = new BackendVisualEditor(editorElem);
   editor.initialize();
 };
 
@@ -1189,7 +1204,7 @@ $c.destroyAllVisualEditors = function (parentElement) {
 };
 
 $c.destroyVisualEditor = function (editorElem) {
-  let editor = Quantumart.QP8.BackendVisualEditor.getComponent(editorElem);
+  let editor = BackendVisualEditor.getComponent(editorElem);
   if (editor) {
     editor.dispose();
     editor = null;
@@ -1203,7 +1218,7 @@ $c.saveDataOfAllVisualEditors = function (parentElement) {
 };
 
 $c.saveVisualEditorData = function (editorElem) {
-  let editor = Quantumart.QP8.BackendVisualEditor.getComponent(editorElem);
+  let editor = BackendVisualEditor.getComponent(editorElem);
   if (editor) {
     editor.saveVisualEditorData();
     editor = null;
@@ -1232,14 +1247,14 @@ $c.initAllHighlightedTextAreas = function (parentElem) {
 };
 
 $c.initHighlightedTextArea = function (editorElem) {
-  let area = new Quantumart.QP8.BackendHighlightedTextArea(editorElem);
+  let area = new BackendHighlightedTextArea(editorElem);
   area.initialize();
   area = null;
 };
 
 $c.saveDataOfAllHighlightedTextAreas = function (parentElem) {
   $c.getAllHighlightedTextAreas(parentElem).each(function () {
-    const area = new Quantumart.QP8.BackendHighlightedTextArea($(this));
+    const area = new BackendHighlightedTextArea($(this));
     area.saveData();
   });
 };
@@ -1251,7 +1266,7 @@ $c.destroyAllHighlightedTextAreas = function (parentElem) {
 };
 
 $c.destroyHighlightedTextArea = function (editorElem) {
-  let area = new Quantumart.QP8.BackendHighlightedTextArea(editorElem);
+  let area = new BackendHighlightedTextArea(editorElem);
   area.destroy();
   area = null;
 };
@@ -1279,7 +1294,7 @@ $c.initAllAggregationLists = function (parentElement) {
 };
 
 $c.initAggregationList = function (editorElem) {
-  let list = new Quantumart.QP8.BackendAggregationList(editorElem);
+  let list = new BackendAggregationList(editorElem);
   list.initialize();
   list = null;
 };
@@ -1296,7 +1311,7 @@ $c.destroyAllAggregationLists = function (parentElement) {
 };
 
 $c.destroyAggregationList = function (editorElem) {
-  (new Quantumart.QP8.BackendAggregationList(editorElem)).destroyAggregationList();
+  (new BackendAggregationList(editorElem)).destroyAggregationList();
 };
 
 $c.saveDataOfAllAggregationLists = function (parentElement) {
@@ -1307,7 +1322,7 @@ $c.saveDataOfAllAggregationLists = function (parentElement) {
 };
 
 $c.saveAggregationListData = function (editorElem) {
-  (new Quantumart.QP8.BackendAggregationList(editorElem)).saveAggregationListData();
+  (new BackendAggregationList(editorElem)).saveAggregationListData();
 };
 
 // #endregion
@@ -1333,15 +1348,15 @@ $c.initAllWorkflows = function (parentElement) {
 };
 
 $c.initWorkflow = function (editorElem) {
-  const workflow = new Quantumart.QP8.BackendWorkflow(editorElem);
+  const workflow = new BackendWorkflow(editorElem);
   workflow.initialize();
 };
 
 $c.saveDataOfAllWorkflows = function (editorElem) {
   window.console.error('TODO: SHOULD NOT USE THIS METHOD');
   const $workflows = $c.getAllWorkflows(editorElem);
-  $workflows.each(function () {
-    $c.saveWorkflowData($(this));
+  $workflows.each(() => {
+    $c.saveWorkflowData();
   });
 };
 
@@ -1396,14 +1411,14 @@ $c.openPreviewWindow = function (url, width, height) {
 };
 
 $c.openCropWindow = function (url, folderUrl, urlParams) {
-  const imgCropResize = Quantumart.QP8.ImageCropResizeClient.create({
+  const imgCropResize = ImageCropResizeClient.create({
     sourceImageUrl: url,
     resultImageFolder: folderUrl,
     onCompleteCallback() {
       imgCropResize.closeWindow();
       imgCropResize.dispose();
 
-      const newEventArgs = new Quantumart.QP8.BackendEventArgs();
+      const newEventArgs = new BackendEventArgs();
       newEventArgs.set_entityTypeCode(urlParams.entityTypeCode);
       newEventArgs.set_actionTypeCode(window.ACTION_TYPE_CODE_FILE_CROPPED);
       const actionCode = urlParams.entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE
@@ -1412,7 +1427,7 @@ $c.openCropWindow = function (url, folderUrl, urlParams) {
 
       newEventArgs.set_actionCode(actionCode);
       newEventArgs.set_parentEntityId(urlParams.id);
-      Quantumart.QP8.Backend.getInstance()._onActionExecuted(newEventArgs);
+      Backend.getInstance()._onActionExecuted(newEventArgs);
     }
   });
 
@@ -1443,6 +1458,7 @@ $c.downloadFile = function (url) {
     }).appendTo(document.body).get(0);
   }
 
+  // @ts-ignore HTMLIFrameElement.src
   iframe.src = url;
 };
 
@@ -1450,7 +1466,7 @@ $c.downloadFileWithChecking = function (checkUrl, fileName) {
   const result = $q.getJsonSync(checkUrl);
   if (result.proceed) {
     const urlParams = { id: result.key, fileName: encodeURIComponent(fileName) };
-    const url = Quantumart.QP8.BackendLibrary.generateActionUrl('DownloadFile', urlParams);
+    const url = BackendLibrary.generateActionUrl('DownloadFile', urlParams);
     $c.downloadFile(url);
   } else {
     $q.alertError(result.msg);
@@ -1570,7 +1586,7 @@ $c.initEntityDataList = function (dataListElem, actionExecutingHandler, editorOp
       countLimit: $q.toInt($dataList.data('count_limit'), 1)
     };
 
-    const entityDataList = Quantumart.QP8.BackendEntityDataListManager.getInstance().createList(
+    const entityDataList = BackendEntityDataListManager.getInstance().createList(
       $dataList.attr('id'),
       $dataList.data('entity_type_code'),
       $dataList.data('parent_entity_id'),
@@ -1685,7 +1701,7 @@ $c.initEntityDataTree = function (dataTreeElem) {
       virtualContentId
     };
 
-    const entityDataTree = Quantumart.QP8.BackendEntityTreeManager
+    const entityDataTree = BackendEntityTreeManager
       .getInstance()
       .createTree(treeElementId, entityTypeCode, parentEntityId, actionCode, options);
 
@@ -1717,5 +1733,8 @@ $c.destroyEntityDataTree = function (dataTreeElem) {
 
 // #endregion
 
-Quantumart.QP8.ControlHelpers = window.$c;
-Quantumart.QP8.ControlHelpers.registerClass('Quantumart.QP8.ControlHelpers');
+export const ControlHelpers = $c;
+
+window.$c = $c;
+
+Quantumart.QP8.ControlHelpers = ControlHelpers;
