@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -293,7 +293,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         private static QpPrincipal GetQpPrincipal(int userId)
         {
             var user = new UserService().ReadProfile(userId);
-            var identity = new QpIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false);
+            var identity = new QpIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false, false);
             return new QpPrincipal(identity, new string[] { });
         }
 

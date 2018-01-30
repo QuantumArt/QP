@@ -1367,6 +1367,7 @@
           <Property Name="salt" Type="bigint" />
           <Property Name="PASSWORD_MODIFIED" Type="datetime" Nullable="false" />
           <Property Name="ENABLE_CONTENT_GROUPING_IN_TREE" Type="bit" Nullable="false" />
+		  <Property Name="MUST_CHANGE_PASSWORD" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="VE_COMMAND">
           <Key>
@@ -7564,6 +7565,7 @@
           <NavigationProperty Name="DB1" Relationship="QP8Model.FK_DB_USER" FromRole="UserDAL" ToRole="DB" />
           <NavigationProperty Name="OBJECT_FORMAT_VERSION" Relationship="QP8Model.FK_OBJECT_FORMAT_VERSION_LAST_MODIFIED_BY" FromRole="UserDAL" ToRole="ObjectFormatVersionDAL" />
           <Property Type="Boolean" Name="EnableContentGroupingInTree" Nullable="false" />
+          <Property Name="MustChangePassword" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="VersionContentDataDAL">
           <Key>
@@ -11674,6 +11676,7 @@
             <EntityTypeMapping TypeName="QP8Model.UserDAL">
               <MappingFragment StoreEntitySet="USERS">
                 <ScalarProperty Name="EnableContentGroupingInTree" ColumnName="ENABLE_CONTENT_GROUPING_IN_TREE" />
+				<ScalarProperty Name="MustChangePassword" ColumnName="MUST_CHANGE_PASSWORD" />
                 <ScalarProperty Name="PASSWORD" ColumnName="PASSWORD" />
                 <ScalarProperty Name="Id" ColumnName="USER_ID" />
                 <ScalarProperty Name="Disabled" ColumnName="DISABLED" />

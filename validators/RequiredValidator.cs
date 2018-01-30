@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Quantumart.QP8.Validators
@@ -9,6 +9,9 @@ namespace Quantumart.QP8.Validators
         /// Возвращает типовой шаблон сообщения об ошибке, который используется, если валидация не опровергнута
         /// </summary>
         protected override string DefaultNonNegatedMessageTemplate => Resources.RequiredNonNegatedValidatorDefaultMessageTemplate;
+
+        protected string _dependPropertyName = null;
+        protected bool _inverse = false;
 
         /// <summary>
         /// Возвращает типовой  шаблон сообщения об ошибке, который используется, если валидация опровергнута
@@ -46,6 +49,14 @@ namespace Quantumart.QP8.Validators
             : base(messageTemplate, null, negated)
         { }
 
+        public RequiredValidator(string dependPropertyName, bool inverse)
+           : base(null, null, false)
+        {
+            _dependPropertyName = dependPropertyName;
+            _inverse = inverse;
+        }
+
+
         /// <summary>
         /// Проверяет обязательность заполнения <paramref name="objectToValidate"/>
         /// </summary>
@@ -55,10 +66,15 @@ namespace Quantumart.QP8.Validators
         /// <param name="validationResults">результаты валидации</param>
         public override void DoValidate(object objectToValidate, object currentTarget, string key, ValidationResults validationResults)
         {
-            var isValid = !string.IsNullOrEmpty(objectToValidate?.ToString());
-            if (isValid == Negated)
+            bool isContinue = ValidatorArgumentsValidatorHelper.CheckIsNeedtoValidate(_dependPropertyName, _inverse, currentTarget);
+
+            if (isContinue)
             {
-                LogValidationResult(validationResults, GetMessage(objectToValidate, key), currentTarget, key);
+                var isValid = !string.IsNullOrEmpty(objectToValidate?.ToString());
+                if (isValid == Negated)
+                {
+                    LogValidationResult(validationResults, GetMessage(objectToValidate, key), currentTarget, key);
+                }
             }
         }
     }

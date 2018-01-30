@@ -3977,4 +3977,8 @@ insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, NAME, [ORDER], i
 values (dbo.qp_action_id('list_archive_article'), dbo.qp_action_id('multiple_export_archive_article'), 'Export', 15, 'other/export.gif')
 
 GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[USERS]') AND name = 'MUST_CHANGE_PASSWORD')
+  ALTER TABLE [dbo].[USERS] ADD [MUST_CHANGE_PASSWORD] [bit] NOT NULL CONSTRAINT DF_MUST_CHANGE_PASSWORD DEFAULT 0 
+
+GO
 

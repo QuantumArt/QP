@@ -73,6 +73,7 @@ namespace Quantumart.QP8.Security
                     userInformation.CultureName + "|" +
                     userInformation.IsSilverlightInstalled + "|" +
                     string.Join(";", userInformation.Roles) + "|" +
+                    userInformation.MustChangePassword + "|" +
                     userInformation.SessionId;
             }
 
@@ -95,7 +96,8 @@ namespace Quantumart.QP8.Security
                         LanguageId = int.Parse(userDataCollection[3]),
                         IsSilverlightInstalled = bool.Parse(userDataCollection[5]),
                         Roles = userDataCollection[6].Split(';'),
-                        SessionId = userDataCollection.Length >= 8 ? int.Parse(userDataCollection[7]) : 0
+                        SessionId = userDataCollection.Length >= 9 ? int.Parse(userDataCollection[8]) : 0,
+                        MustChangePassword = bool.Parse(userDataCollection[7])
                     };
                 }
             }

@@ -41,7 +41,8 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
             "BackendImageCropResizeClient.Lang.js",
             "BackendCommunacation.Lang.js",
             "BackendDocumentHost.Lang.js",
-            "BackendTextArea.Lang.js"
+            "BackendTextArea.Lang.js",
+            "BackendChangePasswordWindow.Lang.js"
         };
 
         public void ProcessRequest(HttpContext context)

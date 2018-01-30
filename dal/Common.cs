@@ -10094,5 +10094,20 @@ namespace Quantumart.QP8.DAL
                 return ids.Select(n => result[n]).ToArray();
             }
         }
+
+        public static bool NewPasswordMatchCurrentPassword(SqlConnection connection, int userId, string password)
+        {
+            var query = @"declare @salt bigint, @hash binary(20), @old_hash binary(20)
+                          select @salt = salt, @old_hash = hash from users where USER_ID = @userId
+                          set @hash = dbo.qp_get_hash(@password, @salt)
+                          select case when @old_hash = @hash then 1 else 0 end as bit";
+            using (var cmd = SqlCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.AddWithValue("@password", password);
+                return Convert.ToBoolean(cmd.ExecuteScalar());
+            }
+        }
     }
 }

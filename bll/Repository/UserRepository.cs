@@ -65,6 +65,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static bool CheckAuthenticate(string login, string password) => QPContext.EFContext.Authenticate(login, password, false, false) != null;
 
+        internal static bool GetUserMustChangePassword(int userId) => QPContext.EFContext.UserSet.Where(w => w.Id == userId).Select(s => s.MustChangePassword).Single();
         internal static User GetById(int id, bool stopRecursion = false)
         {
             var result = GetByIdFromCache(id);
@@ -112,6 +113,14 @@ namespace Quantumart.QP8.BLL.Repository
         internal static User UpdateProfile(User user) => UpdateUser(user, true);
 
         internal static User UpdateProperties(User user) => UpdateUser(user);
+
+        public static bool NewPasswordMathCurrentPassword(int userId, string newPassword)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.NewPasswordMatchCurrentPassword(QPConnectionScope.Current.DbConnection, userId, newPassword);
+            }
+        }
 
         private static User UpdateUser(User user, bool profileOnly = false)
         {
