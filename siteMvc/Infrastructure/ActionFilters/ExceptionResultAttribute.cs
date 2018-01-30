@@ -77,7 +77,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 return false;
             }
 
-            return new HttpException(null, filterContext.Exception).GetHttpCode() == 500 && ExceptionType.IsInstanceOfType(filterContext.Exception);
+            return ExceptionType.IsInstanceOfType(filterContext.Exception);
         }
     }
 }
