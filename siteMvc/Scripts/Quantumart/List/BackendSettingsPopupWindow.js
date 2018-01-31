@@ -106,8 +106,9 @@ export class BackendSettingsPopupWindow extends BackendSelectPopupWindow {
   submitForm(ajaxData) {
     const url = this._settingsActionUrl.replace('Settings', 'SetupWithParams');
     const callback = response => {
-      if (response && response.data) {
-        $(`#${this._popupWindowComponent.get_documentWrapperElementId()}`).html(response.data);
+      if (response && (typeof response === 'string' || response.data)) {
+        const data = response.data || response;
+        $(`#${this._popupWindowComponent.get_documentWrapperElementId()}`).html(data);
       } else {
         this._popupWindowComponent.closeWindow();
         $('.t-overlay').remove();
