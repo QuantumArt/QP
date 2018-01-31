@@ -51,14 +51,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string tabId,
             int parentId,
             GridCommand command,
-            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleContextQueryParam>>))] IList<ArticleContextQueryParam> contextQuery,
+            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))]
+            IList<ArticleSearchQueryParam> searchQuery,
+            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleContextQueryParam>>))]
+            IList<ArticleContextQueryParam> contextQuery,
             string customFilter,
             bool? onlyIds,
             int[] filterIds)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-            var serviceResult = ArticleService.List(parentId, new int[0], command.GetListCommand(), searchQuery, contextQuery, customFilter, ftsParser, onlyIds, filterIds);
+
+            var serviceResult = ArticleService.List(
+                parentId,
+                new int[0],
+                command.GetListCommand(),
+                searchQuery,
+                contextQuery,
+                customFilter,
+                ftsParser,
+                onlyIds,
+                filterIds);
+
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

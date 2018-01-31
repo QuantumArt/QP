@@ -715,7 +715,9 @@ export class BackendDocumentHost extends Observable {
             item.FieldColumnName,
             item.FieldName,
             item.FieldGroup,
+            item.ReferenceFieldId,
             {
+              isEntity: true,
               entities: item.SelectedEntities
             }
           )
