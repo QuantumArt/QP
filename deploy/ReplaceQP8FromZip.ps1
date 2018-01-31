@@ -1,18 +1,20 @@
 param(
   [ValidateNotNullOrEmpty()]
   [String] $name='QP8',
-  [Parameter(Mandatory = $true)]
-  [ValidateScript({Test-Path $_ -PathType Container})]
   [String] $source,
   [ValidateNotNullOrEmpty()]
   [String] $config='Default',
   [ValidateNotNullOrEmpty()]
   [String] $configFiles='Web,NLog',
   [ValidateNotNullOrEmpty()]
-  [ValidateScript({Test-Path $_ -PathType Container})]
   [String] $backupPath = 'c:\temp\backups',
-  [bool] $transform
+  [object] $transform
 )
+
+if ([String]::IsNullOrEmpty($source))
+{
+  $source = $PSScriptRoot
+}
 
 $s = Get-SiteOrApplication -name $name -Verbose
 $path = $s.PhysicalPath
@@ -38,6 +40,13 @@ Stop-AppPool $s.applicationPool -Verbose
 $pluginsBackupName = Get-SiteOrApplicationBackupName -name $name -application "Plugins"
 $backendBackupName = Get-SiteOrApplicationBackupName -name $name -application "Backend"
 $winlogonBackupName = Get-SiteOrApplicationBackupName -name $name -application "Backend\Winlogon"
+
+if (-not(Test-Path $backupPath))
+{
+  Write-Verbose "Directory $backupPath not found. Creating..." -Verbose
+  New-Item $backupPath -ItemType Directory -Force
+  Write-Verbose "OK" -Verbose
+}
 
 Create-Backup -sourcePath $backendPath -name $backendBackupName -path $backupPath
 Create-Backup -sourcePath $winlogonPath -name $winlogonBackupName -path $backupPath
