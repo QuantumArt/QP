@@ -1390,6 +1390,7 @@
     <Content Include="Content\jsoneditor\src\docs\which files do I need.md" />
     <Content Include="Content\jsoneditor\src\js\assets\jsonlint\README.md" />
     <Content Include="Content\jsoneditor\test\largefile.json" />
+    <Content Include="Content\custom\layout.scss" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>

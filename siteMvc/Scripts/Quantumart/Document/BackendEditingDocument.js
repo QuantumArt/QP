@@ -91,7 +91,7 @@ export class BackendEditingDocument extends BackendDocumentHost {
 
     let $documentWrapper = $(`#${documentWrapperElementId}`);
     if ($q.isNullOrEmpty($documentWrapper)) {
-      $documentWrapper = $('<div />', { id: documentWrapperElementId, class: 'documentWrapper' });
+      $documentWrapper = $('<div />', { id: documentWrapperElementId, class: 'documentWrapper vertical-layout__main' });
 
       const $documentsContainer = $(this._editingArea.get_documentsContainerElement());
       $documentsContainer.append($documentWrapper);
@@ -283,7 +283,6 @@ export class BackendEditingDocument extends BackendDocumentHost {
 
     searchBlockComponent.attachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
     searchBlockComponent.attachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
-    searchBlockComponent.attachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
     this._searchBlockComponent = searchBlockComponent;
   }
 
@@ -491,9 +490,7 @@ export class BackendEditingDocument extends BackendDocumentHost {
   }
 
   _onLibraryResized() {
-    const $docContainer = $(this._editingArea.get_documentsContainerElement());
-    const $docWrp = $(this._documentWrapperElement);
-    $docWrp.height($docContainer.height());
+    // not used
   }
 
   _onExternalCallerContextsUnbinded(unbindingEventArgs) {
@@ -506,7 +503,6 @@ export class BackendEditingDocument extends BackendDocumentHost {
       searchBlockComponent.hideSearchBlock();
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
-      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
 
       const searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
       BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);

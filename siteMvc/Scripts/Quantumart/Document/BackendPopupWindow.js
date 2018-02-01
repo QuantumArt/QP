@@ -422,10 +422,10 @@ export class BackendPopupWindow extends BackendDocumentHost {
       .cat(`  <div id="${actionToolbarWrapperId}" class="actionToolbarWrapper"></div>\n`)
       .cat(`  <div id="${viewToolbarWrapperId}" class="viewToolbarWrapper"></div>\n`)
       .cat('</div>\n')
-      .cat(`<div id="${documentAreaId}" class="area">`)
+      .cat(`<div id="${documentAreaId}" class="area vertical-layout vertical-layout__main">`)
       .cat(`  <div id="${searchBlockWrapperId}" class="searchWrapper"></div>`)
       .cat(`  <div id="${contextBlockWrapperId}" class="contextWrapper"></div>`)
-      .cat(`  <div id="${documentWrapperId}" class="documentWrapper"></div>`)
+      .cat(`  <div id="${documentWrapperId}" class="documentWrapper vertical-layout__main"></div>`)
       .cat('</div>\n');
 
     const popupWindowComponent = $.telerik.window.create({
@@ -449,14 +449,8 @@ export class BackendPopupWindow extends BackendDocumentHost {
     }
 
     const $content = $popupWindow.find('DIV.t-window-content:first');
-    let bottomPaddingFix = 0;
-    if ($.support.borderRadius) {
-      bottomPaddingFix = 15;
-    } else {
-      bottomPaddingFix = 10;
-    }
-
-    $content.css('padding-bottom', `${bottomPaddingFix}px`);
+    $content.addClass('vertical-layout');
+    $content.css('padding-bottom', '4px');
 
     let $breadCrumbsWrapper = null;
     if (this._breadCrumbsComponent) {
@@ -550,27 +544,7 @@ export class BackendPopupWindow extends BackendDocumentHost {
       .unbind('activated', this._onPopupWindowActivatedHandler);
   }
 
-  _fixDocumentAreaHeight() {
-    const $popupWindow = $(this._popupWindowElement);
-    const $content = $popupWindow.find('DIV.t-window-content:first');
-    let $breadCrumbsWrapper = null;
-    if (this._breadCrumbsWrapperElement) {
-      $breadCrumbsWrapper = $(this._breadCrumbsWrapperElement);
-    }
-
-    const $toolbarWrapper = $(this._toolbarWrapperElement);
-    const $area = $(this._documentAreaElement);
-
-    const contentHeight = parseInt(String($content.height()), 10);
-    let breadCrumbsWrapperHeight = 0;
-    if (!$q.isNullOrEmpty($breadCrumbsWrapper)) {
-      breadCrumbsWrapperHeight = parseInt(String($breadCrumbsWrapper.outerHeight()), 10);
-    }
-
-    const toolbarWrapperHeight = parseInt(String($toolbarWrapper.outerHeight()), 10);
-    const areaHeight = contentHeight - breadCrumbsWrapperHeight - toolbarWrapperHeight;
-    $area.height(areaHeight);
-
+  _resizeLibraryComponent() {
     const main = this.getMainComponent();
     if (main && (main instanceof BackendLibrary)) {
       main.resize();
@@ -768,11 +742,6 @@ export class BackendPopupWindow extends BackendDocumentHost {
       this._onSearchHandler
     );
 
-    searchBlockComponent.attachObserver(
-      window.EVENT_TYPE_SEARCH_BLOCK_RESIZED,
-      this._onSearchBlockResizeHandler
-    );
-
     this._searchBlockComponent = searchBlockComponent;
   }
 
@@ -805,7 +774,6 @@ export class BackendPopupWindow extends BackendDocumentHost {
       searchBlockComponent.hideSearchBlock();
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
       searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
-      searchBlockComponent.detachObserver(window.EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
 
       const searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
       BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
@@ -878,11 +846,11 @@ export class BackendPopupWindow extends BackendDocumentHost {
   }
 
   _onPopupWindowResize() {
-    this._fixDocumentAreaHeight();
+    this._resizeLibraryComponent();
   }
 
   _onPopupWindowOpen() {
-    this._fixDocumentAreaHeight();
+    this._resizeLibraryComponent();
   }
 
   _onPopupWindowClose() {
@@ -895,10 +863,7 @@ export class BackendPopupWindow extends BackendDocumentHost {
   }
 
   _onPopupWindowActivated() {
-    const main = this.getMainComponent();
-    if (main && (main instanceof BackendLibrary)) {
-      main.resize();
-    }
+    this._resizeLibraryComponent();
   }
 
   _onExternalCallerContextsUnbinded(unbindingEventArgs) {
