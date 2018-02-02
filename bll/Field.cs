@@ -2627,21 +2627,26 @@ namespace Quantumart.QP8.BLL
         {
             if (ActiveVeCommandIds != null)
             {
-                var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToArray(); //все возможные команды
-                var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, ActiveVeCommandIds).Select(c => c.Id).ToArray(); //opposite to activeVecommands
-                var oldSiteCommandIdsOn = new HashSet<int>(VisualEditorRepository.GetResultCommands(Id).Where(n => n.On).Select(n => n.Id));
-                var siteCommands = VisualEditorRepository.GetSiteCommands(Content.SiteId);
+                var oldCommands = VisualEditorRepository.GetResultCommands(Id, Content.SiteId)
+                    .ToDictionary(s => s.Id, s => s.On);
 
-                var defaultCommandsDictionary = defaultCommands.ToDictionary(c => c.Id, c => c.On);
-                var siteCommandsDictionary = siteCommands.ToDictionary(c => c.Id, c => c.On);
-                var changedCommandsDictionary = ActiveVeCommandIds.Where(cId => !oldSiteCommandIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
+                var activeCommandIdsSet = new HashSet<int>(ActiveVeCommandIds);
 
-                foreach (var cId in offVeCommands.Where(cId => oldSiteCommandIdsOn.Contains(cId)))
-                {
-                    changedCommandsDictionary.Add(cId, false);
-                }
+                var newCommands = oldCommands.Keys
+                    .Union(ActiveVeCommandIds)
+                    .ToDictionary(id => id, id => activeCommandIdsSet.Contains(id));
 
-                VisualEditorRepository.SetFieldCommands(Content.SiteId, Id, changedCommandsDictionary, defaultCommandsDictionary, siteCommandsDictionary);
+                var changedCommands = newCommands.Keys
+                    .Where(id => !oldCommands.ContainsKey(id) || oldCommands[id] != newCommands[id])
+                    .ToDictionary(id => id, id => newCommands[id]);
+
+                var defaultCommands = VisualEditorRepository.GetDefaultCommands()
+                    .ToDictionary(s => s.Id, s => s.On);
+
+                var siteCommands = VisualEditorRepository.GetSiteCommands(Content.SiteId)
+                    .ToDictionary(s => s.Id, s => s.On);
+
+                VisualEditorRepository.SetFieldCommands(Content.SiteId, Id, changedCommands, defaultCommands, siteCommands);
             }
         }
 
@@ -2657,21 +2662,26 @@ namespace Quantumart.QP8.BLL
         {
             if (ActiveVeStyleIds != null)
             {
-                var defaultStyles = VisualEditorRepository.GetAllStyles().ToArray(); //все возможные стили
-                var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, ActiveVeStyleIds).Select(c => c.Id).ToArray(); //opposite to activeVecommands
-                var oldFieldStyleIdsOn = new HashSet<int>(VisualEditorRepository.GetResultStyles(Id).Where(n => n.On).Select(n => n.Id)); // с этим нужно сравнивать на предмет измененеий
-                var siteStyles = VisualEditorRepository.GetSiteStyles(Content.SiteId);
+                var oldStyles = VisualEditorRepository.GetResultStyles(Id, Content.SiteId)
+                    .ToDictionary(s => s.Id, s => s.On);
 
-                var defaultStylesDictionary = defaultStyles.ToDictionary(c => c.Id, c => c.On);
-                var siteStylesDictionary = siteStyles.ToDictionary(c => c.Id, c => c.On);
-                var changedStylesDictionary = ActiveVeStyleIds.Where(cId => !oldFieldStyleIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
+                var activeStyleIdsSet = new HashSet<int>(ActiveVeStyleIds);
 
-                foreach (var cId in offVeStyles.Where(cId => oldFieldStyleIdsOn.Contains(cId)))
-                {
-                    changedStylesDictionary.Add(cId, false);
-                }
+                var newStyles = oldStyles.Keys
+                    .Union(ActiveVeStyleIds)
+                    .ToDictionary(id => id, id => activeStyleIdsSet.Contains(id));
 
-                VisualEditorRepository.SetFieldStyles(Content.SiteId, Id, changedStylesDictionary, defaultStylesDictionary, siteStylesDictionary);
+                var changedStyles = newStyles.Keys
+                    .Where(id => !oldStyles.ContainsKey(id) || oldStyles[id] != newStyles[id])
+                    .ToDictionary(id => id, id => newStyles[id]);
+
+                var defaultStyles = VisualEditorRepository.GetAllStyles()
+                    .ToDictionary(s => s.Id, s => s.On);
+
+                var siteStyles = VisualEditorRepository.GetSiteStyles(Content.SiteId)
+                    .ToDictionary(s => s.Id, s => s.On);
+
+                VisualEditorRepository.SetFieldStyles(Content.SiteId, Id, changedStyles, defaultStyles, siteStyles);
             }
         }
 
