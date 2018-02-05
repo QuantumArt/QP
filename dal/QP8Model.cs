@@ -29809,10 +29809,6 @@ namespace Quantumart.QP8.DAL
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="name">Initial value of the Name property.</param>
         /// <param name="dns">Initial value of the Dns property.</param>
-        /// <param name="liveDirectory">Initial value of the LiveDirectory property.</param>
-        /// <param name="liveVirtualRoot">Initial value of the LiveVirtualRoot property.</param>
-        /// <param name="stageDirectory">Initial value of the StageDirectory property.</param>
-        /// <param name="stageVirtualRoot">Initial value of the StageVirtualRoot property.</param>
         /// <param name="isLive">Initial value of the IsLive property.</param>
         /// <param name="created">Initial value of the Created property.</param>
         /// <param name="modified">Initial value of the Modified property.</param>
@@ -29842,16 +29838,12 @@ namespace Quantumart.QP8.DAL
         /// <param name="externalDevelopment">Initial value of the ExternalDevelopment property.</param>
         /// <param name="downloadEfSource">Initial value of the DownloadEfSource property.</param>
         /// <param name="disableListAutoWrap">Initial value of the DisableListAutoWrap property.</param>
-        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String liveDirectory, global::System.String liveVirtualRoot, global::System.String stageDirectory, global::System.String stageVirtualRoot, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications, global::System.Boolean externalDevelopment, global::System.Boolean downloadEfSource, global::System.Boolean disableListAutoWrap)
+        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications, global::System.Boolean externalDevelopment, global::System.Boolean downloadEfSource, global::System.Boolean disableListAutoWrap)
         {
             SiteDAL siteDAL = new SiteDAL();
             siteDAL.Id = id;
             siteDAL.Name = name;
             siteDAL.Dns = dns;
-            siteDAL.LiveDirectory = liveDirectory;
-            siteDAL.LiveVirtualRoot = liveVirtualRoot;
-            siteDAL.StageDirectory = stageDirectory;
-            siteDAL.StageVirtualRoot = stageVirtualRoot;
             siteDAL.IsLive = isLive;
             siteDAL.Created = created;
             siteDAL.Modified = modified;
@@ -29966,7 +29958,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
         public global::System.String LiveDirectory
         {
@@ -29978,7 +29970,7 @@ namespace Quantumart.QP8.DAL
             {
                 OnLiveDirectoryChanging(value);
                 ReportPropertyChanging("LiveDirectory");
-                _LiveDirectory = StructuralObject.SetValidValue(value, false);
+                _LiveDirectory = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("LiveDirectory");
                 OnLiveDirectoryChanged();
             }
@@ -29990,7 +29982,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
         public global::System.String LiveVirtualRoot
         {
@@ -30002,7 +29994,7 @@ namespace Quantumart.QP8.DAL
             {
                 OnLiveVirtualRootChanging(value);
                 ReportPropertyChanging("LiveVirtualRoot");
-                _LiveVirtualRoot = StructuralObject.SetValidValue(value, false);
+                _LiveVirtualRoot = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("LiveVirtualRoot");
                 OnLiveVirtualRootChanged();
             }
@@ -30014,7 +30006,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
         public global::System.String StageDirectory
         {
@@ -30026,7 +30018,7 @@ namespace Quantumart.QP8.DAL
             {
                 OnStageDirectoryChanging(value);
                 ReportPropertyChanging("StageDirectory");
-                _StageDirectory = StructuralObject.SetValidValue(value, false);
+                _StageDirectory = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("StageDirectory");
                 OnStageDirectoryChanged();
             }
@@ -30038,7 +30030,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
         public global::System.String StageVirtualRoot
         {
@@ -30050,7 +30042,7 @@ namespace Quantumart.QP8.DAL
             {
                 OnStageVirtualRootChanging(value);
                 ReportPropertyChanging("StageVirtualRoot");
-                _StageVirtualRoot = StructuralObject.SetValidValue(value, false);
+                _StageVirtualRoot = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("StageVirtualRoot");
                 OnStageVirtualRootChanged();
             }

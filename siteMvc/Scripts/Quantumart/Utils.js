@@ -919,7 +919,9 @@ $q.serializeForm = function serializeForm(wrapperId) {
   const result = {};
   items.forEach(
     pair => {
-      result[pair.name] = pair.value;
+      if (!result[pair.name]) {
+        result[pair.name] = pair.value;
+      }
     });
   return result;
 };

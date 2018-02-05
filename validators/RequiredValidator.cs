@@ -6,12 +6,19 @@ namespace Quantumart.QP8.Validators
     public class RequiredValidator : ValueValidator
     {
         /// <summary>
+        /// Имя свойства, от значения которого зависит валидировать ли текущее значение
+        /// </summary>
+        protected string _dependPropertyName = null;
+
+        /// <summary>
+        /// Инверсировать ли действие переменной _dependPropertyName
+        /// </summary>
+        protected bool _inverse = false;
+
+        /// <summary>
         /// Возвращает типовой шаблон сообщения об ошибке, который используется, если валидация не опровергнута
         /// </summary>
-        protected override string DefaultNonNegatedMessageTemplate => Resources.RequiredNonNegatedValidatorDefaultMessageTemplate;
-
-        protected string _dependPropertyName = null;
-        protected bool _inverse = false;
+        protected override string DefaultNonNegatedMessageTemplate => Resources.RequiredNonNegatedValidatorDefaultMessageTemplate;         
 
         /// <summary>
         /// Возвращает типовой  шаблон сообщения об ошибке, который используется, если валидация опровергнута
@@ -38,7 +45,7 @@ namespace Quantumart.QP8.Validators
         /// <param name="messageTemplate">шаблон сообщения об ошибке</param>
         public RequiredValidator(string messageTemplate)
             : this(false, messageTemplate)
-        { }
+        { }        
 
         /// <summary>
         /// <para>Инициализирует новый экземпляр класса <see cref="RequiredValidator"/> с шаблоном сообщения об ошибке</para>
@@ -49,13 +56,17 @@ namespace Quantumart.QP8.Validators
             : base(messageTemplate, null, negated)
         { }
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="RequiredValidator"/> для зависимого значения
+        /// </summary>
+        /// <param name="dependPropertyName">Свойство, от которого зависит текущее значение</param>
+        /// <param name="inverse">Инверсировать ли значение свойства <paramref name="dependPropertyName"/></param>
         public RequiredValidator(string dependPropertyName, bool inverse)
            : base(null, null, false)
         {
             _dependPropertyName = dependPropertyName;
             _inverse = inverse;
         }
-
 
         /// <summary>
         /// Проверяет обязательность заполнения <paramref name="objectToValidate"/>

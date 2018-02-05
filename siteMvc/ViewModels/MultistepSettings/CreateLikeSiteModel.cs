@@ -12,6 +12,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public readonly string UploadUrlPrefixBlock = "uploadUrlPrefixBlock";
         public readonly string TestDirectoryPathBlock = "testDirectoryPathBlock";
         public readonly string TestDirectoryBlock = "testDirectoryBlock";
+        public readonly string LivePagesLocationBlock = "LivePagesLocationBlock";
+        public readonly string StagePagesLocationBlock = "StagePagesLocationBlock";
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Site;
 

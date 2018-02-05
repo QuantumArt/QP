@@ -17,9 +17,10 @@ namespace Quantumart.QP8.Validators
         {
         }
 
-        public RequiredValidatorAttribute(string dependPropertyName)
+        public RequiredValidatorAttribute(string dependPropertyName, bool inverse = false)
         {
             _dependPropertyName = dependPropertyName;
+            _inverse = inverse;
         }
 
         /// <summary>

@@ -739,7 +739,7 @@
           <Property Name="link_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="l_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="r_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="IS_REV" Type="bit" Nullable="false" />
+		  <Property Name="IS_REV" Type="bit" Nullable="false" />
           <Property Name="IS_SELF" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="item_to_item_version">
@@ -1098,10 +1098,10 @@
           <Property Name="SITE_ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SITE_NAME" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="DNS" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="LIVE_DIRECTORY" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="LIVE_VIRTUAL_ROOT" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="STAGE_DIRECTORY" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="STAGE_VIRTUAL_ROOT" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="LIVE_DIRECTORY" Type="nvarchar" MaxLength="255" />
+          <Property Name="LIVE_VIRTUAL_ROOT" Type="nvarchar" MaxLength="255" />
+          <Property Name="STAGE_DIRECTORY" Type="nvarchar" MaxLength="255" />
+          <Property Name="STAGE_VIRTUAL_ROOT" Type="nvarchar" MaxLength="255" />
           <Property Name="IS_LIVE" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="DESCRIPTION" Type="nvarchar" MaxLength="512" />
           <Property Name="CREATED" Type="datetime" Nullable="false" />
@@ -7242,10 +7242,10 @@
           <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Dns" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="LiveDirectory" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="LiveVirtualRoot" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="StageDirectory" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="StageVirtualRoot" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="LiveDirectory" Type="String" Nullable="true" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="LiveVirtualRoot" Type="String" Nullable="true" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="StageDirectory" Type="String" Nullable="true" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="StageVirtualRoot" Type="String" Nullable="true" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="IsLive" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
@@ -10510,7 +10510,7 @@
               <PropertyRef Name="CdcLastExecutedLsnId" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>
+        </Association>        
 			</Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11085,7 +11085,7 @@
           </EntitySetMapping>
           <EntitySetMapping Name="ItemToItemSet">
             <EntityTypeMapping TypeName="QP8Model.ItemToItemDAL">
-              <MappingFragment StoreEntitySet="item_to_item">
+              <MappingFragment StoreEntitySet="item_to_item">			  
                 <ScalarProperty Name="IS_SELF" ColumnName="IS_SELF" />
                 <ScalarProperty Name="IS_REV" ColumnName="IS_REV" />
                 <ScalarProperty Name="LinkId" ColumnName="link_id" />
@@ -15619,6 +15619,7 @@
         <EntityTypeShape EntityType="QP8Model.CdcLastExecutedLsn" Width="1.5" PointX="12.375" PointY="5.625" />
         <EntityTypeShape EntityType="QP8Model.SystemNotificationDAL" Width="1.5" PointX="14.625" PointY="5.25" />
         <AssociationConnector Association="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" />
+        <AssociationConnector Association="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_SYSTEM_NOTIFICATION_QUEUE" />
         </Diagram>
     </Diagrams>
   </Designer>

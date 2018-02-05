@@ -28,6 +28,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
         public readonly string OnScreenBlock = "onScreenBlock";
         public readonly string TestDirectoryBlock = "testDirectoryBlock";
         public readonly string XamlDictionariesBlock = "XamlDictionariesBlock";
+        public readonly string AssemblingParametersBlock = "AssemblingParametersBlock";
+        public readonly string LivePagesLocationBlock = "LivePagesLocationBlock";
+        public readonly string StagePagesLocationBlock = "StagePagesLocationBlock";
+        public readonly string OnScreenAssemblingParametersBlock = "OnScreenAssemblingParametersBlock";
 
         public string AggregationListItemsDataExternalCssItems { get; set; }
 
