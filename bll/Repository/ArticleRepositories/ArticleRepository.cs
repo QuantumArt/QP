@@ -833,11 +833,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static Dictionary<int, string> GetLinkedItemsMultiple(int linkId, IEnumerable<int> ids)
+        internal static Dictionary<int, string> GetLinkedItemsMultiple(int linkId, IEnumerable<int> ids, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
-                return Common.GetLinkedArticlesMultiple(QPConnectionScope.Current.DbConnection, linkId, ids, QPContext.IsLive);
+                return Common.GetLinkedArticlesMultiple(QPConnectionScope.Current.DbConnection, linkId, ids, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -871,6 +871,19 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             using (new QPConnectionScope())
             {
                 return Common.ExcludeArchived(QPConnectionScope.Current.DbConnection, ids);
+            }
+        }
+
+        internal static int[] CheckArchiveArticles(int[] ids)
+        {
+            if (ids == null || !ids.Any())
+            {
+                return ids;
+            }
+
+            using (new QPConnectionScope())
+            {
+                return Common.CheckArchiveArticle(QPConnectionScope.Current.DbConnection, ids);
             }
         }
 
