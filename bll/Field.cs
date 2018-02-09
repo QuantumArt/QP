@@ -508,7 +508,7 @@ namespace Quantumart.QP8.BLL
             get => _relateToContentId.Value;
             set => _relateToContentId.Value = value;
         }
-
+        
         public Content RelatedToContent => RelateToContentId.HasValue ? _contentRepository.GetById(RelateToContentId.Value) : null;
 
         [LocalizedDisplayName("TextBoxRows", NameResourceType = typeof(FieldStrings))]
@@ -640,8 +640,11 @@ namespace Quantumart.QP8.BLL
         /// Существует ли для данного поля обратное поле ?
         /// </summary>
         public bool IsBackwardFieldExists => BackwardField != null && !BackwardField.IsNew;
-
+                
         public Field BackwardField => M2MBackwardField ?? O2MBackwardField;
+
+        [LocalizedDisplayName("BackwardFieldId", NameResourceType = typeof(FieldStrings))]
+        public int? BackwardRelateToFieldId => BackwardField.Id;
 
         /// <summary>
         /// Поля которые ссылаются на данное поле связью O2M

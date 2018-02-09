@@ -263,8 +263,24 @@
                         if (!Model.Data.IsBackwardFieldExists)
                         {
                             @Html.TextBoxFieldFor(s => s.Data.NewM2MBackwardFieldName)
-                        }
+                        }                       
                     }
+                }
+
+                if (Model.Data.IsBackwardFieldExists)
+                {
+                   @Html.SingleItemPickerFieldFor(s => s.Data.BackwardRelateToFieldId, Model.BackwardRelateTo, new EntityDataListArgs
+                   {
+                       EntityTypeCode = EntityTypeCode.Field,
+                       ParentEntityId = Model.Data.RelateToContentId,
+                       ReadActionCode = ActionCode.FieldProperties,
+                       ListId = -1 * DateTime.Now.Millisecond,
+                       ShowIds = true,
+                    }, new ControlOptions
+                    {
+                       Enabled = false,
+                       HtmlAttributes = new Dictionary<string, object> { { "id", Model.BackwardFieldNameElementId } }
+                    })
                 }
 
                 using (Html.BeginPanel("O2MBackwardFieldName"))
@@ -274,7 +290,7 @@
                         if (!Model.Data.IsBackwardFieldExists)
                         {
                             @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
-                        }
+                        }                    
                     }
                 }
 
