@@ -26,7 +26,6 @@ export class BackendChangePasswordWindow {
     }).data('tWindow').center();
 
     $('.changePassword', this._popupWindowComponent.element).click($.proxy(this._onCloseAndApplyWndClick, this));
-    $('form', this._popupWindowComponent.element).submit($.proxy(this._onFilterFormSubmitted, this));
 
     this._contentContainerElement = $(this.CONTAINER_SELECTOR, this._popupWindowComponent.element).get(0);
 

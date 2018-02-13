@@ -42,7 +42,7 @@ export class BackendBrowserHistoryManager {
       window.history.replaceState({
         type: HISTORY_INITIAL_STATE,
         stateIndex: this._currentStateIndex,
-        title: this._defaultTitle,
+        title: this._defaultTitle
       }, document.title);
 
       this.pushStateAllTabsClosed();
@@ -184,7 +184,7 @@ export class BackendBrowserHistoryManager {
       entities: eventArgs.get_entities(),
       isMultipleEntities: eventArgs.get_isMultipleEntities(),
       tabId: eventArgs.get_tabId(),
-      title: eventArgs.title,
+      title: eventArgs.title
     };
   }
 
