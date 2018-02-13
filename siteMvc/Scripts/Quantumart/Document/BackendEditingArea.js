@@ -54,10 +54,6 @@ export class BackendEditingArea extends Observable {
         this._contextBlockContainerElementId = options.contextBlockContainerElementId;
       }
 
-      if (options.documentsContainerHeightDifference) {
-        this._documentsContainerHeightDifference = options.documentsContainerHeightDifference;
-      }
-
       if (options.tabStrip) {
         this._tabStrip = options.tabStrip;
         this._onTabStripCloseRequestHandler = $.proxy(this.onTabStripCloseRequest, this);
@@ -80,8 +76,6 @@ export class BackendEditingArea extends Observable {
           $.proxy(this.onFindTabInTreeRequest, this));
       }
     }
-
-    this._onWindowResizedHandler = $.proxy(this.onWindowResized, this);
   }
 
   _editingAreaElementId = '';
@@ -89,7 +83,6 @@ export class BackendEditingArea extends Observable {
   _documentsContainerElementId = '';
   _documentsContainerElement = null;
   _loadingLayerElement = null;
-  _documentsContainerHeightDifference = 0;
   _selectedDocumentId = '';
   _breadCrumbsContainerElementId = '';
   _breadCrumbsContainerElement = null;
@@ -106,7 +99,6 @@ export class BackendEditingArea extends Observable {
   _hostStateStorage = null;
   _customVars = null;
   _customScripts = null;
-  _onWindowResizedHandler = null;
 
   // eslint-disable-next-line camelcase
   get_editingAreaElementId() {
@@ -131,16 +123,6 @@ export class BackendEditingArea extends Observable {
   // eslint-disable-next-line camelcase
   get_documentsContainerElement() {
     return this._documentsContainerElement;
-  }
-
-  // eslint-disable-next-line camelcase
-  get_documentsContainerHeightDifference() {
-    return this._documentsContainerHeightDifference;
-  }
-
-  // eslint-disable-next-line camelcase
-  set_documentsContainerHeightDifference(value) {
-    this._documentsContainerHeightDifference = value;
   }
 
   // eslint-disable-next-line camelcase
@@ -282,34 +264,11 @@ export class BackendEditingArea extends Observable {
     this._searchBlockContainerElement = $searchBlockContainer.get(0);
     this._contextBlockContainerElement = $contextBlockContainer.get(0);
     this._loadingLayerElement = $loadingLayer.get(0);
-
-    $(window).resize(this._onWindowResizedHandler);
-  }
-
-  fixDocumentsContainerHeight(options) {
-    if (options && options.bySplitter) {
-      return;
-    }
-
-    let $documentsContainer = $(this._documentsContainerElement);
-    const oldDocumentsContainerHeight = parseInt(String($documentsContainer.height()), 10);
-    // eslint-disable-next-line max-len
-    let newDocumentsContainerHeight = parseInt(String($(window).height()), 10) - this._documentsContainerHeightDifference;
-
-    if (oldDocumentsContainerHeight !== newDocumentsContainerHeight) {
-      if (newDocumentsContainerHeight < 300) {
-        newDocumentsContainerHeight = 300;
-      }
-
-      $documentsContainer.css('height', `${newDocumentsContainerHeight}px`);
-    }
-
-    $documentsContainer = null;
   }
 
   openArea() {
     let $editingArea = $(this._editingAreaElement);
-    $editingArea.css('display', 'block');
+    $editingArea.css('display', 'flex');
 
     $editingArea = null;
   }
@@ -568,10 +527,6 @@ export class BackendEditingArea extends Observable {
     }
   }
 
-  onWindowResized(e, options) {
-    this.fixDocumentsContainerHeight(options);
-  }
-
   closeNonExistentDocuments() {
     const that = this;
     const $tabs = this._tabStrip.getAllTabs();
@@ -685,9 +640,6 @@ export class BackendEditingArea extends Observable {
       this._tabStrip.detachObserver(window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST);
       this._tabStrip.detachObserver(window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST);
     }
-
-    $(window).unbind('resize', this._onWindowResizedHandler);
-    $q.collectGarbageInIE();
   }
 }
 

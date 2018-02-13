@@ -199,7 +199,6 @@ export class BackendDocumentHost extends Observable {
     this._isCustomAction = false;
 
     this._useCustomActionToolbar = false;
-    this._oldSearchBlockHeight = 0;
     this._isContextBlockVisible = false;
     this._selectedParentEntityId = 0;
     this._filter = '';
@@ -222,7 +221,6 @@ export class BackendDocumentHost extends Observable {
     this._externalCallerContexts = [];
     this._onSearchHandler = $.proxy(this.onSearch, this);
     this._onContextSwitchingHandler = $.proxy(this.onContextSwitching, this);
-    this._onSearchBlockResizeHandler = $.proxy(this.onSearchBlockResize, this);
     this._onGeneralEventHandler = $.proxy(this.onGeneralEvent, this);
 
     if ($q.isObject(eventArgs)) {
@@ -1107,27 +1105,6 @@ export class BackendDocumentHost extends Observable {
     }
   }
 
-  _fixDocumentWrapperHeight(searchBlockHeight) {
-    const $documentWrapper = $(this._documentWrapperElement);
-    const oldDocumentWrapperHeight = parseInt(String($documentWrapper.height()), 10);
-    const oldSearchBlockHeight = this._oldSearchBlockHeight;
-    let newSearchBlockHeight = oldSearchBlockHeight;
-    let newDocumentWrapperHeight = 0;
-
-    if (!$q.isNull(searchBlockHeight)) {
-      newSearchBlockHeight = searchBlockHeight;
-    }
-
-    if (newSearchBlockHeight > oldSearchBlockHeight) {
-      newDocumentWrapperHeight = oldDocumentWrapperHeight - (newSearchBlockHeight - oldSearchBlockHeight);
-    } else {
-      newDocumentWrapperHeight = oldDocumentWrapperHeight + (oldSearchBlockHeight - newSearchBlockHeight);
-    }
-
-    $documentWrapper.height(newDocumentWrapperHeight);
-    this._oldSearchBlockHeight = newSearchBlockHeight;
-  }
-
   loadReadyHtmlContent(data) {
     const $documentWrapper = $(this._documentWrapperElement);
     const visible = $documentWrapper.is(':visible');
@@ -1139,12 +1116,12 @@ export class BackendDocumentHost extends Observable {
       $documentWrapper.data('scroll_position', scrollData);
 
       if (visible) {
-        $documentWrapper.hide();
+        this.hideDocumentWrapper();
       }
 
       $documentWrapper.empty().html(data.view);
       if (visible) {
-        $documentWrapper.show();
+        this.showDocumentWrapper();
       }
 
       this.onDocumentLoaded();
@@ -1204,10 +1181,6 @@ export class BackendDocumentHost extends Observable {
     if (main && (main instanceof BackendEntityGrid)) {
       main.markGridAsBusy();
     }
-  }
-
-  onSearchBlockResize(eventType, sender, args) {
-    this._fixDocumentWrapperHeight(args.getSearchBlockHeight());
   }
 
   onContextSwitching(eventType, sender, args) {

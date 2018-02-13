@@ -1,0 +1,13 @@
+.vertical-layout {
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    flex: none;
+  }
+
+  > .vertical-layout__main {
+    // IE11 does not handle `flex: auto` correctly
+    flex: 1 1 0%;
+  }
+}

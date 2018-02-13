@@ -169,7 +169,6 @@ export class Backend {
         viewToolbarContainerElementId: 'viewToolbar',
         searchBlockContainerElementId: 'search',
         contextBlockContainerElementId: 'context',
-        documentsContainerHeightDifference: 118,
         tabStrip: this._backendTabStrip,
         currentCustomerCode: this._currentCustomerCode,
         currentUserId: this._currentUserId

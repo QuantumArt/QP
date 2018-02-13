@@ -2108,6 +2108,7 @@ span.seachResultHighlight
 
 .library .l-files
 {
+    box-sizing: border-box;
     padding: 4px;
 }
 
@@ -2118,7 +2119,7 @@ span.seachResultHighlight
 
 .library .l-rightPanel
 {
-  margin-right: 11px;
+  min-width: 642px;
 }
 
 .l-searchBlock, .l-infoBlock
@@ -2216,6 +2217,7 @@ span.seachResultHighlight
 {
   padding:0.5em;
   overflow:hidden;
+  min-width: 640px;
 }
   .fileListNameContainer ul
   {
@@ -2227,7 +2229,7 @@ span.seachResultHighlight
   .fileListNameContainer .column
   {
     float:left;
-    width:31%;
+    width:33%;
   }
 
   .fileListNameContainer .fileItem
