@@ -585,10 +585,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             var sb = new StringBuilder();
             foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
             {
-                sb.AppendFormatLine(" left join content_{0} as {1} on base.[{2}] = {1}.content_item_id ", field.RelatedContentId, field.TableAlias, field.Name);
+                sb.AppendFormatLine(" left join content_{0}_united as {1} on base.[{2}] = {1}.content_item_id ", field.RelatedContentId, field.TableAlias, field.Name);
                 foreach (var f in field.Related.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
                 {
-                    sb.AppendFormatLine(" left join content_{0} as {1} on {3}.[{2}] = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, f.Name, field.TableAlias);
+                    sb.AppendFormatLine(" left join content_{0}_united as {1} on {3}.[{2}] = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, f.Name, field.TableAlias);
                 }
             }
 
@@ -833,11 +833,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static Dictionary<int, string> GetLinkedItemsMultiple(int linkId, IEnumerable<int> ids)
+        internal static Dictionary<int, string> GetLinkedItemsMultiple(int linkId, IEnumerable<int> ids, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
-                return Common.GetLinkedArticlesMultiple(QPConnectionScope.Current.DbConnection, linkId, ids, QPContext.IsLive);
+                return Common.GetLinkedArticlesMultiple(QPConnectionScope.Current.DbConnection, linkId, ids, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -871,6 +871,19 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             using (new QPConnectionScope())
             {
                 return Common.ExcludeArchived(QPConnectionScope.Current.DbConnection, ids);
+            }
+        }
+
+        internal static int[] CheckArchiveArticles(int[] ids)
+        {
+            if (ids == null || !ids.Any())
+            {
+                return ids;
+            }
+
+            using (new QPConnectionScope())
+            {
+                return Common.CheckArchiveArticle(QPConnectionScope.Current.DbConnection, ids);
             }
         }
 

@@ -510,7 +510,8 @@ namespace Quantumart.QP8.BLL
                             Id = user.Id,
                             Name = user.LogOn,
                             CustomerCode = data.CustomerCode,
-                            LanguageId = user.LanguageId
+                            LanguageId = user.LanguageId,
+                            MustChangePassword = user.MustChangePassword
                         };
 
                         using (var cn = new SqlConnection(sqlCn))

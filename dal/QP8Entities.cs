@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Metadata.Edm;
@@ -111,7 +111,9 @@ namespace Quantumart.QP8.DAL
             AllowStageEditObject = r.Field<decimal>("allow_stage_edit_object"),
             BuiltIn = r.Field<bool>("BUILT_IN"),
             LogOn = r.Field<string>("LOGIN"),
-            PasswordModified = r.Field<DateTime>("PASSWORD_MODIFIED")
+            PasswordModified = r.Field<DateTime>("PASSWORD_MODIFIED"),
+            MustChangePassword = r.Field<bool>("MUST_CHANGE_PASSWORD")
+
         });
 
         private readonly Materializer<UserDAL> _modifierMaterializer = new Materializer<UserDAL>(r => new UserDAL

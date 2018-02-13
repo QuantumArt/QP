@@ -157,6 +157,9 @@ namespace Quantumart.QP8.BLL.Services
             return result;
         }
 
+     
+        public static bool GetUserMustChangePassword(int userId) => userId > 0 ? UserRepository.GetUserMustChangePassword(userId) : false;
+
         public IEnumerable<UserDefaultFilter> GetContentDefaultFilters(int userId) => userId > 0 ? UserRepository.GetContentDefaultFilters(userId) : Enumerable.Empty<UserDefaultFilter>();
     }
 }

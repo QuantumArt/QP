@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
     {
         private const string FolderForUpload = "temp";
         private const string IdentifierFieldName = FieldName.ContentItemId;
-        private const string ExtensionQueryTemplate = " LEFT JOIN CONTENT_{0} [ex{1}] ON [ex{1}].[{2}] = base.CONTENT_ITEM_ID ";
+        private const string ExtensionQueryTemplate = " LEFT JOIN CONTENT_{0}_united [ex{1}] ON [ex{1}].[{2}] = base.CONTENT_ITEM_ID ";
         private const string FieldNameQueryTemplate = "[ex{0}].[{1}] [{0}.{1}]";
         private const string FieldNameHeaderTemplate = "{0}.{1}";
         private const string BaseFieldNameQueryTemplate = "base.[{0}]";
@@ -144,7 +144,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var dict = fields
                     .Where(n => n.ExactType == FieldExactTypes.M2MRelation && articles[0].Table.Columns.Contains(n.ContentId == _contentId ? n.Name : string.Format(FieldNameHeaderTemplate, n.Content.Name, n.Name)))
                     .Select(n => new { LinkId = n.LinkId.Value, n.ContentId })
-                    .ToDictionary(n => n.LinkId, m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == _contentId ? ids : extensionIdsMap[m.ContentId]));
+                    .ToDictionary(n => n.LinkId, m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == _contentId ? ids : extensionIdsMap[m.ContentId], true));
 
                 foreach (var article in articles)
                 {

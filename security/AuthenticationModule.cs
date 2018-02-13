@@ -45,13 +45,15 @@ namespace Quantumart.QP8.Security
                         userInformation.LanguageId,
                         userInformation.CultureName,
                         userInformation.IsSilverlightInstalled,
-                        userInformation.SessionId);
+                        userInformation.MustChangePassword,
+                        userInformation.SessionId
+                        );
 
                     roles = userInformation.Roles;
                 }
                 else
                 {
-                    identity = new QpIdentity(0, userName, string.Empty, "QP", false, 0, "neutral", false);
+                    identity = new QpIdentity(0, userName, string.Empty, "QP", false, 0, "neutral", false, false);
                 }
 
                 context.User = Thread.CurrentPrincipal = new QpPrincipal(identity, roles);

@@ -208,7 +208,12 @@ namespace Quantumart.QP8.BLL.Services
 
         public static IEnumerable<VisualEditorCommand> GetDefaultVisualEditorCommands() => VisualEditorRepository.GetDefaultCommands();
 
-        public static IEnumerable<VisualEditorCommand> GetResultVisualEditorCommands(int fieldId, int siteId) => VisualEditorRepository.GetResultCommands(fieldId, siteId);
+        public static IEnumerable<VisualEditorCommand> GetResultVisualEditorCommands(int fieldId, int siteId)
+        {
+            return QPContext.IsAdmin
+                ? VisualEditorRepository.GetDefaultCommands()
+                : VisualEditorRepository.GetResultCommands(fieldId, siteId);
+        }
 
         public static IEnumerable<VisualEditorStyle> GetResultStyles(int fieldId, int siteId) => VisualEditorRepository.GetResultStyles(fieldId, siteId);
 

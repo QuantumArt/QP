@@ -71,7 +71,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                 return null;
             }
 
-            return new JsonNetResult<object>(new { success = true, view = RenderPartialView(viewName, model) });
+            return new JsonNetResult<object>( new
+            { success = true, view = RenderPartialView(viewName, model) }
+                );
         }
 
         public JsonCamelCaseResult<JSendResponse> JsonCamelCaseHtml(string viewName, object model = null)

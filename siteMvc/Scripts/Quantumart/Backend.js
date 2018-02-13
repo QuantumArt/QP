@@ -18,6 +18,7 @@ import { BackendTreeMenu } from './Tree/BackendTreeMenu';
 import { BackendTreeMenuContextMenuManager } from './Managers/BackendTreeMenuContextMenuManager';
 import { DirectLinkExecutor } from './BackendDirectLinkExecutor';
 import { EntityEditorAutoSaver } from './Editor/BackendEditorsAutoSaver';
+import { BackendChangePasswordWindow } from './BackendChangePasswordWindow';
 import { GlobalCache } from './Cache';
 import { $a, BackendActionExecutor, BackendActionParameters } from './BackendActionExecutor';
 import { $q } from './Utils';
@@ -42,6 +43,10 @@ export class Backend {
 
       if (options.autoLoadHome) {
         this._autoLoadHome = options.autoLoadHome;
+      }
+
+      if (options.mustChangePassword) {
+        this._userMustChangePassword = options.mustChangePassword;
       }
     }
 
@@ -109,10 +114,15 @@ export class Backend {
   _onActionExecutedHandler = null;
   _onEntityReadedHandler = null;
   _onHostExternalCallerContextsUnbindedHandler = null;
+  _userMustChangePassword = false;
 
   _initialize() {
     this._backendBrowserHistoryManager.initialize();
 
+    if (this._userMustChangePassword) {
+      const changingWindow = new BackendChangePasswordWindow();
+      changingWindow._changePassword();
+    }
     this._directLinkExecutor = new DirectLinkExecutor(
       this._currentCustomerCode, this._directLinkOptions
     );
@@ -160,7 +170,6 @@ export class Backend {
         viewToolbarContainerElementId: 'viewToolbar',
         searchBlockContainerElementId: 'search',
         contextBlockContainerElementId: 'context',
-        documentsContainerHeightDifference: 118,
         tabStrip: this._backendTabStrip,
         currentCustomerCode: this._currentCustomerCode,
         currentUserId: this._currentUserId

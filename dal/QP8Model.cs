@@ -35529,7 +35529,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="passwordModified">Initial value of the PasswordModified property.</param>
         /// <param name="pASSWORD">Initial value of the PASSWORD property.</param>
         /// <param name="enableContentGroupingInTree">Initial value of the EnableContentGroupingInTree property.</param>
-        public static UserDAL CreateUserDAL(global::System.Decimal id, global::System.Decimal disabled, global::System.String firstName, global::System.String lastName, global::System.String email, global::System.Decimal autoLogOn, global::System.Decimal subscribed, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Decimal vMode, global::System.Decimal allowStageEditField, global::System.Decimal allowStageEditObject, global::System.Boolean builtIn, global::System.String logOn, global::System.DateTime passwordModified, global::System.String pASSWORD, global::System.Boolean enableContentGroupingInTree)
+        /// <param name="mustChangePassword">Initial value of the MustChangePassword property.</param>
+        public static UserDAL CreateUserDAL(global::System.Decimal id, global::System.Decimal disabled, global::System.String firstName, global::System.String lastName, global::System.String email, global::System.Decimal autoLogOn, global::System.Decimal subscribed, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Decimal vMode, global::System.Decimal allowStageEditField, global::System.Decimal allowStageEditObject, global::System.Boolean builtIn, global::System.String logOn, global::System.DateTime passwordModified, global::System.String pASSWORD, global::System.Boolean enableContentGroupingInTree, global::System.Boolean mustChangePassword)
         {
             UserDAL userDAL = new UserDAL();
             userDAL.Id = id;
@@ -35550,6 +35551,7 @@ namespace Quantumart.QP8.DAL
             userDAL.PasswordModified = passwordModified;
             userDAL.PASSWORD = pASSWORD;
             userDAL.EnableContentGroupingInTree = enableContentGroupingInTree;
+            userDAL.MustChangePassword = mustChangePassword;
             return userDAL;
         }
 
@@ -36087,6 +36089,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _EnableContentGroupingInTree;
         partial void OnEnableContentGroupingInTreeChanging(global::System.Boolean value);
         partial void OnEnableContentGroupingInTreeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean MustChangePassword
+        {
+            get
+            {
+                return _MustChangePassword;
+            }
+            set
+            {
+                OnMustChangePasswordChanging(value);
+                ReportPropertyChanging("MustChangePassword");
+                _MustChangePassword = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MustChangePassword");
+                OnMustChangePasswordChanged();
+            }
+        }
+        private global::System.Boolean _MustChangePassword;
+        partial void OnMustChangePasswordChanging(global::System.Boolean value);
+        partial void OnMustChangePasswordChanged();
 
         #endregion
 

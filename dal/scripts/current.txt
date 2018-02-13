@@ -27,3 +27,4 @@ AggregatesToRemove
 AddMaxItemCountColumn
 Tokens
 AddExportArchiveArticlesToToolbar
+AddMustChangePasswordColumn

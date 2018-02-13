@@ -75,5 +75,7 @@ namespace Quantumart.QP8.Security
         public bool IsSilverlightInstalled { get; set; }
 
         private int _languageId;
+        
+        public bool MustChangePassword { get; set; }
     }
 }
