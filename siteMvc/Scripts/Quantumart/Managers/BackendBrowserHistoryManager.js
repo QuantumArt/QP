@@ -57,8 +57,6 @@ export class BackendBrowserHistoryManager {
   }
 
   _handlePopState({ state }) {
-    console.log('POP', state);
-
     if (this._modalWindowIsShown
       || this._hasPendingTabChangedEvent
       || state.type === HISTORY_INITIAL_STATE
@@ -69,7 +67,6 @@ export class BackendBrowserHistoryManager {
       document.title = state.title;
       this.onPopStateAllTabsClosed();
     } else if (state.type === HISTORY_TAB_CHANGED_STATE) {
-      console.log('START EXECUTION', state);
       const previousStateId = this._currentStateIndex;
       this._currentStateIndex = state.stateIndex;
       this._hasPendingTabChangedEvent = true;
@@ -84,7 +81,6 @@ export class BackendBrowserHistoryManager {
         }
         this._hasPendingTabChangedEvent = false;
         this._applyPendingStateQueue();
-        console.log('FINISH EXECUTION', state);
       });
 
       document.title = state.title;
@@ -96,13 +92,9 @@ export class BackendBrowserHistoryManager {
     const { state } = window.history;
 
     if (state.stateIndex > this._currentStateIndex) {
-      console.log('BACK');
       window.history.back();
     } else if (state.stateIndex < this._currentStateIndex) {
-      console.log('FORWARD');
       window.history.forward();
-    } else {
-      console.log('SAME STATE');
     }
   }
 
@@ -153,10 +145,8 @@ export class BackendBrowserHistoryManager {
   _pushOrEnqueueState(state) {
     if (this._hasPendingTabChangedEvent) {
       this._pendingStateQueue.push(state);
-      console.log('ENQUEUE', state);
     } else {
       this._pushState(state);
-      console.log('PUSH', state);
     }
   }
 
