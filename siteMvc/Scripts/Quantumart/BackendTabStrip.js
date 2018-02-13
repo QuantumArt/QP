@@ -1202,6 +1202,7 @@ export class BackendTabStrip extends Observable {
     eventArgs.set_entities($tab.data('entities'));
     eventArgs.set_isMultipleEntities($q.toBoolean($tab.data('is_multiple_entities'), false));
     eventArgs.set_tabId(this.getTabId($tab));
+    eventArgs.title = $tab.data('tab_text') || document.title;
     return eventArgs;
   }
 

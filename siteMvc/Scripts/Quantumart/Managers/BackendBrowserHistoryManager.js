@@ -29,6 +29,7 @@ export class BackendBrowserHistoryManager {
   onPopStateAllTabsClosed = event(this);
 
   constructor() {
+    this._defaultTitle = document.title;
     this._handlePopState = this._handlePopState.bind(this);
     this.handleModalWindowOpen = this.handleModalWindowOpen.bind(this);
     this.handleModalWindowClose = this.handleModalWindowClose.bind(this);
@@ -40,7 +41,8 @@ export class BackendBrowserHistoryManager {
     if (state === null) {
       window.history.replaceState({
         type: HISTORY_INITIAL_STATE,
-        stateIndex: this._currentStateIndex
+        stateIndex: this._currentStateIndex,
+        title: this._defaultTitle,
       }, document.title);
 
       this.pushStateAllTabsClosed();
@@ -64,6 +66,7 @@ export class BackendBrowserHistoryManager {
       this._rollbackBrowserState();
     } else if (state.type === HISTORY_ALL_TABS_CLOSED_STATE) {
       this._currentStateIndex = state.stateIndex;
+      document.title = state.title;
       this.onPopStateAllTabsClosed();
     } else if (state.type === HISTORY_TAB_CHANGED_STATE) {
       console.log('START EXECUTION', state);
@@ -84,6 +87,7 @@ export class BackendBrowserHistoryManager {
         console.log('FINISH EXECUTION', state);
       });
 
+      document.title = state.title;
       this.onPopStateTabChanged(eventArgs);
     }
   }
@@ -137,7 +141,10 @@ export class BackendBrowserHistoryManager {
       return;
     }
 
-    this._pushOrEnqueueState({ type: HISTORY_ALL_TABS_CLOSED_STATE });
+    this._pushOrEnqueueState({
+      type: HISTORY_ALL_TABS_CLOSED_STATE,
+      title: this._defaultTitle
+    });
   }
 
   /**
@@ -168,6 +175,7 @@ export class BackendBrowserHistoryManager {
     // eslint-disable-next-line no-param-reassign
     state.stateIndex = this._currentStateIndex;
     window.history.pushState(state, document.title);
+    document.title = state.title;
   }
 
   /**
@@ -185,7 +193,8 @@ export class BackendBrowserHistoryManager {
       actionTypeCode: eventArgs.get_actionTypeCode(),
       entities: eventArgs.get_entities(),
       isMultipleEntities: eventArgs.get_isMultipleEntities(),
-      tabId: eventArgs.get_tabId()
+      tabId: eventArgs.get_tabId(),
+      title: eventArgs.title,
     };
   }
 

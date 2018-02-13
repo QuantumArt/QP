@@ -5,6 +5,7 @@ import { setEquals } from '../Utils/Set';
 
 export class BackendTabEventArgs extends BackendEventArgs {
   _tabId = '';
+  title = '';
   isExpandRequested = false;
   fromHistory = false;
   onExecutionFinished = event(this, Boolean);
