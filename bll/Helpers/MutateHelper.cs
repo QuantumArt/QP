@@ -42,11 +42,11 @@ namespace Quantumart.QP8.BLL.Helpers
             return result;
         }
 
-        public static string MutateString(string value, int mutationStep) => string.Format("{0} {1}", value, mutationStep);
+        public static string MutateString(string value, int mutationStep) => string.IsNullOrEmpty(value) ? value : string.Format("{0} {1}", value, mutationStep);
 
-        public static string MutateNetName(string value, int mutationStep) => string.Format("{0}{1}", value, mutationStep);
+        public static string MutateNetName(string value, int mutationStep) => string.IsNullOrEmpty(value) ? value : string.Format("{0}{1}", value, mutationStep);
 
-        public static string MutateUserLogin(string value, int mutationStep) => string.Format("{0}{1}", value, mutationStep);
+        public static string MutateUserLogin(string value, int mutationStep) => string.IsNullOrEmpty(value) ? value : string.Format("{0}{1}", value, mutationStep);
 
         public static int MutateInt(int value, int mutationStep) => value + mutationStep;
 
