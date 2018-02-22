@@ -215,7 +215,7 @@ BODY {
   padding: 0;
   height: 26px;
   background-color: #ebf5fb;
-  z-index: 9999;
+  z-index: 9995;
   overflow: hidden;
 }
 
@@ -223,7 +223,7 @@ BODY {
   margin: 0;
   padding: 0;
   background-color: #bcc7d8;
-  z-index: 9999;
+  z-index: 9995;
   overflow: hidden;
 }
 
