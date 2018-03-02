@@ -10,7 +10,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
     public class ExportSettings : IMultistepActionParams
     {
-        private static DateTime _dateForFileName;
+        private DateTime _dateForFileName;
 
         public ExportSettings()
         {
