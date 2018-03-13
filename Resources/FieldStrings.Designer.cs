@@ -169,6 +169,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Backward Field.
+        /// </summary>
+        public static string BackwardFieldId {
+            get {
+                return ResourceManager.GetString("BackwardFieldId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Backward field name.
         /// </summary>
         public static string BackwardFieldName {
