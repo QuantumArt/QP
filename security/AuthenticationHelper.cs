@@ -96,8 +96,8 @@ namespace Quantumart.QP8.Security
                         LanguageId = int.Parse(userDataCollection[3]),
                         IsSilverlightInstalled = bool.Parse(userDataCollection[5]),
                         Roles = userDataCollection[6].Split(';'),
-                        SessionId = userDataCollection.Length >= 9 ? int.Parse(userDataCollection[8]) : 0,
-                        MustChangePassword = bool.Parse(userDataCollection[7])
+                        MustChangePassword = userDataCollection.Length >= 8 && bool.TryParse(userDataCollection[7], out var result) ? result : false,
+                        SessionId = userDataCollection.Length >= 9 && int.TryParse(userDataCollection[8], out var sessionId) ? sessionId : 0
                     };
                 }
             }
