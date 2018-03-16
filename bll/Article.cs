@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -992,6 +993,15 @@ namespace Quantumart.QP8.BLL
                         }
 
                         break;
+                }
+
+                if (field.ExactType == FieldExactTypes.Numeric && field.DecimalPlaces > 0 && versionId != 0)
+                {
+                    var str = objectValue?.ToString();
+                    if (!string.IsNullOrEmpty(str))
+                    {
+                        objectValue = decimal.Parse(str, CultureInfo.InvariantCulture);
+                    }
                 }
 
                 if (field.ReplaceUrls && objectValue != null)
