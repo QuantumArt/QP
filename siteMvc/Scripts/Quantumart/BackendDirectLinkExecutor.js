@@ -4,167 +4,131 @@ import { $q } from './Utils';
 
 window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING = 'OnDirectLinkActionExecuting';
 
+const SESSION_STORAGE_INSTANCE_ID = 'Quantumart.QP8.DirectLinkExecutor.InstanceId';
+const LOCAL_STORAGE_PRIMARY_ID = 'Quantumart.QP8.DirectLinkExecutor.PrimaryId';
+const LOCAL_STORAGE_DIRECT_LINK = 'Quantumart.QP8.DirectLinkExecutor.DirectLink';
+
 export class DirectLinkExecutor extends Observable {
+  _currentCustomerCode = null;
+  _directLinkOptions = null;
+  _isPrimaryInstance = false;
+  _instanceId = null;
+
   constructor(currentCustomerCode, directLinkOptions) {
     super();
 
     this._currentCustomerCode = currentCustomerCode;
-    this._urlLinkParams = directLinkOptions;
-    this._uid = new Date().getTime();
-  }
+    this._directLinkOptions = directLinkOptions;
 
-  LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG = 'Quantumart.QP8.DirectLinkExecutor.BackendIsAllreadyExists';
-  LOCAL_STORAGE_KEY_OBSERVABLE_ITEM = 'Quantumart.QP8.DirectLinkExecutor.DirectLinkData';
-  LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE = 'Quantumart.QP8.DirectLinkExecutor.ExistingRespose';
-  LOCAL_STORAGE_KEY_SENT_KEY_NAME = 'Quantumart.QP8.DirectLinkExecutor.LastKeyName';
-
-  _currentCustomerCode = null;
-  _urlLinkParams = null;
-  _imFirst = false;
-  _uid = null;
-
-  _onDirectLinkOpenRequested(e) {
-    if ($q.isNullOrEmpty(e.key)) {
-      const key = window.localStorage.getItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
-      if (key) {
-        // eslint-disable-next-line no-param-reassign
-        e.key = key;
-        // eslint-disable-next-line no-param-reassign
-        e.newValue = window.localStorage.getItem(key);
-      }
-    }
-
-    if (e.key === this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM && $q.isString(e.newValue)) {
-      const actionParams = jQuery.parseJSON(e.newValue);
-      this._executeAction(actionParams, true);
-    } else if (e.key === this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG && $.isNumeric(e.newValue)) {
-      $q.warnIfEqDiff(e.newValue, this._uid);
-      if (e.newValue !== this._uid) {
-        this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE, 'true');
-      }
-    }
-  }
-
-  _onDirectLinkOpenRequestedHandler = null;
-
-  _executeAction(actionParams, byRequest) {
-    const newParams = Object.assign({}, actionParams);
-    if (newParams) {
-      if ($q.isNullOrEmpty(newParams.customerCode)) {
-        newParams.customerCode = this._currentCustomerCode;
-      }
-
-      if (newParams.customerCode.toLowerCase() === this._currentCustomerCode.toLowerCase()) {
-        if (!byRequest || $q.confirmMessage($l.BackendDirectLinkExecutor.OpenDirectLinkConfirmation)) {
-          const action = $a.getBackendActionByCode(newParams.actionCode);
-          if ($q.isNullOrEmpty(action)) {
-            $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
-          } else {
-            const params = new BackendActionParameters({
-              entityTypeCode: newParams.entityTypeCode,
-              entityId: newParams.entityId,
-              parentEntityId: newParams.parentEntityId
-            });
-
-            params.correct(action);
-            const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
-            this.notify(window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, eventArgs);
-          }
-        }
-      } else if ($q.confirmMessage($l.BackendDirectLinkExecutor.ReloginRequestConfirmation)) {
-        window.location.href = `${window.CONTROLLER_URL_LOGON}LogOut/?${jQuery.param(newParams)}`;
-      }
-
-      if (byRequest) {
-        window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM);
-      }
-    }
-  }
-
-  _send(type, message) {
-    window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
-    window.localStorage.setItem(type, message);
-    if ('onstorage' in document) {
-      window.localStorage.setItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME, type);
-    }
-  }
-
-  _instanceExistenceCheck() {
-    // eslint-disable-next-line new-cap
-    const dfr = jQuery.Deferred();
-    if (window.localStorage.getItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG)) {
-      this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, this._uid);
-      const that = this;
-      setTimeout(() => {
-        const testResponse = !!window.localStorage.getItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
-        window.localStorage.removeItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
-        dfr.resolveWith(that, [testResponse]);
-      }, 500);
+    const instanceId = window.sessionStorage.getItem(SESSION_STORAGE_INSTANCE_ID);
+    if (instanceId) {
+      this._instanceId = Number(instanceId);
     } else {
-      dfr.resolveWith(this, [false]);
+      this._instanceId = Number(new Date());
+      window.sessionStorage.setItem(SESSION_STORAGE_INSTANCE_ID, String(this._instanceId));
     }
 
-    return dfr.promise();
+    this._onStorage = this._onStorage.bind(this);
+    window.addEventListener('storage', this._onStorage, false);
   }
 
-  _registerInstance() {
-    this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, 'true');
-  }
-
-  _unregisterInstance() {
-    window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG);
-  }
-
-  ready(callback) {
-    this._instanceExistenceCheck().done(function (instanceExists) {
-      if (instanceExists) {
-        this._imFirst = false;
-        if (this._urlLinkParams) {
-          if ($q.confirmMessage($l.BackendDirectLinkExecutor.WillBeRunInFirstInstanceConfirmation)) {
-            this._send(this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM, JSON.stringify(this._urlLinkParams));
-          }
-        } else {
-          $q.alertFail($l.BackendDirectLinkExecutor.InstanceIsAllreadyOpen);
+  /**
+   * @param {StorageEvent} e
+   */
+  _onStorage(e) {
+    if (!e.newValue) {
+      return;
+    }
+    switch (e.key) {
+      case LOCAL_STORAGE_PRIMARY_ID: {
+        const primaryId = Number(e.newValue);
+        if (primaryId > this._instanceId) {
+          window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, String(this._instanceId));
         }
-      } else {
-        this._imFirst = true;
-        this._registerInstance();
-        this._send(this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM, '');
-        this._onDirectLinkOpenRequestedHandler = jQuery.proxy(this._onDirectLinkOpenRequested, this);
-
-        if (window.addEventListener) {
-          window.addEventListener('storage', this._onDirectLinkOpenRequestedHandler, false);
-        } else if (document.attachEvent) {
-          document.attachEvent('onstorage', this._onDirectLinkOpenRequestedHandler);
-        }
-
-        const openByDirectLink = !!this._urlLinkParams;
-        if ($q.isFunction(callback)) {
-          callback(openByDirectLink);
-        }
-
-        if (openByDirectLink) {
-          this._executeAction(this._urlLinkParams, false);
-        }
+        break;
       }
+      case LOCAL_STORAGE_DIRECT_LINK: {
+        const message = JSON.parse(e.newValue);
+        if ($q.isObject(message) && message.instanceId !== this._instanceId) {
+          window.localStorage.removeItem(LOCAL_STORAGE_DIRECT_LINK);
+          this._executeAction(message.directLinkOptions, true);
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  /** @returns {Promise<boolean>} */
+  _checkIsPrimaryInstance() {
+    window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, String(this._instanceId));
+    return new Promise(resolve => {
+      setTimeout(() => {
+        const primaryId = Number(window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID));
+        resolve(primaryId === this._instanceId);
+      }, 500);
     });
   }
 
-  dispose() {
-    if (this._imFirst) {
-      if (!('onstorage' in document)) {
-        this._unregisterInstance();
-      }
+  /**
+   * @param {function(boolean): void} callback
+   */
+  async ready(callback) {
+    this._isPrimaryInstance = await this._checkIsPrimaryInstance();
+    console.log({ _isPrimaryInstance: this._isPrimaryInstance });
 
-      window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM);
-      if (window.removeEventListener) {
-        window.removeEventListener('storage', this._onDirectLinkOpenRequestedHandler);
-      } else if (document.detachEvent) {
-        document.detachEvent('onstorage', this._onDirectLinkOpenRequestedHandler);
+    if (this._isPrimaryInstance) {
+      const openByDirectLink = !!this._directLinkOptions;
+      if ($q.isFunction(callback)) {
+        callback(openByDirectLink);
       }
+      if (openByDirectLink) {
+        this._executeAction(this._directLinkOptions, false);
+      }
+    } else if (this._directLinkOptions) {
+      if ($q.confirmMessage($l.BackendDirectLinkExecutor.WillBeRunInFirstInstanceConfirmation)) {
+        window.localStorage.setItem(LOCAL_STORAGE_DIRECT_LINK, JSON.stringify({
+          instanceId: this._instanceId,
+          directLinkOptions: this._directLinkOptions
+        }));
+      }
+    } else {
+      $q.alertFail($l.BackendDirectLinkExecutor.InstanceIsAllreadyOpen);
     }
   }
-}
 
+  _executeAction(actionParams, byMessage) {
+    const newParams = { ...actionParams };
+    if ($q.isNullOrEmpty(newParams.customerCode)) {
+      newParams.customerCode = this._currentCustomerCode;
+    }
+
+    if (newParams.customerCode.toLowerCase() === this._currentCustomerCode.toLowerCase()) {
+      if (!byMessage || $q.confirmMessage($l.BackendDirectLinkExecutor.OpenDirectLinkConfirmation)) {
+        const action = $a.getBackendActionByCode(newParams.actionCode);
+        if ($q.isNullOrEmpty(action)) {
+          $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
+        } else {
+          const params = new BackendActionParameters({
+            entityTypeCode: newParams.entityTypeCode,
+            entityId: newParams.entityId,
+            parentEntityId: newParams.parentEntityId
+          });
+
+          params.correct(action);
+          const eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+          this.notify(window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, eventArgs);
+        }
+      }
+    } else if ($q.confirmMessage($l.BackendDirectLinkExecutor.ReloginRequestConfirmation)) {
+      window.location.href = `${window.CONTROLLER_URL_LOGON}LogOut/?${jQuery.param(newParams)}`;
+    }
+  }
+
+  dispose() {
+    window.removeEventListener('storage', this._onStorage);
+  }
+}
 
 Quantumart.QP8.DirectLinkExecutor = DirectLinkExecutor;
