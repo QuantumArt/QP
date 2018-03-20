@@ -4,6 +4,7 @@ import { BackendBreadCrumbsManager } from '../Managers/BackendBreadCrumbsManager
 import { BackendDocumentHost } from './BackendDocumentHost';
 import { BackendEventArgs } from '../Common/BackendEventArgs';
 import { BackendLibrary } from '../Library/BackendLibrary';
+import { BackendBrowserHistoryManager } from '../Managers/BackendBrowserHistoryManager';
 import { BackendSearchBlockManager } from '../Managers/BackendSearchBlockManager';
 import { BackendViewToolbar } from '../Toolbar/BackendViewToolbar';
 import { $a } from '../BackendActionExecutor';
@@ -20,6 +21,8 @@ export class BackendPopupWindow extends BackendDocumentHost {
   static get isWindow() {
     return true;
   }
+
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
 
   // eslint-disable-next-line max-statements, complexity
   constructor(popupWindowId, eventArgs, options) {
@@ -438,7 +441,9 @@ export class BackendPopupWindow extends BackendDocumentHost {
       modal: this._isModal,
       actions,
       resizable: this._allowResize,
-      draggable: this._allowDrag
+      draggable: this._allowDrag,
+      onOpen: this._backendBrowserHistoryManager.handleModalWindowOpen,
+      onClose: this._backendBrowserHistoryManager.handleModalWindowClose
     }).data('tWindow').center();
 
     const $popupWindow = $(popupWindowComponent.element);

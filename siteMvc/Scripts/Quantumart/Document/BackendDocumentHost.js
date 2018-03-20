@@ -168,15 +168,12 @@ export class BackendDocumentHost extends Observable {
 
   static getAllActionLinks(documentWrapperElement) {
     const $wrapper = $q.toJQuery(documentWrapperElement);
-    let result;
 
-    if ($wrapper) {
-      result = $wrapper.find('.actionLink');
-    } else {
-      result = [];
+    if (!$wrapper) {
+      return $q.toJQuery([]);
     }
 
-    return result;
+    return $wrapper.find('.actionLink');
   }
 
   // eslint-disable-next-line max-statements
@@ -1073,19 +1070,24 @@ export class BackendDocumentHost extends Observable {
       this.updateDocument(eventArgs);
       this._externalCallerContexts = externalCallerContexts;
 
-      const that = this;
       this._loadDefaultSearchBlockState();
       this.loadHtmlContentToDocumentWrapper(success => {
-        that.unmarkMainComponentAsBusy();
+        this.unmarkMainComponentAsBusy();
         if (success) {
-          that.unbindExternalCallerContexts('changed');
+          this.unbindExternalCallerContexts('changed');
         } else {
-          that.updateDocument(appliedEventArgs);
+          this.updateDocument(appliedEventArgs);
         }
 
-        $(that._documentWrapperElement).scrollTo(0);
-        that.onDocumentChanged();
+        $(this._documentWrapperElement).scrollTo(0);
+        this.onDocumentChanged();
+
+        if (eventArgs.fromHistory) {
+          eventArgs.finishExecution();
+        }
       });
+    } else if (eventArgs.fromHistory) {
+      eventArgs.finishExecution(false);
     }
   }
 

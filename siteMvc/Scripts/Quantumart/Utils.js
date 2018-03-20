@@ -400,6 +400,10 @@ $q.isFunction = function isFunction(value) {
   return result;
 };
 
+/**
+ * @param {any} value
+ * @returns {JQuery}
+ */
 $q.toJQuery = function toJQuery(value) {
   if ($q.isObject(value)) {
     if (value.jquery) {

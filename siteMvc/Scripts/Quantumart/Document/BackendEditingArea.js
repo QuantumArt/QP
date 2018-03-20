@@ -1,10 +1,10 @@
 /* eslint max-lines: 'off' */
 import { BackendDocumentHostStateStorage } from './BackendDocumentHostStateStorage';
 import { BackendEditingDocument } from './BackendEditingDocument';
+import { BackendBrowserHistoryManager } from '../Managers/BackendBrowserHistoryManager';
 import { BackendEventArgs } from '../Common/BackendEventArgs';
 import { Observable } from '../Common/Observable';
 import { $q } from '../Utils';
-
 
 window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADING = 'OnEditingAreaDocumentLoading';
 window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADED = 'OnEditingAreaDocumentLoaded';
@@ -17,6 +17,9 @@ window.EVENT_TYPE_EDITING_AREA_ENTITY_READED = 'OnEditingAreaEntityReaded';
 window.EVENT_TYPE_EDITING_AREA_FIND_TAB_IN_TREE = 'OnEditingAreaFindTabInTree';
 
 export class BackendEditingArea extends Observable {
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
+
+  // eslint-disable-next-line max-statements
   constructor(editingAreaElementId, options) {
     super();
 
@@ -26,6 +29,7 @@ export class BackendEditingArea extends Observable {
     });
 
     this._editingAreaElementId = editingAreaElementId;
+    /** @type {{ [x: string]: BackendEditingDocument }} */
     this._documents = {};
     this._customVars = {};
     this._customScripts = {};
@@ -76,6 +80,12 @@ export class BackendEditingArea extends Observable {
           $.proxy(this.onFindTabInTreeRequest, this));
       }
     }
+
+    this.handlePopStateTabChanged = this.handlePopStateTabChanged.bind(this);
+    this.handlePopStateAllTabsClosed = this.handlePopStateAllTabsClosed.bind(this);
+
+    this._backendBrowserHistoryManager.onPopStateTabChanged.attach(this.handlePopStateTabChanged);
+    this._backendBrowserHistoryManager.onPopStateAllTabsClosed.attach(this.handlePopStateAllTabsClosed);
   }
 
   _editingAreaElementId = '';
@@ -94,7 +104,6 @@ export class BackendEditingArea extends Observable {
   _searchBlockContainerElement = null;
   _contextBlockContainerElementId = '';
   _contextBlockContainerElement = null;
-  _documents = null;
   _tabStrip = null;
   _hostStateStorage = null;
   _customVars = null;
@@ -266,18 +275,16 @@ export class BackendEditingArea extends Observable {
     this._loadingLayerElement = $loadingLayer.get(0);
   }
 
-  openArea() {
-    let $editingArea = $(this._editingAreaElement);
-    $editingArea.css('display', 'flex');
+  showArea() {
+    $(this._editingAreaElement).css('display', 'flex');
+  }
 
-    $editingArea = null;
+  hideArea() {
+    $(this._editingAreaElement).css('display', 'none');
   }
 
   closeArea() {
-    let $editingArea = $(this._editingAreaElement);
-    $editingArea.css('display', 'none');
-
-    $editingArea = null;
+    this.hideArea();
 
     let $documentsContainer = $(this._documentsContainerElement);
     $documentsContainer
@@ -319,51 +326,92 @@ export class BackendEditingArea extends Observable {
     return this.getDocument(docId);
   }
 
+  // eslint-disable-next-line max-statements
   addDocument(eventArgs) {
-    if (!eventArgs.get_isWindow()) {
-      let tabId = this.getExistingTabId(eventArgs);
-      if (tabId === 0) {
-        this.onDocumentLoading();
-        if (this._tabStrip.getAllTabsCount() === 0) {
-          this.openArea();
-        }
+    if (eventArgs.get_isWindow()) {
+      return;
+    }
 
-        tabId = this._tabStrip.addNewTab(eventArgs);
-        const oldDoc = this.getSelectedDocument();
-        if (oldDoc) {
-          oldDoc.hidePanels();
-          oldDoc.hideDocumentWrapper();
-        }
+    this.showArea();
 
-        const doc = new BackendEditingDocument(
-          tabId,
-          this,
-          eventArgs,
-          { hostStateStorage: this._hostStateStorage }
-        );
+    if (eventArgs.fromHistory) {
+      const allTabs = this._tabStrip.getAllTabs().get();
 
-        const docId = doc.get_id();
-        this._documents[docId] = doc;
-        this._selectedDocumentId = docId;
+      const sameDocumentTab = allTabs.find(tab => {
+        const tabEventArgs = this._tabStrip.getEventArgsFromTab(tab);
+        return eventArgs.hasSameDocument(tabEventArgs);
+      });
 
-        const that = this;
-        doc.initialize(() => {
-          that.onDocumentLoaded(that._selectedDocumentId);
-        });
-
-        if (eventArgs.get_context() && eventArgs.get_context().ctrlKey) {
-          this.selectDocument(this._tabStrip._previousSelectedTabId);
-        }
-      } else if ($.isEmptyObject(eventArgs.get_context()) || !eventArgs.get_context().ctrlKey) {
-        const selectedDocument = this.selectDocument(tabId);
+      if (sameDocumentTab) {
+        const sameDocumentTabId = this._tabStrip.getTabId(sameDocumentTab);
+        const selectedDocument = this.selectDocument(sameDocumentTabId);
         if (selectedDocument) {
-          selectedDocument.onSelectedThroughExecution(eventArgs);
+          eventArgs.finishExecution();
         }
+        return;
+      }
+
+      const eventTabId = eventArgs.get_tabId();
+      const existingTab = this._tabStrip.getTab(eventTabId);
+      if (existingTab) {
+        const selectedDocument = this.selectDocument(eventTabId);
+        if (selectedDocument) {
+          const tabEventArgs = this._tabStrip.getEventArgsFromTab(existingTab);
+          if (eventArgs.structurallyEquals(tabEventArgs)) {
+            eventArgs.finishExecution();
+          } else {
+            selectedDocument.onSelectedThroughExecution(eventArgs);
+            selectedDocument.changeContent(eventArgs);
+          }
+        }
+        return;
+      }
+    }
+
+    const tabId = this.getExistingTabId(eventArgs);
+    if (tabId === 0) {
+      this._addNewDocument(eventArgs);
+    } else if ($.isEmptyObject(eventArgs.get_context()) || !eventArgs.get_context().ctrlKey) {
+      const selectedDocument = this.selectDocument(tabId);
+      if (selectedDocument) {
+        selectedDocument.onSelectedThroughExecution(eventArgs);
       }
     }
   }
 
+  _addNewDocument(eventArgs) {
+    this.onDocumentLoading();
+
+    const tabId = this._tabStrip.addNewTab(eventArgs);
+    const oldDoc = this.getSelectedDocument();
+    if (oldDoc) {
+      oldDoc.hidePanels();
+      oldDoc.hideDocumentWrapper();
+    }
+
+    const doc = new BackendEditingDocument(tabId, this, eventArgs, {
+      hostStateStorage: this._hostStateStorage
+    });
+
+    const docId = doc.get_id();
+    this._documents[docId] = doc;
+    this._selectedDocumentId = docId;
+
+    doc.initialize(() => {
+      this.onDocumentLoaded(this._selectedDocumentId);
+      if (eventArgs.fromHistory) {
+        eventArgs.finishExecution();
+      }
+    });
+
+    if (eventArgs.get_context() && eventArgs.get_context().ctrlKey) {
+      this.selectDocument(this._tabStrip._previousSelectedTabId);
+    }
+  }
+
   selectDocument(tabId) {
+    this.showArea();
+
     const docId = this.getDocumentIdByTabId(tabId);
     const doc = this.getDocument(docId);
     const oldDoc = this.getSelectedDocument();
@@ -387,6 +435,19 @@ export class BackendEditingArea extends Observable {
     }
 
     return undefined;
+  }
+
+  deselectAllDocuments() {
+    this.hideArea();
+
+    const oldDoc = this.getSelectedDocument();
+
+    if (oldDoc) {
+      oldDoc.hidePanels();
+      oldDoc.hideDocumentWrapper();
+    }
+
+    this._tabStrip.deselectAllTabs();
   }
 
   removeDocument(docId) {
@@ -432,6 +493,14 @@ export class BackendEditingArea extends Observable {
   unmarkAsBusy() {
     this._tabStrip.unmarkAsBusy();
     Object.values(this._documents).forEach(doc => doc.unmarkPanelsAsBusy());
+  }
+
+  handlePopStateTabChanged(sender, eventArgs) {
+    this.addDocument(eventArgs);
+  }
+
+  handlePopStateAllTabsClosed() {
+    this.deselectAllDocuments();
   }
 
   onDocumentError(docId) {
@@ -513,7 +582,7 @@ export class BackendEditingArea extends Observable {
     const docId = this.getDocumentIdByTabId(eventArgs.get_tabId());
     const doc = this.getDocument(docId);
     if (doc) {
-      doc.saveAndCloseRequest(eventArgs);
+      doc.saveAndCloseRequest();
     }
   }
 
@@ -640,9 +709,11 @@ export class BackendEditingArea extends Observable {
       this._tabStrip.detachObserver(window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST);
       this._tabStrip.detachObserver(window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST);
     }
+
+    this._backendBrowserHistoryManager.onPopStateTabChanged.detach(this.handlePopStateTabChanged);
+    this._backendBrowserHistoryManager.onPopStateAllTabsClosed.detach(this.handlePopStateAllTabsClosed);
   }
 }
-
 
 BackendEditingArea._instance = null;
 BackendEditingArea.getInstance = function (editingAreaElementId, options) {
@@ -661,7 +732,6 @@ BackendEditingArea.destroyInstance = function () {
     BackendEditingArea._instance = null;
   }
 };
-
 
 export class BackendEditingAreaEventArgs extends BackendEventArgs {
   // eslint-disable-next-line no-useless-constructor, FIXME
@@ -692,7 +762,6 @@ export class BackendEditingAreaEventArgs extends BackendEventArgs {
     this._isSelected = value;
   }
 }
-
 
 Quantumart.QP8.BackendEditingArea = BackendEditingArea;
 Quantumart.QP8.BackendEditingAreaEventArgs = BackendEditingAreaEventArgs;

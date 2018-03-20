@@ -1,3 +1,4 @@
+import { BackendBrowserHistoryManager } from '../Managers/BackendBrowserHistoryManager';
 import { BackendLibrary } from '../Library/BackendLibrary';
 import { Observable } from '../Common/Observable';
 import { $c } from '../ControlHelpers';
@@ -8,6 +9,8 @@ window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED = 'OnMultistepActionWindowCan
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED = 'OnMultistepActionWindowClosed';
 
 export class BackendMultistepActionWindow extends Observable {
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
+
   constructor(actionName, shortActionName) {
     super();
 
@@ -332,6 +335,7 @@ export class BackendMultistepActionWindow extends Observable {
       modal: true,
       resizable: false,
       draggable: false,
+      onOpen: this._backendBrowserHistoryManager.handleModalWindowOpen,
       onClose: $.proxy(this._onWindowClose, this)
     }).data('tWindow').center();
 
@@ -359,6 +363,7 @@ export class BackendMultistepActionWindow extends Observable {
       return false;
     }
 
+    this._backendBrowserHistoryManager.handleModalWindowClose();
     this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED, {});
     return undefined;
   }

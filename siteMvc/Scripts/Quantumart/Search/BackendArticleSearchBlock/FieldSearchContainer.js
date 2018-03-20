@@ -9,10 +9,13 @@ import { Observable } from '../../Common/Observable';
 import { RelationFieldSearch } from './RelationFieldSearch';
 import { StringEnumFieldSearch } from './StringEnumFieldSearch';
 import { TextFieldSearch } from './TextFieldSearch';
+import { BackendBrowserHistoryManager } from '../../Managers/BackendBrowserHistoryManager';
 import { $c } from '../../ControlHelpers';
 import { $q } from '../../Utils';
 
 export class FieldSearchContainer extends Observable {
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
+
   // eslint-disable-next-line max-params
   constructor(
     fieldSearchContainerElement,
@@ -148,6 +151,7 @@ export class FieldSearchContainer extends Observable {
       .string();
 
     let wndSize = this._getWindowSize();
+
     this._popupWindowComponent = $.telerik.window.create({
       title: $l.SearchBlock.filterSettings + this._fieldName,
       html,
@@ -156,7 +160,9 @@ export class FieldSearchContainer extends Observable {
       modal: true,
       resizable: false,
       draggable: true,
-      visible: isOpened
+      visible: isOpened,
+      onOpen: this._backendBrowserHistoryManager.handleModalWindowOpen,
+      onClose: this._backendBrowserHistoryManager.handleModalWindowClose
     }).data('tWindow').center();
     wndSize = null;
 

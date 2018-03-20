@@ -1,7 +1,8 @@
 /* eslint max-lines: 'off' */
+import { BackendBrowserHistoryManager } from './Managers/BackendBrowserHistoryManager';
 import { BackendDocumentHost } from './Document/BackendDocumentHost';
 import { BackendEntityType } from './Info/BackendEntityType';
-import { BackendEventArgs } from './Common/BackendEventArgs';
+import { BackendTabEventArgs } from './Common/BackendTabEventArgs';
 import { Observable } from './Common/Observable';
 import { $a } from './BackendActionExecutor';
 import { $o } from './Info/BackendEntityObject';
@@ -14,6 +15,8 @@ window.EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST = 'OnTabSaveAndCloseRequest';
 window.EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST = 'OnFindTabInTreeRequest';
 
 export class BackendTabStrip extends Observable {
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
+
   constructor(tabStripElementId, options) {
     super();
 
@@ -61,8 +64,8 @@ export class BackendTabStrip extends Observable {
   _tabStripElement = null;
   _tabStripScrollableElement = null;
 
-  /** @type {string | HTMLElement} */
-  _tabListElement = '';
+  /** @type {HTMLElement} */
+  _tabListElement = null;
   _partialRemovedTabsContainerElement = null;
   _selectedTabId = '';
   _previousSelectedTabId = '';
@@ -319,21 +322,7 @@ export class BackendTabStrip extends Observable {
   }
 
   generateTabId() {
-    let tabNumber = 1;
-    const $tabs = this.getAllTabs();
-    if ($tabs.length > 0) {
-      const $lastTab = $tabs.last();
-      const lastTabId = $lastTab.attr('id');
-      const numberMatch = lastTabId.match('[0-9]+');
-      if (numberMatch.length === 1) {
-        tabNumber = parseInt(numberMatch[0], 10) + 1;
-      } else {
-        $q.alertError($l.TabStrip.tabIdGenerationErrorMessage);
-        return null;
-      }
-    }
-
-    return String.format('tab{0}', tabNumber);
+    return `tab_${$q.uniqueId()}`;
   }
 
   generateTabText(eventArgs, tabNumber) {
@@ -394,19 +383,20 @@ export class BackendTabStrip extends Observable {
     return $tab;
   }
 
+  /**
+   * @param {string | HTMLElement | JQuery} tab
+   * @returns {JQuery}
+   */
   getTab(tab) {
-    let $tab = null;
     if ($q.isObject(tab)) {
       return $q.toJQuery(tab);
-    } else if ($q.isString(tab)) {
-      $tab = $(this._tabListElement).find(`#${tab}`);
-      if ($tab.length === 0) {
-        $tab = null;
-      }
-
-      return $tab;
     }
-    return undefined;
+    if ($q.isString(tab) && tab !== '') {
+      const $tab = $(this._tabListElement).find(`#${tab}`);
+
+      return $tab.length > 0 ? $tab : null;
+    }
+    return null;
   }
 
   isLastTab(tab) {
@@ -514,8 +504,12 @@ export class BackendTabStrip extends Observable {
     const associatedAction = $a.getBackendAction(eventArgs.get_actionCode());
     const actionTypeCode = associatedAction.ActionType.Code;
     const tabTypeCode = associatedAction.Code;
-    const tabNumber = actionTypeCode === window.ACTION_TYPE_CODE_ADD_NEW ? this._getTabTypeCounter(tabTypeCode) + 1 : 0;
-    const tabId = this.generateTabId();
+    const tabNumber = actionTypeCode === window.ACTION_TYPE_CODE_ADD_NEW
+      ? this._getTabTypeCounter(tabTypeCode) + 1
+      : 0;
+    const tabId = eventArgs.fromHistory
+      ? eventArgs.get_tabId()
+      : this.generateTabId();
     const tabGroupCode = this.generateTabGroupCode(eventArgs, tabNumber);
     const tabText = this.generateTabText(eventArgs, tabNumber);
 
@@ -546,12 +540,21 @@ export class BackendTabStrip extends Observable {
 
     if (jQuery.isEmptyObject(eventArgs.get_context()) || !eventArgs.get_context().ctrlKey) {
       this.highlightTab($tab);
+
+      if (!eventArgs.fromHistory) {
+        this._backendBrowserHistoryManager
+          .pushStateTabChanged(this.getEventArgsFromTab($tab));
+      }
     }
 
     this.fixTabStripWidth();
     return tabId;
   }
 
+  /**
+   * @param {string} tab
+   * @param {BackendTabEventArgs} eventArgs
+   */
   updateTab(tab, eventArgs) {
     const $tab = this.getTab(tab);
 
@@ -585,6 +588,13 @@ export class BackendTabStrip extends Observable {
     if (newTabGroupCode !== oldTabGroupCode) {
       this._moveTabToGroup($tab, oldTabGroupCode, newTabGroupCode);
     }
+
+    if (this._selectedTabId === tab) {
+      if (!eventArgs.fromHistory) {
+        this._backendBrowserHistoryManager
+          .pushStateTabChanged(this.getEventArgsFromTab(tab));
+      }
+    }
   }
 
   selfUpdateTab(tab) {
@@ -606,7 +616,22 @@ export class BackendTabStrip extends Observable {
 
       // Устанавливаем ширину группы табов
       this.fixTabStripWidth();
+
+      this._backendBrowserHistoryManager
+        .pushStateTabChanged(this.getEventArgsFromTab(tab));
     }
+  }
+
+  deselectAllTabs() {
+    // Запоминаем код выбранного таба
+    this._previousSelectedTabId = this._selectedTabId;
+    this._selectedTabId = '';
+
+    // Снимаем выделение со всех табов
+    this.getAllTabs().removeClass(this.TAB_SELECTED_CLASS_NAME);
+
+    // Устанавливаем ширину группы табов
+    this.fixTabStripWidth();
   }
 
   selectTabRequest(tab) {
@@ -617,6 +642,9 @@ export class BackendTabStrip extends Observable {
     eventArgs = null;
   }
 
+  /**
+   * @param {string | JQuery} tab
+   */
   highlightTab(tab) {
     const $tab = this.getTab(tab);
     const $tabs = this.getAllTabs();
@@ -676,6 +704,10 @@ export class BackendTabStrip extends Observable {
       }
 
       this._removeTab($tab);
+
+      if ($(this._tabListElement).children().length === 0) {
+        this._backendBrowserHistoryManager.pushStateAllTabsClosed();
+      }
     }
 
     $tab = null;
@@ -1162,14 +1194,15 @@ export class BackendTabStrip extends Observable {
     // eslint-disable-next-line no-use-before-define
     const eventArgs = new BackendTabEventArgs();
     eventArgs.set_entityTypeCode($tab.data('entity_type_code'));
-    eventArgs.set_entityId($tab.data('entity_id'));
+    eventArgs.set_entityId(Number($tab.data('entity_id')));
     eventArgs.set_entityName($tab.data('entity_name'));
-    eventArgs.set_parentEntityId($tab.data('parent_entity_id'));
+    eventArgs.set_parentEntityId(Number($tab.data('parent_entity_id')));
     eventArgs.set_actionCode(actionCode);
     eventArgs.set_actionTypeCode(action.ActionType.Code);
     eventArgs.set_entities($tab.data('entities'));
     eventArgs.set_isMultipleEntities($q.toBoolean($tab.data('is_multiple_entities'), false));
     eventArgs.set_tabId(this.getTabId($tab));
+    eventArgs.title = $tab.data('tab_text') || document.title;
     return eventArgs;
   }
 
@@ -1577,26 +1610,4 @@ BackendTabStrip.getInstance = function (tabStripElementId, options) {
   return BackendTabStrip._instance;
 };
 
-
-export class BackendTabEventArgs extends BackendEventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
-  constructor() {
-    super();
-  }
-
-  _tabId = '';
-  isExpandRequested = false;
-  // eslint-disable-next-line camelcase
-  get_tabId() {
-    return this._tabId;
-  }
-
-  // eslint-disable-next-line camelcase
-  set_tabId(value) {
-    this._tabId = value;
-  }
-}
-
-
 Quantumart.QP8.BackendTabStrip = BackendTabStrip;
-Quantumart.QP8.BackendTabEventArgs = BackendTabEventArgs;

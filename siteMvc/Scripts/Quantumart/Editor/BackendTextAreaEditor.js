@@ -1,10 +1,13 @@
 import { BackendEventArgs } from '../Common/BackendEventArgs';
 import { BackendSelectPopupWindow } from '../List/BackendSelectPopupWindow';
+import { BackendBrowserHistoryManager } from '../Managers/BackendBrowserHistoryManager';
 import { $q } from '../Utils';
 
 /* global CodeMirror, JSONEditor */
 
 export class BackendHighlightedTextArea {
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
+
   constructor(componentElem) {
     this._componentElem = componentElem;
   }
@@ -382,7 +385,9 @@ export class BackendHighlightedTextArea {
           }],
           openDuration: 'fast',
           closeDuration: 'fast'
-        }
+        },
+        onOpen: this._backendBrowserHistoryManager.handleModalWindowOpen,
+        onClose: this._backendBrowserHistoryManager.handleModalWindowClose
       }).data('tWindow').center();
 
       this._insertPopUp = $(this._insertWindowComponent.element).addClass('popupWindow');
