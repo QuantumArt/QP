@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net47</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
     <Version>2.0.1-rc2</Version>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.4.12" />
+	<Reference Include="netstandard" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -773,5 +773,8 @@
   </data>
   <data name="MaxDataItemCountNotInRange" xml:space="preserve">
     <value>Values of field is not in acceptable range: from {3} to {5}</value>
+  </data>
+  <data name="BackwardFieldId" xml:space="preserve">
+    <value>Backward Field</value>
   </data>
 </root>

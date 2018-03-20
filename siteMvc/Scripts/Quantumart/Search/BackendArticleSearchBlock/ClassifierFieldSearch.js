@@ -27,6 +27,7 @@ export class ClassifierFieldSearch extends FieldSearchBase {
       referenceFieldID
     );
 
+    this._contentID = contentID;
     this._searchType = searchType;
     this._onIsNullCheckBoxChangeHandler = $.proxy(this._onIsNullCheckBoxChange, this);
   }

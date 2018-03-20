@@ -103,6 +103,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public string M2MDefaultElementId => UniqueId("M2MPicker");
 
+        public string BackwardFieldNameElementId => UniqueId("BackwardFieldName");
+
         public string IndexedElementId => UniqueId("FieldIndexedCheckbox");
 
         public string OnScreenElementId => UniqueId("FieldOnScreenCheckbox");
@@ -559,6 +561,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         }
 
         public QPSelectListItem RelateToListItem => Data.RelateToContentId.HasValue ? new QPSelectListItem { Value = Data.RelateToContentId.Value.ToString(), Text = ContentService.GetNameById(Data.RelateToContentId.Value), Selected = true } : null;
+
+        public QPSelectListItem BackwardRelateTo => Data.IsBackwardFieldExists ? new QPSelectListItem { Value = Data.BackwardField.Id.ToString(), Text = Data.BackwardField.Name, Selected = true } : null;
 
         [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
         public IEnumerable<int> DefaultArticleIds { get; set; }
