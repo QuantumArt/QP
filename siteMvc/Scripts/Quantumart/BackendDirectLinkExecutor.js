@@ -50,14 +50,14 @@ export class DirectLinkExecutor extends Observable {
       switch (e.key) {
         case LOCAL_STORAGE_PRIMARY_ID: {
           const primaryId = JSON.parse(e.newValue);
-          if (isPrimary || (isNew && instanceId < primaryId)) {
+          if ((isPrimary && instanceId !== primaryId) || (isNew && instanceId < primaryId)) {
             window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, JSON.stringify(instanceId));
           }
           break;
         }
         case LOCAL_STORAGE_DIRECT_LINK: {
           const message = JSON.parse(e.newValue);
-          if (isPrimary && $q.isObject(message) && message.instanceId !== instanceId) {
+          if (isPrimary && message.instanceId !== instanceId) {
             window.localStorage.removeItem(LOCAL_STORAGE_DIRECT_LINK);
             this._executeAction(message.directLinkOptions, true);
           }
