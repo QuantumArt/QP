@@ -12,7 +12,8 @@ export class DirectLinkExecutor extends Observable {
   _currentCustomerCode = null;
   _directLinkOptions = null;
   _sessionState = {
-    isPrimary: true,
+    isNew: true,
+    isPrimary: false,
     instanceId: Number(new Date())
   };
 
@@ -44,19 +45,19 @@ export class DirectLinkExecutor extends Observable {
    * @param {StorageEvent} e
    */
   _onStorage(e) {
-    const { isPrimary, instanceId } = this._sessionState;
-    if (isPrimary && e.newValue) {
+    const { isNew, isPrimary, instanceId } = this._sessionState;
+    if (e.newValue) {
       switch (e.key) {
         case LOCAL_STORAGE_PRIMARY_ID: {
           const primaryId = JSON.parse(e.newValue);
-          if (instanceId < primaryId) {
+          if (isPrimary || (isNew && instanceId < primaryId)) {
             window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, JSON.stringify(instanceId));
           }
           break;
         }
         case LOCAL_STORAGE_DIRECT_LINK: {
           const message = JSON.parse(e.newValue);
-          if ($q.isObject(message) && message.instanceId !== instanceId) {
+          if (isPrimary && $q.isObject(message) && message.instanceId !== instanceId) {
             window.localStorage.removeItem(LOCAL_STORAGE_DIRECT_LINK);
             this._executeAction(message.directLinkOptions, true);
           }
@@ -71,7 +72,7 @@ export class DirectLinkExecutor extends Observable {
   _onBeforeUnload() {
     const { isPrimary, instanceId } = this._sessionState;
     if (isPrimary) {
-      const primaryIdJson = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID));
+      const primaryIdJson = window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID);
       if (primaryIdJson) {
         const primaryId = JSON.parse(primaryIdJson);
         if (primaryId === instanceId) {
@@ -83,31 +84,31 @@ export class DirectLinkExecutor extends Observable {
 
   /** @returns {Promise<boolean>} */
   _checkIsPrimaryInstance() {
-    const { isPrimary, instanceId } = this._sessionState;
-    if (!isPrimary) {
-      return Promise.resolve(false);
-    }
+    const { instanceId } = this._sessionState;
 
     let primaryIdJson = window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID);
-    if (!primaryIdJson) {
+    if (primaryIdJson) {
+      const primaryId = JSON.parse(primaryIdJson);
+      if (primaryId === instanceId) {
+        return Promise.resolve(true);
+      }
+    } else {
       window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, JSON.stringify(instanceId));
       return Promise.resolve(true);
     }
 
     return new Promise(resolve => {
-      const voteForPrimaryInstance = () => {
-        window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, JSON.stringify(instanceId));
-        setTimeout(() => {
-          primaryIdJson = window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID);
-          if (primaryIdJson) {
-            const primaryId = JSON.parse(primaryIdJson);
-            resolve(primaryId === instanceId);
-          } else {
-            voteForPrimaryInstance();
-          }
-        }, 500);
-      };
-      voteForPrimaryInstance();
+      window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, JSON.stringify(instanceId));
+      setTimeout(() => {
+        primaryIdJson = window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID);
+        if (primaryIdJson) {
+          const primaryId = JSON.parse(primaryIdJson);
+          resolve(primaryId === instanceId);
+        } else {
+          window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, JSON.stringify(instanceId));
+          resolve(true);
+        }
+      }, 500);
     });
   }
 
@@ -116,7 +117,7 @@ export class DirectLinkExecutor extends Observable {
    */
   async ready(callback) {
     const isPrimary = await this._checkIsPrimaryInstance();
-    this._setSessionState({ isPrimary });
+    this._setSessionState({ isNew: false, isPrimary });
 
     if (isPrimary) {
       const openByDirectLink = !!this._directLinkOptions;
