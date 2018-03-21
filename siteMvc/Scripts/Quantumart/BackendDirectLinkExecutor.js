@@ -4,15 +4,17 @@ import { $q } from './Utils';
 
 window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING = 'OnDirectLinkActionExecuting';
 
-const SESSION_STORAGE_INSTANCE_ID = 'Quantumart.QP8.DirectLinkExecutor.InstanceId';
+const SESSION_STORAGE_STATE = 'Quantumart.QP8.DirectLinkExecutor.SessionState';
 const LOCAL_STORAGE_PRIMARY_ID = 'Quantumart.QP8.DirectLinkExecutor.PrimaryId';
 const LOCAL_STORAGE_DIRECT_LINK = 'Quantumart.QP8.DirectLinkExecutor.DirectLink';
 
 export class DirectLinkExecutor extends Observable {
   _currentCustomerCode = null;
   _directLinkOptions = null;
-  _isPrimaryInstance = false;
-  _instanceId = null;
+  _sessionState = {
+    isPrimary: true,
+    instanceId: Number(new Date())
+  };
 
   constructor(currentCustomerCode, directLinkOptions) {
     super();
@@ -20,54 +22,92 @@ export class DirectLinkExecutor extends Observable {
     this._currentCustomerCode = currentCustomerCode;
     this._directLinkOptions = directLinkOptions;
 
-    const instanceId = window.sessionStorage.getItem(SESSION_STORAGE_INSTANCE_ID);
-    if (instanceId) {
-      this._instanceId = Number(instanceId);
+    const sessionJson = window.sessionStorage.getItem(SESSION_STORAGE_STATE);
+    if (sessionJson) {
+      this._sessionState = JSON.parse(sessionJson);
     } else {
-      this._instanceId = Number(new Date());
-      window.sessionStorage.setItem(SESSION_STORAGE_INSTANCE_ID, String(this._instanceId));
+      window.sessionStorage.setItem(SESSION_STORAGE_STATE, JSON.stringify(this._sessionState));
     }
 
     this._onStorage = this._onStorage.bind(this);
+    this._onBeforeUnload = this._onBeforeUnload.bind(this);
     window.addEventListener('storage', this._onStorage, false);
+    window.addEventListener('beforeunload', this._onBeforeUnload, false);
+  }
+
+  _setSessionState(changedState) {
+    Object.assign(this._sessionState, changedState);
+    window.sessionStorage.setItem(SESSION_STORAGE_STATE, JSON.stringify(this._sessionState));
   }
 
   /**
    * @param {StorageEvent} e
    */
   _onStorage(e) {
-    if (!e.newValue) {
-      return;
+    const { isPrimary, instanceId } = this._sessionState;
+    if (isPrimary && e.newValue) {
+      switch (e.key) {
+        case LOCAL_STORAGE_PRIMARY_ID: {
+          const primaryId = JSON.parse(e.newValue);
+          if (instanceId < primaryId) {
+            window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, JSON.stringify(instanceId));
+          }
+          break;
+        }
+        case LOCAL_STORAGE_DIRECT_LINK: {
+          const message = JSON.parse(e.newValue);
+          if ($q.isObject(message) && message.instanceId !== instanceId) {
+            window.localStorage.removeItem(LOCAL_STORAGE_DIRECT_LINK);
+            this._executeAction(message.directLinkOptions, true);
+          }
+          break;
+        }
+        default:
+          break;
+      }
     }
-    switch (e.key) {
-      case LOCAL_STORAGE_PRIMARY_ID: {
-        const primaryId = Number(e.newValue);
-        if (primaryId > this._instanceId) {
-          window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, String(this._instanceId));
+  }
+
+  _onBeforeUnload() {
+    const { isPrimary, instanceId } = this._sessionState;
+    if (isPrimary) {
+      const primaryIdJson = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID));
+      if (primaryIdJson) {
+        const primaryId = JSON.parse(primaryIdJson);
+        if (primaryId === instanceId) {
+          window.localStorage.removeItem(LOCAL_STORAGE_PRIMARY_ID);
         }
-        break;
       }
-      case LOCAL_STORAGE_DIRECT_LINK: {
-        const message = JSON.parse(e.newValue);
-        if ($q.isObject(message) && message.instanceId !== this._instanceId) {
-          window.localStorage.removeItem(LOCAL_STORAGE_DIRECT_LINK);
-          this._executeAction(message.directLinkOptions, true);
-        }
-        break;
-      }
-      default:
-        break;
     }
   }
 
   /** @returns {Promise<boolean>} */
   _checkIsPrimaryInstance() {
-    window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, String(this._instanceId));
+    const { isPrimary, instanceId } = this._sessionState;
+    if (!isPrimary) {
+      return Promise.resolve(false);
+    }
+
+    let primaryIdJson = window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID);
+    if (!primaryIdJson) {
+      window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, JSON.stringify(instanceId));
+      return Promise.resolve(true);
+    }
+
     return new Promise(resolve => {
-      setTimeout(() => {
-        const primaryId = Number(window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID));
-        resolve(primaryId === this._instanceId);
-      }, 500);
+      const voteForPrimaryInstance = () => {
+        window.localStorage.setItem(LOCAL_STORAGE_PRIMARY_ID, JSON.stringify(instanceId));
+        setTimeout(() => {
+          primaryIdJson = window.localStorage.getItem(LOCAL_STORAGE_PRIMARY_ID);
+          if (primaryIdJson) {
+            const primaryId = JSON.parse(primaryIdJson);
+            resolve(primaryId === instanceId);
+          } else {
+            voteForPrimaryInstance();
+          }
+        }, 500);
+      };
+      voteForPrimaryInstance();
     });
   }
 
@@ -75,10 +115,10 @@ export class DirectLinkExecutor extends Observable {
    * @param {function(boolean): void} callback
    */
   async ready(callback) {
-    this._isPrimaryInstance = await this._checkIsPrimaryInstance();
-    console.log({ _isPrimaryInstance: this._isPrimaryInstance });
+    const isPrimary = await this._checkIsPrimaryInstance();
+    this._setSessionState({ isPrimary });
 
-    if (this._isPrimaryInstance) {
+    if (isPrimary) {
       const openByDirectLink = !!this._directLinkOptions;
       if ($q.isFunction(callback)) {
         callback(openByDirectLink);
@@ -88,8 +128,9 @@ export class DirectLinkExecutor extends Observable {
       }
     } else if (this._directLinkOptions) {
       if ($q.confirmMessage($l.BackendDirectLinkExecutor.WillBeRunInFirstInstanceConfirmation)) {
+        const { instanceId } = this._sessionState;
         window.localStorage.setItem(LOCAL_STORAGE_DIRECT_LINK, JSON.stringify({
-          instanceId: this._instanceId,
+          instanceId,
           directLinkOptions: this._directLinkOptions
         }));
       }
