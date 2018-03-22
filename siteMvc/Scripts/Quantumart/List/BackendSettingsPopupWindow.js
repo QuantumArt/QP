@@ -103,28 +103,39 @@ export class BackendSettingsPopupWindow extends BackendSelectPopupWindow {
     }
   }
 
-  submitForm(ajaxData) {
+  async submitForm(ajaxData) {
     const url = this._settingsActionUrl.replace('Settings', 'SetupWithParams');
-    const callback = response => {
-      if (response && (typeof response === 'string' || response.data)) {
-        const data = response.data || response;
-        $(`#${this._popupWindowComponent.get_documentWrapperElementId()}`).html(data);
-      } else {
-        this._popupWindowComponent.closeWindow();
-        $('.t-overlay').remove();
-        this._callback({ isSettingsSet: true });
-      }
-    };
+    const popupWindowElement = this._popupWindowComponent.get_popupWindowElement();
 
-    if (this.SettingsClass === MultistepActionImportSettings) {
-      $.ajax({
-        url,
-        data: ajaxData,
-        type: 'POST',
-        success: callback
+    let response;
+    $q.captureUserInput(popupWindowElement, true);
+    try {
+      response = await new Promise((resolve, reject) => {
+        if (this.SettingsClass === MultistepActionImportSettings) {
+          $.ajax({
+            url,
+            data: ajaxData,
+            type: 'POST',
+            success: resolve,
+            error: reject
+          });
+        } else {
+          $q.postAjax(url, ajaxData, resolve, reject, reject).fail(reject);
+        }
       });
+    } catch (e) {
+      return;
+    } finally {
+      $q.captureUserInput(popupWindowElement, false);
+    }
+
+    const data = (response && response.data) || response;
+    if (data) {
+      $(`#${this._popupWindowComponent.get_documentWrapperElementId()}`).html(data);
     } else {
-      $q.postAjax(url, ajaxData, callback);
+      this._popupWindowComponent.closeWindow();
+      $('.t-overlay').remove();
+      this._callback({ isSettingsSet: true });
     }
   }
 
@@ -133,6 +144,5 @@ export class BackendSettingsPopupWindow extends BackendSelectPopupWindow {
     super.dispose();
   }
 }
-
 
 Quantumart.QP8.BackendSettingsPopupWindow = BackendSettingsPopupWindow;

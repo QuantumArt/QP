@@ -114,7 +114,7 @@ $q.warnIfEqDiff = (left, right) => {
 /**
  * Basic implementation of jQuery ajax request with JSend response support
  * @param  {Object} opts jQuery options for ajax request
- * @return {Object}      jQuery XHR deffered
+ * @return {JQueryPromise<any>} jQuery XHR deffered
  */
 $q.sendAjax = opts => {
   const defaultOptions = {
@@ -190,7 +190,7 @@ $q.getAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
  * @param  {function} [jsendSuccess]  callback function for jQuery ajax success
  * @param  {function} [jsendFail]     callback function for jQuery ajax fail
  * @param  {function} [jsendError]    callback function for jQuery ajax error
- * @return {Object}                   jQuery XHR deffered
+ * @return {JQueryPromise<any>}       jQuery XHR deffered
  */
 $q.postAjax = (url, data, jsendSuccess, jsendFail, jsendError) => $q.sendAjax({
   url,
@@ -986,7 +986,7 @@ const preventInput = event => {
 $q.captureUserInput = function (element, capture, ...events) {
   if (events.length === 0) {
     // eslint-disable-next-line no-param-reassign
-    events = ['mousedown', 'click', 'contextmenu', 'focus'];
+    events = ['mousedown', 'mouseup', 'click', 'contextmenu', 'focus'];
   }
   events.forEach(event => {
     if (capture) {
