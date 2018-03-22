@@ -158,12 +158,6 @@ export class BackendContextMenu extends Observable {
     }
   }
 
-  showMenuAt(e, targetElem, xc, yc) {
-    if (this._contextMenuComponent._menuElement.childNodes.length > 0) {
-      this._contextMenuComponent.showAt(e, targetElem, xc, yc);
-    }
-  }
-
   hideMenu(e) {
     this._contextMenuComponent.hide(e);
   }
@@ -188,7 +182,7 @@ export class BackendContextMenu extends Observable {
           let menuItemCount = 0;
           if (!$q.isNull(menuItems)) {
             menuItems = $.grep(menuItems, menuItem => !hideRefreshMenuItem
-            || menuItem.ActionTypeCode !== window.ACTION_TYPE_CODE_REFRESH);
+              || menuItem.ActionTypeCode !== window.ACTION_TYPE_CODE_REFRESH);
 
             menuItemCount = menuItems.length;
           }
