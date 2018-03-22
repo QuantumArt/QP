@@ -773,7 +773,18 @@ export class BackendToolbar extends Observable {
     eventArgs.set_checkOnClick(checkOnClick);
     eventArgs.set_checked(checked);
 
-    this.notifyToolbarButtonClicked(eventArgs);
+    if (value === 'multiple_export_article') {
+      // Prevent double-click
+      $q.captureUserInput(e.currentTarget, true, 'mouseup');
+      try {
+        this.notifyToolbarButtonClicked(eventArgs);
+      } finally {
+        $q.captureUserInput(e.currentTarget, false, 'mouseup');
+      }
+    } else {
+      this.notifyToolbarButtonClicked(eventArgs);
+    }
+
     return undefined;
   }
 

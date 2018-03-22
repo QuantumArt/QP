@@ -403,7 +403,8 @@ export class BackendActionExecutor extends Observable {
               isSettingsSet: eventArgs.isSettingsSet
             });
 
-          $q.getJsonFromUrl('POST', settingsActionUrl.replace('Settings', 'PreSettings'), params, true, false)
+          const asyncAjax = eventArgs.get_actionCode() !== 'multiple_export_article';
+          $q.getJsonFromUrl('POST', settingsActionUrl.replace('Settings', 'PreSettings'), params, asyncAjax, false)
             .done(settingsResult => {
               if (settingsResult && settingsResult.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
                 BackendActionExecutor.showResult(settingsResult);
