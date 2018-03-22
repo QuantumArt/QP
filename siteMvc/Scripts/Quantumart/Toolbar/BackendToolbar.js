@@ -21,17 +21,17 @@ export class BackendToolbar extends Observable {
       }
     }
 
-    this._onToolbarButtonUnhoveringHandler = $.proxy(this._onToolbarButtonUnhovering, this);
-    this._onToolbarButtonClickingHandler = $.proxy(this._onToolbarButtonClicking, this);
-    this._onToolbarButtonClickedHandler = $.proxy(this._onToolbarButtonClicked, this);
-    this._onToolbarDropDownArrowUnhoveringHandler = $.proxy(this._onToolbarDropDownArrowUnhovering, this);
-    this._onToolbarDropDownArrowClickingHandler = $.proxy(this._onToolbarDropDownArrowClicking, this);
-    this._onToolbarDropDownArrowClickedHandler = $.proxy(this._onToolbarDropDownArrowClicked, this);
-    this._onToolbarDropDownButtonUnhoveringHandler = $.proxy(this._onToolbarDropDownButtonUnhovering, this);
-    this._onToolbarDropDownButtonClickingHandler = $.proxy(this._onToolbarDropDownButtonClicking, this);
-    this._onToolbarDropDownButtonClickedHandler = $.proxy(this._onToolbarDropDownButtonClicked, this);
-    this._onToolbarDropDownListItemClickingHandler = $.proxy(this._onToolbarDropDownListItemClicking, this);
-    this._onToolbarDropDownListItemClickedHandler = $.proxy(this._onToolbarDropDownListItemClicked, this);
+    this._onToolbarButtonUnhovering = this._onToolbarButtonUnhovering.bind(this);
+    this._onToolbarButtonClicking = this._onToolbarButtonClicking.bind(this);
+    this._onToolbarButtonClicked = this._onToolbarButtonClicked.bind(this);
+    this._onToolbarDropDownArrowUnhovering = this._onToolbarDropDownArrowUnhovering.bind(this);
+    this._onToolbarDropDownArrowClicking = this._onToolbarDropDownArrowClicking.bind(this);
+    this._onToolbarDropDownArrowClicked = this._onToolbarDropDownArrowClicked.bind(this);
+    this._onToolbarDropDownButtonUnhovering = this._onToolbarDropDownButtonUnhovering.bind(this);
+    this._onToolbarDropDownButtonClicking = this._onToolbarDropDownButtonClicking.bind(this);
+    this._onToolbarDropDownButtonClicked = this._onToolbarDropDownButtonClicked.bind(this);
+    this._onToolbarDropDownListItemClicking = this._onToolbarDropDownListItemClicking.bind(this);
+    this._onToolbarDropDownListItemClicked = this._onToolbarDropDownListItemClicked.bind(this);
   }
 
   _toolbarElementId = '';
@@ -49,17 +49,6 @@ export class BackendToolbar extends Observable {
   DROPDOWN_BUTTON_CLICKABLE_SELECTORS = '.toolbar > UL > LI.dropDown SPAN.button';
   DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS = '.toolbar > UL > LI.dropDown .list UL LI.item';
 
-  _onToolbarButtonUnhoveringHandler = null;
-  _onToolbarButtonClickingHandler = null;
-  _onToolbarButtonClickedHandler = null;
-  _onToolbarDropDownArrowUnhoveringHandler = null;
-  _onToolbarDropDownArrowClickingHandler = null;
-  _onToolbarDropDownArrowClickedHandler = null;
-  _onToolbarDropDownButtonUnhoveringHandler = null;
-  _onToolbarDropDownButtonClickingHandler = null;
-  _onToolbarDropDownButtonClickedHandler = null;
-  _onToolbarDropDownListItemClickingHandler = null;
-  _onToolbarDropDownListItemClickedHandler = null;
   _isBindToExternal = false;
 
   // eslint-disable-next-line camelcase
@@ -428,8 +417,7 @@ export class BackendToolbar extends Observable {
       .cat('</span>')
       .cat('</span>')
       .cat('</a>\n')
-      .cat('</li>\n')
-    ;
+      .cat('</li>\n');
   }
 
   _getToolbarDropDownHtml(html, dataItem) {
@@ -689,43 +677,32 @@ export class BackendToolbar extends Observable {
 
   _attachToolbarEventHandlers() {
     $(this._toolbarElement)
-      .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarButtonUnhoveringHandler)
-      .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarButtonClickingHandler)
-      .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarButtonClickedHandler)
-      .delegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownArrowUnhoveringHandler)
-      .delegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownArrowClickingHandler)
-      .delegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownArrowClickedHandler)
-      .delegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownButtonUnhoveringHandler)
-      .delegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownButtonClickingHandler)
-      .delegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownButtonClickedHandler)
-      .delegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownListItemClickingHandler)
-      .delegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS,
-        'mousedown',
-        this._onToolbarDropDownListItemClickedHandler
-      );
+      .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarButtonUnhovering)
+      .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarButtonClicking)
+      .delegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarButtonClicked)
+      .delegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownArrowUnhovering)
+      .delegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownArrowClicking)
+      .delegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownArrowClicked)
+      .delegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownButtonUnhovering)
+      .delegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownButtonClicking)
+      .delegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownButtonClicked)
+      .delegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownListItemClicking)
+      .delegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownListItemClicked);
   }
 
   _detachToolbarEventHandlers() {
     $(this._toolbarElement)
-      .undelegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarButtonUnhoveringHandler)
-      .undelegate(this.BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarButtonClickingHandler)
-      .undelegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarButtonClickedHandler)
-      .undelegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownArrowUnhoveringHandler)
-      .undelegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownArrowClickingHandler)
-      .undelegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownArrowClickedHandler)
-      .undelegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownButtonUnhoveringHandler)
-      .undelegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownButtonClickingHandler)
-      .undelegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownButtonClickedHandler)
-      .undelegate(
-        this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS,
-        'mouseup',
-        this._onToolbarDropDownListItemClickingHandler
-      )
-      .undelegate(
-        this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS,
-        'mousedown',
-        this._onToolbarDropDownListItemClickedHandler
-      );
+      .undelegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarButtonUnhovering)
+      .undelegate(this.BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarButtonClicking)
+      .undelegate(this.BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarButtonClicked)
+      .undelegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownArrowUnhovering)
+      .undelegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownArrowClicking)
+      .undelegate(this.DROPDOWN_ARROW_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownArrowClicked)
+      .undelegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseout', this._onToolbarDropDownButtonUnhovering)
+      .undelegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownButtonClicking)
+      .undelegate(this.DROPDOWN_BUTTON_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownButtonClicked)
+      .undelegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mouseup', this._onToolbarDropDownListItemClicking)
+      .undelegate(this.DROPDOWN_LIST_ITEM_CLICKABLE_SELECTORS, 'mousedown', this._onToolbarDropDownListItemClicked);
   }
 
   notifyToolbarButtonClicking(eventArgs) {
@@ -985,29 +962,10 @@ export class BackendToolbar extends Observable {
 
     this._toolbarItemListElement = null;
     this._toolbarElement = null;
-    this._onToolbarButtonUnhoveringHandler = null;
-    this._onToolbarButtonClickingHandler = null;
-    this._onToolbarButtonClickedHandler = null;
-    this._onToolbarDropDownArrowUnhoveringHandler = null;
-    this._onToolbarDropDownArrowClickingHandler = null;
-    this._onToolbarDropDownArrowClickedHandler = null;
-    this._onToolbarDropDownButtonUnhoveringHandler = null;
-    this._onToolbarDropDownButtonClickingHandler = null;
-    this._onToolbarDropDownButtonClickedHandler = null;
-    this._onToolbarDropDownListItemClickingHandler = null;
-    this._onToolbarDropDownListItemClickedHandler = null;
-
-    $q.collectGarbageInIE();
   }
 }
 
-
 export class BackendToolbarButtonEventArgs extends Sys.EventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
-  constructor() {
-    super();
-  }
-
   _value = '';
   _checkOnClick = false;
   _checked = false;
@@ -1043,13 +1001,7 @@ export class BackendToolbarButtonEventArgs extends Sys.EventArgs {
   }
 }
 
-
 export class BackendToolbarDropDownListEventArgs extends Sys.EventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
-  constructor() {
-    super();
-  }
-
   _itemValue = '';
   _oldSubItemValue = '';
   _newSubItemValue = '';
@@ -1084,7 +1036,6 @@ export class BackendToolbarDropDownListEventArgs extends Sys.EventArgs {
     this._newSubItemValue = value;
   }
 }
-
 
 Quantumart.QP8.BackendToolbar = BackendToolbar;
 Quantumart.QP8.BackendToolbarButtonEventArgs = BackendToolbarButtonEventArgs;
