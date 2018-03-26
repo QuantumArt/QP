@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -38,6 +39,7 @@
     </NuGetPackageImportStamp>
     <Use64BitIISExpress />
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>2.5</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -1425,13 +1427,28 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <Content Include="Scripts\polyfills\array\array.find.polyfill.js" />
+    <Content Include="Scripts\polyfills\array\array.findIndex.polyfill.js" />
+    <Content Include="Scripts\polyfills\array\array.from.polyfill.js" />
+    <Content Include="Scripts\polyfills\array\array.includes.polyfill.js" />
+    <Content Include="Scripts\polyfills\object\object.assign.polyfill.js" />
+    <Content Include="Scripts\polyfills\object\object.entries.polyfill.js" />
+    <Content Include="Scripts\polyfills\object\object.values.polyfill.js" />
+    <Content Include="Scripts\polyfills\promise.polyfill.js" />
+    <Content Include="Scripts\polyfills\string\string.endsWith.polyfill.js" />
+    <Content Include="Scripts\polyfills\string\string.includes.polyfill.js" />
+    <Content Include="Scripts\polyfills\string\string.repeat.polyfill.js" />
+    <Content Include="Scripts\polyfills\string\string.startsWith.polyfill.js" />
+    <Content Include="Scripts\Quantumart\App.js" />
+    <Content Include="Scripts\Quantumart\AppLogon.js" />
+    <Content Include="Scripts\Quantumart\Common\BackendTabEventArgs.js" />
     <Content Include="Scripts\Quantumart\languages\BackendChangePasswordWindow.Lang.js" />
+    <Content Include="Scripts\Quantumart\BackendDirectLinkExecutor.md">
+      <DependentUpon>BackendDirectLinkExecutor.js</DependentUpon>
+    </Content>
     <None Include="Settings.StyleCop" />
     <Content Include="Scripts\jquery\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
-    <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
-    <Content Include="Scripts\polyfills\array.find.polyfill.js" />
-    <Content Include="Scripts\polyfills\object.assign.polyfill.js" />
     <Content Include="Scripts\Quantumart\BackendChangePasswordWindow.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\dialogs\aspell.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\plugin.js" />
@@ -1594,6 +1611,8 @@
     <Content Include="Scripts\PlUpload\moxie.js" />
     <Content Include="Scripts\PlUpload\Moxie.swf" />
     <Content Include="Scripts\PlUpload\Moxie.xap" />
+    <Content Include="Scripts\Quantumart\Managers\BackendBreadMenuContextMenuManager.js" />
+    <Content Include="Scripts\Quantumart\Managers\BackendBrowserHistoryManager.js" />
     <Content Include="Scripts\Quantumart\Uploader\BackendUploaderEventArgs.js" />
     <Content Include="Scripts\Quantumart\Uploader\plupload\plupload.filters.js" />
     <Content Include="Scripts\PlUpload\plupload.dev.js" />
@@ -1780,6 +1799,12 @@
     <Content Include="Scripts\Quantumart\Search\BackendArticleSearchBlock\ClassifierFieldSearch.js" />
     <Content Include="Scripts\Quantumart\Search\BackendContextBlock.js" />
     <Content Include="Scripts\Quantumart\Uploader\BackendPlUploader.js" />
+    <Content Include="Scripts\Quantumart\Utils\Decorators.js" />
+    <Content Include="Scripts\Quantumart\Utils\Event.js" />
+    <Content Include="Scripts\Quantumart\Utils\Filter.js" />
+    <Content Include="Scripts\Quantumart\Utils\Reduce.js" />
+    <Content Include="Scripts\Quantumart\Utils\Set.js" />
+    <Content Include="Scripts\Quantumart\Utils\Sort.js" />
     <Content Include="ToCopy\default\container_code_cs.txt" />
     <Content Include="ToCopy\default\container_code_vb.txt" />
     <Content Include="ToCopy\default\container_presentation.txt" />
@@ -2444,8 +2469,19 @@
   <ItemGroup>
     <Content Include="Scripts\Web.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\polyfills\polyfills.d.ts" />
+    <TypeScriptCompile Include="Scripts\Quantumart\App.d.ts" />
+    <TypeScriptCompile Include="Scripts\Quantumart\jQueryExtensions.d.ts" />
+    <TypeScriptCompile Include="Scripts\Quantumart\MultistepAction\BackendProgressBar.jquery.d.ts" />
+    <TypeScriptCompile Include="Scripts\Quantumart\Server.d.ts" />
+    <TypeScriptCompile Include="Scripts\Quantumart\Utils\Event.d.ts" />
+    <TypeScriptCompile Include="Scripts\Quantumart\Utils\Filter.d.ts" />
+    <TypeScriptCompile Include="Scripts\Quantumart\Utils\Reduce.d.ts" />
+    <TypeScriptCompile Include="Scripts\Quantumart\Utils\Sort.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <PropertyGroup>
@@ -2454,6 +2490,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <ProjectExtensions>
