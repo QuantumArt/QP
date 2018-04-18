@@ -86,12 +86,6 @@ export class BackendDocumentContext {
   _execSelectCallback = null;
   _hostLoadedCallback = null;
 
-  initHandler = null;
-  disposeHandler = null;
-  beforeSubmitHandler = null;
-  loadHandler = null;
-  fieldValueChangedHandler = null;
-
   _options = null;
   _params = null;
 
