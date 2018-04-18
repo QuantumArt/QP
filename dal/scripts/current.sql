@@ -2082,52 +2082,56 @@ GO
 CREATE PROCEDURE SyncProductVersions
 AS
 BEGIN
-	insert into ProductVersions(Deleted, Modification, DpcId, Version, IsLive, Language, Format, Data, Alias, Created, Updated, Hash, MarketingProductId, Title, UserUpdated, UserUpdatedId, ProductType)
-	select
-	 0 Deleted,
-	 p.Updated Modification,
-	 p.DpcId,
-	 p.Version,
-	 p.IsLive,
-	 p.Language,
-	 p.Format,
-	 p.Data,
-	 p.Alias,
-	 p.Created,
-	 p.Updated,
-	 p.Hash,
-	 p.MarketingProductId,
-	 p.Title,
-	 p.UserUpdated,
-	 p.UserUpdatedId,
-	 p.ProductType
-	from Products p
-	where not exists (
+	print('Start update ProductVersions...')
+
+	WHILE exists(
 		select null
-		from ProductVersions v with (nolock)
-		where
-			p.[Updated] = v.[Modification] and
-			p.[DpcId] = v.[DpcId] and
-			p.[IsLive] = v.[IsLive] and
-			p.[Language] = v.[Language]
-			and p.[Format] = v.[Format]
-		)
+		from Products p
+		where not exists (
+			select null
+			from ProductVersions v with (nolock)
+			where
+				p.[Updated] = v.[Modification] and
+				p.[DpcId] = v.[DpcId] and
+				p.[IsLive] = v.[IsLive] and
+				p.[Language] = v.[Language]
+				and p.[Format] = v.[Format]
+			)
+	)
+	BEGIN
+		insert into ProductVersions(Deleted, Modification, DpcId, Version, IsLive, Language, Format, Data, Alias, Created, Updated, Hash, MarketingProductId, Title, UserUpdated, UserUpdatedId, ProductType)
+		select top 1000
+			0 Deleted,
+			p.Updated Modification,
+			p.DpcId,
+			p.Version,
+			p.IsLive,
+			p.Language,
+			p.Format,
+			p.Data,
+			p.Alias,
+			p.Created,
+			p.Updated,
+			p.Hash,
+			p.MarketingProductId,
+			p.Title,
+			p.UserUpdated,
+			p.UserUpdatedId,
+			p.ProductType
+		from Products p
+		where not exists (
+			select null
+			from ProductVersions v with (nolock)
+			where
+				p.[Updated] = v.[Modification] and
+				p.[DpcId] = v.[DpcId] and
+				p.[IsLive] = v.[IsLive] and
+				p.[Language] = v.[Language]
+				and p.[Format] = v.[Format]
+			)	
+	END
 
-
-	insert ProductRegionVersions([ProductVersionId], [RegionId])
-	select v.[Id], r.[RegionId]
-	from
-		Products p
-		join ProductVersions v on
-			p.[Updated] = v.[Modification] and
-			p.[DpcId] = v.[DpcId] and
-			p.[IsLive] = v.[IsLive] and
-			p.[Language] = v.[Language]
-			and p.[Format] = v.[Format]
-		join ProductRegions r on
-			p.Id = r.ProductId
-	where
-		not exists (select null from ProductRegionVersions rv with (nolock) where rv.[ProductVersionId] = v.[Id])
+	print('End update ProductVersions')
 END
 GO
 
@@ -3979,6 +3983,31 @@ values (dbo.qp_action_id('list_archive_article'), dbo.qp_action_id('multiple_exp
 GO
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[USERS]') AND name = 'MUST_CHANGE_PASSWORD')
   ALTER TABLE [dbo].[USERS] ADD [MUST_CHANGE_PASSWORD] [bit] NOT NULL CONSTRAINT DF_MUST_CHANGE_PASSWORD DEFAULT 0 
+
+GO
+ALTER function [dbo].[qp_aggregated_and_self](@itemIds Ids READONLY)
+returns @ids table (id numeric primary key)
+as 
+begin
+	
+	declare @ids2 Ids
+	insert into @ids2
+	select id from @itemIds i inner join content_item ci with(nolock) on i.ID = ci.CONTENT_ITEM_ID
+	inner join CONTENT_ATTRIBUTE ca with(nolock) on ca.CONTENT_ID = ci.CONTENT_ID and ca.IS_CLASSIFIER = 1
+
+	insert into @ids
+	select id from @itemIds
+
+	union 	
+	select AGG_DATA.CONTENT_ITEM_ID
+	from CONTENT_ATTRIBUTE ATT with(nolock)
+	JOIN CONTENT_ATTRIBUTE AGG_ATT with(nolock) ON AGG_ATT.CLASSIFIER_ATTRIBUTE_ID = ATT.ATTRIBUTE_ID
+	JOIN CONTENT_DATA AGG_DATA with(nolock) ON AGG_DATA.ATTRIBUTE_ID = AGG_ATT.ATTRIBUTE_ID
+	where ATT.IS_CLASSIFIER = 1 AND AGG_ATT.AGGREGATED = 1
+	and ATT.CONTENT_ID in (select content_id from content_item with(nolock) where content_item_id in (select id from @itemIds)) AND AGG_DATA.DATA in  (select cast(id as nvarchar(8)) from @ids2)	
+
+	return
+end
 
 GO
 

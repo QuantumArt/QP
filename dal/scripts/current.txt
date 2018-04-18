@@ -28,3 +28,4 @@ AddMaxItemCountColumn
 Tokens
 AddExportArchiveArticlesToToolbar
 AddMustChangePasswordColumn
+AggregatedAndSelf
