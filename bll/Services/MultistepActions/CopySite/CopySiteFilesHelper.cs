@@ -43,14 +43,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             }
 
             var dirs = new List<string>();
-            if (_source.LiveDirectory != _destination.LiveDirectory && Directory.Exists(_source.LiveDirectory))
-            {
-                dirs.Add(_destination.LiveDirectory);
-            }
 
-            if (_source.AssemblyPath != _destination.AssemblyPath && Directory.Exists(_source.AssemblyPath))
+            if (!_destination.ExternalDevelopment)
             {
-                dirs.Add(_destination.AssemblyPath);
+                if (_source.LiveDirectory != _destination.LiveDirectory && Directory.Exists(_source.LiveDirectory))
+                {
+                    dirs.Add(_destination.LiveDirectory);
+                }
+
+                if (_source.AssemblyPath != _destination.AssemblyPath && Directory.Exists(_source.AssemblyPath))
+                {
+                    dirs.Add(_destination.AssemblyPath);
+                }
             }
 
             if (_source.UploadDir != _destination.UploadDir && Directory.Exists(_source.UploadDir))
@@ -170,12 +174,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             return ReplaceSourceContentDirsToNew(result, contentsRelations, attributesRelations);
         }
 
-        private static List<string> GetAllFilesPaths(Site source)
+        private static List<string> GetAllFilesPaths(Site source, Site destination = null)
         {
             var filePaths = new List<string>();
-            if (!string.IsNullOrEmpty(source.AssemblyPath) && Directory.Exists(source.AssemblyPath))
+
+            if (destination == null || destination != null && !destination.ExternalDevelopment)
             {
-                filePaths.AddRange(Directory.EnumerateFiles(source.AssemblyPath, "*.*", SearchOption.TopDirectoryOnly).ToList());
+                if (!string.IsNullOrEmpty(source.AssemblyPath) && Directory.Exists(source.AssemblyPath))
+                {
+                    filePaths.AddRange(Directory.EnumerateFiles(source.AssemblyPath, "*.*", SearchOption.TopDirectoryOnly).ToList());
+                }
             }
 
             if (Directory.Exists(source.UploadDir))
@@ -190,7 +198,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         {
             if (filePaths == null)
             {
-                filePaths = GetAllFilesPaths(_source);
+                filePaths = GetAllFilesPaths(_source, _destination);
             }
 
             File.WriteAllText(Settings.PathForFileWithFilesToCopy, string.Empty);
