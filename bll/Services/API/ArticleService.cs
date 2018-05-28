@@ -68,6 +68,14 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
+        public IEnumerable<Article> List(int contentId, int[] ids, bool excludeArchive)
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                return ids == null ? ArticleRepository.GetList(contentId, excludeArchive) : ArticleRepository.GetList(ids, true, excludeArchive);
+            }
+        }
+
         public string GetRelatedItems(int fieldId, int? id)
         {
             using (new QPConnectionScope(ConnectionString))

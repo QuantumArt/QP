@@ -118,10 +118,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataRow GetArticleRow(SqlConnection connection, int id, int contentId, bool isLive)
+        public static DataRow GetArticleRow(SqlConnection connection, int id, int contentId, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
-            using (var cmd = SqlCommandFactory.Create($"select * from content_{contentId}{suffix} with(nolock) where content_item_id = @id", connection))
+            using (var cmd = SqlCommandFactory.Create($"select * from content_{contentId}{suffix} with(nolock) where content_item_id = @id {(excludeArchive ? "and archive = 0" : "")}", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -142,22 +142,23 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isLive)
+        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
             var sql = $"select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{contentId}{suffix} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id ";
-            if (ids != null)
-            {
-                sql = sql + "where c.content_item_id in (select id from @itemIds)";
-            }
 
+            if (ids != null || excludeArchive)
+            {
+                sql = sql + $"where {(ids != null ? "c.content_item_id in (select id from @itemIds)" : "")} {(ids != null && excludeArchive ? "and" : "")} {(excludeArchive ? "ci.archive = 0" : "")}";
+            }
+            
             if (ids != null && !isLive) //optimization for list of ids
             {
-                const string baseSql = "select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{0}{1} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id where c.content_item_id in (select id from @itemIds) and {2}";
+                const string baseSql = "select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{0}{1} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id where c.content_item_id in (select id from @itemIds) {3} {2}";
                 var sb = new StringBuilder();
-                sb.AppendLine(string.Format(baseSql, contentId, string.Empty, " isnull(ci.splitted, 0) = 0 "));
+                sb.AppendLine(string.Format(baseSql, contentId, string.Empty, " isnull(ci.splitted, 0) = 0 ", excludeArchive ? " and ci.archive = 0" : string.Empty));
                 sb.AppendLine(" union all ");
-                sb.AppendLine(string.Format(baseSql, contentId, "_async", " ci.splitted = 1 "));
+                sb.AppendLine(string.Format(baseSql, contentId, "_async", " ci.splitted = 1 ", excludeArchive ? " and ci.archive = 0" : string.Empty));
                 sql = sb.ToString();
             }
 

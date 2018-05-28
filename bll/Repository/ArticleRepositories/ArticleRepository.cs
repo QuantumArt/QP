@@ -212,7 +212,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false)
+        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
@@ -222,7 +222,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     var contentId = (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First());
                     if (contentId != 0)
                     {
-                        var data = GetData(ids, contentId);
+                        var data = GetData(ids, contentId, excludeArchive);
                         result = InternalGetList(contentId, data, loadFieldValues);
                     }
                 }
@@ -231,9 +231,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<Article> GetList(int contentId)
+        internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false)
         {
-            var data = GetData(null, contentId);
+            var data = GetData(null, contentId, excludeArchive);
             var result = InternalGetList(contentId, data, true);
             return result;
         }
@@ -669,21 +669,21 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return orderExpression;
         }
 
-        internal static DataRow GetData(int id, int contentId, bool isLive)
+        internal static DataRow GetData(int id, int contentId, bool isLive, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
                 return id == 0
                     ? Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId)
-                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive);
+                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive, excludeArchive);
             }
         }
 
-        internal static DataTable GetData(IEnumerable<int> ids, int contentId)
+        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive);
+                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive, excludeArchive);
             }
         }
 
