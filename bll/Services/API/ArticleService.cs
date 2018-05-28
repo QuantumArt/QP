@@ -59,16 +59,9 @@ namespace Quantumart.QP8.BLL.Services.API
                 return content.VirtualType == 3 ? ArticleRepository.GetVirtualById(id, contentId) : Read(id, forceLoadFieldValues);
             }
         }
+        
 
-        public IEnumerable<Article> List(int contentId, int[] ids)
-        {
-            using (new QPConnectionScope(ConnectionString))
-            {
-                return ids == null ? ArticleRepository.GetList(contentId) : ArticleRepository.GetList(ids, true);
-            }
-        }
-
-        public IEnumerable<Article> List(int contentId, int[] ids, bool excludeArchive)
+        public IEnumerable<Article> List(int contentId, int[] ids, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
@@ -76,35 +69,35 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public string GetRelatedItems(int fieldId, int? id)
+        public string GetRelatedItems(int fieldId, int? id, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetRelatedItems(fieldId, id);
+                return ArticleRepository.GetRelatedItems(fieldId, id, excludeArchive);
             }
         }
 
-        public string GetLinkedItems(int linkId, int id)
+        public string GetLinkedItems(int linkId, int id, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetLinkedItems(linkId, id);
+                return ArticleRepository.GetLinkedItems(linkId, id, excludeArchive);
             }
         }
 
-        public Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids)
+        public Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetRelatedItemsMultiple(fieldId, ids);
+                return ArticleRepository.GetRelatedItemsMultiple(fieldId, ids,excludeArchive);
             }
         }
 
-        public Dictionary<int, string> GetLinkedItemsMultiple(int linkId, IEnumerable<int> ids)
+        public Dictionary<int, string> GetLinkedItemsMultiple(int linkId, IEnumerable<int> ids, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetLinkedItemsMultiple(linkId, ids);
+                return ArticleRepository.GetLinkedItemsMultiple(linkId, ids, excludeArchive);
             }
         }
 

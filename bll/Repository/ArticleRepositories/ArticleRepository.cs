@@ -825,11 +825,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <param name="linkId">ID связи</param>
         /// <param name="id">ID статьи</param>
         /// <returns>список связанных статей через запятую</returns>
-        internal static string GetLinkedItems(int linkId, int id)
+        internal static string GetLinkedItems(int linkId, int id, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
-                return Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkId, id, QPContext.IsLive);
+                return Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkId, id, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -847,7 +847,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <param name="fieldId">ID базового поля связи</param>
         /// <param name="id">ID статьи</param>
         /// <returns>список связанных статей через запятую</returns>
-        internal static string GetRelatedItems(int fieldId, int? id)
+        internal static string GetRelatedItems(int fieldId, int? id, bool excludeArchive = false)
         {
             var backField = FieldRepository.GetById(fieldId);
             if (backField == null)
@@ -857,7 +857,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
             using (new QPConnectionScope())
             {
-                return Common.GetRelatedArticles(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, id, QPContext.IsLive);
+                return Common.GetRelatedArticles(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, id, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -887,7 +887,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids)
+        internal static Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids, bool excludeArchive = false)
         {
             var backField = FieldRepository.GetById(fieldId);
             if (backField == null)
@@ -897,7 +897,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
             using (new QPConnectionScope())
             {
-                return Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, ids, QPContext.IsLive);
+                return Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, ids, QPContext.IsLive, excludeArchive);
             }
         }
 
