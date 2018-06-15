@@ -154,7 +154,7 @@ namespace Quantumart.QP8.DAL
             
             if (ids != null && !isLive) //optimization for list of ids
             {
-                const string baseSql = "select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{0}{1} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id where c.content_item_id in (select id from @itemIds) {3} {2}";
+                const string baseSql = "select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{0}{1} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id where c.content_item_id in (select id from @itemIds) and {2} {3}";
                 var sb = new StringBuilder();
                 sb.AppendLine(string.Format(baseSql, contentId, string.Empty, " isnull(ci.splitted, 0) = 0 ", excludeArchive ? " and ci.archive = 0" : string.Empty));
                 sb.AppendLine(" union all ");
