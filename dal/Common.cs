@@ -474,7 +474,7 @@ namespace Quantumart.QP8.DAL
         public static string GetLinkedArticles(SqlConnection connection, int linkId, int id, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
-            var isArchive = excludeArchive ? "join content_item ci with(nolock) on item_link.linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
+            var isArchive = excludeArchive ? "join content_item ci with(nolock) on linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
             using (
                 var cmd =
                     SqlCommandFactory.Create(
