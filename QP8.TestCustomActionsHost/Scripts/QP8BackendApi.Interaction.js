@@ -1,7 +1,15 @@
-/* eslint-disable no-empty-function, line-comment-position */
-window.Quantumart = window.Quantumart || {};
-window.Quantumart.QP8 = window.Quantumart.QP8 || {};
-window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || (function Interaction() {
+/* global module */
+/* eslint-disable prefer-arrow-callback, no-empty-function, line-comment-position */
+(function (factory) {
+  // @ts-ignore
+  if (typeof module === 'object' && module.exports) {
+    module.exports = factory();
+  } else {
+    window.Quantumart = window.Quantumart || {};
+    window.Quantumart.QP8 = window.Quantumart.QP8 || {};
+    window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || factory();
+  }
+}(function () {
   // class BackendExternalMessage (сообщения для передачи в Backend)
   const BackendExternalMessage = function () { };
 
@@ -173,4 +181,4 @@ window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || (functi
       });
     }
   };
-}());
+}));

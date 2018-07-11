@@ -26,7 +26,7 @@
     CheckHost: 4
   };
 
-  /** class ExecuteActionOptions (Парамеры сообщения на выполнение BackendAction) */
+  // class ExecuteActionOptions (Парамеры сообщения на выполнение BackendAction)
   const ExecuteActionOptions = function () { };
 
   ExecuteActionOptions.prototype = {
