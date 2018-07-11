@@ -1,22 +1,14 @@
-/* global pmrpc */
-
+/* eslint-disable no-empty-function, line-comment-position */
 window.Quantumart = window.Quantumart || {};
 window.Quantumart.QP8 = window.Quantumart.QP8 || {};
-window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || {};
-window.Quantumart.QP8.Interaction = (function Interaction() {
-  var BackendEventObserver;
+window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || (function Interaction() {
+  // class BackendExternalMessage (сообщения для передачи в Backend)
+  const BackendExternalMessage = function () { };
 
-  /* eslint-disable no-empty-function */
-  var ArticleFormState = function () {};
-  var ExecuteActionOptions = function () {};
-  var BackendExternalMessage = function () {};
-  var OpenSelectWindowOptions = function () {};
-
-  /* eslint-enable no-empty-function */
   BackendExternalMessage.prototype = {
-    type: '',
-    hostUID: null,
-    data: null
+    type: '', // Тип
+    hostUID: null, // UID хоста
+    data: null // параметры
   };
 
   BackendExternalMessage.Types = {
@@ -25,6 +17,9 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
     OpenSelectWindow: 3,
     CheckHost: 4
   };
+
+  // class ExecuteActionOptions (Парамеры сообщения на выполнение BackendAction)
+  const ExecuteActionOptions = function () { };
 
   ExecuteActionOptions.prototype = {
     actionCode: '',
@@ -40,19 +35,27 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
     options: null
   };
 
+  // class ArticleFormState (Параметры для инициализации формы статьи)
+  const ArticleFormState = function () { };
+
   ArticleFormState.prototype = {
-    initFieldValues: null,
-    disabledFields: null,
-    hideFields: null,
-    disabledActionCodes: null,
-    additionalParams: null
+    initFieldValues: null, // значения для инициализации полей (массив ArticleFormState.InitFieldValue)
+    disabledFields: null, // идентификаторы полей который должны быть disable (массив имен полей)
+    hideFields: null, // идентификаторы полей которые должны быть скрыты (массив имен полей)
+    disabledActionCodes: null, // массив Action Code для которых кнопки на тулбаре будут скрыты
+    additionalParams: null // дополнительные параметры для выполнения Custom Action
   };
 
-  ArticleFormState.InitFieldValue = Object.create({});
+  // class ArticleFormState.InitFieldValue (значение поля)
+  ArticleFormState.InitFieldValue = function () { };
+
   ArticleFormState.InitFieldValue.prototype = {
-    fieldName: '',
-    value: null
+    fieldName: '', // имя поля
+    value: null // значение (зависит от типа)
   };
+
+  // class OpenSelectWindowOtions (Парамеры сообщения на открытие окна выбора из списка)
+  const OpenSelectWindowOptions = function () { };
 
   OpenSelectWindowOptions.prototype = {
     selectActionCode: '',
@@ -60,12 +63,13 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
     parentEntityId: 0,
     isMultiple: false,
     selectedEntityIDs: null,
-    selectWindowUID: null,
+    selectWindowUID: null, // ID для идентификации окна со списком
     callerCallback: '',
     options: null
   };
 
-  BackendEventObserver = function (callbackProcName, callback) {
+  // class BackendEventObserver (Observer сообщений от хоста)
+  const BackendEventObserver = function (callbackProcName, callback) {
     this.callbackProcName = callbackProcName;
     this.callback = callback;
     pmrpc.register({
@@ -78,7 +82,7 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
   BackendEventObserver.prototype = {
     callbackProcName: '',
     callback: null,
-    dispose: function () {
+    dispose() {
       pmrpc.unregister(this.callback);
     }
   };
@@ -96,75 +100,77 @@ window.Quantumart.QP8.Interaction = (function Interaction() {
   };
 
   return {
-    BackendEventObserver: BackendEventObserver,
-    ExecuteActionOptions: ExecuteActionOptions,
+    BackendEventObserver, // Observer сообщений от хоста
+    ExecuteActionOptions, // Парамеры сообщения на выполнение BackendAction
     ExecuteActionOtions: ExecuteActionOptions,
-    ArticleFormState: ArticleFormState,
-    OpenSelectWindowOptions: OpenSelectWindowOptions,
-    ExternalMessageTypes: BackendExternalMessage.Types,
-    BackendEventTypes: BackendEventObserver.EventType,
-    executeBackendAction: function (executeOtions, hostUID, destination) {
-      var message = new BackendExternalMessage();
+    ArticleFormState, // Параметры для инициализации формы статьи
+    OpenSelectWindowOptions, // Параметры открытия окна выбора из списка
+    ExternalMessageTypes: BackendExternalMessage.Types, // Типы сообщений backend'у
+    BackendEventTypes: BackendEventObserver.EventType, // Типы событий backend'а
+
+    // Выполнить BackendAction
+    executeBackendAction(executeOtions, hostUID, destination) {
+      const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.ExecuteAction;
       message.hostUID = hostUID;
       message.data = executeOtions;
       pmrpc.call({
-        destination: destination,
+        destination,
         publicProcedureName: message.hostUID,
         params: [message]
       });
     },
 
-    closeBackendHost: function (actionUID, hostUID, destination) {
-      var message = new BackendExternalMessage();
+    // Закрыть Backend хост
+    closeBackendHost(actionUID, hostUID, destination) {
+      const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CloseBackendHost;
       message.hostUID = hostUID;
-      message.data = { actionUID: actionUID };
+      message.data = { actionUID };
       pmrpc.call({
-        destination: destination,
+        destination,
         publicProcedureName: message.hostUID,
         params: [message]
       });
     },
 
-    openSelectWindow: function (openSelectWindowOptions, hostUID, destination) {
-      var message = new BackendExternalMessage();
+    // Открытие всплывающего окна для выбора значения
+    openSelectWindow(openSelectWindowOptions, hostUID, destination) {
+      const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.OpenSelectWindow;
       message.hostUID = hostUID;
       message.data = openSelectWindowOptions;
       pmrpc.call({
-        destination: destination,
+        destination,
         publicProcedureName: message.hostUID,
         params: [message]
       });
     },
 
-    checkHost: function (hostUID, destination, callback) {
-      var prmpcObject;
-      var callbackIsCalled = false;
-      var message = new BackendExternalMessage();
+    // Проверка, что веб-приложение выполняется внутри бекэнда
+    checkHost(hostUID, destination, callback) {
+      let callbackIsCalled = false;
+      const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CheckHost;
       message.hostUID = hostUID;
 
-      prmpcObject = {
-        destination: destination,
+      pmrpc.call({
+        destination,
         publicProcedureName: message.hostUID,
         params: [message],
-        onSuccess: function (args) {
-          if (callbackIsCalled === false) {
+        onSuccess(args) {
+          if (!callbackIsCalled) {
             callbackIsCalled = true;
             callback({ success: true, hostVersion: args.returnValue });
           }
         },
-        onError: function (args) {
-          if (callbackIsCalled === false) {
+        onError(args) {
+          if (!callbackIsCalled) {
             callbackIsCalled = true;
             callback({ success: false, error: args.description });
           }
         }
-      };
-
-      pmrpc.call(prmpcObject);
+      });
     }
   };
 }());
