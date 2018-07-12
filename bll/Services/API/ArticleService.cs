@@ -36,7 +36,12 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 var article = ArticleRepository.GetById(id);
-                if (article != null && forceLoadFieldValues)
+                if (article == null || excludeArchive && article.Archived)
+                {
+                    return null;
+                }
+
+                if (forceLoadFieldValues)
                 {
                     article.LoadFieldValues(excludeArchive);
                     article.LoadAggregatedArticles(excludeArchive);
