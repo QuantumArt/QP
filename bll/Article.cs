@@ -285,18 +285,17 @@ namespace Quantumart.QP8.BLL
             set => _liveFieldValues = value;
         }
 
-        internal List<FieldValue> LoadFieldValues()
+        internal List<FieldValue> LoadFieldValues(bool excludeArchive = false)
         {
             if (_fieldValues == null || _liveFieldValues == null)
             {
                 var fields = FieldRepository.GetFullList(DisplayContentId);
                 if (_fieldValues == null)
                 {
-                    _fieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive), fields, this);
-                }
+                    _fieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive), fields, this, 0, null, excludeArchive);}
                 if (_liveFieldValues == null)
                 {
-                    _liveFieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, true), fields, this);
+                    _liveFieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, true), fields, this, 0, null, excludeArchive);
                 }
             }
             return _fieldValues;
@@ -879,11 +878,11 @@ namespace Quantumart.QP8.BLL
             return FieldValues.Concat(AggregatedArticles.SelectMany(n => n.FieldValues)).Where(n => n.Field.UseRelationSecurity);
         }
 
-        internal void LoadAggregatedArticles()
+        internal void LoadAggregatedArticles(bool excludeArchive = false)
         {
             foreach (var art in AggregatedArticles)
             {
-                art.LoadFieldValues();
+                art.LoadFieldValues(excludeArchive);
             }
         }
 
@@ -937,7 +936,7 @@ namespace Quantumart.QP8.BLL
 
         internal PathInfo GetVersionPathInfo(int newVersionId) => Content.GetVersionPathInfo(newVersionId);
 
-        internal static List<FieldValue> GetFieldValues(DataRow data, IEnumerable<Field> fields, Article article, int versionId = 0, string contentPrefix = null)
+        internal static List<FieldValue> GetFieldValues(DataRow data, IEnumerable<Field> fields, Article article, int versionId = 0, string contentPrefix = null, bool excludeArchive = false)
         {
             if (data == null)
             {
@@ -964,7 +963,7 @@ namespace Quantumart.QP8.BLL
                             {
                                 objectValue = versionId != 0
                                     ? ArticleVersionRepository.GetLinkedItems(versionId, field.Id)
-                                    : ArticleRepository.GetLinkedItems(linkId.Value, article.Id);
+                                    : ArticleRepository.GetLinkedItems(linkId.Value, article.Id, excludeArchive);
                             }
                         }
 
@@ -980,7 +979,7 @@ namespace Quantumart.QP8.BLL
                         {
                             objectValue = versionId != 0
                                 ? ArticleVersionRepository.GetRelatedItems(versionId, field.Id)
-                                : ArticleRepository.GetRelatedItems(backRelationId.Value, article.Id);
+                                : ArticleRepository.GetRelatedItems(backRelationId.Value, article.Id, excludeArchive);
                         }
 
                         break;
