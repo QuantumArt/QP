@@ -1066,7 +1066,12 @@ namespace Quantumart.QP8.BLL
             {
                 var result = new List<FieldValue>();
                 var id = (int)(decimal)dr["content_item_id"];
-                var article = enumerable.Single(n => n.Id == id);
+                var article = enumerable.SingleOrDefault(n => n.Id == id);
+
+                if (article == null)
+                {
+                    continue;
+                }
 
                 var statusTypeId = (int)(decimal)dr["status_type_id"];
                 if (article.StatusTypeId != statusTypeId)
