@@ -234,16 +234,17 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false)
         {
             var data = GetData(null, contentId, excludeArchive);
-            var result = InternalGetList(contentId, data, true);
+            var result = InternalGetList(contentId, data, true, excludeArchive);
             return result;
         }
 
-        private static IEnumerable<Article> InternalGetList(int contentId, DataTable data, bool loadFieldValues)
+        private static IEnumerable<Article> InternalGetList(int contentId, DataTable data, bool loadFieldValues, bool excludeArchive = false)
         {
             IEnumerable<Article> result = new List<Article>();
             if (data != null)
             {
                 var content = ContentRepository.GetById(contentId);
+                bool ArchiveFilter(Article n) => (!excludeArchive) || !n.Archived;
                 result = data.AsEnumerable().Select(n => new Article
                 {
                     ContentId = contentId,
@@ -258,7 +259,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     StatusTypeId = Converter.ToInt32(n["status_type_id"]),
                     LastModifiedBy = Converter.ToInt32(n["last_modified_by"]),
                     LockedBy = Converter.ToInt32(n["locked_by"])
-                }).ToList();
+                }).Where(ArchiveFilter).ToList();
 
                 var statusTypeIds = result.Select(n => n.StatusTypeId).Distinct().ToArray();
                 var userIds = result.Select(n => n.LastModifiedBy).Union(result.Select(n => n.LockedBy)).Where(n => n != 0).Distinct().ToArray();
@@ -278,7 +279,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 if (loadFieldValues)
                 {
                     var fields = FieldRepository.GetFullList(contentId);
-                    Article.LoadFieldValuesForArticles(data, fields, result, contentId);
+                    Article.LoadFieldValuesForArticles(data, fields, result, contentId, excludeArchive);
                 }
             }
 

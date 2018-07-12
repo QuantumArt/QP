@@ -1027,7 +1027,7 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        internal static void LoadFieldValuesForArticles(DataTable data, IEnumerable<Field> fields, IEnumerable<Article> articles, int contentId)
+        internal static void LoadFieldValuesForArticles(DataTable data, IEnumerable<Field> fields, IEnumerable<Article> articles, int contentId, bool excludeArchive)
         {
             var enumerable = articles as Article[] ?? articles.ToArray();
             var ids = enumerable.Select(n => n.Id).ToArray();
@@ -1050,13 +1050,13 @@ namespace Quantumart.QP8.BLL
                     case RelationType.ManyToMany:
                         if (field.LinkId != null)
                         {
-                            itemsForRelations.Add(field.Id, ArticleRepository.GetLinkedItemsMultiple(field.LinkId.Value, ids));
+                            itemsForRelations.Add(field.Id, ArticleRepository.GetLinkedItemsMultiple(field.LinkId.Value, ids, excludeArchive));
                         }
                         break;
                     case RelationType.ManyToOne:
                         if (field.BackRelationId != null)
                         {
-                            itemsForRelations.Add(field.Id, ArticleRepository.GetRelatedItemsMultiple(field.BackRelationId.Value, ids));
+                            itemsForRelations.Add(field.Id, ArticleRepository.GetRelatedItemsMultiple(field.BackRelationId.Value, ids, excludeArchive));
                         }
                         break;
                 }
