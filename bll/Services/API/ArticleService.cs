@@ -46,7 +46,7 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public Article Read(int id, int contentId, bool forceLoadFieldValues = false)
+        public Article Read(int id, int contentId, bool forceLoadFieldValues = false, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
@@ -56,7 +56,7 @@ namespace Quantumart.QP8.BLL.Services.API
                     return null;
                 }
 
-                return content.VirtualType == 3 ? ArticleRepository.GetVirtualById(id, contentId) : Read(id, forceLoadFieldValues);
+                return content.VirtualType == 3 ? ArticleRepository.GetVirtualById(id, contentId) : Read(id, forceLoadFieldValues, excludeArchive);
             }
         }
         
