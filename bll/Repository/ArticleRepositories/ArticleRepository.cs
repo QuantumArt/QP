@@ -212,7 +212,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false)
+        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
@@ -222,7 +222,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     var contentId = (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First());
                     if (contentId != 0)
                     {
-                        var data = GetData(ids, contentId);
+                        var data = GetData(ids, contentId, excludeArchive);
                         result = InternalGetList(contentId, data, loadFieldValues);
                     }
                 }
@@ -231,19 +231,20 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<Article> GetList(int contentId)
+        internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false)
         {
-            var data = GetData(null, contentId);
-            var result = InternalGetList(contentId, data, true);
+            var data = GetData(null, contentId, excludeArchive);
+            var result = InternalGetList(contentId, data, true, excludeArchive);
             return result;
         }
 
-        private static IEnumerable<Article> InternalGetList(int contentId, DataTable data, bool loadFieldValues)
+        private static IEnumerable<Article> InternalGetList(int contentId, DataTable data, bool loadFieldValues, bool excludeArchive = false)
         {
             IEnumerable<Article> result = new List<Article>();
             if (data != null)
             {
                 var content = ContentRepository.GetById(contentId);
+                bool ArchiveFilter(Article n) => (!excludeArchive) || !n.Archived;
                 result = data.AsEnumerable().Select(n => new Article
                 {
                     ContentId = contentId,
@@ -258,7 +259,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     StatusTypeId = Converter.ToInt32(n["status_type_id"]),
                     LastModifiedBy = Converter.ToInt32(n["last_modified_by"]),
                     LockedBy = Converter.ToInt32(n["locked_by"])
-                }).ToList();
+                }).Where(ArchiveFilter).ToList();
 
                 var statusTypeIds = result.Select(n => n.StatusTypeId).Distinct().ToArray();
                 var userIds = result.Select(n => n.LastModifiedBy).Union(result.Select(n => n.LockedBy)).Where(n => n != 0).Distinct().ToArray();
@@ -278,7 +279,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 if (loadFieldValues)
                 {
                     var fields = FieldRepository.GetFullList(contentId);
-                    Article.LoadFieldValuesForArticles(data, fields, result, contentId);
+                    Article.LoadFieldValuesForArticles(data, fields, result, contentId, excludeArchive);
                 }
             }
 
@@ -669,21 +670,21 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return orderExpression;
         }
 
-        internal static DataRow GetData(int id, int contentId, bool isLive)
+        internal static DataRow GetData(int id, int contentId, bool isLive, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
                 return id == 0
                     ? Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId)
-                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive);
+                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive, excludeArchive);
             }
         }
 
-        internal static DataTable GetData(IEnumerable<int> ids, int contentId)
+        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive);
+                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -825,11 +826,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <param name="linkId">ID связи</param>
         /// <param name="id">ID статьи</param>
         /// <returns>список связанных статей через запятую</returns>
-        internal static string GetLinkedItems(int linkId, int id)
+        internal static string GetLinkedItems(int linkId, int id, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
-                return Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkId, id, QPContext.IsLive);
+                return Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkId, id, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -847,7 +848,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <param name="fieldId">ID базового поля связи</param>
         /// <param name="id">ID статьи</param>
         /// <returns>список связанных статей через запятую</returns>
-        internal static string GetRelatedItems(int fieldId, int? id)
+        internal static string GetRelatedItems(int fieldId, int? id, bool excludeArchive = false)
         {
             var backField = FieldRepository.GetById(fieldId);
             if (backField == null)
@@ -857,7 +858,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
             using (new QPConnectionScope())
             {
-                return Common.GetRelatedArticles(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, id, QPContext.IsLive);
+                return Common.GetRelatedArticles(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, id, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -887,7 +888,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids)
+        internal static Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids, bool excludeArchive = false)
         {
             var backField = FieldRepository.GetById(fieldId);
             if (backField == null)
@@ -897,7 +898,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
             using (new QPConnectionScope())
             {
-                return Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, ids, QPContext.IsLive);
+                return Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, ids, QPContext.IsLive, excludeArchive);
             }
         }
 

@@ -31,22 +31,27 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public Article Read(int id, bool forceLoadFieldValues = false)
+        public Article Read(int id, bool forceLoadFieldValues = false, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
                 var article = ArticleRepository.GetById(id);
-                if (article != null && forceLoadFieldValues)
+                if (article == null || excludeArchive && article.Archived)
                 {
-                    article.LoadFieldValues();
-                    article.LoadAggregatedArticles();
+                    return null;
+                }
+
+                if (forceLoadFieldValues)
+                {
+                    article.LoadFieldValues(excludeArchive);
+                    article.LoadAggregatedArticles(excludeArchive);
                 }
 
                 return article;
             }
         }
 
-        public Article Read(int id, int contentId, bool forceLoadFieldValues = false)
+        public Article Read(int id, int contentId, bool forceLoadFieldValues = false, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
@@ -56,47 +61,48 @@ namespace Quantumart.QP8.BLL.Services.API
                     return null;
                 }
 
-                return content.VirtualType == 3 ? ArticleRepository.GetVirtualById(id, contentId) : Read(id, forceLoadFieldValues);
+                return content.VirtualType == 3 ? ArticleRepository.GetVirtualById(id, contentId) : Read(id, forceLoadFieldValues, excludeArchive);
             }
         }
+        
 
-        public IEnumerable<Article> List(int contentId, int[] ids)
+        public IEnumerable<Article> List(int contentId, int[] ids, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ids == null ? ArticleRepository.GetList(contentId) : ArticleRepository.GetList(ids, true);
+                return ids == null ? ArticleRepository.GetList(contentId, excludeArchive) : ArticleRepository.GetList(ids, true, excludeArchive);
             }
         }
 
-        public string GetRelatedItems(int fieldId, int? id)
+        public string GetRelatedItems(int fieldId, int? id, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetRelatedItems(fieldId, id);
+                return ArticleRepository.GetRelatedItems(fieldId, id, excludeArchive);
             }
         }
 
-        public string GetLinkedItems(int linkId, int id)
+        public string GetLinkedItems(int linkId, int id, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetLinkedItems(linkId, id);
+                return ArticleRepository.GetLinkedItems(linkId, id, excludeArchive);
             }
         }
 
-        public Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids)
+        public Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetRelatedItemsMultiple(fieldId, ids);
+                return ArticleRepository.GetRelatedItemsMultiple(fieldId, ids,excludeArchive);
             }
         }
 
-        public Dictionary<int, string> GetLinkedItemsMultiple(int linkId, IEnumerable<int> ids)
+        public Dictionary<int, string> GetLinkedItemsMultiple(int linkId, IEnumerable<int> ids, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetLinkedItemsMultiple(linkId, ids);
+                return ArticleRepository.GetLinkedItemsMultiple(linkId, ids, excludeArchive);
             }
         }
 
