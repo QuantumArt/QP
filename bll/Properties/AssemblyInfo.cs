@@ -17,4 +17,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("QP8.WebMvc.NUnit.Tests")]
 
 [assembly: AssemblyVersion("2.6.0.0")]
-[assembly: AssemblyInformationalVersion("2.6.0.0-beta9")]
+[assembly: AssemblyInformationalVersion("2.6.0.0")]
