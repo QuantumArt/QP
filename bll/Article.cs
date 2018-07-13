@@ -374,10 +374,14 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public static void ValidateXamlById(int articleId, RulesException errors, string customerCode = null)
+        public static void ValidateXamlById(int articleId, RulesException errors, string customerCode, bool persistChanges)
         {
             var article = ArticleRepository.GetById(articleId);
-            article.ValidateXaml(errors, customerCode ?? QPContext.CurrentCustomerCode);
+            var hasChanges = article.ValidateXaml(errors, customerCode ?? QPContext.CurrentCustomerCode);
+            if (hasChanges && persistChanges)
+            {
+                article.Persist(true);
+            }
         }
 
         public static string GetDynamicColumnName(Field field, Dictionary<int, int> relationCounters, bool useFormName = false)
@@ -711,8 +715,10 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private void ValidateXaml(RulesException errors, string customerCode)
+        private bool ValidateXaml(RulesException errors, string customerCode)
         {
+            bool result = false;
+
             var values = FieldValues
                 .Concat(AggregatedArticles.SelectMany(a => a.FieldValues))
                 .Where(v => !v.Field.Aggregated)
@@ -744,7 +750,7 @@ namespace Quantumart.QP8.BLL
                     };
 
                     var vcontext = ValidationServices.ValidateModel(obj);
-                    CheckChangesValues(valuesState, values);
+                    result = CheckChangesValues(valuesState, values);
 
                     if (!vcontext.IsValid)
                     {
@@ -763,14 +769,18 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorForModel(string.Format(ArticleStrings.CustomValidationFailed, exp.Message));
                 }
             }
+
+            return result;
         }
 
-        public void CheckChangesValues(Dictionary<string, string> stateValues, Dictionary<string, string> values)
+        public bool CheckChangesValues(Dictionary<string, string> stateValues, Dictionary<string, string> values)
         {
-            if (!stateValues.SequenceEqual(values))
+            var result = !stateValues.SequenceEqual(values);
+            if (result)
             {
                 UpdateFieldValues(values);
             }
+            return result;
         }
 
         private static void ValidateSchedule(RulesException<Article> errors, ArticleSchedule item)
