@@ -298,12 +298,14 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public RulesException ValidateXamlById(int articleId, string customerCode, bool persistChanges = false)
         {
+            var errors = new RulesException();
             using (new QPConnectionScope(ConnectionString))
             {
-                var errors = new RulesException();
+                QPContext.CurrentUserId = TestedUserId;
                 Article.ValidateXamlById(articleId, errors, customerCode, persistChanges);
-                return errors;
+                QPContext.CurrentUserId = 0;
             }
+            return errors;
         }
     }
 }
