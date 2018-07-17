@@ -78,7 +78,7 @@ namespace Quantumart.QP8.BLL.Services.API
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetRelatedItems(fieldId, id, excludeArchive);
+                return ArticleRepository.GetRelatedItems(new [] {fieldId}, id, excludeArchive)[fieldId];
             }
         }
 
@@ -86,7 +86,7 @@ namespace Quantumart.QP8.BLL.Services.API
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetLinkedItems(linkId, id, excludeArchive);
+                return ArticleRepository.GetLinkedItems(new [] {linkId}, id, excludeArchive)[linkId];
             }
         }
 

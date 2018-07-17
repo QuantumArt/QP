@@ -279,7 +279,7 @@ namespace Quantumart.QP8.BLL.Services
         public static Dictionary<int, string> GetContentFieldValues(int contentId, string fieldName) => ArticleRepository.GetContentFieldValues(contentId, fieldName);
 
 
-        public static string GetArticleLinkedItems(int linkId, int articleId) => ArticleRepository.GetLinkedItems(linkId, articleId);
+        public static string GetArticleLinkedItems(int linkId, int articleId) => ArticleRepository.GetLinkedItems(new [] {linkId}, articleId)[linkId];
 
         public static int GetArticleIdByFieldValue(int contentId, string fieldName, string fieldValue) => ArticleRepository.GetArticleIdByFieldValue(contentId, fieldName, fieldValue);
     }
