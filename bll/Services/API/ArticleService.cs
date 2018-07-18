@@ -294,16 +294,18 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public RulesException ValidateXamlById(int articleId) => ValidateXamlById(articleId, null);
+        public RulesException ValidateXamlById(int articleId, bool persistChanges = false) => ValidateXamlById(articleId, null, persistChanges);
 
-        public RulesException ValidateXamlById(int articleId, string customerCode)
+        public RulesException ValidateXamlById(int articleId, string customerCode, bool persistChanges = false)
         {
+            var errors = new RulesException();
             using (new QPConnectionScope(ConnectionString))
             {
-                var errors = new RulesException();
-                Article.ValidateXamlById(articleId, errors, customerCode);
-                return errors;
+                QPContext.CurrentUserId = TestedUserId;
+                Article.ValidateXamlById(articleId, errors, customerCode, persistChanges);
+                QPContext.CurrentUserId = 0;
             }
+            return errors;
         }
     }
 }

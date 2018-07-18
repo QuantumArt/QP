@@ -223,7 +223,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     if (contentId != 0)
                     {
                         var data = GetData(ids, contentId, excludeArchive);
-                        result = InternalGetList(contentId, data, loadFieldValues);
+                        result = InternalGetList(contentId, data, loadFieldValues, excludeArchive);
                     }
                 }
 
