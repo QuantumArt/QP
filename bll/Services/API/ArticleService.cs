@@ -82,6 +82,23 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
+        public Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, int[] ids, bool excludeArchive = false)
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                return ArticleRepository.GetRelatedItemsMultiple(fieldId, ids, excludeArchive);
+            }
+        }
+
+        public Dictionary<int, Dictionary<int, List<int>>> GetRelatedItemsMultiple(int[] fieldIds, int[] ids, bool excludeArchive = false)
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                return ArticleRepository.GetRelatedItemsMultiple(fieldIds, ids, excludeArchive);
+            }
+        }
+
+
         public string GetLinkedItems(int linkId, int id, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
@@ -90,21 +107,22 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids, bool excludeArchive = false)
-        {
-            using (new QPConnectionScope(ConnectionString))
-            {
-                return ArticleRepository.GetRelatedItemsMultiple(fieldId, ids,excludeArchive);
-            }
-        }
-
-        public Dictionary<int, string> GetLinkedItemsMultiple(int linkId, IEnumerable<int> ids, bool excludeArchive = false)
+        public Dictionary<int, string> GetLinkedItemsMultiple(int linkId, int[] ids, bool excludeArchive = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
                 return ArticleRepository.GetLinkedItemsMultiple(linkId, ids, excludeArchive);
             }
         }
+
+        public Dictionary<int, Dictionary<int, List<int>>> GetLinkedItemsMultiple(int[] linkIds, int[] ids, bool excludeArchive = false)
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                return ArticleRepository.GetLinkedItemsMultiple(linkIds, ids, excludeArchive);
+            }
+        }
+
 
         public Article CopyAndRead(Article article)
         {
