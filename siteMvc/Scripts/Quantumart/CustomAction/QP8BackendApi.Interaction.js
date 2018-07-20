@@ -1,5 +1,5 @@
 /* global module */
-/* eslint-disable prefer-arrow-callback, no-empty-function, line-comment-position */
+/* eslint-disable prefer-arrow-callback, no-empty-function, line-comment-position, object-shorthand */
 (function (factory) {
   // @ts-ignore
   if (typeof module === 'object' && module.exports) {
@@ -90,7 +90,7 @@
   BackendEventObserver.prototype = {
     callbackProcName: '',
     callback: null,
-    dispose() {
+    dispose: function () {
       pmrpc.unregister(this.callback);
     }
   };
@@ -108,71 +108,71 @@
   };
 
   return {
-    BackendEventObserver, // Observer сообщений от хоста
-    ExecuteActionOptions, // Парамеры сообщения на выполнение BackendAction
+    BackendEventObserver: BackendEventObserver, // Observer сообщений от хоста
+    ExecuteActionOptions: ExecuteActionOptions, // Парамеры сообщения на выполнение BackendAction
     ExecuteActionOtions: ExecuteActionOptions,
-    ArticleFormState, // Параметры для инициализации формы статьи
-    OpenSelectWindowOptions, // Параметры открытия окна выбора из списка
+    ArticleFormState: ArticleFormState, // Параметры для инициализации формы статьи
+    OpenSelectWindowOptions: OpenSelectWindowOptions, // Параметры открытия окна выбора из списка
     ExternalMessageTypes: BackendExternalMessage.Types, // Типы сообщений backend'у
     BackendEventTypes: BackendEventObserver.EventType, // Типы событий backend'а
 
     // Выполнить BackendAction
-    executeBackendAction(executeOtions, hostUID, destination) {
+    executeBackendAction: function (executeOtions, hostUID, destination) {
       const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.ExecuteAction;
       message.hostUID = hostUID;
       message.data = executeOtions;
       pmrpc.call({
-        destination,
+        destination: destination,
         publicProcedureName: message.hostUID,
         params: [message]
       });
     },
 
     // Закрыть Backend хост
-    closeBackendHost(actionUID, hostUID, destination) {
+    closeBackendHost: function (actionUID, hostUID, destination) {
       const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CloseBackendHost;
       message.hostUID = hostUID;
-      message.data = { actionUID };
+      message.data = { actionUID: actionUID };
       pmrpc.call({
-        destination,
+        destination: destination,
         publicProcedureName: message.hostUID,
         params: [message]
       });
     },
 
     // Открытие всплывающего окна для выбора значения
-    openSelectWindow(openSelectWindowOptions, hostUID, destination) {
+    openSelectWindow: function (openSelectWindowOptions, hostUID, destination) {
       const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.OpenSelectWindow;
       message.hostUID = hostUID;
       message.data = openSelectWindowOptions;
       pmrpc.call({
-        destination,
+        destination: destination,
         publicProcedureName: message.hostUID,
         params: [message]
       });
     },
 
     // Проверка, что веб-приложение выполняется внутри бекэнда
-    checkHost(hostUID, destination, callback) {
+    checkHost: function (hostUID, destination, callback) {
       let callbackIsCalled = false;
       const message = new BackendExternalMessage();
       message.type = BackendExternalMessage.Types.CheckHost;
       message.hostUID = hostUID;
 
       pmrpc.call({
-        destination,
+        destination: destination,
         publicProcedureName: message.hostUID,
         params: [message],
-        onSuccess(args) {
+        onSuccess: function (args) {
           if (!callbackIsCalled) {
             callbackIsCalled = true;
             callback({ success: true, hostVersion: args.returnValue });
           }
         },
-        onError(args) {
+        onError: function (args) {
           if (!callbackIsCalled) {
             callbackIsCalled = true;
             callback({ success: false, error: args.description });
