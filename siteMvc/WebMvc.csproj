@@ -2472,6 +2472,9 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\polyfills\polyfills.d.ts" />
     <TypeScriptCompile Include="Scripts\Quantumart\App.d.ts" />
+    <TypeScriptCompile Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.d.ts">
+      <DependentUpon>QP8BackendApi.Interaction.js</DependentUpon>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="Scripts\Quantumart\jQueryExtensions.d.ts" />
     <TypeScriptCompile Include="Scripts\Quantumart\MultistepAction\BackendProgressBar.jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\Quantumart\Server.d.ts" />

@@ -118,10 +118,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataRow GetArticleRow(SqlConnection connection, int id, int contentId, bool isLive)
+        public static DataRow GetArticleRow(SqlConnection connection, int id, int contentId, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
-            using (var cmd = SqlCommandFactory.Create($"select * from content_{contentId}{suffix} with(nolock) where content_item_id = @id", connection))
+            var isExcludeArchive = excludeArchive ? "and archive = 0" : string.Empty;
+            using (var cmd = SqlCommandFactory.Create($"select * from content_{contentId}{suffix} with(nolock) where content_item_id = @id {isExcludeArchive}", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -142,22 +143,40 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isLive)
+        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
             var sql = $"select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{contentId}{suffix} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id ";
-            if (ids != null)
+
+            if (ids != null || excludeArchive)
             {
-                sql = sql + "where c.content_item_id in (select id from @itemIds)";
+                var sb = new StringBuilder();
+                sb.AppendLine(" where ");
+                if (ids != null)
+                {
+                    sb.Append("c.content_item_id in (select id from @itemIds)");
+                }
+
+                if (ids != null && excludeArchive)
+                {
+                    sb.Append(" and ");
+                }
+
+                if (excludeArchive)
+                {
+                    sb.Append(" ci.archive = 0 ");
+                }
+
+                sql = sql + sb.ToString();
             }
 
             if (ids != null && !isLive) //optimization for list of ids
             {
-                const string baseSql = "select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{0}{1} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id where c.content_item_id in (select id from @itemIds) and {2}";
+                const string baseSql = "select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{0}{1} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id where c.content_item_id in (select id from @itemIds) and {2} {3}";
                 var sb = new StringBuilder();
-                sb.AppendLine(string.Format(baseSql, contentId, string.Empty, " isnull(ci.splitted, 0) = 0 "));
+                sb.AppendLine(string.Format(baseSql, contentId, string.Empty, " isnull(ci.splitted, 0) = 0 ", excludeArchive ? " and ci.archive = 0" : string.Empty));
                 sb.AppendLine(" union all ");
-                sb.AppendLine(string.Format(baseSql, contentId, "_async", " ci.splitted = 1 "));
+                sb.AppendLine(string.Format(baseSql, contentId, "_async", " ci.splitted = 1 ", excludeArchive ? " and ci.archive = 0" : string.Empty));
                 sql = sb.ToString();
             }
 
@@ -452,13 +471,14 @@ namespace Quantumart.QP8.DAL
             Value = !string.IsNullOrEmpty(item.Value) ? (object)item.Value : DBNull.Value
         };
 
-        public static string GetLinkedArticles(SqlConnection connection, int linkId, int id, bool isLive)
+        public static string GetLinkedArticles(SqlConnection connection, int linkId, int id, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
+            var isArchive = excludeArchive ? "join content_item ci with(nolock) on linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
             using (
                 var cmd =
                     SqlCommandFactory.Create(
-                        $"select linked_item_id, item_id from item_link{suffix} with(nolock) where item_id = @id and link_id = @lid", connection))
+                        $"select linked_item_id, item_id from item_link{suffix} with(nolock) {isArchive} where item_id = @id and link_id = @lid ", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -504,11 +524,12 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetRelatedArticles(SqlConnection connection, int contentId, string fieldName, int? id, bool isLive)
+        public static string GetRelatedArticles(SqlConnection connection, int contentId, string fieldName, int? id, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
             var action = id.HasValue ? " = @id" : " is null ";
-            using (var cmd = SqlCommandFactory.Create(string.Format("select content_item_id from content_{1}{3} with(nolock) where [{0}] {2}", fieldName, contentId, action, suffix), connection))
+            var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
+            using (var cmd = SqlCommandFactory.Create(string.Format("select content_item_id from content_{1}{3} with(nolock) where [{0}] {2} {4}", fieldName, contentId, action, suffix, isArchive), connection))
             {
                 cmd.Parameters.Add(new SqlParameter("@id", SqlDbType.Decimal)
                 {
@@ -553,10 +574,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<int, string> GetRelatedArticlesMultiple(SqlConnection connection, int contentId, string fieldName, IEnumerable<int> ids, bool isLive)
+        public static Dictionary<int, string> GetRelatedArticlesMultiple(SqlConnection connection, int contentId, string fieldName, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
-            using (var cmd = SqlCommandFactory.Create(string.Format("select content_item_id as linked_item_id, [{0}] as item_id from content_{1}{2} with(nolock) where [{0}] in (select id from @itemIds)", fieldName, contentId, suffix), connection))
+            var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
+            using (var cmd = SqlCommandFactory.Create(string.Format("select content_item_id as linked_item_id, [{0}] as item_id from content_{1}{2} with(nolock) where [{0}] in (select id from @itemIds) {3}", fieldName, contentId, suffix, isArchive), connection))
             {
                 cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
                 {
