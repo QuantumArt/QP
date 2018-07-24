@@ -304,6 +304,11 @@ export class BackendPopupWindow extends BackendDocumentHost {
   }
 
   // eslint-disable-next-line camelcase
+  get_popupWindowElement() {
+    return this._popupWindowElement;
+  }
+
+  // eslint-disable-next-line camelcase
   get_selectionContext() {
     return this._selectionContext;
   }

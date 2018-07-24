@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
 import { BackendActionType } from '../Info/BackendActionType';
 import { BackendEventArgs } from '../Common/BackendEventArgs';
+import { BackendPopupWindow } from '../Document/BackendPopupWindow';
 import { BackendPopupWindowManager } from '../Managers/BackendPopupWindowManager';
 import { BackendToolbar } from '../Toolbar/BackendToolbar';
 import { Observable } from '../Common/Observable';
+/* eslint-enable no-unused-vars */
 
 window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED = 'OnSelectPopupWindowResultSelected';
 window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED = 'OnSelectPopupWindowClosed';
@@ -30,6 +33,8 @@ export class BackendSelectPopupWindow extends Observable {
     });
 
     eventArgs.set_actionTypeCode(BackendActionType.getActionTypeCodeByActionCode(this._actionCode));
+
+    /** @type {BackendPopupWindow} */
     this._popupWindowComponent = manager.createPopupWindow(eventArgs, popupOptions);
     this._popupWindowComponent.attachObserver(
       window.EVENT_TYPE_POPUP_WINDOW_CLOSED, $.proxy(this._onClosed, this)
@@ -42,7 +47,6 @@ export class BackendSelectPopupWindow extends Observable {
   _isMultipleEntities = false;
   _popupWindowId = '';
   _popupWindowToolbarComponent = null;
-  _popupWindowComponent = null;
   _allowMultipleItemSelection = false;
 
   SELECT_BUTTON_CODE = 'select';
