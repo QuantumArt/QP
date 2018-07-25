@@ -746,11 +746,25 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             var articleUpdater = new ArticleUpdateService(article);
             var schedule = article.Schedule;
+            var colaborativeArticles = article.CollaborativePublishedArticle;
             article = articleUpdater.Update();
             article.Schedule = schedule;
+            article.CollaborativePublishedArticle = colaborativeArticles;
             ScheduleRepository.UpdateSchedule(article);
             ScheduleRepository.CopyScheduleToChildDelays(article);
+            if (article.CollaborativePublishedArticle == 0)
+            {
+                ClearChildDelaysForChild(article.Id);
+            }
             return article;
+        }
+
+        internal static void ClearChildDelaysForChild(int childId)
+        {
+            using (new QPConnectionScope())
+            {
+                Common.ClearChildDelaysForChild(QPConnectionScope.Current.DbConnection, childId);
+            }
         }
 
         internal static void MultipleDelete(IList<int> ids, bool withAggregated = false, bool withAutoArchive = false)
@@ -1349,6 +1363,22 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
+        internal static int GetArticleIdForCollaborativePublication(int childId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetArticleIdForCollaborativePublication(scope.DbConnection, childId);
+            }
+        }
+
+        internal static int GetContentIdForArticle(int id)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return (int)Common.GetContentIdForArticle(scope.DbConnection, id);
+            }
+        }
+
         #region BatchUpdate
 
         internal static InsertData[] BatchUpdate(ArticleData[] articles, bool formatArticleData)
@@ -1429,17 +1459,17 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         }
 
         private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations) => (from a in articles
-                from f in a.Fields
-                from linkedItemId in f.ArticleIds != null && f.ArticleIds.Any() ? f.ArticleIds : new[] { 0 }
-                join r in relations on f.Id equals r.FieldId
-                where r.LinkId.HasValue
-                select new LinkData
-                {
-                    // ReSharper disable once PossibleInvalidOperationException
-                    LinkId = r.LinkId.Value,
-                    ItemId = a.Id,
-                    LinkedItemId = linkedItemId != 0 ? linkedItemId : (int?)null
-                })
+                                                                                                                              from f in a.Fields
+                                                                                                                              from linkedItemId in f.ArticleIds != null && f.ArticleIds.Any() ? f.ArticleIds : new[] { 0 }
+                                                                                                                              join r in relations on f.Id equals r.FieldId
+                                                                                                                              where r.LinkId.HasValue
+                                                                                                                              select new LinkData
+                                                                                                                              {
+                                                                                                                                  // ReSharper disable once PossibleInvalidOperationException
+                                                                                                                                  LinkId = r.LinkId.Value,
+                                                                                                                                  ItemId = a.Id,
+                                                                                                                                  LinkedItemId = linkedItemId != 0 ? linkedItemId : (int?)null
+                                                                                                                              })
             .ToArray();
 
         private static LinkData[] UpdateLinkIds(LinkData[] links, IEnumerable<InsertData> insertData)
@@ -1464,13 +1494,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         private static ArticleData[] UpdateArticleRelations(ArticleData[] articles, IEnumerable<RelationData> relations)
         {
             var items = (from article in articles
-                    from field in article.Fields
-                    join relation in relations
-                        on new { articleId = article.Id, fieldId = field.Id }
-                        equals new { articleId = relation.ArticleId, fieldId = relation.FieldId }
-                        into r
-                    from relation in r.DefaultIfEmpty()
-                    select new { article, field, relation })
+                         from field in article.Fields
+                         join relation in relations
+                             on new { articleId = article.Id, fieldId = field.Id }
+                             equals new { articleId = relation.ArticleId, fieldId = relation.FieldId }
+                             into r
+                         from relation in r.DefaultIfEmpty()
+                         select new { article, field, relation })
                 .ToArray();
 
             foreach (var item in items)

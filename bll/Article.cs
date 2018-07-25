@@ -48,6 +48,7 @@ namespace Quantumart.QP8.BLL
         private readonly InitPropertyValue<List<Article>> _variationArticles;
         private readonly InitPropertyValue<IEnumerable<ArticleVariationListItem>> _variationListItems;
         private readonly InitPropertyValue<IEnumerable<ArticleContextListItem>> _contextListItems;
+        private int _parentContentId;
 
         internal Article()
         {
@@ -356,6 +357,14 @@ namespace Quantumart.QP8.BLL
             set => _contextListItems.Value = value;
         }
 
+        public int CollaborativePublishedArticle { get; set; }       
+
+        public int ParentContentId
+        {
+            get => _parentContentId != 0 || CollaborativePublishedArticle == 0 ? _parentContentId : GetContentIdForArticle();
+            set => _parentContentId = value;
+        }
+   
         public override void Validate()
         {
             var errors = new RulesException<Article>();
@@ -372,7 +381,7 @@ namespace Quantumart.QP8.BLL
             {
                 throw errors;
             }
-        }
+        }        
 
         public static void ValidateXamlById(int articleId, RulesException errors, string customerCode, bool persistChanges)
         {
@@ -1497,6 +1506,21 @@ namespace Quantumart.QP8.BLL
 
                 yield return result;
             }
+        }
+
+        public void LoadCollaborativePublishedArticle(int id)
+        {
+            CollaborativePublishedArticle =  ArticleRepository.GetArticleIdForCollaborativePublication(id);
+        }
+
+
+    private int GetContentIdForArticle()
+        {
+            if (_parentContentId == 0 || CollaborativePublishedArticle != 0 )
+            {
+                _parentContentId = ArticleRepository.GetContentIdForArticle(CollaborativePublishedArticle);
+            }
+            return _parentContentId;
         }
     }
 

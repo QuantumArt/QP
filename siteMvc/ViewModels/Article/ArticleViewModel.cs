@@ -10,6 +10,8 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
+using Quantumart.QP8.Validators;
+using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Article
@@ -47,6 +49,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             var model = Create<ArticleViewModel>(data, tabId, parentEntityId);
             model.BoundToExternal = boundToExternal;
             model.IsVirtual = data.Content.IsVirtual;
+            model.CheckedCollaborativeArticle = new List<QPCheckedItem>() { new QPCheckedItem { Value = data.CollaborativePublishedArticle.ToString() } };
+
             return model;
         }
 
@@ -254,6 +258,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
         public void DoCustomBinding()
         {
             Data.VariationListItems = JsonConvert.DeserializeObject<List<ArticleVariationListItem>>(VariationModel);
+            Data.CollaborativePublishedArticle = CheckedCollaborativeArticle.Any()
+                ? CheckedCollaborativeArticle.Select(s=>int.Parse(s.Value)).FirstOrDefault()
+                : 0;
         }
 
         public string RemoveVariationCode
@@ -271,5 +278,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 return sb.ToString();
             }
         }
+
+        [LocalizedDisplayName("CollaborativePublication", NameResourceType = typeof(ArticleStrings))]
+        public IList<QPCheckedItem> CheckedCollaborativeArticle { get; set; }
+
+        public IEnumerable<ListItem> CollaborativePublishedArticlesList => new ListItem[] {
+            new ListItem {
+                Value = Data.CollaborativePublishedArticle.ToString(),
+                Text = Data.CollaborativePublishedArticle.ToString(),
+                Selected = true }
+        };
+
     }
 }
