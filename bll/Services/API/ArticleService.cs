@@ -64,13 +64,15 @@ namespace Quantumart.QP8.BLL.Services.API
                 return content.VirtualType == 3 ? ArticleRepository.GetVirtualById(id, contentId) : Read(id, forceLoadFieldValues, excludeArchive);
             }
         }
-        
 
-        public IEnumerable<Article> List(int contentId, int[] ids, bool excludeArchive = false)
+
+        public IEnumerable<Article> List(int contentId, int[] ids, bool excludeArchive = false, string filter = "")
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ids == null ? ArticleRepository.GetList(contentId, excludeArchive) : ArticleRepository.GetList(ids, true, excludeArchive);
+                return ids == null
+                    ? ArticleRepository.GetList(contentId, excludeArchive, filter)
+                    : ArticleRepository.GetList(ids, true, excludeArchive, contentId, filter);
             }
         }
 

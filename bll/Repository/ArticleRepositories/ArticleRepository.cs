@@ -212,17 +212,17 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false, bool excludeArchive = false)
+        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false, bool excludeArchive = false, int contentId = 0, string filter = "")
         {
             using (new QPConnectionScope())
             {
                 var result = new List<Article>().AsEnumerable();
                 if (ids != null && ids.Any())
                 {
-                    var contentId = (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First());
+                    contentId = (contentId == 0) ? (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First()) : contentId;
                     if (contentId != 0)
                     {
-                        var data = GetData(ids, contentId, excludeArchive);
+                        var data = GetData(ids, contentId, excludeArchive, filter);
                         result = InternalGetList(contentId, data, loadFieldValues, excludeArchive);
                     }
                 }
@@ -231,9 +231,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false)
+        internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false, string filter = "")
         {
-            var data = GetData(null, contentId, excludeArchive);
+            var data = GetData(null, contentId, excludeArchive, filter);
             var result = InternalGetList(contentId, data, true, excludeArchive);
             return result;
         }
@@ -689,11 +689,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool excludeArchive = false)
+        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool excludeArchive = false, string filter = "")
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive, excludeArchive);
+                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive, excludeArchive, filter);
             }
         }
 
@@ -862,7 +862,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <returns>список связанных статей через запятую</returns>
         internal static Dictionary<int, string> GetRelatedItems(IEnumerable<int> fieldIds, int? id, bool excludeArchive = false)
         {
-            var fiList = fieldIds.Select(FieldRepository.GetById).Select(n => 
+            var fiList = fieldIds.Select(FieldRepository.GetById).Select(n =>
                 new Common.FieldInfo()
                 {
                     ContentId = n.ContentId,
@@ -921,7 +921,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         internal static Dictionary<int, Dictionary<int, List<int>>> GetRelatedItemsMultiple(IEnumerable<int> fieldIds, IEnumerable<int> ids, bool excludeArchive = false)
         {
-            var fiList = fieldIds.Select(FieldRepository.GetById).Select(n => 
+            var fiList = fieldIds.Select(FieldRepository.GetById).Select(n =>
                 new Common.FieldInfo()
                 {
                     ContentId = n.ContentId,

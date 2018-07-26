@@ -143,31 +143,31 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isLive, bool excludeArchive = false)
+        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isLive, bool excludeArchive = false, string filter = "")
         {
             var suffix = isLive ? string.Empty : "_united";
             var sql = $"select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{contentId}{suffix} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id ";
 
-            if (ids != null || excludeArchive)
+            var conditions = new List<string>();
+
+            if (ids != null)
             {
-                var sb = new StringBuilder();
-                sb.AppendLine(" where ");
-                if (ids != null)
-                {
-                    sb.Append("c.content_item_id in (select id from @itemIds)");
-                }
+                conditions.Add("c.content_item_id in (select id from @itemIds)");
+            }
 
-                if (ids != null && excludeArchive)
-                {
-                    sb.Append(" and ");
-                }
+            if (excludeArchive)
+            {
+                conditions.Add("ci.archive = 0");
+            }
 
-                if (excludeArchive)
-                {
-                    sb.Append(" ci.archive = 0 ");
-                }
+            if (!string.IsNullOrEmpty(filter))
+            {
+                 conditions.Add(filter);
+            }
 
-                sql = sql + sb.ToString();
+            if (conditions.Any())
+            {
+                sql = sql + " where " + String.Join(" and ", conditions);
             }
 
             if (ids != null && !isLive) //optimization for list of ids
