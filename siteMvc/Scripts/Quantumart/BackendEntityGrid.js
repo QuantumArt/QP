@@ -1167,7 +1167,19 @@ export class BackendEntityGrid extends Observable {
 
   _onRowContextMenuHidden(eventType, sender, args) {
     if (this._contextMenuActionCode) {
-      this.executeAction($(args.get_targetElement()), this._contextMenuActionCode, false, false);
+      let $row = $(args.get_targetElement());
+      const entityId = this.getEntityId($row);
+
+      if (entityId === 0) {
+        $row = this.getRowByEntityId(this._currentRowId);
+        if (!$row) {
+          // предлагаем переоткрыть контекстное меню, если были загружены
+          // строки с другими Id, пока меню было открыто
+          $q.alertError($l.EntityGrid.tryReopenContextMenu);
+        }
+      }
+
+      this.executeAction($row, this._contextMenuActionCode, false, false);
       this._contextMenuActionCode = '';
     }
   }
