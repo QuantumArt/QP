@@ -1,13 +1,13 @@
 /* global module */
 /* eslint-disable prefer-arrow-callback, no-empty-function, line-comment-position, object-shorthand */
+// prettier-ignore
 (function (factory) {
+  window.Quantumart = window.Quantumart || {};
+  window.Quantumart.QP8 = window.Quantumart.QP8 || {};
+  window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || factory();
   // @ts-ignore
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory();
-  } else {
-    window.Quantumart = window.Quantumart || {};
-    window.Quantumart.QP8 = window.Quantumart.QP8 || {};
-    window.Quantumart.QP8.Interaction = window.Quantumart.QP8.Interaction || factory();
+    module.exports = window.Quantumart.QP8.Interaction;
   }
 }(function () {
   // class BackendExternalMessage (сообщения для передачи в Backend)
