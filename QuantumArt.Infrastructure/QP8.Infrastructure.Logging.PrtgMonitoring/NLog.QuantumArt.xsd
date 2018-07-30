@@ -15,6 +15,7 @@
           <xs:annotation>
             <xs:documentation>Name of the target.</xs:documentation>
           </xs:annotation>
+        </xs:attribute>
           <xs:attribute name="host" type="xs:string">
             <xs:annotation>
               <xs:documentation>Monitoring service base url (protocol://host:port/).</xs:documentation>

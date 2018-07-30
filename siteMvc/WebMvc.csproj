@@ -2334,8 +2334,6 @@
     <Content Include="Views\Site\SearchInArticles.cshtml">
       <LastGenOutput>SearchInArticles.generated.cs</LastGenOutput>
     </Content>
-    <Content Include="Views\SiteFolder\Properties.cshtml">
-    </Content>
     <Content Include="Views\User\Index.cshtml">
     </Content>
     <Content Include="Views\UserGroup\Index.cshtml">

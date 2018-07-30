@@ -96,6 +96,8 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("UniqueId", NameResourceType = typeof(ArticleStrings))]
         public Guid? UniqueId { get; set; }
 
+        public string UniqueIdStr => UniqueId.HasValue ? UniqueId.ToString() : "";
+
         [LocalizedDisplayName("CancelSplit", NameResourceType = typeof(ArticleStrings))]
         public bool CancelSplit { get; set; }
 
