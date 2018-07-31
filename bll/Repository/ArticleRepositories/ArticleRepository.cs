@@ -212,17 +212,17 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false, bool excludeArchive = false)
+        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false, bool excludeArchive = false, int contentId = 0, string filter = "")
         {
             using (new QPConnectionScope())
             {
                 var result = new List<Article>().AsEnumerable();
                 if (ids != null && ids.Any())
                 {
-                    var contentId = (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First());
+                    contentId = (contentId == 0) ? (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First()) : contentId;
                     if (contentId != 0)
                     {
-                        var data = GetData(ids, contentId, excludeArchive);
+                        var data = GetData(ids, contentId, excludeArchive, filter);
                         result = InternalGetList(contentId, data, loadFieldValues, excludeArchive);
                     }
                 }
@@ -231,9 +231,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false)
+        internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false, string filter = "")
         {
-            var data = GetData(null, contentId, excludeArchive);
+            var data = GetData(null, contentId, excludeArchive, filter);
             var result = InternalGetList(contentId, data, true, excludeArchive);
             return result;
         }
@@ -392,17 +392,26 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var field = fieldId.HasValue ? FieldRepository.GetById(fieldId.Value) : null;
                 var fields = ContentRepository.GetDisplayFields(contentId, field).ToList();
                 var displayExpression = GetDisplayExpression(fields);
-
-                var orderByExpression = field != null && (field.ExactType == FieldExactTypes.M2MRelation || field.ExactType == FieldExactTypes.M2ORelation)
+                var isMany = field != null && (field.ExactType == FieldExactTypes.M2MRelation || field.ExactType == FieldExactTypes.M2ORelation);
+                var orderByExpression = isMany
                     ? GetSimpleListOrderExpression(field, fields)
                     : string.Empty;
 
                 var selection = new HashSet<int>(selectedArticleIDs ?? new int[] { });
-                if (field != null && testArticleId != 0 && articleId.HasValue && (field.ExactType == FieldExactTypes.M2MRelation || field.ExactType == FieldExactTypes.M2ORelation))
+                if (testArticleId != 0 && articleId.HasValue && isMany)
                 {
                     var testResult = field.ExactType == FieldExactTypes.M2MRelation && field.LinkId.HasValue
-                        ? Common.TestM2MValue(scope.DbConnection, field.LinkId.Value, articleId.Value, testArticleId)
-                        : Common.TestM2OValue(scope.DbConnection, field.BackRelation.ContentId, field.BackRelation.Name, articleId.Value, testArticleId);
+                        ? Common.TestM2MValue(
+                            scope.DbConnection, field.LinkId.Value, articleId.Value, testArticleId
+                        )
+                        : Common.TestM2OValue(
+                            scope.DbConnection, new Common.FieldInfo()
+                            {
+                                Id = field.BackRelation.Id,
+                                ContentId = field.BackRelation.ContentId,
+                                Name = field.BackRelation.Name
+                            }, articleId.Value, testArticleId
+                        );
 
                     if (testResult)
                     {
@@ -680,11 +689,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool excludeArchive = false)
+        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool excludeArchive = false, string filter = "")
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive, excludeArchive);
+                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive, excludeArchive, filter);
             }
         }
 
@@ -820,17 +829,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        /// <summary>
-        /// Возвращает связанные статьи (для поля M2M)
-        /// </summary>
-        /// <param name="linkId">ID связи</param>
-        /// <param name="id">ID статьи</param>
-        /// <returns>список связанных статей через запятую</returns>
-        internal static string GetLinkedItems(int linkId, int id, bool excludeArchive = false)
+        internal static Dictionary<int, string> GetLinkedItems(IEnumerable<int> linkIds, int id, bool excludeArchive = false)
         {
             using (new QPConnectionScope())
             {
-                return Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkId, id, QPContext.IsLive, excludeArchive);
+                return Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkIds, id, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -838,7 +841,16 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (new QPConnectionScope())
             {
-                return Common.GetLinkedArticlesMultiple(QPConnectionScope.Current.DbConnection, linkId, ids, QPContext.IsLive, excludeArchive);
+                var dict = Common.GetLinkedArticlesMultiple(QPConnectionScope.Current.DbConnection, new [] {linkId}, ids, QPContext.IsLive, excludeArchive)[linkId];
+                return dict.ToDictionary(n => n.Key, m => string.Join(",", m.Value));
+            }
+        }
+
+        internal static Dictionary<int, Dictionary<int, List<int>>> GetLinkedItemsMultiple(IEnumerable<int> linkIds, IEnumerable<int> ids, bool excludeArchive = false)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.GetLinkedArticlesMultiple(QPConnectionScope.Current.DbConnection, linkIds, ids, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -848,17 +860,20 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <param name="fieldId">ID базового поля связи</param>
         /// <param name="id">ID статьи</param>
         /// <returns>список связанных статей через запятую</returns>
-        internal static string GetRelatedItems(int fieldId, int? id, bool excludeArchive = false)
+        internal static Dictionary<int, string> GetRelatedItems(IEnumerable<int> fieldIds, int? id, bool excludeArchive = false)
         {
-            var backField = FieldRepository.GetById(fieldId);
-            if (backField == null)
-            {
-                return string.Empty;
-            }
+            var fiList = fieldIds.Select(FieldRepository.GetById).Select(n =>
+                new Common.FieldInfo()
+                {
+                    ContentId = n.ContentId,
+                    Name = n.Name,
+                    Id = n.Id
+                }
+            ).ToList();
 
             using (new QPConnectionScope())
             {
-                return Common.GetRelatedArticles(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, id, QPContext.IsLive, excludeArchive);
+                return Common.GetRelatedArticles(QPConnectionScope.Current.DbConnection, fiList, id, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -890,15 +905,34 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         internal static Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, IEnumerable<int> ids, bool excludeArchive = false)
         {
-            var backField = FieldRepository.GetById(fieldId);
-            if (backField == null)
+            using (new QPConnectionScope())
             {
-                return null;
+                var field = FieldRepository.GetById(fieldId);
+                var fi = new Common.FieldInfo()
+                {
+                    ContentId = field.ContentId,
+                    Name = field.Name,
+                    Id = field.Id
+                };
+                var dict = Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, new [] {fi}, ids, QPContext.IsLive, excludeArchive)[fieldId];
+                return dict.ToDictionary(n => n.Key, m => string.Join(",", m.Value));
             }
+        }
+
+        internal static Dictionary<int, Dictionary<int, List<int>>> GetRelatedItemsMultiple(IEnumerable<int> fieldIds, IEnumerable<int> ids, bool excludeArchive = false)
+        {
+            var fiList = fieldIds.Select(FieldRepository.GetById).Select(n =>
+                new Common.FieldInfo()
+                {
+                    ContentId = n.ContentId,
+                    Name = n.Name,
+                    Id = n.Id
+                }
+            ).ToList();
 
             using (new QPConnectionScope())
             {
-                return Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, backField.ContentId, backField.Name, ids, QPContext.IsLive, excludeArchive);
+                return Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, fiList, ids, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -1020,14 +1054,15 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 }
 
                 var values = article.FieldValues.Where(n => n.Field.IsClassifier).ToList();
-                if (isLive)
-                {
-                    values = article.LiveFieldValues.Where(n => n.Field.IsClassifier).ToList();
-                }
 
                 if (!values.Any())
                 {
                     return Enumerable.Empty<Article>();
+                }
+
+                if (isLive)
+                {
+                    values = article.LiveFieldValues.Where(n => n.Field.IsClassifier).ToList();
                 }
 
                 var classifierFields = values.Select(n => n.Field.Id).ToArray();

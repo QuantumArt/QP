@@ -30,8 +30,6 @@ namespace Quantumart.QP8.BLL
 
         public int[] RelatedItems => Converter.ToIdArray(Value);
 
-        public int[] CurrentRelatedItems => Converter.ToIdArray(ArticleRepository.GetRelatedItems(Field.BackRelationId.Value, Article.Id));
-
         public int[] NewUnrelatedItems { get; set; }
 
         public int[] NewRelatedItems { get; set; }
@@ -97,7 +95,8 @@ namespace Quantumart.QP8.BLL
 
                 if (Field.BackRelation.IsUnique)
                 {
-                    var unRelatedItems = Converter.ToIdArray(ArticleRepository.GetRelatedItems(Field.BackRelationId.Value, null));
+                    var backwardId = Field.BackRelation.Id;
+                    var unRelatedItems = Converter.ToIdArray(ArticleRepository.GetRelatedItems(new [] {backwardId}, null)[backwardId]);
                     var unRelatedItemsAfterUpdate = unRelatedItems.Except(NewRelatedItems).Concat(newUnrelatedItemsWithoutArchive).ToArray();
                     if (!Field.BackRelation.Constraint.IsComplex)
                     {

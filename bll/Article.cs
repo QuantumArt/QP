@@ -96,6 +96,8 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("UniqueId", NameResourceType = typeof(ArticleStrings))]
         public Guid? UniqueId { get; set; }
 
+        public string UniqueIdStr => UniqueId.HasValue ? UniqueId.ToString() : "";
+
         [LocalizedDisplayName("CancelSplit", NameResourceType = typeof(ArticleStrings))]
         public bool CancelSplit { get; set; }
 
@@ -277,31 +279,38 @@ namespace Quantumart.QP8.BLL
         [JsonIgnore]
         public List<FieldValue> LiveFieldValues
         {
-            get
-            {
-                LoadFieldValues();
-                return _liveFieldValues;
-            }
+            get => _liveFieldValues ?? LoadLiveFieldValues();
             set => _liveFieldValues = value;
+        }
+
+        internal List<FieldValue> LoadLiveFieldValues(bool excludeArchive = false)
+        {
+            if (_liveFieldValues == null)
+            {
+                var fields = FieldRepository.GetFullList(DisplayContentId);
+                if (_liveFieldValues == null)
+                {
+                    var data = ArticleRepository.GetData(Id, DisplayContentId, true, excludeArchive);
+                    _liveFieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
+                }
+            }
+            return _liveFieldValues;
         }
 
         internal List<FieldValue> LoadFieldValues(bool excludeArchive = false)
         {
-            if (_fieldValues == null || _liveFieldValues == null)
+            if (_fieldValues == null)
             {
                 var fields = FieldRepository.GetFullList(DisplayContentId);
                 if (_fieldValues == null)
                 {
-                    _fieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive), fields, this, 0, null, excludeArchive);}
-                if (_liveFieldValues == null)
-                {
-                    _liveFieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, true), fields, this, 0, null, excludeArchive);
+                    var data = ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive, excludeArchive);
+                    _fieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
+
                 }
             }
             return _fieldValues;
         }
-
-        internal List<FieldValue> GetFieldValues(bool isLive) => isLive ? LiveFieldValues : FieldValues;
 
         public ArticleViewType ViewType { get; set; } = ArticleViewType.Normal;
 
@@ -954,7 +963,24 @@ namespace Quantumart.QP8.BLL
             }
 
             var result = new List<FieldValue>();
-            foreach (var field in fields)
+
+            var fieldsArr = fields as Field[] ?? fields.ToArray();
+
+            var linkResult = new Dictionary<int, string>();
+            var backRelationsResult = new Dictionary<int, string>();
+
+
+            if (versionId == 0)
+            {
+                var linkIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToMany).Select(n => n.GetBaseField(article.Id).LinkId.Value).ToArray();
+                var backRelationIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToOne).Select(n => n.GetBaseField(article.Id).BackRelationId.Value).ToArray();
+                linkResult = ArticleRepository.GetLinkedItems(linkIds, article.Id, excludeArchive);
+                backRelationsResult = ArticleRepository.GetRelatedItems(backRelationIds, article.Id, excludeArchive);
+
+            }
+
+
+            foreach (var field in fieldsArr)
             {
                 var fullFieldName = string.IsNullOrWhiteSpace(contentPrefix) ? field.Name : $"{contentPrefix}.{field.Name}";
                 if (!data.Table.Columns.Contains(fullFieldName))
@@ -969,27 +995,22 @@ namespace Quantumart.QP8.BLL
                         if (!article.IsNew)
                         {
                             var linkId = field.GetBaseField(article.Id).LinkId;
-                            if (linkId != null)
+                            if (linkId.HasValue)
                             {
-                                objectValue = versionId != 0
-                                    ? ArticleVersionRepository.GetLinkedItems(versionId, field.Id)
-                                    : ArticleRepository.GetLinkedItems(linkId.Value, article.Id, excludeArchive);
+                                objectValue = (versionId == 0)
+                                ? linkResult[linkId.Value]
+                                : ArticleVersionRepository.GetLinkedItems(versionId, field.Id);
                             }
-                        }
-
-                        else
-                        {
-                            objectValue = string.Join(",", field.DefaultArticleIds.ToArray());
                         }
 
                         break;
                     case RelationType.ManyToOne:
                         var backRelationId = field.GetBaseField(article.Id).BackRelationId;
-                        if (backRelationId != null)
+                        if (backRelationId.HasValue)
                         {
-                            objectValue = versionId != 0
-                                ? ArticleVersionRepository.GetRelatedItems(versionId, field.Id)
-                                : ArticleRepository.GetRelatedItems(backRelationId.Value, article.Id, excludeArchive);
+                            objectValue = versionId == 0
+                                ? backRelationsResult[backRelationId.Value]
+                                : ArticleVersionRepository.GetRelatedItems(versionId, field.Id);
                         }
 
                         break;
@@ -1039,16 +1060,25 @@ namespace Quantumart.QP8.BLL
 
         internal static void LoadFieldValuesForArticles(DataTable data, IEnumerable<Field> fields, IEnumerable<Article> articles, int contentId, bool excludeArchive)
         {
-            var enumerable = articles as Article[] ?? articles.ToArray();
-            var ids = enumerable.Select(n => n.Id).ToArray();
+            var articlesArr = articles as Article[] ?? articles.ToArray();
+            var ids = articlesArr.Select(n => n.Id).ToArray();
             var itemsForRelations = new Dictionary<int, Dictionary<int, string>>();
             if (data == null)
             {
                 throw new Exception(string.Join(",", ids.ToString()));
             }
 
-            var enumerable1 = fields as Field[] ?? fields.ToArray();
-            foreach (var field in enumerable1)
+            var fieldsArr = fields as Field[] ?? fields.ToArray();
+            var linkIds = fieldsArr.Where(n => n.LinkId.HasValue).Select(n => n.LinkId.Value).ToArray();
+            var backwardIds = fieldsArr.Where(n => n.BackRelationId.HasValue).Select(n => n.BackRelationId.Value).ToArray();
+            var linkResult = linkIds.Any()
+                ? ArticleRepository.GetLinkedItemsMultiple(linkIds, ids, excludeArchive)
+                : new Dictionary<int, Dictionary<int, List<int>>>();
+            var backwardResult = backwardIds.Any()
+                ? ArticleRepository.GetRelatedItemsMultiple(backwardIds, ids, excludeArchive)
+                : new Dictionary<int, Dictionary<int, List<int>>>();
+
+            foreach (var field in fieldsArr)
             {
                 if (!data.Columns.Contains(field.Name))
                 {
@@ -1058,15 +1088,19 @@ namespace Quantumart.QP8.BLL
                 switch (field.RelationType)
                 {
                     case RelationType.ManyToMany:
-                        if (field.LinkId != null)
+                        if (field.LinkId.HasValue)
                         {
-                            itemsForRelations.Add(field.Id, ArticleRepository.GetLinkedItemsMultiple(field.LinkId.Value, ids, excludeArchive));
+                            var dict = linkResult[field.LinkId.Value];
+                            var convertedDict = dict.ToDictionary(n => n.Key, m => string.Join(",", m.Value));
+                            itemsForRelations.Add(field.Id, convertedDict);
                         }
                         break;
                     case RelationType.ManyToOne:
-                        if (field.BackRelationId != null)
+                        if (field.BackRelationId.HasValue)
                         {
-                            itemsForRelations.Add(field.Id, ArticleRepository.GetRelatedItemsMultiple(field.BackRelationId.Value, ids, excludeArchive));
+                            var dict = backwardResult[field.BackRelationId.Value];
+                            var convertedDict = dict.ToDictionary(n => n.Key, m => string.Join(",", m.Value));
+                            itemsForRelations.Add(field.Id, convertedDict);
                         }
                         break;
                 }
@@ -1076,7 +1110,7 @@ namespace Quantumart.QP8.BLL
             {
                 var result = new List<FieldValue>();
                 var id = (int)(decimal)dr["content_item_id"];
-                var article = enumerable.SingleOrDefault(n => n.Id == id);
+                var article = articlesArr.SingleOrDefault(n => n.Id == id);
 
                 if (article == null)
                 {
@@ -1090,15 +1124,15 @@ namespace Quantumart.QP8.BLL
                     article.Status = StatusTypeRepository.GetById(statusTypeId);
                 }
 
-                foreach (var field in enumerable1)
+                foreach (var field in fieldsArr)
                 {
                     object objectValue = null;
                     if (field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne)
                     {
                         var dict = itemsForRelations[field.Id];
-                        if (dict != null && dict.ContainsKey(id))
+                        if (dict != null && dict.TryGetValue(id, out var stringValue))
                         {
-                            objectValue = dict[id];
+                            objectValue = stringValue;
                         }
                     }
                     else
@@ -1436,17 +1470,21 @@ namespace Quantumart.QP8.BLL
 
         private static void RemoveAggregates(Article currentArticle, Article previousArticle)
         {
-            var liveExtensionContents = GetClassifierValues(currentArticle.LiveFieldValues);
-            var stageExtensionContents = GetClassifierValues(currentArticle.FieldValues);
-            var protectedExtensionContents = liveExtensionContents.Except(stageExtensionContents).ToArray();
+            if (currentArticle.FieldValues.Any(n => n.Field.IsClassifier))
+            {
+                var liveExtensionContents = GetClassifierValues(currentArticle.LiveFieldValues);
+                var stageExtensionContents = GetClassifierValues(currentArticle.FieldValues);
+                var protectedExtensionContents = liveExtensionContents.Except(stageExtensionContents).ToArray();
 
-            var comparer = new LambdaEqualityComparer<Article>((x, y) => x.Id == y.Id, x => x.Id);
-            var deletingAggregated = previousArticle
-                .AggregatedArticles
-                .Except(currentArticle.AggregatedArticles, comparer)
-                .Where(n => !protectedExtensionContents.Contains(n.ContentId))
-                .Select(a => a.Id).ToList();
-            ArticleRepository.MultipleDelete(deletingAggregated);
+                var comparer = new LambdaEqualityComparer<Article>((x, y) => x.Id == y.Id, x => x.Id);
+                var deletingAggregated = previousArticle
+                    .AggregatedArticles
+                    .Except(currentArticle.AggregatedArticles, comparer)
+                    .Where(n => !protectedExtensionContents.Contains(n.ContentId))
+                    .Select(a => a.Id).ToList();
+                ArticleRepository.MultipleDelete(deletingAggregated);
+            }
+
         }
 
         private void RemoveVariations()

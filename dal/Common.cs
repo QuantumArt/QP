@@ -143,31 +143,31 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isLive, bool excludeArchive = false)
+        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isLive, bool excludeArchive = false, string filter = "")
         {
             var suffix = isLive ? string.Empty : "_united";
             var sql = $"select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{contentId}{suffix} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id ";
 
-            if (ids != null || excludeArchive)
+            var conditions = new List<string>();
+
+            if (ids != null)
             {
-                var sb = new StringBuilder();
-                sb.AppendLine(" where ");
-                if (ids != null)
-                {
-                    sb.Append("c.content_item_id in (select id from @itemIds)");
-                }
+                conditions.Add("c.content_item_id in (select id from @itemIds)");
+            }
 
-                if (ids != null && excludeArchive)
-                {
-                    sb.Append(" and ");
-                }
+            if (excludeArchive)
+            {
+                conditions.Add("ci.archive = 0");
+            }
 
-                if (excludeArchive)
-                {
-                    sb.Append(" ci.archive = 0 ");
-                }
+            if (!string.IsNullOrEmpty(filter))
+            {
+                 conditions.Add(filter);
+            }
 
-                sql = sql + sb.ToString();
+            if (conditions.Any())
+            {
+                sql = sql + " where " + String.Join(" and ", conditions);
             }
 
             if (ids != null && !isLive) //optimization for list of ids
@@ -439,7 +439,7 @@ namespace Quantumart.QP8.DAL
             return withSpace ? string.Join(", ", ids) : string.Join(",", ids);
         }
 
-        private static Dictionary<int, string> IdCommaListDictionary(DataTable dt, string keyFieldName, string valueFieldName, bool withSpace = true)
+        private static Dictionary<int, string> IdCommaListDictionary(DataTable dt, string keyFieldName, string valueFieldName, bool withSpace = true, IEnumerable<int> defaultKeys = null)
         {
             var result = new Dictionary<int, List<string>>();
             var data =
@@ -459,10 +459,54 @@ namespace Quantumart.QP8.DAL
                 }
             }
 
+            if (defaultKeys != null)
+            {
+                foreach (var key in defaultKeys)
+                {
+                    if (!result.ContainsKey(key))
+                        result.Add(key, new List<string>());
+                }
+            }
+
             return result.Select(
                     n => new KeyValuePair<int, string>(n.Key, string.Join(withSpace ? ", " : ",", n.Value)))
                 .ToDictionary(n => n.Key, n => n.Value);
         }
+
+
+        private static Dictionary<int, Dictionary<int, List<int>>> GroupedLinks(
+            DataTable dt, string keyFieldName, string valueFieldName, string groupFieldName, IEnumerable<int> groupIds)
+        {
+            var result = groupIds.Select(n => new { Id = n, Dict = new Dictionary<int, List<int>>() }).ToDictionary(n => n.Id, m => m.Dict);
+
+            var data =  
+                dt.AsEnumerable()
+                    .Select(
+                        row =>
+                            new
+                            {
+                                Id = (int)(decimal)row[keyFieldName],
+                                LinkedId = (int)(decimal)row[valueFieldName],
+                                LinkId = (int)(decimal)row[groupFieldName]
+                            });
+
+            foreach (var item in data)
+            {
+                var group = result[item.LinkId];
+
+                if (!group.ContainsKey(item.Id))
+                {
+                    group.Add(item.Id, new List<int> { item.LinkedId });
+                }
+                else
+                {
+                    group[item.Id].Add(item.LinkedId);
+                }
+            }
+
+            return result;
+        }
+
 
         private static SqlParameter CreateDbParameter(FieldParameter item) => new SqlParameter
         {
@@ -471,32 +515,44 @@ namespace Quantumart.QP8.DAL
             Value = !string.IsNullOrEmpty(item.Value) ? (object)item.Value : DBNull.Value
         };
 
-        public static string GetLinkedArticles(SqlConnection connection, int linkId, int id, bool isLive, bool excludeArchive = false)
+        public static Dictionary<int, string> GetLinkedArticles(SqlConnection connection, IEnumerable<int> linkIds, int id, bool isLive, bool excludeArchive = false)
         {
-            var suffix = isLive ? string.Empty : "_united";
-            var isArchive = excludeArchive ? "join content_item ci with(nolock) on linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
-            using (
-                var cmd =
-                    SqlCommandFactory.Create(
-                        $"select linked_item_id, item_id from item_link{suffix} with(nolock) {isArchive} where item_id = @id and link_id = @lid ", connection))
+            if (!linkIds.Any())
             {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@lid", linkId);
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                return IdCommaList(dt, "linked_item_id", false);
+                return new Dictionary<int, string>();
+            }
+            else
+            {
+                var suffix = isLive ? string.Empty : "_united";
+                var isArchive = excludeArchive ? "join content_item ci with(nolock) on linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
+                using (
+                    var cmd =
+                        SqlCommandFactory.Create(
+                            $"select linked_item_id, item_id, link_id from item_link{suffix} with(nolock) {isArchive} where item_id = @id and link_id in (select id from @linkIds) ", connection))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    cmd.Parameters.Add(new SqlParameter("@linkIds", SqlDbType.Structured)
+                    {
+                        TypeName = "Ids",
+                        Value = IdsToDataTable(linkIds)
+                    });
+                    var dt = new DataTable();
+                    new SqlDataAdapter(cmd).Fill(dt);
+                    return IdCommaListDictionary(dt, "link_id", "linked_item_id", false, linkIds);
+                }
             }
         }
 
-        public static Dictionary<int, string> GetLinkedArticlesMultiple(SqlConnection connection, int linkId, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
+        public static Dictionary<int, Dictionary<int, List<int>>> GetLinkedArticlesMultiple(SqlConnection connection, IEnumerable<int> linkIds, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
-            var sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id 
-                        where link_id = @lid ";
+            var sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id 
+                        where link_id in (select id from @linkIds) ";
             if (excludeArchive)
             {
-                sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id  
-                         inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = ii.r_item_id where link_id = @lid and ci.ARCHIVE = 0";
+                sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id  
+                         inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = ii.r_item_id where link_id in (select id from @linkIds) and ci.ARCHIVE = 0";
             }
             if (!isLive)
             {
@@ -504,7 +560,7 @@ namespace Quantumart.QP8.DAL
                 sb.AppendLine(sql);
                 sb.AppendLine(" and not exists (select * from content_item_splitted cis where cis.content_item_id = ii.l_item_id) ");
                 sb.AppendLine(" union all ");
-                sb.AppendLine(" select il.linked_item_id, il.item_id from @itemIds i inner join item_link_async il with(nolock) on il.item_id = i.id where link_id = @lid");
+                sb.AppendLine(" select il.linked_item_id, il.item_id, il.link_id from @itemIds i inner join item_link_async il with(nolock) on il.item_id = i.id where link_id in (select id from @linkIds)");
                 sql = sb.ToString();
             }
             using (var cmd = SqlCommandFactory.Create(sql, connection))
@@ -514,31 +570,61 @@ namespace Quantumart.QP8.DAL
                     TypeName = "Ids",
                     Value = IdsToDataTable(ids)
                 });
-
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@lid", linkId);
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                return IdCommaListDictionary(dt, "item_id", "linked_item_id", false);
-            }
-        }
-
-        public static string GetRelatedArticles(SqlConnection connection, int contentId, string fieldName, int? id, bool isLive, bool excludeArchive = false)
-        {
-            var suffix = isLive ? string.Empty : "_united";
-            var action = id.HasValue ? " = @id" : " is null ";
-            var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
-            using (var cmd = SqlCommandFactory.Create(string.Format("select content_item_id from content_{1}{3} with(nolock) where [{0}] {2} {4}", fieldName, contentId, action, suffix, isArchive), connection))
-            {
-                cmd.Parameters.Add(new SqlParameter("@id", SqlDbType.Decimal)
+                cmd.Parameters.Add(new SqlParameter("@linkIds", SqlDbType.Structured)
                 {
-                    Value = id == null ? DBNull.Value : (object)id.Value
+                    TypeName = "Ids",
+                    Value = IdsToDataTable(linkIds)
                 });
 
                 var dt = new DataTable();
                 new SqlDataAdapter(cmd).Fill(dt);
-                return IdCommaList(dt, "content_item_id", false);
+                return GroupedLinks(dt, "item_id", "linked_item_id", "link_id", linkIds);
+            }
+        }
+
+        public class FieldInfo
+        {
+
+            public int ContentId { get; set; }
+
+            public string Name  { get; set; }
+
+            public int Id { get; set; }
+
+            public override bool Equals(object obj) => Id == ((FieldInfo)obj).Id;
+
+            public override int GetHashCode() => Id;
+        }
+
+        public static Dictionary<int, string> GetRelatedArticles(SqlConnection connection, IEnumerable<FieldInfo> fiList, int? id, bool isLive, bool excludeArchive = false)
+        {
+            if (!fiList.Any())
+            {
+                return new Dictionary<int, string>();
+            }
+            else
+            {
+                var suffix = isLive ? string.Empty : "_united";
+                var action = id.HasValue ? " = @id" : " is null ";
+                var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
+                var fieldIds = fiList.Select(n => n.Id).ToArray();
+                var strTemplates = fiList.Select(fi => string.Format(
+                    "select content_item_id, cast({5} as decimal) as field_id from content_{1}{3} with(nolock) where [{0}] {2} {4}",
+                    fi.Name, fi.ContentId, action, suffix, isArchive, fi.Id));
+
+                var sql = String.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
+
+                using (var cmd = SqlCommandFactory.Create(sql, connection))
+                {
+                    cmd.Parameters.Add(new SqlParameter("@id", SqlDbType.Decimal)
+                    {
+                        Value = id == null ? DBNull.Value : (object)id.Value
+                    });
+
+                    var dt = new DataTable();
+                    new SqlDataAdapter(cmd).Fill(dt);
+                    return IdCommaListDictionary(dt, "field_id", "content_item_id", false, fieldIds);
+                }
             }
         }
 
@@ -574,11 +660,18 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<int, string> GetRelatedArticlesMultiple(SqlConnection connection, int contentId, string fieldName, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
+        public static Dictionary<int, Dictionary<int, List<int>>> GetRelatedArticlesMultiple(SqlConnection connection, IEnumerable<FieldInfo> fiList, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
             var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
-            using (var cmd = SqlCommandFactory.Create(string.Format("select content_item_id as linked_item_id, [{0}] as item_id from content_{1}{2} with(nolock) where [{0}] in (select id from @itemIds) {3}", fieldName, contentId, suffix, isArchive), connection))
+            var fieldIds = fiList.Select(n => n.Id).ToArray();
+            var strTemplates = fiList.Select(fi => string.Format(
+                "select content_item_id as linked_item_id, [{0}] as item_id, cast({4} as decimal) as field_id from content_{1}{2} with(nolock) where [{0}] in (select id from @itemIds) {3}", 
+                fi.Name, fi.ContentId, suffix, isArchive, fi.Id
+            ));
+
+            var sql = String.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
+            using (var cmd = SqlCommandFactory.Create(sql, connection))
             {
                 cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
                 {
@@ -588,7 +681,7 @@ namespace Quantumart.QP8.DAL
 
                 var dt = new DataTable();
                 new SqlDataAdapter(cmd).Fill(dt);
-                return IdCommaListDictionary(dt, "item_id", "linked_item_id", false);
+                return GroupedLinks(dt, "item_id", "linked_item_id", "field_id", fieldIds);
             }
         }
 
@@ -5006,7 +5099,7 @@ namespace Quantumart.QP8.DAL
         public static bool TestM2MValue(SqlConnection sqlConnection, int linkId, int articleId, int testArticleId)
         {
             var result =
-                GetLinkedArticles(sqlConnection, linkId, articleId, false)
+                GetLinkedArticles(sqlConnection, new [] {linkId}, articleId, false)[linkId]
                     .Split(",".ToCharArray())
                     .Where(n => !string.IsNullOrEmpty(n))
                     .Select(int.Parse)
@@ -5015,10 +5108,10 @@ namespace Quantumart.QP8.DAL
             return result.ContainsKey(testArticleId);
         }
 
-        public static bool TestM2OValue(SqlConnection sqlConnection, int contentId, string fieldName, int articleId, int testArticleId)
+        public static bool TestM2OValue(SqlConnection sqlConnection, FieldInfo fi, int articleId, int testArticleId)
         {
             var result =
-                GetRelatedArticles(sqlConnection, contentId, fieldName, articleId, false)
+                GetRelatedArticles(sqlConnection, new [] {fi}, articleId, false)[fi.Id]
                     .Split(",".ToCharArray())
                     .Where(n => !string.IsNullOrEmpty(n))
                     .Select(int.Parse)
