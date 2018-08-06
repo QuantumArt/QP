@@ -129,8 +129,8 @@ export class BackendSettingsPopupWindow extends BackendSelectPopupWindow {
       $q.captureUserInput(popupWindowElement, false);
     }
 
-    const data = (response && response.data) || response;
-    if (data) {
+    if (response && (typeof response === 'string' || response.data)) {
+      const data = response.data || response;
       $(`#${this._popupWindowComponent.get_documentWrapperElementId()}`).html(data);
     } else {
       this._popupWindowComponent.closeWindow();
