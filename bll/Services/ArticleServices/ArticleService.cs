@@ -87,6 +87,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
                 article.AutoLock();
             }
 
+            article.LoadCollaborativePublishedArticle(article.Id);
             article.LoadLockedByUser();
             return article;
         }

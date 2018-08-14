@@ -10244,5 +10244,28 @@ namespace Quantumart.QP8.DAL
                 return Convert.ToBoolean(cmd.ExecuteScalar());
             }
         }
+
+        public static int GetArticleIdForCollaborativePublication(SqlConnection connection, int childId)
+        {
+            var sql = @"SELECT id FROM child_delays WHERE child_id = @childId";          
+            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@childId", childId);
+                var result = cmd.ExecuteScalar();
+                return result == null ? 0 : (int)(decimal)result;
+            }
+        }
+
+        public static void ClearChildDelaysForChild(SqlConnection connection, int childId)
+        {
+            var sql = @"DELETE FROM child_delays WHERE child_id = @childId";
+            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@childId", childId);
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

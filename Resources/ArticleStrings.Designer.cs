@@ -277,6 +277,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Collaborative Publication with.
+        /// </summary>
+        public static string CollaborativePublication {
+            get {
+                return ResourceManager.GetString("CollaborativePublication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Comments.
         /// </summary>
         public static string Comments {

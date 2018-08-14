@@ -615,4 +615,7 @@
   <data name="SearchBlock_StartBeginningCheckBoxLabelText" xml:space="preserve">
     <value>Поиск от начала строки</value>
   </data>
+  <data name="CollaborativePublication" xml:space="preserve">
+    <value>Совместная публикация с</value>
+  </data>
 </root>
