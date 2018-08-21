@@ -157,7 +157,7 @@ namespace Quantumart.QP8.DAL
 
             if (excludeArchive)
             {
-                conditions.Add("ci.archive = 0");
+                conditions.Add("c.archive = 0");
             }
 
             if (!string.IsNullOrEmpty(filter))
