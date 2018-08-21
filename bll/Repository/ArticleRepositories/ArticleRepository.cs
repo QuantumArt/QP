@@ -222,8 +222,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     contentId = (contentId == 0) ? (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First()) : contentId;
                     if (contentId != 0)
                     {
-                        var data = GetData(ids, contentId, excludeArchive, filter);
-                        result = InternalGetList(contentId, data, loadFieldValues, excludeArchive);
+                        var content = ContentRepository.GetById(contentId);
+                        var data = GetData(ids, contentId, content.IsVirtual, excludeArchive, filter);
+                        result = InternalGetList(content, data, loadFieldValues, excludeArchive);
                     }
                 }
 
@@ -233,21 +234,22 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false, string filter = "")
         {
-            var data = GetData(null, contentId, excludeArchive, filter);
-            var result = InternalGetList(contentId, data, true, excludeArchive);
+            var content = ContentRepository.GetById(contentId);
+            var data = GetData(null, contentId, content.IsVirtual, excludeArchive, filter);
+            var result = InternalGetList(content, data, true, excludeArchive);
             return result;
         }
 
-        private static IEnumerable<Article> InternalGetList(int contentId, DataTable data, bool loadFieldValues, bool excludeArchive = false)
+        private static IEnumerable<Article> InternalGetList(Content content, DataTable data, bool loadFieldValues, bool excludeArchive = false)
         {
             IEnumerable<Article> result = new List<Article>();
             if (data != null)
             {
-                var content = ContentRepository.GetById(contentId);
+
                 bool ArchiveFilter(Article n) => (!excludeArchive) || !n.Archived;
                 result = data.AsEnumerable().Select(n => new Article
                 {
-                    ContentId = contentId,
+                    ContentId = content.Id,
                     Content = content,
                     Id = Converter.ToInt32(n["content_item_id"]),
                     Splitted = (bool)n["splitted"],
@@ -278,8 +280,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
                 if (loadFieldValues)
                 {
-                    var fields = FieldRepository.GetFullList(contentId);
-                    Article.LoadFieldValuesForArticles(data, fields, result, contentId, excludeArchive);
+                    var fields = FieldRepository.GetFullList(content.Id);
+                    Article.LoadFieldValuesForArticles(data, fields, result, content.Id, excludeArchive);
                 }
             }
 
@@ -689,11 +691,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool excludeArchive = false, string filter = "")
+        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool isVirtual, bool excludeArchive = false, string filter = "")
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive, excludeArchive, filter);
+                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, isVirtual, QPContext.IsLive, excludeArchive, filter);
             }
         }
 
