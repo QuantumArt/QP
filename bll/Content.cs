@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -657,7 +658,9 @@ namespace Quantumart.QP8.BLL
                 }
                 catch (Exception exp)
                 {
-                    errors.ErrorFor(f => f.XamlValidation, $"{ContentStrings.XamlValidation}: {exp.Message}");
+                    var message = exp.InnerException != null ? exp.InnerException.Message : exp.Message;
+                    errors.ErrorFor(f => f.XamlValidation, $"{ContentStrings.XamlValidation}: {message}");
+                    Logger.Log.Info($"Testing XAML valdator for content {Id} failed", exp);
                 }
             }
         }
