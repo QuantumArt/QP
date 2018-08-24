@@ -1,5 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
     <Authors>Alex Kostyukov</Authors>
@@ -18,7 +17,6 @@
     <RootNamespace>QP8.WebMvc.NUnit.Tests</RootNamespace>
     <DebugType>Full</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.0.0-rc1" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.0.0-rc1" />
@@ -27,15 +25,13 @@
     <PackageReference Include="Moq" Version="4.7.142" />
     <PackageReference Include="NUnit" Version="3.8.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
-    <PackageReference Include="QA.Validation.Xaml" Version="1.1.0" />
+    <PackageReference Include="QA.Validation.Xaml" Version="1.2.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\bll\BLL.csproj" />
     <ProjectReference Include="..\..\constants\Constants.csproj" />
     <ProjectReference Include="..\..\utils\Utils.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="System.Xaml" />
   </ItemGroup>
