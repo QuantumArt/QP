@@ -17,8 +17,8 @@
       <dependency id="QP8.Infrastructure.Logging.PrtgMonitoring" version="2.0.1-rc1" />
       <dependency id="Quantumart" version="3.0.0" />
       <dependency id="QA.Configuration" version="1.0.2" />
-      <dependency id="QA.Validation.Xaml" version="1.1.0" />
-      <dependency id="QA.Validation.Xaml.Extensions" version="1.1.0" />
+      <dependency id="QA.Validation.Xaml" version="1.2.1" />
+      <dependency id="QA.Validation.Xaml.Extensions" version="1.2.0" />
       <dependency id="AutoMapper" version="1.1.2" />
       <dependency id="Unity" version="5.0.2" />
       <dependency id="EnterpriseLibrary.Common" version="6.0.1304.0" />
