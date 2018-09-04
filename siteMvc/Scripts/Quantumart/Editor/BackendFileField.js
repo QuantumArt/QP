@@ -163,13 +163,11 @@ export class BackendFileField {
   }
 
   updateUploader(value, updateSubFolder = false, resetSubFolder = false) {
-    if (updateSubFolder)
-    {
-      let newValue = (!value) ? '' : '\\' + value;
-      newValue = (resetSubFolder) ? '' : newValue;
-      let newSubFolder = this._initSubFolder + newValue;
-      if (newSubFolder !== this._subFolder)
-      {
+    if (updateSubFolder) {
+      let newValue = value ? `\\${value}` : '';
+      newValue = resetSubFolder ? '' : newValue;
+      const newSubFolder = this._initSubFolder + newValue;
+      if (newSubFolder !== this._subFolder) {
         this._destroyLibrary();
       }
       this._subFolder = newSubFolder;
