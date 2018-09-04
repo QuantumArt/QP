@@ -54,6 +54,7 @@ export class BackendFileField {
 
       if (options.subFolder) {
         this._subFolder = options.subFolder;
+        this._initSubFolder = this._subFolder;
       }
 
       if (options.uploaderType) {
@@ -83,6 +84,7 @@ export class BackendFileField {
   _isImage = false;
   _isVersion = false;
   _subFolder = '';
+  _initSubFolder = '';
   _useSiteLibrary = false;
   _libraryEntityId = 0;
   _libraryParentEntityId = 0;
@@ -160,7 +162,17 @@ export class BackendFileField {
     this._isImage = value;
   }
 
-  updateUploader(value) {
+  updateUploader(value, updateSubFolder = false, resetSubFolder = false) {
+    if (updateSubFolder) {
+      let newValue = value ? `\\${value}` : '';
+      newValue = resetSubFolder ? '' : newValue;
+      const newSubFolder = this._initSubFolder + newValue;
+      if (newSubFolder !== this._subFolder) {
+        this._destroyLibrary();
+      }
+      this._subFolder = newSubFolder;
+    }
+
     this._uploaderSubFolder = value;
     const $fileField = $(this._fileFieldElement);
 
