@@ -145,6 +145,31 @@ export declare class OpenSelectWindowOptions {
   options?: any;
 }
 
+/**
+ * Скачать файл, содержащийся в поле статьи
+ * @param downloadFileOptions
+ * @param hostUID Уникальный идентификатор текущей вкладки ГПИ.
+ * Генерируется бекэндом, передаётся в пользовательское действие в виде одноимённого параметра `QueryString`.
+ * @param destination Окно, содержащее основное приложение бекэнда.
+ * Обычно нужно передавать window.parent.
+ */
+export declare function downloadFile(
+  downloadFileOptions: DownloadFileOptions,
+  hostUID: string,
+  destination: Window
+): void;
+
+
+/** Параметры скачивания файла */
+export declare class DownloadFileOptions {
+  /** Идентификатор сущности */
+  entityId: number;
+  /** Идентификатор поля */
+  fieldId: number;
+  /** Имя файла */
+  fileName: string;
+}
+
 /** Observer сообщений от хоста */
 export declare class BackendEventObserver {
   /**
@@ -185,6 +210,7 @@ export declare const ExternalMessageTypes: {
   CloseBackendHost: 2;
   OpenSelectWindow: 3;
   CheckHost: 4;
+  DownloadFile: 5;
 };
 
 /** Типы событий backend'а */
@@ -206,6 +232,7 @@ declare var Quantumart: {
       closeBackendHost: typeof closeBackendHost;
       executeBackendAction: typeof executeBackendAction;
       openSelectWindow: typeof openSelectWindow;
+      downloadFile: typeof downloadFile;
       ExecuteActionOptions: typeof ExecuteActionOptions;
       ArticleFormState: typeof ArticleFormState;
       OpenSelectWindowOptions: typeof OpenSelectWindowOptions;

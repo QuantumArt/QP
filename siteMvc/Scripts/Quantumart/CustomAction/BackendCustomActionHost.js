@@ -1,6 +1,7 @@
 import { BackendEventArgs } from '../Common/BackendEventArgs';
 import { BackendSelectPopupWindow } from '../List/BackendSelectPopupWindow';
 import { Observable } from '../Common/Observable';
+import { BackendLibrary } from '../Library/BackendLibrary';
 import { $a, BackendActionParameters } from '../BackendActionExecutor';
 import { $c } from '../ControlHelpers';
 import { $o } from '../Info/BackendEntityObject';
@@ -44,6 +45,9 @@ export class BackendCustomActionHost extends Observable {
       successCallback(0);
     } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.CheckHost) {
       successCallback(this._onCheckHostMessageReceived(message));
+    } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.DownloadFile) {
+      this._onDownloadFileMessageReceived(message);
+      successCallback(0);
     }
   }
 
@@ -95,6 +99,21 @@ export class BackendCustomActionHost extends Observable {
     eventArgs.set_additionalData(message.data.options);
     eventArgs.set_startedByExternal(true);
     this.notify(window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, eventArgs);
+  }
+
+  _onDownloadFileMessageReceived(message) {
+    const { entityId, fieldId, fileName } = message.data;
+    if ($q.isNullOrWhiteSpace(fileName)) {
+      return;
+    }
+    const urlParams = {
+      id: `field_${fieldId}`,
+      fileName: encodeURIComponent(fileName),
+      isVersion: false,
+      entityId
+    };
+    const url = BackendLibrary.generateActionUrl('TestFieldValueDownload', urlParams);
+    $c.downloadFileWithChecking(url, fileName);
   }
 
   _onOpenSelectWindowMessageReceived(message) {

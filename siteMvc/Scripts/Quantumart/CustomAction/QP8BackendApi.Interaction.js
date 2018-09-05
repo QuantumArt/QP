@@ -1,6 +1,8 @@
 /* global module */
-/* eslint-disable prefer-arrow-callback, no-empty-function, line-comment-position, object-shorthand */
+/* eslint-disable prefer-arrow-callback, no-empty-function, line-comment-position, object-shorthand, no-warning-comments */
 // prettier-ignore
+// TODO: up version for NuGet
+// TODO: copy to QP8.TestCustomActionsHost
 (function (factory) {
   window.Quantumart = window.Quantumart || {};
   window.Quantumart.QP8 = window.Quantumart.QP8 || {};
@@ -23,7 +25,8 @@
     ExecuteAction: 1,
     CloseBackendHost: 2,
     OpenSelectWindow: 3,
-    CheckHost: 4
+    CheckHost: 4,
+    DownloadFile: 5
   };
 
   // class ExecuteActionOptions (Парамеры сообщения на выполнение BackendAction)
@@ -74,6 +77,15 @@
     selectWindowUID: null, // ID для идентификации окна со списком
     callerCallback: '',
     options: null
+  };
+
+  // class DownloadFileOptions (Параметры скачивания файла)
+  const DownloadFileOptions = function () { };
+
+  DownloadFileOptions.prototype = {
+    entityId: 0,
+    fieldId: 0,
+    fileName: ''
   };
 
   // class BackendEventObserver (Observer сообщений от хоста)
@@ -178,6 +190,19 @@
             callback({ success: false, error: args.description });
           }
         }
+      });
+    },
+
+    // Скачать файл
+    downloadFile: function (downloadFileOptions, hostUID, destination) {
+      const message = new BackendExternalMessage();
+      message.type = BackendExternalMessage.Types.DownloadFile;
+      message.hostUID = hostUID;
+      message.data = downloadFileOptions;
+      pmrpc.call({
+        destination: destination,
+        publicProcedureName: message.hostUID,
+        params: [message]
       });
     }
   };
