@@ -26,7 +26,8 @@
     CloseBackendHost: 2,
     OpenSelectWindow: 3,
     CheckHost: 4,
-    DownloadFile: 5
+    PreviewImage: 5,
+    DownloadFile: 6
   };
 
   // class ExecuteActionOptions (Парамеры сообщения на выполнение BackendAction)
@@ -83,6 +84,15 @@
   const DownloadFileOptions = function () { };
 
   DownloadFileOptions.prototype = {
+    entityId: 0,
+    fieldId: 0,
+    fileName: ''
+  };
+
+  // class PreviewImageOptions (Параметры просмотра изображения)
+  const PreviewImageOptions = function () { };
+
+  PreviewImageOptions.prototype = {
     entityId: 0,
     fieldId: 0,
     fileName: ''
@@ -190,6 +200,19 @@
             callback({ success: false, error: args.description });
           }
         }
+      });
+    },
+
+    // Посмотреть изображение
+    previewImage: function (previewImageOptions, hostUID, destination) {
+      const message = new BackendExternalMessage();
+      message.type = BackendExternalMessage.Types.PreviewImage;
+      message.hostUID = hostUID;
+      message.data = previewImageOptions;
+      pmrpc.call({
+        destination: destination,
+        publicProcedureName: message.hostUID,
+        params: [message]
       });
     },
 

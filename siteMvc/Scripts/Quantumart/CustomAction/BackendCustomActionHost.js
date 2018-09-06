@@ -11,6 +11,8 @@ import './QP8BackendApi.Interaction';
 window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING = 'OnExternalActionExecuting';
 
 export class BackendCustomActionHost extends Observable {
+  _previewWindowComponent = null;
+
   constructor(hostId, options, manager) {
     super();
 
@@ -18,10 +20,6 @@ export class BackendCustomActionHost extends Observable {
     this._options = options;
     this._manager = manager;
   }
-
-  _options = null;
-  _hostId = '';
-  _manager = null;
 
   initialize() {
     pmrpc.register({
@@ -45,6 +43,9 @@ export class BackendCustomActionHost extends Observable {
       successCallback(0);
     } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.CheckHost) {
       successCallback(this._onCheckHostMessageReceived(message));
+    } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.PreviewImage) {
+      this._onPreviewImageMessageReceived(message);
+      successCallback(0);
     } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.DownloadFile) {
       this._onDownloadFileMessageReceived(message);
       successCallback(0);
@@ -99,6 +100,22 @@ export class BackendCustomActionHost extends Observable {
     eventArgs.set_additionalData(message.data.options);
     eventArgs.set_startedByExternal(true);
     this.notify(window.EVENT_TYPE_EXTERNAL_ACTION_EXECUTING, eventArgs);
+  }
+
+  _onPreviewImageMessageReceived(message) {
+    const { entityId, fieldId, fileName } = message.data;
+    if ($q.isNullOrWhiteSpace(fileName)) {
+      return;
+    }
+    $c.destroyPopupWindow(this._previewWindowComponent);
+    const urlParams = {
+      id: `field_${fieldId}`,
+      fileName: encodeURIComponent(fileName),
+      isVersion: false,
+      entityId
+    };
+    const testUrl = BackendLibrary.generateActionUrl('GetImageProperties', urlParams);
+    this._previewWindowComponent = $c.preview(testUrl);
   }
 
   _onDownloadFileMessageReceived(message) {

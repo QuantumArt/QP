@@ -142,11 +142,37 @@ export declare class OpenSelectWindowOptions {
   selectWindowUID?: string;
   /** Ссылка на метод-обработчик в веб-приложении. Обычно определяется через `BackendEventObserver` */
   callerCallback?: string;
+  /** Дополнительные опции */
   options?: {
     [key: string]: any;
     /** SQL для фильтрации списка статей (обычно используется Field.RelationCondition) */
     filter?: string;
   };
+}
+
+/**
+ * Предпросмотр изображения, содержащегося в поле статьи
+ * @param previewImageOptions
+ * @param hostUID Уникальный идентификатор текущей вкладки ГПИ.
+ * Генерируется бекэндом, передаётся в пользовательское действие в виде одноимённого параметра `QueryString`.
+ * @param destination Окно, содержащее основное приложение бекэнда.
+ * Обычно нужно передавать window.parent.
+ */
+export declare function previewImage(
+  previewImageOptions: PreviewImageOptions,
+  hostUID: string,
+  destination: Window
+): void;
+
+
+/** Параметры просмотра изображения */
+export declare class PreviewImageOptions {
+  /** Идентификатор сущности */
+  entityId: number;
+  /** Идентификатор поля */
+  fieldId: number;
+  /** Имя файла */
+  fileName: string;
 }
 
 /**
@@ -214,7 +240,8 @@ export declare const ExternalMessageTypes: {
   CloseBackendHost: 2;
   OpenSelectWindow: 3;
   CheckHost: 4;
-  DownloadFile: 5;
+  PreviewImage: 5;
+  DownloadFile: 6;
 };
 
 /** Типы событий backend'а */
@@ -236,6 +263,7 @@ declare var Quantumart: {
       closeBackendHost: typeof closeBackendHost;
       executeBackendAction: typeof executeBackendAction;
       openSelectWindow: typeof openSelectWindow;
+      previewImage: typeof previewImage;
       downloadFile: typeof downloadFile;
       ExecuteActionOptions: typeof ExecuteActionOptions;
       ArticleFormState: typeof ArticleFormState;
