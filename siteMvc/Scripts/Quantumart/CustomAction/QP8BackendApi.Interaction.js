@@ -1,8 +1,6 @@
 /* global module */
-/* eslint-disable prefer-arrow-callback, no-empty-function, line-comment-position, object-shorthand, no-warning-comments */
+/* eslint-disable prefer-arrow-callback, no-empty-function, line-comment-position, object-shorthand */
 // prettier-ignore
-// TODO: up version for NuGet
-// TODO: copy to QP8.TestCustomActionsHost
 (function (factory) {
   window.Quantumart = window.Quantumart || {};
   window.Quantumart.QP8 = window.Quantumart.QP8 || {};
@@ -27,7 +25,8 @@
     OpenSelectWindow: 3,
     CheckHost: 4,
     PreviewImage: 5,
-    DownloadFile: 6
+    DownloadFile: 6,
+    OpenFileLibrary: 7
   };
 
   // class ExecuteActionOptions (Парамеры сообщения на выполнение BackendAction)
@@ -66,7 +65,7 @@
     value: null // значение (зависит от типа)
   };
 
-  // class OpenSelectWindowOtions (Парамеры сообщения на открытие окна выбора из списка)
+  // class OpenSelectWindowOtions (Параметры сообщения на открытие окна выбора из списка)
   const OpenSelectWindowOptions = function () { };
 
   OpenSelectWindowOptions.prototype = {
@@ -98,6 +97,19 @@
     fileName: ''
   };
 
+  // class OpenFileLibraryOptions (Параметры сообщения на открытие окна библиотеки файлов)
+  const OpenFileLibraryOptions = function () { };
+
+  OpenFileLibraryOptions.prototype = {
+    isImage: false,
+    useSiteLibrary: false,
+    subFolder: '',
+    libraryEntityId: 0,
+    libraryParentEntityId: 0,
+    selectWindowUID: null, // ID для идентификации окна со списком
+    callerCallback: ''
+  };
+
   // class BackendEventObserver (Observer сообщений от хоста)
   const BackendEventObserver = function (callbackProcName, callback) {
     this.callbackProcName = callbackProcName;
@@ -121,7 +133,8 @@
     HostUnbinded: 1,
     ActionExecuted: 2,
     EntitiesSelected: 3,
-    SelectWindowClosed: 4
+    SelectWindowClosed: 4,
+    FileSelected: 5
   };
 
   BackendEventObserver.HostUnbindingReason = {
@@ -222,6 +235,19 @@
       message.type = BackendExternalMessage.Types.DownloadFile;
       message.hostUID = hostUID;
       message.data = downloadFileOptions;
+      pmrpc.call({
+        destination: destination,
+        publicProcedureName: message.hostUID,
+        params: [message]
+      });
+    },
+
+    // Открытие всплывающего окна библиотеки файлов
+    openFileLibrary: function (openFileLibraryOptions, hostUID, destination) {
+      const message = new BackendExternalMessage();
+      message.type = BackendExternalMessage.Types.OpenFileLibrary;
+      message.hostUID = hostUID;
+      message.data = openFileLibraryOptions;
       pmrpc.call({
         destination: destination,
         publicProcedureName: message.hostUID,

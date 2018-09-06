@@ -49,6 +49,9 @@ export class BackendCustomActionHost extends Observable {
     } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.DownloadFile) {
       this._onDownloadFileMessageReceived(message);
       successCallback(0);
+    } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.OpenFileLibrary) {
+      this._onOpenFileLibraryMessageReceived(message);
+      successCallback(0);
     }
   }
 
@@ -133,6 +136,57 @@ export class BackendCustomActionHost extends Observable {
     $c.downloadFileWithChecking(url, fileName);
   }
 
+  _onOpenFileLibraryMessageReceived(message) {
+    const eventArgs = new BackendEventArgs();
+    eventArgs.set_entityId(message.data.libraryEntityId);
+    eventArgs.set_parentEntityId(message.data.libraryParentEntityId);
+    eventArgs.set_entityTypeCode(
+      message.data.useSiteLibrary ? window.ENTITY_TYPE_CODE_SITE : window.ENTITY_TYPE_CODE_CONTENT
+    );
+    eventArgs.set_actionCode(
+      message.data.useSiteLibrary ? window.ACTION_CODE_POPUP_SITE_LIBRARY : window.ACTION_CODE_POPUP_CONTENT_LIBRARY
+    );
+
+    const options = {
+      isMultiOpen: false,
+      additionalUrlParameters: {
+        filterFileTypeId: message.data.isImage ? Quantumart.QP8.Enums.LibraryFileType.Image : '',
+        subFolder: message.data.subFolder,
+        allowUpload: true
+      }
+    };
+
+    /** @type {BackendSelectPopupWindow & { callerCallback?: string, selectWindowUID?: string }} */
+    const selectPopupWindowComponent = new BackendSelectPopupWindow(eventArgs, options);
+    selectPopupWindowComponent.callerCallback = message.data.callerCallback;
+    selectPopupWindowComponent.selectWindowUID = message.data.selectWindowUID;
+    selectPopupWindowComponent.attachObserver(
+      window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, (_eventType, sender, args) => {
+        if (args) {
+          const { entities } = args;
+          if (entities.length > 0) {
+            let url = args.context;
+            if (url === '\\') {
+              url = '';
+            }
+            url = url.replace(`${message.data.subFolder || ''}\\`, '').replace(/\\/g, '/');
+            this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.FileSelected, {
+              filePath: url + entities[0].Name,
+              callerCallback: sender.callerCallback
+            });
+          }
+        }
+        this._destroySelectPopupWindow(sender);
+      }
+    );
+    selectPopupWindowComponent.attachObserver(
+      window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, (_eventType, sender) => {
+        this._destroySelectPopupWindow(sender);
+      }
+    );
+    selectPopupWindowComponent.openWindow();
+  }
+
   _onOpenSelectWindowMessageReceived(message) {
     const eventArgs = new BackendEventArgs();
     eventArgs.set_isMultipleEntities(message.data.isMultiple);
@@ -149,10 +203,9 @@ export class BackendCustomActionHost extends Observable {
       }
     }
 
+    /** @type {BackendSelectPopupWindow & { callerCallback?: string, selectWindowUID?: string }} */
     const selectPopupWindowComponent = new BackendSelectPopupWindow(eventArgs, message.data.options);
-    // @ts-ignore FIXME
     selectPopupWindowComponent.callerCallback = message.data.callerCallback;
-    // @ts-ignore FIXME
     selectPopupWindowComponent.selectWindowUID = message.data.selectWindowUID;
     selectPopupWindowComponent.attachObserver(
       window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED,

@@ -150,6 +150,39 @@ export declare class OpenSelectWindowOptions {
   };
 }
 
+
+/**
+ * Открытие всплывающего окна библиотеки файлов с последующим возвратом результата выбора в веб-приложение.
+ * @param openFileLibraryOptions
+ * @param hostUID Уникальный идентификатор текущей вкладки ГПИ.
+ * Генерируется бекэндом, передаётся в пользовательское действие в виде одноимённого параметра `QueryString`.
+ * @param destination Окно, содержащее основное приложение бекэнда.
+ * Обычно нужно передавать window.parent.
+ */
+export declare function openFileLibrary(
+  openFileLibraryOptions: OpenFileLibraryOptions,
+  hostUID: string,
+  destination: Window
+): void;
+
+/** Параметры сообщения на открытие окна библиотеки файлов */
+export declare class OpenFileLibraryOptions {
+  /** Фильтровать по типу файла: только изображения @default false */
+  isImage?: boolean;
+  /** Использовать библиотеку сайта или библиотеку контента @default false */
+  useSiteLibrary?: boolean;
+  /** Подкаталой в каталоге библтотеки */
+  subFolder?: string;
+  /** Id контента (для библиотеки контента) или Id сайта (для библиотеки сайта) */
+  libraryEntityId: number;
+  /** Id сайта (для библиотеки контента) или 0 (для библиотеки сайта) */
+  libraryParentEntityId: number;
+  /** ID для идентификации окна со списком. Задаётся веб-приложением */
+  selectWindowUID?: string;
+  /** Ссылка на метод-обработчик в веб-приложении. Обычно определяется через `BackendEventObserver` */
+  callerCallback?: string;
+}
+
 /**
  * Предпросмотр изображения, содержащегося в поле статьи
  * @param previewImageOptions
@@ -216,6 +249,8 @@ export declare class BackendEventObserver {
         selectWindowUID?: string;
         /** массив идентификаторов выбранных сущностей */
         selectedEntityIDs?: number[];
+        /** имя выбранного файла */
+        filePath?: string;
       }
     ) => void
   );
@@ -242,6 +277,7 @@ export declare const ExternalMessageTypes: {
   CheckHost: 4;
   PreviewImage: 5;
   DownloadFile: 6;
+  OpenFileLibrary: 7;
 };
 
 /** Типы событий backend'а */
@@ -254,6 +290,8 @@ export declare const BackendEventTypes: {
   EntitiesSelected: 3;
   /** окно выбора было закрыто */
   SelectWindowClosed: 4;
+  /** файл был выбран */
+  FileSelected: 5;
 };
 
 declare var Quantumart: {
@@ -265,6 +303,7 @@ declare var Quantumart: {
       openSelectWindow: typeof openSelectWindow;
       previewImage: typeof previewImage;
       downloadFile: typeof downloadFile;
+      openFileLibrary: typeof openFileLibrary;
       ExecuteActionOptions: typeof ExecuteActionOptions;
       ArticleFormState: typeof ArticleFormState;
       OpenSelectWindowOptions: typeof OpenSelectWindowOptions;
