@@ -142,7 +142,11 @@ export declare class OpenSelectWindowOptions {
   selectWindowUID?: string;
   /** Ссылка на метод-обработчик в веб-приложении. Обычно определяется через `BackendEventObserver` */
   callerCallback?: string;
-  options?: any;
+  options?: {
+    [key: string]: any;
+    /** SQL для фильтрации списка статей (обычно используется Field.RelationCondition) */
+    filter?: string;
+  };
 }
 
 /**
