@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -223,6 +224,7 @@ namespace Quantumart.QP8.BLL
         private ContentWorkflowBind _workflowBinding;
         private IEnumerable<ContentConstraint> _constraints;
         private readonly Lazy<IEnumerable<Content>> _aggregatedContents;
+        private readonly InitPropertyValue<Content> _baseAggregationContent;
         private readonly InitPropertyValue<Field> _treeField;
         private readonly InitPropertyValue<Field> _variationField;
         private readonly InitPropertyValue<IEnumerable<int>> _unionContentIDs;
@@ -268,6 +270,7 @@ namespace Quantumart.QP8.BLL
             _unionContentIDs = new InitPropertyValue<IEnumerable<int>>(() => VirtualContentRepository.GetUnionSourceContents(Id));
             _virtualSubContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetVirtualSubContents(Id));
             _userQueryContentViewSchema = new Lazy<IEnumerable<UserQueryColumn>>(GetUserQueryContentViewSchema);
+            _baseAggregationContent = new InitPropertyValue<Content>(() => ContentRepository.GetBaseAggregationContent((Id)));
             _aggregatedContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetAggregatedContents(Id));
             _parentContent = new InitPropertyValue<Content>(() => ParentContentId.HasValue ? ContentRepository.GetById(ParentContentId.Value) : null);
             _childContents = new InitPropertyValue<IEnumerable<Content>>(() => ContentRepository.GetChildList(Id));
@@ -460,6 +463,8 @@ namespace Quantumart.QP8.BLL
             get { return Fields.Any(f => f.Aggregated); }
         }
 
+        public Content BaseAggregationContent => _baseAggregationContent.Value;
+
         public IEnumerable<Content> AggregatedContents => _aggregatedContents.Value;
 
         public Field TreeField => _treeField.Value;
@@ -648,16 +653,27 @@ namespace Quantumart.QP8.BLL
             if (!DisableXamlValidation && !CreateDefaultXamlValidation && !string.IsNullOrWhiteSpace(XamlValidation))
             {
                 var data = Fields.ToDictionary(f => f.FormName, f => string.Empty);
+                string baseXamlValidation = null;
+                if (BaseAggregationContent != null)
+                {
+                    baseXamlValidation = BaseAggregationContent.XamlValidation;
+                    var baseData = BaseAggregationContent.Fields.ToDictionary(f => f.FormName, f => string.Empty);
+                    baseData.ToList().ForEach(x => data[x.Key] = x.Value);
+
+                }
+
                 data[FieldName.ContentItemId] = string.Empty;
                 data[FieldName.StatusTypeId] = string.Empty;
 
                 try
                 {
-                    ValidationServices.TestValidator(data, XamlValidation, Site.XamlDictionaries);
+                    ValidationServices.TestValidator(data, XamlValidation, Site.XamlDictionaries, baseXamlValidation);
                 }
                 catch (Exception exp)
                 {
-                    errors.ErrorFor(f => f.XamlValidation, $"{ContentStrings.XamlValidation}: {exp.Message}");
+                    var message = exp.InnerException != null ? exp.InnerException.Message : exp.Message;
+                    errors.ErrorFor(f => f.XamlValidation, $"{ContentStrings.XamlValidation}: {message}");
+                    Logger.Log.Info($"Testing XAML validator for content {Id} failed", exp);
                 }
             }
         }

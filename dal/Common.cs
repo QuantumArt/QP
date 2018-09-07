@@ -143,7 +143,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isLive, bool excludeArchive = false, string filter = "")
+        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "")
         {
             var suffix = isLive ? string.Empty : "_united";
             var sql = $"select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{contentId}{suffix} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id ";
@@ -157,7 +157,7 @@ namespace Quantumart.QP8.DAL
 
             if (excludeArchive)
             {
-                conditions.Add("ci.archive = 0");
+                conditions.Add("c.archive = 0");
             }
 
             if (!string.IsNullOrEmpty(filter))
@@ -170,7 +170,7 @@ namespace Quantumart.QP8.DAL
                 sql = sql + " where " + String.Join(" and ", conditions);
             }
 
-            if (ids != null && !isLive) //optimization for list of ids
+            if (ids != null && !isLive && !isVirtual) //optimization for list of ids
             {
                 const string baseSql = "select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{0}{1} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id where c.content_item_id in (select id from @itemIds) and {2} {3}";
                 var sb = new StringBuilder();
@@ -479,7 +479,7 @@ namespace Quantumart.QP8.DAL
         {
             var result = groupIds.Select(n => new { Id = n, Dict = new Dictionary<int, List<int>>() }).ToDictionary(n => n.Id, m => m.Dict);
 
-            var data =  
+            var data =
                 dt.AsEnumerable()
                     .Select(
                         row =>
@@ -547,11 +547,11 @@ namespace Quantumart.QP8.DAL
 
         public static Dictionary<int, Dictionary<int, List<int>>> GetLinkedArticlesMultiple(SqlConnection connection, IEnumerable<int> linkIds, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
-            var sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id 
+            var sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id
                         where link_id in (select id from @linkIds) ";
             if (excludeArchive)
             {
-                sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id  
+                sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id
                          inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = ii.r_item_id where link_id in (select id from @linkIds) and ci.ARCHIVE = 0";
             }
             if (!isLive)
@@ -666,7 +666,7 @@ namespace Quantumart.QP8.DAL
             var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
             var fieldIds = fiList.Select(n => n.Id).ToArray();
             var strTemplates = fiList.Select(fi => string.Format(
-                "select content_item_id as linked_item_id, [{0}] as item_id, cast({4} as decimal) as field_id from content_{1}{2} with(nolock) where [{0}] in (select id from @itemIds) {3}", 
+                "select content_item_id as linked_item_id, [{0}] as item_id, cast({4} as decimal) as field_id from content_{1}{2} with(nolock) where [{0}] in (select id from @itemIds) {3}",
                 fi.Name, fi.ContentId, suffix, isArchive, fi.Id
             ));
 
@@ -10242,6 +10242,29 @@ namespace Quantumart.QP8.DAL
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@password", password);
                 return Convert.ToBoolean(cmd.ExecuteScalar());
+            }
+        }
+
+        public static int GetArticleIdForCollaborativePublication(SqlConnection connection, int childId)
+        {
+            var sql = @"SELECT id FROM child_delays WHERE child_id = @childId";
+            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@childId", childId);
+                var result = cmd.ExecuteScalar();
+                return result == null ? 0 : (int)(decimal)result;
+            }
+        }
+
+        public static void ClearChildDelaysForChild(SqlConnection connection, int childId)
+        {
+            var sql = @"DELETE FROM child_delays WHERE child_id = @childId";
+            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@childId", childId);
+                cmd.ExecuteNonQuery();
             }
         }
     }

@@ -222,8 +222,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     contentId = (contentId == 0) ? (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First()) : contentId;
                     if (contentId != 0)
                     {
-                        var data = GetData(ids, contentId, excludeArchive, filter);
-                        result = InternalGetList(contentId, data, loadFieldValues, excludeArchive);
+                        var content = ContentRepository.GetById(contentId);
+                        var data = GetData(ids, contentId, content.IsVirtual, excludeArchive, filter);
+                        result = InternalGetList(content, data, loadFieldValues, excludeArchive);
                     }
                 }
 
@@ -233,25 +234,26 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false, string filter = "")
         {
-            var data = GetData(null, contentId, excludeArchive, filter);
-            var result = InternalGetList(contentId, data, true, excludeArchive);
+            var content = ContentRepository.GetById(contentId);
+            var data = GetData(null, contentId, content.IsVirtual, excludeArchive, filter);
+            var result = InternalGetList(content, data, true, excludeArchive);
             return result;
         }
 
-        private static IEnumerable<Article> InternalGetList(int contentId, DataTable data, bool loadFieldValues, bool excludeArchive = false)
+        private static IEnumerable<Article> InternalGetList(Content content, DataTable data, bool loadFieldValues, bool excludeArchive = false)
         {
             IEnumerable<Article> result = new List<Article>();
             if (data != null)
             {
-                var content = ContentRepository.GetById(contentId);
+
                 bool ArchiveFilter(Article n) => (!excludeArchive) || !n.Archived;
                 result = data.AsEnumerable().Select(n => new Article
                 {
-                    ContentId = contentId,
+                    ContentId = content.Id,
                     Content = content,
                     Id = Converter.ToInt32(n["content_item_id"]),
-                    Splitted = (bool)n["splitted"],
-                    Delayed = (bool)n["schedule_new_version_publication"],
+                    Splitted =  Converter.ToBoolean(n["splitted"]),
+                    Delayed =  Converter.ToBoolean(n["schedule_new_version_publication"]),
                     Created = (DateTime)n["created"],
                     Modified = (DateTime)n["modified"],
                     Archived = Converter.ToBoolean(n["archive"]),
@@ -278,8 +280,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
                 if (loadFieldValues)
                 {
-                    var fields = FieldRepository.GetFullList(contentId);
-                    Article.LoadFieldValuesForArticles(data, fields, result, contentId, excludeArchive);
+                    var fields = FieldRepository.GetFullList(content.Id);
+                    Article.LoadFieldValuesForArticles(data, fields, result, content.Id, excludeArchive);
                 }
             }
 
@@ -689,11 +691,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool excludeArchive = false, string filter = "")
+        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool isVirtual, bool excludeArchive = false, string filter = "")
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, QPContext.IsLive, excludeArchive, filter);
+                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, isVirtual, QPContext.IsLive, excludeArchive, filter);
             }
         }
 
@@ -755,11 +757,25 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             var articleUpdater = new ArticleUpdateService(article);
             var schedule = article.Schedule;
+            var colaborativeArticles = article.CollaborativePublishedArticle;
             article = articleUpdater.Update();
             article.Schedule = schedule;
+            article.CollaborativePublishedArticle = colaborativeArticles;
             ScheduleRepository.UpdateSchedule(article);
             ScheduleRepository.CopyScheduleToChildDelays(article);
+            if (article.CollaborativePublishedArticle == 0)
+            {
+                ClearChildDelaysForChild(article.Id);
+            }
             return article;
+        }
+
+        internal static void ClearChildDelaysForChild(int childId)
+        {
+            using (new QPConnectionScope())
+            {
+                Common.ClearChildDelaysForChild(QPConnectionScope.Current.DbConnection, childId);
+            }
         }
 
         internal static void MultipleDelete(IList<int> ids, bool withAggregated = false, bool withAutoArchive = false)
@@ -1384,6 +1400,22 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
+        internal static int GetArticleIdForCollaborativePublication(int childId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetArticleIdForCollaborativePublication(scope.DbConnection, childId);
+            }
+        }
+
+        internal static int GetContentIdForArticle(int id)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return (int)Common.GetContentIdForArticle(scope.DbConnection, id);
+            }
+        }
+
         #region BatchUpdate
 
         internal static InsertData[] BatchUpdate(ArticleData[] articles, bool formatArticleData)
@@ -1464,17 +1496,17 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         }
 
         private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations) => (from a in articles
-                from f in a.Fields
-                from linkedItemId in f.ArticleIds != null && f.ArticleIds.Any() ? f.ArticleIds : new[] { 0 }
-                join r in relations on f.Id equals r.FieldId
-                where r.LinkId.HasValue
-                select new LinkData
-                {
-                    // ReSharper disable once PossibleInvalidOperationException
-                    LinkId = r.LinkId.Value,
-                    ItemId = a.Id,
-                    LinkedItemId = linkedItemId != 0 ? linkedItemId : (int?)null
-                })
+                                                                                                                              from f in a.Fields
+                                                                                                                              from linkedItemId in f.ArticleIds != null && f.ArticleIds.Any() ? f.ArticleIds : new[] { 0 }
+                                                                                                                              join r in relations on f.Id equals r.FieldId
+                                                                                                                              where r.LinkId.HasValue
+                                                                                                                              select new LinkData
+                                                                                                                              {
+                                                                                                                                  // ReSharper disable once PossibleInvalidOperationException
+                                                                                                                                  LinkId = r.LinkId.Value,
+                                                                                                                                  ItemId = a.Id,
+                                                                                                                                  LinkedItemId = linkedItemId != 0 ? linkedItemId : (int?)null
+                                                                                                                              })
             .ToArray();
 
         private static LinkData[] UpdateLinkIds(LinkData[] links, IEnumerable<InsertData> insertData)
@@ -1499,13 +1531,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         private static ArticleData[] UpdateArticleRelations(ArticleData[] articles, IEnumerable<RelationData> relations)
         {
             var items = (from article in articles
-                    from field in article.Fields
-                    join relation in relations
-                        on new { articleId = article.Id, fieldId = field.Id }
-                        equals new { articleId = relation.ArticleId, fieldId = relation.FieldId }
-                        into r
-                    from relation in r.DefaultIfEmpty()
-                    select new { article, field, relation })
+                         from field in article.Fields
+                         join relation in relations
+                             on new { articleId = article.Id, fieldId = field.Id }
+                             equals new { articleId = relation.ArticleId, fieldId = relation.FieldId }
+                             into r
+                         from relation in r.DefaultIfEmpty()
+                         select new { article, field, relation })
                 .ToArray();
 
             foreach (var item in items)

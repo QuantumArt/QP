@@ -85,6 +85,10 @@ Quantumart.QP8.BackendDocumentContext.prototype.getParentResolverFieldNameProp =
   return 'parent' + resolverName + 'FieldName';
 };
 
+Quantumart.QP8.BackendDocumentContext.prototype.getParentByClassifierResolverFieldNamesProp = function (resolverName) {
+  return 'parentByClassifier' + resolverName + 'FieldNames';
+};
+
 Quantumart.QP8.BackendDocumentContext.prototype.getParentClassifierFieldNameProp = function (resolverName) {
   return 'parent' + resolverName + 'ClassifierFieldName';
 };
@@ -104,7 +108,13 @@ Quantumart.QP8.BackendDocumentContext.prototype.getResolver = function (editor, 
     if (classifierProp && this[classifierProp] && +val) {
       var classifier = $o.getArticleFieldValue(resolverContentId, this[classifierProp], val);
       var extension = $o.getArticleIdByFieldValue(classifier, 'Parent', val);
-      prod = $o.getArticleFieldValue(classifier, this[parentProp], extension);
+      var parentsByClassifierProp = this.getParentByClassifierResolverFieldNamesProp(resolverName);
+      var parentFieldName;
+      if (parentsByClassifierProp && this[parentsByClassifierProp]) {
+        parentFieldName = this[parentsByClassifierProp][classifier];
+      }
+      parentFieldName = parentFieldName || this[parentProp];
+      prod = $o.getArticleFieldValue(classifier, parentFieldName, extension);
     } else if (!+val) {
       prod = 0;
     } else if (+this[parentProp]) {
