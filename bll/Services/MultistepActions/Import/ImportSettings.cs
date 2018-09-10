@@ -90,7 +90,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new DirectoryNotFoundException();
             }
 
-            return HttpUtility.UrlDecode($"{currentSite.UploadDir}\\contents\\{ContentId}\\{FileName}");
+            return HttpUtility.UrlDecode($"{currentSite.UploadDir}\\contents\\{ContentId}\\_temp\\{FileName}");
         }
 
         public bool IsWorkflowAssigned { get; set; }
