@@ -150,7 +150,6 @@ export declare class OpenSelectWindowOptions {
   };
 }
 
-
 /**
  * Открытие всплывающего окна библиотеки файлов с последующим возвратом результата выбора в веб-приложение.
  * @param openFileLibraryOptions
@@ -197,7 +196,6 @@ export declare function previewImage(
   destination: Window
 ): void;
 
-
 /** Параметры просмотра изображения */
 export declare class PreviewImageOptions {
   /** Идентификатор сущности */
@@ -222,7 +220,6 @@ export declare function downloadFile(
   destination: Window
 ): void;
 
-
 /** Параметры скачивания файла */
 export declare class DownloadFileOptions {
   /** Идентификатор сущности */
@@ -243,15 +240,11 @@ export declare class BackendEventObserver {
     callbackProcName: string,
     callback: (
       eventType: typeof BackendEventTypes[keyof typeof BackendEventTypes],
-      args: {
-        reason?: typeof HostUnbindingReason[keyof typeof HostUnbindingReason];
-        /** идентификатор окна, в котором произошёл выбор */
-        selectWindowUID?: string;
-        /** массив идентификаторов выбранных сущностей */
-        selectedEntityIDs?: number[];
-        /** имя выбранного файла */
-        filePath?: string;
-      }
+      args: HostUnbindedArgs &
+        ActionExecutedArgs &
+        EntitiesSelectedArgs &
+        SelectWindowClosedArgs &
+        FileSelectedArgs
     ) => void
   );
 
@@ -262,23 +255,6 @@ export declare class BackendEventObserver {
 
   static HostUnbindingReason: typeof HostUnbindingReason;
 }
-
-/** причина отсоединения */
-declare const HostUnbindingReason: {
-  Closed: "closed";
-  Changed: "changed";
-};
-
-/** Типы сообщений backend'у */
-export declare const ExternalMessageTypes: {
-  ExecuteAction: 1;
-  CloseBackendHost: 2;
-  OpenSelectWindow: 3;
-  CheckHost: 4;
-  PreviewImage: 5;
-  DownloadFile: 6;
-  OpenFileLibrary: 7;
-};
 
 /** Типы событий backend'а */
 export declare const BackendEventTypes: {
@@ -292,6 +268,54 @@ export declare const BackendEventTypes: {
   SelectWindowClosed: 4;
   /** файл был выбран */
   FileSelected: 5;
+};
+
+export interface HostUnbindedArgs {
+  /** причина отсоединения */
+  reason?: typeof HostUnbindingReason[keyof typeof HostUnbindingReason];
+}
+
+/** причина отсоединения */
+declare const HostUnbindingReason: {
+  Closed: "closed";
+  Changed: "changed";
+};
+
+export interface ActionExecutedArgs {
+  actionCode?: string;
+  actionTypeCode?: string;
+  entityTypeCode: string;
+  parentEntityId?: number;
+  entityId?: string;
+  isMultipleAction?: boolean;
+}
+
+export interface EntitiesSelectedArgs {
+  /** идентификатор окна, в котором произошёл выбор */
+  selectWindowUID?: string;
+  /** массив идентификаторов выбранных сущностей */
+  selectedEntityIDs?: number[];
+}
+
+export interface SelectWindowClosedArgs {
+  /** идентификатор окна, в котором произошёл выбор */
+  selectWindowUID?: string;
+}
+
+export interface FileSelectedArgs {
+  /** имя выбранного файла */
+  filePath?: string;
+}
+
+/** Типы сообщений backend'у */
+export declare const ExternalMessageTypes: {
+  ExecuteAction: 1;
+  CloseBackendHost: 2;
+  OpenSelectWindow: 3;
+  CheckHost: 4;
+  PreviewImage: 5;
+  DownloadFile: 6;
+  OpenFileLibrary: 7;
 };
 
 declare var Quantumart: {
