@@ -214,7 +214,7 @@ export class BackendFileField {
           url = '';
         }
 
-        url = url.replace(`${this._subFolder}\\`, '').replace(/\\/g, '/');
+        url = url.replace(`${this._initSubFolder}\\`, '').replace(/\\/g, '/');
         $(this._fileFieldElement).val(url + entities[0].Name).trigger('change');
       }
     }
