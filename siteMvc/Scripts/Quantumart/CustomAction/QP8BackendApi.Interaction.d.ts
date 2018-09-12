@@ -142,7 +142,92 @@ export declare class OpenSelectWindowOptions {
   selectWindowUID?: string;
   /** Ссылка на метод-обработчик в веб-приложении. Обычно определяется через `BackendEventObserver` */
   callerCallback?: string;
-  options?: any;
+  /** Дополнительные опции */
+  options?: {
+    [key: string]: any;
+    /** SQL для фильтрации списка статей (обычно используется Field.RelationCondition) */
+    filter?: string;
+  };
+}
+
+/**
+ * Открытие всплывающего окна библиотеки файлов с последующим возвратом результата выбора в веб-приложение.
+ * @param openFileLibraryOptions
+ * @param hostUID Уникальный идентификатор текущей вкладки ГПИ.
+ * Генерируется бекэндом, передаётся в пользовательское действие в виде одноимённого параметра `QueryString`.
+ * @param destination Окно, содержащее основное приложение бекэнда.
+ * Обычно нужно передавать window.parent.
+ */
+export declare function openFileLibrary(
+  openFileLibraryOptions: OpenFileLibraryOptions,
+  hostUID: string,
+  destination: Window
+): void;
+
+/** Параметры сообщения на открытие окна библиотеки файлов */
+export declare class OpenFileLibraryOptions {
+  /** Фильтровать по типу файла: только изображения @default false */
+  isImage?: boolean;
+  /** Использовать библиотеку сайта или библиотеку контента @default false */
+  useSiteLibrary?: boolean;
+  /** Подкаталой в каталоге библтотеки */
+  subFolder?: string;
+  /** Id контента (для библиотеки контента) или Id сайта (для библиотеки сайта) */
+  libraryEntityId: number;
+  /** Id сайта (для библиотеки контента) или 0 (для библиотеки сайта) */
+  libraryParentEntityId: number;
+  /** ID для идентификации окна со списком. Задаётся веб-приложением */
+  selectWindowUID?: string;
+  /** Ссылка на метод-обработчик в веб-приложении. Обычно определяется через `BackendEventObserver` */
+  callerCallback?: string;
+}
+
+/**
+ * Предпросмотр изображения, содержащегося в поле статьи
+ * @param previewImageOptions
+ * @param hostUID Уникальный идентификатор текущей вкладки ГПИ.
+ * Генерируется бекэндом, передаётся в пользовательское действие в виде одноимённого параметра `QueryString`.
+ * @param destination Окно, содержащее основное приложение бекэнда.
+ * Обычно нужно передавать window.parent.
+ */
+export declare function previewImage(
+  previewImageOptions: PreviewImageOptions,
+  hostUID: string,
+  destination: Window
+): void;
+
+/** Параметры просмотра изображения */
+export declare class PreviewImageOptions {
+  /** Идентификатор сущности */
+  entityId: number;
+  /** Идентификатор поля */
+  fieldId: number;
+  /** Имя файла */
+  fileName: string;
+}
+
+/**
+ * Скачать файл, содержащийся в поле статьи
+ * @param downloadFileOptions
+ * @param hostUID Уникальный идентификатор текущей вкладки ГПИ.
+ * Генерируется бекэндом, передаётся в пользовательское действие в виде одноимённого параметра `QueryString`.
+ * @param destination Окно, содержащее основное приложение бекэнда.
+ * Обычно нужно передавать window.parent.
+ */
+export declare function downloadFile(
+  downloadFileOptions: DownloadFileOptions,
+  hostUID: string,
+  destination: Window
+): void;
+
+/** Параметры скачивания файла */
+export declare class DownloadFileOptions {
+  /** Идентификатор сущности */
+  entityId: number;
+  /** Идентификатор поля */
+  fieldId: number;
+  /** Имя файла */
+  fileName: string;
 }
 
 /** Observer сообщений от хоста */
@@ -155,13 +240,11 @@ export declare class BackendEventObserver {
     callbackProcName: string,
     callback: (
       eventType: typeof BackendEventTypes[keyof typeof BackendEventTypes],
-      args: {
-        reason?: typeof HostUnbindingReason[keyof typeof HostUnbindingReason];
-        /** идентификатор окна, в котором произошёл выбор */
-        selectWindowUID?: string;
-        /** массив идентификаторов выбранных сущностей */
-        selectedEntityIDs?: number[];
-      }
+      args: HostUnbindedArgs &
+        ActionExecutedArgs &
+        EntitiesSelectedArgs &
+        SelectWindowClosedArgs &
+        FileSelectedArgs
     ) => void
   );
 
@@ -173,20 +256,6 @@ export declare class BackendEventObserver {
   static HostUnbindingReason: typeof HostUnbindingReason;
 }
 
-/** причина отсоединения */
-declare const HostUnbindingReason: {
-  Closed: "closed";
-  Changed: "changed";
-};
-
-/** Типы сообщений backend'у */
-export declare const ExternalMessageTypes: {
-  ExecuteAction: 1;
-  CloseBackendHost: 2;
-  OpenSelectWindow: 3;
-  CheckHost: 4;
-};
-
 /** Типы событий backend'а */
 export declare const BackendEventTypes: {
   /** вызванный хост был отсоединён */
@@ -197,6 +266,56 @@ export declare const BackendEventTypes: {
   EntitiesSelected: 3;
   /** окно выбора было закрыто */
   SelectWindowClosed: 4;
+  /** файл был выбран */
+  FileSelected: 5;
+};
+
+export interface HostUnbindedArgs {
+  /** причина отсоединения */
+  reason?: typeof HostUnbindingReason[keyof typeof HostUnbindingReason];
+}
+
+/** причина отсоединения */
+declare const HostUnbindingReason: {
+  Closed: "closed";
+  Changed: "changed";
+};
+
+export interface ActionExecutedArgs {
+  actionCode?: string;
+  actionTypeCode?: string;
+  entityTypeCode: string;
+  parentEntityId?: number;
+  entityId?: string;
+  isMultipleAction?: boolean;
+}
+
+export interface EntitiesSelectedArgs {
+  /** идентификатор окна, в котором произошёл выбор */
+  selectWindowUID?: string;
+  /** массив идентификаторов выбранных сущностей */
+  selectedEntityIDs?: number[];
+}
+
+export interface SelectWindowClosedArgs {
+  /** идентификатор окна, в котором произошёл выбор */
+  selectWindowUID?: string;
+}
+
+export interface FileSelectedArgs {
+  /** имя выбранного файла */
+  filePath?: string;
+}
+
+/** Типы сообщений backend'у */
+export declare const ExternalMessageTypes: {
+  ExecuteAction: 1;
+  CloseBackendHost: 2;
+  OpenSelectWindow: 3;
+  CheckHost: 4;
+  PreviewImage: 5;
+  DownloadFile: 6;
+  OpenFileLibrary: 7;
 };
 
 declare var Quantumart: {
@@ -206,6 +325,9 @@ declare var Quantumart: {
       closeBackendHost: typeof closeBackendHost;
       executeBackendAction: typeof executeBackendAction;
       openSelectWindow: typeof openSelectWindow;
+      previewImage: typeof previewImage;
+      downloadFile: typeof downloadFile;
+      openFileLibrary: typeof openFileLibrary;
       ExecuteActionOptions: typeof ExecuteActionOptions;
       ArticleFormState: typeof ArticleFormState;
       OpenSelectWindowOptions: typeof OpenSelectWindowOptions;

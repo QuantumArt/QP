@@ -23,7 +23,10 @@
     ExecuteAction: 1,
     CloseBackendHost: 2,
     OpenSelectWindow: 3,
-    CheckHost: 4
+    CheckHost: 4,
+    PreviewImage: 5,
+    DownloadFile: 6,
+    OpenFileLibrary: 7
   };
 
   // class ExecuteActionOptions (Парамеры сообщения на выполнение BackendAction)
@@ -62,7 +65,7 @@
     value: null // значение (зависит от типа)
   };
 
-  // class OpenSelectWindowOtions (Парамеры сообщения на открытие окна выбора из списка)
+  // class OpenSelectWindowOtions (Параметры сообщения на открытие окна выбора из списка)
   const OpenSelectWindowOptions = function () { };
 
   OpenSelectWindowOptions.prototype = {
@@ -74,6 +77,37 @@
     selectWindowUID: null, // ID для идентификации окна со списком
     callerCallback: '',
     options: null
+  };
+
+  // class DownloadFileOptions (Параметры скачивания файла)
+  const DownloadFileOptions = function () { };
+
+  DownloadFileOptions.prototype = {
+    entityId: 0,
+    fieldId: 0,
+    fileName: ''
+  };
+
+  // class PreviewImageOptions (Параметры просмотра изображения)
+  const PreviewImageOptions = function () { };
+
+  PreviewImageOptions.prototype = {
+    entityId: 0,
+    fieldId: 0,
+    fileName: ''
+  };
+
+  // class OpenFileLibraryOptions (Параметры сообщения на открытие окна библиотеки файлов)
+  const OpenFileLibraryOptions = function () { };
+
+  OpenFileLibraryOptions.prototype = {
+    isImage: false,
+    useSiteLibrary: false,
+    subFolder: '',
+    libraryEntityId: 0,
+    libraryParentEntityId: 0,
+    selectWindowUID: null, // ID для идентификации окна со списком
+    callerCallback: ''
   };
 
   // class BackendEventObserver (Observer сообщений от хоста)
@@ -99,7 +133,8 @@
     HostUnbinded: 1,
     ActionExecuted: 2,
     EntitiesSelected: 3,
-    SelectWindowClosed: 4
+    SelectWindowClosed: 4,
+    FileSelected: 5
   };
 
   BackendEventObserver.HostUnbindingReason = {
@@ -178,6 +213,45 @@
             callback({ success: false, error: args.description });
           }
         }
+      });
+    },
+
+    // Посмотреть изображение
+    previewImage: function (previewImageOptions, hostUID, destination) {
+      const message = new BackendExternalMessage();
+      message.type = BackendExternalMessage.Types.PreviewImage;
+      message.hostUID = hostUID;
+      message.data = previewImageOptions;
+      pmrpc.call({
+        destination: destination,
+        publicProcedureName: message.hostUID,
+        params: [message]
+      });
+    },
+
+    // Скачать файл
+    downloadFile: function (downloadFileOptions, hostUID, destination) {
+      const message = new BackendExternalMessage();
+      message.type = BackendExternalMessage.Types.DownloadFile;
+      message.hostUID = hostUID;
+      message.data = downloadFileOptions;
+      pmrpc.call({
+        destination: destination,
+        publicProcedureName: message.hostUID,
+        params: [message]
+      });
+    },
+
+    // Открытие всплывающего окна библиотеки файлов
+    openFileLibrary: function (openFileLibraryOptions, hostUID, destination) {
+      const message = new BackendExternalMessage();
+      message.type = BackendExternalMessage.Types.OpenFileLibrary;
+      message.hostUID = hostUID;
+      message.data = openFileLibraryOptions;
+      pmrpc.call({
+        destination: destination,
+        publicProcedureName: message.hostUID,
+        params: [message]
       });
     }
   };
