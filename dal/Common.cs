@@ -143,9 +143,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "", bool returnIds = false)
+        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
         {
-            var fields = returnIds ? "c.content_item_id" : "c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication";
+            var fields = returnOnlyIds ? "c.content_item_id" : "c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication";
             var baseSql = $"select {fields} from content_{contentId}{{0}} c with(nolock)" +
                 " left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id {1} {2}";
 
@@ -175,7 +175,7 @@ namespace Quantumart.QP8.DAL
             var where = " where " + String.Join(" and ", conditions);
             var sql = "";
 
-            if (ids != null && !isLive && !isVirtual && !returnIds) //optimization for list of ids
+            if (ids != null && !isLive && !isVirtual && !returnOnlyIds) //optimization for list of ids
             {
                 var sb = new StringBuilder();
                 sb.AppendLine(string.Format(baseSql, string.Empty, where, " and isnull(ci.splitted, 0) = 0 "));

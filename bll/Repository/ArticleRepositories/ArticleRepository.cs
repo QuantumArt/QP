@@ -212,31 +212,47 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false, bool excludeArchive = false, int contentId = 0, string filter = "")
+        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false,
+            bool excludeArchive = false, int contentId = 0, string filter = "")
         {
+            var result = new Article[] {};
             using (new QPConnectionScope())
             {
-                var result = new List<Article>().AsEnumerable();
-                if (ids != null && ids.Any())
+                contentId = GetContentIdForArticles(ids, contentId);
+                if (contentId != 0)
                 {
-                    contentId = (contentId == 0) ? (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First()) : contentId;
-                    if (contentId != 0)
-                    {
-                        var content = ContentRepository.GetById(contentId);
-                        var data = GetData(ids, contentId, content.IsVirtual, excludeArchive, filter);
-                        result = InternalGetList(content, data, loadFieldValues, excludeArchive);
-                    }
+                   var content = ContentRepository.GetById(contentId);
+                   var data = GetData(ids, contentId, content.IsVirtual, excludeArchive, filter);
+                   result = InternalGetList(content, data, loadFieldValues, excludeArchive).ToArray();
                 }
-
-                return result;
             }
+            return result;
         }
 
-        internal static IEnumerable<Article> GetList(int contentId, bool excludeArchive = false, string filter = "")
+        private static int GetContentIdForArticles(IList<int> ids, int contentId = 0)
         {
-            var content = ContentRepository.GetById(contentId);
-            var data = GetData(null, contentId, content.IsVirtual, excludeArchive, filter);
-            var result = InternalGetList(content, data, true, excludeArchive);
+            if (contentId == 0)
+            {
+                return (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First());
+            }
+
+            return contentId;
+        }
+
+        public static IEnumerable<int> GetIds(IList<int> ids, bool excludeArchive = false,
+            int contentId = 0, string filter = "")
+        {
+            var result = new int[] {};
+            using (new QPConnectionScope())
+            {
+                contentId = GetContentIdForArticles(ids, contentId);
+                if (contentId != 0)
+                {
+                    var content = ContentRepository.GetById(contentId);
+                    var data = GetData(ids, contentId, content.IsVirtual, excludeArchive, filter);
+                    result = data.AsEnumerable().Select(n => Converter.ToInt32(n["content_item_id"])).ToArray();
+                }
+            }
             return result;
         }
 
@@ -691,11 +707,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool isVirtual, bool excludeArchive = false, string filter = "")
+        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool isVirtual, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, isVirtual, QPContext.IsLive, excludeArchive, filter);
+                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, isVirtual, QPContext.IsLive, excludeArchive, filter, returnOnlyIds);
             }
         }
 
