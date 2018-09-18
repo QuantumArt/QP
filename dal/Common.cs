@@ -143,10 +143,12 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "")
+        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
         {
-            var suffix = isLive ? string.Empty : "_united";
-            var sql = $"select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{contentId}{suffix} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id ";
+            var fields = returnOnlyIds ? "c.content_item_id" : "c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication";
+            var baseSql = $"select {fields} from content_{contentId}{{0}} c with(nolock)" +
+                " left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id {1} {2}";
+
 
             var conditions = new List<string>();
 
@@ -162,22 +164,28 @@ namespace Quantumart.QP8.DAL
 
             if (!string.IsNullOrEmpty(filter))
             {
-                 conditions.Add(filter);
+                conditions.Add(filter);
             }
 
-            if (conditions.Any())
+            if (!conditions.Any())
             {
-                sql = sql + " where " + String.Join(" and ", conditions);
+                conditions.Add("1 = 1");
             }
 
-            if (ids != null && !isLive && !isVirtual) //optimization for list of ids
+            var where = " where " + String.Join(" and ", conditions);
+            var sql = "";
+
+            if (ids != null && !isLive && !isVirtual && !returnOnlyIds) //optimization for list of ids
             {
-                const string baseSql = "select c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication from content_{0}{1} c with(nolock) left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id where c.content_item_id in (select id from @itemIds) and {2} {3}";
                 var sb = new StringBuilder();
-                sb.AppendLine(string.Format(baseSql, contentId, string.Empty, " isnull(ci.splitted, 0) = 0 ", excludeArchive ? " and ci.archive = 0" : string.Empty));
+                sb.AppendLine(string.Format(baseSql, string.Empty, where, " and isnull(ci.splitted, 0) = 0 "));
                 sb.AppendLine(" union all ");
-                sb.AppendLine(string.Format(baseSql, contentId, "_async", " ci.splitted = 1 ", excludeArchive ? " and ci.archive = 0" : string.Empty));
+                sb.AppendLine(string.Format(baseSql, "_async", where, " and ci.splitted = 1 "));
                 sql = sb.ToString();
+            }
+            else
+            {
+                sql = String.Format(baseSql, isLive ? string.Empty : "_united", where, "");
             }
 
             using (var cmd = SqlCommandFactory.Create(sql, connection))
