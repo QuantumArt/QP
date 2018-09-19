@@ -231,7 +231,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         private static int GetContentIdForArticles(IList<int> ids, int contentId = 0)
         {
-            if (contentId == 0)
+            if (contentId == 0 && ids != null && ids.Any())
             {
                 return (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First());
             }

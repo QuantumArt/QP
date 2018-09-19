@@ -139,6 +139,50 @@ namespace QP8.Integration.Tests
             }
         }
 
+        [Test]
+        public void ArticleService_GetFebArticlesWithOnlyEmptyIds_Got0()
+        {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articles = articleService.List(0, new int[]{}, true, "c.title like '%feb%'").ToArray();
+                Assert.That(articles.Length, Is.EqualTo(0));
+            }
+        }
+
+        [Test]
+        public void ArticleService_GetFebIdsWithOnlyEmptyIds_Got0()
+        {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articles = articleService.Ids(0, new int[]{}, true, "c.title like '%feb%'").ToArray();
+                Assert.That(articles.Length, Is.EqualTo(0));
+            }
+        }
+
+        [Test]
+        public void ArticleService_GetFebArticlesWithOnlyNullIds_Got0()
+        {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articles = articleService.List(0, null, true, "c.title like '%feb%'").ToArray();
+                Assert.That(articles.Length, Is.EqualTo(0));
+            }
+        }
+
+        [Test]
+        public void ArticleService_GetFebIdsWithOnlyNullIds_Got0()
+        {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articles = articleService.Ids(0, null, true, "c.title like '%feb%'").ToArray();
+                Assert.That(articles.Length, Is.EqualTo(0));
+            }
+        }
+
         [OneTimeTearDown]
         public static void Destroy()
         {
