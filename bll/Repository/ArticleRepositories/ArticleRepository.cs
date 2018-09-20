@@ -249,8 +249,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 if (contentId != 0)
                 {
                     var content = ContentRepository.GetById(contentId);
-                    var data = GetData(ids, contentId, content.IsVirtual, excludeArchive, filter);
-                    result = data.AsEnumerable().Select(n => Converter.ToInt32(n["content_item_id"])).ToArray();
+                    var data = GetData(ids, contentId, content.IsVirtual, excludeArchive, filter, true);
+                    if (data != null)
+                    {
+                        result = data.AsEnumerable().Select(n => Converter.ToInt32(n["content_item_id"])).ToArray();
+                    }
                 }
             }
             return result;

@@ -139,6 +139,7 @@ namespace QP8.Integration.Tests
             }
         }
 
+
         [Test]
         public void ArticleService_GetFebArticlesWithOnlyEmptyIds_Got0()
         {
@@ -149,6 +150,51 @@ namespace QP8.Integration.Tests
                 Assert.That(articles.Length, Is.EqualTo(0));
             }
         }
+
+        [Test]
+        public void ArticleService_GetFebArticlesWithEmptyIds_Got0()
+        {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articles = articleService.List(_newsContentId, new int[]{}, true, "c.title like '%feb%'").ToArray();
+                Assert.That(articles.Length, Is.EqualTo(0));
+            }
+        }
+
+        [Test]
+        public void ArticleService_GetFebIdsWithEmptyIds_Got0()
+        {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articles = articleService.Ids(_newsContentId, new int[]{}, true, "c.title like '%feb%'").ToArray();
+                Assert.That(articles.Length, Is.EqualTo(0));
+            }
+        }
+
+        [Test]
+        public void ArticleService_GetNoFebArticlesWithNullIds_Got0()
+        {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articles = articleService.List(_newsContentId, null, true, "c.title like '%ффф%'").ToArray();
+                Assert.That(articles.Length, Is.EqualTo(0));
+            }
+        }
+
+        [Test]
+        public void ArticleService_GetNoFebIdsWithNullIds_Got0()
+        {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articles = articleService.Ids(_newsContentId, null, true, "c.title like '%ффф%'").ToArray();
+                Assert.That(articles.Length, Is.EqualTo(0));
+            }
+        }
+
 
         [Test]
         public void ArticleService_GetFebIdsWithOnlyEmptyIds_Got0()
