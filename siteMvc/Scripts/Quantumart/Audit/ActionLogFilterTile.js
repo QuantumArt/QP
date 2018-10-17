@@ -1,4 +1,5 @@
 import { ActionLogFilterBase } from './ActionLogFilterBase';
+import { BackendBrowserHistoryManager } from '../Managers/BackendBrowserHistoryManager';
 import { Observable } from '../Common/Observable';
 import { $c } from '../ControlHelpers';
 import { $q } from '../Utils';
@@ -6,6 +7,8 @@ import { $q } from '../Utils';
 window.EVENT_TYPE_FILTER_TILE_CLOSE = 'Quantumart.QP8.ActionLogFilterTile.onFilterTileClose';
 
 export class ActionLogFilterTile extends Observable {
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
+
   constructor(containerElement, options) {
     super();
     this._containerElement = containerElement;
@@ -86,7 +89,9 @@ export class ActionLogFilterTile extends Observable {
       modal: true,
       resizable: false,
       draggable: false,
-      visible: true
+      visible: true,
+      onOpen: this._backendBrowserHistoryManager.handleModalWindowOpen,
+      onClose: this._backendBrowserHistoryManager.handleModalWindowClose
     }).data('tWindow').center();
 
     $('.closeFilter', this._popupWindowComponent.element).click($.proxy(this._onCloseFilterWndClick, this));

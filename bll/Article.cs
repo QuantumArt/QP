@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -47,6 +48,7 @@ namespace Quantumart.QP8.BLL
         private readonly InitPropertyValue<List<Article>> _variationArticles;
         private readonly InitPropertyValue<IEnumerable<ArticleVariationListItem>> _variationListItems;
         private readonly InitPropertyValue<IEnumerable<ArticleContextListItem>> _contextListItems;
+        private int _parentContentId;
 
         internal Article()
         {
@@ -94,6 +96,8 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("UniqueId", NameResourceType = typeof(ArticleStrings))]
         public Guid? UniqueId { get; set; }
+
+        public string UniqueIdStr => UniqueId.HasValue ? UniqueId.ToString() : "";
 
         [LocalizedDisplayName("CancelSplit", NameResourceType = typeof(ArticleStrings))]
         public bool CancelSplit { get; set; }
@@ -276,32 +280,38 @@ namespace Quantumart.QP8.BLL
         [JsonIgnore]
         public List<FieldValue> LiveFieldValues
         {
-            get
-            {
-                LoadFieldValues();
-                return _liveFieldValues;
-            }
+            get => _liveFieldValues ?? LoadLiveFieldValues();
             set => _liveFieldValues = value;
         }
 
-        internal List<FieldValue> LoadFieldValues()
+        internal List<FieldValue> LoadLiveFieldValues(bool excludeArchive = false)
         {
-            if (_fieldValues == null || _liveFieldValues == null)
+            if (_liveFieldValues == null)
+            {
+                var fields = FieldRepository.GetFullList(DisplayContentId);
+                if (_liveFieldValues == null)
+                {
+                    var data = ArticleRepository.GetData(Id, DisplayContentId, true, excludeArchive);
+                    _liveFieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
+                }
+            }
+            return _liveFieldValues;
+        }
+
+        internal List<FieldValue> LoadFieldValues(bool excludeArchive = false)
+        {
+            if (_fieldValues == null)
             {
                 var fields = FieldRepository.GetFullList(DisplayContentId);
                 if (_fieldValues == null)
                 {
-                    _fieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive), fields, this);
-                }
-                if (_liveFieldValues == null)
-                {
-                    _liveFieldValues = GetFieldValues(ArticleRepository.GetData(Id, DisplayContentId, true), fields, this);
+                    var data = ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive, excludeArchive);
+                    _fieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
+
                 }
             }
             return _fieldValues;
         }
-
-        internal List<FieldValue> GetFieldValues(bool isLive) => isLive ? LiveFieldValues : FieldValues;
 
         public ArticleViewType ViewType { get; set; } = ArticleViewType.Normal;
 
@@ -356,6 +366,14 @@ namespace Quantumart.QP8.BLL
             set => _contextListItems.Value = value;
         }
 
+        public int CollaborativePublishedArticle { get; set; }       
+
+        public int ParentContentId
+        {
+            get => _parentContentId != 0 || CollaborativePublishedArticle == 0 ? _parentContentId : GetContentIdForArticle();
+            set => _parentContentId = value;
+        }
+   
         public override void Validate()
         {
             var errors = new RulesException<Article>();
@@ -372,12 +390,16 @@ namespace Quantumart.QP8.BLL
             {
                 throw errors;
             }
-        }
+        }        
 
-        public static void ValidateXamlById(int articleId, RulesException errors, string customerCode = null)
+        public static void ValidateXamlById(int articleId, RulesException errors, string customerCode, bool persistChanges)
         {
             var article = ArticleRepository.GetById(articleId);
-            article.ValidateXaml(errors, customerCode ?? QPContext.CurrentCustomerCode);
+            var hasChanges = article.ValidateXaml(errors, customerCode ?? QPContext.CurrentCustomerCode);
+            if (hasChanges && persistChanges)
+            {
+                article.Persist(true);
+            }
         }
 
         public static string GetDynamicColumnName(Field field, Dictionary<int, int> relationCounters, bool useFormName = false)
@@ -711,8 +733,10 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private void ValidateXaml(RulesException errors, string customerCode)
+        private bool ValidateXaml(RulesException errors, string customerCode)
         {
+            bool result = false;
+
             var values = FieldValues
                 .Concat(AggregatedArticles.SelectMany(a => a.FieldValues))
                 .Where(v => !v.Field.Aggregated)
@@ -744,7 +768,7 @@ namespace Quantumart.QP8.BLL
                     };
 
                     var vcontext = ValidationServices.ValidateModel(obj);
-                    CheckChangesValues(valuesState, values);
+                    result = CheckChangesValues(valuesState, values);
 
                     if (!vcontext.IsValid)
                     {
@@ -763,14 +787,18 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorForModel(string.Format(ArticleStrings.CustomValidationFailed, exp.Message));
                 }
             }
+
+            return result;
         }
 
-        public void CheckChangesValues(Dictionary<string, string> stateValues, Dictionary<string, string> values)
+        public bool CheckChangesValues(Dictionary<string, string> stateValues, Dictionary<string, string> values)
         {
-            if (!stateValues.SequenceEqual(values))
+            var result = !stateValues.SequenceEqual(values);
+            if (result)
             {
                 UpdateFieldValues(values);
             }
+            return result;
         }
 
         private static void ValidateSchedule(RulesException<Article> errors, ArticleSchedule item)
@@ -878,11 +906,11 @@ namespace Quantumart.QP8.BLL
             return FieldValues.Concat(AggregatedArticles.SelectMany(n => n.FieldValues)).Where(n => n.Field.UseRelationSecurity);
         }
 
-        internal void LoadAggregatedArticles()
+        internal void LoadAggregatedArticles(bool excludeArchive = false)
         {
             foreach (var art in AggregatedArticles)
             {
-                art.LoadFieldValues();
+                art.LoadFieldValues(excludeArchive);
             }
         }
 
@@ -936,7 +964,7 @@ namespace Quantumart.QP8.BLL
 
         internal PathInfo GetVersionPathInfo(int newVersionId) => Content.GetVersionPathInfo(newVersionId);
 
-        internal static List<FieldValue> GetFieldValues(DataRow data, IEnumerable<Field> fields, Article article, int versionId = 0, string contentPrefix = null)
+        internal static List<FieldValue> GetFieldValues(DataRow data, IEnumerable<Field> fields, Article article, int versionId = 0, string contentPrefix = null, bool excludeArchive = false)
         {
             if (data == null)
             {
@@ -944,7 +972,24 @@ namespace Quantumart.QP8.BLL
             }
 
             var result = new List<FieldValue>();
-            foreach (var field in fields)
+
+            var fieldsArr = fields as Field[] ?? fields.ToArray();
+
+            var linkResult = new Dictionary<int, string>();
+            var backRelationsResult = new Dictionary<int, string>();
+
+
+            if (versionId == 0)
+            {
+                var linkIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToMany).Select(n => n.GetBaseField(article.Id).LinkId.Value).ToArray();
+                var backRelationIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToOne).Select(n => n.GetBaseField(article.Id).BackRelationId.Value).ToArray();
+                linkResult = ArticleRepository.GetLinkedItems(linkIds, article.Id, excludeArchive);
+                backRelationsResult = ArticleRepository.GetRelatedItems(backRelationIds, article.Id, excludeArchive);
+
+            }
+
+
+            foreach (var field in fieldsArr)
             {
                 var fullFieldName = string.IsNullOrWhiteSpace(contentPrefix) ? field.Name : $"{contentPrefix}.{field.Name}";
                 if (!data.Table.Columns.Contains(fullFieldName))
@@ -959,27 +1004,22 @@ namespace Quantumart.QP8.BLL
                         if (!article.IsNew)
                         {
                             var linkId = field.GetBaseField(article.Id).LinkId;
-                            if (linkId != null)
+                            if (linkId.HasValue)
                             {
-                                objectValue = versionId != 0
-                                    ? ArticleVersionRepository.GetLinkedItems(versionId, field.Id)
-                                    : ArticleRepository.GetLinkedItems(linkId.Value, article.Id);
+                                objectValue = (versionId == 0)
+                                ? linkResult[linkId.Value]
+                                : ArticleVersionRepository.GetLinkedItems(versionId, field.Id);
                             }
-                        }
-
-                        else
-                        {
-                            objectValue = string.Join(",", field.DefaultArticleIds.ToArray());
                         }
 
                         break;
                     case RelationType.ManyToOne:
                         var backRelationId = field.GetBaseField(article.Id).BackRelationId;
-                        if (backRelationId != null)
+                        if (backRelationId.HasValue)
                         {
-                            objectValue = versionId != 0
-                                ? ArticleVersionRepository.GetRelatedItems(versionId, field.Id)
-                                : ArticleRepository.GetRelatedItems(backRelationId.Value, article.Id);
+                            objectValue = versionId == 0
+                                ? backRelationsResult[backRelationId.Value]
+                                : ArticleVersionRepository.GetRelatedItems(versionId, field.Id);
                         }
 
                         break;
@@ -992,6 +1032,15 @@ namespace Quantumart.QP8.BLL
                         }
 
                         break;
+                }
+
+                if (field.ExactType == FieldExactTypes.Numeric && field.DecimalPlaces > 0 && versionId != 0)
+                {
+                    var str = objectValue?.ToString();
+                    if (!string.IsNullOrEmpty(str))
+                    {
+                        objectValue = decimal.Parse(str, CultureInfo.InvariantCulture);
+                    }
                 }
 
                 if (field.ReplaceUrls && objectValue != null)
@@ -1018,18 +1067,27 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        internal static void LoadFieldValuesForArticles(DataTable data, IEnumerable<Field> fields, IEnumerable<Article> articles, int contentId)
+        internal static void LoadFieldValuesForArticles(DataTable data, IEnumerable<Field> fields, IEnumerable<Article> articles, int contentId, bool excludeArchive)
         {
-            var enumerable = articles as Article[] ?? articles.ToArray();
-            var ids = enumerable.Select(n => n.Id).ToArray();
+            var articlesArr = articles as Article[] ?? articles.ToArray();
+            var ids = articlesArr.Select(n => n.Id).ToArray();
             var itemsForRelations = new Dictionary<int, Dictionary<int, string>>();
             if (data == null)
             {
                 throw new Exception(string.Join(",", ids.ToString()));
             }
 
-            var enumerable1 = fields as Field[] ?? fields.ToArray();
-            foreach (var field in enumerable1)
+            var fieldsArr = fields as Field[] ?? fields.ToArray();
+            var linkIds = fieldsArr.Where(n => n.LinkId.HasValue).Select(n => n.LinkId.Value).ToArray();
+            var backwardIds = fieldsArr.Where(n => n.BackRelationId.HasValue).Select(n => n.BackRelationId.Value).ToArray();
+            var linkResult = linkIds.Any()
+                ? ArticleRepository.GetLinkedItemsMultiple(linkIds, ids, excludeArchive)
+                : new Dictionary<int, Dictionary<int, List<int>>>();
+            var backwardResult = backwardIds.Any()
+                ? ArticleRepository.GetRelatedItemsMultiple(backwardIds, ids, excludeArchive)
+                : new Dictionary<int, Dictionary<int, List<int>>>();
+
+            foreach (var field in fieldsArr)
             {
                 if (!data.Columns.Contains(field.Name))
                 {
@@ -1039,15 +1097,19 @@ namespace Quantumart.QP8.BLL
                 switch (field.RelationType)
                 {
                     case RelationType.ManyToMany:
-                        if (field.LinkId != null)
+                        if (field.LinkId.HasValue)
                         {
-                            itemsForRelations.Add(field.Id, ArticleRepository.GetLinkedItemsMultiple(field.LinkId.Value, ids));
+                            var dict = linkResult[field.LinkId.Value];
+                            var convertedDict = dict.ToDictionary(n => n.Key, m => string.Join(",", m.Value));
+                            itemsForRelations.Add(field.Id, convertedDict);
                         }
                         break;
                     case RelationType.ManyToOne:
-                        if (field.BackRelationId != null)
+                        if (field.BackRelationId.HasValue)
                         {
-                            itemsForRelations.Add(field.Id, ArticleRepository.GetRelatedItemsMultiple(field.BackRelationId.Value, ids));
+                            var dict = backwardResult[field.BackRelationId.Value];
+                            var convertedDict = dict.ToDictionary(n => n.Key, m => string.Join(",", m.Value));
+                            itemsForRelations.Add(field.Id, convertedDict);
                         }
                         break;
                 }
@@ -1057,7 +1119,12 @@ namespace Quantumart.QP8.BLL
             {
                 var result = new List<FieldValue>();
                 var id = (int)(decimal)dr["content_item_id"];
-                var article = enumerable.Single(n => n.Id == id);
+                var article = articlesArr.SingleOrDefault(n => n.Id == id);
+
+                if (article == null)
+                {
+                    continue;
+                }
 
                 var statusTypeId = (int)(decimal)dr["status_type_id"];
                 if (article.StatusTypeId != statusTypeId)
@@ -1066,15 +1133,15 @@ namespace Quantumart.QP8.BLL
                     article.Status = StatusTypeRepository.GetById(statusTypeId);
                 }
 
-                foreach (var field in enumerable1)
+                foreach (var field in fieldsArr)
                 {
                     object objectValue = null;
                     if (field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne)
                     {
                         var dict = itemsForRelations[field.Id];
-                        if (dict != null && dict.ContainsKey(id))
+                        if (dict != null && dict.TryGetValue(id, out var stringValue))
                         {
-                            objectValue = dict[id];
+                            objectValue = stringValue;
                         }
                     }
                     else
@@ -1412,17 +1479,21 @@ namespace Quantumart.QP8.BLL
 
         private static void RemoveAggregates(Article currentArticle, Article previousArticle)
         {
-            var liveExtensionContents = GetClassifierValues(currentArticle.LiveFieldValues);
-            var stageExtensionContents = GetClassifierValues(currentArticle.FieldValues);
-            var protectedExtensionContents = liveExtensionContents.Except(stageExtensionContents).ToArray();
+            if (currentArticle.FieldValues.Any(n => n.Field.IsClassifier))
+            {
+                var liveExtensionContents = GetClassifierValues(currentArticle.LiveFieldValues);
+                var stageExtensionContents = GetClassifierValues(currentArticle.FieldValues);
+                var protectedExtensionContents = liveExtensionContents.Except(stageExtensionContents).ToArray();
 
-            var comparer = new LambdaEqualityComparer<Article>((x, y) => x.Id == y.Id, x => x.Id);
-            var deletingAggregated = previousArticle
-                .AggregatedArticles
-                .Except(currentArticle.AggregatedArticles, comparer)
-                .Where(n => !protectedExtensionContents.Contains(n.ContentId))
-                .Select(a => a.Id).ToList();
-            ArticleRepository.MultipleDelete(deletingAggregated);
+                var comparer = new LambdaEqualityComparer<Article>((x, y) => x.Id == y.Id, x => x.Id);
+                var deletingAggregated = previousArticle
+                    .AggregatedArticles
+                    .Except(currentArticle.AggregatedArticles, comparer)
+                    .Where(n => !protectedExtensionContents.Contains(n.ContentId))
+                    .Select(a => a.Id).ToList();
+                ArticleRepository.MultipleDelete(deletingAggregated);
+            }
+
         }
 
         private void RemoveVariations()
@@ -1473,6 +1544,21 @@ namespace Quantumart.QP8.BLL
 
                 yield return result;
             }
+        }
+
+        public void LoadCollaborativePublishedArticle(int id)
+        {
+            CollaborativePublishedArticle =  ArticleRepository.GetArticleIdForCollaborativePublication(id);
+        }
+
+
+    private int GetContentIdForArticle()
+        {
+            if (_parentContentId == 0 || CollaborativePublishedArticle != 0 )
+            {
+                _parentContentId = ArticleRepository.GetContentIdForArticle(CollaborativePublishedArticle);
+            }
+            return _parentContentId;
         }
     }
 

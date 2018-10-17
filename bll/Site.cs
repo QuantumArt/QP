@@ -509,20 +509,25 @@ namespace Quantumart.QP8.BLL
 
         public static string GetFullyQualifiedName(string nameSpace, string className) => string.IsNullOrEmpty(nameSpace) ? className : $"{nameSpace}.{className}";
 
-        public void SaveVisualEditorCommands(int[] activeVeCommands)
+        public void SaveVisualEditorCommands(int[] activeCommandIds)
         {
-            var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToList(); //все возможные команды
-            var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, activeVeCommands).Select(c => c.Id).ToArray(); //opposite to activeVecommands
-            var oldSiteCommandIdsOn = new HashSet<int>(VisualEditorRepository.GetResultCommands(Id).Where(n => n.On).Select(n => n.Id)); // с этим нужно сравнивать на предмет измененеий
+            var oldCommands = VisualEditorRepository.GetResultCommands(Id)
+               .ToDictionary(s => s.Id, s => s.On);
 
-            var defaultCommandsDictionary = defaultCommands.ToDictionary(c => c.Id, c => c.On);
-            var changedCommands = activeVeCommands.Where(cId => !oldSiteCommandIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
-            foreach (var cId in offVeCommands.Where(cId => oldSiteCommandIdsOn.Contains(cId)))
-            {
-                changedCommands.Add(cId, false);
-            }
+            var activeCommandIdsSet = new HashSet<int>(activeCommandIds);
 
-            VisualEditorRepository.SetSiteCommands(Id, changedCommands, defaultCommandsDictionary);
+            var newCommands = oldCommands.Keys
+                .Union(activeCommandIds)
+                .ToDictionary(id => id, id => activeCommandIdsSet.Contains(id));
+
+            var changedCommands = newCommands.Keys
+                .Where(id => !oldCommands.ContainsKey(id) || oldCommands[id] != newCommands[id])
+                .ToDictionary(id => id, id => newCommands[id]);
+
+            var defaultCommands = VisualEditorRepository.GetDefaultCommands()
+                .ToDictionary(s => s.Id, s => s.On);
+
+            VisualEditorRepository.SetSiteCommands(Id, changedCommands, defaultCommands);
         }
 
         /// <summary>
@@ -643,17 +648,23 @@ namespace Quantumart.QP8.BLL
 
         internal void SaveVisualEditorStyles(int[] activeStyleIds)
         {
-            var defaultStyles = VisualEditorRepository.GetAllStyles().ToList();
-            var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, activeStyleIds).Select(c => c.Id).ToArray();
-            var oldSiteStylesIdsOn = new HashSet<int>(VisualEditorRepository.GetResultStyles(Id).Where(n => n.On).Select(n => n.Id));
-            var defaultStyleDictionary = defaultStyles.ToDictionary(s => s.Id, s => s.On);
-            var changedStyles = activeStyleIds.Where(cId => !oldSiteStylesIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
-            foreach (var cId in offVeStyles.Where(cId => !oldSiteStylesIdsOn.Contains(cId)))
-            {
-                changedStyles.Add(cId, false);
-            }
+            var oldStyles = VisualEditorRepository.GetResultStyles(Id)
+                .ToDictionary(s => s.Id, s => s.On);
 
-            VisualEditorRepository.SetSiteStyles(Id, changedStyles, defaultStyleDictionary);
+            var activeStyleIdsSet = new HashSet<int>(activeStyleIds);
+
+            var newStyles = oldStyles.Keys
+                .Union(activeStyleIds)
+                .ToDictionary(id => id, id => activeStyleIdsSet.Contains(id));
+
+            var changedStyles = newStyles.Keys
+                .Where(id => !oldStyles.ContainsKey(id) || oldStyles[id] != newStyles[id])
+                .ToDictionary(id => id, id => newStyles[id]);
+
+            var defaultStyles = VisualEditorRepository.GetAllStyles()
+                .ToDictionary(s => s.Id, s => s.On);
+
+            VisualEditorRepository.SetSiteStyles(Id, changedStyles, defaultStyles);
         }
     }
 }

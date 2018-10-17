@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * pmrpc 0.7.1 - Inter-widget remote procedure call library based on HTML5
  *               postMessage API and JSON-RPC. https://github.com/izuzak/pmrpc

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net47</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
     <Product>QP8.Framework</Product>
@@ -22,8 +22,9 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.0.0-rc1" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.0.0-rc1" />
-    <PackageReference Include="AutoMapper" Version="[1.1.2,2.0.0)" />
+    <PackageReference Include="AutoMapper" Version="1.1.2" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
+    <PackageReference Include="Flurl.Http" Version="2.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="Moq" Version="4.7.142" />
     <PackageReference Include="xunit" Version="2.3.1" />
@@ -37,5 +38,8 @@
     <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.TestTools\QP8.Infrastructure.TestTools.csproj" />
     <ProjectReference Include="..\..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj" />
     <ProjectReference Include="..\..\QuantumArt.Schedulers\Quantumart.QP8.CdcDataImport.Common\Quantumart.QP8.CdcDataImport.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+	<Reference Include="netstandard" />
   </ItemGroup>
 </Project>

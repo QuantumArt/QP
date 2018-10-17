@@ -789,4 +789,7 @@
   <data name="MaxDataItemCountNotInRange" xml:space="preserve">
     <value>Содержимое поля не входит в допустимый диапазон: от {3} до {5} </value>
   </data>
+  <data name="BackwardFieldId" xml:space="preserve">
+    <value>Обратное поле</value>
+  </data>
 </root>

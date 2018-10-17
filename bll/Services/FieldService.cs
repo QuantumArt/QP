@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -208,7 +209,18 @@ namespace Quantumart.QP8.BLL.Services
 
         public static IEnumerable<VisualEditorCommand> GetDefaultVisualEditorCommands() => VisualEditorRepository.GetDefaultCommands();
 
-        public static IEnumerable<VisualEditorCommand> GetResultVisualEditorCommands(int fieldId, int siteId) => VisualEditorRepository.GetResultCommands(fieldId, siteId);
+        public static IEnumerable<VisualEditorCommand> GetResultVisualEditorCommands(int fieldId, int siteId)
+        {
+            if (QPContext.IsAdmin)
+            {
+                var defaultCommands = VisualEditorRepository.GetDefaultCommands();
+                var siteCommands = VisualEditorRepository.GetSiteCommands(siteId);
+
+                return VisualEditorHelpers.Merge(defaultCommands, siteCommands);
+            }
+
+            return VisualEditorRepository.GetResultCommands(fieldId, siteId);
+        }
 
         public static IEnumerable<VisualEditorStyle> GetResultStyles(int fieldId, int siteId) => VisualEditorRepository.GetResultStyles(fieldId, siteId);
 

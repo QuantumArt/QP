@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quantumart.QP8.ArticleScheduler.WinService</RootNamespace>
     <AssemblyName>Quantumart.QP8.ArticleScheduler.WinService</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -98,6 +98,7 @@
     <Reference Include="Unity.ServiceLocation, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Unity.5.1.2\lib\net47\Unity.ServiceLocation.dll</HintPath>
     </Reference>
+	<Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleSchedulerService.cs">
@@ -170,4 +171,3 @@
   </Target>
   -->
 </Project>
-

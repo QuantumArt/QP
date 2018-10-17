@@ -628,6 +628,21 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             return Enumerable.Empty<Content>();
         }
 
+        public static Content GetBaseAggregationContent(int contentId)
+        {
+            if (contentId > 0)
+            {
+                return MapperFacade.ContentMapper.GetBizObject(
+                    QPContext.EFContext.FieldSet
+                    .Where(f => f.ContentId == contentId && f.Aggregated)
+                    .Select(f => f.Classifier.Content)
+                    .FirstOrDefault()
+                );
+            }
+
+            return null;
+        }
+
         internal static IEnumerable<ListItem> GetGroupSimpleList(int siteId, int[] selectedIds = null)
         {
             var groups = GetSiteContentGroups(siteId).Select(g => new ListItem(g.Id.ToString(), g.Name)).ToList();

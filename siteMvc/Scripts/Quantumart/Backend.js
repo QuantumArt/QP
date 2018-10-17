@@ -95,6 +95,7 @@ export class Backend {
   _backendEntityDataListManager = null;
   _backendActionPermissionViewManager = null;
   _backendCustomActionHostManager = null;
+  _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
 
   _currentCustomerCode = null;
   _currentUserId = null;
@@ -116,7 +117,7 @@ export class Backend {
   _userMustChangePassword = false;
 
   _initialize() {
-    BackendBrowserHistoryManager.preventBrowserNavigateBack();
+    this._backendBrowserHistoryManager.initialize();
 
     if (this._userMustChangePassword) {
       const changingWindow = new BackendChangePasswordWindow();
@@ -169,7 +170,6 @@ export class Backend {
         viewToolbarContainerElementId: 'viewToolbar',
         searchBlockContainerElementId: 'search',
         contextBlockContainerElementId: 'context',
-        documentsContainerHeightDifference: 118,
         tabStrip: this._backendTabStrip,
         currentCustomerCode: this._currentCustomerCode,
         currentUserId: this._currentUserId

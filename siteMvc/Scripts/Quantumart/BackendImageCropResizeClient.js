@@ -1,6 +1,8 @@
 /* eslint-disable max-lines */
 /* eslint-disable max-statements */
 /* eslint-disable max-len */
+import { BackendBrowserHistoryManager } from './Managers/BackendBrowserHistoryManager';
+
 export const ImageCropResizeClient = {};
 ImageCropResizeClient._cache = {};
 
@@ -387,6 +389,8 @@ ImageCropResizeClient._cache = {};
     _createSlider();
   };
 
+  const _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
+
   const _createWindow = function () {
     _telerikWindow = $.telerik.window.create({
       title: $l.Crop.title,
@@ -396,8 +400,10 @@ ImageCropResizeClient._cache = {};
       resizable: false,
       draggable: true,
       scrollable: true,
+      onOpen: _backendBrowserHistoryManager.handleModalWindowOpen,
       onClose() {
         _telerikWindow.destroy();
+        _backendBrowserHistoryManager.handleModalWindowClose();
       }
     }).data('tWindow');
 

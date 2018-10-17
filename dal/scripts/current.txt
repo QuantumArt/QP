@@ -28,4 +28,5 @@ AddMaxItemCountColumn
 Tokens
 AddExportArchiveArticlesToToolbar
 AddMustChangePasswordColumn
+AggregatedAndSelf
 ChangingSiteColumnsToNull

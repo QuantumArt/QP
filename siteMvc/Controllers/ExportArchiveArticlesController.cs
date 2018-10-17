@@ -66,7 +66,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 settings.CustomFieldIds = model.CustomFields.ToArray();
                 settings.ExcludeSystemFields = model.ExcludeSystemFields;
-                settings.FieldIdsToExpand = model.FieldsToExpand.ToArray();
+                settings.FieldIdsToExpand = model.FieldsToExpand ?? Enumerable.Empty<int>().ToArray();
             }
 
             settings.isArchive = true;

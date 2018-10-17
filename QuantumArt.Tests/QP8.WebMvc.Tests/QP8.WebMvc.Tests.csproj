@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net47</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
     <Product>QP8.Framework</Product>
@@ -40,6 +40,7 @@
 
   <ItemGroup>
     <Reference Include="System.Web" />
+	<Reference Include="netstandard" />
   </ItemGroup>
 
   <ItemGroup>

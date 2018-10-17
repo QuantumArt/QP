@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>QP8BackendApi.Interaction</id>
-    <version>1.0.2</version>
+    <version>1.1.1</version>
     <title>QP8BackendApi.Interaction</title>
     <authors>Pavel Celut,Maxim Tertyshnyy,Alex Kostyukov</authors>
     <owners>Quantum Art</owners>
@@ -17,5 +17,6 @@
   <files>
     <file src="siteMvc\Scripts\pmrpc.js" target="Content\Scripts" />
     <file src="siteMvc\Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.js" target="siteMvc\Content\Scripts" />
+    <file src="siteMvc\Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.d.ts" target="siteMvc\Content\Scripts" />
   </files>
 </package>

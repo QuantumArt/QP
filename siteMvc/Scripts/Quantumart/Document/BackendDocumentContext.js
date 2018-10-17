@@ -86,11 +86,16 @@ export class BackendDocumentContext {
   _execSelectCallback = null;
   _hostLoadedCallback = null;
 
-  initHandler = null;
-  disposeHandler = null;
-  beforeSubmitHandler = null;
-  loadHandler = null;
-  fieldValueChangedHandler = null;
+  /** @type {Function} */
+  initHandler;
+  /** @type {Function} */
+  disposeHandler;
+  /** @type {Function} */
+  beforeSubmitHandler;
+  /** @type {Function} */
+  loadHandler;
+  /** @type {Function} */
+  fieldValueChangedHandler;
 
   _options = null;
   _params = null;
@@ -414,23 +419,19 @@ export class BackendDocumentContext {
     const result = {};
 
     if (this.initHandler) {
-      result.init = jQuery.proxy(this.initHandler, this);
+      result.init = this.initHandler.bind(this);
     }
-
     if (this.disposeHandler) {
-      result.dispose = jQuery.proxy(this.disposeHandler, this);
+      result.dispose = this.disposeHandler.bind(this);
     }
-
     if (this.beforeSubmitHandler) {
-      result.beforeSubmit = jQuery.proxy(this.beforeSubmitHandler, this);
+      result.beforeSubmit = this.beforeSubmitHandler.bind(this);
     }
-
     if (this.fieldValueChangedHandler) {
-      result.fieldValueChanged = jQuery.proxy(this.fieldValueChangedHandler, this);
+      result.fieldValueChanged = this.fieldValueChangedHandler.bind(this);
     }
-
     if (this.loadHandler) {
-      result.load = jQuery.proxy(this.loadHandler, this);
+      result.load = this.loadHandler.bind(this);
     }
 
     return result;

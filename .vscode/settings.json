@@ -1,6 +1,6 @@
 {
   "eslint.autoFixOnSave": true,
-  "javascript.referencesCodeLens.enabled": true,
+  "javascript.referencesCodeLens.enabled": false,
   "files.exclude": {
     "**/.git": true,
     "**/.vs": true,
@@ -16,7 +16,7 @@
     "node_modules": true,
     "packages": true,
     "QA": true,
-    "QP.Custom": true,
+    "QP.Custom": false,
     "QP8.ConsoleDbUpdate": true,
     "QP8.TestCustomActionsHost": false,
     "QP8.TestCustomActionsHost/App_Start": true,

@@ -15,6 +15,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public int StagesCount => 3;
 
-        public string UploadPath => $"{SiteRepository.GetById(SiteId).UploadDir}\\contents\\{ContentId}\\";
+        public string UploadPath => $"{SiteRepository.GetById(SiteId).UploadDir}\\contents\\{ContentId}\\_temp\\";
     }
 }

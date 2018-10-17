@@ -3,6 +3,7 @@
 import { Backend } from './Backend';
 import { BackendAggregationList } from './Editor/BackendAggregationList';
 import { BackendClassifierField } from './Editor/BackendClassifierField';
+import { BackendBrowserHistoryManager } from './Managers/BackendBrowserHistoryManager';
 import { BackendEntityDataListManager } from './Managers/BackendEntityDataListManager';
 import { BackendEntityTreeManager } from './Managers/BackendEntityTreeManager';
 import { BackendEventArgs } from './Common/BackendEventArgs';
@@ -1410,11 +1411,15 @@ $c.openPreviewWindow = function (url, width, height) {
     .cat(`<img src="${urlWithTime}" width="${width}" height="${height}" />`)
     .cat('</div>');
 
+  const _backendBrowserHistoryManager = BackendBrowserHistoryManager.getInstance();
+
   const win = $.telerik.window.create({
     title: $l.FileField.previewWindowTitle,
     html: html.string(),
     height: $c.correctPreviewSize(height, 125, $(window).height()),
-    width: $c.correctPreviewSize(width, 215, $(window).width())
+    width: $c.correctPreviewSize(width, 215, $(window).width()),
+    onOpen: _backendBrowserHistoryManager.handleModalWindowOpen,
+    onClose: _backendBrowserHistoryManager.handleModalWindowClose
   }).data('tWindow');
 
   win.center().open();

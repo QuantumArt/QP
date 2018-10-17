@@ -17,12 +17,13 @@ window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS = 1;
 window.BACKEND_ACTION_EXECUTION_STATUS_FAILED = 2;
 window.BACKEND_ACTION_EXECUTION_STATUS_ERROR = 3;
 
+// eslint-disable-next-line
+/** @typedef {BackendEventArgs & Object} ActionEventArgs */
 export class BackendActionExecutor extends Observable {
-  // eslint-disable-next-line no-useless-constructor, FIXME
-  constructor() {
-    super();
-  }
-
+  /**
+   * @param {ActionEventArgs} eventArgs
+   * @param {Function} callback
+   */
   executeNonInterfaceAction(eventArgs, callback) {
     const actionCode = eventArgs.get_actionCode();
     const isCustom = eventArgs.get_isCustomAction();
@@ -153,6 +154,10 @@ export class BackendActionExecutor extends Observable {
     }
   }
 
+  /**
+   * @param {ActionEventArgs} eventArgs
+   * @returns {number} Action Status
+   */
   executeSpecialAction(eventArgs) {
     let actionStatus = window.BACKEND_ACTION_EXECUTION_STATUS_NOT_STARTING;
     const entityTypeCode = eventArgs.get_entityTypeCode();
@@ -193,6 +198,10 @@ export class BackendActionExecutor extends Observable {
     return actionStatus;
   }
 
+  /**
+   * @param {ActionEventArgs} eventArgs
+   * @returns {JQueryPromise<void>}
+   */
   executeMultistepAction(eventArgs) {
     // eslint-disable-next-line new-cap
     const dfr = $.Deferred();
@@ -394,7 +403,8 @@ export class BackendActionExecutor extends Observable {
               isSettingsSet: eventArgs.isSettingsSet
             });
 
-          $q.getJsonFromUrl('POST', settingsActionUrl.replace('Settings', 'PreSettings'), params, true, false)
+          const asyncAjax = eventArgs.get_actionCode() !== 'multiple_export_article';
+          $q.getJsonFromUrl('POST', settingsActionUrl.replace('Settings', 'PreSettings'), params, asyncAjax, false)
             .done(settingsResult => {
               if (settingsResult && settingsResult.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
                 BackendActionExecutor.showResult(settingsResult);
@@ -447,13 +457,7 @@ export class BackendActionExecutor extends Observable {
 
     return dfr.promise();
   }
-
-  dispose() {
-    super.dispose();
-    $q.collectGarbageInIE();
-  }
 }
-
 
 BackendActionExecutor._instance = null;
 

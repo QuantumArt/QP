@@ -97,9 +97,13 @@
     });
   };
 
-  CKEDITOR.dtd.a.div = true;
+  // https://github.com/ckeditor/ckeditor-dev/issues/514
+  Object.keys(CKEDITOR.dtd.$block).forEach(tag => {
+    CKEDITOR.dtd.a[tag] = 1;
+  });
+
   ['a', 'i', 'b', 'span'].forEach(tag => {
-    CKEDITOR.dtd.$removeEmpty[tag] = false;
+    delete CKEDITOR.dtd.$removeEmpty[tag];
   });
 
   bindEvents();
