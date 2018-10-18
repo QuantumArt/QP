@@ -78,7 +78,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             }
         }
 
-        private bool CheckIfFoldersAreEqual() => _source.LiveDirectory == _destination.LiveDirectory || _source.AssemblyPath == _destination.AssemblyPath || _source.UploadDir == _destination.UploadDir;
+        private bool CheckIfFoldersAreEqual() => _destination.ExternalDevelopment ? _source.UploadDir == _destination.UploadDir : 
+            _source.LiveDirectory == _destination.LiveDirectory || _source.AssemblyPath == _destination.AssemblyPath || _source.UploadDir == _destination.UploadDir;
+
 
         public int CopyFiles(int step, bool overwriteFilesOnDestination = true)
         {

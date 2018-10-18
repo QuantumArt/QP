@@ -133,6 +133,8 @@ export class BackendSettingsPopupWindow extends BackendSelectPopupWindow {
     if (response && (typeof response === 'string' || response.data)) {
       const data = response.data || response;
       $(`#${this._popupWindowComponent.get_documentWrapperElementId()}`).html(data);
+      const $form = this._popupWindowComponent.get_documentWrapperElement().children;
+      $c.initAllCheckboxToggles($form);
     } else {
       this._popupWindowComponent.closeWindow();
       $('.t-overlay').remove();
