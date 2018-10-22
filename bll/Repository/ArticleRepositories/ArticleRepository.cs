@@ -614,13 +614,19 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         private static string GetExtraFromForRelations(IEnumerable<ExportSettings.FieldSetting> displayFields)
         {
             var sb = new StringBuilder();
-            foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
+            foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation && !n.FromExtension))
             {
                 sb.AppendFormatLine(" left join content_{0}_united as {1} on base.[{2}] = {1}.content_item_id ", field.RelatedContentId, field.TableAlias, field.Name);
                 foreach (var f in field.Related.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
                 {
                     sb.AppendFormatLine(" left join content_{0}_united as {1} on {3}.[{2}] = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, f.Name, field.TableAlias);
                 }
+            }
+
+            foreach (var field in displayFields.Where(w=>w.FromExtension))
+            {
+                sb.AppendFormatLine(" left join (select c_{0}.*, c_{1}.ItemId from content_{0}_united c_{0} LEFT JOIN content_{1}_united c_{1} on c_{1}.[{3}] = c_{0}.CONTENT_ITEM_ID) as {2} on base.CONTENT_ITEM_ID =  {2}.ItemId",
+                     field.RelatedContentId, field.ContentId, field.TableAlias, field.Name);
             }
 
             return sb.ToString();
@@ -1392,6 +1398,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             using (var scope = new QPConnectionScope())
             {
                 return Common.GetM2OValuesBatch(scope.DbConnection, contentId, fieldId, fieldName, ids, displayFieldName, Default.MaxViewInListArticleNumber);
+            }
+        }
+
+        internal static Dictionary<Tuple<int, int>, List<int>> GetM2OValues(List<int> ids, int contentId, int fieldId, string fieldName, string displayFieldName)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetM2OValues(scope.DbConnection, contentId, fieldId, fieldName, ids, displayFieldName, Default.MaxViewInListArticleNumber);
             }
         }
 

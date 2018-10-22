@@ -595,7 +595,7 @@ namespace Quantumart.QP8.DAL
 
             public int ContentId { get; set; }
 
-            public string Name  { get; set; }
+            public string Name { get; set; }
 
             public int Id { get; set; }
 
@@ -693,18 +693,24 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static string GetQueryForO2MValues(string fieldName, string displayFieldName, int contentId, List<int> ids, int maxNumberOfRecords)
+        {
+            var query = new StringBuilder();
+            query.AppendFormatLine(" select subsel.content_item_id, {0}, Title from ( ", fieldName);
+            query.AppendFormatLine(" select u.content_item_id, u.{0}, CONVERT(NVARCHAR(255),[{1}]) as Title, ROW_NUMBER () over (PARTITION BY {0} order by u.content_item_id) AS [RowNum]", fieldName, displayFieldName);
+            query.AppendFormatLine(" from content_{0}_united as u with(nolock) where {2} in ({1})) as subsel ", contentId, string.Join(",", ids), fieldName);
+            query.AppendFormatLine(" where subsel.[RowNum] <= {0}", maxNumberOfRecords + 1);
+            return query.ToString();
+        }
+
         public static Dictionary<string, List<string>> GetM2OValuesBatch(SqlConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
         {
             var result = new Dictionary<string, List<string>>();
             if (ids.Any())
             {
-                var query = new StringBuilder();
-                query.AppendFormatLine(" select subsel.content_item_id, {0}, Title from ( ", fieldName);
-                query.AppendFormatLine(" select u.content_item_id, u.{0}, CONVERT(NVARCHAR(255),[{1}]) as Title, ROW_NUMBER () over (PARTITION BY {0} order by u.content_item_id) AS [RowNum]", fieldName, displayFieldName);
-                query.AppendFormatLine(" from content_{0}_united as u with(nolock) where {2} in ({1})) as subsel ", contentId, string.Join(",", ids), fieldName);
-                query.AppendFormatLine(" where subsel.[RowNum] <= {0}", maxNumberOfRecords + 1);
+                var query = GetQueryForO2MValues(fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
 
-                using (var cmd = SqlCommandFactory.Create(query.ToString(), connection))
+                using (var cmd = SqlCommandFactory.Create(query, connection))
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -720,6 +726,40 @@ namespace Quantumart.QP8.DAL
                             {
                                 result.Add(key, new List<string> { valueToInsert });
                             }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static Dictionary<Tuple<int, int>, List<int>> GetM2OValues(SqlConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
+        {
+            var result = new Dictionary<Tuple<int, int>, List<int>>();
+            if (ids.Any())
+            {
+                var query = GetQueryForO2MValues(fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
+
+                using (var cmd = SqlCommandFactory.Create(query, connection))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var articleId = (int)reader.GetDecimal(1);
+
+                            var relatedArticleId = reader.IsDBNull(0) ? 0 : (int)reader.GetDecimal(0);
+                            var key = Tuple.Create(articleId, fieldId);
+                            if (result.ContainsKey(key))
+                            {
+                                result[key].Add(relatedArticleId);
+                            }
+                            else
+                            {
+                                result.Add(key, new List<int> { relatedArticleId });
+                            }
+
                         }
                     }
                 }
@@ -2673,16 +2713,12 @@ namespace Quantumart.QP8.DAL
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var filter = "cnt.CONTENT_ID = " + options.ContentId;
 
-            if (options.Mode == FieldSelectMode.ForExport)
+            if (options.Mode == FieldSelectMode.ForExport || options.Mode == FieldSelectMode.ForExportExpanded)
             {
                 filter = "cnt.CONTENT_ID IN (" + string.Join(",", aggregatedContentIds.Union(new[] { options.ContentId })) + ")";
                 filter = SqlFilterComposer.Compose(filter, "ca.AGGREGATED = 0");
-                filter = SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID <> 13");
-            }
-            else if (options.Mode == FieldSelectMode.ForExportExpanded)
-            {
-                filter = SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID = 11");
-            }
+                filter = options.Mode == FieldSelectMode.ForExport ? SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID <> 13") : SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID in (11, 13)");
+            }          
 
             var selectBuilder = new StringBuilder();
             selectBuilder.Append("ca.[ATTRIBUTE_ID] AS Id,  CASE WHEN (cnt.CONTENT_ID = " + options.ContentId + ") THEN [ATTRIBUTE_NAME] ELSE cnt.[CONTENT_NAME] + '.' + [ATTRIBUTE_NAME] END as [Name], [ATTRIBUTE_NAME] as [FieldName], cnt.[CONTENT_NAME] as [ContentName], ca.[CREATED] as [Created], ca.[MODIFIED] as [Modified], ATTRIBUTE_ORDER as [Order]");
@@ -5107,7 +5143,7 @@ namespace Quantumart.QP8.DAL
         public static bool TestM2MValue(SqlConnection sqlConnection, int linkId, int articleId, int testArticleId)
         {
             var result =
-                GetLinkedArticles(sqlConnection, new [] {linkId}, articleId, false)[linkId]
+                GetLinkedArticles(sqlConnection, new[] { linkId }, articleId, false)[linkId]
                     .Split(",".ToCharArray())
                     .Where(n => !string.IsNullOrEmpty(n))
                     .Select(int.Parse)
@@ -5119,7 +5155,7 @@ namespace Quantumart.QP8.DAL
         public static bool TestM2OValue(SqlConnection sqlConnection, FieldInfo fi, int articleId, int testArticleId)
         {
             var result =
-                GetRelatedArticles(sqlConnection, new [] {fi}, articleId, false)[fi.Id]
+                GetRelatedArticles(sqlConnection, new[] { fi }, articleId, false)[fi.Id]
                     .Split(",".ToCharArray())
                     .Where(n => !string.IsNullOrEmpty(n))
                     .Select(int.Parse)

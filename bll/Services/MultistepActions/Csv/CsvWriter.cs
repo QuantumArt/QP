@@ -10,6 +10,7 @@ using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
 using Quantumart.QP8.Constants;
@@ -144,10 +145,27 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var dict = fields
                     .Where(n => n.ExactType == FieldExactTypes.M2MRelation && articles[0].Table.Columns.Contains(n.ContentId == _contentId ? n.Name : string.Format(FieldNameHeaderTemplate, n.Content.Name, n.Name)))
                     .Select(n => new { LinkId = n.LinkId.Value, n.ContentId })
-                    .ToDictionary(n => n.LinkId, m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == _contentId ? ids : extensionIdsMap[m.ContentId], true));
+                    .ToDictionary(n => n.LinkId.ToString(), m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == _contentId ? ids : extensionIdsMap[m.ContentId], true));
+
+                var m2oFields = fields.Where(w => w.ExactType == FieldExactTypes.M2ORelation).ToArray();
+                foreach (var field in m2oFields)
+                {
+                    var m2ODisplayFieldName = ContentRepository.GetTitleName(field.BackRelation.ContentId);
+                    var m2OValues = ArticleRepository.GetM2OValues(articles.AsEnumerable().Select(n => (int)n.Field<decimal>("content_item_id")).ToList(),
+                                                                    field.BackRelation.ContentId,
+                                                                    field.Id,
+                                                                    field.BackRelation.Name,
+                                                                    m2ODisplayFieldName);
+
+                    foreach (var value in m2OValues)
+                    {
+                        var key = value.Key.Item1 + "_" + value.Key.Item2;
+                        dict.Add(key, new Dictionary<int, string>() { { value.Key.Item1, string.Join(",", value.Value) } });
+                    }
+                }
 
                 foreach (var article in articles)
-                {
+                {                    
                     _sb.Append(_contentId);
                     _sb.Append(_settings.Delimiter);
                     _sb.AppendFormat("{0}{1}", article["content_item_id"], _settings.Delimiter);
@@ -213,6 +231,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 if (field.ExactType == FieldExactTypes.O2MRelation)
                 {
                     sb.AppendFormat(", {0} as [{1}]", string.Join(" + '; ' + ", GetParts(field)), field.Alias);
+                }
+                else if (field.ExactType == FieldExactTypes.M2ORelation && field.Related.Any())
+                {
+                    sb.AppendFormat(", dbo.[qp_m2o_titles](base.content_item_id, {0}, {1}, 255) as [{2}]", field.Related.First().Id, field.RelatedAttributeId, field.Alias);
                 }
                 else
                 {
@@ -290,7 +312,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return value;
         }
 
-        private string FormatFieldValue(DataRow article, string value, Field field, IReadOnlyDictionary<int, Dictionary<int, string>> m2MValues)
+        private string FormatFieldValue(DataRow article, string value, Field field, IReadOnlyDictionary<string, Dictionary<int, string>> valuesWithRelation)
         {
             if (value.Contains("\""))
             {
@@ -321,10 +343,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
             }
 
-            if (field != null && field.RelationType == RelationType.ManyToMany)
+            if (field != null && (field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne))
             {
                 value = string.Empty;
-                if (m2MValues.TryGetValue(field.LinkId.Value, out var mappings) && mappings.Any())
+                var mapValue = field.RelationType == RelationType.ManyToMany ? field.LinkId.Value.ToString() : article["content_Item_id"] + "_" + field.Id; 
+                if (valuesWithRelation.TryGetValue(mapValue, out var mappings) && mappings.Any())
                 {
                     var key = field.ContentId == _contentId ? IdentifierFieldName : string.Format(FieldNameHeaderTemplate, field.Content.Name, IdentifierFieldName);
                     if (int.TryParse(article[key].ToString(), out var id))
@@ -378,7 +401,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         }
 
         private IEnumerable<Field> GetBaseFields() => from f in FieldRepository.GetList(_settings.ContentId, false)
-            where f.ExactType != FieldExactTypes.M2ORelation && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
+            where _settings.AllFields || _settings.CustomFieldIds.Contains(f.Id)
             select f;
 
         private IEnumerable<string> GetExtensionFields(Content content, string template) => (from f in content.Fields
