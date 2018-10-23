@@ -3985,15 +3985,6 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[US
   ALTER TABLE [dbo].[USERS] ADD [MUST_CHANGE_PASSWORD] [bit] NOT NULL CONSTRAINT DF_MUST_CHANGE_PASSWORD DEFAULT 0 
 
 GO
-  alter table SITE alter column live_directory nvarchar(255) null
-  alter table SITE alter column live_virtual_root nvarchar(255) null
-  alter table SITE alter column stage_directory nvarchar(255) null
-  alter table SITE alter column stage_virtual_root nvarchar(255) null
-  alter table SITE alter column upload_dir nvarchar(255) null
-  alter table SITE alter column upload_url nvarchar(255) null
-  alter table SITE alter column upload_url_prefix nvarchar(255) null
-
-GO
 ALTER function [dbo].[qp_aggregated_and_self](@itemIds Ids READONLY)
 returns @ids table (id numeric primary key)
 as
@@ -4020,6 +4011,12 @@ begin
 	and AGG_DATA.DATA in (select cast(id as nvarchar(8)) from @ids2)
 	return
 end
+
+GO
+  alter table SITE alter column live_directory nvarchar(255) null
+  alter table SITE alter column live_virtual_root nvarchar(255) null
+  alter table SITE alter column stage_directory nvarchar(255) null
+  alter table SITE alter column stage_virtual_root nvarchar(255) null
 
 GO
 
