@@ -821,6 +821,9 @@ export class BackendActionParameters {
     }
 
     if (action.ActionType.IsMultiple) {
+      if (this._entityId && !this._entities) {
+        this._entities = [{ Id: this._entityId, Name: this._entityName }];
+      }
       this._entityId = 0;
       this._entityName = '';
     }
