@@ -3,47 +3,57 @@
 
 @using (Html.BeginTabForm(Model))
 {
-    using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
-    {
-        @Html.TextBoxFieldFor(s => s.Data.Name)
-        @Html.TextAreaFieldFor(s => s.Data.Description)
-    }
+  using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.Name)
+    @Html.TextAreaFieldFor(s => s.Data.Description)
+    @Html.CheckBoxFieldFor(s => s.Data.ExternalDevelopment, string.Join(",", new[] {
+                                                                          Model.LivePagesLocationBlock,
+                                                                          Model.StagePagesLocationBlock
+                                                                        }))
+  }
 
-    using (Html.BeginFieldGroup(SiteStrings.Legend_CopySiteSettings))
-    {
-        @Html.TextBoxFieldFor(s => s.DoNotCopyArticles)
-        @Html.CheckBoxFieldFor(s => s.DoNotCopyTemplates)
-        @Html.CheckBoxFieldFor(s => s.DoNotCopyFiles)
-    }
-    using (Html.BeginFieldGroup(SiteStrings.Legend_SiteLocation))
-    {
-        @Html.TextBoxFieldFor(s => s.Data.Dns)
-    }
+  using (Html.BeginFieldGroup(SiteStrings.Legend_CopySiteSettings))
+  {
+    @Html.TextBoxFieldFor(s => s.DoNotCopyArticles)
+    @Html.CheckBoxFieldFor(s => s.DoNotCopyTemplates)
+    @Html.CheckBoxFieldFor(s => s.DoNotCopyFiles)
+  }
+  using (Html.BeginFieldGroup(SiteStrings.Legend_SiteLocation))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.Dns)
+  }
 
-    using (Html.BeginFieldGroup(SiteStrings.Legend_UploadedFilesLocation))
-    {
-        @Html.TextBoxFieldFor(s => s.Data.UploadUrl)
-        @Html.TextBoxFieldFor(s => s.Data.UploadDir)
-    }
+  using (Html.BeginFieldGroup(SiteStrings.Legend_UploadedFilesLocation))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.UploadUrl)
+    @Html.TextBoxFieldFor(s => s.Data.UploadDir)
+  }
 
+  using (Html.BeginPanel(Model.LivePagesLocationBlock, false, false, reverse: true))
+  {
     using (Html.BeginFieldGroup(SiteStrings.Legend_LivePagesLocation))
     {
-        @Html.TextBoxFieldFor(s => s.Data.LiveVirtualRoot)
-        @Html.TextBoxFieldFor(s => s.Data.LiveDirectory)
+      @Html.TextBoxFieldFor(s => s.Data.LiveVirtualRoot)
+      @Html.TextBoxFieldFor(s => s.Data.LiveDirectory)
     }
+  }
 
+  using (Html.BeginPanel(Model.StagePagesLocationBlock, false, false, reverse: true))
+  {
     using (Html.BeginFieldGroup(SiteStrings.Legend_StagePagesLocation))
     {
-        @Html.TextBoxFieldFor(s => s.Data.StageVirtualRoot)
-        @Html.TextBoxFieldFor(s => s.Data.StageDirectory)
+      @Html.TextBoxFieldFor(s => s.Data.StageVirtualRoot)
+      @Html.TextBoxFieldFor(s => s.Data.StageDirectory)
     }
 
     if (Model.Data.AssemblingType != "vbscript")
     {
-        using (Html.BeginFieldGroup(SiteStrings.Legend_AssemblyFilesLocation))
-        {
-            @Html.TextBoxFieldFor(s => s.Data.AssemblyPath)
-            @Html.TextBoxFieldFor(s => s.Data.StageAssemblyPath)
-        }
+      using (Html.BeginFieldGroup(SiteStrings.Legend_AssemblyFilesLocation))
+      {
+        @Html.TextBoxFieldFor(s => s.Data.AssemblyPath)
+        @Html.TextBoxFieldFor(s => s.Data.StageAssemblyPath)
+      }
     }
+  }
 }

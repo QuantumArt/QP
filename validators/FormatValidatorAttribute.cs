@@ -17,6 +17,8 @@ namespace Quantumart.QP8.Validators
         private readonly RegexOptions _options;
         private readonly string _patternResourceName;
         private readonly Type _patternResourceType;
+        private readonly string _propertyName = null;
+        private readonly bool _inverse = false;
 
         /// <summary>
         ///     <para>Initializes a new instance of the <see cref="FormatValidatorAttribute" /> class with a regex pattern.</para>
@@ -62,6 +64,16 @@ namespace Quantumart.QP8.Validators
         }
 
         /// <summary>
+        ///     <para>Initializes a new instance of the <see cref="FormatValidatorAttribute" /> class with a regex pattern.</para>
+        /// </summary>
+        /// <param name="pattern">The pattern to match.</param>
+        /// <param name="propertyName">The name of the property which validator depends on.</param>
+        /// <param name="inverse">True if the validator must inverse the propertyName value.</param>
+        public FormatValidatorAttribute(string pattern, string propertyName, bool inverse = false)
+            : this(pattern, null, null, RegexOptions.None, propertyName, inverse)
+        { }
+
+        /// <summary>
         ///     <para>
         ///     Initializes a new instance of the <see cref="FormatValidatorAttribute" /> class with a regex pattern,
         ///     matching options and a failure message template.
@@ -70,13 +82,17 @@ namespace Quantumart.QP8.Validators
         /// <param name="pattern">The pattern to match.</param>
         /// <param name="patternResourceName">The resource name containing the pattern for the regular expression.</param>
         /// <param name="patternResourceType">The type containing the resource for the regular expression.</param>
-        /// <param name="options">The <see cref="RegexOptions" /> to use when matching.</param>
-        internal FormatValidatorAttribute(string pattern, string patternResourceName, Type patternResourceType, RegexOptions options)
+        /// <param name="options">The <see cref="RegexOptions"/> to use when matching.</param>        /// 
+        /// <param name="propertyName">The name of the property which validator depends on.</param>
+        /// <param name="inverse">True if the validator must inverse the propertyName value.</param>
+        internal FormatValidatorAttribute(string pattern, string patternResourceName, Type patternResourceType, RegexOptions options, string propertyName = null, bool inverse = false)
         {
             ValidatorArgumentsValidatorHelper.ValidateRegexIgnoresEmptyStringValidator(pattern, patternResourceName, patternResourceType);
 
             _pattern = pattern;
             _options = options;
+            _propertyName = propertyName;
+            _inverse = inverse;
             _patternResourceName = patternResourceName;
             _patternResourceType = patternResourceType;
         }
@@ -86,7 +102,10 @@ namespace Quantumart.QP8.Validators
         /// </summary>
         /// <param name="targetType">The type of object that will be validated by the validator.</param>
         /// <remarks>This operation must be overriden by subclasses.</remarks>
-        /// <returns>The created <see cref="FormatValidator" />.</returns>
-        protected override Validator DoCreateValidator(Type targetType) => new FormatValidator(_pattern, _patternResourceName, _patternResourceType, _options, MessageTemplate, Negated);
+        /// <returns>The created <see cref="FormatValidator"/>.</returns>
+        protected override Validator DoCreateValidator(Type targetType)
+        {
+            return new FormatValidator(_pattern, _patternResourceName, _patternResourceType, _options, MessageTemplate, Negated, _propertyName, _inverse);
+        }
     }
 }

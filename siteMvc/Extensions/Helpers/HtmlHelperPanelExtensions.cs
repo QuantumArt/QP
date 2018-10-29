@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -41,13 +41,18 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
         }
 
-        public static Panel BeginPanel(this HtmlHelper html, string id, bool isView, bool isUniqId, Dictionary<string, object> htmlAttributes = null)
+        public static Panel BeginPanel(this HtmlHelper html, string id, bool isView, bool isUniqId, Dictionary<string, object> htmlAttributes = null, bool reverse = false)
         {
             var display = isView ? "block" : "none";
 
             if (htmlAttributes == null)
             {
                 htmlAttributes = new Dictionary<string, object>(0);
+            }
+
+            if (reverse)
+            {
+                htmlAttributes.AddData("reverse", true.ToString().ToLowerInvariant());
             }
 
             var attrs = string.Join(" ", htmlAttributes.Select(p => $"{p.Key}={p.Value}"));

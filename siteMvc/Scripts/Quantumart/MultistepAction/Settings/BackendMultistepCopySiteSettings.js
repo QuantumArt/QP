@@ -1,4 +1,5 @@
 import { $q } from '../../Utils';
+import { $c } from '../../ControlHelpers';
 
 export class MultistepActionCopySiteSettings {
   constructor(options) {
@@ -7,7 +8,8 @@ export class MultistepActionCopySiteSettings {
 
 
   initActions() {
-    // empty fn
+    const $form = $(`#${this.options.popupWindowId}_editingForm`);
+    $c.initAllCheckboxToggles($form);
   }
 
   validate() {

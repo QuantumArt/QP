@@ -29,7 +29,7 @@ namespace Quantumart.QP8.Validators
                 return result;
             }
 
-            return false;
+            return true;
         }
     }
 }
