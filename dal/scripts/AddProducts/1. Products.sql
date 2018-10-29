@@ -22,8 +22,18 @@ BEGIN
         CONSTRAINT [PK_Products] PRIMARY KEY CLUSTERED ([Id] ASC)
     )
 END
+GO
 
-if not exists (select * from sys.indexes where name = 'IX_Products')
+IF EXISTS (select index_id from sys.indexes where name = 'IX_Products' AND object_id = OBJECT_ID('dbo.Products'))
+AND NOT EXISTS (select * from sys.index_columns where object_id = OBJECT_ID('IX_Products')
+and index_id in (select index_id from sys.indexes where name = 'IX_Products')
+and column_id in (select column_id from sys.columns where object_id = OBJECT_ID('dbo.Products') and name = 'Updated'))
+BEGIN
+    DROP INDEX [IX_Products] ON [dbo].[Products];
+END
+GO
+
+IF NOT EXISTS (select index_id from sys.indexes where name = 'IX_Products' AND object_id = OBJECT_ID('dbo.Products'))
 BEGIN
     CREATE UNIQUE NONCLUSTERED INDEX [IX_Products] ON [dbo].[Products]
     (
@@ -34,6 +44,28 @@ BEGIN
         [Language] ASC,
         [Format] ASC
     )
+    INCLUDE
+    (
+    [Updated]
+    );
+END
+GO
+
+IF NOT EXISTS (SELECT index_id FROM sys.indexes WHERE name='IX_Updated' AND object_id = OBJECT_ID('dbo.Products'))
+BEGIN
+    CREATE NONCLUSTERED INDEX [IX_Updated] ON [dbo].[Products]
+    (
+    [Updated] DESC
+    )
+    INCLUDE
+    (
+    [DpcId],
+    [Slug],
+    [IsLive],
+    [Version],
+    [Language],
+    [Format]
+    );
 END
 GO
 
