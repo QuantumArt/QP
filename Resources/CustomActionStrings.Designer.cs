@@ -106,6 +106,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot copy custom action because you have no enough permissions.
+        /// </summary>
+        public static string CannotCopyBecauseOfSecurity {
+            get {
+                return ResourceManager.GetString("CannotCopyBecauseOfSecurity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirm Phrase.
         /// </summary>
         public static string ConfirmPhrase {

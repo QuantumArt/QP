@@ -40,6 +40,8 @@ namespace Quantumart.QP8.BLL.Services
         IEnumerable<Content> GetContents(IEnumerable<int> contentIDs);
 
         CustomActionInitListResult InitList(int parentId);
+
+        CopyResult Copy(int id, int[] selectedActionsIds);
     }
 
     public class CustomActionService : ICustomActionService
@@ -120,6 +122,29 @@ namespace Quantumart.QP8.BLL.Services
             customAction = Normalize(customAction, selectedActionsIds);
             customAction = CustomActionRepository.Update(customAction);
             return customAction;
+        }
+
+        public CopyResult Copy(int id, int[] selectedActionsIds)
+        {
+            var result = new CopyResult();
+            var action = Read(id);
+            action.Id = 0;
+            if (action == null)
+            {                
+                throw new Exception(string.Format(CustomActionStrings.ActionNotFoundByCode, id));
+            }
+            if (!action.IsUpdatable || !action.IsAccessible(ActionTypeCode.Read))
+            {
+                result.Message = MessageResult.Error(CustomActionStrings.CannotCopyBecauseOfSecurity);
+            }
+
+            if (result.Message == null)
+            {
+                action = Normalize(action, selectedActionsIds);
+                action = CustomActionRepository.Copy(action);
+            }
+
+            return result;
         }
 
         private static CustomAction Normalize(CustomAction customAction, int[] selectedActionsIds)
