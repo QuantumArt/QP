@@ -132,6 +132,9 @@
   <data name="BasicParametersTitle" xml:space="preserve">
     <value>Основные параметры</value>
   </data>
+  <data name="CannotCopyBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно создать копию пользовательского действия, потому что у Вас недостаточно прав доступа</value>
+  </data>
   <data name="ConfirmPhrase" xml:space="preserve">
     <value>Фраза подтверждения</value>
   </data>
