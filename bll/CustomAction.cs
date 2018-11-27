@@ -107,6 +107,12 @@ namespace Quantumart.QP8.BLL
         [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
         public override string Description { get; set; }
 
+        [LocalizedDisplayName("Alias", NameResourceType = typeof(CustomActionStrings))]
+        [MaxLengthValidator(255, MessageTemplateResourceName = "AliasExceeded", MessageTemplateResourceType = typeof(CustomActionStrings))]
+        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "AliasInvalidFormat", MessageTemplateResourceType = typeof(CustomActionStrings))]
+
+        public string Alias { get; set; }
+
         public int ActionId { get; set; }
 
         [LocalizedDisplayName("Url", NameResourceType = typeof(CustomActionStrings))]

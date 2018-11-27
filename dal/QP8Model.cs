@@ -14329,6 +14329,30 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Alias
+        {
+            get
+            {
+                return _Alias;
+            }
+            set
+            {
+                OnAliasChanging(value);
+                ReportPropertyChanging("Alias");
+                _Alias = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Alias");
+                OnAliasChanged();
+            }
+        }
+        private global::System.String _Alias;
+        partial void OnAliasChanging(global::System.String value);
+        partial void OnAliasChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String Url

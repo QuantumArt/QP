@@ -4092,4 +4092,18 @@ GO
   alter table SITE alter column stage_virtual_root nvarchar(255) null
 
 GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CUSTOM_ACTION' AND COLUMN_NAME = 'ALIAS')
+BEGIN
+	ALTER TABLE CUSTOM_ACTION ADD ALIAS nvarchar(255) NULL
+END
+GO
+
+if not exists(select * from sys.indexes where name = 'IX_CUSTOM_ACTION_ALIAS' and [object_id] = object_id('CUSTOM_ACTION'))
+begin
+  CREATE UNIQUE NONCLUSTERED INDEX [IX_CUSTOM_ACTION_ALIAS] ON [dbo].CUSTOM_ACTION ([ALIAS] ASC) WHERE [ALIAS] IS NOT NULL
+end
+
+GO
+
+GO
 
