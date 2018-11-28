@@ -274,16 +274,33 @@ namespace Quantumart.QP8.BLL.Repository
             var oldId = action.Id;
             var oldName = action.Name;
             action.Name = MutateName(action.Name);
+            if (action.Alias != null)
+            {
+                action.Alias = MutateAlias(action.Alias);
+            }
             action.CalculateOrder(action.Action.EntityTypeId, true, action.Order);
 
             var newAction = Save(action);
 
             return GetById(newAction.Id);
         }
-        
+
+        private static string MutateAlias(string alias)
+        {
+            string newAlias;
+            var index = 0;
+            do
+            {
+                index++;
+                newAlias = MutateHelper.MutateNetName(alias, index);
+            }
+            while (ExistAlias(newAlias));
+            return newAlias;
+        }
+
         private static string MutateName(string name)
         {
-            var newName = name;
+            string newName;
             var index = 0;
             do
             {
@@ -297,6 +314,11 @@ namespace Quantumart.QP8.BLL.Repository
         private static bool ExistName(string name)
         {
             return QPContext.EFContext.CustomActionSet.Any(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        private static bool ExistAlias(string alias)
+        {
+            return QPContext.EFContext.CustomActionSet.Any(a => a.Alias.Equals(alias, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private static IEnumerable<int> ExistOrders()

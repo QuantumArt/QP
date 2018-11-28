@@ -31,3 +31,5 @@ AddMustChangePasswordColumn
 AggregatedAndSelf
 M2ONames
 ChangingSiteColumnsToNull
+AddCustomActionAlias
+
