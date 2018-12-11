@@ -110,10 +110,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             {
                 Id = field.Id;
                 ContentId = field.ContentId;
+                ContentName = field.Content.Name;
                 Name = field.Name;
                 Order = order;
                 LinkId = field.LinkId ?? 0;
                 ExactType = field.ExactType;
+                IsRelation = field.Relation != null;
                 RelatedContentId = displayField?.ContentId ?? 0;
                 RelatedContentName = displayField?.Content.Name;
                 RelatedAttributeName = displayField?.Name;
@@ -126,6 +128,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
             public int ContentId { get; set; }
 
+            public string ContentName { get; set; }
+
             public string Name { get; set; }
 
             public int Order { get; set; }
@@ -137,6 +141,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             public string RelatedAttributeName { get; set; }
 
             public int RelatedAttributeId { get; set; }
+
+            public bool IsRelation { get; set; }
 
             public string Alias => $"rel_{Order}_{RelatedContentId}";
 

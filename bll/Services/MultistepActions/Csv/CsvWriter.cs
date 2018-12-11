@@ -234,11 +234,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
                 else if (field.ExactType == FieldExactTypes.M2ORelation && field.Related.Any())
                 {
-                    sb.AppendFormat(", dbo.[qp_m2o_titles](base.content_item_id, {0}, {1}, 255) as [{2}]", field.Related.First().Id, field.RelatedAttributeId, field.Alias);
+                    var related = field.Related.First(f => !f.IsRelation).Id;
+                    sb.AppendFormat(", dbo.[qp_m2o_titles](base.content_item_id, {0}, {1}, 255) as [{2}]", related, field.RelatedAttributeId, field.Alias);
                 }
                 else
                 {
-                    sb.AppendFormat(", dbo.[qp_link_titles]({0}, base.content_item_id, {1}, 255) as [{2}]", field.LinkId, field.RelatedAttributeId, field.Alias);
+                    var contentCondition = field.FromExtension ? $"[ex{field.ContentName}].content_item_id" : "base.content_item_id";
+                    sb.AppendFormat(", dbo.[qp_link_titles]({0}, {1}, {2}, 255) as [{3}]", field.LinkId, contentCondition, field.RelatedAttributeId, field.Alias);
                 }
             }
 
