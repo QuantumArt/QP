@@ -8,6 +8,16 @@ const SESSION_STORAGE_STATE = 'Quantumart.QP8.DirectLinkExecutor.SessionState';
 const LOCAL_STORAGE_PRIMARY_ID = 'Quantumart.QP8.DirectLinkExecutor.PrimaryId';
 const LOCAL_STORAGE_DIRECT_LINK = 'Quantumart.QP8.DirectLinkExecutor.DirectLink';
 
+let inBackground = document.visibilityState === 'hidden';
+
+window.addEventListener('focus', () => {
+  inBackground = false;
+}, false);
+
+window.addEventListener('blur', () => {
+  inBackground = true;
+}, false);
+
 export class DirectLinkExecutor extends Observable {
   _currentCustomerCode = null;
   _directLinkOptions = null;
@@ -59,7 +69,20 @@ export class DirectLinkExecutor extends Observable {
           const message = JSON.parse(e.newValue);
           if (isPrimary && message.instanceId !== instanceId) {
             window.localStorage.removeItem(LOCAL_STORAGE_DIRECT_LINK);
-            this._executeAction(message.directLinkOptions, true);
+
+            // https://developers.google.com/web/updates/2017/03/dialogs-policy
+            // https://bugs.chromium.org/p/chromium/issues/detail?id=629964
+            // `window.confirm()` silently returns `false` in Chromium
+            // if current window in background and DevTools are closed
+            if (inBackground) {
+              const handler = () => {
+                window.removeEventListener('focus', handler, false);
+                this._executeAction(message.directLinkOptions, true);
+              };
+              window.addEventListener('focus', handler, false);
+            } else {
+              this._executeAction(message.directLinkOptions, true);
+            }
           }
           break;
         }
