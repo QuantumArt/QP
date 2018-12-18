@@ -1660,7 +1660,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         private static int[] GetArticleIds(IEnumerable<ArticleData> articles)
         {
-            return articles.Select(a => a.Id).ToArray();
+            return articles.Select(a => a.Id).Distinct().ToArray();
         }
 
         private static int[] GetFieldIds(IEnumerable<ArticleData> articles)
