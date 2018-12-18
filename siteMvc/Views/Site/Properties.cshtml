@@ -2,206 +2,227 @@
 @model Quantumart.QP8.WebMvc.ViewModels.Site.SiteViewModel
 
 <script type="text/html" id="@Html.UniqueId("Data_ExternalCssItems_template")">
-	<span data-bind="click: addItem">
-        @Html.SimpleAddActionLink(VisualEditorStrings.AddNewExternalCss)
-	</span>
-	<table>
-		<thead>
-			<tr>
-				<td/>
-				<td>URL</td>
-				<td></td>
-			</tr>
-		</thead>
-		<tbody data-bind ="foreach: items">
-			<tr>
-				<td data-bind="text: $index() + 1"></td>
-				<td> <input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
-				<td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
-			</tr>
-		</tbody>
-	</table>
+  <span data-bind="click: addItem">
+    @Html.SimpleAddActionLink(VisualEditorStrings.AddNewExternalCss)
+  </span>
+  <table>
+    <thead>
+      <tr>
+        <td />
+        <td>URL</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody data-bind="foreach: items">
+      <tr>
+        <td data-bind="text: $index() + 1"></td>
+        <td> <input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
+        <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem" /></td>
+      </tr>
+    </tbody>
+  </table>
 </script>
 
 @using (Html.BeginTabForm(Model))
 {
-	@Html.Partial("Locking", Model)
+  @Html.Partial("Locking", Model)
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
-	{
-		@Html.TextBoxFieldFor(s => s.Data.Name)
-		@Html.TextAreaFieldFor(s => s.Data.Description)
-        @Html.CheckBoxFieldFor(s => s.Data.ExternalDevelopment, Model.ExtDevBlock)
-		@Html.RadioFieldFor(s => s.Data.IsLive, Html.List(Model.SiteModes))
-	}
+  using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.Name)
+    @Html.TextAreaFieldFor(s => s.Data.Description)
+    @Html.CheckBoxFieldFor(s => s.Data.ExternalDevelopment, string.Join(",", new[] {
+                                                              Model.ExtDevBlock,
+                                                              Model.AssemblingParametersBlock,
+                                                              Model.LivePagesLocationBlock,
+                                                              Model.StagePagesLocationBlock,
+                                                              Model.BinBlock,
+                                                              Model.OnScreenAssemblingParametersBlock
+                                                            }))
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_AssemblingParameters))
-	{
-		@Html.SelectFieldFor(s => s.Data.AssemblingType, Html.List(Model.AssemblingTypes), new SelectOptions { ReadOnly = !Model.IsNew })
-		@Html.CheckBoxFieldFor(s => s.Data.AllowUserSessions)
-		using (Html.BeginPanel(Model.AssemblingNetOptionsBlock))
-		{
-			@Html.CheckBoxFieldFor(s => s.Data.AssembleFormatsInLive)
-			@Html.CheckBoxFieldFor(s => s.Data.ForceAssemble)
-		}
-	}
+    @Html.RadioFieldFor(s => s.Data.IsLive, Html.List(Model.SiteModes))
+  }
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_SiteLocation))
-	{
-		@Html.TextBoxFieldFor(s => s.Data.Dns)
-		@Html.CheckBoxFieldFor(s => s.Data.SeparateDns, Model.StageDnsBlock)
+  using (Html.BeginPanel(Model.AssemblingParametersBlock, false, false, reverse: true))
+  {
+    using (Html.BeginFieldGroup(SiteStrings.Legend_AssemblingParameters))
+    {
+      @Html.SelectFieldFor(s => s.Data.AssemblingType, Html.List(Model.AssemblingTypes), new SelectOptions { ReadOnly = !Model.IsNew })
+      @Html.CheckBoxFieldFor(s => s.Data.AllowUserSessions)
+      using (Html.BeginPanel(Model.AssemblingNetOptionsBlock))
+      {
+        @Html.CheckBoxFieldFor(s => s.Data.AssembleFormatsInLive)
+        @Html.CheckBoxFieldFor(s => s.Data.ForceAssemble)
+      }
+    }
+  }
 
-		using (Html.BeginPanel(Model.StageDnsBlock))
-		{
-			@Html.TextBoxFieldFor(s => s.Data.StageDns)
-		}
-	}
+  using (Html.BeginFieldGroup(SiteStrings.Legend_SiteLocation))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.Dns)
+    @Html.CheckBoxFieldFor(s => s.Data.SeparateDns, Model.StageDnsBlock)
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_UploadedFilesLocation))
-	{
-		@Html.TextBoxFieldFor(s => s.Data.UploadUrl)
-		@Html.CheckBoxFieldFor(s => s.Data.UseAbsoluteUploadUrl, Model.UploadUrlPrefixBlock)
+    using (Html.BeginPanel(Model.StageDnsBlock))
+    {
+      @Html.TextBoxFieldFor(s => s.Data.StageDns)
+    }
+  }
 
-		using (Html.BeginPanel(Model.UploadUrlPrefixBlock))
-		{
-			@Html.TextBoxFieldFor(s => s.Data.UploadUrlPrefix)
-		}
-		@Html.TextBoxFieldFor(s => s.Data.UploadDir)
-	}
+  using (Html.BeginFieldGroup(SiteStrings.Legend_UploadedFilesLocation))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.UploadUrl)
+    @Html.CheckBoxFieldFor(s => s.Data.UseAbsoluteUploadUrl, Model.UploadUrlPrefixBlock)
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_LivePagesLocation))
-	{
-		@Html.TextBoxFieldFor(s => s.Data.LiveVirtualRoot)
-		@Html.TextBoxFieldFor(s => s.Data.LiveDirectory)
-		using (Html.BeginPanel(Model.TestDirectoryBlock))
-		{
-			@Html.CheckBoxFieldFor(s => s.Data.ForceTestDirectory, Model.TestDirectoryPathBlock)
-			using (Html.BeginPanel(Model.TestDirectoryPathBlock))
-			{
-				@Html.TextBoxFieldFor(s => s.Data.TestDirectory)
-			}
-		}
-	}
+    using (Html.BeginPanel(Model.UploadUrlPrefixBlock))
+    {
+      @Html.TextBoxFieldFor(s => s.Data.UploadUrlPrefix)
+    }
+    @Html.TextBoxFieldFor(s => s.Data.UploadDir)
+  }
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_StagePagesLocation))
-	{
-		@Html.TextBoxFieldFor(s => s.Data.StageVirtualRoot)
-		@Html.TextBoxFieldFor(s => s.Data.StageDirectory)
-	}
+  using (Html.BeginPanel(Model.LivePagesLocationBlock, false, false, reverse: true))
+  {
+    using (Html.BeginFieldGroup(SiteStrings.Legend_LivePagesLocation))
+    {
+      @Html.TextBoxFieldFor(s => s.Data.LiveVirtualRoot)
+      @Html.TextBoxFieldFor(s => s.Data.LiveDirectory)
+      using (Html.BeginPanel(Model.TestDirectoryBlock))
+      {
+        @Html.CheckBoxFieldFor(s => s.Data.ForceTestDirectory, Model.TestDirectoryPathBlock)
+        using (Html.BeginPanel(Model.TestDirectoryPathBlock))
+        {
+          @Html.TextBoxFieldFor(s => s.Data.TestDirectory)
+        }
+      }
+    }
+  }
 
-	using (Html.BeginPanel(Model.BinBlock))
-	{
-		using (Html.BeginFieldGroup(SiteStrings.Legend_AssemblyFilesLocation))
-		{
-			@Html.TextBoxFieldFor(s => s.Data.AssemblyPath)
-			@Html.TextBoxFieldFor(s => s.Data.StageAssemblyPath)
-		}
-	}
+  using (Html.BeginPanel(Model.StagePagesLocationBlock, false, false, reverse: true))
+  {
+    using (Html.BeginFieldGroup(SiteStrings.Legend_StagePagesLocation))
+    {
+      @Html.TextBoxFieldFor(s => s.Data.StageVirtualRoot)
+      @Html.TextBoxFieldFor(s => s.Data.StageDirectory)
+    }
+  }
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_OnScreenAssemblingParameters))
-	{
-		@Html.CheckBoxFieldFor(s => s.Data.EnableOnScreen, Model.OnScreenBlock)
-		using (Html.BeginPanel(Model.OnScreenBlock))
-		{
-			@Html.RadioFieldFor(s => s.Data.OnScreenFieldBorder, Html.List(Model.OnScreenModes))
-			using (Html.BeginPanel(Model.OnScreenAspBlock))
-			{
-				@Html.RadioFieldFor(s => s.Data.OnScreenObjectBorder, Html.List(Model.OnScreenModes))
-			}
-		}
-	}
+  using (Html.BeginPanel(Model.BinBlock, false, false, new Dictionary<string, object>
+    { { "data-depended", Model.Data.ExternalDevelopment } }, reverse: true))
+  {
+    using (Html.BeginFieldGroup(SiteStrings.Legend_AssemblyFilesLocation))
+    {
+      @Html.TextBoxFieldFor(s => s.Data.AssemblyPath)
+      @Html.TextBoxFieldFor(s => s.Data.StageAssemblyPath)
+    }
+  }
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_VisualEditor))
-	{
-		@Html.CheckBoxFieldFor(s => s.Data.PEnterMode)
+  using (Html.BeginPanel(Model.OnScreenAssemblingParametersBlock, false, false, reverse: true))
+  {
+    using (Html.BeginFieldGroup(SiteStrings.Legend_OnScreenAssemblingParameters))
+    {
+      @Html.CheckBoxFieldFor(s => s.Data.EnableOnScreen, Model.OnScreenBlock)
+      using (Html.BeginPanel(Model.OnScreenBlock))
+      {
+        @Html.RadioFieldFor(s => s.Data.OnScreenFieldBorder, Html.List(Model.OnScreenModes))
+        using (Html.BeginPanel(Model.OnScreenAspBlock))
+        {
+          @Html.RadioFieldFor(s => s.Data.OnScreenObjectBorder, Html.List(Model.OnScreenModes))
+        }
+      }
+    }
+  }
+
+  using (Html.BeginFieldGroup(SiteStrings.Legend_VisualEditor))
+  {
+    @Html.CheckBoxFieldFor(s => s.Data.PEnterMode)
     @Html.CheckBoxFieldFor(s => s.Data.UseEnglishQuotes)
-		@Html.CheckBoxFieldFor(s => s.Data.DisableListAutoWrap)
+    @Html.CheckBoxFieldFor(s => s.Data.DisableListAutoWrap)
 
-		@Html.CheckboxListFieldFor(
-			model => model.ActiveVeCommands,
-			Html.List(Model.DefaultCommandsListItems),
-			new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
-					new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeCommands") } }
-		)
+    @Html.CheckboxListFieldFor(
+             model => model.ActiveVeCommands,
+             Html.List(Model.DefaultCommandsListItems),
+             new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
+                 new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeCommands") } }
+           )
 
-		@Html.TextBoxFieldFor(s => s.Data.RootElementClass)
+    @Html.TextBoxFieldFor(s => s.Data.RootElementClass)
 
-		@Html.AggregationListFieldFor(s => s.Data.ExternalCssItems, Model.Data.ExternalCssItems, "Url")
+    @Html.AggregationListFieldFor(s => s.Data.ExternalCssItems, Model.Data.ExternalCssItems, "Url")
 
-		@Html.CheckboxListFieldFor(
-			model => model.ActiveVeStyles,
-			Html.List(Model.AllStylesListItems),
-			new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
-					new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeStyles") } }
-		)
+    @Html.CheckboxListFieldFor(
+                model => model.ActiveVeStyles,
+                Html.List(Model.AllStylesListItems),
+                new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
+                    new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeStyles") } }
+              )
 
-		@Html.CheckboxListFieldFor(
-			model => model.ActiveVeFormats,
-			Html.List(Model.AllFormatsListItems),
-			new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
-					new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeFormats") } }
-		)
-	}
+    @Html.CheckboxListFieldFor(
+                model => model.ActiveVeFormats,
+                Html.List(Model.AllFormatsListItems),
+                new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
+                    new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeFormats") } }
+              )
+  }
 
-	using (Html.BeginPanel(Model.LinqBlock))
-	{
-		using (Html.BeginFieldGroup(SiteStrings.Legend_LinqAssemblingParameters))
-		{
-			@Html.CheckBoxFieldFor(s => s.Data.ImportMappingToDb)
-			@Html.CheckBoxFieldFor(s => s.Data.ProceedMappingWithDb, Model.MappingWithDbBlock)
+  using (Html.BeginPanel(Model.LinqBlock))
+  {
+    using (Html.BeginFieldGroup(SiteStrings.Legend_LinqAssemblingParameters))
+    {
+      @Html.CheckBoxFieldFor(s => s.Data.ImportMappingToDb)
+      @Html.CheckBoxFieldFor(s => s.Data.ProceedMappingWithDb, Model.MappingWithDbBlock)
 
-			using (Html.BeginPanel(Model.MappingWithDbBlock))
-			{
-				@Html.CheckBoxFieldFor(s => s.Data.ProceedDbIndependentGeneration, Model.MapFileBlock)
-				using (Html.BeginPanel(Model.MapFileBlock))
-				{
-					@Html.CheckBoxFieldFor(s => s.Data.GenerateMapFileOnly)
-                }
-                using (Html.BeginPanel(Model.ExtDevBlock))
-                {
-                    @Html.CheckBoxFieldFor(s => s.Data.DownloadEfSource)
-                }
+      using (Html.BeginPanel(Model.MappingWithDbBlock))
+      {
+        @Html.CheckBoxFieldFor(s => s.Data.ProceedDbIndependentGeneration, Model.MapFileBlock)
 
-				@Html.TextBoxFieldFor(s => s.Data.ConnectionStringName)
-				@Html.CheckBoxFieldFor(s => s.Data.UseLongUrls)
-				@Html.CheckBoxFieldFor(s => s.Data.ReplaceUrls)
-				@Html.TextBoxFieldFor(s => s.Data.Namespace)
-				@Html.TextBoxFieldFor(s => s.Data.ContextClassName)
-				@Html.CheckBoxFieldFor(s => s.Data.SendNotifications)
-			}
-		}
-	}
+        using (Html.BeginPanel(Model.MapFileBlock))
+        {
+          @Html.CheckBoxFieldFor(s => s.Data.GenerateMapFileOnly)
+        }
+        using (Html.BeginPanel(Model.ExtDevBlock))
+        {
+          @Html.CheckBoxFieldFor(s => s.Data.DownloadEfSource)
+        }
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_NotificationProperties))
-	{
-		@Html.TextBoxFieldFor(s => s.Data.ExternalUrl)
-	}
+        @Html.TextBoxFieldFor(s => s.Data.ConnectionStringName)
+        @Html.CheckBoxFieldFor(s => s.Data.UseLongUrls)
+        @Html.CheckBoxFieldFor(s => s.Data.ReplaceUrls)
+        @Html.TextBoxFieldFor(s => s.Data.Namespace)
+        @Html.TextBoxFieldFor(s => s.Data.ContextClassName)
+        @Html.CheckBoxFieldFor(s => s.Data.SendNotifications)
+      }
+    }
+  }
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_CustomValidation))
-	{
-		@Html.CheckBoxFieldFor(s => s.Data.CreateDefaultXamlDictionary, Model.XamlDictionariesBlock, true)
-		using (Html.BeginPanel(Model.XamlDictionariesBlock))
-		{
-			@Html.HtmlFieldFor(s => s.Data.XamlDictionaries,
-				@<div class="qp-expandedContent">
-					@Html.QpTextAreaFor(s => s.Data.XamlDictionaries, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
-				</div>
-			);
+  using (Html.BeginFieldGroup(SiteStrings.Legend_NotificationProperties))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.ExternalUrl)
+  }
 
-		}
-	}
+  using (Html.BeginFieldGroup(SiteStrings.Legend_CustomValidation))
+  {
+    @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultXamlDictionary, Model.XamlDictionariesBlock, true)
+    using (Html.BeginPanel(Model.XamlDictionariesBlock))
+    {
+      @Html.HtmlFieldFor(s => s.Data.XamlDictionaries,
+            @<div class="qp-expandedContent">
+              @Html.QpTextAreaFor(s => s.Data.XamlDictionaries, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
+            </div>
+      );
+    }
+  }
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_Scripts))
-	{
-		@Html.HtmlFieldFor(s => s.Data.ContentFormScript,
-			@<div class="qp-expandedContent">
-				@Html.QpTextAreaFor(s => s.Data.ContentFormScript, new Dictionary<string, object> { { "class", "textbox hta-JsTextArea highlightedTextarea" } })
-			</div>
-		);
-	}
+  using (Html.BeginFieldGroup(SiteStrings.Legend_Scripts))
+  {
+    @Html.HtmlFieldFor(s => s.Data.ContentFormScript,
+                @<div class="qp-expandedContent">
+                  @Html.QpTextAreaFor(s => s.Data.ContentFormScript, new Dictionary<string, object> { { "class", "textbox hta-JsTextArea highlightedTextarea" } })
+                </div>
+                                  );
+  }
 
-	@Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+  @Html.Partial("Version", Model.Data)
+  @Html.Partial("EntityDirectLink", Model)
 
 }
 

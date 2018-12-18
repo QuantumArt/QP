@@ -23,6 +23,8 @@ namespace Quantumart.QP8.BLL
 
         public static readonly string DefaultConnectionStringName = "qp_database";
 
+        public const string DependPropertyName = "ExternalDevelopment";
+
         internal Site()
         {
             AllowUserSessions = true;
@@ -138,8 +140,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Виртуальный путь расположения страниц в Основном режиме
         /// </summary>
-        [RequiredValidator(MessageTemplateResourceName = "LiveVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "LiveVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
+        [RequiredValidator(DependPropertyName, true, MessageTemplateResourceName = "LiveVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
+        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "LiveVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
         [FormatValidator(RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "LiveVirtualRootInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example("/qp_demo_net/")]
         [LocalizedDisplayName("LiveVirtualRoot", NameResourceType = typeof(SiteStrings))]
@@ -148,8 +150,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Путь расположения страниц в Основном режиме
         /// </summary>
-        [RequiredValidator(MessageTemplateResourceName = "LiveDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "LiveDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
+        [RequiredValidator(DependPropertyName, true, MessageTemplateResourceName = "LiveDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
+        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "LiveDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
         [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "LiveDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net")]
         [LocalizedDisplayName("LiveDirectory", NameResourceType = typeof(SiteStrings))]
@@ -172,9 +174,9 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Виртуальный путь расположения страниц в Тестовом режиме
         /// </summary>
-        [RequiredValidator(MessageTemplateResourceName = "StageVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "StageVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "StageVirtualRootInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [RequiredValidator(DependPropertyName, true, MessageTemplateResourceName = "StageVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
+        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "StageVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.RelativeWebFolderUrl, DependPropertyName, true, MessageTemplateResourceName = "StageVirtualRootInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example("/qp_demo_net/stage/")]
         [LocalizedDisplayName("StageVirtualRoot", NameResourceType = typeof(SiteStrings))]
         public string StageVirtualRoot { get; set; }
@@ -182,9 +184,9 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Путь расположения страниц в Тестовом режиме
         /// </summary>
-        [RequiredValidator(MessageTemplateResourceName = "StageDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "StageDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "StageDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [RequiredValidator(DependPropertyName, true, MessageTemplateResourceName = "StageDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
+        [MaxLengthValidator(255, DependPropertyName, true,  MessageTemplateResourceName = "StageDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, DependPropertyName, true, MessageTemplateResourceName = "StageDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\stage")]
         [LocalizedDisplayName("StageDirectory", NameResourceType = typeof(SiteStrings))]
         public string StageDirectory { get; set; }
@@ -192,8 +194,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Путь расположения файлов сборок для Основного режима
         /// </summary>
-        [MaxLengthValidator(255, MessageTemplateResourceName = "AssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "AssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "AssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, DependPropertyName, true, MessageTemplateResourceName = "AssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\bin")]
         [LocalizedDisplayName("LiveAssemblyPath", NameResourceType = typeof(SiteStrings))]
         public string AssemblyPath { get; set; }
@@ -201,8 +203,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Путь расположения файлов сборок для Тестового режима
         /// </summary>
-        [MaxLengthValidator(255, MessageTemplateResourceName = "StageAssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "StageAssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "StageAssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, DependPropertyName, true, MessageTemplateResourceName = "StageAssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\stage\bin")]
         [LocalizedDisplayName("StageAssemblyPath", NameResourceType = typeof(SiteStrings))]
         public string StageAssemblyPath { get; set; }
@@ -544,6 +546,16 @@ namespace Quantumart.QP8.BLL
             CreateSiteFolders(true, false);
         }
 
+        internal void NullifyField()
+        {
+            LiveVirtualRoot = null;
+            LiveDirectory = null;
+            StageVirtualRoot = null;
+            StageDirectory = null;
+            AssemblyPath = null;
+            StageAssemblyPath = null;
+        }
+
         /// <summary>
         /// Создает директории внутри сайта
         /// </summary>
@@ -557,27 +569,29 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         private void CreateSiteFolders(bool isLive, bool isStage)
         {
-            if (isLive)
+            if (isLive && !ExternalDevelopment)
             {
                 SitePathRepository.CreateDirectories(LiveDirectory);
             }
 
-            if (isStage)
+            if (isStage && !ExternalDevelopment)
             {
                 SitePathRepository.CreateDirectories(StageDirectory);
             }
-
             SitePathRepository.CreateUploadDirectories(UploadDir);
-            if (IsDotNet)
+            if (IsDotNet )                
             {
-                if (isLive)
+                if (!ExternalDevelopment)
                 {
-                    SitePathRepository.CreateBinDirectory(AssemblyPath);
-                }
+                    if (isLive)
+                    {
+                        SitePathRepository.CreateBinDirectory(AssemblyPath);
+                    }
 
-                if (isStage)
-                {
-                    SitePathRepository.CreateBinDirectory(StageAssemblyPath);
+                    if (isStage)
+                    {
+                        SitePathRepository.CreateBinDirectory(StageAssemblyPath);
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(TestDirectory))
@@ -607,12 +621,12 @@ namespace Quantumart.QP8.BLL
 
             if (IsDotNet)
             {
-                if (string.IsNullOrEmpty(AssemblyPath))
+                if (string.IsNullOrEmpty(AssemblyPath) && !ExternalDevelopment)
                 {
                     errors.ErrorFor(s => s.AssemblyPath, SiteStrings.AssemblyPathNotEntered);
                 }
 
-                if (string.IsNullOrEmpty(StageAssemblyPath))
+                if (string.IsNullOrEmpty(StageAssemblyPath) && !ExternalDevelopment)
                 {
                     errors.ErrorFor(s => s.StageAssemblyPath, SiteStrings.StageAssemblyPathNotEntered);
                 }

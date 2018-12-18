@@ -573,6 +573,7 @@
           <Property Name="ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ACTION_ID" Type="int" Nullable="false" />
           <Property Name="NAME" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ALIAS" Type="nvarchar" MaxLength="255" />
           <Property Name="URL" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="ICON_URL" Type="nvarchar" MaxLength="255" />
           <Property Name="ORDER" Type="int" Nullable="false" />
@@ -739,7 +740,7 @@
           <Property Name="link_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="l_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="r_item_id" Type="numeric" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="IS_REV" Type="bit" Nullable="false" />
+		  <Property Name="IS_REV" Type="bit" Nullable="false" />
           <Property Name="IS_SELF" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="item_to_item_version">
@@ -1098,10 +1099,10 @@
           <Property Name="SITE_ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SITE_NAME" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="DNS" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="LIVE_DIRECTORY" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="LIVE_VIRTUAL_ROOT" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="STAGE_DIRECTORY" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="STAGE_VIRTUAL_ROOT" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="LIVE_DIRECTORY" Type="nvarchar" MaxLength="255" />
+          <Property Name="LIVE_VIRTUAL_ROOT" Type="nvarchar" MaxLength="255" />
+          <Property Name="STAGE_DIRECTORY" Type="nvarchar" MaxLength="255" />
+          <Property Name="STAGE_VIRTUAL_ROOT" Type="nvarchar" MaxLength="255" />
           <Property Name="IS_LIVE" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="DESCRIPTION" Type="nvarchar" MaxLength="512" />
           <Property Name="CREATED" Type="datetime" Nullable="false" />
@@ -7242,10 +7243,10 @@
           <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Dns" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="LiveDirectory" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="LiveVirtualRoot" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="StageDirectory" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="StageVirtualRoot" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="LiveDirectory" Type="String" Nullable="true" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="LiveVirtualRoot" Type="String" Nullable="true" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="StageDirectory" Type="String" Nullable="true" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="StageVirtualRoot" Type="String" Nullable="true" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="IsLive" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
@@ -9582,6 +9583,7 @@
           </Key>
           <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ActionId" Nullable="false" />
+          <Property Type="String" Name="Alias" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Url" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="IconUrl" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="Order" Nullable="false" />
@@ -11840,6 +11842,7 @@
               <MappingFragment StoreEntitySet="CUSTOM_ACTION">
                 <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
                 <ScalarProperty Name="Name" ColumnName="NAME" />
+                <ScalarProperty Name="Alias" ColumnName="ALIAS" />
                 <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
                 <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
                 <ScalarProperty Name="Created" ColumnName="CREATED" />
@@ -15619,6 +15622,7 @@
         <EntityTypeShape EntityType="QP8Model.CdcLastExecutedLsn" Width="1.5" PointX="12.375" PointY="5.625" />
         <EntityTypeShape EntityType="QP8Model.SystemNotificationDAL" Width="1.5" PointX="14.625" PointY="5.25" />
         <AssociationConnector Association="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_CdcLastExecutedLsn" />
+        <AssociationConnector Association="QP8Model.FK_SYSTEM_NOTIFICATION_QUEUE_SYSTEM_NOTIFICATION_QUEUE" />
         </Diagram>
     </Diagrams>
   </Designer>

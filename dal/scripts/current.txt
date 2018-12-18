@@ -29,3 +29,7 @@ Tokens
 AddExportArchiveArticlesToToolbar
 AddMustChangePasswordColumn
 AggregatedAndSelf
+M2ONames
+ChangingSiteColumnsToNull
+AddCustomActionAlias
+

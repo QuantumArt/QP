@@ -1911,8 +1911,18 @@ BEGIN
         CONSTRAINT [PK_Products] PRIMARY KEY CLUSTERED ([Id] ASC)
     )
 END
+GO
 
-if not exists (select * from sys.indexes where name = 'IX_Products')
+IF EXISTS (select index_id from sys.indexes where name = 'IX_Products' AND object_id = OBJECT_ID('dbo.Products'))
+AND NOT EXISTS (select * from sys.index_columns where object_id = OBJECT_ID('IX_Products')
+and index_id in (select index_id from sys.indexes where name = 'IX_Products')
+and column_id in (select column_id from sys.columns where object_id = OBJECT_ID('dbo.Products') and name = 'Updated'))
+BEGIN
+    DROP INDEX [IX_Products] ON [dbo].[Products];
+END
+GO
+
+IF NOT EXISTS (select index_id from sys.indexes where name = 'IX_Products' AND object_id = OBJECT_ID('dbo.Products'))
 BEGIN
     CREATE UNIQUE NONCLUSTERED INDEX [IX_Products] ON [dbo].[Products]
     (
@@ -1923,6 +1933,28 @@ BEGIN
         [Language] ASC,
         [Format] ASC
     )
+    INCLUDE
+    (
+    [Updated]
+    );
+END
+GO
+
+IF NOT EXISTS (SELECT index_id FROM sys.indexes WHERE name='IX_Updated' AND object_id = OBJECT_ID('dbo.Products'))
+BEGIN
+    CREATE NONCLUSTERED INDEX [IX_Updated] ON [dbo].[Products]
+    (
+    [Updated] DESC
+    )
+    INCLUDE
+    (
+    [DpcId],
+    [Slug],
+    [IsLive],
+    [Version],
+    [Language],
+    [Format]
+    );
 END
 GO
 
@@ -2725,6 +2757,17 @@ VALUES(dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('unselect_chi
 IF NOT EXISTS(SELECT * FROM  CONTEXT_MENU_ITEM WHERE NAME = 'Select Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
 INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
 VALUES(dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('select_child_articles'), 'Select Child Articles', 80, 'select_all.gif')
+GO
+if not exists (select * From BACKEND_ACTION where code = 'copy_custom_action')
+begin
+
+  INSERT INTO [dbo].[BACKEND_ACTION] ([TYPE_ID], [ENTITY_TYPE_ID], [NAME], [SHORT_NAME], [CODE], [CONTROLLER_ACTION_URL],[IS_INTERFACE])
+  VALUES (dbo.qp_action_type_id('copy'), dbo.qp_entity_type_id('custom_action'), N'Create Like Custom Action', 'Create Like', N'copy_custom_action', '~/CustomAction/Copy/', 0)
+
+  INSERT INTO [dbo].[CONTEXT_MENU_ITEM] ([CONTEXT_MENU_ID], [ACTION_ID], [Name], [ORDER], [ICON],  [BOTTOM_SEPARATOR])
+  VALUES (dbo.qp_context_menu_id('custom_action'), dbo.qp_action_id('copy_custom_action'), N'Create Like', 5, 'create_like.gif', 1)
+
+end
 
 GO
 exec qp_drop_existing 'qp_content_new_views_create', 'IsProcedure'
@@ -4011,6 +4054,56 @@ begin
 	and AGG_DATA.DATA in (select cast(id as nvarchar(8)) from @ids2)
 	return
 end
+
+GO
+exec qp_drop_existing 'qp_m2o_titles', 'IsScalarFunction'
+GO
+
+CREATE FUNCTION [dbo].[qp_m2o_titles](@id int, @field_related_id int, @related_attribute_id int, @maxlength int)
+RETURNS nvarchar(max)
+AS
+BEGIN
+	declare @names table
+	(
+		name nvarchar(255) 
+	)
+	declare @result nvarchar(max)
+
+	insert into @names
+	select coalesce(data, blob_data) from CONTENT_DATA where attribute_id = @field_related_id 
+	and content_item_id in (select content_item_id from content_data where ATTRIBUTE_ID = @related_attribute_id and cast(coalesce(data, blob_data) as nvarchar(max)) = CAST(@id AS nvarchar(max)))
+	
+	SELECT @result = COALESCE(@result + ', ', '') +  name  FROM @names
+
+	if @result is null
+		set @result = ''
+
+	if (@maxlength > 0 and len(@result) > @maxlength)
+		set @result = SUBSTRING(@result, 1, @maxlength) + '...'
+	
+	return @result
+
+END
+
+GO
+  alter table SITE alter column live_directory nvarchar(255) null
+  alter table SITE alter column live_virtual_root nvarchar(255) null
+  alter table SITE alter column stage_directory nvarchar(255) null
+  alter table SITE alter column stage_virtual_root nvarchar(255) null
+
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CUSTOM_ACTION' AND COLUMN_NAME = 'ALIAS')
+BEGIN
+	ALTER TABLE CUSTOM_ACTION ADD ALIAS nvarchar(255) NULL
+END
+GO
+
+if not exists(select * from sys.indexes where name = 'IX_CUSTOM_ACTION_ALIAS' and [object_id] = object_id('CUSTOM_ACTION'))
+begin
+  CREATE UNIQUE NONCLUSTERED INDEX [IX_CUSTOM_ACTION_ALIAS] ON [dbo].CUSTOM_ACTION ([ALIAS] ASC) WHERE [ALIAS] IS NOT NULL
+end
+
+GO
 
 GO
 

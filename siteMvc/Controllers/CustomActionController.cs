@@ -221,5 +221,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.RemoveCustomAction)]
         [BackendActionLog]
         public ActionResult Remove(int id) => JsonMessageResult(_service.Remove(id));
+
+
+        [HttpPost, Record]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.CreateLikeCustomAction)]
+        [BackendActionContext(ActionCode.CreateLikeCustomAction)]
+        [BackendActionLog]
+        public ActionResult Copy(string tabId, int parentId, int id, FormCollection collection)
+        {
+            var action = _service.ReadForUpdate(id);
+            var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
+            var result = _service.Copy(id, model.SelectedActionsIds);
+            return JsonMessageResult(result.Message);
+        }
     }
 }

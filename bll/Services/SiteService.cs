@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -49,6 +49,11 @@ namespace Quantumart.QP8.BLL.Services
             if (item == null)
             {
                 throw new ArgumentNullException(nameof(item));
+            }
+
+            if (item.ExternalDevelopment)
+            {
+                item.NullifyField();
             }
 
             var result = SiteRepository.Save(item);

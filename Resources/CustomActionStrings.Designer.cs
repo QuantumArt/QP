@@ -19,7 +19,7 @@ namespace Quantumart.QP8.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class CustomActionStrings {
@@ -97,11 +97,47 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alias.
+        /// </summary>
+        public static string Alias {
+            get {
+                return ResourceManager.GetString("Alias", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The length of Alias should not exceed {5} characters!.
+        /// </summary>
+        public static string AliasExceeded {
+            get {
+                return ResourceManager.GetString("AliasExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid Alias format.
+        /// </summary>
+        public static string AliasInvalidFormat {
+            get {
+                return ResourceManager.GetString("AliasInvalidFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Basic Parameters.
         /// </summary>
         public static string BasicParametersTitle {
             get {
                 return ResourceManager.GetString("BasicParametersTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot copy custom action because you have no enough permissions.
+        /// </summary>
+        public static string CannotCopyBecauseOfSecurity {
+            get {
+                return ResourceManager.GetString("CannotCopyBecauseOfSecurity", resourceCulture);
             }
         }
         

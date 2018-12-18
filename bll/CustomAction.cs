@@ -82,19 +82,19 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void CalculateOrder(int entityTypeId)
+        public void CalculateOrder(int entityTypeId, bool force = false, int beginRange = 1)
         {
-            if (Order <= 0)
+            if (Order <= 0 || force)
             {
-                Order = GetFreeOrder(entityTypeId);
+                Order = GetFreeOrder(entityTypeId, beginRange);
             }
         }
 
-        private static int GetFreeOrder(int entityTypeId)
+        private static int GetFreeOrder(int entityTypeId, int beginRange = 1)
         {
             // получить минимальное из неиспользуемых значений Order
             var existingOrders = CustomActionRepository.GetActionOrdersForEntityType(entityTypeId).ToList();
-            return existingOrders.Any() ? Enumerable.Range(1, existingOrders.Max() + 1).Except(existingOrders).Min() : 1;
+            return existingOrders.Any() ? Enumerable.Range(beginRange, existingOrders.Max() + 1).Except(existingOrders).Min() : 1;
         }
 
         [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
@@ -106,6 +106,12 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("Description", NameResourceType = typeof(EntityObjectStrings))]
         [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
         public override string Description { get; set; }
+
+        [LocalizedDisplayName("Alias", NameResourceType = typeof(CustomActionStrings))]
+        [MaxLengthValidator(255, MessageTemplateResourceName = "AliasExceeded", MessageTemplateResourceType = typeof(CustomActionStrings))]
+        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "AliasInvalidFormat", MessageTemplateResourceType = typeof(CustomActionStrings))]
+
+        public string Alias { get; set; }
 
         public int ActionId { get; set; }
 

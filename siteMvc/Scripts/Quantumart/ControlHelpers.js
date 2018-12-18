@@ -100,30 +100,32 @@ $c.destroyCheckboxToggle = function (checkboxElem) {
 $c._onCheckboxToggleClickHandler = function () {
   const $checkbox = $(this);
 
-  const panelId = $q.toString($checkbox.data('toggle_for'), '');
+  const panelIds = $checkbox.data('toggle_for').split(',');
   const isReverse = $q.toBoolean($checkbox.data('reverse'), false);
   const isChecked = $checkbox.is(':checked');
   let state = isChecked;
   if (isReverse) {
     state = !isChecked;
   }
-
-  const $panel = $(`#${panelId}`);
-  if (state) {
-    $panel.show();
-    $panel.trigger('show');
-    $c.fixAllEntityDataListsOverflow($panel);
-    $c._refreshAllHta($panel);
-    if (!$checkbox.data('init')) {
-      $c._setPanelControlsDisabledState($panel, false);
+  $.each(panelIds, (index, panelId) => {
+    const $panel = $(`#${panelId}`);
+    const isReversePanel = $q.toBoolean($panel.data('reverse'), false);
+    if ((state && !isReversePanel) || (!state && isReversePanel)) {
+      $panel.show();
+      $panel.trigger('show');
+      $c.fixAllEntityDataListsOverflow($panel);
+      $c._refreshAllHta($panel);
+      if (!$checkbox.data('init')) {
+        $c._setPanelControlsDisabledState($panel, false);
+      }
+    } else {
+      $panel.hide();
+      $panel.trigger('hide');
+      if (!$checkbox.data('init')) {
+        $c._setPanelControlsDisabledState($panel, true);
+      }
     }
-  } else {
-    $panel.hide();
-    $panel.trigger('hide');
-    if (!$checkbox.data('init')) {
-      $c._setPanelControlsDisabledState($panel, true);
-    }
-  }
+  });
   $checkbox.removeData('init');
 };
 
@@ -253,13 +255,17 @@ $c._switchPanel = function ($selectedSwitcher, panelIDs) {
     if ({}.hasOwnProperty.call(panelIDs, key)) {
       const panelId = panelIDs[key];
       if (panelId) {
-        $(panelId).filter(function () {
-          return $(this).css('display') === 'block';
-        }).hide()
-          .trigger('hide')
-          .each(function () {
-            $c._setPanelControlsDisabledState($(this), true);
+        $(panelId).filter(
+          function () {
+            return $(this).css('display') === 'block'
+              || $q.toBoolean($(this).data('depended'), false);
           }
+        ).hide()
+          .trigger('hide')
+          .each(
+            function () {
+              $c._setPanelControlsDisabledState($(this), true);
+            }
           );
       }
     }
@@ -269,10 +275,15 @@ $c._switchPanel = function ($selectedSwitcher, panelIDs) {
   const panelId = panelIDs[selectedValue];
   if (panelId) {
     const $panels = $(panelId);
-    $panels.each(function () {
-      $c._setPanelControlsDisabledState($(this), false);
-    }).show().trigger('show');
-
+    $panels.filter(
+      function () {
+        return !$q.toBoolean($(this).data('depended'), false);
+      }
+    ).each(
+      function () {
+        $c._setPanelControlsDisabledState(jQuery(this), false);
+      }
+    ).show().trigger('show');
     $c.fixAllEntityDataListsOverflow($panels);
     $c._refreshAllHta($panels);
   }

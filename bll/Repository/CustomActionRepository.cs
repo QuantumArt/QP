@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
@@ -266,6 +267,63 @@ namespace Quantumart.QP8.BLL.Repository
 
             SetBottomSeparator(contextMenuId);
             BackendActionCache.Reset();
+        }
+
+        internal static CustomAction Copy(CustomAction action)
+        {
+            var oldId = action.Id;
+            var oldName = action.Name;
+            action.Name = MutateName(action.Name);
+            if (action.Alias != null)
+            {
+                action.Alias = MutateAlias(action.Alias);
+            }
+            action.CalculateOrder(action.Action.EntityTypeId, true, action.Order);
+
+            var newAction = Save(action);
+
+            return GetById(newAction.Id);
+        }
+
+        private static string MutateAlias(string alias)
+        {
+            string newAlias;
+            var index = 0;
+            do
+            {
+                index++;
+                newAlias = MutateHelper.MutateNetName(alias, index);
+            }
+            while (ExistAlias(newAlias));
+            return newAlias;
+        }
+
+        private static string MutateName(string name)
+        {
+            string newName;
+            var index = 0;
+            do
+            {
+                index++;
+                newName = MutateHelper.MutateString(name, index);
+            }
+            while (ExistName(newName));
+            return newName;
+        }
+
+        private static bool ExistName(string name)
+        {
+            return QPContext.EFContext.CustomActionSet.Any(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        private static bool ExistAlias(string alias)
+        {
+            return QPContext.EFContext.CustomActionSet.Any(a => a.Alias.Equals(alias, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        private static IEnumerable<int> ExistOrders()
+        {
+            return QPContext.EFContext.CustomActionSet.Select(s => s.Order);
         }
 
         internal static IEnumerable<int> GetActionOrdersForEntityType(int entityTypeId)

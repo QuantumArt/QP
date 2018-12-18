@@ -13,7 +13,8 @@ namespace Quantumart.QP8.Validators
     public class FormatValidator : ValueValidator<string>
     {
         private readonly RegexOptions _options;
-
+        private readonly string _dependPropertyName;
+        private readonly bool _inverse;
         /// <summary>
         ///     <para>Initializes a new instance of the <see cref="FormatValidator" /> class with a regex pattern.</para>
         /// </summary>
@@ -233,15 +234,19 @@ namespace Quantumart.QP8.Validators
         /// <param name="options">The <see cref="RegexOptions" /> to use when matching.</param>
         /// <param name="messageTemplate">The message template.</param>
         /// <param name="negated">True if the validator must negate the result of the validation.</param>
+        /// <param name="propertyName">The name of the property which validator depends on.</param>
+        /// <param name="inverse">True if the validator must inverse the propertyName value.</param>
         /// <param name="patternResourceName">The resource name containing the pattern for the regular expression.</param>
         /// <param name="patternResourceType">The type containing the resource for the regular expression.</param>
-        public FormatValidator(string pattern, string patternResourceName, Type patternResourceType, RegexOptions options, string messageTemplate, bool negated)
+        public FormatValidator(string pattern, string patternResourceName, Type patternResourceType, RegexOptions options, string messageTemplate, bool negated, string propertyName = null, bool inverse = false)
             : base(messageTemplate, null, negated)
         {
             ValidatorArgumentsValidatorHelper.ValidateRegexIgnoresEmptyStringValidator(pattern, patternResourceName, patternResourceType);
 
             Pattern = pattern;
             _options = options;
+            _dependPropertyName = propertyName;
+            _inverse = inverse;
             PatternResourceName = patternResourceName;
             PatternResourceType = patternResourceType;
         }
@@ -259,20 +264,25 @@ namespace Quantumart.QP8.Validators
         /// </remarks>
         protected override void DoValidate(string objectToValidate, object currentTarget, string key, ValidationResults validationResults)
         {
-            var logError = Negated;
-            if (!string.IsNullOrWhiteSpace(objectToValidate))
+            bool isContinue = ValidatorArgumentsValidatorHelper.CheckIsNeedtoValidate(_dependPropertyName, _inverse, currentTarget);
+          
+            if (isContinue)
             {
-                var pattern = GetPattern();
-                if (Options != null)
+                var logError = Negated;
+                if (!string.IsNullOrWhiteSpace(objectToValidate))
                 {
-                    var regex = new Regex(pattern, (RegexOptions)Options);
-                    logError = !regex.IsMatch(objectToValidate);
+                    var pattern = GetPattern();
+                    if (Options != null)
+                    {
+                        var regex = new Regex(pattern, (RegexOptions)Options);
+                        logError = !regex.IsMatch(objectToValidate);
+                    }
                 }
-            }
 
-            if (logError != Negated)
-            {
-                LogValidationResult(validationResults, GetMessage(objectToValidate, key), currentTarget, key);
+                if (logError != Negated)
+                {
+                    LogValidationResult(validationResults, GetMessage(objectToValidate, key), currentTarget, key);
+                }
             }
         }
 

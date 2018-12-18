@@ -4,6 +4,7 @@ import { MultistepActionCopySiteSettings } from '../MultistepAction/Settings/Bac
 import { MultistepActionExportSettings } from '../MultistepAction/Settings/BackendMultistepExportSettings';
 import { MultistepActionImportSettings } from '../MultistepAction/Settings/BackendMultistepImportSettings';
 import { $q } from '../Utils';
+import { $c } from '../ControlHelpers';
 
 export class BackendSettingsPopupWindow extends BackendSelectPopupWindow {
   constructor(eventArgs, options, callback) {
@@ -132,6 +133,8 @@ export class BackendSettingsPopupWindow extends BackendSelectPopupWindow {
     if (response && (typeof response === 'string' || response.data)) {
       const data = response.data || response;
       $(`#${this._popupWindowComponent.get_documentWrapperElementId()}`).html(data);
+      const $form = this._popupWindowComponent.get_documentWrapperElement().children;
+      $c.initAllCheckboxToggles($form);
     } else {
       this._popupWindowComponent.closeWindow();
       $('.t-overlay').remove();

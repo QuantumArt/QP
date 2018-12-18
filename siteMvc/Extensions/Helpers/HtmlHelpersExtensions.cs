@@ -1117,13 +1117,18 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString QpCheckBoxFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, bool>> expression, string toggleId = null, bool reverseToggle = false, Dictionary<string, object> htmlAttributes = null)
         {
-            var htmlProperties = source.QpHtmlProperties(expression, EditorType.Checkbox);
+            var htmlProperties = source.QpHtmlProperties(expression, EditorType.Checkbox);            
             if (!string.IsNullOrWhiteSpace(toggleId))
             {
-                htmlProperties.AddData("toggle_for", source.UniqueId(toggleId));
+                var toggleIds = toggleId.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                var uniqueToggleIds = new List<string>();
+                foreach (var id in toggleIds)
+                {
+                    uniqueToggleIds.Add(source.UniqueId(id));
+                }
+                htmlProperties.AddData("toggle_for", string.Join(",", uniqueToggleIds));
                 htmlProperties.AddData("reverse", reverseToggle.ToString().ToLowerInvariant());
             }
-
             htmlProperties.Merge(htmlAttributes, true);
             return source.CheckBoxFor(expression, htmlProperties);
         }
