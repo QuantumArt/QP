@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -17,4 +17,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("QP8.WebMvc.NUnit.Tests")]
 
 [assembly: AssemblyVersion("2.9.0.0")]
-[assembly: AssemblyInformationalVersion("2.9.0.0-beta2")]
+[assembly: AssemblyInformationalVersion("2.9.0.0")]
