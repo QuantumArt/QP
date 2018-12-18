@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
-    <Version>2.0.1-rc2</Version>
+    <Version>2.1.0</Version>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
     <Product>QP8.Framework</Product>
@@ -26,8 +26,8 @@
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.0.0-rc1" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.0.0-rc1" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
-    <PackageReference Include="Flurl" Version="2.5.1" />
-    <PackageReference Include="Flurl.Http" Version="2.0.1" />
+    <PackageReference Include="Flurl" Version="2.8.0" />
+    <PackageReference Include="Flurl.Http" Version="2.4.0" />
     <PackageReference Include="Moq" Version="4.7.142" />
     <PackageReference Include="xunit" Version="2.3.1" />
   </ItemGroup>
