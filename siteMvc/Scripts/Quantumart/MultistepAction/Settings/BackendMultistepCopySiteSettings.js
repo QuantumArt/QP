@@ -17,7 +17,7 @@ export class MultistepActionCopySiteSettings {
   }
 
   serializeForm() {
-    return $q.serializeForm(this.options.wrapperElementId);
+    return $q.serializeForm(this.options.wrapperElementId, true);
   }
 
   dispose() {

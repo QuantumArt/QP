@@ -9,14 +9,20 @@
     @Html.TextAreaFieldFor(s => s.Data.Description)
     @Html.CheckBoxFieldFor(s => s.Data.ExternalDevelopment, string.Join(",", new[] {
                                                                           Model.LivePagesLocationBlock,
-                                                                          Model.StagePagesLocationBlock
-                                                                        }))
+                                                                          Model.StagePagesLocationBlock,
+                                                                          Model.BeginNotCopyTemplatesBlock
+                                                                        }), forceReadonly: true)
   }
 
   using (Html.BeginFieldGroup(SiteStrings.Legend_CopySiteSettings))
   {
     @Html.TextBoxFieldFor(s => s.DoNotCopyArticles)
-    @Html.CheckBoxFieldFor(s => s.DoNotCopyTemplates)
+
+    using (Html.BeginPanel(Model.BeginNotCopyTemplatesBlock, false, false, reverse: true))
+    {
+      @Html.CheckBoxFieldFor(s => s.DoNotCopyTemplates)
+    }
+
     @Html.CheckBoxFieldFor(s => s.DoNotCopyFiles)
   }
   using (Html.BeginFieldGroup(SiteStrings.Legend_SiteLocation))

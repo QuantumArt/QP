@@ -14,6 +14,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public readonly string TestDirectoryBlock = "testDirectoryBlock";
         public readonly string LivePagesLocationBlock = "LivePagesLocationBlock";
         public readonly string StagePagesLocationBlock = "StagePagesLocationBlock";
+        public readonly string BeginNotCopyTemplatesBlock = "BeginNotCopyTemplates";
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Site;
 
