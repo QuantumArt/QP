@@ -42,7 +42,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
 
                     if (parameters.ContainsValue(c.Value))
                     {
-                        parameterKey = parameters.Single(e => e.Value == c.Value).Key;
+                        parameterKey = parameters.Single(e => e.Value.Equals(c.Value)).Key;
                     }
                     else
                     {
