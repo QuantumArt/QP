@@ -15,10 +15,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
     {
         #region Constants
 
-        private const string OtMJoinTemplate = "\tLEFT JOIN CONTENT_{0}_UNITED {1}_{2} ON {1}.{2} = {1}_{2}.CONTENT_ITEM_ID";
+        private const string OtMJoinTemplate = "\tLEFT JOIN CONTENT_{0}_UNITED {1}_{2} ON {1}.{2} = {1}_{2}.CONTENT_ITEM_ID AND {1}_{2}.ARCHIVE = 0";
         private const string LinkJoinTemplate = "\tLEFT JOIN item_link_united link_{0}_to_{0}_{1} ON {0}.{1} = link_{0}_to_{0}_{1}.link_id AND {0}.CONTENT_ITEM_ID = link_{0}_to_{0}_{1}.item_id";
         private const string MtMJoinTemplate = "\tLEFT JOIN CONTENT_{0}_UNITED {1}_{2} ON link_{1}_to_{1}_{2}.linked_item_id = {1}_{2}.CONTENT_ITEM_ID";
-        private const string MoOJoinTemplate = "\tLEFT JOIN CONTENT_{0}_UNITED {1}_{2} ON {1}.CONTENT_ITEM_ID = {1}_{2}.{3}";
+        private const string MoOJoinTemplate = "\tLEFT JOIN CONTENT_{0}_UNITED {1}_{2} ON {1}.CONTENT_ITEM_ID = {1}_{2}.{3} AND {1}_{2}.ARCHIVE = 0";
 
         #endregion
 
@@ -145,7 +145,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
             return condition
                 .OfType<FieldCondition>()
                 .SelectMany(c => c.Fields)
-                .Distinct()
+                .GroupBy(f => new { f.ContentId, f.Name })
                 .Count();
         }
 
@@ -260,7 +260,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
                     sb.AppendLine();
                 }
 
-                sb.AppendLine("WHERE");
+                sb.AppendLine("WHERE root.ARCHIVE = 0 and");
                 sb.Append("\t");
                 sb.AppendLine(where);
 
