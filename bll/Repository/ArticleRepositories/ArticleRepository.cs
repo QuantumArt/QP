@@ -614,14 +614,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         private static string GetExtraFromForRelations(IEnumerable<ExportSettings.FieldSetting> displayFields)
         {
             var sb = new StringBuilder();
-            foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation && !n.FromExtension))
+            foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation && !n.FromExtension && !n.ExcludeFromSQLRequest))
             {
                 var onExpr = $"on base.[{field.Name}] = {field.TableAlias}.content_item_id";
                 sb.AppendFormatLine(" left join content_{0}_united as {1} {2} ", field.RelatedContentId, field.TableAlias, onExpr);
                 sb.Append(GetO2MRelationExpression(field));
             }
 
-            foreach (var field in displayFields.Where(w=>w.FromExtension && w.ExactType != FieldExactTypes.M2MRelation))
+            foreach (var field in displayFields.Where(w=>w.FromExtension && w.ExactType != FieldExactTypes.M2MRelation && !w.ExcludeFromSQLRequest))
             {
                 sb.AppendFormatLine(" left join (select c_{0}.CONTENT_ITEM_ID, c_{1}.{4}, c_{0}.{5} from content_{0}_united c_{0} LEFT JOIN content_{1}_united c_{1} on c_{1}.[{3}] = c_{0}.CONTENT_ITEM_ID) as {2} on base.CONTENT_ITEM_ID =  {2}.{4}",
                      field.RelatedContentId, field.ContentId, field.TableAlias, field.Name, field.RelationByField, field.RelatedAttributeName);

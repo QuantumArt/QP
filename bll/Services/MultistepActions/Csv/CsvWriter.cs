@@ -228,7 +228,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             foreach (var field in fieldsToExpand)
             {
-                if (field.ExactType == FieldExactTypes.O2MRelation)
+                if (field.ExcludeFromSQLRequest)
+                {
+                    sb.AppendFormat(", NULL as {0}", field.Alias);
+                }
+                else if (field.ExactType == FieldExactTypes.O2MRelation)
                 {
                     sb.AppendFormat(", {0} as [{1}]", string.Join(" + '; ' + ", GetParts(field)), field.Alias);
                 }

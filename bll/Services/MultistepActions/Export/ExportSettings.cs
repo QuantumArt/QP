@@ -122,6 +122,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
                 RelatedAttributeId = displayField?.Id ?? 0;
                 FromExtension = field.Aggregated || extensionsList.Select(s => s.ContentId).Contains(field.ContentId);
                 RelationByField = FromExtension ? extensionsList.Where(w => w.ContentId == field.ContentId).Single().RelationFieldName : field.BackRelation != null ? field.BackRelation.Name : string.Empty;
+                ExcludeFromSQLRequest = field.ContentId != exportedContent && ! FromExtension;
             }
 
             public int Id { get; set; }
@@ -161,6 +162,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             public bool FromExtension { get; set; }
 
             public string RelationByField { get; set; }
+
+            public bool ExcludeFromSQLRequest { get; set; }
         }
 
         public class Extension
