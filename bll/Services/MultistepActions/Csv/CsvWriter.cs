@@ -228,17 +228,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             foreach (var field in fieldsToExpand)
             {
-                if (field.ExactType == FieldExactTypes.O2MRelation)
+                if (field.ExcludeFromSQLRequest)
+                {
+                    sb.AppendFormat(", NULL as {0}", field.Alias);
+                }
+                else if (field.ExactType == FieldExactTypes.O2MRelation)
                 {
                     sb.AppendFormat(", {0} as [{1}]", string.Join(" + '; ' + ", GetParts(field)), field.Alias);
                 }
                 else if (field.ExactType == FieldExactTypes.M2ORelation && field.Related.Any())
                 {
-                    sb.AppendFormat(", dbo.[qp_m2o_titles](base.content_item_id, {0}, {1}, 255) as [{2}]", field.Related.First().Id, field.RelatedAttributeId, field.Alias);
+                    var related = field.Related.First(f => !f.IsRelation).Id;
+                    sb.AppendFormat(", dbo.[qp_m2o_titles](base.content_item_id, {0}, {1}, 255) as [{2}]", related, field.RelatedAttributeId, field.Alias);
                 }
                 else
                 {
-                    sb.AppendFormat(", dbo.[qp_link_titles]({0}, base.content_item_id, {1}, 255) as [{2}]", field.LinkId, field.RelatedAttributeId, field.Alias);
+                    var contentCondition = field.FromExtension ? $"[ex{field.ContentName}].content_item_id" : "base.content_item_id";
+                    sb.AppendFormat(", dbo.[qp_link_titles]({0}, {1}, {2}, 255) as [{3}]", field.LinkId, contentCondition, field.RelatedAttributeId, field.Alias);
                 }
             }
 
@@ -269,7 +275,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                             parts.Add(string.Format("dbo.qp_link_titles({0}, {2}.content_item_id, {1}, 255)", f.LinkId.Value, f.RelatedAttributeId, field.TableAlias));
                             break;
                         case FieldExactTypes.O2MRelation:
-                            parts.Add($"isnull(cast( {f.TableAlias}.[{f.RelatedAttributeName}] as nvarchar(255)), '')");
+                           parts.Add($"cast( {f.TableAlias}.[{f.RelatedAttributeName}] as nvarchar(255))");
+                           break;
+                        case FieldExactTypes.M2ORelation:
+                            parts.Add(string.Format("dbo.[qp_m2o_titles](base.content_item_id, {0}, {1}, 255)", f.Id, field.RelatedAttributeId));
                             break;
                         default:
                             parts.Add(new[]
@@ -426,6 +435,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _settings.FieldNames = GetFieldNames(_extensionContents);
             _settings.HeaderNames = GetHeaderNames(_extensionContents);
             _settings.Extensions = GetExtensions(_extensionContents);
+            _settings.extensionsList = _extensionContents.Select(s => new ExportSettings.Extension { ContentId = s.Id, Fields = s.Fields});
         }
     }
 }
