@@ -10,7 +10,7 @@ namespace Quantumart.QP8.Configuration
         [Get("/api/v1/customers/{id}")]
         Task<QaConfigCustomer> GetCustomer([AliasAs("id")] string customerCode);
 
-        [Get("/api/v1/customers/{id}")]
+        [Get("/api/v1/customers")]
         Task<List<QaConfigCustomer>> GetCustomers();
 
         [Get("/api/v1/variables")]
