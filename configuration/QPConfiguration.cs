@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -10,6 +11,7 @@ using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging.Extensions;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.Configuration
 {
@@ -17,8 +19,12 @@ namespace Quantumart.QP8.Configuration
     public class QPConfiguration
     {
         internal static string _configPath;
-
+        
         internal static string _tempDirectory;
+        
+        internal static string _configServiceUrl;
+
+        internal static string _configServiceToken;
 
         /// <summary>
         /// Проверка, запущен ли пул в 64-битном режиме
@@ -35,24 +41,61 @@ namespace Quantumart.QP8.Configuration
         /// </summary>
         public static string ConfigVariable(string name)
         {
-            var elem = XmlConfig.Descendants("app_var").SingleOrDefault(n => n.Attribute("app_var_name")?.Value == name);
-            return elem?.Value ?? string.Empty;
-        }
+            if (ConfigServiceUrl != null && ConfigServiceToken != null)
+            {
+                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
 
+                List<QaConfigApplicationVariable> variables = service.GetVariables().AsSyncronous();
+
+                QaConfigApplicationVariable variable = variables.SingleOrDefault(v => v.Name == name);
+
+                return variable?.Value ?? String.Empty;
+            }
+
+            XElement elem = XmlConfig
+                .Descendants("app_var")
+                .SingleOrDefault(n => n.Attribute("app_var_name")?.Value == name);
+
+            return elem?.Value ?? String.Empty;
+        }
+        
         public static string GetConnectionString(string customerCode, string appName = "QP8Backend")
         {
-            if (!string.IsNullOrWhiteSpace(customerCode))
+            if (!String.IsNullOrWhiteSpace(customerCode))
             {
-                var customerElement = XmlConfig.Descendants("customer").SingleOrDefault(n => n.Attribute("customer_name")?.Value == customerCode);
-                if (customerElement == null)
+                string connectionString;
+                if (ConfigServiceUrl != null && ConfigServiceToken != null)
                 {
-                    throw new Exception($"Данный customer code: {customerCode} - отсутствует в конфиге");
+                    var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+
+                    QaConfigCustomer customer = service.GetCustomer(customerCode).AsSyncronous();
+
+                    // TODO: handle 404
+                    
+                    if (customer == null)
+                    {
+                        throw new Exception($"Данный customer code: {customerCode} - отсутствует в конфиге");
+                    }
+
+                    connectionString = customer.ConnectionString;
+                }
+                else
+                {
+                    XElement customerElement = XmlConfig
+                        .Descendants("customer")
+                        .SingleOrDefault(n => n.Attribute("customer_name")?.Value == customerCode);
+
+                    if (customerElement == null)
+                    {
+                        throw new Exception($"Данный customer code: {customerCode} - отсутствует в конфиге");
+                    }
+
+                    connectionString = customerElement.Element("db")?.Value;
                 }
 
-                var dbConnectionString = customerElement.Element("db");
-                if (dbConnectionString != null)
+                if (!String.IsNullOrEmpty(connectionString))
                 {
-                    return TuneConnectionString(dbConnectionString.Value, out var _, appName);
+                    return TuneConnectionString(connectionString, out var _, appName);
                 }
             }
 
@@ -61,8 +104,20 @@ namespace Quantumart.QP8.Configuration
 
         public static List<QaConfigCustomer> GetCustomers(string appName)
         {
-            var customers = GetQaConfiguration().Customers.ToList();
-            foreach (var entry in customers)
+            List<QaConfigCustomer> customers;
+
+            if (ConfigServiceUrl != null && ConfigServiceToken != null)
+            {
+                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+
+                customers = service.GetCustomers().AsSyncronous();
+            }
+            else
+            {
+                customers = GetQaConfiguration().Customers.ToList();
+            }
+
+            foreach (QaConfigCustomer entry in customers)
             {
                 entry.ConnectionString = TuneConnectionString(entry.ConnectionString, out var _, appName);
             }
@@ -72,6 +127,15 @@ namespace Quantumart.QP8.Configuration
 
         public static List<string> GetCustomerCodes()
         {
+            if (ConfigServiceUrl != null && ConfigServiceToken != null)
+            {
+                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+
+                List<QaConfigCustomer> customers = service.GetCustomers().AsSyncronous();
+
+                return customers.ConvertAll(c => c.CustomerName);
+            }
+
             return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
         }
 
@@ -139,6 +203,10 @@ namespace Quantumart.QP8.Configuration
                     {
                         _configPath = WebConfigSection.QpConfigPath;
                     }
+                    else if (!string.IsNullOrEmpty(AppConfigSection?.QpConfigPath))
+                    {
+                        _configPath = AppConfigSection.QpConfigPath;
+                    }
                     else
                     {
                         var qKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(QpKeyRegistryPath);
@@ -157,10 +225,61 @@ namespace Quantumart.QP8.Configuration
             }
         }
 
+        public static string ConfigServiceUrl
+        {
+            get
+            {
+                if (_configServiceUrl == null)
+                {
+                    if (!String.IsNullOrEmpty(WebConfigSection?.QpConfigUrl))
+                    {
+                        _configServiceUrl = WebConfigSection.QpConfigUrl;
+                    }
+                    else if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigUrl))
+                    {
+                        _configServiceUrl = AppConfigSection.QpConfigUrl;
+                    }
+                    else
+                    {
+                        _configServiceUrl = String.Empty;
+                    }
+                }
+                return _configServiceUrl != String.Empty ? _configServiceUrl : null;
+            }
+        }
+
+        public static string ConfigServiceToken
+        {
+            get
+            {
+                if (_configServiceToken == null)
+                {
+                    if (!String.IsNullOrEmpty(WebConfigSection?.QpConfigToken))
+                    {
+                        _configServiceToken = WebConfigSection.QpConfigToken;
+                    }
+                    else if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigToken))
+                    {
+                        _configServiceToken = AppConfigSection.QpConfigToken;
+                    }
+                    else
+                    {
+                        _configServiceToken = String.Empty;
+                    }
+                }
+                return _configServiceToken != String.Empty ? _configServiceToken : null;
+            }
+        }
+
         /// <summary>
         /// Возвращает кастомную конфигурационную секцию в файле web.config
         /// </summary>
         public static QPublishingSection WebConfigSection => WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
+
+        /// <summary>
+        /// Возвращает кастомную конфигурационную секцию в файле web.config
+        /// </summary>
+        public static QPublishingSection AppConfigSection => ConfigurationManager.GetSection("qpublishing") as QPublishingSection;
 
         public static void SetAppSettings(NameValueCollection settings)
         {

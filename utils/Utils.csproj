@@ -84,6 +84,7 @@
     <Compile Include="Sorting\SqlSorting.cs" />
     <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="TaskExtensions.cs" />
     <Compile Include="Typographer.cs" />
     <Compile Include="Url.cs" />
   </ItemGroup>
