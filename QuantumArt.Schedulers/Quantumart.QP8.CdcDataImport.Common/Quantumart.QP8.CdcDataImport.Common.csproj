@@ -46,14 +46,17 @@
       <HintPath>$(SolutionDir)packages\Quartz.2.6.1\lib\net40\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Topshelf, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Topshelf.4.0.3\lib\net452\Topshelf.dll</HintPath>
+    <Reference Include="Topshelf, Version=4.2.0.194, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b">
+      <HintPath>$(SolutionDir)packages\Topshelf.4.2.0\lib\net452\Topshelf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Topshelf.Quartz, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Topshelf.Quartz.0.4.0.1\lib\net45\Topshelf.Quartz.dll</HintPath>
@@ -100,3 +103,4 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
+

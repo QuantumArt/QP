@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unity" Version="5.8.11" />
+    <PackageReference Include="Unity" Version="5.8.13" />
   </ItemGroup>
 
   <ItemGroup>

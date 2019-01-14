@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
@@ -29,7 +29,7 @@
   <ItemGroup>
     <PackageReference Include="Flurl" Version="2.8.0" />
     <PackageReference Include="Flurl.Http" Version="2.4.0" />
-    <PackageReference Include="NLog" Version="4.5.10" />
+    <PackageReference Include="NLog" Version="4.5.11" />
   </ItemGroup>
 
   <ItemGroup>

@@ -46,39 +46,47 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\CommonServiceLocator.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\CommonServiceLocator.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
-      <HintPath>$(SolutionDir)packages\NLog.4.5.10\lib\net45\NLog.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\NLog.4.5.11\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>$(SolutionDir)packages\System.Configuration.ConfigurationManager.4.4.1\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
+    <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>$(SolutionDir)packages\System.Configuration.ConfigurationManager.4.5.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.OracleClient" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO">
       <HintPath>$(SolutionDir)packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Net.Http, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>$(SolutionDir)packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime">
       <HintPath>$(SolutionDir)packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security.Cryptography.Algorithms">
-      <HintPath>$(SolutionDir)packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+    <Reference Include="System.Security.AccessControl, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>$(SolutionDir)packages\System.Security.AccessControl.4.5.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>$(SolutionDir)packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Security.Cryptography.Encoding">
@@ -89,8 +97,16 @@
       <HintPath>$(SolutionDir)packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Security.Cryptography.X509Certificates">
-      <HintPath>$(SolutionDir)packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>$(SolutionDir)packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Permissions, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>$(SolutionDir)packages\System.Security.Permissions.4.5.0\lib\net461\System.Security.Permissions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>$(SolutionDir)packages\System.Security.Principal.Windows.4.5.1\lib\net461\System.Security.Principal.Windows.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ServiceModel" />
@@ -103,31 +119,31 @@
     <Reference Include="System.Xml" />
     <Reference Include="netstandard" />
     <Reference Include="Unity.Abstractions, Version=3.3.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Abstractions.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.Configuration, Version=5.2.5.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Unity.Container, Version=5.8.11.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Container.dll</HintPath>
+    <Reference Include="Unity.Container, Version=5.8.13.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Container.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.Interception, Version=5.5.5.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Interception.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Interception.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.Interception.Configuration, Version=5.1.7.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Interception.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Interception.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.RegistrationByConvention, Version=2.1.9.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.ServiceLocation, Version=2.1.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.ServiceLocation.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -195,4 +211,5 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
+
 
