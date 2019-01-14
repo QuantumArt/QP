@@ -22,7 +22,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
 
         public FilterCdcByLsnNetChangesTests()
         {
-            _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization()).Customize(new MultipleCustomization());
+            _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
             _fixture.Customizations.Add(new NameValueSpecimenBuilder());
 
             Mapper.CreateMap<CdcTableTypeModel, CdcTableTypeModel>();
@@ -54,7 +54,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
             var actual = listOfModels.GetCdcDataFilteredByLsnNetChanges(cdc => new { cdc.TransactionLsn });
 
             // Verify outcome
-            actual.Should().ContainSingle().Which.ShouldBeEquivalentTo(expected);
+            actual.Should().ContainSingle().Which.Should().BeEquivalentTo(expected);
         }
 
         [Theory, AutoData, Trait("CdcTarantool", "DataImportJob")]
@@ -78,7 +78,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
             var actual = listOfModels.GetCdcDataFilteredByLsnNetChanges(cdc => new { cdc.TransactionLsn });
 
             // Verify outcome
-            actual.Should().ContainSingle(cdc => cdc.Action == CdcOperationType.Insert).Which.ShouldBeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
+            actual.Should().ContainSingle(cdc => cdc.Action == CdcOperationType.Insert).Which.Should().BeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
         }
 
         [Theory, AutoData, Trait("CdcTarantool", "DataImportJob")]
@@ -108,7 +108,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
             var actual = listOfModels.GetCdcDataFilteredByLsnNetChanges(cdc => new { cdc.TransactionLsn });
 
             // Verify outcome
-            actual.ShouldBeEquivalentTo(expected);
+            actual.Should().BeEquivalentTo(expected);
         }
 
         [Theory, AutoData, Trait("CdcTarantool", "DataImportJob")]
@@ -139,7 +139,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
 
             // Verify outcome
             actual.Should().HaveCount(2);
-            actual.ShouldAllBeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
+            actual.Should().BeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
             Assert.True(actual.Single(cdc => cdc.SequenceLsn == "D").Action == CdcOperationType.Insert);
         }
 
@@ -164,7 +164,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
             var actual = listOfModels.GetCdcDataFilteredByLsnNetChanges(cdc => new { contentItemId = cdc.Entity.Columns[ContentItemColumnName.ContentItemId], cdc.TransactionLsn });
 
             // Verify outcome
-            actual.Should().ContainSingle().Which.ShouldBeEquivalentTo(expected);
+            actual.Should().ContainSingle().Which.Should().BeEquivalentTo(expected);
         }
 
         [Theory, AutoData, Trait("CdcTarantool", "DataImportJob")]
@@ -188,7 +188,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
             var actual = listOfModels.GetCdcDataFilteredByLsnNetChanges(cdc => new { contentItemId = cdc.Entity.Columns[ContentItemColumnName.ContentItemId], cdc.TransactionLsn });
 
             // Verify outcome
-            actual.Should().ContainSingle(cdc => cdc.Action == CdcOperationType.Insert).Which.ShouldBeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
+            actual.Should().ContainSingle(cdc => cdc.Action == CdcOperationType.Insert).Which.Should().BeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
         }
 
         [Theory, AutoData, Trait("CdcTarantool", "DataImportJob")]
@@ -218,7 +218,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
             var actual = listOfModels.GetCdcDataFilteredByLsnNetChanges(cdc => new { contentItemId = cdc.Entity.Columns[ContentItemColumnName.ContentItemId], cdc.TransactionLsn });
 
             // Verify outcome
-            actual.ShouldBeEquivalentTo(expected);
+            actual.Should().BeEquivalentTo(expected);
         }
 
         [Theory, AutoData, Trait("CdcTarantool", "DataImportJob")]
@@ -249,7 +249,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
 
             // Verify outcome
             actual.Should().HaveCount(2);
-            actual.ShouldAllBeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
+            actual.Should().BeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
             Assert.True(actual.Single(cdc => cdc.SequenceLsn == "D").Action == CdcOperationType.Insert);
         }
 
@@ -276,7 +276,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
             var actual = listOfModels.GetCdcDataFilteredByLsnNetChangesWithColumnsCopy(cdc => new { contentItemId = cdc.Entity.Columns[ContentItemColumnName.ContentItemId], cdc.TransactionLsn });
 
             // Verify outcome
-            actual.Should().ContainSingle(cdc => cdc.Action == CdcOperationType.Insert).Which.ShouldBeEquivalentTo(expected, options =>
+            actual.Should().ContainSingle(cdc => cdc.Action == CdcOperationType.Insert).Which.Should().BeEquivalentTo(expected, options =>
             {
                 options.Excluding(cdc => cdc.Action);
                 options.Excluding(cdc => cdc.Entity.Columns);
@@ -319,7 +319,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
             // Verify outcome
             actual.Should()
                 .ContainSingle(cdc => cdc.Action == CdcOperationType.Insert && cdc.Entity.Columns.Contains(expectedColumn))
-                .Which.ShouldBeEquivalentTo(expected, options =>
+                .Which.Should().BeEquivalentTo(expected, options =>
                 {
                     options.Excluding(cdc => cdc.Action);
                     options.Excluding(cdc => cdc.Entity.Columns);
@@ -363,7 +363,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
 
             // Verify outcome
             actual.Should().HaveCount(2);
-            actual.ShouldAllBeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
+            actual.Should().BeEquivalentTo(expected, options => options.Excluding(cdc => cdc.Action));
             Assert.True(actual.Single(cdc => cdc.SequenceLsn == "0x00011CA000030F480047").Action == CdcOperationType.Insert);
         }
 

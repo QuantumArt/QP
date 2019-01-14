@@ -10,8 +10,8 @@ namespace Quantumart.QP8.Validators
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Parameter, AllowMultiple = true, Inherited = false)]
     public sealed class RequiredValidatorAttribute : ValueValidatorAttribute
     {
-        protected string _dependPropertyName = null;
-        protected bool _inverse = false;
+        private string _dependPropertyName = null;
+        private readonly bool _inverse = false;
 
         public RequiredValidatorAttribute()
         {

@@ -9,7 +9,7 @@
     <Description>QP8 prtg monitoring service and nlog infrastructure with unity extensions</Description>
     <Copyright>Copyright © 2007-2017 Quantum Art</Copyright>
     <PackageReleaseNotes>Update to new projects structure.</PackageReleaseNotes>
-    <PackageLicenseUrl>https://github.com/QuantumArt/QP/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/QuantumArt/QP</PackageProjectUrl>
     <RepositoryUrl>https://github.com/QuantumArt/QP</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

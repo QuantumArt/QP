@@ -32,7 +32,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 
         public XmlDbUpdateTests()
         {
-            _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization()).Customize(new MultipleCustomization());
+            _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
             _fixture.Customizations.Add(new NameValueSpecimenBuilder());
             _fixture.Customize<XmlDbUpdateRecordedAction>(m => m.Without(action => action.Lcid));
 

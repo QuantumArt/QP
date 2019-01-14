@@ -21,7 +21,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
 
         public ArticleValidationChangingTest()
         {
-            _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization());
+            _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
         }
 
         public static Field GenerateField(IFixture fixture, FieldExactTypes type)
