@@ -614,25 +614,34 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         private static string GetExtraFromForRelations(IEnumerable<ExportSettings.FieldSetting> displayFields)
         {
             var sb = new StringBuilder();
-            foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation && !n.FromExtension))
+            foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation && !n.FromExtension && !n.ExcludeFromSQLRequest))
             {
-                sb.AppendFormatLine(" left join content_{0}_united as {1} on base.[{2}] = {1}.content_item_id ", field.RelatedContentId, field.TableAlias, field.Name);
-                foreach (var f in field.Related.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
-                {
-                    sb.AppendFormatLine(" left join content_{0}_united as {1} on {3}.[{2}] = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, f.Name, field.TableAlias);
-                }
+                var onExpr = $"on base.[{field.Name}] = {field.TableAlias}.content_item_id";
+                sb.AppendFormatLine(" left join content_{0}_united as {1} {2} ", field.RelatedContentId, field.TableAlias, onExpr);
+                sb.Append(GetO2MRelationExpression(field));
             }
 
-            foreach (var field in displayFields.Where(w=>w.FromExtension))
+            foreach (var field in displayFields.Where(w=>w.FromExtension && w.ExactType != FieldExactTypes.M2MRelation && !w.ExcludeFromSQLRequest))
             {
-                sb.AppendFormatLine(" left join (select c_{0}.*, c_{1}.ItemId from content_{0}_united c_{0} LEFT JOIN content_{1}_united c_{1} on c_{1}.[{3}] = c_{0}.CONTENT_ITEM_ID) as {2} on base.CONTENT_ITEM_ID =  {2}.ItemId",
-                     field.RelatedContentId, field.ContentId, field.TableAlias, field.Name);
+                sb.AppendFormatLine(" left join (select c_{0}.CONTENT_ITEM_ID, c_{1}.{4}, c_{0}.{5} from content_{0}_united c_{0} LEFT JOIN content_{1}_united c_{1} on c_{1}.[{3}] = c_{0}.CONTENT_ITEM_ID) as {2} on base.CONTENT_ITEM_ID =  {2}.{4}",
+                     field.RelatedContentId, field.ContentId, field.TableAlias, field.Name, field.RelationByField, field.RelatedAttributeName);
             }
 
             return sb.ToString();
         }
 
-        private static string GetDisplayExpression(IEnumerable<Field> displayFields)
+
+        private static string GetO2MRelationExpression(ExportSettings.FieldSetting field)
+        {
+            var sb = new StringBuilder();
+            foreach (var f in field.Related.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
+            {
+                sb.AppendFormatLine(" left join content_{0}_united as {1} on {3}.[{2}] = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, f.Name, field.TableAlias);
+            }
+            return sb.ToString();
+        }
+
+        public static string GetDisplayExpression(IEnumerable<Field> displayFields)
         {
             var parts = new List<string>();
             var relCounter = 0;
