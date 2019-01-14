@@ -102,7 +102,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
                     {
                         result._RedundantIds.Add(article.Id);
                     }
-                    else if (article.LockedByAnyoneElse)
+                    else if (article.LockedByAnyoneElse && !QPContext.CanUnlockItems)
                     {
                         result._LockedItems.Add(article);
                     }
@@ -144,7 +144,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
                 foreach (var article in list)
                 {
-                    if (article.LockedByAnyoneElse)
+                    if (article.LockedByAnyoneElse && !QPContext.CanUnlockItems)
                     {
                         result._LockedItems.Add(article);
                     }
@@ -187,7 +187,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
                 foreach (var article in list)
                 {
-                    if (article.LockedByAnyoneElse)
+                    if (article.LockedByAnyoneElse && !QPContext.CanUnlockItems)
                     {
                         result._LockedItems.Add(article);
                     }
@@ -228,7 +228,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
                 {
                     result._NotAccessedIds.Add(id);
                 }
-                else if (lockableItem != null && lockableItem.LockedByAnyoneElse)
+                else if (lockableItem != null && lockableItem.LockedByAnyoneElse && !QPContext.CanUnlockItems)
                 {
                     result._LockedItems.Add(item);
                 }
