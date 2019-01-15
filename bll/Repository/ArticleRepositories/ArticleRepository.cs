@@ -1460,7 +1460,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         #region BatchUpdate
 
-        internal static InsertData[] BatchUpdate(ArticleData[] articles, bool formatArticleData)
+        internal static InsertData[] BatchUpdate(ArticleData[] articles, bool formatArticleData, bool createVersions)
         {
             if (articles.Any())
             {
@@ -1480,6 +1480,15 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
                     rows = Common.BatchInsert(scope.DbConnection, GetBatchDataTable(articles), true, QPContext.CurrentUserId);
                     var insertData = MapperFacade.DataRowMapper.Map<InsertData>(rows);
+
+                    if (createVersions)
+                    {
+                        var updatedIds = articles.Select(a => a.Id)
+                            .Except(insertData.Select(a => a.OriginalArticleId))
+                            .ToArray();
+
+                        Common.CreateArticleVersions(scope.DbConnection, QPContext.CurrentUserId, updatedIds);
+                    }
 
                     links = UpdateLinkIds(links, insertData);
                     articles = UpdateArticleIds(articles, insertData);
