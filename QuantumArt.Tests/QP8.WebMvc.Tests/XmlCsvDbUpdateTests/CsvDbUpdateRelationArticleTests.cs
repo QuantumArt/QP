@@ -98,7 +98,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             // Verify outcome
             fieldRepository.Verify();
             articleRepository.Verify();
-            articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult))));
+            articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult)), false));
         }
 
         [Theory, AutoData, Trait("CsvDbUpdate", "RelatedArticle")]
@@ -164,7 +164,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             //logger.Verify(m => m.Warn(It.IsAny<string>()));
             fieldRepository.Verify();
             articleRepository.Verify(m => m.IsExist(relatedArticleId), Times.Once);
-            articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult))));
+            articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult)), false));
         }
 
         [Theory, AutoData, Trait("CsvDbUpdate", "RelatedArticle")]
@@ -247,7 +247,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             // Verify outcome
             fieldRepository.Verify();
             articleRepository.Verify(m => m.IsExist(It.IsAny<int>()), Times.Never);
-            articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult))));
+            articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult)), false));
         }
     }
 }
