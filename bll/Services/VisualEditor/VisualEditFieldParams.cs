@@ -16,13 +16,17 @@
         {
         }
 
-        public VisualEditFieldParams(Site site)
+        public static VisualEditFieldParams Create(Site site)
         {
-            PEnterMode = site.PEnterMode;
-            UseEnglishQuotes = site.UseEnglishQuotes;
-            DisableListAutoWrap = site.DisableListAutoWrap;
-            ExternalCss = site.ExternalCss;
-            RootElementClass = site.RootElementClass;
+            var result = new VisualEditFieldParams()
+            {
+                PEnterMode = site.PEnterMode,
+                UseEnglishQuotes = site.UseEnglishQuotes,
+                DisableListAutoWrap = site.DisableListAutoWrap,
+                ExternalCss = site.ExternalCss,
+                RootElementClass = site.RootElementClass
+            };
+            return result;
         }
     }
 }

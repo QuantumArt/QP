@@ -1028,7 +1028,7 @@ namespace Quantumart.QP8.BLL
             return pathInfo;
         }
 
-        private VisualEditFieldParams GetVisualEditFieldParamsForInit() => IsNew ? new VisualEditFieldParams(Content.Site) : _fieldRepository.GetVisualEditFieldParams(Id);
+        private VisualEditFieldParams GetVisualEditFieldParamsForInit() => IsNew ? VisualEditFieldParams.Create(Content.Site) : _fieldRepository.GetVisualEditFieldParams(Id);
 
         private VisualEditorConfig GetVisualEditorConfigForInit() => new VisualEditorConfig(this);
 

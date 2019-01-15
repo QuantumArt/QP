@@ -31,7 +31,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         public IEnumerable<SearchInArticlesResultItem> SearchInArticles(int siteId, int userId, string sqlSearchString, int? articleId, ListCommand listCmd, out int totalRecords)
         {
             var dt = QPContext.EFContext.SearchInArticles(siteId, userId, sqlSearchString, articleId, TranslateSortExpression(listCmd.SortExpression), listCmd.StartRecord, listCmd.PageSize, out totalRecords);
-            var result = Mapper.Map<IDataReader, IEnumerable<SearchInArticlesResultItem>>(dt.CreateDataReader()).ToList();
+            var result = Mapper.Map<IEnumerable<DataRow>, IEnumerable<SearchInArticlesResultItem>>(dt.AsEnumerable()).ToList();
             foreach (var item in result)
             {
                 item.Text = Cleaner.RemoveAllHtmlTags(item.Text);

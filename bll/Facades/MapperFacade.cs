@@ -41,9 +41,9 @@ namespace Quantumart.QP8.BLL.Facades
             cfg.CreateMap<decimal, int>().ConvertUsing(src => Converter.ToInt32(src));
             cfg.CreateMap<int?, decimal?>().ConvertUsing(src => src);
 
-            cfg.CreateMap<IDataReader, IEnumerable<SearchInArticlesResultItem>>();
-            cfg.CreateMap<IDataReader, IEnumerable<VisualEditFieldParams>>();
-            cfg.CreateMap<IDataReader, IEnumerable<BackendActionCacheRecord>>();
+            DataRowMapper.CreateMap<SearchInArticlesResultItem>(cfg);
+            DataRowMapper.CreateMap<VisualEditFieldParams>(cfg);
+            DataRowMapper.CreateMap<BackendActionCacheRecord>(cfg);
 
             DataRowMapper.CreateMap<SchemaInfo>(cfg);
             DataRowMapper.CreateMap<RelationData>(cfg);
