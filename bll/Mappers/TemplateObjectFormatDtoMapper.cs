@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class TemplateObjectFormatDtoRowMapper : GenericMapper<TemplateObjectFormatDto, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, TemplateObjectFormatDto>()
+            cfg.CreateMap<DataRow, TemplateObjectFormatDto>(MemberList.Source)
                 .ForMember(biz => biz.TemplateName, opt => opt.MapFrom(row => row.Field<string>("TemplateName")))
                 .ForMember(biz => biz.ObjectName, opt => opt.MapFrom(row => row.Field<string>("ObjectName")))
                 .ForMember(biz => biz.FormatName, opt => opt.MapFrom(row => row.Field<string>("FormatName")))

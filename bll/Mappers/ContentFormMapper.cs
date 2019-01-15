@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ContentFormMapper : GenericMapper<ContentForm, ContentFormDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentForm, ContentFormDAL>()
+            cfg.CreateMap<ContentForm, ContentFormDAL>(MemberList.Destination)
                 .ForMember(x => x.GenerateUpdateScript, opt => opt.MapFrom(src => src.GenerateUpdateScript ? 1 : 0))
                 .ForMember(x => x.Content, opt => opt.Ignore())
                 .ForMember(x => x.Object, opt => opt.Ignore())
@@ -17,9 +17,9 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(x => x.Locked, opt => opt.Ignore());
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentFormDAL, ContentForm>()
+            cfg.CreateMap<ContentFormDAL, ContentForm>(MemberList.Source)
                 .ForMember(data => data.GenerateUpdateScript, opt => opt.MapFrom(x => Converter.ToBoolean(x.GenerateUpdateScript, false)))
                 .ForMember(data => data.Page, opt => opt.Ignore())
                 ;

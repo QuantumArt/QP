@@ -5,9 +5,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ObjectValueMapper : GenericMapper<ObjectValue, ObjectValuesDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ObjectValue, ObjectValuesDAL>()
+            cfg.CreateMap<ObjectValue, ObjectValuesDAL>(MemberList.Destination)
                 .ForMember(data => data.Object, opt => opt.Ignore())
                 ;
         }

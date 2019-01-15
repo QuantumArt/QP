@@ -8,9 +8,9 @@ namespace Quantumart.QP8.BLL.Mappers
     {
         public bool DisableTranslations { get; set; }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ActionTypeDAL, BackendActionType>()
+            cfg.CreateMap<ActionTypeDAL, BackendActionType>(MemberList.Source)
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(data => DisableTranslations ? data.Name : Translator.Translate(data.Name)))
                 .ForMember(biz => biz.NotTranslatedName, opt => opt.MapFrom(data => data.Name))
                 .ForMember(biz => biz.RequiredPermissionLevel, opt => opt.MapFrom(data => Converter.ToInt32(data.PermissionLevel.Level)));

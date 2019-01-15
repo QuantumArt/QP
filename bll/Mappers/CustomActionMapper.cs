@@ -5,9 +5,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class CustomActionMapper : GenericMapper<CustomAction, CustomActionDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<CustomAction, CustomActionDAL>()
+            cfg.CreateMap<CustomAction, CustomActionDAL>(MemberList.Destination)
                 .ForMember(data => data.Action, opt => opt.Ignore())
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
                 .ForMember(data => data.Sites, opt => opt.Ignore())

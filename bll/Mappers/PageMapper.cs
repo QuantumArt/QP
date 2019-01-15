@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class PageMapper : GenericMapper<Page, PageDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<Page, PageDAL>()
+            cfg.CreateMap<Page, PageDAL>(MemberList.Destination)
                 .ForMember(data => data.ContentForm, opt => opt.Ignore())
                 .ForMember(data => data.Object, opt => opt.Ignore())
                 .ForMember(data => data.PageTemplate, opt => opt.Ignore())
@@ -60,9 +60,9 @@ namespace Quantumart.QP8.BLL.Mappers
             }
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<PageDAL, Page>().AfterMap(SetBizProperties);
+            cfg.CreateMap<PageDAL, Page>(MemberList.Source).AfterMap(SetBizProperties);
         }
 
         private static void SetBizProperties(PageDAL dataObject, Page bizObject)

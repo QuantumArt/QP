@@ -5,16 +5,16 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class WorkFlowRuleMapper : GenericMapper<WorkflowRule, WorkflowRulesDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<WorkflowRule, WorkflowRulesDAL>()
+            cfg.CreateMap<WorkflowRule, WorkflowRulesDAL>(MemberList.Destination)
                 .ForMember(data => data.StatusType, opt => opt.Ignore())
                 .ForMember(data => data.Workflow, opt => opt.Ignore());
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<WorkflowRulesDAL, WorkflowRule>()
+            cfg.CreateMap<WorkflowRulesDAL, WorkflowRule>(MemberList.Source)
                 .ForMember(biz => biz.Description, opt => opt.MapFrom(src => src.Description));
         }
     }

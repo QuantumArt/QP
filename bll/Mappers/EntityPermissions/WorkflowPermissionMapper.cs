@@ -7,16 +7,16 @@ namespace Quantumart.QP8.BLL.Mappers.EntityPermissions
 {
     internal class WorkflowPermissionMapper : GenericMapper<EntityPermission, WorkflowPermissionDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<WorkflowPermissionDAL, EntityPermission>()
+            cfg.CreateMap<WorkflowPermissionDAL, EntityPermission>()
                 .ForMember(biz => biz.Parent, opt => opt.MapFrom(data => MapperFacade.WorkflowMapper.GetBizObject(data.Workflow)))
                 .ForMember(biz => biz.ParentEntityId, opt => opt.MapFrom(data => Converter.ToInt32(data.WorkflowId)));
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<EntityPermission, WorkflowPermissionDAL>()
+            cfg.CreateMap<EntityPermission, WorkflowPermissionDAL>()
                 .ForMember(data => data.Workflow, opt => opt.Ignore())
                 .ForMember(data => data.WorkflowId, opt => opt.MapFrom(biz => Converter.ToDecimal(biz.ParentEntityId)))
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())

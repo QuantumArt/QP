@@ -8,9 +8,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class StatusHistoryItemMapper : GenericMapper<StatusHistoryListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, StatusHistoryListItem>()
+            cfg.CreateMap<DataRow, StatusHistoryListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("Id"))))
                 .ForMember(biz => biz.Comment, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("Comment"))))
                 .ForMember(biz => biz.ActionMadeBy, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("ActionMadeBy"))))

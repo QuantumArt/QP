@@ -6,9 +6,11 @@
         {
         }
 
-        public ContentWorkflowBind(Content content)
+        public static ContentWorkflowBind Create(Content content)
         {
-            SetContent(content);
+            ContentWorkflowBind result = new ContentWorkflowBind();
+            result.SetContent(content);
+            return result;
         }
 
         public void SetContent(Content content)

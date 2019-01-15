@@ -6,16 +6,16 @@ namespace Quantumart.QP8.BLL.Mappers.VisualEditor
 {
     internal class VisualEditorPluginMapper : GenericMapper<VisualEditorPlugin, VePluginDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<VisualEditorPlugin, VePluginDAL>()
+            cfg.CreateMap<VisualEditorPlugin, VePluginDAL>()
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
                 .ForMember(data => data.VeCommands, opt => opt.Ignore());
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<VePluginDAL, VisualEditorPlugin>();
+            cfg.CreateMap<VePluginDAL, VisualEditorPlugin>();
         }
     }
 }

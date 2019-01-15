@@ -5,9 +5,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ContentMapper : GenericMapper<Content, ContentDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentDAL, Content>()
+            cfg.CreateMap<ContentDAL, Content>(MemberList.Source)
                 .ForMember(biz => biz.Fields, opt => opt.Ignore())
                 .ForMember(biz => biz.Constraints, opt => opt.Ignore())
                 .ForMember(biz => biz.GroupId, opt => opt.MapFrom(dal => dal.GroupId))
@@ -22,9 +22,9 @@ namespace Quantumart.QP8.BLL.Mappers
             ;
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<Content, ContentDAL>()
+            cfg.CreateMap<Content, ContentDAL>(MemberList.Destination)
                 .ForMember(data => data.GroupId, opt => opt.MapFrom(biz => biz.GroupId))
                 .ForMember(data => data.JoinId, opt => opt.MapFrom(biz => biz.JoinRootId))
                 .ForMember(data => data.Query, opt => opt.MapFrom(biz => biz.UserQuery))

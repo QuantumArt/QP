@@ -5,9 +5,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class WorkflowMapper : GenericMapper<Workflow, WorkflowDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<Workflow, WorkflowDAL>()
+            cfg.CreateMap<Workflow, WorkflowDAL>(MemberList.Destination)
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
                 .ForMember(data => data.Site, opt => opt.Ignore())
                 .ForMember(data => data.WorkflowRules, opt => opt.Ignore())
@@ -15,9 +15,9 @@ namespace Quantumart.QP8.BLL.Mappers
                 ;
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<WorkflowDAL, Workflow>();
+            cfg.CreateMap<WorkflowDAL, Workflow>(MemberList.Source);
         }
     }
 }

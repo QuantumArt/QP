@@ -27,7 +27,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
             else
             {
-                binding = new ContentWorkflowBind(content);
+                binding = ContentWorkflowBind.Create(content);
             }
 
             return binding;
@@ -49,7 +49,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
             else
             {
-                binding = new ArticleWorkflowBind(article);
+                binding = ArticleWorkflowBind.Create(article);
             }
 
             return binding;

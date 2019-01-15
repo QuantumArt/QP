@@ -7,10 +7,10 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     public class DataRowMapper
     {
-        public static void CreateMap<TModel>()
+        public static void CreateMap<TModel>(IMapperConfigurationExpression cfg)
             where TModel : class
         {
-            Mapper.CreateMap<DataRow, TModel>().ConvertUsing(src => Converter.ToModelFromDataRow<TModel>(src));
+            cfg.CreateMap<DataRow, TModel>(MemberList.None).ConvertUsing(src => Converter.ToModelFromDataRow<TModel>(src));
         }
 
         public TModel Map<TModel>(DataRow row)

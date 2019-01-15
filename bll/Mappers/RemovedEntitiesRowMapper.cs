@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class RemovedEntitiesRowMapper : GenericMapper<RemovedEntity, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, RemovedEntity>()
+            cfg.CreateMap<DataRow, RemovedEntity>(MemberList.Source)
                 .ForMember(biz => biz.DeletedTime, opt => opt.MapFrom(row => row.Field<DateTime>("DeletedTime")))
                 .ForMember(biz => biz.EntityId, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("EntityId"))))
                 .ForMember(biz => biz.ParentEntityId, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("ParentEntityId"))))

@@ -6,9 +6,11 @@ namespace Quantumart.QP8.BLL
         {
         }
 
-        public ArticleWorkflowBind(Article article)
+        public static ArticleWorkflowBind Create(Article article)
         {
-            SetArticle(article);
+            var result = new ArticleWorkflowBind();
+            result.SetArticle(article);
+            return result;
         }
 
         public void SetArticle(Article article)

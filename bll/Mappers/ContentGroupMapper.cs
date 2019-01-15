@@ -5,9 +5,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ContentGroupMapper : GenericMapper<ContentGroup, ContentGroupDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentGroup, ContentGroupDAL>()
+            cfg.CreateMap<ContentGroup, ContentGroupDAL>(MemberList.Destination)
                 .ForMember(data => data.Site, opt => opt.Ignore())
                 .ForMember(data => data.Contents, opt => opt.Ignore())
                 ;

@@ -6,14 +6,14 @@ namespace Quantumart.QP8.BLL.Mappers.VisualEditor
 {
     internal class VisualEditorStyleMapper : GenericMapper<VisualEditorStyle, VeStyleDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<VisualEditorStyle, VeStyleDAL>().ForMember(data => data.LastModifiedByUser, opt => opt.Ignore());
+            cfg.CreateMap<VisualEditorStyle, VeStyleDAL>().ForMember(data => data.LastModifiedByUser, opt => opt.Ignore());
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<VeStyleDAL, VisualEditorStyle>().AfterMap(SetBizProperties);
+            cfg.CreateMap<VeStyleDAL, VisualEditorStyle>().AfterMap(SetBizProperties);
         }
 
         private static void SetBizProperties(VeStyleDAL dataObject, VisualEditorStyle bizObject)

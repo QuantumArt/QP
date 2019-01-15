@@ -8,9 +8,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ObjectRowMapper : GenericMapper<ObjectListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, ObjectListItem>()
+            cfg.CreateMap<DataRow, ObjectListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("Id"))))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("Name")))
                 .ForMember(biz => biz.TypeName, opt => opt.MapFrom(row => row.Field<string>("TypeName")))
@@ -36,9 +36,9 @@ namespace Quantumart.QP8.BLL.Mappers
 
     internal class ObjectSearchResultRowMapper : GenericMapper<ObjectSearchListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, ObjectSearchListItem>()
+            cfg.CreateMap<DataRow, ObjectSearchListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("Id"))))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("Name")))
                 .ForMember(biz => biz.TemplateName, opt => opt.MapFrom(row => row.Field<string>("TemplateName")))

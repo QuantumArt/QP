@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class NotificationTemplateFormatMapper : GenericMapper<NotificationObjectFormat, ObjectFormatDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<NotificationObjectFormat, ObjectFormatDAL>()
+            cfg.CreateMap<NotificationObjectFormat, ObjectFormatDAL>(MemberList.Destination)
                 .ForMember(data => data.Locked, opt => opt.MapFrom(src => src.LockedBy == 0 ? null : (DateTime?)src.Locked))
                 .ForMember(data => data.LockedBy, opt => opt.MapFrom(src => src.LockedBy == 0 ? null : (int?)src.LockedBy))
                 .AfterMap(SetDalProperties);

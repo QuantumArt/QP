@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class SessionsLogRowMapper : GenericMapper<SessionsLog, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, SessionsLog>()
+            cfg.CreateMap<DataRow, SessionsLog>(MemberList.Source)
                 .ForMember(biz => biz.SessionId, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("SessionId"))))
                 .ForMember(biz => biz.AutoLogged, opt => opt.MapFrom(row => row.Field<int>("AutoLogged")))
                 .ForMember(biz => biz.Browser, opt => opt.MapFrom(row => row.Field<string>("Browser")))

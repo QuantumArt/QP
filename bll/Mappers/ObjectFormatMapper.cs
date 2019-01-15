@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ObjectFormatMapper : GenericMapper<ObjectFormat, ObjectFormatDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ObjectFormat, ObjectFormatDAL>()
+            cfg.CreateMap<ObjectFormat, ObjectFormatDAL>(MemberList.Destination)
                 .ForMember(data => data.NetLanguages, opt => opt.Ignore())
                 .ForMember(data => data.Notifications, opt => opt.Ignore())
                 .ForMember(data => data.Object, opt => opt.Ignore())

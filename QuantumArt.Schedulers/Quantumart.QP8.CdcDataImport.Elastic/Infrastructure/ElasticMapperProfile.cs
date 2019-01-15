@@ -9,7 +9,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure
 {
     public class ElasticMapperProfile : Profile
     {
-        protected override void Configure()
+        public ElasticMapperProfile()
         {
             CreateMap<CdcEntityModel, CdcEntityModel>();
             CreateMap<CdcTableTypeModel, CdcTableTypeModel>();

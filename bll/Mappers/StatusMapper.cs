@@ -5,17 +5,17 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class StatusMapper : GenericMapper<StatusType, StatusTypeDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<StatusType, StatusTypeDAL>()
+            cfg.CreateMap<StatusType, StatusTypeDAL>(MemberList.Destination)
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
                 .ForMember(data => data.WorkflowRules, opt => opt.Ignore())
                 ;
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<StatusTypeDAL, StatusType>();
+            cfg.CreateMap<StatusTypeDAL, StatusType>(MemberList.Source);
         }
     }
 }

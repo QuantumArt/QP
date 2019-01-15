@@ -9,9 +9,9 @@ namespace Quantumart.QP8.BLL.Mappers.VisualEditor
 {
     internal class VisualEditorCommandRowMapper : GenericMapper<VisualEditorCommand, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, VisualEditorCommand>()
+            cfg.CreateMap<DataRow, VisualEditorCommand>()
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("ID"))))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("NAME")))
                 .ForMember(biz => biz.Alias, opt => opt.MapFrom(row => Translator.Translate(row.Field<string>("ALIAS"))))

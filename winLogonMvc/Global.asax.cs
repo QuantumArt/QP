@@ -28,6 +28,7 @@ namespace Quantumart.QP8.WebMvc.WinLogOn
             Logger.Log = LogProvider.LogFactory.GetLogger(AssemblyHelpers.GetAssemblyName());
             ModelBinders.Binders.DefaultBinder = new QpModelBinder();
             RegisterRoutes(RouteTable.Routes);
+            WebMvc.MvcApplication.RegisterMappings();
         }
 
         protected void Application_Error(object sender, EventArgs e)

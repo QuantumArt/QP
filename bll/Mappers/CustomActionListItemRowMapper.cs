@@ -11,9 +11,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class CustomActionListItemRowMapper : GenericMapper<CustomActionListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, CustomActionListItem>()
+            cfg.CreateMap<DataRow, CustomActionListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("ID"))))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("NAME")))
                 .ForMember(biz => biz.Url, opt => opt.MapFrom(row => row.Field<string>("URL")))

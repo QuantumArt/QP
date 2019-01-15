@@ -9,9 +9,9 @@ namespace Quantumart.QP8.BLL.Mappers.EntityPermissions
 {
     internal class PermissionListItemRowMapper : GenericMapper<EntityPermissionListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, EntityPermissionListItem>()
+            cfg.CreateMap<DataRow, EntityPermissionListItem>()
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("ID"))))
                 .ForMember(biz => biz.UserLogin, opt => opt.MapFrom(row => row.Field<string>("UserLogin")))
                 .ForMember(biz => biz.GroupName, opt => opt.MapFrom(row => row.Field<string>("GroupName")))

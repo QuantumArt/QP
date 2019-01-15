@@ -5,15 +5,15 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ContentConstraintRuleMapper : GenericMapper<ContentConstraintRule, ContentConstraintRuleDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentConstraintRule, ContentConstraintRuleDAL>()
+            cfg.CreateMap<ContentConstraintRule, ContentConstraintRuleDAL>(MemberList.Destination)
                 .ForMember(data => data.Field, opt => opt.Ignore());
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentConstraintRuleDAL, ContentConstraintRule>()
+            cfg.CreateMap<ContentConstraintRuleDAL, ContentConstraintRule>(MemberList.Source)
                 .ForMember(biz => biz.Field, opt => opt.Ignore());
         }
     }

@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class BackendActionStatusMapper : GenericMapper<BackendActionStatus, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, BackendActionStatus>()
+            cfg.CreateMap<DataRow, BackendActionStatus>(MemberList.Source)
                 .ForMember(biz => biz.Code, opt => opt.MapFrom(row => row.Field<string>("CODE")))
                 .ForMember(biz => biz.Visible, opt => opt.MapFrom(row => row.Field<bool>(FieldName.Visible)));
         }

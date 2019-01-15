@@ -6,16 +6,16 @@ namespace Quantumart.QP8.BLL.Mappers.EntityPermissions
 {
     internal class BackendActionPermissionMapper : GenericMapper<EntityPermission, BackendActionPermissionDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<BackendActionPermissionDAL, EntityPermission>()
+            cfg.CreateMap<BackendActionPermissionDAL, EntityPermission>()
                 .ForMember(biz => biz.Parent, opt => opt.MapFrom(data => MapperFacade.BackendActionMapper.GetBizObject(data.Action)))
                 .ForMember(biz => biz.ParentEntityId, opt => opt.MapFrom(data => data.ActionId));
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<EntityPermission, BackendActionPermissionDAL>()
+            cfg.CreateMap<EntityPermission, BackendActionPermissionDAL>()
                 .ForMember(data => data.Action, opt => opt.Ignore())
                 .ForMember(data => data.ActionId, opt => opt.MapFrom(biz => biz.ParentEntityId))
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())

@@ -127,11 +127,11 @@ namespace Quantumart.QP8.BLL
             StringEnumItems = Enumerable.Empty<StringEnumItem>();
         }
 
-        public Field(Content content, IFieldRepository fieldRepository, IContentRepository contentRepository)
-            : this(fieldRepository, contentRepository)
+        public static Field Create(Content content, IFieldRepository fieldRepository, IContentRepository contentRepository)
         {
-            Content = content;
-            ContentId = content.Id;
+            var result = new Field(fieldRepository, contentRepository) { Content = content, ContentId = content.Id };
+            result.Init();
+            return result;
         }
 
         private InitPropertyValue<Field> _relation;
@@ -508,7 +508,7 @@ namespace Quantumart.QP8.BLL
             get => _relateToContentId.Value;
             set => _relateToContentId.Value = value;
         }
-        
+
         public Content RelatedToContent => RelateToContentId.HasValue ? _contentRepository.GetById(RelateToContentId.Value) : null;
 
         [LocalizedDisplayName("TextBoxRows", NameResourceType = typeof(FieldStrings))]
@@ -640,7 +640,7 @@ namespace Quantumart.QP8.BLL
         /// Существует ли для данного поля обратное поле ?
         /// </summary>
         public bool IsBackwardFieldExists => BackwardField != null && !BackwardField.IsNew;
-                
+
         public Field BackwardField => M2MBackwardField ?? O2MBackwardField;
 
         [LocalizedDisplayName("BackwardFieldId", NameResourceType = typeof(FieldStrings))]
@@ -1375,7 +1375,7 @@ namespace Quantumart.QP8.BLL
                         // возможно только если Related контент не виртуальный
                         if (relContent.VirtualType == 0)
                         {
-                            var f = new Field(relContent, _fieldRepository, _contentRepository).Init();
+                            var f = Create(relContent, _fieldRepository, _contentRepository);
                             f.Name = NewM2MBackwardFieldName;
                             f.ExactType = FieldExactTypes.M2MRelation;
                             f.ContentId = relContent.Id;
@@ -1404,7 +1404,7 @@ namespace Quantumart.QP8.BLL
                         // возможно только если Related контент не виртуальный
                         if (relContent.VirtualType == 0)
                         {
-                            var f = new Field(relContent, _fieldRepository, _contentRepository).Init();
+                            var f = Create(relContent, _fieldRepository, _contentRepository);
                             f.Name = NewO2MBackwardFieldName;
                             f.ExactType = FieldExactTypes.M2ORelation;
                             f.ContentId = relContent.Id;
@@ -2838,23 +2838,20 @@ namespace Quantumart.QP8.BLL
 
         internal Field GetVirtualClone(Content virtualContent)
         {
-            var result = new Field(virtualContent, _fieldRepository, _contentRepository)
-            {
-                Name = Name,
-                TypeId = TypeId,
-                RelationId = RelationId,
-                BaseImageId = BaseImageId,
-                UseSiteLibrary = UseSiteLibrary,
-                LinkId = LinkId,
-                ViewInList = ViewInList,
-                BackRelationId = BackRelationId,
-                IsLong = IsLong,
-                UseForTree = UseForTree,
-                AutoCheckChildren = AutoCheckChildren,
-                IsClassifier = IsClassifier
-            };
+            var result = Create(virtualContent, _fieldRepository, _contentRepository);
 
-            result.Init();
+            result.Name = Name;
+            result.TypeId = TypeId;
+            result.RelationId = RelationId;
+            result.BaseImageId = BaseImageId;
+            result.UseSiteLibrary = UseSiteLibrary;
+            result.LinkId = LinkId;
+            result.ViewInList = ViewInList;
+            result.BackRelationId = BackRelationId;
+            result.IsLong = IsLong;
+            result.UseForTree = UseForTree;
+            result.AutoCheckChildren = AutoCheckChildren;
+            result.IsClassifier = IsClassifier;
             result.ExactType = ExactType;
             result.Size = Size;
             result.TextBoxRows = TextBoxRows;

@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class UnionFieldRelationCountMapper : GenericMapper<UnionFieldRelationCount, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, UnionFieldRelationCount>()
+            cfg.CreateMap<DataRow, UnionFieldRelationCount>(MemberList.Source)
                 .ForMember(biz => biz.Count, opt => opt.MapFrom(r => Converter.ToInt32(r.Field<int>("F_COUNT"))))
                 .ForMember(biz => biz.UnionFieldId, opt => opt.MapFrom(r => Converter.ToInt32(r.Field<decimal>("UNION_FIELD_ID"))));
         }

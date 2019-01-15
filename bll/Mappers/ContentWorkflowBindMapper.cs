@@ -5,16 +5,16 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ContentWorkflowBindMapper : GenericMapper<ContentWorkflowBind, ContentWorkflowBindDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentWorkflowBindDAL, ContentWorkflowBind>()
+            cfg.CreateMap<ContentWorkflowBindDAL, ContentWorkflowBind>(MemberList.Source)
                 .ForMember(biz => biz.Content, opt => opt.Ignore())
                 ;
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentWorkflowBind, ContentWorkflowBindDAL>()
+            cfg.CreateMap<ContentWorkflowBind, ContentWorkflowBindDAL>(MemberList.Destination)
                 .ForMember(data => data.Content, opt => opt.Ignore())
                 ;
         }

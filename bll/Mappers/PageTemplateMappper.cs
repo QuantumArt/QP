@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class PageTemplateMappper : GenericMapper<PageTemplate, PageTemplateDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<PageTemplate, PageTemplateDAL>()
+            cfg.CreateMap<PageTemplate, PageTemplateDAL>(MemberList.Destination)
                 .ForMember(data => data.NetLanguages, opt => opt.Ignore())
                 .ForMember(data => data.Object, opt => opt.Ignore())
                 .ForMember(data => data.Page, opt => opt.Ignore())

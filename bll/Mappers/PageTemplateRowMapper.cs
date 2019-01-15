@@ -8,9 +8,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class PageTemplateRowMapper : GenericMapper<PageTemplateListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, PageTemplateListItem>()
+            cfg.CreateMap<DataRow, PageTemplateListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("Id"))))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("Name")))
                 .ForMember(biz => biz.Folder, opt => opt.MapFrom(row => "\\" + row.Field<string>("Folder")))
@@ -34,9 +34,9 @@ namespace Quantumart.QP8.BLL.Mappers
 
     internal class PageTemplateSearchResultRowMapper : GenericMapper<PageTemplateSearchListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, PageTemplateSearchListItem>()
+            cfg.CreateMap<DataRow, PageTemplateSearchListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("Id"))))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("Name")))
                 .ForMember(biz => biz.Description, opt => opt.Ignore())

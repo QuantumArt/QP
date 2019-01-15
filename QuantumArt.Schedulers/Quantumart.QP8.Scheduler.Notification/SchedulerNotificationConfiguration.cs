@@ -29,7 +29,7 @@ namespace Quantumart.QP8.Scheduler.Notification
             RegisterSystemNotificationsProcessor("System.Notifications");
             RegisterInterfaceNotificationsProcessor("Interface.Notifications");
 
-            Mapper.AddProfile<NotificationMapperProfile>();
+            Mapper.Initialize(cfg => cfg.AddProfile<NotificationMapperProfile>());
         }
 
         private void RegisterSystemNotificationsProcessor(string serviceConfigName)
