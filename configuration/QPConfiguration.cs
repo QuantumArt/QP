@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Configuration;
 using System.Xml.Linq;
+using QP.ConfigurationService.Client;
 using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging.Extensions;
 using Quantumart.QP8.Configuration.Models;
@@ -45,9 +46,9 @@ namespace Quantumart.QP8.Configuration
             {
                 var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
 
-                List<QaConfigApplicationVariable> variables = service.GetVariables().AsSyncronous();
+                var variables = service.GetVariables().AsSyncronous();
 
-                QaConfigApplicationVariable variable = variables.SingleOrDefault(v => v.Name == name);
+                var variable = variables.SingleOrDefault(v => v.Name == name);
 
                 return variable?.Value ?? String.Empty;
             }
@@ -68,7 +69,7 @@ namespace Quantumart.QP8.Configuration
                 {
                     var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
 
-                    QaConfigCustomer customer = service.GetCustomer(customerCode).AsSyncronous();
+                    var customer = service.GetCustomer(customerCode).AsSyncronous();
 
                     // TODO: handle 404
                     
@@ -110,7 +111,12 @@ namespace Quantumart.QP8.Configuration
             {
                 var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
 
-                customers = service.GetCustomers().AsSyncronous();
+                customers = service.GetCustomers().AsSyncronous().ConvertAll(c => new QaConfigCustomer
+                {
+                    CustomerName = c.Name,
+                    ExcludeFromSchedulers = c.ExcludeFromSchedulers,
+                    ConnectionString = c.ConnectionString
+                });
             }
             else
             {
@@ -131,9 +137,9 @@ namespace Quantumart.QP8.Configuration
             {
                 var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
 
-                List<QaConfigCustomer> customers = service.GetCustomers().AsSyncronous();
+                var customers = service.GetCustomers().AsSyncronous();
 
-                return customers.ConvertAll(c => c.CustomerName);
+                return customers.ConvertAll(c => c.Name);
             }
 
             return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
