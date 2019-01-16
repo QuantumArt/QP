@@ -497,10 +497,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             Expression<Func<TModel, bool>> expression,
             string toggleId = null,
             bool reverseToggle = false,
-            Dictionary<string, object> htmlAttributes = null
+            Dictionary<string, object> htmlAttributes = null,
+            bool forceReadonly = false
         ) => MvcHtmlString.Create(new StringBuilder(string.Format(
             html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), html.GetMetaData(expression).DisplayName, true),
-            html.QpCheckBoxFor(expression, toggleId, reverseToggle, htmlAttributes).ToHtmlString()
+            html.QpCheckBoxFor(expression, toggleId, reverseToggle, htmlAttributes, forceReadOnly: forceReadonly).ToHtmlString()
         )).ToString());
 
         public static MvcHtmlString RadioFieldFor<TModel, TValue>(
