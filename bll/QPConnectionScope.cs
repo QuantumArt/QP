@@ -34,14 +34,28 @@ namespace Quantumart.QP8.BLL
 
         static QPConnectionScope()
         {
+            if (!IsMapperInitialized())
+            {
+                Mapper.Initialize(MapperFacade.CreateAllMappings);
+            }
+        }
+
+        public static bool IsMapperInitialized()
+        {
             try
             {
                 Mapper.Configuration.AssertConfigurationIsValid();
             }
             catch (InvalidOperationException)
             {
-                Mapper.Initialize(MapperFacade.CreateAllMappings);
+                return false;
             }
+            catch (AutoMapperConfigurationException)
+            {
+                return true;
+            }
+
+            return true;
         }
 
         public QPConnectionScope()
