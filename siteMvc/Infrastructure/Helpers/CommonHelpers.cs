@@ -22,16 +22,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
             return $"{context.Request.Url?.Scheme}://{context.Request.Url?.Host}:{context.Request.Url?.Port}{context.Request.ApplicationPath}/";
         }
 
-        internal static HashSet<string> GetDbIdentityInsertOptions(bool disableFieldIdentity, bool disableContentIdentity)
+        internal static HashSet<string> GetDbIdentityInsertOptions(bool generateNewFieldIds, bool generateNewContentIds)
         {
             var identityTypes = new HashSet<string>();
-            if (!disableFieldIdentity)
+            if (!generateNewFieldIds)
             {
                 identityTypes.Add(EntityTypeCode.Field);
                 identityTypes.Add(EntityTypeCode.ContentLink);
             }
 
-            if (!disableContentIdentity)
+            if (!generateNewContentIds)
             {
                 identityTypes.Add(EntityTypeCode.Content);
                 identityTypes.Add(EntityTypeCode.ContentGroup);

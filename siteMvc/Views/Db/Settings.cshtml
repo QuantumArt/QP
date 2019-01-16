@@ -4,24 +4,18 @@
 
 @using (Html.BeginTabForm(Model))
 {
-	using (Html.BeginFieldGroup(ContentStrings.Legend_BasicParameters))
-	{
+  using (Html.BeginFieldGroup(DBStrings.RecordActions))
+  {
     @Html.CheckBoxFieldFor(s => s.Data.RecordActions, "OverridePanel")
-		using (Html.BeginPanel("OverridePanel"))
-		{
-			if (Model.Data.SingleUserId != null && Model.Data.SingleUserId != QPContext.CurrentUserId)
-			{
-				@Html.CheckBoxFieldFor(s => s.OverrideRecordsUser)
-			}
+    using (Html.BeginPanel("OverridePanel"))
+    {
+      if (Model.Data.SingleUserId != null && Model.Data.SingleUserId != QPContext.CurrentUserId)
+      {
+        @Html.CheckBoxFieldFor(s => s.OverrideRecordsUser)
+      }
 
       @Html.CheckBoxFieldFor(s => s.OverrideRecordsFile)
     }
-
-    @Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome)
-    @Html.CheckBoxFieldFor(s => s.Data.UseAdSyncService)
-    @Html.CheckBoxFieldFor(s => s.Data.UseTokens)
-    @Html.CheckBoxFieldFor(s => s.Data.UseDpc)
-	  @Html.CheckBoxFieldFor(s => s.Data.UseCdc)
 
     <dl class="row">
       <dt class="label"></dt>
@@ -29,14 +23,19 @@
         <span class="downloadRecords linkButton actionLink actionlink">
           <a href="javascript: void(0)" class="@(ViewBag.IsRecordAvailableForDownload ? string.Empty : "disabled")">
             <span class="icon download"><img src="/Backend/Content/Common/0.gif" alt="download record"></span>
-            <span class="text">@DBStrings.DownloadRecords</span>
+            <span class="text">@DBStrings.DownloadRecordedActions</span>
           </a>
         </span>
       </dd>
     </dl>
 
+  }
+
+
+  using (Html.BeginFieldGroup(DBStrings.ReplayActions))
+  {
     <dl class="row">
-      <dt class="label">@DBStrings.ReplayRecordsLabel</dt>
+      <dt class="label">@DBStrings.RecordedActionsXml:</dt>
       <dd class="field">
         <textarea class="recordedRecordsXmlArea textbox hta-XmlTextArea highlightedTextarea dropzone"></textarea>
       </dd>
@@ -45,25 +44,25 @@
     <dl class="row">
       <dt class="label"></dt>
       <dd class="field">
-        <input class="disableFieldIdentity checkbox simple-checkbox" type="checkbox" value="true">
-        <label>Disable field identity</label>
+        <input class="generateNewFieldIds checkbox simple-checkbox" type="checkbox" value="true">
+        <label>@DBStrings.GenerateNewFieldIds</label>
       </dd>
     </dl>
 
     <dl class="row">
       <dt class="label"></dt>
       <dd class="field">
-        <input class="disableContentIdentity checkbox simple-checkbox" type="checkbox" value="true">
-        <label>Disable content identity</label>
+        <input class="generateNewContentIds checkbox simple-checkbox" type="checkbox" value="true">
+        <label>@DBStrings.GenerateNewContentIds</label>
       </dd>
     </dl>
 
     <dl class="row">
-        <dt class="label"></dt>
-        <dd class="field">
-            <input class="useGuidSubstitution checkbox simple-checkbox" type="checkbox" value="true">
-            <label>Use guid substitution</label>
-        </dd>
+      <dt class="label"></dt>
+      <dd class="field">
+        <input class="useGuidSubstitution checkbox simple-checkbox" type="checkbox" value="true">
+        <label>@DBStrings.UseGuidSubstitution</label>
+      </dd>
     </dl>
 
     <dl class="row">
@@ -72,16 +71,27 @@
         <span class="replayRecords linkButton actionLink">
           <a href="javascript: void(0)">
             <span class="icon restore"><img src="/Backend/Content/Common/0.gif" alt="replay record"></span>
-            <span class="text">@DBStrings.ReplayRecords</span>
+            <span class="text">@DBStrings.ReplayActions</span>
           </a>
         </span>
       </dd>
     </dl>
 
-	  @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
   }
 
-	@Html.Partial("Version", Model.Data)
+  using (Html.BeginFieldGroup(DBStrings.OtherSettings))
+  {
+
+    @Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome)
+    @Html.CheckBoxFieldFor(s => s.Data.UseAdSyncService)
+    @Html.CheckBoxFieldFor(s => s.Data.UseTokens)
+    @Html.CheckBoxFieldFor(s => s.Data.UseDpc)
+    @Html.CheckBoxFieldFor(s => s.Data.UseCdc)
+
+    @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
+  }
+
+  @Html.Partial("Version", Model.Data)
 	@Html.Partial("EntityDirectLink", Model)
 }
 
@@ -125,8 +135,8 @@
       $q.showLoader();
       $q.postAjax("@Url.Action("ReplayRecordedUserActions")", {
         xmlString: $editingForm.find('.recordedRecordsXmlArea').data('codeMirror').getValue(),
-        disableFieldIdentity: $editingForm.find('.disableFieldIdentity').prop('checked'),
-        disableContentIdentity: $editingForm.find('.disableContentIdentity').prop('checked'),
+        generateNewFieldIds: $editingForm.find('.generateNewFieldIds').prop('checked'),
+        generateNewContentIds: $editingForm.find('.generateNewContentIds').prop('checked'),
         useGuidSubstitution: $editingForm.find('.useGuidSubstitution').prop('checked')
       }, function(data, response) {
         $q.alertSuccess(response.message);

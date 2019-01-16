@@ -12,7 +12,7 @@ namespace Quantumart.QP8.BLL
 
         public int? SingleUserId { get; set; }
 
-        [LocalizedDisplayName("RecordActions", NameResourceType = typeof(DBStrings))]
+        [LocalizedDisplayName("RecordActionsIntoFile", NameResourceType = typeof(DBStrings))]
         public bool RecordActions { get; set; }
 
         [LocalizedDisplayName("UseAdSyncService", NameResourceType = typeof(DBStrings))]

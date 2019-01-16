@@ -123,11 +123,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.DbSettings)]
         [BackendActionContext(ActionCode.DbSettings)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool disableFieldIdentity, bool disableContentIdentity, bool useGuidSubstitution)
+        public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool generateNewFieldIds, bool generateNewContentIds, bool useGuidSubstitution)
         {
             new XmlDbUpdateReplayService(
                 QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode),
-                CommonHelpers.GetDbIdentityInsertOptions(disableFieldIdentity, disableContentIdentity),
+                CommonHelpers.GetDbIdentityInsertOptions(generateNewFieldIds, generateNewContentIds),
                 QPContext.CurrentUserId,
                 useGuidSubstitution,
                 _xmlDbUpdateLogService,
