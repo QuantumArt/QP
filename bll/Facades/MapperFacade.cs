@@ -160,8 +160,8 @@ namespace Quantumart.QP8.BLL.Facades
             StatusTypeMapper = Create<StatusMapper>(cfg, true);
         }
 
-        internal static DataRowMapper DataRowMapper;
-        internal static  SiteMapper SiteMapper;
+        internal static DataRowMapper DataRowMapper = new DataRowMapper();
+        internal static SiteMapper SiteMapper;
         internal static UserMapper UserMapper;
         internal static ContentMapper ContentMapper;
         internal static ToolbarButtonMapper ToolbarButtonMapper;

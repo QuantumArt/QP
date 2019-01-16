@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Mvc;
 using System.Web.Routing;
+using AutoMapper;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
 {
@@ -13,7 +14,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
         {
             MvcApplication.RegisterModelBinders();
             MvcApplication.RegisterModelValidatorProviders();
-            MvcApplication.RegisterMappings();
             CheatBuildManager();
 
             AreaRegistration.RegisterAllAreas();

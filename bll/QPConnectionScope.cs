@@ -9,7 +9,9 @@ using System.Linq;
 using System.Transactions;
 using System.Xml;
 using System.Xml.Linq;
+using AutoMapper;
 using QP8.Infrastructure;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 
@@ -29,6 +31,18 @@ namespace Quantumart.QP8.BLL
         }
 
         public string ConnectionString { get; }
+
+        static QPConnectionScope()
+        {
+            try
+            {
+                Mapper.Configuration.AssertConfigurationIsValid();
+            }
+            catch (InvalidOperationException)
+            {
+                Mapper.Initialize(MapperFacade.CreateAllMappings);
+            }
+        }
 
         public QPConnectionScope()
             : this(QPContext.CurrentDbConnectionString)
