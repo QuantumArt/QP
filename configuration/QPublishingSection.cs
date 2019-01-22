@@ -1,4 +1,4 @@
-﻿using System.Configuration;
+using System.Configuration;
 using Quantumart.QP8.Configuration.Authentication;
 using Quantumart.QP8.Configuration.Globalization;
 using Quantumart.QP8.Constants;
@@ -52,6 +52,12 @@ namespace Quantumart.QP8.Configuration
 
         [ConfigurationProperty("qpConfigPath", DefaultValue = "")]
         public string QpConfigPath => (string)base["qpConfigPath"];
+
+        [ConfigurationProperty("qpConfigUrl", DefaultValue = "")]
+        public string QpConfigUrl => (string)base["qpConfigUrl"];
+
+        [ConfigurationProperty("qpConfigToken", DefaultValue = "")]
+        public string QpConfigToken => (string)base["qpConfigToken"];
 
         [ConfigurationProperty("relationLimit", DefaultValue = Default.RelationCountLimit)]
         public int RelationCountLimit => (int)base["relationLimit"];
