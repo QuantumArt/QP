@@ -46,7 +46,7 @@ namespace Quantumart.QP8.Configuration
             {
                 var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
 
-                var variables = service.GetVariables().AsSyncronous();
+                var variables = AsyncHelper.RunSync(() => service.GetVariables());
 
                 var variable = variables.SingleOrDefault(v => v.Name == name);
 
@@ -69,7 +69,7 @@ namespace Quantumart.QP8.Configuration
                 {
                     var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
 
-                    var customer = service.GetCustomer(customerCode).AsSyncronous();
+                    var customer = AsyncHelper.RunSync(() => service.GetCustomer(customerCode));
 
                     // TODO: handle 404
                     
@@ -111,7 +111,7 @@ namespace Quantumart.QP8.Configuration
             {
                 var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
 
-                customers = service.GetCustomers().AsSyncronous().ConvertAll(c => new QaConfigCustomer
+                customers = AsyncHelper.RunSync(() => service.GetCustomers()).ConvertAll(c => new QaConfigCustomer
                 {
                     CustomerName = c.Name,
                     ExcludeFromSchedulers = c.ExcludeFromSchedulers,
@@ -137,7 +137,7 @@ namespace Quantumart.QP8.Configuration
             {
                 var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
 
-                var customers = service.GetCustomers().AsSyncronous();
+                var customers = AsyncHelper.RunSync(() => service.GetCustomers());
 
                 return customers.ConvertAll(c => c.Name);
             }
