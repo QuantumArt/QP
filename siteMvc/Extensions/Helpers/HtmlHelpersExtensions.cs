@@ -1115,7 +1115,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.File(name, null, htmlProperties, field, null, null, false, true, false, false);
         }
 
-        public static MvcHtmlString QpCheckBoxFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, bool>> expression, string toggleId = null, bool reverseToggle = false, Dictionary<string, object> htmlAttributes = null)
+        public static MvcHtmlString QpCheckBoxFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, bool>> expression, string toggleId = null, bool reverseToggle = false, Dictionary<string, object> htmlAttributes = null, bool forceReadOnly = false)
         {
             var htmlProperties = source.QpHtmlProperties(expression, EditorType.Checkbox);            
             if (!string.IsNullOrWhiteSpace(toggleId))
@@ -1129,6 +1129,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 htmlProperties.AddData("toggle_for", string.Join(",", uniqueToggleIds));
                 htmlProperties.AddData("reverse", reverseToggle.ToString().ToLowerInvariant());
             }
+
+            if (forceReadOnly)
+            {
+                htmlProperties.Add("disabled", "disabled");
+            }
+
             htmlProperties.Merge(htmlAttributes, true);
             return source.CheckBoxFor(expression, htmlProperties);
         }
