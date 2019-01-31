@@ -6,16 +6,16 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class UserQueryAttrMapper : GenericMapper<UserQueryAttr, UserQueryAttrsDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<UserQueryAttrsDAL, UserQueryAttr>()
+            cfg.CreateMap<UserQueryAttrsDAL, UserQueryAttr>(MemberList.Source)
                 .ForMember(biz => biz.BaseFieldId, opt => opt.MapFrom(r => Converter.ToInt32(r.UserQueryAttrId)))
                 .ForMember(biz => biz.UserQueryContentId, opt => opt.MapFrom(r => Converter.ToInt32(r.VirtualContentId)));
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<UserQueryAttr, UserQueryAttrsDAL>()
+            cfg.CreateMap<UserQueryAttr, UserQueryAttrsDAL>(MemberList.Destination)
                 .ForMember(data => data.UserQueryAttrId, opt => opt.MapFrom(biz => Converter.ToDecimal(biz.BaseFieldId)))
                 .ForMember(data => data.VirtualContentId, opt => opt.MapFrom(biz => Converter.ToDecimal(biz.UserQueryContentId)));
         }

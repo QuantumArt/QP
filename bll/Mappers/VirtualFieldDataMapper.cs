@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class VirtualFieldDataMapper : GenericMapper<VirtualFieldData, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, VirtualFieldData>()
+            cfg.CreateMap<DataRow, VirtualFieldData>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(r => Converter.ToInt32(r.Field<decimal>("Id"))))
                 .ForMember(biz => biz.JoinId, opt => opt.MapFrom(r => Converter.ToNullableInt32(r.Field<decimal?>("JoinId"))))
                 .ForMember(biz => biz.PersistentContentId, opt => opt.MapFrom(r => Converter.ToInt32(r.Field<decimal>("PersistentContentId"))))

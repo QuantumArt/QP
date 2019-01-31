@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ObjectMapper : GenericMapper<BllObject, ObjectDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<BllObject, ObjectDAL>()
+            cfg.CreateMap<BllObject, ObjectDAL>(MemberList.Destination)
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
                 .ForMember(data => data.StatusType, opt => opt.Ignore())
                 .ForMember(data => data.PageTemplate, opt => opt.Ignore())
@@ -40,9 +40,9 @@ namespace Quantumart.QP8.BLL.Mappers
             }
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ObjectDAL, BllObject>()
+            cfg.CreateMap<ObjectDAL, BllObject>(MemberList.Source)
                 .ForMember(data => data.ObjectInheritedFrom, opt => opt.Ignore())
                 .ForMember(data => data.Container, opt => opt.Ignore())
                 .ForMember(data => data.ContentForm, opt => opt.Ignore());

@@ -209,7 +209,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
         private static void CreateDefaultField(Content newContent, IReadOnlyList<int> forceFieldIds)
         {
-            var field = new Field(newContent, new FieldRepository(), new ContentRepository()).Init();
+            var field = Field.Create(newContent, new FieldRepository(), new ContentRepository());
             field.ExactType = FieldExactTypes.String;
             field.Name = "Title";
             field.Description = "&nbsp;";

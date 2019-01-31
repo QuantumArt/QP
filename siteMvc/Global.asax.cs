@@ -6,9 +6,11 @@ using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using AutoMapper;
 using Microsoft.AspNet.SignalR;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -118,10 +120,15 @@ namespace Quantumart.QP8.WebMvc
             GlobalHost.DependencyResolver = new SignalRUnityDependencyResolver(resolver.UnityContainer);
         }
 
-        internal static void RegisterMappings()
+        public static void RegisterMappings()
         {
-            ViewModelMapper.CreateAllMappings();
-            DTOMapper.CreateAllMappings();
+            Mapper.Initialize(cfg =>
+            {
+                ViewModelMapper.CreateAllMappings(cfg);
+                DTOMapper.CreateAllMappings(cfg);
+                MapperFacade.CreateAllMappings(cfg);
+            });
+
         }
 
         internal static void UnregisterModelBinders()

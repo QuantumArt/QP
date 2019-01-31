@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class NotificationMapper : GenericMapper<Notification, NotificationsDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<Notification, NotificationsDAL>()
+            cfg.CreateMap<Notification, NotificationsDAL>(MemberList.Destination)
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
                 .ForMember(data => data.Workflow, opt => opt.Ignore())
                 .ForMember(data => data.FromUser, opt => opt.Ignore())
@@ -19,9 +19,9 @@ namespace Quantumart.QP8.BLL.Mappers
                 .AfterMap(SetDalProperties);
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<NotificationsDAL, Notification>().AfterMap(SetBizProperties);
+            cfg.CreateMap<NotificationsDAL, Notification>(MemberList.Source).AfterMap(SetBizProperties);
         }
 
         private static void SetBizProperties(NotificationsDAL dataObject, Notification bizObject)

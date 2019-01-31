@@ -59,7 +59,7 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
                 throw new Exception(string.Format(SiteStrings.SiteNotFound, siteId));
             }
 
-            var content = new Content(site);
+            var content = Content.Create(site);
             if (groupId.HasValue)
             {
                 content.GroupId = groupId.Value;

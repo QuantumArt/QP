@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ContextMenuRowMapper : GenericMapper<ContextMenu, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, ContextMenu>()
+            cfg.CreateMap<DataRow, ContextMenu>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => row.Field<int>("ID")))
                 .ForMember(biz => biz.Code, opt => opt.MapFrom(row => row.Field<string>("CODE")))
                 .ForMember(biz => biz.Items, opt => opt.MapFrom(row => MapperFacade.ContextMenuItemRowMapper.GetBizList(row.GetChildRows("Menu2Item").ToList())));

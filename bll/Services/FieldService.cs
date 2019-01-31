@@ -24,7 +24,7 @@ namespace Quantumart.QP8.BLL.Services
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, contentId));
             }
 
-            var field = new Field(content, new FieldRepository(), new ContentRepository()).Init();
+            var field = Field.Create(content, new FieldRepository(), new ContentRepository());
             if (fieldId.HasValue)
             {
                 field.Order = FieldRepository.GetById(fieldId.Value).Order;

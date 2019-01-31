@@ -9,9 +9,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class NotificationListItemRowMapper : GenericMapper<NotificationListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, NotificationListItem>()
+            cfg.CreateMap<DataRow, NotificationListItem>(MemberList.Source)
                 .ForMember(biz => biz.Created, opt => opt.MapFrom(row => row.Field<DateTime>("Created")))
                 .ForMember(biz => biz.ForCreate, opt => opt.MapFrom(row => row.Field<bool>("ForCreate")))
                 .ForMember(biz => biz.ForFrontend, opt => opt.MapFrom(row => row.Field<bool>("ForFrontend")))

@@ -18,7 +18,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Onetime
 
         public OnetimeTaskSchedulerTests()
         {
-            _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization());
+            _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
             FixtureArticleHelpers.InjectSimpleArticle(_fixture);
             LogProvider.LogFactory = new NullLogFactory();
         }

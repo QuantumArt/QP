@@ -5,16 +5,16 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ContentLinkMapper : GenericMapper<ContentLink, ContentToContentDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentToContentDAL, ContentLink>()
+            cfg.CreateMap<ContentToContentDAL, ContentLink>(MemberList.Source)
                 .ForMember(biz => biz.Content, opt => opt.Ignore())
                 ;
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContentLink, ContentToContentDAL>()
+            cfg.CreateMap<ContentLink, ContentToContentDAL>(MemberList.Destination)
                 .ForMember(data => data.Content, opt => opt.Ignore())
                 ;
         }

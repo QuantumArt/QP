@@ -8,9 +8,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class WorkflowListItemRowMapper : GenericMapper<WorkflowListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, WorkflowListItem>()
+            cfg.CreateMap<DataRow, WorkflowListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("Id"))))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("Name")))
                 .ForMember(biz => biz.Description, opt => opt.MapFrom(row => row.Field<string>("Description")))

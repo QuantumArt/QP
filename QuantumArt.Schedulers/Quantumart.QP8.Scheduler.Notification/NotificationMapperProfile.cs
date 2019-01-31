@@ -6,7 +6,7 @@ namespace Quantumart.QP8.Scheduler.Notification
 {
     public class NotificationMapperProfile : Profile
     {
-        protected override void Configure()
+        public NotificationMapperProfile()
         {
             CreateMap<SystemNotificationModel, SystemNotificationDto>();
         }

@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ButtonTraceRowMapper : GenericMapper<ButtonTrace, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, ButtonTrace>()
+            cfg.CreateMap<DataRow, ButtonTrace>(MemberList.Source)
                 .ForMember(biz => biz.ButtonName, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("ButtonName"), string.Empty)))
                 .ForMember(biz => biz.TabName, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("TabName"), string.Empty)))
                 .ForMember(biz => biz.ActivatedTime, opt => opt.MapFrom(row => row.Field<DateTime>("ActivatedTime")))

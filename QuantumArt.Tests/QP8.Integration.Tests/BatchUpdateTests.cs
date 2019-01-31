@@ -172,6 +172,7 @@ namespace QP8.Integration.Tests
             service.Process(Global.GetXml(@"TestData\batchupdate.xml"));
 
             Random = new Random();
+            DbConnector = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             BaseContentId = Global.GetContentId(DbConnector, BaseContent);
             InitBaseContentFields();
             InitExtensions();

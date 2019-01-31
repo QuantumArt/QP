@@ -8,9 +8,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ObjectFormatVersionRowMapper : GenericMapper<ObjectFormatVersionListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, ObjectFormatVersionListItem>()
+            cfg.CreateMap<DataRow, ObjectFormatVersionListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("Id"))))
                 .ForMember(biz => biz.Description, opt => opt.MapFrom(row => row.Field<string>("Description")))
                 .ForMember(biz => biz.Modified, opt => opt.MapFrom(row => row.Field<DateTime>("Modified")))

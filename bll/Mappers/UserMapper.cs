@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class UserMapper : GenericMapper<User, UserDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<User, UserDAL>()
+            cfg.CreateMap<User, UserDAL>(MemberList.Destination)
                 .ForMember(data => data.LanguageId, opt => opt.MapFrom(src => src.LanguageId))
                 .ForMember(data => data.AccessRules, opt => opt.Ignore())
                 .ForMember(data => data.Container, opt => opt.Ignore())
@@ -35,7 +35,9 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(data => data.WorkflowRules, opt => opt.Ignore())
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
                 .ForMember(data => data.STATUS_TYPE, opt => opt.Ignore())
-                .ForMember(data => data.LastLogOn, opt => opt.MapFrom(biz => biz.LastLogOn == default(DateTime) ? null : biz.LastLogOn));
+                .ForMember(data => data.LastLogOn, opt => opt.MapFrom(biz => biz.LastLogOn == default(DateTime) ? null : biz.LastLogOn))
+
+      ;
         }
     }
 }

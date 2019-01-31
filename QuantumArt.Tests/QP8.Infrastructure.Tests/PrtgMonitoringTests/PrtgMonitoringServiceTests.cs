@@ -27,7 +27,7 @@ namespace QP8.Infrastructure.Tests.PrtgMonitoringTests
 
         public PrtgMonitoringServiceTests()
         {
-            _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization()).Customize(new MultipleCustomization());
+            _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
             _fixture.Customizations.Add(new PrtgMonitoringServiceSpecimenBuilder());
 
             _httpTest = new HttpTest();

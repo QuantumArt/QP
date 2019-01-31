@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class SiteMapper : GenericMapper<Site, SiteDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<SiteDAL, Site>()
+            cfg.CreateMap<SiteDAL, Site>(MemberList.Source)
                 .ForMember(biz => biz.LockedBy, opt => opt.MapFrom(src => Converter.ToInt32(src.LockedBy)))
                 .ForMember(biz => biz.Locked, opt => opt.MapFrom(src => Converter.ToDateTime(src.Locked)))
                 .ForMember(biz => biz.IsLive, opt => opt.MapFrom(src => Converter.ToBoolean(src.IsLive)))
@@ -18,9 +18,9 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.ExternalCss, opt => opt.MapFrom(src => src.ExternalCss));
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<Site, SiteDAL>()
+            cfg.CreateMap<Site, SiteDAL>(MemberList.Destination)
                 .ForMember(data => data.IsLive, opt => opt.MapFrom(src => Converter.ToInt32(src.IsLive)))
                 .ForMember(data => data.ScriptLanguage, opt => opt.MapFrom(src => src.AssemblingType))
                 .ForMember(data => data.Locked, opt => opt.MapFrom(src => src.LockedBy == 0 ? null : (DateTime?)src.Locked))

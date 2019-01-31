@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ArticleScheduleTaskMapper : GenericMapper<ArticleScheduleTask, ArticleScheduleDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ArticleScheduleDAL, ArticleScheduleTask>()
+            cfg.CreateMap<ArticleScheduleDAL, ArticleScheduleTask>(MemberList.Source)
                 .ForMember(data => data.Duration, opt => opt.Ignore())
                 .AfterMap(SetBizProperties);
         }

@@ -5,9 +5,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ToolbarButtonRowMapper : GenericMapper<ToolbarButton, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, ToolbarButton>()
+            cfg.CreateMap<DataRow, ToolbarButton>(MemberList.Source)
                 .ForMember(biz => biz.ActionId, opt => opt.MapFrom(row => row.Field<int>("ACTION_ID")))
                 .ForMember(biz => biz.ActionCode, opt => opt.MapFrom(row => row.Field<string>("ACTION_CODE")))
                 .ForMember(biz => biz.ActionTypeCode, opt => opt.MapFrom(row => row.Field<string>("ACTION_TYPE_CODE")))

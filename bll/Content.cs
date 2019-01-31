@@ -208,7 +208,7 @@ namespace Quantumart.QP8.BLL
         public const int MaxLimitOfStoredVersions = 30;
         public const int DefaultLimitOfStoredVersions = 10;
 
-        internal static readonly ReadOnlyCollection<UserQueryColumn> SystemMandatoryColumns = new ReadOnlyCollection<UserQueryColumn>(new List<UserQueryColumn>
+        internal static ReadOnlyCollection<UserQueryColumn> SystemMandatoryColumns = new ReadOnlyCollection<UserQueryColumn>(new List<UserQueryColumn>
         {
             new UserQueryColumn { ColumnName = FieldName.ContentItemId, DbType = "numeric", NumericScale = 0 },
             new UserQueryColumn { ColumnName = FieldName.StatusTypeId, DbType = "numeric", NumericScale = 0 },
@@ -277,12 +277,13 @@ namespace Quantumart.QP8.BLL
             _contentGroup = new InitPropertyValue<ContentGroup>(() => ContentRepository.GetGroupById(GroupId));
         }
 
-        public Content(Site site)
-            : this()
+        public static Content Create(Site site)
         {
-            Site = site;
-            SiteId = site.Id;
-            GroupId = ContentGroup.GetDefaultGroup(SiteId).Id;
+            Content result = new Content();
+            result.Site = site;
+            result.SiteId = site.Id;
+            result.GroupId = ContentGroup.GetDefaultGroup(site.Id).Id;
+            return result;
         }
 
         public int[] ForceFieldIds { get; set; }

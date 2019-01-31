@@ -4,9 +4,9 @@ namespace Quantumart.QP8.BLL.Services.DTO
 {
     public class DTOMapper
     {
-        public static void CreateAllMappings()
+        public static void CreateAllMappings(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<Folder, EntityTreeItem>()
+            cfg.CreateMap<Folder, EntityTreeItem>(MemberList.Source)
                 .ForMember(data => data.Alias, opt => opt.MapFrom(src => src.OutputName))
                 ;
         }

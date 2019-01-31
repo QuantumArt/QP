@@ -7,11 +7,12 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ActionPermissionTreeNodeRowMapper : GenericMapper<ActionPermissionTreeNode, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, ActionPermissionTreeNode>()
+            cfg.CreateMap<DataRow, ActionPermissionTreeNode>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(r => r.Field<int>("ID")))
-                .ForMember(biz => biz.Text, opt => opt.MapFrom(r => FormatText(r)));
+                .ForMember(biz => biz.Text, opt => opt.MapFrom(r => FormatText(r)))
+            ;
         }
 
         private string FormatText(DataRow row)

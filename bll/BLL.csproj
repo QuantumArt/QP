@@ -42,11 +42,11 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=1.1.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\AutoMapper.1.1.2\lib\net35\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\AutoMapper.8.0.0\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\CommonServiceLocator.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\CommonServiceLocator.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EFExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -61,8 +61,8 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="netstandard" />
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="QA.Configuration, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -77,28 +77,43 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(SolutionDir)packages\Quantumart.3.2.2\lib\net471\Quantumart.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.3.3.0\lib\net471\Quantumart.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(SolutionDir)packages\Quantumart.3.2.2\lib\net471\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.3.3.0\lib\net471\Quantumart.QP8.Assembling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
-    <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>$(SolutionDir)packages\System.Configuration.ConfigurationManager.4.4.1\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
+    <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>$(SolutionDir)packages\System.Configuration.ConfigurationManager.4.5.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security.AccessControl, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>$(SolutionDir)packages\System.Security.AccessControl.4.5.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Permissions, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>$(SolutionDir)packages\System.Security.Permissions.4.5.0\lib\net461\System.Security.Permissions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>$(SolutionDir)packages\System.Security.Principal.Windows.4.5.1\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -109,31 +124,31 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Unity.Abstractions, Version=3.3.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Abstractions.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.Configuration, Version=5.2.5.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Unity.Container, Version=5.8.11.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Container.dll</HintPath>
+    <Reference Include="Unity.Container, Version=5.8.13.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Container.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.Interception, Version=5.5.5.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Interception.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Interception.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.Interception.Configuration, Version=5.1.7.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.Interception.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Interception.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.RegistrationByConvention, Version=2.1.9.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.ServiceLocation, Version=2.1.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0">
-      <HintPath>$(SolutionDir)packages\Unity.5.8.11\lib\net47\Unity.ServiceLocation.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -155,6 +170,7 @@
     <Compile Include="Factories\FolderFactory\ContentFolderFactory.cs" />
     <Compile Include="Factories\FolderFactory\SiteFolderFactory.cs" />
     <Compile Include="IContextStorage.cs" />
+    <Compile Include="Mappers\MapperExtensions.cs" />
     <Compile Include="Services\ContentServices\IContentService.cs" />
     <Compile Include="Mappers\GenericMapperBase.cs" />
     <Compile Include="Mappers\SystemNotificationMapper.cs" />
@@ -807,4 +823,5 @@
   </Target>
   -->
 </Project>
+
 

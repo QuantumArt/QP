@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class UserGroupMapper : GenericMapper<UserGroup, UserGroupDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<UserGroup, UserGroupDAL>()
+            cfg.CreateMap<UserGroup, UserGroupDAL>(MemberList.Destination)
                 .ForMember(dal => dal.ContentAccess, opt => opt.Ignore())
                 .ForMember(dal => dal.ContentFolderAccess, opt => opt.Ignore())
                 .ForMember(dal => dal.ArticleAccess, opt => opt.Ignore())
@@ -23,9 +23,9 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore());
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<UserGroupDAL, UserGroup>()
+            cfg.CreateMap<UserGroupDAL, UserGroup>(MemberList.Source)
                 .ForMember(biz => biz.ParentGroup, opt => opt.MapFrom(data => data.ParentGroups.IsLoaded ? data.ParentGroups.FirstOrDefault() : null));
         }
     }

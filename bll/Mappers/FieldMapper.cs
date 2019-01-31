@@ -10,9 +10,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class FieldMapper : GenericMapper<Field, FieldDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<FieldDAL, Field>()
+            cfg.CreateMap<FieldDAL, Field>(MemberList.Source)
                 .ForMember(biz => biz.Indexed, opt => opt.MapFrom(src => Converter.ToBoolean(src.IndexFlag)))
                 .ForMember(biz => biz.OnScreen, opt => opt.MapFrom(src => Converter.ToBoolean(src.AllowStageEdit)))
                 .ForMember(biz => biz.JoinId, opt => opt.MapFrom(src => Converter.ToNullableInt32(src.JoinId)))
@@ -77,9 +77,9 @@ namespace Quantumart.QP8.BLL.Mappers
             bizObject.Init();
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<Field, FieldDAL>()
+            cfg.CreateMap<Field, FieldDAL>(MemberList.Destination)
                 .ForMember(data => data.IndexFlag, opt => opt.MapFrom(src => Converter.ToDecimal(src.Indexed)))
                 .ForMember(data => data.AllowStageEdit, opt => opt.MapFrom(src => Converter.ToDecimal(src.OnScreen)))
                 .ForMember(data => data.NetName, opt => opt.MapFrom(src => src.LinqPropertyName))

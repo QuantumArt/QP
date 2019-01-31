@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class BackendActionLogRowMapper : GenericMapper<BackendActionLog, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, BackendActionLog>()
+            cfg.CreateMap<DataRow, BackendActionLog>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => row.Field<int>("Id")))
                 .ForMember(biz => biz.ExecutionTime, opt => opt.MapFrom(row => row.Field<DateTime>("ExecutionTime")))
                 .ForMember(biz => biz.ActionName, opt => opt.MapFrom(row => row.Field<string>("ActionName")))

@@ -9,17 +9,17 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ArticleScheduleMapper : GenericMapper<ArticleSchedule, ArticleScheduleDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ArticleSchedule, ArticleScheduleDAL>()
+            cfg.CreateMap<ArticleSchedule, ArticleScheduleDAL>(MemberList.Destination)
 
                 //.ForMember(data => data.MaximumOccurences, opt => opt.MapFrom(src => Utils.Converter.ToNullableDecimal(src.MaximumOccurences)))
                 .ForMember(data => data.Article, opt => opt.Ignore());
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ArticleScheduleDAL, ArticleSchedule>()
+            cfg.CreateMap<ArticleScheduleDAL, ArticleSchedule>(MemberList.Source)
                 .ForMember(data => data.Article, opt => opt.Ignore())
                 .ForMember(data => data.Recurring, opt => opt.Ignore());
         }
@@ -119,7 +119,7 @@ namespace Quantumart.QP8.BLL.Mappers
                 result.RepetitionNoEnd = false;
             }
 
-            // Определение дней показа			
+            // Определение дней показа
             if (dal.FreqType == ScheduleFreqTypes.RecurringDaily) // день
             {
                 result.ScheduleRecurringType = ScheduleRecurringType.Daily;

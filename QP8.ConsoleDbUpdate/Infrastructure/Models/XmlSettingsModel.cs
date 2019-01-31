@@ -6,10 +6,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
     internal class XmlSettingsModel : BaseSettingsModel
     {
         [JsonProperty]
-        internal readonly bool DisableFieldIdentity;
+        internal readonly bool GenerateNewFieldIds;
 
         [JsonProperty]
-        internal readonly bool DisableContentIdentity;
+        internal readonly bool GenerateNewContentIds;
 
         [JsonProperty]
         internal readonly bool UseGuidSubstitution;
@@ -17,11 +17,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
         [JsonProperty]
         internal readonly bool DisableDataIntegrity;
 
-        public XmlSettingsModel(IList<string> filePathes, string customerCode, string configPath, bool disableFieldIdentity, bool disableContentIdentity, bool useGuidSubstitution, bool disableDataIntegrity)
+        public XmlSettingsModel(IList<string> filePathes, string customerCode, string configPath, bool generateNewFieldIds, bool generateNewContentIds, bool useGuidSubstitution, bool disableDataIntegrity)
             : base(filePathes, customerCode, configPath)
         {
-            DisableFieldIdentity = disableFieldIdentity;
-            DisableContentIdentity = disableContentIdentity;
+            GenerateNewFieldIds = generateNewFieldIds;
+            GenerateNewContentIds = generateNewContentIds;
             UseGuidSubstitution = useGuidSubstitution;
             DisableDataIntegrity = disableDataIntegrity;
         }

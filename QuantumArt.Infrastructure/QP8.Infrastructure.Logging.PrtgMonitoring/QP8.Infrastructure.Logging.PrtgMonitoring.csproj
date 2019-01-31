@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
@@ -9,7 +9,7 @@
     <Description>QP8 prtg monitoring service and nlog infrastructure</Description>
     <Copyright>Copyright © 2007-2017 Quantum Art</Copyright>
     <PackageReleaseNotes>Update to new projects structure.</PackageReleaseNotes>
-    <PackageLicenseUrl>https://github.com/QuantumArt/QP/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/QuantumArt/QP</PackageProjectUrl>
     <RepositoryUrl>https://github.com/QuantumArt/QP</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -29,7 +29,7 @@
   <ItemGroup>
     <PackageReference Include="Flurl" Version="2.8.0" />
     <PackageReference Include="Flurl.Http" Version="2.4.0" />
-    <PackageReference Include="NLog" Version="4.5.10" />
+    <PackageReference Include="NLog" Version="4.5.11" />
   </ItemGroup>
 
   <ItemGroup>

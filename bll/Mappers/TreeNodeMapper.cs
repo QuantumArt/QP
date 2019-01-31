@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class TreeNodeMapper : GenericMapper<TreeNode, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, TreeNode>()
+            cfg.CreateMap<DataRow, TreeNode>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<long>("ID"))))
                 .ForMember(biz => biz.Code, opt => opt.MapFrom(row => row.Field<string>("CODE")))
                 .ForMember(biz => biz.ParentId, opt => opt.MapFrom(row => Converter.ToNullableInt32(row.Field<long?>("PARENT_ID"))))

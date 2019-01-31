@@ -22,7 +22,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 
         public CsvDbUpdateSimpleArticleTests()
         {
-            _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization()).Customize(new MultipleCustomization());
+            _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
             _fixture.Customize<Field>(composer => composer.FromFactory(CsvDbUpdateTestHelpers.GenerateField(_fixture)).OmitAutoProperties());
 
             QPContext.CurrentDbConnectionString = _fixture.Create<string>();

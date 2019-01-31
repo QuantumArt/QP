@@ -19,7 +19,7 @@ namespace Quantumart.QP8.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class DBStrings {
@@ -88,11 +88,29 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download records.
+        ///   Looks up a localized string similar to Download recorded actions.
         /// </summary>
-        public static string DownloadRecords {
+        public static string DownloadRecordedActions {
             get {
-                return ResourceManager.GetString("DownloadRecords", resourceCulture);
+                return ResourceManager.GetString("DownloadRecordedActions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate new content ids.
+        /// </summary>
+        public static string GenerateNewContentIds {
+            get {
+                return ResourceManager.GetString("GenerateNewContentIds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate new field ids.
+        /// </summary>
+        public static string GenerateNewFieldIds {
+            get {
+                return ResourceManager.GetString("GenerateNewFieldIds", resourceCulture);
             }
         }
         
@@ -133,6 +151,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Other settings.
+        /// </summary>
+        public static string OtherSettings {
+            get {
+                return ResourceManager.GetString("OtherSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Empty file if exists.
         /// </summary>
         public static string OverrideRecordsFile {
@@ -151,7 +178,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Record actions into file.
+        ///   Looks up a localized string similar to Record actions.
         /// </summary>
         public static string RecordActions {
             get {
@@ -160,20 +187,29 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Replay records.
+        ///   Looks up a localized string similar to Record actions into file.
         /// </summary>
-        public static string ReplayRecords {
+        public static string RecordActionsIntoFile {
             get {
-                return ResourceManager.GetString("ReplayRecords", resourceCulture);
+                return ResourceManager.GetString("RecordActionsIntoFile", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Проигрывание записанных действий.
+        ///   Looks up a localized string similar to XML with recorded actions.
         /// </summary>
-        public static string ReplayRecordsLabel {
+        public static string RecordedActionsXml {
             get {
-                return ResourceManager.GetString("ReplayRecordsLabel", resourceCulture);
+                return ResourceManager.GetString("RecordedActionsXml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replay actions.
+        /// </summary>
+        public static string ReplayActions {
+            get {
+                return ResourceManager.GetString("ReplayActions", resourceCulture);
             }
         }
         
@@ -210,6 +246,15 @@ namespace Quantumart.QP8.Resources {
         public static string UseDPC {
             get {
                 return ResourceManager.GetString("UseDPC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use GUID substitution.
+        /// </summary>
+        public static string UseGuidSubstitution {
+            get {
+                return ResourceManager.GetString("UseGuidSubstitution", resourceCulture);
             }
         }
         

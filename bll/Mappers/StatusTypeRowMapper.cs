@@ -8,9 +8,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class StatusTypeRowMapper : GenericMapper<StatusType, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, StatusType>()
+            cfg.CreateMap<DataRow, StatusType>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>(FieldName.StatusTypeId))))
                 .ForMember(biz => biz.Weight, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("WEIGHT"))))
                 .ForMember(biz => biz.SiteId, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("SITE_ID"))))

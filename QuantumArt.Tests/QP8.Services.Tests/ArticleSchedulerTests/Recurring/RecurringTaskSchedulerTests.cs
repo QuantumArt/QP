@@ -19,7 +19,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
 
         public RecurringTaskSchedulerTests()
         {
-            _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization());
+            _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
             FixtureArticleHelpers.InjectSimpleArticle(_fixture);
             LogProvider.LogFactory = new NullLogFactory();
         }

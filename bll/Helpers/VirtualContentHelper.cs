@@ -209,7 +209,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 }
                 else
                 {
-                    var vField = new Field(dbContent, new FieldRepository(), new ContentRepository()).Init();
+                    var vField = Field.Create(dbContent, new FieldRepository(), new ContentRepository());
                     vField.Name = column.Name;
                     var stringSize = column.CharMaxLength ?? Field.StringSizeDefaultValue;
                     switch (column.DbType.ToLowerInvariant())

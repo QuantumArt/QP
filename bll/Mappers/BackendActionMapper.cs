@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class BackendActionMapper : GenericMapper<BackendAction, BackendActionDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<BackendActionDAL, BackendAction>()
+            cfg.CreateMap<BackendActionDAL, BackendAction>(MemberList.Source)
                 .ForMember(biz => biz.NextFailedActionCode, opt => opt.MapFrom(data => data.NextFailedAction != null ? data.NextFailedAction.Code : null))
                 .ForMember(biz => biz.NextSuccessfulActionCode, opt => opt.MapFrom(data => data.NextSuccessfulAction != null ? data.NextSuccessfulAction.Code : null))
                 .ForMember(biz => biz.ExcludeCodes, opt => opt.MapFrom(data => data.Excludes != null ? data.Excludes.Select(n => n.Code).ToArray() : null))
@@ -20,9 +20,9 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.TabId, opt => opt.MapFrom(data => Converter.ToNullableInt32(data.TabId)));
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<BackendAction, BackendActionDAL>()
+            cfg.CreateMap<BackendAction, BackendActionDAL>(MemberList.Destination)
                 .ForMember(data => data.ActionType, opt => opt.Ignore())
                 .ForMember(data => data.EntityType, opt => opt.Ignore())
                 .ForMember(data => data.CustomActions, opt => opt.Ignore())

@@ -66,7 +66,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     throw new ApplicationException(string.Format(FieldStrings.FieldNotFound, fieldId));
                 }
 
-                return Mapper.Map<IDataReader, IEnumerable<VisualEditFieldParams>>(dt.CreateDataReader()).Single();
+                return Mapper.Map<DataRow, VisualEditFieldParams>(dt.Rows[0]);
             }
         }
 

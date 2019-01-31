@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,7 +9,7 @@
     <Description>QP infrastructure for web projects</Description>
     <Copyright>Copyright © 2007-2017 Quantum Art</Copyright>
     <PackageReleaseNotes>Update to new projects structure.</PackageReleaseNotes>
-    <PackageLicenseUrl>https://github.com/QuantumArt/QP/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/QuantumArt/QP</PackageProjectUrl>
     <RepositoryUrl>https://github.com/QuantumArt/QP</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>

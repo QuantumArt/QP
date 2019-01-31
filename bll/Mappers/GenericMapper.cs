@@ -7,19 +7,6 @@ namespace Quantumart.QP8.BLL.Mappers
         where TBiz : class
         where TDal : class
     {
-        public override void CreateBizMapper()
-        {
-            GetBizMapper();
-        }
-
-        public override void CreateDalMapper()
-        {
-            GetDalMapper();
-        }
-
-        public IMappingExpression<TDal, TBiz> GetBizMapper() => Mapper.CreateMap<TDal, TBiz>();
-
-        public IMappingExpression<TBiz, TDal> GetDalMapper() => Mapper.CreateMap<TBiz, TDal>();
 
         public virtual TBiz GetBizObject(TDal dataObject) => DefaultMapper.GetBizObject<TBiz, TDal>(dataObject);
 
@@ -28,5 +15,14 @@ namespace Quantumart.QP8.BLL.Mappers
         public virtual TDal GetDalObject(TBiz bizObject) => DefaultMapper.GetDalObject<TDal, TBiz>(bizObject);
 
         public virtual List<TDal> GetDalList(List<TBiz> bizList) => DefaultMapper.GetDalList<TDal, TBiz>(bizList);
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<TDal, TBiz>(MemberList.Source);
+        }
+
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<TBiz, TDal>(MemberList.Destination);
+        }
     }
 }

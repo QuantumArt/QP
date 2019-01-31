@@ -8,9 +8,9 @@ namespace Quantumart.QP8.BLL.Mappers
     {
         public bool DisableTranslations { get; set; }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<EntityTypeDAL, EntityType>()
+            cfg.CreateMap<EntityTypeDAL, EntityType>(MemberList.Source)
 
                 //---------------
                 .ForMember(biz => biz.ParentCode, opt => opt.MapFrom(src => src.Parent != null ? src.Parent.Code : null))
@@ -20,9 +20,9 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.TabId, opt => opt.MapFrom(data => Converter.ToNullableInt32(data.TabId)));
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<EntityType, EntityTypeDAL>()
+            cfg.CreateMap<EntityType, EntityTypeDAL>(MemberList.Destination)
                 .ForMember(data => data.Source, opt => opt.Ignore())
                 .ForMember(data => data.IdField, opt => opt.Ignore())
                 .ForMember(data => data.ParentIdField, opt => opt.Ignore());

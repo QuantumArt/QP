@@ -5,9 +5,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ContainerMapper : GenericMapper<Container, ContainerDAL>
     {
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<Container, ContainerDAL>()
+            cfg.CreateMap<Container, ContainerDAL>(MemberList.Destination)
                 .ForMember(x => x.Users, opt => opt.Ignore())
                 .ForMember(x => x.Object, opt => opt.Ignore())
                 .ForMember(x => x.StartPermissionLevel, opt => opt.Ignore())
@@ -19,9 +19,9 @@ namespace Quantumart.QP8.BLL.Mappers
                 ;
         }
 
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<ContainerDAL, Container>()
+            cfg.CreateMap<ContainerDAL, Container>(MemberList.Source)
                 .ForMember(x => x.LastModifiedByUser, opt => opt.Ignore())
                 .ForMember(x => x.Object, opt => opt.Ignore())
                 .AfterMap(SetBizProperties)

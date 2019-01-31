@@ -7,9 +7,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class ArticleRowMapper : GenericMapper<Article, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, Article>()
+            cfg.CreateMap<DataRow, Article>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => row.Field<decimal>(FieldName.ContentItemId)))
                 .ForMember(biz => biz.StatusTypeId, opt => opt.MapFrom(row => row.Field<decimal>(FieldName.StatusTypeId)))
                 .ForMember(biz => biz.Visible, opt => opt.MapFrom(row => row.Field<decimal>(FieldName.Visible)))

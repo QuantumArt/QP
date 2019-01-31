@@ -9,9 +9,9 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class UserListItemRowMapper : GenericMapper<UserListItem, DataRow>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<DataRow, UserListItem>()
+            cfg.CreateMap<DataRow, UserListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("ID"))))
                 .ForMember(biz => biz.Login, opt => opt.MapFrom(row => row.Field<string>("LOGIN")))
                 .ForMember(biz => biz.FirstName, opt => opt.MapFrom(row => row.Field<string>("FIRST_NAME")))

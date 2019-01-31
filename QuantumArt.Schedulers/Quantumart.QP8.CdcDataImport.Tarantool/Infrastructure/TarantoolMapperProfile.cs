@@ -10,7 +10,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure
 {
     public class TarantoolMapperProfile : Profile
     {
-        protected override void Configure()
+        public TarantoolMapperProfile()
         {
             CreateMap<CdcEntityModel, CdcEntityModel>();
             CreateMap<CdcTableTypeModel, CdcTableTypeModel>();

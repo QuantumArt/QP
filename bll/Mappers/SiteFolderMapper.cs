@@ -5,15 +5,15 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class SiteFolderMapper : GenericMapper<SiteFolder, SiteFolderDAL>
     {
-        public override void CreateBizMapper()
+        public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<SiteFolderDAL, SiteFolder>()
+            cfg.CreateMap<SiteFolderDAL, SiteFolder>(MemberList.Source)
                 .ForMember(biz => biz.StoredPath, opt => opt.MapFrom(data => data.Path));
         }
 
-        public override void CreateDalMapper()
+        public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.CreateMap<SiteFolder, SiteFolderDAL>()
+            cfg.CreateMap<SiteFolder, SiteFolderDAL>(MemberList.Destination)
                 .ForMember(data => data.Site, opt => opt.Ignore())
                 .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore());
         }

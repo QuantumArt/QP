@@ -28,7 +28,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 
         public CsvDbUpdateRelationArticleTests()
         {
-            _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization()).Customize(new MultipleCustomization());
+            _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
             _postProcessFieldComposer = _fixture.Build<Field>().FromFactory(CsvDbUpdateTestHelpers.GenerateField(_fixture)).OmitAutoProperties();
             _fixture.Customize<Field>(composer => _postProcessFieldComposer);
 
