@@ -25,6 +25,7 @@
       <dependency id="EnterpriseLibrary.Common" version="6.0.1304.0" />
       <dependency id="EnterpriseLibrary.Validation" version="6.0.1304.0" />
       <dependency id="Newtonsoft.Json" version="11.0.2" />
+      <dependency id="EntityFramework" version="6.2.0" />
     </dependencies>
   </metadata>
   <files>
