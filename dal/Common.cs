@@ -309,6 +309,17 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static void CreateArticleVersions(SqlConnection connection, int userId, int[] ids)
+        {
+            using (var cmd = SqlCommandFactory.Create("qp_create_content_item_versions", connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@last_modified_by", userId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         public static void RestoreArticleVersion(SqlConnection connection, int userId, int id)
         {
             using (var cmd = SqlCommandFactory.Create("restore_content_item_version", connection))
