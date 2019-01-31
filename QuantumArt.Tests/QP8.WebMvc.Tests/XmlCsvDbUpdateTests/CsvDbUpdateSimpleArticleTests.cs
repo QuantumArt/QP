@@ -66,7 +66,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             // Verify outcome
             fieldRepository.Verify();
             contentRepository.Verify(m => m.GetById(It.IsAny<int>()), Times.Never);
-            articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult))));
+            articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult)), false));
         }
     }
 }

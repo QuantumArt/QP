@@ -279,7 +279,7 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public InsertData[] BatchUpdate(IEnumerable<Article> articles)
+        public InsertData[] BatchUpdate(IEnumerable<Article> articles, bool createVersions = false)
         {
             var articlesData = articles.Select(article => new ArticleData
             {
@@ -293,17 +293,17 @@ namespace Quantumart.QP8.BLL.Services.API
                 }).ToList()
             });
 
-            return BatchUpdate(articlesData, false);
+            return BatchUpdate(articlesData, false, createVersions);
         }
 
-        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles) => BatchUpdate(articles, true);
+        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool createVersions = false) => BatchUpdate(articles, true, createVersions);
 
-        private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData)
+        private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData, bool createVersions)
         {
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                var result = ArticleRepository.BatchUpdate(articles.ToArray(), formatArticleData);
+                var result = ArticleRepository.BatchUpdate(articles.ToArray(), formatArticleData, createVersions);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
