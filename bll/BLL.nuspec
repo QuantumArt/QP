@@ -15,6 +15,7 @@
       <dependency id="QP8.Infrastructure" version="2.1.0" />
       <dependency id="QP8.Infrastructure.Logging" version="2.1.0" />
       <dependency id="QP8.Infrastructure.Logging.PrtgMonitoring" version="2.1.0" />
+      <dependency id="QP.ConfigurationService.Client" version="0.1.0" />
       <dependency id="Quantumart" version="3.2.2" />
       <dependency id="QA.Configuration" version="1.0.2" />
       <dependency id="QA.Validation.Xaml" version="1.2.1" />
