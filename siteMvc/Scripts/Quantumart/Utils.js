@@ -917,14 +917,26 @@ $q.updateQueryStringParameter = function updateQueryStringParameter(uri, key, va
   return `${uri + separator + key}=${value}`;
 };
 
-$q.serializeForm = function serializeForm(wrapperId) {
-  const selector = `#${wrapperId} form`;
-  const items = $(selector).formToArray();
+$q.serializeForm = function serializeForm(wrapperId, includeDisabled) {
+  const selector = `#${wrapperId} form [id]`;
+  const items = $(selector).serializeArray();
+
+  if (includeDisabled) {
+    const disabledSelector = `${selector} [disabled]`;
+    $(disabledSelector).each(function () {
+      items.push({
+        name: this.name,
+        value: this.type === 'checkbox' ? this.checked : this.value
+      });
+    });
+  }
+
   const result = {};
   items.forEach(
     pair => {
       result[pair.name] = pair.value;
     });
+
   return result;
 };
 

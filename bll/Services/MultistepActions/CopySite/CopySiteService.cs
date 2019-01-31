@@ -45,7 +45,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                 siteArticlesCount = ContentRepository.GetArticlesCountToCopy(prms.DoNotCopyArticles.Value, site.Id);
             }
 
-            if (prms.DoNotCopyTemplates)
+            if (prms.DoNotCopyTemplates || site.ExternalDevelopment)
             {
                 siteTemplatesElementsCount = 0;
             }
