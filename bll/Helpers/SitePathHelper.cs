@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL.Helpers
@@ -50,3 +51,4 @@ namespace Quantumart.QP8.BLL.Helpers
         public static string GetThemeAjaxLoaderIconsImageFolderUrl(string themeName) => SitePathRepository.GetThemeAjaxLoaderIconsImageFolderUrl(themeName);
     }
 }
+#endif

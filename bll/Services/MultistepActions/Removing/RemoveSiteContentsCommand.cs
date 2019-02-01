@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -74,3 +75,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
         #endregion
     }
 }
+#endif

@@ -1,9 +1,13 @@
 using System;
 using System.Linq;
+
+#if !NET_STANDARD
 using System.Web;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.Security;
+#endif
+
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Configuration;
@@ -13,6 +17,7 @@ using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.Security
 {
+#if !NET_STANDARD
     public static class AuthenticationHelper
     {
         public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, string userData = null)
@@ -187,4 +192,5 @@ namespace Quantumart.QP8.Security
             return FormsAuthentication.LoginUrl;
         }
     }
+#endif
 }

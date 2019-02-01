@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !NET_STANDARD
 using Quantumart.QP8.Assembling;
+#endif
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -80,18 +82,22 @@ namespace Quantumart.QP8.BLL.Services
 
             if (notification.FormatId != null)
             {
+                #if !NET_STANDARD
                 var cnt = new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification, QPContext.CurrentDbConnectionString);
                 cnt.Assemble();
+                #endif
             }
             return null;
         }
 
         public MessageResult MultipleAssembleNotification(int[] ids)
         {
+#if !NET_STANDARD
             var notifications = ids.Select(NotificationRepository.GetPropertiesById).ToList();
 
             foreach (var cnt in notifications.Select(notification =>
             {
+
                 if (notification.FormatId != null)
                 {
                     return new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification,
@@ -103,6 +109,7 @@ namespace Quantumart.QP8.BLL.Services
             {
                 cnt.Assemble();
             }
+#endif
 
             return null;
         }

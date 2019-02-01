@@ -13,7 +13,7 @@ using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.DAL
 {
-    public static class Common
+    public static partial class Common
     {
         public static long GetContentIdForArticle(SqlConnection connection, long id)
         {
@@ -2729,7 +2729,7 @@ namespace Quantumart.QP8.DAL
                 filter = "cnt.CONTENT_ID IN (" + string.Join(",", aggregatedContentIds.Union(new[] { options.ContentId })) + ")";
                 filter = SqlFilterComposer.Compose(filter, "ca.AGGREGATED = 0");
                 filter = options.Mode == FieldSelectMode.ForExport ? SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID <> 13") : SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID in (11, 13)");
-            }          
+            }
 
             var selectBuilder = new StringBuilder();
             selectBuilder.Append("ca.[ATTRIBUTE_ID] AS Id,  CASE WHEN (cnt.CONTENT_ID = " + options.ContentId + ") THEN [ATTRIBUTE_NAME] ELSE cnt.[CONTENT_NAME] + '.' + [ATTRIBUTE_NAME] END as [Name], [ATTRIBUTE_NAME] as [FieldName], cnt.[CONTENT_NAME] as [ContentName], ca.[CREATED] as [Created], ca.[MODIFIED] as [Modified], ATTRIBUTE_ORDER as [Order]");
@@ -2974,6 +2974,8 @@ namespace Quantumart.QP8.DAL
                 return dt.AsEnumerable().ToArray();
             }
         }
+
+
 
         public static DataRow GetContextMenuById(SqlConnection sqlConnection, int userId, int menuId, bool loadRelatedData = false)
         {

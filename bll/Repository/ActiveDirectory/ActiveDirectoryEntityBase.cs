@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System.DirectoryServices;
 using System.Linq;
 
@@ -24,3 +25,4 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         protected T GetValue<T>(SearchResult entity, string key) => entity.Properties[key].OfType<T>().FirstOrDefault();
     }
 }
+#endif

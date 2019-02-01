@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
@@ -149,7 +150,7 @@ namespace Quantumart.QP8.BLL.Repository
             var newDal = !needToPersist ? null : MapperFacade.ContentWorkflowBindMapper.GetDalObject(binding);
             if (persisted && changed || persisted && !needToPersist)
             {
-                DefaultRepository.SimpleDelete(oldDal.EntityKey);
+                DefaultRepository.SimpleDelete(oldDal);
             }
 
             if (persisted && changed || !persisted && needToPersist)
@@ -180,8 +181,7 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
             }
 
-            entities.WorkflowSet.Attach(dal);
-            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            entities.Entry(dal).State = EntityState.Modified;
 
             var dalDb = entities.WorkflowSet.Include("WorkflowRules").Single(g => g.Id == dal.Id);
             foreach (var rule in newWorkflowRules)
@@ -190,7 +190,7 @@ namespace Quantumart.QP8.BLL.Repository
                 dalRule.WorkflowId = workflow.Id;
                 dalRule.Description = rule.Description;
                 dalRule.RuleOrder = rule.RuleOrder;
-                entities.WorkflowRulesSet.AddObject(dalRule);
+                entities.Entry(dalRule).State = EntityState.Added;
             }
 
             var inmemoryRulesIDs = new HashSet<decimal>(workflow.WorkflowRules.Select(x => Converter.ToDecimal(x.Id)));
@@ -201,7 +201,7 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     entities.WorkflowRulesSet.Attach(rule);
                     dalDb.WorkflowRules.Remove(rule);
-                    entities.WorkflowRulesSet.DeleteObject(rule);
+                    entities.Entry(rule).State = EntityState.Deleted;
                 }
             }
 
@@ -270,7 +270,8 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = dal.Created;
             }
 
-            entities.WorkflowSet.AddObject(dal);
+            entities.Entry(dal).State = EntityState.Added;
+
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Workflow, workflow);
             if (workflow.ForceId > 0)
             {
@@ -287,7 +288,7 @@ namespace Quantumart.QP8.BLL.Repository
                     dalRule.Id = forceIds.Dequeue();
                 }
                 dalRule.WorkflowId = dal.Id;
-                entities.WorkflowRulesSet.AddObject(dalRule);
+                entities.Entry(dalRule).State = EntityState.Added;
             }
 
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.WorkflowRule);

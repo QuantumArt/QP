@@ -16,7 +16,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
             MvcApplication.RegisterModelValidatorProviders();
             CheatBuildManager();
 
-            AreaRegistration.RegisterAllAreas();
             MvcApplication.RegisterUnity();
             MvcApplication.RegisterRoutes(new RouteCollection());
         }

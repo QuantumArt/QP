@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
@@ -12,9 +12,11 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class SiteFolderRepository : FolderRepository
     {
-        internal ObjectSet<SiteFolderDAL> CurrentSet => QPContext.EFContext.SiteFolderSet;
+        internal DbQuery<SiteFolderDAL> CurrentSet => QPContext.EFContext.SiteFolderSet;
 
         internal SiteFolderMapper CurrentMapper => MapperFacade.SiteFolderMapper;
+
+        internal SiteFolderRowMapper RowMapper = MapperFacade.SiteFolderRowMapper;
 
         public override Folder GetById(int id)
         {
@@ -40,7 +42,17 @@ namespace Quantumart.QP8.BLL.Repository
             return CurrentMapper.GetBizList(CurrentSet.Where(c => c.ParentId == parentId).ToList());
         }
 
-        public override IEnumerable<Folder> GetChildrenFromDb(int parentEntityId, int parentId) => CurrentMapper.GetBizList(QPContext.EFContext.GetChildSiteFoldersList(QPContext.CurrentUserId, parentEntityId, parentId, PermissionLevel.List, false, out var totalRecords));
+        public override IEnumerable<Folder> GetChildrenFromDb(int parentEntityId, int parentId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return RowMapper.GetBizList(
+                    Common.GetChildFoldersList(scope.DbConnection, QPContext.CurrentUserId,
+                        parentEntityId, true, parentId, PermissionLevel.List, false, out var totalRecords)
+                        .ToList()
+                );
+            }
+        }
 
         public override IEnumerable<Folder> GetChildrenWithSync(int parentEntityId, int? parentId)
         {

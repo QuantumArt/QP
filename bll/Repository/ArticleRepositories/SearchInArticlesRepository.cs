@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using AutoMapper;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
@@ -30,7 +31,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
     {
         public IEnumerable<SearchInArticlesResultItem> SearchInArticles(int siteId, int userId, string sqlSearchString, int? articleId, ListCommand listCmd, out int totalRecords)
         {
-            var dt = QPContext.EFContext.SearchInArticles(siteId, userId, sqlSearchString, articleId, TranslateSortExpression(listCmd.SortExpression), listCmd.StartRecord, listCmd.PageSize, out totalRecords);
+            var dt = Common.SearchInArticles(QPConnectionScope.Current.DbConnection, siteId, userId, sqlSearchString, articleId, TranslateSortExpression(listCmd.SortExpression), listCmd.StartRecord, listCmd.PageSize, out totalRecords);
             var result = Mapper.Map<IEnumerable<DataRow>, IEnumerable<SearchInArticlesResultItem>>(dt.AsEnumerable()).ToList();
             foreach (var item in result)
             {
@@ -40,9 +41,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return result;
         }
 
-        public Version GetSqlServerVersion() => QPContext.EFContext.GetSqlServerVersion();
+        public Version GetSqlServerVersion() => Common.GetSqlServerVersion(QPConnectionScope.Current.DbConnection);
 
-        public IEnumerable<string> GetWordForms(string sqlSearchString) => QPContext.EFContext.GetWordForms(sqlSearchString);
+        public IEnumerable<string> GetWordForms(string sqlSearchString) => Common.GetWordForms(QPConnectionScope.Current.DbConnection, sqlSearchString);
 
         /// <summary>
         /// Траслирует SortExpression

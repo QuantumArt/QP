@@ -1,6 +1,9 @@
+#if !NET_STANDARD
+using System.Web;
+#endif
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Constants.Mvc;
 
@@ -15,6 +18,9 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         {
             get
             {
+#if NET_STANDARD
+                return _actions ?? (_actions = LoadActions());
+#else
                 if (HttpContext.Current == null || HttpContext.Current.Session == null)
                 {
                     return _actions ?? (_actions = LoadActions());
@@ -26,6 +32,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 }
 
                 return HttpContext.Current.Session[HttpContextSession.BackendActionCache] as IEnumerable<BackendAction>;
+#endif
             }
         }
 
@@ -45,13 +52,13 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 
         private static IEnumerable<CustomAction> LoadCustomActions() => MapperFacade.CustomActionMapper.GetBizList(
             QPContext.EFContext.CustomActionSet
-                .Include("Action.EntityType.ContextMenu")
-                .Include("Action.ToolbarButtons")
-                .Include("Action.ContextMenuItems")
-                .Include("Action.ActionType.PermissionLevel")
-                .Include("Action.Excludes")
-                .Include("Contents.Site")
-                .Include("Sites")
+                .Include(b => b.Action.EntityType.ContextMenu)
+                .Include(b => b.Action.ToolbarButtons)
+                .Include(b => b.Action.ContextMenuItems)
+                .Include(b => b.Action.ActionType.PermissionLevel)
+                .Include(b => b.Action.Excludes)
+                .Include(b => b.Contents)
+                .Include(b => b.Sites)
                 .ToList()
         );
 
@@ -59,6 +66,9 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         {
             get
             {
+#if NET_STANDARD
+                return _customActions ?? (_customActions = LoadCustomActions());
+#else
                 if (HttpContext.Current == null || HttpContext.Current.Session == null)
                 {
                     return _customActions ?? (_customActions = LoadCustomActions());
@@ -70,11 +80,16 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 }
 
                 return HttpContext.Current.Session[HttpContextSession.BackendCustomActionCache] as IEnumerable<CustomAction>;
+#endif
             }
         }
 
         public static void Reset()
         {
+#if NET_STANDARD
+            _actions = null;
+            _customActions = null;
+#else
             if (HttpContext.Current == null || HttpContext.Current.Session == null)
             {
                 _actions = null;
@@ -85,6 +100,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 HttpContext.Current.Session.Remove(HttpContextSession.BackendActionCache);
                 HttpContext.Current.Session.Remove(HttpContextSession.BackendCustomActionCache);
             }
+#endif
         }
     }
 }

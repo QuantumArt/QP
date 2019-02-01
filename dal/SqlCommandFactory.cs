@@ -13,7 +13,7 @@ namespace Quantumart.QP8.DAL
 
         public static SqlCommand Create(string cmdText, SqlConnection connection, SqlTransaction transaction) => Init(new SqlCommand(cmdText, connection, transaction));
 
-        public static int CommandTimeout => QPConfiguration.WebConfigSection != null ? QPConfiguration.WebConfigSection.CommandTimeout : 120;
+        public static int CommandTimeout => (QPConfiguration.CommandTimeout != 0) ? QPConfiguration.CommandTimeout : 120;
 
         private static SqlCommand Init(SqlCommand cmd)
         {

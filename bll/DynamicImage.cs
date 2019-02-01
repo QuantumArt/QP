@@ -1,15 +1,18 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.Primitives;
 
 namespace Quantumart.QP8.BLL
 {
@@ -147,21 +150,23 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private ImageCodecInfo ImageCodecInfo
-        {
-            get { return ImageCodecInfo.GetImageEncoders().Where(n => n.MimeType == MimeType).SingleOrDefault(); }
-        }
-
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        private EncoderParameters EncoderParameters
+        public IImageEncoder Encoder
         {
             get
             {
                 if (Type == "JPG")
                 {
-                    var parameters = new EncoderParameters(1);
-                    parameters.Param[0] = new EncoderParameter(Encoder.Quality, (int)Quality);
-                    return parameters;
+                    return new JpegEncoder() { Quality = Quality };
+                }
+
+                if (Type == "GIF")
+                {
+                    return new GifEncoder();
+                }
+
+                if (Type == "PNG")
+                {
+                    return new PngEncoder();
                 }
 
                 return null;
@@ -210,20 +215,15 @@ namespace Quantumart.QP8.BLL
             {
                 if (!imageValue.ToUpper().EndsWith(SVG_EXTENSION))
                 {
-                    using (var input = new Bitmap(baseImagePath))
+                    using (Image<Rgba32> image = Image.Load(baseImagePath))
                     {
-                        var desiredSize = GetDesiredImageSize(input.Size);
-                        using (var output = new Bitmap(desiredSize.Width, desiredSize.Height))
+                        var desiredSize = GetDesiredImageSize(new Size(image.Width, image.Height));
+                        image.Mutate(x => x.Resize(desiredSize.Width, desiredSize.Height));
+                        var resultPath = Path.Combine(PathInfo.Path, GetDesiredFileName(imageValue).Replace(@"/", @"\"));
+                        Directory.CreateDirectory(Path.GetDirectoryName(resultPath));
+                        using (var fs = File.OpenWrite(resultPath))
                         {
-                            var resizer = Graphics.FromImage(output);
-                            resizer.InterpolationMode = output.Width < input.Width && output.Height < input.Height ? InterpolationMode.HighQualityBicubic : InterpolationMode.HighQualityBilinear;
-                            resizer.DrawImage(input, 0, 0, desiredSize.Width, desiredSize.Height);
-                            var resultPath = Path.Combine(PathInfo.Path, GetDesiredFileName(imageValue).Replace(@"/", @"\"));
-                            Directory.CreateDirectory(Path.GetDirectoryName(resultPath));
-                            using (var fs = File.OpenWrite(resultPath))
-                            {
-                                output.Save(fs, ImageCodecInfo, EncoderParameters);
-                            }
+                            image.Save(fs, Encoder);
                         }
                     }
                 }

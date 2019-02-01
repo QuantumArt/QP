@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.IO;
 using System.Linq;
@@ -177,3 +178,4 @@ namespace Quantumart.QP8.BLL.Services
         public CookieContainer Cookie { get; set; }
     }
 }
+#endif

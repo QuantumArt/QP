@@ -14,7 +14,7 @@ namespace Quantumart.QP8.DAL
         public static DataRow[] GetRelationSecurityFields(SqlConnection sqlConnection)
         {
             const string sqlText = @"
-				select coalesce(ca3.content_id, ca1.content_id) as path_content_id, coalesce(ca4.CONTENT_ID, cl.linked_content_id) as rel_content_id, ca1.content_id, 
+				select coalesce(ca3.content_id, ca1.content_id) as path_content_id, coalesce(ca4.CONTENT_ID, cl.linked_content_id) as rel_content_id, ca1.content_id,
 				cast(case when ca1.link_id is not null then 1 else 0 end as bit) as is_m2m,
 				cast(case when ca2.attribute_id is not null then 1 else 0 end as bit) as is_ext,
 				ca1.is_classifier,
@@ -88,7 +88,7 @@ namespace Quantumart.QP8.DAL
                         {
                             nextRows = nextRows.Where(n => (int)n.Field<decimal>("rel_content_id") == nextIds[0]).ToArray();
                         }
-                        
+
                         ExtraFinders = nextIds.Skip(1).Select(n => new RelationSecurityPathFinder(PathRows, CurrentContentId, CurrentPath) { CurrentRelatedContentId = n, OldIndex = OldIndex, Index = Index}).ToList();
 
                         var param = new RelationSecurityPathItem
@@ -263,7 +263,7 @@ namespace Quantumart.QP8.DAL
 
         public static Dictionary<int, bool> CheckLockedBy(SqlConnection dbConnection, int[] ids, int currentUserId, bool forceUnlock)
         {
-            const string sql = @"select locked_by, content_item_id from content_item ci with(nolock) 
+            const string sql = @"select locked_by, content_item_id from content_item ci with(nolock)
 				inner join @ids i on i.id = ci.content_item_id where locked_by is not null and locked_by <> @userId ";
 
             var result = ids.ToDictionary(kvp => kvp, kvp => true);
@@ -363,7 +363,7 @@ namespace Quantumart.QP8.DAL
             {
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@sessionId", sessionId);
-                cmd.ExecuteNonQuery();              
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -402,5 +402,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
         }
+
+
     }
 }

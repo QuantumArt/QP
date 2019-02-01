@@ -20,7 +20,11 @@ namespace Quantumart.QP8.Configuration
         [ConfigurationProperty("backendUrl", IsRequired = true)]
         public string BackendUrl
         {
+#if !NET_STANDARD
             get => Url.ToAbsolute(base["backendUrl"].ToString());
+#else
+            get => base["backendUrl"].ToString();
+#endif
             set => base["backendUrl"] = value;
         }
 
@@ -30,7 +34,11 @@ namespace Quantumart.QP8.Configuration
         [ConfigurationProperty("defaultTheme", IsRequired = true)]
         public string DefaultTheme
         {
+#if !NET_STANDARD
             get => Url.ToAbsolute(base["defaultTheme"].ToString());
+#else
+            get => base["defaultTheme"].ToString();
+#endif
             set => base["defaultTheme"] = value;
         }
 
@@ -40,7 +48,11 @@ namespace Quantumart.QP8.Configuration
         [ConfigurationProperty("uploaderType", IsRequired = true)]
         public string UploaderTypeName
         {
+#if !NET_STANDARD
             get => Url.ToAbsolute(base["uploaderType"].ToString());
+#else
+            get => base["uploaderType"].ToString();
+#endif
             set => base["uploaderType"] = value;
         }
 

@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Web;
 using Quantumart.QP8.BLL.Repository;
@@ -86,3 +87,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         };
     }
 }
+#endif

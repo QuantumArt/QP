@@ -11,6 +11,7 @@ namespace Quantumart.QP8.BLL
     {
         public static string Translate(string phrase)
         {
+#if !NET_STANDARD
             if (!string.IsNullOrWhiteSpace(phrase) && QPContext.CurrentUserIdentity != null)
             {
                 var dictionaries = Dictionaries.Value;
@@ -24,7 +25,7 @@ namespace Quantumart.QP8.BLL
 
                 return phrase;
             }
-
+#endif
             return phrase;
         }
 

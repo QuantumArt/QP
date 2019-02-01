@@ -72,7 +72,7 @@ namespace Quantumart.QP8.BLL.Repository
         public IEnumerable<BackendActionLog> Save(IEnumerable<BackendActionLog> logs)
         {
             IEnumerable<BackendActionLogDAL> toSave = MapperFacade.BackendActionLogMapper.GetDalList(logs.ToList());
-            var saved = DefaultRepository.SimpleSave(toSave);
+            var saved = DefaultRepository.SimpleSaveBulk(toSave);
             return MapperFacade.BackendActionLogMapper.GetBizList(saved.ToList());
         }
 
@@ -175,7 +175,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             var slDal =
                 QPContext.EFContext.SessionsLogSet
-                    .Where(s => !s.IsQP7 && s.UserId == uid && s.SessionId == sid)                
+                    .Where(s => !s.IsQP7 && s.UserId == uid && s.SessionId == sid)
                     .FirstOrDefault() ??
                 QPContext.EFContext.SessionsLogSet
                     .Where(s => !s.IsQP7 && s.UserId == uid)

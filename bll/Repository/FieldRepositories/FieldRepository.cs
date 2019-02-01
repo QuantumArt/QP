@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper;
@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 {
     public class FieldRepository : IFieldRepository
     {
-        internal static ObjectQuery<FieldDAL> DefaultFieldQuery => QPContext.EFContext.FieldSet.Include("Content").Include("Type").Include("LastModifiedByUser");
+        internal static DbQuery<FieldDAL> DefaultFieldQuery => QPContext.EFContext.FieldSet.Include("Content").Include("Type").Include("LastModifiedByUser");
 
         Field IFieldRepository.GetById(int fieldId) => GetById(fieldId);
 
@@ -669,7 +669,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                 var dymamicImageDal = DefaultRepository.GetById<DynamicImageFieldDAL>(newItem.Id);
                 if (dymamicImageDal != null)
                 {
-                    DefaultRepository.SimpleDelete(dymamicImageDal.EntityKey);
+                    DefaultRepository.SimpleDelete(dymamicImageDal);
                 }
             }
         }

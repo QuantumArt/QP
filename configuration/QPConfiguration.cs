@@ -5,7 +5,11 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+
+#if !NET_STANDARD
 using System.Web.Configuration;
+#endif
+
 using System.Xml.Linq;
 using QP.ConfigurationService.Client;
 using QP8.Infrastructure.Helpers;
@@ -20,12 +24,14 @@ namespace Quantumart.QP8.Configuration
     public class QPConfiguration
     {
         internal static string _configPath;
-        
-        internal static string _tempDirectory;
-        
+
+        private static string _tempDirectory;
+
         internal static string _configServiceUrl;
 
         internal static string _configServiceToken;
+
+        internal static int? _commandTimeout;
 
         /// <summary>
         /// Проверка, запущен ли пул в 64-битном режиме
@@ -59,7 +65,7 @@ namespace Quantumart.QP8.Configuration
 
             return elem?.Value ?? String.Empty;
         }
-        
+
         public static string GetConnectionString(string customerCode, string appName = "QP8Backend")
         {
             if (!String.IsNullOrWhiteSpace(customerCode))
@@ -72,7 +78,7 @@ namespace Quantumart.QP8.Configuration
                     var customer = AsyncHelper.RunSync(() => service.GetCustomer(customerCode));
 
                     // TODO: handle 404
-                    
+
                     if (customer == null)
                     {
                         throw new Exception($"Данный customer code: {customerCode} - отсутствует в конфиге");
@@ -205,16 +211,20 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configPath == null)
                 {
+                    #if !NET_STANDARD
                     if (!string.IsNullOrEmpty(WebConfigSection?.QpConfigPath))
                     {
                         _configPath = WebConfigSection.QpConfigPath;
                     }
-                    else if (!string.IsNullOrEmpty(AppConfigSection?.QpConfigPath))
+                    else
+                    #endif
+                    if (!string.IsNullOrEmpty(AppConfigSection?.QpConfigPath))
                     {
                         _configPath = AppConfigSection.QpConfigPath;
                     }
                     else
                     {
+#if !NET_STANDARD
                         var qKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(QpKeyRegistryPath);
                         if (qKey != null)
                         {
@@ -224,6 +234,11 @@ namespace Quantumart.QP8.Configuration
                         {
                             throw new Exception("QP is not installed");
                         }
+
+#else
+                        throw new Exception("QP is not installed");
+
+#endif
                     }
                 }
 
@@ -237,11 +252,14 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceUrl == null)
                 {
+                    #if !NET_STANDARD
                     if (!String.IsNullOrEmpty(WebConfigSection?.QpConfigUrl))
                     {
                         _configServiceUrl = WebConfigSection.QpConfigUrl;
                     }
-                    else if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigUrl))
+                    else
+                    #endif
+                    if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigUrl))
                     {
                         _configServiceUrl = AppConfigSection.QpConfigUrl;
                     }
@@ -260,11 +278,16 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceToken == null)
                 {
+                    #if !NET_STANDARD
+
                     if (!String.IsNullOrEmpty(WebConfigSection?.QpConfigToken))
                     {
                         _configServiceToken = WebConfigSection.QpConfigToken;
                     }
-                    else if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigToken))
+                    else
+                    #endif
+
+                    if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigToken))
                     {
                         _configServiceToken = AppConfigSection.QpConfigToken;
                     }
@@ -277,10 +300,42 @@ namespace Quantumart.QP8.Configuration
             }
         }
 
+        public static int CommandTimeout
+        {
+            get
+            {
+                if (_commandTimeout == null)
+                {
+#if !NET_STANDARD
+
+                    if (WebConfigSection?.CommandTimeout != null)
+                    {
+                        _commandTimeout = WebConfigSection.CommandTimeout;
+                    }
+                    else
+#endif
+
+                    if (AppConfigSection?.CommandTimeout != null)
+                    {
+                        _commandTimeout = AppConfigSection.CommandTimeout;
+                    }
+                    else
+                    {
+                        _commandTimeout = 0;
+                    }
+                }
+                return _commandTimeout.Value;
+            }
+        }
+
+
+#if !NET_STANDARD
         /// <summary>
         /// Возвращает кастомную конфигурационную секцию в файле web.config
         /// </summary>
         public static QPublishingSection WebConfigSection => WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
+
+#endif
 
         /// <summary>
         /// Возвращает кастомную конфигурационную секцию в файле web.config

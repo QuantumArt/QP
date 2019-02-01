@@ -1,8 +1,11 @@
+#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+#if !NET_STANDARD
 using Quantumart.QP8.Assembling;
+#endif
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants.Mvc;
@@ -87,3 +90,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
         public int[] TemplateIds { get; set; }
     }
 }
+#endif

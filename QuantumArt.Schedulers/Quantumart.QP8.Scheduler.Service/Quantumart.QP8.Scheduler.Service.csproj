@@ -117,7 +117,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
-    <Reference Include="netstandard" />
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
     <Reference Include="Unity.Abstractions, Version=3.3.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f">
       <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Abstractions.dll</HintPath>
       <Private>True</Private>

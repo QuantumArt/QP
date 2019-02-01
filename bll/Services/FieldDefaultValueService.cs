@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Linq;
 using System.Web;
@@ -104,3 +105,4 @@ namespace Quantumart.QP8.BLL.Services
         private static bool HasAlreadyRun() => HttpContext.Current.Session[HttpContextSession.FieldDefaultValueServiceProcessingContext] != null;
     }
 }
+#endif

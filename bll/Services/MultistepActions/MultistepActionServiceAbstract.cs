@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Web;
 using Quantumart.QP8.BLL.Repository;
@@ -111,3 +112,5 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
         public virtual IMultistepActionSettings MultistepActionSettings(int parentId, int id, int[] ids, bool isArchive) => null;
     }
 }
+
+#endif

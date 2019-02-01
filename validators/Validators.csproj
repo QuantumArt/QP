@@ -1,105 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{289708F2-2275-4FAD-858F-1499AA467E28}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Quantumart.QP8.Validators</RootNamespace>
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
     <AssemblyName>Quantumart.QP8.Validators</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <RootNamespace>Quantumart.QP8.Validators</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
-      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="EnterpriseLibrary.Common.NetCore" Version="6.0.1312" />
+    <PackageReference Include="EnterpriseLibrary.Validation.NetCore" Version="6.0.1312" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
+    <PackageReference Include="EnterpriseLibrary.Common" Version="6.0.1304" />
+    <PackageReference Include="EnterpriseLibrary.Validation" Version="6.0.1304" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>NET_STANDARD</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="CustomValidator.cs" />
-    <Compile Include="CustomValidatorAttribute.cs" />
-    <Compile Include="Constants\ValidationType.cs" />
-    <Compile Include="EditorTypeAttribute.cs" />
-    <Compile Include="ExampleAttribute.cs" />
-    <Compile Include="Helpers\UrlValidatorHelpers.cs" />
-    <Compile Include="LocalizedDisplayNameAttribute.cs" />
-    <Compile Include="FormatValidator.cs" />
-    <Compile Include="FormatValidatorAttribute.cs" />
-    <Compile Include="MaxLengthValidatorAttribute.cs" />
-    <Compile Include="MaxLengthValidator.cs" />
-    <Compile Include="RangeValueValidator.cs" />
-    <Compile Include="RangeValueValidatorAttribute.cs" />
-    <Compile Include="RuleSetAttribute.cs" />
-    <Compile Include="ValidatorArgumentsValidatorHelper.cs" />
-    <Compile Include="ValueComparisonValidator.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ValueComparisonValidatorAttribute.cs" />
-    <Compile Include="RequiredValidator.cs" />
-    <Compile Include="RequiredValidatorAttribute.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="ValidationReflectionHelper.cs" />
+    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj" />
+    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj">
-      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
-      <Name>Constants</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj">
-      <Project>{448D5691-BDFC-4314-8036-EA615978273D}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

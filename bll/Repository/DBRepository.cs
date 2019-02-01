@@ -56,13 +56,14 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void SaveAppSettings(IEnumerable<AppSettingsItem> values)
         {
-            IEnumerable<AppSettingsDAL> result = values.Select(n => AppSettingsDAL.CreateAppSettingsDAL(n.Key, n.Value)).ToList();
-            DefaultRepository.SimpleSave(result);
+            var result = values.Select(n => new AppSettingsDAL(){ Key = n.Key, Value = n.Value} ).ToList();
+            DefaultRepository.SimpleSaveBulk(result);
         }
 
         internal static void DeleteAppSettings()
         {
-            DefaultRepository.SimpleDelete(QPContext.EFContext.AppSettingsSet.ToList());
+            var result = QPContext.EFContext.AppSettingsSet.ToList();
+            DefaultRepository.SimpleDeleteBulk(result);
         }
     }
 }

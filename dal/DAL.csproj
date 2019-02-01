@@ -1,174 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3FF8834B-FB47-4855-B1E2-3B88C0DB1A94}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
     <RootNamespace>Quantumart.QP8.DAL</RootNamespace>
     <AssemblyName>Quantumart.QP8.DAL</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EFExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)binaries\EFExtensions.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <HintPath>$(SolutionDir)packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <PackageReference Include="Z.EntityFramework.Classic" Version="7.0.37" />
+  </ItemGroup>
+
+  <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleDAL.cs" />
-    <Compile Include="CdcImport\CdcElasticImportDal.cs" />
-    <Compile Include="CdcImport\CdcTarantoolImportDal.cs" />
-    <Compile Include="CdcImport\CdcImportDal.cs" />
-    <Compile Include="RelationSecurityInfo.cs" />
-    <Compile Include="RelationSecurityPathItem.cs" />
-    <Compile Include="NotificationSender\CommonSystemNotificationsDal.cs" />
-    <Compile Include="NotificationSender\CommonExternalNotificationsDal.cs" />
-    <Compile Include="CommonSecurity.cs" />
-    <Compile Include="DTO\ArticleFullTextSearchParameter.cs" />
-    <Compile Include="Common.cs" />
-    <Compile Include="ContentFolderDAL.cs" />
-    <Compile Include="DTO\ArticleLinkSearchParameter.cs" />
-    <Compile Include="DTO\ArticleRelationSecurityParameter.cs" />
-    <Compile Include="DTO\ArticleSimpleListOptions.cs" />
-    <Compile Include="DTO\ArticlePageOptions.cs" />
-    <Compile Include="DTO\ContentPageOptions.cs" />
-    <Compile Include="DTO\FieldPageOptions.cs" />
-    <Compile Include="DTO\PageOptionsBase.cs" />
-    <Compile Include="DTO\SitePageOptions.cs" />
-    <Compile Include="DTO\UserPageOptions.cs" />
-    <Compile Include="DynamicQuery.cs" />
-    <Compile Include="IQpEntityObject.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QP8Entities.cs" />
-    <Compile Include="QP8Model.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>QP8Model.tt</DependentUpon>
-    </Compile>
-    <Compile Include="QP8Model.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>QP8Model.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="SiteFolderDAL.cs" />
-    <Compile Include="SqlCommandFactory.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.Config">
-      <SubType>Designer</SubType>
-    </None>
-    <EntityDeploy Include="QP8Model.edmx">
+    <None Include="QP8Model.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>QP8Model.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="packages.config" />
-    <None Include="QP8Model.tt">
+    </None>
+    <Content Include="QP8Model.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>QP8Model.cs</LastGenOutput>
+      <CustomToolNamespace>Quantumart.QP8.DAL</CustomToolNamespace>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="QP8Model.csdl">
+      <LogicalName>QP8Model.csdl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QP8Model.ssdl">
+      <LogicalName>QP8Model.ssdl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QP8Model.msl">
+      <LogicalName>QP8Model.msl</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net471'">
+    <PreBuildEvent>dotnet "$(MSBuildProjectDirectory)/utils/QA.Core.SplitEdmx.dll" "$(MSBuildProjectDirectory)/QP8Model.edmx"</PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="QP8Model.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>QP8Model.Context.cs</LastGenOutput>
+      <DependentUpon>QP8Model.edmx</DependentUpon>
+      <CustomToolNamespace>Quantumart.QP8.DAL</CustomToolNamespace>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj" />
+    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj" />
+    <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj" />
+    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="QP8Model.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>QP8Model.cs</LastGenOutput>
     </None>
-    <None Include="Properties\DataSources\QP8Entities.datasource" />
-    <None Include="scripts\fix_dbo.tfs.cmd" />
-    <None Include="scripts\fix_dbo.vss.cmd" />
-    <None Include="scripts\restore_db.vss.cmd" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="scripts\ArchiveArticleSearch\1_qp_all_article_search.sql" />
-    <Content Include="scripts\ContextMenuAction\Add_Context_Menu_Action.sql" />
-    <Content Include="scripts\DeleteSite\tbd_delete_content.sql" />
-    <Content Include="scripts\GetPermittedItemsAsQuery\1_qp_GetPermittedItemsAsQuery.sql" />
-    <Content Include="scripts\UpdateM2O\1_qp_update_m2o.sql" />
-    <Content Include="scripts\EFTablesViews\1_ef_base.sql" />
-    <Content Include="scripts\EFTablesViews\2_link_tables.sql" />
-    <Content Include="scripts\EFTablesViews\3_ti_item_to_item.sql" />
-    <Content Include="scripts\EFTablesViews\4_td_item_to_item.sql" />
-    <Content Include="scripts\EFTablesViews\5_ti_item_link_async.sql" />
-    <Content Include="scripts\EFTablesViews\6_td_item_link_async.sql" />
-    <Content Include="scripts\fix_dbo.sql" />
-    <Content Include="scripts\fix_dbo_old.sql" />
-    <Content Include="scripts\max.temp.fix_dbo.sql" />
-    <Content Include="scripts\MultipleUpdate\1_qp_get_m2o_ids_multiple.sql" />
-    <Content Include="scripts\MultipleUpdate\2_qp_create_content_item_versions.sql" />
-    <Content Include="scripts\MultipleUpdate\3_qp_split_articles.sql" />
-    <Content Include="scripts\MultipleUpdate\4_qp_merge_links_multiple.sql" />
-    <Content Include="scripts\MultipleUpdate\5_qp_merge_articles.sql" />
-    <Content Include="scripts\MultipleUpdate\6_qp_assert_num_equal.sql" />
-    <Content Include="scripts\MultipleUpdate\tests\test.sql" />
-    <Content Include="scripts\MultipleUpdate\tests\test2.sql" />
-    <Content Include="scripts\MultipleUpdate\tests\test3.sql" />
-    <Content Include="scripts\MultipleUpdate\tests\test4.sql" />
-    <Content Include="scripts\TaHighlight\1_adding_column_to_content_attribute.sql" />
-    <Content Include="scripts\undo_to_previous.sql" />
-    <Content Include="scripts\UpdateWrongWFStatuses\1_update_wrong_workflow_statuses.sql" />
+    <Compile Update="QP8Model.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>QP8Model.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
-      <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
-      <Name>Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj">
-      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
-      <Name>Constants</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj">
-      <Project>{2a8b24b1-32aa-4a82-ab51-450f18fcbc76}</Project>
-      <Name>Resources</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj">
-      <Project>{448D5691-BDFC-4314-8036-EA615978273D}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

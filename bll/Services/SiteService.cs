@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+#if !NET_STANDARD
 using Quantumart.QP8.Assembling;
+#endif
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -100,7 +102,7 @@ namespace Quantumart.QP8.BLL.Services
             SiteRepository.Delete(id);
             return null;
         }
-
+#if !NET_STANDARD
         public static MessageResult AssembleContentsPreAction(int id)
         {
             var site = SiteRepository.GetById(id);
@@ -166,6 +168,7 @@ namespace Quantumart.QP8.BLL.Services
             new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString).Assemble();
             return null;
         }
+#endif
 
         public static void Cancel(int id)
         {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -111,7 +111,9 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     SortExpression = cmd.SortExpression,
                     StartRecord = cmd.StartRecord,
                     PageSize = cmd.PageSize,
+#if !NET_STANDARD
                     LanguageId = QPContext.CurrentUserIdentity.LanguageId,
+#endif
                     CustomFilter = filter.CustomFilter
                 };
 
@@ -125,7 +127,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
         {
             if (ids != null && ids.Any())
             {
-                ObjectQuery<ContentDAL> context = QPContext.EFContext.ContentSet;
+                DbQuery<ContentDAL> context = QPContext.EFContext.ContentSet;
                 if (loadSite)
                 {
                     context = context.Include("Site");

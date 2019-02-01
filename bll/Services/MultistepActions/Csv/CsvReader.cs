@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -747,7 +748,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     var grantedIds = field.UseRelationSecurity
                         ? new HashSet<int>(ArticleRepository.CheckRelationSecurity(contentId, validatedIds.ToArray(), false).Where(n => n.Value).Select(m => m.Key))
                         : validatedIds;
-                                        
+
                     var archiveArticles = ArticleRepository.CheckArchiveArticles(relatedIds.ToArray());
 
                     foreach (var item in filteredValues)
@@ -1204,3 +1205,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         public bool Skip { get; set; }
     }
 }
+#endif

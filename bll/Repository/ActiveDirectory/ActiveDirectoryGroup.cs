@@ -1,4 +1,5 @@
-﻿using System.DirectoryServices;
+﻿#if !NET_STANDARD
+using System.DirectoryServices;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
@@ -10,3 +11,4 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         }
     }
 }
+#endif

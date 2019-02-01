@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
@@ -85,8 +86,7 @@ namespace Quantumart.QP8.BLL.Repository
             var dal = MapperFacade.VisualEditorPluginMapper.GetDalObject(plugin);
             dal.LastModifiedBy = QPContext.CurrentUserId;
             dal.Modified = timeStamp;
-            entities.VePluginSet.Attach(dal);
-            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            entities.Entry(dal).State = EntityState.Modified;
             UpdateCommands(plugin, entities, timeStamp);
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.VisualEditorPlugin, plugin);
             entities.SaveChanges();
@@ -99,10 +99,7 @@ namespace Quantumart.QP8.BLL.Repository
             // delete
             var newIds = new HashSet<decimal>(plugin.VeCommands.Select(c => Converter.ToDecimal(c.Id)));
             var commandsToDelete = entities.VeCommandSet.Where(n => n.PluginId == (decimal)plugin.Id && !newIds.Contains(n.Id));
-            foreach (var c in commandsToDelete)
-            {
-                entities.VeCommandSet.DeleteObject(c);
-            }
+            entities.BulkDelete(commandsToDelete);
 
             // save and update
             var forceIds = plugin.ForceCommandIds == null ? null : new Queue<int>(plugin.ForceCommandIds);
@@ -121,12 +118,11 @@ namespace Quantumart.QP8.BLL.Repository
                         dalCommand.Id = forceIds.Dequeue();
                     }
 
-                    entities.VeCommandSet.AddObject(dalCommand);
+                    entities.Entry(dalCommand).State = EntityState.Added;
                 }
                 else
                 {
-                    entities.VeCommandSet.Attach(dalCommand);
-                    entities.ObjectStateManager.ChangeObjectState(dalCommand, EntityState.Modified);
+                    entities.Entry(dalCommand).State = EntityState.Modified;
                 }
             }
         }
@@ -150,7 +146,7 @@ namespace Quantumart.QP8.BLL.Repository
             dal.Modified = timeStamp;
             dal.Created = timeStamp;
 
-            entities.VePluginSet.AddObject(dal);
+            entities.Entry(dal).State = EntityState.Added;
 
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.VisualEditorPlugin, plugin);
             if (plugin.ForceId != 0)
@@ -174,7 +170,8 @@ namespace Quantumart.QP8.BLL.Repository
                 dalCommand.LastModifiedBy = QPContext.CurrentUserId;
                 dalCommand.Modified = timeStamp;
                 dalCommand.Created = timeStamp;
-                entities.VeCommandSet.AddObject(dalCommand);
+                entities.Entry(dalCommand).State = EntityState.Added;
+
             }
 
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.VisualEditorCommand);

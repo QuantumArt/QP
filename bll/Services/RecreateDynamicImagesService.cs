@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -153,3 +154,4 @@ namespace Quantumart.QP8.BLL.Services
         }
     }
 }
+#endif

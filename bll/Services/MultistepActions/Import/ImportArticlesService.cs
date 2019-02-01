@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.IO;
 using System.Web;
@@ -113,3 +114,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         }
     }
 }
+#endif

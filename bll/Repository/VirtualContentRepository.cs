@@ -160,8 +160,8 @@ namespace Quantumart.QP8.BLL.Repository
                 var virtualContentId = virtualContent.Id;
                 var recToRemove = QPContext.EFContext.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
 
-                DefaultRepository.SimpleDelete(recToRemove);
-                DefaultRepository.SimpleSave(unionSourceContentIDs.Select(id => new UnionContentsDAL { VirtualContentId = virtualContentId, UnionContentId = id }));
+                DefaultRepository.SimpleDeleteBulk(recToRemove);
+                DefaultRepository.SimpleSaveBulk(unionSourceContentIDs.Select(id => new UnionContentsDAL { VirtualContentId = virtualContentId, UnionContentId = id }));
             }
             finally
             {
@@ -173,7 +173,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var virtualContentId = virtualContent.Id;
             var recToRemove = QPContext.EFContext.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
-            DefaultRepository.SimpleDelete(recToRemove);
+            DefaultRepository.SimpleDeleteBulk(recToRemove);
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var virtualContentId = uqVirtualContent.Id;
             RemoveUserQuerySourcesInfo(uqVirtualContent);
-            DefaultRepository.SimpleSave(uqVirtualContent.UserQueryContentViewSchema.SelectUniqContentIDs().Select(id => new UserQueryContentsDAL
+            DefaultRepository.SimpleSaveBulk(uqVirtualContent.UserQueryContentViewSchema.SelectUniqContentIDs().Select(id => new UserQueryContentsDAL
             {
                 IsIdSource = false,
                 RealContentId = id,
@@ -266,7 +266,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var virtualContentId = uqVirtualContent.Id;
             var recToRemove = QPContext.EFContext.UserQueryContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
-            DefaultRepository.SimpleDelete(recToRemove);
+            DefaultRepository.SimpleDeleteBulk(recToRemove);
         }
 
         /// <summary>

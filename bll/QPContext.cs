@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
+
+#if !NET_STANDARD
 using System.Web;
+#endif
+
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Facades;
@@ -33,14 +38,14 @@ namespace Quantumart.QP8.BLL
                 if (QPConnectionScope.Current == null)
                 {
                     dbContext = new QP8Entities(CurrentDbConnectionStringForEntities);
-                    dbContext.ExecuteStoreCommand("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+                    dbContext.Database.ExecuteSqlCommand("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
                 }
                 else
                 {
                     dbContext = new QP8Entities(QPConnectionScope.Current.EfConnection);
                 }
 
-                dbContext.ContextOptions.LazyLoadingEnabled = false;
+                dbContext.Configuration.LazyLoadingEnabled = false;
                 return dbContext;
             }
         }
@@ -59,12 +64,17 @@ namespace Quantumart.QP8.BLL
                 return _externalContextStorage.GetValue<T>(key);
             }
 
+#if NET_STANDARD
+            return threadStorageData;
+#else
+
             if (HttpContext.Current == null)
             {
                 return threadStorageData;
             }
 
             return (T)HttpContext.Current.Items[key];
+#endif
         }
 
         private static void SetValueToStorage<T>(ref T threadStorage, T value, string key)
@@ -79,6 +89,9 @@ namespace Quantumart.QP8.BLL
                 _externalContextStorage.SetValue(value, key);
             }
 
+#if NET_STANDARD
+            threadStorage = value;
+#else
             if (HttpContext.Current == null)
             {
                 threadStorage = value;
@@ -87,6 +100,7 @@ namespace Quantumart.QP8.BLL
             {
                 HttpContext.Current.Items[key] = value;
             }
+ #endif
         }
 
         internal static Dictionary<int, Field> GetFieldCache() => GetValueFromStorage(_fieldCache, HttpContextItems.FieldCache);
@@ -304,11 +318,13 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = GetValueFromStorage(_currentUserId, HttpContextItems.CurrentUserIdKey);
+#if !NET_STANDARD
                 if (result == null)
                 {
                     result = (HttpContext.Current.User.Identity as QpIdentity)?.Id;
                     SetCurrentUserIdValueToStorage(result);
                 }
+#endif
 
                 return result ?? 0;
             }
@@ -337,11 +353,13 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = GetValueFromStorage(_currentSessionId, HttpContextItems.CurrentSessionIdKey);
+                #if !NET_STANDARD
                 if (result == null)
                 {
                     result = (HttpContext.Current.User.Identity as QpIdentity)?.SessionId;
                     SetCurrentSessionIdValueToStorage(result);
                 }
+                #endif
 
                 return result ?? 0;
             }
@@ -415,13 +433,16 @@ namespace Quantumart.QP8.BLL
             set => SetValueToStorage(ref _isLive, value, HttpContextItems.IsLiveKey);
         }
 
+#if !NET_STANDARD
         public static string CurrentUserName => (HttpContext.Current.User.Identity as QpIdentity)?.Name;
+#endif
 
         public static string CurrentCustomerCode
         {
             get
             {
                 var result = GetValueFromStorage(_currentCustomerCode, HttpContextItems.CurrentCustomerCodeKey);
+#if !NET_STANDARD
                 if (result == null)
                 {
                     if (HttpContext.Current != null && CurrentUserIdentity != null)
@@ -430,6 +451,7 @@ namespace Quantumart.QP8.BLL
                         SetCurrentCustomerCodeValueToStorage(result);
                     }
                 }
+#endif
 
                 return result;
             }
@@ -453,19 +475,21 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = GetValueFromStorage(_currentSqlVersion, HttpContextItems.CurrentSqlVersionKey);
+#if !NET_STANDARD
                 if (result == null && HttpContext.Current != null && CurrentUserIdentity != null)
                 {
-                    result = EFContext.GetSqlServerVersion();
+                    result = Common.GetSqlServerVersion(QPConnectionScope.Current.DbConnection);
                     SetCurrentSqlVersionValueToStorage(result);
                 }
+#endif
 
                 return result;
             }
             set => SetCurrentSqlVersionValueToStorage(value);
         }
-
+#if !NET_STANDARD
         public static QpIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QpIdentity : null;
-
+#endif
         public static string CurrentDbConnectionString
         {
             get
@@ -501,8 +525,14 @@ namespace Quantumart.QP8.BLL
             {
                 try
                 {
-                    var dbUser = dbContext.Authenticate(data.UserName, data.Password, data.UseAutoLogin, false);
-                    var user = MapperFacade.UserMapper.GetBizObject(dbUser);
+                    User user = null;
+                    using (var cn = new SqlConnection(sqlCn))
+                    {
+                        cn.Open();
+                        var dbUser = Common.Authenticate(cn, data.UserName, data.Password, data.UseAutoLogin, false);
+                        user = MapperFacade.UserMapper.GetBizObject(dbUser);
+                    }
+
                     if (user != null)
                     {
                         resultUser = new QpUser
@@ -520,14 +550,15 @@ namespace Quantumart.QP8.BLL
                             resultUser.Roles = QpRolesManager.GetRolesForUser(Common.IsAdmin(cn, user.Id));
                         }
 
-                        dbUser.LastLogOn = DateTime.Now;
                         resultUser.SessionId = CreateSuccessfulSession(user, dbContext);
+#if !NET_STANDARD
                         var context = HttpContext.Current;
                         if (context != null)
                         {
                             context.Items[HttpContextItems.DbContext] = dbContext;
                             QP7Service.SetPassword(data.Password);
                         }
+#endif
                     }
                     else
                     {
@@ -544,6 +575,8 @@ namespace Quantumart.QP8.BLL
 
             return resultUser;
         }
+
+#if !NET_STANDARD
 
         public static string LogOut()
         {
@@ -564,6 +597,7 @@ namespace Quantumart.QP8.BLL
                 return loginUrl;
             }
         }
+#endif
 
         private static int CreateSuccessfulSession(User user, QP8Entities dbContext)
         {
@@ -580,14 +614,15 @@ namespace Quantumart.QP8.BLL
                 Login = user.Name.Left(20),
                 UserId = user.Id,
                 StartTime = currentDt,
-
+#if !NET_STANDARD
                 Browser = HttpContext.Current.Request.ServerVariables[RequestServerVariables.HttpUserAgent].Left(255),
                 IP = HttpContext.Current.Request.UserHostAddress,
+#endif
                 ServerName = Environment.MachineName.Left(255)
             };
 
             var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
-            dbContext.AddToSessionsLogSet(sessionsLogDal);
+            dbContext.Entry(sessionsLogDal).State = EntityState.Added;
             dbContext.SaveChanges();
             sessionsLog = MapperFacade.SessionsLogMapper.GetBizObject(sessionsLogDal);
 
@@ -614,14 +649,15 @@ namespace Quantumart.QP8.BLL
                 Login = data.UserName.Left(20),
                 UserId = null,
                 StartTime = DateTime.Now,
-
+#if !NET_STANDARD
                 Browser = HttpContext.Current.Request.ServerVariables[RequestServerVariables.HttpUserAgent].Left(255),
                 IP = HttpContext.Current.Request.UserHostAddress,
+#endif
                 ServerName = Environment.MachineName.Left(255)
             };
 
             var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
-            dbContext.AddToSessionsLogSet(sessionsLogDal);
+            dbContext.Entry(sessionsLogDal).State = EntityState.Added;
             dbContext.SaveChanges();
         }
 

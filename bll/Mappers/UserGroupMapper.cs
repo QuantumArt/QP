@@ -26,7 +26,9 @@ namespace Quantumart.QP8.BLL.Mappers
         public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<UserGroupDAL, UserGroup>(MemberList.Source)
-                .ForMember(biz => biz.ParentGroup, opt => opt.MapFrom(data => data.ParentGroups.IsLoaded ? data.ParentGroups.FirstOrDefault() : null));
+                .ForMember(biz => biz.ParentGroup, opt => opt.MapFrom(
+                    data => data.ParentGroups != null && data.ParentGroups.Any() ? data.ParentGroups.FirstOrDefault() : null)
+                );
         }
     }
 }

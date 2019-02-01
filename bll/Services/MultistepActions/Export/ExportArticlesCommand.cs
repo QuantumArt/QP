@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System.Collections.Generic;
 using System.Web;
 using QP8.Infrastructure;
@@ -70,3 +71,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         }
     }
 }
+#endif

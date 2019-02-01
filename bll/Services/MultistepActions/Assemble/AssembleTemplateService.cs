@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -144,3 +145,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
         }
     }
 }
+#endif

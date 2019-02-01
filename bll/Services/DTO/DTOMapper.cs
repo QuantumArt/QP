@@ -6,7 +6,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
     {
         public static void CreateAllMappings(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<Folder, EntityTreeItem>(MemberList.Source)
+            cfg.CreateMap<Folder, EntityTreeItem>(MemberList.Destination)
                 .ForMember(data => data.Alias, opt => opt.MapFrom(src => src.OutputName))
                 ;
         }

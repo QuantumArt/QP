@@ -228,8 +228,9 @@ namespace Quantumart.QP8.BLL.Repository
                 ExternalExceptionHandler = HandleException,
                 ThrowNotificationExceptions = false
             };
-
+#if !NET_STANDARD
             QPConfiguration.SetAppSettings(cnn.AppSettings);
+#endif
             foreach (var simpleCode in code.Split(';'))
             {
                 cnn.SendNotification(id, simpleCode);
@@ -287,7 +288,7 @@ namespace Quantumart.QP8.BLL.Repository
         private Article[] GetArticles()
         {
             var articles = ArticleRepository.GetList(ArticleIds, true);
-            return ContentId == 0 ? articles.Where(a => a.ContentId == ContentId).ToArray() : articles.ToArray();
+            return ContentId != 0 ? articles.Where(a => a.ContentId == ContentId).ToArray() : articles.ToArray();
         }
 
         private void ValidateCodes(IEnumerable<string> codes)

@@ -1,0 +1,1579 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="QP8ModelStoreContainer" CdmEntityContainer="QP8Entities">
+    <EntitySetMapping Name="ActionTypeSet">
+      <EntityTypeMapping TypeName="QP8Model.ActionTypeDAL">
+        <MappingFragment StoreEntitySet="ACTION_TYPE">
+          <ScalarProperty Name="Id" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Code" ColumnName="CODE" />
+          <ScalarProperty Name="RequiredPermissionLevelId" ColumnName="REQUIRED_PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="ItemsAffected" ColumnName="ITEMS_AFFECTED" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ArticleWorkflowBindSet">
+      <EntityTypeMapping TypeName="QP8Model.ArticleWorkflowBindDAL">
+        <MappingFragment StoreEntitySet="article_workflow_bind">
+          <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
+          <ScalarProperty Name="WorkflowId" ColumnName="WORKFLOW_ID" />
+          <ScalarProperty Name="IsAsync" ColumnName="is_async" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FieldTypeSet">
+      <EntityTypeMapping TypeName="QP8Model.FieldTypeDAL">
+        <MappingFragment StoreEntitySet="ATTRIBUTE_TYPE">
+          <ScalarProperty Name="Id" ColumnName="ATTRIBUTE_TYPE_ID" />
+          <ScalarProperty Name="Name" ColumnName="TYPE_NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Image" ColumnName="TYPE_IMAGE" />
+          <ScalarProperty Name="DatabaseType" ColumnName="DATABASE_TYPE" />
+          <ScalarProperty Name="InputType" ColumnName="INPUT_TYPE" />
+          <ScalarProperty Name="CheckFunction" ColumnName="CHECK_FUNCTION" />
+          <ScalarProperty Name="Icon" ColumnName="ICON" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BackendActionSet">
+      <EntityTypeMapping TypeName="QP8Model.BackendActionDAL">
+        <MappingFragment StoreEntitySet="BACKEND_ACTION">
+          <ScalarProperty Name="EntityLimit" ColumnName="ENTITY_LIMIT" />
+          <ScalarProperty Name="AdditionalControllerActionUrl" ColumnName="ADDITIONAL_CONTROLLER_ACTION_URL" />
+          <ScalarProperty Name="HasSettings" ColumnName="HAS_SETTINGS" />
+          <ScalarProperty Name="IsMultistep" ColumnName="IS_MULTISTEP" />
+          <ScalarProperty Name="TabId" ColumnName="TAB_ID" />
+          <ScalarProperty Name="IsCustom" ColumnName="IS_CUSTOM" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+          <ScalarProperty Name="TypeId" ColumnName="TYPE_ID" />
+          <ScalarProperty Name="EntityTypeId" ColumnName="ENTITY_TYPE_ID" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="ShortName" ColumnName="SHORT_NAME" />
+          <ScalarProperty Name="Code" ColumnName="CODE" />
+          <ScalarProperty Name="UserControlFile" ColumnName="USER_CONTROL_FILE" />
+          <ScalarProperty Name="ControllerActionUrl" ColumnName="CONTROLLER_ACTION_URL" />
+          <ScalarProperty Name="ConfirmPhrase" ColumnName="CONFIRM_PHRASE" />
+          <ScalarProperty Name="IsInterface" ColumnName="IS_INTERFACE" />
+          <ScalarProperty Name="HasPreAction" ColumnName="HAS_PRE_ACTION" />
+          <ScalarProperty Name="WindowHeight" ColumnName="WINDOW_HEIGHT" />
+          <ScalarProperty Name="WindowWidth" ColumnName="WINDOW_WIDTH" />
+          <ScalarProperty Name="IsWindow" ColumnName="IS_WINDOW" />
+          <ScalarProperty Name="ParentId" ColumnName="PARENT_ID" />
+          <ScalarProperty Name="DefaultViewTypeId" ColumnName="DEFAULT_VIEW_TYPE_ID" />
+          <ScalarProperty Name="AllowSearch" ColumnName="ALLOW_SEARCH" />
+          <ScalarProperty Name="AllowPreview" ColumnName="ALLOW_PREVIEW" />
+          <ScalarProperty Name="NextSuccessfulActionId" ColumnName="NEXT_SUCCESSFUL_ACTION_ID" />
+          <ScalarProperty Name="NextFailedActionId" ColumnName="NEXT_FAILED_ACTION_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BackendActionLogSet">
+      <EntityTypeMapping TypeName="QP8Model.BackendActionLogDAL">
+        <MappingFragment StoreEntitySet="BACKEND_ACTION_LOG">
+          <ScalarProperty Name="IsApi" ColumnName="API" />
+          <ScalarProperty Name="EntityTitle" ColumnName="ENTITY_TITLE" />
+          <ScalarProperty Name="ParentEntityId" ColumnName="PARENT_ENTITY_ID" />
+          <ScalarProperty Name="EntityStringId" ColumnName="ENTITY_STRING_ID" />
+          <ScalarProperty Name="EntityId" ColumnName="ENTITY_ID" />
+          <ScalarProperty Name="EntityTypeCode" ColumnName="ENTITY_TYPE_CODE" />
+          <ScalarProperty Name="ActionTypeCode" ColumnName="ACTION_TYPE_CODE" />
+          <ScalarProperty Name="ActionCode" ColumnName="ACTION_CODE" />
+          <ScalarProperty Name="ExecutionTime" ColumnName="EXEC_TIME" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CharsetSet">
+      <EntityTypeMapping TypeName="QP8Model.CharsetDAL">
+        <MappingFragment StoreEntitySet="CHARSET">
+          <ScalarProperty Name="Subj" ColumnName="CHARSET" />
+          <ScalarProperty Name="Codepage" ColumnName="CODEPAGE" />
+          <ScalarProperty Name="Name" ColumnName="CHARSET_NAME" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CodeSnippetSet">
+      <EntityTypeMapping TypeName="QP8Model.CodeSnippetDAL">
+        <MappingFragment StoreEntitySet="CODE_SNIPPET">
+          <ScalarProperty Name="SnippetId" ColumnName="SNIPPET_ID" />
+          <ScalarProperty Name="SnippetName" ColumnName="SNIPPET_NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Code" ColumnName="CODE" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContainerSet">
+      <EntityTypeMapping TypeName="QP8Model.ContainerDAL">
+        <MappingFragment StoreEntitySet="CONTAINER">
+          <ScalarProperty Name="ObjectId" ColumnName="OBJECT_ID" />
+          <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
+          <ScalarProperty Name="AllowOrderDynamic" ColumnName="ALLOW_ORDER_DYNAMIC" />
+          <ScalarProperty Name="OrderStatic" ColumnName="ORDER_STATIC" />
+          <ScalarProperty Name="OrderDynamic" ColumnName="ORDER_DYNAMIC" />
+          <ScalarProperty Name="FilterValue" ColumnName="FILTER_VALUE" />
+          <ScalarProperty Name="SelectStart" ColumnName="SELECT_START" />
+          <ScalarProperty Name="SelectTotal" ColumnName="SELECT_TOTAL" />
+          <ScalarProperty Name="ScheduleDependence" ColumnName="SCHEDULE_DEPENDENCE" />
+          <ScalarProperty Name="RotateContent" ColumnName="ROTATE_CONTENT" />
+          <ScalarProperty Name="ApplySecurity" ColumnName="APPLY_SECURITY" />
+          <ScalarProperty Name="ShowArchived" ColumnName="SHOW_ARCHIVED" />
+          <ScalarProperty Name="CursorType" ColumnName="CURSOR_TYPE" />
+          <ScalarProperty Name="CursorLocation" ColumnName="CURSOR_LOCATION" />
+          <ScalarProperty Name="LockType" ColumnName="LOCK_TYPE" />
+          <ScalarProperty Name="Locked" ColumnName="LOCKED" />
+          <ScalarProperty Name="LockedBy" ColumnName="LOCKED_BY" />
+          <ScalarProperty Name="Duration" ColumnName="DURATION" />
+          <ScalarProperty Name="EnableCacheInvalidation" ColumnName="ENABLE_CACHE_INVALIDATION" />
+          <ScalarProperty Name="DynamicContentVariable" ColumnName="DYNAMIC_CONTENT_VARIABLE" />
+          <ScalarProperty Name="StartLevel" ColumnName="START_LEVEL" />
+          <ScalarProperty Name="EndLevel" ColumnName="END_LEVEL" />
+          <ScalarProperty Name="UseLevelFiltration" ColumnName="USE_LEVEL_FILTRATION" />
+          <ScalarProperty Name="ReturnLastModified" ColumnName="RETURN_LAST_MODIFIED" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentDAL">
+        <MappingFragment StoreEntitySet="CONTENT">
+          <ScalarProperty Name="ForReplication" ColumnName="FOR_REPLICATION" />
+          <ScalarProperty Name="FormScript" ColumnName="FORM_SCRIPT" />
+          <ScalarProperty Name="UseForContext" ColumnName="USE_FOR_CONTEXT" />
+          <ScalarProperty Name="ParentContentId" ColumnName="PARENT_CONTENT_ID" />
+          <ScalarProperty Name="DisableChangingActions" ColumnName="DISABLE_CHANGING_ACTIONS" />
+          <ScalarProperty Name="DisableXamlValidation" ColumnName="DISABLE_XAML_VALIDATION" />
+          <ScalarProperty Name="XamlValidation" ColumnName="XAML_VALIDATION" />
+          <ScalarProperty Name="Id" ColumnName="CONTENT_ID" />
+          <ScalarProperty Name="Name" ColumnName="CONTENT_NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="FriendlyPluralName" ColumnName="friendly_name_plural" />
+          <ScalarProperty Name="FriendlySingularName" ColumnName="friendly_name_singular" />
+          <ScalarProperty Name="AllowItemsPermission" ColumnName="allow_items_permission" />
+          <ScalarProperty Name="GroupId" ColumnName="content_group_id" />
+          <ScalarProperty Name="ExternalId" ColumnName="external_id" />
+          <ScalarProperty Name="VirtualType" ColumnName="virtual_type" />
+          <ScalarProperty Name="JoinId" ColumnName="virtual_join_primary_content_id" />
+          <ScalarProperty Name="IsShared" ColumnName="is_shared" />
+          <ScalarProperty Name="AutoArchive" ColumnName="AUTO_ARCHIVE" />
+          <ScalarProperty Name="MaxNumOfStoredVersions" ColumnName="max_num_of_stored_versions" />
+          <ScalarProperty Name="CreateVersionControlView" ColumnName="version_control_view" />
+          <ScalarProperty Name="PageSize" ColumnName="content_page_size" />
+          <ScalarProperty Name="Query" ColumnName="query" />
+          <ScalarProperty Name="AltQuery" ColumnName="alt_query" />
+          <ScalarProperty Name="MapAsClass" ColumnName="MAP_AS_CLASS" />
+          <ScalarProperty Name="NetName" ColumnName="NET_CONTENT_NAME" />
+          <ScalarProperty Name="NetPluralName" ColumnName="NET_PLURAL_CONTENT_NAME" />
+          <ScalarProperty Name="UseDefaultFiltration" ColumnName="USE_DEFAULT_FILTRATION" />
+          <ScalarProperty Name="AdditionalContextClassName" ColumnName="ADD_CONTEXT_CLASS_NAME" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentPermissionSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentPermissionDAL">
+        <MappingFragment StoreEntitySet="CONTENT_ACCESS">
+          <ScalarProperty Name="Hide" ColumnName="HIDE" />
+          <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="PermissionLevelId" ColumnName="PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="PropagateToItems" ColumnName="propagate_to_items" />
+          <ScalarProperty Name="Id" ColumnName="CONTENT_ACCESS_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FieldSet">
+      <EntityTypeMapping TypeName="QP8Model.FieldDAL">
+        <MappingFragment StoreEntitySet="CONTENT_ATTRIBUTE">
+          <ScalarProperty Name="DisableListAutoWrap" ColumnName="DISABLE_LIST_AUTO_WRAP" />
+          <ScalarProperty Name="UseSeparateReverseViews" ColumnName="USE_SEPARATE_REVERSE_VIEWS" />
+          <ScalarProperty Name="TaHighlightType" ColumnName="TA_HIGHLIGHT_TYPE" />
+          <ScalarProperty Name="IsLocalization" ColumnName="IS_LOCALIZATION" />
+          <ScalarProperty Name="OptimizeForHierarchy" ColumnName="OPTIMIZE_FOR_HIERARCHY" />
+          <ScalarProperty Name="UseInChildContentFilter" ColumnName="USE_IN_CHILD_CONTENT_FILTER" />
+          <ScalarProperty Name="IncludeRelationsInTitle" ColumnName="INCLUDE_RELATIONS_IN_TITLE" />
+          <ScalarProperty Name="FieldTitleCount" ColumnName="FIELD_TITLE_COUNT" />
+          <ScalarProperty Name="OrderByTitle" ColumnName="ORDER_BY_TITLE" />
+          <ScalarProperty Name="UseForVariations" ColumnName="USE_FOR_VARIATIONS" />
+          <ScalarProperty Name="UseForContext" ColumnName="USE_FOR_CONTEXT" />
+          <ScalarProperty Name="Override" ColumnName="OVERRIDE" />
+          <ScalarProperty Name="Hide" ColumnName="HIDE" />
+          <ScalarProperty Name="ParentFieldId" ColumnName="PARENT_ATTRIBUTE_ID" />
+          <ScalarProperty Name="OrderFieldId" ColumnName="TREE_ORDER_FIELD" />
+          <ScalarProperty Name="UseForDefaultFiltration" ColumnName="USE_FOR_DEFAULT_FILTRATION" />
+          <ScalarProperty Name="ShowAsRadioButtons" ColumnName="SHOW_AS_RADIO_BUTTON" />
+          <ScalarProperty Name="EnumValues" ColumnName="ENUM_VALUES" />
+          <ScalarProperty Name="CopyPermissionsToChildren" ColumnName="COPY_PERMISSIONS_TO_CHILDREN" />
+          <ScalarProperty Name="UseRelationSecurity" ColumnName="USE_RELATION_SECURITY" />
+          <ScalarProperty Name="Changeable" ColumnName="CHANGEABLE" />
+          <ScalarProperty Name="IsClassifier" ColumnName="IS_CLASSIFIER" />
+          <ScalarProperty Name="ClassifierId" ColumnName="CLASSIFIER_ATTRIBUTE_ID" />
+          <ScalarProperty Name="Aggregated" ColumnName="AGGREGATED" />
+          <ScalarProperty Name="AutoCheckChildren" ColumnName="AUTO_CHECK_CHILDREN" />
+          <ScalarProperty Name="UseForTree" ColumnName="USE_FOR_TREE" />
+          <ScalarProperty Name="RootElementClass" ColumnName="ROOT_ELEMENT_CLASS" />
+          <ScalarProperty Name="ExternalCss" ColumnName="EXTERNAL_CSS" />
+          <ScalarProperty Name="IsLong" ColumnName="IS_LONG" />
+          <ScalarProperty Name="BackRelationId" ColumnName="BACK_RELATED_ATTRIBUTE_ID" />
+          <ScalarProperty Name="Id" ColumnName="ATTRIBUTE_ID" />
+          <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
+          <ScalarProperty Name="Name" ColumnName="ATTRIBUTE_NAME" />
+          <ScalarProperty Name="FormatMask" ColumnName="FORMAT_MASK" />
+          <ScalarProperty Name="InputMask" ColumnName="INPUT_MASK" />
+          <ScalarProperty Name="Size" ColumnName="ATTRIBUTE_SIZE" />
+          <ScalarProperty Name="DefaultValue" ColumnName="DEFAULT_VALUE" />
+          <ScalarProperty Name="TypeId" ColumnName="ATTRIBUTE_TYPE_ID" />
+          <ScalarProperty Name="RelationId" ColumnName="RELATED_ATTRIBUTE_ID" />
+          <ScalarProperty Name="IndexFlag" ColumnName="INDEX_FLAG" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Order" ColumnName="ATTRIBUTE_ORDER" />
+          <ScalarProperty Name="Required" ColumnName="REQUIRED" />
+          <ScalarProperty Name="PermanentFlag" ColumnName="PERMANENT_FLAG" />
+          <ScalarProperty Name="PrimaryFlag" ColumnName="PRIMARY_FLAG" />
+          <ScalarProperty Name="RelationCondition" ColumnName="RELATION_CONDITION" />
+          <ScalarProperty Name="DisplayAsRadioButton" ColumnName="display_as_radio_button" />
+          <ScalarProperty Name="ViewInList" ColumnName="view_in_list" />
+          <ScalarProperty Name="ReadonlyFlag" ColumnName="READONLY_FLAG" />
+          <ScalarProperty Name="AllowStageEdit" ColumnName="allow_stage_edit" />
+          <ScalarProperty Name="Configuration" ColumnName="ATTRIBUTE_CONFIGURATION" />
+          <ScalarProperty Name="BaseImageId" ColumnName="RELATED_IMAGE_ATTRIBUTE_ID" />
+          <ScalarProperty Name="PersistentId" ColumnName="persistent_attr_id" />
+          <ScalarProperty Name="JoinId" ColumnName="join_attr_id" />
+          <ScalarProperty Name="LinkId" ColumnName="link_id" />
+          <ScalarProperty Name="DefaultBlobValue" ColumnName="DEFAULT_BLOB_VALUE" />
+          <ScalarProperty Name="AutoLoad" ColumnName="AUTO_LOAD" />
+          <ScalarProperty Name="FriendlyName" ColumnName="FRIENDLY_NAME" />
+          <ScalarProperty Name="UseSiteLibrary" ColumnName="use_site_library" />
+          <ScalarProperty Name="UseArchiveArticles" ColumnName="use_archive_articles" />
+          <ScalarProperty Name="AutoExpand" ColumnName="AUTO_EXPAND" />
+          <ScalarProperty Name="RelationPageSize" ColumnName="relation_page_size" />
+          <ScalarProperty Name="Doctype" ColumnName="doctype" />
+          <ScalarProperty Name="FullPage" ColumnName="full_page" />
+          <ScalarProperty Name="RenameMatched" ColumnName="RENAME_MATCHED" />
+          <ScalarProperty Name="Subfolder" ColumnName="SUBFOLDER" />
+          <ScalarProperty Name="DisableVersionControl" ColumnName="DISABLE_VERSION_CONTROL" />
+          <ScalarProperty Name="MapAsProperty" ColumnName="MAP_AS_PROPERTY" />
+          <ScalarProperty Name="NetName" ColumnName="NET_ATTRIBUTE_NAME" />
+          <ScalarProperty Name="NetBackName" ColumnName="NET_BACK_ATTRIBUTE_NAME" />
+          <ScalarProperty Name="PEnterMode" ColumnName="P_ENTER_MODE" />
+          <ScalarProperty Name="UseEnglishQuotes" ColumnName="USE_ENGLISH_QUOTES" />
+          <ScalarProperty Name="MaxDataListItemCount" ColumnName="MAX_DATA_LIST_ITEM_COUNT" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentConstraintSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentConstraintDAL">
+        <MappingFragment StoreEntitySet="content_constraint">
+          <ScalarProperty Name="Id" ColumnName="constraint_id" />
+          <ScalarProperty Name="ContentId" ColumnName="content_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentDataSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentDataDAL">
+        <MappingFragment StoreEntitySet="CONTENT_DATA">
+          <ScalarProperty Name="SPLITTED" ColumnName="SPLITTED" />
+          <ScalarProperty Name="FieldId" ColumnName="ATTRIBUTE_ID" />
+          <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
+          <ScalarProperty Name="Data" ColumnName="DATA" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="BlobData" ColumnName="BLOB_DATA" />
+          <ScalarProperty Name="Id" ColumnName="CONTENT_DATA_ID" />
+          <ScalarProperty Name="NotForReplication" ColumnName="not_for_replication" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentFolderSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentFolderDAL">
+        <MappingFragment StoreEntitySet="content_FOLDER">
+          <ScalarProperty Name="ContentId" ColumnName="content_ID" />
+          <ScalarProperty Name="Id" ColumnName="FOLDER_ID" />
+          <ScalarProperty Name="ParentId" ColumnName="PARENT_FOLDER_ID" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Filter" ColumnName="FILTER" />
+          <ScalarProperty Name="Path" ColumnName="PATH" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentFolderAccessSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentFolderAccessDAL">
+        <MappingFragment StoreEntitySet="content_FOLDER_ACCESS">
+          <ScalarProperty Name="ContentFolderId" ColumnName="content_FOLDER_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="PermissionLevelId" ColumnName="PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Id" ColumnName="CONTENT_FOLDER_ACCESS_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentFormSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentFormDAL">
+        <MappingFragment StoreEntitySet="CONTENT_FORM">
+          <ScalarProperty Name="ObjectId" ColumnName="object_id" />
+          <ScalarProperty Name="ContentId" ColumnName="content_id" />
+          <ScalarProperty Name="GenerateUpdateScript" ColumnName="generate_update_script" />
+          <ScalarProperty Name="ThankYouPageId" ColumnName="thank_you_page_id" />
+          <ScalarProperty Name="NetLanguageId" ColumnName="NET_LANGUAGE_ID" />
+          <ScalarProperty Name="Locked" ColumnName="LOCKED" />
+          <ScalarProperty Name="LockedBy" ColumnName="LOCKED_BY" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentGroupSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentGroupDAL">
+        <MappingFragment StoreEntitySet="content_group">
+          <ScalarProperty Name="Id" ColumnName="content_group_id" />
+          <ScalarProperty Name="SiteId" ColumnName="site_id" />
+          <ScalarProperty Name="Name" ColumnName="name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ArticleSet">
+      <EntityTypeMapping TypeName="QP8Model.ArticleDAL">
+        <MappingFragment StoreEntitySet="CONTENT_ITEM">
+          <ScalarProperty Name="UniqueId" ColumnName="UNIQUE_ID" />
+          <ScalarProperty Name="CancelSplit" ColumnName="CANCEL_SPLIT" />
+          <ScalarProperty Name="Splitted" ColumnName="SPLITTED" />
+          <ScalarProperty Name="Id" ColumnName="CONTENT_ITEM_ID" />
+          <ScalarProperty Name="Visible" ColumnName="VISIBLE" />
+          <ScalarProperty Name="StatusTypeId" ColumnName="STATUS_TYPE_ID" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="LockedBy" ColumnName="locked_by" />
+          <ScalarProperty Name="Locked" ColumnName="LOCKED" />
+          <ScalarProperty Name="PermanentLock" ColumnName="PERMANENT_LOCK" />
+          <ScalarProperty Name="Archived" ColumnName="ARCHIVE" />
+          <ScalarProperty Name="NotForReplication" ColumnName="not_for_replication" />
+          <ScalarProperty Name="Delayed" ColumnName="SCHEDULE_NEW_VERSION_PUBLICATION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ArticlePermissionSet">
+      <EntityTypeMapping TypeName="QP8Model.ArticlePermissionDAL">
+        <MappingFragment StoreEntitySet="CONTENT_ITEM_ACCESS">
+          <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="PermissionLevelId" ColumnName="PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Id" ColumnName="CONTENT_ITEM_ACCESS_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ArticleScheduleSet">
+      <EntityTypeMapping TypeName="QP8Model.ArticleScheduleDAL">
+        <MappingFragment StoreEntitySet="CONTENT_ITEM_SCHEDULE">
+          <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
+          <ScalarProperty Name="Id" ColumnName="SCHEDULE_ID" />
+          <ScalarProperty Name="MaximumOccurences" ColumnName="MAXIMUM_OCCURENCES" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="FreqType" ColumnName="freq_type" />
+          <ScalarProperty Name="FreqInterval" ColumnName="freq_interval" />
+          <ScalarProperty Name="FreqSubdayType" ColumnName="freq_subday_type" />
+          <ScalarProperty Name="FreqSubdayInterval" ColumnName="freq_subday_interval" />
+          <ScalarProperty Name="FreqRelativeInterval" ColumnName="freq_relative_interval" />
+          <ScalarProperty Name="FreqRecurrenceFactor" ColumnName="freq_recurrence_factor" />
+          <ScalarProperty Name="ActiveStartDate" ColumnName="active_start_date" />
+          <ScalarProperty Name="ActiveEndDate" ColumnName="active_end_date" />
+          <ScalarProperty Name="ActiveStartTime" ColumnName="active_start_time" />
+          <ScalarProperty Name="ActiveEndTime" ColumnName="active_end_time" />
+          <ScalarProperty Name="Occurences" ColumnName="occurences" />
+          <ScalarProperty Name="UseDuration" ColumnName="use_duration" />
+          <ScalarProperty Name="Duration" ColumnName="duration" />
+          <ScalarProperty Name="DurationUnits" ColumnName="duration_units" />
+          <ScalarProperty Name="Deactivate" ColumnName="DEACTIVATE" />
+          <ScalarProperty Name="DeleteJob" ColumnName="DELETE_JOB" />
+          <ScalarProperty Name="UseService" ColumnName="USE_SERVICE" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ArticleStatusHistorySet">
+      <EntityTypeMapping TypeName="QP8Model.ArticleStatusHistoryDAL">
+        <MappingFragment StoreEntitySet="CONTENT_ITEM_STATUS_HISTORY">
+          <ScalarProperty Name="VISIBLE" ColumnName="VISIBLE" />
+          <ScalarProperty Name="ARCHIVE" ColumnName="ARCHIVE" />
+          <ScalarProperty Name="StatusHistoryId" ColumnName="STATUS_HISTORY_ID" />
+          <ScalarProperty Name="StatusHistoryDate" ColumnName="STATUS_HISTORY_DATE" />
+          <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
+          <ScalarProperty Name="StatusTypeId" ColumnName="STATUS_TYPE_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="SystemStatusTypeId" ColumnName="SYSTEM_STATUS_TYPE_ID" />
+          <ScalarProperty Name="ArticleVersionId" ColumnName="content_item_version_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ArticleVersionSet">
+      <EntityTypeMapping TypeName="QP8Model.ArticleVersionDAL">
+        <MappingFragment StoreEntitySet="CONTENT_ITEM_VERSION">
+          <ScalarProperty Name="ModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Id" ColumnName="CONTENT_ITEM_VERSION_ID" />
+          <ScalarProperty Name="Version" ColumnName="VERSION" />
+          <ScalarProperty Name="VersionLabel" ColumnName="VERSION_LABEL" />
+          <ScalarProperty Name="ContentVersionId" ColumnName="CONTENT_VERSION_ID" />
+          <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CREATED_BY" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentToContentSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentToContentDAL">
+        <MappingFragment StoreEntitySet="content_to_content">
+          <ScalarProperty Name="Symmetric" ColumnName="SYMMETRIC" />
+          <ScalarProperty Name="LinkId" ColumnName="link_id" />
+          <ScalarProperty Name="LContentId" ColumnName="l_content_id" />
+          <ScalarProperty Name="RContentId" ColumnName="r_content_id" />
+          <ScalarProperty Name="MapAsClass" ColumnName="MAP_AS_CLASS" />
+          <ScalarProperty Name="NetLinkName" ColumnName="NET_LINK_NAME" />
+          <ScalarProperty Name="NetPluralLinkName" ColumnName="NET_PLURAL_LINK_NAME" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentWorkflowBindSet">
+      <EntityTypeMapping TypeName="QP8Model.ContentWorkflowBindDAL">
+        <MappingFragment StoreEntitySet="content_workflow_bind">
+          <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
+          <ScalarProperty Name="WorkflowId" ColumnName="WORKFLOW_ID" />
+          <ScalarProperty Name="IsAsync" ColumnName="is_async" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DangerousActionsSet">
+      <EntityTypeMapping TypeName="QP8Model.DangerousActionsDAL">
+        <MappingFragment StoreEntitySet="DANGEROUS_ACTIONS">
+          <ScalarProperty Name="ActionName" ColumnName="ACTION_NAME" />
+          <ScalarProperty Name="EntityName" ColumnName="ENTITY_NAME" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="Performed" ColumnName="PERFORMED" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DeveloperSet">
+      <EntityTypeMapping TypeName="QP8Model.DeveloperDAL">
+        <MappingFragment StoreEntitySet="DEVELOPER">
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Order" ColumnName="ORDER" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DynamicImageFieldSet">
+      <EntityTypeMapping TypeName="QP8Model.DynamicImageFieldDAL">
+        <MappingFragment StoreEntitySet="DYNAMIC_IMAGE_ATTRIBUTE">
+          <ScalarProperty Name="Id" ColumnName="ATTRIBUTE_ID" />
+          <ScalarProperty Name="Width" ColumnName="WIDTH" />
+          <ScalarProperty Name="Height" ColumnName="HEIGHT" />
+          <ScalarProperty Name="Type" ColumnName="TYPE" />
+          <ScalarProperty Name="Quality" ColumnName="QUALITY" />
+          <ScalarProperty Name="MaxSize" ColumnName="MAX_SIZE" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="EntityTypeSet">
+      <EntityTypeMapping TypeName="QP8Model.EntityTypeDAL">
+        <MappingFragment StoreEntitySet="ENTITY_TYPE">
+          <ScalarProperty Name="GROUP_PARENT_ID_FIELD" ColumnName="GROUP_PARENT_ID_FIELD" />
+          <ScalarProperty Name="GROUP_PARENT_ID" ColumnName="GROUP_PARENT_ID" />
+          <ScalarProperty Name="ACTION_PERMISSION_ENABLE" ColumnName="ACTION_PERMISSION_ENABLE" />
+          <ScalarProperty Name="ContextName" ColumnName="CONTEXT_NAME" />
+          <ScalarProperty Name="CancelActionId" ColumnName="CANCEL_ACTION_ID" />
+          <ScalarProperty Name="Disabled" ColumnName="DISABLED" />
+          <ScalarProperty Name="TabId" ColumnName="TAB_ID" />
+          <ScalarProperty Name="FolderContextMenuId" ColumnName="FOLDER_CONTEXT_MENU_ID" />
+          <ScalarProperty Name="ContextMenuId" ColumnName="CONTEXT_MENU_ID" />
+          <ScalarProperty Name="FolderDefaultActionId" ColumnName="FOLDER_DEFAULT_ACTION_ID" />
+          <ScalarProperty Name="DefaultActionId" ColumnName="DEFAULT_ACTION_ID" />
+          <ScalarProperty Name="RecurringIdField" ColumnName="RECURRING_ID_FIELD" />
+          <ScalarProperty Name="HasItemNodes" ColumnName="HAS_ITEM_NODES" />
+          <ScalarProperty Name="IconField" ColumnName="ICON_FIELD" />
+          <ScalarProperty Name="IconModifierField" ColumnName="ICON_MODIFIER_FIELD" />
+          <ScalarProperty Name="FolderIcon" ColumnName="FOLDER_ICON" />
+          <ScalarProperty Name="ParentIdField" ColumnName="PARENT_ID_FIELD" />
+          <ScalarProperty Name="OrderField" ColumnName="ORDER_FIELD" />
+          <ScalarProperty Name="TitleField" ColumnName="TITLE_FIELD" />
+          <ScalarProperty Name="IdField" ColumnName="ID_FIELD" />
+          <ScalarProperty Name="SourceSP" ColumnName="SOURCE_SP" />
+          <ScalarProperty Name="Source" ColumnName="SOURCE" />
+          <ScalarProperty Name="Order" ColumnName="ORDER" />
+          <ScalarProperty Name="ParentId" ColumnName="PARENT_ID" />
+          <ScalarProperty Name="Code" ColumnName="CODE" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SiteFolderSet">
+      <EntityTypeMapping TypeName="QP8Model.SiteFolderDAL">
+        <MappingFragment StoreEntitySet="FOLDER">
+          <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+          <ScalarProperty Name="Id" ColumnName="FOLDER_ID" />
+          <ScalarProperty Name="ParentId" ColumnName="PARENT_FOLDER_ID" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Filter" ColumnName="FILTER" />
+          <ScalarProperty Name="Path" ColumnName="PATH" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SiteFolderPermissionSet">
+      <EntityTypeMapping TypeName="QP8Model.SiteFolderPermissionDAL">
+        <MappingFragment StoreEntitySet="FOLDER_ACCESS">
+          <ScalarProperty Name="FolderId" ColumnName="FOLDER_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="PermissionLevelId" ColumnName="PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Id" ColumnName="FOLDER_ACCESS_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ItemToItemSet">
+      <EntityTypeMapping TypeName="QP8Model.ItemToItemDAL">
+        <MappingFragment StoreEntitySet="item_to_item">
+          <ScalarProperty Name="IS_SELF" ColumnName="IS_SELF" />
+          <ScalarProperty Name="IS_REV" ColumnName="IS_REV" />
+          <ScalarProperty Name="LinkId" ColumnName="link_id" />
+          <ScalarProperty Name="LItemId" ColumnName="l_item_id" />
+          <ScalarProperty Name="RItemId" ColumnName="r_item_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ItemToItemVersionSet">
+      <EntityTypeMapping TypeName="QP8Model.ItemToItemVersionDAL">
+        <MappingFragment StoreEntitySet="item_to_item_version">
+          <ScalarProperty Name="ArticleVersionId" ColumnName="content_item_version_id" />
+          <ScalarProperty Name="FieldId" ColumnName="attribute_id" />
+          <ScalarProperty Name="LinkedItemId" ColumnName="linked_item_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="LanguagesSet">
+      <EntityTypeMapping TypeName="QP8Model.LanguagesDAL">
+        <MappingFragment StoreEntitySet="LANGUAGES">
+          <ScalarProperty Name="LanguageId" ColumnName="LANGUAGE_ID" />
+          <ScalarProperty Name="LanguageName" ColumnName="LANGUAGE_NAME" />
+          <ScalarProperty Name="LanguagePt" ColumnName="LANGUAGE_PT" />
+          <ScalarProperty Name="Locale" ColumnName="LOCALE" />
+          <ScalarProperty Name="Codepage" ColumnName="CODEPAGE" />
+          <ScalarProperty Name="Charset" ColumnName="CHARSET" />
+          <ScalarProperty Name="GeneralDateFormat" ColumnName="general_date_format" />
+          <ScalarProperty Name="LongDateFormat" ColumnName="long_date_format" />
+          <ScalarProperty Name="ShortDateFormat" ColumnName="short_date_format" />
+          <ScalarProperty Name="LongTimeFormat" ColumnName="long_time_format" />
+          <ScalarProperty Name="ShortTimeFormat" ColumnName="short_time_format" />
+          <ScalarProperty Name="Direction" ColumnName="direction" />
+          <ScalarProperty Name="IsoCode" ColumnName="iso_code" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="LocaleSet">
+      <EntityTypeMapping TypeName="QP8Model.LocaleDAL">
+        <MappingFragment StoreEntitySet="LOCALE">
+          <ScalarProperty Name="Id" ColumnName="LCID" />
+          <ScalarProperty Name="Name" ColumnName="LOCALE_NAME" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MaskTemplateSet">
+      <EntityTypeMapping TypeName="QP8Model.MaskTemplateDAL">
+        <MappingFragment StoreEntitySet="MASK_TEMPLATE">
+          <ScalarProperty Name="Id" ColumnName="ID" />
+          <ScalarProperty Name="Mask" ColumnName="MASK" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NetLanguagesSet">
+      <EntityTypeMapping TypeName="QP8Model.NetLanguagesDAL">
+        <MappingFragment StoreEntitySet="NET_LANGUAGES">
+          <ScalarProperty Name="Id" ColumnName="NET_LANGUAGE_ID" />
+          <ScalarProperty Name="Name" ColumnName="NET_LANGUAGE_NAME" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NotificationsSet">
+      <EntityTypeMapping TypeName="QP8Model.NotificationsDAL">
+        <MappingFragment StoreEntitySet="NOTIFICATIONS">
+          <ScalarProperty Name="UseService" ColumnName="USE_SERVICE" />
+          <ScalarProperty Name="ForDelayedPublication" ColumnName="FOR_DELAYED_PUBLICATION" />
+          <ScalarProperty Name="ExternalUrl" ColumnName="EXTERNAL_URL" />
+          <ScalarProperty Name="IsExternal" ColumnName="IS_EXTERNAL" />
+          <ScalarProperty Name="Id" ColumnName="NOTIFICATION_ID" />
+          <ScalarProperty Name="Name" ColumnName="NOTIFICATION_NAME" />
+          <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
+          <ScalarProperty Name="FormatId" ColumnName="FORMAT_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="ForCreate" ColumnName="FOR_CREATE" />
+          <ScalarProperty Name="ForModify" ColumnName="FOR_MODIFY" />
+          <ScalarProperty Name="ForRemove" ColumnName="FOR_REMOVE" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="ForStatusChanged" ColumnName="for_status_changed" />
+          <ScalarProperty Name="ForFrontend" ColumnName="for_frontend" />
+          <ScalarProperty Name="NotifyOnStatusTypeId" ColumnName="notify_on_status_type_id" />
+          <ScalarProperty Name="EmailFieldId" ColumnName="email_attribute_id" />
+          <ScalarProperty Name="NoEmail" ColumnName="no_email" />
+          <ScalarProperty Name="SendFiles" ColumnName="send_files" />
+          <ScalarProperty Name="WorkflowId" ColumnName="workflow_id" />
+          <ScalarProperty Name="FromBackenduserId" ColumnName="from_backenduser_id" />
+          <ScalarProperty Name="FromBackenduser" ColumnName="from_backenduser" />
+          <ScalarProperty Name="FromDefaultName" ColumnName="from_default_name" />
+          <ScalarProperty Name="FromUserEmail" ColumnName="from_user_email" />
+          <ScalarProperty Name="FromUserName" ColumnName="from_user_name" />
+          <ScalarProperty Name="ForStatusPartiallyChanged" ColumnName="for_status_partially_changed" />
+          <ScalarProperty Name="UseQaMail" ColumnName="USE_QA_MAIL" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NotificationsSentSet">
+      <EntityTypeMapping TypeName="QP8Model.NotificationsSentDAL">
+        <MappingFragment StoreEntitySet="notifications_sent">
+          <ScalarProperty Name="UserId" ColumnName="user_id" />
+          <ScalarProperty Name="NotificationId" ColumnName="notification_id" />
+          <ScalarProperty Name="ArticleId" ColumnName="content_item_id" />
+          <ScalarProperty Name="Sent" ColumnName="sent" />
+          <ScalarProperty Name="EventTxt" ColumnName="event_txt" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ObjectSet">
+      <EntityTypeMapping TypeName="QP8Model.ObjectDAL">
+        <MappingFragment StoreEntitySet="OBJECT">
+          <ScalarProperty Name="PermanentLock" ColumnName="PERMANENT_LOCK" />
+          <ScalarProperty Name="Id" ColumnName="OBJECT_ID" />
+          <ScalarProperty Name="ParentObjectId" ColumnName="PARENT_OBJECT_ID" />
+          <ScalarProperty Name="PageTemplateId" ColumnName="PAGE_TEMPLATE_ID" />
+          <ScalarProperty Name="PageId" ColumnName="PAGE_ID" />
+          <ScalarProperty Name="Name" ColumnName="OBJECT_NAME" />
+          <ScalarProperty Name="DefaultFormatId" ColumnName="OBJECT_FORMAT_ID" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="TypeId" ColumnName="OBJECT_TYPE_ID" />
+          <ScalarProperty Name="UseDefaultValues" ColumnName="USE_DEFAULT_VALUES" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="AllowStageEdit" ColumnName="allow_stage_edit" />
+          <ScalarProperty Name="Global" ColumnName="GLOBAL" />
+          <ScalarProperty Name="NetName" ColumnName="NET_OBJECT_NAME" />
+          <ScalarProperty Name="Locked" ColumnName="LOCKED" />
+          <ScalarProperty Name="LockedBy" ColumnName="LOCKED_BY" />
+          <ScalarProperty Name="EnableViewstate" ColumnName="ENABLE_VIEWSTATE" />
+          <ScalarProperty Name="ControlCustomClass" ColumnName="control_custom_class" />
+          <ScalarProperty Name="DisableDatabind" ColumnName="DISABLE_DATABIND" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ObjectFormatSet">
+      <EntityTypeMapping TypeName="QP8Model.ObjectFormatDAL">
+        <MappingFragment StoreEntitySet="OBJECT_FORMAT">
+          <ScalarProperty Name="PermanentLock" ColumnName="PERMANENT_LOCK" />
+          <ScalarProperty Name="Id" ColumnName="OBJECT_FORMAT_ID" />
+          <ScalarProperty Name="ObjectId" ColumnName="OBJECT_ID" />
+          <ScalarProperty Name="Name" ColumnName="FORMAT_NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="FormatBody" ColumnName="FORMAT_BODY" />
+          <ScalarProperty Name="NetLanguageId" ColumnName="NET_LANGUAGE_ID" />
+          <ScalarProperty Name="NetFormatName" ColumnName="NET_FORMAT_NAME" />
+          <ScalarProperty Name="CodeBehind" ColumnName="CODE_BEHIND" />
+          <ScalarProperty Name="Locked" ColumnName="LOCKED" />
+          <ScalarProperty Name="LockedBy" ColumnName="LOCKED_BY" />
+          <ScalarProperty Name="Assembled" ColumnName="ASSEMBLED" />
+          <ScalarProperty Name="AssembleInLive" ColumnName="ASSEMBLE_IN_LIVE" />
+          <ScalarProperty Name="AssembleInStage" ColumnName="ASSEMBLE_IN_STAGE" />
+          <ScalarProperty Name="AssembleNotificationInLive" ColumnName="ASSEMBLE_NOTIFICATION_IN_LIVE" />
+          <ScalarProperty Name="AssembleNotificationInStage" ColumnName="ASSEMBLE_NOTIFICATION_IN_STAGE" />
+          <ScalarProperty Name="AssemblePreviewInLive" ColumnName="ASSEMBLE_PREVIEW_IN_LIVE" />
+          <ScalarProperty Name="AssemblePreviewInStage" ColumnName="ASSEMBLE_PREVIEW_IN_STAGE" />
+          <ScalarProperty Name="TagName" ColumnName="TAG_NAME" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ObjectFormatVersionSet">
+      <EntityTypeMapping TypeName="QP8Model.ObjectFormatVersionDAL">
+        <MappingFragment StoreEntitySet="OBJECT_FORMAT_VERSION">
+          <ScalarProperty Name="Id" ColumnName="OBJECT_FORMAT_VERSION_ID" />
+          <ScalarProperty Name="ObjectFormatId" ColumnName="OBJECT_FORMAT_ID" />
+          <ScalarProperty Name="ObjectId" ColumnName="OBJECT_ID" />
+          <ScalarProperty Name="Name" ColumnName="FORMAT_NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="FormatBody" ColumnName="FORMAT_BODY" />
+          <ScalarProperty Name="NetLanguageId" ColumnName="NET_LANGUAGE_ID" />
+          <ScalarProperty Name="NetFormatName" ColumnName="NET_FORMAT_NAME" />
+          <ScalarProperty Name="CodeBehind" ColumnName="CODE_BEHIND" />
+          <ScalarProperty Name="Locked" ColumnName="LOCKED" />
+          <ScalarProperty Name="LockedBy" ColumnName="LOCKED_BY" />
+          <ScalarProperty Name="Assembled" ColumnName="ASSEMBLED" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ObjectTypeSet">
+      <EntityTypeMapping TypeName="QP8Model.ObjectTypeDAL">
+        <MappingFragment StoreEntitySet="OBJECT_TYPE">
+          <ScalarProperty Name="Id" ColumnName="OBJECT_TYPE_ID" />
+          <ScalarProperty Name="Name" ColumnName="TYPE_NAME" />
+          <ScalarProperty Name="RelatedTable" ColumnName="RELATED_TABLE" />
+          <ScalarProperty Name="ImageName" ColumnName="image_name" />
+          <ScalarProperty Name="Icon" ColumnName="ICON" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ObjectValuesSet">
+      <EntityTypeMapping TypeName="QP8Model.ObjectValuesDAL">
+        <MappingFragment StoreEntitySet="OBJECT_VALUES">
+          <ScalarProperty Name="ObjectId" ColumnName="OBJECT_ID" />
+          <ScalarProperty Name="VariableName" ColumnName="VARIABLE_NAME" />
+          <ScalarProperty Name="VariableValue" ColumnName="VARIABLE_VALUE" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PageSet">
+      <EntityTypeMapping TypeName="QP8Model.PageDAL">
+        <MappingFragment StoreEntitySet="PAGE">
+          <ScalarProperty Name="PermanentLock" ColumnName="PERMANENT_LOCK" />
+          <ScalarProperty Name="SendNocacheHeaders" ColumnName="SEND_NOCACHE_HEADERS" />
+          <ScalarProperty Name="Id" ColumnName="PAGE_ID" />
+          <ScalarProperty Name="TemplateId" ColumnName="PAGE_TEMPLATE_ID" />
+          <ScalarProperty Name="Name" ColumnName="PAGE_NAME" />
+          <ScalarProperty Name="Filename" ColumnName="PAGE_FILENAME" />
+          <ScalarProperty Name="ProxyCache" ColumnName="PROXY_CACHE" />
+          <ScalarProperty Name="CacheHours" ColumnName="CACHE_HOURS" />
+          <ScalarProperty Name="Charset" ColumnName="CHARSET" />
+          <ScalarProperty Name="Codepage" ColumnName="CODEPAGE" />
+          <ScalarProperty Name="Locale" ColumnName="LOCALE" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Reassemble" ColumnName="REASSEMBLE" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Assembled" ColumnName="ASSEMBLED" />
+          <ScalarProperty Name="LastAssembledBy" ColumnName="LAST_ASSEMBLED_BY" />
+          <ScalarProperty Name="GenerateTrace" ColumnName="GENERATE_TRACE" />
+          <ScalarProperty Name="Folder" ColumnName="page_folder" />
+          <ScalarProperty Name="Locked" ColumnName="LOCKED" />
+          <ScalarProperty Name="LockedBy" ColumnName="LOCKED_BY" />
+          <ScalarProperty Name="EnableViewstate" ColumnName="ENABLE_VIEWSTATE" />
+          <ScalarProperty Name="DisableBrowseServer" ColumnName="DISABLE_BROWSE_SERVER" />
+          <ScalarProperty Name="SendLastModifiedHeader" ColumnName="SET_LAST_MODIFIED_HEADER" />
+          <ScalarProperty Name="CustomClass" ColumnName="page_custom_class" />
+          <ScalarProperty Name="AssembleInLive" ColumnName="ASSEMBLE_IN_LIVE" />
+          <ScalarProperty Name="AssembleInStage" ColumnName="ASSEMBLE_IN_STAGE" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PageTemplateSet">
+      <EntityTypeMapping TypeName="QP8Model.PageTemplateDAL">
+        <MappingFragment StoreEntitySet="PAGE_TEMPLATE">
+          <ScalarProperty Name="PermanentLock" ColumnName="PERMANENT_LOCK" />
+          <ScalarProperty Name="SendNocacheHeaders" ColumnName="SEND_NOCACHE_HEADERS" />
+          <ScalarProperty Name="Id" ColumnName="PAGE_TEMPLATE_ID" />
+          <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+          <ScalarProperty Name="Name" ColumnName="TEMPLATE_NAME" />
+          <ScalarProperty Name="TemplatePicture" ColumnName="TEMPLATE_PICTURE" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Charset" ColumnName="charset" />
+          <ScalarProperty Name="Codepage" ColumnName="codepage" />
+          <ScalarProperty Name="Locale" ColumnName="locale" />
+          <ScalarProperty Name="TemplateBody" ColumnName="TEMPLATE_BODY" />
+          <ScalarProperty Name="TemplateFolder" ColumnName="TEMPLATE_FOLDER" />
+          <ScalarProperty Name="IsSystem" ColumnName="is_system" />
+          <ScalarProperty Name="NetTemplateName" ColumnName="NET_TEMPLATE_NAME" />
+          <ScalarProperty Name="CodeBehind" ColumnName="CODE_BEHIND" />
+          <ScalarProperty Name="NetLanguageId" ColumnName="NET_LANGUAGE_ID" />
+          <ScalarProperty Name="Locked" ColumnName="LOCKED" />
+          <ScalarProperty Name="LockedBy" ColumnName="LOCKED_BY" />
+          <ScalarProperty Name="ShowFilenames" ColumnName="show_filenames" />
+          <ScalarProperty Name="EnableViewstate" ColumnName="ENABLE_VIEWSTATE" />
+          <ScalarProperty Name="ForMobileDevices" ColumnName="FOR_MOBILE_DEVICES" />
+          <ScalarProperty Name="PreviewTemplateBody" ColumnName="PREVIEW_TEMPLATE_BODY" />
+          <ScalarProperty Name="PreviewCodeBehind" ColumnName="PREVIEW_CODE_BEHIND" />
+          <ScalarProperty Name="MaxNumOfFormatStoredVersions" ColumnName="max_num_of_format_stored_versions" />
+          <ScalarProperty Name="CustomClassForPages" ColumnName="custom_class_for_pages" />
+          <ScalarProperty Name="TemplateCustomClass" ColumnName="template_custom_class" />
+          <ScalarProperty Name="CustomClassForGenerics" ColumnName="custom_class_for_generics" />
+          <ScalarProperty Name="CustomClassForContainers" ColumnName="custom_class_for_containers" />
+          <ScalarProperty Name="CustomClassForForms" ColumnName="custom_class_for_forms" />
+          <ScalarProperty Name="AssembleInLive" ColumnName="ASSEMBLE_IN_LIVE" />
+          <ScalarProperty Name="AssembleInStage" ColumnName="ASSEMBLE_IN_STAGE" />
+          <ScalarProperty Name="DisableDatabind" ColumnName="DISABLE_DATABIND" />
+          <ScalarProperty Name="Using" ColumnName="using" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PageTraceSet">
+      <EntityTypeMapping TypeName="QP8Model.PageTraceDAL">
+        <MappingFragment StoreEntitySet="PAGE_TRACE">
+          <ScalarProperty Name="TraceId" ColumnName="TRACE_ID" />
+          <ScalarProperty Name="PageId" ColumnName="PAGE_ID" />
+          <ScalarProperty Name="QueryString" ColumnName="QUERY_STRING" />
+          <ScalarProperty Name="Values" ColumnName="VALUES" />
+          <ScalarProperty Name="Session" ColumnName="SESSION" />
+          <ScalarProperty Name="Cookies" ColumnName="COOKIES" />
+          <ScalarProperty Name="Traced" ColumnName="TRACED" />
+          <ScalarProperty Name="Duration" ColumnName="DURATION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PageTraceFormatSet">
+      <EntityTypeMapping TypeName="QP8Model.PageTraceFormatDAL">
+        <MappingFragment StoreEntitySet="PAGE_TRACE_FORMAT">
+          <ScalarProperty Name="TraceFormatId" ColumnName="TRACE_FORMAT_ID" />
+          <ScalarProperty Name="FormatId" ColumnName="FORMAT_ID" />
+          <ScalarProperty Name="ParentTraceFormatId" ColumnName="PARENT_TRACE_FORMAT_ID" />
+          <ScalarProperty Name="TraceId" ColumnName="TRACE_ID" />
+          <ScalarProperty Name="Number" ColumnName="NUMBER" />
+          <ScalarProperty Name="Duration" ColumnName="DURATION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PageTraceFormatValuesSet">
+      <EntityTypeMapping TypeName="QP8Model.PageTraceFormatValuesDAL">
+        <MappingFragment StoreEntitySet="PAGE_TRACE_FORMAT_VALUES">
+          <ScalarProperty Name="TraceFormatId" ColumnName="TRACE_FORMAT_ID" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Value" ColumnName="VALUE" />
+          <ScalarProperty Name="Defined" ColumnName="DEFINED" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PermissionLevelSet">
+      <EntityTypeMapping TypeName="QP8Model.PermissionLevelDAL">
+        <MappingFragment StoreEntitySet="PERMISSION_LEVEL">
+          <ScalarProperty Name="Level" ColumnName="PERMISSION_LEVEL" />
+          <ScalarProperty Name="Id" ColumnName="PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="Name" ColumnName="PERMISSION_LEVEL_NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RemovedEntitiesSet">
+      <EntityTypeMapping TypeName="QP8Model.RemovedEntitiesDAL">
+        <MappingFragment StoreEntitySet="REMOVED_ENTITIES">
+          <ScalarProperty Name="EntityName" ColumnName="ENTITY_NAME" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="Deleted" ColumnName="DELETED" />
+          <ScalarProperty Name="ParentId" ColumnName="PARENT_ID" />
+          <ScalarProperty Name="Title" ColumnName="TITLE" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RemovedFilesSet">
+      <EntityTypeMapping TypeName="QP8Model.RemovedFilesDAL">
+        <MappingFragment StoreEntitySet="REMOVED_FILES">
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Path" ColumnName="PATH" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="Deleted" ColumnName="DELETED" />
+          <ScalarProperty Name="IsFolder" ColumnName="IS_FOLDER" />
+          <ScalarProperty Name="IsRenamed" ColumnName="IS_RENAMED" />
+          <ScalarProperty Name="IsMoved" ColumnName="IS_MOVED" />
+          <ScalarProperty Name="Destination" ColumnName="DESTINATION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SessionsLogSet">
+      <EntityTypeMapping TypeName="QP8Model.SessionsLogDAL">
+        <MappingFragment StoreEntitySet="SESSIONS_LOG">
+          <ScalarProperty Name="IsQP7" ColumnName="IS_QP7" />
+          <ScalarProperty Name="SessionId" ColumnName="SESSION_ID" />
+          <ScalarProperty Name="Login" ColumnName="LOGIN" />
+          <ScalarProperty Name="Password" ColumnName="PASSWORD" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="StartTime" ColumnName="START_TIME" />
+          <ScalarProperty Name="EndTime" ColumnName="END_TIME" />
+          <ScalarProperty Name="IP" ColumnName="IP" />
+          <ScalarProperty Name="Browser" ColumnName="BROWSER" />
+          <ScalarProperty Name="ServerName" ColumnName="SERVER_NAME" />
+          <ScalarProperty Name="AutoLogged" ColumnName="AUTO_LOGGED" />
+          <ScalarProperty Name="Sid" ColumnName="sid" />
+          <ScalarProperty Name="VisualEditorUrl" ColumnName="VISUAL_EDITOR_URL" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SiteSet">
+      <EntityTypeMapping TypeName="QP8Model.SiteDAL">
+        <MappingFragment StoreEntitySet="SITE">
+          <ScalarProperty Name="DisableListAutoWrap" ColumnName="DISABLE_LIST_AUTO_WRAP" />
+          <ScalarProperty Name="DownloadEfSource" ColumnName="DOWNLOAD_EF_SOURCE" />
+          <ScalarProperty Name="ExternalDevelopment" ColumnName="EXTERNAL_DEVELOPMENT" />
+          <ScalarProperty Name="ContentFormScript" ColumnName="CONTENT_FORM_SCRIPT" />
+          <ScalarProperty Name="XamlDictionaries" ColumnName="XAML_DICTIONARIES" />
+          <ScalarProperty Name="RootElementClass" ColumnName="ROOT_ELEMENT_CLASS" />
+          <ScalarProperty Name="ExternalCss" ColumnName="EXTERNAL_CSS" />
+          <ScalarProperty Name="SendNotifications" ColumnName="SEND_NOTIFICATIONS" />
+          <ScalarProperty Name="ExternalUrl" ColumnName="EXTERNAL_URL" />
+          <ScalarProperty Name="Id" ColumnName="SITE_ID" />
+          <ScalarProperty Name="Name" ColumnName="SITE_NAME" />
+          <ScalarProperty Name="Dns" ColumnName="DNS" />
+          <ScalarProperty Name="LiveDirectory" ColumnName="LIVE_DIRECTORY" />
+          <ScalarProperty Name="LiveVirtualRoot" ColumnName="LIVE_VIRTUAL_ROOT" />
+          <ScalarProperty Name="StageDirectory" ColumnName="STAGE_DIRECTORY" />
+          <ScalarProperty Name="StageVirtualRoot" ColumnName="STAGE_VIRTUAL_ROOT" />
+          <ScalarProperty Name="IsLive" ColumnName="IS_LIVE" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="UploadDir" ColumnName="UPLOAD_DIR" />
+          <ScalarProperty Name="UploadUrl" ColumnName="UPLOAD_URL" />
+          <ScalarProperty Name="AllowUserSessions" ColumnName="ALLOW_USER_SESSIONS" />
+          <ScalarProperty Name="UseAbsoluteUploadUrl" ColumnName="use_absolute_upload_url" />
+          <ScalarProperty Name="UploadUrlPrefix" ColumnName="upload_url_prefix" />
+          <ScalarProperty Name="ScriptLanguage" ColumnName="script_language" />
+          <ScalarProperty Name="OnScreenFieldBorder" ColumnName="stage_edit_field_border" />
+          <ScalarProperty Name="OnScreenObjectBorder" ColumnName="stage_edit_object_border" />
+          <ScalarProperty Name="OnScreenObjectTypeMask" ColumnName="stage_edit_object_type_mask" />
+          <ScalarProperty Name="Locked" ColumnName="LOCKED" />
+          <ScalarProperty Name="LockedBy" ColumnName="LOCKED_BY" />
+          <ScalarProperty Name="ForceAssemble" ColumnName="FORCE_ASSEMBLE" />
+          <ScalarProperty Name="AssemblyPath" ColumnName="ASSEMBLY_PATH" />
+          <ScalarProperty Name="StageDns" ColumnName="STAGE_DNS" />
+          <ScalarProperty Name="StageAssemblyPath" ColumnName="STAGE_ASSEMBLY_PATH" />
+          <ScalarProperty Name="AssembleFormatsInLive" ColumnName="ASSEMBLE_FORMATS_IN_LIVE" />
+          <ScalarProperty Name="TestDirectory" ColumnName="TEST_DIRECTORY" />
+          <ScalarProperty Name="ForceTestDirectory" ColumnName="FORCE_TEST_DIRECTORY" />
+          <ScalarProperty Name="ImportMappingToDb" ColumnName="IMPORT_MAPPING_TO_DB" />
+          <ScalarProperty Name="ProceedMappingWithDb" ColumnName="PROCEED_MAPPING_WITH_DB" />
+          <ScalarProperty Name="ReplaceUrls" ColumnName="REPLACE_URLS" />
+          <ScalarProperty Name="UseLongUrls" ColumnName="USE_LONG_URLS" />
+          <ScalarProperty Name="Namespace" ColumnName="NAMESPACE" />
+          <ScalarProperty Name="ConnectionStringName" ColumnName="CONNECTION_STRING_NAME" />
+          <ScalarProperty Name="ContextClassName" ColumnName="CONTEXT_CLASS_NAME" />
+          <ScalarProperty Name="PermanentLock" ColumnName="PERMANENT_LOCK" />
+          <ScalarProperty Name="PEnterMode" ColumnName="P_ENTER_MODE" />
+          <ScalarProperty Name="ProceedDbIndependentGeneration" ColumnName="PROCEED_DB_INDEPENDENT_GENERATION" />
+          <ScalarProperty Name="GenerateMapFileOnly" ColumnName="GENERATE_MAP_FILE_ONLY" />
+          <ScalarProperty Name="EnableOnScreen" ColumnName="ENABLE_ONSCREEN" />
+          <ScalarProperty Name="UseEnglishQuotes" ColumnName="USE_ENGLISH_QUOTES" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SitePermissionSet">
+      <EntityTypeMapping TypeName="QP8Model.SitePermissionDAL">
+        <MappingFragment StoreEntitySet="SITE_ACCESS">
+          <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="PermissionLevelId" ColumnName="PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="PropagateToItems" ColumnName="propagate_to_contents" />
+          <ScalarProperty Name="Id" ColumnName="SITE_ACCESS_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="StatusTypeSet">
+      <EntityTypeMapping TypeName="QP8Model.StatusTypeDAL">
+        <MappingFragment StoreEntitySet="STATUS_TYPE">
+          <ScalarProperty Name="AltColor" ColumnName="ALT_COLOR" />
+          <ScalarProperty Name="Color" ColumnName="COLOR" />
+          <ScalarProperty Name="BuiltIn" ColumnName="BUILT_IN" />
+          <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+          <ScalarProperty Name="Id" ColumnName="STATUS_TYPE_ID" />
+          <ScalarProperty Name="Name" ColumnName="STATUS_TYPE_NAME" />
+          <ScalarProperty Name="Weight" ColumnName="WEIGHT" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="StyleSet">
+      <EntityTypeMapping TypeName="QP8Model.StyleDAL">
+        <MappingFragment StoreEntitySet="STYLE">
+          <ScalarProperty Name="Id" ColumnName="STYLE_ID" />
+          <ScalarProperty Name="TagId" ColumnName="STYLE_TAG_ID" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Name" ColumnName="STYLE_NAME" />
+          <ScalarProperty Name="Class" ColumnName="CLASS" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+          <ScalarProperty Name="Direct" ColumnName="DIRECT" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="StyleAttributeSet">
+      <EntityTypeMapping TypeName="QP8Model.StyleAttributeDAL">
+        <MappingFragment StoreEntitySet="STYLE_ATTRIBUTE">
+          <ScalarProperty Name="Id" ColumnName="STYLE_ATTRIBUTE_ID" />
+          <ScalarProperty Name="StyleId" ColumnName="STYLE_ID" />
+          <ScalarProperty Name="Name" ColumnName="ATTRIBUTE_NAME" />
+          <ScalarProperty Name="AttributeValue" ColumnName="ATTRIBUTE_VALUE" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="StyleTagSet">
+      <EntityTypeMapping TypeName="QP8Model.StyleTagDAL">
+        <MappingFragment StoreEntitySet="STYLE_TAG">
+          <ScalarProperty Name="Id" ColumnName="STYLE_TAG_ID" />
+          <ScalarProperty Name="TagName" ColumnName="TAG_NAME" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SystemStatusTypeSet">
+      <EntityTypeMapping TypeName="QP8Model.SystemStatusTypeDAL">
+        <MappingFragment StoreEntitySet="SYSTEM_STATUS_TYPE">
+          <ScalarProperty Name="Id" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="DisableClear" ColumnName="DISABLE_CLEAR" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TodayPanelsSet">
+      <EntityTypeMapping TypeName="QP8Model.TodayPanelsDAL">
+        <MappingFragment StoreEntitySet="today_panels">
+          <ScalarProperty Name="PanelName" ColumnName="panel_name" />
+          <ScalarProperty Name="PanelId" ColumnName="panel_id" />
+          <ScalarProperty Name="PanelFile" ColumnName="panel_file" />
+          <ScalarProperty Name="PanelBlockNo" ColumnName="panel_block_no" />
+          <ScalarProperty Name="PanelOrder" ColumnName="panel_order" />
+          <ScalarProperty Name="PanelHeight" ColumnName="panel_height" />
+          <ScalarProperty Name="IconFileName" ColumnName="icon_file_name" />
+          <ScalarProperty Name="Necessary" ColumnName="necessary" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TranslationsSet">
+      <EntityTypeMapping TypeName="QP8Model.TranslationsDAL">
+        <MappingFragment StoreEntitySet="TRANSLATIONS">
+          <ScalarProperty Name="PhraseId" ColumnName="PHRASE_ID" />
+          <ScalarProperty Name="LanguageId" ColumnName="LANGUAGE_ID" />
+          <ScalarProperty Name="PhraseTranslation" ColumnName="PHRASE_TRANSLATION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UnionContentsSet">
+      <EntityTypeMapping TypeName="QP8Model.UnionContentsDAL">
+        <MappingFragment StoreEntitySet="union_contents">
+          <ScalarProperty Name="VirtualContentId" ColumnName="virtual_content_id" />
+          <ScalarProperty Name="UnionContentId" ColumnName="union_content_id" />
+          <ScalarProperty Name="MasterContentId" ColumnName="master_content_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserGroupSet">
+      <EntityTypeMapping TypeName="QP8Model.UserGroupDAL">
+        <MappingFragment StoreEntitySet="USER_GROUP">
+          <ScalarProperty Name="CanUnlockItems" ColumnName="CAN_UNLOCK_ITEMS" />
+          <ScalarProperty Name="Id" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="Name" ColumnName="GROUP_NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="SharedArticles" ColumnName="shared_content_items" />
+          <ScalarProperty Name="NtGroup" ColumnName="nt_group" />
+          <ScalarProperty Name="AdSid" ColumnName="ad_sid" />
+          <ScalarProperty Name="BuiltIn" ColumnName="BUILT_IN" />
+          <ScalarProperty Name="IsReadOnly" ColumnName="READONLY" />
+          <ScalarProperty Name="UseParallelWorkflow" ColumnName="use_parallel_workflow" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserQueryAttrsSet">
+      <EntityTypeMapping TypeName="QP8Model.UserQueryAttrsDAL">
+        <MappingFragment StoreEntitySet="user_query_attrs">
+          <ScalarProperty Name="VirtualContentId" ColumnName="virtual_content_id" />
+          <ScalarProperty Name="UserQueryAttrId" ColumnName="user_query_attr_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserQueryContentsSet">
+      <EntityTypeMapping TypeName="QP8Model.UserQueryContentsDAL">
+        <MappingFragment StoreEntitySet="user_query_contents">
+          <ScalarProperty Name="VirtualContentId" ColumnName="virtual_content_id" />
+          <ScalarProperty Name="RealContentId" ColumnName="real_content_id" />
+          <ScalarProperty Name="IsIdSource" ColumnName="is_id_source" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserToPanelSet">
+      <EntityTypeMapping TypeName="QP8Model.UserToPanelDAL">
+        <MappingFragment StoreEntitySet="user_to_panel">
+          <ScalarProperty Name="UserId" ColumnName="user_id" />
+          <ScalarProperty Name="PanelId" ColumnName="panel_id" />
+          <ScalarProperty Name="PanelBlockNo" ColumnName="panel_block_no" />
+          <ScalarProperty Name="PanelOrder" ColumnName="panel_order" />
+          <ScalarProperty Name="PanelHeight" ColumnName="panel_height" />
+          <ScalarProperty Name="SaveBlockNo" ColumnName="save_block_no" />
+          <ScalarProperty Name="SaveOrder" ColumnName="save_order" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserSet">
+      <EntityTypeMapping TypeName="QP8Model.UserDAL">
+        <MappingFragment StoreEntitySet="USERS">
+          <ScalarProperty Name="EnableContentGroupingInTree" ColumnName="ENABLE_CONTENT_GROUPING_IN_TREE" />
+          <ScalarProperty Name="MustChangePassword" ColumnName="MUST_CHANGE_PASSWORD" />
+          <ScalarProperty Name="PASSWORD" ColumnName="PASSWORD" />
+          <ScalarProperty Name="Id" ColumnName="USER_ID" />
+          <ScalarProperty Name="Disabled" ColumnName="DISABLED" />
+          <ScalarProperty Name="FirstName" ColumnName="FIRST_NAME" />
+          <ScalarProperty Name="LastName" ColumnName="LAST_NAME" />
+          <ScalarProperty Name="Email" ColumnName="EMAIL" />
+          <ScalarProperty Name="AutoLogOn" ColumnName="AUTO_LOGIN" />
+          <ScalarProperty Name="NTLogOn" ColumnName="NT_LOGIN" />
+          <ScalarProperty Name="LastLogOn" ColumnName="LAST_LOGIN" />
+          <ScalarProperty Name="Subscribed" ColumnName="SUBSCRIBED" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="LanguageId" ColumnName="LANGUAGE_ID" />
+          <ScalarProperty Name="VMode" ColumnName="VMODE" />
+          <ScalarProperty Name="AdSid" ColumnName="ad_sid" />
+          <ScalarProperty Name="AllowStageEditField" ColumnName="allow_stage_edit_field" />
+          <ScalarProperty Name="AllowStageEditObject" ColumnName="allow_stage_edit_object" />
+          <ScalarProperty Name="BuiltIn" ColumnName="BUILT_IN" />
+          <ScalarProperty Name="LogOn" ColumnName="LOGIN" />
+          <ScalarProperty Name="PasswordModified" ColumnName="PASSWORD_MODIFIED" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VersionContentDataSet">
+      <EntityTypeMapping TypeName="QP8Model.VersionContentDataDAL">
+        <MappingFragment StoreEntitySet="VERSION_CONTENT_DATA">
+          <ScalarProperty Name="FieldId" ColumnName="ATTRIBUTE_ID" />
+          <ScalarProperty Name="ArticleVersionId" ColumnName="CONTENT_ITEM_VERSION_ID" />
+          <ScalarProperty Name="Data" ColumnName="DATA" />
+          <ScalarProperty Name="BlobData" ColumnName="BLOB_DATA" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WaitingForApprovalSet">
+      <EntityTypeMapping TypeName="QP8Model.WaitingForApprovalDAL">
+        <MappingFragment StoreEntitySet="WAITING_FOR_APPROVAL">
+          <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="StatusTypeId" ColumnName="STATUS_TYPE_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ToolbarButtonSet">
+      <EntityTypeMapping TypeName="QP8Model.ToolbarButtonDAL">
+        <MappingFragment StoreEntitySet="ACTION_TOOLBAR_BUTTON">
+          <ScalarProperty Name="IsCommand" ColumnName="IS_COMMAND" />
+          <ScalarProperty Name="IconDisabled" ColumnName="ICON_DISABLED" />
+          <ScalarProperty Name="Icon" ColumnName="ICON" />
+          <ScalarProperty Name="Order" ColumnName="ORDER" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="ActionId" ColumnName="ACTION_ID" />
+          <ScalarProperty Name="ParentActionId" ColumnName="PARENT_ACTION_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkflowSet">
+      <EntityTypeMapping TypeName="QP8Model.WorkflowDAL">
+        <MappingFragment StoreEntitySet="workflow">
+          <ScalarProperty Name="Id" ColumnName="WORKFLOW_ID" />
+          <ScalarProperty Name="Name" ColumnName="WORKFLOW_NAME" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+          <ScalarProperty Name="CreateDefaultNotification" ColumnName="create_default_notification" />
+          <ScalarProperty Name="ApplyByDefault" ColumnName="apply_by_default" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkflowPermissionSet">
+      <EntityTypeMapping TypeName="QP8Model.WorkflowPermissionDAL">
+        <MappingFragment StoreEntitySet="WORKFLOW_ACCESS">
+          <ScalarProperty Name="WorkflowId" ColumnName="WORKFLOW_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="PermissionLevelId" ColumnName="PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Id" ColumnName="WORKFLOW_ACCESS_ACCESS_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkflowRulesSet">
+      <EntityTypeMapping TypeName="QP8Model.WorkflowRulesDAL">
+        <MappingFragment StoreEntitySet="workflow_rules">
+          <ScalarProperty Name="Id" ColumnName="WORKFLOW_RULE_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="RuleOrder" ColumnName="RULE_ORDER" />
+          <ScalarProperty Name="PredecessorPermissionId" ColumnName="PREDECESSOR_PERMISSION_ID" />
+          <ScalarProperty Name="SuccessorPermissionId" ColumnName="SUCCESSOR_PERMISSION_ID" />
+          <ScalarProperty Name="SuccessorStatusId" ColumnName="SUCCESSOR_STATUS_ID" />
+          <ScalarProperty Name="Description" ColumnName="COMMENT" />
+          <ScalarProperty Name="WorkflowId" ColumnName="WORKFLOW_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="CONTAINER_STATUSES" TypeName="QP8Model.CONTAINER_STATUSES" StoreEntitySet="CONTAINER_STATUSES">
+      <EndProperty Name="OBJECT">
+        <ScalarProperty Name="Id" ColumnName="OBJECT_ID" />
+      </EndProperty>
+      <EndProperty Name="STATUS_TYPE">
+        <ScalarProperty Name="Id" ColumnName="STATUS_TYPE_ID" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="USER_GROUP_BIND" TypeName="QP8Model.USER_GROUP_BIND" StoreEntitySet="USER_GROUP_BIND">
+      <EndProperty Name="USER_GROUP">
+        <ScalarProperty Name="Id" ColumnName="GROUP_ID" />
+      </EndProperty>
+      <EndProperty Name="USERS">
+        <ScalarProperty Name="Id" ColumnName="USER_ID" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <EntitySetMapping Name="ActionViewSet">
+      <EntityTypeMapping TypeName="QP8Model.ActionViewDAL">
+        <MappingFragment StoreEntitySet="ACTION_VIEW">
+          <ScalarProperty Name="ActionId" ColumnName="ACTION_ID" />
+          <ScalarProperty Name="ViewTypeId" ColumnName="TYPE_ID" />
+          <ScalarProperty Name="PreventDefaultBehavior" ColumnName="PREVENT_DEFAULT_BEHAVIOR" />
+          <ScalarProperty Name="ControllerActionUrl" ColumnName="CONTROLLER_ACTION_URL" />
+          <ScalarProperty Name="Order" ColumnName="ORDER" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ViewTypeSet">
+      <EntityTypeMapping TypeName="QP8Model.ViewTypeDAL">
+        <MappingFragment StoreEntitySet="VIEW_TYPE">
+          <ScalarProperty Name="Id" ColumnName="ID" />
+          <ScalarProperty Name="Code" ColumnName="CODE" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Icon" ColumnName="ICON" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContentConstraintRuleSet">
+      <EntityTypeMapping TypeName="IsTypeOf(QP8Model.ContentConstraintRuleDAL)">
+        <MappingFragment StoreEntitySet="content_constraint_rule">
+          <ScalarProperty Name="FieldId" ColumnName="attribute_id" />
+          <ScalarProperty Name="ConstraintId" ColumnName="constraint_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UnionAttrSet">
+      <EntityTypeMapping TypeName="QP8Model.UnionAttrDAL">
+        <MappingFragment StoreEntitySet="union_attrs">
+          <ScalarProperty Name="EF_FIX" ColumnName="EF_FIX" />
+          <ScalarProperty Name="VirtualFieldId" ColumnName="virtual_attr_id" />
+          <ScalarProperty Name="UnionFieldId" ColumnName="union_attr_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CustomActionSet">
+      <EntityTypeMapping TypeName="QP8Model.CustomActionDAL">
+        <MappingFragment StoreEntitySet="CUSTOM_ACTION">
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Alias" ColumnName="ALIAS" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="ShowInToolbar" ColumnName="SHOW_IN_TOOLBAR" />
+          <ScalarProperty Name="ShowInMenu" ColumnName="SHOW_IN_MENU" />
+          <ScalarProperty Name="ContentExcluded" ColumnName="CONTENT_EXCLUDED" />
+          <ScalarProperty Name="SiteExcluded" ColumnName="SITE_EXCLUDED" />
+          <ScalarProperty Name="Order" ColumnName="ORDER" />
+          <ScalarProperty Name="IconUrl" ColumnName="ICON_URL" />
+          <ScalarProperty Name="Url" ColumnName="URL" />
+          <ScalarProperty Name="ActionId" ColumnName="ACTION_ID" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="ACTION_CONTENT_BIND" TypeName="QP8Model.ACTION_CONTENT_BIND" StoreEntitySet="ACTION_CONTENT_BIND">
+      <EndProperty Name="CUSTOM_ACTION">
+        <ScalarProperty Name="Id" ColumnName="CUSTOM_ACTION_ID" />
+      </EndProperty>
+      <EndProperty Name="ContentDAL">
+        <ScalarProperty Name="Id" ColumnName="CONTENT_ID" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="ACTION_SITE_BIND" TypeName="QP8Model.ACTION_SITE_BIND" StoreEntitySet="ACTION_SITE_BIND">
+      <EndProperty Name="SiteDAL">
+        <ScalarProperty Name="Id" ColumnName="SITE_ID" />
+      </EndProperty>
+      <EndProperty Name="CUSTOM_ACTION">
+        <ScalarProperty Name="Id" ColumnName="CUSTOM_ACTION_ID" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <EntitySetMapping Name="ContextMenuSet">
+      <EntityTypeMapping TypeName="QP8Model.ContextMenuDAL">
+        <MappingFragment StoreEntitySet="CONTEXT_MENU">
+          <ScalarProperty Name="Code" ColumnName="CODE" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContextMenuItemSet">
+      <EntityTypeMapping TypeName="QP8Model.ContextMenuItemDAL">
+        <MappingFragment StoreEntitySet="CONTEXT_MENU_ITEM">
+          <ScalarProperty Name="HasBottomSeparator" ColumnName="BOTTOM_SEPARATOR" />
+          <ScalarProperty Name="IconDisabled" ColumnName="ICON_DISABLED" />
+          <ScalarProperty Name="Icon" ColumnName="ICON" />
+          <ScalarProperty Name="Order" ColumnName="ORDER" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="ActionId" ColumnName="ACTION_ID" />
+          <ScalarProperty Name="ContextMenuId" ColumnName="CONTEXT_MENU_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="Group_To_Group" TypeName="QP8Model.Group_To_Group" StoreEntitySet="Group_To_Group">
+      <EndProperty Name="UserGroupDAL1">
+        <ScalarProperty Name="Id" ColumnName="Parent_Group_Id" />
+      </EndProperty>
+      <EndProperty Name="UserGroupDAL">
+        <ScalarProperty Name="Id" ColumnName="Child_Group_Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <EntitySetMapping Name="BackendActionPermissionSet">
+      <EntityTypeMapping TypeName="QP8Model.BackendActionPermissionDAL">
+        <MappingFragment StoreEntitySet="ACTION_ACCESS">
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="PermissionLevelId" ColumnName="PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="ActionId" ColumnName="ACTION_ID" />
+          <ScalarProperty Name="Id" ColumnName="ACTION_ACCESS_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="EntityTypePermissionSet">
+      <EntityTypeMapping TypeName="QP8Model.EntityTypePermissionDAL">
+        <MappingFragment StoreEntitySet="ENTITY_TYPE_ACCESS">
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="PermissionLevelId" ColumnName="PERMISSION_LEVEL_ID" />
+          <ScalarProperty Name="GroupId" ColumnName="GROUP_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="EntityTypeId" ColumnName="ENTITY_TYPE_ID" />
+          <ScalarProperty Name="Id" ColumnName="ENTITY_TYPE_ACCESS_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VeCommandSet">
+      <EntityTypeMapping TypeName="QP8Model.VeCommandDAL">
+        <MappingFragment StoreEntitySet="VE_COMMAND">
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="PluginId" ColumnName="PLUGIN_ID" />
+          <ScalarProperty Name="On" ColumnName="ON" />
+          <ScalarProperty Name="CommandInGroupOrder" ColumnName="COMMAND_IN_GROUP_ORDER" />
+          <ScalarProperty Name="GroupInToolbarOrder" ColumnName="GROUP_IN_TOOLBAR_ORDER" />
+          <ScalarProperty Name="ToolbarInRowOrder" ColumnName="TOOLBAR_IN_ROW_ORDER" />
+          <ScalarProperty Name="RowOrder" ColumnName="ROW_ORDER" />
+          <ScalarProperty Name="Alias" ColumnName="ALIAS" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VePluginSet">
+      <EntityTypeMapping TypeName="QP8Model.VePluginDAL">
+        <MappingFragment StoreEntitySet="VE_PLUGIN">
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Order" ColumnName="ORDER" />
+          <ScalarProperty Name="Url" ColumnName="URL" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VeStyleSet">
+      <EntityTypeMapping TypeName="QP8Model.VeStyleDAL">
+        <MappingFragment StoreEntitySet="VE_STYLE">
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="Styles" ColumnName="STYLES" />
+          <ScalarProperty Name="Attributes" ColumnName="ATTRIBUTES" />
+          <ScalarProperty Name="IsSystem" ColumnName="IS_SYSTEM" />
+          <ScalarProperty Name="IsFormat" ColumnName="IS_FORMAT" />
+          <ScalarProperty Name="OverridesTag" ColumnName="OVERRIDES_TAG" />
+          <ScalarProperty Name="Order" ColumnName="ORDER" />
+          <ScalarProperty Name="Tag" ColumnName="TAG" />
+          <ScalarProperty Name="Description" ColumnName="DESCRIPTION" />
+          <ScalarProperty Name="Name" ColumnName="NAME" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserDefaultFilterSet">
+      <EntityTypeMapping TypeName="QP8Model.UserDefaultFilterItemDAL">
+        <MappingFragment StoreEntitySet="USER_DEFAULT_FILTER">
+          <ScalarProperty Name="ArticleId" ColumnName="CONTENT_ITEM_ID" />
+          <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DbSet">
+      <EntityTypeMapping TypeName="QP8Model.DbDAL">
+        <MappingFragment StoreEntitySet="DB">
+          <ScalarProperty Name="UseCdc" ColumnName="USE_CDC" />
+          <ScalarProperty Name="UseDpc" ColumnName="USE_DPC" />
+          <ScalarProperty Name="UseTokens" ColumnName="USE_TOKENS" />
+          <ScalarProperty Name="AutoOpenHome" ColumnName="AUTO_OPEN_HOME" />
+          <ScalarProperty Name="UseADSyncService" ColumnName="USE_AD_SYNC_SERVICE" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="SingleUserId" ColumnName="SINGLE_USER_ID" />
+          <ScalarProperty Name="RecordActions" ColumnName="RECORD_ACTIONS" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="ACTION_EXCLUSIONS" TypeName="QP8Model.ACTION_EXCLUSIONS" StoreEntitySet="ACTION_EXCLUSIONS">
+      <EndProperty Name="BackendActionDAL1">
+        <ScalarProperty Name="Id" ColumnName="EXCLUDES_ID" />
+      </EndProperty>
+      <EndProperty Name="BackendActionDAL">
+        <ScalarProperty Name="Id" ColumnName="EXCLUDED_BY_ID" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <EntitySetMapping Name="AppSettingsSet">
+      <EntityTypeMapping TypeName="QP8Model.AppSettingsDAL">
+        <MappingFragment StoreEntitySet="APP_SETTINGS">
+          <ScalarProperty Name="Value" ColumnName="VALUE" />
+          <ScalarProperty Name="Key" ColumnName="KEY" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ExternalNotificationSet">
+      <EntityTypeMapping TypeName="QP8Model.ExternalNotificationDAL">
+        <MappingFragment StoreEntitySet="EXTERNAL_NOTIFICATION_QUEUE">
+          <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+          <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
+          <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+          <ScalarProperty Name="Sent" ColumnName="SENT" />
+          <ScalarProperty Name="OldXml" ColumnName="OLD_XML" />
+          <ScalarProperty Name="NewXml" ColumnName="NEW_XML" />
+          <ScalarProperty Name="Tries" ColumnName="TRIES" />
+          <ScalarProperty Name="Url" ColumnName="URL" />
+          <ScalarProperty Name="Created" ColumnName="CREATED" />
+          <ScalarProperty Name="ArticleId" ColumnName="ARTICLE_ID" />
+          <ScalarProperty Name="EventName" ColumnName="EVENT_NAME" />
+          <ScalarProperty Name="Id" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="XML_DB_UPDATE">
+      <EntityTypeMapping TypeName="QP8Model.XmlDbUpdateLogEntity">
+        <MappingFragment StoreEntitySet="XML_DB_UPDATE">
+          <ScalarProperty Name="Version" ColumnName="Version" />
+          <ScalarProperty Name="Body" ColumnName="Body" />
+          <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="Hash" ColumnName="Hash" />
+          <ScalarProperty Name="Applied" ColumnName="Applied" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="XML_DB_UPDATE_ACTIONS">
+      <EntityTypeMapping TypeName="QP8Model.XmlDbUpdateActionsLogEntity">
+        <MappingFragment StoreEntitySet="XML_DB_UPDATE_ACTIONS">
+          <ScalarProperty Name="ResultXml" ColumnName="ResultXml" />
+          <ScalarProperty Name="SourceXml" ColumnName="SourceXml" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Applied" ColumnName="Applied" />
+          <ScalarProperty Name="Hash" ColumnName="Hash" />
+          <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+          <ScalarProperty Name="Ids" ColumnName="Ids" />
+          <ScalarProperty Name="UpdateId" ColumnName="UpdateId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CdcLastExecutedLsn">
+      <EntityTypeMapping TypeName="QP8Model.CdcLastExecutedLsn">
+        <MappingFragment StoreEntitySet="CdcLastExecutedLsn">
+          <ScalarProperty Name="LastExecutedLsn" ColumnName="LastExecutedLsn" />
+          <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+          <ScalarProperty Name="TransactionLsn" ColumnName="TransactionLsn" />
+          <ScalarProperty Name="ProviderUrl" ColumnName="ProviderUrl" />
+          <ScalarProperty Name="ProviderName" ColumnName="ProviderName" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SystemNotificationSet">
+      <EntityTypeMapping TypeName="QP8Model.SystemNotificationDAL">
+        <MappingFragment StoreEntitySet="SYSTEM_NOTIFICATION_QUEUE">
+          <ScalarProperty Name="MODIFIED" ColumnName="MODIFIED" />
+          <ScalarProperty Name="CREATED" ColumnName="CREATED" />
+          <ScalarProperty Name="Sent" ColumnName="SENT" />
+          <ScalarProperty Name="JSON" ColumnName="JSON" />
+          <ScalarProperty Name="TRIES" ColumnName="TRIES" />
+          <ScalarProperty Name="URL" ColumnName="URL" />
+          <ScalarProperty Name="TRANSACTION_DATE" ColumnName="TRANSACTION_DATE" />
+          <ScalarProperty Name="TRANSACTION_LSN" ColumnName="TRANSACTION_LSN" />
+          <ScalarProperty Name="CdcLastExecutedLsnId" ColumnName="CdcLastExecutedLsnId" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

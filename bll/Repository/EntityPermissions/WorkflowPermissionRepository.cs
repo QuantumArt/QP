@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Data.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
@@ -24,7 +24,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 
         public EntityPermission GetById(int id, bool include = true)
         {
-            ObjectQuery<WorkflowPermissionDAL> set = QPContext.EFContext.WorkflowPermissionSet;
+            DbQuery<WorkflowPermissionDAL> set = QPContext.EFContext.WorkflowPermissionSet;
             if (include)
             {
                 set = set

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Objects;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
@@ -19,7 +20,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
             var query = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
-            return MapperFacade.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(query, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
+            var ctx = (QPContext.EFContext as IObjectContextAdapter).ObjectContext;
+            var result = ctx.CreateQuery<ArticleVersionDAL>(query, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser");
+            return MapperFacade.ArticleVersionMapper.GetBizList(result.ToList());
         }
 
         /// <summary>
@@ -62,7 +65,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     return null;
                 }
 
-                articleVersionDal.LastModifiedByUserReference.Load();
+                QPContext.EFContext.Entry(articleVersionDal).Reference(n => n.LastModifiedByUser).Load();
 
                 articleVersion = MapperFacade.ArticleVersionMapper.GetBizObject(articleVersionDal);
                 if (articleVersion != null)

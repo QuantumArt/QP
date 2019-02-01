@@ -5,6 +5,7 @@ namespace QP8.Infrastructure.Web.AspNet.Helpers
 {
     public class UrlHelpers
     {
+
         public static string ConvertToAbsoluteUrl(string url)
         {
             if (Web.Helpers.UrlHelpers.IsRelativeUrl(url))

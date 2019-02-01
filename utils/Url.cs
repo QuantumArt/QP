@@ -12,6 +12,7 @@ namespace Quantumart.QP8.Utils
             return UrlFormatRegExp.IsMatch(url);
         }
 
+        #if !NET_STANDARD
         // Преобразуется относительный URL в абсолютный (с точки зрения приложения) [без домена]
         public static string ToAbsolute(string url)
         {
@@ -34,6 +35,7 @@ namespace Quantumart.QP8.Utils
 
             return result;
         }
+        #endif
 
         public static bool IsQueryEmpty(string url)
         {

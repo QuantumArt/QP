@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
@@ -66,8 +67,7 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
             }
 
-            entities.UserGroupSet.Attach(dal);
-            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            entities.Entry(dal).State = EntityState.Modified;
 
             var dalDb = entities.UserGroupSet.Include("ParentGroups").Include("Users").Single(g => g.Id == dal.Id);
             foreach (var pg in dalDb.ParentGroups.ToArray())
@@ -123,8 +123,7 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = dal.Created;
             }
 
-            entities.UserGroupSet.AddObject(dal);
-            entities.SaveChanges();
+            entities.Entry(dal).State = EntityState.Added;
 
             if (group.ParentGroup != null)
             {

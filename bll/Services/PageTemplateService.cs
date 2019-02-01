@@ -1,3 +1,5 @@
+#if !NET_STANDARD
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -419,21 +421,6 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        public MessageResult AssemblePageFromPageObject(int pageId) => AssemblePage(pageId);
-
-        public MessageResult AssemblePageFromPageObjectPreAction(int pageId) => AssemblePagePreAction(pageId);
-
-        public MessageResult AssemblePageFromPageObjectFormatPreAction(int objectId)
-        {
-            var props = ReadObjectProperties(objectId, false);
-            if (props.PageId == null)
-            {
-                throw new ArgumentException(@"Wrong argument", nameof(objectId));
-            }
-
-            return AssemblePagePreAction(props.PageId.Value);
-        }
-
         public BllObject ReadObjectProperties(int id, bool withAutoLock = true)
         {
             var obj = ObjectRepository.GetObjectPropertiesById(id);
@@ -449,6 +436,21 @@ namespace Quantumart.QP8.BLL.Services
 
             obj.LoadLockedByUser();
             return obj;
+        }
+
+        public MessageResult AssemblePageFromPageObject(int pageId) => AssemblePage(pageId);
+
+        public MessageResult AssemblePageFromPageObjectPreAction(int pageId) => AssemblePagePreAction(pageId);
+
+        public MessageResult AssemblePageFromPageObjectFormatPreAction(int objectId)
+        {
+            var props = ReadObjectProperties(objectId, false);
+            if (props.PageId == null)
+            {
+                throw new ArgumentException(@"Wrong argument", nameof(objectId));
+            }
+
+            return AssemblePagePreAction(props.PageId.Value);
         }
 
         public MessageResult AssemblePageFromPageObjectList(int parentId) => AssemblePage(parentId);
@@ -703,3 +705,4 @@ namespace Quantumart.QP8.BLL.Services
         }
     }
 }
+#endif

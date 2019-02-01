@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using Quantumart.QP8.Resources;
@@ -164,12 +164,12 @@ namespace Quantumart.QP8.BLL
                     {
                         try
                         {
-                            using (var image = Image.FromFile(FullName))
+                            using (var image = Image.Load(FullName))
                             {
                                 _Dimensions = string.Format("{0}x{1}", image.Width, image.Height);
                             }
                         }
-                        catch (OutOfMemoryException) // sic!!!
+                        catch (NotSupportedException)
                         {
                             _Dimensions = string.Empty;
                         }

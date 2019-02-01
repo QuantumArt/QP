@@ -178,7 +178,13 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>
         /// <returns>результат проверки (true - существует; false - не существует)</returns>
-        internal static bool CheckExistence(string entityTypeCode, int entityId) => QPContext.EFContext.CheckEntityExistence(entityTypeCode, entityId);
+        internal static bool CheckExistence(string entityTypeCode, int entityId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.CheckEntityExistence(scope.DbConnection, entityTypeCode, entityId);
+            }
+        }
 
         /// <summary>
         /// Проверяет сущность на наличие рекурсивных связей
@@ -217,7 +223,14 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="entityId">идентификатор сущности</param>
         /// <param name="parentEntityId"></param>
         /// <returns>название сущности</returns>
-        internal static string GetName(string entityTypeCode, int entityId, int parentEntityId = 0) => QPContext.EFContext.GetEntityName(entityTypeCode, entityId, parentEntityId);
+        internal static string GetName(string entityTypeCode, int entityId, int parentEntityId = 0)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetEntityName(scope.DbConnection, entityTypeCode, entityId, parentEntityId);
+            }
+        }
+
 
         /// <summary>
         /// Возвращает идентификатор родительской сущности
@@ -227,17 +240,17 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>идентификатор родительской сущности</returns>
         internal static int? GetParentId(string entityTypeCode, int entityId)
         {
-            using (new QPConnectionScope())
+            using (var scope =new QPConnectionScope())
             {
-                return Common.GetParentEntityId(QPConnectionScope.Current.DbConnection, entityTypeCode, entityId);
+                return Common.GetParentEntityId(scope.DbConnection, entityTypeCode, entityId);
             }
         }
 
         internal static int[] GetParentIdsForTree(string entityTypeCode, int[] ids)
         {
-            using (new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
-                return Common.GetParentEntityIdsForTree(QPConnectionScope.Current.DbConnection, entityTypeCode, ids);
+                return Common.GetParentEntityIdsForTree(scope.DbConnection, entityTypeCode, ids);
             }
         }
 

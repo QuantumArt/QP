@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Linq;
 using System.Web;
@@ -76,3 +77,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
         public abstract string ActionCode { get; }
     }
 }
+#endif

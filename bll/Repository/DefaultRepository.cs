@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
-using D = System.Data.Objects.DataClasses;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -33,15 +35,15 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static TBiz Save<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQpEntityObject
+            where TDal : class, IQpEntityObject
             where TBiz : EntityObject => SaveAsUser<TBiz, TDal>(item, QPContext.CurrentUserId);
 
         internal static TBiz SaveAsAdmin<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQpEntityObject
+            where TDal : class, IQpEntityObject
             where TBiz : EntityObject => SaveAsUser<TBiz, TDal>(item, SpecialIds.AdminUserId);
 
         internal static TBiz SaveAsUser<TBiz, TDal>(TBiz item, int userId)
-            where TDal : D.EntityObject, IQpEntityObject
+            where TDal : class, IQpEntityObject
             where TBiz : EntityObject
         {
             var entities = QPContext.EFContext;
@@ -61,14 +63,14 @@ namespace Quantumart.QP8.BLL.Repository
             dalItem.Created = current;
             dalItem.Modified = current;
             dalItem.LastModifiedBy = userId;
-            entities.AddObject(GetSetNameByType(typeof(TDal)), dalItem);
+            entities.Entry(dalItem).State = EntityState.Added;
             entities.SaveChanges();
 
             return DefaultMapper.GetBizObject<TBiz, TDal>(dalItem);
         }
 
         internal static TBiz Update<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQpEntityObject
+            where TDal : class, IQpEntityObject
             where TBiz : EntityObject
         {
             var dalItem = DefaultMapper.GetDalObject<TDal, TBiz>(item);
@@ -80,38 +82,33 @@ namespace Quantumart.QP8.BLL.Repository
                 dalItem.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
             }
 
-            entities.AttachTo(GetSetNameByType(typeof(TDal)), dalItem);
-            entities.ObjectStateManager.ChangeObjectState(dalItem, EntityState.Modified);
+            entities.Entry(dalItem).State = EntityState.Modified;
             entities.SaveChanges();
             return DefaultMapper.GetBizObject<TBiz, TDal>(dalItem);
         }
 
         internal static void Delete<TDal>(int id)
-            where TDal : D.EntityObject
+            where TDal : class
         {
             SimpleDelete(new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id));
         }
 
         internal static void Delete<TDal>(int[] id)
-            where TDal : D.EntityObject
+            where TDal : class
         {
             var entities = QPContext.EFContext;
             var sql = $"SELECT VALUE entity FROM {GetSetNameByType(typeof(TDal), true)} AS entity WHERE entity.Id IN {{{string.Join(",", id)}}}";
-            var list = entities.CreateQuery<TDal>(sql).ToList();
-            foreach (var result in list)
-            {
-                entities.DeleteObject(result);
-            }
-
+            var list = (entities as IObjectContextAdapter).ObjectContext.CreateQuery<TDal>(sql).ToList();
+            entities.BulkDelete(list);
             entities.SaveChanges();
         }
 
         internal static TDal GetById<TDal>(int id)
-            where TDal : D.EntityObject
+            where TDal : class
         {
             var entities = QPContext.EFContext;
             var key = new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id);
-            if (entities.TryGetObjectByKey(key, out var result))
+            if ((entities as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
             {
                 return (TDal)result;
             }
@@ -120,35 +117,28 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static TDal SimpleSave<TDal>(TDal dalItem)
-            where TDal : D.EntityObject
+            where TDal : class
         {
             var entities = QPContext.EFContext;
-            entities.AddObject(GetSetNameByType(typeof(TDal)), dalItem);
+            entities.Entry(dalItem).State = EntityState.Added;
             entities.SaveChanges();
             return dalItem;
         }
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        internal static IEnumerable<TDal> SimpleSave<TDal>(IEnumerable<TDal> dalItemList)
-            where TDal : D.EntityObject
+        internal static IEnumerable<TDal> SimpleSaveBulk<TDal>(IEnumerable<TDal> dalItemList)
+            where TDal : class
         {
             var entities = QPContext.EFContext;
-            var setName = GetSetNameByType(typeof(TDal));
-            foreach (var dalItem in dalItemList)
-            {
-                entities.AddObject(setName, dalItem);
-            }
-
-            entities.SaveChanges();
+            entities.BulkInsert(dalItemList);
             return dalItemList;
         }
 
         internal static TDal SimpleUpdate<TDal>(TDal dalItem)
-            where TDal : D.EntityObject
+            where TDal : class
         {
             var entities = QPContext.EFContext;
-            entities.AttachTo(GetSetNameByType(typeof(TDal)), dalItem);
-            entities.ObjectStateManager.ChangeObjectState(dalItem, EntityState.Modified);
+            entities.Entry(dalItem).State = EntityState.Modified;
             entities.SaveChanges();
             return dalItem;
         }
@@ -156,27 +146,27 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void SimpleDelete(EntityKey key)
         {
             var entities = QPContext.EFContext;
-            if (entities.TryGetObjectByKey(key, out var result))
+            if ((entities as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
             {
-                entities.DeleteObject(result);
+                entities.Entry(result).State = EntityState.Deleted;
             }
 
             entities.SaveChanges();
         }
 
-        internal static void SimpleDelete<TDal>(IEnumerable<TDal> dalItems)
-            where TDal : D.EntityObject
+        internal static void SimpleDelete<TDal>(TDal dalItem)
+            where TDal : class
         {
             var entities = QPContext.EFContext;
-            foreach (var dalItem in dalItems)
-            {
-                if (entities.TryGetObjectByKey(dalItem.EntityKey, out var result))
-                {
-                    entities.DeleteObject(result);
-                }
-            }
-
+            entities.Entry(dalItem).State = EntityState.Deleted;
             entities.SaveChanges();
+        }
+
+        internal static void SimpleDeleteBulk<TDal>(IEnumerable<TDal> dalItems)
+            where TDal : class
+        {
+            var entities = QPContext.EFContext;
+            entities.BulkDelete(dalItems);
         }
 
         public static void ChangeIdentityInsertState(string entityTypeCode, bool state)

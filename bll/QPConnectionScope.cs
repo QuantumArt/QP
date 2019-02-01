@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.EntityClient;
-using System.Data.Mapping;
-using System.Data.Metadata.Edm;
+using System.Data.Entity.Core.EntityClient;
+using System.Data.Entity.Core.Mapping;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -178,10 +178,9 @@ namespace Quantumart.QP8.BLL
                 rdr[0] = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.msl"));
 
                 var smic = new StorageMappingItemCollection(eic, sic, rdr);
-                var workspace = new MetadataWorkspace();
-                workspace.RegisterItemCollection(eic);
-                workspace.RegisterItemCollection(sic);
-                workspace.RegisterItemCollection(smic);
+                var workspace = new MetadataWorkspace(
+                    () => eic, () => sic, () => smic
+                );
 
                 return workspace;
             }

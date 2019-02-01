@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.Helpers;
@@ -84,3 +85,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
         public const int RebuildUserQueries = 2;
     }
 }
+#endif

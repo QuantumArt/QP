@@ -9,7 +9,7 @@ namespace Quantumart.QP8.Utils.FullTextSearch
 {
     [Language("SearchGrammar", "1.0", "Google-to-SQL query converter")]
     internal class IronySearchGrammar : Grammar
-    {         
+    {
         public IronySearchGrammar() : base(false)
         {
             this.GrammarComments =
@@ -63,7 +63,6 @@ namespace Quantumart.QP8.Utils.FullTextSearch
             //also do not report braces as expected
             this.AddToNoReportGroup("(", ")", "<", ">");
 
-            LanguageFlags |= LanguageFlags.CanRunSample;
         }
 
         //Creates extended identifier terminal that allows international characters
@@ -82,11 +81,11 @@ namespace Quantumart.QP8.Utils.FullTextSearch
              UnicodeCategory.ConnectorPunctuation, //Pc
              UnicodeCategory.SpacingCombiningMark, //Mc
              UnicodeCategory.NonSpacingMark,       //Mn
-             UnicodeCategory.Format                //Cf,             
+             UnicodeCategory.Format                //Cf,
           });
             //StartCharCategories are the same
             term.StartCharCategories.AddRange(term.CharCategories);
             return term;
-        }                 
+        }
     }
 }

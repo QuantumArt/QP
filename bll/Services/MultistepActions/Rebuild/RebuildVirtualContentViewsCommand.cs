@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,3 +100,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
         public int[] ContentIdsToRebuild { get; set; }
     }
 }
+#endif

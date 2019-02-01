@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,6 +61,7 @@ namespace Quantumart.QP8.BLL.Services
 
     public class PageService : IPageService
     {
+
         private readonly IQP7Service _qp7Service;
 
         public PageService()
@@ -294,8 +296,8 @@ namespace Quantumart.QP8.BLL.Services
                 Data = list.ToList(),
                 TotalRecords = totalRecords
             };
-        }
 
+        }
         public MessageResult AssemblePagePreAction(int id)
         {
             var page = PageRepository.GetPagePropertiesById(id);
@@ -403,3 +405,4 @@ namespace Quantumart.QP8.BLL.Services
         }
     }
 }
+#endif

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils.FullTextSearch;
 
 namespace Quantumart.QP8.BLL
@@ -11,12 +12,12 @@ namespace Quantumart.QP8.BLL
         private static HashSet<string> CreateStopListHashSet()
         {
             // получить версию sql server
-            var version = QPContext.EFContext.GetSqlServerVersion();
+            var version = Common.GetSqlServerVersion(QPConnectionScope.Current.DbConnection);
 
             // если это 2008 или старше - то получить стоп-лист из sql server
             if (version.Major >= 10)
             {
-                var stopList = QPContext.EFContext.GetStopWordList();
+                var stopList = Common.GetStopWordList(QPConnectionScope.Current.DbConnection);
                 return new HashSet<string>(stopList, StringComparer.InvariantCultureIgnoreCase);
             }
 

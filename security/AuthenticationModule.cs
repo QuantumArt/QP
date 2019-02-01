@@ -6,6 +6,7 @@ using Quantumart.QP8.Constants.Mvc;
 
 namespace Quantumart.QP8.Security
 {
+#if !NET_STANDARD
     public class AuthenticationModule : IHttpModule
     {
         public void Init(HttpApplication context)
@@ -64,4 +65,5 @@ namespace Quantumart.QP8.Security
         {
         }
     }
+#endif
 }

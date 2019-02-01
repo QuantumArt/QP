@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using Quantumart.QP8.BLL.Services.MultistepActions.Base;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Archive
@@ -7,3 +8,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Archive
         public override string ActionCode => Constants.ActionCode.MultipleRestoreArticleFromArchive;
     }
 }
+#endif

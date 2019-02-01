@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,9 +38,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             SetupWithParams(parentId, 0, ids, settingsParams as ExportSettings);
         }
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal) => Setup(parentId, id, null, boundToExternal);
- 
+
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive) => Setup(parentId, id, null, boundToExternal, isArchive);
-        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => Setup(parentId, id, ids, null, false); 
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => Setup(parentId, id, ids, null, false);
 
         public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive)
         {
@@ -126,3 +127,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         ).ToArray();
     }
 }
+#endif

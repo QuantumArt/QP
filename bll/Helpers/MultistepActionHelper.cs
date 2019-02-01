@@ -116,6 +116,7 @@ namespace Quantumart.QP8.BLL.Helpers
             return value;
         }
 
+#if !NET_STANDARD
         public static List<string> GetFileFields(ImportSettings setts, FileReader reader)
         {
             reader.CopyFileToTempDir();
@@ -127,6 +128,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
             return CsvReader.GetFieldNames(firstline, setts.Delimiter, setts.NoHeaders);
         }
+#endif
 
         public static IEnumerable<ListItem> GetLocalesAsListItems()
         {

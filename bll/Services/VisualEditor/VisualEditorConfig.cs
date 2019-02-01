@@ -7,7 +7,11 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
         private const int CkeditorEnterBr = 2;
         private const int ToolbarsHeight = 110;
 
+#if !NET_STANDARD
         public string Language => QPContext.CurrentUserIdentity.CultureName;
+#else
+        public string Language => "en-us";
+#endif
 
         public string DocType => !string.IsNullOrWhiteSpace(_field.DocType) ? _field.DocType : @"<!doctype html>";
 

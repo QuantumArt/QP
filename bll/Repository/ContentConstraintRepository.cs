@@ -68,11 +68,11 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             var ccDal = QPContext.EFContext.ContentConstraintSet.Single(d => d.Id == constraint.Id);
-            ccDal.Rules.Load();
+            QPContext.EFContext.Entry(ccDal).Reference(n => n.Rules).Load();
             IEnumerable<ContentConstraintRuleDAL> ruleDalList = ccDal.Rules.ToArray();
 
             // удалить все правила которые уже есть
-            DefaultRepository.SimpleDelete(ruleDalList);
+            DefaultRepository.SimpleDeleteBulk(ruleDalList);
 
             // создать новые записи для правил
             foreach (var rule in constraint.Rules)
@@ -81,7 +81,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             var newDalList = MapperFacade.ContentConstraintRuleMapper.GetDalList(constraint.Rules.ToList());
-            DefaultRepository.SimpleSave(newDalList.AsEnumerable());
+            DefaultRepository.SimpleSaveBulk(newDalList.AsEnumerable());
 
             return MapperFacade.ContentConstraintMapper.GetBizObject(ccDal);
         }

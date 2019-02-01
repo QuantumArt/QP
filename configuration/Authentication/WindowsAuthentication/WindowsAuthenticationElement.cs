@@ -8,7 +8,12 @@ namespace Quantumart.QP8.Configuration.Authentication.WindowsAuthentication
         [ConfigurationProperty("loginUrl", IsRequired = true)]
         public string LoginUrl
         {
+            #if !NET_STANDARD
             get => Url.ToAbsolute(base["loginUrl"].ToString());
+            #else
+            get => base["loginUrl"].ToString();
+            #endif
+
             set => base["loginUrl"] = value;
         }
 

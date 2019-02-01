@@ -4,6 +4,7 @@ using System.Web;
 
 namespace Quantumart.QP8.Utils
 {
+#if !NET_STANDARD
 	public static class RequestExtensions
 	{
 		/// <summary>
@@ -71,4 +72,5 @@ namespace Quantumart.QP8.Utils
 			return result;
 		}
 	}
+#endif
 }

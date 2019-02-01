@@ -349,13 +349,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public JsonResult GetHTAToolbarMarkUp(bool presentationOrCodeBehind, int? formatId, int? templateId) => new JsonResult
+        public JsonResult GetHTAToolbarMarkUp(bool presentationOrCodeBehind, int? formatId, int? templateId)
         {
-            Data = new
+            return new JsonResult
             {
-                html = RenderPartialView("HTAreaToolbar", new HtAreaToolbarViewModel(presentationOrCodeBehind, formatId, templateId))
-            },
-            JsonRequestBehavior = JsonRequestBehavior.DenyGet
-        };
+                Data = new
+                {
+                    html = RenderPartialView("HTAreaToolbar", new HtAreaToolbarViewModel(presentationOrCodeBehind, formatId, templateId))
+                },
+                JsonRequestBehavior = JsonRequestBehavior.DenyGet
+            };
+        }
     }
 }

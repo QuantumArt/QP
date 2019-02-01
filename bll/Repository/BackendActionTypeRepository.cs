@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
@@ -9,7 +9,7 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class BackendActionTypeRepository
     {
-        private static ObjectQuery<ActionTypeDAL> DefaultActionTypeQuery => QPContext.EFContext.ActionTypeSet
+        private static DbQuery<ActionTypeDAL> DefaultActionTypeQuery => QPContext.EFContext.ActionTypeSet
             .Include("PermissionLevel");
 
         private static readonly Lazy<IEnumerable<BackendActionType>> actionTypesCache = new Lazy<IEnumerable<BackendActionType>>(() => LoadActionTypes());

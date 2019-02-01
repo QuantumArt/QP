@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -63,7 +64,7 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.UserMapper.GetBizList(users);
         }
 
-        internal static bool CheckAuthenticate(string login, string password) => QPContext.EFContext.Authenticate(login, password, false, false) != null;
+        internal static bool CheckAuthenticate(string login, string password) => Common.Authenticate(QPConnectionScope.Current.DbConnection, login, password, false, false) != null;
 
         internal static bool GetUserMustChangePassword(int userId) => QPContext.EFContext.UserSet.Where(w => w.Id == userId).Select(s => s.MustChangePassword).Single();
         internal static User GetById(int id, bool stopRecursion = false)
@@ -132,8 +133,8 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
             }
 
-            entities.UserSet.Attach(dal);
-            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            entities.Entry(dal).State = EntityState.Modified;
+
             if (!profileOnly)
             {
                 // Save Groups
@@ -163,11 +164,11 @@ namespace Quantumart.QP8.BLL.Repository
             // User Default Filters
             foreach (var f in entities.UserDefaultFilterSet.Where(r => r.UserId == dal.Id))
             {
-                entities.UserDefaultFilterSet.DeleteObject(f);
+                entities.Entry(f).State = EntityState.Deleted;
             }
             foreach (var f in MapUserDefaultFilter(user, dal))
             {
-                entities.UserDefaultFilterSet.AddObject(f);
+                entities.Entry(f).State = EntityState.Added;
             }
 
             //--------------------------
@@ -213,7 +214,7 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.PasswordModified = dal.Created;
             }
 
-            entities.UserSet.AddObject(dal);
+            entities.Entry(dal).State = EntityState.Added;
             entities.SaveChanges();
 
             // Save Groups
@@ -228,7 +229,7 @@ namespace Quantumart.QP8.BLL.Repository
             // User Default Filters
             foreach (var f in MapUserDefaultFilter(user, dal))
             {
-                entities.UserDefaultFilterSet.AddObject(f);
+                entities.Entry(f).State = EntityState.Added;
             }
 
             //----------------

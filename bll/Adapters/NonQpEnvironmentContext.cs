@@ -7,13 +7,13 @@ namespace Quantumart.QP8.BLL.Adapters
     {
         public NonQpEnvironmentContext(string connectionString)
         {
-            QPConfiguration._tempDirectory = @"c:\temp\";
+            QPConfiguration.TempDirectory = @"c:\temp\";
             QPContext.CurrentDbConnectionString = connectionString;
         }
 
         public void Dispose()
         {
-            QPConfiguration._tempDirectory = null;
+            QPConfiguration.TempDirectory = null;
             QPContext.CurrentDbConnectionString = null;
         }
     }

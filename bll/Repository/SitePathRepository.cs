@@ -1,6 +1,9 @@
-using System.IO;
+#if !NET_STANDARD
 using System.Web;
 using System.Web.Configuration;
+#endif
+
+using System.IO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Utils;
 
@@ -18,6 +21,8 @@ namespace Quantumart.QP8.BLL.Repository
         public static string RELATIVE_BIN_PATH = @"\bin";
         public static string RELATIVE_APP_DATA_PATH = @"\App_Data";
         public static string RELATIVE_APP_CODE_PATH = @"\App_Code";
+
+#if !NET_STANDARD
 
         /// <summary>
         /// Возвращает URL, по которому расположен бэкенд
@@ -108,27 +113,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        public static void CreateDirectories(string basePath)
-        {
-            Directory.CreateDirectory(basePath);
-            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_PREVIEW_PATH));
-            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_NOTIFICATIONS_PATH));
-            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_SETTINGS_PATH));
-        }
-
-        public static void CreateUploadDirectories(string basePath)
-        {
-            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_CONTENTS_PATH));
-            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_TEMPLATES_PATH));
-            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_IMAGES_PATH));
-        }
-
-        public static void CreateBinDirectory(string binPath)
-        {
-            Directory.CreateDirectory(binPath);
-            CopySiteDirectory(binPath, RELATIVE_BIN_PATH);
-        }
-
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся изображения общие для всех тем
         /// </summary>
@@ -173,5 +157,31 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы</returns>
         internal static string GetThemeAjaxLoaderIconsImageFolderUrl(string themeName) =>
             Url.ToAbsolute("~/Content/" + themeName + "/icons/ajax_loaders/");
+
+#endif
+        public static void CreateDirectories(string basePath)
+        {
+            Directory.CreateDirectory(basePath);
+            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_PREVIEW_PATH));
+            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_NOTIFICATIONS_PATH));
+            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_SETTINGS_PATH));
+        }
+
+        public static void CreateUploadDirectories(string basePath)
+        {
+            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_CONTENTS_PATH));
+            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_TEMPLATES_PATH));
+            Directory.CreateDirectory(PathUtility.Combine(basePath, RELATIVE_IMAGES_PATH));
+        }
+
+        public static void CreateBinDirectory(string binPath)
+        {
+            Directory.CreateDirectory(binPath);
+            #if !NET_STANDARD
+            CopySiteDirectory(binPath, RELATIVE_BIN_PATH);
+            #endif
+        }
+
     }
 }
+

@@ -78,7 +78,6 @@ namespace Quantumart.QP8.WebMvc
         {
             RegisterModelBinders();
             RegisterModelValidatorProviders();
-            AreaRegistration.RegisterAllAreas();
             RegisterMappings();
             RegisterUnity();
             RegisterRoutes(RouteTable.Routes);

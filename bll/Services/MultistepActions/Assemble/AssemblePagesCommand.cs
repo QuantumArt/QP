@@ -1,3 +1,4 @@
+#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -148,3 +149,5 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
         public Dictionary<string, List<PageInfo>> MissedPages;
     }
 }
+#endif
+

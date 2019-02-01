@@ -17,7 +17,9 @@ namespace Quantumart.QP8.BLL.Repository
         public void SendNotification(string connectionString, int siteId, string code, int id, bool isLive)
         {
             var cnn = new DBConnector(connectionString) { CacheData = false };
+            #if !NET_STANDARD
             QPConfiguration.SetAppSettings(cnn.AppSettings);
+            #endif
             cnn.SendNotification(siteId, code, id, string.Empty, isLive);
         }
 
