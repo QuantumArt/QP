@@ -139,6 +139,22 @@
       <HintPath>$(SolutionDir)packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <Reference Include="Z.EntityFramework.Classic, Version=7.0.0.0, Culture=neutral, PublicKeyToken=afc61983f100d280">
+      <HintPath>..\packages\Z.EntityFramework.Classic.7.0.37\lib\net45\Z.EntityFramework.Classic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Z.EntityFramework.Classic.SqlServer, Version=7.0.0.0, Culture=neutral, PublicKeyToken=afc61983f100d280">
+      <HintPath>..\packages\Z.EntityFramework.Classic.7.0.37\lib\net45\Z.EntityFramework.Classic.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Z.EntityFramework.Extensions.Classic, Version=3.16.23.0, Culture=neutral, PublicKeyToken=59b66d028979105b">
+      <HintPath>..\packages\Z.EntityFramework.Extensions.Classic.3.16.23\lib\net45\Z.EntityFramework.Extensions.Classic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Z.Expressions.Eval, Version=2.9.6.0, Culture=neutral, PublicKeyToken=59b66d028979105b">
+      <HintPath>..\packages\Z.Expressions.Eval.2.9.6\lib\net45\Z.Expressions.Eval.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
@@ -156,6 +172,7 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="App.config" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
