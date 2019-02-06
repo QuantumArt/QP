@@ -191,13 +191,22 @@ namespace Quantumart.QP8.BLL.Repository
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.CustomAction);
 
             var buttonsToInsert = MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList());
-            entities.BulkInsert(buttonsToInsert);
+            foreach (var item in buttonsToInsert)
+            {
+                entities.Entry(item).State = EntityState.Added;
+            }
 
             var cmiToInsert = MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList());
-            entities.BulkInsert(cmiToInsert);
+            foreach (var item in cmiToInsert)
+            {
+                entities.Entry(item).State = EntityState.Added;
+            }
 
             var siteLinksToAdd = MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList());
-            entities.BulkInsert(siteLinksToAdd);
+            foreach (var item in siteLinksToAdd)
+            {
+                entities.Entry(item).State = EntityState.Added;
+            }
 
             foreach (var s in siteLinksToAdd)
             {

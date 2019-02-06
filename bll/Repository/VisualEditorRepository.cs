@@ -99,7 +99,10 @@ namespace Quantumart.QP8.BLL.Repository
             // delete
             var newIds = new HashSet<decimal>(plugin.VeCommands.Select(c => Converter.ToDecimal(c.Id)));
             var commandsToDelete = entities.VeCommandSet.Where(n => n.PluginId == (decimal)plugin.Id && !newIds.Contains(n.Id));
-            entities.BulkDelete(commandsToDelete);
+            foreach (var cmd in commandsToDelete)
+            {
+                entities.Entry(cmd).State = EntityState.Deleted;
+            }
 
             // save and update
             var forceIds = plugin.ForceCommandIds == null ? null : new Queue<int>(plugin.ForceCommandIds);

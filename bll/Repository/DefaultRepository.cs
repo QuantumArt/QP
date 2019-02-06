@@ -99,7 +99,11 @@ namespace Quantumart.QP8.BLL.Repository
             var entities = QPContext.EFContext;
             var sql = $"SELECT VALUE entity FROM {GetSetNameByType(typeof(TDal), true)} AS entity WHERE entity.Id IN {{{string.Join(",", id)}}}";
             var list = (entities as IObjectContextAdapter).ObjectContext.CreateQuery<TDal>(sql).ToList();
-            entities.BulkDelete(list);
+            foreach (var item in list)
+            {
+                entities.Entry(item).State = EntityState.Deleted;
+            }
+
             entities.SaveChanges();
         }
 
@@ -130,7 +134,10 @@ namespace Quantumart.QP8.BLL.Repository
             where TDal : class
         {
             var entities = QPContext.EFContext;
-            entities.BulkInsert(dalItemList);
+            foreach (var item in dalItemList)
+            {
+                entities.Entry(item).State = EntityState.Added;
+            }
             return dalItemList;
         }
 
@@ -166,7 +173,11 @@ namespace Quantumart.QP8.BLL.Repository
             where TDal : class
         {
             var entities = QPContext.EFContext;
-            entities.BulkDelete(dalItems);
+            foreach (var dal in dalItems)
+            {
+                entities.Entry(dal).State = EntityState.Deleted;
+            }
+
         }
 
         public static void ChangeIdentityInsertState(string entityTypeCode, bool state)
