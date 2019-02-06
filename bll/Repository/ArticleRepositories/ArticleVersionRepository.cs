@@ -59,14 +59,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
             else
             {
-                var articleVersionDal = DefaultRepository.GetById<ArticleVersionDAL>(id);
-                if (articleVersionDal == null)
-                {
-                    return null;
-                }
-
-                QPContext.EFContext.Entry(articleVersionDal).Reference(n => n.LastModifiedByUser).Load();
-
+                var articleVersionDal = QPContext.EFContext.ArticleVersionSet.Include(n => n.LastModifiedByUser).SingleOrDefault(n => n.Id == id);
                 articleVersion = MapperFacade.ArticleVersionMapper.GetBizObject(articleVersionDal);
                 if (articleVersion != null)
                 {

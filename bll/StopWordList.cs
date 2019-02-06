@@ -11,17 +11,20 @@ namespace Quantumart.QP8.BLL
 
         private static HashSet<string> CreateStopListHashSet()
         {
-            // получить версию sql server
-            var version = Common.GetSqlServerVersion(QPConnectionScope.Current.DbConnection);
-
-            // если это 2008 или старше - то получить стоп-лист из sql server
-            if (version.Major >= 10)
+            using (var scope = new QPConnectionScope())
             {
-                var stopList = Common.GetStopWordList(QPConnectionScope.Current.DbConnection);
-                return new HashSet<string>(stopList, StringComparer.InvariantCultureIgnoreCase);
-            }
+                // получить версию sql server
+                var version = Common.GetSqlServerVersion(scope.DbConnection);
 
-            return new HashSet<string>();
+                // если это 2008 или старше - то получить стоп-лист из sql server
+                if (version.Major >= 10)
+                {
+                    var stopList = Common.GetStopWordList(scope.DbConnection);
+                    return new HashSet<string>(stopList, StringComparer.InvariantCultureIgnoreCase);
+                }
+
+                return new HashSet<string>();
+            }
         }
 
         #region IStopWordList Members

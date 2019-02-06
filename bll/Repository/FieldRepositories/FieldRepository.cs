@@ -666,10 +666,11 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             }
             else
             {
-                var dymamicImageDal = DefaultRepository.GetById<DynamicImageFieldDAL>(newItem.Id);
-                if (dymamicImageDal != null)
+                var context = QPContext.EFContext;
+                var dynamicImageFieldDAL = DefaultRepository.GetById<DynamicImageFieldDAL>(newItem.Id, context);
+                if (dynamicImageFieldDAL != null)
                 {
-                    DefaultRepository.SimpleDelete(dymamicImageDal);
+                    DefaultRepository.SimpleDelete(dynamicImageFieldDAL, context);
                 }
             }
         }

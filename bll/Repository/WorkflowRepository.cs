@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
@@ -12,9 +13,10 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class WorkflowRepository
     {
-        internal static ContentWorkflowBindDAL GetContentWorkflowDal(int contentId)
+        internal static ContentWorkflowBindDAL GetContentWorkflowDal(int contentId, QP8Entities context = null)
         {
-            return QPContext.EFContext.ContentWorkflowBindSet.SingleOrDefault(s => s.ContentId == (decimal)contentId);
+            var currentContext = context ?? QPContext.EFContext;
+            return currentContext.ContentWorkflowBindSet.SingleOrDefault(s => s.ContentId == (decimal)contentId);
         }
 
         internal static ContentWorkflowBind GetContentWorkflow(int contentId) => MapperFacade.ContentWorkflowBindMapper.GetBizObject(GetContentWorkflowDal(contentId));
@@ -143,14 +145,15 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void UpdateContentWorkflowBind(ContentWorkflowBind binding)
         {
-            var oldDal = GetContentWorkflowDal(binding.Content.Id);
+            var context = QPContext.EFContext;
+            var oldDal = GetContentWorkflowDal(binding.Content.Id, context);
             var persisted = oldDal != null;
             var needToPersist = binding.WorkflowId != WorkflowBind.UnassignedId;
             var changed = persisted && needToPersist && (oldDal.WorkflowId != binding.WorkflowId || oldDal.IsAsync != binding.IsAsync);
             var newDal = !needToPersist ? null : MapperFacade.ContentWorkflowBindMapper.GetDalObject(binding);
             if (persisted && changed || persisted && !needToPersist)
             {
-                DefaultRepository.SimpleDelete(oldDal);
+                DefaultRepository.SimpleDelete(oldDal, context);
             }
 
             if (persisted && changed || !persisted && needToPersist)

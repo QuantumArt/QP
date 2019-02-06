@@ -158,9 +158,10 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 ChangeUnionContentTriggerState(false);
                 var virtualContentId = virtualContent.Id;
-                var recToRemove = QPContext.EFContext.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
+                var context = QPContext.EFContext;
+                var recToRemove = context.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
 
-                DefaultRepository.SimpleDeleteBulk(recToRemove);
+                DefaultRepository.SimpleDeleteBulk(recToRemove, context);
                 DefaultRepository.SimpleSaveBulk(unionSourceContentIDs.Select(id => new UnionContentsDAL { VirtualContentId = virtualContentId, UnionContentId = id }));
             }
             finally
@@ -172,8 +173,9 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void RemoveUnionSourcesInfo(Content virtualContent)
         {
             var virtualContentId = virtualContent.Id;
-            var recToRemove = QPContext.EFContext.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
-            DefaultRepository.SimpleDeleteBulk(recToRemove);
+            var context = QPContext.EFContext;
+            var recToRemove = context.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
+            DefaultRepository.SimpleDeleteBulk(recToRemove, context);
         }
 
         /// <summary>
@@ -265,8 +267,9 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void RemoveUserQuerySourcesInfo(Content uqVirtualContent)
         {
             var virtualContentId = uqVirtualContent.Id;
-            var recToRemove = QPContext.EFContext.UserQueryContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
-            DefaultRepository.SimpleDeleteBulk(recToRemove);
+            var context = QPContext.EFContext;
+            var recToRemove = context.UserQueryContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
+            DefaultRepository.SimpleDeleteBulk(recToRemove, context);
         }
 
         /// <summary>

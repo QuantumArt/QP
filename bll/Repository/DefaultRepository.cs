@@ -107,16 +107,15 @@ namespace Quantumart.QP8.BLL.Repository
             entities.SaveChanges();
         }
 
-        internal static TDal GetById<TDal>(int id)
+        internal static TDal GetById<TDal>(int id, QP8Entities context = null)
             where TDal : class
         {
-            var entities = QPContext.EFContext;
+            var currentContext = context ?? QPContext.EFContext;
             var key = new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id);
-            if ((entities as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
+            if ((currentContext as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
             {
                 return (TDal)result;
             }
-
             return null;
         }
 
@@ -138,6 +137,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 entities.Entry(item).State = EntityState.Added;
             }
+            entities.SaveChanges();
             return dalItemList;
         }
 
@@ -157,26 +157,26 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 entities.Entry(result).State = EntityState.Deleted;
             }
-
             entities.SaveChanges();
         }
 
-        internal static void SimpleDelete<TDal>(TDal dalItem)
+        internal static void SimpleDelete<TDal>(TDal dalItem, QP8Entities context = null)
             where TDal : class
         {
-            var entities = QPContext.EFContext;
+            var entities = context ?? QPContext.EFContext;
             entities.Entry(dalItem).State = EntityState.Deleted;
             entities.SaveChanges();
         }
 
-        internal static void SimpleDeleteBulk<TDal>(IEnumerable<TDal> dalItems)
+        internal static void SimpleDeleteBulk<TDal>(IEnumerable<TDal> dalItems, QP8Entities context = null)
             where TDal : class
         {
-            var entities = QPContext.EFContext;
+            var entities = context ?? QPContext.EFContext;
             foreach (var dal in dalItems)
             {
                 entities.Entry(dal).State = EntityState.Deleted;
             }
+            entities.SaveChanges();
 
         }
 

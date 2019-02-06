@@ -62,8 +62,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void DeleteAppSettings()
         {
-            var result = QPContext.EFContext.AppSettingsSet.ToList();
-            DefaultRepository.SimpleDeleteBulk(result);
+            var context = QPContext.EFContext;
+            DefaultRepository.SimpleDeleteBulk(context.AppSettingsSet.ToList(), context);
         }
     }
 }
