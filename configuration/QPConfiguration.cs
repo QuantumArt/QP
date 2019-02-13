@@ -5,7 +5,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-
+using System.Runtime.InteropServices;
 #if !NET_STANDARD
 using System.Web.Configuration;
 #endif
@@ -224,26 +224,24 @@ namespace Quantumart.QP8.Configuration
                     }
                     else
                     {
-#if !NET_STANDARD
-                        var qKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(QpKeyRegistryPath);
-                        if (qKey != null)
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                         {
-                            _configPath = qKey.GetValue(Registry.XmlConfigValue).ToString();
+                            var qKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(QpKeyRegistryPath);
+                            if (qKey != null)
+                            {
+                                _configPath = qKey.GetValue(Registry.XmlConfigValue).ToString();
+                            }
+                            else
+                            {
+                                throw new Exception("QP is not installed");
+                            }
                         }
-                        else
-                        {
-                            throw new Exception("QP is not installed");
-                        }
-
-#else
-                        throw new Exception("QP is not installed");
-
-#endif
                     }
                 }
 
                 return _configPath;
             }
+            set { _configPath = value; }
         }
 
         public static string ConfigServiceUrl
@@ -270,6 +268,7 @@ namespace Quantumart.QP8.Configuration
                 }
                 return _configServiceUrl != String.Empty ? _configServiceUrl : null;
             }
+            set { _configServiceUrl = value; }
         }
 
         public static string ConfigServiceToken
@@ -298,7 +297,9 @@ namespace Quantumart.QP8.Configuration
                 }
                 return _configServiceToken != String.Empty ? _configServiceToken : null;
             }
+            set { _configServiceToken = value; }
         }
+
 
         public static int CommandTimeout
         {

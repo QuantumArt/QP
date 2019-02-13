@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Quantumart.QP8.BLL.Models.NotificationSender;
-using Quantumart.QP8.Constants.Cdc.Enums;
+using E = Quantumart.QP8.Constants.Cdc.Enums;
 
 namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions
 {
@@ -33,9 +33,9 @@ namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions
         private static CdcTableTypeModel HandleSimpleTableTypeDataModifier(CdcTableTypeModel prevInSortOrder, CdcTableTypeModel nextInSortOrder)
         {
             var result = Mapper.Map<CdcTableTypeModel, CdcTableTypeModel>(nextInSortOrder);
-            if (result.Action == CdcOperationType.Update && prevInSortOrder.Action == CdcOperationType.Insert)
+            if (result.Action == E.CdcOperationType.Update && prevInSortOrder.Action == E.CdcOperationType.Insert)
             {
-                result.Action = CdcOperationType.Insert;
+                result.Action = E.CdcOperationType.Insert;
             }
 
             return result;
@@ -44,14 +44,14 @@ namespace Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions
         private static CdcTableTypeModel HandleContentDataTableTypeDataModifier(CdcTableTypeModel prevInSortOrder, CdcTableTypeModel nextInSortOrder)
         {
             var result = Mapper.Map<CdcTableTypeModel, CdcTableTypeModel>(nextInSortOrder);
-            if (result.Action == CdcOperationType.Update)
+            if (result.Action == E.CdcOperationType.Update)
             {
-                if (prevInSortOrder.Action == CdcOperationType.Insert)
+                if (prevInSortOrder.Action == E.CdcOperationType.Insert)
                 {
-                    result.Action = CdcOperationType.Insert;
+                    result.Action = E.CdcOperationType.Insert;
                 }
 
-                if (prevInSortOrder.Action == CdcOperationType.Insert || prevInSortOrder.Action == CdcOperationType.Update)
+                if (prevInSortOrder.Action == E.CdcOperationType.Insert || prevInSortOrder.Action == E.CdcOperationType.Update)
                 {
                     foreach (var col in prevInSortOrder.Entity.Columns)
                     {

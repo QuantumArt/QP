@@ -14,16 +14,14 @@ namespace Quantumart.QP8.ArticleScheduler
     {
         private const string AppName = "QP8ArticleSchedulerService";
 
-        private readonly TimeSpan _recurrentTimeout;
-        private readonly TimeSpan _tasksQueueCheckShiftTime;
+        private readonly ArticleSchedulerProperties _props;
         private CancellationTokenSource _cancellationTokenSource;
 
         private Task _task;
 
-        public QpSchedulerProcessor(TimeSpan recurrentTimeout, TimeSpan tasksQueueCheckShiftTime)
+        public QpSchedulerProcessor(ArticleSchedulerProperties props)
         {
-            _recurrentTimeout = recurrentTimeout;
-            _tasksQueueCheckShiftTime = tasksQueueCheckShiftTime;
+            _props = props;
         }
 
         public void Run()
@@ -38,14 +36,18 @@ namespace Quantumart.QP8.ArticleScheduler
                 {
                     try
                     {
+                        QPConfiguration.ConfigServiceUrl = _props.ConfigServiceUrl;
+                        QPConfiguration.ConfigServiceToken = _props.ConfigServiceToken;
+                        QPConfiguration.XmlConfigPath = _props.XmlConfigPath;
+
                         var customers = QPConfiguration.GetCustomers(AppName).Where(c => !c.ExcludeFromSchedulers).ToList();
-                        new QpScheduler(unityConfig.UnityContainer, prtgLogger, customers, _tasksQueueCheckShiftTime).Run();
+                        new QpScheduler(unityConfig.UnityContainer, prtgLogger, customers, _props.PrtgLoggerTasksQueueCheckShiftTime).Run();
                     }
                     catch (Exception ex)
                     {
                         Logger.Log.Error("There was an error while starting the service job", ex);
                     }
-                } while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_recurrentTimeout));
+                } while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_props.RecurrentTimeout));
             }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
             _task.Start();
         }
