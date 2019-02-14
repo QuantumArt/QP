@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
     <Product>QP8.Framework</Product>
