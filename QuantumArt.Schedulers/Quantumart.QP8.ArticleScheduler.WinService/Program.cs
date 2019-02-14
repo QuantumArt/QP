@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Hosting;
-using Quantumart.QP8.ServiceBaseLifeTime;
+using QA.Core.ServiceBaseLifeTime;
 using NLog.Extensions.Logging;
 
 namespace Quantumart.QP8.ArticleScheduler.WinService

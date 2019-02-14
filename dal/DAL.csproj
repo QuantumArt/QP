@@ -37,7 +37,7 @@
       <LogicalName>QP8Model.msl</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net471'">
+  <PropertyGroup>
     <PreBuildEvent>dotnet "$(MSBuildProjectDirectory)/utils/QA.Core.SplitEdmx.dll" "$(MSBuildProjectDirectory)/QP8Model.edmx"</PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>

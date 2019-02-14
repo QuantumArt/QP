@@ -98,8 +98,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.TestTool
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Web.AspNet", "QuantumArt.Infrastructure\QP8.Infrastructure.Web.AspNet\QP8.Infrastructure.Web.AspNet.csproj", "{58BAD907-EC85-49D8-8E08-D7F15A6D60DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.ServiceBaseLifeTime", "QuantumArt.Schedulers\Quantumart.QP8.ServiceBaseLifeTime\Quantumart.QP8.ServiceBaseLifeTime.csproj", "{CD9EFD2D-517E-471B-ADA3-932DF207143C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug MVC2 NET35|Any CPU = Debug MVC2 NET35|Any CPU
@@ -1856,54 +1854,6 @@ Global
 		{58BAD907-EC85-49D8-8E08-D7F15A6D60DB}.Stage|Mixed Platforms.Build.0 = Debug|Any CPU
 		{58BAD907-EC85-49D8-8E08-D7F15A6D60DB}.Stage|x86.ActiveCfg = Debug|Any CPU
 		{58BAD907-EC85-49D8-8E08-D7F15A6D60DB}.Stage|x86.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug MVC2 NET35|Mixed Platforms.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug MVC2 NET35|x86.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug MVC2 NET35|x86.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug_AspnetCore|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug_AspnetCore|Any CPU.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug_AspnetCore|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug_AspnetCore|Mixed Platforms.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug_AspnetCore|x86.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug_AspnetCore|x86.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Debug|x86.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Live|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Live|Any CPU.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Live|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Live|Mixed Platforms.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Live|x86.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Live|x86.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release MVC2 NET35|Mixed Platforms.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release MVC2 NET35|x86.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release MVC2 NET35|x86.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release_AspnetCore|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release_AspnetCore|Any CPU.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release_AspnetCore|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release_AspnetCore|Mixed Platforms.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release_AspnetCore|x86.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release_AspnetCore|x86.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release|x86.ActiveCfg = Release|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Release|x86.Build.0 = Release|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Stage|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Stage|Any CPU.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Stage|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Stage|Mixed Platforms.Build.0 = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Stage|x86.ActiveCfg = Debug|Any CPU
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C}.Stage|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1935,7 +1885,6 @@ Global
 		{C8D0F9D8-0F40-4480-B60F-C50791E9F8C1} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 		{D303B005-9E08-427E-92E7-8C8DCC303C53} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 		{58BAD907-EC85-49D8-8E08-D7F15A6D60DB} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
-		{CD9EFD2D-517E-471B-ADA3-932DF207143C} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45
