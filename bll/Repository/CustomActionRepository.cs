@@ -193,30 +193,29 @@ namespace Quantumart.QP8.BLL.Repository
             var buttonsToInsert = MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList());
             foreach (var item in buttonsToInsert)
             {
+                item.ActionId = customActionDal.ActionId;
                 entities.Entry(item).State = EntityState.Added;
             }
 
             var cmiToInsert = MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList());
             foreach (var item in cmiToInsert)
             {
+                item.ActionId = customActionDal.ActionId;
                 entities.Entry(item).State = EntityState.Added;
             }
 
             var siteLinksToAdd = MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList());
             foreach (var item in siteLinksToAdd)
             {
-                entities.Entry(item).State = EntityState.Added;
+                entities.SiteSet.Attach(item);
+                customActionDal.Sites.Add(item);
             }
 
-            foreach (var s in siteLinksToAdd)
+            var contentLinksToAdd = MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList());
+            foreach (var item in contentLinksToAdd)
             {
-                customActionDal.Sites.Add(s);
-            }
-
-            foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
-            {
-                entities.ContentSet.Attach(s);
-                customActionDal.Contents.Add(s);
+                entities.ContentSet.Attach(item);
+                customActionDal.Contents.Add(item);
             }
 
             if (customAction.Action.IsInterface)
