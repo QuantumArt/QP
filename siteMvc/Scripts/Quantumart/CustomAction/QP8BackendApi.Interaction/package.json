@@ -1,0 +1,11 @@
+{
+  "name": "qp8backendapi-interaction",
+  "version": "1.0.0",
+  "description": "",
+  "main": "QP8BackendApi.Interaction.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Quantum Art",
+  "license": "MPL-2.0"
+}
