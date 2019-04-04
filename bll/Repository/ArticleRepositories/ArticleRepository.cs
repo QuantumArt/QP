@@ -862,7 +862,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return true;
         }
 
-        internal static int CountDuplicates(ContentConstraint constraint, int[] restrictToIds, int exceptFieldId)
+        internal static int CountDuplicates(ContentConstraint constraint, int[] restrictToIds, int exceptFieldId, bool includeArchive = false)
         {
             if (restrictToIds != null && restrictToIds.Length == 0)
             {
@@ -875,7 +875,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     QPConnectionScope.Current.DbConnection,
                     constraint.ContentId,
                     Converter.ToIdCommaList(constraint.Rules.Select(n => n.FieldId).Where(n => n != exceptFieldId)),
-                    Converter.ToIdCommaList(restrictToIds));
+                    Converter.ToIdCommaList(restrictToIds), includeArchive);
             }
         }
 

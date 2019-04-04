@@ -345,7 +345,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int CountDuplicates(SqlConnection connection, int contentId, string fieldIds, string itemIds)
+        public static int CountDuplicates(SqlConnection connection, int contentId, string fieldIds, string itemIds, bool includeArchive = false)
         {
             using (var cmd = SqlCommandFactory.Create("qp_count_duplicates", connection))
             {
@@ -353,6 +353,7 @@ namespace Quantumart.QP8.DAL
                 cmd.Parameters.AddWithValue("@content_id", contentId);
                 cmd.Parameters.AddWithValue("@field_ids", fieldIds);
                 cmd.Parameters.AddWithValue("@ids", itemIds);
+                cmd.Parameters.AddWithValue("@includeArchive", includeArchive);
                 return (int)cmd.ExecuteScalar();
             }
         }
