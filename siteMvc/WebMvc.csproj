@@ -1507,6 +1507,7 @@
     </Content>
     <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\package-lock.json" />
     <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\package.json" />
+    <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\README.md" />
     <None Include="Settings.StyleCop" />
     <Content Include="Scripts\jquery\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />

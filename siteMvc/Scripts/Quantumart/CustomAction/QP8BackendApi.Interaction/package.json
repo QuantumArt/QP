@@ -1,7 +1,7 @@
 {
-  "name": "qp8backendapi-interaction",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@quantumart/qp8backendapi-interaction",
+  "version": "1.0.1",
+  "description": "Package for integration JS-app with QP8",
   "main": "QP8BackendApi.Interaction.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
