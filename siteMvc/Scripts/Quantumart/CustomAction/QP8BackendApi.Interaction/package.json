@@ -1,6 +1,6 @@
 {
   "name": "@quantumart/qp8backendapi-interaction",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Package for integration JS-app with QP8",
   "main": "QP8BackendApi.Interaction.js",
   "scripts": {
