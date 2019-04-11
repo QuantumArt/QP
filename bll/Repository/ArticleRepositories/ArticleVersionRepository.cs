@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
 
@@ -20,8 +20,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
             var query = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
-            var ctx = (QPContext.EFContext as IObjectContextAdapter).ObjectContext;
-            var result = ctx.CreateQuery<ArticleVersionDAL>(query, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser");
+            // var ctx = (QPContext.EFContext as IObjectContextAdapter).ObjectContext;
+            // TODO: проверить валидность, менялось при переходе на EF CORE
+            var result = QPContext.EFContext
+                .ArticleVersionSet
+                .FromSql(query, new SqlParameter("id", articleId))
+                .Include("LastModifiedByUser")
+                .Include("CreatedByUser");
+
             return MapperFacade.ArticleVersionMapper.GetBizList(result.ToList());
         }
 
@@ -55,7 +61,15 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 }
 
                 var article = ArticleRepository.GetById(articleId);
-                articleVersion = new ArticleVersion { ArticleId = articleId, Id = id, Modified = article.Modified, LastModifiedBy = article.LastModifiedBy, LastModifiedByUser = article.LastModifiedByUser, Article = article };
+                articleVersion = new ArticleVersion
+                {
+                    ArticleId = articleId,
+                    Id = id,
+                    Modified = article.Modified,
+                    LastModifiedBy = article.LastModifiedBy,
+                    LastModifiedByUser = article.LastModifiedByUser,
+                    Article = article
+                };
             }
             else
             {

@@ -9,30 +9,43 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class NetLanguagesDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public NetLanguagesDAL()
-        {
-            this.ContentForm = new HashSet<ContentFormDAL>();
-            this.ObjectFormat = new HashSet<ObjectFormatDAL>();
-            this.ObjectFormatVersion = new HashSet<ObjectFormatVersionDAL>();
-            this.PageTemplate = new HashSet<PageTemplateDAL>();
-        }
     
         public decimal Id { get; set; }
         public string Name { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ContentFormDAL> ContentForm { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ObjectFormatDAL> ObjectFormat { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ObjectFormatVersionDAL> ObjectFormatVersion { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PageTemplateDAL> PageTemplate { get; set; }
+        public ICollection<ContentFormDAL> ContentForm { get; set; }
+        public ICollection<ObjectFormatDAL> ObjectFormat { get; set; }
+        public ICollection<ObjectFormatVersionDAL> ObjectFormatVersion { get; set; }
+        public ICollection<PageTemplateDAL> PageTemplate { get; set; }
     }
+        public class NetLanguagesDALConfiguration : IEntityTypeConfiguration<NetLanguagesDAL>
+        {
+            public void Configure(EntityTypeBuilder<NetLanguagesDAL> builder)
+            {
+                builder.ToTable("NET_LANGUAGES");
+    
+                builder.Property(x => x.Id).HasColumnName("NET_LANGUAGE_ID");
+				builder.Property(x => x.Name).HasColumnName("NET_LANGUAGE_NAME");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.ContentForm).WithOne(y => y.NetLanguages).HasForeignKey(y => y.NetLanguageId);
+    			builder.HasMany(x => x.ObjectFormat).WithOne(y => y.NetLanguages).HasForeignKey(y => y.NetLanguageId);
+    			builder.HasMany(x => x.ObjectFormatVersion).WithOne(y => y.NetLanguage).HasForeignKey(y => y.NetLanguageId);
+    			builder.HasMany(x => x.PageTemplate).WithOne(y => y.NetLanguages).HasForeignKey(y => y.NetLanguageId);
+    			
+            }
+        }
 }

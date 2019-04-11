@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class BackendActionLogDAL
     {
+    
         public int Id { get; set; }
         public decimal UserId { get; set; }
         public System.DateTime ExecutionTime { get; set; }
@@ -26,4 +33,28 @@ namespace Quantumart.QP8.DAL
         public string EntityTitle { get; set; }
         public bool IsApi { get; set; }
     }
+        public class BackendActionLogDALConfiguration : IEntityTypeConfiguration<BackendActionLogDAL>
+        {
+            public void Configure(EntityTypeBuilder<BackendActionLogDAL> builder)
+            {
+                builder.ToTable("BACKEND_ACTION_LOG");
+    
+                builder.Property(x => x.IsApi).HasColumnName("API");
+				builder.Property(x => x.EntityTitle).HasColumnName("ENTITY_TITLE");
+				builder.Property(x => x.ParentEntityId).HasColumnName("PARENT_ENTITY_ID");
+				builder.Property(x => x.EntityStringId).HasColumnName("ENTITY_STRING_ID");
+				builder.Property(x => x.EntityId).HasColumnName("ENTITY_ID");
+				builder.Property(x => x.EntityTypeCode).HasColumnName("ENTITY_TYPE_CODE");
+				builder.Property(x => x.ActionTypeCode).HasColumnName("ACTION_TYPE_CODE");
+				builder.Property(x => x.ActionCode).HasColumnName("ACTION_CODE");
+				builder.Property(x => x.ExecutionTime).HasColumnName("EXEC_TIME");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.Id).HasColumnName("ID");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                
+            }
+        }
 }

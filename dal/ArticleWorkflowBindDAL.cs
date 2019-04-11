@@ -9,15 +9,39 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
-    
+
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ArticleWorkflowBindDAL
     {
+
         public decimal ArticleId { get; set; }
         public Nullable<decimal> WorkflowId { get; set; }
         public bool IsAsync { get; set; }
-    
-        public virtual ArticleDAL Article { get; set; }
+
+        public ArticleDAL Article { get; set; }
     }
+        public class ArticleWorkflowBindDALConfiguration : IEntityTypeConfiguration<ArticleWorkflowBindDAL>
+        {
+            public void Configure(EntityTypeBuilder<ArticleWorkflowBindDAL> builder)
+            {
+                builder.ToTable("article_workflow_bind");
+
+                builder.Property(x => x.ArticleId).HasColumnName("CONTENT_ITEM_ID");
+				builder.Property(x => x.WorkflowId).HasColumnName("WORKFLOW_ID");
+				builder.Property(x => x.IsAsync).HasColumnName("is_async");
+
+
+                builder.HasKey(x => x.ArticleId);
+
+                builder.HasOne(x => x.Article).WithOne(y => y.WorkflowBinding).HasForeignKey<ArticleDAL>(y => y.Id);
+
+            }
+        }
 }

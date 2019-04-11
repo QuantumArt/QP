@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class XmlDbUpdateActionsLogEntity
     {
+    
         public int Id { get; set; }
         public Nullable<int> UpdateId { get; set; }
         public string Ids { get; set; }
@@ -24,6 +31,29 @@ namespace Quantumart.QP8.DAL
         public string SourceXml { get; set; }
         public string ResultXml { get; set; }
     
-        public virtual XmlDbUpdateLogEntity XML_DB_UPDATE { get; set; }
+        public XmlDbUpdateLogEntity XML_DB_UPDATE { get; set; }
     }
+        public class XmlDbUpdateActionsLogEntityConfiguration : IEntityTypeConfiguration<XmlDbUpdateActionsLogEntity>
+        {
+            public void Configure(EntityTypeBuilder<XmlDbUpdateActionsLogEntity> builder)
+            {
+                builder.ToTable("XML_DB_UPDATE_ACTIONS");
+    
+                builder.Property(x => x.ResultXml).HasColumnName("ResultXml");
+				builder.Property(x => x.SourceXml).HasColumnName("SourceXml");
+				builder.Property(x => x.UserId).HasColumnName("UserId");
+				builder.Property(x => x.Applied).HasColumnName("Applied");
+				builder.Property(x => x.Hash).HasColumnName("Hash");
+				builder.Property(x => x.ParentId).HasColumnName("ParentId");
+				builder.Property(x => x.Ids).HasColumnName("Ids");
+				builder.Property(x => x.UpdateId).HasColumnName("UpdateId");
+				builder.Property(x => x.Id).HasColumnName("Id");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.XML_DB_UPDATE).WithMany(y => y.XML_DB_UPDATE_ACTIONS).HasForeignKey(x => x.UpdateId);
+    			
+            }
+        }
 }

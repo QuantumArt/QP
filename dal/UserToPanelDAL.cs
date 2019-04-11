@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class UserToPanelDAL
     {
+    
         public decimal UserId { get; set; }
         public decimal PanelId { get; set; }
         public decimal PanelBlockNo { get; set; }
@@ -22,7 +29,30 @@ namespace Quantumart.QP8.DAL
         public decimal SaveBlockNo { get; set; }
         public decimal SaveOrder { get; set; }
     
-        public virtual TodayPanelsDAL TodayPanels { get; set; }
-        public virtual UserDAL Users { get; set; }
+        public TodayPanelsDAL TodayPanels { get; set; }
+        public UserDAL Users { get; set; }
     }
+        public class UserToPanelDALConfiguration : IEntityTypeConfiguration<UserToPanelDAL>
+        {
+            public void Configure(EntityTypeBuilder<UserToPanelDAL> builder)
+            {
+                builder.ToTable("user_to_panel");
+    
+                builder.Property(x => x.UserId).HasColumnName("user_id");
+				builder.Property(x => x.PanelId).HasColumnName("panel_id");
+				builder.Property(x => x.PanelBlockNo).HasColumnName("panel_block_no");
+				builder.Property(x => x.PanelOrder).HasColumnName("panel_order");
+				builder.Property(x => x.PanelHeight).HasColumnName("panel_height");
+				builder.Property(x => x.SaveBlockNo).HasColumnName("save_block_no");
+				builder.Property(x => x.SaveOrder).HasColumnName("save_order");
+				
+    
+                builder.HasKey(x => new { x.UserId, x.PanelId });
+
+    
+                builder.HasOne(x => x.TodayPanels).WithMany(y => y.UserToPanel).HasForeignKey(x => x.PanelId);
+    			builder.HasOne(x => x.Users).WithMany(y => y.UserToPanel).HasForeignKey(x => x.UserId);
+    			
+            }
+        }
 }

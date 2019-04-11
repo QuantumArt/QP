@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -114,7 +113,8 @@ namespace Quantumart.QP8.BLL.Repository
                 if (!inmemorySiteIDs.Contains(s.Id))
                 {
                     entities.SiteSet.Attach(s);
-                    dalDb.Sites.Remove(s);
+                    #warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                    // dalDb.Sites.Remove(s);
                 }
             }
             foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
@@ -122,7 +122,8 @@ namespace Quantumart.QP8.BLL.Repository
                 if (!indbSiteIDs.Contains(s.Id))
                 {
                     entities.SiteSet.Attach(s);
-                    dal.Sites.Add(s);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                    // dal.Sites.Add(s);
                 }
             }
 
@@ -134,7 +135,8 @@ namespace Quantumart.QP8.BLL.Repository
                 if (!inmemoryContentIDs.Contains(s.Id))
                 {
                     entities.ContentSet.Attach(s);
-                    dalDb.Contents.Remove(s);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                    // dalDb.Contents.Remove(s);
                 }
             }
             foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
@@ -142,7 +144,8 @@ namespace Quantumart.QP8.BLL.Repository
                 if (!indbContentIDs.Contains(s.Id))
                 {
                     entities.ContentSet.Attach(s);
-                    dal.Contents.Add(s);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                    // dal.Contents.Add(s);
                 }
             }
 
@@ -208,14 +211,16 @@ namespace Quantumart.QP8.BLL.Repository
             foreach (var item in siteLinksToAdd)
             {
                 entities.SiteSet.Attach(item);
-                customActionDal.Sites.Add(item);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                // customActionDal.Sites.Add(item);
             }
 
             var contentLinksToAdd = MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList());
             foreach (var item in contentLinksToAdd)
             {
                 entities.ContentSet.Attach(item);
-                customActionDal.Contents.Add(item);
+                #warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                // customActionDal.Contents.Add(item);
             }
 
             if (customAction.Action.IsInterface)

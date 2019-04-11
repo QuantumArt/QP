@@ -9,17 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class LanguagesDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public LanguagesDAL()
-        {
-            this.Translations = new HashSet<TranslationsDAL>();
-            this.Users = new HashSet<UserDAL>();
-        }
     
         public decimal LanguageId { get; set; }
         public string LanguageName { get; set; }
@@ -35,9 +35,35 @@ namespace Quantumart.QP8.DAL
         public bool Direction { get; set; }
         public string IsoCode { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TranslationsDAL> Translations { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserDAL> Users { get; set; }
+        public ICollection<TranslationsDAL> Translations { get; set; }
+        public ICollection<UserDAL> Users { get; set; }
     }
+        public class LanguagesDALConfiguration : IEntityTypeConfiguration<LanguagesDAL>
+        {
+            public void Configure(EntityTypeBuilder<LanguagesDAL> builder)
+            {
+                builder.ToTable("LANGUAGES");
+    
+                builder.Property(x => x.LanguageId).HasColumnName("LANGUAGE_ID");
+				builder.Property(x => x.LanguageName).HasColumnName("LANGUAGE_NAME");
+				builder.Property(x => x.LanguagePt).HasColumnName("LANGUAGE_PT");
+				builder.Property(x => x.Locale).HasColumnName("LOCALE");
+				builder.Property(x => x.Codepage).HasColumnName("CODEPAGE");
+				builder.Property(x => x.Charset).HasColumnName("CHARSET");
+				builder.Property(x => x.GeneralDateFormat).HasColumnName("general_date_format");
+				builder.Property(x => x.LongDateFormat).HasColumnName("long_date_format");
+				builder.Property(x => x.ShortDateFormat).HasColumnName("short_date_format");
+				builder.Property(x => x.LongTimeFormat).HasColumnName("long_time_format");
+				builder.Property(x => x.ShortTimeFormat).HasColumnName("short_time_format");
+				builder.Property(x => x.Direction).HasColumnName("direction");
+				builder.Property(x => x.IsoCode).HasColumnName("iso_code");
+				
+    
+                builder.HasKey(x => x.LanguageId);
+    
+                builder.HasMany(x => x.Translations).WithOne(y => y.Languages).HasForeignKey(y => y.LanguageId);
+    			builder.HasMany(x => x.Users).WithOne(y => y.Languages).HasForeignKey(y => y.LanguageId);
+    			
+            }
+        }
 }

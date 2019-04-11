@@ -9,17 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class PageTemplateDAL :  IQpEntityObject
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public PageTemplateDAL()
-        {
-            this.Object = new HashSet<ObjectDAL>();
-            this.Page = new HashSet<PageDAL>();
-        }
     
         public decimal Id { get; set; }
         public decimal SiteId { get; set; }
@@ -58,13 +58,66 @@ namespace Quantumart.QP8.DAL
         public bool SendNocacheHeaders { get; set; }
         public bool PermanentLock { get; set; }
     
-        public virtual NetLanguagesDAL NetLanguages { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ObjectDAL> Object { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PageDAL> Page { get; set; }
-        public virtual UserDAL LockedByUser { get; set; }
-        public virtual SiteDAL Site { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
+        public NetLanguagesDAL NetLanguages { get; set; }
+        public ICollection<ObjectDAL> Object { get; set; }
+        public ICollection<PageDAL> Page { get; set; }
+        public UserDAL LockedByUser { get; set; }
+        public SiteDAL Site { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
     }
+        public class PageTemplateDALConfiguration : IEntityTypeConfiguration<PageTemplateDAL>
+        {
+            public void Configure(EntityTypeBuilder<PageTemplateDAL> builder)
+            {
+                builder.ToTable("PAGE_TEMPLATE");
+    
+                builder.Property(x => x.PermanentLock).HasColumnName("PERMANENT_LOCK");
+				builder.Property(x => x.SendNocacheHeaders).HasColumnName("SEND_NOCACHE_HEADERS");
+				builder.Property(x => x.Id).HasColumnName("PAGE_TEMPLATE_ID");
+				builder.Property(x => x.SiteId).HasColumnName("SITE_ID");
+				builder.Property(x => x.Name).HasColumnName("TEMPLATE_NAME");
+				builder.Property(x => x.TemplatePicture).HasColumnName("TEMPLATE_PICTURE");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.Charset).HasColumnName("charset");
+				builder.Property(x => x.Codepage).HasColumnName("codepage");
+				builder.Property(x => x.Locale).HasColumnName("locale");
+				builder.Property(x => x.TemplateBody).HasColumnName("TEMPLATE_BODY");
+				builder.Property(x => x.TemplateFolder).HasColumnName("TEMPLATE_FOLDER");
+				builder.Property(x => x.IsSystem).HasColumnName("is_system");
+				builder.Property(x => x.NetTemplateName).HasColumnName("NET_TEMPLATE_NAME");
+				builder.Property(x => x.CodeBehind).HasColumnName("CODE_BEHIND");
+				builder.Property(x => x.NetLanguageId).HasColumnName("NET_LANGUAGE_ID");
+				builder.Property(x => x.Locked).HasColumnName("LOCKED");
+				builder.Property(x => x.LockedBy).HasColumnName("LOCKED_BY");
+				builder.Property(x => x.ShowFilenames).HasColumnName("show_filenames");
+				builder.Property(x => x.EnableViewstate).HasColumnName("ENABLE_VIEWSTATE");
+				builder.Property(x => x.ForMobileDevices).HasColumnName("FOR_MOBILE_DEVICES");
+				builder.Property(x => x.PreviewTemplateBody).HasColumnName("PREVIEW_TEMPLATE_BODY");
+				builder.Property(x => x.PreviewCodeBehind).HasColumnName("PREVIEW_CODE_BEHIND");
+				builder.Property(x => x.MaxNumOfFormatStoredVersions).HasColumnName("max_num_of_format_stored_versions");
+				builder.Property(x => x.CustomClassForPages).HasColumnName("custom_class_for_pages");
+				builder.Property(x => x.TemplateCustomClass).HasColumnName("template_custom_class");
+				builder.Property(x => x.CustomClassForGenerics).HasColumnName("custom_class_for_generics");
+				builder.Property(x => x.CustomClassForContainers).HasColumnName("custom_class_for_containers");
+				builder.Property(x => x.CustomClassForForms).HasColumnName("custom_class_for_forms");
+				builder.Property(x => x.AssembleInLive).HasColumnName("ASSEMBLE_IN_LIVE");
+				builder.Property(x => x.AssembleInStage).HasColumnName("ASSEMBLE_IN_STAGE");
+				builder.Property(x => x.DisableDatabind).HasColumnName("DISABLE_DATABIND");
+				builder.Property(x => x.Using).HasColumnName("@using");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.NetLanguages).WithMany(y => y.PageTemplate).HasForeignKey(x => x.NetLanguageId);
+    			builder.HasMany(x => x.Object).WithOne(y => y.PageTemplate).HasForeignKey(y => y.PageTemplateId);
+    			builder.HasMany(x => x.Page).WithOne(y => y.PageTemplate).HasForeignKey(y => y.TemplateId);
+    			builder.HasOne(x => x.LockedByUser).WithMany(y => y.PageTemplate).HasForeignKey(x => x.LockedBy);
+    			builder.HasOne(x => x.Site).WithMany(y => y.PageTemplates).HasForeignKey(x => x.SiteId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.PAGE_TEMPLATE).HasForeignKey(x => x.LastModifiedBy);
+    			
+            }
+        }
 }

@@ -1,4 +1,4 @@
-﻿<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Core" #>
 <#@ assembly name="System.Data" #>
 <#@ assembly name="System.Xml" #>
 <#@ assembly name="System.Xml.Linq"#>
@@ -1500,7 +1500,7 @@ public class EdmMetadataLoader
         _errors = errors;
     }
 
-    public IEnumerable<GlobalItem> CreateEdmItemCollection(string sourcePath)
+    public EdmItemCollection CreateEdmItemCollection(string sourcePath)
     {
         ArgumentNotNull(sourcePath, "sourcePath");
 
@@ -1524,6 +1524,24 @@ public class EdmMetadataLoader
         }
         return new EdmItemCollection();
     }
+
+    public StoreItemCollection CreateStoreItemCollection(string sourcePath)
+    {
+        ArgumentNotNull(sourcePath, "sourcePath");
+        return new StoreItemCollection(new [] {_host.ResolvePath(sourcePath)});
+
+    }
+
+    public StorageMappingItemCollection CreateStorageMappingItemCollection(EdmItemCollection itemCollection, StoreItemCollection storeCollection, string sourcePath)
+    {
+        ArgumentNotNull(sourcePath, "sourcePath");
+        ArgumentNotNull(itemCollection, "itemCollection");
+        ArgumentNotNull(storeCollection, "storeCollection");
+
+        return new StorageMappingItemCollection(itemCollection, storeCollection, new [] {_host.ResolvePath(sourcePath)});
+    }
+
+
 
     public string GetModelNamespace(string sourcePath)
     {

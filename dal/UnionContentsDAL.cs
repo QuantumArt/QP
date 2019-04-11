@@ -9,17 +9,44 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class UnionContentsDAL
     {
+    
         public decimal VirtualContentId { get; set; }
         public decimal UnionContentId { get; set; }
         public Nullable<decimal> MasterContentId { get; set; }
     
-        public virtual ContentDAL Content { get; set; }
-        public virtual ContentDAL Content1 { get; set; }
-        public virtual ContentDAL Content2 { get; set; }
+        public ContentDAL Content { get; set; }
+        public ContentDAL Content1 { get; set; }
+        public ContentDAL Content2 { get; set; }
     }
+        public class UnionContentsDALConfiguration : IEntityTypeConfiguration<UnionContentsDAL>
+        {
+            public void Configure(EntityTypeBuilder<UnionContentsDAL> builder)
+            {
+                builder.ToTable("union_contents");
+    
+                builder.Property(x => x.VirtualContentId).HasColumnName("virtual_content_id");
+				builder.Property(x => x.UnionContentId).HasColumnName("union_content_id");
+				builder.Property(x => x.MasterContentId).HasColumnName("master_content_id");
+				
+    
+                builder.HasKey(x => new { x.VirtualContentId, x.UnionContentId });
+
+    
+                builder.HasOne(x => x.Content).WithMany(y => y.UnionContents).HasForeignKey(x => x.MasterContentId);
+    			builder.HasOne(x => x.Content1).WithMany(y => y.UnionContents1).HasForeignKey(x => x.UnionContentId);
+    			builder.HasOne(x => x.Content2).WithMany(y => y.UnionContents2).HasForeignKey(x => x.VirtualContentId);
+    			
+            }
+        }
 }

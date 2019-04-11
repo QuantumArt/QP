@@ -9,23 +9,41 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class SystemStatusTypeDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public SystemStatusTypeDAL()
-        {
-            this.ArticleStatusHistory = new HashSet<ArticleStatusHistoryDAL>();
-        }
     
         public decimal Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public Nullable<decimal> DisableClear { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ArticleStatusHistoryDAL> ArticleStatusHistory { get; set; }
+        public ICollection<ArticleStatusHistoryDAL> ArticleStatusHistory { get; set; }
     }
+        public class SystemStatusTypeDALConfiguration : IEntityTypeConfiguration<SystemStatusTypeDAL>
+        {
+            public void Configure(EntityTypeBuilder<SystemStatusTypeDAL> builder)
+            {
+                builder.ToTable("SYSTEM_STATUS_TYPE");
+    
+                builder.Property(x => x.Id).HasColumnName("ID");
+				builder.Property(x => x.Name).HasColumnName("NAME");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.DisableClear).HasColumnName("DISABLE_CLEAR");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.ArticleStatusHistory).WithOne(y => y.SystemStatusType).HasForeignKey(y => y.SystemStatusTypeId);
+    			
+            }
+        }
 }

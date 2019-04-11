@@ -9,14 +9,38 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class UserQueryAttrsDAL
     {
+    
         public decimal VirtualContentId { get; set; }
         public decimal UserQueryAttrId { get; set; }
     
-        public virtual ContentDAL Content { get; set; }
+        public ContentDAL Content { get; set; }
     }
+        public class UserQueryAttrsDALConfiguration : IEntityTypeConfiguration<UserQueryAttrsDAL>
+        {
+            public void Configure(EntityTypeBuilder<UserQueryAttrsDAL> builder)
+            {
+                builder.ToTable("user_query_attrs");
+    
+                builder.Property(x => x.VirtualContentId).HasColumnName("virtual_content_id");
+				builder.Property(x => x.UserQueryAttrId).HasColumnName("user_query_attr_id");
+				
+    
+                builder.HasKey(x => new { x.VirtualContentId, x.UserQueryAttrId });
+
+    
+                builder.HasOne(x => x.Content).WithMany(y => y.UserQueryAttrs).HasForeignKey(x => x.VirtualContentId);
+    			
+            }
+        }
 }

@@ -9,20 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
-    
+
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class EntityTypeDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public EntityTypeDAL()
-        {
-            this.Actions = new HashSet<BackendActionDAL>();
-            this.Children = new HashSet<EntityTypeDAL>();
-            this.ENTITY_TYPE_ACCESS = new HashSet<EntityTypePermissionDAL>();
-            this.ENTITY_TYPE11 = new HashSet<EntityTypeDAL>();
-        }
-    
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
@@ -50,21 +48,68 @@ namespace Quantumart.QP8.DAL
         public bool ACTION_PERMISSION_ENABLE { get; set; }
         public Nullable<int> GROUP_PARENT_ID { get; set; }
         public string GROUP_PARENT_ID_FIELD { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BackendActionDAL> Actions { get; set; }
-        public virtual BackendActionDAL DefaultAction { get; set; }
-        public virtual BackendActionDAL FolderDefaultAction { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EntityTypeDAL> Children { get; set; }
-        public virtual EntityTypeDAL Parent { get; set; }
-        public virtual BackendActionDAL CancelAction { get; set; }
-        public virtual ContextMenuDAL ContextMenu { get; set; }
-        public virtual ContextMenuDAL FolderContextMenu { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EntityTypePermissionDAL> ENTITY_TYPE_ACCESS { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EntityTypeDAL> ENTITY_TYPE11 { get; set; }
-        public virtual EntityTypeDAL ENTITY_TYPE3 { get; set; }
+
+        public ICollection<BackendActionDAL> Actions { get; set; }
+        public BackendActionDAL DefaultAction { get; set; }
+        public BackendActionDAL FolderDefaultAction { get; set; }
+        public ICollection<EntityTypeDAL> Children { get; set; }
+        public EntityTypeDAL Parent { get; set; }
+        public BackendActionDAL CancelAction { get; set; }
+        public ContextMenuDAL ContextMenu { get; set; }
+        public ContextMenuDAL FolderContextMenu { get; set; }
+        public ICollection<EntityTypePermissionDAL> ENTITY_TYPE_ACCESS { get; set; }
+        public ICollection<EntityTypeDAL> ENTITY_TYPE11 { get; set; }
+        public EntityTypeDAL ENTITY_TYPE3 { get; set; }
     }
+        public class EntityTypeDALConfiguration : IEntityTypeConfiguration<EntityTypeDAL>
+        {
+            public void Configure(EntityTypeBuilder<EntityTypeDAL> builder)
+            {
+                builder.ToTable("ENTITY_TYPE");
+
+                builder.Property(x => x.GROUP_PARENT_ID_FIELD).HasColumnName("GROUP_PARENT_ID_FIELD");
+				builder.Property(x => x.GROUP_PARENT_ID).HasColumnName("GROUP_PARENT_ID");
+				builder.Property(x => x.ACTION_PERMISSION_ENABLE).HasColumnName("ACTION_PERMISSION_ENABLE");
+				builder.Property(x => x.ContextName).HasColumnName("CONTEXT_NAME");
+				builder.Property(x => x.CancelActionId).HasColumnName("CANCEL_ACTION_ID");
+				builder.Property(x => x.Disabled).HasColumnName("DISABLED");
+				builder.Property(x => x.TabId).HasColumnName("TAB_ID");
+				builder.Property(x => x.FolderContextMenuId).HasColumnName("FOLDER_CONTEXT_MENU_ID");
+				builder.Property(x => x.ContextMenuId).HasColumnName("CONTEXT_MENU_ID");
+				builder.Property(x => x.FolderDefaultActionId).HasColumnName("FOLDER_DEFAULT_ACTION_ID");
+				builder.Property(x => x.DefaultActionId).HasColumnName("DEFAULT_ACTION_ID");
+				builder.Property(x => x.RecurringIdField).HasColumnName("RECURRING_ID_FIELD");
+				builder.Property(x => x.HasItemNodes).HasColumnName("HAS_ITEM_NODES");
+				builder.Property(x => x.IconField).HasColumnName("ICON_FIELD");
+				builder.Property(x => x.IconModifierField).HasColumnName("ICON_MODIFIER_FIELD");
+				builder.Property(x => x.FolderIcon).HasColumnName("FOLDER_ICON");
+				builder.Property(x => x.ParentIdField).HasColumnName("PARENT_ID_FIELD");
+				builder.Property(x => x.OrderField).HasColumnName("ORDER_FIELD");
+				builder.Property(x => x.TitleField).HasColumnName("TITLE_FIELD");
+				builder.Property(x => x.IdField).HasColumnName("ID_FIELD");
+				builder.Property(x => x.SourceSP).HasColumnName("SOURCE_SP");
+				builder.Property(x => x.Source).HasColumnName("SOURCE");
+				builder.Property(x => x.Order).HasColumnName("ORDER");
+				builder.Property(x => x.ParentId).HasColumnName("PARENT_ID");
+				builder.Property(x => x.Code).HasColumnName("CODE");
+				builder.Property(x => x.Name).HasColumnName("NAME");
+				builder.Property(x => x.Id).HasColumnName("ID");
+
+
+                builder.HasKey(x => x.Id);
+
+                builder.HasMany(x => x.Actions).WithOne().HasForeignKey(y => y.EntityTypeId);
+    			builder.HasOne(x => x.DefaultAction).WithMany().HasForeignKey(x => x.DefaultActionId);
+    			builder.HasOne(x => x.FolderDefaultAction).WithMany().HasForeignKey(x => x.FolderDefaultActionId);
+    			builder.HasMany(x => x.Children).WithOne(y => y.Parent).HasForeignKey(y => y.ParentId);
+    			builder.HasOne(x => x.Parent).WithMany(y => y.Children).HasForeignKey(x => x.ParentId);
+    			builder.HasOne(x => x.CancelAction).WithMany().HasForeignKey(x => x.CancelActionId);
+    			builder.HasOne(x => x.ContextMenu).WithMany().HasForeignKey(x => x.ContextMenuId);
+    			builder.HasOne(x => x.FolderContextMenu).WithMany().HasForeignKey(x => x.FolderContextMenuId);
+    			builder.HasMany(x => x.ENTITY_TYPE_ACCESS).WithOne(y => y.EntityType).HasForeignKey(y => y.EntityTypeId);
+    			builder.HasMany(x => x.ENTITY_TYPE11).WithOne(y => y.ENTITY_TYPE3).HasForeignKey(y => y.GROUP_PARENT_ID);
+    			builder.HasOne(x => x.ENTITY_TYPE3).WithMany(y => y.ENTITY_TYPE11).HasForeignKey(x => x.GROUP_PARENT_ID);
+
+            }
+        }
 }

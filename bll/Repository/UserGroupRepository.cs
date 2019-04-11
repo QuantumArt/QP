@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
+using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -75,7 +76,8 @@ namespace Quantumart.QP8.BLL.Repository
                 if (group.ParentGroup == null || pg.Id != group.ParentGroup.Id)
                 {
                     entities.UserGroupSet.Attach(pg);
-                    dalDb.ParentGroups.Remove(pg);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                    // dalDb.ParentGroups.Remove(pg);
                 }
             }
 
@@ -85,7 +87,8 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     var dalParent = entities.UserGroupSet.Single(g => g.Id == group.ParentGroup.Id);
                     entities.UserGroupSet.Attach(dalParent);
-                    dal.ParentGroups.Add(dalParent);
+                    #warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                    // dal.ParentGroups.Add(dalParent);
                 }
             }
 
@@ -96,7 +99,8 @@ namespace Quantumart.QP8.BLL.Repository
                 if (!inmemoryUserIDs.Contains(u.Id))
                 {
                     entities.UserSet.Attach(u);
-                    dalDb.Users.Remove(u);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                    // dalDb.Users.Remove(u);
                 }
             }
             foreach (var u in MapperFacade.UserMapper.GetDalList(group.Users.ToList()))
@@ -104,7 +108,8 @@ namespace Quantumart.QP8.BLL.Repository
                 if (!indbUserIDs.Contains(u.Id))
                 {
                     entities.UserSet.Attach(u);
-                    dal.Users.Add(u);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                    // dal.Users.Add(u);
                 }
             }
 
@@ -129,13 +134,15 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 var parentDal = MapperFacade.UserGroupMapper.GetDalObject(group.ParentGroup);
                 entities.UserGroupSet.Attach(parentDal);
-                dal.ParentGroups.Add(parentDal);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                // dal.ParentGroups.Add(parentDal);
             }
 
             foreach (var u in MapperFacade.UserMapper.GetDalList(group.Users.ToList()))
             {
                 entities.UserSet.Attach(u);
-                dal.Users.Add(u);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                // dal.Users.Add(u);
             }
 
             entities.SaveChanges();

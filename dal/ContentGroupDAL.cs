@@ -9,23 +9,41 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ContentGroupDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ContentGroupDAL()
-        {
-            this.Contents = new HashSet<ContentDAL>();
-        }
     
         public decimal Id { get; set; }
         public decimal SiteId { get; set; }
         public string Name { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ContentDAL> Contents { get; set; }
-        public virtual SiteDAL Site { get; set; }
+        public ICollection<ContentDAL> Contents { get; set; }
+        public SiteDAL Site { get; set; }
     }
+        public class ContentGroupDALConfiguration : IEntityTypeConfiguration<ContentGroupDAL>
+        {
+            public void Configure(EntityTypeBuilder<ContentGroupDAL> builder)
+            {
+                builder.ToTable("content_group");
+    
+                builder.Property(x => x.Id).HasColumnName("content_group_id");
+				builder.Property(x => x.SiteId).HasColumnName("site_id");
+				builder.Property(x => x.Name).HasColumnName("name");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.Contents).WithOne(y => y.Group).HasForeignKey(y => y.GroupId);
+    			builder.HasOne(x => x.Site).WithMany(y => y.ContentGroups).HasForeignKey(x => x.SiteId);
+    			
+            }
+        }
 }

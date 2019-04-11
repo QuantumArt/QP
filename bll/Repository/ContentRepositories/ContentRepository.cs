@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -127,7 +127,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
         {
             if (ids != null && ids.Any())
             {
-                DbQuery<ContentDAL> context = QPContext.EFContext.ContentSet;
+                var context = QPContext.EFContext.ContentSet.AsQueryable();
                 if (loadSite)
                 {
                     context = context.Include("Site");

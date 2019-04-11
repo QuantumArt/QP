@@ -9,18 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class PageDAL :  IQpEntityObject
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public PageDAL()
-        {
-            this.ContentForm = new HashSet<ContentFormDAL>();
-            this.Object = new HashSet<ObjectDAL>();
-            this.PageTrace = new HashSet<PageTraceDAL>();
-        }
     
         public decimal Id { get; set; }
         public decimal TemplateId { get; set; }
@@ -51,14 +50,58 @@ namespace Quantumart.QP8.DAL
         public Nullable<bool> SendNocacheHeaders { get; set; }
         public bool PermanentLock { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ContentFormDAL> ContentForm { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ObjectDAL> Object { get; set; }
-        public virtual UserDAL LockedByUser { get; set; }
-        public virtual PageTemplateDAL PageTemplate { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PageTraceDAL> PageTrace { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
+        public ICollection<ContentFormDAL> ContentForm { get; set; }
+        public ICollection<ObjectDAL> Object { get; set; }
+        public UserDAL LockedByUser { get; set; }
+        public PageTemplateDAL PageTemplate { get; set; }
+        public ICollection<PageTraceDAL> PageTrace { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
     }
+        public class PageDALConfiguration : IEntityTypeConfiguration<PageDAL>
+        {
+            public void Configure(EntityTypeBuilder<PageDAL> builder)
+            {
+                builder.ToTable("PAGE");
+    
+                builder.Property(x => x.PermanentLock).HasColumnName("PERMANENT_LOCK");
+				builder.Property(x => x.SendNocacheHeaders).HasColumnName("SEND_NOCACHE_HEADERS");
+				builder.Property(x => x.Id).HasColumnName("PAGE_ID");
+				builder.Property(x => x.TemplateId).HasColumnName("PAGE_TEMPLATE_ID");
+				builder.Property(x => x.Name).HasColumnName("PAGE_NAME");
+				builder.Property(x => x.Filename).HasColumnName("PAGE_FILENAME");
+				builder.Property(x => x.ProxyCache).HasColumnName("PROXY_CACHE");
+				builder.Property(x => x.CacheHours).HasColumnName("CACHE_HOURS");
+				builder.Property(x => x.Charset).HasColumnName("CHARSET");
+				builder.Property(x => x.Codepage).HasColumnName("CODEPAGE");
+				builder.Property(x => x.Locale).HasColumnName("LOCALE");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Reassemble).HasColumnName("REASSEMBLE");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.Assembled).HasColumnName("ASSEMBLED");
+				builder.Property(x => x.LastAssembledBy).HasColumnName("LAST_ASSEMBLED_BY");
+				builder.Property(x => x.GenerateTrace).HasColumnName("GENERATE_TRACE");
+				builder.Property(x => x.Folder).HasColumnName("page_folder");
+				builder.Property(x => x.Locked).HasColumnName("LOCKED");
+				builder.Property(x => x.LockedBy).HasColumnName("LOCKED_BY");
+				builder.Property(x => x.EnableViewstate).HasColumnName("ENABLE_VIEWSTATE");
+				builder.Property(x => x.DisableBrowseServer).HasColumnName("DISABLE_BROWSE_SERVER");
+				builder.Property(x => x.SendLastModifiedHeader).HasColumnName("SET_LAST_MODIFIED_HEADER");
+				builder.Property(x => x.CustomClass).HasColumnName("page_custom_class");
+				builder.Property(x => x.AssembleInLive).HasColumnName("ASSEMBLE_IN_LIVE");
+				builder.Property(x => x.AssembleInStage).HasColumnName("ASSEMBLE_IN_STAGE");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.ContentForm).WithOne(y => y.Page).HasForeignKey(y => y.ThankYouPageId);
+    			builder.HasMany(x => x.Object).WithOne(y => y.Page).HasForeignKey(y => y.PageId);
+    			builder.HasOne(x => x.LockedByUser).WithMany(y => y.Page).HasForeignKey(x => x.LockedBy);
+    			builder.HasOne(x => x.PageTemplate).WithMany(y => y.Page).HasForeignKey(x => x.TemplateId);
+    			builder.HasMany(x => x.PageTrace).WithOne(y => y.Page).HasForeignKey(y => y.PageId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.PAGE).HasForeignKey(x => x.LastModifiedBy);
+    			
+            }
+        }
 }

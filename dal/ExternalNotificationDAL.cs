@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ExternalNotificationDAL
     {
+    
         public decimal Id { get; set; }
         public string EventName { get; set; }
         public decimal ArticleId { get; set; }
@@ -27,4 +34,29 @@ namespace Quantumart.QP8.DAL
         public Nullable<decimal> ContentId { get; set; }
         public Nullable<decimal> SiteId { get; set; }
     }
+        public class ExternalNotificationDALConfiguration : IEntityTypeConfiguration<ExternalNotificationDAL>
+        {
+            public void Configure(EntityTypeBuilder<ExternalNotificationDAL> builder)
+            {
+                builder.ToTable("EXTERNAL_NOTIFICATION_QUEUE");
+    
+                builder.Property(x => x.SiteId).HasColumnName("SITE_ID");
+				builder.Property(x => x.ContentId).HasColumnName("CONTENT_ID");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.Sent).HasColumnName("SENT");
+				builder.Property(x => x.OldXml).HasColumnName("OLD_XML");
+				builder.Property(x => x.NewXml).HasColumnName("NEW_XML");
+				builder.Property(x => x.Tries).HasColumnName("TRIES");
+				builder.Property(x => x.Url).HasColumnName("URL");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.ArticleId).HasColumnName("ARTICLE_ID");
+				builder.Property(x => x.EventName).HasColumnName("EVENT_NAME");
+				builder.Property(x => x.Id).HasColumnName("ID");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                
+            }
+        }
 }

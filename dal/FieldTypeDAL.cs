@@ -9,16 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class FieldTypeDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public FieldTypeDAL()
-        {
-            this.Field = new HashSet<FieldDAL>();
-        }
     
         public decimal Id { get; set; }
         public string Name { get; set; }
@@ -29,7 +30,28 @@ namespace Quantumart.QP8.DAL
         public string CheckFunction { get; set; }
         public string Icon { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FieldDAL> Field { get; set; }
+        public ICollection<FieldDAL> Field { get; set; }
     }
+        public class FieldTypeDALConfiguration : IEntityTypeConfiguration<FieldTypeDAL>
+        {
+            public void Configure(EntityTypeBuilder<FieldTypeDAL> builder)
+            {
+                builder.ToTable("ATTRIBUTE_TYPE");
+    
+                builder.Property(x => x.Id).HasColumnName("ATTRIBUTE_TYPE_ID");
+				builder.Property(x => x.Name).HasColumnName("TYPE_NAME");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Image).HasColumnName("TYPE_IMAGE");
+				builder.Property(x => x.DatabaseType).HasColumnName("DATABASE_TYPE");
+				builder.Property(x => x.InputType).HasColumnName("INPUT_TYPE");
+				builder.Property(x => x.CheckFunction).HasColumnName("CHECK_FUNCTION");
+				builder.Property(x => x.Icon).HasColumnName("ICON");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.Field).WithOne(y => y.Type).HasForeignKey(y => y.TypeId);
+    			
+            }
+        }
 }

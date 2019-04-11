@@ -9,21 +9,37 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ContextMenuDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ContextMenuDAL()
-        {
-            this.Items = new HashSet<ContextMenuItemDAL>();
-        }
     
         public int Id { get; set; }
         public string Code { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ContextMenuItemDAL> Items { get; set; }
+        public ICollection<ContextMenuItemDAL> Items { get; set; }
     }
+        public class ContextMenuDALConfiguration : IEntityTypeConfiguration<ContextMenuDAL>
+        {
+            public void Configure(EntityTypeBuilder<ContextMenuDAL> builder)
+            {
+                builder.ToTable("CONTEXT_MENU");
+    
+                builder.Property(x => x.Code).HasColumnName("CODE");
+				builder.Property(x => x.Id).HasColumnName("ID");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.Items).WithOne(y => y.ContextMenu).HasForeignKey(y => y.ContextMenuId);
+    			
+            }
+        }
 }

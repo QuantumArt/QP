@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
@@ -146,7 +145,8 @@ namespace Quantumart.QP8.BLL.Repository
                     if (!inmemoryGroupIDs.Contains(g.Id) && !g.IsReadOnly && !(g.BuiltIn && user.BuiltIn))
                     {
                         entities.UserGroupSet.Attach(g);
-                        dalDb.Groups.Remove(g);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                        // dalDb.Groups.Remove(g);
                     }
                 }
                 foreach (var g in MapperFacade.UserGroupMapper.GetDalList(user.Groups.ToList()))
@@ -154,7 +154,8 @@ namespace Quantumart.QP8.BLL.Repository
                     if (!indbGroupIDs.Contains(g.Id))
                     {
                         entities.UserGroupSet.Attach(g);
-                        dal.Groups.Add(g);
+#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                        // dal.Groups.Add(g);
                     }
                 }
 
@@ -221,7 +222,8 @@ namespace Quantumart.QP8.BLL.Repository
             foreach (var s in MapperFacade.UserGroupMapper.GetDalList(user.Groups.ToList()))
             {
                 entities.UserGroupSet.Attach(s);
-                dal.Groups.Add(s);
+                #warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                // dal.Groups.Add(s);
             }
 
             //---------------

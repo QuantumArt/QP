@@ -9,16 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ObjectTypeDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ObjectTypeDAL()
-        {
-            this.Object = new HashSet<ObjectDAL>();
-        }
     
         public decimal Id { get; set; }
         public string Name { get; set; }
@@ -26,7 +27,25 @@ namespace Quantumart.QP8.DAL
         public string ImageName { get; set; }
         public string Icon { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ObjectDAL> Object { get; set; }
+        public ICollection<ObjectDAL> Object { get; set; }
     }
+        public class ObjectTypeDALConfiguration : IEntityTypeConfiguration<ObjectTypeDAL>
+        {
+            public void Configure(EntityTypeBuilder<ObjectTypeDAL> builder)
+            {
+                builder.ToTable("OBJECT_TYPE");
+    
+                builder.Property(x => x.Id).HasColumnName("OBJECT_TYPE_ID");
+				builder.Property(x => x.Name).HasColumnName("TYPE_NAME");
+				builder.Property(x => x.RelatedTable).HasColumnName("RELATED_TABLE");
+				builder.Property(x => x.ImageName).HasColumnName("image_name");
+				builder.Property(x => x.Icon).HasColumnName("ICON");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.Object).WithOne(y => y.ObjectType).HasForeignKey(y => y.TypeId);
+    			
+            }
+        }
 }

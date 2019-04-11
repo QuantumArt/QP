@@ -9,16 +9,42 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class UserQueryContentsDAL
     {
+    
         public decimal VirtualContentId { get; set; }
         public decimal RealContentId { get; set; }
         public Nullable<bool> IsIdSource { get; set; }
     
-        public virtual ContentDAL Content { get; set; }
-        public virtual ContentDAL Content1 { get; set; }
+        public ContentDAL Content { get; set; }
+        public ContentDAL Content1 { get; set; }
     }
+        public class UserQueryContentsDALConfiguration : IEntityTypeConfiguration<UserQueryContentsDAL>
+        {
+            public void Configure(EntityTypeBuilder<UserQueryContentsDAL> builder)
+            {
+                builder.ToTable("user_query_contents");
+    
+                builder.Property(x => x.VirtualContentId).HasColumnName("virtual_content_id");
+				builder.Property(x => x.RealContentId).HasColumnName("real_content_id");
+				builder.Property(x => x.IsIdSource).HasColumnName("is_id_source");
+				
+    
+                builder.HasKey(x => new { x.VirtualContentId, x.RealContentId });
+
+    
+                builder.HasOne(x => x.Content).WithMany(y => y.UserQueryContents).HasForeignKey(x => x.RealContentId);
+    			builder.HasOne(x => x.Content1).WithMany(y => y.UserQueryContents1).HasForeignKey(x => x.VirtualContentId);
+    			
+            }
+        }
 }

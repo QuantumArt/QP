@@ -9,25 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ArticleDAL :  IQpEntityObject
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ArticleDAL()
-        {
-            this.ContentData = new HashSet<ContentDataDAL>();
-            this.AccessRules = new HashSet<ArticlePermissionDAL>();
-            this.WaitingForApproval = new HashSet<WaitingForApprovalDAL>();
-            this.Schedules = new HashSet<ArticleScheduleDAL>();
-            this.StatusHistory = new HashSet<ArticleStatusHistoryDAL>();
-            this.Versions = new HashSet<ArticleVersionDAL>();
-            this.ItemToItem = new HashSet<ItemToItemDAL>();
-            this.BackItemToItem = new HashSet<ItemToItemDAL>();
-            this.ItemToItemVersions = new HashSet<ItemToItemVersionDAL>();
-            this.USER_DEFAULT_FILTER = new HashSet<UserDefaultFilterItemDAL>();
-        }
     
         public decimal Id { get; set; }
         public decimal Visible { get; set; }
@@ -46,30 +38,64 @@ namespace Quantumart.QP8.DAL
         public bool CancelSplit { get; set; }
         public System.Guid UniqueId { get; set; }
     
-        public virtual ArticleWorkflowBindDAL WorkflowBinding { get; set; }
-        public virtual ContentDAL Content { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ContentDataDAL> ContentData { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ArticlePermissionDAL> AccessRules { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WaitingForApprovalDAL> WaitingForApproval { get; set; }
-        public virtual UserDAL LockedByUser { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ArticleScheduleDAL> Schedules { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ArticleStatusHistoryDAL> StatusHistory { get; set; }
-        public virtual StatusTypeDAL Status { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ArticleVersionDAL> Versions { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ItemToItemDAL> ItemToItem { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ItemToItemDAL> BackItemToItem { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ItemToItemVersionDAL> ItemToItemVersions { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserDefaultFilterItemDAL> USER_DEFAULT_FILTER { get; set; }
+        public ArticleWorkflowBindDAL WorkflowBinding { get; set; }
+        public ContentDAL Content { get; set; }
+        public ICollection<ContentDataDAL> ContentData { get; set; }
+        public ICollection<ArticlePermissionDAL> AccessRules { get; set; }
+        public ICollection<WaitingForApprovalDAL> WaitingForApproval { get; set; }
+        public UserDAL LockedByUser { get; set; }
+        public ICollection<ArticleScheduleDAL> Schedules { get; set; }
+        public ICollection<ArticleStatusHistoryDAL> StatusHistory { get; set; }
+        public StatusTypeDAL Status { get; set; }
+        public ICollection<ArticleVersionDAL> Versions { get; set; }
+        public ICollection<ItemToItemDAL> ItemToItem { get; set; }
+        public ICollection<ItemToItemDAL> BackItemToItem { get; set; }
+        public ICollection<ItemToItemVersionDAL> ItemToItemVersions { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
+        public ICollection<UserDefaultFilterItemDAL> USER_DEFAULT_FILTER { get; set; }
     }
+        public class ArticleDALConfiguration : IEntityTypeConfiguration<ArticleDAL>
+        {
+            public void Configure(EntityTypeBuilder<ArticleDAL> builder)
+            {
+                builder.ToTable("CONTENT_ITEM");
+    
+                builder.Property(x => x.UniqueId).HasColumnName("UNIQUE_ID");
+				builder.Property(x => x.CancelSplit).HasColumnName("CANCEL_SPLIT");
+				builder.Property(x => x.Splitted).HasColumnName("SPLITTED");
+				builder.Property(x => x.Id).HasColumnName("CONTENT_ITEM_ID");
+				builder.Property(x => x.Visible).HasColumnName("VISIBLE");
+				builder.Property(x => x.StatusTypeId).HasColumnName("STATUS_TYPE_ID");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.ContentId).HasColumnName("CONTENT_ID");
+				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.LockedBy).HasColumnName("locked_by");
+				builder.Property(x => x.Locked).HasColumnName("LOCKED");
+				builder.Property(x => x.PermanentLock).HasColumnName("PERMANENT_LOCK");
+				builder.Property(x => x.Archived).HasColumnName("ARCHIVE");
+				builder.Property(x => x.NotForReplication).HasColumnName("not_for_replication");
+				builder.Property(x => x.Delayed).HasColumnName("SCHEDULE_NEW_VERSION_PUBLICATION");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.WorkflowBinding).WithOne(y => y.Article).HasForeignKey<ArticleWorkflowBindDAL>(y => y.ArticleId);
+    			builder.HasOne(x => x.Content).WithMany(y => y.Articles).HasForeignKey(x => x.ContentId);
+    			builder.HasMany(x => x.ContentData).WithOne(y => y.Article).HasForeignKey(y => y.ArticleId);
+    			builder.HasMany(x => x.AccessRules).WithOne(y => y.Article).HasForeignKey(y => y.ArticleId);
+    			builder.HasMany(x => x.WaitingForApproval).WithOne(y => y.Article).HasForeignKey(y => y.ArticleId);
+    			builder.HasOne(x => x.LockedByUser).WithMany(y => y.LockedByArticles).HasForeignKey(x => x.LockedBy);
+    			builder.HasMany(x => x.Schedules).WithOne(y => y.Article).HasForeignKey(y => y.ArticleId);
+    			builder.HasMany(x => x.StatusHistory).WithOne(y => y.Article).HasForeignKey(y => y.ArticleId);
+    			builder.HasOne(x => x.Status).WithMany(y => y.Articles).HasForeignKey(x => x.StatusTypeId);
+    			builder.HasMany(x => x.Versions).WithOne(y => y.Article).HasForeignKey(y => y.ArticleId);
+    			builder.HasMany(x => x.ItemToItem).WithOne(y => y.Article).HasForeignKey(y => y.LItemId);
+    			builder.HasMany(x => x.BackItemToItem).WithOne(y => y.Article1).HasForeignKey(y => y.RItemId);
+    			builder.HasMany(x => x.ItemToItemVersions).WithOne(y => y.Article).HasForeignKey(y => y.LinkedItemId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy);
+    			builder.HasMany(x => x.USER_DEFAULT_FILTER).WithOne(y => y.Article).HasForeignKey(y => y.ArticleId);
+    			
+            }
+        }
 }

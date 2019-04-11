@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;

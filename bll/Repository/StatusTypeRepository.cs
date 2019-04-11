@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;

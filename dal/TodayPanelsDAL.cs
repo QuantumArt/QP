@@ -9,16 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class TodayPanelsDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TodayPanelsDAL()
-        {
-            this.UserToPanel = new HashSet<UserToPanelDAL>();
-        }
     
         public string PanelName { get; set; }
         public decimal PanelId { get; set; }
@@ -29,7 +30,28 @@ namespace Quantumart.QP8.DAL
         public string IconFileName { get; set; }
         public bool Necessary { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserToPanelDAL> UserToPanel { get; set; }
+        public ICollection<UserToPanelDAL> UserToPanel { get; set; }
     }
+        public class TodayPanelsDALConfiguration : IEntityTypeConfiguration<TodayPanelsDAL>
+        {
+            public void Configure(EntityTypeBuilder<TodayPanelsDAL> builder)
+            {
+                builder.ToTable("today_panels");
+    
+                builder.Property(x => x.PanelName).HasColumnName("panel_name");
+				builder.Property(x => x.PanelId).HasColumnName("panel_id");
+				builder.Property(x => x.PanelFile).HasColumnName("panel_file");
+				builder.Property(x => x.PanelBlockNo).HasColumnName("panel_block_no");
+				builder.Property(x => x.PanelOrder).HasColumnName("panel_order");
+				builder.Property(x => x.PanelHeight).HasColumnName("panel_height");
+				builder.Property(x => x.IconFileName).HasColumnName("icon_file_name");
+				builder.Property(x => x.Necessary).HasColumnName("necessary");
+				
+    
+                builder.HasKey(x => x.PanelId);
+    
+                builder.HasMany(x => x.UserToPanel).WithOne(y => y.TodayPanels).HasForeignKey(y => y.PanelId);
+    			
+            }
+        }
 }

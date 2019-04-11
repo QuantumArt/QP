@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ContentFolderAccessDAL
     {
+    
         public decimal ContentFolderId { get; set; }
         public Nullable<decimal> UserId { get; set; }
         public Nullable<decimal> GroupId { get; set; }
@@ -23,9 +30,34 @@ namespace Quantumart.QP8.DAL
         public decimal LastModifiedBy { get; set; }
         public decimal Id { get; set; }
     
-        public virtual ContentFolderDAL ContentFolder { get; set; }
-        public virtual UserGroupDAL UserGroup { get; set; }
-        public virtual PermissionLevelDAL PermissionLevel { get; set; }
-        public virtual UserDAL Users { get; set; }
+        public ContentFolderDAL ContentFolder { get; set; }
+        public UserGroupDAL UserGroup { get; set; }
+        public PermissionLevelDAL PermissionLevel { get; set; }
+        public UserDAL Users { get; set; }
     }
+        public class ContentFolderAccessDALConfiguration : IEntityTypeConfiguration<ContentFolderAccessDAL>
+        {
+            public void Configure(EntityTypeBuilder<ContentFolderAccessDAL> builder)
+            {
+                builder.ToTable("content_FOLDER_ACCESS");
+    
+                builder.Property(x => x.ContentFolderId).HasColumnName("content_FOLDER_ID");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.GroupId).HasColumnName("GROUP_ID");
+				builder.Property(x => x.PermissionLevelId).HasColumnName("PERMISSION_LEVEL_ID");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.Id).HasColumnName("CONTENT_FOLDER_ACCESS_ID");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.ContentFolder).WithMany(y => y.ContentFolderAccess).HasForeignKey(x => x.ContentFolderId);
+    			builder.HasOne(x => x.UserGroup).WithMany(y => y.ContentFolderAccess).HasForeignKey(x => x.GroupId);
+    			builder.HasOne(x => x.PermissionLevel).WithMany(y => y.ContentFolderAccess).HasForeignKey(x => x.PermissionLevelId);
+    			builder.HasOne(x => x.Users).WithMany(y => y.ContentFolderAccess).HasForeignKey(x => x.UserId);
+    			
+            }
+        }
 }

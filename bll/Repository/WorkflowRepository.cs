@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Core;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
+using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository
 {

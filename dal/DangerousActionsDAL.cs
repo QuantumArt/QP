@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class DangerousActionsDAL
     {
+    
         public string ActionName { get; set; }
         public string EntityName { get; set; }
         public decimal Id { get; set; }
@@ -21,4 +28,23 @@ namespace Quantumart.QP8.DAL
         public System.DateTime Performed { get; set; }
         public string Description { get; set; }
     }
+        public class DangerousActionsDALConfiguration : IEntityTypeConfiguration<DangerousActionsDAL>
+        {
+            public void Configure(EntityTypeBuilder<DangerousActionsDAL> builder)
+            {
+                builder.ToTable("DANGEROUS_ACTIONS");
+    
+                builder.Property(x => x.ActionName).HasColumnName("ACTION_NAME");
+				builder.Property(x => x.EntityName).HasColumnName("ENTITY_NAME");
+				builder.Property(x => x.Id).HasColumnName("ID");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.Performed).HasColumnName("PERFORMED");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				
+    
+                builder.HasKey(x => x.Performed);
+    
+                
+            }
+        }
 }

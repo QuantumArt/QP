@@ -9,17 +9,44 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class WaitingForApprovalDAL
     {
+    
         public decimal ArticleId { get; set; }
         public decimal UserId { get; set; }
         public decimal StatusTypeId { get; set; }
     
-        public virtual ArticleDAL Article { get; set; }
-        public virtual StatusTypeDAL StatusType { get; set; }
-        public virtual UserDAL Users { get; set; }
+        public ArticleDAL Article { get; set; }
+        public StatusTypeDAL StatusType { get; set; }
+        public UserDAL Users { get; set; }
     }
+        public class WaitingForApprovalDALConfiguration : IEntityTypeConfiguration<WaitingForApprovalDAL>
+        {
+            public void Configure(EntityTypeBuilder<WaitingForApprovalDAL> builder)
+            {
+                builder.ToTable("WAITING_FOR_APPROVAL");
+    
+                builder.Property(x => x.ArticleId).HasColumnName("CONTENT_ITEM_ID");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.StatusTypeId).HasColumnName("STATUS_TYPE_ID");
+				
+    
+                builder.HasKey(x => new { x.ArticleId, x.UserId });
+
+    
+                builder.HasOne(x => x.Article).WithMany(y => y.WaitingForApproval).HasForeignKey(x => x.ArticleId);
+    			builder.HasOne(x => x.StatusType).WithMany(y => y.WaitingForApproval).HasForeignKey(x => x.StatusTypeId);
+    			builder.HasOne(x => x.Users).WithMany(y => y.WaitingForApproval).HasForeignKey(x => x.UserId);
+    			
+            }
+        }
 }

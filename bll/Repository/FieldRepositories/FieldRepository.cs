@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 {
     public class FieldRepository : IFieldRepository
     {
-        internal static DbQuery<FieldDAL> DefaultFieldQuery => QPContext.EFContext.FieldSet.Include("Content").Include("Type").Include("LastModifiedByUser");
+        internal static IQueryable<FieldDAL> DefaultFieldQuery => QPContext.EFContext.FieldSet.Include("Content").Include("Type").Include("LastModifiedByUser");
 
         Field IFieldRepository.GetById(int fieldId) => GetById(fieldId);
 

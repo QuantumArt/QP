@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
@@ -12,7 +12,7 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class SiteFolderRepository : FolderRepository
     {
-        internal DbQuery<SiteFolderDAL> CurrentSet => QPContext.EFContext.SiteFolderSet;
+        internal DbSet<SiteFolderDAL> CurrentSet => QPContext.EFContext.SiteFolderSet;
 
         internal SiteFolderMapper CurrentMapper => MapperFacade.SiteFolderMapper;
 

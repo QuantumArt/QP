@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
-    
+
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ContentFormDAL
     {
+
         public decimal ObjectId { get; set; }
         public decimal ContentId { get; set; }
         public decimal GenerateUpdateScript { get; set; }
@@ -21,11 +28,36 @@ namespace Quantumart.QP8.DAL
         public Nullable<decimal> NetLanguageId { get; set; }
         public Nullable<System.DateTime> Locked { get; set; }
         public Nullable<decimal> LockedBy { get; set; }
-    
-        public virtual ContentDAL Content { get; set; }
-        public virtual UserDAL Users { get; set; }
-        public virtual NetLanguagesDAL NetLanguages { get; set; }
-        public virtual ObjectDAL Object { get; set; }
-        public virtual PageDAL Page { get; set; }
+
+        public ContentDAL Content { get; set; }
+        public UserDAL Users { get; set; }
+        public NetLanguagesDAL NetLanguages { get; set; }
+        public ObjectDAL Object { get; set; }
+        public PageDAL Page { get; set; }
     }
+        public class ContentFormDALConfiguration : IEntityTypeConfiguration<ContentFormDAL>
+        {
+            public void Configure(EntityTypeBuilder<ContentFormDAL> builder)
+            {
+                builder.ToTable("CONTENT_FORM");
+
+                builder.Property(x => x.ObjectId).HasColumnName("object_id");
+				builder.Property(x => x.ContentId).HasColumnName("content_id");
+				builder.Property(x => x.GenerateUpdateScript).HasColumnName("generate_update_script");
+				builder.Property(x => x.ThankYouPageId).HasColumnName("thank_you_page_id");
+				builder.Property(x => x.NetLanguageId).HasColumnName("NET_LANGUAGE_ID");
+				builder.Property(x => x.Locked).HasColumnName("LOCKED");
+				builder.Property(x => x.LockedBy).HasColumnName("LOCKED_BY");
+
+
+                builder.HasKey(x => x.ObjectId);
+
+                builder.HasOne(x => x.Content).WithMany(y => y.Forms).HasForeignKey(x => x.ContentId);
+    			builder.HasOne(x => x.Users).WithMany(y => y.ContentForm).HasForeignKey(x => x.LockedBy);
+    			builder.HasOne(x => x.NetLanguages).WithMany(y => y.ContentForm).HasForeignKey(x => x.NetLanguageId);
+    			builder.HasOne(x => x.Object).WithOne(y => y.ContentForm).HasForeignKey<ContentFormDAL>(y => y.ObjectId);
+    			builder.HasOne(x => x.Page).WithMany(y => y.ContentForm).HasForeignKey(x => x.ThankYouPageId);
+
+            }
+        }
 }

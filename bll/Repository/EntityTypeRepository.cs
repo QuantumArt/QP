@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
 
@@ -9,7 +9,7 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class EntityTypeRepository
     {
-        private static DbQuery<EntityTypeDAL> DefaultEntityTypeQuery => QPContext.EFContext.EntityTypeSet.Include("Parent").Include("CancelAction").Include("ContextMenu");
+        private static IQueryable<EntityTypeDAL> DefaultEntityTypeQuery => QPContext.EFContext.EntityTypeSet.Include("Parent").Include("CancelAction").Include("ContextMenu");
 
         /// <summary>
         /// Возвращает тип сущности по ее идентификатору

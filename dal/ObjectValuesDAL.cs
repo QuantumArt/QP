@@ -9,15 +9,40 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ObjectValuesDAL
     {
+    
         public decimal ObjectId { get; set; }
         public string VariableName { get; set; }
         public string VariableValue { get; set; }
     
-        public virtual ObjectDAL Object { get; set; }
+        public ObjectDAL Object { get; set; }
     }
+        public class ObjectValuesDALConfiguration : IEntityTypeConfiguration<ObjectValuesDAL>
+        {
+            public void Configure(EntityTypeBuilder<ObjectValuesDAL> builder)
+            {
+                builder.ToTable("OBJECT_VALUES");
+    
+                builder.Property(x => x.ObjectId).HasColumnName("OBJECT_ID");
+				builder.Property(x => x.VariableName).HasColumnName("VARIABLE_NAME");
+				builder.Property(x => x.VariableValue).HasColumnName("VARIABLE_VALUE");
+				
+    
+                builder.HasKey(x => new { x.ObjectId, x.VariableName });
+
+    
+                builder.HasOne(x => x.Object).WithMany(y => y.ObjectValues).HasForeignKey(x => x.ObjectId);
+    			
+            }
+        }
 }

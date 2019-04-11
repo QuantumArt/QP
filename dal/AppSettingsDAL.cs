@@ -9,12 +9,34 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class AppSettingsDAL
     {
+    
         public string Key { get; set; }
         public string Value { get; set; }
     }
+        public class AppSettingsDALConfiguration : IEntityTypeConfiguration<AppSettingsDAL>
+        {
+            public void Configure(EntityTypeBuilder<AppSettingsDAL> builder)
+            {
+                builder.ToTable("APP_SETTINGS");
+    
+                builder.Property(x => x.Value).HasColumnName("VALUE");
+				builder.Property(x => x.Key).HasColumnName("KEY");
+				
+    
+                builder.HasKey(x => x.Key);
+    
+                
+            }
+        }
 }

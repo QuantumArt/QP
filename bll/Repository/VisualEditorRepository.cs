@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -10,6 +10,7 @@ using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
+using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -455,7 +456,8 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetCommandBindingBySiteId(scope.DbConnection, siteId).ToDictionary(r => Converter.ToInt32(r.Field<decimal>("COMMAND_ID")), r => r.Field<bool>("ON"));
+                return Common.GetCommandBindingBySiteId(scope.DbConnection, siteId)
+                    .ToDictionary(r => Converter.ToInt32(r.Field<decimal>("COMMAND_ID")), r => r.Field<bool>("ON"));
             }
         }
 

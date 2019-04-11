@@ -9,16 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ArticleVersionDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ArticleVersionDAL()
-        {
-            this.ItemToItemVersion = new HashSet<ItemToItemVersionDAL>();
-        }
     
         public decimal Id { get; set; }
         public string Version { get; set; }
@@ -31,10 +32,36 @@ namespace Quantumart.QP8.DAL
         public System.DateTime Modified { get; set; }
         public decimal ModifiedBy { get; set; }
     
-        public virtual ArticleDAL Article { get; set; }
-        public virtual UserDAL CreatedByUser { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ItemToItemVersionDAL> ItemToItemVersion { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
+        public ArticleDAL Article { get; set; }
+        public UserDAL CreatedByUser { get; set; }
+        public ICollection<ItemToItemVersionDAL> ItemToItemVersion { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
     }
+        public class ArticleVersionDALConfiguration : IEntityTypeConfiguration<ArticleVersionDAL>
+        {
+            public void Configure(EntityTypeBuilder<ArticleVersionDAL> builder)
+            {
+                builder.ToTable("CONTENT_ITEM_VERSION");
+    
+                builder.Property(x => x.ModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.Id).HasColumnName("CONTENT_ITEM_VERSION_ID");
+				builder.Property(x => x.Version).HasColumnName("VERSION");
+				builder.Property(x => x.VersionLabel).HasColumnName("VERSION_LABEL");
+				builder.Property(x => x.ContentVersionId).HasColumnName("CONTENT_VERSION_ID");
+				builder.Property(x => x.ArticleId).HasColumnName("CONTENT_ITEM_ID");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.CreatedBy).HasColumnName("CREATED_BY");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.Article).WithMany(y => y.Versions).HasForeignKey(x => x.ArticleId);
+    			builder.HasOne(x => x.CreatedByUser).WithMany().HasForeignKey(x => x.CreatedBy);
+    			builder.HasMany(x => x.ItemToItemVersion).WithOne(y => y.ArticleVersion).HasForeignKey(y => y.ArticleVersionId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.CONTENT_ITEM_VERSION1).HasForeignKey(x => x.ModifiedBy);
+    			
+            }
+        }
 }

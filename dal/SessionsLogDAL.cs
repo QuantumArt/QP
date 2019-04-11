@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
-    
+
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class SessionsLogDAL
     {
+
         public decimal SessionId { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
@@ -28,4 +35,30 @@ namespace Quantumart.QP8.DAL
         public string VisualEditorUrl { get; set; }
         public bool IsQP7 { get; set; }
     }
+        public class SessionsLogDALConfiguration : IEntityTypeConfiguration<SessionsLogDAL>
+        {
+            public void Configure(EntityTypeBuilder<SessionsLogDAL> builder)
+            {
+                builder.ToTable("SESSIONS_LOG");
+
+                builder.Property(x => x.IsQP7).HasColumnName("IS_QP7");
+				builder.Property(x => x.SessionId).HasColumnName("SESSION_ID").UseSqlServerIdentityColumn();
+				builder.Property(x => x.Login).HasColumnName("LOGIN");
+				builder.Property(x => x.Password).HasColumnName("PASSWORD");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.StartTime).HasColumnName("START_TIME");
+				builder.Property(x => x.EndTime).HasColumnName("END_TIME");
+				builder.Property(x => x.IP).HasColumnName("IP");
+				builder.Property(x => x.Browser).HasColumnName("BROWSER");
+				builder.Property(x => x.ServerName).HasColumnName("SERVER_NAME");
+				builder.Property(x => x.AutoLogged).HasColumnName("AUTO_LOGGED");
+				builder.Property(x => x.Sid).HasColumnName("sid");
+				builder.Property(x => x.VisualEditorUrl).HasColumnName("VISUAL_EDITOR_URL");
+
+
+                builder.HasKey(x => x.SessionId);
+
+
+            }
+        }
 }

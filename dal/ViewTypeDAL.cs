@@ -9,23 +9,41 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ViewTypeDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ViewTypeDAL()
-        {
-            this.Views = new HashSet<ActionViewDAL>();
-        }
     
         public int Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
         public string Icon { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ActionViewDAL> Views { get; set; }
+        public ICollection<ActionViewDAL> Views { get; set; }
     }
+        public class ViewTypeDALConfiguration : IEntityTypeConfiguration<ViewTypeDAL>
+        {
+            public void Configure(EntityTypeBuilder<ViewTypeDAL> builder)
+            {
+                builder.ToTable("VIEW_TYPE");
+    
+                builder.Property(x => x.Id).HasColumnName("ID");
+				builder.Property(x => x.Code).HasColumnName("CODE");
+				builder.Property(x => x.Name).HasColumnName("NAME");
+				builder.Property(x => x.Icon).HasColumnName("ICON");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.Views).WithOne(y => y.ViewType).HasForeignKey(y => y.ViewTypeId);
+    			
+            }
+        }
 }

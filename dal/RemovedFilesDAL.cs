@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class RemovedFilesDAL
     {
+    
         public string Name { get; set; }
         public string Path { get; set; }
         public decimal UserId { get; set; }
@@ -23,4 +30,25 @@ namespace Quantumart.QP8.DAL
         public bool IsMoved { get; set; }
         public string Destination { get; set; }
     }
+        public class RemovedFilesDALConfiguration : IEntityTypeConfiguration<RemovedFilesDAL>
+        {
+            public void Configure(EntityTypeBuilder<RemovedFilesDAL> builder)
+            {
+                builder.ToTable("REMOVED_FILES");
+    
+                builder.Property(x => x.Name).HasColumnName("NAME");
+				builder.Property(x => x.Path).HasColumnName("PATH");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.Deleted).HasColumnName("DELETED");
+				builder.Property(x => x.IsFolder).HasColumnName("IS_FOLDER");
+				builder.Property(x => x.IsRenamed).HasColumnName("IS_RENAMED");
+				builder.Property(x => x.IsMoved).HasColumnName("IS_MOVED");
+				builder.Property(x => x.Destination).HasColumnName("DESTINATION");
+				
+    
+                builder.HasKey(x => x.Deleted);
+    
+                
+            }
+        }
 }

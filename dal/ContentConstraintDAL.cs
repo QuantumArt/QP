@@ -9,22 +9,39 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ContentConstraintDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ContentConstraintDAL()
-        {
-            this.Rules = new HashSet<ContentConstraintRuleDAL>();
-        }
     
         public decimal Id { get; set; }
         public decimal ContentId { get; set; }
     
-        public virtual ContentDAL Content { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ContentConstraintRuleDAL> Rules { get; set; }
+        public ContentDAL Content { get; set; }
+        public ICollection<ContentConstraintRuleDAL> Rules { get; set; }
     }
+        public class ContentConstraintDALConfiguration : IEntityTypeConfiguration<ContentConstraintDAL>
+        {
+            public void Configure(EntityTypeBuilder<ContentConstraintDAL> builder)
+            {
+                builder.ToTable("content_constraint");
+    
+                builder.Property(x => x.Id).HasColumnName("constraint_id");
+				builder.Property(x => x.ContentId).HasColumnName("content_id");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.Content).WithMany(y => y.Constraints).HasForeignKey(x => x.ContentId);
+    			builder.HasMany(x => x.Rules).WithOne(y => y.Constraint).HasForeignKey(y => y.ConstraintId);
+    			
+            }
+        }
 }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -22,7 +22,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 
         public EntityPermission GetById(int id, bool include = true)
         {
-            DbQuery<SiteFolderPermissionDAL> set = QPContext.EFContext.SiteFolderPermissionSet;
+            var set = QPContext.EFContext.SiteFolderPermissionSet.AsQueryable();
             if (include)
             {
                 set = set.Include("User").Include("Group").Include("LastModifiedByUser");

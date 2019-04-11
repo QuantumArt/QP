@@ -9,13 +9,36 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class CharsetDAL
     {
+    
         public string Subj { get; set; }
         public int Codepage { get; set; }
         public string Name { get; set; }
     }
+        public class CharsetDALConfiguration : IEntityTypeConfiguration<CharsetDAL>
+        {
+            public void Configure(EntityTypeBuilder<CharsetDAL> builder)
+            {
+                builder.ToTable("CHARSET");
+    
+                builder.Property(x => x.Subj).HasColumnName("CHARSET");
+				builder.Property(x => x.Codepage).HasColumnName("CODEPAGE");
+				builder.Property(x => x.Name).HasColumnName("CHARSET_NAME");
+				
+    
+                builder.HasKey(x => x.Subj);
+    
+                
+            }
+        }
 }

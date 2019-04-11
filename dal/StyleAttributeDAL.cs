@@ -9,16 +9,41 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class StyleAttributeDAL
     {
+    
         public decimal Id { get; set; }
         public decimal StyleId { get; set; }
         public string Name { get; set; }
         public string AttributeValue { get; set; }
     
-        public virtual StyleDAL Style { get; set; }
+        public StyleDAL Style { get; set; }
     }
+        public class StyleAttributeDALConfiguration : IEntityTypeConfiguration<StyleAttributeDAL>
+        {
+            public void Configure(EntityTypeBuilder<StyleAttributeDAL> builder)
+            {
+                builder.ToTable("STYLE_ATTRIBUTE");
+    
+                builder.Property(x => x.Id).HasColumnName("STYLE_ATTRIBUTE_ID");
+				builder.Property(x => x.StyleId).HasColumnName("STYLE_ID");
+				builder.Property(x => x.Name).HasColumnName("ATTRIBUTE_NAME");
+				builder.Property(x => x.AttributeValue).HasColumnName("ATTRIBUTE_VALUE");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.Style).WithMany(y => y.StyleAttribute).HasForeignKey(x => x.StyleId);
+    			
+            }
+        }
 }

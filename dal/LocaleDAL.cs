@@ -9,12 +9,34 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class LocaleDAL
     {
+    
         public int Id { get; set; }
         public string Name { get; set; }
     }
+        public class LocaleDALConfiguration : IEntityTypeConfiguration<LocaleDAL>
+        {
+            public void Configure(EntityTypeBuilder<LocaleDAL> builder)
+            {
+                builder.ToTable("LOCALE");
+    
+                builder.Property(x => x.Id).HasColumnName("LCID");
+				builder.Property(x => x.Name).HasColumnName("LOCALE_NAME");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                
+            }
+        }
 }

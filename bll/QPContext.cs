@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+// using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
-
+using Microsoft.EntityFrameworkCore;
 #if !NET_STANDARD
 using System.Web;
 #endif
@@ -45,7 +45,7 @@ namespace Quantumart.QP8.BLL
                     dbContext = new QP8Entities(QPConnectionScope.Current.EfConnection);
                 }
 
-                dbContext.Configuration.LazyLoadingEnabled = false;
+                // dbContext.Configuration.LazyLoadingEnabled = false;
                 return dbContext;
             }
         }
@@ -508,7 +508,7 @@ namespace Quantumart.QP8.BLL
 
         private static string CurrentDbConnectionStringForEntities => PreparingDbConnectionStringForEntities(CurrentDbConnectionString);
 
-        private static string PreparingDbConnectionStringForEntities(string connectionString) => $"metadata=res://*/QP8Model.csdl|res://*/QP8Model.ssdl|res://*/QP8Model.msl;provider=System.Data.SqlClient;provider connection string=\"{connectionString}\"";
+        private static string PreparingDbConnectionStringForEntities(string connectionString) => connectionString;//$"metadata=res://*/QP8Model.csdl|res://*/QP8Model.ssdl|res://*/QP8Model.msl;provider=System.Data.SqlClient;provider connection string=\"{connectionString}\"";
 
         public static bool CheckCustomerCode(string customerCode)
         {

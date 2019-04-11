@@ -9,16 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class CdcLastExecutedLsn
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public CdcLastExecutedLsn()
-        {
-            this.SYSTEM_NOTIFICATION_QUEUE = new HashSet<SystemNotificationDAL>();
-        }
     
         public int Id { get; set; }
         public string ProviderName { get; set; }
@@ -27,7 +28,26 @@ namespace Quantumart.QP8.DAL
         public Nullable<System.DateTime> TransactionDate { get; set; }
         public string LastExecutedLsn { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SystemNotificationDAL> SYSTEM_NOTIFICATION_QUEUE { get; set; }
+        public ICollection<SystemNotificationDAL> SYSTEM_NOTIFICATION_QUEUE { get; set; }
     }
+        public class CdcLastExecutedLsnConfiguration : IEntityTypeConfiguration<CdcLastExecutedLsn>
+        {
+            public void Configure(EntityTypeBuilder<CdcLastExecutedLsn> builder)
+            {
+                builder.ToTable("CdcLastExecutedLsn");
+    
+                builder.Property(x => x.LastExecutedLsn).HasColumnName("LastExecutedLsn");
+				builder.Property(x => x.TransactionDate).HasColumnName("TransactionDate");
+				builder.Property(x => x.TransactionLsn).HasColumnName("TransactionLsn");
+				builder.Property(x => x.ProviderUrl).HasColumnName("ProviderUrl");
+				builder.Property(x => x.ProviderName).HasColumnName("ProviderName");
+				builder.Property(x => x.Id).HasColumnName("Id");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.SYSTEM_NOTIFICATION_QUEUE).WithOne(y => y.CdcLastExecutedLsn).HasForeignKey(y => y.CdcLastExecutedLsnId);
+    			
+            }
+        }
 }

@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class DynamicImageFieldDAL
     {
+    
         public decimal Id { get; set; }
         public Nullable<short> Width { get; set; }
         public Nullable<short> Height { get; set; }
@@ -21,6 +28,26 @@ namespace Quantumart.QP8.DAL
         public Nullable<short> Quality { get; set; }
         public bool MaxSize { get; set; }
     
-        public virtual FieldDAL Field { get; set; }
+        public FieldDAL Field { get; set; }
     }
+        public class DynamicImageFieldDALConfiguration : IEntityTypeConfiguration<DynamicImageFieldDAL>
+        {
+            public void Configure(EntityTypeBuilder<DynamicImageFieldDAL> builder)
+            {
+                builder.ToTable("DYNAMIC_IMAGE_ATTRIBUTE");
+    
+                builder.Property(x => x.Id).HasColumnName("ATTRIBUTE_ID");
+				builder.Property(x => x.Width).HasColumnName("WIDTH");
+				builder.Property(x => x.Height).HasColumnName("HEIGHT");
+				builder.Property(x => x.Type).HasColumnName("TYPE");
+				builder.Property(x => x.Quality).HasColumnName("QUALITY");
+				builder.Property(x => x.MaxSize).HasColumnName("MAX_SIZE");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.Field).WithOne(y => y.DynamicImageSettings).HasForeignKey<FieldDAL>(y => y.Id);
+    			
+            }
+        }
 }

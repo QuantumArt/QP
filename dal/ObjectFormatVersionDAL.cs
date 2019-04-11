@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ObjectFormatVersionDAL
     {
+    
         public decimal Id { get; set; }
         public decimal ObjectFormatId { get; set; }
         public decimal ObjectId { get; set; }
@@ -30,8 +37,39 @@ namespace Quantumart.QP8.DAL
         public Nullable<decimal> LockedBy { get; set; }
         public Nullable<System.DateTime> Assembled { get; set; }
     
-        public virtual NetLanguagesDAL NetLanguage { get; set; }
-        public virtual ObjectFormatDAL ObjectFormat { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
+        public NetLanguagesDAL NetLanguage { get; set; }
+        public ObjectFormatDAL ObjectFormat { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
     }
+        public class ObjectFormatVersionDALConfiguration : IEntityTypeConfiguration<ObjectFormatVersionDAL>
+        {
+            public void Configure(EntityTypeBuilder<ObjectFormatVersionDAL> builder)
+            {
+                builder.ToTable("OBJECT_FORMAT_VERSION");
+    
+                builder.Property(x => x.Id).HasColumnName("OBJECT_FORMAT_VERSION_ID");
+				builder.Property(x => x.ObjectFormatId).HasColumnName("OBJECT_FORMAT_ID");
+				builder.Property(x => x.ObjectId).HasColumnName("OBJECT_ID");
+				builder.Property(x => x.Name).HasColumnName("FORMAT_NAME");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.FormatBody).HasColumnName("FORMAT_BODY");
+				builder.Property(x => x.NetLanguageId).HasColumnName("NET_LANGUAGE_ID");
+				builder.Property(x => x.NetFormatName).HasColumnName("NET_FORMAT_NAME");
+				builder.Property(x => x.CodeBehind).HasColumnName("CODE_BEHIND");
+				builder.Property(x => x.Locked).HasColumnName("LOCKED");
+				builder.Property(x => x.LockedBy).HasColumnName("LOCKED_BY");
+				builder.Property(x => x.Assembled).HasColumnName("ASSEMBLED");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.NetLanguage).WithMany(y => y.ObjectFormatVersion).HasForeignKey(x => x.NetLanguageId);
+    			builder.HasOne(x => x.ObjectFormat).WithMany(y => y.ObjectFormatVersion).HasForeignKey(x => x.ObjectFormatId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.OBJECT_FORMAT_VERSION).HasForeignKey(x => x.LastModifiedBy);
+    			
+            }
+        }
 }

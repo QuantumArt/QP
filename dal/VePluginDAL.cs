@@ -9,16 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class VePluginDAL :  IQpEntityObject
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public VePluginDAL()
-        {
-            this.VeCommands = new HashSet<VeCommandDAL>();
-        }
     
         public decimal Id { get; set; }
         public string Name { get; set; }
@@ -29,8 +30,30 @@ namespace Quantumart.QP8.DAL
         public System.DateTime Modified { get; set; }
         public decimal LastModifiedBy { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VeCommandDAL> VeCommands { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
+        public ICollection<VeCommandDAL> VeCommands { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
     }
+        public class VePluginDALConfiguration : IEntityTypeConfiguration<VePluginDAL>
+        {
+            public void Configure(EntityTypeBuilder<VePluginDAL> builder)
+            {
+                builder.ToTable("VE_PLUGIN");
+    
+                builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Order).HasColumnName("ORDER");
+				builder.Property(x => x.Url).HasColumnName("URL");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Name).HasColumnName("NAME");
+				builder.Property(x => x.Id).HasColumnName("ID");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.VeCommands).WithOne(y => y.VePlugin).HasForeignKey(y => y.PluginId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.VE_PLUGIN).HasForeignKey(x => x.LastModifiedBy);
+    			
+            }
+        }
 }

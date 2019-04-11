@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Core;
-using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using EF = Quantumart.QP8.Constants.EF;
+using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -90,7 +90,15 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void Delete<TDal>(int id)
             where TDal : class
         {
-            SimpleDelete(new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id));
+            var entities = QPContext.EFContext;
+            var result = entities.Set<TDal>().Find(id);
+            if (result != null)
+            {
+                entities.Entry( result).State = EntityState.Deleted;
+                entities.SaveChanges();
+            }
+
+            // SimpleDelete(new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id));
         }
 
         internal static void Delete<TDal>(int[] id)
@@ -98,7 +106,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var entities = QPContext.EFContext;
             var sql = $"SELECT VALUE entity FROM {GetSetNameByType(typeof(TDal), true)} AS entity WHERE entity.Id IN {{{string.Join(",", id)}}}";
-            var list = (entities as IObjectContextAdapter).ObjectContext.CreateQuery<TDal>(sql).ToList();
+            var list = entities.Set<TDal>().FromSql(sql).ToList();
             foreach (var item in list)
             {
                 entities.Entry(item).State = EntityState.Deleted;
@@ -111,12 +119,14 @@ namespace Quantumart.QP8.BLL.Repository
             where TDal : class
         {
             var currentContext = context ?? QPContext.EFContext;
-            var key = new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id);
-            if ((currentContext as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
-            {
-                return (TDal)result;
-            }
-            return null;
+            return currentContext.Set<TDal>().Find(id);
+
+            // var key = new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id);
+            // if ((currentContext as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
+            // {
+            //     return (TDal)result;
+            // }
+            // return null;
         }
 
         internal static TDal SimpleSave<TDal>(TDal dalItem)
@@ -150,15 +160,16 @@ namespace Quantumart.QP8.BLL.Repository
             return dalItem;
         }
 
-        internal static void SimpleDelete(EntityKey key)
-        {
-            var entities = QPContext.EFContext;
-            if ((entities as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
-            {
-                entities.Entry(result).State = EntityState.Deleted;
-            }
-            entities.SaveChanges();
-        }
+        // internal static void SimpleDelete(EntityKey key)
+        // {
+        //     var entities = QPContext.EFContext;
+        //     
+        //     if ((entities as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
+        //     {
+        //         entities.Entry(result).State = EntityState.Deleted;
+        //     }
+        //     entities.SaveChanges();
+        // }
 
         internal static void SimpleDelete<TDal>(TDal dalItem, QP8Entities context = null)
             where TDal : class

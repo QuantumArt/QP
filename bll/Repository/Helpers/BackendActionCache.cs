@@ -4,6 +4,7 @@ using System.Web;
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Constants.Mvc;
 
@@ -38,15 +39,15 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 
         private static IEnumerable<BackendAction> LoadActions() => MapperFacade.BackendActionMapper.GetBizList(
             QPContext.EFContext.BackendActionSet
-                .Include("EntityType")
-                .Include("EntityType.Parent")
-                .Include("EntityType.CancelAction")
-                .Include("ActionType.PermissionLevel")
-                .Include("DefaultViewType")
-                .Include("Views.ViewType")
-                .Include("NextSuccessfulAction")
-                .Include("NextFailedAction")
-                .Include("Excludes")
+                .Include(x => x.EntityType)
+                .Include(x => x.EntityType.Parent)
+                .Include(x => x.EntityType.CancelAction)
+                .Include(x => x.ActionType.PermissionLevel)
+                .Include(x => x.DefaultViewType)
+                .Include(x => x.Views).ThenInclude( y => y.ViewType)
+                .Include(x => x.NextSuccessfulAction)
+                .Include(x => x.NextFailedAction)
+                .Include(x => x.ExcludesBinds)
                 .ToList()
         );
 
@@ -56,8 +57,8 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 .Include(b => b.Action.ToolbarButtons)
                 .Include(b => b.Action.ContextMenuItems)
                 .Include(b => b.Action.ActionType.PermissionLevel)
-                .Include(b => b.Action.Excludes)
-                .Include(b => b.Contents)
+                .Include(b => b.Action.ExcludesBinds)
+                .Include(b => b.ContentCustomActionBinds)
                 .Include(b => b.Sites)
                 .ToList()
         );

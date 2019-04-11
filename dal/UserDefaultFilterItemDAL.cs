@@ -9,17 +9,44 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class UserDefaultFilterItemDAL
     {
+    
         public decimal UserId { get; set; }
         public decimal ContentId { get; set; }
         public decimal ArticleId { get; set; }
     
-        public virtual ContentDAL Content { get; set; }
-        public virtual ArticleDAL Article { get; set; }
-        public virtual UserDAL User { get; set; }
+        public ContentDAL Content { get; set; }
+        public ArticleDAL Article { get; set; }
+        public UserDAL User { get; set; }
     }
+        public class UserDefaultFilterItemDALConfiguration : IEntityTypeConfiguration<UserDefaultFilterItemDAL>
+        {
+            public void Configure(EntityTypeBuilder<UserDefaultFilterItemDAL> builder)
+            {
+                builder.ToTable("USER_DEFAULT_FILTER");
+    
+                builder.Property(x => x.ArticleId).HasColumnName("CONTENT_ITEM_ID");
+				builder.Property(x => x.ContentId).HasColumnName("CONTENT_ID");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				
+    
+                builder.HasKey(x => new { x.UserId, x.ContentId, x.ArticleId });
+
+    
+                builder.HasOne(x => x.Content).WithMany(y => y.USER_DEFAULT_FILTER).HasForeignKey(x => x.ContentId);
+    			builder.HasOne(x => x.Article).WithMany(y => y.USER_DEFAULT_FILTER).HasForeignKey(x => x.ArticleId);
+    			builder.HasOne(x => x.User).WithMany(y => y.DefaultFilter).HasForeignKey(x => x.UserId);
+    			
+            }
+        }
 }

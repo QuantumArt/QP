@@ -9,16 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class XmlDbUpdateLogEntity
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public XmlDbUpdateLogEntity()
-        {
-            this.XML_DB_UPDATE_ACTIONS = new HashSet<XmlDbUpdateActionsLogEntity>();
-        }
     
         public int Id { get; set; }
         public System.DateTime Applied { get; set; }
@@ -28,7 +29,27 @@ namespace Quantumart.QP8.DAL
         public string Body { get; set; }
         public string Version { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<XmlDbUpdateActionsLogEntity> XML_DB_UPDATE_ACTIONS { get; set; }
+        public ICollection<XmlDbUpdateActionsLogEntity> XML_DB_UPDATE_ACTIONS { get; set; }
     }
+        public class XmlDbUpdateLogEntityConfiguration : IEntityTypeConfiguration<XmlDbUpdateLogEntity>
+        {
+            public void Configure(EntityTypeBuilder<XmlDbUpdateLogEntity> builder)
+            {
+                builder.ToTable("XML_DB_UPDATE");
+    
+                builder.Property(x => x.Version).HasColumnName("Version");
+				builder.Property(x => x.Body).HasColumnName("Body");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.FileName).HasColumnName("FileName");
+				builder.Property(x => x.Hash).HasColumnName("Hash");
+				builder.Property(x => x.Applied).HasColumnName("Applied");
+				builder.Property(x => x.Id).HasColumnName("Id");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.XML_DB_UPDATE_ACTIONS).WithOne(y => y.XML_DB_UPDATE).HasForeignKey(y => y.UpdateId);
+    			
+            }
+        }
 }

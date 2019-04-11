@@ -9,12 +9,34 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class StyleTagDAL
     {
+    
         public decimal Id { get; set; }
         public string TagName { get; set; }
     }
+        public class StyleTagDALConfiguration : IEntityTypeConfiguration<StyleTagDAL>
+        {
+            public void Configure(EntityTypeBuilder<StyleTagDAL> builder)
+            {
+                builder.ToTable("STYLE_TAG");
+    
+                builder.Property(x => x.Id).HasColumnName("STYLE_TAG_ID");
+				builder.Property(x => x.TagName).HasColumnName("TAG_NAME");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                
+            }
+        }
 }

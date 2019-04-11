@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class NotificationsDAL :  IQpEntityObject
     {
+    
         public decimal Id { get; set; }
         public string Name { get; set; }
         public decimal ContentId { get; set; }
@@ -45,14 +52,66 @@ namespace Quantumart.QP8.DAL
         public bool ForDelayedPublication { get; set; }
         public bool UseService { get; set; }
     
-        public virtual ContentDAL Content { get; set; }
-        public virtual FieldDAL EmailField { get; set; }
-        public virtual UserDAL FromUser { get; set; }
-        public virtual StatusTypeDAL OnStatusType { get; set; }
-        public virtual ObjectFormatDAL Format { get; set; }
-        public virtual UserGroupDAL ToUserGroup { get; set; }
-        public virtual UserDAL ToUser { get; set; }
-        public virtual WorkflowDAL Workflow { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
+        public ContentDAL Content { get; set; }
+        public FieldDAL EmailField { get; set; }
+        public UserDAL FromUser { get; set; }
+        public StatusTypeDAL OnStatusType { get; set; }
+        public ObjectFormatDAL Format { get; set; }
+        public UserGroupDAL ToUserGroup { get; set; }
+        public UserDAL ToUser { get; set; }
+        public WorkflowDAL Workflow { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
     }
+        public class NotificationsDALConfiguration : IEntityTypeConfiguration<NotificationsDAL>
+        {
+            public void Configure(EntityTypeBuilder<NotificationsDAL> builder)
+            {
+                builder.ToTable("NOTIFICATIONS");
+    
+                builder.Property(x => x.UseService).HasColumnName("USE_SERVICE");
+				builder.Property(x => x.ForDelayedPublication).HasColumnName("FOR_DELAYED_PUBLICATION");
+				builder.Property(x => x.ExternalUrl).HasColumnName("EXTERNAL_URL");
+				builder.Property(x => x.IsExternal).HasColumnName("IS_EXTERNAL");
+				builder.Property(x => x.Id).HasColumnName("NOTIFICATION_ID");
+				builder.Property(x => x.Name).HasColumnName("NOTIFICATION_NAME");
+				builder.Property(x => x.ContentId).HasColumnName("CONTENT_ID");
+				builder.Property(x => x.FormatId).HasColumnName("FORMAT_ID");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.GroupId).HasColumnName("GROUP_ID");
+				builder.Property(x => x.ForCreate).HasColumnName("FOR_CREATE");
+				builder.Property(x => x.ForModify).HasColumnName("FOR_MODIFY");
+				builder.Property(x => x.ForRemove).HasColumnName("FOR_REMOVE");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.ForStatusChanged).HasColumnName("for_status_changed");
+				builder.Property(x => x.ForFrontend).HasColumnName("for_frontend");
+				builder.Property(x => x.NotifyOnStatusTypeId).HasColumnName("notify_on_status_type_id");
+				builder.Property(x => x.EmailFieldId).HasColumnName("email_attribute_id");
+				builder.Property(x => x.NoEmail).HasColumnName("no_email");
+				builder.Property(x => x.SendFiles).HasColumnName("send_files");
+				builder.Property(x => x.WorkflowId).HasColumnName("workflow_id");
+				builder.Property(x => x.FromBackenduserId).HasColumnName("from_backenduser_id");
+				builder.Property(x => x.FromBackenduser).HasColumnName("from_backenduser");
+				builder.Property(x => x.FromDefaultName).HasColumnName("from_default_name");
+				builder.Property(x => x.FromUserEmail).HasColumnName("from_user_email");
+				builder.Property(x => x.FromUserName).HasColumnName("from_user_name");
+				builder.Property(x => x.ForStatusPartiallyChanged).HasColumnName("for_status_partially_changed");
+				builder.Property(x => x.UseQaMail).HasColumnName("USE_QA_MAIL");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.Content).WithMany(y => y.Notifications).HasForeignKey(x => x.ContentId);
+    			builder.HasOne(x => x.EmailField).WithMany(y => y.DependentNotifications).HasForeignKey(x => x.EmailFieldId);
+    			builder.HasOne(x => x.FromUser).WithMany(y => y.NotificationsForBackendUser).HasForeignKey(x => x.FromBackenduserId);
+    			builder.HasOne(x => x.OnStatusType).WithMany(y => y.Notifications).HasForeignKey(x => x.NotifyOnStatusTypeId);
+    			builder.HasOne(x => x.Format).WithMany(y => y.Notifications).HasForeignKey(x => x.FormatId);
+    			builder.HasOne(x => x.ToUserGroup).WithMany(y => y.Notifications).HasForeignKey(x => x.GroupId);
+    			builder.HasOne(x => x.ToUser).WithMany(y => y.Notifications).HasForeignKey(x => x.UserId);
+    			builder.HasOne(x => x.Workflow).WithMany(y => y.Notifications).HasForeignKey(x => x.WorkflowId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy);
+    			
+            }
+        }
 }

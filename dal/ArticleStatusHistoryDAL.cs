@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ArticleStatusHistoryDAL
     {
+    
         public decimal StatusHistoryId { get; set; }
         public System.DateTime StatusHistoryDate { get; set; }
         public decimal ArticleId { get; set; }
@@ -26,7 +33,33 @@ namespace Quantumart.QP8.DAL
         public Nullable<bool> ARCHIVE { get; set; }
         public Nullable<bool> VISIBLE { get; set; }
     
-        public virtual ArticleDAL Article { get; set; }
-        public virtual SystemStatusTypeDAL SystemStatusType { get; set; }
+        public ArticleDAL Article { get; set; }
+        public SystemStatusTypeDAL SystemStatusType { get; set; }
     }
+        public class ArticleStatusHistoryDALConfiguration : IEntityTypeConfiguration<ArticleStatusHistoryDAL>
+        {
+            public void Configure(EntityTypeBuilder<ArticleStatusHistoryDAL> builder)
+            {
+                builder.ToTable("CONTENT_ITEM_STATUS_HISTORY");
+    
+                builder.Property(x => x.VISIBLE).HasColumnName("VISIBLE");
+				builder.Property(x => x.ARCHIVE).HasColumnName("ARCHIVE");
+				builder.Property(x => x.StatusHistoryId).HasColumnName("STATUS_HISTORY_ID");
+				builder.Property(x => x.StatusHistoryDate).HasColumnName("STATUS_HISTORY_DATE");
+				builder.Property(x => x.ArticleId).HasColumnName("CONTENT_ITEM_ID");
+				builder.Property(x => x.StatusTypeId).HasColumnName("STATUS_TYPE_ID");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.SystemStatusTypeId).HasColumnName("SYSTEM_STATUS_TYPE_ID");
+				builder.Property(x => x.ArticleVersionId).HasColumnName("content_item_version_id");
+				
+    
+                builder.HasKey(x => x.StatusHistoryId);
+    
+                builder.HasOne(x => x.Article).WithMany(y => y.StatusHistory).HasForeignKey(x => x.ArticleId);
+    			builder.HasOne(x => x.SystemStatusType).WithMany(y => y.ArticleStatusHistory).HasForeignKey(x => x.SystemStatusTypeId);
+    			
+            }
+        }
 }

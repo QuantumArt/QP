@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ArticlePermissionDAL :  IQpEntityObject
     {
+    
         public decimal ArticleId { get; set; }
         public Nullable<decimal> UserId { get; set; }
         public Nullable<decimal> GroupId { get; set; }
@@ -23,10 +30,36 @@ namespace Quantumart.QP8.DAL
         public decimal LastModifiedBy { get; set; }
         public decimal Id { get; set; }
     
-        public virtual ArticleDAL Article { get; set; }
-        public virtual UserGroupDAL Group { get; set; }
-        public virtual UserDAL User { get; set; }
-        public virtual PermissionLevelDAL PermissionLevel { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
+        public ArticleDAL Article { get; set; }
+        public UserGroupDAL Group { get; set; }
+        public UserDAL User { get; set; }
+        public PermissionLevelDAL PermissionLevel { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
     }
+        public class ArticlePermissionDALConfiguration : IEntityTypeConfiguration<ArticlePermissionDAL>
+        {
+            public void Configure(EntityTypeBuilder<ArticlePermissionDAL> builder)
+            {
+                builder.ToTable("CONTENT_ITEM_ACCESS");
+    
+                builder.Property(x => x.ArticleId).HasColumnName("CONTENT_ITEM_ID");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.GroupId).HasColumnName("GROUP_ID");
+				builder.Property(x => x.PermissionLevelId).HasColumnName("PERMISSION_LEVEL_ID");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.Id).HasColumnName("CONTENT_ITEM_ACCESS_ID");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.Article).WithMany(y => y.AccessRules).HasForeignKey(x => x.ArticleId);
+    			builder.HasOne(x => x.Group).WithMany(y => y.ArticleAccess).HasForeignKey(x => x.GroupId);
+    			builder.HasOne(x => x.User).WithMany(y => y.AccessRules).HasForeignKey(x => x.UserId);
+    			builder.HasOne(x => x.PermissionLevel).WithMany(y => y.CONTENT_ITEM_ACCESS).HasForeignKey(x => x.PermissionLevelId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy);
+    			
+            }
+        }
 }

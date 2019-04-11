@@ -6,24 +6,25 @@
     <AssemblyName>Quantumart.QP8.DAL</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.3" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
-    <PackageReference Include="Z.EntityFramework.Classic" Version="7.0.37" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="QP8Model.Context.tt" />
+    <None Remove="EFG\**" />
   </ItemGroup>
   <ItemGroup>
     <None Include="QP8Model.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>QP8Model.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="QP8Model.tt">
+    <Content Include="QP8Model.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>QP8Model.cs</LastGenOutput>
-      <CustomToolNamespace>Quantumart.QP8.DAL</CustomToolNamespace>
+      <LastGenOutput>QP8Model.Context.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -36,18 +37,16 @@
     <EmbeddedResource Include="QP8Model.msl">
       <LogicalName>QP8Model.msl</LogicalName>
     </EmbeddedResource>
-  </ItemGroup>
-  <PropertyGroup>
-    <PreBuildEvent>dotnet "$(MSBuildProjectDirectory)/utils/QA.Core.SplitEdmx.dll" "$(MSBuildProjectDirectory)/QP8Model.edmx"</PreBuildEvent>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="QP8Model.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>QP8Model.Context.cs</LastGenOutput>
-      <DependentUpon>QP8Model.edmx</DependentUpon>
-      <CustomToolNamespace>Quantumart.QP8.DAL</CustomToolNamespace>
-    </Content>
-  </ItemGroup>
+    <EmbeddedResource Remove="EFG\**" />
+  </ItemGroup>  
+  <!--<ItemGroup>-->
+    <!--<Content Include="QP8Model.Context.tt">-->
+      <!--<Generator>TextTemplatingFileGenerator</Generator>-->
+      <!--&lt;!&ndash;<LastGenOutput>QP8Model.Context.cs</LastGenOutput>&ndash;&gt;-->
+      <!--<DependentUpon>QP8Model.edmx</DependentUpon>-->
+      <!--<CustomToolNamespace>Quantumart.QP8.DAL</CustomToolNamespace>-->
+    <!--</Content>-->
+  <!--</ItemGroup>-->
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj" />
     <ProjectReference Include="$(SolutionDir)constants\Constants.csproj" />
@@ -64,10 +63,16 @@
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="QP8Model.Context.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>QP8Model.Context.tt</DependentUpon>
+    </Compile>
     <Compile Update="QP8Model.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>QP8Model.tt</DependentUpon>
     </Compile>
+    <Compile Remove="EFG\**" />
   </ItemGroup>
 </Project>

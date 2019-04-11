@@ -13,12 +13,13 @@
     <RootNamespace>Quantumart.QP8.BLL</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.3" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
     <PackageReference Include="Unity" Version="5.8.13" />
     <PackageReference Include="AutoMapper" Version="8.0.0" />
     <PackageReference Include="QA.Validation.Xaml" Version="1.3.0-portable1" />
     <PackageReference Include="QA.Validation.Xaml.Extensions" Version="1.3.0-portable1" />
-    <PackageReference Include="Z.EntityFramework.Classic" Version="7.0.37" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
     <Reference Include="System.DirectoryServices" />

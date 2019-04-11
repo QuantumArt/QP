@@ -9,16 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class PageTraceDAL
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public PageTraceDAL()
-        {
-            this.PageTraceFormat = new HashSet<PageTraceFormatDAL>();
-        }
     
         public decimal TraceId { get; set; }
         public decimal PageId { get; set; }
@@ -29,8 +30,30 @@ namespace Quantumart.QP8.DAL
         public System.DateTime Traced { get; set; }
         public decimal Duration { get; set; }
     
-        public virtual PageDAL Page { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PageTraceFormatDAL> PageTraceFormat { get; set; }
+        public PageDAL Page { get; set; }
+        public ICollection<PageTraceFormatDAL> PageTraceFormat { get; set; }
     }
+        public class PageTraceDALConfiguration : IEntityTypeConfiguration<PageTraceDAL>
+        {
+            public void Configure(EntityTypeBuilder<PageTraceDAL> builder)
+            {
+                builder.ToTable("PAGE_TRACE");
+    
+                builder.Property(x => x.TraceId).HasColumnName("TRACE_ID");
+				builder.Property(x => x.PageId).HasColumnName("PAGE_ID");
+				builder.Property(x => x.QueryString).HasColumnName("QUERY_STRING");
+				builder.Property(x => x.Values).HasColumnName("VALUES");
+				builder.Property(x => x.Session).HasColumnName("SESSION");
+				builder.Property(x => x.Cookies).HasColumnName("COOKIES");
+				builder.Property(x => x.Traced).HasColumnName("TRACED");
+				builder.Property(x => x.Duration).HasColumnName("DURATION");
+				
+    
+                builder.HasKey(x => x.TraceId);
+    
+                builder.HasOne(x => x.Page).WithMany(y => y.PageTrace).HasForeignKey(x => x.PageId);
+    			builder.HasMany(x => x.PageTraceFormat).WithOne(y => y.PageTrace).HasForeignKey(y => y.TraceId);
+    			
+            }
+        }
 }

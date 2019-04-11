@@ -9,13 +9,36 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class DeveloperDAL
     {
+    
         public string Name { get; set; }
         public string Description { get; set; }
         public int Order { get; set; }
     }
+        public class DeveloperDALConfiguration : IEntityTypeConfiguration<DeveloperDAL>
+        {
+            public void Configure(EntityTypeBuilder<DeveloperDAL> builder)
+            {
+                builder.ToTable("DEVELOPER");
+    
+                builder.Property(x => x.Name).HasColumnName("NAME");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Order).HasColumnName("ORDER");
+				
+    
+                builder.HasKey(x => x.Name);
+    
+                
+            }
+        }
 }

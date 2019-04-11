@@ -9,11 +9,18 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class RemovedEntitiesDAL
     {
+    
         public string EntityName { get; set; }
         public decimal Id { get; set; }
         public decimal UserId { get; set; }
@@ -21,4 +28,24 @@ namespace Quantumart.QP8.DAL
         public Nullable<decimal> ParentId { get; set; }
         public string Title { get; set; }
     }
+        public class RemovedEntitiesDALConfiguration : IEntityTypeConfiguration<RemovedEntitiesDAL>
+        {
+            public void Configure(EntityTypeBuilder<RemovedEntitiesDAL> builder)
+            {
+                builder.ToTable("REMOVED_ENTITIES");
+    
+                builder.Property(x => x.EntityName).HasColumnName("ENTITY_NAME");
+				builder.Property(x => x.Id).HasColumnName("ID");
+				builder.Property(x => x.UserId).HasColumnName("USER_ID");
+				builder.Property(x => x.Deleted).HasColumnName("DELETED");
+				builder.Property(x => x.ParentId).HasColumnName("PARENT_ID");
+				builder.Property(x => x.Title).HasColumnName("TITLE");
+				
+    
+                builder.HasKey(x => new { x.EntityName, x.Id });
+
+    
+                
+            }
+        }
 }

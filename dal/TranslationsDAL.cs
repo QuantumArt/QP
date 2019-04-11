@@ -9,15 +9,40 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class TranslationsDAL
     {
+    
         public decimal PhraseId { get; set; }
         public decimal LanguageId { get; set; }
         public string PhraseTranslation { get; set; }
     
-        public virtual LanguagesDAL Languages { get; set; }
+        public LanguagesDAL Languages { get; set; }
     }
+        public class TranslationsDALConfiguration : IEntityTypeConfiguration<TranslationsDAL>
+        {
+            public void Configure(EntityTypeBuilder<TranslationsDAL> builder)
+            {
+                builder.ToTable("TRANSLATIONS");
+    
+                builder.Property(x => x.PhraseId).HasColumnName("PHRASE_ID");
+				builder.Property(x => x.LanguageId).HasColumnName("LANGUAGE_ID");
+				builder.Property(x => x.PhraseTranslation).HasColumnName("PHRASE_TRANSLATION");
+				
+    
+                builder.HasKey(x => new { x.PhraseId, x.LanguageId });
+
+    
+                builder.HasOne(x => x.Languages).WithMany(y => y.Translations).HasForeignKey(x => x.LanguageId);
+    			
+            }
+        }
 }

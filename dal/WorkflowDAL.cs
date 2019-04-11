@@ -9,18 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class WorkflowDAL :  IQpEntityObject
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public WorkflowDAL()
-        {
-            this.Notifications = new HashSet<NotificationsDAL>();
-            this.WorkflowAccess = new HashSet<WorkflowPermissionDAL>();
-            this.WorkflowRules = new HashSet<WorkflowRulesDAL>();
-        }
     
         public decimal Id { get; set; }
         public string Name { get; set; }
@@ -32,13 +31,37 @@ namespace Quantumart.QP8.DAL
         public bool CreateDefaultNotification { get; set; }
         public bool ApplyByDefault { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<NotificationsDAL> Notifications { get; set; }
-        public virtual SiteDAL Site { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkflowPermissionDAL> WorkflowAccess { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkflowRulesDAL> WorkflowRules { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
+        public ICollection<NotificationsDAL> Notifications { get; set; }
+        public SiteDAL Site { get; set; }
+        public ICollection<WorkflowPermissionDAL> WorkflowAccess { get; set; }
+        public ICollection<WorkflowRulesDAL> WorkflowRules { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
     }
+        public class WorkflowDALConfiguration : IEntityTypeConfiguration<WorkflowDAL>
+        {
+            public void Configure(EntityTypeBuilder<WorkflowDAL> builder)
+            {
+                builder.ToTable("workflow");
+    
+                builder.Property(x => x.Id).HasColumnName("WORKFLOW_ID");
+				builder.Property(x => x.Name).HasColumnName("WORKFLOW_NAME");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.SiteId).HasColumnName("SITE_ID");
+				builder.Property(x => x.CreateDefaultNotification).HasColumnName("create_default_notification");
+				builder.Property(x => x.ApplyByDefault).HasColumnName("apply_by_default");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasMany(x => x.Notifications).WithOne(y => y.Workflow).HasForeignKey(y => y.WorkflowId);
+    			builder.HasOne(x => x.Site).WithMany(y => y.Workflows).HasForeignKey(x => x.SiteId);
+    			builder.HasMany(x => x.WorkflowAccess).WithOne(y => y.Workflow).HasForeignKey(y => y.WorkflowId);
+    			builder.HasMany(x => x.WorkflowRules).WithOne(y => y.Workflow).HasForeignKey(y => y.WorkflowId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.workflow).HasForeignKey(x => x.LastModifiedBy);
+    			
+            }
+        }
 }

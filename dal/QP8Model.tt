@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" debug="false" hostspecific="true"#>
+<#@ template language="C#" debug="true" hostspecific="true"#>
 <#@ include file="EF6.Utility.CS.ttinclude"#><#@
  output extension=".cs"#><#
 
@@ -8,7 +8,10 @@ var code = new CodeGenerationTools(this);
 var ef = new MetadataTools(this);
 var typeMapper = new TypeMapper(code, ef, textTransform.Errors);
 var	fileManager = EntityFrameworkTemplateFileManager.Create(this);
-var itemCollection = new EdmMetadataLoader(textTransform.Host, textTransform.Errors).CreateEdmItemCollection(inputFile);
+var edmDataLoader = new EdmMetadataLoader(textTransform.Host, textTransform.Errors);
+var itemCollection = edmDataLoader.CreateEdmItemCollection(inputFile);
+var storeItemCollection = edmDataLoader.CreateStoreItemCollection("QP8Model.ssdl");
+var storageMappingItemCollection = edmDataLoader.CreateStorageMappingItemCollection(itemCollection, storeItemCollection, "QP8Model.msl");
 var codeStringGenerator = new CodeStringGenerator(code, typeMapper, ef);
 
 if (!typeMapper.VerifyCaseInsensitiveTypeUniqueness(typeMapper.GetAllGlobalItems(itemCollection), inputFile))
@@ -22,47 +25,20 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
 {
     fileManager.StartNewFile(entity.Name + ".cs");
     BeginNamespace(code);
+
 #>
 <#=codeStringGenerator.UsingDirectives(inHeader: false)#>
+// ReSharper disable CollectionNeverUpdated.Global
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 <#=codeStringGenerator.EntityClassOpening(entity)#>
 {
+
 <#
     var propertiesWithDefaultValues = typeMapper.GetPropertiesWithDefaultValues(entity);
     var collectionNavigationProperties = typeMapper.GetCollectionNavigationProperties(entity);
     var complexProperties = typeMapper.GetComplexProperties(entity);
-
-    if (propertiesWithDefaultValues.Any() || collectionNavigationProperties.Any() || complexProperties.Any())
-    {
-#>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-    public <#=code.Escape(entity)#>()
-    {
-<#
-        foreach (var edmProperty in propertiesWithDefaultValues)
-        {
-#>
-        this.<#=code.Escape(edmProperty)#> = <#=typeMapper.CreateLiteral(edmProperty.DefaultValue)#>;
-<#
-        }
-
-        foreach (var navigationProperty in collectionNavigationProperties)
-        {
-#>
-        this.<#=code.Escape(navigationProperty)#> = new HashSet<<#=typeMapper.GetTypeName(navigationProperty.ToEndMember.GetEntityType())#>>();
-<#
-        }
-
-        foreach (var complexProperty in complexProperties)
-        {
-#>
-        this.<#=code.Escape(complexProperty)#> = new <#=typeMapper.GetTypeName(complexProperty.TypeUsage)#>();
-<#
-        }
-#>
-    }
-
-<#
-    }
 
     var simpleProperties = typeMapper.GetSimpleProperties(entity);
     if (simpleProperties.Any())
@@ -96,20 +72,31 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
 <#
         foreach (var navigationProperty in navigationProperties)
         {
-            if (navigationProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
-            {
-#>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-<#
-            }
+
 #>
     <#=codeStringGenerator.NavigationProperty(navigationProperty)#>
 <#
         }
     }
+
+
 #>
 }
+    <#=codeStringGenerator.EntityConfigurationClassOpening(entity)#>
+    {
+        <#=codeStringGenerator.ConfigureMethodOpening(entity)#>
+        {
+            <#=codeStringGenerator.TableMapping(entity, storageMappingItemCollection)#>
+
+            <#=codeStringGenerator.PropertyMappings(entity, storageMappingItemCollection)#>
+
+            <#=codeStringGenerator.Keys(entity)#>
+
+            <#=codeStringGenerator.ForeignKeys(entity)#>
+        }
+    }
 <#
+
     EndNamespace(code);
 }
 
@@ -308,9 +295,40 @@ public class CodeStringGenerator
             _code.SpaceAfter(Accessibility.ForSetter(navProp)));
     }
 
+    public string ForeignKeyBuilding(NavigationProperty navProp)
+    {
+        var endType = _typeMapper.GetTypeName(navProp.ToEndMember.GetEntityType());
+        var isEndMany = navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many;
+        var isFromMany = navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many;
+        var inversedNavProp = _ef.Inverse(navProp);
+
+        var hasClause = isEndMany ? "HasMany" : "HasOne";
+        var withClause = isFromMany ? "WithMany" : "WithOne";
+        var withExpression = inversedNavProp == null ? string.Empty : $"y => y.{inversedNavProp}";
+
+        var isOneToOne = !isEndMany && ! isFromMany;
+        var foreignKeyGenericClause =  isOneToOne ? $"<{endType}>" : string.Empty;
+
+        var invDepProp = inversedNavProp?.GetDependentProperties()?.FirstOrDefault();
+        var depProp = navProp?.GetDependentProperties()?.FirstOrDefault();
+
+        var foreignKeyProp = invDepProp?.ToString();
+        if(string.IsNullOrWhiteSpace(foreignKeyProp))
+            foreignKeyProp = depProp?.ToString();
+
+        var foreignKeyExpression = isEndMany || isOneToOne
+                        ? $"y => y.{foreignKeyProp}"
+                        : $"x => x.{foreignKeyProp}";
+
+        var result = $"builder.{hasClause}(x => x.{navProp}).{withClause}({withExpression}).HasForeignKey{foreignKeyGenericClause}({foreignKeyExpression});";
+
+
+        return result;
+    }
+
     public string AccessibilityAndVirtual(string accessibility)
     {
-        return accessibility + (accessibility != "private" ? " virtual" : "");
+        return accessibility; // + (accessibility != "private" ? " virtual" : "");
     }
 
     public string EntityClassOpening(EntityType entity)
@@ -323,6 +341,116 @@ public class CodeStringGenerator
             _code.SpaceAfter(_code.AbstractOption(entity)),
             _code.Escape(entity),
             _code.StringBefore(" : ", baseType));
+    }
+
+
+
+    MappingFragment GetMappingFragment(EntityType entity, StorageMappingItemCollection storageMappingItemCollection)
+    {
+         var mapping = storageMappingItemCollection
+                            .GetItems<EntityContainerMapping>()
+                            .SelectMany(x => x.EntitySetMappings)
+                            .FirstOrDefault(x => x.EntitySet.ElementType.FullName == entity.FullName);
+
+        var entitySetMappings = mapping
+            .EntityTypeMappings
+            .Select(x => x.EntitySetMapping);
+
+        var typeMappings =
+            entitySetMappings
+                .FirstOrDefault(x => x.EntitySet.ElementType.FullName == entity.FullName)?
+                .EntityTypeMappings
+                .FirstOrDefault();
+
+        return typeMappings?.Fragments?.FirstOrDefault();
+    }
+
+    public string TableMapping(EntityType entity, StorageMappingItemCollection storageMappingItemCollection)
+    {
+        var mappingFragment = GetMappingFragment(entity, storageMappingItemCollection);
+        if(mappingFragment == null)
+            return string.Empty;
+
+        var tableName = mappingFragment?.StoreEntitySet?.Name;
+        return string.IsNullOrWhiteSpace(tableName) ? string.Empty : $"builder.ToTable(\"{tableName}\");";
+    }
+
+    public string PropertyMappings(EntityType entity, StorageMappingItemCollection storageMappingItemCollection)
+    {
+        var mappingFragment = GetMappingFragment(entity, storageMappingItemCollection);
+        if(mappingFragment?.PropertyMappings == null)
+            return string.Empty;
+
+        var result = string.Empty;
+        foreach (var propMap in mappingFragment?.PropertyMappings)
+        {
+            var propertyMapping = propMap as ScalarPropertyMapping;
+            if (propertyMapping != null)
+            {
+                result += $"builder.Property(x => x.{_code.Escape(propertyMapping.Property.Name)}).HasColumnName(\"{_code.Escape(propertyMapping.Column.Name)}\");\n\t\t\t\t";
+            }
+        }
+        return result;
+    }
+
+    public string Keys(EntityType entity)
+    {
+        var result = string.Empty;
+        var keyProperties = entity.KeyProperties;
+        if (keyProperties.Count > 1)
+        {
+            var propertiesString = string.Join(", ", keyProperties.Select(x => $"x.{_code.Escape(x.Name)}"));
+            result += $"builder.HasKey(x => new {{ {propertiesString} }});\n";
+        }
+        else
+        {
+            foreach (var keyProperty in keyProperties)
+            {
+                result += $"builder.HasKey(x => x.{_code.Escape(keyProperty.Name)});";
+            }
+        }
+
+        return result;
+    }
+
+    public string ForeignKeys(EntityType entity)
+    {
+        var navProps = _typeMapper.GetNavigationProperties(entity);
+        if(navProps == null || !navProps.Any())
+            return string.Empty;
+        var sb = new StringBuilder();
+
+        foreach(var navProp in navProps)
+        {
+            sb.AppendLine(ForeignKeyBuilding(navProp));
+            sb.Append("\t\t\t");
+        }
+
+        return sb.ToString();
+
+    }
+
+    public string PrintAllItems(StorageMappingItemCollection itemCollection)
+    {
+        var result = string.Empty;
+        var entitySets = itemCollection.GetItems<EntityContainer>().SelectMany(x => x.EntitySets);
+        foreach(EntitySet item in entitySets)
+        {
+            result += item.Name + "\n";
+        }
+
+        return result;
+    }
+
+    public string EntityConfigurationClassOpening(EntityType entity)
+    {
+        string baseType = _code.Escape(entity);
+        return $"public class {baseType}Configuration : IEntityTypeConfiguration<{baseType}>";
+    }
+
+    public string ConfigureMethodOpening(EntityType entity)
+    {
+        return $"public void Configure(EntityTypeBuilder<{_code.Escape(entity)}> builder)";
     }
 
     string EntityInterface(EntityType entity, CodeGenerationTools code)
@@ -468,6 +596,8 @@ public class CodeStringGenerator
             ? string.Format(
                 CultureInfo.InvariantCulture,
                 "{0}using System;{1}" +
+                "{0}using Microsoft.EntityFrameworkCore;" +
+                "{0}using Microsoft.EntityFrameworkCore.Metadata.Builders;" +
                 "{2}",
                 inHeader ? Environment.NewLine : "",
                 includeCollections ? (Environment.NewLine + "using System.Collections.Generic;") : "",

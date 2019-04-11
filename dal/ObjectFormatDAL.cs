@@ -9,19 +9,17 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
     
+    // ReSharper disable CollectionNeverUpdated.Global
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Global
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ObjectFormatDAL :  IQpEntityObject
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ObjectFormatDAL()
-        {
-            this.Notifications = new HashSet<NotificationsDAL>();
-            this.Object1 = new HashSet<ObjectDAL>();
-            this.ObjectFormatVersion = new HashSet<ObjectFormatVersionDAL>();
-            this.PageTraceFormat = new HashSet<PageTraceFormatDAL>();
-        }
     
         public decimal Id { get; set; }
         public decimal ObjectId { get; set; }
@@ -46,17 +44,56 @@ namespace Quantumart.QP8.DAL
         public string TagName { get; set; }
         public bool PermanentLock { get; set; }
     
-        public virtual NetLanguagesDAL NetLanguages { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<NotificationsDAL> Notifications { get; set; }
-        public virtual ObjectDAL Object { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ObjectDAL> Object1 { get; set; }
-        public virtual UserDAL LockedByUser { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ObjectFormatVersionDAL> ObjectFormatVersion { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PageTraceFormatDAL> PageTraceFormat { get; set; }
-        public virtual UserDAL LastModifiedByUser { get; set; }
+        public NetLanguagesDAL NetLanguages { get; set; }
+        public ICollection<NotificationsDAL> Notifications { get; set; }
+        public ObjectDAL Object { get; set; }
+        public ICollection<ObjectDAL> Object1 { get; set; }
+        public UserDAL LockedByUser { get; set; }
+        public ICollection<ObjectFormatVersionDAL> ObjectFormatVersion { get; set; }
+        public ICollection<PageTraceFormatDAL> PageTraceFormat { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
     }
+        public class ObjectFormatDALConfiguration : IEntityTypeConfiguration<ObjectFormatDAL>
+        {
+            public void Configure(EntityTypeBuilder<ObjectFormatDAL> builder)
+            {
+                builder.ToTable("OBJECT_FORMAT");
+    
+                builder.Property(x => x.PermanentLock).HasColumnName("PERMANENT_LOCK");
+				builder.Property(x => x.Id).HasColumnName("OBJECT_FORMAT_ID");
+				builder.Property(x => x.ObjectId).HasColumnName("OBJECT_ID");
+				builder.Property(x => x.Name).HasColumnName("FORMAT_NAME");
+				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+				builder.Property(x => x.Created).HasColumnName("CREATED");
+				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
+				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+				builder.Property(x => x.FormatBody).HasColumnName("FORMAT_BODY");
+				builder.Property(x => x.NetLanguageId).HasColumnName("NET_LANGUAGE_ID");
+				builder.Property(x => x.NetFormatName).HasColumnName("NET_FORMAT_NAME");
+				builder.Property(x => x.CodeBehind).HasColumnName("CODE_BEHIND");
+				builder.Property(x => x.Locked).HasColumnName("LOCKED");
+				builder.Property(x => x.LockedBy).HasColumnName("LOCKED_BY");
+				builder.Property(x => x.Assembled).HasColumnName("ASSEMBLED");
+				builder.Property(x => x.AssembleInLive).HasColumnName("ASSEMBLE_IN_LIVE");
+				builder.Property(x => x.AssembleInStage).HasColumnName("ASSEMBLE_IN_STAGE");
+				builder.Property(x => x.AssembleNotificationInLive).HasColumnName("ASSEMBLE_NOTIFICATION_IN_LIVE");
+				builder.Property(x => x.AssembleNotificationInStage).HasColumnName("ASSEMBLE_NOTIFICATION_IN_STAGE");
+				builder.Property(x => x.AssemblePreviewInLive).HasColumnName("ASSEMBLE_PREVIEW_IN_LIVE");
+				builder.Property(x => x.AssemblePreviewInStage).HasColumnName("ASSEMBLE_PREVIEW_IN_STAGE");
+				builder.Property(x => x.TagName).HasColumnName("TAG_NAME");
+				
+    
+                builder.HasKey(x => x.Id);
+    
+                builder.HasOne(x => x.NetLanguages).WithMany(y => y.ObjectFormat).HasForeignKey(x => x.NetLanguageId);
+    			builder.HasMany(x => x.Notifications).WithOne(y => y.Format).HasForeignKey(y => y.FormatId);
+    			builder.HasOne(x => x.Object).WithMany(y => y.ChildObjectFormats).HasForeignKey(x => x.ObjectId);
+    			builder.HasMany(x => x.Object1).WithOne(y => y.DefaultFormat).HasForeignKey(y => y.DefaultFormatId);
+    			builder.HasOne(x => x.LockedByUser).WithMany(y => y.ObjectFormat).HasForeignKey(x => x.LockedBy);
+    			builder.HasMany(x => x.ObjectFormatVersion).WithOne(y => y.ObjectFormat).HasForeignKey(y => y.ObjectFormatId);
+    			builder.HasMany(x => x.PageTraceFormat).WithOne(y => y.ObjectFormat).HasForeignKey(y => y.FormatId);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.OBJECT_FORMAT).HasForeignKey(x => x.LastModifiedBy);
+    			
+            }
+        }
 }
