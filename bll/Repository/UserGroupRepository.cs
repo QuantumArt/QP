@@ -17,7 +17,11 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<UserGroup> GetNtGroups()
         {
-            var groups = QPContext.EFContext.UserGroupSet.Include("ParentGroups").Where(f => f.NtGroup != null);
+            var groups = QPContext
+                .EFContext
+                .UserGroupSet
+                .Include(x => x.ParentGroupToGroupBinds).ThenInclude(y => y.ParentGroup)
+                .Where(f => f.NtGroup != null);
             return MapperFacade.UserGroupMapper.GetBizList(groups.ToList());
         }
 
@@ -44,12 +48,9 @@ namespace Quantumart.QP8.BLL.Repository
         internal static UserGroup GetPropertiesById(int id)
         {
             return MapperFacade.UserGroupMapper.GetBizObject(QPContext.EFContext.UserGroupSet
-                .Include(x => x.ParentGroupToGroupBinds)
-                .ThenInclude(y => y.ParentGroup)
-                .Include(x => x.ChildGroupToGroupBinds)
-                .ThenInclude(y => y.ChildGroup)
-                .Include(x => x.UserGroupBinds)
-                .ThenInclude(y => y.User)
+                .Include(x => x.ParentGroupToGroupBinds).ThenInclude(y => y.ParentGroup)
+                .Include(x => x.ChildGroupToGroupBinds).ThenInclude(y => y.ChildGroup)
+                .Include(x => x.UserGroupBinds).ThenInclude(y => y.User)
                 .Include(x => x.LastModifiedByUser)
                 .SingleOrDefault(g => g.Id == id)
             );

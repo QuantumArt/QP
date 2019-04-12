@@ -102,8 +102,8 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             var dalDb = entities.CustomActionSet
-                .Include("Contents")
-                .Include("Sites")
+                .Include(x => x.ContentCustomActionBinds).ThenInclude(y=> y.Content)
+                .Include(x => x.SiteCustomActionBinds).ThenInclude(y => y.Site)
                 .Single(a => a.Id == customAction.Id);
 
             var inmemorySiteIDs = new HashSet<decimal>(customAction.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
