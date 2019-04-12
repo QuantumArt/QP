@@ -47,7 +47,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 .Include(x => x.Views).ThenInclude( y => y.ViewType)
                 .Include(x => x.NextSuccessfulAction)
                 .Include(x => x.NextFailedAction)
-                .Include(x => x.ExcludesBinds)
+                .Include(x => x.ExcludesBinds).ThenInclude(x => x.Excludes)
                 .ToList()
         );
 
@@ -57,9 +57,9 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 .Include(b => b.Action.ToolbarButtons)
                 .Include(b => b.Action.ContextMenuItems)
                 .Include(b => b.Action.ActionType.PermissionLevel)
-                .Include(b => b.Action.ExcludesBinds)
-                .Include(b => b.ContentCustomActionBinds)
-                .Include(b => b.Sites)
+                .Include(b => b.Action.ExcludesBinds).ThenInclude(x => x.Excludes)
+                .Include(b => b.ContentCustomActionBinds).ThenInclude(x => x.Content)
+                .Include(b => b.SiteCustomActionBinds).ThenInclude(x => x.Site)
                 .ToList()
         );
 

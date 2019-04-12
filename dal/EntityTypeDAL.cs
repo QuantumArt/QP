@@ -58,8 +58,8 @@ namespace Quantumart.QP8.DAL
         public ContextMenuDAL ContextMenu { get; set; }
         public ContextMenuDAL FolderContextMenu { get; set; }
         public ICollection<EntityTypePermissionDAL> ENTITY_TYPE_ACCESS { get; set; }
-        public ICollection<EntityTypeDAL> ENTITY_TYPE11 { get; set; }
-        public EntityTypeDAL ENTITY_TYPE3 { get; set; }
+        // public ICollection<EntityTypeDAL> ENTITY_TYPE11 { get; set; }
+        // public EntityTypeDAL ENTITY_TYPE3 { get; set; }
     }
         public class EntityTypeDALConfiguration : IEntityTypeConfiguration<EntityTypeDAL>
         {
@@ -98,7 +98,7 @@ namespace Quantumart.QP8.DAL
 
                 builder.HasKey(x => x.Id);
 
-                builder.HasMany(x => x.Actions).WithOne().HasForeignKey(y => y.EntityTypeId);
+                builder.HasMany(x => x.Actions).WithOne(y => y.EntityType).HasForeignKey(y => y.EntityTypeId);
     			builder.HasOne(x => x.DefaultAction).WithMany().HasForeignKey(x => x.DefaultActionId);
     			builder.HasOne(x => x.FolderDefaultAction).WithMany().HasForeignKey(x => x.FolderDefaultActionId);
     			builder.HasMany(x => x.Children).WithOne(y => y.Parent).HasForeignKey(y => y.ParentId);
@@ -107,8 +107,8 @@ namespace Quantumart.QP8.DAL
     			builder.HasOne(x => x.ContextMenu).WithMany().HasForeignKey(x => x.ContextMenuId);
     			builder.HasOne(x => x.FolderContextMenu).WithMany().HasForeignKey(x => x.FolderContextMenuId);
     			builder.HasMany(x => x.ENTITY_TYPE_ACCESS).WithOne(y => y.EntityType).HasForeignKey(y => y.EntityTypeId);
-    			builder.HasMany(x => x.ENTITY_TYPE11).WithOne(y => y.ENTITY_TYPE3).HasForeignKey(y => y.GROUP_PARENT_ID);
-    			builder.HasOne(x => x.ENTITY_TYPE3).WithMany(y => y.ENTITY_TYPE11).HasForeignKey(x => x.GROUP_PARENT_ID);
+    			// builder.HasMany(x => x.ENTITY_TYPE11).WithOne(y => y.ENTITY_TYPE3).HasForeignKey(y => y.GROUP_PARENT_ID);
+    			// builder.HasOne(x => x.ENTITY_TYPE3).WithMany(y => y.ENTITY_TYPE11).HasForeignKey(x => x.GROUP_PARENT_ID);
 
             }
         }

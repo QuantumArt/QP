@@ -1,6 +1,9 @@
 using System.Data.Common;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Logging.EventLog;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -10,6 +13,8 @@ namespace Quantumart.QP8.DAL
 {
     public class QP8Entities : DbContext
     {
+        public static readonly LoggerFactory MyLoggerFactory
+            = new LoggerFactory(new[] {new EventLogLoggerProvider(new EventLogSettings{LogName="QPEFcore", SourceName="LocalQP8EfCore"})});
         private readonly string _nameOrConnectionString;
 
         public QP8Entities()
@@ -145,6 +150,8 @@ namespace Quantumart.QP8.DAL
                 optionsBuilder.UseSqlServer(_dbConnection);
 
             }
+
+            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
 
             // Database.SetCommandTimeout(SqlCommandFactory.CommandTimeout);
 

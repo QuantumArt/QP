@@ -59,7 +59,9 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static List<User> GetNtUsers()
         {
-            var users = QPContext.EFContext.UserSet.Include("Groups").Where(u => u.NTLogOn != null).ToList();
+            var users = QPContext.EFContext.UserSet
+                .Include(x => x.UserGroupBinds).ThenInclude(y=> y.UserGroup)
+                .Where(u => u.NTLogOn != null).ToList();
             return MapperFacade.UserMapper.GetBizList(users);
         }
 
@@ -103,8 +105,8 @@ namespace Quantumart.QP8.BLL.Repository
         internal static User GetPropertiesById(int id)
         {
             var dal = QPContext.EFContext.UserSet
-                .Include("Groups")
-                .Include("LastModifiedByUser")
+                .Include(x => x.UserGroupBinds).ThenInclude(y => y.UserGroup)
+                .Include(x => x.LastModifiedByUser)
                 .SingleOrDefault(u => u.Id == id);
 
             return MapperFacade.UserMapper.GetBizObject(dal);
@@ -137,7 +139,9 @@ namespace Quantumart.QP8.BLL.Repository
             if (!profileOnly)
             {
                 // Save Groups
-                var dalDb = entities.UserSet.Include("Groups").Single(u => u.Id == dal.Id);
+                var dalDb = entities.UserSet
+                    .Include(x => x.UserGroupBinds).ThenInclude(y => y.UserGroup)
+                    .Single(u => u.Id == dal.Id);
                 var inmemoryGroupIDs = new HashSet<decimal>(user.Groups.Select(g => Converter.ToDecimal(g.Id)));
                 var indbGroupIDs = new HashSet<decimal>(dalDb.Groups.Select(g => g.Id));
                 foreach (var g in dalDb.Groups.ToArray())

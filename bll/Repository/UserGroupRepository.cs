@@ -44,10 +44,13 @@ namespace Quantumart.QP8.BLL.Repository
         internal static UserGroup GetPropertiesById(int id)
         {
             return MapperFacade.UserGroupMapper.GetBizObject(QPContext.EFContext.UserGroupSet
-                .Include("ParentGroups")
-                .Include("ChildGroups")
-                .Include("Users")
-                .Include("LastModifiedByUser")
+                .Include(x => x.ParentGroupToGroupBinds)
+                .ThenInclude(y => y.ParentGroup)
+                .Include(x => x.ChildGroupToGroupBinds)
+                .ThenInclude(y => y.ChildGroup)
+                .Include(x => x.UserGroupBinds)
+                .ThenInclude(y => y.User)
+                .Include(x => x.LastModifiedByUser)
                 .SingleOrDefault(g => g.Id == id)
             );
         }
@@ -70,7 +73,11 @@ namespace Quantumart.QP8.BLL.Repository
 
             entities.Entry(dal).State = EntityState.Modified;
 
-            var dalDb = entities.UserGroupSet.Include("ParentGroups").Include("Users").Single(g => g.Id == dal.Id);
+            var dalDb = entities
+                .UserGroupSet
+                .Include(x => x.ParentGroupToGroupBinds).ThenInclude(y => y.ParentGroup)
+                .Include(x => x.UserGroupBinds).ThenInclude(y => y.User)
+                .Single(g => g.Id == dal.Id);
             foreach (var pg in dalDb.ParentGroups.ToArray())
             {
                 if (group.ParentGroup == null || pg.Id != group.ParentGroup.Id)

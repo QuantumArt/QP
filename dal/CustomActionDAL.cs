@@ -35,7 +35,7 @@ namespace Quantumart.QP8.DAL
         public UserDAL LastModifiedByUser { get; set; }
 
         public ICollection<ContentCustomActionBindDAL> ContentCustomActionBinds { get; set; }
-        public IEnumerable<SiteCustomActionBindDAL> SiteCustomActionBinds { get; set; }
+        public ICollection<SiteCustomActionBindDAL> SiteCustomActionBinds { get; set; }
 
         [NotMapped]
         public IEnumerable<ContentDAL> Contents => ContentCustomActionBinds?.Select(x => x.Content);
