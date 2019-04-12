@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
@@ -105,8 +108,8 @@ namespace Quantumart.QP8.BLL.Repository
             where TDal : class
         {
             var entities = QPContext.EFContext;
-            var sql = $"SELECT VALUE entity FROM {GetSetNameByType(typeof(TDal), true)} AS entity WHERE entity.Id IN {{{string.Join(",", id)}}}";
-            var list = entities.Set<TDal>().FromSql(sql).ToList();
+
+            var list = FindAll<TDal>(entities, id);
             foreach (var item in list)
             {
                 entities.Entry(item).State = EntityState.Deleted;
@@ -114,6 +117,46 @@ namespace Quantumart.QP8.BLL.Repository
 
             entities.SaveChanges();
         }
+
+
+        private static List<TDal> FindAll<TDal>(DbContext dbContext, params object[] keyValues)
+            where TDal : class
+        {
+            var entityType = dbContext.Model.FindEntityType(typeof(TDal));
+            var primaryKey = entityType.FindPrimaryKey();
+            if (primaryKey.Properties.Count != 1)
+                throw new NotSupportedException("Only a single primary key is supported");
+
+            var pkProperty = primaryKey.Properties[0];
+            var pkPropertyType = pkProperty.ClrType;
+
+            // validate passed key values
+            foreach (var keyValue in keyValues)
+            {
+                if (!pkPropertyType.IsInstanceOfType(keyValue))
+                {
+                    throw new ArgumentException($"Key value '{keyValue}' is not of the right type");
+                }
+            }
+
+            // retrieve member info for primary key
+            var pkMemberInfo = typeof(TDal).GetProperty(pkProperty.Name);
+            if (pkMemberInfo == null)
+                throw new ArgumentException("Type does not contain the primary key as an accessible property");
+
+            // build lambda expression
+            var parameter = Expression.Parameter(typeof(TDal), "e");
+            var body = Expression.Call(null, ContainsMethod,
+                Expression.Constant(keyValues),
+                Expression.Convert(Expression.MakeMemberAccess(parameter, pkMemberInfo), typeof(object)));
+            var predicateExpression = Expression.Lambda<Func<TDal, bool>>(body, parameter);
+
+            // run query
+            return dbContext.Set<TDal>().Where(predicateExpression).ToList();
+        }
+
+
+
 
         internal static TDal GetById<TDal>(int id, QP8Entities context = null)
             where TDal : class
@@ -163,7 +206,7 @@ namespace Quantumart.QP8.BLL.Repository
         // internal static void SimpleDelete(EntityKey key)
         // {
         //     var entities = QPContext.EFContext;
-        //     
+        //
         //     if ((entities as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
         //     {
         //         entities.Entry(result).State = EntityState.Deleted;
@@ -265,5 +308,9 @@ namespace Quantumart.QP8.BLL.Repository
         {
             ChangeIdentityInsertState(entityTypeCode, false);
         }
+
+        private static readonly MethodInfo ContainsMethod = typeof(Enumerable).GetMethods()
+            .FirstOrDefault(m => m.Name == "Contains" && m.GetParameters().Length == 2)
+            .MakeGenericMethod(typeof(object));
     }
 }

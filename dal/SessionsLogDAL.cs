@@ -42,7 +42,7 @@ namespace Quantumart.QP8.DAL
                 builder.ToTable("SESSIONS_LOG");
 
                 builder.Property(x => x.IsQP7).HasColumnName("IS_QP7");
-				builder.Property(x => x.SessionId).HasColumnName("SESSION_ID").UseSqlServerIdentityColumn();
+				builder.Property(x => x.SessionId).HasColumnName("SESSION_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.Login).HasColumnName("LOGIN");
 				builder.Property(x => x.Password).HasColumnName("PASSWORD");
 				builder.Property(x => x.UserId).HasColumnName("USER_ID");
