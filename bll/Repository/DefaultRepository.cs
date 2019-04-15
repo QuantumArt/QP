@@ -162,14 +162,8 @@ namespace Quantumart.QP8.BLL.Repository
             where TDal : class
         {
             var currentContext = context ?? QPContext.EFContext;
-            return currentContext.Set<TDal>().Find(id);
+            return currentContext.Set<TDal>().Find((decimal)id);
 
-            // var key = new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id);
-            // if ((currentContext as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
-            // {
-            //     return (TDal)result;
-            // }
-            // return null;
         }
 
         internal static TDal SimpleSave<TDal>(TDal dalItem)

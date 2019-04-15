@@ -94,7 +94,7 @@ namespace Quantumart.QP8.DAL
             builder.Property(x => x.DisableChangingActions).HasColumnName("DISABLE_CHANGING_ACTIONS");
             builder.Property(x => x.DisableXamlValidation).HasColumnName("DISABLE_XAML_VALIDATION");
             builder.Property(x => x.XamlValidation).HasColumnName("XAML_VALIDATION");
-            builder.Property(x => x.Id).HasColumnName("CONTENT_ID");
+            builder.Property(x => x.Id).HasColumnName("CONTENT_ID").ValueGeneratedOnAdd();
             builder.Property(x => x.Name).HasColumnName("CONTENT_NAME");
             builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
             builder.Property(x => x.SiteId).HasColumnName("SITE_ID");

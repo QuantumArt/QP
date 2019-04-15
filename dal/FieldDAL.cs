@@ -161,7 +161,7 @@ namespace Quantumart.QP8.DAL
 				builder.Property(x => x.ExternalCss).HasColumnName("EXTERNAL_CSS");
 				builder.Property(x => x.IsLong).HasColumnName("IS_LONG");
 				builder.Property(x => x.BackRelationId).HasColumnName("BACK_RELATED_ATTRIBUTE_ID");
-				builder.Property(x => x.Id).HasColumnName("ATTRIBUTE_ID");
+				builder.Property(x => x.Id).HasColumnName("ATTRIBUTE_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.ContentId).HasColumnName("CONTENT_ID");
 				builder.Property(x => x.Name).HasColumnName("ATTRIBUTE_NAME");
 				builder.Property(x => x.FormatMask).HasColumnName("FORMAT_MASK");
