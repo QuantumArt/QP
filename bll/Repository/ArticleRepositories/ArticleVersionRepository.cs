@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Linq.Dynamic;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils.Sorting;
+using Remotion.Linq.Clauses;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 {
@@ -19,14 +22,20 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <returns>список версий статей</returns>
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
-            var query = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
-            // var ctx = (QPContext.EFContext as IObjectContextAdapter).ObjectContext;
-            // TODO: проверить валидность, менялось при переходе на EF CORE
+
+
             var result = QPContext.EFContext
                 .ArticleVersionSet
-                .FromSql(query, new SqlParameter("id", articleId))
-                .Include("LastModifiedByUser")
-                .Include("CreatedByUser");
+                .Where(x => x.ArticleId == articleId)
+                .Include(x => x.LastModifiedByUser)
+                .Include(x => x.CreatedByUser)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(command.SortExpression))
+            {
+                result = result.OrderBy(command.SortExpression);
+            }
+
 
             return MapperFacade.ArticleVersionMapper.GetBizList(result.ToList());
         }
