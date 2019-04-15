@@ -26,12 +26,12 @@ namespace Quantumart.QP8.DAL
 
             builder
                 .HasOne(x => x.ChildGroup)
-                .WithMany(y => y.ChildGroupToGroupBinds)
+                .WithMany(y => y.ParentGroupToGroupBinds)
                 .HasForeignKey(x => x.ChildGroupId);
 
             builder
                 .HasOne(x => x.ParentGroup)
-                .WithMany(y => y.ParentGroupToGroupBinds)
+                .WithMany(y => y.ChildGroupToGroupBinds)
                 .HasForeignKey(x => x.ParentGroupId);
         }
     }

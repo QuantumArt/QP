@@ -83,7 +83,7 @@ namespace Quantumart.QP8.DAL
         public ICollection<DbDAL> DB { get; set; }
         public ICollection<DbDAL> DB1 { get; set; }
         public ICollection<ObjectFormatVersionDAL> OBJECT_FORMAT_VERSION { get; set; }
-        public ICollection<UserUserGroupBindDAL> UserGroupBinds { get; set; }
+        public ICollection<UserUserGroupBindDAL> UserGroupBinds { get; set; } = new HashSet<UserUserGroupBindDAL>();
 
         [NotMapped]
         public IEnumerable<UserGroupDAL> Groups => UserGroupBinds?.Select(x => x.UserGroup);
@@ -98,7 +98,7 @@ namespace Quantumart.QP8.DAL
             builder.Property(x => x.EnableContentGroupingInTree).HasColumnName("ENABLE_CONTENT_GROUPING_IN_TREE");
             builder.Property(x => x.MustChangePassword).HasColumnName("MUST_CHANGE_PASSWORD");
             builder.Property(x => x.PASSWORD).HasColumnName("PASSWORD");
-            builder.Property(x => x.Id).HasColumnName("USER_ID");
+            builder.Property(x => x.Id).HasColumnName("USER_ID").ValueGeneratedOnAdd();
             builder.Property(x => x.Disabled).HasColumnName("DISABLED");
             builder.Property(x => x.FirstName).HasColumnName("FIRST_NAME");
             builder.Property(x => x.LastName).HasColumnName("LAST_NAME");

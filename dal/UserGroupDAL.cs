@@ -40,9 +40,9 @@ namespace Quantumart.QP8.DAL
         public UserDAL LastModifiedByUser { get; set; }
         public ICollection<BackendActionPermissionDAL> ACTION_ACCESS { get; set; }
         public ICollection<EntityTypePermissionDAL> ENTITY_TYPE_ACCESS { get; set; }
-        public ICollection<UserUserGroupBindDAL> UserGroupBinds { get; set; }
-        public ICollection<GroupToGroupBindDAL> ParentGroupToGroupBinds { get; set; }
-        public ICollection<GroupToGroupBindDAL> ChildGroupToGroupBinds { get; set; }
+        public ICollection<UserUserGroupBindDAL> UserGroupBinds { get; set; } = new HashSet<UserUserGroupBindDAL>();
+        public ICollection<GroupToGroupBindDAL> ParentGroupToGroupBinds { get; set; } = new HashSet<GroupToGroupBindDAL>();
+        public ICollection<GroupToGroupBindDAL> ChildGroupToGroupBinds { get; set; } = new HashSet<GroupToGroupBindDAL>();
 
         [NotMapped]
         public IEnumerable<UserDAL> Users => UserGroupBinds?.Select(x => x.User);
@@ -63,7 +63,7 @@ namespace Quantumart.QP8.DAL
             builder.ToTable("USER_GROUP");
 
             builder.Property(x => x.CanUnlockItems).HasColumnName("CAN_UNLOCK_ITEMS");
-            builder.Property(x => x.Id).HasColumnName("GROUP_ID");
+            builder.Property(x => x.Id).HasColumnName("GROUP_ID").ValueGeneratedOnAdd();
             builder.Property(x => x.Name).HasColumnName("GROUP_NAME");
             builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
             builder.Property(x => x.Created).HasColumnName("CREATED");
@@ -94,8 +94,8 @@ namespace Quantumart.QP8.DAL
 
 
             builder.HasMany(x => x.UserGroupBinds).WithOne(y => y.UserGroup).HasForeignKey(y => y.UserGroupId);
-            builder.HasMany(x => x.ChildGroupToGroupBinds).WithOne(y => y.ChildGroup).HasForeignKey(y => y.ChildGroupId);
-            builder.HasMany(x => x.ParentGroupToGroupBinds).WithOne(y => y.ParentGroup).HasForeignKey(y => y.ParentGroupId);
+            builder.HasMany(x => x.ChildGroupToGroupBinds).WithOne(y => y.ParentGroup).HasForeignKey(y => y.ParentGroupId);
+            builder.HasMany(x => x.ParentGroupToGroupBinds).WithOne(y => y.ChildGroup).HasForeignKey(y => y.ChildGroupId);
 
         }
     }

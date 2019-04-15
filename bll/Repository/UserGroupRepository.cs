@@ -79,13 +79,11 @@ namespace Quantumart.QP8.BLL.Repository
                 .Include(x => x.ParentGroupToGroupBinds).ThenInclude(y => y.ParentGroup)
                 .Include(x => x.UserGroupBinds).ThenInclude(y => y.User)
                 .Single(g => g.Id == dal.Id);
-            foreach (var pg in dalDb.ParentGroups.ToArray())
+            foreach (var pg in dalDb.ParentGroupToGroupBinds.ToArray())
             {
-                if (group.ParentGroup == null || pg.Id != group.ParentGroup.Id)
+                if (group.ParentGroup == null || pg.ParentGroup.Id != group.ParentGroup.Id)
                 {
-                    entities.UserGroupSet.Attach(pg);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                    // dalDb.ParentGroups.Remove(pg);
+                    dalDb.ParentGroupToGroupBinds.Remove(pg);
                 }
             }
 
@@ -95,29 +93,26 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     var dalParent = entities.UserGroupSet.Single(g => g.Id == group.ParentGroup.Id);
                     entities.UserGroupSet.Attach(dalParent);
-                    #warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                    // dal.ParentGroups.Add(dalParent);
+                    var bind = new GroupToGroupBindDAL { ParentGroup = dalParent, ChildGroup = dal};
+                    dal.ParentGroupToGroupBinds.Add(bind);
                 }
             }
 
             var inmemoryUserIDs = new HashSet<decimal>(group.Users.Select(u => Converter.ToDecimal(u.Id)));
             var indbUserIDs = new HashSet<decimal>(dalDb.Users.Select(u => u.Id));
-            foreach (var u in dalDb.Users.ToArray())
+            foreach (var u in dalDb.UserGroupBinds.ToArray())
             {
-                if (!inmemoryUserIDs.Contains(u.Id))
+                if (!inmemoryUserIDs.Contains(u.User.Id))
                 {
-                    entities.UserSet.Attach(u);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                    // dalDb.Users.Remove(u);
+                    dalDb.UserGroupBinds.Remove(u);
                 }
             }
             foreach (var u in MapperFacade.UserMapper.GetDalList(group.Users.ToList()))
             {
                 if (!indbUserIDs.Contains(u.Id))
                 {
-                    entities.UserSet.Attach(u);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                    // dal.Users.Add(u);
+                    var bind = new UserUserGroupBindDAL { UserId = u.Id, UserGroupId = group.Id };
+                    dal.UserGroupBinds.Add(bind);
                 }
             }
 
@@ -142,15 +137,15 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 var parentDal = MapperFacade.UserGroupMapper.GetDalObject(group.ParentGroup);
                 entities.UserGroupSet.Attach(parentDal);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                // dal.ParentGroups.Add(parentDal);
+                var bind = new GroupToGroupBindDAL { ParentGroup = parentDal, ChildGroup = dal };
+                dal.ParentGroupToGroupBinds.Add(bind);
             }
 
             foreach (var u in MapperFacade.UserMapper.GetDalList(group.Users.ToList()))
             {
                 entities.UserSet.Attach(u);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                // dal.Users.Add(u);
+                var bind = new UserUserGroupBindDAL { UserGroup = dal, User = u };
+                dal.UserGroupBinds.Add(bind);
             }
 
             entities.SaveChanges();

@@ -152,6 +152,7 @@ namespace Quantumart.QP8.DAL
             }
 
             optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+            optionsBuilder.EnableSensitiveDataLogging();
 
             // Database.SetCommandTimeout(SqlCommandFactory.CommandTimeout);
 

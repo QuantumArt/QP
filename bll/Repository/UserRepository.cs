@@ -144,13 +144,11 @@ namespace Quantumart.QP8.BLL.Repository
                     .Single(u => u.Id == dal.Id);
                 var inmemoryGroupIDs = new HashSet<decimal>(user.Groups.Select(g => Converter.ToDecimal(g.Id)));
                 var indbGroupIDs = new HashSet<decimal>(dalDb.Groups.Select(g => g.Id));
-                foreach (var g in dalDb.Groups.ToArray())
+                foreach (var g in dalDb.UserGroupBinds.ToArray())
                 {
-                    if (!inmemoryGroupIDs.Contains(g.Id) && !g.IsReadOnly && !(g.BuiltIn && user.BuiltIn))
+                    if (!inmemoryGroupIDs.Contains(g.UserGroupId) && !g.UserGroup.IsReadOnly && !(g.UserGroup.BuiltIn && user.BuiltIn))
                     {
-                        entities.UserGroupSet.Attach(g);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                        // dalDb.Groups.Remove(g);
+                        dalDb.UserGroupBinds.Remove(g);
                     }
                 }
                 foreach (var g in MapperFacade.UserGroupMapper.GetDalList(user.Groups.ToList()))
@@ -158,8 +156,8 @@ namespace Quantumart.QP8.BLL.Repository
                     if (!indbGroupIDs.Contains(g.Id))
                     {
                         entities.UserGroupSet.Attach(g);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                        // dal.Groups.Add(g);
+                        var bind = new UserUserGroupBindDAL { User = dal, UserGroup = g };
+                        dal.UserGroupBinds.Add(bind);
                     }
                 }
 
@@ -222,11 +220,16 @@ namespace Quantumart.QP8.BLL.Repository
             entities.Entry(dal).State = EntityState.Added;
             entities.SaveChanges();
 
+
+
+
             // Save Groups
             foreach (var s in MapperFacade.UserGroupMapper.GetDalList(user.Groups.ToList()))
             {
                 entities.UserGroupSet.Attach(s);
-                #warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                var userGroupBind = new UserUserGroupBindDAL{User = dal, UserGroup = s};
+                dal.UserGroupBinds.Add(userGroupBind);
+                //#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
                 // dal.Groups.Add(s);
             }
 
