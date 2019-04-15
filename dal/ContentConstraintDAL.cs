@@ -13,17 +13,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
-    
+
     // ReSharper disable CollectionNeverUpdated.Global
     // ReSharper disable InconsistentNaming
     // ReSharper disable UnusedMember.Global
     // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ContentConstraintDAL
     {
-    
+
         public decimal Id { get; set; }
         public decimal ContentId { get; set; }
-    
+
         public ContentDAL Content { get; set; }
         public ICollection<ContentConstraintRuleDAL> Rules { get; set; }
     }
@@ -32,16 +32,16 @@ namespace Quantumart.QP8.DAL
             public void Configure(EntityTypeBuilder<ContentConstraintDAL> builder)
             {
                 builder.ToTable("content_constraint");
-    
-                builder.Property(x => x.Id).HasColumnName("constraint_id");
+
+                builder.Property(x => x.Id).HasColumnName("constraint_id").ValueGeneratedOnAdd();
 				builder.Property(x => x.ContentId).HasColumnName("content_id");
-				
-    
+
+
                 builder.HasKey(x => x.Id);
-    
+
                 builder.HasOne(x => x.Content).WithMany(y => y.Constraints).HasForeignKey(x => x.ContentId);
     			builder.HasMany(x => x.Rules).WithOne(y => y.Constraint).HasForeignKey(y => y.ConstraintId);
-    			
+
             }
         }
 }

@@ -38,10 +38,13 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
         public bool CheckUnique(EntityPermission permission)
         {
             return !QPContext.EFContext.SiteFolderPermissionSet.Any(p =>
-                p.FolderId == permission.ParentEntityId &&
-                (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
-                (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null));
+                PermissionUserOrGroupEquals(permission, p));
         }
+
+        private static bool PermissionUserOrGroupEquals(EntityPermission permission, SiteFolderPermissionDAL p) =>
+            p.FolderId == permission.ParentEntityId &&
+            (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
+            (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null);
 
         public void MultipleRemove(IEnumerable<int> IDs)
         {

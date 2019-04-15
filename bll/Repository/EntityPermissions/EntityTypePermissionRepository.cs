@@ -41,11 +41,14 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
         {
             return !QPContext.EFContext.EntityTypePermissionSet
                 .Any(p =>
-                    p.EntityTypeId == permission.ParentEntityId &&
-                    (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
-                    (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null)
+                    PermissionUserOrGroupEquals(permission, p)
                 );
         }
+
+        private static bool PermissionUserOrGroupEquals(EntityPermission permission, EntityTypePermissionDAL p) =>
+            p.EntityTypeId == permission.ParentEntityId &&
+            (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
+            (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null);
 
         public EntityPermission Update(EntityPermission permission) => DefaultRepository.Update<EntityPermission, EntityTypePermissionDAL>(permission);
 

@@ -13,14 +13,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
-    
+
     // ReSharper disable CollectionNeverUpdated.Global
     // ReSharper disable InconsistentNaming
     // ReSharper disable UnusedMember.Global
     // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class SiteFolderPermissionDAL :  IQpEntityObject
     {
-    
+
         public decimal FolderId { get; set; }
         public Nullable<decimal> UserId { get; set; }
         public Nullable<decimal> GroupId { get; set; }
@@ -29,7 +29,7 @@ namespace Quantumart.QP8.DAL
         public System.DateTime Modified { get; set; }
         public decimal LastModifiedBy { get; set; }
         public decimal Id { get; set; }
-    
+
         public SiteFolderDAL Folder { get; set; }
         public UserGroupDAL Group { get; set; }
         public PermissionLevelDAL PermissionLevel { get; set; }
@@ -41,7 +41,7 @@ namespace Quantumart.QP8.DAL
             public void Configure(EntityTypeBuilder<SiteFolderPermissionDAL> builder)
             {
                 builder.ToTable("FOLDER_ACCESS");
-    
+
                 builder.Property(x => x.FolderId).HasColumnName("FOLDER_ID");
 				builder.Property(x => x.UserId).HasColumnName("USER_ID");
 				builder.Property(x => x.GroupId).HasColumnName("GROUP_ID");
@@ -49,17 +49,17 @@ namespace Quantumart.QP8.DAL
 				builder.Property(x => x.Created).HasColumnName("CREATED");
 				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
 				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
-				builder.Property(x => x.Id).HasColumnName("FOLDER_ACCESS_ID");
-				
-    
+				builder.Property(x => x.Id).HasColumnName("FOLDER_ACCESS_ID").ValueGeneratedOnAdd();
+
+
                 builder.HasKey(x => x.Id);
-    
+
                 builder.HasOne(x => x.Folder).WithMany(y => y.FolderAccess).HasForeignKey(x => x.FolderId);
     			builder.HasOne(x => x.Group).WithMany(y => y.FolderAccess).HasForeignKey(x => x.GroupId);
     			builder.HasOne(x => x.PermissionLevel).WithMany(y => y.FolderAccess).HasForeignKey(x => x.PermissionLevelId);
     			builder.HasOne(x => x.User).WithMany(y => y.FolderAccess).HasForeignKey(x => x.UserId);
     			builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy);
-    			
+
             }
         }
 }

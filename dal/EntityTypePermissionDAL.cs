@@ -13,14 +13,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
-    
+
     // ReSharper disable CollectionNeverUpdated.Global
     // ReSharper disable InconsistentNaming
     // ReSharper disable UnusedMember.Global
     // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class EntityTypePermissionDAL :  IQpEntityObject
     {
-    
+
         public decimal Id { get; set; }
         public int EntityTypeId { get; set; }
         public Nullable<decimal> UserId { get; set; }
@@ -29,7 +29,7 @@ namespace Quantumart.QP8.DAL
         public System.DateTime Created { get; set; }
         public System.DateTime Modified { get; set; }
         public decimal LastModifiedBy { get; set; }
-    
+
         public EntityTypeDAL EntityType { get; set; }
         public UserGroupDAL Group { get; set; }
         public UserDAL LastModifiedByUser { get; set; }
@@ -41,7 +41,7 @@ namespace Quantumart.QP8.DAL
             public void Configure(EntityTypeBuilder<EntityTypePermissionDAL> builder)
             {
                 builder.ToTable("ENTITY_TYPE_ACCESS");
-    
+
                 builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
 				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
 				builder.Property(x => x.Created).HasColumnName("CREATED");
@@ -49,17 +49,17 @@ namespace Quantumart.QP8.DAL
 				builder.Property(x => x.GroupId).HasColumnName("GROUP_ID");
 				builder.Property(x => x.UserId).HasColumnName("USER_ID");
 				builder.Property(x => x.EntityTypeId).HasColumnName("ENTITY_TYPE_ID");
-				builder.Property(x => x.Id).HasColumnName("ENTITY_TYPE_ACCESS_ID");
-				
-    
+				builder.Property(x => x.Id).HasColumnName("ENTITY_TYPE_ACCESS_ID").ValueGeneratedOnAdd();
+
+
                 builder.HasKey(x => x.Id);
-    
+
                 builder.HasOne(x => x.EntityType).WithMany(y => y.ENTITY_TYPE_ACCESS).HasForeignKey(x => x.EntityTypeId);
     			builder.HasOne(x => x.Group).WithMany(y => y.ENTITY_TYPE_ACCESS).HasForeignKey(x => x.GroupId);
     			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.ENTITY_TYPE_ACCESS).HasForeignKey(x => x.LastModifiedBy);
     			builder.HasOne(x => x.PermissionLevel).WithMany(y => y.ENTITY_TYPE_ACCESS).HasForeignKey(x => x.PermissionLevelId);
     			builder.HasOne(x => x.User).WithMany(y => y.ENTITY_TYPE_ACCESS1).HasForeignKey(x => x.UserId);
-    			
+
             }
         }
 }

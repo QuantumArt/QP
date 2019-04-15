@@ -13,14 +13,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
-    
+
     // ReSharper disable CollectionNeverUpdated.Global
     // ReSharper disable InconsistentNaming
     // ReSharper disable UnusedMember.Global
     // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class ContentPermissionDAL :  IQpEntityObject
     {
-    
+
         public decimal ContentId { get; set; }
         public Nullable<decimal> UserId { get; set; }
         public Nullable<decimal> GroupId { get; set; }
@@ -31,7 +31,7 @@ namespace Quantumart.QP8.DAL
         public decimal PropagateToItems { get; set; }
         public decimal Id { get; set; }
         public bool Hide { get; set; }
-    
+
         public ContentDAL Content { get; set; }
         public UserGroupDAL Group { get; set; }
         public UserDAL User { get; set; }
@@ -43,7 +43,7 @@ namespace Quantumart.QP8.DAL
             public void Configure(EntityTypeBuilder<ContentPermissionDAL> builder)
             {
                 builder.ToTable("CONTENT_ACCESS");
-    
+
                 builder.Property(x => x.Hide).HasColumnName("HIDE");
 				builder.Property(x => x.ContentId).HasColumnName("CONTENT_ID");
 				builder.Property(x => x.UserId).HasColumnName("USER_ID");
@@ -53,17 +53,17 @@ namespace Quantumart.QP8.DAL
 				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
 				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
 				builder.Property(x => x.PropagateToItems).HasColumnName("propagate_to_items");
-				builder.Property(x => x.Id).HasColumnName("CONTENT_ACCESS_ID");
-				
-    
+				builder.Property(x => x.Id).HasColumnName("CONTENT_ACCESS_ID").ValueGeneratedOnAdd();
+
+
                 builder.HasKey(x => x.Id);
-    
+
                 builder.HasOne(x => x.Content).WithMany(y => y.AccessRules).HasForeignKey(x => x.ContentId);
     			builder.HasOne(x => x.Group).WithMany(y => y.ContentAccess).HasForeignKey(x => x.GroupId);
     			builder.HasOne(x => x.User).WithMany(y => y.ContentAccess).HasForeignKey(x => x.UserId);
     			builder.HasOne(x => x.PermissionLevel).WithMany(y => y.CONTENT_ACCESS).HasForeignKey(x => x.PermissionLevelId);
     			builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy);
-    			
+
             }
         }
 }

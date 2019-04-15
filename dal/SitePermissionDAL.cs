@@ -13,14 +13,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Quantumart.QP8.DAL
 {
-    
+
     // ReSharper disable CollectionNeverUpdated.Global
     // ReSharper disable InconsistentNaming
     // ReSharper disable UnusedMember.Global
     // ReSharper disable UnusedAutoPropertyAccessor.Global
     public partial class SitePermissionDAL :  IQpEntityObject
     {
-    
+
         public decimal SiteId { get; set; }
         public Nullable<decimal> UserId { get; set; }
         public Nullable<decimal> GroupId { get; set; }
@@ -30,7 +30,7 @@ namespace Quantumart.QP8.DAL
         public decimal LastModifiedBy { get; set; }
         public decimal PropagateToItems { get; set; }
         public decimal Id { get; set; }
-    
+
         public SiteDAL Site { get; set; }
         public UserGroupDAL Group { get; set; }
         public UserDAL User { get; set; }
@@ -42,7 +42,7 @@ namespace Quantumart.QP8.DAL
             public void Configure(EntityTypeBuilder<SitePermissionDAL> builder)
             {
                 builder.ToTable("SITE_ACCESS");
-    
+
                 builder.Property(x => x.SiteId).HasColumnName("SITE_ID");
 				builder.Property(x => x.UserId).HasColumnName("USER_ID");
 				builder.Property(x => x.GroupId).HasColumnName("GROUP_ID");
@@ -51,17 +51,17 @@ namespace Quantumart.QP8.DAL
 				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
 				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
 				builder.Property(x => x.PropagateToItems).HasColumnName("propagate_to_contents");
-				builder.Property(x => x.Id).HasColumnName("SITE_ACCESS_ID");
-				
-    
+				builder.Property(x => x.Id).HasColumnName("SITE_ACCESS_ID").ValueGeneratedOnAdd();
+
+
                 builder.HasKey(x => x.Id);
-    
+
                 builder.HasOne(x => x.Site).WithMany(y => y.AccessRules).HasForeignKey(x => x.SiteId);
     			builder.HasOne(x => x.Group).WithMany(y => y.SiteAccess).HasForeignKey(x => x.GroupId);
     			builder.HasOne(x => x.User).WithMany(y => y.SiteAccess).HasForeignKey(x => x.UserId);
     			builder.HasOne(x => x.PermissionLevel).WithMany(y => y.SITE_ACCESS).HasForeignKey(x => x.PermissionLevelId);
     			builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy);
-    			
+
             }
         }
 }

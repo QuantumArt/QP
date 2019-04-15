@@ -43,11 +43,14 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
         {
             return !QPContext.EFContext.WorkflowPermissionSet
                 .Any(p =>
-                    p.WorkflowId == permission.ParentEntityId &&
-                    (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
-                    (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null)
+                    PermissionUserOrGroupEquals(permission, p)
                 );
         }
+
+        private static bool PermissionUserOrGroupEquals(EntityPermission permission, WorkflowPermissionDAL p) =>
+            p.WorkflowId == permission.ParentEntityId &&
+            (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
+            (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null);
 
         public void MultipleRemove(IEnumerable<int> IDs)
         {
