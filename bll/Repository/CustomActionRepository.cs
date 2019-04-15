@@ -108,13 +108,12 @@ namespace Quantumart.QP8.BLL.Repository
 
             var inmemorySiteIDs = new HashSet<decimal>(customAction.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
             var indbSiteIDs = new HashSet<decimal>(dalDb.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
-            foreach (var s in dalDb.Sites.ToArray())
+            foreach (var s in dalDb.SiteCustomActionBinds.ToArray())
             {
-                if (!inmemorySiteIDs.Contains(s.Id))
+                if (!inmemorySiteIDs.Contains(s.Site.Id))
                 {
-                    entities.SiteSet.Attach(s);
-                    #warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                    // dalDb.Sites.Remove(s);
+                    entities.SiteSet.Attach(s.Site);
+                    dalDb.SiteCustomActionBinds.Remove(s);
                 }
             }
             foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
@@ -122,21 +121,20 @@ namespace Quantumart.QP8.BLL.Repository
                 if (!indbSiteIDs.Contains(s.Id))
                 {
                     entities.SiteSet.Attach(s);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                    // dal.Sites.Add(s);
+                    var bind = new SiteCustomActionBindDAL {CustomAction = dal, Site = s};
+                    dal.SiteCustomActionBinds.Add(bind);
                 }
             }
 
             // Binded Contents
             var inmemoryContentIDs = new HashSet<decimal>(customAction.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
             var indbContentIDs = new HashSet<decimal>(dalDb.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
-            foreach (var s in dalDb.Contents.ToArray())
+            foreach (var s in dalDb.ContentCustomActionBinds.ToArray())
             {
-                if (!inmemoryContentIDs.Contains(s.Id))
+                if (!inmemoryContentIDs.Contains(s.Content.Id))
                 {
-                    entities.ContentSet.Attach(s);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                    // dalDb.Contents.Remove(s);
+                    entities.ContentSet.Attach(s.Content);
+                    dalDb.ContentCustomActionBinds.Remove(s);
                 }
             }
             foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
@@ -144,8 +142,8 @@ namespace Quantumart.QP8.BLL.Repository
                 if (!indbContentIDs.Contains(s.Id))
                 {
                     entities.ContentSet.Attach(s);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                    // dal.Contents.Add(s);
+                    var bind = new ContentCustomActionBindDAL { CustomAction = dal, Content = s };
+                    dal.ContentCustomActionBinds.Add(bind);
                 }
             }
 
@@ -211,16 +209,16 @@ namespace Quantumart.QP8.BLL.Repository
             foreach (var item in siteLinksToAdd)
             {
                 entities.SiteSet.Attach(item);
-#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                // customActionDal.Sites.Add(item);
+                var bind = new SiteCustomActionBindDAL { Site = item, CustomAction = customActionDal };
+                customActionDal.SiteCustomActionBinds.Add(bind);
             }
 
             var contentLinksToAdd = MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList());
             foreach (var item in contentLinksToAdd)
             {
                 entities.ContentSet.Attach(item);
-                #warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                // customActionDal.Contents.Add(item);
+                var bind = new ContentCustomActionBindDAL { Content = item, CustomAction = customActionDal };
+                customActionDal.ContentCustomActionBinds.Add(bind);
             }
 
             if (customAction.Action.IsInterface)

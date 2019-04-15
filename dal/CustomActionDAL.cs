@@ -34,8 +34,8 @@ namespace Quantumart.QP8.DAL
 
         public UserDAL LastModifiedByUser { get; set; }
 
-        public ICollection<ContentCustomActionBindDAL> ContentCustomActionBinds { get; set; }
-        public ICollection<SiteCustomActionBindDAL> SiteCustomActionBinds { get; set; }
+        public ICollection<ContentCustomActionBindDAL> ContentCustomActionBinds { get; set; } = new HashSet<ContentCustomActionBindDAL>();
+        public ICollection<SiteCustomActionBindDAL> SiteCustomActionBinds { get; set; } = new HashSet<SiteCustomActionBindDAL>();
 
         [NotMapped]
         public IEnumerable<ContentDAL> Contents => ContentCustomActionBinds?.Select(x => x.Content);
@@ -64,7 +64,7 @@ namespace Quantumart.QP8.DAL
             builder.Property(x => x.IconUrl).HasColumnName("ICON_URL");
             builder.Property(x => x.Url).HasColumnName("URL");
             builder.Property(x => x.ActionId).HasColumnName("ACTION_ID");
-            builder.Property(x => x.Id).HasColumnName("ID");
+            builder.Property(x => x.Id).HasColumnName("ID").ValueGeneratedOnAdd();
 
             builder.HasKey(x => x.Id);
 
