@@ -6,6 +6,7 @@ using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
@@ -13,7 +14,7 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class WorkflowRepository
     {
-        internal static ContentWorkflowBindDAL GetContentWorkflowDal(int contentId, QP8Entities context = null)
+        internal static ContentWorkflowBindDAL GetContentWorkflowDal(int contentId, QPModelDataContext context = null)
         {
             var currentContext = context ?? QPContext.EFContext;
             return currentContext.ContentWorkflowBindSet.SingleOrDefault(s => s.ContentId == (decimal)contentId);

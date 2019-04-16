@@ -5,6 +5,7 @@ using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {
@@ -43,7 +44,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
         {
             return !QPContext.EFContext.SitePermissionSet.Any(p => PermissionUserOrGroupEquals(permission, p));
         }
-        
+
         private static bool PermissionUserOrGroupEquals(EntityPermissionBase permission, SitePermissionDAL p) =>
             p.SiteId == permission.ParentEntityId &&
             (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&

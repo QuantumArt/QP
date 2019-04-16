@@ -11,6 +11,7 @@ using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.Results;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 using IsolationLevel = System.Transactions.IsolationLevel;
 

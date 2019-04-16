@@ -22,25 +22,6 @@
     <None Remove="EFG\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="QP8Model.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>QP8Model.Designer.cs</LastGenOutput>
-    </None>
-    <Content Include="QP8Model.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>QP8Model.Context.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="QP8Model.csdl">
-      <LogicalName>QP8Model.csdl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="QP8Model.ssdl">
-      <LogicalName>QP8Model.ssdl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="QP8Model.msl">
-      <LogicalName>QP8Model.msl</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Remove="EFG\**" />
   </ItemGroup>  
   <!--<ItemGroup>-->

@@ -9,6 +9,7 @@ using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
@@ -95,7 +96,7 @@ namespace Quantumart.QP8.BLL.Repository
             return GetPluginPropertiesById(plugin.Id);
         }
 
-        private static void UpdateCommands(VisualEditorPlugin plugin, QP8Entities entities, DateTime timeStamp)
+        private static void UpdateCommands(VisualEditorPlugin plugin, QPModelDataContext entities, DateTime timeStamp)
         {
             // delete
             var newIds = new HashSet<decimal>(plugin.VeCommands.Select(c => Converter.ToDecimal(c.Id)));

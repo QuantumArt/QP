@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.DAL

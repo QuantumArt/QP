@@ -30,19 +30,19 @@ namespace Quantumart.QP8.BLL
     public class QPContext
     {
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public static QP8Entities EFContext
+        public static QPModelDataContext EFContext
         {
             get
             {
-                QP8Entities dbContext;
+                QPModelDataContext dbContext;
                 if (QPConnectionScope.Current == null)
                 {
-                    dbContext = new QP8Entities(CurrentDbConnectionStringForEntities);
+                    dbContext = new QPModelDataContext(CurrentDbConnectionStringForEntities);
                     dbContext.Database.ExecuteSqlCommand("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
                 }
                 else
                 {
-                    dbContext = new QP8Entities(QPConnectionScope.Current.EfConnection);
+                    dbContext = new QPModelDataContext(QPConnectionScope.Current.EfConnection);
                 }
 
                 // dbContext.Configuration.LazyLoadingEnabled = false;
@@ -521,7 +521,7 @@ namespace Quantumart.QP8.BLL
             message = string.Empty;
 
             var sqlCn = QPConfiguration.GetConnectionString(data.CustomerCode);
-            using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(sqlCn)))
+            using (var dbContext = new QPModelDataContext(PreparingDbConnectionStringForEntities(sqlCn)))
             {
                 try
                 {
@@ -599,7 +599,7 @@ namespace Quantumart.QP8.BLL
         }
 #endif
 
-        private static int CreateSuccessfulSession(User user, QP8Entities dbContext)
+        private static int CreateSuccessfulSession(User user, QPModelDataContext dbContext)
         {
             // сбросить sid и установить EndTime для всех сессий пользователя
             var currentDt = DateTime.Now;
@@ -631,7 +631,7 @@ namespace Quantumart.QP8.BLL
             return sessionsLog.SessionId;
         }
 
-        private static void CloseUserSessions(decimal userId, QP8Entities dbContext, DateTime currentDt)
+        private static void CloseUserSessions(decimal userId, QPModelDataContext dbContext, DateTime currentDt)
         {
             var userSessions = dbContext.SessionsLogSet.Where(s => s.UserId == userId && !s.EndTime.HasValue && !s.IsQP7).ToArray();
             foreach (var us in userSessions)
@@ -641,7 +641,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private static void CreateFailedSession(LogOnCredentials data, QP8Entities dbContext)
+        private static void CreateFailedSession(LogOnCredentials data, QPModelDataContext dbContext)
         {
             var sessionsLog = new SessionsLog
             {

@@ -8,6 +8,7 @@ using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository

@@ -7,6 +7,7 @@ using System.Linq.Dynamic;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils.Sorting;
 using Remotion.Linq.Clauses;
 

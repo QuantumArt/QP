@@ -13,6 +13,7 @@ using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository.ContentRepositories

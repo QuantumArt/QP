@@ -7,6 +7,7 @@ using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
+using SiteFolderDAL = Quantumart.QP8.DAL.Entities.SiteFolderDAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {

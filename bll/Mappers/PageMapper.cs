@@ -2,6 +2,7 @@
 using AutoMapper;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Mappers
 {

@@ -7,6 +7,7 @@ using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {

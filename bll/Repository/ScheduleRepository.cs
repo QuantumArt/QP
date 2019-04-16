@@ -4,6 +4,7 @@ using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository
 {

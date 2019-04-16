@@ -158,7 +158,7 @@ namespace Quantumart.QP8.BLL.Repository
 
 
 
-        internal static TDal GetById<TDal>(int id, QP8Entities context = null)
+        internal static TDal GetById<TDal>(int id, QPModelDataContext context = null)
             where TDal : class
         {
             var currentContext = context ?? QPContext.EFContext;
@@ -208,7 +208,7 @@ namespace Quantumart.QP8.BLL.Repository
         //     entities.SaveChanges();
         // }
 
-        internal static void SimpleDelete<TDal>(TDal dalItem, QP8Entities context = null)
+        internal static void SimpleDelete<TDal>(TDal dalItem, QPModelDataContext context = null)
             where TDal : class
         {
             var entities = context ?? QPContext.EFContext;
@@ -216,7 +216,7 @@ namespace Quantumart.QP8.BLL.Repository
             entities.SaveChanges();
         }
 
-        internal static void SimpleDeleteBulk<TDal>(IEnumerable<TDal> dalItems, QP8Entities context = null)
+        internal static void SimpleDeleteBulk<TDal>(IEnumerable<TDal> dalItems, QPModelDataContext context = null)
             where TDal : class
         {
             var entities = context ?? QPContext.EFContext;

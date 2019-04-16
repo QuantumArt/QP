@@ -9,6 +9,7 @@ using System.Text;
 using System.Xml.Linq;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.DTO;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.DAL
@@ -1961,7 +1962,7 @@ namespace Quantumart.QP8.DAL
                     result = ds.Tables[0];
                     totalRecords = forceCountQuery
                         ? (int)cmd.Parameters["total_records"].Value
-                        : (result.Rows.Count != 0 ? (int)result.Rows[0][QP8Entities.CountColumn] : 0);
+                        : (result.Rows.Count != 0 ? (int)result.Rows[0][QPModelDataContext.CountColumn] : 0);
                 }
                 else if (countOnly)
                 {
@@ -2149,7 +2150,7 @@ namespace Quantumart.QP8.DAL
                         result = ds.Tables[0];
                         if (!forceCountQuery)
                         {
-                            totalRecords = result.Rows.Count != 0 ? (int)result.Rows[0][QP8Entities.CountColumn] : 0;
+                            totalRecords = result.Rows.Count != 0 ? (int)result.Rows[0][QPModelDataContext.CountColumn] : 0;
                         }
                     }
                 }
@@ -6012,7 +6013,7 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
                 new SqlDataAdapter(cmd).Fill(dt);
-                totalRecords = dt.Rows.Count != 0 ? (int)dt.Rows[0][QP8Entities.CountColumn] : 0;
+                totalRecords = dt.Rows.Count != 0 ? (int)dt.Rows[0][QPModelDataContext.CountColumn] : 0;
                 return dt.AsEnumerable().ToArray();
             }
         }
