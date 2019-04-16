@@ -11,53 +11,18 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
-    <Reference Include="Microsoft.Extensions.Logging.Console, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
-      <HintPath>..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.logging.console\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Console.dll</HintPath>
-    </Reference>
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="QP8Model.Context.tt" />
-    <None Remove="EFG\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Remove="EFG\**" />
-  </ItemGroup>  
-  <!--<ItemGroup>-->
-    <!--<Content Include="QP8Model.Context.tt">-->
-      <!--<Generator>TextTemplatingFileGenerator</Generator>-->
-      <!--&lt;!&ndash;<LastGenOutput>QP8Model.Context.cs</LastGenOutput>&ndash;&gt;-->
-      <!--<DependentUpon>QP8Model.edmx</DependentUpon>-->
-      <!--<CustomToolNamespace>Quantumart.QP8.DAL</CustomToolNamespace>-->
-    <!--</Content>-->
-  <!--</ItemGroup>-->
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj" />
     <ProjectReference Include="$(SolutionDir)constants\Constants.csproj" />
     <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj" />
     <ProjectReference Include="$(SolutionDir)utils\Utils.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="QP8Model.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>QP8Model.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
+ 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Update="QP8Model.Context.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>QP8Model.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Update="QP8Model.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>QP8Model.tt</DependentUpon>
-    </Compile>
-    <Compile Remove="EFG\**" />
-  </ItemGroup>
+ 
 </Project>
