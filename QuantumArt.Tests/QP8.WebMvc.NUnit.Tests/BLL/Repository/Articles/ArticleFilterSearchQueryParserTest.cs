@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
@@ -2277,7 +2278,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
             {
                 try
                 {
-                    var sqlParams = new List<SqlParameter>();
+                    var sqlParams = new List<DbParameter>();
                     var actual = new ArticleFilterSearchQueryParser().GetFilter(testData.SearchQueryParams?.ToList(), sqlParams);
                     if (testData.ExpectedExceptionType != null)
                     {
@@ -2292,7 +2293,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         try
                         {
-                            var sqlParams = new List<SqlParameter>();
+                            var sqlParams = new List<DbParameter>();
                             new ArticleFilterSearchQueryParser().GetFilter(testData.SearchQueryParams?.ToList(), sqlParams);
                         }
                         // ReSharper disable once EmptyGeneralCatchClause

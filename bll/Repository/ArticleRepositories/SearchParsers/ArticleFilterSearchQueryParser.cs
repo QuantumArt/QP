@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using QP8.Infrastructure;
@@ -26,7 +27,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
         /// <summary>
         /// Возвращает значение параметра filter
         /// </summary>
-        public string GetFilter(IList<ArticleSearchQueryParam> searchQueryParams, IList<SqlParameter> sqlParams)
+        public string GetFilter(IList<ArticleSearchQueryParam> searchQueryParams, IList<DbParameter> sqlParams)
         {
             if (searchQueryParams == null || !searchQueryParams.Any())
             {
@@ -86,7 +87,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             return string.IsNullOrWhiteSpace(result) ? null : result;
         }
 
-        private static string ParseIdentifierParam(ArticleSearchQueryParam p, ICollection<SqlParameter> sqlParams)
+        private static string ParseIdentifierParam(ArticleSearchQueryParam p, ICollection<DbParameter> sqlParams)
         {
             Ensure.NotNull(p);
             Ensure.That(p.SearchType == ArticleFieldSearchType.Identifier);
@@ -722,7 +723,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<>" : "=")} {numberFrom})";
         }
 
-        private static string ParseO2MRelationParam(ArticleSearchQueryParam p, ICollection<SqlParameter> sqlParams)
+        private static string ParseO2MRelationParam(ArticleSearchQueryParam p, ICollection<DbParameter> sqlParams)
         {
             Ensure.NotNull(p);
             Ensure.That(p.SearchType == ArticleFieldSearchType.O2MRelation || p.SearchType == ArticleFieldSearchType.Classifier);

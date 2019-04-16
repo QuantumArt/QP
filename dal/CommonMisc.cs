@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using Npgsql;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
@@ -12,23 +14,44 @@ namespace Quantumart.QP8.DAL
     public static partial class Common
     {
 
-        public static UserDAL Authenticate(SqlConnection connection, string login, string password, bool useNtLogin, bool checkAdminAccess)
+        public static UserDAL Authenticate(DbConnection connection, string login, string password, bool useNtLogin, bool checkAdminAccess)
         {
-            object[] parameters =
-            {
-                new SqlParameter { ParameterName = "login", DbType = DbType.String, Size = 255, Value = login },
-                new SqlParameter { ParameterName = "password", DbType = DbType.String, Size = 20, Value = password ?? string.Empty },
-                new SqlParameter { ParameterName = "use_nt_login", DbType = DbType.Boolean, Value = useNtLogin },
-                new SqlParameter { ParameterName = "check_admin_access", DbType = DbType.Boolean, Value = checkAdminAccess }
-            };
 
-            using (var cmd = SqlCommandFactory.Create("qp_authenticate", connection))
+            object[] parameters;
+            DatabaseType dbType;
+            switch (connection)
+            {
+
+                case SqlConnection _:
+                    parameters = new object[] {
+                        new SqlParameter { ParameterName = "login", DbType = DbType.String, Size = 255, Value = login },
+                        new SqlParameter { ParameterName = "password", DbType = DbType.String, Size = 20, Value = password ?? string.Empty },
+                        new SqlParameter { ParameterName = "use_nt_login", DbType = DbType.Boolean, Value = useNtLogin },
+                        new SqlParameter { ParameterName = "check_admin_access", DbType = DbType.Boolean, Value = checkAdminAccess }
+                    };
+                    dbType = DatabaseType.SqlServer;
+                    break;
+                case NpgsqlConnection _:
+                    parameters = new object[] {
+                        new NpgsqlParameter { ParameterName = "login", DbType = DbType.String, Size = 255, Value = login },
+                        new NpgsqlParameter { ParameterName = "password", DbType = DbType.String, Size = 20, Value = password ?? string.Empty },
+                        new NpgsqlParameter { ParameterName = "use_nt_login", DbType = DbType.Boolean, Value = useNtLogin },
+                        new NpgsqlParameter { ParameterName = "check_admin_access", DbType = DbType.Boolean, Value = checkAdminAccess }
+                    };
+                    dbType = DatabaseType.Postgres;
+                    break;
+                default:
+                    throw new ApplicationException("Unknown connection type");
+            }
+
+            using (var cmd = DbCommandFactory.Create("qp_authenticate", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddRange(parameters);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                var dataAdapter = DataAdapterFactory.Create(cmd);
+                dataAdapter.Fill(dt);
                 if (dt.Rows.Count == 0)
                 {
                     return null;
@@ -65,10 +88,10 @@ namespace Quantumart.QP8.DAL
 
         }
 
-        public static IEnumerable<DataRow> GetChildFoldersList(SqlConnection sqlConnection, int userId, int id, bool isSite, int? folderId, int permissionLevel, bool countOnly, out int totalRecords)
+        public static IEnumerable<DataRow> GetChildFoldersList(DbConnection sqlConnection, int userId, int id, bool isSite, int? folderId, int permissionLevel, bool countOnly, out int totalRecords)
         {
             totalRecords = -1;
-            using (var cmd = SqlCommandFactory.Create("qp_get_folders_tree", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_get_folders_tree", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add(new SqlParameter { ParameterName = "user_id", DbType = DbType.Decimal, Value = userId });
@@ -80,16 +103,16 @@ namespace Quantumart.QP8.DAL
                 cmd.Parameters.Add(new SqlParameter { ParameterName = "total_records", Direction = ParameterDirection.InputOutput, DbType = DbType.Int32, Value = totalRecords });
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 totalRecords = (int)cmd.Parameters["total_records"].Value;
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static string GetEntityName(SqlConnection sqlConnection, string entityTypeCode, int entityId, int parentEntityId)
+        public static string GetEntityName(DbConnection sqlConnection, string entityTypeCode, int entityId, int parentEntityId)
         {
 
-            using (var cmd = SqlCommandFactory.Create("qp_get_entity_title", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_get_entity_title", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("entity_type_code", entityTypeCode);
@@ -109,9 +132,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static bool CheckEntityExistence(SqlConnection sqlConnection, string entityTypeCode, decimal entityId)
+        public static bool CheckEntityExistence(DbConnection sqlConnection, string entityTypeCode, decimal entityId)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_check_entity_existence", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_check_entity_existence", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("entity_type_code", entityTypeCode);
@@ -121,10 +144,10 @@ namespace Quantumart.QP8.DAL
         }
 
 
-        public static void SetContentItemVisible(SqlConnection sqlConnection, int contentItemId, bool isVisible, int lastModifiedBy = 1)
+        public static void SetContentItemVisible(DbConnection sqlConnection, int contentItemId, bool isVisible, int lastModifiedBy = 1)
         {
             var sql = "UPDATE content_item with(rowlock) SET visible = @is_visible, modified = getdate(), last_modified_by = @last_modified_by WHERE content_item_id = @id";
-            using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("id", contentItemId);
                 cmd.Parameters.AddWithValue("is_visible", isVisible ? 1 : 0);
@@ -134,9 +157,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void MergeArticle(SqlConnection sqlConnection, int contentItemId, int lastModifiedBy = 1)
+        public static void MergeArticle(DbConnection sqlConnection, int contentItemId, int lastModifiedBy = 1)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_merge_article", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_merge_article", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("item_id", contentItemId);
@@ -145,7 +168,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable SearchInArticles(SqlConnection sqlConnection, int siteId, int userId, string searchString, int? articleId, string sortExpression, int startRow, int pageSize, out int totalRecords)
+        public static DataTable SearchInArticles(DbConnection sqlConnection, int siteId, int userId, string searchString, int? articleId, string sortExpression, int startRow, int pageSize, out int totalRecords)
         {
             totalRecords = -1;
             object[] parameters =
@@ -160,12 +183,12 @@ namespace Quantumart.QP8.DAL
                 new SqlParameter { ParameterName = "total_records", Direction = ParameterDirection.InputOutput, DbType = DbType.Int32, Value = totalRecords }
             };
 
-            using (var cmd = SqlCommandFactory.Create("qp_all_article_search", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_all_article_search", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddRange(parameters);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 totalRecords = (int)cmd.Parameters["total_records"].Value;
                 return dt;
             }
@@ -174,22 +197,22 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Получить словоформы для строки запроса
         /// </summary>
-        public static IEnumerable<string> GetWordForms(SqlConnection sqlConnection, string searchString)
+        public static IEnumerable<string> GetWordForms(DbConnection sqlConnection, string searchString)
         {
-            using (var cmd = SqlCommandFactory.Create("usp_fts_parser", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("usp_fts_parser", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("searchString", Cleaner.ToSafeSqlString(searchString));
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().Select(r => r.Field<string>("display_term")).ToArray();
             }
         }
 
-        public static Version GetSqlServerVersion(SqlConnection sqlConnection)
+        public static Version GetSqlServerVersion(DbConnection sqlConnection)
         {
             string version;
-            using (var cmd = SqlCommandFactory.Create("SELECT SERVERPROPERTY('productversion') [version]", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("SELECT SERVERPROPERTY('productversion') [version]", sqlConnection))
             {
                 version = cmd.ExecuteScalar().ToString();
             }
@@ -200,7 +223,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Получает список стоп-слов для языка который указан в full text serach индексе на столбце dbo.CONTENT_DATA.DATA
         /// </summary>
-        public static IEnumerable<string> GetStopWordList(SqlConnection sqlConnection)
+        public static IEnumerable<string> GetStopWordList(DbConnection sqlConnection)
         {
             const string query = "select stopword from sys.fulltext_system_stopwords " +
                 "where language_id = (" +
@@ -210,7 +233,7 @@ namespace Quantumart.QP8.DAL
 
             var result = new List<string>();
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 using (var reader = cmd.ExecuteReader())
                 {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 
         private Article Article { get; set; }
 
-        private List<SqlParameter> Parameters { get; }
+        private List<DbParameter> Parameters { get; }
 
         private string FieldParamName => $"@field{Counter}";
 
@@ -27,7 +28,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         public ArticleUpdateService()
         {
             Counter = 0;
-            Parameters = new List<SqlParameter>();
+            Parameters = new List<DbParameter>();
         }
 
         public ArticleUpdateService(Article item)

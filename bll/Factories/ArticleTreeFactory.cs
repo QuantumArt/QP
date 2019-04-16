@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using Quantumart.QP8.BLL.Processors.TreeProcessors;
@@ -24,7 +25,7 @@ namespace Quantumart.QP8.BLL.Factories
                     var contentId = parentEntityId.GetValueOrDefault();
                     commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out var ftsOptions, out var extensionContentIds, out var _);
 
-                    var filterSqlParams = new List<SqlParameter>();
+                    var filterSqlParams = new List<DbParameter>();
                     var sourceQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);
                     var linkedFilters = (ArticleRepository.GetLinkSearchParameter(searchQuery) ?? new ArticleLinkSearchParameter[0]).ToList();
                     var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);

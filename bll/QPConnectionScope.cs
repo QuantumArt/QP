@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+
 // using System.Data.Entity.Core.EntityClient;
 // using System.Data.Entity.Core.Mapping;
 // using System.Data.Entity.Core.Metadata.Edm;
@@ -11,6 +12,7 @@ using System.Transactions;
 using System.Xml;
 using System.Xml.Linq;
 using AutoMapper;
+using Npgsql;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Constants;
@@ -106,6 +108,7 @@ namespace Quantumart.QP8.BLL
             {
                 Current._efConnection.Close();
                 Current._efConnection.Dispose();
+
                 // Current._efConnection.Close();
                 // Current._efConnection.Dispose();
                 Current._efConnection = null;
@@ -115,7 +118,7 @@ namespace Quantumart.QP8.BLL
             Current = null;
         }
 
-        public SqlConnection DbConnection => (SqlConnection)EfConnection;
+        public DbConnection DbConnection => EfConnection;
 
         public DbConnection EfConnection
         {
@@ -134,15 +137,19 @@ namespace Quantumart.QP8.BLL
         {
             if (Current._efConnection == null)
             {
-                var sqlConnection = new SqlConnection(ConnectionString);
+                #warning временный костыль. нужно реализовать нормальное определение sqlServer/postgres
+                var usePostgres = ConnectionString.IndexOf("MSCPGSQL01", StringComparison.InvariantCultureIgnoreCase) != -1;
+                var dbConnection = usePostgres ? (DbConnection)new NpgsqlConnection(ConnectionString) : new SqlConnection(ConnectionString);
+
                 // var efc = new EntityConnection(MetadataWorkspace, sqlConnection);
-                
-                sqlConnection.Open();
+
+                dbConnection.Open();
+
                 // efc.Open();
-                Current._efConnection = sqlConnection;
-                if (Transaction.Current == null)
+                Current._efConnection = dbConnection;
+                if (Transaction.Current == null && !usePostgres)
                 {
-                    using (var cmd = SqlCommandFactory.Create("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED", sqlConnection))
+                    using (var cmd = DbCommandFactory.Create("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED", dbConnection as SqlConnection))
                     {
                         cmd.ExecuteNonQuery();
                     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 
@@ -12,24 +13,24 @@ namespace Quantumart.QP8.DAL.CdcImport
         private const string @ProviderName = "@providerName";
         private const string @ProviderUrl = "@providerUrl";
 
-        public static string GetLastExecutedLsn(SqlConnection connection, string providerUrl)
+        public static string GetLastExecutedLsn(DbConnection connection, string providerUrl)
         {
-            using (var cmd = SqlCommandFactory.Create($"SELECT TOP(1) LastExecutedLsn FROM [dbo].[CdcLastExecutedLsn] WHERE ProviderUrl = {@ProviderUrl};", connection))
+            using (var cmd = DbCommandFactory.Create($"SELECT TOP(1) LastExecutedLsn FROM [dbo].[CdcLastExecutedLsn] WHERE ProviderUrl = {@ProviderUrl};", connection))
             {
                 cmd.Parameters.AddWithValue(@ProviderUrl, providerUrl);
                 return (string)cmd.ExecuteScalar();
             }
         }
 
-        public static string GetMaxLsn(SqlConnection connection)
+        public static string GetMaxLsn(DbConnection connection)
         {
-            using (var cmd = SqlCommandFactory.Create("SELECT CONVERT(varchar(22), sys.fn_cdc_get_max_lsn(), 1);", connection))
+            using (var cmd = DbCommandFactory.Create("SELECT CONVERT(varchar(22), sys.fn_cdc_get_max_lsn(), 1);", connection))
             {
                 return (string)cmd.ExecuteScalar();
             }
         }
 
-        public static int PostLastExecutedLsn(SqlConnection connection, string providerName, string providerUrl, string lastPushedLsn, string lastExecutedLsn)
+        public static int PostLastExecutedLsn(DbConnection connection, string providerName, string providerUrl, string lastPushedLsn, string lastExecutedLsn)
         {
             var query = $@"
 IF EXISTS (SELECT * FROM [dbo].[CdcLastExecutedLsn] WHERE providerUrl = {@ProviderUrl})
@@ -59,7 +60,7 @@ ELSE
     )
 ";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.Parameters.AddWithValue(@ProviderName, providerName);
                 cmd.Parameters.AddWithValue(@ProviderUrl, providerUrl);

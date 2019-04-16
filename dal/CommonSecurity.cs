@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace Quantumart.QP8.DAL
 {
     public class CommonSecurity
     {
-        public static DataRow[] GetRelationSecurityFields(SqlConnection sqlConnection)
+        public static DataRow[] GetRelationSecurityFields(DbConnection sqlConnection)
         {
             const string sqlText = @"
 				select coalesce(ca3.content_id, ca1.content_id) as path_content_id, coalesce(ca4.CONTENT_ID, cl.linked_content_id) as rel_content_id, ca1.content_id,
@@ -27,11 +28,11 @@ namespace Quantumart.QP8.DAL
 				 where ca1.USE_RELATION_SECURITY = 1
 			 ";
 
-            using (var cmd = SqlCommandFactory.Create(sqlText, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sqlText, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
@@ -130,7 +131,7 @@ namespace Quantumart.QP8.DAL
 
         }
 
-        public static Dictionary<int, bool> CheckArticleSecurity(SqlConnection sqlConnection, int contentId, int[] testIds,
+        public static Dictionary<int, bool> CheckArticleSecurity(DbConnection sqlConnection, int contentId, int[] testIds,
             int userId, int startLevel)
         {
             const string columnName = "content_item_id";
@@ -139,7 +140,7 @@ namespace Quantumart.QP8.DAL
             return CheckSecurity(sqlConnection, contentId, testIds, userId, startLevel, entityName, parentEntityName, columnName);
         }
 
-        public static Dictionary<int, bool> CheckContentSecurity(SqlConnection sqlConnection, int siteId, int[] testIds,
+        public static Dictionary<int, bool> CheckContentSecurity(DbConnection sqlConnection, int siteId, int[] testIds,
             int userId, int startLevel)
         {
             const string columnName = "content_id";
@@ -148,7 +149,7 @@ namespace Quantumart.QP8.DAL
             return CheckSecurity(sqlConnection, siteId, testIds, userId, startLevel, entityName, parentEntityName, columnName);
         }
 
-        private static Dictionary<int, bool> CheckSecurity(SqlConnection sqlConnection, int parentId, IEnumerable<int> testIds, int userId, int startLevel, string entityName, string parentEntityName, string columnName)
+        private static Dictionary<int, bool> CheckSecurity(DbConnection sqlConnection, int parentId, IEnumerable<int> testIds, int userId, int startLevel, string entityName, string parentEntityName, string columnName)
         {
             var granted = new Dictionary<int, bool>();
             var securitySql = Common.GetPermittedItemsAsQuery(sqlConnection, userId, 0, startLevel, PermissionLevel.FullAccess,
@@ -159,7 +160,7 @@ namespace Quantumart.QP8.DAL
 				left join ({0}) as pi on pi.{1} = i.id "
                 , securitySql, columnName);
 
-            using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured)
                 {
@@ -261,7 +262,7 @@ namespace Quantumart.QP8.DAL
                 : $"cast(c{n.Order}.content_item_id as nvarchar(30)) as '{n.RelContentId}'";
         }
 
-        public static Dictionary<int, bool> CheckLockedBy(SqlConnection dbConnection, int[] ids, int currentUserId, bool forceUnlock)
+        public static Dictionary<int, bool> CheckLockedBy(DbConnection dbConnection, int[] ids, int currentUserId, bool forceUnlock)
         {
             const string sql = @"select locked_by, content_item_id from content_item ci with(nolock)
 				inner join @ids i on i.id = ci.content_item_id where locked_by is not null and locked_by <> @userId ";
@@ -269,7 +270,7 @@ namespace Quantumart.QP8.DAL
             var result = ids.ToDictionary(kvp => kvp, kvp => true);
             if (!forceUnlock)
             {
-                using (var cmd = SqlCommandFactory.Create(sql, dbConnection))
+                using (var cmd = DbCommandFactory.Create(sql, dbConnection))
                 {
                     cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured)
                     {
@@ -292,7 +293,7 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static RelationSecurityInfo GetRelationSecurityInfo(SqlConnection dbConnection, int contentId, int[] ids)
+        public static RelationSecurityInfo GetRelationSecurityInfo(DbConnection dbConnection, int contentId, int[] ids)
         {
             var result = new RelationSecurityInfo();
             var pathRows = GetRelationSecurityFields(dbConnection);
@@ -334,7 +335,7 @@ namespace Quantumart.QP8.DAL
                 }
 
                 var sql = GetSecurityPathSql(securityPath, contentId);
-                using (var cmd = SqlCommandFactory.Create(sql, dbConnection))
+                using (var cmd = DbCommandFactory.Create(sql, dbConnection))
                 {
                     cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured)
                     {
@@ -356,10 +357,10 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static void ClearUserToken(SqlConnection dbConnection, int userId, int sessionId)
+        public static void ClearUserToken(DbConnection dbConnection, int userId, int sessionId)
         {
             var sql = "delete from access_token where UserId = @userId and SessionId = @sessionId";
-            using (var cmd = SqlCommandFactory.Create(sql, dbConnection))
+            using (var cmd = DbCommandFactory.Create(sql, dbConnection))
             {
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@sessionId", sessionId);
@@ -383,7 +384,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static void ProcessSecurityPathSqlReader(SqlDataReader reader, int[] contentIds, string[] classifierNames,
+        private static void ProcessSecurityPathSqlReader(DbDataReader reader, int[] contentIds, string[] classifierNames,
             RelationSecurityInfo result)
         {
             var id = (int)(decimal)reader["id"];

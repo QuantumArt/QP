@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 
 namespace Quantumart.QP8.DAL.NotificationSender
@@ -41,45 +42,62 @@ namespace Quantumart.QP8.DAL.NotificationSender
 
         private const string DeleteSentNotificationsQuery = @"DELETE FROM SYSTEM_NOTIFICATION_QUEUE WHERE SENT = 1";
 
-        private static void ExecuteIdsQuery(SqlConnection connection, string query, IEnumerable<int> ids, string lastExceptionMessage = null)
+        private static void ExecuteIdsQuery(DbConnection connection, string query, IEnumerable<int> ids, string lastExceptionMessage = null)
         {
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var idsTable = Common.IdsToDataTable(ids);
-                var parameter = cmd.Parameters.AddWithValue("@ids", idsTable);
-                parameter.SqlDbType = SqlDbType.Structured;
-                parameter.TypeName = "dbo.Ids";
 
-                cmd.Parameters.Add(new SqlParameter("@lastExceptionMessage", SqlDbType.NVarChar, -1) { Value = (object)lastExceptionMessage ?? DBNull.Value });
+                switch (cmd)
+                {
+                    case SqlCommand sqlCommand:
+                        var parameter = sqlCommand.Parameters.AddWithValue("@ids", idsTable);
+                        parameter.SqlDbType = SqlDbType.Structured;
+                        parameter.TypeName = "dbo.Ids";
+                        sqlCommand.Parameters.Add(new SqlParameter("@lastExceptionMessage", SqlDbType.NVarChar, -1) { Value = (object)lastExceptionMessage ?? DBNull.Value });
+                        break;
+                    default:
+                        throw new NotImplementedException("Not implemented for postgres");
+                }
+
+
+
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void InsertNotifications(SqlConnection connection, string notificationsXml)
+        public static void InsertNotifications(DbConnection connection, string notificationsXml)
         {
-            using (var cmd = SqlCommandFactory.Create(InsertNotificationsQuery, connection))
+            using (var cmd = DbCommandFactory.Create(InsertNotificationsQuery, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var parameter = cmd.Parameters.AddWithValue("@notifications", notificationsXml);
-                parameter.SqlDbType = SqlDbType.Xml;
+                switch (parameter)
+                {
+                    case SqlParameter sqlParameter:
+                        sqlParameter.SqlDbType = SqlDbType.Xml;
+                        break;
+                    default:
+                        throw new NotImplementedException("Not implemented for postgres");
+                }
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void UpdateSentNotifications(SqlConnection connection, IEnumerable<int> ids)
+        public static void UpdateSentNotifications(DbConnection connection, IEnumerable<int> ids)
         {
             ExecuteIdsQuery(connection, UpdateSentNotificationsQuery, ids);
         }
 
-        public static void UpdateUnsentNotifications(SqlConnection connection, IEnumerable<int> ids, string lastExceptionMessage = null)
+        public static void UpdateUnsentNotifications(DbConnection connection, IEnumerable<int> ids, string lastExceptionMessage = null)
         {
             ExecuteIdsQuery(connection, UpdateUnsentNotificationsQuery, ids, lastExceptionMessage);
         }
 
-        public static void DeleteSentNotifications(SqlConnection connection)
+        public static void DeleteSentNotifications(DbConnection connection)
         {
-            using (var cmd = SqlCommandFactory.Create(DeleteSentNotificationsQuery, connection))
+            using (var cmd = DbCommandFactory.Create(DeleteSentNotificationsQuery, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();

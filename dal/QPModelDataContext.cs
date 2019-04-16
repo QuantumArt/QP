@@ -11,15 +11,16 @@ using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.DAL
 {
-    public class QPModelDataContext : DbContext
+    public abstract class QPModelDataContext : DbContext
     {
         public static readonly LoggerFactory MyLoggerFactory
             = new LoggerFactory(new[] {new EventLogLoggerProvider(new EventLogSettings{LogName="QPEFcore", SourceName="LocalQP8EfCore"})});
-        private readonly string _nameOrConnectionString;
+
+        protected readonly string _nameOrConnectionString;
 
         public QPModelDataContext()
         {
-            _nameOrConnectionString = "name=QP8Entities";
+            // _nameOrConnectionString = "name=QP8Entities";
         }
 
         public QPModelDataContext(string nameOrConnectionString)
@@ -48,11 +49,11 @@ namespace Quantumart.QP8.DAL
         public DbSet<FieldDAL> FieldSet { get; set; }
         public DbSet<ContentConstraintDAL> ContentConstraintSet { get; set; }
         public DbSet<ContentDataDAL> ContentDataSet { get; set; }
-        public DbSet<Entities.ContentFolderDAL> ContentFolderSet { get; set; }
+        public DbSet<ContentFolderDAL> ContentFolderSet { get; set; }
         public DbSet<ContentFolderAccessDAL> ContentFolderAccessSet { get; set; }
         public DbSet<ContentFormDAL> ContentFormSet { get; set; }
         public DbSet<ContentGroupDAL> ContentGroupSet { get; set; }
-        public DbSet<Entities.ArticleDAL> ArticleSet { get; set; }
+        public DbSet<ArticleDAL> ArticleSet { get; set; }
         public DbSet<ArticlePermissionDAL> ArticlePermissionSet { get; set; }
         public DbSet<ArticleScheduleDAL> ArticleScheduleSet { get; set; }
         public DbSet<ArticleStatusHistoryDAL> ArticleStatusHistorySet { get; set; }
@@ -63,7 +64,7 @@ namespace Quantumart.QP8.DAL
         public DbSet<DeveloperDAL> DeveloperSet { get; set; }
         public DbSet<DynamicImageFieldDAL> DynamicImageFieldSet { get; set; }
         public DbSet<EntityTypeDAL> EntityTypeSet { get; set; }
-        public DbSet<Entities.SiteFolderDAL> SiteFolderSet { get; set; }
+        public DbSet<SiteFolderDAL> SiteFolderSet { get; set; }
         public DbSet<SiteFolderPermissionDAL> SiteFolderPermissionSet { get; set; }
         public DbSet<ItemToItemDAL> ItemToItemSet { get; set; }
         public DbSet<ItemToItemVersionDAL> ItemToItemVersionSet { get; set; }
@@ -128,7 +129,8 @@ namespace Quantumart.QP8.DAL
         public DbSet<XmlDbUpdateActionsLogEntity> XML_DB_UPDATE_ACTIONS { get; set; }
         public DbSet<CdcLastExecutedLsn> CdcLastExecutedLsn { get; set; }
         public DbSet<SystemNotificationDAL> SystemNotificationSet { get; set; }
-        private readonly DbConnection _dbConnection;
+
+        protected readonly DbConnection _dbConnection;
 
         public static readonly string CountColumn = "ROWS_COUNT";
 
@@ -140,16 +142,16 @@ namespace Quantumart.QP8.DAL
         {
 
 
-            // base.OnConfiguring(optionsBuilder);
-            if (!string.IsNullOrWhiteSpace(_nameOrConnectionString))
-            {
-                optionsBuilder.UseSqlServer(_nameOrConnectionString);
-            }
-            else if (_dbConnection != null)
-            {
-                optionsBuilder.UseSqlServer(_dbConnection);
-
-            }
+            base.OnConfiguring(optionsBuilder);
+            // if (!string.IsNullOrWhiteSpace(_nameOrConnectionString))
+            // {
+            //     optionsBuilder.UseSqlServer(_nameOrConnectionString);
+            // }
+            // else if (_dbConnection != null)
+            // {
+            //     optionsBuilder.UseSqlServer(_dbConnection);
+            //
+            // }
 
             optionsBuilder.UseLoggerFactory(MyLoggerFactory);
             optionsBuilder.EnableSensitiveDataLogging();
@@ -157,6 +159,8 @@ namespace Quantumart.QP8.DAL
             // Database.SetCommandTimeout(SqlCommandFactory.CommandTimeout);
 
         }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

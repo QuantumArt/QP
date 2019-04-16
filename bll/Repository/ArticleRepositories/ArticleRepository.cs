@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
@@ -184,7 +185,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out var useMainTable);
                 filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
 
-                var sqlParams = new List<SqlParameter>();
+                var sqlParams = new List<DbParameter>();
                 var options = new ArticlePageOptions
                 {
                     ContentId = contentId,
@@ -382,7 +383,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return new ArticleFullTextSearchParameter { HasError = ftsHasError, FieldIdList = ftsFieldIdList, QueryString = ftsQueryString, RawQueryString = rawQueryString, SearchResultLimit = searchResultLimit };
         }
 
-        public static string GetCommonFilter(IList<ArticleSearchQueryParam> searchQueryParams, string filter, IList<SqlParameter> sqlParams)
+        public static string GetCommonFilter(IList<ArticleSearchQueryParam> searchQueryParams, string filter, IList<DbParameter> sqlParams)
             => SqlFilterComposer.Compose(new ArticleFilterSearchQueryParser().GetFilter(searchQueryParams, sqlParams), filter);
 
         public static IEnumerable<ArticleLinkSearchParameter> GetLinkSearchParameter(IEnumerable<ArticleSearchQueryParam> searchQueryParams)
@@ -479,7 +480,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
+        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -505,7 +506,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static string GetSearchFiltersQuery(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int searchLimit)
+        internal static string GetSearchFiltersQuery(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int searchLimit)
         {
             if (string.IsNullOrEmpty(filterQuery) && (linkedFilters == null || !linkedFilters.Any()))
             {
@@ -1506,7 +1507,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return new InsertData[0];
         }
 
-        private static void FormatArticleData(SqlConnection cnn, ArticleData[] articles)
+        private static void FormatArticleData(DbConnection cnn, ArticleData[] articles)
         {
             var fieldIds = articles.SelectMany(m => m.Fields).Select(n => n.Id).Distinct().ToArray();
             var types = Common.GetFieldTypes(cnn, fieldIds).AsEnumerable().ToDictionary(n => (int)n.Field<decimal>("attribute_id"), m =>

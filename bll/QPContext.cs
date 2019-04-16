@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+
 // using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 #if !NET_STANDARD
 using System.Web;
 #endif
@@ -35,19 +38,59 @@ namespace Quantumart.QP8.BLL
             get
             {
                 QPModelDataContext dbContext;
+
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(CurrentDbConnectionStringForEntities);
                 if (QPConnectionScope.Current == null)
                 {
-                    dbContext = new QPModelDataContext(CurrentDbConnectionStringForEntities);
-                    dbContext.Database.ExecuteSqlCommand("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+                    dbContext = CreateDbContext(dbType, CurrentDbConnectionStringForEntities);
                 }
                 else
                 {
-                    dbContext = new QPModelDataContext(QPConnectionScope.Current.EfConnection);
+                    dbContext = CreateDbContextUsingConnection(dbType);
                 }
 
                 // dbContext.Configuration.LazyLoadingEnabled = false;
                 return dbContext;
             }
+        }
+
+        private static bool UsePostgres(string connectionString) => connectionString.IndexOf("MSCPGSQL01", StringComparison.InvariantCultureIgnoreCase) != -1;
+
+        private static QPModelDataContext CreateDbContextUsingConnection(DatabaseType dbType)
+        {
+            switch (dbType)
+            {
+                case DatabaseType.Unknown:
+                    throw new ApplicationException("Database type unknown");
+                case DatabaseType.SqlServer:
+                    return new SqlServerQPModelDataContext(QPConnectionScope.Current.EfConnection);
+                case DatabaseType.Postgres:
+                    return new NpgSqlQPModelDataContext(QPConnectionScope.Current.EfConnection);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dbType), dbType, null);
+            }
+
+        }
+
+        private static QPModelDataContext CreateDbContext(DatabaseType dbType, string connectionString)
+        {
+            QPModelDataContext dbContext;
+            switch (dbType)
+            {
+                case DatabaseType.Unknown:
+                    throw new ApplicationException("Database type unknown");
+                case DatabaseType.SqlServer:
+                    dbContext = new SqlServerQPModelDataContext(connectionString);
+                    dbContext.Database.ExecuteSqlCommand($"SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+                    break;
+                case DatabaseType.Postgres:
+                    dbContext = new NpgSqlQPModelDataContext(connectionString);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dbType), dbType, null);
+            }
+
+            return dbContext;
         }
 
         public static string GetRecordXmlFilePath() => $"{QPConfiguration.TempDirectory}{CurrentCustomerCode}.xml";
@@ -521,12 +564,14 @@ namespace Quantumart.QP8.BLL
             message = string.Empty;
 
             var sqlCn = QPConfiguration.GetConnectionString(data.CustomerCode);
-            using (var dbContext = new QPModelDataContext(PreparingDbConnectionStringForEntities(sqlCn)))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlCn);
+
+            using (var dbContext = CreateDbContext(dbType, sqlCn))
             {
                 try
                 {
                     User user = null;
-                    using (var cn = new SqlConnection(sqlCn))
+                    using (var cn = CreateDbConnection(sqlCn, dbType))
                     {
                         cn.Open();
                         var dbUser = Common.Authenticate(cn, data.UserName, data.Password, data.UseAutoLogin, false);
@@ -574,6 +619,21 @@ namespace Quantumart.QP8.BLL
             }
 
             return resultUser;
+        }
+
+        private static DbConnection CreateDbConnection(string connectionString, DatabaseType dbType)
+        {
+            switch (dbType)
+            {
+                case DatabaseType.Unknown:
+                    throw new ApplicationException("Database type unknown");
+                case DatabaseType.SqlServer:
+                    return new SqlConnection(connectionString);
+                case DatabaseType.Postgres:
+                    return new NpgsqlConnection(connectionString);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dbType), dbType, null);
+            }
         }
 
 #if !NET_STANDARD
