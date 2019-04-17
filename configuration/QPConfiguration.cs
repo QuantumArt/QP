@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Web.Configuration;
 #endif
 
 using System.Xml.Linq;
+using Npgsql;
 using QP.ConfigurationService.Client;
 using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging.Extensions;
@@ -151,23 +153,35 @@ namespace Quantumart.QP8.Configuration
             return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
         }
 
-        public static string TuneConnectionString(string connectionString, out SqlConnectionStringBuilder cnsBuilder, string appName = null)
+        public static string TuneConnectionString(string connectionString, out DbConnectionStringBuilder cnsBuilder, string appName = null)
         {
-            cnsBuilder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
-            if (!string.IsNullOrWhiteSpace(appName))
+            #warning временный костыль. нужно реализовать нормальное определение sqlServer/postgres
+            var isPostgres = connectionString.IndexOf("MSCPGSQL01", StringComparison.InvariantCultureIgnoreCase) != -1;
+            if (!isPostgres)
             {
-                cnsBuilder.ApplicationName = appName;
+                    var sqlConnectionStringBuilder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
+                    cnsBuilder = sqlConnectionStringBuilder;
+                    if (!string.IsNullOrWhiteSpace(appName))
+                    {
+                        sqlConnectionStringBuilder.ApplicationName = appName;
+                    }
+                    else
+                    {
+                        sqlConnectionStringBuilder.ApplicationName = string.IsNullOrWhiteSpace(appName)
+                            ? sqlConnectionStringBuilder.ApplicationName ?? "QpApp"
+                            : sqlConnectionStringBuilder.ApplicationName = appName;
+                    }
+
+                    if (sqlConnectionStringBuilder.ConnectTimeout < 120)
+                    {
+                        sqlConnectionStringBuilder.ConnectTimeout = 120;
+                    }
+
             }
             else
             {
-                cnsBuilder.ApplicationName = string.IsNullOrWhiteSpace(appName)
-                    ? cnsBuilder.ApplicationName ?? "QpApp"
-                    : cnsBuilder.ApplicationName = appName;
-            }
-
-            if (cnsBuilder.ConnectTimeout < 120)
-            {
-                cnsBuilder.ConnectTimeout = 120;
+                var npgSqlConnectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString);
+                cnsBuilder = npgSqlConnectionStringBuilder;
             }
 
             return cnsBuilder.ToString();

@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Npgsql;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.DAL.Entities;
@@ -985,7 +986,8 @@ namespace Quantumart.QP8.DAL
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
-                return (int)cmd.ExecuteScalar() > 0;
+                var result = cmd.ExecuteScalar();
+                return (long)result > 0;
             }
         }
 
@@ -3086,6 +3088,8 @@ namespace Quantumart.QP8.DAL
 
         public static string GetCurrentDbVersion(DbConnection connection)
         {
+            #warning разобраться с переносом/не переносом в постгрес, пока заглушка
+            if (IsPostgresConnection(connection)) return "7.9.9.0";
             using (var cmd = DbCommandFactory.Create("qp_versions", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -9681,7 +9685,8 @@ namespace Quantumart.QP8.DAL
 
         public static string GetDbName(DbConnection sqlConnection)
         {
-            const string query = @"select db_name() as name";
+            var isPostgres = IsPostgresConnection(sqlConnection);
+            var query = $"select {(isPostgres ? "current_database()" : "db_name()")} as name";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -9691,13 +9696,18 @@ namespace Quantumart.QP8.DAL
 
         public static string GetDbServerName(DbConnection sqlConnection)
         {
-            const string query = @"select @@SERVERNAME as server_name";
+            var isPostgresConnection = IsPostgresConnection(sqlConnection);
+            #warning разобраться, нужно ли в postgres и как получать, сейчас заглушка
+            var query = $"select {(isPostgresConnection ? "'SERVER'" : @"@@SERVERNAME")} as server_name";
+
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 return (string)cmd.ExecuteScalar();
             }
         }
+
+        private static bool IsPostgresConnection(DbConnection connection) => connection is NpgsqlConnection;
 
         public static int[] SortIdsByFieldName(DbConnection sqlConnection, int[] ids, int contentId, string fieldName, bool isArchive)
         {

@@ -12,7 +12,7 @@ namespace Quantumart.QP8.BLL.Repository
     {
         public static Db Get()
         {
-            var result = MapperFacade.DbMapper.GetBizObject(QPContext.EFContext.DbSet.Include("LastModifiedByUser").FirstOrDefault());
+            var result = MapperFacade.DbMapper.GetBizObject(QPContext.EFContext.DbSet.Include(x => x.LastModifiedByUser).FirstOrDefault());
             result.AppSettings = GetAppSettings();
             return result;
         }

@@ -39,7 +39,7 @@ namespace Quantumart.QP8.DAL
 
                 foreach(var property in entity.GetProperties())
                 {
-                    property.Relational().ColumnName = property.Name.ToSnakeCase();
+                    property.Relational().ColumnName = property.Relational().ColumnName.ToSnakeCase();
                 }
 
                 foreach(var key in entity.GetKeys())

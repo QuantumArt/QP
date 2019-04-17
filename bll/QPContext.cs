@@ -589,7 +589,7 @@ namespace Quantumart.QP8.BLL
                             MustChangePassword = user.MustChangePassword
                         };
 
-                        using (var cn = new SqlConnection(sqlCn))
+                        using (var cn = CreateDbConnection(sqlCn, dbType))
                         {
                             cn.Open();
                             resultUser.Roles = QpRolesManager.GetRolesForUser(Common.IsAdmin(cn, user.Id));
