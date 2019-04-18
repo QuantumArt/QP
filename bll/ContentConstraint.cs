@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 
@@ -35,6 +35,6 @@ namespace Quantumart.QP8.BLL
             return fieldValues.AsEnumerable().Where(n => fieldIds.Contains(n.Field.Id)).ToList();
         }
 
-        public int CountDuplicates(int id) => ArticleRepository.CountDuplicates(this, null, id);
+        public int CountDuplicates(int id) => ArticleRepository.CountDuplicates(this, null, id, false);
     }
 }
