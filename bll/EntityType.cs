@@ -91,10 +91,44 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public string ParentIdField { get; set; }
 
+
+        /// <summary>
+        /// идентификатор родительской группы
+        /// </summary>
+        public int? GroupParentId { get; set; }
+
+        /// <summary>
+        /// Имя поля-идентификатора родителя в таблице сущности
+        /// </summary>
+        public string GroupParentIdField { get; set; }
+
+        /// <summary>
+        /// Имя поля с иконкой
+        /// </summary>
+        public string IconField { get; set; }
+
+        /// <summary>
+        /// Имя поля с модификатором иконки
+        /// </summary>
+        public string IconModifierField { get; set; }
+
+        /// <summary>
+        /// Имя поля с названием
+        /// </summary>
+        public string TitleField { get; set; }
+
+        public string RecurringIdField { get; set; }
+        public string OrderField { get; set; }
+        public string SourceSP { get; set; }
+        public int? DefaultActionId { get; set; }
+        public int? ContextMenuId { get; set; }
+
         /// <summary>
         /// Проверка на автосохранение
         /// </summary>
         public static bool CheckToAutosave(string code) => AllowedToAutosaveCodes.Contains(code);
+
+
 
         private static readonly HashSet<string> AllowedToAutosaveCodes = new HashSet<string>(new[]
         {
@@ -116,5 +150,7 @@ namespace Quantumart.QP8.BLL
             EntityTypeCode.VirtualContent,
             EntityTypeCode.Page
         }, StringComparer.InvariantCultureIgnoreCase);
+
+
     }
 }

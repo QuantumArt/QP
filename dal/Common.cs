@@ -288,6 +288,27 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static IEnumerable<DataRow> GetDataRows(DbConnection connection, string sqlString)
+        {
+            using (var cmd = DbCommandFactory.Create(sqlString, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var dt = new DataTable();
+                DataAdapterFactory.Create(cmd).Fill(dt);
+                return dt.AsEnumerable().ToArray();
+            }
+        }
+
+        public static long ExecuteScalarLong(DbConnection connection, string sqlString)
+        {
+            using (var cmd = DbCommandFactory.Create(sqlString, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var result = cmd.ExecuteScalar();
+                return Convert.ToInt64(result);
+            }
+        }
+
         public static DataRow GetArticleVersionRow(DbConnection connection, int id, int versionId)
         {
             using (var cmd = DbCommandFactory.Create("qp_get_versions", connection))
@@ -987,7 +1008,7 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
                 var result = cmd.ExecuteScalar();
-                return (long)result > 0;
+                return Convert.ToInt64(result) > 0;
             }
         }
 
@@ -5158,6 +5179,12 @@ namespace Quantumart.QP8.DAL
                 return (string)cmd.Parameters["@SQLOut"].Value;
             }
         }
+
+        public static string GetPermittedItemsAsQueryV2(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityName, string parentEntityName, int parentEntityId)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public static bool TestM2MValue(DbConnection sqlConnection, int linkId, int articleId, int testArticleId)
         {
