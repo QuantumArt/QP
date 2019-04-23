@@ -1485,6 +1485,8 @@
     <Content Include="Content\custom\layout.scss" />
     <None Include="NLog.xsd" />
     <None Include="packages.config" />
+    <Content Include="Scripts\kendo\kendo.all.min.js" />
+    <Content Include="Scripts\kendo\kendo.grid.min.js" />
     <Content Include="Scripts\polyfills\array\array.find.polyfill.js" />
     <Content Include="Scripts\polyfills\array\array.findIndex.polyfill.js" />
     <Content Include="Scripts\polyfills\array\array.from.polyfill.js" />
@@ -1504,6 +1506,8 @@
     <Content Include="Scripts\Quantumart\BackendDirectLinkExecutor.md">
       <DependentUpon>BackendDirectLinkExecutor.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\kendo\kendo.all.min.js.map" />
+    <Content Include="Scripts\kendo\kendo.grid.min.js.map" />
     <None Include="Settings.StyleCop" />
     <Content Include="Scripts\jquery\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
@@ -2543,6 +2547,9 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\kendo\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -2572,6 +2579,3 @@
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
   <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
-
-
-

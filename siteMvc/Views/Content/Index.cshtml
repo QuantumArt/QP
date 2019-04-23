@@ -5,13 +5,56 @@
 
 @using (Html.BeginDocumentPadding())
 {
-	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
     {
-        using (Html.BeginLinkButtonsList())
-        {
 			@Html.AddNewItemLink(Model)
-        }
     }
+  }
+    @*<div id="@Model.MainComponentId"></div>*@
+    <script>
+      $(document).ready(function () {
+        $(`#${'@Model.MainComponentId'}`).kendoGrid({
+          columns: [
+            { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
+            { field: 'GroupName', title: '@ContentStrings.GroupName' },
+            { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' }, width: 133 },
+            @if (Model.ActionCode == ActionCode.MultipleSelectContent)
+            {
+              @:{ field: 'SiteName', title: '@ContentStrings.ParentSiteName' },
+            }
+            { field: 'Description', title: '@EntityObjectStrings.Description' },
+            @if (Model.IsVirtual)
+            {
+              @:{ field: 'VirtualType', title: '@ContentStrings.VirtualType' },
+            }
+            { field: 'Created', title: '@EntityObjectStrings.Created' },
+            { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+            { field: 'LastModifiedByUser', title: '@EntityObjectStrings.LastModifiedBy', width: 100 },
+          ],
+          pageable: true,
+          dataSource: {
+              transport: {
+                read: {
+                  url: "@Url.Action(Model.GetDataAction, "Content")",
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    parentId: @Model.ParentEntityId,
+                },
+              },
+            },
+            schema: {
+              data: 'data',
+              total: 'total',
+            },
+            pageSize: @Default.GridPageSize,
+            serverPaging: true,
+          },
+        });
+      });
+    </script>
 
     @(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
@@ -20,7 +63,7 @@
                 c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
                     .Width(30)
                     .HtmlAttributes(new { @class = "id" });
-                c.Bound(s => s.GroupName).Title(ContentStrings.GroupName);
+                c.Bound(s => s.GroupName).Title(ContentStrings.GroupName); 
                 c.Bound(s => s.Name)
                     .Title(EntityObjectStrings.Name)
                     .HtmlAttributes(new { @class = "title" });
@@ -33,9 +76,7 @@
                 c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
                 c.Bound(s => s.LastModifiedByUser).Title(EntityObjectStrings.LastModifiedBy);
             })
-        .DataBinding(db => db.Ajax()
-            .Select(Model.GetDataAction, "Content")
-        )
+        .DataBinding(db => db.Ajax().Select(Model.GetDataAction, "Content"))
         .EnableCustomBinding(true)
         .Sortable()
         .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))

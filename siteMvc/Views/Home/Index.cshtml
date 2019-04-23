@@ -15,6 +15,9 @@
   <link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
   <link rel="stylesheet" href="@Url.Content("~/Content/build/app.css?sha=" + version)" />
+  <link rel="stylesheet" href="@Url.Content("~/Content/kendo/kendo.common.min.css")" />
+  <link rel="stylesheet" href="@Url.Content("~/Content/kendo/kendo.blueopal.min.css")" />
+  <link rel="stylesheet" href="@Url.Content("~/Content/kendo/kendo.default.min.css")" />
   <link rel="stylesheet" href="@Url.Action("CustomCss", "Css")" />
 
   <script>
@@ -42,54 +45,54 @@
                     .Orientation(SplitterOrientation.Horizontal)
                     .Panes(panes =>
                     {
-                    panes.Add().Content(
-                        @<div id="menuContainer" style="display:none;">
-                          <div class="lineTop"></div>
-                          <em class="tl"></em>
-                          <em class="tr"></em>
-                          <em class="bl"></em>
-                          <em class="br"></em>
-                          <div id="tree">
-                            @(Html.Telerik().TreeView().Name("MainTreeMenu"))
-                          </div>
-                          <div class="lineBottom"></div>
-                        </div>)
-          .Size("20%")
-          .MinSize("50px")
-          .MaxSize("400px")
-          .Collapsible(false)
-          .Resizable(true)
-          .Scrollable(false)
-          .HtmlAttributes(new { id = "leftMenu", @class = "corners" });
+                      panes.Add().Content(
+@<div id="menuContainer" style="display:none;">
+  <div class="lineTop"></div>
+  <em class="tl"></em>
+  <em class="tr"></em>
+  <em class="bl"></em>
+  <em class="br"></em>
+  <div id="tree">
+    @(Html.Telerik().TreeView().Name("MainTreeMenu"))
+  </div>
+  <div class="lineBottom"></div>
+</div>)
+.Size("20%")
+.MinSize("50px")
+.MaxSize("400px")
+.Collapsible(false)
+.Resizable(true)
+.Scrollable(false)
+.HtmlAttributes(new { id = "leftMenu", @class = "corners" });
 
-                    panes.Add().Content(
-                        @<div>
-                          <div id="tabs"><div class="tabStrip" id="MainTabStrip"></div></div>
-                          <div id="editingArea" class="vertical-layout corners">
-                            <div class="lineTop"></div>
-                            <em class="tl"></em>
-                            <em class="tr"></em>
-                            <em class="bl"></em>
-                            <em class="br"></em>
-                            <div id="breadCrumbs"></div>
-                            <div id="toolbar">
-                              <div id="actionToolbar"></div>
-                              <div id="viewToolbar"></div>
-                            </div>
-                            <div id="document" class="vertical-layout vertical-layout__main">
-                              <div id="context"></div>
-                              <div id="search"></div>
-                            </div>
-                            <div class="lineBottom"></div>
-                          </div>
-                        </div>
-          ).HtmlAttributes(new { id = "content", @class = "content" });
-                    }).Render();
+panes.Add().Content(
+@<div>
+  <div id="tabs"><div class="tabStrip" id="MainTabStrip"></div></div>
+  <div id="editingArea" class="vertical-layout corners">
+    <div class="lineTop"></div>
+    <em class="tl"></em>
+    <em class="tr"></em>
+    <em class="bl"></em>
+    <em class="br"></em>
+    <div id="breadCrumbs"></div>
+    <div id="toolbar">
+      <div id="actionToolbar"></div>
+      <div id="viewToolbar"></div>
+    </div>
+    <div id="document" class="vertical-layout vertical-layout__main">
+      <div id="context"></div>
+      <div id="search"></div>
+    </div>
+    <div class="lineBottom"></div>
+  </div>
+</div>
+).HtmlAttributes(new { id = "content", @class = "content" });
+        }).Render();
     }
   </div>
 
   <script src="@Url.Content("~/Scripts/build/vendors.js?sha=" + version)"></script>
-
+  <script src="@Url.Content("~/Scripts/kendo/kendo.all.min.js")"></script>
   <script src="@Url.Content("~/Scripts/Quantumart/JsConstants.ashx")"></script>
   <script src="@Url.Content("~/Scripts/Quantumart/JsLanguage.ashx")"></script>
   <script src="@Url.Content("~/signalr/hubs")"></script>
