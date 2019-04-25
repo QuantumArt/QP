@@ -63,6 +63,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
+        [HttpPost]
+        [ActionAuthorize(ActionCode.Contents)]
+        [BackendActionContext(ActionCode.Contents)]
+        public ActionResult Grid(string tabId, int parentId, int page, int pageSize, string orderBy, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+        {
+            filter = filter ?? ContentListFilter.Empty;
+            filter.SiteId = parentId > 0 ? (int?)parentId : null;
+            var serviceResult = ContentService.List(filter, new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+            });
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
+        }
+
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VirtualContents)]
         [BackendActionContext(ActionCode.VirtualContents)]

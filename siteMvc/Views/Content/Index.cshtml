@@ -12,7 +12,7 @@
 			@Html.AddNewItemLink(Model)
     }
   }
-    @*<div id="@Model.MainComponentId"></div>*@
+    <div id="@Model.MainComponentId"></div>
     <script>
       $(document).ready(function () {
         $(`#${'@Model.MainComponentId'}`).kendoGrid({
@@ -34,16 +34,23 @@
             { field: 'LastModifiedByUser', title: '@EntityObjectStrings.LastModifiedBy', width: 100 },
           ],
           pageable: true,
+          sortable: true,
+          autoBind: false,
           dataSource: {
-              transport: {
-                read: {
-                  url: "@Url.Action(Model.GetDataAction, "Content")",
-                type: 'post',
-                dataType: 'json',
-                data: {
-                    parentId: @Model.ParentEntityId,
-                },
-              },
+             transport: {
+               read: {
+                 url: "@Url.Action("Grid", "Content", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+                 type: 'post',
+                 dataType: 'json',
+               },
+               parameterMap: function(data) {
+                 console.log(data);
+                 var result = { page: data.page, pageSize: data.pageSize };
+                 if (data.sort && data.sort.length) {
+                   result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
+                 }
+                 return result;
+               },
             },
             schema: {
               data: 'data',
@@ -51,12 +58,13 @@
             },
             pageSize: @Default.GridPageSize,
             serverPaging: true,
+            serverSorting: true,
           },
         });
       });
     </script>
 
-    @(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
+    @*@(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
             {
@@ -86,7 +94,7 @@
                 .OnDataBinding("$q.preventDefaultFunction")
                 .OnRowDataBound("$q.preventDefaultFunction")
         )
-    )
+    )*@
 }
 
 @Html.PrepareAndRunInitScript(Model)

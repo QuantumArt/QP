@@ -12,7 +12,7 @@ window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING = 'OnEntityGridActionExecuting';
 window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED = 'OnEntityGridEntitySelected';
 window.EVENT_TYPE_ENTITY_GRID_TITLE_LINK_CLICK = 'OnEntityGridEntityTitleLinkClick';
 
-export class BackendEntityGrid extends Observable {
+export class BackendEntityGridOld extends Observable {
   static applyStatusColor(row, item) {
     if (item.STATUS_TYPE_COLOR) {
       const $row = $(row);
@@ -409,7 +409,7 @@ export class BackendEntityGrid extends Observable {
     $('.fullTextBlock label').addClass('hidden');
 
     const $grid = $(`#${this._gridElementId}`);
-    const gridComponent = $grid.getKendoGrid();
+    const gridComponent = $grid.data('tGrid');
 
     if (this._currentPage) {
       gridComponent.currentPage = this._currentPage;
@@ -423,24 +423,17 @@ export class BackendEntityGrid extends Observable {
     this._gridComponent = gridComponent;
     this._startingEntitiesIDs = this._selectedEntitiesIDs.slice();
 
-    //$grid
-    //  .unbind('dataBinding', gridComponent.onDataBinding)
-    //  .unbind('dataBound', gridComponent.onDataBound)
-    //  .unbind('rowDataBound', gridComponent.onRowDataBound)
-    //  .bind('dataBinding', this._onDataBindingHandler)
-    //  .bind('dataBound', this._onDataBoundHandler)
-    //  .bind('rowDataBound', this._onRowDataBoundHandler);
-
-    gridComponent
+    $grid
       .unbind('dataBinding', gridComponent.onDataBinding)
-      .bind('dataBinding', this._onDataBindingHandler);
-
-    gridComponent
       .unbind('dataBound', gridComponent.onDataBound)
-      .bind('dataBound', this._onDataBoundHandler);
+      .unbind('rowDataBound', gridComponent.onRowDataBound)
+      .bind('dataBinding', this._onDataBindingHandler)
+      .bind('dataBound', this._onDataBoundHandler)
+      .bind('rowDataBound', this._onRowDataBoundHandler);
 
-
-    gridComponent.dataSource.read();
+    if (this._autoLoad && !this._delayAutoLoad) {
+      gridComponent.ajaxRequest();
+    }
 
     if (gridComponent.selectable) {
       const $headerCheckbox = this._getHeaderCheckbox();
@@ -556,7 +549,7 @@ export class BackendEntityGrid extends Observable {
   getRows() {
     let $rows = [];
     if (this._gridComponent) {
-      $rows = $(`#${this._gridElementId}`).find('tr[role="row"]');
+      $rows = this._gridComponent.$rows();
     }
 
     return $rows;
@@ -781,7 +774,7 @@ export class BackendEntityGrid extends Observable {
 
     this._gridComponent.currentPage = 1;
     if (this._gridComponent) {
-      this._gridComponent.dataSource.read();
+      this._gridComponent.ajaxRequest();
     }
   }
 
@@ -806,7 +799,7 @@ export class BackendEntityGrid extends Observable {
 
     const gridComponent = this._gridComponent;
     if (gridComponent) {
-      gridComponent.dataSource.read();
+      gridComponent.ajaxRequest();
     }
   }
 
@@ -1029,7 +1022,6 @@ export class BackendEntityGrid extends Observable {
 
   _onDataBinding(e) {
     const params = this._createDataQueryParams();
-    console.log(params);
 
     // eslint-disable-next-line no-param-reassign
     Object.assign(e, { data: params });
@@ -1309,4 +1301,4 @@ export class BackendEntityGrid extends Observable {
   }
 }
 
-Quantumart.QP8.BackendEntityGrid = BackendEntityGrid;
+Quantumart.QP8.BackendEntityGridOld = BackendEntityGridOld;

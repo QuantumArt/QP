@@ -1501,6 +1501,7 @@
     <Content Include="Scripts\polyfills\string\string.startsWith.polyfill.js" />
     <Content Include="Scripts\Quantumart\App.js" />
     <Content Include="Scripts\Quantumart\AppLogon.js" />
+    <Content Include="Scripts\Quantumart\BackendEntityGrid.js" />
     <Content Include="Scripts\Quantumart\Common\BackendTabEventArgs.js" />
     <Content Include="Scripts\Quantumart\languages\BackendChangePasswordWindow.Lang.js" />
     <Content Include="Scripts\Quantumart\BackendDirectLinkExecutor.md">
@@ -2156,7 +2157,7 @@
     <Content Include="Scripts\Quantumart\BackendContextMenu.js" />
     <Content Include="Scripts\Quantumart\Document\BackendEditingArea.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendEntityEditor.js" />
-    <Content Include="Scripts\Quantumart\BackendEntityGrid.js" />
+    <Content Include="Scripts\Quantumart\BackendEntityGridOld.js" />
     <Content Include="Scripts\Quantumart\BackendSplitter.js" />
     <Content Include="Scripts\Quantumart\BackendTabStrip.js" />
     <Content Include="Scripts\Quantumart\Toolbar\BackendActionToolbar.js" />
