@@ -4615,7 +4615,8 @@ namespace Quantumart.QP8.DAL
 
         public static void UnlockAllArticlesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            const string query = @"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var isPostgres = IsPostgresConnection(sqlConnection);
+            var query = $"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = {(isPostgres ? "FALSE" : "0")} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4626,7 +4627,8 @@ namespace Quantumart.QP8.DAL
 
         public static void UnlockAllSitesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            const string query = @"update [SITE] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var isPostgres = IsPostgresConnection(sqlConnection);
+            var query = $"update {(isPostgres ? "\"site\"" : "[SITE]")} set locked_by = null, locked = null where permanent_lock = {(isPostgres ? "FALSE" : "0")} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -6303,12 +6305,13 @@ namespace Quantumart.QP8.DAL
 
         public static int GetDefaultGroupId(DbConnection sqlConnection, int siteId)
         {
-            var query = $@"select [dbo].qp_default_group_id({siteId})";
+            var query = $@"select content_group_id from content_group where site_id = {siteId} and name = 'Default Group'";
+            // var query = $@"select [dbo].qp_default_group_id({siteId})";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var result = cmd.ExecuteScalar();
-                return DBNull.Value.Equals(result) ? 0 : (int)result;
+                return DBNull.Value.Equals(result) ? 0 : Convert.ToInt32(result);
             }
         }
 

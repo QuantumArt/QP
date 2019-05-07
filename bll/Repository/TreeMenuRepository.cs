@@ -45,8 +45,6 @@ namespace Quantumart.QP8.BLL.Repository
             return node;
         }
 
-
-
         private static string GetTreeNodeSql(string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, bool countOnly = false)
         {
             parentEntityId = parentEntityId ?? 0;
@@ -81,7 +79,7 @@ namespace Quantumart.QP8.BLL.Repository
                     currentIsGroup = true;
                 }
             }
-            else if (!string.IsNullOrWhiteSpace(groupItemCode) )
+            else if (!string.IsNullOrWhiteSpace(groupItemCode))
             {
                 if (!isFolder)
                 {
@@ -89,7 +87,6 @@ namespace Quantumart.QP8.BLL.Repository
                     newEntityTypeCode = groupItemCode;
                 }
             }
-
 
             var newEntityType = entityTypes.FirstOrDefault(x => x.Code.Equals(newEntityTypeCode, StringComparison.InvariantCultureIgnoreCase));
 
@@ -193,8 +190,8 @@ namespace Quantumart.QP8.BLL.Repository
                         $"WHEN i.ICON_MODIFIER is not null THEN {ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", CastToString(databaseType, "i.ICON_MODIFIER"), "'.gif'")}\n" +
                         $"ELSE {ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", "'.gif'")} END\n" +
                         $"AS icon,\n" +
-                        $"{NullableDbValue(newEntityType?.DefaultActionId)} AS default_action_id,\n" +
-                        $"{NullableDbValue(newEntityType?.ContextMenuId)} as context_menu_id,\n" +
+                        $"{NullableDbValue(databaseType, newEntityType?.DefaultActionId)} AS default_action_id,\n" +
+                        $"{NullableDbValue(databaseType, newEntityType?.ContextMenuId)} as context_menu_id,\n" +
                         $"{ToBoolSql(databaseType, string.IsNullOrWhiteSpace(newEntityType?.RecurringIdField))} as is_recurring,\n" +
                         $"i.id,\n" +
                         $"i.title,\n" +
@@ -233,7 +230,7 @@ namespace Quantumart.QP8.BLL.Repository
                     var isFolderQuery = !string.IsNullOrWhiteSpace(newEntityTypeCode);
 
                     sql = $@"select et.id as id,
-                        {NullableDbValue(parentEntityId)} as parent_id,
+                        {NullableDbValue(databaseType, parentEntityId)} as parent_id,
                         et.name as title,
                         et.code as code,
                         {ToBoolSql(databaseType, isFolderQuery)} as is_folder,
@@ -246,7 +243,6 @@ namespace Quantumart.QP8.BLL.Repository
                         {ToBoolSql(databaseType, false)} as is_recurring,
                         et.""order"" as sortorder
                         ";
-
                 }
 
                 sql += $" from entity_type et {(useSecurity ? $"inner join ( {securitySql} ) s on s.entity_type_id = et.id and (s.hide = 0 or s.hide is null)" : string.Empty)}  where {condition}";
@@ -290,7 +286,18 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        private static string NullableDbValue(int? value) => value.HasValue ? value.ToString() : "NULL";
+        private static string NullableDbValue(DatabaseType databaseType, int? value)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return value.HasValue ? value.ToString() : "NULL";
+                case DatabaseType.Postgres:
+                    return value.HasValue ? value.ToString() : "NULL::numeric";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
 
         private static string ConcatStrValuesSql(DatabaseType databaseType, params string[] p)
         {
@@ -467,10 +474,6 @@ namespace Quantumart.QP8.BLL.Repository
                     index++;
                 }
             }
-
-
-
-
 
             if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder)
             {
