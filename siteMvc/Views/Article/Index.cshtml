@@ -1,21 +1,114 @@
 ﻿@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Constants.Mvc
+@using Quantumart.QP8.Utils
+@using Quantumart.QP8.BLL.Helpers
 @model Quantumart.QP8.WebMvc.ViewModels.Article.ArticleListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-    using (Html.BeginLinkButtonsList())
+  using (Html.BeginLinkButtonsList())
+  {
+    if (Model.ShowAddNewItemButton && !Model.IsReadOnly)
     {
-        if (Model.ShowAddNewItemButton && !Model.IsReadOnly)
-        {
-            @Html.AddNewItemLink(Model)
-        }
-
-        @Html.SelectAllLink(Model)
-        @Html.UnselectLink(Model)
-        <li class="doctab-title__element doctab-title__articles-count-label--selected">@ArticleStrings.TotalSelectedArticles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
+      @Html.AddNewItemLink(Model)
     }
 
-    @Html.ArticleGrid(Model)
+    @Html.SelectAllLink(Model)
+    @Html.UnselectLink(Model)
+    <li class="doctab-title__element doctab-title__articles-count-label--selected">@ArticleStrings.TotalSelectedArticles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
+  }
+
+  <div id="@Model.MainComponentId"></div>
+  string currentTheme = HttpContext.Current.Session[HttpContextSession.CurrentCssTheme].ToString();
+  <script id="icon-template" type="text/x-kendo-template">
+    #var alt = data.alt || data.title;#
+    <img src="@Quantumart.QP8.Utils.Url.ToAbsolute(PathUtility.Combine(SitePathHelper.GetThemeRootImageFolderUrl(currentTheme), "#: data.url#"))"
+        style="width: 16px; height: 16px;"
+        class="t-image"
+        title="#: data.title #"
+        alt="#: alt #" />
+  </script>
+  <script>
+    $(function () {
+      //var headIconTemplate = kendo.template($('#icon-template').html(), { useWithBlock: false });
+      var headIconTemplate = function (settings) {
+        return function () {
+          return '<img ' +
+            'src="' +
+            '@SitePathHelper.GetThemeRootImageFolderUrl(currentTheme)' + settings.url + '"' +
+            'style="width: 16px; height: 16px;"' +
+            'class="t-image"' +
+            'title="' + settings.title + '"' +
+            'alt="' + (settings.alt || settings.title) + '"' +
+            '/>';
+        };
+      };
+      var bodyIconTemplate = function (settings) {
+        return function (dataItem) {
+          return '<img ' +
+            'src="' +
+            '@SitePathHelper.GetThemeSmallIconsImageFolderUrl(currentTheme)' + dataItem[settings.icon] + '"' +
+            'style="width: 16px; height: 16px;"' +
+            'class="t-image"' +
+            'title="' + (dataItem[settings.tooltip] || dataItem[settings.icon]) + '"' +
+            'alt="' + (dataItem[settings.tooltip] || dataItem[settings.icon]) + '"' +
+            '/>';
+        };
+      };
+      $(`#${'@Model.MainComponentId'}`).qpGrid({
+        columns: [
+          { field: '@FieldName.ContentItemId', title: '@FieldName.Id', attributes: { 'class': 'id' }, width: 70 },
+          {
+            field: '@FieldName.LockedBy',
+            headerTemplate: headIconTemplate({ url: 'grid/header_icons/lock.gif', title: '@ArticleStrings.IsLockedHeaderTooltip'}),
+            headerAttributes: { 'class': 't-image-header isCentered'},
+            template: bodyIconTemplate({ icon: '@FieldName.LockedByIcon', tooltip: '@FieldName.LockedByTooltip' }),
+            attributes: { 'class': 'isCentered' },
+            width: 46
+          },
+          {
+            field: '@FieldName.Scheduled',
+            headerTemplate: headIconTemplate({ url: 'grid/header_icons/scheduled.gif', title: '@ArticleStrings.IsScheduledTooltip'}),
+            headerAttributes: { 'class': 't-image-header isCentered'},
+            template: bodyIconTemplate({ icon: '@FieldName.ScheduledIcon', tooltip: '@FieldName.ScheduledTooltip' }),
+            attributes: { 'class': 'isCentered' },
+            width: 46
+          },
+          {
+            field: '@FieldName.Splitted',
+            headerTemplate: headIconTemplate({ url: 'grid/header_icons/splited.gif', title: '@ArticleStrings.IsSplitedTooltip'}),
+            headerAttributes: { 'class': 't-image-header isCentered'},
+            template: bodyIconTemplate({ icon: '@FieldName.SplittedIcon', tooltip: '@FieldName.SplittedTooltip' }),
+            attributes: { 'class': 'isCentered' },
+            width: 46
+          },
+          {
+            field: '@FieldName.Visible',
+            headerTemplate: headIconTemplate({ url: 'grid/header_icons/invisible.gif', title: '@ArticleStrings.IsInvisibleTooltip'}),
+            headerAttributes: { 'class': 't-image-header isCentered' },
+            template: bodyIconTemplate({ icon: '@FieldName.VisibleIcon', tooltip: '@FieldName.VisibleTooltip' }),
+            attributes: { 'class': 'isCentered' },
+            width: 46
+          },
+          /*dynamic columns
+           * --here--
+           * */
+          { field: '@FieldName.StatusTypeName', title: '@ArticleStrings.Status' },
+          { field: '@FieldName.Created', title: '@ArticleStrings.Created' },
+          { field: '@FieldName.Modified', title: '@ArticleStrings.Modified' },
+          { field: '@FieldName.ModifierLogin', title: '@ArticleStrings.LastModifiedBy' },
+        ],
+        pageSize: @Model.PageSize,
+        dataSource: {
+          read: {
+            url: "@Url.Action(Model.GetDataActionName, "Article", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+          },
+        },
+      });
+    });
+  </script>
+  @*@Html.ArticleGrid(Model)*@
 }
 
 @Html.PrepareAndRunInitScript(Model)

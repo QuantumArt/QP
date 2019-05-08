@@ -5,7 +5,8 @@
 
 @using (Html.BeginDocumentPadding())
 {
-    @(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
+  <div>Multiselect</div>
+    @*@(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
             {
@@ -42,7 +43,7 @@
                 .OnDataBinding("$q.preventDefaultFunction")
                 .OnRowDataBound("$q.preventDefaultFunction")
         )
-    )
+    )*@
 }
 
 @Html.PrepareAndRunInitScript(Model)

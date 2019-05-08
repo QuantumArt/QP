@@ -68,6 +68,7 @@ custom.paths = {
     'Scripts/polyfills/console.fns.polyfill.js',
     'Scripts/polyfills/promise.polyfill.js',
 
+    // 'Scripts/jquery/jquery-1.8.3.js',
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/telerik/telerik.common.js',
     'Scripts/microsoft/MicrosoftAjax.js',
@@ -123,6 +124,7 @@ custom.paths = {
     'Scripts/PlUpload/plupload.dev.js'
   ],
   vendorsjsLogon: [
+    // 'Scripts/jquery/jquery-1.8.3.js',
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/microsoft/MicrosoftAjax.js'
   ],

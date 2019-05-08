@@ -1,4 +1,19 @@
-/* eslint-disable no-restricted-properties, no-param-reassign */
+/* eslint-disable no-restricted-properties, no-param-reassign, no-console */
+
+// eslint-disable-next-line func-style
+function checkGridParams(opt) {
+  try {
+    if (!opt.columns) {
+      console.error('Columns is required');
+    }
+    if (!opt.dataSource.read.url) {
+      console.error('Url is required');
+    }
+  } catch (e) {
+    console.error('Grid options lack of required keys');
+  }
+}
+
 // eslint-disable-next-line id-length, no-shadow
 (function ($) {
   const colors = {
@@ -331,6 +346,50 @@
         zmax += def.inc;
         $(this).css('z-index', zmax);
       });
+    },
+
+    // Инициализатор грида
+    qpGrid(opt) {
+      checkGridParams(opt);
+      return $(this).kendoGrid($.extend(true, {
+        selectable: true,
+        pageable: {
+          alwaysVisible: false
+        },
+        sortable: {
+          allowUnsort: true
+        },
+        autoBind: false,
+        dataSource: {
+          transport: {
+            read: {
+              type: 'post',
+              dataType: 'json',
+              ...opt.dataSource.read
+            },
+            parameterMap(data) {
+              const result = {
+                page: data.page,
+                pageSize: data.pageSize
+              };
+              if (data.sort && data.sort.length) {
+                result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
+              }
+              if (data.searchQuery) {
+                result.searchQuery = data.searchQuery;
+              }
+              return result;
+            }
+          },
+          schema: {
+            data: 'data',
+            total: 'total'
+          },
+          pageSize: 20,
+          serverPaging: true,
+          serverSorting: true
+        }
+      }, opt));
     }
   });
 

@@ -13,7 +13,7 @@
 		    @Html.AddNewItemLink(Model)
         }
     }
-
+    <div>Field</div>
     @(Html.Telerik().Grid<FieldListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>

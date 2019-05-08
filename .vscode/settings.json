@@ -56,5 +56,6 @@
   "search.exclude": {
     "**/node_modules": true,
     "siteMvc/Scripts/build": true
-  }
+  },
+  "eslint.enable": true
 }

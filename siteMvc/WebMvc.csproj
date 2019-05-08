@@ -1485,6 +1485,7 @@
     <Content Include="Content\custom\layout.scss" />
     <None Include="NLog.xsd" />
     <None Include="packages.config" />
+    <Content Include="Scripts\jquery\jquery-1.8.3.js" />
     <Content Include="Scripts\kendo\kendo.all.min.js" />
     <Content Include="Scripts\kendo\kendo.grid.min.js" />
     <Content Include="Scripts\polyfills\array\array.find.polyfill.js" />

@@ -12,8 +12,8 @@
 			@Html.AddNewItemLink(Model)
 		}
 	}
-
-    @(Html.Telerik().Grid<ObjectListItem>().Name(Model.MainComponentId)
+    <div>Object</div>
+    @*@(Html.Telerik().Grid<ObjectListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
         {
@@ -67,7 +67,7 @@
             e.OnDataBinding("$q.preventDefaultFunction")
              .OnRowDataBound("$q.preventDefaultFunction")
         )
-    )
+    )*@
 }
 
 @Html.PrepareAndRunInitScript(Model)

@@ -13,7 +13,8 @@
 		}
 	}
 
-    @(Html.Telerik().Grid<PageListItem>().Name(Model.MainComponentId)
+  <div>Page</div>
+    @*@(Html.Telerik().Grid<PageListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
         {
@@ -62,7 +63,7 @@
             e.OnDataBinding("$q.preventDefaultFunction")
              .OnRowDataBound("$q.preventDefaultFunction")
         )
-    )
+    )*@
 }
 
 @Html.PrepareAndRunInitScript(Model)
