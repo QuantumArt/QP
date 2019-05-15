@@ -97,7 +97,8 @@ export class FieldSearchBlock {
       const that = this;
       const $options = $('option', this._fieldsComboElement);
       $.each(state, (index, st) => {
-        if (st.fieldID && !that._fieldSearchContainerList[st.fieldID]) {
+        // TODO: check whats going on
+        if (st && st.fieldID && !that._fieldSearchContainerList[st.fieldID]) {
           const isValid = $options.is(function () {
             const $option = $(this);
             return st.fieldID === $option.data('field_id')

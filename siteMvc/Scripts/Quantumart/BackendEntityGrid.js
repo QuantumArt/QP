@@ -653,7 +653,7 @@ export class BackendEntityGrid extends Observable {
   }
 
   _getHeaderCheckbox() {
-    return $(this.CHECKBOX_HEADER_SELECTORS, this._gridComponent.$header);
+    return $(this.CHECKBOX_HEADER_SELECTORS, this._gridComponent.wrapper);
   }
 
   _refreshHeaderCheckbox() {
@@ -772,9 +772,13 @@ export class BackendEntityGrid extends Observable {
       }
     }
 
-    this._gridComponent.currentPage = 1;
+    this._gridComponent.dataSource.page(1);
     if (this._gridComponent) {
-      this._gridComponent.dataSource.read({ searchQuery: this._searchQuery });
+      this._gridComponent.dataSource.read({
+        searchQuery: this._searchQuery,
+        contextQuery: this._contextQuery,
+        customFilter: this._filter
+      });
     }
   }
 
@@ -797,9 +801,12 @@ export class BackendEntityGrid extends Observable {
       }
     }
 
-    const gridComponent = this._gridComponent;
-    if (gridComponent) {
-      gridComponent.dataSource.read({ searchQuery: this._searchQuery });
+    if (this._gridComponent) {
+      this._gridComponent.dataSource.read({
+        searchQuery: this._searchQuery,
+        contextQuery: this._contextQuery,
+        customFilter: this._filter
+      });
     }
   }
 
@@ -1052,7 +1059,7 @@ export class BackendEntityGrid extends Observable {
   _onDataBound() {
     const grid = this._gridComponent;
     if (grid.currentPage > 1 && !grid.dataSource._total) {
-      grid.dataSource.page(grid.currentPage - 1);
+      grid.dataSource._page = grid.currentPage - 1;
     }
 
     this._isDataLoaded = true;

@@ -17,7 +17,6 @@
     white-space: normal;
     min-height: 18px;
     height: auto;
-
 }
 
 .t-grid-header .t-image-header IMG.t-image
@@ -588,12 +587,23 @@ a.t-button.t-state-disabled:hover,
     color: #c2cedb;
 }
 
-.k-grid-header .k-link .k-icon.k-i-sort-asc-sm,
-.k-grid-header .k-link .k-icon.k-i-sort-desc-sm {
+/* Kendo */
+
+.qpGrid .k-grid-header .k-link .k-icon.k-i-sort-asc-sm,
+.qpGrid .k-grid-header .k-link .k-icon.k-i-sort-desc-sm {
   vertical-align: top;
   margin-left: 0;
 }
 
+.qpGrid .k-grid-header th.k-header {
+  white-space: normal;
+  vertical-align: middle;
+}
+
 .isCentered {
   text-align: center !important;
+}
+
+.isRight {
+  text-align: right !important;
 }

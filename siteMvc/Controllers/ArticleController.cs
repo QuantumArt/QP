@@ -75,6 +75,45 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
+        [HttpPost]
+        [GridAction(EnableCustomBinding = true)]
+        [ActionAuthorize(ActionCode.Articles)]
+        [BackendActionContext(ActionCode.Articles)]
+        public ActionResult Grid(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))]
+            IList<ArticleSearchQueryParam> searchQuery,
+            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleContextQueryParam>>))]
+            IList<ArticleContextQueryParam> contextQuery,
+            string customFilter,
+            bool? onlyIds,
+            int[] filterIds)
+        {
+            var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
+
+            var serviceResult = ArticleService.List(
+                parentId,
+                new int[0],
+                new ListCommand
+                {
+                    StartPage = page,
+                    PageSize = pageSize,
+                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+                },
+                searchQuery,
+                contextQuery,
+                customFilter,
+                ftsParser,
+                onlyIds,
+                filterIds);
+
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
+        }
+
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArchiveArticles)]
         [BackendActionContext(ActionCode.ArchiveArticles)]

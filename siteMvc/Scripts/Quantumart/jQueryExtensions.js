@@ -6,11 +6,11 @@ function checkGridParams(opt) {
     if (!opt.columns) {
       console.error('Columns is required');
     }
-    if (!opt.dataSource.read.url) {
+    if (!opt.dataSource.transport.read.url) {
       console.error('Url is required');
     }
   } catch (e) {
-    console.error('Grid options lack of required keys');
+    console.error(e, opt, 'Grid options lack of required keys');
   }
 }
 
@@ -353,6 +353,7 @@ function checkGridParams(opt) {
       checkGridParams(opt);
       return $(this).kendoGrid($.extend(true, {
         selectable: true,
+        resizable: true,
         pageable: {
           alwaysVisible: false
         },
@@ -378,6 +379,9 @@ function checkGridParams(opt) {
               if (data.searchQuery) {
                 result.searchQuery = data.searchQuery;
               }
+              if (data.customFilter) {
+                result.customFilter = data.customFilter;
+              }
               return result;
             }
           },
@@ -389,7 +393,7 @@ function checkGridParams(opt) {
           serverPaging: true,
           serverSorting: true
         }
-      }, opt));
+      }, opt)).addClass('qpGrid');
     }
   });
 

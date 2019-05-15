@@ -15,7 +15,7 @@
   <div id="@Model.MainComponentId"></div>
   <script>
     $(function () {
-      $(`#${'@Model.MainComponentId'}`).kendoGrid({
+      $(`#${'@Model.MainComponentId'}`).qpGrid({
         columns: [
           { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
           { field: 'GroupName', title: '@ContentStrings.GroupName' },
@@ -33,39 +33,13 @@
           { field: 'Modified', title: '@EntityObjectStrings.Modified' },
           { field: 'LastModifiedByUser', title: '@EntityObjectStrings.LastModifiedBy', width: 100 },
         ],
-        selectable: true,
-        pageable: {
-          alwaysVisible: false,
-        },
-        sortable: {
-          allowUnsort: true,
-        },
-        autoBind: false,
         dataSource: {
-            transport: {
-              read: {
-                url: "@Url.Action(Model.GetDataActionName, "Content", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
-                type: 'post',
-                dataType: 'json',
-              },
-              parameterMap: function(data) {
-                var result = { page: data.page, pageSize: data.pageSize };
-                if (data.sort && data.sort.length) {
-                  result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
-                }
-                if (data.searchQuery) {
-                  result.searchQuery = data.searchQuery;
-                }
-                return result;
-              },
-          },
-          schema: {
-            data: 'data',
-            total: 'total',
+          transport: {
+            read: {
+              url: "@Url.Action(Model.GetDataActionName, "Content", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
           },
           pageSize: @Default.GridPageSize,
-          serverPaging: true,
-          serverSorting: true,
         },
       });
     });
