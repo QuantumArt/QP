@@ -84,15 +84,16 @@ namespace Quantumart.QP8.BLL.Repository
 
             var entity = entityTypes.FirstOrDefault(x => x.Code.Equals(entityTypeCode, StringComparison.InvariantCultureIgnoreCase));
 
-            decimal? result = null;
-            if (entity?.Source != null && entity?.IdField != null)
+            if (entity?.Source == null || entity.IdField == null)
             {
-                using (var scope = new QPConnectionScope())
-                {
-                    result = Common.GetNumericFieldValue(scope.DbConnection, entity.ParentIdField, entity.Source, entity.IdField, entityId);
-                }
+                return null;
             }
-            return result;
+
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetNumericFieldValue(scope.DbConnection, entity.ParentIdField, entity.Source, entity.IdField, entityId);
+            }
+            
         }
     }
 }

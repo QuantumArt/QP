@@ -60,7 +60,7 @@ namespace Quantumart.QP8.BLL.Facades
             BackendActionTypeMapper = Create<BackendActionTypeMapper>(cfg);
             ContextMenuItemRowMapper = Create<ContextMenuItemRowMapper>(cfg);
             ContextMenuRowMapper = Create<ContextMenuRowMapper>(cfg);
-            EntityTypeMapper = Create<EntityTypeMapper>(cfg);
+            EntityTypeMapper = Create<EntityTypeMapper>(cfg, true);
             TreeNodeMapper = Create<TreeNodeMapper>(cfg);
             ViewTypeMapper = Create<ViewTypeMapper>(cfg);
             BackendActionViewMapper = Create<BackendActionViewMapper>(cfg);

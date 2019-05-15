@@ -299,6 +299,8 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+
+
         public static long ExecuteScalarLong(DbConnection connection, string sqlString)
         {
             using (var cmd = DbCommandFactory.Create(sqlString, connection))
@@ -3002,6 +3004,8 @@ namespace Quantumart.QP8.DAL
 
 
 
+
+
         public static DataRow GetContextMenuById(DbConnection sqlConnection, int userId, int menuId, bool loadRelatedData = false)
         {
             using (var cmd = DbCommandFactory.Create("qp_get_context_menu_by_id", sqlConnection))
@@ -4615,8 +4619,8 @@ namespace Quantumart.QP8.DAL
 
         public static void UnlockAllArticlesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            var isPostgres = IsPostgresConnection(sqlConnection);
-            var query = $"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = {(isPostgres ? "FALSE" : "0")} and locked_by = @user_id";
+            var databaseType = GetDatabaseType(sqlConnection);
+            var query = $"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = {GetBoolValue(false, databaseType)} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4627,13 +4631,26 @@ namespace Quantumart.QP8.DAL
 
         public static void UnlockAllSitesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            var isPostgres = IsPostgresConnection(sqlConnection);
-            var query = $"update {(isPostgres ? "\"site\"" : "[SITE]")} set locked_by = null, locked = null where permanent_lock = {(isPostgres ? "FALSE" : "0")} and locked_by = @user_id";
+            var databaseType = GetDatabaseType(sqlConnection);
+            var query = $"update {EscapeObjectName("SITE", databaseType)} set locked_by = null, locked = null where permanent_lock = {GetBoolValue(false, databaseType)} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static string GetBoolValue(bool value, DatabaseType databaseType)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return value ? "1" : "0";
+                case DatabaseType.Postgres:
+                    return value ? "TRUE" : "FALSE";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }
         }
 
@@ -5804,7 +5821,9 @@ namespace Quantumart.QP8.DAL
 
         public static void UnlockAllTemplatesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            const string templateQuery = @"update [PAGE_TEMPLATE] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var databaseType = GetDatabaseType(sqlConnection);
+            var falseValueStr = GetBoolValue(false, databaseType);
+            var templateQuery = $"update {EscapeObjectName("PAGE_TEMPLATE", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(templateQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5812,7 +5831,7 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
 
-            const string pageQuery = @"update [PAGE] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var pageQuery = $"update {EscapeObjectName("PAGE", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(pageQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5820,7 +5839,7 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
 
-            const string objectQuery = @"update [OBJECT] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var objectQuery = $"update {EscapeObjectName("OBJECT", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(objectQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5828,12 +5847,38 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
 
-            const string formatQuery = @"update [OBJECT_FORMAT] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var formatQuery = $"update {EscapeObjectName("OBJECT_FORMAT", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(formatQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static string EscapeObjectName(string objectName, DatabaseType databaseType)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"[{objectName}]";
+                case DatabaseType.Postgres:
+                    return $"\"{objectName.ToLower()}\"";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        private static DatabaseType GetDatabaseType(DbConnection connection)
+        {
+            switch (connection)
+            {
+                case SqlConnection _:
+                    return DatabaseType.SqlServer;
+                case NpgsqlConnection _:
+                    return DatabaseType.Postgres;
+                default:
+                    return DatabaseType.Unknown;
             }
         }
 
