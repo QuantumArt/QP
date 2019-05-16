@@ -69,8 +69,10 @@
           attributes: { 'class': getClass(c, i), 'role': 'gridcell' },
         };
       });
+      console.log(columnsData, dynamicColumns);
       var columns = [
         {
+          // TODO: add condition
           field: '',
           headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
           headerAttributes: { 'class': 't-select-header' },

@@ -49,7 +49,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                     return AllowMultipleEntitySelection ? "_MultipleSelect" : "_Select";
                 }
 
-                return ShowArchive ? "_ArchiveIndex" : "Grid";
+                return ShowArchive ? "_ArchiveIndex" : "_Index";
             }
         }
 

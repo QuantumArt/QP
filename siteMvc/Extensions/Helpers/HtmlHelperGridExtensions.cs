@@ -15,27 +15,8 @@ using Telerik.Web.Mvc.UI.Fluent;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
-    
-
     public static class HtmlHelperGridExtensions
     {
-        public static List<GridRow> GetDynamicColumns(this HtmlHelper html, ArticleListViewModel model)
-        {
-            var relationCounters = new Dictionary<int, int>();
-            var rowList = new List<GridRow>();
-            foreach (var field in model.DisplayFields)
-            {
-                var row = new GridRow
-                {
-                    Field = Article.GetDynamicColumnName(field, relationCounters, true),
-                    Title = field.DisplayName,
-                    Sortable = field.ExactType != FieldExactTypes.M2MRelation && field.ExactType != FieldExactTypes.M2ORelation
-                };
-                rowList.Add(row);
-            }
-            return rowList;
-        }
-
         public static MvcHtmlString ArticleGrid(this HtmlHelper html, ArticleListViewModel model)
         {
             var result = html.Telerik().Grid<DataRow>()

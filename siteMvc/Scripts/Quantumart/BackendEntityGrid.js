@@ -772,7 +772,10 @@ export class BackendEntityGrid extends Observable {
       }
     }
 
-    this._gridComponent.dataSource.page(1);
+    if (this._gridComponent.dataSource._page !== 1) {
+      this._gridComponent.dataSource.page(1);
+    }
+
     if (this._gridComponent) {
       this._gridComponent.dataSource.read({
         searchQuery: this._searchQuery,
