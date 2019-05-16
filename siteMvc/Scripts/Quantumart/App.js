@@ -103,7 +103,7 @@ require('./Audit/ActionLogItemListFilter.js');
 require('./Audit/ActionLogUserFilter.js');
 require('./SearchInCodeComponent.js');
 require('./CustomAction/CustomActionProperties.js');
-require('./CustomAction/QP8BackendApi.Interaction.js');
+require('./CustomAction/QP8BackendApi.Interaction/QP8BackendApi.Interaction.js');
 require('./CustomAction/BackendCustomActionHost.js');
 require('./ActionPermissions/BackendActionPermissionView.js');
 require('./Managers/BackendBrowserHistoryManager.js');

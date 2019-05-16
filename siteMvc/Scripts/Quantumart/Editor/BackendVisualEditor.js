@@ -90,6 +90,8 @@ const getCkEditorConfig = function getCkEditorConfig(obj, opts) {
 
   config.on = {
     instanceReady(ev) {
+      obj.afterCkEditorInstanceReady(ev.editor);
+
       ev.editor.filter.addElementCallback(el => {
         if (el.name === 'table' || el.name === 'img') {
           return CKEDITOR.FILTER_SKIP_TREE;
@@ -213,6 +215,7 @@ export class BackendVisualEditor {
           if (instance) {
             that.disposeCKEditor(false);
           }
+          this.beforeCkEditorInstanceReady(that._editorElem);
           CKEDITOR.replace(that._editorElem.id, getCkEditorConfig(that, data));
         });
       }
@@ -237,6 +240,14 @@ export class BackendVisualEditor {
       this._$expandLink.trigger('click');
     }
   }
+
+  /** @abstract Can be overrided by client scripts */
+  // eslint-disable-next-line no-empty-function
+  beforeCkEditorInstanceReady(_editorElem) { }
+
+  /** @abstract Can be overrided by client scripts */
+  // eslint-disable-next-line no-empty-function
+  afterCkEditorInstanceReady(_editor) { }
 
   getCkEditor() {
     return CKEDITOR.instances[this._editorElem.id];
@@ -388,6 +399,5 @@ BackendVisualEditor.getComponent = function getComponent(editorElem) {
 
   return undefined;
 };
-
 
 Quantumart.QP8.BackendVisualEditor = BackendVisualEditor;
