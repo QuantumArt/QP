@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
-using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
@@ -115,7 +111,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static string Pluralize(string input)
         {
-            if(string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(input))
             {
                 return input;
             }
@@ -126,11 +122,23 @@ namespace Quantumart.QP8.BLL.Repository
         private static IEnumerable<TreeNode> GetNodesList(string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId)
         {
             var nodesList = Enumerable.Empty<TreeNode>();
-
-            using (var newScope = new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
-                var sql = TreeMenuSqlHelper.GetTreeNodeSql(entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId);
-                var dataRows = Common.GetDataRows(newScope.DbConnection, sql).ToList();
+                var ctx = QPContext.EFContext;
+                var connection = scope.DbConnection;
+
+                var dataRows = TreeMenu.GetTreeChildNodes(
+                        ctx,
+                        connection,
+                        entityTypeCode,
+                        parentEntityId,
+                        isFolder,
+                        isGroup,
+                        groupItemCode,
+                        entityId,
+                        QPContext.CurrentUserId,
+                        QPContext.IsAdmin)
+                    .ToList();
                 nodesList = MapperFacade.TreeNodeMapper.GetBizList(dataRows);
                 var index = 0;
                 foreach (var node in nodesList)
@@ -138,24 +146,41 @@ namespace Quantumart.QP8.BLL.Repository
                     string countSql = null;
                     if (node.IsFolder)
                     {
-                        countSql = TreeMenuSqlHelper.GetTreeNodeSql(node.Code, node.ParentId, true, node.IsGroup, node.GroupItemCode, 0, true);
+                        var count = TreeMenu.GetTreeChildNodesCount(
+                            ctx,
+                            connection,
+                            node.Code,
+                            node.ParentId,
+                            true,
+                            node.IsGroup,
+                            node.GroupItemCode,
+                            0,
+                            QPContext.CurrentUserId,
+                            QPContext.IsAdmin);
+
+                        node.HasChildren = count > 0;
                     }
                     else if (index == 0 || node.IsRecurring || node.IsGroup)
                     {
-                        countSql = TreeMenuSqlHelper.GetTreeNodeSql(node.Code, node.Id, false, node.IsGroup, node.GroupItemCode, 0, true);
-                    }
-
-                    if (countSql != null)
-                    {
-                        var count = Common.ExecuteScalarLong(newScope.DbConnection, countSql);
+                        var count = TreeMenu.GetTreeChildNodesCount(
+                            ctx,
+                            connection,
+                            node.Code,
+                            node.Id,
+                            false,
+                            node.IsGroup,
+                            node.GroupItemCode,
+                            0,
+                            QPContext.CurrentUserId,
+                            QPContext.IsAdmin);
                         node.HasChildren = count > 0;
                     }
 
                     index++;
                 }
-            }
 
-            return nodesList;
+                return nodesList;
+            }
         }
     }
 }

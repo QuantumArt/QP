@@ -21,9 +21,9 @@ namespace Quantumart.QP8.DAL
             {
                 optionsBuilder.UseNpgsql(_nameOrConnectionString);
             }
-            else if (_dbConnection != null)
+            else if (_connection != null)
             {
-                optionsBuilder.UseNpgsql(_dbConnection);
+                optionsBuilder.UseNpgsql(_connection);
             }
         }
 

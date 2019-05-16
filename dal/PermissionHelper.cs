@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
-namespace Quantumart.QP8.BLL.Repository.Helpers
+namespace Quantumart.QP8.DAL
 {
     public class PermissionHelper
     {
@@ -12,6 +12,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         private const string LevelIncrementPlaceholder = "<@_increment_level_@>";
 
         public static string GetPermittedItemsAsQuery(
+            QPModelDataContext context,
             decimal? userIdParam = 0,
             decimal? groupIdParam = 0,
             int? startLevelParam = 2,
@@ -28,7 +29,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             var parentEntityName = parentEntityNameParam ?? "";
             var parentEntityId = parentEntityIdParam ?? 0;
 
-            var dbType = QPContext.DatabaseType;
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(context);
             var isPostgres = dbType == DatabaseType.Postgres;
             var sql = string.Empty;
 
@@ -85,8 +86,8 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             if (userId > 0)
             {
                 sql = selectUser + groupBy;
-                var user = UserRepository.GetPropertiesById((int)userId);
-                childGroups = user?.Groups?.Select(x => (decimal)x.Id).Distinct().ToList();
+                var user = GetUserPropertiesById(context, userId);
+                childGroups = user?.Groups?.Select(x => x.Id).Distinct().ToList() ?? new List<decimal>();
                 currentLevelAddition += intIncrement;
             }
 
@@ -114,7 +115,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             sql += groupBy;
 
             var usedGroups = childGroups;
-            var parentGroupIds = GetParentGroupIds(childGroups);
+            var parentGroupIds = GetParentGroupIds(context, childGroups);
 
             while (parentGroupIds.Any())
             {
@@ -132,7 +133,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                         .Replace(GroupInListPlaceholder, groupIds);
                     sql += groupBy;
                     usedGroups.AddRange(newParentGroups);
-                    parentGroupIds = GetParentGroupIds(newParentGroups);
+                    parentGroupIds = GetParentGroupIds(context, newParentGroups);
                 }
             }
 
@@ -146,11 +147,18 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 HAVING {minPlExpression} >= {startLevel} and {minPlExpression} <= {endLevel}";
         }
 
-        public static string GetEntityPermissionAsQuery(decimal userId)
+        private static UserDAL GetUserPropertiesById(QPModelDataContext context, decimal userId)
         {
-            var dbType = QPContext.DatabaseType;
+            return context.UserSet
+                .Include(x => x.UserGroupBinds).ThenInclude(y => y.UserGroup)
+                .SingleOrDefault(u => u.Id == userId);
+        }
+
+        public static string GetEntityPermissionAsQuery(QPModelDataContext context, decimal userId)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(context);
             var isPostgres = dbType == DatabaseType.Postgres;
-            var entitySecQuery = GetPermittedItemsAsQuery(userIdParam: userId, startLevelParam: 0, endLevelParam: 100, entityNameParam: "entity_type");
+            var entitySecQuery = GetPermittedItemsAsQuery(context, userIdParam: userId, startLevelParam: 0, endLevelParam: 100, entityNameParam: "entity_type");
             var permissionTable = "entity_type_access_PermLevel";
             if (isPostgres)
             {
@@ -165,9 +173,9 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 			LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL";
         }
 
-        private static List<decimal> GetParentGroupIds(ICollection<decimal> childGroups)
+        private static List<decimal> GetParentGroupIds(QPModelDataContext context, ICollection<decimal> childGroups)
         {
-            return QPContext.EFContext
+            return context
                 .UserGroupSet
                 .Where(x => childGroups.Contains(x.Id))
                 .Include(x => x.ParentGroupToGroupBinds)

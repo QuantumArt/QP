@@ -102,7 +102,7 @@ namespace Quantumart.QP8.DAL
                 {
                     while (dr.Read())
                     {
-                        values.Add((int)(decimal)dr[0], dr[1]?.ToString() ?? String.Empty);
+                        values.Add((int)(decimal)dr[0], dr[1]?.ToString() ?? string.Empty);
                     }
                 }
 
@@ -175,7 +175,7 @@ namespace Quantumart.QP8.DAL
                 conditions.Add("1 = 1");
             }
 
-            var where = " where " + String.Join(" and ", conditions);
+            var where = " where " + string.Join(" and ", conditions);
             var sql = "";
 
             if (ids != null && !isLive && !isVirtual && !returnOnlyIds) //optimization for list of ids
@@ -188,7 +188,7 @@ namespace Quantumart.QP8.DAL
             }
             else
             {
-                sql = String.Format(baseSql, isLive ? string.Empty : "_united", where, "");
+                sql = string.Format(baseSql, isLive ? string.Empty : "_united", where, "");
             }
 
             using (var cmd = DbCommandFactory.Create(sql, connection))
@@ -657,7 +657,7 @@ namespace Quantumart.QP8.DAL
                     "select content_item_id, cast({5} as decimal) as field_id from content_{1}{3} with(nolock) where [{0}] {2} {4}",
                     fi.Name, fi.ContentId, action, suffix, isArchive, fi.Id));
 
-                var sql = String.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
+                var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
 
                 using (var cmd = DbCommandFactory.Create(sql, connection))
                 {
@@ -715,7 +715,7 @@ namespace Quantumart.QP8.DAL
                 fi.Name, fi.ContentId, suffix, isArchive, fi.Id
             ));
 
-            var sql = String.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
+            var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
@@ -10411,5 +10411,7 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
         }
+
+
     }
 }

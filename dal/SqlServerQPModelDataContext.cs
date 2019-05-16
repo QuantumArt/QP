@@ -22,9 +22,9 @@ namespace Quantumart.QP8.DAL
             {
                 optionsBuilder.UseSqlServer(_nameOrConnectionString);
             }
-            else if (_dbConnection != null)
+            else if (_connection != null)
             {
-                optionsBuilder.UseSqlServer(_dbConnection);
+                optionsBuilder.UseSqlServer(_connection);
             }
         }
     }

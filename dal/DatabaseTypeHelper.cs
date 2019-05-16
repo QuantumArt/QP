@@ -12,5 +12,20 @@ namespace Quantumart.QP8.DAL
                 : DatabaseType.SqlServer;
         }
 
+        public static DatabaseType ResolveDatabaseType(QPModelDataContext context)
+        {
+            switch (context)
+            {
+                case SqlServerQPModelDataContext _:
+                    return DatabaseType.SqlServer;
+                case NpgSqlQPModelDataContext _:
+                    return DatabaseType.Postgres;
+                default:
+                    return DatabaseType.Unknown;
+            }
+        }
+
+
+
     }
 }

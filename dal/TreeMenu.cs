@@ -1,31 +1,48 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
-using Quantumart.QP8.BLL.Facades;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL;
-using Quantumart.QP8.DAL.Entities;
 
-namespace Quantumart.QP8.BLL.Repository.Helpers
+namespace Quantumart.QP8.DAL
 {
-    public class TreeMenuSqlHelper
+    public static class TreeMenu
     {
-        public static string GetTreeNodeSql(string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, bool countOnly = false)
+        public static IEnumerable<DataRow> GetTreeChildNodes(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin)
         {
-            parentEntityId = parentEntityId ?? 0;
+            var query = GetSqlQuery(context, connection, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId, userId, isAdmin, false);
+            return Common.GetDataRows(connection, query);
+        }
 
-            var userId = QPContext.CurrentUserId;
-            var user = UserRepository.GetById(userId);
+        public static long GetTreeChildNodesCount(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin)
+        {
+            var query = GetSqlQuery(context, connection, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId, userId, isAdmin, true);
+            return string.IsNullOrWhiteSpace(query) ? 0 : Common.ExecuteScalarLong(connection, query);
+        }
+
+
+
+        private static string GetSqlQuery(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin, bool countOnly = false)
+        {
+            var user = context.UserSet.SingleOrDefault(x => x.Id == userId);
+
             var enableContentGrouping = (entityTypeCode != EntityTypeCode.Content && entityTypeCode != EntityTypeCode.VirtualContent)
                 || user.EnableContentGroupingInTree;
 
-            var entityTypes = EntityTypeRepository.GetList();
+            var entityTypes = context.EntityTypeSet
+                .Include(x => x.Parent)
+                .Include(x => x.CancelAction)
+                .Include(x => x.ContextMenu);
             var entityType = entityTypes.FirstOrDefault(x => x.Code.Equals(entityTypeCode, StringComparison.InvariantCultureIgnoreCase));
+
             var parentGroupCode = entityType == null || !enableContentGrouping
                 ? null
                 : entityTypes.FirstOrDefault(x => x.Id == entityType.GroupParentId)?.Code;
 
-            var realParentId = isGroup ? EntityTypeRepository.GetParentEntityId((decimal)parentEntityId, entityTypeCode) : parentEntityId;
+            var realParentId = isGroup ? GetParentEntityId(context, connection, (decimal)parentEntityId, entityTypeCode) : parentEntityId;
 
             var currentIsGroup = false;
             string currentGroupItemCode = null;
@@ -52,23 +69,17 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             }
 
             var newEntityType = entityTypes.FirstOrDefault(x => x.Code.Equals(newEntityTypeCode, StringComparison.InvariantCultureIgnoreCase));
-            var entityTypeDal = MapperFacade.EntityTypeMapper.GetDalObject(newEntityType);
 
-            return GetSql(parentEntityId, isGroup, entityId, countOnly, newIsFolder, newEntityTypeCode, entityTypeDal, realParentId,  currentIsGroup, currentGroupItemCode, userId, QPContext.IsAdmin);
-        }
-
-        private static string GetSql(int? parentEntityId, bool isGroup, int entityId, bool countOnly, bool isFolder, string newEntityTypeCode, EntityTypeDAL entityType, decimal? realParentId, bool currentIsGroup, string currentGroupItemCode, int userId, bool isAdmin)
-        {
             var realParentIdStr = realParentId.HasValue ? realParentId.ToString() : "NULL";
-            var iconField = entityType?.IconField ?? "NULL";
-            var iconModifierField = entityType?.IconModifierField ?? "NULL";
+            var iconField = newEntityType?.IconField ?? "NULL";
+            var iconModifierField = newEntityType?.IconModifierField ?? "NULL";
 
-            var parentIdField = entityType?.ParentIdField;
+            var parentIdField = newEntityType?.ParentIdField;
             string realParentIdField = null;
             if (isGroup)
             {
                 realParentIdField = parentIdField;
-                parentIdField = entityType?.GroupParentIdField;
+                parentIdField = newEntityType?.GroupParentIdField;
             }
 
             var sqlSb = new StringBuilder();
@@ -76,15 +87,15 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             var whereSb = new StringBuilder();
             var orderSb = new StringBuilder();
             var sql = string.Empty;
-            var databaseType = QPContext.DatabaseType;
-            if (isFolder || !string.IsNullOrWhiteSpace(entityType?.RecurringIdField))
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(context);
+            if (newIsFolder || !string.IsNullOrWhiteSpace(newEntityType?.RecurringIdField))
             {
-                if (entityType?.HasItemNodes ?? false)
+                if (newEntityType?.HasItemNodes ?? false)
                 {
-                    var orderColumn = (string.IsNullOrWhiteSpace(entityType.OrderField) ? entityType.TitleField : entityType.OrderField).FixColumnName(databaseType);
+                    var orderColumn = (string.IsNullOrWhiteSpace(newEntityType.OrderField) ? newEntityType.TitleField : newEntityType.OrderField).FixColumnName(databaseType);
                     selectSb.AppendLine($@"
-                        {entityType.Source}.{entityType.IdField} AS id,
-                        {entityType.TitleField} AS title,
+                        {newEntityType.Source}.{newEntityType.IdField} AS id,
+                        {newEntityType.TitleField} AS title,
                         {iconField} as icon,
                         {iconModifierField} as icon_modifier,
                         {orderColumn} as sortorder
@@ -96,46 +107,46 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                         whereSb.AppendLine($" AND {parentIdField} = {parentEntityId}");
                     }
 
-                    if (!string.IsNullOrWhiteSpace(entityType.RecurringIdField))
+                    if (!string.IsNullOrWhiteSpace(newEntityType.RecurringIdField))
                     {
-                        whereSb.AppendLine($" AND {entityType.RecurringIdField} {(isFolder ? " is null" : $" = {parentEntityId}")}");
+                        whereSb.AppendLine($" AND {newEntityType.RecurringIdField} {(newIsFolder ? " is null" : $" = {parentEntityId}")}");
                     }
 
                     if (entityId != 0)
                     {
-                        whereSb.AppendLine($" AND {entityType.Source}.{entityType.IdField} = {entityId}");
+                        whereSb.AppendLine($" AND {newEntityType.Source}.{newEntityType.IdField} = {entityId}");
                     }
 
                     orderSb.AppendLine(orderColumn);
                 }
 
-                if (string.IsNullOrWhiteSpace(entityType.SourceSP))
+                if (string.IsNullOrWhiteSpace(newEntityType.SourceSP))
                 {
-                    if (!string.IsNullOrWhiteSpace(selectSb.ToString()) && !string.IsNullOrWhiteSpace(entityType.Source) && !string.IsNullOrWhiteSpace(whereSb.ToString()))
+                    if (!string.IsNullOrWhiteSpace(selectSb.ToString()) && !string.IsNullOrWhiteSpace(newEntityType.Source) && !string.IsNullOrWhiteSpace(whereSb.ToString()))
                     {
-                        sqlSb.AppendLine($"select {selectSb} from {entityType.Source} where {whereSb}");
+                        sqlSb.AppendLine($"select {selectSb} from {newEntityType.Source} where {whereSb}");
                     }
                 }
                 else
                 {
                     decimal? siteId;
-                    switch (entityType.SourceSP)
+                    switch (newEntityType.SourceSP)
                     {
                         case "qp_sites_list":
-                            sqlSb.AppendLine(GetSitesListSql(selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), false, userId, isAdmin));
+                            sqlSb.AppendLine(GetSitesListSql(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), false, userId, isAdmin));
                             break;
                         case "qp_real_content_list":
                             siteId = !string.IsNullOrWhiteSpace(realParentIdField) ? (decimal?)realParentId.Value : parentEntityId;
-                            sqlSb.AppendLine(GetContentListSql(selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), false, siteId, userId, isAdmin));
+                            sqlSb.AppendLine(GetContentListSql(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), false, siteId, userId, isAdmin));
                             break;
                         case "qp_virtual_content_list":
                             siteId = realParentId.HasValue ? (decimal?)realParentId.Value : parentEntityId;
-                            sqlSb.AppendLine(GetContentListSql(selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), true, siteId, userId, isAdmin));
+                            sqlSb.AppendLine(GetContentListSql(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), true, siteId, userId, isAdmin));
                             break;
                         case "qp_site_folder_list":
                             siteId = realParentId.HasValue ? (decimal?)realParentId.Value : parentEntityId;
-                            var parentFolderId = isFolder ? 0 : parentEntityId.Value;
-                            sqlSb.AppendLine(GetSiteFolderList(selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), siteId, parentFolderId, userId, isAdmin));
+                            var parentFolderId = newIsFolder ? 0 : parentEntityId.Value;
+                            sqlSb.AppendLine(GetSiteFolderList(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), siteId, parentFolderId, userId, isAdmin));
                             break;
                     }
                 }
@@ -158,9 +169,9 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                     $"WHEN i.ICON_MODIFIER is not null THEN {ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", CastToString(databaseType, "i.ICON_MODIFIER"), "'.gif'")}\n" +
                     $"ELSE {ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", "'.gif'")} END\n" +
                     "AS icon,\n" +
-                    $"{NullableDbValue(databaseType, entityType?.DefaultActionId)} AS default_action_id,\n" +
-                    $"{NullableDbValue(databaseType, entityType?.ContextMenuId)} as context_menu_id,\n" +
-                    $"{ToBoolSql(databaseType, string.IsNullOrWhiteSpace(entityType?.RecurringIdField))} as is_recurring,\n" +
+                    $"{NullableDbValue(databaseType, newEntityType?.DefaultActionId)} AS default_action_id,\n" +
+                    $"{NullableDbValue(databaseType, newEntityType?.ContextMenuId)} as context_menu_id,\n" +
+                    $"{ToBoolSql(databaseType, string.IsNullOrWhiteSpace(newEntityType?.RecurringIdField))} as is_recurring,\n" +
                     "i.id,\n" +
                     "i.title,\n" +
                     "i.sortorder\n" +
@@ -172,7 +183,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 var condition = $" et.disabled = {ToBoolSql(databaseType, false)}";
                 condition += string.IsNullOrWhiteSpace(newEntityTypeCode)
                     ? " and et.parent_id is null "
-                    : $" and et.parent_id = {entityType.Id} ";
+                    : $" and et.parent_id = {newEntityType.Id} ";
 
                 var useSecurity = !isAdmin;
 
@@ -180,7 +191,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 if (useSecurity)
                 {
                     condition += " and s.permission_level > 0 ";
-                    securitySql = PermissionHelper.GetEntityPermissionAsQuery(userId);
+                    securitySql = PermissionHelper.GetEntityPermissionAsQuery(context, userId);
                 }
 
                 if (entityId != 0)
@@ -240,31 +251,9 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 ";
         }
 
-        private static string CastToString(DatabaseType databaseType, string columnName)
-        {
-            switch (databaseType)
-            {
-                case DatabaseType.SqlServer:
-                    return $"CAST({columnName} as nvarchar)";
-                case DatabaseType.Postgres:
-                    return $"{columnName}::varchar";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
-        }
 
-        private static string NullableDbValue(DatabaseType databaseType, int? value)
-        {
-            switch (databaseType)
-            {
-                case DatabaseType.SqlServer:
-                    return value.HasValue ? value.ToString() : "NULL";
-                case DatabaseType.Postgres:
-                    return value.HasValue ? value.ToString() : "NULL::numeric";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
-        }
+
+
 
         private static string ConcatStrValuesSql(DatabaseType databaseType, params string[] p)
         {
@@ -274,6 +263,55 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                     return string.Join(" + ", p);
                 case DatabaseType.Postgres:
                     return string.Join(" || ", p);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        private static string GetContentListSql(QPModelDataContext context, string select, string filter, string orderBy, bool isVirtual, decimal? siteId, int userId, bool isAdmin)
+        {
+            if (string.IsNullOrWhiteSpace(orderBy))
+            {
+                orderBy = "content_id";
+            }
+
+            if (string.IsNullOrWhiteSpace(@select))
+            {
+                @select = "content.*, u.login";
+            }
+
+            if (!@select.Contains("as sortorder"))
+            {
+                @select += $", {orderBy} as sortorder";
+            }
+
+            filter += $" and virtual_type {(isVirtual ? "<> 0" : "=0")}";
+
+            var useSecurity = !isAdmin;
+            var securitySql = string.Empty;
+            if (useSecurity)
+            {
+                securitySql = PermissionHelper.GetPermittedItemsAsQuery(context, userIdParam: userId, startLevelParam: 1, entityNameParam: "content", parentEntityNameParam: "site", parentEntityIdParam: siteId);
+            }
+
+            var sql = $@"
+                select {@select}
+                from content inner join users as u on content.last_modified_by = u.user_id
+                {(!useSecurity ? string.Empty : $"inner join ( {securitySql} ) as pi on content.content_id = pi.content_id and pi.hide = 0 ")}
+                where content.site_id = {siteId}
+                {(string.IsNullOrWhiteSpace(filter) ? string.Empty : $"and {filter}")}
+                ";
+            return sql;
+        }
+
+        private static string CastToString(DatabaseType databaseType, string columnName)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"CAST({columnName} as nvarchar)";
+                case DatabaseType.Postgres:
+                    return $"{columnName}::varchar";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }
@@ -292,21 +330,70 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             }
         }
 
-        private static string GetSiteFolderList(string select, string filter, string orderBy, decimal? siteId, int parentFolderId, int userId, bool isAdmin)
+        private static string GetSitesListSql(QPModelDataContext context, string select, string filter, string orderBy, bool siteIdOnly, int userId, bool isAdmin)
+        {
+            if (string.IsNullOrWhiteSpace(orderBy))
+            {
+                orderBy = "site_id";
+            }
+
+            if (string.IsNullOrWhiteSpace(@select))
+            {
+                @select = "site.*, u.login";
+            }
+
+            if (!@select.Contains("as sortorder"))
+            {
+                @select += $", {orderBy} as sortorder";
+            }
+
+
+
+            var useSecurity = !isAdmin;
+            var securitySql = string.Empty;
+            if (useSecurity)
+            {
+                securitySql = PermissionHelper.GetPermittedItemsAsQuery(context, userIdParam: userId, startLevelParam: 1, entityNameParam: "site");
+            }
+
+            var sql = $@"
+                select {(siteIdOnly ? "site.site_id" : @select)}
+                from site
+                inner join users as u on site.last_modified_by = u.user_id
+                {(!useSecurity ? string.Empty : $"inner join ( {securitySql} ) as pi on site.site_id = pi.site_id ")}
+                {(string.IsNullOrWhiteSpace(filter) ? string.Empty : $"and {filter}")}
+                ";
+            return sql;
+        }
+
+        private static string NullableDbValue(DatabaseType databaseType, int? value)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return value.HasValue ? value.ToString() : "NULL";
+                case DatabaseType.Postgres:
+                    return value.HasValue ? value.ToString() : "NULL::numeric";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        private static string GetSiteFolderList(QPModelDataContext context, string select, string filter, string orderBy, decimal? siteId, int parentFolderId, int userId, bool isAdmin)
         {
             if (string.IsNullOrWhiteSpace(orderBy))
             {
                 orderBy = "folder_id";
             }
 
-            if (string.IsNullOrWhiteSpace(select))
+            if (string.IsNullOrWhiteSpace(@select))
             {
-                select = "folder.*, u.login";
+                @select = "folder.*, u.login";
             }
 
-            if (!select.Contains("as sortorder"))
+            if (!@select.Contains("as sortorder"))
             {
-                select += $", {orderBy} as sortorder";
+                @select += $", {orderBy} as sortorder";
             }
 
             var useSecurity = !isAdmin;
@@ -315,87 +402,30 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             var parentEntityName = parentFolderId != 0 ? "parent_folder" : "site";
             if (useSecurity)
             {
-                securitySql = PermissionHelper.GetPermittedItemsAsQuery(userIdParam: userId, startLevelParam: 1, entityNameParam: "folder", parentEntityNameParam: parentEntityName, parentEntityIdParam: parentEntityId);
+                securitySql = PermissionHelper.GetPermittedItemsAsQuery(context, userIdParam: userId, startLevelParam: 1, entityNameParam: "folder", parentEntityNameParam: parentEntityName, parentEntityIdParam: parentEntityId);
             }
 
             var sql = $@"
-                select {select} from folder inner join users as u on folder.last_modified_by = u.user_id
+                select {@select} from folder inner join users as u on folder.last_modified_by = u.user_id
                 {(!useSecurity ? string.Empty : $"inner join ( {securitySql} ) as pi on folder.folder_id = pi.folder_id ")}
                 {(string.IsNullOrWhiteSpace(filter) ? string.Empty : $" and {filter}")}
                 ";
             return sql;
         }
 
-        private static string GetContentListSql(string select, string filter, string orderBy, bool isVirtual, decimal? siteId, int userId, bool isAdmin)
+
+        private static decimal? GetParentEntityId(QPModelDataContext context, DbConnection connection, decimal entityId, string entityTypeCode)
         {
-            if (string.IsNullOrWhiteSpace(orderBy))
+            var entity = context.EntityTypeSet.FirstOrDefault(x => x.Code.Equals(entityTypeCode, StringComparison.InvariantCultureIgnoreCase));
+            if (entity?.Source == null || entity.IdField == null)
             {
-                orderBy = "content_id";
+                return null;
             }
 
-            if (string.IsNullOrWhiteSpace(select))
-            {
-                select = "content.*, u.login";
-            }
+            return Common.GetNumericFieldValue(connection, entity.ParentIdField, entity.Source, entity.IdField, entityId);
 
-            if (!select.Contains("as sortorder"))
-            {
-                select += $", {orderBy} as sortorder";
-            }
-
-            filter += $" and virtual_type {(isVirtual ? "<> 0" : "=0")}";
-
-            var useSecurity = !isAdmin;
-            var securitySql = string.Empty;
-            if (useSecurity)
-            {
-                securitySql = PermissionHelper.GetPermittedItemsAsQuery(userIdParam: userId, startLevelParam: 1, entityNameParam: "content", parentEntityNameParam: "site", parentEntityIdParam: siteId);
-            }
-
-            var sql = $@"
-                select {select}
-                from content inner join users as u on content.last_modified_by = u.user_id
-                {(!useSecurity ? string.Empty : $"inner join ( {securitySql} ) as pi on content.content_id = pi.content_id and pi.hide = 0 ")}
-                where content.site_id = {siteId}
-                {(string.IsNullOrWhiteSpace(filter) ? string.Empty : $"and {filter}")}
-                ";
-            return sql;
         }
 
-        private static string GetSitesListSql(string select, string filter, string orderBy, bool siteIdOnly, int userId, bool isAdmin)
-        {
-            if (string.IsNullOrWhiteSpace(orderBy))
-            {
-                orderBy = "site_id";
-            }
 
-            if (string.IsNullOrWhiteSpace(select))
-            {
-                select = "site.*, u.login";
-            }
-
-            if (!select.Contains("as sortorder"))
-            {
-                select += $", {orderBy} as sortorder";
-            }
-
-
-
-            var useSecurity = !isAdmin;
-            var securitySql = string.Empty;
-            if (useSecurity)
-            {
-                securitySql = PermissionHelper.GetPermittedItemsAsQuery(userIdParam: userId, startLevelParam: 1, entityNameParam: "site");
-            }
-
-            var sql = $@"
-                select {(siteIdOnly ? "site.site_id" : select)}
-                from site
-                inner join users as u on site.last_modified_by = u.user_id
-                {(!useSecurity ? string.Empty : $"inner join ( {securitySql} ) as pi on site.site_id = pi.site_id ")}
-                {(string.IsNullOrWhiteSpace(filter) ? string.Empty : $"and {filter}")}
-                ";
-            return sql;
-        }
     }
 }
