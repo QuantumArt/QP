@@ -22,7 +22,7 @@
   string currentTheme = HttpContext.Current.Session[HttpContextSession.CurrentCssTheme].ToString();
   <script>
     $(function () {
-      var headIconTemplate = function (settings) {
+      var headIconTpl = function (settings) {
         return function () {
           return '<img ' +
             'src="' +
@@ -34,7 +34,7 @@
             '/>';
         };
       };
-      var bodyIconTemplate = function (settings) {
+      var bodyIconTpl = function (settings) {
         return function (dataItem) {
           return '<img ' +
             'src="' +
@@ -88,33 +88,33 @@
         { field: '@FieldName.ContentItemId', title: '@FieldName.Id', attributes: { 'class': 'id' }, width: 58 },
         {
           field: '@FieldName.LockedBy',
-          headerTemplate: headIconTemplate({ url: 'grid/header_icons/lock.gif', title: '@ArticleStrings.IsLockedHeaderTooltip' }),
+          headerTemplate: headIconTpl({ url: 'grid/header_icons/lock.gif', title: '@ArticleStrings.IsLockedHeaderTooltip' }),
           headerAttributes: { 'class': 't-image-header isCentered' },
-          template: bodyIconTemplate({ icon: '@FieldName.LockedByIcon', tooltip: '@FieldName.LockedByTooltip' }),
+          template: bodyIconTpl({ icon: '@FieldName.LockedByIcon', tooltip: '@FieldName.LockedByTooltip' }),
           attributes: { 'class': 'isCentered' },
           width: 47
         },
         {
           field: '@FieldName.Scheduled',
-          headerTemplate: headIconTemplate({ url: 'grid/header_icons/scheduled.gif', title: '@ArticleStrings.IsScheduledTooltip' }),
+          headerTemplate: headIconTpl({ url: 'grid/header_icons/scheduled.gif', title: '@ArticleStrings.IsScheduledTooltip' }),
           headerAttributes: { 'class': 't-image-header isCentered' },
-          template: bodyIconTemplate({ icon: '@FieldName.ScheduledIcon', tooltip: '@FieldName.ScheduledTooltip' }),
+          template: bodyIconTpl({ icon: '@FieldName.ScheduledIcon', tooltip: '@FieldName.ScheduledTooltip' }),
           attributes: { 'class': 'isCentered' },
           width: 47
         },
         {
           field: '@FieldName.Splitted',
-          headerTemplate: headIconTemplate({ url: 'grid/header_icons/splited.gif', title: '@ArticleStrings.IsSplitedTooltip' }),
+          headerTemplate: headIconTpl({ url: 'grid/header_icons/splited.gif', title: '@ArticleStrings.IsSplitedTooltip' }),
           headerAttributes: { 'class': 't-image-header isCentered' },
-          template: bodyIconTemplate({ icon: '@FieldName.SplittedIcon', tooltip: '@FieldName.SplittedTooltip' }),
+          template: bodyIconTpl({ icon: '@FieldName.SplittedIcon', tooltip: '@FieldName.SplittedTooltip' }),
           attributes: { 'class': 'isCentered' },
           width: 47
         },
         {
           field: '@FieldName.Visible',
-          headerTemplate: headIconTemplate({ url: 'grid/header_icons/invisible.gif', title: '@ArticleStrings.IsInvisibleTooltip' }),
+          headerTemplate: headIconTpl({ url: 'grid/header_icons/invisible.gif', title: '@ArticleStrings.IsInvisibleTooltip' }),
           headerAttributes: { 'class': 't-image-header isCentered' },
-          template: bodyIconTemplate({ icon: '@FieldName.VisibleIcon', tooltip: '@FieldName.VisibleTooltip' }),
+          template: bodyIconTpl({ icon: '@FieldName.VisibleIcon', tooltip: '@FieldName.VisibleTooltip' }),
           attributes: { 'class': 'isCentered' },
           width: 47
         },
