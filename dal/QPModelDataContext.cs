@@ -13,26 +13,26 @@ namespace Quantumart.QP8.DAL
 {
     public abstract class QPModelDataContext : DbContext
     {
-        public static readonly LoggerFactory MyLoggerFactory
+        private static readonly LoggerFactory MyLoggerFactory
             = new LoggerFactory(new[] {new EventLogLoggerProvider(new EventLogSettings{LogName="QPEFcore", SourceName="LocalQP8EfCore"})});
 
         protected readonly string _nameOrConnectionString;
+        protected readonly DbConnection _connection;
 
-        public QPModelDataContext()
+        protected QPModelDataContext()
         {
             // _nameOrConnectionString = "name=QP8Entities";
         }
 
-        public QPModelDataContext(string nameOrConnectionString)
+        protected QPModelDataContext(string nameOrConnectionString)
         {
             _nameOrConnectionString = nameOrConnectionString;
-
-
         }
 
-        public QPModelDataContext(DbConnection dbConnection)
+        protected QPModelDataContext(DbConnection dbConnection)
         {
-            _dbConnection = dbConnection;
+
+            _connection = dbConnection;
         }
 
 
@@ -130,7 +130,6 @@ namespace Quantumart.QP8.DAL
         public DbSet<CdcLastExecutedLsn> CdcLastExecutedLsn { get; set; }
         public DbSet<SystemNotificationDAL> SystemNotificationSet { get; set; }
 
-        protected readonly DbConnection _dbConnection;
 
         public static readonly string CountColumn = "ROWS_COUNT";
 

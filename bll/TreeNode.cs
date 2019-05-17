@@ -16,6 +16,8 @@ namespace Quantumart.QP8.BLL
 
         public bool IsGroup { get; set; }
 
+        public bool IsRecurring { get; set; }
+
         public string GroupItemCode { get; set; }
 
         public string Icon { get; set; }

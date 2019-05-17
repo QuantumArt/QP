@@ -47,8 +47,8 @@ namespace Quantumart.QP8.DAL.Entities
         public Nullable<int> CancelActionId { get; set; }
         public string ContextName { get; set; }
         public bool ACTION_PERMISSION_ENABLE { get; set; }
-        public Nullable<int> GROUP_PARENT_ID { get; set; }
-        public string GROUP_PARENT_ID_FIELD { get; set; }
+        public Nullable<int> GroupParentId { get; set; }
+        public string GroupParentIdField { get; set; }
 
         public ICollection<BackendActionDAL> Actions { get; set; }
         public BackendActionDAL DefaultAction { get; set; }
@@ -68,8 +68,8 @@ namespace Quantumart.QP8.DAL.Entities
             {
                 builder.ToTable("ENTITY_TYPE");
 
-                builder.Property(x => x.GROUP_PARENT_ID_FIELD).HasColumnName("GROUP_PARENT_ID_FIELD");
-				builder.Property(x => x.GROUP_PARENT_ID).HasColumnName("GROUP_PARENT_ID");
+                builder.Property(x => x.GroupParentIdField).HasColumnName("GROUP_PARENT_ID_FIELD");
+				builder.Property(x => x.GroupParentId).HasColumnName("GROUP_PARENT_ID");
 				builder.Property(x => x.ACTION_PERMISSION_ENABLE).HasColumnName("ACTION_PERMISSION_ENABLE");
 				builder.Property(x => x.ContextName).HasColumnName("CONTEXT_NAME");
 				builder.Property(x => x.CancelActionId).HasColumnName("CANCEL_ACTION_ID");

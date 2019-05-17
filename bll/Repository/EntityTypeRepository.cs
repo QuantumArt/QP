@@ -10,7 +10,12 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class EntityTypeRepository
     {
-        private static IQueryable<EntityTypeDAL> DefaultEntityTypeQuery => QPContext.EFContext.EntityTypeSet.Include("Parent").Include("CancelAction").Include("ContextMenu");
+        private static IQueryable<EntityTypeDAL> DefaultEntityTypeQuery => QPContext
+            .EFContext
+            .EntityTypeSet
+            .Include(x => x.Parent)
+            .Include(x => x.CancelAction)
+            .Include(x => x.ContextMenu);
 
         /// <summary>
         /// Возвращает тип сущности по ее идентификатору
@@ -71,6 +76,24 @@ namespace Quantumart.QP8.BLL.Repository
         internal static string GetDefaultActionCodeByEntityTypeCode(string entityTypeCode)
         {
             return QPContext.EFContext.EntityTypeSet.Include("DefaultAction").SingleOrDefault(et => et.Code == entityTypeCode).DefaultAction?.Code;
+        }
+
+        internal static decimal? GetParentEntityId(decimal entityId, string entityTypeCode)
+        {
+            var entityTypes = GetList();
+
+            var entity = entityTypes.FirstOrDefault(x => x.Code.Equals(entityTypeCode, StringComparison.InvariantCultureIgnoreCase));
+
+            if (entity?.Source == null || entity.IdField == null)
+            {
+                return null;
+            }
+
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetNumericFieldValue(scope.DbConnection, entity.ParentIdField, entity.Source, entity.IdField, entityId);
+            }
+            
         }
     }
 }

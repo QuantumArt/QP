@@ -24,9 +24,22 @@ namespace Quantumart.QP8.BLL.Mappers
         public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<EntityType, EntityTypeDAL>(MemberList.Destination)
-                .ForMember(data => data.Source, opt => opt.Ignore())
-                .ForMember(data => data.IdField, opt => opt.Ignore())
-                .ForMember(data => data.ParentIdField, opt => opt.Ignore());
+                // .ForMember(data => data.Source, opt => opt.Ignore())
+                // .ForMember(data => data.IdField, opt => opt.Ignore())
+                // .ForMember(data => data.ParentIdField, opt => opt.Ignore())
+                .ForMember(data => data.FolderIcon, opt => opt.Ignore())
+                .ForMember(data => data.FolderDefaultActionId, opt => opt.Ignore())
+                .ForMember(data => data.FolderContextMenuId, opt => opt.Ignore())
+                .ForMember(data => data.ACTION_PERMISSION_ENABLE, opt => opt.Ignore())
+                .ForMember(data => data.Actions, opt => opt.Ignore())
+                .ForMember(data => data.DefaultAction, opt => opt.Ignore())
+                .ForMember(data => data.FolderDefaultAction, opt => opt.Ignore())
+                .ForMember(data => data.Children, opt => opt.Ignore())
+                // .ForMember(data => data.Parent, opt => opt.Ignore())
+                // .ForMember(data => data.CancelAction, opt => opt.Ignore())
+                // .ForMember(data => data.FolderContextMenu, opt => opt.Ignore())
+                // .ForMember(data => data.ENTITY_TYPE_ACCESS, opt => opt.Ignore())
+                ;
         }
     }
 }

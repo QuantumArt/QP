@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL.Models.XmlDbUpdate;
+using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 
 namespace Quantumart.QP8.BLL.Repository.XmlDbUpdate
 {

@@ -102,7 +102,7 @@ namespace Quantumart.QP8.DAL
                 {
                     while (dr.Read())
                     {
-                        values.Add((int)(decimal)dr[0], dr[1]?.ToString() ?? String.Empty);
+                        values.Add((int)(decimal)dr[0], dr[1]?.ToString() ?? string.Empty);
                     }
                 }
 
@@ -175,7 +175,7 @@ namespace Quantumart.QP8.DAL
                 conditions.Add("1 = 1");
             }
 
-            var where = " where " + String.Join(" and ", conditions);
+            var where = " where " + string.Join(" and ", conditions);
             var sql = "";
 
             if (ids != null && !isLive && !isVirtual && !returnOnlyIds) //optimization for list of ids
@@ -188,7 +188,7 @@ namespace Quantumart.QP8.DAL
             }
             else
             {
-                sql = String.Format(baseSql, isLive ? string.Empty : "_united", where, "");
+                sql = string.Format(baseSql, isLive ? string.Empty : "_united", where, "");
             }
 
             using (var cmd = DbCommandFactory.Create(sql, connection))
@@ -285,6 +285,29 @@ namespace Quantumart.QP8.DAL
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static IEnumerable<DataRow> GetDataRows(DbConnection connection, string sqlString)
+        {
+            using (var cmd = DbCommandFactory.Create(sqlString, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var dt = new DataTable();
+                DataAdapterFactory.Create(cmd).Fill(dt);
+                return dt.AsEnumerable().ToArray();
+            }
+        }
+
+
+
+        public static long ExecuteScalarLong(DbConnection connection, string sqlString)
+        {
+            using (var cmd = DbCommandFactory.Create(sqlString, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var result = cmd.ExecuteScalar();
+                return Convert.ToInt64(result);
             }
         }
 
@@ -634,7 +657,7 @@ namespace Quantumart.QP8.DAL
                     "select content_item_id, cast({5} as decimal) as field_id from content_{1}{3} with(nolock) where [{0}] {2} {4}",
                     fi.Name, fi.ContentId, action, suffix, isArchive, fi.Id));
 
-                var sql = String.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
+                var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
 
                 using (var cmd = DbCommandFactory.Create(sql, connection))
                 {
@@ -692,7 +715,7 @@ namespace Quantumart.QP8.DAL
                 fi.Name, fi.ContentId, suffix, isArchive, fi.Id
             ));
 
-            var sql = String.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
+            var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
@@ -987,7 +1010,7 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
                 var result = cmd.ExecuteScalar();
-                return (long)result > 0;
+                return Convert.ToInt64(result) > 0;
             }
         }
 
@@ -2981,6 +3004,8 @@ namespace Quantumart.QP8.DAL
 
 
 
+
+
         public static DataRow GetContextMenuById(DbConnection sqlConnection, int userId, int menuId, bool loadRelatedData = false)
         {
             using (var cmd = DbCommandFactory.Create("qp_get_context_menu_by_id", sqlConnection))
@@ -4594,7 +4619,8 @@ namespace Quantumart.QP8.DAL
 
         public static void UnlockAllArticlesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            const string query = @"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var databaseType = GetDatabaseType(sqlConnection);
+            var query = $"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = {GetBoolValue(false, databaseType)} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4605,12 +4631,26 @@ namespace Quantumart.QP8.DAL
 
         public static void UnlockAllSitesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            const string query = @"update [SITE] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var databaseType = GetDatabaseType(sqlConnection);
+            var query = $"update {EscapeObjectName("SITE", databaseType)} set locked_by = null, locked = null where permanent_lock = {GetBoolValue(false, databaseType)} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static string GetBoolValue(bool value, DatabaseType databaseType)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return value ? "1" : "0";
+                case DatabaseType.Postgres:
+                    return value ? "TRUE" : "FALSE";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }
         }
 
@@ -5158,6 +5198,12 @@ namespace Quantumart.QP8.DAL
                 return (string)cmd.Parameters["@SQLOut"].Value;
             }
         }
+
+        public static string GetPermittedItemsAsQueryV2(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityName, string parentEntityName, int parentEntityId)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public static bool TestM2MValue(DbConnection sqlConnection, int linkId, int articleId, int testArticleId)
         {
@@ -5775,7 +5821,9 @@ namespace Quantumart.QP8.DAL
 
         public static void UnlockAllTemplatesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            const string templateQuery = @"update [PAGE_TEMPLATE] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var databaseType = GetDatabaseType(sqlConnection);
+            var falseValueStr = GetBoolValue(false, databaseType);
+            var templateQuery = $"update {EscapeObjectName("PAGE_TEMPLATE", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(templateQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5783,7 +5831,7 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
 
-            const string pageQuery = @"update [PAGE] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var pageQuery = $"update {EscapeObjectName("PAGE", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(pageQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5791,7 +5839,7 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
 
-            const string objectQuery = @"update [OBJECT] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var objectQuery = $"update {EscapeObjectName("OBJECT", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(objectQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5799,12 +5847,38 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
 
-            const string formatQuery = @"update [OBJECT_FORMAT] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
+            var formatQuery = $"update {EscapeObjectName("OBJECT_FORMAT", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(formatQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static string EscapeObjectName(string objectName, DatabaseType databaseType)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"[{objectName}]";
+                case DatabaseType.Postgres:
+                    return $"\"{objectName.ToLower()}\"";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        private static DatabaseType GetDatabaseType(DbConnection connection)
+        {
+            switch (connection)
+            {
+                case SqlConnection _:
+                    return DatabaseType.SqlServer;
+                case NpgsqlConnection _:
+                    return DatabaseType.Postgres;
+                default:
+                    return DatabaseType.Unknown;
             }
         }
 
@@ -6276,12 +6350,13 @@ namespace Quantumart.QP8.DAL
 
         public static int GetDefaultGroupId(DbConnection sqlConnection, int siteId)
         {
-            var query = $@"select [dbo].qp_default_group_id({siteId})";
+            var query = $@"select content_group_id from content_group where site_id = {siteId} and name = 'Default Group'";
+            // var query = $@"select [dbo].qp_default_group_id({siteId})";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var result = cmd.ExecuteScalar();
-                return DBNull.Value.Equals(result) ? 0 : (int)result;
+                return DBNull.Value.Equals(result) ? 0 : Convert.ToInt32(result);
             }
         }
 
@@ -10336,5 +10411,7 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
         }
+
+
     }
 }

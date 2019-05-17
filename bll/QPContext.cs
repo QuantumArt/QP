@@ -54,6 +54,8 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        public static DatabaseType DatabaseType => DatabaseTypeHelper.ResolveDatabaseType(CurrentDbConnectionStringForEntities);
+
         private static bool UsePostgres(string connectionString) => connectionString.IndexOf("MSCPGSQL01", StringComparison.InvariantCultureIgnoreCase) != -1;
 
         private static QPModelDataContext CreateDbContextUsingConnection(DatabaseType dbType)

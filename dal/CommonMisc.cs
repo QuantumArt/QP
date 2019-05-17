@@ -246,5 +246,16 @@ namespace Quantumart.QP8.DAL
 
             return result;
         }
+
+        public static decimal? GetNumericFieldValue(DbConnection dbConnection, string fieldName, string entityName, string entityIdField, decimal entityId)
+        {
+            var query = $"select {fieldName} from {entityName} where {entityIdField} = {entityId}";
+
+            using (var cmd = DbCommandFactory.Create(query, dbConnection))
+            {
+                var value = cmd.ExecuteScalar();
+                return (value == null || value == DBNull.Value) ? (decimal?)null : (decimal)value;
+            }
+        }
     }
 }
