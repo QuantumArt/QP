@@ -54,7 +54,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.Contents)]
         [BackendActionContext(ActionCode.Contents)]
-        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+        public ActionResult _Index(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            string orderBy = "")
         {
             filter = filter ?? ContentListFilter.Empty;
             filter.SiteId = parentId > 0 ? (int?)parentId : null;

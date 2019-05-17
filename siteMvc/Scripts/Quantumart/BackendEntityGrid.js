@@ -403,7 +403,6 @@ export class BackendEntityGrid extends Observable {
     return undefined;
   }
 
-
   // eslint-disable-next-line max-statements
   initialize() {
     try {
@@ -424,13 +423,16 @@ export class BackendEntityGrid extends Observable {
       this._gridComponent = gridComponent;
       this._startingEntitiesIDs = this._selectedEntitiesIDs.slice();
 
+      gridComponent.dataSource.transport.parameterMap = this._getParameterMapper();
       gridComponent
         .unbind('dataBinding', gridComponent.onDataBinding)
         .unbind('dataBound', gridComponent.onDataBound)
         .bind('dataBinding', this._onDataBindingHandler)
         .bind('dataBound', this._onDataBoundHandler);
 
-      gridComponent.dataSource.read();
+      if (this._autoLoad && !this._delayAutoLoad) {
+        gridComponent.dataSource.read();
+      }
 
       if (gridComponent.options.selectable) {
         const $headerCheckbox = this._getHeaderCheckbox();
@@ -502,6 +504,21 @@ export class BackendEntityGrid extends Observable {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  _getParameterMapper() {
+    return data => {
+      const result = {
+        page: data.page,
+        pageSize: data.pageSize,
+        ...this._createDataQueryParams()
+      };
+      if (data.sort && data.sort.length) {
+        result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
+      }
+
+      return result;
+    };
   }
 
   _getCurrentAction() {
@@ -777,11 +794,7 @@ export class BackendEntityGrid extends Observable {
     }
 
     if (this._gridComponent) {
-      this._gridComponent.dataSource.read({
-        searchQuery: this._searchQuery,
-        contextQuery: this._contextQuery,
-        customFilter: this._filter
-      });
+      this._gridComponent.dataSource.read();
     }
   }
 
@@ -805,11 +818,7 @@ export class BackendEntityGrid extends Observable {
     }
 
     if (this._gridComponent) {
-      this._gridComponent.dataSource.read({
-        searchQuery: this._searchQuery,
-        contextQuery: this._contextQuery,
-        customFilter: this._filter
-      });
+      this._gridComponent.dataSource.read();
     }
   }
 

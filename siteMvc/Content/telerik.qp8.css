@@ -600,6 +600,10 @@ a.t-button.t-state-disabled:hover,
   vertical-align: middle;
 }
 
+.qpGrid .k-grid-norecords {
+  padding: 8px 0;
+}
+
 .isCentered {
   text-align: center !important;
 }

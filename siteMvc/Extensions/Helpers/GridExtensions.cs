@@ -43,12 +43,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <returns>настройка сортировки в виде SQL-кода</returns>
         public static string ToSqlSortExpression(this string sorting)
         {
-            var sortExpression = new StringBuilder(sorting);
-            return sortExpression
-                .Replace("asc", "ASC")
-                .Replace("desc", "DESC")
-                .Replace("-", " ")
-                .ToString();
+            if (sorting.Length != 0)
+            {
+                var sortExpression = new StringBuilder(sorting);
+                return sortExpression
+                    .Replace("asc", "ASC")
+                    .Replace("desc", "DESC")
+                    .Replace("-", " ")
+                    .ToString();
+            }
+            return sorting;
         }
 
         public static ListCommand GetListCommand(this GridCommand command)

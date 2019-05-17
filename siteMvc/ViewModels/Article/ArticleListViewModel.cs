@@ -15,10 +15,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
     public class GridRow
     {
         public string Field { get; set; }
+        public string Title { get; set; }
         public string Type { get; set; }
         public bool IsClassifier { get; set; }
         public bool HasTitleLink { get; set; }
-        public string Title { get; set; }
         public bool Sortable { get; set; }
     }
 
@@ -113,17 +113,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public List<GridRow> GetDynamicColumns()
         {
-            var relationCounters = new Dictionary<int, int>();
             var rowList = new List<GridRow>();
             foreach (var field in DisplayFields)
             {
                 var row = new GridRow
                 {
-                    Field = BLL.Article.GetDynamicColumnName(field, relationCounters, true),
+                    Field = field.FormName,
+                    Title = field.DisplayName,
                     Type = field.Type.Name,
                     IsClassifier = field.IsClassifier,
                     HasTitleLink = !IsWindow,
-                    Title = field.DisplayName,
                     Sortable = field.ExactType != FieldExactTypes.M2MRelation && field.ExactType != FieldExactTypes.M2ORelation,
                 };
                 rowList.Add(row);

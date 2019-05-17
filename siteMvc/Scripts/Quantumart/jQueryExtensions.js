@@ -1,19 +1,5 @@
 /* eslint-disable no-restricted-properties, no-param-reassign, no-console */
 
-// eslint-disable-next-line func-style
-function checkGridParams(opt) {
-  try {
-    if (!opt.columns) {
-      console.error('Columns is required');
-    }
-    if (!opt.dataSource.transport.read.url) {
-      console.error('Url is required');
-    }
-  } catch (e) {
-    console.error(e, opt, 'Grid options lack of required keys');
-  }
-}
-
 // eslint-disable-next-line id-length, no-shadow
 (function ($) {
   const colors = {
@@ -350,10 +336,25 @@ function checkGridParams(opt) {
 
     // Инициализатор грида
     qpGrid(opt) {
-      checkGridParams(opt);
+      (function checkGridParams() {
+        try {
+          if (!opt.columns) {
+            console.error('Columns is required');
+          }
+          if (!opt.dataSource.transport.read.url) {
+            console.error('Url is required');
+          }
+        } catch (e) {
+          console.error(e, opt, 'Grid options lack of required keys');
+        }
+      }());
       return $(this).kendoGrid($.extend(true, {
+        noRecords: {
+          template: 'No records to display.'
+        },
+        reorderable: true,
         selectable: true,
-        resizable: true,
+        scrollable: false,
         pageable: {
           alwaysVisible: false
         },
@@ -367,22 +368,6 @@ function checkGridParams(opt) {
               type: 'post',
               dataType: 'json',
               ...opt.dataSource.read
-            },
-            parameterMap(data) {
-              const result = {
-                page: data.page,
-                pageSize: data.pageSize
-              };
-              if (data.sort && data.sort.length) {
-                result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
-              }
-              if (data.searchQuery) {
-                result.searchQuery = data.searchQuery;
-              }
-              if (data.customFilter) {
-                result.customFilter = data.customFilter;
-              }
-              return result;
             }
           },
           schema: {
@@ -393,7 +378,8 @@ function checkGridParams(opt) {
           serverPaging: true,
           serverSorting: true
         }
-      }, opt)).addClass('qpGrid');
+      }, opt))
+        .addClass('qpGrid');
     }
   });
 

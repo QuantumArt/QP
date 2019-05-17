@@ -43,38 +43,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Index", model);
         }
 
-        //[HttpPost]
-        //[GridAction(EnableCustomBinding = true)]
-        //[ActionAuthorize(ActionCode.Articles)]
-        //[BackendActionContext(ActionCode.Articles)]
-        //public ActionResult _Index(
-        //    string tabId,
-        //    int parentId,
-        //    GridCommand command,
-        //    [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))]
-        //    IList<ArticleSearchQueryParam> searchQuery,
-        //    [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleContextQueryParam>>))]
-        //    IList<ArticleContextQueryParam> contextQuery,
-        //    string customFilter,
-        //    bool? onlyIds,
-        //    int[] filterIds)
-        //{
-        //    var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-
-        //    var serviceResult = ArticleService.List(
-        //        parentId,
-        //        new int[0],
-        //        command.GetListCommand(),
-        //        searchQuery,
-        //        contextQuery,
-        //        customFilter,
-        //        ftsParser,
-        //        onlyIds,
-        //        filterIds);
-
-        //    return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
-        //}
-
         [HttpPost]
         [ActionAuthorize(ActionCode.Articles)]
         [BackendActionContext(ActionCode.Articles)]
@@ -122,21 +90,36 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArchiveArticles)]
         [BackendActionContext(ActionCode.ArchiveArticles)]
         public ActionResult _ArchiveIndex(
             string tabId,
             int parentId,
-            GridCommand command,
+            int page,
+            int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleContextQueryParam>>))] IList<ArticleContextQueryParam> contextQuery,
             string customFilter,
             bool? onlyIds,
-            int[] filterIds)
+            int[] filterIds,
+            string orderBy = "")
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-            var serviceResult = ArticleService.List(parentId, new int[0], command.GetListCommand(), searchQuery, contextQuery, customFilter, ftsParser, onlyIds, filterIds);
+            var serviceResult = ArticleService.List(
+                parentId,
+                new int[0],
+                new ListCommand
+                {
+                    StartPage = page,
+                    PageSize = pageSize,
+                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+                },
+                searchQuery,
+                null,
+                customFilter,
+                ftsParser,
+                onlyIds,
+                filterIds);
+
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -161,21 +144,36 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectArticle)]
         [BackendActionContext(ActionCode.SelectArticle)]
         public ActionResult _Select(
             string tabId,
             int parentId,
-            int id,
-            GridCommand command,
+            int page,
+            int pageSize,
+            int IDs,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
             string customFilter,
-            bool? onlyIds)
-
+            bool? onlyIds,
+            int[] filterIds,
+            string orderBy = "")
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-            var serviceResult = ArticleService.List(parentId, new[] { id }, command.GetListCommand(), searchQuery, null, customFilter, ftsParser, onlyIds);
+            var serviceResult = ArticleService.List(
+                parentId,
+                new[] { IDs },
+                new ListCommand
+                {
+                    StartPage = page,
+                    PageSize = pageSize,
+                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+                },
+                searchQuery,
+                null,
+                customFilter,
+                ftsParser,
+                onlyIds);
+
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -237,25 +235,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
-
-        //[HttpPost]
-        //[ActionAuthorize(ActionCode.MultipleSelectArticle)]
-        //[BackendActionContext(ActionCode.MultipleSelectArticle)]
-        //[SuppressMessage("ReSharper", "InconsistentNaming")]
-        //public ActionResult _MultipleSelect(
-        //    string tabId,
-        //    int parentId,
-        //    string IDs,
-        //    GridCommand command,
-        //    [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-        //    string customFilter,
-        //    bool? onlyIds)
-        //{
-        //    var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-        //    var selectedArticleIDs = Converter.ToInt32Collection(IDs, ',');
-        //    var serviceResult = ArticleService.List(parentId, selectedArticleIDs, command.GetListCommand(), searchQuery, null, customFilter, ftsParser, onlyIds);
-        //    return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
-        //}
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]

@@ -67,20 +67,25 @@
           sortable: c.Sortable,
           template: '#=' + c.Field + '#',
           attributes: { 'class': getClass(c, i), 'role': 'gridcell' },
+          width: 120
         };
       });
-      console.log(columnsData, dynamicColumns);
       var columns = [
+        @if (Model.AllowMultipleEntitySelection)
         {
-          // TODO: add condition
-          field: '',
-          headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
-          headerAttributes: { 'class': 't-select-header' },
-          template: '<input type="checkbox" name="SelectedArticlesIDs" value="#:@FieldName.ContentItemId#" />',
-          attributes: { 'class': 't-select-cell' },
-          width: 35,
-        },
-        { field: '@FieldName.ContentItemId', title: '@FieldName.Id', attributes: { 'class': 'id' }, width: 70 },
+          <text>
+            {
+              field: '',
+              headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
+              headerAttributes: { 'class': 't-select-header' },
+              template: '<input type="checkbox" name="SelectedArticlesIDs" value="#:@FieldName.ContentItemId#" />',
+              sortable: false,
+              attributes: { 'class': 't-select-cell' },
+              width: 35,
+            },
+          </text>
+        }
+        { field: '@FieldName.ContentItemId', title: '@FieldName.Id', attributes: { 'class': 'id' }, width: 58 },
         {
           field: '@FieldName.LockedBy',
           headerTemplate: headIconTemplate({ url: 'grid/header_icons/lock.gif', title: '@ArticleStrings.IsLockedHeaderTooltip' }),
@@ -113,10 +118,10 @@
           attributes: { 'class': 'isCentered' },
           width: 47
         },
-        { field: '@FieldName.StatusTypeName', title: '@ArticleStrings.Status' },
-        { field: '@FieldName.Created', title: '@ArticleStrings.Created' },
-        { field: '@FieldName.Modified', title: '@ArticleStrings.Modified' },
-        { field: '@FieldName.ModifierLogin', title: '@ArticleStrings.LastModifiedBy' },
+        { field: '@FieldName.StatusTypeName', title: '@ArticleStrings.Status', width: 75 },
+        { field: '@FieldName.Created', title: '@ArticleStrings.Created', width: 75 },
+        { field: '@FieldName.Modified', title: '@ArticleStrings.Modified', width: 75 },
+        { field: '@FieldName.ModifierLogin', title: '@ArticleStrings.LastModifiedBy', width: 75 },
       ];
       Array.prototype.splice.apply(columns, [6, 0].concat(dynamicColumns));
       $(`#${'@Model.MainComponentId'}`).qpGrid({
@@ -127,8 +132,7 @@
               url: "@Url.Action(Model.GetDataActionName, "Article", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
             },
           },
-          //pageSize: @Model.PageSize,
-          pageSize: 3,
+          pageSize: @Model.PageSize,
         },
       });
     });
@@ -136,4 +140,3 @@
 }
 
 @Html.PrepareAndRunInitScript(Model)
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))
