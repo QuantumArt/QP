@@ -12,7 +12,6 @@ AS $BODY$
 		content_links content_link[];
 		item content_link;
 		link_items link[];
-		extra_link_items link[];
 		self_related boolean;
 		is_async boolean;
     BEGIN

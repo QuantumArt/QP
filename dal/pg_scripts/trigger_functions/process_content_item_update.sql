@@ -84,8 +84,8 @@ AS $BODY$
             				max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, 
 							case when i2.id is not null then false else ciw.is_async end as is_workflow_async, 
             				ci.SCHEDULE_NEW_VERSION_PUBLICATION as delayed, ci.not_for_replication 
-            				from content_item ci inner join (select * from UNNEST($1) as id) i on i.id = ci.content_item_id
-            				left join (select * from UNNEST($2) as id) i2 on i2.id = ci.content_item_id
+            				from content_item ci inner join UNNEST($1) i(id) on i.id = ci.content_item_id
+            				left join UNNEST($2) i2(id) on i2.id = ci.content_item_id
             				inner join content_%s c on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID
             				inner join STATUS_TYPE st1 on ci.STATUS_TYPE_ID = st1.STATUS_TYPE_ID
             				inner join STATUS_TYPE st2 on c.STATUS_TYPE_ID = st2.STATUS_TYPE_ID

@@ -10,3 +10,5 @@ $$
 		RETURN NEW;
 	END;
 $$;
+
+alter function process_before_content_item_delete() owner to postgres;

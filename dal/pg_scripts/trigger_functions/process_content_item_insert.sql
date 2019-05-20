@@ -10,15 +10,13 @@ CREATE OR REPLACE FUNCTION public.process_content_item_insert()
 AS $BODY$
 	DECLARE
 		ids int[];
+		ids2 int[];
 		content_ids int[];
 		cid int;
 		none_id int;
-		ids2 int[];
-		ids3 int[];
     BEGIN
 	
-		insert into content_data
-		(i.content_item_id, ca.attribute_id, i.not_for_replication)
+		insert into content_data (content_item_id, attribute_id, not_for_replication)
 		select i.content_item_id, ca.attribute_id, i.not_for_replication
 		from new_table i inner join content_attribute ca on i.content_id = ca.content_id;
 	
@@ -30,15 +28,15 @@ AS $BODY$
 			inner join content c on st.site_id = c.site_id and st.status_type_name = 'None'
 			where c.content_id = cid;
 								
-			ids2 := array_agg(n.content_item_id) from new_table n 
+			ids := array_agg(n.content_item_id) from new_table n
 						where n.content_id = cid and not n.not_for_replication;
-			ids2 := COALESCE(ids2, ARRAY[]::int[]);
+			ids := COALESCE(ids, ARRAY[]::int[]);
 							 
-			ids3 := array_agg(n.content_item_id) from new_table n 
+			ids2 := array_agg(n.content_item_id) from new_table n
 						where n.content_id = cid and not n.not_for_replication and n.schedule_new_version_publication;
-			ids3 := COALESCE(ids3, ARRAY[]::int[]);
+			ids2 := COALESCE(ids2, ARRAY[]::int[]);
 			
-			call qp_upsert_items(cid, ids2, ids3, none_id, false);
+			call qp_upsert_items(cid, ids, ids2, none_id, false);
 							 
 		END LOOP;
 		RETURN NULL;

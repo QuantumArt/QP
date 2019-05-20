@@ -94,3 +94,5 @@ AS $BODY$
 										  
 	END;
 $BODY$;
+
+alter procedure qp_replicate_items(integer[], integer[], integer) owner to postgres;

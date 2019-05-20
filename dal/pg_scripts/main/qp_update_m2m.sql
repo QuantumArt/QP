@@ -115,3 +115,5 @@ AS $BODY$
 		END IF;
 	END;
 $BODY$;
+
+alter procedure qp_update_m2m(numeric, numeric, text, boolean, boolean) owner to postgres;

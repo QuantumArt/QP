@@ -21,3 +21,6 @@ AS $BODY$
         END IF;
 	END;
 $BODY$;
+
+ALTER FUNCTION public.qp_before_content_item_delete(integer[])
+    OWNER TO postgres;

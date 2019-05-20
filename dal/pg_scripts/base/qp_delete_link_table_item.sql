@@ -36,3 +36,6 @@ AS $BODY$
 
 	END;
 $BODY$;
+
+alter procedure qp_delete_link_table_item(numeric, numeric, link[], boolean, boolean, boolean) owner to postgres;
+

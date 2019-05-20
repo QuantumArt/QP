@@ -2,7 +2,6 @@ CREATE OR REPLACE FUNCTION update_hash() RETURNS TRIGGER AS $tiu_update_hash$
 	DECLARE 
 		salt bigint;
 	 	old_hash bytea;
-		hash bytea;
 	BEGIN
 		IF (TG_OP = 'INSERT') THEN
 			IF PASSWORD IS NULL OR PASSWORD = '' THEN
@@ -29,8 +28,5 @@ CREATE OR REPLACE FUNCTION update_hash() RETURNS TRIGGER AS $tiu_update_hash$
 	END
 $tiu_update_hash$ LANGUAGE plpgsql;
 
+alter function update_hash() owner to postgres;
 
-CREATE TRIGGER tiu_update_hash
-BEFORE INSERT OR UPDATE ON users
-    FOR EACH ROW
-    EXECUTE PROCEDURE update_hash();

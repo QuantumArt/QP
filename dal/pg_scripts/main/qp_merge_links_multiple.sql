@@ -103,3 +103,5 @@ AS $BODY$
 	END;
 	
 $BODY$;
+
+alter procedure qp_merge_links_multiple(integer[], boolean) owner to postgres;

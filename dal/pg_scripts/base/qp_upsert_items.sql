@@ -1,4 +1,4 @@
-create procedure qp_upsert_items(content_id integer, ids integer[], delayed_ids integer[], none_id integer, is_async boolean)
+create or replace procedure qp_upsert_items(content_id integer, ids integer[], delayed_ids integer[], none_id integer, is_async boolean)
     language plpgsql
 as
 $$
@@ -26,8 +26,8 @@ DECLARE
     			case when i2.id is not null then $3 else ci.status_type_id end as status_type_id, 
     			ci.visible, ci.archive 
 				from content_item ci left join %s base on ci.content_item_id = base.content_item_id 
-    			inner join (SELECT unnest($1) as id) i on ci.content_item_id = i.id 	
-				left join (SELECT unnest($2) as id) i2 on ci.content_item_id = i2.id 
+    			inner join unnest($1) i(id) on ci.content_item_id = i.id
+				left join unnest($2) i2(id) on ci.content_item_id = i2.id
     			where base.content_item_id is null';
 		sql := FORMAT(sql, table_name, table_name);
 		RAISE NOTICE '%', sql;

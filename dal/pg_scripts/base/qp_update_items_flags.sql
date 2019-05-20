@@ -27,3 +27,5 @@ AS $BODY$
 		execute sql using ids;
 	END;
 $BODY$;
+
+alter procedure qp_update_items_flags(integer, integer[], boolean) owner to postgres;

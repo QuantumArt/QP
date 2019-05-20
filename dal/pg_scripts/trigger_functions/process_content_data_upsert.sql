@@ -14,7 +14,6 @@ AS $BODY$
 		attribute_ids int[];
 		attr_id int;
 		attr content_attribute;
-		table_name text;
 		source text;
 		column_type text;
 		sql text;

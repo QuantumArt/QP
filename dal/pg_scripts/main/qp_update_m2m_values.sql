@@ -126,3 +126,5 @@ AS $BODY$
 	END;
 	
 $BODY$;
+
+alter procedure qp_update_m2m_values(xml) owner to postgres;

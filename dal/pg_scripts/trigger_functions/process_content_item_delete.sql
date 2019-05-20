@@ -14,7 +14,6 @@ AS $BODY$
 		cid int;
 		published_id int;
 		is_virtual boolean;
-		ids2 int[];
 		char_ids text[];
 		o2m_ids int[];
     BEGIN
@@ -29,7 +28,7 @@ AS $BODY$
 				inner join content c on st.site_id = c.site_id and st.status_type_name = 'Published'
 				where c.content_id = cid;
 
-				ids2 := array_agg(n.content_item_id) from OLD_TABLE n where n.content_id = cid;
+				ids := array_agg(n.content_item_id) from OLD_TABLE n where n.content_id = cid;
 									
 				IF EXISTS (select * from OLD_TABLE where status_type_id = published_id and not splitted) THEN
 					update content_modification set live_modified = now(), stage_modified = now() where content_id = cid;
@@ -62,8 +61,8 @@ AS $BODY$
 				
 								 
 				IF NOT is_virtual THEN
-					call qp_delete_items(cid, ids2, false);
-					call qp_delete_items(cid, ids2, true);
+					call qp_delete_items(cid, ids, false);
+					call qp_delete_items(cid, ids, true);
 				END IF;
 								 
 
