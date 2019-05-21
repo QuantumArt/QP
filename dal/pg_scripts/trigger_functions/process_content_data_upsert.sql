@@ -11,6 +11,7 @@ AS $BODY$
 	DECLARE
 		ids int[];
 		async_ids int[];
+	    o2m_ids int[];
 		attribute_ids int[];
 		attr_id int;
 		attr content_attribute;
@@ -18,7 +19,26 @@ AS $BODY$
 		column_type text;
 		sql text;
     BEGIN
-	
+
+		IF TG_OP = 'UPDATE' THEN
+            o2m_ids := array_agg(i.content_data_id)
+            from new_table i
+                inner join old_table o on i.content_data_id and i.content_data_id
+                inner join content_attribute ca on ca.attribute_id = i.attribute_id
+		        where ca.attribute_type_id = 11 and ca.link_id is null
+		        and coalesce(i.data, '') <> coalesce(o.data, '');
+		ELSE
+            o2m_ids := array_agg(i.content_data_id)
+            from new_table i
+                inner join content_attribute ca on ca.attribute_id = i.attribute_id
+		        where ca.attribute_type_id = 11 and ca.link_id is null
+		        and i.data is not null;
+        END IF;
+
+         IF o2m_ids is not null THEN
+            update content_data set o2m_data = data::numeric where content_data_id = ANY(o2m_ids);
+         END IF;
+
 	  	IF NOT EXISTS(select content_data_id from new_table where not not_for_replication) THEN
 			RETURN NULL;
 		END IF;
@@ -26,7 +46,8 @@ AS $BODY$
 		IF TG_OP = 'UPDATE' THEN
 			IF EXISTS (
 				select * from new_table i inner join old_table o on i.content_data_id = o.content_data_id
-				where i.splitted <> o.splitted or i.not_for_replication <> o.not_for_replication) THEN
+				where i.splitted <> o.splitted or i.not_for_replication <> o.not_for_replication
+				or coalesce(i.o2m_data, 0) <> coalesce(o.o2m_data, 0)) THEN
 					RETURN NULL;
 			END IF;
 		END IF;
@@ -60,7 +81,7 @@ AS $BODY$
 			END IF;					  
 								  
 	   		IF attr.attribute_type_id in (9,10) THEN
-				source := 'cd.blob_data';								  
+				source := 'coalesce(cd.data, cd.blob_data)';
 			ELSE
 				source := 'qp_correct_data(cd.data::text, %s, %s, ''%s'')';
 				source := FORMAT(source, 

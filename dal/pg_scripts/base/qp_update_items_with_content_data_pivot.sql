@@ -63,7 +63,7 @@ AS $BODY$
 			cross_tab := 'update %s base set %s from (
 			SELECT %s FROM crosstab(''
 			select content_item_id, lower(ca.attribute_name), 
-			case when ca.attribute_type_id in (9, 10) then cd.blob_data
+			case when ca.attribute_type_id in (9, 10) then coalesce(cd.data, cd.blob_data)
 			else qp_correct_data(cd.data::text, ca.attribute_type_id, ca.attribute_size, ca.default_value)::text
 			end as value from content_data cd 
 			inner join content_attribute ca on cd.attribute_id = ca.attribute_id

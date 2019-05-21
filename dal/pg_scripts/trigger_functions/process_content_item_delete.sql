@@ -36,14 +36,14 @@ AS $BODY$
 					update content_modification set stage_modified = now() where content_id = cid;
 				END IF;									
 								 
-            	o2m_ids := ca1.attribute_id from CONTENT_ATTRIBUTE ca1
+            	o2m_ids := array_agg(ca1.attribute_id) from CONTENT_ATTRIBUTE ca1
             		inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID
             		where ca2.CONTENT_ID = cid;
 									
 				IF o2m_ids is not null AND NOT EXISTS(
 					SELECT * FROM information_schema.tables where table_name = 'disable_td_delete_item_o2m_nullify'	
 				) THEN
-					char_ids := array_agg(unnest::text) from unnest(o2m_ids);				
+					char_ids := array_agg(unnest::text) from unnest(ids);
 									
 	                UPDATE content_attribute SET default_value = null
                     	WHERE attribute_id = ANY(o2m_ids)
@@ -51,7 +51,7 @@ AS $BODY$
 
 					UPDATE content_data SET data = NULL, blob_data = NULL
 						WHERE attribute_id = ANY(o2m_ids)
-						AND data = ANY(char_ids);
+						AND o2m_data = ANY(ids);
 
 					DELETE from VERSION_CONTENT_DATA
 						where ATTRIBUTE_ID = ANY(o2m_ids)
