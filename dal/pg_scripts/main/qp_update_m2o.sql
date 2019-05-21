@@ -41,12 +41,15 @@ AS $BODY$
 
 		RAISE NOTICE 'Archive calculated: %',  clock_timestamp();
 
-		create temp table if not exists o2m_result_ids(id numeric, attribute_id numeric, to_remove boolean);
+		create temp table if not exists o2m_result_ids
+		(
+		    id numeric, attribute_id numeric, to_remove boolean, remove_delays boolean
+		);
 
 		insert into o2m_result_ids
-        select unnest, attr.attribute_id, true from unnest(old_ids)
+        select unnest, attr.attribute_id, true, false from unnest(old_ids)
         union all
-        select unnest, attr.attribute_id, false from unnest(new_ids);
+        select unnest, attr.attribute_id, false, false from unnest(new_ids);
 
 		RAISE NOTICE 'Result returned: %',  clock_timestamp();
 
