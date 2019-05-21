@@ -34,7 +34,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Fields)]
         public ActionResult _Index(
             string tabId,

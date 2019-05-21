@@ -176,10 +176,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "gridParentId")]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _Files(GridCommand command, int gridParentId, [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery)
+        public ActionResult _Files(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            int gridParentId,
+            [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery,
+            string orderBy = "")
         {
-            var serviceResult = SiteService.GetFileList(command.GetListCommand(), gridParentId, searchQuery);
+            var serviceResult = SiteService.GetFileList(
+                new ListCommand
+                {
+                    StartPage = page,
+                    PageSize = pageSize,
+                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+                },
+                gridParentId,
+                searchQuery);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
