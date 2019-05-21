@@ -1466,9 +1466,6 @@ BEGIN
     insert into @ids
     exec qp_get_m2o_ids @contentId, @fieldName, @id
 
-    select content_item_id
-    from content_data where ATTRIBUTE_ID = @fieldId and DATA = CAST(@id as nvarchar)
-
     insert into @new_ids select * from dbo.split(@value, ',');
 
     insert into @cross_ids select t1.id from @ids t1 inner join @new_ids t2 on t1.id = t2.id
