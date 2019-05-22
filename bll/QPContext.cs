@@ -612,12 +612,25 @@ namespace Quantumart.QP8.BLL
                         CreateFailedSession(data, dbContext);
                     }
                 }
-                catch (SqlException ex)
+                catch (DbException ex)
                 {
                     message = ex.Message;
-                    errorCode = ex.State;
+                    switch (ex)
+                    {
+                        case SqlException sqlEx:
+                            errorCode = sqlEx.State;
+                            break;
+                        case NpgsqlException npgsqlEx:
+                            errorCode = npgsqlEx.ErrorCode;
+                            break;
+                        default:
+                            errorCode = ex.ErrorCode;
+                            break;
+                    }
+
                     CreateFailedSession(data, dbContext);
                 }
+
             }
 
             return resultUser;
