@@ -91,7 +91,7 @@ namespace Quantumart.QP8.DAL
                 case DatabaseType.SqlServer:
                     return $"[{entityName}]";
                 case DatabaseType.Postgres:
-                    return $"\"{entityName.ToSnakeCase()}\"";
+                    return $"\"{entityName.ToLower()}\"";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }
