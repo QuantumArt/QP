@@ -207,7 +207,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     UseMainTableForVariations = useMainTable,
                     VariationFieldName = content.Fields.SingleOrDefault(n => n.UseForVariations)?.Name,
                     OnlyIds = onlyIds.HasValue && onlyIds.Value,
-                    UseSql2012Syntax = QPContext.CurrentSqlVersion.Major >= 11
+                    UseSql2012Syntax = QPContext.DatabaseType == DatabaseType.Postgres || QPContext.CurrentSqlVersion.Major >= 11
                 };
 
                 return Common.GetArticlesPage(QPConnectionScope.Current.DbConnection, options, sqlParams, out totalRecords);

@@ -18,7 +18,7 @@ namespace Quantumart.QP8.BLL.SharedLogic
 
             // Получить родительский контент и сайт
             IEnumerable<EntityInfo> bindableParentEntities =
-                EntityObjectRepository.GetParentsChain(testEntityTypeCode, testEntityId)
+                EntityObjectRepository.GetParentsChain(testEntityTypeCode, testEntityId)?
                     .Where(ei =>
                         ei.Id > 0 &&
                         (
@@ -29,7 +29,7 @@ namespace Quantumart.QP8.BLL.SharedLogic
                     )
                     .ToArray();
 
-            var customActions = CustomActionRepository.GetListByCodes(statuses.Select(s => s.Code).ToArray());
+            var customActions = CustomActionRepository.GetListByCodes(statuses.Select(s => s.Code)?.ToArray());
 
             // Если есть как минимум сайт - то проверяем
             if (customActions.Any())

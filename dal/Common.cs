@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Npgsql;
+using NpgsqlTypes;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.DAL.Entities;
@@ -31,25 +32,67 @@ namespace Quantumart.QP8.DAL
 
         public static string GetTitleName(DbConnection connection, long contentId)
         {
-            using (var cmd = DbCommandFactory.Create("select dbo.qp_get_display_field(@id, 1)", connection))
+
+            var displayFieldsQuery = GetDisplayFieldsQuery(connection, contentId, true);
+            var isPostgres = IsPostgresConnection(connection);
+
+            var query = $@"
+select
+case when attribute_name is not null then attribute_name else 'content_item_id' end
+from (
+    select {(isPostgres ? string.Empty : "TOP 1")} attribute_name
+    from ({displayFieldsQuery}) as df
+    order by view_in_list desc, attribute_priority desc, attribute_order asc
+    {(isPostgres ? "LIMIT 1" : string.Empty)}
+) as a
+";
+
+
+            using (var cmd = DbCommandFactory.Create("query", connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", contentId);
+                // cmd.Parameters.AddWithValue("@id", contentId);
                 return cmd.ExecuteScalar().ToString();
             }
         }
 
         public static DataTable GetDisplayFields(DbConnection connection, long contentId, bool withRelations = false)
         {
-            using (var cmd = DbCommandFactory.Create("SELECT * FROM [dbo].[qp_get_display_fields](@contentId, @with_relation_field)", connection))
+            var query = GetDisplayFieldsQuery(connection, contentId, withRelations);
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@contentId", contentId);
-                cmd.Parameters.AddWithValue("@with_relation_field", withRelations);
+                // cmd.Parameters.AddWithValue("@contentId", contentId);
+                // cmd.Parameters.AddWithValue("@with_relation_field", withRelations);
                 var ds = new DataSet();
                 DataAdapterFactory.Create(cmd).Fill(ds);
                 return 0 == ds.Tables.Count ? null : ds.Tables[0];
             }
+        }
+
+        private static string GetDisplayFieldsQuery(DbConnection connection, long contentId, bool withRelations)
+        {
+            var isPostgres = IsPostgresConnection(connection);
+
+            return $@"
+select *
+from (
+        SELECT attribute_id, attribute_name,
+        CASE
+            WHEN attribute_type_id in (9, 10)
+                THEN {(withRelations ? "1" : "0")}
+            WHEN attribute_type_id = 13 or is_classifier = 1 or
+                 attribute_type_id = 11 AND {(!withRelations ? "1=1" : "1=0")} THEN -1
+            ELSE 1
+            END AS attribute_priority,
+        view_in_list,
+        attribute_order
+        FROM content_attribute ca
+        WHERE content_id = {contentId}
+    ) as c
+where attribute_priority >= 0
+";
         }
 
         public static string GetFieldName(DbConnection connection, int fieldId)
@@ -979,6 +1022,11 @@ namespace Quantumart.QP8.DAL
         public static DataTable GetBreadCrumbsList(DbConnection connection, int userId, string entityTypeCode, long entityId, long? parentEntityId, bool oneLevel)
         {
             DataTable dt = null;
+            #warning реализовать для postgres
+            if (IsPostgresConnection(connection))
+            {
+                return dt;
+            }
             using (var cmd = DbCommandFactory.Create("qp_get_breadcrumbs", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -1072,6 +1120,8 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         public static bool IsEntityAccessible(DbConnection connection, int userId, string entityTypeCode, int entityId, string actionTypeCode)
         {
+            #warning реализовать для postgres
+            if (IsPostgresConnection(connection)) return true;
             using (var cmd = DbCommandFactory.Create("select dbo.qp_is_entity_action_type_accessible(@userId, 0, @entityTypeCode, @entityId, @actionTypeCode)", connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -2024,6 +2074,7 @@ namespace Quantumart.QP8.DAL
         {
             totalRecords = 0;
             DataTable result = null;
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             if (useSecurity)
             {
                 var securitySql = GetPermittedItemsAsQuery(sqlConnection, userId, groupId, startLevel, endLevel, entityTypeCode, parentEntityTypeCode, parentEntityId);
@@ -2034,7 +2085,7 @@ namespace Quantumart.QP8.DAL
             if (countOnly || forceCountQuery)
             {
                 var countBuilder = new StringBuilder();
-                countBuilder.Append("SELECT @total_records = COUNT(*) from ");
+                countBuilder.Append("SELECT COUNT(*) from ");
                 countBuilder.AppendLine(fromBlock);
                 if (!string.IsNullOrEmpty(filter))
                 {
@@ -2045,30 +2096,56 @@ namespace Quantumart.QP8.DAL
                 using (var countCmd = DbCommandFactory.Create(countBuilder.ToString(), sqlConnection))
                 {
                     countCmd.CommandType = CommandType.Text;
-                    countCmd.Parameters.Add(new SqlParameter("total_records", SqlDbType.Int)
-                    {
-                        Direction = ParameterDirection.Output
-                    });
 
-                    countCmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
+                    switch (databaseType)
                     {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(selectedIds)
-                    });
+                        case DatabaseType.SqlServer:
+                            // countCmd.Parameters.Add(new SqlParameter("@total_records", SqlDbType.Int)
+                            // {
+                            //     Direction = ParameterDirection.Output
+                            // });
+                            countCmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
+                            {
+                                TypeName = "Ids",
+                                Value = IdsToDataTable(selectedIds)
+                            });
 
-                    countCmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(filterIds)
-                    });
+                            countCmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
+                            {
+                                TypeName = "Ids",
+                                Value = IdsToDataTable(filterIds)
+                            });
+                            if (sqlParameters != null)
+                            {
+                                countCmd.Parameters.AddRange(sqlParameters.ToArray());
+                            }
+                            break;
+                        case DatabaseType.Postgres:
+                            // countCmd.Parameters.Add(new NpgsqlParameter("@total_records", NpgsqlDbType.Integer)
+                            // {
+                            //     Direction = ParameterDirection.Output
+                            // });
+                            countCmd.Parameters.Add(new NpgsqlParameter("@itemIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
+                            {
+                                Value = selectedIds.ToArray()
+                            });
 
-                    if (sqlParameters != null)
-                    {
-                        countCmd.Parameters.AddRange(sqlParameters.ToArray());
+                            countCmd.Parameters.Add(new NpgsqlParameter("@filterIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
+                            {
+                                Value = filterIds.ToArray()
+                            });
+                            if (sqlParameters != null)
+                            {
+                                countCmd.Parameters.AddRange(sqlParameters.ToArray());
+                            }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
 
-                    countCmd.ExecuteNonQuery();
-                    totalRecords = (int)countCmd.Parameters["total_records"].Value;
+
+                    var countResult = countCmd.ExecuteScalar();
+                    totalRecords = Convert.ToInt32(countResult);
                 }
             }
 
@@ -2106,7 +2183,7 @@ namespace Quantumart.QP8.DAL
                     sqlBuilder.AppendLine(@"OFFSET @startRow ROWS ");
                     if (endRow > 0)
                     {
-                        sqlBuilder.AppendLine(@"FETCH NEXT @endRow - @startRow ROWS ONLY ");
+                        sqlBuilder.AppendLine(@"FETCH NEXT (@endRow - @startRow) ROWS ONLY ");
                     }
                 }
                 else
@@ -2150,24 +2227,51 @@ namespace Quantumart.QP8.DAL
                 using (var cmd = DbCommandFactory.Create(sqlBuilder.ToString(), sqlConnection))
                 {
                     cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.Add(new SqlParameter("@startRow", SqlDbType.Int) { Value = startRow });
-                    cmd.Parameters.Add(new SqlParameter("@endRow", SqlDbType.Int) { Value = endRow });
-                    cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(selectedIds)
-                    });
 
-                    cmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
+                    switch (databaseType)
                     {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(filterIds)
-                    });
+                        case DatabaseType.SqlServer:
+                            cmd.Parameters.Add(new SqlParameter("@startRow", SqlDbType.Int) { Value = startRow });
+                            cmd.Parameters.Add(new SqlParameter("@endRow", SqlDbType.Int) { Value = endRow });
+                            cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
+                            {
+                                TypeName = "Ids",
+                                Value = IdsToDataTable(selectedIds)
+                            });
 
-                    if (sqlParameters != null)
-                    {
-                        cmd.Parameters.AddRange(sqlParameters.ToArray());
+                            cmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
+                            {
+                                TypeName = "Ids",
+                                Value = IdsToDataTable(filterIds)
+                            });
+
+                            if (sqlParameters != null)
+                            {
+                                cmd.Parameters.AddRange(sqlParameters.ToArray());
+                            }
+                            break;
+                        case DatabaseType.Postgres:
+                            cmd.Parameters.Add(new NpgsqlParameter("@startRow", NpgsqlDbType.Integer) { Value = startRow });
+                            cmd.Parameters.Add(new NpgsqlParameter("@endRow", NpgsqlDbType.Integer) { Value = endRow });
+                            cmd.Parameters.Add(new NpgsqlParameter("@itemIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
+                            {
+                                Value = selectedIds.ToArray()
+                            });
+
+                            cmd.Parameters.Add(new NpgsqlParameter("@filterIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
+                            {
+                                Value = filterIds.ToArray()
+                            });
+
+                            if (sqlParameters != null)
+                            {
+                                cmd.Parameters.AddRange(sqlParameters.ToArray());
+                            }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
+
 
                     var ds = new DataSet();
                     DataAdapterFactory.Create(cmd).Fill(ds);
@@ -2292,6 +2396,7 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetDisplayColumns(DbConnection sqlConnection, int contentId)
         {
             var queryBuilder = new StringBuilder();
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             queryBuilder.Append(
                 "SELECT ca.ATTRIBUTE_ID, ca.ATTRIBUTE_NAME, ca.ATTRIBUTE_TYPE_ID, rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID, rca.ATTRIBUTE_TYPE_ID AS RELATED_ATTRIBUTE_TYPE_ID, ");
             queryBuilder.Append(
@@ -2299,11 +2404,11 @@ namespace Quantumart.QP8.DAL
             queryBuilder.Append(
                 " rrca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID2, rrca.ATTRIBUTE_TYPE_ID AS RELATED_ATTRIBUTE_TYPE_ID2, rrca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME2, rrca.CONTENT_ID AS RELATED_CONTENT_ID2, ");
             queryBuilder.Append(
-                " CAST(ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ORDER ASC) AS NUMERIC) AS 'RELATED_COUNT' ");
+                " CAST(ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ORDER ASC) AS NUMERIC) AS RELATED_COUNT ");
             queryBuilder.Append(" FROM CONTENT_ATTRIBUTE AS ca ");
             queryBuilder.Append(" LEFT JOIN CONTENT_ATTRIBUTE AS rca ON rca.ATTRIBUTE_ID = ca.RELATED_ATTRIBUTE_ID ");
             queryBuilder.Append(" LEFT JOIN CONTENT_ATTRIBUTE AS rrca ON rrca.ATTRIBUTE_ID = rca.RELATED_ATTRIBUTE_ID ");
-            queryBuilder.Append(" WHERE ca.CONTENT_ID = @content_id AND ca.view_in_list = 1");
+            queryBuilder.Append($" WHERE ca.CONTENT_ID = @content_id AND ca.view_in_list = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, true)}");
             queryBuilder.Append(" ORDER BY ca.permanent_flag DESC, ca.attribute_order ASC");
             using (var cmd = DbCommandFactory.Create(queryBuilder.ToString(), sqlConnection))
             {
@@ -2327,6 +2432,7 @@ namespace Quantumart.QP8.DAL
 
         public static IEnumerable<DataRow> GetArticlesPage(DbConnection sqlConnection, ArticlePageOptions options, IList<DbParameter> sqlParams, out int totalRecords)
         {
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             var selectBuilder = new StringBuilder();
             var fromBuilder = new StringBuilder();
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(options.CommonFilter, options.ContextFilter));
@@ -2344,8 +2450,8 @@ namespace Quantumart.QP8.DAL
             }
 
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
-            AddStaticColumnsToQuery(options, useSelection, selectBuilder);
-            AddSourcesToQuery(options, useSelection, fromBuilder, fieldMap, referenceMap);
+            AddStaticColumnsToQuery(databaseType, options, useSelection, selectBuilder);
+            AddSourcesToQuery(databaseType, options, useSelection, fromBuilder, fieldMap, referenceMap);
             AddDynamicColumnsToQuery(sqlConnection, options, selectBuilder, fromBuilder, Default.MaxViewInListFieldLength + 1);
 
             var useFullText = AddFullTextFilteringToQuery(sqlConnection, options.FullTextSearch, options.ContentId, options.ExtensionContentIds, fromBuilder);
@@ -2353,7 +2459,7 @@ namespace Quantumart.QP8.DAL
             AddRelationSecurityFilteringToQuery(sqlConnection, options, fromBuilder, whereBuilder);
             if (options.FilterIds != null && options.FilterIds.Any())
             {
-                whereBuilder.Append(" AND c.CONTENT_ITEM_ID IN (SELECT ID FROM @filterIds)");
+                whereBuilder.Append($" AND c.CONTENT_ITEM_ID IN (SELECT ID FROM {(databaseType == DatabaseType.Postgres ? "unnest(@filterIds)" : "@filterIds")})");
             }
 
             var defaultSortExpression = useSelection ? "is_selected DESC, MODIFIED DESC" : "MODIFIED DESC";
@@ -2592,6 +2698,8 @@ namespace Quantumart.QP8.DAL
                 return;
             }
 
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+
             foreach (var row in GetDisplayColumns(sqlConnection, options.ContentId))
             {
                 var viewInList = row.Field<bool>("view_in_list");
@@ -2600,18 +2708,18 @@ namespace Quantumart.QP8.DAL
                 var isFieldAClassifier = row.Field<bool>("IS_CLASSIFIER");
                 if (isFieldAClassifier)
                 {
-                    selectBuilder.AppendFormat(", [cnt_{0}].[CONTENT_NAME] as [{0}]", fieldName);
-                    fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT AS [cnt_{0}] ON [cnt_{0}].[content_id] = c.[{0}] ", fieldName);
+                    selectBuilder.AppendFormat($", {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, $"cnt_{fieldName}")}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "CONTENT_NAME")} as {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)}", fieldName);
+                    fromBuilder.AppendFormatLine($" LEFT JOIN CONTENT AS cnt_{fieldName} ON cnt_{fieldName}.content_id = c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)} ");
                 }
                 else
                 {
                     if (viewInList && (fieldType == FieldTypeCodes.VisualEdit || fieldType == FieldTypeCodes.Textbox))
                     {
-                        selectBuilder.AppendFormat(", substring(c.[{0}], 1, {1}) as [{0}]", fieldName, maxDisplayLength);
+                        selectBuilder.AppendFormat($", substring(c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)}, 1, {maxDisplayLength}) as {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)}", fieldName, maxDisplayLength);
                     }
                     else
                     {
-                        selectBuilder.AppendFormat(", c.[{0}]", fieldName);
+                        selectBuilder.Append($", c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)}");
                     }
                 }
 
@@ -2630,10 +2738,10 @@ namespace Quantumart.QP8.DAL
                     }
 
                     var attributeTypeId = (int)row.Field<decimal>("RELATED_ATTRIBUTE_TYPE_ID");
-                    var currentBlock = GetCurrentBlock(tableAlias, relatedFieldName, attributeTypeId);
+                    var currentBlock = GetCurrentBlock(databaseType, tableAlias, relatedFieldName, attributeTypeId);
 
                     selectBuilder.AppendFormat(", {0} AS {1}", currentBlock, fieldAlias);
-                    fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_{0}_UNITED AS {1} with(nolock) ON c.[{2}] = {1}.content_item_id ", relatedContentId, tableAlias, fieldName);
+                    fromBuilder.AppendLine($" LEFT JOIN CONTENT_{relatedContentId}_UNITED AS {tableAlias} {WithNolock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)} = {tableAlias}.content_item_id ");
 
                     var relatedAttributeId2 = (int?)row.Field<decimal?>("RELATED_ATTRIBUTE_ID2");
                     if (relatedAttributeId2.HasValue)
@@ -2644,103 +2752,110 @@ namespace Quantumart.QP8.DAL
 
                         var tableAlias2 = tableAlias + "_r1";
                         var fieldAlias2 = fieldAlias + "_r1";
-                        var currentBlock2 = GetCurrentBlock(tableAlias2, relatedFieldName2, attributeTypeId2);
+                        var currentBlock2 = GetCurrentBlock(databaseType, tableAlias2, relatedFieldName2, attributeTypeId2);
 
                         selectBuilder.AppendFormat(", {0} AS {1}", currentBlock2, fieldAlias2);
-                        fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_{0}_UNITED AS {1} with(nolock) ON {2}.[{3}] = {1}.content_item_id ", relatedContentId2, tableAlias2, tableAlias, relatedFieldName);
+                        fromBuilder.AppendLine($" LEFT JOIN CONTENT_{relatedContentId2}_UNITED AS {tableAlias2} {WithNolock(databaseType)} ON {tableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, relatedFieldName)} = {tableAlias2}.content_item_id ");
                     }
                 }
             }
         }
 
-        private static string GetCurrentBlock(string tableAlias, string relatedFieldName, int attributeTypeId)
+        private static string GetCurrentBlock(DatabaseType databaseType, string tableAlias, string relatedFieldName, int attributeTypeId)
         {
-            var currentBlock = $"{tableAlias}.[{relatedFieldName}]";
+            var currentBlock = $"{tableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, relatedFieldName)}";
             if (attributeTypeId == FieldTypeCodes.Textbox || attributeTypeId == FieldTypeCodes.VisualEdit)
             {
-                currentBlock = $"cast ({currentBlock} as nvarchar(255))";
+                currentBlock = $"cast ({currentBlock} as {(databaseType == DatabaseType.Postgres ? "varchar" : "nvarchar")}(255))";
             }
 
             return currentBlock;
         }
 
-        private static void AddSourcesToQuery(ArticlePageOptions options, bool useSelection, StringBuilder fromBuilder, IDictionary<int, string> fieldMap, IDictionary<int, string> referenceMap)
+        private static void AddSourcesToQuery(DatabaseType databaseType, ArticlePageOptions options, bool useSelection, StringBuilder fromBuilder, IDictionary<int, string> fieldMap, IDictionary<int, string> referenceMap)
         {
+            var isPostgres = databaseType == DatabaseType.Postgres;
             var tablePrefix = options.UseMainTableForVariations ? "c" : "ch";
-            fromBuilder.AppendFormatLine(" dbo.CONTENT_{0}_UNITED c with(nolock) ", options.ContentId);
+            fromBuilder.AppendLine($" {DbSchemaName(databaseType)}.CONTENT_{options.ContentId}_UNITED c {WithNolock(databaseType)}");
 
             if (!options.UseMainTableForVariations)
             {
-                fromBuilder.AppendFormatLine(" INNER JOIN CONTENT_{0}_UNITED ch with(nolock) on c.[{1}] = ch.CONTENT_ITEM_ID", options.ContentId, options.VariationFieldName);
+                fromBuilder.AppendLine($" INNER JOIN CONTENT_{options.ContentId}_UNITED ch {WithNolock(databaseType)} on c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, options.VariationFieldName)} = ch.CONTENT_ITEM_ID");
             }
 
             if (!options.IsVirtual)
             {
-                fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_ITEM cil with(nolock) on {0}.CONTENT_ITEM_ID = cil.CONTENT_ITEM_ID AND LOCKED_BY IS NOT NULL", tablePrefix);
-                fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_{0}_ASYNC ca with(nolock) on {1}.CONTENT_ITEM_ID = ca.CONTENT_ITEM_ID", options.ContentId, tablePrefix);
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[USERS] lu WITH(NOLOCK) ON cil.LOCKED_BY = lu.USER_ID");
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[CONTENT_ITEM_SCHEDULE] sch WITH(NOLOCK) ON {0}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID", tablePrefix);
+                fromBuilder.AppendLine($" LEFT JOIN CONTENT_ITEM cil {WithNolock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = cil.CONTENT_ITEM_ID AND LOCKED_BY IS NOT NULL");
+                fromBuilder.AppendLine($" LEFT JOIN CONTENT_{options.ContentId}_ASYNC ca {WithNolock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = ca.CONTENT_ITEM_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} lu {WithNolock(databaseType)} ON cil.LOCKED_BY = lu.USER_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "CONTENT_ITEM_SCHEDULE")} sch {WithNolock(databaseType)} ON {tablePrefix}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID");
             }
 
-            fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[USERS] mu WITH(NOLOCK) ON {0}.LAST_MODIFIED_BY = mu.USER_ID", tablePrefix);
-            fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[STATUS_TYPE] st WITH(NOLOCK) ON {0}.STATUS_TYPE_ID = st.STATUS_TYPE_ID", tablePrefix);
+            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} mu {WithNolock(databaseType)} ON {tablePrefix}.LAST_MODIFIED_BY = mu.USER_ID");
+            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "STATUS_TYPE")} st {WithNolock(databaseType)} ON {tablePrefix}.STATUS_TYPE_ID = st.STATUS_TYPE_ID");
 
             if (useSelection)
             {
-                fromBuilder.AppendFormatLine(" LEFT OUTER JOIN (SELECT CONTENT_ITEM_ID from CONTENT_ITEM with(nolock) where CONTENT_ITEM_ID in (select id from @itemIds)) AS cis ON {0}.CONTENT_ITEM_ID = cis.CONTENT_ITEM_ID ", tablePrefix);
+                fromBuilder.AppendLine($" LEFT OUTER JOIN (SELECT CONTENT_ITEM_ID from CONTENT_ITEM {WithNolock(databaseType)} where CONTENT_ITEM_ID in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@itemIds)" : "@itemIds")})) AS cis ON {tablePrefix}.CONTENT_ITEM_ID = cis.CONTENT_ITEM_ID ");
             }
 
             if (options.UseSecurity)
             {
                 const string innerSql = "SELECT sec.content_item_id AS ALLOWED_CONTENT_ITEM_ID, sec.permission_level AS PERMISSION_LEVEL FROM (<$_security_insert_$>) AS sec";
-                fromBuilder.AppendFormatLine(" INNER JOIN ({0}) AS pl ON {1}.CONTENT_ITEM_ID = pl.ALLOWED_CONTENT_ITEM_ID", innerSql, tablePrefix);
+                fromBuilder.AppendLine($" INNER JOIN ({innerSql}) AS pl ON {tablePrefix}.CONTENT_ITEM_ID = pl.ALLOWED_CONTENT_ITEM_ID");
             }
 
             foreach (var reference in options.ContentReferences.Where(reference => referenceMap.ContainsKey(reference.ReferenceFieldId)))
             {
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.CONTENT_{0}_UNITED c_{0}_{1} with(nolock) ON c.[{2}] = c_{0}_{1}.CONTENT_ITEM_ID", reference.TargetContentId, reference.ReferenceFieldId, referenceMap[reference.ReferenceFieldId]);
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{reference.TargetContentId}_UNITED c_{reference.TargetContentId}_{reference.ReferenceFieldId} {WithNolock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, referenceMap[reference.ReferenceFieldId])} = c_{reference.TargetContentId}_{reference.ReferenceFieldId}.CONTENT_ITEM_ID");
             }
 
             foreach (var contentId in options.ExtensionContentIds)
             {
                 if (fieldMap.ContainsKey(contentId))
                 {
-                    fromBuilder.AppendFormatLine(" LEFT JOIN dbo.CONTENT_{0}_UNITED c_{0} with(nolock) ON c.CONTENT_ITEM_ID = c_{0}.{1}", contentId, fieldMap[contentId]);
+                    fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{contentId}_UNITED c_{contentId} {WithNolock(databaseType)} ON c.CONTENT_ITEM_ID = c_{contentId}.{fieldMap[contentId]}");
                 }
             }
         }
 
-        private static void AddStaticColumnsToQuery(ArticlePageOptions options, bool useSelection, StringBuilder selectBuilder)
+        private static string DbSchemaName(DatabaseType databaseType) => databaseType == DatabaseType.Postgres ? "public" : "dbo";
+
+        private static string WithNolock(DatabaseType databaseType) => databaseType == DatabaseType.Postgres ? string.Empty : "with(nolock) ";
+
+        private static void AddStaticColumnsToQuery(DatabaseType databaseType, ArticlePageOptions options, bool useSelection, StringBuilder selectBuilder)
         {
+            var tablePrefix = options.UseMainTableForVariations ? "c" : "ch";
             if (options.OnlyIds)
             {
-                selectBuilder.AppendFormat(" {0}.CONTENT_ITEM_ID ", options.UseMainTableForVariations ? "c" : "ch");
+                selectBuilder.Append($" {tablePrefix}.CONTENT_ITEM_ID ");
             }
             else
             {
                 const string colorString = ", CASE WHEN st.COLOR IS NOT NULL AND ST.ALT_COLOR IS NOT NULL THEN ST.STATUS_TYPE_ID ELSE NULL END AS STATUS_TYPE_COLOR";
-                selectBuilder.AppendFormat(
-                    " {0}.CONTENT_ITEM_ID, {0}.CREATED, {0}.MODIFIED, {0}.LAST_MODIFIED_BY, st.STATUS_TYPE_NAME{1}, CAST({0}.visible as bit) as visible",
-                    options.UseMainTableForVariations ? "c" : "ch", colorString
+                selectBuilder.Append(
+                    $" {tablePrefix}.CONTENT_ITEM_ID, {tablePrefix}.CREATED, {tablePrefix}.MODIFIED, {tablePrefix}.LAST_MODIFIED_BY, st.STATUS_TYPE_NAME{colorString}, {SqlQuerySyntaxHelper.CastToBool(databaseType, $"{tablePrefix}.visible")} as visible"
                 );
 
+                var falseValue = SqlQuerySyntaxHelper.ToBoolSql(databaseType, false);
                 if (!options.IsVirtual)
                 {
                     selectBuilder.Append(", cil.LOCKED_BY");
-                    selectBuilder.Append(", CAST((CASE WHEN (sch.content_item_id IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled");
-                    selectBuilder.Append(", CAST((CASE WHEN (ca.content_item_id IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS splitted");
-                    selectBuilder.Append(", lu.FIRST_NAME AS LOCKER_FIRST_NAME, lu.LAST_NAME AS LOCKER_LAST_NAME, lu.[LOGIN] AS LOCKER_LOGIN");
+                    selectBuilder.Append($", {SqlQuerySyntaxHelper.CastToBool(databaseType, "(CASE WHEN (sch.content_item_id IS NOT NULL) THEN 1 ELSE 0 END)")} AS scheduled");
+                    selectBuilder.Append($", {SqlQuerySyntaxHelper.CastToBool(databaseType, "(CASE WHEN (ca.content_item_id IS NOT NULL) THEN 1 ELSE 0 END)")} AS splitted");
+                    selectBuilder.Append($", lu.FIRST_NAME AS LOCKER_FIRST_NAME, lu.LAST_NAME AS LOCKER_LAST_NAME, lu.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "LOGIN")} AS LOCKER_LOGIN");
                 }
                 else
                 {
-                    selectBuilder.Append(", cast(NULL as numeric) AS LOCKED_BY, cast(0 as bit) AS SCHEDULED, cast(0 as bit) AS SPLITTED");
-                    selectBuilder.Append(", cast(NULL as nvarchar) AS LOCKER_FIRST_NAME, cast(NULL as nvarchar) AS LOCKER_LAST_NAME, cast(NULL as nvarchar) AS LOCKER_LOGIN");
+                    var nullStringValue = SqlQuerySyntaxHelper.CastToString(databaseType, "NULL");
+                    selectBuilder.Append($", cast(NULL as numeric) AS LOCKED_BY, {falseValue} AS SCHEDULED, {falseValue} AS SPLITTED");
+                    selectBuilder.Append($", {nullStringValue} AS LOCKER_FIRST_NAME, {nullStringValue} AS LOCKER_LAST_NAME, {nullStringValue} AS LOCKER_LOGIN");
                 }
 
-                selectBuilder.Append(", mu.FIRST_NAME AS MODIFIER_FIRST_NAME, mu.LAST_NAME AS MODIFIER_LAST_NAME ,mu.[LOGIN] AS MODIFIER_LOGIN");
+                selectBuilder.Append($", mu.FIRST_NAME AS MODIFIER_FIRST_NAME, mu.LAST_NAME AS MODIFIER_LAST_NAME ,mu.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "LOGIN")} AS MODIFIER_LOGIN");
                 selectBuilder.Append(useSelection
-                    ? ", CASE WHEN (cis.CONTENT_ITEM_ID IS NOT NULL) THEN 1 ELSE 0 END as is_selected"
-                    : ", 0 as is_selected");
+                    ? $", {SqlQuerySyntaxHelper.CastToBool(databaseType, "(CASE WHEN (cis.CONTENT_ITEM_ID IS NOT NULL) THEN 1 ELSE 0 END)")} as is_selected"
+                    : $", {falseValue} as is_selected");
             }
         }
 
@@ -2937,6 +3052,8 @@ namespace Quantumart.QP8.DAL
 
         public static IEnumerable<DataRow> GetToolbarButtonsForAction(DbConnection sqlConnection, int userId, string actionCode, int entityId)
         {
+            #warning реализовать для postgres
+            if (IsPostgresConnection(sqlConnection)) return new List<DataRow>();
             using (var cmd = DbCommandFactory.Create("qp_get_toolbar_buttons_list_by_action_code", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;

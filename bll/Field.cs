@@ -2936,5 +2936,23 @@ namespace Quantumart.QP8.BLL
         }
 
         public override string ToString() => $"{Id,6}: {Name}";
+
+        public int FieldPriority(bool withRelations)
+        {
+            var result = 1;
+
+            if (TypeId == FieldTypeCodes.Textbox || TypeId == FieldTypeCodes.VisualEdit)
+            {
+                result = withRelations ? 1 : 0;
+            }
+
+            if (TypeId == FieldTypeCodes.M2ORelation || IsClassifier || TypeId == FieldTypeCodes.Relation && !withRelations)
+            {
+                result = -1;
+            }
+
+            return result;
+
+        }
     }
 }

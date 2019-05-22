@@ -61,9 +61,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         public JsonNetResult<int[]> GetParentIdsForTree(string entityTypeCode, int[] ids) => EntityObjectService.GetParentIdsForTree(entityTypeCode, ids);
 
-        public JsonNetResult<IEnumerable<EntityInfo>> GetBreadCrumbsList(string entityTypeCode, long entityId, long? parentEntityId, string actionCode) => EntityObjectService.GetBreadCrumbsList(entityTypeCode, entityId, parentEntityId, actionCode).ToList();
+        public JsonNetResult<IEnumerable<EntityInfo>> GetBreadCrumbsList(string entityTypeCode, long entityId, long? parentEntityId, string actionCode) => EntityObjectService.GetBreadCrumbsList(entityTypeCode, entityId, parentEntityId, actionCode)?.ToList();
 
-        public JsonNetResult<IEnumerable<EntityInfo>> GetParentInfo(string entityTypeCode, long entityId, long? parentEntityId) => EntityObjectService.GetParentInfo(entityTypeCode, entityId, parentEntityId).ToList();
+        public JsonNetResult<IEnumerable<EntityInfo>> GetParentInfo(string entityTypeCode, long entityId, long? parentEntityId) => EntityObjectService.GetParentInfo(entityTypeCode, entityId, parentEntityId)?.ToList();
 
         public JsonNetResult<string> GetArticleFieldValue(int contentId, string fieldName, int articleId) => EntityObjectService.GetArticleFieldValue(contentId, fieldName, articleId);
 

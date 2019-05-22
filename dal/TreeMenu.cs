@@ -162,16 +162,16 @@ namespace Quantumart.QP8.DAL
                     $"{realParentIdStr} as parent_id,\n" +
                     $"{(isGroup ? $"{parentEntityId}" : "NULL")} as parent_group_id,\n" +
                     $"'{newEntityTypeCode}' as code,\n" +
-                    $"{ToBoolSql(databaseType, false)} as is_folder,\n" +
-                    $"{ToBoolSql(databaseType, currentIsGroup)} as is_group,\n" +
+                    $"{SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)} as is_folder,\n" +
+                    $"{SqlQuerySyntaxHelper.ToBoolSql(databaseType, currentIsGroup)} as is_group,\n" +
                     $"{(!string.IsNullOrWhiteSpace(currentGroupItemCode) ? $"'{currentGroupItemCode}'" : "NULL")} as group_item_code,\n" +
                     "CASE WHEN i.ICON is not null THEN i.ICON\n" +
-                    $"WHEN i.ICON_MODIFIER is not null THEN {ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", CastToString(databaseType, "i.ICON_MODIFIER"), "'.gif'")}\n" +
-                    $"ELSE {ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", "'.gif'")} END\n" +
+                    $"WHEN i.ICON_MODIFIER is not null THEN {SqlQuerySyntaxHelper.ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", SqlQuerySyntaxHelper.CastToString(databaseType, "i.ICON_MODIFIER"), "'.gif'")}\n" +
+                    $"ELSE {SqlQuerySyntaxHelper.ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", "'.gif'")} END\n" +
                     "AS icon,\n" +
-                    $"{NullableDbValue(databaseType, newEntityType?.DefaultActionId)} AS default_action_id,\n" +
-                    $"{NullableDbValue(databaseType, newEntityType?.ContextMenuId)} as context_menu_id,\n" +
-                    $"{ToBoolSql(databaseType, string.IsNullOrWhiteSpace(newEntityType?.RecurringIdField))} as is_recurring,\n" +
+                    $"{SqlQuerySyntaxHelper.NullableDbValue(databaseType, newEntityType?.DefaultActionId)} AS default_action_id,\n" +
+                    $"{SqlQuerySyntaxHelper.NullableDbValue(databaseType, newEntityType?.ContextMenuId)} as context_menu_id,\n" +
+                    $"{SqlQuerySyntaxHelper.ToBoolSql(databaseType, string.IsNullOrWhiteSpace(newEntityType?.RecurringIdField))} as is_recurring,\n" +
                     "i.id,\n" +
                     "i.title,\n" +
                     "i.sortorder\n" +
@@ -180,7 +180,7 @@ namespace Quantumart.QP8.DAL
 
             else
             {
-                var condition = $" et.disabled = {ToBoolSql(databaseType, false)}";
+                var condition = $" et.disabled = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)}";
                 condition += string.IsNullOrWhiteSpace(newEntityTypeCode)
                     ? " and et.parent_id is null "
                     : $" and et.parent_id = {newEntityType.Id} ";
@@ -208,17 +208,17 @@ namespace Quantumart.QP8.DAL
                     var isFolderQuery = !string.IsNullOrWhiteSpace(newEntityTypeCode);
 
                     sql = $@"select et.id as id,
-                        {NullableDbValue(databaseType, parentEntityId)} as parent_id,
+                        {SqlQuerySyntaxHelper.NullableDbValue(databaseType, parentEntityId)} as parent_id,
                         et.name as title,
                         et.code as code,
-                        {ToBoolSql(databaseType, isFolderQuery)} as is_folder,
-                        {ToBoolSql(databaseType, false)} as is_group,
-                        {ConcatStrValuesSql(databaseType, "et.code", "'.gif'")} as icon,
+                        {SqlQuerySyntaxHelper.ToBoolSql(databaseType, isFolderQuery)} as is_folder,
+                        {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)} as is_group,
+                        {SqlQuerySyntaxHelper.ConcatStrValuesSql(databaseType, "et.code", "'.gif'")} as icon,
                         et.{(isFolderQuery ? "folder_" : string.Empty)}default_action_id as default_action_id,
                         et.{(isFolderQuery ? "folder_" : string.Empty)}context_menu_id as context_menu_id,
                         NULL as parent_group_id,
                         NULL as group_item_code,
-                        {ToBoolSql(databaseType, false)} as is_recurring,
+                        {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)} as is_recurring,
                         et.""order"" as sortorder
                         ";
                 }
@@ -241,7 +241,7 @@ namespace Quantumart.QP8.DAL
                 backend_action.code as default_action_code,
                 action_type.code as default_action_type_code,
                 context_menu.code as context_menu_code,
-                {ToBoolSql(databaseType, false)} as has_children
+                {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)} as has_children
 
                 from ( {sql} ) as treenode
                 left outer join backend_action on treenode.default_action_id = backend_action.id
@@ -249,23 +249,6 @@ namespace Quantumart.QP8.DAL
                 left outer join context_menu on treenode.context_menu_id = context_menu.id
                 order by treenode.sortorder
 ";
-        }
-
-
-
-
-
-        private static string ConcatStrValuesSql(DatabaseType databaseType, params string[] p)
-        {
-            switch (databaseType)
-            {
-                case DatabaseType.SqlServer:
-                    return string.Join(" + ", p);
-                case DatabaseType.Postgres:
-                    return string.Join(" || ", p);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
         }
 
         private static string GetContentListSql(QPModelDataContext context, string select, string filter, string orderBy, bool isVirtual, decimal? siteId, int userId, bool isAdmin)
@@ -304,32 +287,6 @@ namespace Quantumart.QP8.DAL
             return sql;
         }
 
-        private static string CastToString(DatabaseType databaseType, string columnName)
-        {
-            switch (databaseType)
-            {
-                case DatabaseType.SqlServer:
-                    return $"CAST({columnName} as nvarchar)";
-                case DatabaseType.Postgres:
-                    return $"{columnName}::varchar";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
-        }
-
-        private static string ToBoolSql(DatabaseType databaseType, bool boolValue)
-        {
-            switch (databaseType)
-            {
-                case DatabaseType.SqlServer:
-                    return boolValue ? "cast(1 as bit)" : "cast(0 as bit)";
-                case DatabaseType.Postgres:
-                    return boolValue ? "TRUE" : "FALSE";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
-        }
-
         private static string GetSitesListSql(QPModelDataContext context, string select, string filter, string orderBy, bool siteIdOnly, int userId, bool isAdmin)
         {
             if (string.IsNullOrWhiteSpace(orderBy))
@@ -364,19 +321,6 @@ namespace Quantumart.QP8.DAL
                 {(string.IsNullOrWhiteSpace(filter) ? string.Empty : $"and {filter}")}
                 ";
             return sql;
-        }
-
-        private static string NullableDbValue(DatabaseType databaseType, int? value)
-        {
-            switch (databaseType)
-            {
-                case DatabaseType.SqlServer:
-                    return value.HasValue ? value.ToString() : "NULL";
-                case DatabaseType.Postgres:
-                    return value.HasValue ? value.ToString() : "NULL::numeric";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
         }
 
         private static string GetSiteFolderList(QPModelDataContext context, string select, string filter, string orderBy, decimal? siteId, int parentFolderId, int userId, bool isAdmin)

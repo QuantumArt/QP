@@ -11,6 +11,7 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.DbColumns;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.DAL.Entities;
@@ -40,22 +41,41 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
         IEnumerable<int> IContentRepository.GetDisplayFieldIds(int contentId, bool withRelations, int excludeId)
         {
-            using (new QPConnectionScope())
-            {
-                IEnumerable<DataRow> rows = Common.GetDisplayFields(QPConnectionScope.Current.DbConnection, contentId, withRelations).AsEnumerable();
-                return rows.Select(n => new
-                    {
-                        id = Converter.ToInt32(n.Field<decimal>("ATTRIBUTE_ID")),
-                        viewInList = n.Field<bool>("view_in_list"),
-                        priority = n.Field<int>("attribute_priority"),
-                        order = n.Field<decimal>("attribute_order")
-                    })
-                    .Where(n => n.id != excludeId)
-                    .OrderByDescending(n => n.viewInList)
-                    .ThenByDescending(n => n.priority)
-                    .ThenBy(n => n.order)
-                    .Select(n => n.id);
-            }
+            var fields = GetDisplayFields(contentId, withRelations);
+            return fields
+                .Where(x => x.Id != excludeId)
+                .OrderByDescending(x => x.ViewInList)
+                .ThenByDescending(x => x.FieldPriority(withRelations))
+                .ThenBy(x => x.Order)
+                .Select(x => x.Id);
+
+            // using (new QPConnectionScope())
+            // {
+            //     IEnumerable<DataRow> rows = Common.GetDisplayFields(QPConnectionScope.Current.DbConnection, contentId, withRelations).AsEnumerable();
+            //     return rows.Select(n => new
+            //         {
+            //             id = Converter.ToInt32(n.Field<decimal>("ATTRIBUTE_ID")),
+            //             viewInList = n.Field<bool>("view_in_list"),
+            //             priority = n.Field<int>("attribute_priority"),
+            //             order = n.Field<decimal>("attribute_order")
+            //         })
+            //         .Where(n => n.id != excludeId)
+            //         .OrderByDescending(n => n.viewInList)
+            //         .ThenByDescending(n => n.priority)
+            //         .ThenBy(n => n.order)
+            //         .Select(n => n.id);
+            // }
+        }
+
+        private static IEnumerable<Field> GetDisplayFields(int contentId, bool withRelations)
+        {
+            var dbFields = QPContext
+                .EFContext
+                .FieldSet
+                .Where(x => x.ContentId == contentId)
+                .ToList();
+
+            return MapperFacade.FieldMapper.GetBizList(dbFields).Where(x => x.FieldPriority(withRelations) >= 0).ToList();
         }
 
         void IContentRepository.ChangeRelationIdToNewOne(int currentRelationFieldId, int newRelationFieldId)
@@ -392,10 +412,20 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
         internal static string GetTitleName(int contentId)
         {
-            using (new QPConnectionScope())
-            {
-                return Common.GetTitleName(QPConnectionScope.Current.DbConnection, contentId);
-            }
+            var displayFields = GetDisplayFields(contentId, false);
+            var fieldName = displayFields
+                .OrderByDescending(x => x.ViewInList)
+                .ThenByDescending(x => x.FieldPriority(false))
+                .ThenBy(x => x.Order)
+                .FirstOrDefault();
+
+            return fieldName?.Name ?? ContentDataColumnName.ContentItemId;
+
+
+            // using (new QPConnectionScope())
+            // {
+            //     return Common.GetTitleName(QPConnectionScope.Current.DbConnection, contentId);
+            // }
         }
 
         internal static IEnumerable<Field> GetDisplayFields(int contentId, Field field = null)
@@ -637,9 +667,9 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             {
                 return MapperFacade.ContentMapper.GetBizObject(
                     QPContext.EFContext.FieldSet
-                    .Where(f => f.ContentId == contentId && f.Aggregated)
-                    .Select(f => f.Classifier.Content)
-                    .FirstOrDefault()
+                        .Where(f => f.ContentId == contentId && f.Aggregated)
+                        .Select(f => f.Classifier.Content)
+                        .FirstOrDefault()
                 );
             }
 
