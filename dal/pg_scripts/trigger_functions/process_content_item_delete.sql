@@ -55,7 +55,7 @@ AS $BODY$
 
 					DELETE from VERSION_CONTENT_DATA
 						where ATTRIBUTE_ID = ANY(o2m_ids)
-						AND data = ANY(char_ids);
+						AND o2m_data = ANY(ids);
 									
 				END IF;
 				
