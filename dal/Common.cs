@@ -735,22 +735,6 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
             }
         }
 
-        public static int[] CheckArchiveArticle(DbConnection connection, int[] ids)
-        {
-            using (var cmd = DbCommandFactory.Create("select content_item_id from content_item with(nolock) where content_item_id in (select id from @itemIds) and archive = 1", connection))
-            {
-                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(ids)
-                });
-
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
-            }
-        }
-
         public static Dictionary<int, Dictionary<int, List<int>>> GetRelatedArticlesMultiple(DbConnection connection, IEnumerable<FieldInfo> fiList, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";

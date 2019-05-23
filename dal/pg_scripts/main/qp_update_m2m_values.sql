@@ -18,7 +18,7 @@ AS $BODY$
 		PASSING XMLPARSE(DOCUMENT xml_parameter) 
 		COLUMNS
 			id int PATH '@id',
-			link_id int PATH '@link_id',
+			link_id int PATH '@linkId',
 			value text PATH '@value'
 		) x inner join content_item ci on x.id = ci.content_item_id;
 		

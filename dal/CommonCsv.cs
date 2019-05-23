@@ -25,14 +25,13 @@ namespace Quantumart.QP8.DAL
             WITH new AS
             (
                 select x.content_item_id, x.attribute_id,
-                case when data <> '' then data else null end data,
+                case when text_data <> '' then text_data else null end ""data"",
                 case when blob_data <> '' then blob_data else null end blob_data
-                from XMLTABLE('PARAMETERS/FIELDVALUE' passing input COLUMNS
+                from XMLTABLE('PARAMETERS/FIELDVALUE' passing @xmlParameter COLUMNS
                     content_item_id int PATH 'CONTENT_ITEM_ID',
                     attribute_id int PATH 'ATTRIBUTE_ID',
-                    data text PATH 'DATA',
+                    text_data text PATH 'DATA',
                     blob_data text PATH 'BLOB_DATA'
-
                 ) x
             )
         ";
@@ -51,7 +50,7 @@ namespace Quantumart.QP8.DAL
                     FROM @xmlParameter.nodes('/PARAMETERS/FIELDVALUE') doc(col)
             " : PgTableValuesBlock;
 
-            var tableUsing = dbType == DatabaseType.SqlServer ? "@NewArticles new" : "new";
+            var tableUsing = dbType == DatabaseType.SqlServer ? "@NewArticles a" : "new a";
 
             string sql = $@"{tableDefintionBlock}
                 select * from
@@ -60,15 +59,14 @@ namespace Quantumart.QP8.DAL
                     inner join CONTENT_ATTRIBUTE ca on a.ATTRIBUTE_ID = ca.ATTRIBUTE_ID
                     inner join CONTENT_ATTRIBUTE rca on ca.RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID and ca.CONTENT_ID <> rca.CONTENT_ID
                     inner join CONTENT rc on rc.CONTENT_ID = rca.CONTENT_ID and rc.VIRTUAL_TYPE <> 3
-                    where a.DATA != ''
+                    where a.data != ''
                 ) as a
-                left join CONTENT_ITEM ci on ci.CONTENT_ITEM_ID = cast(data as numeric)
+                left join CONTENT_ITEM ci on ci.CONTENT_ITEM_ID = cast(a.data as numeric)
                 where ci.CONTENT_ID is null or ci.CONTENT_ID <> a.RELATED_CONTENT_ID";
 
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@xmlParameter", SqlDbType.Xml) { Value = xmlParameter });
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xmlParameter", xmlParameter, dbType));
                 var resultDt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(resultDt);
                 if (resultDt.AsEnumerable().Any())
@@ -121,6 +119,7 @@ namespace Quantumart.QP8.DAL
 
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xml", xml, dbType));
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -192,7 +191,7 @@ namespace Quantumart.QP8.DAL
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
-                cmd.Parameters.AddWithValue("@xmlParameter", xmlParameter);
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xmlParameter", xmlParameter, dbType));
                 var resultDt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(resultDt);
             }
@@ -216,7 +215,7 @@ namespace Quantumart.QP8.DAL
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
-                cmd.Parameters.AddWithValue("@xmlParameter", xmlParameter);
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xmlParameter", xmlParameter, dbType));
                 var resultDt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(resultDt);
             }
@@ -240,7 +239,7 @@ namespace Quantumart.QP8.DAL
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
-                cmd.Parameters.AddWithValue("@xmlParameter", xmlParameter);
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xmlParameter", xmlParameter, dbType));
                 var resultDt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(resultDt);
             }

@@ -495,5 +495,18 @@ WHERE content_item_id = {contentItemId}
             }
         }
 
+        public static int[] CheckArchiveArticle(DbConnection connection, int[] ids)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@"select content_item_id from content_item {WithNoLock(dbType)} where content_item_id in (select id from {IdList(dbType, "@ids")}) and archive = 1";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
+            {
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
+                var dt = new DataTable();
+                DataAdapterFactory.Create(cmd).Fill(dt);
+                return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+            }
+        }
+
     }
 }
