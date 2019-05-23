@@ -853,16 +853,34 @@ where attribute_priority >= 0
             var result = new Dictionary<string, List<string>>();
             if (ids.Any())
             {
-                var query = string.Format(
-                    "SELECT [item_id], [linked_item_id], link_id, title FROM( SELECT [item_id], [linked_item_id], link_id, CONVERT (NVARCHAR(255), [{2}]) as title, "
-                    + " ROW_NUMBER() over (partition by item_id "
-                    + "order by linked_item_id) AS [RowNum] from [item_link_united] as u with(nolock) inner join content_{3}_united as c with(nolock) on u.linked_item_id = c.CONTENT_ITEM_ID"
-                    + " where item_id in (select id from @ids) and link_id = {1}) as subq where subq.RowNum <= {0} ",
-                    maxNumberOfRecords + 1, linkId, displayFieldName, contentId);
+                var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+                var titleField = databaseType == DatabaseType.Postgres
+                    ? $"{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, displayFieldName)}::text"
+                    : $"CONVERT (NVARCHAR(255), {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, displayFieldName)})";
+                var query = $@"
+SELECT item_id, linked_item_id, link_id, title
+FROM (
+SELECT item_id, linked_item_id, link_id, {titleField} as title, ROW_NUMBER()
+over (partition by item_id order by linked_item_id) AS RowNum
+from item_link_united as u {WithNolock(databaseType)}
+inner join content_{contentId}_united as c {WithNolock(databaseType)} on u.linked_item_id = c.CONTENT_ITEM_ID
+where item_id in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@ids) i(id)" : "@ids")}) and link_id = {linkId}) as subq
+where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
                 using (var cmd = DbCommandFactory.Create(query, sqlConnection))
                 {
-                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                    switch (databaseType)
+                    {
+                        case DatabaseType.SqlServer:
+                            cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                            break;
+                        case DatabaseType.Postgres:
+                            cmd.Parameters.Add(GetIntArrayPostgresParam("@ids", ids));
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -884,6 +902,8 @@ where attribute_priority >= 0
 
             return result;
         }
+
+
 
         public static string GetLinkedArticlesForVersion(DbConnection connection, int fieldId, int versionId)
         {
@@ -2459,7 +2479,7 @@ where attribute_priority >= 0
             AddRelationSecurityFilteringToQuery(sqlConnection, options, fromBuilder, whereBuilder);
             if (options.FilterIds != null && options.FilterIds.Any())
             {
-                whereBuilder.Append($" AND c.CONTENT_ITEM_ID IN (SELECT ID FROM {(databaseType == DatabaseType.Postgres ? "unnest(@filterIds)" : "@filterIds")})");
+                whereBuilder.Append($" AND c.CONTENT_ITEM_ID IN (SELECT ID FROM {(databaseType == DatabaseType.Postgres ? "unnest(@filterIds) i(id)" : "@filterIds")})");
             }
 
             var defaultSortExpression = useSelection ? "is_selected DESC, MODIFIED DESC" : "MODIFIED DESC";
@@ -2796,7 +2816,7 @@ where attribute_priority >= 0
 
             if (useSelection)
             {
-                fromBuilder.AppendLine($" LEFT OUTER JOIN (SELECT CONTENT_ITEM_ID from CONTENT_ITEM {WithNolock(databaseType)} where CONTENT_ITEM_ID in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@itemIds)" : "@itemIds")})) AS cis ON {tablePrefix}.CONTENT_ITEM_ID = cis.CONTENT_ITEM_ID ");
+                fromBuilder.AppendLine($" LEFT OUTER JOIN (SELECT CONTENT_ITEM_ID from CONTENT_ITEM {WithNolock(databaseType)} where CONTENT_ITEM_ID in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@itemIds) i(id)" : "@itemIds")})) AS cis ON {tablePrefix}.CONTENT_ITEM_ID = cis.CONTENT_ITEM_ID ");
             }
 
             if (options.UseSecurity)
@@ -10407,6 +10427,11 @@ where attribute_priority >= 0
         {
             TypeName = "Ids",
             Value = IdsToDataTable(ids)
+        };
+
+        private static DbParameter GetIntArrayPostgresParam(string paramName, List<int> ints) => new NpgsqlParameter(paramName, NpgsqlDbType.Array | NpgsqlDbType.Integer)
+        {
+            Value = ints.ToArray()
         };
 
         private static IList<DataRow> GetDatatableResult(DbConnection cn, string query, out int totalCount, params DbParameter[] @params)
