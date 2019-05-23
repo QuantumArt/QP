@@ -1,11 +1,9 @@
--- auto-generated definition
-create type link_multiple as
-    (
-    id numeric(18),
-    link_id numeric(18),
-    linked_id numeric(18),
-    splitted boolean
-    );
+CREATE TYPE public.link_multiple AS
+(
+	id numeric(18,0),
+	link_id numeric(18,0),
+	linked_id numeric(18,0)
+);
 
-alter type link_multiple owner to postgres;
-
+ALTER TYPE public.link_multiple
+    OWNER TO postgres;

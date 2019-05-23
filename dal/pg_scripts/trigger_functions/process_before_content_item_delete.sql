@@ -7,8 +7,8 @@ $$
     BEGIN
         ids := ARRAY[old.CONTENT_ITEM_ID]::int[];
         call qp_before_content_item_delete(ids);
-		RETURN NEW;
+		RETURN OLD;
 	END;
 $$;
 
-alter function process_before_content_item_delete() owner to postgres;
+alter function process_before_content_iteminsert into content_item_delete() owner to postgres;

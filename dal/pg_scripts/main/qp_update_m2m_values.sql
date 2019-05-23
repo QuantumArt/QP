@@ -8,9 +8,9 @@ LANGUAGE 'plpgsql'
 
 AS $BODY$
 	DECLARE
-		new_ids link_multiple[];
-		old_ids link_multiple[];
-		cross_ids link_multiple[];
+		new_ids link_multiple_splitted[];
+		old_ids link_multiple_splitted[];
+		cross_ids link_multiple_splitted[];
 	BEGIN
 		create temp table field_values as	
 		select x.*, false as splitted from XMLTABLE(
@@ -24,7 +24,7 @@ AS $BODY$
 		
 		new_ids := array_agg(row(a.id, a.link_id, unnest, a.splitted)) 
 		from field_values a, unnest(regexp_split_to_array(a.value, E',\\s*')::int[]);
-		new_ids := coalesce(new_ids, ARRAY[]::link_multiple[]);
+		new_ids := coalesce(new_ids, ARRAY[]::link_multiple_splitted[]);
 							
 		old_ids := array_agg(row(c.*)) from
 		(					
@@ -38,24 +38,24 @@ AS $BODY$
 		  on il.link_id = f.link_id and il.item_id = f.id
 		  where not f.splitted
 		) c;
-		old_ids := coalesce(old_ids, ARRAY[]::link_multiple[]);
+		old_ids := coalesce(old_ids, ARRAY[]::link_multiple_splitted[]);
 		
 		cross_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))
 		from unnest(new_ids) t1 inner join unnest(old_ids) t2 
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id;
-		cross_ids := coalesce(cross_ids, ARRAY[]::link_multiple[]);
+		cross_ids := coalesce(cross_ids, ARRAY[]::link_multiple_splitted[]);
 
 		old_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))							  
 		from unnest(old_ids) t1 left join unnest(cross_ids) t2 							  
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id
 		where t2.id is null;
-		old_ids := coalesce(old_ids, ARRAY[]::link_multiple[]);
+		old_ids := coalesce(old_ids, ARRAY[]::link_multiple_splitted[]);
 							
 		new_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))							  
 		from unnest(new_ids) t1 left join unnest(cross_ids) t2 							  
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id
 		where t2.id is null;
-		new_ids := coalesce(new_ids, ARRAY[]::link_multiple[]);									
+		new_ids := coalesce(new_ids, ARRAY[]::link_multiple_splitted[]);
 							  
   		delete from item_link_async il using field_values f
 		where il.item_id = f.id and il.link_id = f.link_id

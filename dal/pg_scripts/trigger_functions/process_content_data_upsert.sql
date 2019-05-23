@@ -23,7 +23,7 @@ AS $BODY$
 		IF TG_OP = 'UPDATE' THEN
             o2m_ids := array_agg(i.content_data_id)
             from new_table i
-                inner join old_table o on i.content_data_id and i.content_data_id
+                inner join old_table o on i.content_data_id = i.content_data_id
                 inner join content_attribute ca on ca.attribute_id = i.attribute_id
 		        where ca.attribute_type_id = 11 and ca.link_id is null
 		        and coalesce(i.data, '') <> coalesce(o.data, '');

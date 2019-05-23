@@ -22,5 +22,5 @@ AS $BODY$
 	END;
 $BODY$;
 
-ALTER FUNCTION public.qp_before_content_item_delete(integer[])
+ALTER PROCEDURE public.qp_before_content_item_delete(integer[])
     OWNER TO postgres;

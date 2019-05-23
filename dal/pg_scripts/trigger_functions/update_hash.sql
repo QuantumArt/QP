@@ -4,12 +4,12 @@ CREATE OR REPLACE FUNCTION update_hash() RETURNS TRIGGER AS $tiu_update_hash$
 	 	old_hash bytea;
 	BEGIN
 		IF (TG_OP = 'INSERT') THEN
-			IF PASSWORD IS NULL OR PASSWORD = '' THEN
+			IF NEW.PASSWORD IS NULL OR NEW.PASSWORD = '' THEN
                 RAISE EXCEPTION 'Cannot create user with empty password';
 			END IF;
 			old_hash = null;
 		ELSEIF (TG_OP = 'UPDATE') THEN
-			IF PASSWORD IS NULL OR PASSWORD = '' OR OLD.PASSWORD = NEW.PASSWORD THEN
+			IF NEW.PASSWORD IS NULL OR NEW.PASSWORD = '' OR OLD.PASSWORD = NEW.PASSWORD THEN
 				RAISE NOTICE 'No changes in password detected';
 				RETURN NEW;
 			END IF;
