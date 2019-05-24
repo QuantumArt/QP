@@ -97,13 +97,15 @@ AS $BODY$
 			
 			IF array_length(ids, 1) > 0 THEN
 				
-				sql := FORMAT(sql, 'content_' || attr.content_id, lower(attr.attribute_name), source, column_type, attr.attribute_id);					  
+				sql := FORMAT(sql, 'content_' || attr.content_id, lower(attr.attribute_name), source, column_type, attr.attribute_id);
+				RAISE NOTICE '%', sql;
 				execute sql using ids;
 								  
 			END IF;
 								  
 			IF array_length(async_ids, 1) > 0 THEN
-				sql := FORMAT(sql, 'content_' || attr.content_id || '_async', attr.attribute_name, source, attr.attribute_id);					  
+				sql := FORMAT(sql, 'content_' || attr.content_id || '_async', attr.attribute_name, source, attr.attribute_id);
+				RAISE NOTICE '%', sql;
 				execute sql using async_ids;
 			END IF;
 								  
