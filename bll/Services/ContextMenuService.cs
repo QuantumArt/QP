@@ -19,11 +19,11 @@ namespace Quantumart.QP8.BLL.Services
         public static ContextMenu GetByCode(string menuCode, bool loadItems = false)
         {
 
-            #warning заглушка для Postgres
-            if (string.IsNullOrWhiteSpace(menuCode) || QPContext.DatabaseType == DatabaseType.Postgres)
-            {
-                return null;
-            }
+            // #warning заглушка для Postgres
+            // if (string.IsNullOrWhiteSpace(menuCode) || QPContext.DatabaseType == DatabaseType.Postgres)
+            // {
+            //     return null;
+            // }
 
             return ContextMenuRepository.GetByCode(menuCode, loadItems);
         }

@@ -31,13 +31,7 @@ namespace Quantumart.QP8.BLL.Mappers
     {
     }
 
-    internal class ContextMenuMapper : GenericMapper<ContextMenu, ContextMenuDAL>
-    {
-    }
 
-    internal class ContextMenuItemMapper : GenericMapper<ContextMenuItem, ContextMenuItemDAL>
-    {
-    }
 
     internal class EntityPermissionLevelMapper : GenericMapper<EntityPermissionLevel, PermissionLevelDAL>
     {
