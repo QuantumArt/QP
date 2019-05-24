@@ -119,8 +119,8 @@ AS $BODY$
 
         RAISE NOTICE 'Main defined: %',  clock_timestamp();
 
-        INSERT INTO version_content_data (attribute_id, content_item_version_id, data, blob_data, created)
-        SELECT attribute_id, m.id, data, blob_data, now()
+        INSERT INTO version_content_data (attribute_id, content_item_version_id, data, blob_data, o2m_data, created)
+        SELECT attribute_id, m.id, data, blob_data, o2m_data, now()
         FROM content_data cd inner join unnest(main) m on cd.CONTENT_ITEM_ID = m.linked_id;
 
 	    RAISE NOTICE 'Data saved: %',  clock_timestamp();
