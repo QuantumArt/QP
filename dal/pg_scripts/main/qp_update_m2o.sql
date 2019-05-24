@@ -6,7 +6,7 @@ CREATE OR REPLACE PROCEDURE public.qp_update_m2o(
 	id numeric,
 	field_id numeric,
 	ids text,
-	update_archive boolean)
+	update_archive boolean default false)
 LANGUAGE 'plpgsql'
 
 AS $BODY$
@@ -17,8 +17,8 @@ AS $BODY$
 	    cross_ids int[];
 	    archive_ids int[];
 	BEGIN
-	    attr := ca.* from content_attribute ca where ca.attribute_id = field_id;
-	    old_ids := qp_get_m2o_ids(attr.content_id, attr.attribute_name, id);
+	    attr := row(ca.*) from content_attribute ca where ca.attribute_id = field_id;
+	    old_ids := qp_get_m2o_ids(attr.content_id::int, attr.attribute_name::text, id::int);
 
 		RAISE NOTICE 'Start: %', clock_timestamp();
 		IF ids is null OR ids = '' THEN

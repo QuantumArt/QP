@@ -10,7 +10,7 @@ AS $BODY$
 	    ids_to_split int[];
 	BEGIN
     	if exists(select * from information_schema.tables where table_name = 'o2m_result_ids') then
-            if exists(select * from o2m_result_ids) or exists(select * from CHILD_DELAYS where id = $1) then
+            if exists(select * from o2m_result_ids) or exists(select * from CHILD_DELAYS cd where cd.id = $1) then
                 item := ci.* from content_item ci where ci.content_item_id = $1;
 
                 max_status := max_status_type_id from content_item_workflow ciw
@@ -45,7 +45,7 @@ AS $BODY$
                 from o2m_result_ids r
                 where cd.attribute_id = r.attribute_id and cd.content_item_id = r.id and r.to_remove;
 
-		        delete from CHILD_DELAYS where id = $1 and child_id in (
+		        delete from CHILD_DELAYS cd where cd.id = $1 and child_id in (
 		            select id from o2m_result_ids where remove_delays
 		        );
 
@@ -61,12 +61,12 @@ AS $BODY$
                         and not r.remove_delays;
 
                     ids_to_split := array_agg(content_item_id) from content_item
-                    where content_item_id in (select child_id from child_delays where id = $1) and not splitted;
+                    where content_item_id in (select child_id from child_delays cd where cd.id = $1) and not splitted;
 
                     call qp_split_articles(ids_to_split);
 
                     update content_item set schedule_new_version_publication = 1
-                    where content_item_id in (select child_id from child_delays where id = $1);
+                    where content_item_id in (select child_id from child_delays cd where cd.id = $1);
 
                 end if;
 
