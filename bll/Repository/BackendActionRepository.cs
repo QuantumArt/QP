@@ -40,10 +40,14 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<BackendActionStatus> GetStatusesList(string actionCode, int entityId)
         {
+
             using (var scope = new QPConnectionScope())
             {
                 var userId = QPContext.CurrentUserId;
-                var statusesList = MapperFacade.BackendActionStatusMapper.GetBizList(Common.GetActionStatusList(scope.DbConnection, userId, actionCode, entityId).ToList());
+                var action = BackendActionCache.Actions.FirstOrDefault(x => x.Code == actionCode);
+                var actionId = action?.Id;
+                var entityCode = EntityTypeRepository.GetById(action.EntityTypeId)?.Code;
+                var statusesList = MapperFacade.BackendActionStatusMapper.GetBizList(Common.GetActionStatusList(QPContext.EFContext, scope.DbConnection, userId, actionCode, actionId, entityId, entityCode, QPContext.IsAdmin).ToList());
                 return statusesList;
             }
         }

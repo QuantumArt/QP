@@ -30,70 +30,69 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetTitleName(DbConnection connection, long contentId)
-        {
+        /* public static string GetTitleName(DbConnection connection, long contentId)
+         {
 
-            var displayFieldsQuery = GetDisplayFieldsQuery(connection, contentId, true);
-            var isPostgres = IsPostgresConnection(connection);
+             var displayFieldsQuery = GetDisplayFieldsQuery(connection, contentId, true);
+             var isPostgres = IsPostgresConnection(connection);
 
-            var query = $@"
-select
-case when attribute_name is not null then attribute_name else 'content_item_id' end
-from (
-    select {(isPostgres ? string.Empty : "TOP 1")} attribute_name
-    from ({displayFieldsQuery}) as df
-    order by view_in_list desc, attribute_priority desc, attribute_order asc
-    {(isPostgres ? "LIMIT 1" : string.Empty)}
-) as a
-";
+             var query = $@"
+ select
+ case when attribute_name is not null then attribute_name else 'content_item_id' end
+ from (
+     select {(isPostgres ? string.Empty : "TOP 1")} attribute_name
+     from ({displayFieldsQuery}) as df
+     order by view_in_list desc, attribute_priority desc, attribute_order asc
+     {(isPostgres ? "LIMIT 1" : string.Empty)}
+ ) as a
+ ";
 
 
-            using (var cmd = DbCommandFactory.Create("query", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                // cmd.Parameters.AddWithValue("@id", contentId);
-                return cmd.ExecuteScalar().ToString();
-            }
-        }
+             using (var cmd = DbCommandFactory.Create(query, connection))
+             {
+                 cmd.CommandType = CommandType.Text;
+                 // cmd.Parameters.AddWithValue("@id", contentId);
+                 return cmd.ExecuteScalar().ToString();
+             }
+         }
 
-        public static DataTable GetDisplayFields(DbConnection connection, long contentId, bool withRelations = false)
-        {
-            var query = GetDisplayFieldsQuery(connection, contentId, withRelations);
+         public static DataTable GetDisplayFields(DbConnection connection, long contentId, bool withRelations = false)
+         {
+             var query = GetDisplayFieldsQuery(connection, contentId, withRelations);
 
-            using (var cmd = DbCommandFactory.Create(query, connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                // cmd.Parameters.AddWithValue("@contentId", contentId);
-                // cmd.Parameters.AddWithValue("@with_relation_field", withRelations);
-                var ds = new DataSet();
-                DataAdapterFactory.Create(cmd).Fill(ds);
-                return 0 == ds.Tables.Count ? null : ds.Tables[0];
-            }
-        }
+             using (var cmd = DbCommandFactory.Create(query, connection))
+             {
+                 cmd.CommandType = CommandType.Text;
+                 // cmd.Parameters.AddWithValue("@contentId", contentId);
+                 // cmd.Parameters.AddWithValue("@with_relation_field", withRelations);
+                 var ds = new DataSet();
+                 DataAdapterFactory.Create(cmd).Fill(ds);
+                 return 0 == ds.Tables.Count ? null : ds.Tables[0];
+             }
+         }
 
-        private static string GetDisplayFieldsQuery(DbConnection connection, long contentId, bool withRelations)
-        {
-            var isPostgres = IsPostgresConnection(connection);
+         private static string GetDisplayFieldsQuery(DbConnection connection, long contentId, bool withRelations)
+         {
 
-            return $@"
-select *
-from (
-        SELECT attribute_id, attribute_name,
-        CASE
-            WHEN attribute_type_id in (9, 10)
-                THEN {(withRelations ? "1" : "0")}
-            WHEN attribute_type_id = 13 or is_classifier = 1 or
-                 attribute_type_id = 11 AND {(!withRelations ? "1=1" : "1=0")} THEN -1
-            ELSE 1
-            END AS attribute_priority,
-        view_in_list,
-        attribute_order
-        FROM content_attribute ca
-        WHERE content_id = {contentId}
-    ) as c
-where attribute_priority >= 0
-";
-        }
+             return $@"
+ select *
+ from (
+         SELECT attribute_id, attribute_name,
+         CASE
+             WHEN attribute_type_id in (9, 10)
+                 THEN {(withRelations ? "1" : "0")}
+             WHEN attribute_type_id = 13 or is_classifier = 1 or
+                  attribute_type_id = 11 AND {(!withRelations ? "1=1" : "1=0")} THEN -1
+             ELSE 1
+             END AS attribute_priority,
+         view_in_list,
+         attribute_order
+         FROM content_attribute ca
+         WHERE content_id = {contentId}
+     ) as c
+ where attribute_priority >= 0
+ ";
+         }*/
 
         public static string GetFieldName(DbConnection connection, int fieldId)
         {
@@ -1039,37 +1038,37 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             public string Value { get; set; }
         }
 
-        public static DataTable GetBreadCrumbsList(DbConnection connection, int userId, string entityTypeCode, long entityId, long? parentEntityId, bool oneLevel)
-        {
-            DataTable dt = null;
-            #warning реализовать для postgres
-            if (IsPostgresConnection(connection))
-            {
-                return dt;
-            }
-            using (var cmd = DbCommandFactory.Create("qp_get_breadcrumbs", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@user_id", userId);
-                cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entity_id", entityId);
-                cmd.Parameters.AddWithValue("@one_level", oneLevel);
-
-                if (parentEntityId != null)
-                {
-                    cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
-                }
-
-                var ds = new DataSet();
-                DataAdapterFactory.Create(cmd).Fill(ds);
-                if (ds.Tables.Count > 0)
-                {
-                    dt = ds.Tables[0];
-                }
-            }
-
-            return dt;
-        }
+        // public static DataTable GetBreadCrumbsList(DbConnection connection, int userId, string entityTypeCode, long entityId, long? parentEntityId, bool oneLevel)
+        // {
+        //     DataTable dt = null;
+        //     #warning реализовать для postgres
+        //     if (IsPostgresConnection(connection))
+        //     {
+        //         return dt;
+        //     }
+        //     using (var cmd = DbCommandFactory.Create("qp_get_breadcrumbs", connection))
+        //     {
+        //         cmd.CommandType = CommandType.StoredProcedure;
+        //         cmd.Parameters.AddWithValue("@user_id", userId);
+        //         cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
+        //         cmd.Parameters.AddWithValue("@entity_id", entityId);
+        //         cmd.Parameters.AddWithValue("@one_level", oneLevel);
+        //
+        //         if (parentEntityId != null)
+        //         {
+        //             cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
+        //         }
+        //
+        //         var ds = new DataSet();
+        //         DataAdapterFactory.Create(cmd).Fill(ds);
+        //         if (ds.Tables.Count > 0)
+        //         {
+        //             dt = ds.Tables[0];
+        //         }
+        //     }
+        //
+        //     return dt;
+        // }
 
         public static bool IsAdmin(DbConnection connection, int userId)
         {
@@ -3070,17 +3069,51 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             );
         }
 
-        public static IEnumerable<DataRow> GetToolbarButtonsForAction(DbConnection sqlConnection, int userId, string actionCode, int entityId)
+        public static IEnumerable<DataRow> GetToolbarButtonsForAction(QPModelDataContext context, DbConnection sqlConnection, int userId, bool isAdmin, int? actionId, string actionCode, int entityId)
         {
-            #warning реализовать для postgres
-            if (IsPostgresConnection(sqlConnection)) return new List<DataRow>();
-            using (var cmd = DbCommandFactory.Create("qp_get_toolbar_buttons_list_by_action_code", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("user_id", userId);
-                cmd.Parameters.AddWithValue("action_code", actionCode);
-                cmd.Parameters.AddWithValue("entity_id", entityId);
+            var useSecurity = !isAdmin;
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(context);
 
+
+
+            var query = $@"
+        SELECT
+			ba.ID AS ACTION_ID,
+			ba.CODE AS ACTION_CODE,
+			bat.CODE AS ACTION_TYPE_CODE,
+			ba2.ID AS PARENT_ACTION_ID,
+			ba2.CODE AS PARENT_ACTION_CODE,
+			atb.NAME AS NAME,
+			bat.ITEMS_AFFECTED,
+			atb.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ORDER")},
+			COALESCE(ca.ICON_URL, atb.ICON) AS ICON,
+			atb.ICON_DISABLED,
+			atb.IS_COMMAND
+		FROM
+			ACTION_TOOLBAR_BUTTON AS atb
+			INNER JOIN BACKEND_ACTION AS ba ON atb.ACTION_ID = ba.ID
+			LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
+			INNER JOIN ACTION_TYPE AS bat ON bat.ID = ba.TYPE_ID
+            {(!useSecurity ? string.Empty : "INNER JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = bat.REQUIRED_PERMISSION_LEVEL_ID")}
+			INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID
+            {(!useSecurity ? string.Empty : $"INNER JOIN {PermissionHelper.GetActionPermissionsAsQuery(context, userId)} SEC ON SEC.BACKEND_ACTION_ID = ba.ID")}
+
+		WHERE
+			atb.PARENT_ACTION_ID = {actionId}
+            {(!useSecurity ? string.Empty : "AND (SEC.PERMISSION_LEVEL >= PL.PERMISSION_LEVEL or bat.CODE = ''refresh'')")}
+			-- AND dbo.qp_action_visible(@p2, @p3, @p4, ba.CODE) = 1
+		ORDER BY
+			{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ORDER")}
+";
+
+            // #warning реализовать для postgres
+            // if (IsPostgresConnection(sqlConnection)) return new List<DataRow>();
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+                // cmd.Parameters.AddWithValue("user_id", userId);
+                // cmd.Parameters.AddWithValue("action_code", actionCode);
+                // cmd.Parameters.AddWithValue("entity_id", entityId);
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
 
@@ -3088,14 +3121,35 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public static IEnumerable<DataRow> GetActionStatusList(DbConnection sqlConnection, int userId, string actionCode, int entityId)
+        public static IEnumerable<DataRow> GetActionStatusList(QPModelDataContext efContext, DbConnection sqlConnection, int userId, string actionCode, int? actionId, int entityId, string entityCode, bool isAdmin)
         {
-            using (var cmd = DbCommandFactory.Create("qp_get_action_status_list", sqlConnection))
+            var useSecurity = !isAdmin;
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(efContext);
+            string query;
+
+            // if (!useSecurity)
+            // {
+            #warning прикрутить security (из qp_get_action_status_list)
+            query = $@"
+        SELECT ba.CODE, {SqlQuerySyntaxHelper.ToBoolSql(databaseType, true)} as visible
+		FROM ACTION_TOOLBAR_BUTTON atb
+		INNER JOIN BACKEND_ACTION ba on ba.ID = atb.ACTION_ID
+		INNER JOIN ACTION_TYPE at on ba.TYPE_ID = at.ID
+		WHERE atb.PARENT_ACTION_ID = {actionId} AND at.items_affected = 1
+";
+            // }
+            // else
+            // {
+            //     var secQuery = PermissionHelper.GetActionPermissionsAsQuery(efContext, userId);
+            //
+            // }
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("user_id", userId);
-                cmd.Parameters.AddWithValue("action_code", actionCode);
-                cmd.Parameters.AddWithValue("entity_id", entityId);
+                cmd.CommandType = CommandType.Text;
+                // cmd.Parameters.AddWithValue("user_id", userId);
+                // cmd.Parameters.AddWithValue("action_code", actionCode);
+                // cmd.Parameters.AddWithValue("entity_id", entityId);
 
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);

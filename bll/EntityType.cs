@@ -121,7 +121,9 @@ namespace Quantumart.QP8.BLL
         public string OrderField { get; set; }
         public string SourceSP { get; set; }
         public int? DefaultActionId { get; set; }
+        public int? FolderDefaultActionId { get; set; }
         public int? ContextMenuId { get; set; }
+
 
         /// <summary>
         /// Проверка на автосохранение

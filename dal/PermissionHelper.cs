@@ -173,6 +173,33 @@ namespace Quantumart.QP8.DAL
 			LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL";
         }
 
+        public static string GetActionPermissionsAsQuery(QPModelDataContext context, decimal userId)
+        {
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(context);
+            var actionSecQuery = GetPermittedItemsAsQuery(context,
+                userIdParam: userId,
+                startLevelParam: 0,
+                endLevelParam: 100,
+                entityNameParam: "BACKEND_ACTION"
+                );
+
+            var entitySecQuery = GetEntityPermissionAsQuery(context, userId);
+
+            var query = $@"
+select AP.BACKEND_ACTION_ID, COALESCE(AP.PERMISSION_LEVEL, EP.PERMISSION_LEVEL, 0) AS PERMISSION_LEVEL from
+		(select L.PERMISSION_LEVEL AS PERMISSION_LEVEL, T.ID AS BACKEND_ACTION_ID, T.ENTITY_TYPE_ID FROM
+			({actionSecQuery}) P1
+			LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USER_ID")} = {userId}
+			RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
+			LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
+		) AP
+		JOIN
+        ({entitySecQuery}) EP ON AP.ENTITY_TYPE_ID = EP.ENTITY_TYPE_ID
+
+";
+            return query;
+        }
+
         private static List<decimal> GetParentGroupIds(QPModelDataContext context, ICollection<decimal> childGroups)
         {
             return context

@@ -257,5 +257,57 @@ namespace Quantumart.QP8.DAL
                 return (value == null || value == DBNull.Value) ? (decimal?)null : (decimal)value;
             }
         }
+
+        public static string GetStringFieldValue(DbConnection dbConnection, string fieldName, string entityName, string entityIdField, decimal entityId)
+        {
+            var query = $"select {fieldName} from {entityName} where {entityIdField} = {entityId}";
+
+            using (var cmd = DbCommandFactory.Create(query, dbConnection))
+            {
+                var value = cmd.ExecuteScalar();
+                return (value == null || value == DBNull.Value) ? null: (string)value;
+            }
+        }
+
+        public static string GetArticleTitle(DbConnection dbConnection, long contentItemId, decimal contentId, string titleName, string relName, int? relContentId, string relName2, int? relContentId2)
+        {
+            var query = "";
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(dbConnection);
+
+            if (!string.IsNullOrWhiteSpace(relName2))
+            {
+                query = $@"
+SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, relName2)} as title
+FROM content_{relContentId2}_united
+WHERE content_item_id in (SELECT {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, relName)} FROM content_{relContentId}_united
+WHERE content_item_id in (SELECT {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, titleName)} FROM content_{contentId}_united
+WHERE content_item_id = {contentItemId}))
+";
+            }
+            else if (!string.IsNullOrWhiteSpace(relName))
+            {
+                query = $@"
+SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, relName2)} as title
+FROM content_{relContentId}_united
+WHERE content_item_id in (SELECT {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, titleName)} FROM content_{contentId}_united
+WHERE content_item_id = {contentItemId})
+";
+            }
+            else
+            {
+                query = $@"
+SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, relName2)} as title
+FROM content_{contentId}_united
+WHERE content_item_id = {contentItemId}
+";
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, dbConnection))
+            {
+                var value = cmd.ExecuteScalar();
+                return (value == null || value == DBNull.Value) ? null: (string)value;
+            }
+
+        }
     }
 }

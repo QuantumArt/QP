@@ -11,7 +11,7 @@ namespace Quantumart.QP8.DAL
                 case DatabaseType.SqlServer:
                     return $"CAST({columnName} as nvarchar)";
                 case DatabaseType.Postgres:
-                    return $"{columnName}::varchar";
+                    return $"{columnName.ToLower()}::varchar";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }

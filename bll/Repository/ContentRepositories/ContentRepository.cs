@@ -67,7 +67,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             // }
         }
 
-        private static IEnumerable<Field> GetDisplayFields(int contentId, bool withRelations)
+        internal static IEnumerable<Field> GetDisplayFields(int contentId, bool withRelations)
         {
             var dbFields = QPContext
                 .EFContext

@@ -32,9 +32,9 @@ namespace Quantumart.QP8.BLL.SharedLogic
             var customActions = CustomActionRepository.GetListByCodes(statuses.Select(s => s.Code)?.ToArray());
 
             // Если есть как минимум сайт - то проверяем
-            if (customActions.Any())
+            if (customActions != null && customActions.Any())
             {
-                if (bindableParentEntities.Any())
+                if (bindableParentEntities != null && bindableParentEntities.Any())
                 {
                     var parentSiteInfo = bindableParentEntities.FirstOrDefault(ei => ei.Code.Equals(EntityTypeCode.Site, StringComparison.InvariantCultureIgnoreCase));
                     var parentContentInfo = bindableParentEntities.FirstOrDefault(ei => ei.Code.Equals(EntityTypeCode.Content, StringComparison.InvariantCultureIgnoreCase)
