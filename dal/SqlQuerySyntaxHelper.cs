@@ -56,6 +56,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static string DbSchemaName(DatabaseType databaseType) => databaseType == DatabaseType.Postgres ? "public" : "dbo";
+
+        public static string WithNolock(DatabaseType databaseType) => databaseType == DatabaseType.Postgres ? string.Empty : "with(nolock) ";
+
 
 
         public static string NullableDbValue(DatabaseType databaseType, int? value)
@@ -71,7 +75,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string ConcatStrValuesSql(DatabaseType databaseType, params string[] p)
+        public static string ConcatStrValues(DatabaseType databaseType, params string[] p)
         {
             switch (databaseType)
             {
@@ -79,6 +83,19 @@ namespace Quantumart.QP8.DAL
                     return string.Join(" + ", p);
                 case DatabaseType.Postgres:
                     return string.Join(" || ", p);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static string ConcatStrValuesWithSeparator(DatabaseType databaseType, string separator, params string[] p)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return string.Join($" + {separator} + ", p);
+                case DatabaseType.Postgres:
+                    return string.Join($" || {separator} ||", p);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }
@@ -92,6 +109,32 @@ namespace Quantumart.QP8.DAL
                     return $"[{entityName}]";
                 case DatabaseType.Postgres:
                     return $"\"{entityName.ToLower()}\"";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static string GetDate(DatabaseType databaseType)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return "getdate()";
+                case DatabaseType.Postgres:
+                    return "now()";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static string Returning(DatabaseType databaseType, string expression)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"OUTPUT {expression}";
+                case DatabaseType.Postgres:
+                    return $"returning {expression}";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }

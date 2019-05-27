@@ -456,6 +456,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(contentId);
                 var extraFrom = GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
+                    QPContext.EFContext,
                     QPConnectionScope.Current.DbConnection,
                     QPContext.CurrentUserId,
                     contentId,
@@ -524,9 +525,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         internal static IEnumerable<EntityTreeItem> GetArticleTreeForParentResult(int? rootId, string commonFilter, Field treeField)
         {
             var extraFilter = commonFilter.Replace("c.", "cnt.");
+            var dbType = QPContext.DatabaseType;
             commonFilter = SqlFilterComposer.Compose(commonFilter, rootId.HasValue
-                ? $"c.[{treeField.Name}] = {rootId.Value}"
-                : $"c.[{treeField.Name}] IS NULL");
+                ? $"c.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, treeField.Name)} = {rootId.Value}"
+                : $"c.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, treeField.Name)} IS NULL");
 
             return GetArticleTreeItemsResult(commonFilter, extraFilter, treeField, null);
         }
@@ -561,6 +563,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 fields = fields ?? new[] { treeField.Relation }.ToList();
                 var extraFrom = " LEFT JOIN content_item cil ON c.content_item_id = cil.content_item_id AND locked_by IS NOT NULL LEFT JOIN users lu ON lu.user_id = cil.locked_by " + GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
+                    QPContext.EFContext,
                     scope.DbConnection,
                     QPContext.CurrentUserId,
                     treeField.ContentId,
@@ -572,9 +575,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     null,
                     idsToFilter,
                     ArticleFullTextSearchSettings.SearchResultLimit,
-                    extraSelect,
-                    extraFrom,
-                    GetSimpleListOrderExpression(treeField, fields));
+                    extraSelect: extraSelect,
+                    extraFrom: extraFrom,
+                    orderBy: GetSimpleListOrderExpression(treeField, fields));
 
                 return rows.Select(dr =>
                 {
@@ -604,10 +607,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             var sb = new StringBuilder();
             var relCounter = 0;
+            var databaseType = QPContext.DatabaseType;
             foreach (var field in displayFields.Where(field => field.ExactType == FieldExactTypes.O2MRelation))
             {
                 relCounter++;
-                sb.AppendFormatLine(" left join content_{0} as rel_{1} on c.[{2}] = rel_{1}.content_item_id ", field.RelateToContentId, relCounter, field.Name);
+                sb.AppendFormatLine(" left join content_{0} as rel_{1} on c.{2} = rel_{1}.content_item_id ", field.RelateToContentId, relCounter, SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Name));
             }
 
             return sb.ToString();
@@ -647,6 +651,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             var parts = new List<string>();
             var relCounter = 0;
+            var databaseType = QPContext.DatabaseType;
             foreach (var field in displayFields)
             {
                 if (field.ExactType == FieldExactTypes.M2MRelation)
@@ -672,30 +677,32 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                         foreach (var id in fieldIds)
                         {
                             var displayField = ContentRepository.GetTitleField(id);
-                            parts.Add($"dbo.qp_link_titles({field.LinkId.Value}, c.content_item_id, {displayField.Id}, 255)");
+                            var contentItemIdField = databaseType == DatabaseType.Postgres ? "c.content_item_id::integer" : "c.content_item_id";
+                            parts.Add($"{SqlQuerySyntaxHelper.DbSchemaName(databaseType)}.qp_link_titles({field.LinkId.Value}, {contentItemIdField}, {displayField.Id}, 255)");
                         }
                     }
                 }
                 else if (field.ExactType == FieldExactTypes.O2MRelation)
                 {
                     relCounter++;
-                    parts.Add($"isnull(cast ( rel_{relCounter}.[{field.Relation.Name}] as nvarchar(255)), '')");
+                    parts.Add($"coalesce({SqlQuerySyntaxHelper.CastToString(databaseType, $"rel_{relCounter}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Relation.Name)}")}, '')");
                 }
                 else if (field.IsDateTime || field.IsBlob || field.Type.DbType == DbType.Decimal)
                 {
-                    parts.Add($"isnull(cast ( c.[{field.Name}] as nvarchar(255)), '')");
+                    parts.Add($"coalesce({SqlQuerySyntaxHelper.CastToString(databaseType, $"c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Relation.Name)}")}, '')");
                 }
                 else
                 {
-                    parts.Add($"isnull(c.[{field.Name}], '')");
+                    parts.Add($"coalesce(c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Name)}, '')");
                 }
             }
 
-            return (parts.Any() ? string.Join(" + '; ' + ", parts) : "cast(c.content_item_id as nvarchar(255))") + " as title";
+            return (parts.Any() ? SqlQuerySyntaxHelper.ConcatStrValuesWithSeparator(databaseType, "'; '", parts.ToArray()) : SqlQuerySyntaxHelper.CastToString(databaseType, "c.content_item_id")) + " as title";
         }
 
         private static string GetSimpleListOrderExpression(Field field, IEnumerable<Field> displayFields)
         {
+            var databaseType = QPContext.DatabaseType;
             var titleNames = displayFields.Select(n => n.Name).ToList();
             var orderFieldName = string.Empty;
             var orderFieldMatchesTitle = false;
@@ -711,7 +718,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             var orderExpression = field.OrderByTitle && !orderFieldMatchesTitle ? "title asc" : "c.content_item_id asc";
             if (!string.IsNullOrEmpty(orderFieldName))
             {
-                orderExpression = $"c.[{orderFieldName}] asc, {orderExpression}";
+                orderExpression = $"c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, orderFieldName)} asc, {orderExpression}";
             }
 
             return orderExpression;

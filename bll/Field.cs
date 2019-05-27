@@ -14,6 +14,7 @@ using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
@@ -2883,9 +2884,16 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        public string GetRelationFilter(int articleId) => ExactType != FieldExactTypes.M2ORelation
-            ? RelationFilter
-            : string.Format("(c.[{0}] = {1} OR c.[{0}] IS NULL) AND c.[ARCHIVE] = 0", BackRelation.Name, articleId);
+        public string GetRelationFilter(int articleId)
+        {
+            var databaseType = QPContext.DatabaseType;
+            var escapedBackRelationName = ExactType != FieldExactTypes.M2ORelation
+                ? null
+                : SqlQuerySyntaxHelper.EscapeEntityName(databaseType, BackRelation.Name);
+            return ExactType != FieldExactTypes.M2ORelation
+                ? RelationFilter
+                : $"(c.{escapedBackRelationName} = {articleId} OR c.{escapedBackRelationName} IS NULL) AND c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ARCHIVE")} = 0";
+        }
 
         public void ParseStringEnumJson(string json)
         {

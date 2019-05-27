@@ -109,28 +109,28 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetEntityName(DbConnection sqlConnection, string entityTypeCode, int entityId, int parentEntityId)
-        {
-
-            using (var cmd = DbCommandFactory.Create("qp_get_entity_title", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("entity_type_code", entityTypeCode);
-                cmd.Parameters.AddWithValue("entity_id", entityId);
-                cmd.Parameters.AddWithValue("parent_entity_id", parentEntityId);
-                cmd.Parameters.Add(
-                    new SqlParameter
-                    {
-                        ParameterName = "title",
-                        DbType = DbType.String,
-                        Size = 255,
-                        Direction = ParameterDirection.Output,
-                    }
-                );
-                cmd.ExecuteNonQuery();
-                return cmd.Parameters["title"].Value.ToString();
-            }
-        }
+        // public static string GetEntityName(DbConnection sqlConnection, string entityTypeCode, int entityId, int parentEntityId)
+        // {
+        //
+        //     using (var cmd = DbCommandFactory.Create("qp_get_entity_title", sqlConnection))
+        //     {
+        //         cmd.CommandType = CommandType.StoredProcedure;
+        //         cmd.Parameters.AddWithValue("entity_type_code", entityTypeCode);
+        //         cmd.Parameters.AddWithValue("entity_id", entityId);
+        //         cmd.Parameters.AddWithValue("parent_entity_id", parentEntityId);
+        //         cmd.Parameters.Add(
+        //             new SqlParameter
+        //             {
+        //                 ParameterName = "title",
+        //                 DbType = DbType.String,
+        //                 Size = 255,
+        //                 Direction = ParameterDirection.Output,
+        //             }
+        //         );
+        //         cmd.ExecuteNonQuery();
+        //         return cmd.Parameters["title"].Value.ToString();
+        //     }
+        // }
 
         public static bool CheckEntityExistence(DbConnection sqlConnection, string entityTypeCode, decimal entityId)
         {
@@ -287,7 +287,7 @@ WHERE content_item_id = {contentItemId}))
             else if (!string.IsNullOrWhiteSpace(relName))
             {
                 query = $@"
-SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, relName2)} as title
+SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, relName)} as title
 FROM content_{relContentId}_united
 WHERE content_item_id in (SELECT {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, titleName)} FROM content_{contentId}_united
 WHERE content_item_id = {contentItemId})
@@ -296,7 +296,7 @@ WHERE content_item_id = {contentItemId})
             else
             {
                 query = $@"
-SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, relName2)} as title
+SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, titleName)} as title
 FROM content_{contentId}_united
 WHERE content_item_id = {contentItemId}
 ";

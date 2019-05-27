@@ -166,8 +166,8 @@ namespace Quantumart.QP8.DAL
                     $"{SqlQuerySyntaxHelper.ToBoolSql(databaseType, currentIsGroup)} as is_group,\n" +
                     $"{(!string.IsNullOrWhiteSpace(currentGroupItemCode) ? $"'{currentGroupItemCode}'" : "NULL")} as group_item_code,\n" +
                     "CASE WHEN i.ICON is not null THEN i.ICON\n" +
-                    $"WHEN i.ICON_MODIFIER is not null THEN {SqlQuerySyntaxHelper.ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", SqlQuerySyntaxHelper.CastToString(databaseType, "i.ICON_MODIFIER"), "'.gif'")}\n" +
-                    $"ELSE {SqlQuerySyntaxHelper.ConcatStrValuesSql(databaseType, $"'{newEntityTypeCode}'", "'.gif'")} END\n" +
+                    $"WHEN i.ICON_MODIFIER is not null THEN {SqlQuerySyntaxHelper.ConcatStrValues(databaseType, $"'{newEntityTypeCode}'", SqlQuerySyntaxHelper.CastToString(databaseType, "i.ICON_MODIFIER"), "'.gif'")}\n" +
+                    $"ELSE {SqlQuerySyntaxHelper.ConcatStrValues(databaseType, $"'{newEntityTypeCode}'", "'.gif'")} END\n" +
                     "AS icon,\n" +
                     $"{SqlQuerySyntaxHelper.NullableDbValue(databaseType, newEntityType?.DefaultActionId)} AS default_action_id,\n" +
                     $"{SqlQuerySyntaxHelper.NullableDbValue(databaseType, newEntityType?.ContextMenuId)} as context_menu_id,\n" +
@@ -213,7 +213,7 @@ namespace Quantumart.QP8.DAL
                         et.code as code,
                         {SqlQuerySyntaxHelper.ToBoolSql(databaseType, isFolderQuery)} as is_folder,
                         {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)} as is_group,
-                        {SqlQuerySyntaxHelper.ConcatStrValuesSql(databaseType, "et.code", "'.gif'")} as icon,
+                        {SqlQuerySyntaxHelper.ConcatStrValues(databaseType, "et.code", "'.gif'")} as icon,
                         et.{(isFolderQuery ? "folder_" : string.Empty)}default_action_id as default_action_id,
                         et.{(isFolderQuery ? "folder_" : string.Empty)}context_menu_id as context_menu_id,
                         NULL as parent_group_id,

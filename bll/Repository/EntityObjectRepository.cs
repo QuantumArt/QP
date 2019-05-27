@@ -25,7 +25,11 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (new QPConnectionScope())
             {
-                return Common.Lock(QPConnectionScope.Current.DbConnection, item.EntityTypeCode, item.Id, userId);
+                var entityType = EntityTypeRepository.GetByCode(item.EntityTypeCode);
+                var source = entityType?.Source;
+                var idField = entityType?.IdField;
+                return Common.Lock(QPConnectionScope.Current.DbConnection, source, idField, item.Id, userId);
+                // return Common.Lock(QPConnectionScope.Current.DbConnection, item.EntityTypeCode, item.Id, userId);
             }
         }
 
@@ -244,10 +248,12 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>название сущности</returns>
         internal static string GetName(string entityTypeCode, int entityId, int parentEntityId = 0)
         {
-            using (var scope = new QPConnectionScope())
-            {
-                return Common.GetEntityName(scope.DbConnection, entityTypeCode, entityId, parentEntityId);
-            }
+
+            return GetEntityTitle(entityId, entityTypeCode, parentEntityId);
+            // using (var scope = new QPConnectionScope())
+            // {
+            //     return Common.GetEntityName(scope.DbConnection, entityTypeCode, entityId, parentEntityId);
+            // }
         }
 
         /// <summary>
@@ -345,7 +351,7 @@ namespace Quantumart.QP8.BLL.Repository
 
                     var title = GetEntityTitle(id, code, parentEntityId);
 
-                    var recurringId = !string.IsNullOrWhiteSpace(entity?.Source) && !string.IsNullOrWhiteSpace(entity?.IdField) && !string.IsNullOrWhiteSpace(entity?.RecurringIdField)
+                    var recurringId = !string.IsNullOrWhiteSpace(entity?.RecurringIdField) && !string.IsNullOrWhiteSpace(entity?.Source) && !string.IsNullOrWhiteSpace(entity?.IdField) && !string.IsNullOrWhiteSpace(entity?.RecurringIdField)
                         ? (long?)Common.GetNumericFieldValue(QPConnectionScope.Current.DbConnection, entity.RecurringIdField, entity.Source, entity.IdField, (decimal)id)
                         : null;
 
@@ -362,7 +368,7 @@ namespace Quantumart.QP8.BLL.Repository
                         }
                         else
                         {
-                            parentId = !string.IsNullOrWhiteSpace(entity?.Source) && !string.IsNullOrWhiteSpace(entity?.IdField)
+                            parentId = !string.IsNullOrWhiteSpace(entity?.ParentIdField) && !string.IsNullOrWhiteSpace(entity?.Source) && !string.IsNullOrWhiteSpace(entity?.IdField)
                                 ? (long?)Common.GetNumericFieldValue(QPConnectionScope.Current.DbConnection, entity.ParentIdField, entity.Source, entity.IdField, (decimal)id)
                                 : null;
                         }
@@ -429,19 +435,28 @@ namespace Quantumart.QP8.BLL.Repository
 
             var entity = EntityTypeRepository.GetList().FirstOrDefault(x => x.Code == entityTypeCode);
 
-            return !string.IsNullOrWhiteSpace(entity?.Source) && !string.IsNullOrWhiteSpace(entity?.IdField)
-                ? Common.GetStringFieldValue(QPConnectionScope.Current.DbConnection, entity.TitleField, entity.Source, entity.IdField, entityId.Value)
-                : null;
+            if (string.IsNullOrWhiteSpace(entity?.Source) || string.IsNullOrWhiteSpace(entity?.IdField))
+            {
+                return null;
+            }
+            else
+            {
+                using (var scope = new QPConnectionScope())
+                {
+                    return Common.GetStringFieldValue(scope.DbConnection, entity.TitleField, entity.Source, entity.IdField, entityId.Value);
+                }
+
+            }
         }
 
         private static string GetArticleTitle(long contentItemId, decimal contentId)
         {
             var displayFields = ContentRepository.GetDisplayFields((int)contentId, true);
-            var fields = QPContext.GetFieldCache().Values;
+
             var r = displayFields.Select(x =>
                 {
-                    var relatedField = fields.FirstOrDefault(y => y.Id == x.RelationId);
-                    var relatedRelatedField = fields.FirstOrDefault(y => y.Id == relatedField.RelationId);
+                    var relatedField = x.RelationId != null ? FieldRepository.GetById(x.RelationId.Value) : null;
+                    var relatedRelatedField = relatedField?.RelationId != null ? FieldRepository.GetById(relatedField.RelationId.Value) : null;
                     return new
                     {
                         Field = x,
@@ -452,10 +467,14 @@ namespace Quantumart.QP8.BLL.Repository
                 .OrderBy(x => x.Field.Order)
                 .FirstOrDefault();
 
-            return Common.GetArticleTitle(QPConnectionScope.Current.DbConnection,
-                contentItemId,
-                contentId,
-                r?.Field?.Name, r?.RelatedField?.Name, r?.RelatedField?.ContentId, r?.RelatedRelatedField?.Name, r?.RelatedRelatedField?.ContentId);
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetArticleTitle(scope.DbConnection,
+                    contentItemId,
+                    contentId,
+                    r?.Field?.Name, r?.RelatedField?.Name, r?.RelatedField?.ContentId, r?.RelatedRelatedField?.Name, r?.RelatedRelatedField?.ContentId);
+            }
+
         }
 
         internal static void UnlockAllEntitiesLockedByUser(int userId)
