@@ -729,7 +729,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             using (new QPConnectionScope())
             {
                 return id == 0
-                    ? Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId)
+                    ? Common.GetDefaultArticleRow(QPContext.EFContext, QPConnectionScope.Current.DbConnection, contentId)
                     : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive, excludeArchive);
             }
         }
@@ -798,7 +798,12 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         internal static Article CreateOrUpdate(Article article)
         {
-            var articleUpdater = new ArticleUpdateService(article);
+            var usePostgres = QPContext.DatabaseType == DatabaseType.Postgres;
+
+            var articleUpdater = (usePostgres) ?
+                (IArticleUpdateService)new ArticleXmlUpdateHelper() {Article = article} :
+                new ArticleUpdateService() { Article = article };
+
             var schedule = article.Schedule;
             var colaborativeArticles = article.CollaborativePublishedArticle;
             article = articleUpdater.Update();
@@ -856,7 +861,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var contentId = fieldValuesToTest[0].Article.Content.Id;
                 var filters = fieldValuesToTest.Select(GetSqlExpression).Union(Enumerable.Repeat("ARCHIVE = 0", 1));
                 var condition = SqlFilterComposer.Compose(filters);
-                var parameters = fieldValuesToTest.Select(n => new Common.FieldParameter { Name = n.Field.FormName, DbType = n.Field.Type.DbType, Value = n.Value }).ToList();
+                var parameters = fieldValuesToTest.Select(n => new Common.FieldParameter
+                {
+                    Name = n.Field.FormName,
+                    DbType = n.Field.Type.DbType,
+                    NpgsqlDbType = n.Field.Type.NpgsqlDbType,
+                    Value = n.Value
+                }).ToList();
+
                 using (new QPConnectionScope())
                 {
                     conflictingIds = Common.GetConflictIds(QPConnectionScope.Current.DbConnection, id, contentId, condition, parameters);
@@ -1040,9 +1052,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         private static readonly Regex DynamicColumnNamePattern = new Regex($@"^{Field.Prefix}(\d+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static string GetDisplayExpression(FieldValue item) => $"[{item.Field.Name}]";
+        private static string GetDisplayExpression(FieldValue item) => $"{SqlQuerySyntaxHelper.FieldName(QPContext.DatabaseType, item.Field.Name)}";
 
-        private static string GetSqlExpression(FieldValue item) => string.IsNullOrEmpty(item.Value) ? $"([{item.Field.Name}] IS NULL)" : $"([{item.Field.Name}] = {item.Field.ParamName})";
+        private static string GetSqlExpression(FieldValue item)
+        {
+            var fieldName = SqlQuerySyntaxHelper.FieldName(QPContext.DatabaseType, item.Field.Name);
+            return string.IsNullOrEmpty(item.Value) ? $"({fieldName} IS NULL)" : $"({fieldName} = {item.Field.ParamName})";
+        }
 
         private static string ReplaceDynamicColumnsNamesInSortExpressions(string sortExpression, IList<Field> fieldList)
         {
@@ -1064,10 +1080,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                             return null;
                         }
 
-                        newFieldName = $"[{field.Name}]";
+                        newFieldName = SqlQuerySyntaxHelper.FieldName(QPContext.DatabaseType, field.Name);
                         if (field.Type.Name == FieldTypeName.Time)
                         {
-                            newFieldName = $"dbo.qp_abs_time(c.{newFieldName})";
+                            var schema = SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+                            newFieldName = $"{schema}.qp_abs_time(c.{newFieldName})";
                         }
                     }
                     else if (!SqlSorting.ContainsSquareBrackets(newFieldName))

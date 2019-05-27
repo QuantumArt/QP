@@ -182,17 +182,6 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void LockArticleForUpdate(DbConnection cnn, int id)
-        {
-            using (var cmd = DbCommandFactory.Create("select content_item_id from content_item with(rowlock, updlock) where content_item_id = @id", cnn))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", id);
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-            }
-        }
-
         public static DataTable GetArticleTable(DbConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
         {
             var fields = returnOnlyIds ? "c.content_item_id" : "c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication";
@@ -253,18 +242,6 @@ namespace Quantumart.QP8.DAL
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.Rows.Count == 0 ? null : dt;
-            }
-        }
-
-        public static DataRow GetDefaultArticleRow(DbConnection connection, int contentId)
-        {
-            using (var cmd = DbCommandFactory.Create("qp_get_default_article", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@content_id", contentId);
-                var ds = new DataSet();
-                DataAdapterFactory.Create(cmd).Fill(ds);
-                return 0 == ds.Tables.Count || 0 == ds.Tables[0].Rows.Count ? null : ds.Tables[0].Rows[0];
             }
         }
 
@@ -392,27 +369,7 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
             }
         }
 
-        public static void CreateArticleVersion(DbConnection connection, int userId, int id)
-        {
-            using (var cmd = DbCommandFactory.Create("create_content_item_version", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@uid", userId);
-                cmd.Parameters.AddWithValue("@content_item_id", id);
-                cmd.ExecuteNonQuery();
-            }
-        }
 
-        public static void CreateArticleVersions(DbConnection connection, int userId, int[] ids)
-        {
-            using (var cmd = DbCommandFactory.Create("qp_create_content_item_versions", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@last_modified_by", userId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-                cmd.ExecuteNonQuery();
-            }
-        }
 
         public static void RestoreArticleVersion(DbConnection connection, int userId, int id)
         {
@@ -554,22 +511,7 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
             }
         }
 
-        public static string GetConflictIds(DbConnection connection, int id, int contentId, string condition, List<FieldParameter> parameters)
-        {
-            using (var cmd = DbCommandFactory.Create($"SELECT CONTENT_ITEM_ID FROM CONTENT_{contentId}_UNITED WHERE {condition} AND CONTENT_ITEM_ID <> @id", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", id);
-                foreach (var parameter in parameters)
-                {
-                    cmd.Parameters.Add(CreateDbParameter(parameter));
-                }
 
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                return IdCommaList(dt, FieldName.ContentItemId);
-            }
-        }
 
         private static string IdCommaList(DataTable dt, string fieldName, bool withSpace = true)
         {
@@ -645,13 +587,6 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
             return result;
         }
 
-
-        private static DbParameter CreateDbParameter(FieldParameter item) => new SqlParameter
-        {
-            ParameterName = item.Name,
-            DbType = item.DbType,
-            Value = !string.IsNullOrEmpty(item.Value) ? (object)item.Value : DBNull.Value
-        };
 
         public static Dictionary<int, string> GetLinkedArticles(DbConnection connection, IEnumerable<int> linkIds, int id, bool isLive, bool excludeArchive = false)
         {
@@ -1082,14 +1017,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public class FieldParameter
-        {
-            public string Name { get; set; }
 
-            public DbType DbType { get; set; }
-
-            public string Value { get; set; }
-        }
 
         // public static DataTable GetBreadCrumbsList(DbConnection connection, int userId, string entityTypeCode, long entityId, long? parentEntityId, bool oneLevel)
         // {
@@ -2892,12 +2820,6 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        private static string DbSchemaName(DatabaseType databaseType) => SqlQuerySyntaxHelper.DbSchemaName(databaseType);
-
-        private static string WithNolock(DatabaseType databaseType) => SqlQuerySyntaxHelper.WithNolock(databaseType);
-
-        private static string EscapeEntityName(DatabaseType databaseType, string entityName) => SqlQuerySyntaxHelper.EscapeEntityName(databaseType, entityName);
-
         private static void AddStaticColumnsToQuery(DatabaseType databaseType, ArticlePageOptions options, bool useSelection, StringBuilder selectBuilder)
         {
             var tablePrefix = options.UseMainTableForVariations ? "c" : "ch";
@@ -3335,16 +3257,6 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
-            }
-        }
-
-        public static void UpdateChildDelayedSchedule(DbConnection connection, int articleId)
-        {
-            using (var cmd = DbCommandFactory.Create("qp_copy_schedule_to_child_delays", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@id", articleId);
-                cmd.ExecuteNonQuery();
             }
         }
 
@@ -10615,63 +10527,6 @@ order by ActionDate desc
 
         private static IList<DataRow> GetDatatableResult(DbConnection cn, StringBuilder queryBuilder, params DbParameter[] @params) => GetDatatableResult(cn, queryBuilder.ToString(), @params);
 
-        public static int[] GetArticleIdsByGuids(DbConnection sqlConnection, Guid[] guids)
-        {
-            if (guids == null)
-            {
-                throw new ArgumentNullException(nameof(guids));
-            }
-
-            const string xmlQuery = "SELECT doc.col.value('.[1]', 'nvarchar(max)') UNIQUE_ID FROM @xml.nodes('/guids/guid') doc(col)";
-            var query = $"select isnull(ci.content_item_id, 0), guids.unique_id from ({xmlQuery}) guids left join content_item ci with (nolock) on ci.unique_id = guids.unique_id";
-
-            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-
-                var doc = new XDocument(new XElement("guids"));
-                doc.Root?.Add(guids.Select(n => new XElement("guid", n.ToString())));
-                cmd.Parameters.Add(new SqlParameter("@xml", SqlDbType.Xml) { Value = doc.ToString() });
-
-                var result = new Dictionary<Guid, int>();
-                using (var dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        result.Add(new Guid(dr.GetString(1)), (int)dr.GetDecimal(0));
-                    }
-                }
-
-                return guids.Select(n => result[n]).ToArray();
-            }
-        }
-
-        public static Guid[] GetArticleGuidsByIds(DbConnection sqlConnection, int[] ids)
-        {
-            if (ids == null)
-            {
-                throw new ArgumentNullException(nameof(ids));
-            }
-
-            const string query = @"select ci.unique_id, ids.Id from @ids ids left join content_item ci with (nolock) on ci.content_item_id = ids.Id";
-            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-
-                var result = new Dictionary<int, Guid>();
-                using (var dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        result.Add((int)dr.GetDecimal(1), dr.IsDBNull(0) ? Guid.Empty : dr.GetGuid(0));
-                    }
-                }
-
-                return ids.Select(n => result[n]).ToArray();
-            }
-        }
-
         public static bool NewPasswordMatchCurrentPassword(DbConnection connection, int userId, string password)
         {
             var query = @"declare @salt bigint, @hash binary(20), @old_hash binary(20)
@@ -10709,7 +10564,5 @@ order by ActionDate desc
                 cmd.ExecuteNonQuery();
             }
         }
-
-
     }
 }
