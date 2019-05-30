@@ -433,18 +433,45 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
             }
         }
 
-        public static bool CheckUnique(DbConnection connection, string code, string name, int id, int parentId = 0, int? recurringId = null)
+        // public static bool CheckUnique(DbConnection connection, string code, string name, int id, int parentId = 0, int? recurringId = null)
+        // {
+        //     using (var cmd = DbCommandFactory.Create("qp_is_entity_exists", connection))
+        //     {
+        //         cmd.CommandType = CommandType.StoredProcedure;
+        //         cmd.Parameters.AddWithValue("@code", code);
+        //         cmd.Parameters.AddWithValue("@name", name);
+        //         cmd.Parameters.AddWithValue("@id", id);
+        //         cmd.Parameters.AddWithValue("@parent_id", parentId);
+        //         cmd.Parameters.AddWithValue("@recurring_id", recurringId ?? 0);
+        //         return (bool)cmd.ExecuteScalar();
+        //     }
+        // }
+
+        public static bool CheckUnique(DbConnection connection, string source, string titleField, string parentIdField, string idField, string recurringIdField, string name, int id, int? parentId, int? recurringId)
         {
-            using (var cmd = DbCommandFactory.Create("qp_is_entity_exists", connection))
+            if (parentId == 0) parentId = null;
+            if (recurringId == 0) recurringId = null;
+            var condition = "";
+            if (parentId != null && !string.IsNullOrWhiteSpace(parentIdField))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@code", code);
-                cmd.Parameters.AddWithValue("@name", name);
-                cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@parent_id", parentId);
-                cmd.Parameters.AddWithValue("@recurring_id", recurringId ?? 0);
-                return (bool)cmd.ExecuteScalar();
+                condition += $" and {parentIdField} = {parentId}";
             }
+
+            if (recurringId != null && !string.IsNullOrWhiteSpace(recurringIdField))
+            {
+                condition += $" and {recurringIdField} = {recurringId}";
+            }
+
+            var query = $"select COUNT({idField}) from {source} where {titleField} = '{name}' and {idField} <> {id} {condition}";
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var result = cmd.ExecuteScalar();
+                var count = Convert.ToInt32(result);
+                return count > 0;
+            }
+
         }
 
         public static int CountDuplicates(DbConnection connection, int contentId, string fieldIds, string itemIds)
@@ -990,7 +1017,8 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static DateTime GetSqlDate(DbConnection connection)
         {
-            using (var cmd = DbCommandFactory.Create("select getdate() as date", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            using (var cmd = DbCommandFactory.Create($"select {SqlQuerySyntaxHelper.GetDate(dbType)} as date", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 return (DateTime)cmd.ExecuteScalar();
@@ -1829,15 +1857,54 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection sqlConnection, string entityTypeCode, List<int> entitiesIDs)
+        // public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection sqlConnection, string entityTypeCode, List<int> entitiesIDs)
+        // {
+        //
+        //     if (entitiesIDs != null && entitiesIDs.Any())
+        //     {
+        //         using (var cmd = DbCommandFactory.Create("qp_get_entity_titles_for_log", sqlConnection))
+        //         {
+        //             cmd.CommandType = CommandType.StoredProcedure;
+        //             cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
+        //             cmd.Parameters.AddWithValue("@entity_item_ids", string.Join(",", entitiesIDs));
+        //
+        //             var dt = new DataTable();
+        //             DataAdapterFactory.Create(cmd).Fill(dt);
+        //             return dt.AsEnumerable().ToArray();
+        //         }
+        //     }
+        //
+        //     return Enumerable.Empty<DataRow>();
+        // }
+
+        public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection connection, string titleField, decimal? contentId, List<int> entitiesIDs)
         {
-            if (entitiesIDs != null && entitiesIDs.Any())
+            if (entitiesIDs != null && entitiesIDs.Any() && !string.IsNullOrWhiteSpace(titleField) && contentId.HasValue)
             {
-                using (var cmd = DbCommandFactory.Create("qp_get_entity_titles_for_log", sqlConnection))
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var query = $"SELECT content_item_id as ID, {SqlQuerySyntaxHelper.CastToString(dbType, titleField)} as TITLE from content_{contentId.Value}_united WHERE content_item_id IN ({string.Join(",", entitiesIDs)})";
+                using (var cmd = DbCommandFactory.Create(query, connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
-                    cmd.Parameters.AddWithValue("@entity_item_ids", string.Join(",", entitiesIDs));
+                    cmd.CommandType = CommandType.Text;
+
+                    var dt = new DataTable();
+                    DataAdapterFactory.Create(cmd).Fill(dt);
+                    return dt.AsEnumerable().ToArray();
+                }
+            }
+
+            return Enumerable.Empty<DataRow>();
+        }
+
+        public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection connection, string source, string idField, string titleField, List<int> entitiesIDs)
+        {
+            if (entitiesIDs != null && entitiesIDs.Any() && !string.IsNullOrWhiteSpace(titleField) && !string.IsNullOrWhiteSpace(source) && !string.IsNullOrWhiteSpace(idField))
+            {
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var query = $"SELECT {idField} as ID, {titleField} as TITLE from {source} WHERE {idField} IN ({string.Join(",", entitiesIDs)})";
+                using (var cmd = DbCommandFactory.Create(query, connection))
+                {
+                    cmd.CommandType = CommandType.Text;
 
                     var dt = new DataTable();
                     DataAdapterFactory.Create(cmd).Fill(dt);

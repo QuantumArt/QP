@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -86,7 +88,21 @@ namespace Quantumart.QP8.BLL.Repository
 
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetEntitiesTitles(scope.DbConnection, entityTypeCode, entitiesIDs.ToList()).Select(r => new ListItem(Converter.ToInt32(r["ID"]).ToString(), r["TITLE"].ToString()));
+                IEnumerable<DataRow> result;
+                if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.ArchiveArticle)
+                {
+                    var contentId = QPContext.EFContext.ArticleSet.FirstOrDefault(x => entitiesIDs.Contains((int)x.Id))?.ContentId;
+                    var titleField = ContentRepository.GetTitleName((int)contentId);
+                    result = Common.GetEntitiesTitles(scope.DbConnection, titleField, contentId, entitiesIDs.ToList());
+                }
+                else
+                {
+                    var entityType = EntityTypeRepository.GetByCode(entityTypeCode);
+                    result = Common.GetEntitiesTitles(scope.DbConnection, entityType?.Source, entityType?.IdField, entityType?.TitleField, entitiesIDs.ToList());
+                }
+
+                return result.Select(r => new ListItem(Converter.ToInt32(r["ID"]).ToString(), r["TITLE"].ToString()));
+
             }
         }
 
@@ -200,6 +216,5 @@ namespace Quantumart.QP8.BLL.Repository
                 CommonSecurity.ClearUserToken(scope.DbConnection, userId, sessionId);
             }
         }
-
     }
 }
