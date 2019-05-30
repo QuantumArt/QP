@@ -14,6 +14,13 @@ namespace Quantumart.QP8.DAL
     public static partial class Common
     {
 
+        private static string DbSchemaName(DatabaseType databaseType) => SqlQuerySyntaxHelper.DbSchemaName(databaseType);
+
+        private static string WithNolock(DatabaseType databaseType) => SqlQuerySyntaxHelper.WithNolock(databaseType);
+
+        private static string EscapeEntityName(DatabaseType databaseType, string entityName) => SqlQuerySyntaxHelper.EscapeEntityName(databaseType, entityName);
+
+
         public static UserDAL Authenticate(DbConnection connection, string login, string password, bool useNtLogin, bool checkAdminAccess)
         {
 
@@ -309,5 +316,8 @@ WHERE content_item_id = {contentItemId}
             }
 
         }
+
+
+
     }
 }

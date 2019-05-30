@@ -58,9 +58,9 @@ namespace Quantumart.QP8.DAL
 
         public static string DbSchemaName(DatabaseType databaseType) => databaseType == DatabaseType.Postgres ? "public" : "dbo";
 
-        public static string WithNolock(DatabaseType databaseType) => databaseType == DatabaseType.Postgres ? string.Empty : "with(nolock) ";
+        public static string WithNolock(DatabaseType databaseType) => databaseType == DatabaseType.SqlServer ? "with(nolock) " : string.Empty;
 
-
+        public static string WithRowLock(DatabaseType databaseType) => databaseType == DatabaseType.SqlServer ? "with(rowlock) " : string.Empty;
 
         public static string NullableDbValue(DatabaseType databaseType, int? value)
         {
@@ -139,5 +139,46 @@ namespace Quantumart.QP8.DAL
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }
         }
+
+        public static string SpParamName(DatabaseType databaseType, string expression)
+        {
+            switch (databaseType)
+            {
+                 case DatabaseType.SqlServer:
+                     return $"@" + expression;
+                 case DatabaseType.Postgres:
+                     return expression;
+                 default:
+                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static string IdList(DatabaseType databaseType, string name, string alias)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"{name} {alias}";
+                case DatabaseType.Postgres:
+                    return $"unnest({name}) {alias}(id)";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static string FieldName(DatabaseType databaseType, string fieldName)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $@"[{fieldName}]";
+                case DatabaseType.Postgres:
+                    return $@"""{fieldName.ToLower()}""";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+
     }
 }
