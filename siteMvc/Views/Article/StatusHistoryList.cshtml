@@ -5,24 +5,28 @@
 
 @using (Html.BeginDocumentPadding())
 {
-    @(Html.Telerik().Grid<StatusHistoryListItem>()
-        .Name(Model.MainComponentId)
-        .DataKeys(k => k.Add(s => s.Id))
-        .Columns(c =>
-        {
-            c.Bound(s => s.StatusTypeName).Title(ArticleStrings.Status);
-            c.Bound(s => s.SystemStatusTypeName).Title(AuditStrings.SystemStatus);
-            c.Bound(s => s.ActionMadeBy).Title(EntityObjectStrings.LastModifiedBy);
-            c.Bound(s => s.ActionDate).Title(EntityObjectStrings.Modified);
-            c.Bound(s => s.Comment).Title(ArticleStrings.Comments);
-        })
-        .DataBinding(db => db.Ajax().Select(Model.DataBindingActionName, Model.DataBindingControllerName))
-        .EnableCustomBinding(true)
-        .Sortable()
-        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-        .Selectable(s => s.Enabled(false))
-        .ClientEvents(e => e.OnDataBinding("$q.preventDefaultFunction").OnRowDataBound("$q.preventDefaultFunction"))
-    )
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      $(`#${'@Model.MainComponentId'}`).qpGrid({
+        columns: [
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
+          { field: 'StatusTypeName', title: '@ArticleStrings.Status', width: 100, attributes: { 'class': 'isCentered' }, headerAttributes: { 'class': 'isCentered' } },
+          { field: 'SystemStatusTypeName', title: '@AuditStrings.SystemStatus', attributes: { 'class': 'isCentered' }, headerAttributes: { 'class': 'isCentered' } },
+          { field: 'ActionMadeBy', title: '@EntityObjectStrings.LastModifiedBy', width: 150, attributes: { 'class': 'isCentered' }, headerAttributes: { 'class': 'isCentered' } },
+          { field: 'Comment', title: '@ArticleStrings.Comments' },
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.DataBindingActionName, Model.DataBindingControllerName, new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+      });
+    });
+  </script>
 }
 
 @Html.PrepareAndRunInitScript(Model)

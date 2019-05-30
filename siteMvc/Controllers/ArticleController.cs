@@ -258,12 +258,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArticleStatus)]
         [BackendActionContext(ActionCode.ArticleStatus)]
-        public ActionResult _StatusHistoryList(string tabId, int parentId, int id, GridCommand command)
+        public ActionResult _StatusHistoryList(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy = "")
         {
-            var result = ArticleService.ArticleStatusHistory(command.GetListCommand(), parentId);
+            var result = ArticleService.ArticleStatusHistory(
+                new ListCommand
+                {
+                    StartPage = page,
+                    PageSize = pageSize,
+                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+                },
+                parentId);
             return new TelerikResult(result.Data, result.TotalRecords);
         }
 

@@ -30,12 +30,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArticleVersions)]
         [BackendActionContext(ActionCode.ArticleVersions)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy = "")
         {
-            var serviceResult = ArticleVersionService.List(parentId, command.GetListCommand());
+            var serviceResult = ArticleVersionService.List(
+                parentId,
+                new ListCommand
+                {
+                    StartPage = page,
+                    PageSize = pageSize,
+                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+                });
             var result = Mapper.Map<List<ArticleVersion>, List<ArticleVersionListItem>>(serviceResult);
             return new TelerikResult(result, result.Count);
         }
