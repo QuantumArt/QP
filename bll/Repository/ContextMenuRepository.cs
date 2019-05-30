@@ -38,6 +38,7 @@ namespace Quantumart.QP8.BLL.Repository
             var contextMenuBiz = MapperFacade.ContextMenuMapper.GetBizObject(contextMenu);
 
             var customActions = BackendActionCache.CustomActions;
+            contextMenuBiz.Items = contextMenuBiz.Items.OrderBy(x => x.Order);
             foreach (var menuItem in contextMenuBiz.Items)
             {
                 menuItem.Icon = customActions.FirstOrDefault(x => x.Id == menuItem.ActionId)?.IconUrl ?? menuItem.Icon;

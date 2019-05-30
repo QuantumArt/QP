@@ -21,7 +21,8 @@ namespace Quantumart.QP8.DAL
     {
         public static long GetContentIdForArticle(DbConnection connection, long id)
         {
-            using (var cmd = DbCommandFactory.Create("select content_id from content_item with(nolock) where content_item_id = @id", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            using (var cmd = DbCommandFactory.Create($"select content_id from content_item {WithNolock(dbType)} where content_item_id = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -195,16 +196,27 @@ namespace Quantumart.QP8.DAL
 
         public static DataTable GetArticleTable(DbConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var fields = returnOnlyIds ? "c.content_item_id" : "c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication";
-            var baseSql = $"select {fields} from content_{contentId}{{0}} c with(nolock)" +
-                " left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id {1} {2}";
+            var baseSql = $"select {fields} from content_{contentId}{{0}} c {WithNolock(dbType)}" +
+                $" left join content_item ci {WithNolock(dbType)} on c.content_item_id = ci.content_item_id {{1}} {{2}}";
 
 
             var conditions = new List<string>();
 
             if (ids != null)
             {
-                conditions.Add("c.content_item_id in (select id from @itemIds)");
+                switch (dbType)
+                {
+                    case DatabaseType.SqlServer:
+                        conditions.Add("c.content_item_id in (select id from @itemIds)");
+                        break;
+                    case DatabaseType.Postgres:
+                        conditions.Add("c.content_item_id in (select id from unnest(@myData) i(id))");
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
 
             if (excludeArchive)
@@ -228,7 +240,7 @@ namespace Quantumart.QP8.DAL
             if (ids != null && !isLive && !isVirtual && !returnOnlyIds) //optimization for list of ids
             {
                 var sb = new StringBuilder();
-                sb.AppendLine(string.Format(baseSql, string.Empty, where, " and isnull(ci.splitted, 0) = 0 "));
+                sb.AppendLine(string.Format(baseSql, string.Empty, where, " and coalesce(ci.splitted, 0) = 0 "));
                 sb.AppendLine(" union all ");
                 sb.AppendLine(string.Format(baseSql, "_async", where, " and ci.splitted = 1 "));
                 sql = sb.ToString();
@@ -243,11 +255,7 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.Text;
                 if (ids != null)
                 {
-                    cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(ids)
-                    });
+                    cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", ids, dbType));
                 }
 
                 var dt = new DataTable();
@@ -2169,52 +2177,14 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 using (var countCmd = DbCommandFactory.Create(countBuilder.ToString(), sqlConnection))
                 {
                     countCmd.CommandType = CommandType.Text;
+                    countCmd.Parameters.Add(GetIdsDatatableParam("@itemIds", selectedIds, databaseType));
+                    countCmd.Parameters.Add(GetIdsDatatableParam("@filterIds", filterIds, databaseType));
 
-                    switch (databaseType)
+                    if (sqlParameters != null)
                     {
-                        case DatabaseType.SqlServer:
-                            // countCmd.Parameters.Add(new SqlParameter("@total_records", SqlDbType.Int)
-                            // {
-                            //     Direction = ParameterDirection.Output
-                            // });
-                            countCmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                            {
-                                TypeName = "Ids",
-                                Value = IdsToDataTable(selectedIds)
-                            });
-
-                            countCmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
-                            {
-                                TypeName = "Ids",
-                                Value = IdsToDataTable(filterIds)
-                            });
-                            if (sqlParameters != null)
-                            {
-                                countCmd.Parameters.AddRange(sqlParameters.ToArray());
-                            }
-                            break;
-                        case DatabaseType.Postgres:
-                            // countCmd.Parameters.Add(new NpgsqlParameter("@total_records", NpgsqlDbType.Integer)
-                            // {
-                            //     Direction = ParameterDirection.Output
-                            // });
-                            countCmd.Parameters.Add(new NpgsqlParameter("@itemIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
-                            {
-                                Value = selectedIds.ToArray()
-                            });
-
-                            countCmd.Parameters.Add(new NpgsqlParameter("@filterIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
-                            {
-                                Value = filterIds.ToArray()
-                            });
-                            if (sqlParameters != null)
-                            {
-                                countCmd.Parameters.AddRange(sqlParameters.ToArray());
-                            }
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                        countCmd.Parameters.AddRange(sqlParameters.ToArray());
                     }
+
 
 
                     var countResult = countCmd.ExecuteScalar();
@@ -2301,49 +2271,52 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 {
                     cmd.CommandType = CommandType.Text;
 
-                    switch (databaseType)
+                    cmd.Parameters.AddWithValue("@startRow", startRow);
+                    cmd.Parameters.AddWithValue("@endRow", endRow);
+                    cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", selectedIds, databaseType));
+                    cmd.Parameters.Add(GetIdsDatatableParam("@filterIds", filterIds, databaseType));
+
+                    if (sqlParameters != null)
                     {
-                        case DatabaseType.SqlServer:
-                            cmd.Parameters.Add(new SqlParameter("@startRow", SqlDbType.Int) { Value = startRow });
-                            cmd.Parameters.Add(new SqlParameter("@endRow", SqlDbType.Int) { Value = endRow });
-                            cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                            {
-                                TypeName = "Ids",
-                                Value = IdsToDataTable(selectedIds)
-                            });
-
-                            cmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
-                            {
-                                TypeName = "Ids",
-                                Value = IdsToDataTable(filterIds)
-                            });
-
-                            if (sqlParameters != null)
-                            {
-                                cmd.Parameters.AddRange(sqlParameters.ToArray());
-                            }
-                            break;
-                        case DatabaseType.Postgres:
-                            cmd.Parameters.Add(new NpgsqlParameter("@startRow", NpgsqlDbType.Integer) { Value = startRow });
-                            cmd.Parameters.Add(new NpgsqlParameter("@endRow", NpgsqlDbType.Integer) { Value = endRow });
-                            cmd.Parameters.Add(new NpgsqlParameter("@itemIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
-                            {
-                                Value = selectedIds.ToArray()
-                            });
-
-                            cmd.Parameters.Add(new NpgsqlParameter("@filterIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
-                            {
-                                Value = filterIds.ToArray()
-                            });
-
-                            if (sqlParameters != null)
-                            {
-                                cmd.Parameters.AddRange(sqlParameters.ToArray());
-                            }
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                        cmd.Parameters.AddRange(sqlParameters.ToArray());
                     }
+
+                    // switch (databaseType)
+                    // {
+                    //     case DatabaseType.SqlServer:
+                    //         cmd.Parameters.Add(new SqlParameter("@startRow", SqlDbType.Int) { Value = startRow });
+                    //         cmd.Parameters.Add(new SqlParameter("@endRow", SqlDbType.Int) { Value = endRow });
+                    //         cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
+                    //         {
+                    //             TypeName = "Ids",
+                    //             Value = IdsToDataTable(selectedIds)
+                    //         });
+                    //
+                    //         cmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
+                    //         {
+                    //             TypeName = "Ids",
+                    //             Value = IdsToDataTable(filterIds)
+                    //         });
+                    //
+                    //         if (sqlParameters != null)
+                    //         {
+                    //             cmd.Parameters.AddRange(sqlParameters.ToArray());
+                    //         }
+                    //         break;
+                    //     case DatabaseType.Postgres:
+                    //         cmd.Parameters.Add(new NpgsqlParameter("@startRow", NpgsqlDbType.Integer) { Value = startRow });
+                    //         cmd.Parameters.Add(new NpgsqlParameter("@endRow", NpgsqlDbType.Integer) { Value = endRow });
+                    //         cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", selectedIds, databaseType));
+                    //         cmd.Parameters.Add(GetIdsDatatableParam("@filterIds", filterIds, databaseType));
+                    //
+                    //         if (sqlParameters != null)
+                    //         {
+                    //             cmd.Parameters.AddRange(sqlParameters.ToArray());
+                    //         }
+                    //         break;
+                    //     default:
+                    //         throw new ArgumentOutOfRangeException();
+                    // }
 
 
                     var ds = new DataSet();
@@ -2353,7 +2326,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                         result = ds.Tables[0];
                         if (!forceCountQuery)
                         {
-                            totalRecords = result.Rows.Count != 0 ? (int)result.Rows[0][QPModelDataContext.CountColumn] : 0;
+                            totalRecords = result.Rows.Count != 0 ? Convert.ToInt32(result.Rows[0][QPModelDataContext.CountColumn]) : 0;
                         }
                     }
                 }
@@ -2981,6 +2954,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<DataRow> GetContentsPage(DbConnection sqlConnection, ContentPageOptions options, out int totalRecords)
         {
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             var selectBuilder = new StringBuilder();
             selectBuilder.Append("c.CONTENT_ID as Id, c.CONTENT_NAME as Name, c.DESCRIPTION as Description, c.CREATED as Created, c.MODIFIED as Modified, c.VIRTUAL_TYPE as VirtualType");
             selectBuilder.AppendFormat(", s.SITE_NAME as SiteName, case when cg.CONTENT_GROUP_ID = dbo.qp_default_group_id(c.SITE_ID) then dbo.qp_translate(cg.NAME, {0}) else cg.Name end as GroupName, U.LOGIN as LastModifiedByUser", options.LanguageId);
@@ -2990,9 +2964,9 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append("dbo.CONTENT c INNER JOIN dbo.SITE s ON c.SITE_ID = s.SITE_ID");
-            fromBuilder.Append(" INNER JOIN dbo.[USERS] u ON c.LAST_MODIFIED_BY = U.USER_ID");
-            fromBuilder.Append(" LEFT JOIN dbo.[CONTENT_GROUP] cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
+            fromBuilder.Append($"{DbSchemaName(dbType)}.CONTENT c INNER JOIN dbo.SITE s ON c.SITE_ID = s.SITE_ID");
+            fromBuilder.Append($" INNER JOIN {DbSchemaName(dbType)}.{EscapeEntityName(dbType,"USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
+            fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}.CONTENT_GROUP cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT CONTENT_ID from CONTENT where CONTENT_ID in ({0})) AS cis ON c.CONTENT_ID = cis.CONTENT_ID ", string.Join(",", options.SelectedIDs));
@@ -3000,7 +2974,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
             if (options.Mode == ContentSelectMode.ForWorkflow)
             {
-                fromBuilder.Append(" LEFT JOIN dbo.[CONTENT_WORKFLOW_BIND] cwb ON c.CONTENT_ID = cwb.CONTENT_ID");
+                fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}.CONTENT_WORKFLOW_BIND cwb ON c.CONTENT_ID = cwb.CONTENT_ID");
             }
 
             if (options.UseSecurity)
@@ -3087,17 +3061,18 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var selectBuilder = new StringBuilder();
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
 
             selectBuilder.Append("s.SITE_ID as Id, s.SITE_NAME as Name, s.DESCRIPTION as Description, s.CREATED as Created, s.MODIFIED as Modified, U.LOGIN as LastModifiedByUser");
-            selectBuilder.Append(", s.DNS as Dns, s.LIVE_VIRTUAL_ROOT as UploadUrl, s.IS_LIVE as IsLive, s.LOCKED_BY as LockedBy, u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName ");
+            selectBuilder.Append($", s.DNS as Dns, s.LIVE_VIRTUAL_ROOT as UploadUrl, s.IS_LIVE as IsLive, s.LOCKED_BY as LockedBy, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName ");
             if (useSelection)
             {
                 selectBuilder.Append(", CASE WHEN (cis.SITE_ID IS NOT NULL) THEN 1 ELSE 0 END as isSelected");
             }
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append("dbo.SITE s INNER JOIN dbo.[USERS] u ON s.LAST_MODIFIED_BY = u.USER_ID");
-            fromBuilder.Append(" LEFT JOIN dbo.[USERS] u2 ON s.LOCKED_BY = u2.USER_ID");
+            fromBuilder.Append($"{DbSchemaName(dbType)}.SITE s INNER JOIN {DbSchemaName(dbType)}.{EscapeEntityName(dbType, "USERS")} u ON s.LAST_MODIFIED_BY = u.USER_ID");
+            fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}.{EscapeEntityName(dbType, "USERS")} u2 ON s.LOCKED_BY = u2.USER_ID");
 
             if (useSelection)
             {
@@ -5214,6 +5189,30 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
         /// </summary>
         public static IEnumerable<decimal> GetAggregatedArticlesIDs(DbConnection connection, int articleId, int[] classifierFields, int[] types, bool isLive)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+
+            if (dbType == DatabaseType.SqlServer)
+            {
+                return GetAggregatedArticlesIdsSqlServer(connection, articleId, classifierFields, types, isLive);
+            }
+
+            var query = $"select public.qp_get_aggregated_ids(@articleId::integer, @classifierIds, @contentIds, @isLive)";
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@articleId", articleId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@classifierIds", classifierFields, dbType));
+                cmd.Parameters.Add(GetIdsDatatableParam("@contentIds", types, dbType));
+                cmd.Parameters.AddWithValue("@isLive", isLive);
+
+                var result = cmd.ExecuteScalar();
+                return Array.ConvertAll((int[])result, item => (decimal)item);
+            }
+
+        }
+
+        private static IEnumerable<decimal> GetAggregatedArticlesIdsSqlServer(DbConnection connection, int articleId, int[] classifierFields, int[] types, bool isLive)
+        {
             string query = $@"
             declare @attrIds table (attribute_id numeric primary key, content_id numeric, attribute_name nvarchar(255))
             declare @attribute_id numeric, @content_id numeric, @attribute_name nvarchar(255)
@@ -5228,7 +5227,7 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
                 print @attribute_id
                 if @sql <> ''
                     set @sql = @sql + ' union all '
-                set @sql = @sql + 'select content_item_id from content_' + cast(@content_id as nvarchar(30)) + '{ (isLive ? string.Empty : "_united") } where [' + @attribute_name + '] = @article_id'
+                set @sql = @sql + 'select content_item_id from content_' + cast(@content_id as nvarchar(30)) + '{(isLive ? string.Empty : "_united")} where [' + @attribute_name + '] = @article_id'
                 delete from @attrIds where attribute_id = @attribute_id
             end
             exec sp_executesql @sql, N'@article_id numeric', @article_id = @article_id";
@@ -10515,8 +10514,22 @@ order by ActionDate desc
 
         public static IList<int> GetParentIdsTreeResult(DbConnection cn, IList<int> ids, int fieldId, string fieldName)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cn);
             var query = GetParentIdsTreeQuery(ids, fieldId, fieldName);
-            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids), new SqlParameter("@fieldId", fieldId)).Select(dr => (int)dr.Field<decimal>(0)).ToList();
+            DbParameter fieldIdParameter;
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    fieldIdParameter = new SqlParameter("@fieldId", fieldId);
+                    break;
+                case DatabaseType.Postgres:
+                    fieldIdParameter = new NpgsqlParameter("@fieldId", fieldId);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids, dbType), fieldIdParameter).Select(dr => (int)dr.Field<decimal>(0)).ToList();
         }
 
         public static string GetParentIdsTreeQuery(IList<int> ids, int fieldId, string fieldName) => @"

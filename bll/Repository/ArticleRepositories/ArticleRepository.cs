@@ -689,7 +689,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 }
                 else if (field.IsDateTime || field.IsBlob || field.Type.DbType == DbType.Decimal)
                 {
-                    parts.Add($"coalesce({SqlQuerySyntaxHelper.CastToString(databaseType, $"c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Relation.Name)}")}, '')");
+                    parts.Add($"coalesce({SqlQuerySyntaxHelper.CastToString(databaseType, $"c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Name)}")}, '')");
                 }
                 else
                 {
