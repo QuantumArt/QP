@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using NpgsqlTypes;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 
 namespace Quantumart.QP8.BLL
@@ -32,6 +33,24 @@ namespace Quantumart.QP8.BLL
                 }
 
                 return DbType.String;
+            }
+        }
+
+        public NpgsqlDbType NpgsqlDbType
+        {
+            get
+            {
+                switch (DatabaseType)
+                {
+                    case "NUMERIC":
+                        return NpgsqlDbType.Numeric;
+                    case "NTEXT":
+                        return NpgsqlDbType.Text;
+                    case "DATETIME":
+                        return NpgsqlDbType.Timestamp;
+                }
+
+                return NpgsqlDbType.Text;
             }
         }
 

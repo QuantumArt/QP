@@ -11,11 +11,17 @@ using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository.Helpers
 {
-    public class ArticleUpdateService
+    public interface IArticleUpdateService
+    {
+        Article Article { get; set; }
+        Article Update();
+    }
+
+    public class ArticleUpdateService : IArticleUpdateService
     {
         private int Counter { get; set; }
 
-        private Article Article { get; set; }
+        public Article Article { get; set; }
 
         private List<DbParameter> Parameters { get; }
 
@@ -29,12 +35,6 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         {
             Counter = 0;
             Parameters = new List<DbParameter>();
-        }
-
-        public ArticleUpdateService(Article item)
-            : this()
-        {
-            Article = item;
         }
 
         private string GetSqlQuery()
