@@ -911,7 +911,7 @@ export class BackendEntityGrid extends Observable {
     if (this._allowFilterSelectedEntities && !this._hostIsWindow) {
       eventArgs.set_context({
         dataQueryParams: this._createDataQueryParams(),
-        url: this._gridComponent.dataSource.transport.read.url
+        url: this._gridComponent.dataSource.transport.options.read.url
       });
     }
 
@@ -948,13 +948,12 @@ export class BackendEntityGrid extends Observable {
 
   _saveRowAllSelectionState() {
     let eventArgs = null;
-    const onlyOnePage = !(this.getRows().length < this._gridComponent.total);
+    const onlyOnePage = !(this.getRows().length < this._gridComponent.dataSource._total);
 
     if (onlyOnePage) {
       this._saveRowSelectionState();
     } else {
-      const url = this._gridComponent.url('selectUrl');
-      const queryData = Object.assign({ page: 1, size: 0, onlyIds: true }, this._createDataQueryParams());
+      const queryData = Object.assign({ page: 1, pageSize: 0, onlyIds: true }, this._createDataQueryParams());
       const action = this._getCurrentAction();
 
       if (action) {
@@ -972,7 +971,7 @@ export class BackendEntityGrid extends Observable {
       let rowsData = null;
 
       // synchronous AJAX call (sic!)
-      $q.postDataToUrl(url, queryData, false, data => {
+      $q.postDataToUrl(this._gridComponent.dataSource.transport.options.read.url, queryData, false, data => {
         rowsData = data;
       }, $q.processGenericAjaxError);
 

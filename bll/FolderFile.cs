@@ -3,11 +3,33 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
+
+    class CustomDateTimeConverter : JsonConverter
+    {
+
+        public override bool CanConvert(Type objectType)
+        {
+            return true;
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            DateTimeOffset date = (DateTime)value;
+            serializer.Serialize(writer, date.ToString("d/M/yyyy hh:mm:ss"));
+        }
+    }
+
     public class FolderFile
     {
         #region creation
@@ -182,12 +204,14 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Дата создания файла
         /// </summary>
+        [JsonConverter(typeof(CustomDateTimeConverter))]
         [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
         public DateTime Created { get; set; }
 
         /// <summary>
         /// Дата модификации файла
         /// </summary>
+        [JsonConverter(typeof(CustomDateTimeConverter))]
         [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
         public DateTime Modified { get; set; }
 
