@@ -54,7 +54,7 @@ AS $BODY$
         else
             with result as (
                 update content_item ci
-                    set modified = now(), last_modified_by = i.last_modified_by, not_for_replication = true,
+                    set modified = now(), last_modified_by = i.last_modified_by,
                         status_type_id = coalesce(i.status_type_id, ci.status_type_id),
                         archive = coalesce(i.archive, ci.archive),
                         visible = coalesce(i.visible, ci.visible),
@@ -92,9 +92,9 @@ AS $BODY$
         raise notice 'M2O %', m2o_data;
         raise notice 'Data %', data_items;
 
-        update content_data cd set data = d.data
+        update content_data cd set data = d.data, blob_data = null, not_for_replication = true
         from unnest(data_items) d
-        where content_item_id = d.id and attribute_id = d.field_id;
+        where cd.content_item_id = d.id and cd.attribute_id = d.field_id;
 
         ids := ARRAY[main_id];
 

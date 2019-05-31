@@ -23,7 +23,9 @@ AS $BODY$
 		) x;		
 		
 		new_ids := array_agg(row(a.id, a.link_id, unnest, a.splitted)) 
-		from field_values a, unnest(regexp_split_to_array(a.value, E',\\s*')::int[]);
+		from field_values a, unnest(
+		    case when a.value = '' then ARRAY[]::int[] else regexp_split_to_array(a.value, E',\\s*')::int[] end
+		);
 		new_ids := coalesce(new_ids, ARRAY[]::link_multiple_splitted[]);
 							
 		old_ids := array_agg(row(c.*)) from

@@ -56,9 +56,36 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static string IsTrue(DatabaseType databaseType, string expression)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"{expression} = 1";
+                case DatabaseType.Postgres:
+                    return $"{expression}";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static string IsFalse(DatabaseType databaseType, string expression)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"{expression} = 0";
+                case DatabaseType.Postgres:
+                    return $"not {expression}";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+
         public static string DbSchemaName(DatabaseType databaseType) => databaseType == DatabaseType.Postgres ? "public" : "dbo";
 
-        public static string WithNolock(DatabaseType databaseType) => databaseType == DatabaseType.SqlServer ? "with(nolock) " : string.Empty;
+        public static string WithNoLock(DatabaseType databaseType) => databaseType == DatabaseType.SqlServer ? "with(nolock) " : string.Empty;
 
         public static string WithRowLock(DatabaseType databaseType) => databaseType == DatabaseType.SqlServer ? "with(rowlock) " : string.Empty;
 
@@ -114,7 +141,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetDate(DatabaseType databaseType)
+        public static string Now(DatabaseType databaseType)
         {
             switch (databaseType)
             {
