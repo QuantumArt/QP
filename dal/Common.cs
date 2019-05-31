@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -381,18 +381,45 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
             }
         }
 
-        public static bool CheckUnique(DbConnection connection, string code, string name, int id, int parentId = 0, int? recurringId = null)
+        // public static bool CheckUnique(DbConnection connection, string code, string name, int id, int parentId = 0, int? recurringId = null)
+        // {
+        //     using (var cmd = DbCommandFactory.Create("qp_is_entity_exists", connection))
+        //     {
+        //         cmd.CommandType = CommandType.StoredProcedure;
+        //         cmd.Parameters.AddWithValue("@code", code);
+        //         cmd.Parameters.AddWithValue("@name", name);
+        //         cmd.Parameters.AddWithValue("@id", id);
+        //         cmd.Parameters.AddWithValue("@parent_id", parentId);
+        //         cmd.Parameters.AddWithValue("@recurring_id", recurringId ?? 0);
+        //         return (bool)cmd.ExecuteScalar();
+        //     }
+        // }
+
+        public static bool CheckUnique(DbConnection connection, string source, string titleField, string parentIdField, string idField, string recurringIdField, string name, int id, int? parentId, int? recurringId)
         {
-            using (var cmd = DbCommandFactory.Create("qp_is_entity_exists", connection))
+            if (parentId == 0) parentId = null;
+            if (recurringId == 0) recurringId = null;
+            var condition = "";
+            if (parentId != null && !string.IsNullOrWhiteSpace(parentIdField))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@code", code);
-                cmd.Parameters.AddWithValue("@name", name);
-                cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@parent_id", parentId);
-                cmd.Parameters.AddWithValue("@recurring_id", recurringId ?? 0);
-                return (bool)cmd.ExecuteScalar();
+                condition += $" and {parentIdField} = {parentId}";
             }
+
+            if (recurringId != null && !string.IsNullOrWhiteSpace(recurringIdField))
+            {
+                condition += $" and {recurringIdField} = {recurringId}";
+            }
+
+            var query = $"select COUNT({idField}) from {source} where {titleField} = '{name}' and {idField} <> {id} {condition}";
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var result = cmd.ExecuteScalar();
+                var count = Convert.ToInt32(result);
+                return count > 0;
+            }
+
         }
 
         public static int CountDuplicates(DbConnection connection, int contentId, string fieldIds, string itemIds)
@@ -861,7 +888,8 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static DateTime GetSqlDate(DbConnection connection)
         {
-            using (var cmd = DbCommandFactory.Create("select getdate() as date", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            using (var cmd = DbCommandFactory.Create($"select {Now(dbType)} as date", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 return (DateTime)cmd.ExecuteScalar();
@@ -1174,7 +1202,8 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static int GetStringFieldMaxLength(DbConnection connection, int contentId, string fieldName)
         {
-            using (var cmd = DbCommandFactory.Create(string.Format("select MAX(LEN([{1}])) from content_{0}_united with(nolock)", contentId, fieldName), connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            using (var cmd = DbCommandFactory.Create($"select MAX({SqlQuerySyntaxHelper.GetFieldLength(dbType, fieldName)}) from content_{contentId}_united {WithNoLock(dbType)}", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var objResult = cmd.ExecuteScalar();
@@ -1507,14 +1536,15 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// </summary>
         public static DataTable LoadVirtualFieldsRelations(DbConnection sqlConnection, int rootContentId)
         {
-            const string query = "WITH V2BREL AS " +
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            string query = "WITH V2BREL AS " +
                 "( " +
-                "SELECT *, 0 as [LEVEL] FROM [VIRTUAL_ATTR_BASE_ATTR_RELATION] where BASE_CNT_ID = @rootContent " +
+                $"SELECT *, 0 as {EscapeEntityName(dbType, "LEVEL")} FROM VIRTUAL_ATTR_BASE_ATTR_RELATION where BASE_CNT_ID = @rootContent " +
                 "union all " +
-                "SELECT BA.*, [LEVEL] + 1 FROM [VIRTUAL_ATTR_BASE_ATTR_RELATION] BA " +
+                $"SELECT BA.*, {EscapeEntityName(dbType, "LEVEL")} + 1 FROM VIRTUAL_ATTR_BASE_ATTR_RELATION BA " +
                 "join V2BREL on BA.BASE_ATTR_ID = V2BREL.VIRTUAL_ATTR_ID " +
                 ") " +
-                "select * from V2BREL order by [LEVEL]";
+                $"select * from V2BREL order by {EscapeEntityName(dbType, "LEVEL")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@rootContent", rootContentId);
@@ -1593,20 +1623,24 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             return GetDatatableResult(cn, query).Select(dr => (int)dr.Field<decimal>(0)).ToList();
         }
 
-        private const string GetVisualEditorConfigQuery =
-            "select COALESCE(A.P_ENTER_MODE, S.P_ENTER_MODE) AS PEnterMode, " +
-            "COALESCE(A.USE_ENGLISH_QUOTES, S.USE_ENGLISH_QUOTES) AS UseEnglishQuotes,   " +
-            "COALESCE(A.DISABLE_LIST_AUTO_WRAP, S.DISABLE_LIST_AUTO_WRAP) AS DisableListAutoWrap,   " +
-            "COALESCE(A.ROOT_ELEMENT_CLASS, S.ROOT_ELEMENT_CLASS) AS RootElementClass,   " +
-            "COALESCE(A.EXTERNAL_CSS, S.EXTERNAL_CSS) AS ExternalCss   " +
-            "from CONTENT_ATTRIBUTE A  " +
-            "join CONTENT C on C.CONTENT_ID = A.CONTENT_ID  " +
-            "join SITE S on S.SITE_ID = C.SITE_ID  " +
-            "WHERE A.ATTRIBUTE_ID = @attr_id";
+        private static string GetVisualEditorConfigQuery(DatabaseType dbType)
+        {
+            return "select COALESCE(A.P_ENTER_MODE, S.P_ENTER_MODE) AS PEnterMode, " +
+                "COALESCE(A.USE_ENGLISH_QUOTES, S.USE_ENGLISH_QUOTES) AS UseEnglishQuotes,   " +
+                "COALESCE(A.DISABLE_LIST_AUTO_WRAP, S.DISABLE_LIST_AUTO_WRAP) AS DisableListAutoWrap,   " +
+                "COALESCE(A.ROOT_ELEMENT_CLASS, S.ROOT_ELEMENT_CLASS) AS RootElementClass,   " +
+                "COALESCE(A.EXTERNAL_CSS, S.EXTERNAL_CSS) AS ExternalCss   " +
+                "from CONTENT_ATTRIBUTE A  " +
+                "join CONTENT C on C.CONTENT_ID = A.CONTENT_ID  " +
+                $"join {EscapeEntityName(dbType, "SITE")} S on S.SITE_ID = C.SITE_ID  " +
+                "WHERE A.ATTRIBUTE_ID = @attr_id";
+        }
+
 
         public static DataTable GetVisualEditFieldParams(DbConnection sqlConnection, int fieldId)
         {
-            using (var cmd = DbCommandFactory.Create(GetVisualEditorConfigQuery, sqlConnection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            using (var cmd = DbCommandFactory.Create(GetVisualEditorConfigQuery(dbType), sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@attr_id", fieldId);
                 var dt = new DataTable();
@@ -1670,15 +1704,54 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection sqlConnection, string entityTypeCode, List<int> entitiesIDs)
+        // public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection sqlConnection, string entityTypeCode, List<int> entitiesIDs)
+        // {
+        //
+        //     if (entitiesIDs != null && entitiesIDs.Any())
+        //     {
+        //         using (var cmd = DbCommandFactory.Create("qp_get_entity_titles_for_log", sqlConnection))
+        //         {
+        //             cmd.CommandType = CommandType.StoredProcedure;
+        //             cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
+        //             cmd.Parameters.AddWithValue("@entity_item_ids", string.Join(",", entitiesIDs));
+        //
+        //             var dt = new DataTable();
+        //             DataAdapterFactory.Create(cmd).Fill(dt);
+        //             return dt.AsEnumerable().ToArray();
+        //         }
+        //     }
+        //
+        //     return Enumerable.Empty<DataRow>();
+        // }
+
+        public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection connection, string titleField, decimal? contentId, List<int> entitiesIDs)
         {
-            if (entitiesIDs != null && entitiesIDs.Any())
+            if (entitiesIDs != null && entitiesIDs.Any() && !string.IsNullOrWhiteSpace(titleField) && contentId.HasValue)
             {
-                using (var cmd = DbCommandFactory.Create("qp_get_entity_titles_for_log", sqlConnection))
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var query = $"SELECT content_item_id as ID, {SqlQuerySyntaxHelper.CastToString(dbType, titleField)} as TITLE from content_{contentId.Value}_united WHERE content_item_id IN ({string.Join(",", entitiesIDs)})";
+                using (var cmd = DbCommandFactory.Create(query, connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
-                    cmd.Parameters.AddWithValue("@entity_item_ids", string.Join(",", entitiesIDs));
+                    cmd.CommandType = CommandType.Text;
+
+                    var dt = new DataTable();
+                    DataAdapterFactory.Create(cmd).Fill(dt);
+                    return dt.AsEnumerable().ToArray();
+                }
+            }
+
+            return Enumerable.Empty<DataRow>();
+        }
+
+        public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection connection, string source, string idField, string titleField, List<int> entitiesIDs)
+        {
+            if (entitiesIDs != null && entitiesIDs.Any() && !string.IsNullOrWhiteSpace(titleField) && !string.IsNullOrWhiteSpace(source) && !string.IsNullOrWhiteSpace(idField))
+            {
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var query = $"SELECT {idField} as ID, {titleField} as TITLE from {source} WHERE {idField} IN ({string.Join(",", entitiesIDs)})";
+                using (var cmd = DbCommandFactory.Create(query, connection))
+                {
+                    cmd.CommandType = CommandType.Text;
 
                     var dt = new DataTable();
                     DataAdapterFactory.Create(cmd).Fill(dt);
@@ -4751,9 +4824,24 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static IEnumerable<DataRow> GetVisualEditorStylesBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var query = @"SELECT s.[ID], s.[NAME], s.[DESCRIPTION], s.[TAG], s.[ORDER], s.[OVERRIDES_TAG], s.[IS_FORMAT], s.[IS_SYSTEM]," +
-                " bnd.[ON], s.[ATTRIBUTES], s.[STYLES], s.[CREATED], s.[MODIFIED], s.[LAST_MODIFIED_BY] from [dbo].[VE_STYLE_SITE_BIND] bnd INNER JOIN [dbo].[VE_STYLE] s ON bnd.STYLE_ID = s.ID" +
-                " where bnd.SITE_ID = " + siteId + " ORDER BY [Order]";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var query = $@"SELECT
+s.{EscapeEntityName(dbType, "ID")},
+s.NAME,
+s.DESCRIPTION,
+s.TAG,
+s.{EscapeEntityName(dbType, "ORDER")},
+s.OVERRIDES_TAG,
+s.IS_FORMAT,
+s.IS_SYSTEM,
+bnd.{EscapeEntityName(dbType, "ON")},
+s.ATTRIBUTES,
+s.STYLES,
+s.CREATED,
+s.MODIFIED,
+s.LAST_MODIFIED_BY
+from VE_STYLE_SITE_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where bnd.SITE_ID = {siteId}
+ORDER BY {EscapeEntityName(dbType, "ORDER")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4765,9 +4853,23 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static IEnumerable<DataRow> GetVisualEditorStylesByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var query = @"SELECT s.[ID], s.[NAME], s.[DESCRIPTION], s.[TAG], s.[ORDER], s.[OVERRIDES_TAG], s.[IS_FORMAT], s.[IS_SYSTEM]," +
-                " bnd.[ON], s.[ATTRIBUTES], s.[STYLES], s.[CREATED], s.[MODIFIED], s.[LAST_MODIFIED_BY] from [dbo].[VE_STYLE_FIELD_BIND] bnd INNER JOIN [dbo].[VE_STYLE] s ON bnd.STYLE_ID = s.ID" +
-                " where bnd.FIELD_ID = " + fieldId + " ORDER BY [Order]";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var query = $@"
+SELECT s.{EscapeEntityName(dbType, "ID")},
+s.NAME,
+s.DESCRIPTION,
+s.TAG,
+s.{EscapeEntityName(dbType, "ORDER")},
+s.OVERRIDES_TAG,
+s.IS_FORMAT,
+s.IS_SYSTEM,
+bnd.{EscapeEntityName(dbType, "ON")},
+s.ATTRIBUTES,
+s.STYLES,
+s.CREATED,
+s.MODIFIED,
+s.LAST_MODIFIED_BY
+from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where bnd.FIELD_ID = {fieldId} ORDER BY {EscapeEntityName(dbType, "ORDER")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;

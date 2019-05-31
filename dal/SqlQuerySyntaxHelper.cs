@@ -154,6 +154,19 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static string GetFieldLength(DatabaseType databaseType, string fieldName)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"LEN([{fieldName}])";
+                case DatabaseType.Postgres:
+                    return $"LENGTH(\"{fieldName.ToLower()}\")";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
         public static string Returning(DatabaseType databaseType, string expression)
         {
             switch (databaseType)

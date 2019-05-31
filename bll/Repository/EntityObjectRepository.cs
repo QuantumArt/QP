@@ -17,7 +17,20 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (new QPConnectionScope())
             {
-                return Common.CheckUnique(QPConnectionScope.Current.DbConnection, entity.EntityTypeCode, entity.Name, entity.Id, entity.ParentEntityId, entity.RecurringId);
+                var entityType = EntityTypeRepository.GetByCode(entity.EntityTypeCode);
+                return Common.CheckUnique(QPConnectionScope.Current.DbConnection,
+                    entityType?.Source,
+                    entityType?.TitleField,
+                    entityType?.ParentIdField,
+                    entityType?.IdField,
+                    entityType?.RecurringIdField,
+                    entity.Name,
+                    entity.Id,
+                    entity.ParentEntityId,
+                    entity.RecurringId
+                );
+
+                // return Common.CheckUnique(QPConnectionScope.Current.DbConnection, entity.EntityTypeCode, entity.Name, entity.Id, entity.ParentEntityId, entity.RecurringId);
             }
         }
 
