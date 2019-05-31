@@ -96,7 +96,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                var rows = Common.GetStatusTypePage(scope.DbConnection, siteId, "[WEIGHT]", out totalRecords, cmd.StartRecord, cmd.PageSize);
+                var rows = Common.GetStatusTypePage(scope.DbConnection, siteId, "WEIGHT", out totalRecords, cmd.StartRecord, cmd.PageSize);
                 return MapperFacade.StatusTypeListItemRowMapper.GetBizList(rows.ToList());
             }
         }

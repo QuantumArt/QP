@@ -4,6 +4,8 @@ namespace Quantumart.QP8.BLL.ListItems
     {
         public int Id { get; set; }
 
+        // public int? GroupId { get; set; }
+
         public string GroupName { get; set; }
 
         public string Name { get; set; }
@@ -19,5 +21,7 @@ namespace Quantumart.QP8.BLL.ListItems
         public string VirtualType { get; set; }
 
         public string SiteName { get; set; }
+
+
     }
 }

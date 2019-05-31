@@ -138,6 +138,8 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     CustomFilter = filter.CustomFilter
                 };
 
+
+
                 var rows = Common.GetContentsPage(scope.DbConnection, options, out var totalRecords);
                 return new ListResult<ContentListItem> { Data = MapperFacade.ContentListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }

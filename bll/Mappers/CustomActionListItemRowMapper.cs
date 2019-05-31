@@ -5,6 +5,7 @@ using AutoMapper;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers
@@ -26,11 +27,11 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.LastModifiedByUser, opt => opt.MapFrom(row => row.Field<string>("LOGIN")));
         }
 
-        public string TranslateSortExpression(string sortExpression)
+        public string TranslateSortExpression(string sortExpression, DatabaseType dbType)
         {
             if (string.IsNullOrEmpty(sortExpression))
             {
-                sortExpression = "[ORDER] ASC";
+                sortExpression = $"{SqlQuerySyntaxHelper.EscapeEntityName(dbType, "ORDER")} ASC";
             }
 
             var replaces = new Dictionary<string, string>

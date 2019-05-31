@@ -1935,18 +1935,20 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<DataRow> GetCustomActionList(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, out int totalRecords)
         {
             var selectBuilder = new StringBuilder();
-            selectBuilder.Append("CA.[ID], CA.[NAME], CA.[ACTION_ID]");
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var ns = DbSchemaName(dbType);
+            selectBuilder.Append("CA.ID, CA.NAME, CA.ACTION_ID");
             selectBuilder.Append(", AT.CODE AS ACTION_TYPE_CODE, AT.NAME AS ACTION_TYPE_NAME");
             selectBuilder.Append(", ET.CODE AS ENTITY_TYPE_CODE ,ET.NAME AS ENTITY_TYPE_NAME");
-            selectBuilder.Append(", CA.[URL], CA.[ICON_URL], CA.[ORDER], CA.[SITE_EXCLUDED], CA.[CONTENT_EXCLUDED], CA.[SHOW_IN_MENU], CA.[SHOW_IN_TOOLBAR]");
-            selectBuilder.Append(", CA.[CREATED], CA.[MODIFIED], CA.[LAST_MODIFIED_BY], U.[USER_ID], U.[LOGIN]");
+            selectBuilder.Append($", CA.URL, CA.ICON_URL, CA.{EscapeEntityName(dbType, "ORDER")}, CA.SITE_EXCLUDED, CA.CONTENT_EXCLUDED, CA.SHOW_IN_MENU, CA.SHOW_IN_TOOLBAR");
+            selectBuilder.Append(", CA.CREATED, CA.MODIFIED, CA.LAST_MODIFIED_BY, U.USER_ID, U.LOGIN");
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append(" [dbo].CUSTOM_ACTION CA");
-            fromBuilder.Append(" JOIN [dbo].BACKEND_ACTION A ON CA.ACTION_ID = A.ID");
-            fromBuilder.Append(" JOIN [dbo].ACTION_TYPE AT ON AT.ID = A.[TYPE_ID]");
-            fromBuilder.Append(" JOIN [dbo].ENTITY_TYPE ET ON ET.ID = A.ENTITY_TYPE_ID");
-            fromBuilder.Append(" JOIN [dbo].USERS U ON U.[USER_ID] = CA.LAST_MODIFIED_BY");
+            fromBuilder.Append($" {ns}.CUSTOM_ACTION CA");
+            fromBuilder.Append($" JOIN {ns}.BACKEND_ACTION A ON CA.ACTION_ID = A.ID");
+            fromBuilder.Append($" JOIN {ns}.ACTION_TYPE AT ON AT.ID = A.TYPE_ID");
+            fromBuilder.Append($" JOIN {ns}.ENTITY_TYPE ET ON ET.ID = A.ENTITY_TYPE_ID");
+            fromBuilder.Append($" JOIN {ns}.USERS U ON U.USER_ID = CA.LAST_MODIFIED_BY");
 
             return GetSimplePagedList(
                 sqlConnection,
@@ -2407,18 +2409,23 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             out totalRecords
         );
 
-        public static IEnumerable<DataRow> GetVisualEditorPluginsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.VisualEditorPlugin,
-            "p.[ID] as [Id], p.[NAME] as [Name], p.[DESCRIPTION] as [Description], p.[URL] as [Url], p.[ORDER] as [Order], p.[CREATED] as [Created]," +
-            "p.[MODIFIED] as [Modified], p.LAST_MODIFIED_BY as[LastModifiedBy], u.LOGIN as [LastModifiedByLogin]",
-            "dbo.[VE_PLUGIN] p inner join users u on p.LAST_MODIFIED_BY = u.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Order]",
-            "",
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetVisualEditorPluginsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var escapedOrderColumnName = EscapeEntityName(dbType, "ORDER");
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.VisualEditorPlugin,
+                $"p.ID as Id, p.NAME as Name, p.DESCRIPTION as Description, p.URL as Url, p.{escapedOrderColumnName} as {escapedOrderColumnName}, p.CREATED as Created," +
+                "p.MODIFIED as Modified, p.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
+                "VE_PLUGIN p inner join users u on p.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : escapedOrderColumnName,
+                "",
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
         public static int GetVisualEditorPluginMaxOrder(DbConnection sqlConnection)
         {
@@ -2951,17 +2958,19 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             var selectBuilder = new StringBuilder();
+
             selectBuilder.Append("c.CONTENT_ID as Id, c.CONTENT_NAME as Name, c.DESCRIPTION as Description, c.CREATED as Created, c.MODIFIED as Modified, c.VIRTUAL_TYPE as VirtualType");
-            selectBuilder.AppendFormat(", s.SITE_NAME as SiteName, case when cg.CONTENT_GROUP_ID = dbo.qp_default_group_id(c.SITE_ID) then dbo.qp_translate(cg.NAME, {0}) else cg.Name end as GroupName, U.LOGIN as LastModifiedByUser", options.LanguageId);
+            selectBuilder.AppendFormat(", s.SITE_NAME as SiteName, cg.Name as GroupName, U.LOGIN as LastModifiedByUser", options.LanguageId);
             if (useSelection)
             {
                 selectBuilder.Append(", CASE WHEN (cis.CONTENT_ID IS NOT NULL) THEN 1 ELSE 0 END as isSelected");
             }
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append($"{DbSchemaName(dbType)}.CONTENT c INNER JOIN dbo.SITE s ON c.SITE_ID = s.SITE_ID");
-            fromBuilder.Append($" INNER JOIN {DbSchemaName(dbType)}.{EscapeEntityName(dbType,"USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
-            fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}.CONTENT_GROUP cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
+            var ns = DbSchemaName(dbType);
+            fromBuilder.Append($"{ns}.CONTENT c INNER JOIN {ns}.SITE s ON c.SITE_ID = s.SITE_ID");
+            fromBuilder.Append($" INNER JOIN {ns}.{EscapeEntityName(dbType,"USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
+            fromBuilder.Append($" LEFT JOIN {ns}.CONTENT_GROUP cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT CONTENT_ID from CONTENT where CONTENT_ID in ({0})) AS cis ON c.CONTENT_ID = cis.CONTENT_ID ", string.Join(",", options.SelectedIDs));
@@ -2969,7 +2978,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
             if (options.Mode == ContentSelectMode.ForWorkflow)
             {
-                fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}.CONTENT_WORKFLOW_BIND cwb ON c.CONTENT_ID = cwb.CONTENT_ID");
+                fromBuilder.Append($" LEFT JOIN {ns}.CONTENT_WORKFLOW_BIND cwb ON c.CONTENT_ID = cwb.CONTENT_ID");
             }
 
             if (options.UseSecurity)
@@ -4040,13 +4049,14 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetUserGroupPage(DbConnection sqlConnection, List<int> selectedIds, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            var selectBlock = @"G.[GROUP_ID] AS Id,G.[GROUP_NAME] AS Name,G.[DESCRIPTION] AS Description,G.[CREATED],G.[MODIFIED],G.[LAST_MODIFIED_BY] AS LastModifiedByUserId,G.[LAST_MODIFIED_BY_LOGIN] AS LastModifiedByUser,G.[shared_content_items] AS SharedArticles";
-            var fromBlock = @"[dbo].[USER_GROUP_TREE] G";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var selectBlock = @"G.GROUP_ID AS Id,G.GROUP_NAME AS Name,G.DESCRIPTION AS Description,G.CREATED,G.MODIFIED,G.LAST_MODIFIED_BY AS LastModifiedByUserId,G.LAST_MODIFIED_BY_LOGIN AS LastModifiedByUser,G.shared_content_items AS SharedArticles";
+            var fromBlock = @"USER_GROUP_TREE G";
 
             if (selectedIds != null && selectedIds.Any())
             {
-                selectBlock += " ,CAST((CASE WHEN (GIS.[GROUP_ID] IS NOT NULL) THEN 1 else 0 end) AS bit) AS IS_SELECTED";
-                fromBlock += $" LEFT OUTER JOIN (select [GROUP_ID] from [USER_GROUP_TREE] where [GROUP_ID] in ({string.Join(",", selectedIds)})) AS GIS ON GIS.[GROUP_ID] = G.[GROUP_ID]";
+                selectBlock += $" , {SqlQuerySyntaxHelper.CastToBool(dbType, "CASE WHEN (GIS.GROUP_ID IS NOT NULL) THEN 1 else 0 end")} AS IS_SELECTED";
+                fromBlock += $" LEFT OUTER JOIN (select GROUP_ID from USER_GROUP_TREE where GROUP_ID in ({string.Join(",", selectedIds)})) AS GIS ON GIS.GROUP_ID = G.GROUP_ID";
                 orderBy = string.IsNullOrWhiteSpace(orderBy) ? "IS_SELECTED DESC, Name ASC" : orderBy;
             }
             else
@@ -4064,24 +4074,26 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             string strFilter = null;
             string orderBy;
             var filters = new List<string>(4);
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var ns = DbSchemaName(dbType);
             if (!string.IsNullOrEmpty(options.Login))
             {
-                filters.Add($"U.[LOGIN] LIKE '%{options.Login}%'");
+                filters.Add($"U.LOGIN LIKE '%{options.Login}%'");
             }
 
             if (!string.IsNullOrEmpty(options.Email))
             {
-                filters.Add($"U.[EMAIL] LIKE '%{options.Email}%'");
+                filters.Add($"U.EMAIL LIKE '%{options.Email}%'");
             }
 
             if (!string.IsNullOrEmpty(options.FirstName))
             {
-                filters.Add($"U.[FIRST_NAME] LIKE '%{options.FirstName}%'");
+                filters.Add($"U.FIRST_NAME LIKE '%{options.FirstName}%'");
             }
 
             if (!string.IsNullOrEmpty(options.LastName))
             {
-                filters.Add($"U.[LAST_NAME] LIKE '%{options.LastName}%'");
+                filters.Add($"U.LAST_NAME LIKE '%{options.LastName}%'");
             }
 
             if (filters.Any())
@@ -4089,13 +4101,13 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 strFilter = string.Join(" AND ", filters);
             }
 
-            var selectBlock = @"U.[USER_ID] as ID, U.[LOGIN], U.FIRST_NAME, U.LAST_NAME, U.EMAIL, U.LANGUAGE_ID, L.LANGUAGE_NAME, U.LAST_LOGIN, U.[DISABLED], U.CREATED, U.MODIFIED, U.LAST_MODIFIED_BY, MU.[LOGIN] as LAST_MODIFIED_BY_LOGIN";
-            var fromBlock = @"[dbo].[USERS] U JOIN [dbo].[USERS] MU ON MU.[USER_ID] = U.LAST_MODIFIED_BY JOIN [dbo].LANGUAGES L ON L.LANGUAGE_ID =  U.LANGUAGE_ID";
+            var selectBlock = @"U.USER_ID as ID, U.LOGIN, U.FIRST_NAME, U.LAST_NAME, U.EMAIL, U.LANGUAGE_ID, L.LANGUAGE_NAME, U.LAST_LOGIN, U.DISABLED, U.CREATED, U.MODIFIED, U.LAST_MODIFIED_BY, MU.LOGIN as LAST_MODIFIED_BY_LOGIN";
+            var fromBlock = $@"{ns}.USERS U JOIN {ns}.USERS MU ON MU.USER_ID = U.LAST_MODIFIED_BY JOIN {ns}.LANGUAGES L ON L.LANGUAGE_ID =  U.LANGUAGE_ID";
 
             if (options.SelectedIDs != null && options.SelectedIDs.Any())
             {
-                selectBlock += " ,CAST((CASE WHEN (UIS.[USER_ID] IS NOT NULL) THEN 1 else 0 end) AS bit) AS is_selected";
-                fromBlock += $" LEFT OUTER JOIN (select [USER_ID] from [USERS] where [USER_ID] in ({string.Join(",", options.SelectedIDs)})) AS UIS ON UIS.[USER_ID] = U.[USER_ID]";
+                selectBlock += $" ,{SqlQuerySyntaxHelper.CastToBool(dbType, "CASE WHEN (UIS.USER_ID IS NOT NULL) THEN 1 else 0 end")} AS is_selected";
+                fromBlock += $" LEFT OUTER JOIN (select USER_ID from USERS where USER_ID in ({string.Join(",", options.SelectedIDs)})) AS UIS ON UIS.USER_ID = U.USER_ID";
                 orderBy = string.IsNullOrWhiteSpace(options.SortExpression) ? "is_selected DESC, LOGIN ASC" : options.SortExpression;
             }
             else
@@ -4896,18 +4908,23 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
             }
         }
 
-        public static IEnumerable<DataRow> GetVisualEditorStylesPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.VisualEditorStyle,
-            "s.[ID] as [Id], s.[NAME] as [Name], s.[DESCRIPTION] as [Description], s.[TAG] as [Tag], s.[ORDER] as [Order]," +
-            " s.[IS_SYSTEM] as [IsSystem], s.[IS_FORMAT] as [IsFormat], s.[CREATED] as [Created], s.[MODIFIED] as [Modified], u.LOGIN as [LastModifiedByLogin]",
-            "dbo.[VE_STYLE] s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Order]",
-            "",
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetVisualEditorStylesPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var escapedOrderColumnName = EscapeEntityName(dbType, "ORDER");
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.VisualEditorStyle,
+                $"s.ID as Id, s.NAME as Name, s.DESCRIPTION as Description, s.TAG as Tag, s.{escapedOrderColumnName} as {escapedOrderColumnName}," +
+                " s.IS_SYSTEM as IsSystem, s.IS_FORMAT as IsFormat, s.CREATED as Created, s.MODIFIED as Modified, u.LOGIN as LastModifiedByLogin",
+                "VE_STYLE s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : escapedOrderColumnName,
+                "",
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
         public static IEnumerable<DataRow> GetVisualEditorStylesBySiteId(DbConnection sqlConnection, int siteId)
         {
@@ -4995,31 +5012,39 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
             }
         }
 
-        public static IEnumerable<DataRow> GetWorkflowsPage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Workflow,
-            "w.[WORKFLOW_ID] AS Id, w.[WORKFLOW_NAME] as [Name], w.[DESCRIPTION] as [Description], w.[MODIFIED] as [Modified], w.[CREATED] as [Created]," +
-            "w.[LAST_MODIFIED_BY] as[LastModifiedBy], u.[LOGIN] as [LastModifiedByLogin]",
-            "[WORKFLOW] w inner join users u on w.LAST_MODIFIED_BY = u.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name]",
-            "w.SITE_ID = " + siteId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetWorkflowsPage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Workflow,
+                $"w.WORKFLOW_ID AS Id, w.WORKFLOW_NAME as {EscapeEntityName(dbType, "Name")}, w.DESCRIPTION as Description, w.MODIFIED as Modified, w.CREATED as Created," +
+                "w.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
+                "WORKFLOW w inner join users u on w.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : EscapeEntityName(dbType, "Name"),
+                "w.SITE_ID = " + siteId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
-        public static IEnumerable<DataRow> GetStatusTypePage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.StatusType,
-            "s.[STATUS_TYPE_ID] AS Id, s.[STATUS_TYPE_NAME] as [Name], s.[DESCRIPTION] as [Description], s.[WEIGHT] as [Weight], s.[MODIFIED] as [Modified], s.[CREATED] as [Created]," +
-            " s.[LAST_MODIFIED_BY] as[LastModifiedBy], u.[LOGIN] as [LastModifiedByLogin]",
-            "[STATUS_TYPE] s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Weight]",
-            "s.SITE_ID = " + siteId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetStatusTypePage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.StatusType,
+                $"s.STATUS_TYPE_ID AS Id, s.STATUS_TYPE_NAME as {EscapeEntityName(dbType, "Name")}, s.DESCRIPTION as Description, s.WEIGHT as Weight, s.MODIFIED as Modified, s.CREATED as Created," +
+                " s.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
+                "STATUS_TYPE s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "Weight",
+                "s.SITE_ID = " + siteId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
         public static IEnumerable<DataRow> GetStatusTypeWeightsBySiteId(DbConnection connection, int siteId, int exceptId)
         {
@@ -5393,7 +5418,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetWorkflowContentBindedIds(DbConnection connection, int workflowId)
         {
-            var query = $"SELECT CONTENT_ID FROM [content_workflow_bind] where WORKFLOW_ID = {workflowId};";
+            var query = $"SELECT CONTENT_ID FROM content_workflow_bind where WORKFLOW_ID = {workflowId};";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5534,33 +5559,41 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
             }
         }
 
-        public static IEnumerable<DataRow> GetPageTemplatesBySiteId(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.PageTemplate,
-            "p.[PAGE_TEMPLATE_ID] AS Id, p.[is_system] AS [IsSystem], p.[LOCKED_BY] AS [LockedBy], p.[TEMPLATE_NAME] AS [Name], p.[TEMPLATE_FOLDER] AS [Folder], p.[DESCRIPTION] AS [Description], " +
-            "p.[CREATED] AS [Created], p.[MODIFIED] AS [Modified], p.LAST_MODIFIED_BY AS [LastModifiedBy], u.LOGIN AS [LastModifiedByLogin], u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName",
-            "dbo.[PAGE_TEMPLATE] as p inner join users u on p.LAST_MODIFIED_BY = u.user_id left outer join users u2 on p.[LOCKED_BY] = u2.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name] ASC",
-            "p.SITE_ID = " + siteId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetPageTemplatesBySiteId(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.PageTemplate,
+                "p.PAGE_TEMPLATE_ID AS Id, p.is_system AS IsSystem, p.LOCKED_BY AS LockedBy, p.TEMPLATE_NAME AS Name, p.TEMPLATE_FOLDER AS Folder, p.DESCRIPTION AS Description, " +
+                $"p.CREATED AS Created, p.MODIFIED AS Modified, p.LAST_MODIFIED_BY AS LastModifiedBy, u.LOGIN AS LastModifiedByLogin, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName",
+                "PAGE_TEMPLATE as p inner join users u on p.LAST_MODIFIED_BY = u.user_id left outer join users u2 on p.LOCKED_BY = u2.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : $"{EscapeEntityName(dbType, "Name")} ASC",
+                "p.SITE_ID = " + siteId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
-        public static IEnumerable<DataRow> GetPagesByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Page,
-            "p.[PAGE_ID] AS Id, p.[GENERATE_TRACE] AS [GenerateTrace], p.[LOCKED_BY] AS [LockedBy], p.[REASSEMBLE] AS [Reassemble], p.[PAGE_NAME] AS [Name], p.[DESCRIPTION] AS [Description], " +
-            "p.[PAGE_FILENAME] as FileName, p.[page_folder] as Folder, p.[CREATED] AS [Created], p.[MODIFIED] AS [Modified], p.LAST_MODIFIED_BY AS [LastModifiedBy], u.LOGIN AS [LastModifiedByLogin], " +
-            "p.[ASSEMBLED] as [Assembled], p.[LAST_ASSEMBLED_BY] as [LastAssembledBy], uu.[LOGIN] as [LastAssembledByLogin], u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName, t.[TEMPLATE_NAME] as [TemplateName]",
-            "dbo.[PAGE] as p inner join users u on p.LAST_MODIFIED_BY = u.user_id INNER JOIN page_template as t on p.[PAGE_TEMPLATE_ID] = t.[PAGE_TEMPLATE_ID] left outer join users uu on p.[LAST_ASSEMBLED_BY] " +
-            " = uu.user_id left outer join users u2 on p.[ASSEMBLED] = u2.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name] Asc",
-            "p.[PAGE_TEMPLATE_ID] = " + templateId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetPagesByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Page,
+                "p.PAGE_ID AS Id, p.GENERATE_TRACE AS GenerateTrace, p.LOCKED_BY AS LockedBy, p.REASSEMBLE AS Reassemble, p.PAGE_NAME AS Name, p.DESCRIPTION AS Description, " +
+                "p.PAGE_FILENAME as FileName, p.page_folder as Folder, p.CREATED AS Created, p.MODIFIED AS Modified, p.LAST_MODIFIED_BY AS LastModifiedBy, u.LOGIN AS LastModifiedByLogin, " +
+                $"p.ASSEMBLED as Assembled, p.LAST_ASSEMBLED_BY as LastAssembledBy, uu.LOGIN as LastAssembledByLogin, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName, t.TEMPLATE_NAME as TemplateName",
+                $"{DbSchemaName(dbType)}.{EscapeEntityName(dbType, "PAGE")} as p inner join users u on p.LAST_MODIFIED_BY = u.user_id INNER JOIN page_template as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID left outer join users uu on p.LAST_ASSEMBLED_BY " +
+                " = uu.user_id left outer join users u2 on p.LAST_ASSEMBLED_BY = u2.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "Name Asc",
+                "p.PAGE_TEMPLATE_ID = " + templateId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
         public static IEnumerable<DataRow> GetTemplateObjectsByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
             sqlConnection,

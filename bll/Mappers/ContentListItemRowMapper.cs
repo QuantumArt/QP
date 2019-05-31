@@ -15,6 +15,7 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("Id"))))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("Name")))
                 .ForMember(biz => biz.GroupName, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("GroupName"), ContentStrings.DefaultContentGroup)))
+                // .ForMember(biz => biz.GroupId, opt => opt.MapFrom(row => Converter.ToNullableInt32(row["GroupId"])))
                 .ForMember(biz => biz.SiteName, opt => opt.MapFrom(row => row.Field<string>("SiteName")))
                 .ForMember(biz => biz.Description, opt => opt.MapFrom(row => Converter.ToString(row.Field<string>("Description"), string.Empty)))
                 .ForMember(biz => biz.VirtualType, opt => opt.MapFrom(row => Content.GetVirtualTypeString(Converter.ToInt32(row.Field<decimal>("VirtualType")))))
