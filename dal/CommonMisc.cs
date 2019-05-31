@@ -16,7 +16,18 @@ namespace Quantumart.QP8.DAL
 
         private static string DbSchemaName(DatabaseType databaseType) => SqlQuerySyntaxHelper.DbSchemaName(databaseType);
 
-        private static string WithNolock(DatabaseType databaseType) => SqlQuerySyntaxHelper.WithNolock(databaseType);
+        private static string WithNoLock(DatabaseType databaseType) => SqlQuerySyntaxHelper.WithNoLock(databaseType);
+
+        private static string WithRowLock(DatabaseType databaseType) => SqlQuerySyntaxHelper.WithRowLock(databaseType);
+
+        private static string Now(DatabaseType databaseType) => SqlQuerySyntaxHelper.Now(databaseType);
+
+        private static string IsTrue(DatabaseType databaseType, string expr) => SqlQuerySyntaxHelper.IsTrue(databaseType, expr);
+
+        private static string IsFalse(DatabaseType databaseType, string expr) => SqlQuerySyntaxHelper.IsFalse(databaseType, expr);
+
+        private static string IdList(DatabaseType databaseType, string name, string alias = "i") => SqlQuerySyntaxHelper.IdList(databaseType, name, alias);
+
 
         private static string EscapeEntityName(DatabaseType databaseType, string entityName) => SqlQuerySyntaxHelper.EscapeEntityName(databaseType, entityName);
 

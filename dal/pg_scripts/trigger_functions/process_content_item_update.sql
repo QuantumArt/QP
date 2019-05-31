@@ -95,6 +95,7 @@ AS $BODY$
             			) as main';
 				
 				sql := FORMAT(sql, cid);
+				RAISE NOTICE 'IDS with splitted %', sql;
 				EXECUTE sql using ids, async_ids;
 
 				select 
@@ -108,6 +109,7 @@ AS $BODY$
 				drop table ids_with_splitted;
 				
 				IF ids_to_set is not null THEN
+				    RAISE NOTICE 'ids to set splitted: %', ids_to_set;				    
             		insert into content_item_splitted(content_item_id)
 					select id from (select unnest(ids_to_set) as id) base
             		where not exists (select * from content_item_splitted cis where cis.content_item_id = base.id);
@@ -116,16 +118,19 @@ AS $BODY$
 				END IF;
 																		   
 				IF ids_to_reset is not null THEN
+				    RAISE NOTICE 'ids to reset splitted: %', ids_to_reset;					    
 					delete from content_item_splitted where content_item_id = ANY(ids_to_reset);
 					update content_item set splitted = false where content_item_id = ANY(ids_to_reset);
 				END IF;
 
 				IF sync_ids is not null THEN
+				    RAISE NOTICE 'ids to update sync: %', sync_ids;					    
 					call qp_upsert_items(cid, sync_ids, ARRAY[]::int[], none_id, false);
 					call qp_delete_items(cid, sync_ids, true);
 				END IF;
 																		   
 				IF async_ids is not null THEN
+				    RAISE NOTICE 'ids to update async: %', async_ids;					    
 					call qp_upsert_items(cid, async_ids, ARRAY[]::int[], none_id, true);
 					call qp_update_items_flags(cid, async_ids, false);
 				END IF;																				   

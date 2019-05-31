@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using Npgsql;
 using NpgsqlTypes;
@@ -13,7 +14,7 @@ namespace Quantumart.QP8.DAL
 {
     public static partial class Common
     {
-              public static void PersistArticle(DbConnection currentDbConnection, string xml, out int id)
+        public static void PersistArticle(DbConnection currentDbConnection, string xml, out int id)
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(currentDbConnection);
             var ns = SqlQuerySyntaxHelper.DbSchemaName(databaseType);
@@ -39,12 +40,11 @@ namespace Quantumart.QP8.DAL
         public static void UpdateChildDelayedSchedule(DbConnection connection, int articleId)
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var idParamName = SqlQuerySyntaxHelper.SpParamName(databaseType, "id");
             var sql = databaseType == DatabaseType.SqlServer ? "qp_copy_schedule_to_child_delays" : "call qp_copy_schedule_to_child_delays(@id)";
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = databaseType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
-                cmd.Parameters.AddWithValue(idParamName, articleId);
+                cmd.Parameters.AddWithValue("@id", articleId);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -113,7 +113,7 @@ namespace Quantumart.QP8.DAL
                 throw new ArgumentNullException(nameof(guids));
             }
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var noLock = WithNolock(databaseType);
+            var noLock = WithNoLock(databaseType);
             var textCast = (databaseType == DatabaseType.Postgres) ? "::text" : "";
             string xmlSource;
             if (databaseType == DatabaseType.Postgres)
@@ -163,8 +163,8 @@ namespace Quantumart.QP8.DAL
                 throw new ArgumentNullException(nameof(ids));
             }
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var table = SqlQuerySyntaxHelper.IdList(databaseType, "@ids", "ids");
-            var noLock = WithNolock(databaseType);
+            var table = IdList(databaseType, "@ids", "ids");
+            var noLock = WithNoLock(databaseType);
             var query = $@"select ci.unique_id, ids.id from {table} left join content_item ci {noLock} on ci.content_item_id = ids.id";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -263,6 +263,214 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = databaseType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
                 cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, databaseType));
                 cmd.Parameters.AddWithValue("@last_modified_by", userId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+        public static void SetArchiveFlag(DbConnection connection, IEnumerable<int> articleIds, int userId, bool flag, bool withAggregated)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var idParam = withAggregated ? $@"{DbSchemaName(dbType)}.qp_aggregated_and_self(@ids)" : "@ids";
+            var source = IdList(dbType, idParam);
+            var value = flag ? 1 : 0;
+
+            using (var cmd = DbCommandFactory.Create($@"
+                    update content_item {WithRowLock(dbType)} set archive = {value}, modified = {Now(dbType)}, last_modified_by = @userId where content_item_id in (select id from {source});
+                    update content_item {WithRowLock(dbType)} set locked_by = null, locked = null where content_item_id in (select id from {source});
+                    ", connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds, dbType));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Массовая публикация (может использоваться для статей из разных контентов одного сайта)
+        /// </summary>
+        public static void Publish(DbConnection connection, IEnumerable<int> articleIds, int userId, bool withAggregated)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var idParam = withAggregated ? $@"{DbSchemaName(dbType)}.qp_aggregated_and_self(@ids)" : "@ids";
+            var source = IdList(dbType, idParam);
+            string sql = $@"call qp_publish(@ids, @userId);";
+            if (dbType == DatabaseType.SqlServer)
+            {
+                sql = $@"
+                    declare @ids2 [Ids]
+
+                    insert into @ids2
+                    select id from {source}
+
+                    declare @statusTypeId numeric
+                    select @statusTypeId = status_type_id from status_type where status_type_name = 'Published' and site_id in (select site_id from content c inner join content_item ci with(nolock) on c.content_id = ci.content_id inner join @ids2 i on i.id = ci.content_item_id )
+
+                    update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 0;
+                    update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId, schedule_new_version_publication = 1 where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 1;
+
+                    exec qp_merge_delays @ids2, @userId
+
+                    delete i from @ids2 i inner join content_item ci with(nolock) on ci.content_item_id = i.id where ci.splitted = 0 and ci.schedule_new_version_publication = 0
+
+                    exec qp_merge_articles @ids2, @userId
+
+                    ";
+            }
+
+            using (var cmd = DbCommandFactory.Create(sql, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds, dbType));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void DeleteArticles(DbConnection connection, List<int> ids, bool withAggregated)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var idParam = withAggregated ? $@"{DbSchemaName(dbType)}.qp_aggregated_and_self(@ids)" : "@ids";
+            var source = IdList(dbType, idParam);
+
+            if (ids != null && ids.Any())
+            {
+                var query = $"DELETE FROM content_item where content_item_id in (select id from {source}) ";
+                using (var cmd = DbCommandFactory.Create(query, connection))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void GetContentModification(DbConnection sqlConnection, IEnumerable<int> articleIds, bool withAggregated, bool returnPublishedForLive, ref List<int> liveIds, ref List<int> stageIds)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var idsParam = withAggregated ? $"{DbSchemaName(dbType)}.qp_aggregated_and_self(@ids)" : "@ids";
+            var source = IdList(dbType, idsParam);
+
+            var aggFunc = returnPublishedForLive ? "max" : "min";
+            var ids = articleIds as int[] ?? articleIds.ToArray();
+            if (!ids.Any())
+            {
+                return;
+            }
+
+            var sql = $@"
+			    select cast(a.content_id as int) as content_id, cast({aggFunc}(a.is_published) as bit) as is_published from
+		        (
+			        select ci.content_item_id, ci.content_id,
+			        case when st.status_type_name = 'Published' and {IsFalse(dbType, "ci.splitted")} then 1 else 0 end as is_published
+			        from {source}
+			        inner join content_item ci {WithNoLock(dbType)} on i.id = ci.content_item_id
+			        inner join status_type st on ci.status_type_id = st.status_type_id
+		        ) a group by a.content_id
+            ";
+
+
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
+                var dt = new DataTable();
+                DataAdapterFactory.Create(cmd).Fill(dt);
+                var rows = dt.AsEnumerable().ToArray();
+                stageIds = rows.Select(n => n.Field<int>("content_id")).ToList();
+                bool Predicate1(DataRow n) => n.Field<bool>("is_published");
+                bool Predicate2(DataRow n) => !n.Field<bool>("is_published");
+
+                liveIds = rows.Where(returnPublishedForLive ? (Func<DataRow, bool>)Predicate1 : Predicate2).Select(n => n.Field<int>("content_id")).ToList();
+            }
+        }
+
+        public static void UpdateContentModification(DbConnection sqlConnection, List<int> liveIds, List<int> stageIds)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var sql = new List<DbParameter>();
+            var sb = new StringBuilder();
+            ;
+            if (liveIds.Any())
+            {
+                sb.AppendLine($@"update content_modification {WithRowLock(dbType)} set live_modified = {Now(dbType)} where content_id in (select id from {IdList(dbType, "@liveIds")});");
+                sql.Add(GetIdsDatatableParam("@liveIds", liveIds, dbType));
+            }
+
+            if (stageIds.Any())
+            {
+                sb.AppendLine($@"update content_modification {WithRowLock(dbType)} set stage_modified = {Now(dbType)} where content_id in (select id from {IdList(dbType, "@stageIds")});");
+                sql.Add(GetIdsDatatableParam("@stageIds", stageIds, dbType));
+            }
+
+            if (sql.Any())
+            {
+                using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.AddRange(sql.ToArray());
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static int CountChildArticles(DbConnection sqlConnection, int articleId, bool countArchived)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var sql = "qp_count_child_articles";
+            if (dbType == DatabaseType.Postgres)
+            {
+                sql = $@"
+                    select count(*)::int from content_data cd
+                    inner join content_attribute ca on ca.attribute_id = cd.attribute_id
+                    inner join content_item ci on ci.content_item_id = cd.content_item_id
+                    where o2m_data = @article_id and not ca.aggregated and ci.archive = 0
+                ";
+
+            }
+
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
+            {
+                string outParam;
+                cmd.Parameters.AddWithValue("@article_id", articleId);
+                if (dbType == DatabaseType.SqlServer)
+                {
+                    outParam = "@count";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@count_archived", countArchived);
+                    cmd.Parameters.Add(new SqlParameter(outParam, SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    });
+                }
+                else
+                {
+                    outParam = "count";
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.Add(new NpgsqlParameter(outParam, NpgsqlDbType.Integer)
+                    {
+                        Direction = ParameterDirection.Output
+                    });
+                }
+                cmd.ExecuteNonQuery();
+                return (int)cmd.Parameters[outParam].Value;
+            }
+        }
+
+        public static void AdjustManyToMany(DbConnection connection, int id, int newId)
+        {
+            #warning rewrite to sequential delete and insert as we don't have update trigger in pg
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@"
+                update item_to_item {WithRowLock(dbType)} set l_item_id = @newId where l_item_id = @id and r_item_id = @newId;
+                delete from item_to_item {WithRowLock(dbType)} where r_item_id = @id and l_item_id = @newId;
+            ";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.Parameters.AddWithValue("@newId", newId);
                 cmd.ExecuteNonQuery();
             }
         }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -22,7 +22,7 @@ namespace Quantumart.QP8.DAL
         public static long GetContentIdForArticle(DbConnection connection, long id)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            using (var cmd = DbCommandFactory.Create($"select content_id from content_item {WithNolock(dbType)} where content_item_id = @id", connection))
+            using (var cmd = DbCommandFactory.Create($"select content_id from content_item {WithNoLock(dbType)} where content_item_id = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -127,7 +127,7 @@ namespace Quantumart.QP8.DAL
         public static string GetArticleFieldValue(DbConnection connection, int id, int contentId, string name)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            using (var cmd = DbCommandFactory.Create($"select {EscapeEntityName(dbType, name)} from content_{contentId}_united {WithNolock(dbType)} where content_item_id = @id", connection))
+            using (var cmd = DbCommandFactory.Create($"select {EscapeEntityName(dbType, name)} from content_{contentId}_united {WithNoLock(dbType)} where content_item_id = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -141,7 +141,7 @@ namespace Quantumart.QP8.DAL
             var values = new Dictionary<int, string>();
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var escapedNameColumn = SqlQuerySyntaxHelper.EscapeEntityName(databaseType, name);
-            using (var cmd = DbCommandFactory.Create($"select content_item_id, {escapedNameColumn} from content_{contentId}_united {WithNolock(databaseType)} where {escapedNameColumn} is not null", connection))
+            using (var cmd = DbCommandFactory.Create($"select content_item_id, {escapedNameColumn} from content_{contentId}_united {WithNoLock(databaseType)} where {escapedNameColumn} is not null", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 using (var dr = cmd.ExecuteReader())
@@ -159,7 +159,7 @@ namespace Quantumart.QP8.DAL
         public static int GetArticleIdByFieldValue(DbConnection connection, int contentId, string name, string value)
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            using (var cmd = DbCommandFactory.Create($"select content_item_id from content_{contentId}_united {WithNolock(databaseType)} where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, name)} = @value", connection))
+            using (var cmd = DbCommandFactory.Create($"select content_item_id from content_{contentId}_united {WithNoLock(databaseType)} where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, name)} = @value", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@value", value);
@@ -173,7 +173,7 @@ namespace Quantumart.QP8.DAL
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var suffix = isLive ? string.Empty : "_united";
             var isExcludeArchive = excludeArchive ? $"and archive = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)}" : string.Empty;
-            using (var cmd = DbCommandFactory.Create($"select * from content_{contentId}{suffix} {WithNolock(databaseType)} where content_item_id = @id {isExcludeArchive}", connection))
+            using (var cmd = DbCommandFactory.Create($"select * from content_{contentId}{suffix} {WithNoLock(databaseType)} where content_item_id = @id {isExcludeArchive}", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -187,25 +187,15 @@ namespace Quantumart.QP8.DAL
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var fields = returnOnlyIds ? "c.content_item_id" : "c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication";
-            var baseSql = $"select {fields} from content_{contentId}{{0}} c {WithNolock(dbType)}" +
-                $" left join content_item ci {WithNolock(dbType)} on c.content_item_id = ci.content_item_id {{1}} {{2}}";
+            var baseSql = $"select {fields} from content_{contentId}{{0}} c {WithNoLock(dbType)}" +
+                $" left join content_item ci {WithNoLock(dbType)} on c.content_item_id = ci.content_item_id {{1}} {{2}}";
 
 
             var conditions = new List<string>();
 
             if (ids != null)
             {
-                switch (dbType)
-                {
-                    case DatabaseType.SqlServer:
-                        conditions.Add("c.content_item_id in (select id from @itemIds)");
-                        break;
-                    case DatabaseType.Postgres:
-                        conditions.Add("c.content_item_id in (select id from unnest(@myData) i(id))");
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                conditions.Add($"c.content_item_id in (select id from {IdList(dbType, "@itemIds")})");
             }
 
             if (excludeArchive)
@@ -229,9 +219,11 @@ namespace Quantumart.QP8.DAL
             if (ids != null && !isLive && !isVirtual && !returnOnlyIds) //optimization for list of ids
             {
                 var sb = new StringBuilder();
-                sb.AppendLine(string.Format(baseSql, string.Empty, where, " and coalesce(ci.splitted, 0) = 0 "));
+                var splitted = $"coalesce(ci.splitted, {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)})";
+
+                sb.AppendLine(string.Format(baseSql, string.Empty, where, $" and {IsFalse(dbType, splitted)} "));
                 sb.AppendLine(" union all ");
-                sb.AppendLine(string.Format(baseSql, "_async", where, " and ci.splitted = 1 "));
+                sb.AppendLine(string.Format(baseSql, "_async", where, $" and {IsTrue(dbType, "ci.splitted")} "));
                 sql = sb.ToString();
             }
             else
@@ -283,11 +275,10 @@ c.content_item_id AS id, {displayExpression}, {SqlQuerySyntaxHelper.CastToBool(d
 FROM content_{contentId}_united c
 {(useSecurity ? $"INNER JOIN ({securitySql} as pi ON c.content_item_id = pi.content_item_id)" : string.Empty)}
 {(selectionMode == ListSelectionMode.AllItems ? " LEFT JOIN " : " INNER JOIN ")}
-( SELECT content_item_id FROM content_{contentId} WHERE content_item_id IN (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@myData) i(id)" : "@myData")})) AS cis ON c.content_item_id = cis.content_item_id
+( SELECT content_item_id FROM content_{contentId} WHERE content_item_id IN (select id from {IdList(databaseType, "@myData")})) AS cis ON c.content_item_id = cis.content_item_id
 {extraFrom}
 {(string.IsNullOrWhiteSpace(filter) ? string.Empty : $" WHERE {filter}")}
 ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderBy)}
-
 ";
 
             // var queryBuilder = new StringBuilder();
@@ -463,7 +454,7 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
                 UPDATE {source}
                 SET
                     locked_by = {SqlQuerySyntaxHelper.NullableDbValue(databaseType, userId)},
-                    locked = CASE WHEN @user_id is null THEN NULL ELSE {SqlQuerySyntaxHelper.GetDate(databaseType)} END,
+                    locked = CASE WHEN @user_id is null THEN NULL ELSE {SqlQuerySyntaxHelper.Now(databaseType)} END,
                     permanent_lock = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)}
                 WHERE
                     {idField} = @id
@@ -491,61 +482,6 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
                 cmd.ExecuteNonQuery();
             }
         }
-
-        public static void SetArchiveFlag(DbConnection connection, IEnumerable<int> articleIds, int userId, bool flag, bool withAggregated)
-        {
-            var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
-            using (var cmd = DbCommandFactory.Create(
-                string.Format(
-                    "update content_item with(rowlock) set archive = @flag, modified = getdate(), last_modified_by = @userId where content_item_id in (select id from {0});"
-                    +
-                    " update content_item with(rowlock) set locked_by = null, locked = null where content_item_id in (select id from {0});",
-                    source),
-                connection
-            ))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.AddWithValue("@flag", flag);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds));
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
-        /// Массовая публикация (может использоваться для статей из разных контентов одного сайта)
-        /// </summary>
-        public static void Publish(DbConnection connection, IEnumerable<int> articleIds, int userId, bool withAggregated)
-        {
-            var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
-            using (var cmd = DbCommandFactory.Create($@"
-                    declare @ids2 [Ids]
-
-                    insert into @ids2
-                    select id from {source}
-
-                    declare @statusTypeId numeric
-                    select @statusTypeId = status_type_id from status_type where status_type_name = 'Published' and site_id in (select site_id from content c inner join content_item ci with(nolock) on c.content_id = ci.content_id inner join @ids2 i on i.id = ci.content_item_id )
-
-                    update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 0;
-                    update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId, schedule_new_version_publication = 1 where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 1;
-
-                    exec qp_merge_delays @ids2, @userId
-
-                    delete i from @ids2 i inner join content_item ci with(nolock) on ci.content_item_id = i.id where ci.splitted = 0 and ci.schedule_new_version_publication = 0
-
-                    exec qp_merge_articles @ids2, @userId
-
-                    ", connection
-            ))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds));
-                cmd.ExecuteNonQuery();
-            }
-        }
-
 
 
         private static string IdCommaList(DataTable dt, string fieldName, bool withSpace = true)
@@ -633,10 +569,10 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
             {
                 var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
                 var suffix = isLive ? string.Empty : "_united";
-                var isArchive = excludeArchive ? $"join content_item ci {WithNolock(databaseType)} on linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
+                var isArchive = excludeArchive ? $"join content_item ci {WithNoLock(databaseType)} on linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
                 var query = $@"
 select linked_item_id, item_id, link_id
-from item_link{suffix} {WithNolock(databaseType)} {isArchive}
+from item_link{suffix} {WithNoLock(databaseType)} {isArchive}
 where item_id = @id and link_id in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@linkIds) i(id)" : "@linkIds")}) ";
                 using (var cmd = DbCommandFactory.Create(query, connection))
                 {
@@ -718,7 +654,7 @@ where item_id = @id and link_id in (select id from {(databaseType == DatabaseTyp
 select
 content_item_id,
 cast({fi.Id} as decimal) as field_id
-from content_{fi.ContentId}{suffix} {WithNolock(databaseType)}
+from content_{fi.ContentId}{suffix} {WithNoLock(databaseType)}
 where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {isArchive}");
 
                 var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
@@ -884,8 +820,8 @@ SELECT item_id, linked_item_id, link_id, title
 FROM (
 SELECT item_id, linked_item_id, link_id, {titleField} as title, ROW_NUMBER()
 over (partition by item_id order by linked_item_id) AS RowNum
-from item_link_united as u {WithNolock(databaseType)}
-inner join content_{contentId}_united as c {WithNolock(databaseType)} on u.linked_item_id = c.CONTENT_ITEM_ID
+from item_link_united as u {WithNoLock(databaseType)}
+inner join content_{contentId}_united as c {WithNoLock(databaseType)} on u.linked_item_id = c.CONTENT_ITEM_ID
 where item_id in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@ids) i(id)" : "@ids")}) and link_id = {linkId}) as subq
 where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
@@ -953,7 +889,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static DateTime GetSqlDate(DbConnection connection)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            using (var cmd = DbCommandFactory.Create($"select {SqlQuerySyntaxHelper.GetDate(dbType)} as date", connection))
+            using (var cmd = DbCommandFactory.Create($"select {Now(dbType)} as date", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 return (DateTime)cmd.ExecuteScalar();
@@ -1027,17 +963,6 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
 
             return result.ToArray();
-        }
-
-        public static void AdjustManyToMany(DbConnection connection, int id, int newId)
-        {
-            using (var cmd = DbCommandFactory.Create("update item_to_item with(rowlock) set l_item_id = @newId where l_item_id = @id and r_item_id = @newId;delete from item_to_item with(rowlock) where r_item_id = @id and l_item_id = @newId", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@newId", newId);
-                cmd.ExecuteNonQuery();
-            }
         }
 
         private const string GetTranslationsQuery = @"select p.PHRASE_ID, p.PHRASE_TEXT, t.LANGUAGE_ID, t.PHRASE_TRANSLATION from translations t inner join phrases p on t.phrase_id = p.phrase_id";
@@ -1139,7 +1064,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static int CountArticles(DbConnection connection, int contentId, bool includeArchive)
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = $"select count(*) from content_{contentId} {WithNolock(databaseType)}";
+            var sql = $"select count(*) from content_{contentId} {WithNoLock(databaseType)}";
             if (!includeArchive)
             {
                 sql = sql + $" where archive = 0";
@@ -1278,7 +1203,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static int GetStringFieldMaxLength(DbConnection connection, int contentId, string fieldName)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            using (var cmd = DbCommandFactory.Create($"select MAX({SqlQuerySyntaxHelper.GetFieldLength(dbType, fieldName)}) from content_{contentId}_united {WithNolock(dbType)}", connection))
+            using (var cmd = DbCommandFactory.Create($"select MAX({SqlQuerySyntaxHelper.GetFieldLength(dbType, fieldName)}) from content_{contentId}_united {WithNoLock(dbType)}", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var objResult = cmd.ExecuteScalar();
@@ -1689,24 +1614,12 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public static int CountChildArticles(DbConnection sqlConnection, int articleId, bool countArchived)
-        {
-            using (var cmd = DbCommandFactory.Create("qp_count_child_articles", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@article_id", articleId);
-                cmd.Parameters.AddWithValue("@count_archived", countArchived);
-                cmd.Parameters.Add(new SqlParameter("@count", SqlDbType.Int) { Direction = ParameterDirection.Output });
-                cmd.ExecuteNonQuery();
-                return (int)cmd.Parameters["@count"].Value;
-            }
-        }
-
         public static IList<int> GetChildArticles(DbConnection cn, IList<int> ids, string fieldName, int contentId, string filter)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cn);
             var customFilter = string.IsNullOrWhiteSpace(filter) ? string.Empty : $"AND {filter}";
             var parentFilter = ids.Any() ? $"c.{fieldName} IN ({string.Join(",", ids)})" : $"c.{fieldName} IS NULL";
-            var query = $"SELECT c.content_item_id FROM content_{contentId}_united c WITH(NOLOCK) WHERE {parentFilter} {customFilter}";
+            var query = $"SELECT c.content_item_id FROM content_{contentId}_united c {WithNoLock(dbType)} WHERE {parentFilter} {customFilter}";
             return GetDatatableResult(cn, query).Select(dr => (int)dr.Field<decimal>(0)).ToList();
         }
 
@@ -2795,7 +2708,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                     var currentBlock = GetCurrentBlock(databaseType, tableAlias, relatedFieldName, attributeTypeId);
 
                     selectBuilder.AppendFormat(", {0} AS {1}", currentBlock, fieldAlias);
-                    fromBuilder.AppendLine($" LEFT JOIN CONTENT_{relatedContentId}_UNITED AS {tableAlias} {WithNolock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)} = {tableAlias}.content_item_id ");
+                    fromBuilder.AppendLine($" LEFT JOIN CONTENT_{relatedContentId}_UNITED AS {tableAlias} {WithNoLock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)} = {tableAlias}.content_item_id ");
 
                     var relatedAttributeId2 = (int?)row.Field<decimal?>("RELATED_ATTRIBUTE_ID2");
                     if (relatedAttributeId2.HasValue)
@@ -2809,7 +2722,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                         var currentBlock2 = GetCurrentBlock(databaseType, tableAlias2, relatedFieldName2, attributeTypeId2);
 
                         selectBuilder.AppendFormat(", {0} AS {1}", currentBlock2, fieldAlias2);
-                        fromBuilder.AppendLine($" LEFT JOIN CONTENT_{relatedContentId2}_UNITED AS {tableAlias2} {WithNolock(databaseType)} ON {tableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, relatedFieldName)} = {tableAlias2}.content_item_id ");
+                        fromBuilder.AppendLine($" LEFT JOIN CONTENT_{relatedContentId2}_UNITED AS {tableAlias2} {WithNoLock(databaseType)} ON {tableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, relatedFieldName)} = {tableAlias2}.content_item_id ");
                     }
                 }
             }
@@ -2830,27 +2743,27 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             var isPostgres = databaseType == DatabaseType.Postgres;
             var tablePrefix = options.UseMainTableForVariations ? "c" : "ch";
-            fromBuilder.AppendLine($" {DbSchemaName(databaseType)}.CONTENT_{options.ContentId}_UNITED c {WithNolock(databaseType)}");
+            fromBuilder.AppendLine($" {DbSchemaName(databaseType)}.CONTENT_{options.ContentId}_UNITED c {WithNoLock(databaseType)}");
 
             if (!options.UseMainTableForVariations)
             {
-                fromBuilder.AppendLine($" INNER JOIN CONTENT_{options.ContentId}_UNITED ch {WithNolock(databaseType)} on c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, options.VariationFieldName)} = ch.CONTENT_ITEM_ID");
+                fromBuilder.AppendLine($" INNER JOIN CONTENT_{options.ContentId}_UNITED ch {WithNoLock(databaseType)} on c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, options.VariationFieldName)} = ch.CONTENT_ITEM_ID");
             }
 
             if (!options.IsVirtual)
             {
-                fromBuilder.AppendLine($" LEFT JOIN CONTENT_ITEM cil {WithNolock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = cil.CONTENT_ITEM_ID AND LOCKED_BY IS NOT NULL");
-                fromBuilder.AppendLine($" LEFT JOIN CONTENT_{options.ContentId}_ASYNC ca {WithNolock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = ca.CONTENT_ITEM_ID");
-                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} lu {WithNolock(databaseType)} ON cil.LOCKED_BY = lu.USER_ID");
-                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "CONTENT_ITEM_SCHEDULE")} sch {WithNolock(databaseType)} ON {tablePrefix}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID");
+                fromBuilder.AppendLine($" LEFT JOIN CONTENT_ITEM cil {WithNoLock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = cil.CONTENT_ITEM_ID AND LOCKED_BY IS NOT NULL");
+                fromBuilder.AppendLine($" LEFT JOIN CONTENT_{options.ContentId}_ASYNC ca {WithNoLock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = ca.CONTENT_ITEM_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} lu {WithNoLock(databaseType)} ON cil.LOCKED_BY = lu.USER_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "CONTENT_ITEM_SCHEDULE")} sch {WithNoLock(databaseType)} ON {tablePrefix}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID");
             }
 
-            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} mu {WithNolock(databaseType)} ON {tablePrefix}.LAST_MODIFIED_BY = mu.USER_ID");
-            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "STATUS_TYPE")} st {WithNolock(databaseType)} ON {tablePrefix}.STATUS_TYPE_ID = st.STATUS_TYPE_ID");
+            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} mu {WithNoLock(databaseType)} ON {tablePrefix}.LAST_MODIFIED_BY = mu.USER_ID");
+            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "STATUS_TYPE")} st {WithNoLock(databaseType)} ON {tablePrefix}.STATUS_TYPE_ID = st.STATUS_TYPE_ID");
 
             if (useSelection)
             {
-                fromBuilder.AppendLine($" LEFT OUTER JOIN (SELECT CONTENT_ITEM_ID from CONTENT_ITEM {WithNolock(databaseType)} where CONTENT_ITEM_ID in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@itemIds) i(id)" : "@itemIds")})) AS cis ON {tablePrefix}.CONTENT_ITEM_ID = cis.CONTENT_ITEM_ID ");
+                fromBuilder.AppendLine($" LEFT OUTER JOIN (SELECT CONTENT_ITEM_ID from CONTENT_ITEM {WithNoLock(databaseType)} where CONTENT_ITEM_ID in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@itemIds) i(id)" : "@itemIds")})) AS cis ON {tablePrefix}.CONTENT_ITEM_ID = cis.CONTENT_ITEM_ID ");
             }
 
             if (options.UseSecurity)
@@ -2861,14 +2774,14 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
             foreach (var reference in options.ContentReferences.Where(reference => referenceMap.ContainsKey(reference.ReferenceFieldId)))
             {
-                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{reference.TargetContentId}_UNITED c_{reference.TargetContentId}_{reference.ReferenceFieldId} {WithNolock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, referenceMap[reference.ReferenceFieldId])} = c_{reference.TargetContentId}_{reference.ReferenceFieldId}.CONTENT_ITEM_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{reference.TargetContentId}_UNITED c_{reference.TargetContentId}_{reference.ReferenceFieldId} {WithNoLock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, referenceMap[reference.ReferenceFieldId])} = c_{reference.TargetContentId}_{reference.ReferenceFieldId}.CONTENT_ITEM_ID");
             }
 
             foreach (var contentId in options.ExtensionContentIds)
             {
                 if (fieldMap.ContainsKey(contentId))
                 {
-                    fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{contentId}_UNITED c_{contentId} {WithNolock(databaseType)} ON c.CONTENT_ITEM_ID = c_{contentId}.{fieldMap[contentId]}");
+                    fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{contentId}_UNITED c_{contentId} {WithNoLock(databaseType)} ON c.CONTENT_ITEM_ID = c_{contentId}.{fieldMap[contentId]}");
                 }
             }
         }
@@ -5448,21 +5361,6 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
             return result.ToArray();
         }
 
-        public static void DeleteArticles(DbConnection connection, List<int> ids, bool withAggregated)
-        {
-            var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
-            if (ids != null && ids.Any())
-            {
-                var query = $"DELETE FROM [content_item] where content_item_id in (select id from {source}) ";
-                using (var cmd = DbCommandFactory.Create(query, connection))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
         public static IEnumerable<DataRow> GetAcceptableBaseFieldIdsForCloning(DbConnection sqlConnection, string fieldName, string contentIds, int virtualContentId, bool forNew)
         {
             var sb = new StringBuilder();
@@ -5710,11 +5608,11 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
     ,t.STATUS_TYPE_NAME as StatusTypeName
     ,u.LOGIN as ActionMadeBy
     ,s.NAME as SystemStatusTypeName
-from CONTENT_ITEM_STATUS_HISTORY as h {WithNolock(databaseType)}
-LEFT JOIN STATUS_TYPE as t {WithNolock(databaseType)} on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
-LEFT JOIN USERS as u {WithNolock(databaseType)} on u.USER_ID = h.USER_ID
-LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY {WithNolock(databaseType)} where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={articleId}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
-LEFT JOIN SYSTEM_STATUS_TYPE as s {WithNolock(databaseType)} on s.ID = h1.SYSTEM_STATUS_TYPE_ID
+from CONTENT_ITEM_STATUS_HISTORY as h {WithNoLock(databaseType)}
+LEFT JOIN STATUS_TYPE as t {WithNoLock(databaseType)} on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
+LEFT JOIN USERS as u {WithNoLock(databaseType)} on u.USER_ID = h.USER_ID
+LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY {WithNoLock(databaseType)} where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={articleId}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
+LEFT JOIN SYSTEM_STATUS_TYPE as s {WithNoLock(databaseType)} on s.ID = h1.SYSTEM_STATUS_TYPE_ID
 where h.CONTENT_ITEM_ID = {articleId} AND h.SYSTEM_STATUS_TYPE_ID IS NULL
 order by ActionDate desc
 {(databaseType == DatabaseType.Postgres ? "LIMIT 1" : string.Empty)}
@@ -6987,66 +6885,6 @@ order by ActionDate desc
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@contentId", contentId);
                 cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static void UpdateContentModification(DbConnection sqlConnection, List<int> liveIds, List<int> stageIds)
-        {
-            var sb = new StringBuilder();
-            var sql = new List<SqlParameter>();
-            if (liveIds.Any())
-            {
-                sb.AppendLine("update content_modification with(rowlock) set live_modified = GETDATE() where content_id in (select id from @liveIds)");
-                sql.Add(new SqlParameter("@liveIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(liveIds) });
-            }
-
-            if (stageIds.Any())
-            {
-                sb.AppendLine("update content_modification with(rowlock) set stage_modified = GETDATE() where content_id in (select id from @stageIds)");
-                sql.Add(new SqlParameter("@stageIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(stageIds) });
-            }
-
-            if (sql.Any())
-            {
-                using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.AddRange(sql.ToArray());
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public static void GetContentModification(DbConnection sqlConnection, IEnumerable<int> articleIds, bool withAggregated, bool returnPublishedForLive, ref List<int> liveIds, ref List<int> stageIds)
-        {
-            var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
-            var aggFunc = returnPublishedForLive ? "max" : "min";
-            var sb = new StringBuilder();
-            var ids = articleIds as int[] ?? articleIds.ToArray();
-            if (!ids.Any())
-            {
-                return;
-            }
-
-            sb.AppendLine("declare @fullIds table (id numeric primary key, content_id numeric, is_published bit)");
-            sb.AppendLine("insert into @fullIds select ci.content_item_id, ci.content_id, ");
-            sb.AppendLine("  case when st.status_type_name = 'Published' and ci.splitted = 0 then 1 else 0 end as is_published ");
-            sb.AppendLine($"  from {source} i inner join content_item ci with(nolock) on i.id = ci.content_item_id ");
-            sb.AppendLine("  inner join status_type st on ci.status_type_id = st.status_type_id ");
-            sb.AppendLine($"select cast(content_id as int) as id, cast({aggFunc}(cast(is_published as int)) as bit) as is_published from @fullIds group by content_id");
-
-            using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                var rows = dt.AsEnumerable().ToArray();
-                stageIds = rows.Select(n => n.Field<int>("id")).ToList();
-                bool Predicate1(DataRow n) => n.Field<bool>("is_published");
-                bool Predicate2(DataRow n) => !n.Field<bool>("is_published");
-
-                liveIds = rows.Where(returnPublishedForLive ? (Func<DataRow, bool>)Predicate1 : Predicate2).Select(n => n.Field<int>("id")).ToList();
             }
         }
 
