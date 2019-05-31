@@ -5,14 +5,13 @@
 
 @using (Html.BeginDocumentPadding())
 {
-	if (Model.ShowAddNewItemButton)
-	{
-		using (Html.BeginLinkButtonsList())
-		{
-			@Html.AddNewItemLink(Model)
-		}
-	}
-
+  if (Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
+    {
+      @Html.AddNewItemLink(Model)
+    }
+  }
     @(Html.Telerik().Grid<StatusTypeListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
@@ -25,7 +24,7 @@
                 .HtmlAttributes(new { @class = "title" });
             c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
             c.Bound(s => s.Weight).Title(StatusTypeStrings.Weight);
-			c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
+      c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
             c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
             c.Bound(s => s.LastModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);
         })

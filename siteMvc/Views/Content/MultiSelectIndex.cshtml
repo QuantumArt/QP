@@ -5,8 +5,38 @@
 
 @using (Html.BeginDocumentPadding())
 {
-  <div>Multiselect</div>
-    @*@(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      $(`#${'@Model.MainComponentId'}`).qpGrid({
+        columns: [
+          {
+            field: '',
+            headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
+            headerAttributes: { 'class': 't-select-header' },
+            template: '<input type="checkbox" name="selectedContentIDs" value="#:Id#" />',
+            sortable: false,
+            attributes: { 'class': 't-select-cell' },
+            width: 35,
+          },
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
+          { field: 'GroupName', title: '@ContentStrings.GroupName', attributes: { 'class': 'title' } },
+          { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' } },
+          { field: 'SiteName', title: '@ContentStrings.ParentSiteName' },
+          { field: 'Description', title: '@EntityObjectStrings.Description' },
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.GetDataAction, "Content", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+      });
+    });
+  </script>
+  @*@(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
             {
@@ -47,5 +77,3 @@
 }
 
 @Html.PrepareAndRunInitScript(Model)
-
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

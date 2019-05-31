@@ -5,6 +5,7 @@
 
 @using (Html.BeginDocumentPadding())
 {
+  <div>VirtualContent</div>
     @(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>

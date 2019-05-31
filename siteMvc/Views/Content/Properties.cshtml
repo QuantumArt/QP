@@ -4,85 +4,85 @@
 
 @using (Html.BeginTabForm(Model))
 {
-	using (Html.BeginFieldGroup(ContentStrings.Legend_BasicParameters))
-	{
-		@Html.TextBoxFieldFor(s => s.Data.Name)
-		@Html.TextAreaFieldFor(s => s.Data.Description)
-		@Html.SelectFieldFor(s => s.Data.ParentContentId, Html.List(Model.GetContentsForParent()), Model.SelectParentOptions)
-		@Html.SelectFieldFor(s => s.Data.GroupId, Html.List(Model.Groups), Model.SelectGroupOptions)
-		@Html.NumericFieldFor(s => s.Data.PageSize, Content.MinPageSize, Content.MaxPageSize)
-		@Html.CheckBoxFieldFor(s => s.Data.AllowItemsPermission)
-		@Html.CheckBoxFieldFor(s => s.Data.AutoArchive)
-		@Html.CheckBoxFieldFor(s => s.Data.IsShared)
-		@Html.CheckBoxFieldFor(s => s.Data.DisableChangingActions)
+  using (Html.BeginFieldGroup(ContentStrings.Legend_BasicParameters))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.Name)
+    @Html.TextAreaFieldFor(s => s.Data.Description)
+    @Html.SelectFieldFor(s => s.Data.ParentContentId, Html.List(Model.GetContentsForParent()), Model.SelectParentOptions)
+    @Html.SelectFieldFor(s => s.Data.GroupId, Html.List(Model.Groups), Model.SelectGroupOptions)
+    @Html.NumericFieldFor(s => s.Data.PageSize, Content.MinPageSize, Content.MaxPageSize)
+    @Html.CheckBoxFieldFor(s => s.Data.AllowItemsPermission)
+    @Html.CheckBoxFieldFor(s => s.Data.AutoArchive)
+    @Html.CheckBoxFieldFor(s => s.Data.IsShared)
+    @Html.CheckBoxFieldFor(s => s.Data.DisableChangingActions)
     @Html.CheckBoxFieldFor(s => s.Data.UseForContext, Model.ContextBlock)
     @Html.CheckBoxFieldFor(s => s.Data.ForReplication)
   }
 
   using (Html.BeginFieldGroup(ContentStrings.Legend_FriendlyName))
   {
-		@Html.TextBoxFieldFor(s => s.Data.FriendlySingularName)
-		@Html.TextBoxFieldFor(s => s.Data.FriendlyPluralName)
-	}
+    @Html.TextBoxFieldFor(s => s.Data.FriendlySingularName)
+    @Html.TextBoxFieldFor(s => s.Data.FriendlyPluralName)
+  }
 
-	using (Html.BeginFieldGroup(ContentStrings.Legend_Workflow))
-	{
-		@Html.SelectFieldFor(s => s.Data.WorkflowBinding.WorkflowId, Html.List(Model.Workflows))
-		using (Html.BeginPanel(Model.SplitBlock))
-		{
-			@Html.CheckBoxFieldFor(s => s.Data.WorkflowBinding.IsAsync)
-		}
-	}
+  using (Html.BeginFieldGroup(ContentStrings.Legend_Workflow))
+  {
+    @Html.SelectFieldFor(s => s.Data.WorkflowBinding.WorkflowId, Html.List(Model.Workflows))
+    using (Html.BeginPanel(Model.SplitBlock))
+    {
+      @Html.CheckBoxFieldFor(s => s.Data.WorkflowBinding.IsAsync)
+    }
+  }
 
-	using (Html.BeginFieldGroup(ContentStrings.Legend_VersionControl))
-	{
-		@Html.CheckBoxFieldFor(s => s.Data.UseVersionControl, Model.VersionsBlock)
-		using (Html.BeginPanel(Model.VersionsBlock))
-		{
-			@Html.NumericFieldFor(s => s.Data.MaxNumOfStoredVersions, Content.MinLimitOfStoredVersions, Content.MaxLimitOfStoredVersions)
-		}
-	}
+  using (Html.BeginFieldGroup(ContentStrings.Legend_VersionControl))
+  {
+    @Html.CheckBoxFieldFor(s => s.Data.UseVersionControl, Model.VersionsBlock)
+    using (Html.BeginPanel(Model.VersionsBlock))
+    {
+      @Html.NumericFieldFor(s => s.Data.MaxNumOfStoredVersions, Content.MinLimitOfStoredVersions, Content.MaxLimitOfStoredVersions)
+    }
+  }
 
-	if (Model.Data.Site.IsDotNet)
-	{
-		using (Html.BeginFieldGroup(ContentStrings.Legend_LinqParameters))
-		{
-			@Html.CheckBoxFieldFor(s => s.Data.MapAsClass, Model.ClassBlock)
-			using (Html.BeginPanel(Model.ClassBlock))
-			{
-				@Html.TextBoxFieldFor(s => s.Data.NetName)
-				@Html.TextBoxFieldFor(s => s.Data.NetPluralName)
-				@Html.CheckBoxFieldFor(s => s.Data.UseDefaultFiltration)
-				@Html.TextBoxFieldFor(s => s.Data.AdditionalContextClassName)
-			}
-		}
-	}
+  if (Model.Data.Site.IsDotNet)
+  {
+    using (Html.BeginFieldGroup(ContentStrings.Legend_LinqParameters))
+    {
+      @Html.CheckBoxFieldFor(s => s.Data.MapAsClass, Model.ClassBlock)
+      using (Html.BeginPanel(Model.ClassBlock))
+      {
+        @Html.TextBoxFieldFor(s => s.Data.NetName)
+        @Html.TextBoxFieldFor(s => s.Data.NetPluralName)
+        @Html.CheckBoxFieldFor(s => s.Data.UseDefaultFiltration)
+        @Html.TextBoxFieldFor(s => s.Data.AdditionalContextClassName)
+      }
+    }
+  }
 
-	using (Html.BeginFieldGroup(ContentStrings.Legend_ClientScripts))
-	{
-		@Html.HtmlFieldFor(s => s.Data.FormScript,
-			@<div class="qp-expandedContent">
-				@Html.QpTextAreaFor(s => s.Data.FormScript, new Dictionary<string, object> { { "class", "textbox hta-JsTextArea highlightedTextarea" } })
-			</div>
-		)
-	}
+  using (Html.BeginFieldGroup(ContentStrings.Legend_ClientScripts))
+  {
+    @Html.HtmlFieldFor(s => s.Data.FormScript,
+      @<div class="qp-expandedContent">
+        @Html.QpTextAreaFor(s => s.Data.FormScript, new Dictionary<string, object> { { "class", "textbox hta-JsTextArea highlightedTextarea" } })
+      </div>
+    )
+  }
 
-	using (Html.BeginFieldGroup(ContentStrings.Legend_CustomValidation))
-	{
-		@Html.CheckBoxFieldFor(s => s.Data.CreateDefaultXamlValidation, Model.XamlValidationPanel, true)
-		using (Html.BeginPanel(Model.XamlValidationPanel))
-		{
-			@Html.HtmlFieldFor(s => s.Data.XamlValidation,
-				@<div class="qp-expandedContent">
-					@Html.QpTextAreaFor(s => s.Data.XamlValidation, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
-				</div>
-			)
-		}
-		@Html.CheckBoxFieldFor(s => s.Data.DisableXamlValidation)
-	}
+  using (Html.BeginFieldGroup(ContentStrings.Legend_CustomValidation))
+  {
+    @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultXamlValidation, Model.XamlValidationPanel, true)
+    using (Html.BeginPanel(Model.XamlValidationPanel))
+    {
+      @Html.HtmlFieldFor(s => s.Data.XamlValidation,
+        @<div class="qp-expandedContent">
+          @Html.QpTextAreaFor(s => s.Data.XamlValidation, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
+        </div>
+      )
+    }
+    @Html.CheckBoxFieldFor(s => s.Data.DisableXamlValidation)
+  }
 
-	@Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+  @Html.Partial("Version", Model.Data)
+  @Html.Partial("EntityDirectLink", Model)
 
 }
 

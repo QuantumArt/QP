@@ -5,19 +5,18 @@
 
 @using (Html.BeginDocumentPadding())
 {
-	using (Html.BeginLinkButtonsList())
-	{
-		if (Model.ShowParentPermissionButton)
-		{ 			
-			@Html.ParentPermissionLink(Model)
-		}
+  using (Html.BeginLinkButtonsList())
+  {
+    if (Model.ShowParentPermissionButton)
+    { 			
+      @Html.ParentPermissionLink(Model)
+    }
         @Html.UnselectLink(Model)
-	}
-	
-	<div id="@Model.SearchBlockId" class="alMainContaner">
-		@Html.Partial("UserAndGroupSearchBlock", Model)		
-
-		@(Html.Telerik().Grid<ChildEntityPermissionListItem>().Name(Model.MainComponentId)
+  }
+  
+  <div id="@Model.SearchBlockId" class="alMainContaner">
+    @Html.Partial("UserAndGroupSearchBlock", Model)		
+    @(Html.Telerik().Grid<ChildEntityPermissionListItem>().Name(Model.MainComponentId)
             .DataKeys(k => k.Add(s => s.Id))
             .Columns(c =>
             {
@@ -67,20 +66,20 @@
                  .OnRowDataBound("$q.preventDefaultFunction")
             )
             .HtmlAttributes(new { @class = "pep-grid" })
-		)		
-	</div>
+    )		
+  </div>
 }
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">
-	@(Model.ContextObjectName).setInitializedCallback(function() {
-		this.mediatorComponent = new Quantumart.QP8.BackendChildEntityPermissionList("@Model.SearchBlockId");
-		this.modifyEventArgsContext = this.mediatorComponent.modifyEventArgsContext;		
-	});
-	@(Model.ContextObjectName).setTerminatingCallback(function() {								
-		this.mediatorComponent.dispose();
-		this.mediatorComponent = null;
-	});
+  @(Model.ContextObjectName).setInitializedCallback(function() {
+    this.mediatorComponent = new Quantumart.QP8.BackendChildEntityPermissionList("@Model.SearchBlockId");
+    this.modifyEventArgsContext = this.mediatorComponent.modifyEventArgsContext;
+  });
+  @(Model.ContextObjectName).setTerminatingCallback(function() {
+    this.mediatorComponent.dispose();
+    this.mediatorComponent = null;
+  });
 </script>
 @Html.RunInitScript(Model)
 

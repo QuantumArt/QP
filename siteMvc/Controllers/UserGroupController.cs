@@ -73,9 +73,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectUserGroup)]
         [BackendActionContext(ActionCode.SelectUserGroup)]
-        public ActionResult _Select(string tabId, int id, GridCommand command)
+        public ActionResult _Select(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            int IDs,
+            string orderBy = "")
         {
-            var serviceResult = _service.List(command.GetListCommand(), new[] { id });
+            var serviceResult = _service.List(new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+            }, new[] { IDs });
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

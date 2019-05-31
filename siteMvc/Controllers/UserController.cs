@@ -101,16 +101,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
         public ActionResult _Select(
             string tabId,
-            int id,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
+            int page,
+            int pageSize,
+            int IDs,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter,
+            string orderBy = "")
         {
-            var serviceResult = _service.List(command.GetListCommand(), filter, new[] { id });
+            var serviceResult = _service.List(
+                new ListCommand
+                {
+                    StartPage = page,
+                    PageSize = pageSize,
+                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+                },
+                filter,
+                new[] { IDs });
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
