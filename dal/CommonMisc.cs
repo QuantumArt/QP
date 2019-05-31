@@ -150,14 +150,40 @@ namespace Quantumart.QP8.DAL
         //     }
         // }
 
-        public static bool CheckEntityExistence(DbConnection sqlConnection, string entityTypeCode, decimal entityId)
+        public static bool CheckEntityExistence(DbConnection sqlConnection, string entityTypeCode, string entitySource, string entityIdField, decimal entityId)
         {
-            using (var cmd = DbCommandFactory.Create("qp_check_entity_existence", sqlConnection))
+            if (entityTypeCode == EntityTypeCode.CustomerCode) return true;
+
+            string query;
+            if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.ArchiveArticle)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("entity_type_code", entityTypeCode);
-                cmd.Parameters.AddWithValue("entity_id", entityId);
-                return  bool.Parse(cmd.ExecuteScalar().ToString());
+                var isArchive = entityTypeCode == EntityTypeCode.ArchiveArticle ? 1 : 0;
+                query = $@"
+                    SELECT
+                    COUNT(CONTENT_ITEM_ID)
+                    FROM CONTENT_ITEM
+                    WHERE CONTENT_ITEM_ID = {entityId}
+                    AND ARCHIVE = {isArchive}
+                    ";
+            }
+            else if(!string.IsNullOrWhiteSpace(entitySource) && !string.IsNullOrWhiteSpace(entityIdField))
+            {
+                query = $@"
+                    SELECT COUNT({entityIdField})
+                    FROM {entitySource}
+                    WHERE {entityIdField} = {entityId}
+                    ";
+            }
+            else
+            {
+                return false;
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
             }
         }
 

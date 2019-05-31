@@ -218,7 +218,8 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.CheckEntityExistence(scope.DbConnection, entityTypeCode, entityId);
+                var entity = EntityTypeRepository.GetByCode(entityTypeCode);
+                return Common.CheckEntityExistence(scope.DbConnection, entityTypeCode, entity?.Source, entity?.IdField, entityId);
             }
         }
 
