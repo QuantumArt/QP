@@ -40,12 +40,11 @@ namespace Quantumart.QP8.DAL
         public static void UpdateChildDelayedSchedule(DbConnection connection, int articleId)
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var idParamName = SqlQuerySyntaxHelper.SpParamName(databaseType, "id");
             var sql = databaseType == DatabaseType.SqlServer ? "qp_copy_schedule_to_child_delays" : "call qp_copy_schedule_to_child_delays(@id)";
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = databaseType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
-                cmd.Parameters.AddWithValue(idParamName, articleId);
+                cmd.Parameters.AddWithValue("@id", articleId);
                 cmd.ExecuteNonQuery();
             }
         }

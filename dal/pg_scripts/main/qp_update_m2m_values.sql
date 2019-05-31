@@ -13,14 +13,14 @@ AS $BODY$
 		cross_ids link_multiple_splitted[];
 	BEGIN
 		create temp table field_values as	
-		select x.*, false as splitted from XMLTABLE(
+		select x.*, ci.splitted from XMLTABLE(
 		'/items/item'  
 		PASSING XMLPARSE(DOCUMENT xml_parameter) 
 		COLUMNS
 			id int PATH '@id',
 			link_id int PATH '@link_id',
 			value text PATH '@value'
-		) x;		
+		) x inner join content_item ci on x.id = ci.content_item_id;
 		
 		new_ids := array_agg(row(a.id, a.link_id, unnest, a.splitted)) 
 		from field_values a, unnest(

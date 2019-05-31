@@ -4,11 +4,11 @@ AS $BODY$
 	DECLARE
 	BEGIN
         if exists(select * from content_item_schedule where content_item_id = $1 and freq_type = 2) then
-            update content_item_schedule set delete_job = 1 where use_service = 0 and content_item_id in (
-                select child_id from child_delays where id = $1
+            update content_item_schedule set delete_job = true where not use_service and content_item_id in (
+                select child_id from child_delays cd where cd.id = $1
             );
             delete from content_item_schedule where content_item_id in (
-                select child_id from child_delays where id = $1
+                select child_id from child_delays cd where cd.id = $1
             );
             insert into content_item_schedule (
                 CONTENT_ITEM_ID, MAXIMUM_OCCURENCES, CREATED, MODIFIED, LAST_MODIFIED_BY, freq_type,

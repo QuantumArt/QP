@@ -180,18 +180,6 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string SpParamName(DatabaseType databaseType, string expression)
-        {
-            switch (databaseType)
-            {
-                 case DatabaseType.SqlServer:
-                     return $"@" + expression;
-                 case DatabaseType.Postgres:
-                     return expression;
-                 default:
-                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
-        }
 
         public static string IdList(DatabaseType databaseType, string name, string alias)
         {
