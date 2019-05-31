@@ -5,7 +5,8 @@
 
 @using (Html.BeginDocumentPadding())
 {
-    @(Html.Telerik().Grid<UserGroupListItem>().Name(Model.MainComponentId)
+  <div>SelectIndex</div>
+    @*@(Html.Telerik().Grid<UserGroupListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
         {
@@ -30,7 +31,7 @@
             e.OnDataBinding("$q.preventDefaultFunction")
              .OnRowDataBound("$q.preventDefaultFunction")
         )
-    )
+    )*@
 }
 
 @Html.PrepareAndRunInitScript(Model)

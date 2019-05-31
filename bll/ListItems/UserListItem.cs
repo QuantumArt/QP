@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
-namespace Quantumart.QP8.BLL.Services.DTO
+namespace Quantumart.QP8.BLL.ListItems
 {
     public class UserListItem
     {
@@ -28,10 +30,13 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
         public string Language { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime? LastLogOn { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Created { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Modified { get; set; }
 
         public int LastModifiedByUserId { get; set; }

@@ -157,6 +157,7 @@
     <Compile Include="ArticleContextQueryParam.cs" />
     <Compile Include="ArticleContextSearchBlockItem.cs" />
     <Compile Include="ArticleFieldSearchType.cs" />
+    <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Db.cs" />
     <Compile Include="Enums\CdcImportType.cs" />
     <Compile Include="Enums\Csv\CsvCulture.cs" />
@@ -484,10 +485,10 @@
     <Compile Include="Services\DTO\TemplateObjectFormatDto.cs" />
     <Compile Include="Services\DTO\UserGroupInitListResult.cs" />
     <Compile Include="Services\DTO\UserGroupInitTreeResult.cs" />
-    <Compile Include="Services\DTO\UserGroupListItem.cs" />
+    <Compile Include="ListItems\UserGroupListItem.cs" />
     <Compile Include="Services\DTO\UserInitListResult.cs" />
     <Compile Include="Services\DTO\UserListFilter.cs" />
-    <Compile Include="Services\DTO\UserListItem.cs" />
+    <Compile Include="ListItems\UserListItem.cs" />
     <Compile Include="Services\DTO\VisualEditorInitListResult.cs" />
     <Compile Include="Services\DTO\VisualEditorStyleInitListResult.cs" />
     <Compile Include="Services\DTO\WorkflowInitListResult.cs" />
@@ -823,5 +824,3 @@
   </Target>
   -->
 </Project>
-
-

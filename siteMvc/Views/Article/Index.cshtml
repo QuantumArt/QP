@@ -19,14 +19,13 @@
   }
 
   <div id="@Model.MainComponentId"></div>
-  string currentTheme = HttpContext.Current.Session[HttpContextSession.CurrentCssTheme].ToString();
   <script>
     $(function () {
       var headIconTpl = function (settings) {
         return function () {
           return '<img ' +
             'src="' +
-            '@SitePathHelper.GetThemeRootImageFolderUrl(currentTheme)' + settings.url + '"' +
+            '@Url.GetThemeRootImageFolderUrl()' + settings.url + '"' +
             'style="width: 16px; height: 16px;"' +
             'class="t-image"' +
             'title="' + settings.title + '"' +
@@ -38,7 +37,7 @@
         return function (dataItem) {
           return '<img ' +
             'src="' +
-            '@SitePathHelper.GetThemeSmallIconsImageFolderUrl(currentTheme)' + dataItem[settings.icon] + '"' +
+            '@Url.GetThemeSmallIconsImageFolderUrl()' + dataItem[settings.icon] + '"' +
             'style="width: 16px; height: 16px;"' +
             'class="t-image"' +
             'title="' + (dataItem[settings.tooltip] || dataItem[settings.icon]) + '"' +

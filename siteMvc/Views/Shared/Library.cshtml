@@ -122,40 +122,6 @@
                 },
               });
             </script>
-            @*@(Html.Telerik().Grid<FolderFile>().Name(Model.GridElementId)
-              .DataKeys(k => k.Add(s => s.Name))
-              .Columns(c =>
-              {
-
-                c.Bound("")
-                    .Title(@"<input type='checkbox' />")
-                    .Width(30)
-                    .HeaderHtmlAttributes(new { @class = "t-select-header" })
-                    .ClientTemplate(@"<input type='checkbox' name='SelectedFileNames' value='<#= Name #>' />")
-                    .HtmlAttributes(new { @class = "t-select-cell" })
-                    .Sortable(false);
-
-                c.Bound(s => s.Name).Title(EntityObjectStrings.Name);
-                c.Bound(s => s.Extension).Title(LibraryStrings.Extension);
-                c.Bound(s => s.FileTypeName).Title(LibraryStrings.FileType);
-                c.Bound(s => s.Size).Title(LibraryStrings.Size);
-                c.Bound(s => s.Dimensions).Title(LibraryStrings.Dimensions).Sortable(false);
-                c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
-                c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
-
-              })
-              .DataBinding(db => db.Ajax()
-                .Select("_Files", Model.ControllerName)
-              )
-              .EnableCustomBinding(true)
-              .Sortable()
-              .Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))
-              .Selectable(s => s.Enabled(true))
-              .ClientEvents(e => e
-                .OnDataBinding("$q.preventDefaultFunction")
-                .OnRowDataBound("$q.preventDefaultFunction")
-              )
-            )*@
           </div>
         </div>
       ).HtmlAttributes(new { id=Model.ContentElementId, @class="l-files" });

@@ -1,6 +1,8 @@
 using System;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
 
-namespace Quantumart.QP8.BLL.Services.DTO
+namespace Quantumart.QP8.BLL.ListItems
 {
     public class UserGroupListItem
     {
@@ -12,8 +14,10 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
         public bool SharedArticles { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Created { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Modified { get; set; }
 
         public int LastModifiedByUserId { get; set; }
