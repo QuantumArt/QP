@@ -5088,7 +5088,9 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetCommandBindingBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var query = $"SELECT [COMMAND_ID], [ON] FROM [VE_COMMAND_SITE_BIND] WHERE [SITE_ID] = {siteId}";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+
+            var query = $"SELECT COMMAND_ID, {EscapeEntityName(dbType, "ON")} FROM VE_COMMAND_SITE_BIND WHERE SITE_ID = {siteId}";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -5101,7 +5103,8 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetCommandBindingByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var query = $"SELECT [COMMAND_ID], [ON] FROM [VE_COMMAND_FIELD_BIND] WHERE [FIELD_ID] = {fieldId}";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var query = $"SELECT COMMAND_ID, {EscapeEntityName(dbType, "ON")} FROM VE_COMMAND_FIELD_BIND WHERE FIELD_ID = {fieldId}";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -5114,7 +5117,8 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetStyleBindingByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var query = $"SELECT [STYLE_ID], [ON] FROM [VE_STYLE_FIELD_BIND] WHERE [FIELD_ID] = {fieldId}";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var query = $"SELECT STYLE_ID, {EscapeEntityName(dbType, "ON")} FROM VE_STYLE_FIELD_BIND WHERE FIELD_ID = {fieldId}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5126,7 +5130,8 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetStyleBindingBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var query = $"SELECT [STYLE_ID], [ON] FROM [VE_STYLE_SITE_BIND] WHERE [SITE_ID] = {siteId}";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var query = $"SELECT STYLE_ID, {EscapeEntityName(dbType, "ON")} FROM VE_STYLE_SITE_BIND WHERE SITE_ID = {siteId}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
