@@ -1537,14 +1537,14 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static DataTable LoadVirtualFieldsRelations(DbConnection sqlConnection, int rootContentId)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            string query = "WITH V2BREL AS " +
-                "( " +
-                $"SELECT *, 0 as {EscapeEntityName(dbType, "LEVEL")} FROM VIRTUAL_ATTR_BASE_ATTR_RELATION where BASE_CNT_ID = @rootContent " +
-                "union all " +
-                $"SELECT BA.*, {EscapeEntityName(dbType, "LEVEL")} + 1 FROM VIRTUAL_ATTR_BASE_ATTR_RELATION BA " +
-                "join V2BREL on BA.BASE_ATTR_ID = V2BREL.VIRTUAL_ATTR_ID " +
-                ") " +
-                $"select * from V2BREL order by {EscapeEntityName(dbType, "LEVEL")}";
+            string query = $@"
+            WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} V2BREL AS (
+                SELECT *, 0 as {EscapeEntityName(dbType, "LEVEL")} FROM VIRTUAL_ATTR_BASE_ATTR_RELATION where BASE_CNT_ID = @rootContent
+                union all
+                SELECT BA.*, {EscapeEntityName(dbType, "LEVEL")} + 1 FROM VIRTUAL_ATTR_BASE_ATTR_RELATION BA
+                join V2BREL on BA.BASE_ATTR_ID = V2BREL.VIRTUAL_ATTR_ID
+            )
+            select * from V2BREL order by {EscapeEntityName(dbType, "LEVEL")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@rootContent", rootContentId);

@@ -230,6 +230,11 @@ namespace Quantumart.QP8.BLL.Repository
 
         public static void ChangeIdentityInsertState(string entityTypeCode, bool state)
         {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                return;
+            }
+
             if (QPConnectionScope.Current.IdentityInsertOptions.Contains(entityTypeCode))
             {
                 string table = null;

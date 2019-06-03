@@ -273,6 +273,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                 ChangeMaxOrderTriggerState(false);
                 ChangeM2MDefaultTriggerState(false);
 
+
                 var constraint = item.Constraint;
                 var dynamicImage = item.DynamicImage;
 
@@ -726,6 +727,11 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
         internal static void ChangeCreateFieldsTriggerState(bool enable)
         {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                return;
+            }
+
             using (var scope = new QPConnectionScope())
             {
                 Common.ChangeTriggerState(scope.DbConnection, "ti_create_fields", enable);
@@ -734,6 +740,11 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
         internal static void ChangeMaxOrderTriggerState(bool enable)
         {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                return;
+            }
+
             using (var scope = new QPConnectionScope())
             {
                 Common.ChangeTriggerState(scope.DbConnection, "ti_set_max_order", enable);
@@ -742,6 +753,10 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
         internal static void ChangeContentAttributeTriggerState(bool enable)
         {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                return;
+            }
             using (var scope = new QPConnectionScope())
             {
                 Common.ChangeTriggerState(scope.DbConnection, "ti_content_attribute_m2m_default_value", enable);
@@ -750,6 +765,10 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
         internal static void ChangeInsertFieldTriggerState(bool enable)
         {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                return;
+            }
             using (var scope = new QPConnectionScope())
             {
                 Common.ChangeTriggerState(scope.DbConnection, "ti_insert_field", enable);
@@ -758,6 +777,10 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
         internal static void ChangeM2MDefaultTriggerState(bool enable)
         {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                return;
+            }
             using (var scope = new QPConnectionScope())
             {
                 Common.ChangeTriggerState(scope.DbConnection, "tu_content_attribute_m2m_default_value", enable);
