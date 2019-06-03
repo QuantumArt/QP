@@ -142,6 +142,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             var inverse = (bool)p.QueryParams[0];
             var isByValue = (bool)p.QueryParams[3];
             var isByText = (bool)p.QueryParams[5];
+            var dbType = QPContext.DatabaseType;
+
+            var escapedFieldColumnName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
 
             if (isByText)
             {
@@ -156,12 +159,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 var values = ((object[])p.QueryParams[4]).Select(n => int.Parse(n.ToString())).ToArray();
                 if (values.Length == 1)
                 {
-                    sqlParams.Add(new SqlParameter(paramName, values[0]));
-                    return string.Format(inverse ? "({1}.[{0}] <> {2} OR {1}.[{0}] IS NULL)" : "({1}.[{0}] = {2})", p.FieldColumn.ToLower(), GetTableAlias(p), paramName);
+                    sqlParams.Add(SqlQuerySyntaxHelper.CreateDbParameter(dbType, paramName, values[0]));
+                    return string.Format(inverse ? "({1}.{0} <> {2} OR {1}.{0} IS NULL)" : "({1}.{0} = {2})", escapedFieldColumnName, GetTableAlias(p), paramName);
                 }
 
-                sqlParams.Add(new SqlParameter(paramName, SqlDbType.Structured) { TypeName = "Ids", Value = Common.IdsToDataTable(values) });
-                return string.Format(inverse ? "({1}.[{0}] NOT IN (select id from {2}) OR {1}.[{0}] IS NULL)" : "({1}.[{0}] IN (select id from {2}))", p.FieldColumn.ToLower(), GetTableAlias(p), paramName);
+                sqlParams.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam(paramName, values, dbType));
+                return string.Format(inverse ? "({1}.{0} NOT IN (select id from {2}) OR {1}.{0} IS NULL)" : "({1}.{0} IN (select id from {2}))",
+                    escapedFieldColumnName, GetTableAlias(p), SqlQuerySyntaxHelper.IdList(dbType, paramName, "i"));
             }
 
             // ReSharper disable MergeSequentialChecks
@@ -172,7 +176,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             if (isByValue)
             {
-                return !numberFrom.HasValue ? null : string.Format(inverse ? "({1}.[{0}] <> {2} OR {1}.[{0}] IS NULL)" : "({1}.[{0}] = {2})", p.FieldColumn.ToLower(), GetTableAlias(p), numberFrom);
+                return !numberFrom.HasValue ? null : string.Format(inverse ? "({1}.{0} <> {2} OR {1}.{0} IS NULL)" : "({1}.{0} = {2})", escapedFieldColumnName, GetTableAlias(p), numberFrom);
             }
 
             if (!numberFrom.HasValue && !numberTo.HasValue)
@@ -183,27 +187,27 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             if (numberFrom.HasValue && !numberTo.HasValue)
             {
                 return inverse
-                    ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] < {numberFrom})"
-                    : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] >= {numberFrom})";
+                    ? $"({GetTableAlias(p)}.{escapedFieldColumnName} < {numberFrom})"
+                    : $"({GetTableAlias(p)}.{escapedFieldColumnName} >= {numberFrom})";
             }
 
             if (!numberFrom.HasValue)
             {
                 return inverse
-                    ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] > {numberTo})"
-                    : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <= {numberTo})";
+                    ? $"({GetTableAlias(p)}.{escapedFieldColumnName} > {numberTo})"
+                    : $"({GetTableAlias(p)}.{escapedFieldColumnName} <= {numberTo})";
             }
 
             if (numberFrom.Value < numberTo.Value)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT" : "")} BETWEEN {numberFrom} AND {numberTo})";
+                return $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "NOT" : "")} BETWEEN {numberFrom} AND {numberTo})";
             }
 
             return numberFrom.Value > numberTo.Value
-                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT" : "")} BETWEEN {numberTo} AND {numberFrom})"
+                ? $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "NOT" : "")} BETWEEN {numberTo} AND {numberFrom})"
                 : inverse
-                    ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <> {numberFrom})"
-                    : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] = {numberFrom})";
+                    ? $"({GetTableAlias(p)}.{escapedFieldColumnName} <> {numberFrom})"
+                    : $"({GetTableAlias(p)}.{escapedFieldColumnName} = {numberFrom})";
         }
 
         /// <summary>
@@ -247,10 +251,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             var exactMatch = p.QueryParams.Length > 3 && p.QueryParams[3] is bool && (bool)p.QueryParams[3];
             var startFromBegin = p.QueryParams.Length > 4 && p.QueryParams[4] is bool && (bool)p.QueryParams[4];
 
+            var dbType = QPContext.DatabaseType;
+            var escapedFieldColumnName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
             // isnull == true
+
             if (isNull)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS {(inverse ? "NOT " : "")}NULL)";
+                return $"({GetTableAlias(p)}.{escapedFieldColumnName} IS {(inverse ? "NOT " : "")}NULL)";
             }
 
             // isnull == false  строка пустая
@@ -263,12 +270,12 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             var value = Cleaner.ToSafeSqlLikeCondition(((string)p.QueryParams[1]).Trim());
             if (exactMatch)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<> " : "=")} '{value}')";
+                return $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "<> " : "=")} '{value}')";
             }
 
             return startFromBegin
-                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] LIKE '{(inverse ? "%" + value : value + "%")}')"
-                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}LIKE '%{value}%')";
+                ? $"({GetTableAlias(p)}.{escapedFieldColumnName} LIKE '{(inverse ? "%" + value : value + "%")}')"
+                : $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "NOT " : "")}LIKE '%{value}%')";
         }
 
         private static string ParseDateRangeParam(ArticleSearchQueryParam p)
@@ -321,9 +328,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             string sqlDateToString;
             DateTime? dateTo;
 
+            var dbType = QPContext.DatabaseType;
+            var escapedFieldColumnName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
             if (isNull)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)";
+                return $"({GetTableAlias(p)}.{escapedFieldColumnName} IS NULL)";
             }
 
             if (isByValue)
@@ -343,7 +352,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("date From");
                 }
 
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateFromString}' AND '{sqlDateToString}')";
+                return $"({GetTableAlias(p)}.{escapedFieldColumnName} BETWEEN '{sqlDateFromString}' AND '{sqlDateToString}')";
             }
 
             // если обе даты пустые - то возвращаем null
@@ -360,7 +369,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("date From");
                 }
 
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] >= '{sqlDateFromString}')";
+                return $"({GetTableAlias(p)}.{escapedFieldColumnName} >= '{sqlDateFromString}')";
             }
 
             // дата "от" пустая а "до" не пустая
@@ -371,7 +380,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("date To");
                 }
 
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <= '{sqlDateToString}')";
+                return $"({GetTableAlias(p)}.{escapedFieldColumnName} <= '{sqlDateToString}')";
             }
 
             // обе границы диапазона не пустые
@@ -390,13 +399,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             {
                 Converter.TryConvertToSqlDateString(dateFromString, null, out sqlDateFromString, out dateFrom);
                 Converter.TryConvertToSqlDateString(dateToString, new TimeSpan(23, 59, 59), out sqlDateToString, out dateTo);
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateFromString}' AND '{sqlDateToString}')";
+                return $"({GetTableAlias(p)}.{escapedFieldColumnName} BETWEEN '{sqlDateFromString}' AND '{sqlDateToString}')";
             }
 
             Converter.TryConvertToSqlDateString(dateFromString, new TimeSpan(23, 59, 59), out sqlDateFromString, out dateFrom);
             Converter.TryConvertToSqlDateString(dateToString, null, out sqlDateToString, out dateTo);
 
-            return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateToString}' AND '{sqlDateFromString}')";
+            return $"({GetTableAlias(p)}.{escapedFieldColumnName} BETWEEN '{sqlDateToString}' AND '{sqlDateFromString}')";
         }
 
         private static string ParseDateTimeRangeParam(ArticleSearchQueryParam p)
@@ -449,9 +458,12 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             string sqlDateTimeToString;
             DateTime? datetimeTo;
 
+            var dbType = QPContext.DatabaseType;
+
+            var fieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
             if (isNull)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)";
+                return $"({GetTableAlias(p)}.{fieldName} IS NULL)";
             }
 
             if (isByValue)
@@ -466,7 +478,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("datetime From");
                 }
 
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] = '{sqlDateTimeFromString}')";
+                return $"({GetTableAlias(p)}.{fieldName} = '{sqlDateTimeFromString}')";
             }
 
             // если обе даты пустые - то возвращаем null
@@ -483,7 +495,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("datetime From");
                 }
 
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] >= '{sqlDateTimeFromString}')";
+                return $"({GetTableAlias(p)}.{fieldName} >= '{sqlDateTimeFromString}')";
             }
 
             // дата "от" пустая а "до" не пустая
@@ -494,7 +506,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     throw new FormatException("datetime To");
                 }
 
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <= '{sqlDateTimeToString}')";
+                return $"({GetTableAlias(p)}.{fieldName} <= '{sqlDateTimeToString}')";
             }
 
             // обе границы диапазона не пустые
@@ -511,8 +523,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             // From < To
             // ReSharper disable PossibleInvalidOperationException
             return datetimeFrom.Value < datetimeTo.Value
-                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateTimeFromString}' AND '{sqlDateTimeToString}')"
-                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] BETWEEN '{sqlDateTimeToString}' AND '{sqlDateTimeFromString}')";
+                ? $"({GetTableAlias(p)}.{fieldName} BETWEEN '{sqlDateTimeFromString}' AND '{sqlDateTimeToString}')"
+                : $"({GetTableAlias(p)}.{fieldName} BETWEEN '{sqlDateTimeToString}' AND '{sqlDateTimeFromString}')";
             // ReSharper restore PossibleInvalidOperationException
         }
 
@@ -564,12 +576,16 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             TimeSpan? timeFrom = null;
             TimeSpan? timeTo = null;
 
+            var dbType = QPContext.DatabaseType;
+            var fieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
             // isnull == true
+
             if (isNull)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)";
+                return $"({GetTableAlias(p)}.{fieldName} IS NULL)";
             }
 
+            var ns = SqlQuerySyntaxHelper.DbSchemaName(dbType);
             if (isByValue)
             {
                 if (string.IsNullOrWhiteSpace(timeFromString))
@@ -583,7 +599,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 }
 
                 // ReSharper disable once PossibleInvalidOperationException
-                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) = {timeFrom.Value.TotalSeconds})";
+                return $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) = {timeFrom.Value.TotalSeconds})";
             }
 
             // если обе даты пустые - то возвращаем null
@@ -612,14 +628,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             if (!string.IsNullOrWhiteSpace(timeFromString) && string.IsNullOrWhiteSpace(timeToString))
             {
                 // ReSharper disable once PossibleInvalidOperationException
-                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) >= {timeFrom.Value.TotalSeconds})";
+                return $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) >= {timeFrom.Value.TotalSeconds})";
             }
 
             // дата "от" пустая а "до" не пустая
             if (string.IsNullOrWhiteSpace(timeFromString) && !string.IsNullOrWhiteSpace(timeToString))
             {
                 // ReSharper disable once PossibleInvalidOperationException
-                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) <= {timeTo.Value.TotalSeconds})";
+                return $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) <= {timeTo.Value.TotalSeconds})";
             }
 
             // обе границы диапазона не пустые
@@ -627,14 +643,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             // ReSharper disable PossibleInvalidOperationException
             if (timeFrom.Value < timeTo.Value)
             {
-                return $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) BETWEEN {timeFrom.Value.TotalSeconds} AND {timeTo.Value.TotalSeconds})";
+                return $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) BETWEEN {timeFrom.Value.TotalSeconds} AND {timeTo.Value.TotalSeconds})";
             }
 
             // ReSharper restore PossibleInvalidOperationException
 
             return timeFrom.Value > timeTo.Value
-                ? $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) BETWEEN {timeTo.Value.TotalSeconds} AND {timeFrom.Value.TotalSeconds})"
-                : $"([dbo].[qp_abs_time_seconds]({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}]) = {timeFrom.Value.TotalSeconds})";
+                ? $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) BETWEEN {timeTo.Value.TotalSeconds} AND {timeFrom.Value.TotalSeconds})"
+                : $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) = {timeFrom.Value.TotalSeconds})";
         }
 
         private static string ParseNumericRangeParam(ArticleSearchQueryParam p)
@@ -685,9 +701,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             var isByValue = (bool)p.QueryParams[3];
             var inverse = p.QueryParams.Length > 4 && p.QueryParams[4] is bool && (bool)p.QueryParams[4];
 
+            var dbType = QPContext.DatabaseType;
+            var fieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
             if (isNull)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS {(inverse ? "NOT " : "")}NULL)";
+                return $"({GetTableAlias(p)}.{fieldName} IS {(inverse ? "NOT " : "")}NULL)";
             }
 
             // ReSharper disable MergeSequentialChecks
@@ -696,7 +714,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             if (isByValue)
             {
-                return !numberFrom.HasValue ? null : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<>" : "=")} {numberFrom})";
+                return !numberFrom.HasValue ? null : $"({GetTableAlias(p)}.{fieldName} {(inverse ? "<>" : "=")} {numberFrom})";
             }
 
             if (!numberFrom.HasValue && !numberTo.HasValue)
@@ -706,21 +724,21 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             if (numberFrom.HasValue && !numberTo.HasValue)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<" : ">=")} {numberFrom})";
+                return $"({GetTableAlias(p)}.{fieldName} {(inverse ? "<" : ">=")} {numberFrom})";
             }
             if (!numberFrom.HasValue)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? ">" : "<=")} {numberTo})";
+                return $"({GetTableAlias(p)}.{fieldName} {(inverse ? ">" : "<=")} {numberTo})";
             }
 
             if (numberFrom.Value < numberTo.Value)
             {
-                return $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}BETWEEN {numberFrom} AND {numberTo})";
+                return $"({GetTableAlias(p)}.{fieldName} {(inverse ? "NOT " : "")}BETWEEN {numberFrom} AND {numberTo})";
             }
 
             return numberFrom.Value > numberTo.Value
-                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "NOT " : "")}BETWEEN {numberTo} AND {numberFrom})"
-                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] {(inverse ? "<>" : "=")} {numberFrom})";
+                ? $"({GetTableAlias(p)}.{fieldName} {(inverse ? "NOT " : "")}BETWEEN {numberTo} AND {numberFrom})"
+                : $"({GetTableAlias(p)}.{fieldName} {(inverse ? "<>" : "=")} {numberFrom})";
         }
 
         private static string ParseO2MRelationParam(ArticleSearchQueryParam p, ICollection<DbParameter> sqlParams)
@@ -759,9 +777,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             var isNull = (bool)p.QueryParams[1];
             var inverse = (bool)p.QueryParams[2];
             var inverseString = inverse ? "NOT" : string.Empty;
+
+            var dbType = QPContext.DatabaseType;
+            var fieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
+
             if (isNull)
             {
-                return string.Format("({1}.[{0}] IS {2} NULL)", p.FieldColumn.ToLower(), GetTableAlias(p), inverseString);
+                return string.Format("({1}.{0} IS {2} NULL)", fieldName, GetTableAlias(p), inverseString);
             }
 
             // Если массив null или пустой - то возвращаем null
@@ -776,16 +798,16 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             if (values.Length == 1)
             {
-                sqlParams.Add(new SqlParameter(paramName, values[0]));
+                sqlParams.Add(SqlQuerySyntaxHelper.CreateDbParameter(dbType, paramName, values[0]));
                 return inverse
-                    ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] <> {paramName} OR {GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)"
-                    : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] = {paramName})";
+                    ? $"({GetTableAlias(p)}.{fieldName} <> {paramName} OR {GetTableAlias(p)}.{fieldName} IS NULL)"
+                    : $"({GetTableAlias(p)}.{fieldName} = {paramName})";
             }
 
-            sqlParams.Add(new SqlParameter(paramName, SqlDbType.Structured) { TypeName = "Ids", Value = Common.IdsToDataTable(values) });
+            sqlParams.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam(paramName, values, dbType));
             return inverse
-                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] NOT IN (select id from {paramName}) OR {GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)"
-                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IN (select id from {paramName}))";
+                ? $"({GetTableAlias(p)}.{fieldName} NOT IN (select id from {SqlQuerySyntaxHelper.IdList(dbType, paramName, "i")}) OR {GetTableAlias(p)}.{fieldName} IS NULL)"
+                : $"({GetTableAlias(p)}.{fieldName} IN (select id from {SqlQuerySyntaxHelper.IdList(dbType, paramName, "i")}))";
         }
 
         private static string ParseBooleanParam(ArticleSearchQueryParam p)
@@ -816,9 +838,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 throw new InvalidCastException();
             }
 
+            var dbType = QPContext.DatabaseType;
+            var fieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
             return (bool)p.QueryParams[0]
-                ? $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] IS NULL)"
-                : $"({GetTableAlias(p)}.[{p.FieldColumn.ToLower()}] = {((bool)p.QueryParams[1] ? 1 : 0)})";
+                ? $"({GetTableAlias(p)}.{fieldName} IS NULL)"
+                : $"({GetTableAlias(p)}.{fieldName} = {((bool)p.QueryParams[1] ? 1 : 0)})";
         }
 
         private static string GetTableAlias(ArticleSearchQueryParam p)

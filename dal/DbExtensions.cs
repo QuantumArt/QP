@@ -21,9 +21,6 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-
-
-
         public static void Fill(this DataAdapter da, DataTable dt)
         {
             switch (da)

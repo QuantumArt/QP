@@ -1037,9 +1037,10 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static bool CanUnlockItems(DbConnection connection, int userId)
         {
-            const string sql = @"
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            string sql = $@"
                 WITH
-                  cte (group_id, parent_group_id, can_unlock_items)
+                  {SqlQuerySyntaxHelper.RecursiveCte(dbType)} cte (group_id, parent_group_id, can_unlock_items)
                   AS
                   (
                     SELECT ug.group_id, ug.parent_group_id, ug.can_unlock_items
@@ -1057,7 +1058,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
-                return (int)cmd.ExecuteScalar() > 0;
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
             }
         }
 
@@ -2422,7 +2423,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             AddDynamicColumnsToQuery(sqlConnection, options, selectBuilder, fromBuilder, Default.MaxViewInListFieldLength + 1);
 
             var useFullText = AddFullTextFilteringToQuery(sqlConnection, options.FullTextSearch, options.ContentId, options.ExtensionContentIds, fromBuilder);
-            AddLinkFilteringToQuery(options.LinkFilters, whereBuilder, sqlParams, fieldMap, referenceMap);
+            AddLinkFilteringToQuery(options.LinkFilters, whereBuilder, sqlParams, fieldMap, referenceMap, databaseType);
             AddRelationSecurityFilteringToQuery(sqlConnection, options, fromBuilder, whereBuilder);
             if (options.FilterIds != null && options.FilterIds.Any())
             {
@@ -2462,12 +2463,15 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             StringBuilder whereBuilder,
             ICollection<DbParameter> sqlParams,
             IDictionary<int, string> fieldMap = null,
-            IDictionary<int, string> referenceMap = null)
+            IDictionary<int, string> referenceMap = null,
+            DatabaseType dbType = DatabaseType.SqlServer)
         {
             if (linkFilters == null)
             {
                 return;
             }
+
+            var ns = DbSchemaName(dbType);
 
             foreach (var linkFilter in linkFilters)
             {
@@ -2486,20 +2490,20 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 if (!linkFilter.IsNull)
                 {
                     var paramName = "@link" + linkFilter.LinkId;
-                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY item_id HAVING COUNT(item_id) = (SELECT COUNT(*) FROM {paramName})" : string.Empty;
-                    sqlParams.Add(GetIdsDatatableParam(paramName, linkFilter.Ids));
+                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY item_id HAVING COUNT(item_id) = (SELECT COUNT(*) FROM {IdList(dbType, paramName)})" : string.Empty;
+                    sqlParams.Add(GetIdsDatatableParam(paramName, linkFilter.Ids, dbType));
 
                     inverseString = linkFilter.Inverse ? "NOT " : string.Empty;
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString} EXISTS (select item_id from dbo.item_link_united with(nolock) where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId} AND linked_item_id in (select id from {paramName}){unionAllSqlString})"
-                        : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu with(nolock) where {tableAlias}.content_item_id = [{linkFilter.FieldName}] and cu.content_item_id in (select id from {paramName})) ";
+                        ? $"{inverseString} EXISTS (select item_id from {ns}.item_link_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId} AND linked_item_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
+                        : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu {WithNoLock(dbType)} where {tableAlias}.content_item_id = {EscapeEntityName(dbType, linkFilter.FieldName)} and cu.content_item_id in (select id from {IdList(dbType, paramName)})) ";
                 }
                 else
                 {
                     inverseString = linkFilter.Inverse ? string.Empty : "NOT ";
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString}EXISTS (select item_id from dbo.item_link_united with(nolock) where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId})"
-                        : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united with(nolock) where {tableAlias}.content_item_id = [{linkFilter.FieldName}]) ";
+                        ? $"{inverseString}EXISTS (select item_id from {ns}.item_link_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId})"
+                        : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = {EscapeEntityName(dbType, linkFilter.FieldName)}) ";
                 }
 
                 if (whereBuilder.Length != 0)
@@ -5724,7 +5728,9 @@ order by ActionDate desc
 
         public static int[] GetReferencedAggregatedContentIds(DbConnection sqlConnection, int contentId)
         {
-            const string query = @"
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+
+            string query = $@"
                 SELECT
                     af.CONTENT_ID
                 FROM
@@ -5732,7 +5738,7 @@ order by ActionDate desc
                     JOIN CONTENT_ATTRIBUTE af ON cf.ATTRIBUTE_ID = af.RELATED_ATTRIBUTE_ID
                 WHERE
                     cf.CONTENT_ID = @contentId AND
-                    af.AGGREGATED = 1";
+                    af.AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -5753,10 +5759,11 @@ order by ActionDate desc
 
         public static Dictionary<int, string> GetAggregatedFieldNames(DbConnection sqlConnection, int[] contentIds)
         {
-            using (var cmd = DbCommandFactory.Create("SELECT CONTENT_ID, ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE JOIN @ids ON CONTENT_ID = ID WHERE AGGREGATED = 1", sqlConnection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            using (var cmd = DbCommandFactory.Create($"SELECT CONTENT_ID, ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE JOIN {IdList(dbType, "@ids")} ON CONTENT_ID = ID WHERE AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}", sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", contentIds));
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", contentIds, dbType));
                 using (var reader = cmd.ExecuteReader())
                 {
                     var result = new Dictionary<int, string>();
@@ -10438,28 +10445,7 @@ order by ActionDate desc
 
 
 
-        private static DbParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids, DatabaseType databaseType = DatabaseType.SqlServer)
-        {
-            switch (databaseType)
-            {
-                case DatabaseType.SqlServer:
-                    return new SqlParameter(paramName, SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(ids)
-                    };
-                case DatabaseType.Postgres:
-                    return new NpgsqlParameter(paramName, NpgsqlDbType.Array | NpgsqlDbType.Integer)
-                    {
-                        Value = ids?.ToArray() ?? new int[0]
-                    };
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
-
-
-        }
+        private static DbParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids, DatabaseType databaseType = DatabaseType.SqlServer) => SqlQuerySyntaxHelper.GetIdsDatatableParam(paramName, ids, databaseType);
 
         private static DbParameter GetIntArrayPostgresParam(string paramName, List<int> ints) => new NpgsqlParameter(paramName, NpgsqlDbType.Array | NpgsqlDbType.Integer)
         {

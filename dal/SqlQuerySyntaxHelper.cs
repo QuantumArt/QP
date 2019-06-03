@@ -1,4 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Linq;
+using Npgsql;
+using NpgsqlTypes;
 
 namespace Quantumart.QP8.DAL
 {
@@ -196,6 +203,38 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static DbParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids, DatabaseType databaseType = DatabaseType.SqlServer)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return new SqlParameter(paramName, SqlDbType.Structured)
+                    {
+                        TypeName = "Ids",
+                        Value = IdsToDataTable(ids)
+                    };
+                case DatabaseType.Postgres:
+                    return new NpgsqlParameter(paramName, NpgsqlDbType.Array | NpgsqlDbType.Integer)
+                    {
+                        Value = ids?.ToArray() ?? new int[0]
+                    };
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static DataTable IdsToDataTable(IEnumerable<int> ids)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("id");
+            foreach (var id in ids ?? Enumerable.Empty<int>())
+            {
+                dt.Rows.Add(id);
+            }
+
+            return dt;
+        }
+
         public static string FieldName(DatabaseType databaseType, string fieldName)
         {
             switch (databaseType)
@@ -206,6 +245,19 @@ namespace Quantumart.QP8.DAL
                     return $@"""{fieldName.ToLower()}""";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static DbParameter CreateDbParameter(DatabaseType dbType, string paramName, object value)
+        {
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    return new SqlParameter(paramName, value);
+                case DatabaseType.Postgres:
+                    return new NpgsqlParameter(paramName, value);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dbType), dbType, null);
             }
         }
 
