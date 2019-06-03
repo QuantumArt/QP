@@ -454,7 +454,7 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
                 UPDATE {source}
                 SET
                     locked_by = {SqlQuerySyntaxHelper.NullableDbValue(databaseType, userId)},
-                    locked = CASE WHEN @user_id is null THEN NULL ELSE {SqlQuerySyntaxHelper.Now(databaseType)} END,
+                    locked = {(userId.HasValue ? SqlQuerySyntaxHelper.Now(databaseType) : "NULL")},
                     permanent_lock = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)}
                 WHERE
                     {idField} = @id
@@ -463,7 +463,7 @@ ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderB
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@user_id", userId);
+                // cmd.Parameters.AddWithValue("@user_id", userId.HasValue ? userId.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("@id", id);
 
                 var result = cmd.ExecuteScalar();
@@ -10397,68 +10397,41 @@ order by ActionDate desc
             return dt;
         }
 
-        public static IList<int> GetParentIdsTreeResult(DbConnection cn, IList<int> ids, int fieldId, string fieldName)
+        public static IList<int> GetParentIdsTreeResult(DbConnection cn, IList<int> ids, int fieldId, string fieldName, int? contentId)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(cn);
-            var query = GetParentIdsTreeQuery(ids, fieldId, fieldName);
-            DbParameter fieldIdParameter;
-            switch (dbType)
-            {
-                case DatabaseType.SqlServer:
-                    fieldIdParameter = new SqlParameter("@fieldId", fieldId);
-                    break;
-                case DatabaseType.Postgres:
-                    fieldIdParameter = new NpgsqlParameter("@fieldId", fieldId);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            if (string.IsNullOrWhiteSpace(fieldName) || !contentId.HasValue) return new List<int>();
 
-            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids, dbType), fieldIdParameter).Select(dr => (int)dr.Field<decimal>(0)).ToList();
-        }
-
-        public static string GetParentIdsTreeQuery(IList<int> ids, int fieldId, string fieldName) => @"
-                declare @contentId int
-                declare @fieldName nvarchar(255)
-
-                select
-                    @contentId = CONTENT_ID,
-                    @fieldName = ATTRIBUTE_NAME
-                from
-                    CONTENT_ATTRIBUTE
-                where
-                    ATTRIBUTE_ID = @fieldId and
-                    ATTRIBUTE_TYPE_ID = 11
-
-                if (@contentId is not null and @fieldName is not null)
-                begin
-                    declare @sql nvarchar(max) ='
-                        with CTE(Id, ParentId, Lvl)
+            var query = $@"
+                with {SqlQuerySyntaxHelper.RecursiveCte(dbType)} CTE(Id, ParentId, Lvl)
                         as
                         (
                             select
                                 CONTENT_ITEM_ID Id,
-                                [' + @fieldName + '] ParentId,
+                                {fieldName} ParentId,
                                 0 Lvl
                             from
-                                content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
+                                content_{contentId}_united c {WithNoLock(dbType)}
                             where
-                                CONTENT_ITEM_ID IN (SELECT * FROM @ids)
-
+                                CONTENT_ITEM_ID IN (select id from {(dbType == DatabaseType.Postgres ? "unnest(@ids) i(id)" : "@ids")})
                             union all
-
                             select
                                 c.CONTENT_ITEM_ID Id,
-                                c." + fieldName + @",
+                                c.{fieldName},
                                 r.Lvl + 1
                             from
-                                content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
+                                content_{contentId}_united c {WithNoLock(dbType)}
                                 join CTE r on c.CONTENT_ITEM_ID = r.ParentId
-                        )"
-            + (ids.Count > 1
-                ? "SELECT DISTINCT Id, ParentId FROM CTE'"
-                : "SELECT DISTINCT Id, ParentId, Lvl FROM CTE ORDER BY Lvl'")
-            + "EXEC sp_executesql @sql, N'@ids dbo.Ids READONLY, @fieldId int', @ids, @fieldId END";
+                        )
+            ";
+            query += ids.Count > 1
+                ? "SELECT DISTINCT Id, ParentId FROM CTE"
+                : "SELECT DISTINCT Id, ParentId, Lvl FROM CTE ORDER BY Lvl";
+
+            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids, dbType)).Select(dr => (int)dr.Field<decimal>(0)).ToList();
+        }
+
+
 
         private static DbParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids, DatabaseType databaseType = DatabaseType.SqlServer)
         {

@@ -89,6 +89,8 @@ namespace Quantumart.QP8.DAL
 
         public static string WithRowLock(DatabaseType databaseType) => databaseType == DatabaseType.SqlServer ? "with(rowlock) " : string.Empty;
 
+        public static string RecursiveCte(DatabaseType databaseType) => databaseType == DatabaseType.Postgres ? " RECURSIVE " : string.Empty;
+
         public static string NullableDbValue(DatabaseType databaseType, int? value)
         {
             switch (databaseType)
