@@ -566,9 +566,8 @@ export class BackendEntityGrid extends Observable {
   getRows() {
     let $rows = [];
     if (this._gridComponent) {
-      $rows = $(`#${this._gridElementId}`).find('tr[role="row"]');
+      $rows = $(`#${this._gridElementId}`).find('tbody>tr[role="row"]');
     }
-
     return $rows;
   }
 
@@ -610,7 +609,8 @@ export class BackendEntityGrid extends Observable {
     }
 
     const $row = this.getRow(rowElem);
-    this._setRowsSelectedState($row, !this.isRowSelected($row));
+    const isSelected = this.isRowSelected($row);
+    this._setRowsSelectedState($row, !isSelected);
     this._saveRowSelectionState();
     this._executePostSelectActions();
   }
