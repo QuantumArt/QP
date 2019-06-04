@@ -2829,6 +2829,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<DataRow> GetFieldsPage(DbConnection sqlConnection, FieldPageOptions options, out int totalRecords)
         {
             var aggregatedContentIds = GetReferencedAggregatedContentIds(sqlConnection, options.ContentId);
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
 
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var filter = "cnt.CONTENT_ID = " + options.ContentId;
@@ -2836,12 +2837,19 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             if (options.Mode == FieldSelectMode.ForExport || options.Mode == FieldSelectMode.ForExportExpanded)
             {
                 filter = "cnt.CONTENT_ID IN (" + string.Join(",", aggregatedContentIds.Union(new[] { options.ContentId })) + ")";
-                filter = SqlFilterComposer.Compose(filter, "ca.AGGREGATED = 0");
+                filter = SqlFilterComposer.Compose(filter, $"ca.AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)}");
                 filter = options.Mode == FieldSelectMode.ForExport ? SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID <> 13") : SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID in (11, 13)");
             }
 
+
             var selectBuilder = new StringBuilder();
-            selectBuilder.Append("ca.[ATTRIBUTE_ID] AS Id,  CASE WHEN (cnt.CONTENT_ID = " + options.ContentId + ") THEN [ATTRIBUTE_NAME] ELSE cnt.[CONTENT_NAME] + '.' + [ATTRIBUTE_NAME] END as [Name], [ATTRIBUTE_NAME] as [FieldName], cnt.[CONTENT_NAME] as [ContentName], ca.[CREATED] as [Created], ca.[MODIFIED] as [Modified], ATTRIBUTE_ORDER as [Order]");
+            selectBuilder.Append($@"ca.ATTRIBUTE_ID AS Id,
+  CASE WHEN (cnt.CONTENT_ID = {options.ContentId}) THEN ATTRIBUTE_NAME ELSE {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "cnt.CONTENT_NAME", "'.'", "ATTRIBUTE_NAME")} END as Name,
+ ATTRIBUTE_NAME as FieldName,
+ cnt.CONTENT_NAME as ContentName,
+ ca.CREATED as Created,
+ ca.MODIFIED as Modified,
+ ATTRIBUTE_ORDER as {EscapeEntityName(dbType, "Order")}");
             selectBuilder.Append(", FRIENDLY_NAME as FriendlyName, ca.DESCRIPTION as Description, lmb.LOGIN as LastModifiedByUser, ca.ATTRIBUTE_TYPE_ID as TypeCode");
             selectBuilder.Append(", ATTRIBUTE_SIZE as Size, REQUIRED as Required, INDEX_FLAG as Indexed, MAP_AS_PROPERTY as MapAsProperty, VIEW_IN_LIST as ViewInList, at.icon AS TypeIcon, ca.LINK_ID as LinkId");
             if (useSelection)
@@ -2850,9 +2858,9 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append("dbo.[CONTENT] cnt INNER JOIN dbo.[CONTENT_ATTRIBUTE] ca ON cnt.CONTENT_ID = ca.CONTENT_ID");
-            fromBuilder.Append(" INNER JOIN dbo.[USERS] lmb ON ca.LAST_MODIFIED_BY = lmb.USER_ID");
-            fromBuilder.Append(" INNER JOIN [ATTRIBUTE_TYPE] at on ca.attribute_type_id = at.attribute_type_id");
+            fromBuilder.Append("CONTENT cnt INNER JOIN CONTENT_ATTRIBUTE ca ON cnt.CONTENT_ID = ca.CONTENT_ID");
+            fromBuilder.Append($" INNER JOIN {DbSchemaName(dbType)}.{EscapeEntityName(dbType, "USERS")} lmb ON ca.LAST_MODIFIED_BY = lmb.USER_ID");
+            fromBuilder.Append(" INNER JOIN ATTRIBUTE_TYPE at on ca.attribute_type_id = at.attribute_type_id");
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT ATTRIBUTE_ID from CONTENT_ATTRIBUTE where ATTRIBUTE_ID in ({0})) AS cas ON ca.ATTRIBUTE_ID = cas.ATTRIBUTE_ID ", string.Join(",", options.SelectedIDs));
@@ -2863,7 +2871,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 EntityTypeCode.Field,
                 selectBuilder.ToString(),
                 fromBuilder.ToString(),
-                !string.IsNullOrEmpty(options.SortExpression) ? options.SortExpression : "[Order]",
+                !string.IsNullOrEmpty(options.SortExpression) ? options.SortExpression : EscapeEntityName(dbType, "Order"),
                 filter,
                 options.StartRecord,
                 options.PageSize,
