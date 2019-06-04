@@ -1081,7 +1081,7 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
                     FROM user_group_tree ug2
                     INNER JOIN cte r ON ug2.group_id = r.parent_group_id
                   )
-                  select count(*) from cte where can_unlock_items = 1";
+                  select count(*) from cte where can_unlock_items = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}";
 
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
