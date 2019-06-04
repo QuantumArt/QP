@@ -206,6 +206,8 @@ namespace Quantumart.QP8.DAL
                 else
                 {
                     var isFolderQuery = !string.IsNullOrWhiteSpace(newEntityTypeCode);
+                    var plural = isFolderQuery ? "s" : "";
+                    var icon = SqlQuerySyntaxHelper.ConcatStrValues(databaseType, "et.code", $"'{plural}.gif'");
 
                     sql = $@"select et.id as id,
                         {SqlQuerySyntaxHelper.NullableDbValue(databaseType, parentEntityId)} as parent_id,
@@ -213,7 +215,7 @@ namespace Quantumart.QP8.DAL
                         et.code as code,
                         {SqlQuerySyntaxHelper.ToBoolSql(databaseType, isFolderQuery)} as is_folder,
                         {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)} as is_group,
-                        {SqlQuerySyntaxHelper.ConcatStrValues(databaseType, "et.code", "'.gif'")} as icon,
+                        {icon} as icon,
                         et.{(isFolderQuery ? "folder_" : string.Empty)}default_action_id as default_action_id,
                         et.{(isFolderQuery ? "folder_" : string.Empty)}context_menu_id as context_menu_id,
                         NULL as parent_group_id,

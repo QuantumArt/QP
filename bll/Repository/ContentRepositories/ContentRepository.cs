@@ -219,6 +219,10 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
 
             var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                Common.CreateContent(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
+            }
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
             FieldRepository.ChangeCreateFieldsTriggerState(true);
 
@@ -237,7 +241,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             var field = Field.Create(newContent, new FieldRepository(), new ContentRepository());
             field.ExactType = FieldExactTypes.String;
             field.Name = "Title";
-            field.Description = "&nbsp;";
+            field.Description = "Default field";
             field.Indexed = true;
             field.ViewInList = true;
             field.StringSize = 255;

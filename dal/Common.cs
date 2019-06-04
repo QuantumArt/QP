@@ -127,7 +127,7 @@ namespace Quantumart.QP8.DAL
         public static string GetArticleFieldValue(DbConnection connection, int id, int contentId, string name)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            using (var cmd = DbCommandFactory.Create($"select {EscapeEntityName(dbType, name)} from content_{contentId}_united {WithNoLock(dbType)} where content_item_id = @id", connection))
+            using (var cmd = DbCommandFactory.Create($"select {Escape(dbType, name)} from content_{contentId}_united {WithNoLock(dbType)} where content_item_id = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -263,44 +263,35 @@ namespace Quantumart.QP8.DAL
             string orderBy = "")
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(cn);
-            var securitySql = useSecurity
-                ? PermissionHelper.GetPermittedItemsAsQuery(efContext, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, contentId)
-                : string.Empty;
+            string securityJoin = "";
+            if (useSecurity)
+            {
+                var securitySql = PermissionHelper.GetPermittedItemsAsQuery(
+                    efContext, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, contentId
+                );
+                securityJoin = $"INNER JOIN ({securitySql} as pi ON c.content_item_id = pi.content_item_id)";
+
+            }
+            var top = searchLimit.HasValue ? Top(databaseType, searchLimit.Value) : String.Empty;
+            var limit = searchLimit.HasValue ? Limit(databaseType, searchLimit.Value) : String.Empty;
+            var whereStmt = string.IsNullOrWhiteSpace(filter) ? string.Empty : $" WHERE {filter}";
+            var actualOrderBy = string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderBy;
+            var isSelectedExpression = SqlQuerySyntaxHelper.CastToBool(databaseType, "CASE WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END");
+            var selectionJoin = selectionMode == ListSelectionMode.AllItems ? " LEFT JOIN " : " INNER JOIN ";
 
             var query = $@"
-SELECT
-{(searchLimit.HasValue && databaseType == DatabaseType.SqlServer ? $"TOP ({searchLimit})" : string.Empty)}
-c.content_item_id AS id, {displayExpression}, {SqlQuerySyntaxHelper.CastToBool(databaseType, "CASE WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END")} AS is_selected
-{extraSelect}
-FROM content_{contentId}_united c
-{(useSecurity ? $"INNER JOIN ({securitySql} as pi ON c.content_item_id = pi.content_item_id)" : string.Empty)}
-{(selectionMode == ListSelectionMode.AllItems ? " LEFT JOIN " : " INNER JOIN ")}
-( SELECT content_item_id FROM content_{contentId} WHERE content_item_id IN (select id from {IdList(databaseType, "@myData")})) AS cis ON c.content_item_id = cis.content_item_id
-{extraFrom}
-{(string.IsNullOrWhiteSpace(filter) ? string.Empty : $" WHERE {filter}")}
-ORDER BY {(string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderBy)}
-";
-
-            // var queryBuilder = new StringBuilder();
-            // var selectQuery = searchLimit.HasValue ? $"SELECT TOP ({searchLimit})" : "SELECT";
-            // queryBuilder.AppendFormatLine($" {selectQuery} c.content_item_id AS id, {displayExpression}, CAST(CASE WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END AS bit) AS is_selected ");
-            // queryBuilder.AppendLine(extraSelect ?? string.Empty);
-            // queryBuilder.AppendFormatLine($" FROM content_{contentId}_united c ");
-
-            // if (useSecurity)
-            // {
-            //     var securitySql = GetPermittedItemsAsQuery(cn, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, contentId);
-            //     queryBuilder.AppendFormatLine(" INNER JOIN ({0}) AS pi ON c.content_item_id = pi.content_item_id ", securitySql);
-            // }
-            //
-            // queryBuilder.Append(selectionMode == ListSelectionMode.AllItems ? " LEFT JOIN " : " INNER JOIN ");
-            // queryBuilder.AppendFormatLine("( SELECT content_item_id FROM content_{0} WHERE content_item_id IN (SELECT id FROM @myData)) AS cis ON c.content_item_id = cis.content_item_id ", contentId);
-            // queryBuilder.AppendLine(extraFrom ?? string.Empty);
-            // queryBuilder.AppendLine(string.IsNullOrWhiteSpace(filter) ? string.Empty : $" WHERE {filter}");
-
-            // orderBy = string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderBy;
-            // queryBuilder.AppendLine($" ORDER BY {orderBy}");
-
+                SELECT {top}
+                c.content_item_id AS id, {displayExpression}, {isSelectedExpression} AS is_selected
+                {extraSelect}
+                FROM content_{contentId}_united c
+                {securityJoin}
+                {selectionJoin}
+                ( SELECT content_item_id FROM content_{contentId} WHERE content_item_id IN (select id from {IdList(databaseType, "@myData")})) AS cis ON c.content_item_id = cis.content_item_id
+                {extraFrom}
+                {whereStmt}
+                ORDER BY {actualOrderBy}
+                {limit}
+            ";
             return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", idsToFilter, databaseType), GetIdsDatatableParam("@myData", selectedArticleIds, databaseType));
         }
 
@@ -962,18 +953,19 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             if (entityTypeCode == EntityTypeCode.Article)
             {
                 query = $@"
-SELECT DISTINCT {EscapeEntityName(dbType, selfRelationFieldName)}
-FROM content_{contentId}_united
-WHERE {EscapeEntityName(dbType, selfRelationFieldName)} is not null and content_item_id in ({string.Join(",", ids)})
-";
+                SELECT DISTINCT {Escape(dbType, selfRelationFieldName)}
+                FROM content_{contentId}_united
+                WHERE {Escape(dbType, selfRelationFieldName)} is not null and content_item_id in ({string.Join(",", ids)})
+                ";
             }
             else
             {
                 query = $@"
-SELECT DISTINCT {EscapeEntityName(dbType, entityRecurringIdField)}
-FROM {entitySource}
-WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND {EscapeEntityName(dbType, entityRecurringIdField)} is not null
-";
+                SELECT DISTINCT {Escape(dbType, entityRecurringIdField)}
+                FROM {entitySource}
+                WHERE {Escape(dbType, entityIdField)} in ({string.Join(",", ids)})
+                AND {Escape(dbType, entityRecurringIdField)} is not null
+                ";
 
             }
 
@@ -1569,12 +1561,12 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             string query = $@"
             WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} V2BREL AS (
-                SELECT *, 0 as {EscapeEntityName(dbType, "LEVEL")} FROM VIRTUAL_ATTR_BASE_ATTR_RELATION where BASE_CNT_ID = @rootContent
+                SELECT *, 0 as {Escape(dbType, "LEVEL")} FROM VIRTUAL_ATTR_BASE_ATTR_RELATION where BASE_CNT_ID = @rootContent
                 union all
-                SELECT BA.*, {EscapeEntityName(dbType, "LEVEL")} + 1 FROM VIRTUAL_ATTR_BASE_ATTR_RELATION BA
+                SELECT BA.*, {Escape(dbType, "LEVEL")} + 1 FROM VIRTUAL_ATTR_BASE_ATTR_RELATION BA
                 join V2BREL on BA.BASE_ATTR_ID = V2BREL.VIRTUAL_ATTR_ID
             )
-            select * from V2BREL order by {EscapeEntityName(dbType, "LEVEL")}";
+            select * from V2BREL order by {Escape(dbType, "LEVEL")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@rootContent", rootContentId);
@@ -1662,7 +1654,7 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
                 "COALESCE(A.EXTERNAL_CSS, S.EXTERNAL_CSS) AS ExternalCss   " +
                 "from CONTENT_ATTRIBUTE A  " +
                 "join CONTENT C on C.CONTENT_ID = A.CONTENT_ID  " +
-                $"join {EscapeEntityName(dbType, "SITE")} S on S.SITE_ID = C.SITE_ID  " +
+                $"join {Escape(dbType, "SITE")} S on S.SITE_ID = C.SITE_ID  " +
                 "WHERE A.ATTRIBUTE_ID = @attr_id";
         }
 
@@ -1883,7 +1875,7 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
             selectBuilder.Append("CA.ID, CA.NAME, CA.ACTION_ID");
             selectBuilder.Append(", AT.CODE AS ACTION_TYPE_CODE, AT.NAME AS ACTION_TYPE_NAME");
             selectBuilder.Append(", ET.CODE AS ENTITY_TYPE_CODE ,ET.NAME AS ENTITY_TYPE_NAME");
-            selectBuilder.Append($", CA.URL, CA.ICON_URL, CA.{EscapeEntityName(dbType, "ORDER")}, CA.SITE_EXCLUDED, CA.CONTENT_EXCLUDED, CA.SHOW_IN_MENU, CA.SHOW_IN_TOOLBAR");
+            selectBuilder.Append($", CA.URL, CA.ICON_URL, CA.{Escape(dbType, "ORDER")}, CA.SITE_EXCLUDED, CA.CONTENT_EXCLUDED, CA.SHOW_IN_MENU, CA.SHOW_IN_TOOLBAR");
             selectBuilder.Append(", CA.CREATED, CA.MODIFIED, CA.LAST_MODIFIED_BY, U.USER_ID, U.LOGIN");
 
             var fromBuilder = new StringBuilder();
@@ -2355,7 +2347,7 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
         public static IEnumerable<DataRow> GetVisualEditorPluginsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var escapedOrderColumnName = EscapeEntityName(dbType, "ORDER");
+            var escapedOrderColumnName = Escape(dbType, "ORDER");
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.VisualEditorPlugin,
@@ -2525,14 +2517,14 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
                     inverseString = linkFilter.Inverse ? "NOT " : string.Empty;
                     internalSql = linkFilter.IsManyToMany
                         ? $"{inverseString} EXISTS (select item_id from {ns}.item_link_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId} AND linked_item_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
-                        : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu {WithNoLock(dbType)} where {tableAlias}.content_item_id = {EscapeEntityName(dbType, linkFilter.FieldName)} and cu.content_item_id in (select id from {IdList(dbType, paramName)})) ";
+                        : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)} and cu.content_item_id in (select id from {IdList(dbType, paramName)})) ";
                 }
                 else
                 {
                     inverseString = linkFilter.Inverse ? string.Empty : "NOT ";
                     internalSql = linkFilter.IsManyToMany
                         ? $"{inverseString}EXISTS (select item_id from {ns}.item_link_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId})"
-                        : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = {EscapeEntityName(dbType, linkFilter.FieldName)}) ";
+                        : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)}) ";
                 }
 
                 if (whereBuilder.Length != 0)
@@ -2878,7 +2870,7 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
  cnt.CONTENT_NAME as ContentName,
  ca.CREATED as Created,
  ca.MODIFIED as Modified,
- ATTRIBUTE_ORDER as {EscapeEntityName(dbType, "Order")}");
+ ATTRIBUTE_ORDER as {Escape(dbType, "Order")}");
             selectBuilder.Append(", FRIENDLY_NAME as FriendlyName, ca.DESCRIPTION as Description, lmb.LOGIN as LastModifiedByUser, ca.ATTRIBUTE_TYPE_ID as TypeCode");
             selectBuilder.Append(", ATTRIBUTE_SIZE as Size, REQUIRED as Required, INDEX_FLAG as Indexed, MAP_AS_PROPERTY as MapAsProperty, VIEW_IN_LIST as ViewInList, at.icon AS TypeIcon, ca.LINK_ID as LinkId");
             if (useSelection)
@@ -2888,7 +2880,7 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
 
             var fromBuilder = new StringBuilder();
             fromBuilder.Append("CONTENT cnt INNER JOIN CONTENT_ATTRIBUTE ca ON cnt.CONTENT_ID = ca.CONTENT_ID");
-            fromBuilder.Append($" INNER JOIN {DbSchemaName(dbType)}.{EscapeEntityName(dbType, "USERS")} lmb ON ca.LAST_MODIFIED_BY = lmb.USER_ID");
+            fromBuilder.Append($" INNER JOIN {DbSchemaName(dbType)}.{Escape(dbType, "USERS")} lmb ON ca.LAST_MODIFIED_BY = lmb.USER_ID");
             fromBuilder.Append(" INNER JOIN ATTRIBUTE_TYPE at on ca.attribute_type_id = at.attribute_type_id");
             if (useSelection)
             {
@@ -2900,7 +2892,7 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
                 EntityTypeCode.Field,
                 selectBuilder.ToString(),
                 fromBuilder.ToString(),
-                !string.IsNullOrEmpty(options.SortExpression) ? options.SortExpression : EscapeEntityName(dbType, "Order"),
+                !string.IsNullOrEmpty(options.SortExpression) ? options.SortExpression : Escape(dbType, "Order"),
                 filter,
                 options.StartRecord,
                 options.PageSize,
@@ -2923,7 +2915,7 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
             var fromBuilder = new StringBuilder();
             var ns = DbSchemaName(dbType);
             fromBuilder.Append($"{ns}.CONTENT c INNER JOIN {ns}.SITE s ON c.SITE_ID = s.SITE_ID");
-            fromBuilder.Append($" INNER JOIN {ns}.{EscapeEntityName(dbType,"USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
+            fromBuilder.Append($" INNER JOIN {ns}.{Escape(dbType,"USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
             fromBuilder.Append($" LEFT JOIN {ns}.CONTENT_GROUP cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
             if (useSelection)
             {
@@ -3029,8 +3021,8 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
             }
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append($"{DbSchemaName(dbType)}.SITE s INNER JOIN {DbSchemaName(dbType)}.{EscapeEntityName(dbType, "USERS")} u ON s.LAST_MODIFIED_BY = u.USER_ID");
-            fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}.{EscapeEntityName(dbType, "USERS")} u2 ON s.LOCKED_BY = u2.USER_ID");
+            fromBuilder.Append($"{DbSchemaName(dbType)}.SITE s INNER JOIN {DbSchemaName(dbType)}.{Escape(dbType, "USERS")} u ON s.LAST_MODIFIED_BY = u.USER_ID");
+            fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}.{Escape(dbType, "USERS")} u2 ON s.LOCKED_BY = u2.USER_ID");
 
             if (useSelection)
             {
@@ -3430,54 +3422,6 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
                 cmd.Parameters.AddWithValue("@item_id", articleId);
                 cmd.Parameters.AddWithValue("@new_data", newValue);
                 cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static IEnumerable<DataRow> RemovingActions_GetContentsItemInfo(int? siteId, int? contentId, DbConnection connection)
-        {
-            const string query =
-                "select S.SITE_ID, S.SITE_NAME, C.CONTENT_ID, C.CONTENT_NAME, ISNULL(I.[ITEMS_COUNT], 0) AS ITEMS_COUNT from " +
-                "(select  content_id, count(CONTENT_ITEM_ID) [ITEMS_COUNT] from content_item group by content_id) I " +
-                "RIGHT JOIN CONTENT C ON C.CONTENT_ID = I.CONTENT_ID " +
-                "JOIN [SITE] S ON S.SITE_ID = C.SITE_ID " +
-                "where (c.content_id = @content_id OR @content_id is null) " +
-                "and (s.site_id = @site_id OR @site_id is null)";
-
-            using (var cmd = DbCommandFactory.Create(query, connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@content_id", SqlDbType.Int) { Value = contentId.HasValue ? (object)contentId.Value : DBNull.Value });
-                cmd.Parameters.Add(new SqlParameter("@site_id", SqlDbType.Int) { Value = siteId.HasValue ? (object)siteId.Value : DBNull.Value });
-
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        public static int RemovingActions_RemoveContentItems(int contentId, int itemsToDelete, DbConnection connection)
-        {
-            const string query = "select 1 as A into #disable_td_delete_item_o2m_nullify; " +
-                "delete FROM CONTENT_ITEM WHERE CONTENT_ITEM_ID in (" +
-                "   select top(@deleted_count) CONTENT_ITEM_ID from CONTENT_ITEM where CONTENT_ID = @content_id order by CONTENT_ITEM_ID " +
-                ")";
-
-            using (var cmd = DbCommandFactory.Create(query, connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@content_id", contentId);
-                cmd.Parameters.AddWithValue("@deleted_count", itemsToDelete);
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static int RemovingActions_ClearO2MRelations(int contentId, DbConnection connection)
-        {
-            using (var cmd = DbCommandFactory.Create("qp_clear_relations", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@parent_id", contentId);
-                return cmd.ExecuteNonQuery();
             }
         }
 
@@ -4601,19 +4545,19 @@ WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             var query = $@"
-SELECT cmd.{EscapeEntityName(dbType, "ID")},
-cmd.{EscapeEntityName(dbType, "NAME")},
-cmd.{EscapeEntityName(dbType, "ALIAS")},
-cmd.{EscapeEntityName(dbType, "ROW_ORDER")},
-cmd.{EscapeEntityName(dbType, "TOOLBAR_IN_ROW_ORDER")},
-cmd.{EscapeEntityName(dbType, "GROUP_IN_TOOLBAR_ORDER")},
-cmd.{EscapeEntityName(dbType, "COMMAND_IN_GROUP_ORDER")},
-bnd.{EscapeEntityName(dbType, "ON")},
-cmd.{EscapeEntityName(dbType, "PLUGIN_ID")},
-cmd.{EscapeEntityName(dbType, "CREATED")},
-cmd.{EscapeEntityName(dbType, "MODIFIED")},
-cmd.{EscapeEntityName(dbType, "LAST_MODIFIED_BY")}
-from {DbSchemaName(dbType)}.VE_COMMAND_SITE_BIND bnd INNER JOIN {DbSchemaName(dbType)}.VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.SITE_ID = {siteId} ORDER BY cmd.{EscapeEntityName(dbType, "ID")}";
+SELECT cmd.{Escape(dbType, "ID")},
+cmd.{Escape(dbType, "NAME")},
+cmd.{Escape(dbType, "ALIAS")},
+cmd.{Escape(dbType, "ROW_ORDER")},
+cmd.{Escape(dbType, "TOOLBAR_IN_ROW_ORDER")},
+cmd.{Escape(dbType, "GROUP_IN_TOOLBAR_ORDER")},
+cmd.{Escape(dbType, "COMMAND_IN_GROUP_ORDER")},
+bnd.{Escape(dbType, "ON")},
+cmd.{Escape(dbType, "PLUGIN_ID")},
+cmd.{Escape(dbType, "CREATED")},
+cmd.{Escape(dbType, "MODIFIED")},
+cmd.{Escape(dbType, "LAST_MODIFIED_BY")}
+from {DbSchemaName(dbType)}.VE_COMMAND_SITE_BIND bnd INNER JOIN {DbSchemaName(dbType)}.VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.SITE_ID = {siteId} ORDER BY cmd.{Escape(dbType, "ID")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4627,19 +4571,19 @@ from {DbSchemaName(dbType)}.VE_COMMAND_SITE_BIND bnd INNER JOIN {DbSchemaName(db
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             var query = $@"
-SELECT cmd.{EscapeEntityName(dbType, "ID")},
-cmd.{EscapeEntityName(dbType, "NAME")},
-cmd.{EscapeEntityName(dbType, "ALIAS")},
-cmd.{EscapeEntityName(dbType, "ROW_ORDER")},
-cmd.{EscapeEntityName(dbType, "TOOLBAR_IN_ROW_ORDER")},
-cmd.{EscapeEntityName(dbType, "GROUP_IN_TOOLBAR_ORDER")},
-cmd.{EscapeEntityName(dbType, "COMMAND_IN_GROUP_ORDER")},
-bnd.{EscapeEntityName(dbType, "ON")},
-cmd.{EscapeEntityName(dbType, "PLUGIN_ID")},
-cmd.{EscapeEntityName(dbType, "CREATED")},
-cmd.{EscapeEntityName(dbType, "MODIFIED")},
-cmd.{EscapeEntityName(dbType, "LAST_MODIFIED_BY")}
-from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(dbType)}.VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.FIELD_ID = {fieldId} ORDER BY cmd.{EscapeEntityName(dbType, "ID")}";
+SELECT cmd.{Escape(dbType, "ID")},
+cmd.{Escape(dbType, "NAME")},
+cmd.{Escape(dbType, "ALIAS")},
+cmd.{Escape(dbType, "ROW_ORDER")},
+cmd.{Escape(dbType, "TOOLBAR_IN_ROW_ORDER")},
+cmd.{Escape(dbType, "GROUP_IN_TOOLBAR_ORDER")},
+cmd.{Escape(dbType, "COMMAND_IN_GROUP_ORDER")},
+bnd.{Escape(dbType, "ON")},
+cmd.{Escape(dbType, "PLUGIN_ID")},
+cmd.{Escape(dbType, "CREATED")},
+cmd.{Escape(dbType, "MODIFIED")},
+cmd.{Escape(dbType, "LAST_MODIFIED_BY")}
+from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(dbType)}.VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.FIELD_ID = {fieldId} ORDER BY cmd.{Escape(dbType, "ID")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4865,7 +4809,7 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
         public static IEnumerable<DataRow> GetVisualEditorStylesPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var escapedOrderColumnName = EscapeEntityName(dbType, "ORDER");
+            var escapedOrderColumnName = Escape(dbType, "ORDER");
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.VisualEditorStyle,
@@ -4884,22 +4828,22 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             var query = $@"SELECT
-s.{EscapeEntityName(dbType, "ID")},
+s.{Escape(dbType, "ID")},
 s.NAME,
 s.DESCRIPTION,
 s.TAG,
-s.{EscapeEntityName(dbType, "ORDER")},
+s.{Escape(dbType, "ORDER")},
 s.OVERRIDES_TAG,
 s.IS_FORMAT,
 s.IS_SYSTEM,
-bnd.{EscapeEntityName(dbType, "ON")},
+bnd.{Escape(dbType, "ON")},
 s.ATTRIBUTES,
 s.STYLES,
 s.CREATED,
 s.MODIFIED,
 s.LAST_MODIFIED_BY
 from VE_STYLE_SITE_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where bnd.SITE_ID = {siteId}
-ORDER BY {EscapeEntityName(dbType, "ORDER")}";
+ORDER BY {Escape(dbType, "ORDER")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4913,21 +4857,21 @@ ORDER BY {EscapeEntityName(dbType, "ORDER")}";
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             var query = $@"
-SELECT s.{EscapeEntityName(dbType, "ID")},
+SELECT s.{Escape(dbType, "ID")},
 s.NAME,
 s.DESCRIPTION,
 s.TAG,
-s.{EscapeEntityName(dbType, "ORDER")},
+s.{Escape(dbType, "ORDER")},
 s.OVERRIDES_TAG,
 s.IS_FORMAT,
 s.IS_SYSTEM,
-bnd.{EscapeEntityName(dbType, "ON")},
+bnd.{Escape(dbType, "ON")},
 s.ATTRIBUTES,
 s.STYLES,
 s.CREATED,
 s.MODIFIED,
 s.LAST_MODIFIED_BY
-from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where bnd.FIELD_ID = {fieldId} ORDER BY {EscapeEntityName(dbType, "ORDER")}";
+from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where bnd.FIELD_ID = {fieldId} ORDER BY {Escape(dbType, "ORDER")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4972,10 +4916,10 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.Workflow,
-                $"w.WORKFLOW_ID AS Id, w.WORKFLOW_NAME as {EscapeEntityName(dbType, "Name")}, w.DESCRIPTION as Description, w.MODIFIED as Modified, w.CREATED as Created," +
+                $"w.WORKFLOW_ID AS Id, w.WORKFLOW_NAME as {Escape(dbType, "Name")}, w.DESCRIPTION as Description, w.MODIFIED as Modified, w.CREATED as Created," +
                 "w.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
                 "WORKFLOW w inner join users u on w.LAST_MODIFIED_BY = u.user_id",
-                !string.IsNullOrEmpty(orderBy) ? orderBy : EscapeEntityName(dbType, "Name"),
+                !string.IsNullOrEmpty(orderBy) ? orderBy : Escape(dbType, "Name"),
                 "w.SITE_ID = " + siteId,
                 startRow,
                 pageSize,
@@ -4989,7 +4933,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.StatusType,
-                $"s.STATUS_TYPE_ID AS Id, s.STATUS_TYPE_NAME as {EscapeEntityName(dbType, "Name")}, s.DESCRIPTION as Description, s.WEIGHT as Weight, s.MODIFIED as Modified, s.CREATED as Created," +
+                $"s.STATUS_TYPE_ID AS Id, s.STATUS_TYPE_NAME as {Escape(dbType, "Name")}, s.DESCRIPTION as Description, s.WEIGHT as Weight, s.MODIFIED as Modified, s.CREATED as Created," +
                 " s.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
                 "STATUS_TYPE s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "Weight",
@@ -5131,7 +5075,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
 
-            var query = $"SELECT COMMAND_ID, {EscapeEntityName(dbType, "ON")} FROM VE_COMMAND_SITE_BIND WHERE SITE_ID = {siteId}";
+            var query = $"SELECT COMMAND_ID, {Escape(dbType, "ON")} FROM VE_COMMAND_SITE_BIND WHERE SITE_ID = {siteId}";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -5145,7 +5089,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
         public static IEnumerable<DataRow> GetCommandBindingByFieldId(DbConnection sqlConnection, int fieldId)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var query = $"SELECT COMMAND_ID, {EscapeEntityName(dbType, "ON")} FROM VE_COMMAND_FIELD_BIND WHERE FIELD_ID = {fieldId}";
+            var query = $"SELECT COMMAND_ID, {Escape(dbType, "ON")} FROM VE_COMMAND_FIELD_BIND WHERE FIELD_ID = {fieldId}";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -5159,7 +5103,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
         public static IEnumerable<DataRow> GetStyleBindingByFieldId(DbConnection sqlConnection, int fieldId)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var query = $"SELECT STYLE_ID, {EscapeEntityName(dbType, "ON")} FROM VE_STYLE_FIELD_BIND WHERE FIELD_ID = {fieldId}";
+            var query = $"SELECT STYLE_ID, {Escape(dbType, "ON")} FROM VE_STYLE_FIELD_BIND WHERE FIELD_ID = {fieldId}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5172,7 +5116,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
         public static IEnumerable<DataRow> GetStyleBindingBySiteId(DbConnection sqlConnection, int siteId)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var query = $"SELECT STYLE_ID, {EscapeEntityName(dbType, "ON")} FROM VE_STYLE_SITE_BIND WHERE SITE_ID = {siteId}";
+            var query = $"SELECT STYLE_ID, {Escape(dbType, "ON")} FROM VE_STYLE_SITE_BIND WHERE SITE_ID = {siteId}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5512,7 +5456,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
                 "p.PAGE_TEMPLATE_ID AS Id, p.is_system AS IsSystem, p.LOCKED_BY AS LockedBy, p.TEMPLATE_NAME AS Name, p.TEMPLATE_FOLDER AS Folder, p.DESCRIPTION AS Description, " +
                 $"p.CREATED AS Created, p.MODIFIED AS Modified, p.LAST_MODIFIED_BY AS LastModifiedBy, u.LOGIN AS LastModifiedByLogin, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName",
                 "PAGE_TEMPLATE as p inner join users u on p.LAST_MODIFIED_BY = u.user_id left outer join users u2 on p.LOCKED_BY = u2.user_id",
-                !string.IsNullOrEmpty(orderBy) ? orderBy : $"{EscapeEntityName(dbType, "Name")} ASC",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : $"{Escape(dbType, "Name")} ASC",
                 "p.SITE_ID = " + siteId,
                 startRow,
                 pageSize,
@@ -5529,7 +5473,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
                 "p.PAGE_ID AS Id, p.GENERATE_TRACE AS GenerateTrace, p.LOCKED_BY AS LockedBy, p.REASSEMBLE AS Reassemble, p.PAGE_NAME AS Name, p.DESCRIPTION AS Description, " +
                 "p.PAGE_FILENAME as FileName, p.page_folder as Folder, p.CREATED AS Created, p.MODIFIED AS Modified, p.LAST_MODIFIED_BY AS LastModifiedBy, u.LOGIN AS LastModifiedByLogin, " +
                 $"p.ASSEMBLED as Assembled, p.LAST_ASSEMBLED_BY as LastAssembledBy, uu.LOGIN as LastAssembledByLogin, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName, t.TEMPLATE_NAME as TemplateName",
-                $"{DbSchemaName(dbType)}.{EscapeEntityName(dbType, "PAGE")} as p inner join users u on p.LAST_MODIFIED_BY = u.user_id INNER JOIN page_template as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID left outer join users uu on p.LAST_ASSEMBLED_BY " +
+                $"{DbSchemaName(dbType)}.{Escape(dbType, "PAGE")} as p inner join users u on p.LAST_MODIFIED_BY = u.user_id INNER JOIN page_template as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID left outer join users uu on p.LAST_ASSEMBLED_BY " +
                 " = uu.user_id left outer join users u2 on p.LAST_ASSEMBLED_BY = u2.user_id",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "Name Asc",
                 "p.PAGE_TEMPLATE_ID = " + templateId,
@@ -6886,7 +6830,7 @@ order by ActionDate desc
 
         public static void ClearFieldTreeOrder(DbConnection sqlConnection, int id)
         {
-            var query = $@"UPDATE dbo.[CONTENT_ATTRIBUTE] set [TREE_ORDER_FIELD] = null where  [TREE_ORDER_FIELD] = '{id}'";
+            var query = $@"UPDATE CONTENT_ATTRIBUTE set TREE_ORDER_FIELD = null where TREE_ORDER_FIELD = {id}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -6896,9 +6840,8 @@ order by ActionDate desc
 
         public static void MoveFieldOrders(DbConnection sqlConnection, int contentId, int newOrder)
         {
-            var query = $@"UPDATE [CONTENT_ATTRIBUTE]
-                                         SET [ATTRIBUTE_ORDER] = [ATTRIBUTE_ORDER] + 1
-                                         WHERE CONTENT_ID = {contentId} and [ATTRIBUTE_ORDER] >= {newOrder}";
+            var query = $@"UPDATE CONTENT_ATTRIBUTE SET ATTRIBUTE_ORDER = ATTRIBUTE_ORDER + 1
+                WHERE CONTENT_ID = {contentId} and ATTRIBUTE_ORDER >= {newOrder}";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
@@ -217,7 +218,14 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
         void IFieldRepository.Delete(int id)
         {
-            DefaultRepository.Delete<FieldDAL>(id);
+            using (var scope = new QPConnectionScope())
+            {
+                if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                {
+                    Common.DropColumn(QPContext.EFContext, scope.DbConnection, id);
+                }
+                DefaultRepository.Delete<FieldDAL>(id);
+            }
         }
 
         void IFieldRepository.ClearTreeOrder(int id)
@@ -232,28 +240,37 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
         {
             try
             {
-                if (explicitOrder)
+                using (var scope = new QPConnectionScope())
                 {
-                    ChangeMaxOrderTriggerState(false);
-                    item.ReorderContentFields();
+                    if (explicitOrder)
+                    {
+                        ChangeMaxOrderTriggerState(false);
+                        item.ReorderContentFields();
+                    }
+
+                    var constraint = item.Constraint;
+                    var dynamicImage = item.DynamicImage;
+
+                    DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Field, item);
+                    var newItem = DefaultRepository.Save<Field, FieldDAL>(item);
+                    if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                    {
+                        Common.AddColumn(QPContext.EFContext, scope.DbConnection, newItem.Id);
+                    }
+
+                    DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Field);
+
+                    if (explicitOrder)
+                    {
+                        UpdateFieldOrder(newItem.Id, item.Order);
+                    }
+
+                    SaveConstraint(constraint, newItem);
+                    SaveDynamicImage(dynamicImage, newItem);
+
+                    return GetById(newItem.Id);
                 }
 
-                var constraint = item.Constraint;
-                var dynamicImage = item.DynamicImage;
-
-                DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Field, item);
-                var newItem = DefaultRepository.Save<Field, FieldDAL>(item);
-                DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Field);
-
-                if (explicitOrder)
-                {
-                    UpdateFieldOrder(newItem.Id, item.Order);
-                }
-
-                SaveConstraint(constraint, newItem);
-                SaveDynamicImage(dynamicImage, newItem);
-
-                return GetById(newItem.Id);
             }
             finally
             {
