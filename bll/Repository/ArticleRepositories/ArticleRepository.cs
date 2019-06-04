@@ -546,14 +546,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (var scope = new QPConnectionScope())
             {
+                var dbType = QPContext.DatabaseType;
                 var useSecurity = !QPContext.IsAdmin && ContentRepository.IsArticlePermissionsAllowed(treeField.ContentId);
-                var extraSelect = $", c.{treeField.Name} AS parentId" +
-                    ", cil.locked_by" +
-                    ", lu.first_name + ' ' + lu.last_name AS locker_name" +
-                    ", CAST(CASE WHEN (" +
-                    $"SELECT COUNT(content_item_id) FROM content_{treeField.ContentId}_united cnt " +
-                    $"WHERE [{treeField.Name}] = c.content_item_id AND {extraFilter}" +
-                    ") > 0 THEN 1 ELSE 0 END AS bit) AS has_children ";
+                var cntExpr = $" CASE WHEN (SELECT COUNT(content_item_id) FROM content_{treeField.ContentId}_united cnt WHERE {SqlQuerySyntaxHelper.EscapeEntityName(dbType, treeField.Name)} = c.content_item_id AND {extraFilter}) > 0 THEN 1 ELSE 0 END";
+                var extraSelect = $@", c.{treeField.Name} AS parentId,
+cil.locked_by,
+{SqlQuerySyntaxHelper.ConcatStrValues(dbType, "lu.first_name", "' '", "lu.last_name")} AS locker_name,
+{SqlQuerySyntaxHelper.CastToBool(dbType, cntExpr)} AS has_children ";
 
                 var fields = treeField.TreeFieldTitleCount <= 1
                     ? null
