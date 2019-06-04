@@ -181,7 +181,7 @@ namespace Quantumart.QP8.DAL
             switch (databaseType)
             {
                 case DatabaseType.SqlServer:
-                    return $"OUTPUT {expression}";
+                    return $"OUTPUT inserted.{expression}";
                 case DatabaseType.Postgres:
                     return $"returning {expression}";
                 default:

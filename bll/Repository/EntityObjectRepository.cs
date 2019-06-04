@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
@@ -458,12 +459,13 @@ namespace Quantumart.QP8.BLL.Repository
                     level++;
                 }
 
-                result.ForEach(x =>
+                result.Where(x => !string.IsNullOrWhiteSpace(x.Item2)).ForEach(x =>
                 {
-                    var parentFolder = result.FirstOrDefault(y => y.Item1.Id == x.Item1.ParentId && !string.IsNullOrWhiteSpace(y.Item2));
+
+                    var parentFolder = result.FirstOrDefault(y => y.Item1.Id == x.Item1.ParentId);
                     if (parentFolder != null)
                     {
-                        x.Item1.ActionCode = parentFolder.Item2;
+                        parentFolder.Item1.ActionCode = x.Item2;
                     }
                 });
 

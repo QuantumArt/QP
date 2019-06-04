@@ -441,15 +441,25 @@ namespace Quantumart.QP8.DAL
         public static DateTime? Lock(DbConnection connection, string source, string idField, int id, int? userId)
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var lockedValue = (userId.HasValue ? SqlQuerySyntaxHelper.Now(databaseType) : "NULL");
             var query = $@"
+                {(databaseType == DatabaseType.SqlServer
+                ? $@"
+                    declare @locked datetime
+                    set @locked = {lockedValue}
+                    "
+                : string.Empty)}
+
                 UPDATE {source}
                 SET
                     locked_by = {SqlQuerySyntaxHelper.NullableDbValue(databaseType, userId)},
-                    locked = {(userId.HasValue ? SqlQuerySyntaxHelper.Now(databaseType) : "NULL")},
+                    locked = {(databaseType == DatabaseType.Postgres ? lockedValue : "@locked")},
                     permanent_lock = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)}
                 WHERE
                     {idField} = @id
-                {SqlQuerySyntaxHelper.Returning(databaseType, "locked")}
+                {(databaseType == DatabaseType.Postgres
+                    ? SqlQuerySyntaxHelper.Returning(databaseType, "locked")
+                    : "select @locked")}
                 ";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
