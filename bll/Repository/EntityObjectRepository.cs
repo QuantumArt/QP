@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
@@ -288,7 +290,42 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetParentEntityIdsForTree(scope.DbConnection, entityTypeCode, ids);
+
+                if (entityTypeCode == EntityTypeCode.Article)
+                {
+                    var contentId = QPContext.EFContext.ArticleSet.FirstOrDefault(x => ids.Contains((int)x.Id))?.ContentId;
+                    if (contentId == null) return new int[0];
+                    var selfRelationFieldId = QPContext.EFContext.FieldSet.FirstOrDefault(x => x.ContentId == contentId && x.UseForTree)?.Id;
+                    if (selfRelationFieldId == null)
+                    {
+                        var relationFieldTypeId = QPContext.EFContext.FieldTypeSet.FirstOrDefault(x => x.InputType == "relation").Id;
+                        var fieldIds = QPContext.EFContext.FieldSet.Where(x => x.ContentId == contentId).Select(x => x.Id).ToList();
+
+                        var field = QPContext
+                            .EFContext
+                            .FieldSet
+                            // .Include(x => x.RelationField)
+                            .Where(x => x.ContentId == contentId && x.TypeId == relationFieldTypeId && x.RelationId != null && fieldIds.Contains(x.RelationId.Value))
+                            .OrderBy(x => x.Id)
+                            .FirstOrDefault();
+
+                        selfRelationFieldId = field?.Id;
+                    }
+
+                    if (selfRelationFieldId == null) return new int[0];
+
+                    var selfRelationFieldName = FieldRepository.GetById((int)selfRelationFieldId.Value)?.Name;
+                    return Common.GetParentEntityIdsForTree(scope.DbConnection, entityTypeCode, ids, contentId, selfRelationFieldName, null, null, null);
+                }
+                else
+                {
+                    var entity = EntityTypeRepository.GetByCode(entityTypeCode);
+                    if (string.IsNullOrWhiteSpace(entity?.Source) || string.IsNullOrWhiteSpace(entity?.IdField) || string.IsNullOrWhiteSpace(entity?.RecurringIdField)) return new int[0];
+
+                    return Common.GetParentEntityIdsForTree(scope.DbConnection, entityTypeCode, ids, null, null, entity.Source, entity.IdField, entity.RecurringIdField);
+
+                }
+
             }
         }
 

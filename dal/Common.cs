@@ -945,14 +945,43 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             return parentEntityId;
         }
 
-        public static int[] GetParentEntityIdsForTree(DbConnection connection, string entityTypeCode, int[] ids)
+        public static int[] GetParentEntityIdsForTree(
+            DbConnection connection,
+            string entityTypeCode,
+            int[] ids,
+            decimal? contentId,
+            string selfRelationFieldName,
+            string entitySource = null,
+            string entityIdField = null,
+            string entityRecurringIdField = null)
         {
             var result = new List<int>();
-            using (var cmd = DbCommandFactory.Create("qp_get_parent_entity_ids_for_tree", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+
+            string query;
+            if (entityTypeCode == EntityTypeCode.Article)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entityIds", string.Join(",", ids));
+                query = $@"
+SELECT DISTINCT {EscapeEntityName(dbType, selfRelationFieldName)}
+FROM content_{contentId}_united
+WHERE {EscapeEntityName(dbType, selfRelationFieldName)} is not null and content_item_id in ({string.Join(",", ids)})
+";
+            }
+            else
+            {
+                query = $@"
+SELECT DISTINCT {EscapeEntityName(dbType, entityRecurringIdField)}
+FROM {entitySource}
+WHERE {EscapeEntityName(dbType, entityIdField)} in ({string.Join(",", ids)}) AND {EscapeEntityName(dbType, entityRecurringIdField)} is not null
+";
+
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                // cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
+                // cmd.Parameters.AddWithValue("@entityIds", string.Join(",", ids));
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
