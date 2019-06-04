@@ -662,11 +662,9 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
 
                 using (var cmd = DbCommandFactory.Create(sql, connection))
                 {
+
                     cmd.Parameters.AddWithValue("@id", id);
-                    // cmd.Parameters.Add(new SqlParameter("@id", SqlDbType.Decimal)
-                    // {
-                    //     Value = id == null ? DBNull.Value : (object)id.Value
-                    // });
+
 
                     var dt = new DataTable();
                     DataAdapterFactory.Create(cmd).Fill(dt);

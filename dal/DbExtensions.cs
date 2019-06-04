@@ -15,7 +15,7 @@ namespace Quantumart.QP8.DAL
                 case SqlParameterCollection sqlParameterCollection:
                     return sqlParameterCollection.AddWithValue(parameterName, value);
                 case NpgsqlParameterCollection npgsqlParameterCollection:
-                    return npgsqlParameterCollection.AddWithValue(parameterName, value);
+                    return npgsqlParameterCollection.AddWithValue(parameterName, value ?? DBNull.Value);
                 default:
                     throw new ApplicationException("Unknown db type");
             }
