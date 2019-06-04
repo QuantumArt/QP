@@ -222,6 +222,8 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             {
                 if (QPContext.DatabaseType != DatabaseType.SqlServer)
                 {
+                    var field = GetById(id);
+                    field.ReorderContentFields(true);
                     Common.DropColumn(QPContext.EFContext, scope.DbConnection, id);
                 }
                 DefaultRepository.Delete<FieldDAL>(id);

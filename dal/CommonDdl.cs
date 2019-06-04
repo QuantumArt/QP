@@ -30,8 +30,10 @@ namespace Quantumart.QP8.DAL
 
             var sql = $"alter table {{0}} add {fieldDef}";
 
+            DropUnitedView(field.ContentId, cnn);
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
+            CreateUnitedView(field.ContentId, cnn);
 
             if (field.IndexFlag == 1)
             {
@@ -91,8 +93,10 @@ namespace Quantumart.QP8.DAL
                 DropIndex(cnn, asyncTableName, field.Name);
             }
 
+            DropUnitedView(field.ContentId, cnn);
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
+            CreateUnitedView(field.ContentId, cnn);
 
         }
 
@@ -209,6 +213,39 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static void DropUnitedView(decimal contentId, DbConnection connection)
+        {
+            DropView($"content_{contentId}_united", connection);
+        }
 
+        public static void CreateUnitedView(decimal contentId, DbConnection connection)
+        {
+            string sql = $@"
+                create view content_{contentId}_united as
+	            select c1.* from content_{contentId} c1
+	            left join content_{contentId}_async c2 on c1.content_item_id = c2.content_item_id
+	            where c2.content_item_id is null
+	            union all
+	            select * from content_{contentId}_async;
+            ";
+
+            ExecuteSql(connection, sql);
+        }
+
+        public static void DropView(string viewName, DbConnection connection)
+        {
+            var sql = "";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            if (dbType == DatabaseType.SqlServer)
+            {
+                sql = $"exec qp_drop_existing '{viewName}', 'IsView'";
+            }
+            else
+            {
+                sql = $"DROP VIEW IF EXISTS {viewName}";
+            }
+
+            ExecuteSql(connection, sql);
+        }
     }
 }

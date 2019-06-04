@@ -2757,11 +2757,17 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Обновляет порядок полей контента
         /// </summary>
-        internal void ReorderContentFields()
+        internal void ReorderContentFields(bool forDelete = false)
         {
             if (Content.Fields.Any())
             {
-                if (IsNew)
+                if (forDelete)
+                {
+                    var lastOrder = Content.GetMaxFieldsOrder();
+                    _fieldRepository.UpdateContentFieldsOrders(ContentId, Order, lastOrder);
+
+                }
+                else if (IsNew)
                 {
                     var lastOrder = Content.GetMaxFieldsOrder();
                     if (Order != lastOrder)

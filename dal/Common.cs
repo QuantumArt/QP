@@ -1203,22 +1203,22 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             if (currentOrder != newOrder)
             {
-                var sqlBuilder = new StringBuilder("update [CONTENT_ATTRIBUTE] ");
+                var sqlBuilder = new StringBuilder("update CONTENT_ATTRIBUTE ");
                 if (currentOrder <= 0)
                 {
                     sqlBuilder.Append(" set ATTRIBUTE_ORDER = ATTRIBUTE_ORDER + 1");
-                    sqlBuilder.AppendFormat(" where [ATTRIBUTE_ORDER] > {0}", newOrder);
+                    sqlBuilder.AppendFormat(" where ATTRIBUTE_ORDER > {0}", newOrder);
                 }
                 else if (currentOrder < newOrder)
                 {
                     sqlBuilder.Append(" set ATTRIBUTE_ORDER = ATTRIBUTE_ORDER - 1 ");
-                    sqlBuilder.AppendFormat(" where [ATTRIBUTE_ORDER] > {0} and [ATTRIBUTE_ORDER] <= {1}", currentOrder,
+                    sqlBuilder.AppendFormat(" where ATTRIBUTE_ORDER > {0} and ATTRIBUTE_ORDER <= {1}", currentOrder,
                         newOrder);
                 }
                 else if (currentOrder > newOrder)
                 {
                     sqlBuilder.Append(" set ATTRIBUTE_ORDER = ATTRIBUTE_ORDER + 1");
-                    sqlBuilder.AppendFormat(" where [ATTRIBUTE_ORDER] < {0} and [ATTRIBUTE_ORDER] > {1}", currentOrder,
+                    sqlBuilder.AppendFormat(" where ATTRIBUTE_ORDER < {0} and ATTRIBUTE_ORDER > {1}", currentOrder,
                         newOrder);
                 }
 
