@@ -28,9 +28,11 @@ namespace Quantumart.QP8.DAL
 
         private static string IdList(DatabaseType databaseType, string name, string alias = "i") => SqlQuerySyntaxHelper.IdList(databaseType, name, alias);
 
+        private static string Escape(DatabaseType databaseType, string entityName) => SqlQuerySyntaxHelper.EscapeEntityName(databaseType, entityName);
 
-        private static string EscapeEntityName(DatabaseType databaseType, string entityName) => SqlQuerySyntaxHelper.EscapeEntityName(databaseType, entityName);
+        private static string Top(DatabaseType databaseType, int top) => SqlQuerySyntaxHelper.Top(databaseType, top.ToString());
 
+        private static string Limit(DatabaseType databaseType, int top) => SqlQuerySyntaxHelper.Limit(databaseType, top.ToString());
 
         public static UserDAL Authenticate(DbConnection connection, string login, string password, bool useNtLogin, bool checkAdminAccess)
         {
@@ -353,6 +355,8 @@ WHERE content_item_id = {contentItemId}
             }
 
         }
+
+
 
 
 

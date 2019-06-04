@@ -94,7 +94,7 @@ namespace Quantumart.QP8.BLL.Repository
             where TDal : class
         {
             var entities = QPContext.EFContext;
-            var result = entities.Set<TDal>().Find(id);
+            var result = entities.Set<TDal>().Find((decimal)id);
             if (result != null)
             {
                 entities.Entry( result).State = EntityState.Deleted;

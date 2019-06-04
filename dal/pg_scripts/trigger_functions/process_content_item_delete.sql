@@ -40,9 +40,7 @@ AS $BODY$
             		inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID
             		where ca2.CONTENT_ID = cid;
 									
-				IF o2m_ids is not null AND NOT EXISTS(
-					SELECT * FROM information_schema.tables where table_name = 'disable_td_delete_item_o2m_nullify'	
-				) THEN
+				IF o2m_ids is not null THEN
 					char_ids := array_agg(unnest::text) from unnest(ids);
 									
 	                UPDATE content_attribute SET default_value = null

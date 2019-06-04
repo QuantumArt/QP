@@ -261,6 +261,32 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static string Top(DatabaseType databaseType, string top)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"TOP ({top})";
+                case DatabaseType.Postgres:
+                    return String.Empty;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static string Limit(DatabaseType databaseType, string limit)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return String.Empty;
+                case DatabaseType.Postgres:
+                    return $"LIMIT {limit}";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
 
     }
 }
