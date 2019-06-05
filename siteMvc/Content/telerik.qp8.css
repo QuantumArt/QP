@@ -681,7 +681,8 @@ a.t-button.t-state-disabled:hover,
   padding: 8px 0;
 }
 
-.qpGrid .k-state-selected td .html {
+.qpGrid .k-state-selected td .html,
+.qpGrid .k-state-selected td .js {
   color: white;
 }
 

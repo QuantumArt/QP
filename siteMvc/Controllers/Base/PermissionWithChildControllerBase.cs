@@ -14,7 +14,6 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers.Base
 {
@@ -42,7 +41,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             int? groupId,
             int page,
             int pageSize,
-            string orderBy = "")
+            string orderBy)
         {
             var serviceResult = ChildContentService.List(
                 parentId,
