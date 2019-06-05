@@ -559,6 +559,29 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
+        public static Dictionary<int, string> GetDefaultLinkedArticles(DbConnection connection, IEnumerable<int> linkIds)
+        {
+            if (!linkIds.Any())
+            {
+                return new Dictionary<int, string>();
+            }
+            else
+            {
+                var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var query = $@"
+                    select article_id, link_id
+                    from field_article_bind f inner join content_attribute ca on ca.attribute_id = f.field_id
+                    and ca.link_id in (select id from {IdList(databaseType, "@linkIds")}) ";
+                using (var cmd = DbCommandFactory.Create(query, connection))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.Add(GetIdsDatatableParam("@linkIds", linkIds, databaseType));
+                    var dt = new DataTable();
+                    DataAdapterFactory.Create(cmd).Fill(dt);
+                    return IdCommaListDictionary(dt, "link_id", "article_id", false, linkIds);
+                }
+            }
+        }
 
         public static Dictionary<int, string> GetLinkedArticles(DbConnection connection, IEnumerable<int> linkIds, int id, bool isLive, bool excludeArchive = false)
         {
@@ -574,7 +597,7 @@ namespace Quantumart.QP8.DAL
                 var query = $@"
 select linked_item_id, item_id, link_id
 from item_link{suffix} {WithNoLock(databaseType)} {isArchive}
-where item_id = @id and link_id in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@linkIds) i(id)" : "@linkIds")}) ";
+where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkIds")}) ";
                 using (var cmd = DbCommandFactory.Create(query, connection))
                 {
                     cmd.CommandType = CommandType.Text;
@@ -6891,10 +6914,10 @@ order by ActionDate desc
         public static void SetFieldM2MDefValue(DbConnection sqlConnection, int[] defaultArticles, int fieldId)
         {
             var sb = new StringBuilder();
-            sb.AppendFormatLine(" DELETE FROM FIELD_ARTICLE_BIND where FIELD_ID = {0} ", fieldId);
+            sb.AppendLine($@"DELETE FROM FIELD_ARTICLE_BIND where FIELD_ID = {fieldId};");
             foreach (var artId in defaultArticles)
             {
-                sb.AppendFormatLine(" INSERT INTO FIELD_ARTICLE_BIND([ARTICLE_ID],[FIELD_ID]) VALUES ({0},{1}) ", artId, fieldId);
+                sb.AppendLine($@"INSERT INTO FIELD_ARTICLE_BIND(ARTICLE_ID,FIELD_ID) VALUES ({artId},{fieldId});");
             }
 
             using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))

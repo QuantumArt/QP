@@ -316,5 +316,61 @@ namespace Quantumart.QP8.DAL
 
             ExecuteSql(connection, sql);
         }
+
+        public static void CreateContentModification(DbConnection connection, int id)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@"INSERT INTO CONTENT_MODIFICATION SELECT {id}, {Now(dbType)}, {Now(dbType)}";
+            ExecuteSql(connection, sql);
+
+        }
+
+        public static void CreateLinkTable(DbConnection connection, ContentToContentDAL item)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            if (dbType != DatabaseType.SqlServer)
+            {
+                var tableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}";
+                var revTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_rev";
+                var asyncTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async";
+                var asyncRevTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async_rev";
+                var sql = $@"CREATE TABLE {{0}} (id int NOT NULL, linked_id int NOT NULL, PRIMARY KEY (id, linked_id))";
+
+                ExecuteSql(connection, String.Format(sql, tableName));
+                ExecuteSql(connection, String.Format(sql, revTableName));
+                ExecuteSql(connection, String.Format(sql, asyncTableName));
+                ExecuteSql(connection, String.Format(sql, asyncRevTableName));
+            }
+        }
+
+        public static void DropLinkTable(DbConnection connection, ContentToContentDAL item)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var tableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}";
+            var revTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_rev";
+            var asyncTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async";
+            var asyncRevTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async_rev";
+            var sql = $@"DROP TABLE {{0}}";
+
+            ExecuteSql(connection, String.Format(sql, tableName));
+            ExecuteSql(connection, String.Format(sql, revTableName));
+            ExecuteSql(connection, String.Format(sql, asyncTableName));
+            ExecuteSql(connection, String.Format(sql, asyncRevTableName));
+        }
+
+        public static void CreateLinkView(DbConnection connection, ContentToContentDAL item)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = (dbType == DatabaseType.SqlServer) ? $@"exec qp_build_link_view {item.LinkId}" : $@"call qp_link_view_create({item.LinkId});";
+            ExecuteSql(connection, sql);
+        }
+
+        public static void DropLinkView(DbConnection connection, ContentToContentDAL item)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = (dbType == DatabaseType.SqlServer) ? $@"exec qp_drop_link_view {item.LinkId}" : $@"call qp_link_view_drop({item.LinkId});";
+            ExecuteSql(connection, sql);
+        }
+
     }
 }

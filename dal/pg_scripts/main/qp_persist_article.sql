@@ -70,7 +70,10 @@ AS $BODY$
 
         drop table item;
 
-        data_items := array_agg(row(case when x.id <> 0 then x.id else main_id end, x.field_id, x.value))
+        data_items := array_agg(row(
+            case when x.id <> 0 then x.id else main_id end,
+            x.field_id,
+            case when x.value <> '' then x.value else null end))
         from XMLTABLE('/items/item/data' PASSING input COLUMNS
 			id int PATH '../@id',
             field_id int PATH '@field_id',
