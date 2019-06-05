@@ -35,7 +35,7 @@ export class BackendEntityGrid extends Observable {
     super();
 
     this.GRID_BUSY_CLASS_NAME = 'busy';
-    this.ROW_SELECTED_CLASS_NAME = 't-state-selected';
+    this.ROW_SELECTED_CLASS_NAME = 'k-state-selected';
     this.TITLE_CELL_CLASS_NAME = 'title';
     this.ID_CELL_CLASS_NAME = 'id';
     this.ROW_CLICKABLE_SELECTORS = 'tbody tr:not(.t-grouping-row,.t-detail-row,.t-no-data,:has(> .t-edit-container))';
@@ -506,17 +506,17 @@ export class BackendEntityGrid extends Observable {
     }
   }
 
-  _getParameterMapper() {
+  _getParameterMapper(customData) {
     return data => {
       const result = {
         page: data.page,
         pageSize: data.pageSize,
-        ...this._createDataQueryParams()
+        ...this._createDataQueryParams(),
+        ...customData && { ...customData }
       };
       if (data.sort && data.sort.length) {
         result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
       }
-
       return result;
     };
   }
@@ -1038,11 +1038,7 @@ export class BackendEntityGrid extends Observable {
     return params;
   }
 
-  _onDataBinding(e) {
-    const params = this._createDataQueryParams();
-
-    // eslint-disable-next-line no-param-reassign
-    Object.assign(e, { data: params });
+  _onDataBinding() {
     if (this._isDataLoaded) {
       const action = this._getCurrentAction();
       if (action) {

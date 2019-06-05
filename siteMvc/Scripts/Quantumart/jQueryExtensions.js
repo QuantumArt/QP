@@ -378,8 +378,7 @@
           serverPaging: true,
           serverSorting: true
         }
-      }, opt))
-        .addClass('qpGrid');
+      }, opt)).addClass(`qpGrid ${opt.class}`);
     }
   });
 

@@ -83,7 +83,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ChildArticlePermissions)]
         [BackendActionContext(ActionCode.ChildArticlePermissions)]
-        public override ActionResult _ChildIndex(string tabId, int parentId, int? userId, int? groupId, GridCommand command) => base._ChildIndex(tabId, parentId, userId, groupId, command);
+        public override ActionResult _ChildIndex(
+            string tabId,
+            int parentId,
+            int? userId,
+            int? groupId,
+            int page,
+            int pageSize,
+            string orderBy = "") => base._ChildIndex(tabId, parentId, userId, groupId, page, pageSize, orderBy);
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]

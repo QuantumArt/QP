@@ -1,4 +1,3 @@
-import { BackendEntityGridOld } from '../BackendEntityGridOld';
 import { BackendEntityGrid } from '../BackendEntityGrid';
 import { Observable } from '../Common/Observable';
 import { $o } from '../Info/BackendEntityObject';
