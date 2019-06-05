@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using Npgsql;
 using NpgsqlTypes;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.DAL
 {

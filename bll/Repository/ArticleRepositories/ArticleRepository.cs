@@ -1074,6 +1074,7 @@ cil.locked_by,
                     var sortInfo = sortInfoList[sortInfoIndex];
                     var oldFieldName = sortInfo.FieldName;
                     var newFieldName = oldFieldName;
+                    var dbType = QPContext.DatabaseType;
                     if (DynamicColumnNamePattern.IsMatch(oldFieldName))
                     {
                         var field = fieldList.SingleOrDefault(n => n.FormName == oldFieldName);
@@ -1082,16 +1083,16 @@ cil.locked_by,
                             return null;
                         }
 
-                        newFieldName = SqlQuerySyntaxHelper.FieldName(QPContext.DatabaseType, field.Name);
+                        newFieldName = SqlQuerySyntaxHelper.FieldName(dbType, field.Name);
                         if (field.Type.Name == FieldTypeName.Time)
                         {
-                            var schema = SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+                            var schema = SqlQuerySyntaxHelper.DbSchemaName(dbType);
                             newFieldName = $"{schema}.qp_abs_time(c.{newFieldName})";
                         }
                     }
-                    else if (!SqlSorting.ContainsSquareBrackets(newFieldName))
+                    else if (!SqlSorting.ContainsEscapeSymbols(newFieldName, dbType))
                     {
-                        newFieldName = $"[{newFieldName}]";
+                        newFieldName = SqlQuerySyntaxHelper.FieldName(dbType, newFieldName);
                     }
 
                     if (sortInfoIndex > 0)

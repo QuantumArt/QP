@@ -1,4 +1,4 @@
-namespace Quantumart.QP8.DAL
+namespace Quantumart.QP8.Constants
 {
     public enum DatabaseType
     {
