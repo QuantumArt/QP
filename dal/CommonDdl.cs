@@ -5,15 +5,15 @@ using System.Data.Common;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.DAL
 {
     public static partial class Common
     {
-        public static void AddColumn(QPModelDataContext ctx, DbConnection cnn, int id)
+        public static void AddColumn(DbConnection cnn, FieldDAL field)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
-            var field = ctx.FieldSet.Include(n => n.Type).First(n => n.Id == id);
             var tableName = "content_" + field.ContentId;
             var asyncTableName = tableName + "_async";
             var columnType = (dbType == DatabaseType.SqlServer) ? field.Type.DatabaseType : PgColumnType(field.Type.DatabaseType);
@@ -57,12 +57,18 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static string IndexName(DatabaseType dbType, string tableName, string fieldName)
+        {
+            var indexName = $@"{DbSchemaName(dbType)}.{tableName}_{fieldName}";
+            return Escape(dbType, indexName);
+        }
+
         public static void AddIndex(DbConnection cnn, string tableName, string fieldName)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
             var actualFieldName = (dbType == DatabaseType.Postgres) ? fieldName.ToLower() : fieldName;
-            var indexName = $@"{DbSchemaName(dbType)}.{tableName}_{actualFieldName}";
-            var sql =  $@" create index {Escape(dbType, indexName)} on {tableName}({Escape(dbType, actualFieldName)})";
+            var indexName = IndexName(dbType, tableName, actualFieldName);
+            var sql =  $@" create index {indexName} on {tableName}({Escape(dbType, actualFieldName)})";
             ExecuteSql(cnn, sql);
         }
 
@@ -70,18 +76,17 @@ namespace Quantumart.QP8.DAL
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
             var actualFieldName = (dbType == DatabaseType.Postgres) ? fieldName.ToLower() : fieldName;
-            var indexName = $@"{DbSchemaName(dbType)}.{tableName}_{actualFieldName}";
+            var indexName = IndexName(dbType, tableName, actualFieldName);
             var tablePrefix = (dbType == DatabaseType.SqlServer) ? $@"{DbSchemaName(dbType)}.{tableName}." : "";
-            var sql =  $@"
-            drop index {tablePrefix}{Escape(dbType, indexName)}
+            var sql = $@"
+            drop index {tablePrefix}{indexName}
             ";
             ExecuteSql(cnn, sql);
         }
 
-        public static void DropColumn(QPModelDataContext ctx, DbConnection cnn, int id)
+        public static void DropColumn(DbConnection cnn, FieldDAL field)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
-            var field = ctx.FieldSet.Include(n => n.Type).First(n => n.Id == id);
             var tableName = "content_" + field.ContentId;
             var asyncTableName = tableName + "_async";
 
@@ -243,6 +248,70 @@ namespace Quantumart.QP8.DAL
             else
             {
                 sql = $"DROP VIEW IF EXISTS {viewName}";
+            }
+
+            ExecuteSql(connection, sql);
+        }
+
+        public static void UpdateColumn(DbConnection connection, FieldDAL oldField, FieldDAL newField)
+        {
+            var tableName = "content_" + newField.ContentId;
+            var asyncTableName = tableName + "_async";
+            if (oldField.IndexFlag == 1 && newField.IndexFlag == 0)
+            {
+                DropIndex(connection, tableName, oldField.Name);
+                DropIndex(connection, asyncTableName, oldField.Name);
+            }
+
+            if (oldField.Name != newField.Name)
+            {
+                RenameColumn(connection, tableName, oldField.Name, newField.Name);
+                RenameColumn(connection, asyncTableName, oldField.Name, newField.Name);
+
+                if (oldField.IndexFlag == 1 && newField.IndexFlag == 1)
+                {
+                    RenameIndex(connection, tableName, oldField.Name, newField.Name);
+                    RenameIndex(connection, asyncTableName, oldField.Name, newField.Name);
+                }
+            }
+
+            if (oldField.IndexFlag == 0 && newField.IndexFlag == 1)
+            {
+                AddIndex(connection, tableName, newField.Name);
+                AddIndex(connection, asyncTableName, newField.Name);
+            }
+        }
+
+        public static void RenameColumn(DbConnection connection, string tableName, string oldFieldName, string newFieldName)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = "";
+            if (dbType == DatabaseType.SqlServer)
+            {
+                sql = $"exec sp_rename '{tableName}.{oldFieldName}', '{newFieldName}', 'column' ";
+            }
+            else
+            {
+                sql = $"alter table {tableName} rename {Escape(dbType, oldFieldName)} to {Escape(dbType, newFieldName)}";
+            }
+
+            ExecuteSql(connection, sql);
+        }
+
+        public static void RenameIndex(DbConnection connection, string tableName, string oldFieldName, string newFieldName)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var oldIndexName = IndexName(dbType, tableName, oldFieldName);
+            var newIndexName = IndexName(dbType, tableName, newFieldName);
+            var sql = "";
+
+            if (dbType == DatabaseType.SqlServer)
+            {
+                sql = $"exec sp_rename '{tableName}.{oldIndexName}', '{newIndexName}', 'index' ";
+            }
+            else
+            {
+                sql = $"ALTER INDEX {oldIndexName} RENAME TO {newIndexName}";
             }
 
             ExecuteSql(connection, sql);

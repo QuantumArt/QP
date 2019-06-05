@@ -224,7 +224,8 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                 {
                     var field = GetById(id);
                     field.ReorderContentFields(true);
-                    Common.DropColumn(QPContext.EFContext, scope.DbConnection, id);
+                    var dal = GetDal(field);
+                    Common.DropColumn(scope.DbConnection, dal);
                 }
                 DefaultRepository.Delete<FieldDAL>(id);
             }
@@ -257,7 +258,8 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     var newItem = DefaultRepository.Save<Field, FieldDAL>(item);
                     if (QPContext.DatabaseType != DatabaseType.SqlServer)
                     {
-                        Common.AddColumn(QPContext.EFContext, scope.DbConnection, newItem.Id);
+                        var field = GetDal(newItem);
+                        Common.AddColumn(scope.DbConnection, field);
                     }
 
                     DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Field);
@@ -283,34 +285,56 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             }
         }
 
+        private static FieldTypeDAL GetType(int id)
+        {
+            return QPContext.EFContext.FieldTypeSet.FirstOrDefault(n => n.Id == id);
+        }
+
+        private static FieldDAL GetDal(Field newItem)
+        {
+            var field = MapperFacade.FieldMapper.GetDalObject(newItem);
+            field.Type = GetType(newItem.TypeId);
+            return field;
+        }
+
         Field IFieldRepository.Update(Field item)
         {
             try
             {
-                var preUpdateField = GetById(item.Id);
+                using (var scope = new QPConnectionScope())
+                {
+                    var preUpdateField = GetById(item.Id);
 
-                ChangeMaxOrderTriggerState(false);
-                ChangeM2MDefaultTriggerState(false);
+                    ChangeMaxOrderTriggerState(false);
+                    ChangeM2MDefaultTriggerState(false);
 
 
-                var constraint = item.Constraint;
-                var dynamicImage = item.DynamicImage;
+                    var constraint = item.Constraint;
+                    var dynamicImage = item.DynamicImage;
 
-                item.ReorderContentFields();
+                    item.ReorderContentFields();
 
-                UpdateBackwardFields(item, preUpdateField);
+                    UpdateBackwardFields(item, preUpdateField);
 
-                UpdateRelationData(item, preUpdateField);
+                    UpdateRelationData(item, preUpdateField);
 
-                var newItem = DefaultRepository.Update<Field, FieldDAL>(item);
+                    var newItem = DefaultRepository.Update<Field, FieldDAL>(item);
+                    if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                    {
+                        var oldDal = GetDal(preUpdateField);
+                        var newDal = GetDal(newItem);
+                        Common.UpdateColumn(scope.DbConnection, oldDal, newDal);
+                    }
 
-                UpdateFieldOrder(newItem.Id, item.Order);
+                    UpdateFieldOrder(newItem.Id, item.Order);
 
-                UpdateConstraint(constraint, newItem);
+                    UpdateConstraint(constraint, newItem);
 
-                UpdateDynamicImage(dynamicImage, newItem);
+                    UpdateDynamicImage(dynamicImage, newItem);
 
-                return GetById(newItem.Id);
+                    return GetById(newItem.Id);
+                }
+
             }
             finally
             {
