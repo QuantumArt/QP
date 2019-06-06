@@ -158,7 +158,7 @@ namespace Quantumart.QP8.BLL.Mappers
                     break;
             }
 
-            if (bizObject.TypeId == FieldTypeCodes.VisualEdit)
+            if (bizObject.TypeId == FieldTypeCodes.VisualEdit && bizObject.Content != null)
             {
                 if (bizObject.PEnterMode != bizObject.Content.Site.PEnterMode)
                 {
