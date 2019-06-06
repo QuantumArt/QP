@@ -913,7 +913,8 @@ cil.locked_by,
         {
             using (new QPConnectionScope())
             {
-                return Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkIds, id, QPContext.IsLive, excludeArchive);
+                return (id == 0) ? Common.GetDefaultLinkedArticles(QPConnectionScope.Current.DbConnection, linkIds) :
+                Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkIds, id, QPContext.IsLive, excludeArchive);
             }
         }
 

@@ -25,7 +25,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
         ContentLink IContentRepository.GetContentLinkById(int linkId)
         {
-            return MapperFacade.ContentLinkMapper.GetBizObject(QPContext.EFContext.ContentToContentSet.SingleOrDefault(n => n.LinkId == linkId));
+            return GetBll(QPContext.EFContext.ContentToContentSet.SingleOrDefault(n => n.LinkId == linkId));
         }
 
         bool IContentRepository.IsAnyArticle(int contentId)
@@ -86,6 +86,16 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             }
         }
 
+        private ContentToContentDAL GetDal(ContentLink bll)
+        {
+            return MapperFacade.ContentLinkMapper.GetDalObject(bll);
+        }
+
+        private ContentLink GetBll(ContentToContentDAL dal)
+        {
+            return MapperFacade.ContentLinkMapper.GetBizObject(dal);
+        }
+
         ContentLink IContentRepository.SaveLink(ContentLink link)
         {
             EntityObject.VerifyIdentityInserting(EntityTypeCode.ContentLink, link.LinkId, link.ForceLinkId);
@@ -95,8 +105,18 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             }
 
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.ContentLink);
-            var result = MapperFacade.ContentLinkMapper.GetBizObject(DefaultRepository.SimpleSave(MapperFacade.ContentLinkMapper.GetDalObject(link)));
+            var resultDal = DefaultRepository.SimpleSave(GetDal(link));
+            var result = GetBll(resultDal);
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.ContentLink);
+
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                using (var scope = new QPConnectionScope())
+                {
+                    Common.CreateLinkTable(scope.DbConnection, resultDal);
+                    Common.CreateLinkView(scope.DbConnection, resultDal);
+                }
+            }
 
             result.WasNew = true;
             return result;
@@ -104,7 +124,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
         ContentLink IContentRepository.UpdateLink(ContentLink link)
         {
-            var result = MapperFacade.ContentLinkMapper.GetBizObject(DefaultRepository.SimpleUpdate(MapperFacade.ContentLinkMapper.GetDalObject(link)));
+            var result = GetBll(DefaultRepository.SimpleUpdate(GetDal(link)));
             result.WasNew = false;
             return result;
         }
@@ -222,6 +242,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             if (QPContext.DatabaseType != DatabaseType.SqlServer)
             {
                 Common.CreateContent(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
+                Common.CreateContentModification(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
             }
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
             FieldRepository.ChangeCreateFieldsTriggerState(true);

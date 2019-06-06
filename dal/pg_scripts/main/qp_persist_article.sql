@@ -52,6 +52,10 @@ AS $BODY$
 
 
         else
+
+            update content_item set not_for_replication = true where not not_for_replication
+            and content_item_id in (select item.id from item) ;
+
             with result as (
                 update content_item ci
                     set modified = now(), last_modified_by = i.last_modified_by,
@@ -70,7 +74,10 @@ AS $BODY$
 
         drop table item;
 
-        data_items := array_agg(row(case when x.id <> 0 then x.id else main_id end, x.field_id, x.value))
+        data_items := array_agg(row(
+            case when x.id <> 0 then x.id else main_id end,
+            x.field_id,
+            case when x.value <> '' then x.value else null end))
         from XMLTABLE('/items/item/data' PASSING input COLUMNS
 			id int PATH '../@id',
             field_id int PATH '@field_id',

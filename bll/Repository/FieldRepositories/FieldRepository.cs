@@ -220,14 +220,34 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
         {
             using (var scope = new QPConnectionScope())
             {
+                FieldDAL dal = null;
                 if (QPContext.DatabaseType != DatabaseType.SqlServer)
                 {
                     var field = GetById(id);
                     field.ReorderContentFields(true);
-                    var dal = GetDal(field);
-                    Common.DropColumn(scope.DbConnection, dal);
+                    dal = GetDal(field);
+
                 }
+
                 DefaultRepository.Delete<FieldDAL>(id);
+
+                if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                {
+                    Common.DropColumn(scope.DbConnection, dal);
+                    if (dal.LinkId != null)
+                    {
+                        var realFieldsExists = QPContext.EFContext.FieldSet.Include(n => n.Content)
+                            .Any(n => n.LinkId == dal.LinkId && n.Content.VirtualType == 0);
+
+                        if (!realFieldsExists)
+                        {
+                            DefaultRepository.SimpleDelete(dal.ContentToContent);
+                            Common.DropLinkView(scope.DbConnection, dal.ContentToContent);
+                            Common.DropLinkTable(scope.DbConnection, dal.ContentToContent);
+                        }
+                    }
+                }
+
             }
         }
 
@@ -290,10 +310,17 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             return QPContext.EFContext.FieldTypeSet.FirstOrDefault(n => n.Id == id);
         }
 
+        private static ContentToContentDAL GetContentToContent(int? linkId)
+        {
+            return (linkId.HasValue) ?
+                QPContext.EFContext.ContentToContentSet.FirstOrDefault(n => n.LinkId == linkId.Value) : null;
+        }
+
         private static FieldDAL GetDal(Field newItem)
         {
             var field = MapperFacade.FieldMapper.GetDalObject(newItem);
             field.Type = GetType(newItem.TypeId);
+            field.ContentToContent = GetContentToContent(newItem.LinkId);
             return field;
         }
 

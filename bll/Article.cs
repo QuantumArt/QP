@@ -366,14 +366,14 @@ namespace Quantumart.QP8.BLL
             set => _contextListItems.Value = value;
         }
 
-        public int CollaborativePublishedArticle { get; set; }       
+        public int CollaborativePublishedArticle { get; set; }
 
         public int ParentContentId
         {
             get => _parentContentId != 0 || CollaborativePublishedArticle == 0 ? _parentContentId : GetContentIdForArticle();
             set => _parentContentId = value;
         }
-   
+
         public override void Validate()
         {
             var errors = new RulesException<Article>();
@@ -390,7 +390,7 @@ namespace Quantumart.QP8.BLL
             {
                 throw errors;
             }
-        }        
+        }
 
         public static void ValidateXamlById(int articleId, RulesException errors, string customerCode, bool persistChanges)
         {
@@ -982,10 +982,9 @@ namespace Quantumart.QP8.BLL
             if (versionId == 0)
             {
                 var linkIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToMany).Select(n => n.GetBaseField(article.Id).LinkId.Value).ToArray();
-                var backRelationIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToOne).Select(n => n.GetBaseField(article.Id).BackRelationId.Value).ToArray();
                 linkResult = ArticleRepository.GetLinkedItems(linkIds, article.Id, excludeArchive);
+                var backRelationIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToOne).Select(n => n.GetBaseField(article.Id).BackRelationId.Value).ToArray();
                 backRelationsResult = ArticleRepository.GetRelatedItems(backRelationIds, article.Id, excludeArchive);
-
             }
 
 
@@ -1001,15 +1000,12 @@ namespace Quantumart.QP8.BLL
                 switch (field.RelationType)
                 {
                     case RelationType.ManyToMany:
-                        if (!article.IsNew)
+                        var linkId = field.GetBaseField(article.Id).LinkId;
+                        if (linkId.HasValue)
                         {
-                            var linkId = field.GetBaseField(article.Id).LinkId;
-                            if (linkId.HasValue)
-                            {
-                                objectValue = (versionId == 0)
+                            objectValue = (versionId == 0)
                                 ? linkResult[linkId.Value]
                                 : ArticleVersionRepository.GetLinkedItems(versionId, field.Id);
-                            }
                         }
 
                         break;
