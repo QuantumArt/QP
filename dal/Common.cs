@@ -1198,15 +1198,16 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static void CopyContentAccess(DbConnection connection, int sourceId, int destinationId, int userId)
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.AppendFormat("DELETE FROM content_access WHERE content_id = {0};", destinationId);
-            sqlBuilder.Append("INSERT INTO content_access");
-            sqlBuilder.AppendFormat(" SELECT {0}, user_id, group_id, permission_level_id, GETDATE(), GETDATE(), {1}, propagate_to_items, hide FROM content_access", destinationId, userId);
-            sqlBuilder.AppendFormat(" WHERE content_id = {0}", sourceId);
-            using (var cmd = DbCommandFactory.Create(sqlBuilder.ToString(), connection))
-            {
-                cmd.ExecuteNonQuery();
-            }
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@"
+                DELETE FROM content_access WHERE content_id = {destinationId};
+                INSERT INTO content_access (content_id, user_id, group_id, permission_level_id, created, modified, last_modified_by, propagate_to_items, hide)
+                SELECT {destinationId}, user_id, group_id, permission_level_id, {Now(dbType)}, {Now(dbType)}, {userId}, propagate_to_items, hide FROM content_access
+                WHERE content_id = {sourceId}
+            ";
+
+            ExecuteSql(connection, sql);
+
         }
 
         public static void CopyArticleAccess(DbConnection sqlConnection, int sourceId, int destinationId, int userId)
@@ -1216,10 +1217,8 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             sqlBuilder.Append("INSERT INTO content_item_access");
             sqlBuilder.AppendFormat(" SELECT {0}, user_id, group_id, permission_level_id, GETDATE(), GETDATE(), {1} FROM content_item_access", destinationId, userId);
             sqlBuilder.AppendFormat(" WHERE content_item_id = {0}", sourceId);
-            using (var cmd = DbCommandFactory.Create(sqlBuilder.ToString(), sqlConnection))
-            {
-                cmd.ExecuteNonQuery();
-            }
+
+            ExecuteSql(sqlConnection, sqlBuilder.ToString());
         }
 
         public static void UpdateContentFieldsOrder(DbConnection connection, int currentOrder, int newOrder, int contentId)
@@ -3341,11 +3340,11 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             "d.BLOB_DATA IS NULL " +
             "and I.CONTENT_ID = @content_id";
 
-        private const string ApplyFieldDefaultValueGetM2MItemIdsToProcessQuery = " select i.CONTENT_ITEM_ID from content_item as i WHERE i.CONTENT_ID = @content_id and not exists (select * from [item_link_united] where item_id = i.CONTENT_ITEM_ID and link_id = @link_id ) ";
 
-        public static IEnumerable<int> ApplyFieldDefaultValue_GetM2MItemIdsToProcess(int contentId, int fieldId, string linkId, DbConnection connection)
+        public static IEnumerable<int> ApplyFieldDefaultValue_GetM2MItemIdsToProcess(int contentId, int fieldId, int linkId, DbConnection connection)
         {
-            const string query = ApplyFieldDefaultValueGetM2MItemIdsToProcessQuery;
+            var query = $@" select i.CONTENT_ITEM_ID from content_item as i WHERE i.CONTENT_ID = @content_id
+            and not exists (select * from item_link_united where item_id = i.CONTENT_ITEM_ID and link_id = @link_id ) ";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -3376,46 +3375,53 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        private const string ApplyFieldDefaultValueSetDefaultValueQueryTemplate =
-            "UPDATE content_data " +
-            "SET {0} = (SELECT {1} FROM content_attribute WHERE attribute_id = @attr_id) " +
-            "WHERE {0} IS NULL " +
-            "AND attribute_id = @attr_id " +
-            "AND CONTENT_ITEM_ID in ({2}) " +
-            "INSERT INTO content_data (attribute_id, content_item_id, {0}) " +
-            "select @attr_id, i.content_item_id, a.{1} from content_item as i " +
-            "LEFT OUTER JOIN content_attribute AS a " +
-            "ON a.content_id = i.content_id AND a.attribute_id = @attr_id " +
-            "where i.CONTENT_ITEM_ID in ({2}) and " +
-            "i.CONTENT_ITEM_ID not in (SELECT d.content_item_id FROM content_data AS d WHERE d.attribute_id = @attr_id)";
-
         public static void ApplyFieldDefaultValue_SetDefaultValue(int contentId, int fieldId, bool isBlob, bool isM2M, IEnumerable<int> idsForStep, DbConnection connection)
         {
-            var contentDataColumn = isBlob ? "BLOB_DATA" : "DATA";
-            var attributeDefValueColumn = isBlob ? "DEFAULT_BLOB_VALUE" : "DEFAULT_VALUE";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var contentDataColumn = isBlob && dbType == DatabaseType.SqlServer ? "BLOB_DATA" : "DATA";
+            var attributeDefValueColumn = "COALESCE(a.DEFAULT_BLOB_VALUE, a.DEFAULT_VALUE)";
             var contentItemsIds = string.Join(",", idsForStep);
-            var query = string.Format(ApplyFieldDefaultValueSetDefaultValueQueryTemplate, contentDataColumn, attributeDefValueColumn, contentItemsIds);
+            var sql = $@"UPDATE content_data
+                SET {contentDataColumn} = (SELECT {attributeDefValueColumn} FROM content_attribute a WHERE attribute_id = @attr_id)
+                WHERE {contentDataColumn} IS NULL
+                AND attribute_id = @attr_id
+                AND CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")});
+                INSERT INTO content_data (attribute_id, content_item_id, {contentDataColumn})
+                select @attr_id, i.content_item_id, {attributeDefValueColumn} from content_item as i
+                LEFT OUTER JOIN content_attribute a
+                ON a.content_id = i.content_id AND a.attribute_id = @attr_id
+                where i.CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")}) and
+                i.CONTENT_ITEM_ID not in (SELECT d.content_item_id FROM content_data AS d WHERE d.attribute_id = @attr_id)";
 
-            using (var cmd = DbCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@attr_id", fieldId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", idsForStep, dbType));
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void ApplyM2MFieldDefaultValue_SetDefaultValue(int contentId, int fieldId, string linkId, List<int> idsForStep, bool symmetric, DbConnection connection)
+        public static void ApplyM2MFieldDefaultValue_SetDefaultValue(int contentId, int fieldId, int linkId, List<int> idsForStep, bool symmetric, DbConnection connection)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var query = new StringBuilder();
-            query.AppendLine("INSERT INTO [item_to_item] ([link_id], [l_item_id], [r_item_id])");
-            query.AppendFormatLine("select  @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab cross join CONTENT_ITEM as ci where ci.CONTENT_ITEM_ID in ({0}) and ci.SPLITTED = 0 and ab.FIELD_ID = @fieldId", string.Join(",", idsForStep));
-            query.AppendLine("INSERT INTO [item_link_async] ([link_id],[item_id],[linked_item_id])");
-            query.AppendFormatLine("select  @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab cross join CONTENT_ITEM as ci where ci.CONTENT_ITEM_ID in ({0}) and ci.SPLITTED = 1 and ab.FIELD_ID = @fieldId", string.Join(",", idsForStep));
+            query.AppendLine($@"INSERT INTO item_to_item (link_id, l_item_id, r_item_id)");
+            query.AppendLine($@"select @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab
+                cross join CONTENT_ITEM as ci where ci.CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")})
+                and {IsFalse(dbType, "ci.splitted")} and ab.FIELD_ID = @fieldId;");
+            query.AppendLine($@"INSERT INTO item_link_async (link_id,item_id,linked_item_id)");
+            query.AppendLine($@"select @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab
+                cross join CONTENT_ITEM as ci where ci.CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")})
+                and {IsTrue(dbType, "ci.splitted")} and ab.FIELD_ID = @fieldId;");
             if (symmetric)
             {
-                query.AppendLine("INSERT INTO [item_link_async] ([link_id], [item_id], [linked_item_id])");
-                query.AppendFormatLine(" select  @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab cross join CONTENT_ITEM as ci inner join CONTENT_ITEM as cii on cii.CONTENT_ITEM_ID = ab.ARTICLE_ID " +
-                    " where ci.CONTENT_ITEM_ID in ({0}) and ci.SPLITTED = 0 and cii.SPLITTED = 1 and ab.FIELD_ID = @fieldId", string.Join(",", idsForStep));
+                query.AppendLine($@"INSERT INTO item_link_async (link_id, item_id, linked_item_id)");
+                query.AppendLine($@"select  @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab
+                    cross join CONTENT_ITEM as ci
+                    inner join CONTENT_ITEM as cii on cii.CONTENT_ITEM_ID = ab.ARTICLE_ID
+                    where ci.CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")}) and ab.FIELD_ID = @fieldId
+                    and {IsFalse(dbType, "ci.splitted")} and {IsTrue(dbType, "cii.splitted")};");
             }
 
             using (var cmd = DbCommandFactory.Create(query.ToString(), connection))
@@ -3423,6 +3429,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@linkID", linkId);
                 cmd.Parameters.AddWithValue("@fieldId", fieldId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", idsForStep, dbType));
                 cmd.ExecuteNonQuery();
             }
         }
@@ -5595,10 +5602,11 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static void CopyContentCustomActions(DbConnection sqlConnection, int sourceId, int destinationId)
         {
-            var query = @"INSERT INTO [dbo].[ACTION_CONTENT_BIND] (CUSTOM_ACTION_ID, CONTENT_ID)
-                                    SELECT CUSTOM_ACTION_ID, {0} FROM  [dbo].[ACTION_CONTENT_BIND] where CONTENT_ID = {1}";
+            var query = $@"
+                INSERT INTO ACTION_CONTENT_BIND (CUSTOM_ACTION_ID, CONTENT_ID)
+                SELECT CUSTOM_ACTION_ID, {destinationId} FROM  ACTION_CONTENT_BIND where CONTENT_ID = {sourceId}
+            ";
 
-            query = string.Format(query, destinationId, sourceId);
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -6901,14 +6909,12 @@ order by ActionDate desc
 
         public static void UpdateContentModification(DbConnection sqlConnection, int contentId)
         {
-            var sb = new StringBuilder();
-            sb.AppendLine("update content_modification with(rowlock) set live_modified = GETDATE(), stage_modified = GETDATE() where content_id = @contentId");
-            using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@contentId", contentId);
-                cmd.ExecuteNonQuery();
-            }
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var sql = $@"
+                update content_modification {WithRowLock(dbType)}
+                set live_modified = {Now(dbType)}, stage_modified = {Now(dbType)} where content_id = {contentId}
+            ";
+            ExecuteSql(sqlConnection, sql);
         }
 
         public static void SetFieldM2MDefValue(DbConnection sqlConnection, int[] defaultArticles, int fieldId)
@@ -6920,11 +6926,7 @@ order by ActionDate desc
                 sb.AppendLine($@"INSERT INTO FIELD_ARTICLE_BIND(ARTICLE_ID,FIELD_ID) VALUES ({artId},{fieldId});");
             }
 
-            using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-            }
+            ExecuteSql(sqlConnection, sb.ToString());
         }
 
         public static IEnumerable<DataRow> GetRelationsBetweenContents(DbConnection sqlConnection, int oldSiteId, int newSiteId, string newContentIds)

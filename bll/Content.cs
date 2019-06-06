@@ -880,20 +880,26 @@ namespace Quantumart.QP8.BLL
             } while (ContentRepository.NameExists(this));
 
             var netName = NetName;
-            index = 0;
-            do
+            if (!String.IsNullOrEmpty(netName))
             {
-                index++;
-                NetName = MutateHelper.MutateNetName(netName, index);
-            } while (ContentRepository.NetNameExists(this));
+                index = 0;
+                do
+                {
+                    index++;
+                    NetName = MutateHelper.MutateNetName(netName, index);
+                } while (ContentRepository.NetNameExists(this));
+            }
 
             var netPluralName = NetPluralName;
-            index = 0;
-            do
+            if (!String.IsNullOrEmpty(netPluralName))
             {
-                index++;
-                NetPluralName = MutateHelper.MutateNetName(netPluralName, index);
-            } while (ContentRepository.NetPluralNameExists(this));
+                index = 0;
+                do
+                {
+                    index++;
+                    NetPluralName = MutateHelper.MutateNetName(netPluralName, index);
+                } while (ContentRepository.NetPluralNameExists(this));
+            }
         }
 
         internal void DeleteFields()

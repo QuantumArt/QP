@@ -11,7 +11,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 return isM2M
-                    ? Common.ApplyFieldDefaultValue_GetM2MItemIdsToProcess(contentId, fieldId, linkId, scope.DbConnection)
+                    ? Common.ApplyFieldDefaultValue_GetM2MItemIdsToProcess(contentId, fieldId, int.Parse(linkId), scope.DbConnection)
                     : Common.ApplyFieldDefaultValue_GetItemIdsToProcess(contentId, fieldId, isBlob, scope.DbConnection);
             }
         }
@@ -22,8 +22,8 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 if (ism2m)
                 {
-                    var defVal = FieldRepository.GetById(fieldId).DefaultValue;
-                    Common.ApplyM2MFieldDefaultValue_SetDefaultValue(contentId, fieldId, defVal, idsForStep, isSymmetric, scope.DbConnection);
+                    var linkId = int.Parse(FieldRepository.GetById(fieldId).DefaultValue);
+                    Common.ApplyM2MFieldDefaultValue_SetDefaultValue(contentId, fieldId, linkId, idsForStep, isSymmetric, scope.DbConnection);
                 }
                 else
                 {
