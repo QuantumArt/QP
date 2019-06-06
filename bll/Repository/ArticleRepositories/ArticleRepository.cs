@@ -519,8 +519,16 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             var contextFilter = GetContextFilter(contextQuery, content.Fields.ToList(), out bool _);
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(filterQuery, commonFilter, contextFilter));
 
+            var dbType = QPContext.DatabaseType;
             Common.AddLinkFilteringToQuery(linkedFilters, whereBuilder, filterSqlParams);
-            return $"SELECT DISTINCT TOP({searchLimit}) c.content_item_id from content_{treeField.ContentId}_united c WHERE {whereBuilder}";
+            return $@"
+SELECT
+DISTINCT {(dbType == DatabaseType.SqlServer ? $"TOP({searchLimit})" : string.Empty)}
+c.content_item_id
+from content_{treeField.ContentId}_united c
+WHERE {whereBuilder}
+{(dbType != DatabaseType.SqlServer ? $"LIMIT {searchLimit}" : string.Empty)}
+";
         }
 
         internal static IEnumerable<EntityTreeItem> GetArticleTreeForParentResult(int? rootId, string commonFilter, Field treeField)
@@ -536,10 +544,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         internal static IEnumerable<EntityTreeItem> GetArticleTreeFilteredResult(IList<int> idsToFilter, string commonFilter, Field treeField)
         {
+            var dbType = QPContext.DatabaseType;
             var extraFilter = commonFilter.Replace("c.", "cnt.");
             return idsToFilter == null
                 ? GetArticleTreeForParentResult(null, commonFilter, treeField)
-                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id IN (SELECT id FROM @ids) ", extraFilter, treeField, idsToFilter);
+                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id IN (SELECT id FROM {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")}) ", extraFilter, treeField, idsToFilter);
         }
 
         internal static IEnumerable<EntityTreeItem> GetArticleTreeItemsResult(string commonFilter, string extraFilter, Field treeField, IList<int> idsToFilter)
