@@ -52,6 +52,10 @@ AS $BODY$
 
 
         else
+
+            update content_item set not_for_replication = true where not not_for_replication
+            and content_item_id in (select item.id from item) ;
+
             with result as (
                 update content_item ci
                     set modified = now(), last_modified_by = i.last_modified_by,

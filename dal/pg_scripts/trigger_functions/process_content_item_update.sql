@@ -31,7 +31,9 @@ AS $BODY$
 			array_agg(i.content_item_id) filter (where i.locked_by <> o.locked_by),
 			array_agg(i.content_item_id) filter (where i.modified <> o.modified)			
 		into splitted_ids, not_for_replication_ids, locked_by_ids, modified_ids
-		from new_table i inner join old_table o on i.content_item_id = o.content_item_id;	
+		from new_table i inner join old_table o on i.content_item_id = o.content_item_id;
+
+		RAISE NOTICE 'Splitted ids: %', splitted_ids;
 		
 		IF splitted_ids is not null THEN
 			update content_data set splitted = i.splitted
@@ -40,6 +42,8 @@ AS $BODY$
 			
 			RETURN NULL;		
 		END IF;
+
+		RAISE NOTICE 'Not for Replication ids: %', not_for_replication_ids;
 		
 		IF not_for_replication_ids is not null THEN
 			update content_data set not_for_replication = i.not_for_replication

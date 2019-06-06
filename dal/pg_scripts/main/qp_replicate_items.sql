@@ -89,9 +89,20 @@ AS $BODY$
 			END IF;
 									 
 		END LOOP;
-									 
-   		update content_item set not_for_replication = false, CANCEL_SPLIT = false where content_item_id = ANY(ids);							  
-										  
+
+		update content_data cd set o2m_data = cd.data::numeric, ft_data = to_tsvector('russian', cd.data)
+		 from content_attribute ca where ca.attribute_id = cd.attribute_id
+		 and ca.attribute_type_id = 11 and ca.link_id is null and cd.content_item_id = ANY(ids);
+
+		update content_data cd set ft_data = to_tsvector('russian', cd.data)
+        from content_attribute ca where ca.attribute_id = cd.attribute_id
+        and (ca.attribute_type_id <> 11 or ca.link_id is null) and cd.content_item_id = ANY(ids);
+
+   		update content_item set not_for_replication = false, CANCEL_SPLIT = false where content_item_id = ANY(ids)
+   		    and (not_for_replication or cancel_split);
+
+		update content_data set not_for_replication = false where not_for_replication and content_item_id = ANY(ids);
+
 	END;
 $BODY$;
 
