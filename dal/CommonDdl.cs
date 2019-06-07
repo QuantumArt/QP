@@ -325,7 +325,7 @@ namespace Quantumart.QP8.DAL
 
         }
 
-        public static void CreateLinkTable(DbConnection connection, ContentToContentDAL item)
+        public static void CreateLinkTables(DbConnection connection, ContentToContentDAL item)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             if (dbType != DatabaseType.SqlServer)
@@ -343,7 +343,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void DropLinkTable(DbConnection connection, ContentToContentDAL item)
+        public static void DropLinkTables(DbConnection connection, ContentToContentDAL item)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var tableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}";

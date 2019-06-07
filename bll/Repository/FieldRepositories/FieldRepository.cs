@@ -243,7 +243,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                         {
                             DefaultRepository.SimpleDelete(dal.ContentToContent);
                             Common.DropLinkView(scope.DbConnection, dal.ContentToContent);
-                            Common.DropLinkTable(scope.DbConnection, dal.ContentToContent);
+                            Common.DropLinkTables(scope.DbConnection, dal.ContentToContent);
                         }
                     }
                 }

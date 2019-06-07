@@ -113,7 +113,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             {
                 using (var scope = new QPConnectionScope())
                 {
-                    Common.CreateLinkTable(scope.DbConnection, resultDal);
+                    Common.CreateLinkTables(scope.DbConnection, resultDal);
                     Common.CreateLinkView(scope.DbConnection, resultDal);
                 }
             }
