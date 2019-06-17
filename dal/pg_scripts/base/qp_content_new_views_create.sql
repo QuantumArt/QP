@@ -8,7 +8,6 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 	DECLARE
 	    sql text;
-	    async text;
 	    attrs content_attribute[];
 	    attr content_attribute;
 	    field text;
@@ -45,7 +44,7 @@ AS $BODY$
 				type_name := format('decimal(18, %s)', attr.attribute_size);
 			elseif attr.attribute_type_id = 3 then
 				type_name := 'boolean';
-				field_template := 'cast(coalesce(%s, 0) as %s) as %s';
+				field_template := 'cast(coalesce(%s::int, 0) as %s) as %s';
 			elseif attr.attribute_type_id = 4 then
 				type_name := 'date';
 			elseif attr.attribute_type_id = 5 then

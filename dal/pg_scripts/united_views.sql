@@ -15,3 +15,13 @@ call qp_content_user_query_view_recreate(348);
 call qp_content_user_query_view_recreate(369);
 call qp_content_user_query_view_recreate(387);
 call qp_content_user_query_view_recreate(380);
+
+call qp_content_new_views_drop(380);
+call qp_content_new_views_drop(387);
+call qp_content_new_views_drop(369);
+call qp_content_new_views_drop(348);
+
+call qp_content_new_views_create(348);
+call qp_content_new_views_create(369);
+call qp_content_new_views_create(387);
+call qp_content_new_views_create(380);
