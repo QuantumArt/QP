@@ -1830,6 +1830,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             int pageSize = 0)
         {
             Debug.Assert(userIds != null, "userIDs is null");
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
 
             var filters = new List<string>();
 
@@ -1855,7 +1856,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
             if (!string.IsNullOrEmpty(parentEntityId))
             {
-                filters.Add($"CAST(L.PARENT_ENTITY_ID AS NVARCHAR(25)) = '{Cleaner.ToSafeSqlString(parentEntityId)}'");
+                filters.Add($"{SqlQuerySyntaxHelper.CastToVarchar(dbType, "L.PARENT_ENTITY_ID")} = '{Cleaner.ToSafeSqlString(parentEntityId)}'");
             }
 
             if (!string.IsNullOrEmpty(entityTitle))
@@ -1876,15 +1877,15 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
             if (userIds.Any())
             {
-                filters.Add($"U.[USER_ID] in ({string.Join(",", userIds)})");
+                filters.Add($"U.{Escape(dbType, "USER_ID")} in ({string.Join(",", userIds)})");
             }
 
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.CustomerCode,
-                "L.ID as Id, L.EXEC_TIME AS ExecutionTime, L.API as IsApi, AT.CODE AS ActionTypeCode, AT.NAME AS ActionTypeName, ET.CODE AS EntityTypeCode, ET.NAME AS EntityTypeName" +
-                ", L.ENTITY_STRING_ID AS EntityStringId, L.PARENT_ENTITY_ID AS ParentEntityId, L.ENTITY_TITLE AS EntityTitle, U.[USER_ID] as UserId, U.[LOGIN] as UserLogin, BA.NAME as ActionName",
-                "BACKEND_ACTION_LOG L LEFT JOIN USERS U ON L.[USER_ID] = U.[USER_ID]" +
+                $@"L.ID as Id, L.EXEC_TIME AS ExecutionTime, L.API as IsApi, AT.CODE AS ActionTypeCode, AT.NAME AS ActionTypeName, ET.CODE AS EntityTypeCode, ET.NAME AS EntityTypeName,
+                L.ENTITY_STRING_ID AS EntityStringId, L.PARENT_ENTITY_ID AS ParentEntityId, L.ENTITY_TITLE AS EntityTitle, U.{Escape(dbType, "USER_ID")} as UserId, U.{Escape(dbType, "LOGIN")} as UserLogin, BA.NAME as ActionName",
+                $"BACKEND_ACTION_LOG L LEFT JOIN USERS U ON L.{Escape(dbType, "USER_ID")} = U.{Escape(dbType, "USER_ID")}" +
                 " INNER JOIN ACTION_TYPE AT ON AT.CODE = L.ACTION_TYPE_CODE" +
                 " INNER JOIN ENTITY_TYPE ET ON ET.CODE = L.ENTITY_TYPE_CODE" +
                 " INNER JOIN BACKEND_ACTION BA ON BA.CODE = L.ACTION_CODE"
@@ -4509,12 +4510,13 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetEntityTypePermissionsForGroup(DbConnection sqlConnection, int groupId, int? entityId = null)
         {
-            var fromBlock = @"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit from
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var fromBlock = $@"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit from
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
+                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
                                  RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.[ACTION_PERMISSION_ENABLE] = 1 {1}) AS TR";
+                                 WHERE T.ACTION_PERMISSION_ENABLE = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} {{1}}) AS TR";
 
             fromBlock = string.Format(fromBlock, groupId, entityId.HasValue ? $"AND T.ID = {entityId.Value}" : string.Empty);
 
@@ -4524,13 +4526,14 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetEntityTypePermissionsForUser(DbConnection sqlConnection, int userId, int? entityId = null)
         {
-            var fromBlock = @"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit, L.PERMISSION_LEVEL
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var fromBlock = $@"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit, L.PERMISSION_LEVEL
                                  FROM
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
+                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.{Escape(dbType, "USER_ID")} = {{0}}
                                  RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.[ACTION_PERMISSION_ENABLE] = 1 {1}) AS TR";
+                                 WHERE T.ACTION_PERMISSION_ENABLE = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} {{1}}) AS TR";
 
             fromBlock = string.Format(fromBlock, userId, entityId.HasValue ? $"AND T.ID = {entityId.Value}" : string.Empty);
 
