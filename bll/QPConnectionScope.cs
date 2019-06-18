@@ -15,6 +15,7 @@ using AutoMapper;
 using Npgsql;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 
@@ -34,6 +35,8 @@ namespace Quantumart.QP8.BLL
         }
 
         public string ConnectionString { get; }
+
+        public DatabaseType DbType { get; set; }
 
         static QPConnectionScope()
         {
@@ -62,19 +65,27 @@ namespace Quantumart.QP8.BLL
         }
 
         public QPConnectionScope()
-            : this(QPContext.CurrentDbConnectionString)
+            : this(QPContext.CurrentDbConnectionInfo)
         {
         }
 
-        public QPConnectionScope(string connectionString)
+        public QPConnectionScope(string connectionString, DatabaseType dbType = default(DatabaseType))
+            : this(new QpConnectionInfo { ConnectionString = connectionString, DbType = dbType})
         {
+        }
+
+        public QPConnectionScope(QpConnectionInfo info)
+        {
+            Ensure.NotNull(info, "Connection info should not be null");
+            Ensure.NotNullOrWhiteSpace(info.ConnectionString, "Connection string should not be null or empty");
+
             if (Current == null)
             {
-                Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should not be null or empty");
                 Current = this;
-                ConnectionString = connectionString;
+                ConnectionString = info.ConnectionString;
+                DbType = info.DbType;
             }
-            else if (!string.IsNullOrWhiteSpace(connectionString) && !connectionString.Equals(Current.ConnectionString, StringComparison.OrdinalIgnoreCase))
+            else if (!string.IsNullOrWhiteSpace(info.ConnectionString) && !info.ConnectionString.Equals(Current.ConnectionString, StringComparison.OrdinalIgnoreCase))
             {
                 throw new ArgumentException("Attempt to create connection in the existing scope with different connection string.");
             }
@@ -109,8 +120,6 @@ namespace Quantumart.QP8.BLL
                 Current._efConnection.Close();
                 Current._efConnection.Dispose();
 
-                // Current._efConnection.Close();
-                // Current._efConnection.Dispose();
                 Current._efConnection = null;
                 Current._scopeCount = 0;
             }
@@ -137,15 +146,11 @@ namespace Quantumart.QP8.BLL
         {
             if (Current._efConnection == null)
             {
-                #warning временный костыль. нужно реализовать нормальное определение sqlServer/postgres
-                var usePostgres = ConnectionString.IndexOf("MSCPGSQL01", StringComparison.InvariantCultureIgnoreCase) != -1;
+                var usePostgres = DbType == DatabaseType.Postgres;
                 var dbConnection = usePostgres ? (DbConnection)new NpgsqlConnection(ConnectionString) : new SqlConnection(ConnectionString);
-
-                // var efc = new EntityConnection(MetadataWorkspace, sqlConnection);
 
                 dbConnection.Open();
 
-                // efc.Open();
                 Current._efConnection = dbConnection;
                 if (Transaction.Current == null && !usePostgres)
                 {
@@ -156,92 +161,5 @@ namespace Quantumart.QP8.BLL
                 }
             }
         }
-
-        // private static readonly MetadataWorkspace Mdw = new MetadataWorkspace(new[]
-        // {
-        //     "res://*/QP8Model.csdl",
-        //     "res://*/QP8Model.ssdl",
-        //     "res://*/QP8Model.msl"
-        // }, new[] { typeof(QP8Entities).Assembly });
-
-        // [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-        // private MetadataWorkspace MetadataWorkspace
-        // {
-        //     get
-        //     {
-        //         if (IdentityInsertOptions == null || !IdentityInsertOptions.Any())
-        //         {
-        //             return Mdw;
-        //         }
-        //
-        //         var edmAssembly = typeof(QP8Entities).Assembly;
-        //         var metaReader = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.ssdl"));
-        //         var ssdl = XElement.Load(metaReader);
-        //         CorrectSsdl(ssdl);
-        //
-        //         var rdr = new List<XmlReader> { ssdl.CreateReader() };
-        //         var sic = new StoreItemCollection(rdr);
-        //         rdr[0] = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.csdl"));
-        //
-        //         var eic = new EdmItemCollection(rdr);
-        //         rdr[0] = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.msl"));
-        //
-        //         var smic = new StorageMappingItemCollection(eic, sic, rdr);
-        //         var workspace = new MetadataWorkspace(
-        //             () => eic, () => sic, () => smic
-        //         );
-        //
-        //         return workspace;
-        //     }
-        // }
-
-        // private void CorrectSsdl(XContainer ssdl)
-        // {
-        //     var ns = XNamespace.Get(@"http://schemas.microsoft.com/ado/2009/11/edm/ssdl");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.Site, "SITE", "SITE_ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.Content, "CONTENT", "CONTENT_ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.ContentGroup, "content_group", "content_group_id");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.Field, "CONTENT_ATTRIBUTE", "ATTRIBUTE_ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.ContentLink, "content_to_content", "link_id");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.CustomAction, "CUSTOM_ACTION", "ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.BackendAction, "BACKEND_ACTION", "ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.VisualEditorCommand, "VE_COMMAND", "ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.VisualEditorPlugin, "VE_PLUGIN", "ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.VisualEditorStyle, "VE_STYLE", "ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.User, "USERS", "USER_ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.UserGroup, "USER_GROUP", "GROUP_ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.Workflow, "WORKFLOW", "WORFKLOW_ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.StatusType, "STATUS_TYPE", "STATUS_TYPE_ID");
-        //     CorrectEntityType(ssdl, ns, EntityTypeCode.Notification, "NOTIFICATIONS", "NOTIFICATION_ID");
-        // }
-
-        // [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        // private void CorrectEntityType(XContainer ssdl, XNamespace ns, string entityTypeCode, string tableName, string keyName)
-        // {
-        //     if (IdentityInsertOptions != null && IdentityInsertOptions.Contains(entityTypeCode))
-        //     {
-        //         XElement table;
-        //         try
-        //         {
-        //             table = ssdl.Descendants(ns + "EntityType").Single(n => n.Attribute("Name").Value == tableName);
-        //         }
-        //         catch (InvalidOperationException)
-        //         {
-        //             throw new ApplicationException($"Table {tableName} with namespace {ns} is not found in ssdl");
-        //         }
-        //
-        //         XElement column;
-        //         try
-        //         {
-        //             column = table.Elements(ns + "Property").Single(n => n.Attribute("Name").Value == keyName);
-        //         }
-        //         catch (InvalidOperationException)
-        //         {
-        //             throw new ApplicationException($"Column {keyName} with namespace {ns} for table {tableName} is not found in ssdl");
-        //         }
-        //
-        //         column.Attribute("StoreGeneratedPattern").Value = "None";
-        //     }
-        // }
     }
 }

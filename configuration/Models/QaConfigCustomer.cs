@@ -1,4 +1,5 @@
 using System.Xml.Serialization;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.Configuration.Models
 {
@@ -9,6 +10,9 @@ namespace Quantumart.QP8.Configuration.Models
 
         [XmlAttribute("exclude_from_schedulers")]
         public bool ExcludeFromSchedulers { get; set; }
+
+        [XmlAttribute("db_type")]
+        public DatabaseType DbType { get; set; }
 
         [XmlAttribute("exclude_from_schedulers_cdcelastic")]
         public bool ExcludeFromSchedulersCdcElastic { get; set; }

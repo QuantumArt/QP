@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Common;
 
 // using System.Data.Entity;
@@ -39,28 +40,23 @@ namespace Quantumart.QP8.BLL
             get
             {
                 QPModelDataContext dbContext;
-
-                var dbType = DatabaseTypeHelper.ResolveDatabaseType(CurrentDbConnectionStringForEntities);
                 if (QPConnectionScope.Current == null)
                 {
-                    dbContext = CreateDbContext(dbType, CurrentDbConnectionStringForEntities);
+                    dbContext = CreateDbContext(CurrentDbConnectionInfo);
                 }
                 else
                 {
-                    dbContext = CreateDbContextUsingConnection(dbType);
+                    dbContext = CreateDbContextUsingConnection();
                 }
-
-                // dbContext.Configuration.LazyLoadingEnabled = false;
                 return dbContext;
             }
         }
 
-        public static DatabaseType DatabaseType => DatabaseTypeHelper.ResolveDatabaseType(CurrentDbConnectionStringForEntities);
+        public static DatabaseType DatabaseType => CurrentDbConnectionInfo.DbType;
 
-        private static bool UsePostgres(string connectionString) => connectionString.IndexOf("MSCPGSQL01", StringComparison.InvariantCultureIgnoreCase) != -1;
-
-        private static QPModelDataContext CreateDbContextUsingConnection(DatabaseType dbType)
+        private static QPModelDataContext CreateDbContextUsingConnection()
         {
+            var dbType = QPConnectionScope.Current.DbType;
             switch (dbType)
             {
                 case DatabaseType.Unknown:
@@ -75,22 +71,22 @@ namespace Quantumart.QP8.BLL
 
         }
 
-        private static QPModelDataContext CreateDbContext(DatabaseType dbType, string connectionString)
+        private static QPModelDataContext CreateDbContext(QpConnectionInfo cnnInfo)
         {
             QPModelDataContext dbContext;
-            switch (dbType)
+            switch (cnnInfo.DbType)
             {
                 case DatabaseType.Unknown:
                     throw new ApplicationException("Database type unknown");
                 case DatabaseType.SqlServer:
-                    dbContext = new SqlServerQPModelDataContext(connectionString);
+                    dbContext = new SqlServerQPModelDataContext(cnnInfo.ConnectionString);
                     dbContext.Database.ExecuteSqlCommand($"SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
                     break;
                 case DatabaseType.Postgres:
-                    dbContext = new NpgSqlQPModelDataContext(connectionString);
+                    dbContext = new NpgSqlQPModelDataContext(cnnInfo.ConnectionString);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(dbType), dbType, null);
+                    throw new ArgumentOutOfRangeException(nameof(cnnInfo.DbType), cnnInfo.DbType, null);
             }
 
             return dbContext;
@@ -316,7 +312,7 @@ namespace Quantumart.QP8.BLL
         private static QPConnectionScope _currentConnectionScope;
 
         [ThreadStatic]
-        private static string _currentDbConnectionString;
+        private static QpConnectionInfo _currentDbConnectionInfo;
 
         [ThreadStatic]
         private static BackendActionContext _backendActionContext;
@@ -536,23 +532,40 @@ namespace Quantumart.QP8.BLL
 #if !NET_STANDARD
         public static QpIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QpIdentity : null;
 #endif
+
         public static string CurrentDbConnectionString
+        {
+            get => CurrentDbConnectionInfo.ConnectionString;
+
+            set => CurrentDbConnectionInfo = new QpConnectionInfo
+            {
+                ConnectionString = value
+            };
+        }
+
+        public static QpConnectionInfo CurrentDbConnectionInfo
         {
             get
             {
-                var result = GetValueFromStorage(_currentDbConnectionString, HttpContextItems.CurrentDbConnectionStringKey);
+                var result = GetValueFromStorage(_currentDbConnectionInfo, HttpContextItems.CurrentDbConnectionStringKey);
                 if (result == null)
                 {
-                    result = QPConfiguration.GetConnectionString(CurrentCustomerCode);
-                    SetValueToStorage(ref _currentDbConnectionString, result, HttpContextItems.CurrentDbConnectionStringKey);
+                    var info = QPConfiguration.GetConnectionInfo(CurrentCustomerCode);
+                    result = new QpConnectionInfo()
+                    {
+                        ConnectionString = info.ConnectionString,
+                        DbType = info.DbType
+                    };
+
+                    SetValueToStorage(ref _currentDbConnectionInfo, result, HttpContextItems.CurrentDbConnectionStringKey);
                 }
 
                 return result;
             }
-            set => SetValueToStorage(ref _currentDbConnectionString, value, HttpContextItems.CurrentDbConnectionStringKey);
+            set => SetValueToStorage(ref _currentDbConnectionInfo, value, HttpContextItems.CurrentDbConnectionStringKey);
         }
 
-        private static string CurrentDbConnectionStringForEntities => PreparingDbConnectionStringForEntities(CurrentDbConnectionString);
+        private static string CurrentDbConnectionStringForEntities => PreparingDbConnectionStringForEntities(CurrentDbConnectionInfo.ConnectionString);
 
         private static string PreparingDbConnectionStringForEntities(string connectionString) => connectionString;//$"metadata=res://*/QP8Model.csdl|res://*/QP8Model.ssdl|res://*/QP8Model.msl;provider=System.Data.SqlClient;provider connection string=\"{connectionString}\"";
 
@@ -566,15 +579,14 @@ namespace Quantumart.QP8.BLL
             QpUser resultUser = null;
             message = string.Empty;
 
-            var sqlCn = QPConfiguration.GetConnectionString(data.CustomerCode);
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlCn);
+            var sqlCn = QPConfiguration.GetConnectionInfo(data.CustomerCode);
 
-            using (var dbContext = CreateDbContext(dbType, sqlCn))
+            using (var dbContext = CreateDbContext(sqlCn))
             {
                 try
                 {
                     User user = null;
-                    using (var cn = CreateDbConnection(sqlCn, dbType))
+                    using (var cn = CreateDbConnection(sqlCn))
                     {
                         cn.Open();
                         var dbUser = Common.Authenticate(cn, data.UserName, data.Password, data.UseAutoLogin, false);
@@ -592,7 +604,7 @@ namespace Quantumart.QP8.BLL
                             MustChangePassword = user.MustChangePassword
                         };
 
-                        using (var cn = CreateDbConnection(sqlCn, dbType))
+                        using (var cn = CreateDbConnection(sqlCn))
                         {
                             cn.Open();
                             resultUser.Roles = QpRolesManager.GetRolesForUser(Common.IsAdmin(cn, user.Id));
@@ -637,18 +649,18 @@ namespace Quantumart.QP8.BLL
             return resultUser;
         }
 
-        private static DbConnection CreateDbConnection(string connectionString, DatabaseType dbType)
+        private static DbConnection CreateDbConnection(QpConnectionInfo cnnInfo)
         {
-            switch (dbType)
+            switch (cnnInfo.DbType)
             {
                 case DatabaseType.Unknown:
                     throw new ApplicationException("Database type unknown");
                 case DatabaseType.SqlServer:
-                    return new SqlConnection(connectionString);
+                    return new SqlConnection(cnnInfo.ConnectionString);
                 case DatabaseType.Postgres:
-                    return new NpgsqlConnection(connectionString);
+                    return new NpgsqlConnection(cnnInfo.ConnectionString);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(dbType), dbType, null);
+                    throw new ArgumentOutOfRangeException(nameof(cnnInfo.DbType), cnnInfo.DbType, null);
             }
         }
 

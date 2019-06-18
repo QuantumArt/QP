@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
@@ -68,11 +69,19 @@ namespace Quantumart.QP8.Configuration
             return elem?.Value ?? String.Empty;
         }
 
+
         public static string GetConnectionString(string customerCode, string appName = "QP8Backend")
+        {
+            return GetConnectionInfo(customerCode, appName).ConnectionString;
+        }
+
+
+        public static QpConnectionInfo GetConnectionInfo(string customerCode, string appName = "QP8Backend")
         {
             if (!String.IsNullOrWhiteSpace(customerCode))
             {
                 string connectionString;
+                DatabaseType dbType = default(DatabaseType);
                 if (ConfigServiceUrl != null && ConfigServiceToken != null)
                 {
                     var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
@@ -100,11 +109,18 @@ namespace Quantumart.QP8.Configuration
                     }
 
                     connectionString = customerElement.Element("db")?.Value;
+                    var dbTypeString = customerElement.Attribute("db_type")?.Value;
+                    if (!string.IsNullOrEmpty(dbTypeString) && Enum.TryParse(dbTypeString, true, out DatabaseType parsed))
+                    {
+                        dbType = parsed;
+                    }
+
                 }
 
                 if (!String.IsNullOrEmpty(connectionString))
                 {
-                    return TuneConnectionString(connectionString, out var _, appName);
+                    connectionString = TuneConnectionString(connectionString, appName, dbType);
+                    return new QpConnectionInfo { ConnectionString = connectionString, DbType = dbType };
                 }
             }
 
@@ -133,7 +149,7 @@ namespace Quantumart.QP8.Configuration
 
             foreach (QaConfigCustomer entry in customers)
             {
-                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, out var _, appName);
+                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName);
             }
 
             return customers;
@@ -153,35 +169,23 @@ namespace Quantumart.QP8.Configuration
             return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
         }
 
-        public static string TuneConnectionString(string connectionString, out DbConnectionStringBuilder cnsBuilder, string appName = null)
+        public static string TuneConnectionString(string connectionString, string appName = "QpApp", DatabaseType dbType = DatabaseType.SqlServer)
         {
-            #warning временный костыль. нужно реализовать нормальное определение sqlServer/postgres
-            var isPostgres = connectionString.IndexOf("MSCPGSQL01", StringComparison.InvariantCultureIgnoreCase) != -1;
-            if (!isPostgres)
+            DbConnectionStringBuilder cnsBuilder;
+            if (dbType == DatabaseType.SqlServer)
             {
-                    var sqlConnectionStringBuilder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
-                    cnsBuilder = sqlConnectionStringBuilder;
-                    if (!string.IsNullOrWhiteSpace(appName))
-                    {
-                        sqlConnectionStringBuilder.ApplicationName = appName;
-                    }
-                    else
-                    {
-                        sqlConnectionStringBuilder.ApplicationName = string.IsNullOrWhiteSpace(appName)
-                            ? sqlConnectionStringBuilder.ApplicationName ?? "QpApp"
-                            : sqlConnectionStringBuilder.ApplicationName = appName;
-                    }
+                var sqlConnectionStringBuilder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
+                cnsBuilder = sqlConnectionStringBuilder;
+                sqlConnectionStringBuilder.ApplicationName = appName;
 
-                    if (sqlConnectionStringBuilder.ConnectTimeout < 120)
-                    {
-                        sqlConnectionStringBuilder.ConnectTimeout = 120;
-                    }
-
+                if (sqlConnectionStringBuilder.ConnectTimeout < 120)
+                {
+                    sqlConnectionStringBuilder.ConnectTimeout = 120;
+                }
             }
             else
             {
-                var npgSqlConnectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString);
-                cnsBuilder = npgSqlConnectionStringBuilder;
+                cnsBuilder = new NpgsqlConnectionStringBuilder(connectionString);
             }
 
             return cnsBuilder.ToString();

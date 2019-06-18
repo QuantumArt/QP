@@ -16,7 +16,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
         {
             if (SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, out var cnsBuilder))
             {
-                QPContext.CurrentDbConnectionString = QPConfiguration.TuneConnectionString(cnsBuilder.ConnectionString, out var _);
+                QPContext.CurrentDbConnectionString = QPConfiguration.TuneConnectionString(cnsBuilder.ConnectionString);
             }
             else
             {
