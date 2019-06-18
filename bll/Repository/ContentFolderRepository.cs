@@ -47,9 +47,10 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
+
                 return RowMapper.GetBizList(
                     Common.GetChildFoldersList(
-                        scope.DbConnection, QPContext.CurrentUserId,
+                        scope.DbConnection, QPContext.EFContext, QPContext.IsAdmin, QPContext.CurrentUserId,
                         parentEntityId,false, parentId, PermissionLevel.List, false, out int _)
                         .ToList()
                 );

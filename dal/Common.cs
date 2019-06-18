@@ -3713,11 +3713,13 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// <returns></returns>
         public static bool UserGroups_IsGroupAdminDescendant(int groupId, DbConnection connection)
         {
-            const string query = @"with G2G (Parent_Group_Id, Child_Group_Id, [Level]) AS
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var levelColumnName = Escape(dbType, "Level");
+            var query = $@"with {SqlQuerySyntaxHelper.RecursiveCte(dbType)} G2G (Parent_Group_Id, Child_Group_Id, {levelColumnName}) AS
                             (
-                                select CAST(NULL as numeric) AS Parent_Group_Id, CAST(1 as numeric) as Child_Group_Id, 0 as [Level]
+                                select CAST(NULL as numeric) AS Parent_Group_Id, CAST(1 as numeric) as Child_Group_Id, 0 as {levelColumnName}
                                 union all
-                                select G.Parent_Group_Id, G.Child_Group_Id, [Level] + 1 as [Level]
+                                select G.Parent_Group_Id, G.Child_Group_Id, {levelColumnName} + 1 as {levelColumnName}
                                 from group_to_group G
                                 join G2G ON G.Parent_Group_Id = G2G.Child_Group_Id
                             )
@@ -3824,47 +3826,49 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetSitePermissionPage(DbConnection sqlConnection, int siteId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[SITE_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,SA.[propagate_to_contents] as [PropagateToItems]
-                                      ,cast(0 as bit) as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var selectBlock = $@"SA.SITE_ACCESS_ID AS ID
+                                      ,U.{Escape(dbType, "LOGIN")} AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,SA.propagate_to_contents as PropagateToItems
+                                      ,{SqlQuerySyntaxHelper.ToBoolSql(dbType, false)} as {Escape(dbType, "Hide")}
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.{Escape(dbType, "LOGIN")} AS LastModifiedByUser";
 
-            const string fromBlock = @"[SITE_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"SITE_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[SITE_ID] = " + siteId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "SITE_ID = " + siteId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
         public static IEnumerable<DataRow> GetContentPermissionPage(DbConnection sqlConnection, int contentId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[CONTENT_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,SA.[PROPAGATE_TO_ITEMS] as [PropagateToItems]
-                                      ,SA.[HIDE] as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var selectBlock = $@"SA.CONTENT_ACCESS_ID AS ID
+                                      ,U.{Escape(dbType, "LOGIN")} AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,SA.PROPAGATE_TO_ITEMS as PropagateToItems
+                                      ,SA.HIDE as Hide
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.{Escape(dbType, "LOGIN")} AS LastModifiedByUser";
 
-            const string fromBlock = @"[CONTENT_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"CONTENT_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[CONTENT_ID] = " + contentId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "CONTENT_ID = " + contentId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
@@ -4056,17 +4060,18 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetChildContentPermissionsForUser(DbConnection sqlConnection, int siteId, int userId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
         {
-            var fromBlock = @"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
-                                CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit,
-                                CAST(ISNULL(P2.[PROPAGATE_TO_ITEMS], 0) AS BIT) AS PropagateToItems,
-                                CAST(ISNULL(P2.[HIDE], 0) AS BIT) AS Hide,
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.USER_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, "coalesce(P2.PROPAGATE_TO_ITEMS, 0)")} AS PropagateToItems,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"coalesce(P2.HIDE, {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)})")} AS Hide,
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                 LEFT JOIN content_access_PermLevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
+                                 LEFT JOIN content_access_PermLevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.USER_ID = {{0}}
                                  RIGHT JOIN CONTENT C ON P1.CONTENT_ID = C.CONTENT_ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE C.SITE_ID = {1}) AS TR";
+                                 WHERE C.SITE_ID = {{1}}) AS TR";
 
             fromBlock = string.Format(fromBlock, userId, siteId);
             string filter = null;
@@ -4087,17 +4092,19 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetChildContentPermissionsForGroup(DbConnection sqlConnection, int siteId, int groupId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
         {
-            var fromBlock = @"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
-                                CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit,
-                                CAST(ISNULL(P2.[PROPAGATE_TO_ITEMS], 0) AS BIT) AS PropagateToItems,
-                                CAST(ISNULL(P2.[HIDE], 0) AS BIT) AS Hide,
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"coalesce(P2.PROPAGATE_TO_ITEMS, 0)")} AS PropagateToItems,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"coalesce(P2.HIDE, {falseValue})")} AS Hide,
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                 LEFT JOIN content_access_PermLevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
+                                 LEFT JOIN content_access_PermLevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
                                  RIGHT JOIN CONTENT C ON P1.CONTENT_ID = C.CONTENT_ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE C.SITE_ID = {1}) AS TR";
+                                 WHERE C.SITE_ID = {{1}}) AS TR";
 
             fromBlock = string.Format(fromBlock, groupId, siteId);
 
@@ -4665,7 +4672,12 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static void UpdateOrInsertSiteVeStyleValue(DbConnection sqlConnection, int siteId, int styleId, bool value)
         {
-            const string query = @"begin tran
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            string query;
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    query = @"begin tran
                             if not exists (select * from VE_STYLE_SITE_BIND where [STYLE_ID] = @cId and [SITE_ID] = @sId)
                             begin
                                     INSERT INTO VE_STYLE_SITE_BIND
@@ -4682,6 +4694,18 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
                                     update VE_STYLE_SITE_BIND set [ON] = @val where [STYLE_ID] = @cId and [SITE_ID] = @sId
                             end
                             commit";
+                    break;
+                case DatabaseType.Postgres:
+                    query = $@"
+    INSERT INTO VE_STYLE_SITE_BIND (style_id, site_id, {Escape(dbType, "on")})
+    VALUES( @cId, @sId, @val )
+    ON CONFLICT(style_id, site_id)
+    DO UPDATE SET {Escape(dbType, "on")} = @val;
+";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -4704,7 +4728,8 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static void RemoveSiteVeStyle(DbConnection sqlConnection, int siteId, int styleId)
         {
-            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_STYLE_SITE_BIND where [STYLE_ID] = @cId and [SITE_ID] = @sId", sqlConnection))
+
+            using (var cmd = DbCommandFactory.Create($"DELETE FROM VE_STYLE_SITE_BIND where STYLE_ID = @cId and SITE_ID = @sId", sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", styleId);
                 cmd.Parameters.AddWithValue("@sId", siteId);
@@ -5415,23 +5440,40 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
             }
         }
 
-        public static string GetPermittedItemsAsQuery(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityName, string parentEntityName, int parentEntityId)
+        public static string GetPermittedItemsAsQuery(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityName, string parentEntityName, int parentEntityId, QPModelDataContext context = null)
         {
-            using (var cmd = DbCommandFactory.Create("qp_GetPermittedItemsAsQuery", connection))
+            if (context == null)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@user_id", userId);
-                cmd.Parameters.AddWithValue("@group_id", groupId);
-                cmd.Parameters.AddWithValue("@start_level", startLevel);
-                cmd.Parameters.AddWithValue("@end_level", endLevel);
-                cmd.Parameters.AddWithValue("@entity_name", entityName);
-                cmd.Parameters.AddWithValue("@parent_entity_name", parentEntityName);
-                cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
-
-                cmd.Parameters.Add(new SqlParameter("@SQLOut", SqlDbType.NVarChar, -1) { Direction = ParameterDirection.Output });
-                cmd.ExecuteNonQuery();
-                return (string)cmd.Parameters["@SQLOut"].Value;
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                switch (dbType)
+                {
+                    case DatabaseType.SqlServer:
+                        context = new SqlServerQPModelDataContext(connection);
+                        break;
+                    case DatabaseType.Postgres:
+                        context = new NpgSqlQPModelDataContext(connection);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
+
+            return PermissionHelper.GetPermittedItemsAsQuery(context, userId, groupId, startLevel, endLevel, entityName, parentEntityName, parentEntityId);
+            // using (var cmd = DbCommandFactory.Create("qp_GetPermittedItemsAsQuery", connection))
+            // {
+            //     cmd.CommandType = CommandType.StoredProcedure;
+            //     cmd.Parameters.AddWithValue("@user_id", userId);
+            //     cmd.Parameters.AddWithValue("@group_id", groupId);
+            //     cmd.Parameters.AddWithValue("@start_level", startLevel);
+            //     cmd.Parameters.AddWithValue("@end_level", endLevel);
+            //     cmd.Parameters.AddWithValue("@entity_name", entityName);
+            //     cmd.Parameters.AddWithValue("@parent_entity_name", parentEntityName);
+            //     cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
+            //
+            //     cmd.Parameters.Add(new SqlParameter("@SQLOut", SqlDbType.NVarChar, -1) { Direction = ParameterDirection.Output });
+            //     cmd.ExecuteNonQuery();
+            //     return (string)cmd.Parameters["@SQLOut"].Value;
+            // }
         }
 
         public static string GetPermittedItemsAsQueryV2(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityName, string parentEntityName, int parentEntityId)
@@ -10527,5 +10569,7 @@ order by ActionDate desc
                 cmd.ExecuteNonQuery();
             }
         }
+
+
     }
 }

@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
@@ -108,26 +109,125 @@ namespace Quantumart.QP8.DAL
 
         }
 
-        public static IEnumerable<DataRow> GetChildFoldersList(DbConnection sqlConnection, int userId, int id, bool isSite, int? folderId, int permissionLevel, bool countOnly, out int totalRecords)
+
+        public static IEnumerable<DataRow> GetChildFoldersList(DbConnection sqlConnection, QPModelDataContext context, bool isAdmin, int userId, int id, bool isSite, int? folderId, int permissionLevel, bool countOnly, out int totalRecords)
         {
             totalRecords = -1;
-            using (var cmd = DbCommandFactory.Create("qp_get_folders_tree", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter { ParameterName = "user_id", DbType = DbType.Decimal, Value = userId });
-                cmd.Parameters.Add(new SqlParameter { ParameterName = "parent_entity_id", DbType = DbType.Decimal, Value = id });
-                cmd.Parameters.Add(new SqlParameter { ParameterName = "is_site", DbType = DbType.Boolean, Value = isSite });
-                cmd.Parameters.Add(new SqlParameter { ParameterName = "parent_folder_id", DbType = DbType.Decimal, IsNullable = true, Value = folderId });
-                cmd.Parameters.Add(new SqlParameter { ParameterName = "permission_level", DbType = DbType.Decimal, Value = permissionLevel });
-                cmd.Parameters.Add(new SqlParameter { ParameterName = "count_only", DbType = DbType.Int32, Value = countOnly });
-                cmd.Parameters.Add(new SqlParameter { ParameterName = "total_records", Direction = ParameterDirection.InputOutput, DbType = DbType.Int32, Value = totalRecords });
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var entityName = isSite ? EntityTypeCode.OldSiteFolder : EntityTypeCode.ContentFolder;
+            var parentEntityName = isSite ? EntityTypeCode.Site : EntityTypeCode.Content;
+            var blockFilter = string.Empty;
 
+            var useSecurity = !isAdmin;
+
+            int parentLevel;
+            if (entityName == EntityTypeCode.ContentFolder)
+            {
+                useSecurity = false;
+                parentLevel = GetEntityAccessLevel(sqlConnection, context, userId, 0, parentEntityName, id);
+                if (parentLevel == 0)
+                {
+                    blockFilter += " AND 1 = 0 ";
+                }
+
+            }
+            else
+            {
+                parentLevel = folderId.HasValue
+                    ? GetEntityAccessLevel(sqlConnection, context, userId, 0, EntityTypeCode.SiteFolder, folderId.Value)
+                    : GetEntityAccessLevel(sqlConnection, context, userId, 0, parentEntityName, id);
+            }
+
+            var securitySql = useSecurity
+                ? PermissionHelper.GetPermittedItemsAsQuery(context, userId, 0, 0, 4, entityName, parentEntityName, id)
+                : string.Empty;
+
+
+            var query = $@"
+            SELECT
+{(countOnly
+                    ? "COUNT(c.FOLDER_ID) "
+                    : $@"
+            c.FOLDER_ID,
+            c.NAME,
+            c.CREATED,
+            c.MODIFIED, 
+            c.LAST_MODIFIED_BY,
+            {SqlQuerySyntaxHelper.CastToBool(dbType, $"CASE WHEN (SELECT COUNT(FOLDER_ID) FROM {entityName} WHERE PARENT_FOLDER_ID = c.FOLDER_ID) > 0 THEN 1 ELSE 0 END")} AS HAS_CHILDREN,
+            mu.{Escape(dbType, "USER_ID")} as MODIFIER_USER_ID,
+            mu.FIRST_NAME as MODIFIER_FIRST_NAME,
+            mu.LAST_NAME AS MODIFIER_LAST_NAME,
+            mu.EMAIL AS MODIFIER_EMAIL,
+            mu.{Escape(dbType, "LOGIN")} AS MODIFIER_LOGIN
+            {(useSecurity
+                ? $", COALESCE(pi.permission_level, {SqlQuerySyntaxHelper.CastToVarchar(dbType, parentLevel.ToString())}) as EFFECTIVE_PERMISSION_LEVEL"
+                : string.Empty
+                        )}
+"
+                )} ";
+
+            query += $@"
+    FROM {entityName} as c
+    {(useSecurity
+                ? $"LEFT JOIN ({securitySql}) as pi ON c.folder_id = pi.{entityName}_id"
+                : string.Empty
+    )}
+    {(!countOnly
+                ? $" LEFT OUTER JOIN USERS as mu ON mu.user_id = c.last_modified_by "
+                : string.Empty)}
+    WHERE
+    {(folderId.HasValue
+                ? $" c.parent_folder_id = '{folderId.Value}' "
+                : $" c.parent_folder_id is null and c.{parentEntityName}_id = '{id}'"
+    )}
+
+    {(useSecurity
+                ? $" AND coalesce(pi.permission_level, 4) >= {permissionLevel}"
+                : string.Empty
+    )}
+";
+            query += blockFilter;
+
+            if (!countOnly)
+            {
+                query += "ORDER BY c.NAME ASC";
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
+            {
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
-                totalRecords = (int)cmd.Parameters["total_records"].Value;
+                totalRecords = dt.Rows.Count;
                 return dt.AsEnumerable().ToArray();
             }
         }
+
+        private static int GetEntityAccessLevel(DbConnection sqlConnection, QPModelDataContext context, int userId, int groupId, string parentEntityName, int id)
+        {
+            #warning реализовать qp_entity_access_level
+            return PermissionLevel.FullAccess;
+        }
+
+        // public static IEnumerable<DataRow> GetChildFoldersList(DbConnection sqlConnection, int userId, int id, bool isSite, int? folderId, int permissionLevel, bool countOnly, out int totalRecords)
+        // {
+        //     totalRecords = -1;
+        //     using (var cmd = DbCommandFactory.Create("qp_get_folders_tree", sqlConnection))
+        //     {
+        //         cmd.CommandType = CommandType.StoredProcedure;
+        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "user_id", DbType = DbType.Decimal, Value = userId });
+        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "parent_entity_id", DbType = DbType.Decimal, Value = id });
+        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "is_site", DbType = DbType.Boolean, Value = isSite });
+        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "parent_folder_id", DbType = DbType.Decimal, IsNullable = true, Value = folderId });
+        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "permission_level", DbType = DbType.Decimal, Value = permissionLevel });
+        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "count_only", DbType = DbType.Int32, Value = countOnly });
+        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "total_records", Direction = ParameterDirection.InputOutput, DbType = DbType.Int32, Value = totalRecords });
+        //
+        //         var dt = new DataTable();
+        //         DataAdapterFactory.Create(cmd).Fill(dt);
+        //         totalRecords = (int)cmd.Parameters["total_records"].Value;
+        //         return dt.AsEnumerable().ToArray();
+        //     }
+        // }
 
         // public static string GetEntityName(DbConnection sqlConnection, string entityTypeCode, int entityId, int parentEntityId)
         // {
