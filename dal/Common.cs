@@ -5105,8 +5105,9 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
             var result = new HashSet<int>();
             if (!string.IsNullOrEmpty(selectedIds))
             {
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
                 var sb = new StringBuilder();
-                sb.AppendLine("WITH IDS (ID)");
+                sb.AppendLine($"WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} IDS (ID)");
                 sb.AppendLine("AS");
                 sb.AppendLine("(");
                 sb.AppendFormatLine("select {0} from {1} where {2} in ({3}) and {0} is not null", parentFieldName, tableName, idFieldName, selectedIds);

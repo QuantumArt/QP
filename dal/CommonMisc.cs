@@ -151,7 +151,7 @@ namespace Quantumart.QP8.DAL
             c.FOLDER_ID,
             c.NAME,
             c.CREATED,
-            c.MODIFIED, 
+            c.MODIFIED,
             c.LAST_MODIFIED_BY,
             {SqlQuerySyntaxHelper.CastToBool(dbType, $"CASE WHEN (SELECT COUNT(FOLDER_ID) FROM {entityName} WHERE PARENT_FOLDER_ID = c.FOLDER_ID) > 0 THEN 1 ELSE 0 END")} AS HAS_CHILDREN,
             mu.{Escape(dbType, "USER_ID")} as MODIFIER_USER_ID,
