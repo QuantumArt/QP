@@ -1,6 +1,6 @@
 CREATE OR REPLACE PROCEDURE public.qp_content_frontend_views_drop(
 	cid numeric,
-	is_new boolean
+	is_new boolean DEFAULT false
 )
 LANGUAGE 'plpgsql'
 

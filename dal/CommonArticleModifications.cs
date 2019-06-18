@@ -40,13 +40,8 @@ namespace Quantumart.QP8.DAL
         public static void UpdateChildDelayedSchedule(DbConnection connection, int articleId)
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = databaseType == DatabaseType.SqlServer ? "qp_copy_schedule_to_child_delays" : "call qp_copy_schedule_to_child_delays(@id)";
-            using (var cmd = DbCommandFactory.Create(sql, connection))
-            {
-                cmd.CommandType = databaseType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", articleId);
-                cmd.ExecuteNonQuery();
-            }
+            var sql = SqlQuerySyntaxHelper.SpCall(databaseType, "qp_copy_schedule_to_child_delays", articleId.ToString());
+            ExecuteSql(connection, sql);
         }
 
         private static string PgSelectType(int attributeTypeId)
@@ -257,10 +252,10 @@ namespace Quantumart.QP8.DAL
         public static void CreateArticleVersions(DbConnection connection, int userId, int[] ids)
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = databaseType == DatabaseType.SqlServer ? "qp_create_content_item_versions" : "call qp_create_content_item_versions(@ids, @last_modified_by)";
+            var sql = SqlQuerySyntaxHelper.SpCall(databaseType, "qp_create_content_item_versions", "@ids, @last_modified_by");
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = databaseType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
+                cmd.CommandType = CommandType.Text;
                 cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, databaseType));
                 cmd.Parameters.AddWithValue("@last_modified_by", userId);
                 cmd.ExecuteNonQuery();

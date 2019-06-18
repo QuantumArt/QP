@@ -288,6 +288,19 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static string SpCall(DatabaseType databaseType, string name, string paramString)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $@"exec {name} {paramString}";
+                case DatabaseType.Postgres:
+                    return $@"call {name}({paramString});";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
 
     }
 }

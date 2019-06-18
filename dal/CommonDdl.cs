@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.Constants;
@@ -30,10 +31,11 @@ namespace Quantumart.QP8.DAL
 
             var sql = $"alter table {{0}} add {fieldDef}";
 
-            DropUnitedView(field.ContentId, cnn);
+            var contentId = (int)field.ContentId;
+            DropContentViews(cnn, contentId);
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
-            CreateUnitedView(field.ContentId, cnn);
+            CreateContentViews(cnn, contentId);
 
             if (field.IndexFlag == 1)
             {
@@ -98,41 +100,16 @@ namespace Quantumart.QP8.DAL
                 DropIndex(cnn, asyncTableName, field.Name);
             }
 
-            DropUnitedView(field.ContentId, cnn);
+            var contentId = (int)field.ContentId;
+            DropContentViews(cnn, contentId);
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
-            CreateUnitedView(field.ContentId, cnn);
+            CreateContentViews(cnn, contentId);
 
         }
 
 
-        public static void RenameColumn(DbConnection cnn, string tableName, string fieldName, string newFieldName, bool preserveIndex)
-        {
-            if (preserveIndex)
-            {
-                DropIndex(cnn, tableName, fieldName);
-            }
-
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
-            var sql = "";
-            if (dbType == DatabaseType.SqlServer)
-            {
-                sql = $@"exec sp_rename '{tableName}.{fieldName}', '{newFieldName}', 'column' ";
-            }
-            else
-            {
-                sql = $@"ALTER TABLE {tableName} RENAME COLUMN {Escape(dbType, fieldName)} TO {Escape(dbType, newFieldName)};";
-            }
-
-            ExecuteSql(cnn, sql);
-
-            if (preserveIndex)
-            {
-                AddIndex(cnn, tableName, fieldName);
-            }
-        }
-
-        public static void CreateContent(DbConnection cnn, int id)
+        public static void CreateContentTables(DbConnection cnn, int id)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
             var tableName = "content_" + id;
@@ -151,10 +128,25 @@ namespace Quantumart.QP8.DAL
 
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
+        }
+
+        public static void CreateContentViews(DbConnection cnn, int id)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var idStr = id.ToString();
+
+            var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_create", idStr);
+            ExecuteSql(cnn, unitedSql);
+
+            var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_create", idStr);
+            ExecuteSql(cnn, feSql);
+
+            var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create", idStr);
+            ExecuteSql(cnn, newSql);
 
         }
 
-        public static void DropContent(DbConnection cnn, int id)
+        public static void DropContentTables(DbConnection cnn, int id)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
             var tableName = "content_" + id;
@@ -163,6 +155,21 @@ namespace Quantumart.QP8.DAL
 
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
+        }
+
+        public static void DropContentViews(DbConnection cnn, int id)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var idStr = id.ToString();
+
+            var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_drop", idStr);
+            ExecuteSql(cnn, newSql);
+
+            var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_drop", idStr);
+            ExecuteSql(cnn, feSql);
+
+            var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_drop", idStr);
+            ExecuteSql(cnn, unitedSql);
         }
 
         public static IEnumerable<DataRow> RemovingActions_GetContentsItemInfo(int? siteId, int? contentId, DbConnection connection)
@@ -218,25 +225,6 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void DropUnitedView(decimal contentId, DbConnection connection)
-        {
-            DropView($"content_{contentId}_united", connection);
-        }
-
-        public static void CreateUnitedView(decimal contentId, DbConnection connection)
-        {
-            string sql = $@"
-                create view content_{contentId}_united as
-	            select c1.* from content_{contentId} c1
-	            left join content_{contentId}_async c2 on c1.content_item_id = c2.content_item_id
-	            where c2.content_item_id is null
-	            union all
-	            select * from content_{contentId}_async;
-            ";
-
-            ExecuteSql(connection, sql);
-        }
-
         public static void DropView(string viewName, DbConnection connection)
         {
             var sql = "";
@@ -265,8 +253,10 @@ namespace Quantumart.QP8.DAL
 
             if (oldField.Name != newField.Name)
             {
+                DropContentViews(connection, (int)newField.ContentId);
                 RenameColumn(connection, tableName, oldField.Name, newField.Name);
                 RenameColumn(connection, asyncTableName, oldField.Name, newField.Name);
+                CreateContentViews(connection, (int)newField.ContentId);;
 
                 if (oldField.IndexFlag == 1 && newField.IndexFlag == 1)
                 {
@@ -361,14 +351,14 @@ namespace Quantumart.QP8.DAL
         public static void CreateLinkView(DbConnection connection, ContentToContentDAL item)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = (dbType == DatabaseType.SqlServer) ? $@"exec qp_build_link_view {item.LinkId}" : $@"call qp_link_view_create({item.LinkId});";
+            var sql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_build_link_view", item.LinkId.ToString(CultureInfo.InvariantCulture));
             ExecuteSql(connection, sql);
         }
 
         public static void DropLinkView(DbConnection connection, ContentToContentDAL item)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = (dbType == DatabaseType.SqlServer) ? $@"exec qp_drop_link_view {item.LinkId}" : $@"call qp_link_view_drop({item.LinkId});";
+            var sql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_drop_link_view", item.LinkId.ToString(CultureInfo.InvariantCulture));
             ExecuteSql(connection, sql);
         }
 

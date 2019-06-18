@@ -241,7 +241,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
             if (QPContext.DatabaseType != DatabaseType.SqlServer)
             {
-                Common.CreateContent(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
+                Common.CreateContentTables(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
                 Common.CreateContentModification(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
             }
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
@@ -249,7 +249,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
             if (createDefaultField)
             {
-                CreateDefaultField(newContent, content.ForceFieldIds);
+                CreateDefaultField(newContent, content.ForceFieldIds); // implicitly create views
             }
 
             binding.SetContent(newContent);
@@ -299,6 +299,11 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
         internal static void Delete(int id)
         {
             DefaultRepository.Delete<ContentDAL>(id);
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                Common.DropContentViews(QPContext.CurrentConnectionScope.DbConnection, id);
+                Common.DropContentTables(QPContext.CurrentConnectionScope.DbConnection, id);
+            }
         }
 
         internal static Content Copy(Content content, int? forceId, int[] forceFieldIds, int[] forceLinkIds, bool forHierarchy)
