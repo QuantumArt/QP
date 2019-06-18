@@ -14,7 +14,8 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetTreeChildNodes(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin)
         {
             var query = GetSqlQuery(context, connection, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId, userId, isAdmin, false);
-            return Common.GetDataRows(connection, query);
+
+            return string.IsNullOrWhiteSpace(query) ? Enumerable.Empty<DataRow>() : Common.GetDataRows(connection, query);
         }
 
         public static long GetTreeChildNodesCount(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin)
@@ -158,6 +159,10 @@ namespace Quantumart.QP8.DAL
                         : $"SELECT COUNT(ID) FROM ({sqlSb}) as innerSql";
                 }
 
+                if (string.IsNullOrWhiteSpace(sqlSb.ToString()))
+                {
+                    return null;
+                }
                 sql = " SELECT\n" +
                     $"{realParentIdStr} as parent_id,\n" +
                     $"{(isGroup ? $"{parentEntityId}" : "NULL")} as parent_group_id,\n" +
