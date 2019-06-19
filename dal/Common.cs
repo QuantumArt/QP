@@ -1929,30 +1929,35 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             );
         }
 
-        public static List<DataRow> GetLockedArticlesList(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Article,
-            @"[CONTENT_ITEM_ID] as ID
-                                      ,it.[content_id] as ParentId
-                                      ,dbo.qp_get_article_title_func(it.[Content_Item_Id],it.[content_id]) as Title
+        public static List<DataRow> GetLockedArticlesList(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var ns = DbSchemaName(dbType);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Article,
+                $@"CONTENT_ITEM_ID as ID
+                                      ,it.content_id as ParentId
+                                      ,{ns}.qp_get_article_title_func(it.Content_Item_Id, it.content_id) as Title
                                       ,con.CONTENT_NAME as ContentName
                                       ,site.SITE_NAME as SiteName
                                       ,typ.STATUS_TYPE_NAME as StatusName
-                                      ,it.[CREATED] as Created
-                                      ,it.[MODIFIED] as Modified
+                                      ,it.CREATED as Created
+                                      ,it.MODIFIED as Modified
                                       ,us.LOGIN as LastModifiedByUser
-                                      ,it.[PERMANENT_LOCK] as IsPermanentLock",
-            @"[dbo].[CONTENT_ITEM] as it
-                                      INNER JOIN [dbo].[content] as con on con.CONTENT_ID = it.CONTENT_ID
-                                      INNER JOIN [dbo].[SITE] as site on site.SITE_ID = con.SITE_ID
-                                      INNER JOIN [dbo].[STATUS_TYPE] as typ on typ.STATUS_TYPE_ID = it.STATUS_TYPE_ID
-                                      INNER JOIN [dbo].[USERS] as us on us.USER_ID = it.LAST_MODIFIED_BY",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "ID ASC",
-            $"it.[locked_by] = {userId}",
-            startRow,
-            pageSize,
-            out totalRecords
-        ).ToList();
+                                      ,it.PERMANENT_LOCK as IsPermanentLock",
+                $@"{ns}.CONTENT_ITEM as it
+                                      INNER JOIN {ns}.{Escape(dbType, "content")} as con on con.CONTENT_ID = it.CONTENT_ID
+                                      INNER JOIN {ns}.{Escape(dbType, "site")} as site on site.SITE_ID = con.SITE_ID
+                                      INNER JOIN {ns}.STATUS_TYPE as typ on typ.STATUS_TYPE_ID = it.STATUS_TYPE_ID
+                                      INNER JOIN {ns}.{Escape(dbType, "USERS")} as us on us.USER_ID = it.LAST_MODIFIED_BY",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "ID ASC",
+                $"it.{Escape(dbType, "locked_by")} = {userId}",
+                startRow,
+                pageSize,
+                out totalRecords
+            ).ToList();
+        }
 
         public static int GetLockedArticlesCount(DbConnection sqlConnection, int userId)
         {
@@ -1986,12 +1991,17 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public static List<DataRow> GetArticlesWaitingForApproval(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Article,
-            @"ci.content_item_id as ID
+        public static List<DataRow> GetArticlesWaitingForApproval(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var ns = DbSchemaName(dbType);
+            var withNoLock = WithNoLock(dbType);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Article,
+                $@"ci.content_item_id as ID
                                     ,ci.content_id as ParentId
-                                    ,dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) as Title
+                                    ,{ns}.qp_get_article_title_func(ci.content_item_id, c.content_id) as Title
                                     ,s.site_name as SiteName
                                     ,c.CONTENT_NAME as ContentName
                                     ,ci.MODIFIED as Modified
@@ -1999,26 +2009,27 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                                     ,typ.STATUS_TYPE_NAME as StatusName
                                     ,us.LOGIN as LastModifiedByUser
                                     ,ci.PERMANENT_LOCK as IsPermanentLock",
-            @"content_item_workflow ciw with(nolock)
-                                    INNER JOIN content_item ci with(nolock) ON ci.content_item_id = ciw.content_item_id
-                                    INNER JOIN full_workflow_rules wr with(nolock) on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
-                                    INNER JOIN full_workflow_rules wr2 with(nolock) on wr.workflow_id = wr2.workflow_id AND wr2.rule_order = wr.rule_order + 1
-                                    INNER JOIN content c with(nolock) ON ci.content_id = c.content_id
-                                    INNER JOIN site s with(nolock) ON c.site_id = s.site_id
-                                    INNER JOIN status_type as typ with(nolock) on typ.STATUS_TYPE_ID = ci.STATUS_TYPE_ID
+                $@"content_item_workflow ciw {withNoLock}
+                                    INNER JOIN content_item ci {withNoLock} ON ci.content_item_id = ciw.content_item_id
+                                    INNER JOIN full_workflow_rules wr {withNoLock} on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
+                                    INNER JOIN full_workflow_rules wr2 {withNoLock} on wr.workflow_id = wr2.workflow_id AND wr2.rule_order = wr.rule_order + 1
+                                    INNER JOIN content c {withNoLock} ON ci.content_id = c.content_id
+                                    INNER JOIN site s {withNoLock} ON c.site_id = s.site_id
+                                    INNER JOIN status_type as typ {withNoLock} on typ.STATUS_TYPE_ID = ci.STATUS_TYPE_ID
                                     INNER JOIN users as us on us.USER_ID = ci.LAST_MODIFIED_BY",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "SiteName ASC, ID ASC",
-            string.Format(@"(wr2.user_id = {0}
-                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind with(nolock) WHERE user_id={0})
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "SiteName ASC, ID ASC",
+                $@"(wr2.user_id = {userId}
+                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind {withNoLock} WHERE user_id={userId})
                                         )
                                         AND (
-                                            ci.content_item_id not in (select content_item_id from waiting_for_approval with(nolock))
-                                            OR ci.content_item_id in (select content_item_id from waiting_for_approval with(nolock) where user_id = {0})
-                                        )", userId),
-            startRow,
-            pageSize,
-            out totalRecords
-        ).ToList();
+                                            ci.content_item_id not in (select content_item_id from waiting_for_approval {withNoLock})
+                                            OR ci.content_item_id in (select content_item_id from waiting_for_approval {withNoLock} where user_id = {userId})
+                                        )",
+                startRow,
+                pageSize,
+                out totalRecords
+            ).ToList();
+        }
 
         internal static IEnumerable<DataRow> GetSimplePagedListOld(DbConnection sqlConnection,
             string entityTypeCode, string selectBlock, string fromBlock, string orderBy, string filter, int startRow,
