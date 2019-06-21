@@ -96,6 +96,7 @@ namespace Quantumart.QP8.Configuration
                     }
 
                     connectionString = customer.ConnectionString;
+                    dbType = (DatabaseType)(int)customer.DbType;
                 }
                 else
                 {
@@ -139,7 +140,8 @@ namespace Quantumart.QP8.Configuration
                 {
                     CustomerName = c.Name,
                     ExcludeFromSchedulers = c.ExcludeFromSchedulers,
-                    ConnectionString = c.ConnectionString
+                    ConnectionString = c.ConnectionString,
+                    DbType = (DatabaseType)(int)c.DbType
                 });
             }
             else
@@ -149,7 +151,7 @@ namespace Quantumart.QP8.Configuration
 
             foreach (QaConfigCustomer entry in customers)
             {
-                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName);
+                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName, entry.DbType);
             }
 
             return customers;

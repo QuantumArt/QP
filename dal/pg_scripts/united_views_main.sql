@@ -6,6 +6,7 @@ BEGIN
 	cids := array_agg(content_id) from content where virtual_type = 0;
 	foreach cid in array cids
 	loop
+	    call qp_content_united_view_drop(cid);
 		call qp_content_united_view_create(cid);
 	end loop;
 END;
