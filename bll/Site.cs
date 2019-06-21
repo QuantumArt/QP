@@ -37,6 +37,7 @@ namespace Quantumart.QP8.BLL
             ContextClassName = DefaultContextClassName;
             ConnectionStringName = DefaultConnectionStringName;
             _externalCssItems = new InitPropertyValue<IEnumerable<ExternalCss>>(() => ExternalCssHelper.GenerateExternalCss(ExternalCss));
+            ReplaceUrlsInDB = true;
         }
 
         /// <summary>
@@ -88,6 +89,13 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("Dns", NameResourceType = typeof(SiteStrings))]
         [Example("localhost")]
         public string Dns { get; set; }
+
+        /// <summary>
+        /// Признак, разрещающий замену Url-Placeholder
+        /// </summary>
+        [LocalizedDisplayName("ReplaceUrlsInDB", NameResourceType = typeof(SiteStrings))]
+        public bool ReplaceUrlsInDB { get; set; }
+
 
         /// <summary>
         /// Признак использования отдельного DNS

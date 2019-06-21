@@ -29862,7 +29862,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="externalDevelopment">Initial value of the ExternalDevelopment property.</param>
         /// <param name="downloadEfSource">Initial value of the DownloadEfSource property.</param>
         /// <param name="disableListAutoWrap">Initial value of the DisableListAutoWrap property.</param>
-        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications, global::System.Boolean externalDevelopment, global::System.Boolean downloadEfSource, global::System.Boolean disableListAutoWrap)
+        /// <param name="replaceUrlsInDB">Initial value of the ReplaceUrlsInDB property.</param>
+        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications, global::System.Boolean externalDevelopment, global::System.Boolean downloadEfSource, global::System.Boolean disableListAutoWrap, global::System.Boolean replaceUrlsInDB)
         {
             SiteDAL siteDAL = new SiteDAL();
             siteDAL.Id = id;
@@ -29897,6 +29898,7 @@ namespace Quantumart.QP8.DAL
             siteDAL.ExternalDevelopment = externalDevelopment;
             siteDAL.DownloadEfSource = downloadEfSource;
             siteDAL.DisableListAutoWrap = disableListAutoWrap;
+            siteDAL.ReplaceUrlsInDB = replaceUrlsInDB;
             return siteDAL;
         }
 
@@ -31154,6 +31156,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DisableListAutoWrap;
         partial void OnDisableListAutoWrapChanging(global::System.Boolean value);
         partial void OnDisableListAutoWrapChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean ReplaceUrlsInDB
+        {
+            get
+            {
+                return _ReplaceUrlsInDB;
+            }
+            set
+            {
+                OnReplaceUrlsInDBChanging(value);
+                ReportPropertyChanging("ReplaceUrlsInDB");
+                _ReplaceUrlsInDB = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ReplaceUrlsInDB");
+                OnReplaceUrlsInDBChanged();
+            }
+        }
+        private global::System.Boolean _ReplaceUrlsInDB;
+        partial void OnReplaceUrlsInDBChanging(global::System.Boolean value);
+        partial void OnReplaceUrlsInDBChanged();
 
         #endregion
 
