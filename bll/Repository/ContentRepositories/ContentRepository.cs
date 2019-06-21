@@ -1067,7 +1067,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetReferencedAggregatedContentIds(scope.DbConnection, contentId, articleIds, isArchive);
+                return Common.GetReferencedAggregatedContentIds(QPContext.EFContext, scope.DbConnection, contentId, articleIds, isArchive);
             }
         }
 

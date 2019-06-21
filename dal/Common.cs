@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using NpgsqlTypes;
 using Quantumart.QP8.Constants;
@@ -612,12 +613,25 @@ where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkI
 
         public static Dictionary<int, Dictionary<int, List<int>>> GetLinkedArticlesMultiple(DbConnection connection, IEnumerable<int> linkIds, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
-            var sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id
-                        where link_id in (select id from @linkIds) ";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@" select
+                        ii.r_item_id as linked_item_id,
+                        ii.l_item_id as item_id,
+                        ii.link_id
+                        from {IdList(dbType, "@itemIds", "i")}
+                            inner join item_to_item ii {(dbType == DatabaseType.SqlServer ? "with(nolock, index(ix_l_item_id))" : string.Empty)} on ii.l_item_id = i.id
+                        where link_id in (select id from {IdList(dbType, "@linkIds", "l")}) ";
+
             if (excludeArchive)
             {
-                sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id
-                         inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = ii.r_item_id where link_id in (select id from @linkIds) and ci.ARCHIVE = 0";
+                sql = $@" select
+                            ii.r_item_id as linked_item_id,
+                            ii.l_item_id as item_id,
+                            ii.link_id
+                            from {IdList(dbType, "@itemIds", "i")}
+                                inner join item_to_item ii {(dbType == DatabaseType.SqlServer ? "with(nolock, index(ix_l_item_id))" : string.Empty)} on ii.l_item_id = i.id
+                         inner join content_item ci {WithNoLock(dbType)} on ci.CONTENT_ITEM_ID = ii.r_item_id
+                         where link_id in (select id from {IdList(dbType, "@linkIds", "l")}) and ci.ARCHIVE = 0";
             }
             if (!isLive)
             {
@@ -625,21 +639,20 @@ where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkI
                 sb.AppendLine(sql);
                 sb.AppendLine(" and not exists (select * from content_item_splitted cis where cis.content_item_id = ii.l_item_id) ");
                 sb.AppendLine(" union all ");
-                sb.AppendLine(" select il.linked_item_id, il.item_id, il.link_id from @itemIds i inner join item_link_async il with(nolock) on il.item_id = i.id where link_id in (select id from @linkIds)");
+                sb.AppendLine($@"
+                    select il.linked_item_id,
+                        il.item_id,
+                        il.link_id
+                        from {IdList(dbType, "@itemIds", "i")}
+                            inner join item_link_async il {WithNoLock(dbType)} on il.item_id = i.id
+                        where link_id in (select id from {IdList(dbType, "@linkIds", "l")} )");
                 sql = sb.ToString();
             }
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(ids)
-                });
-                cmd.Parameters.Add(new SqlParameter("@linkIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(linkIds)
-                });
+                cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", ids, dbType));
+                cmd.Parameters.Add(GetIdsDatatableParam("@linkIds", linkIds, dbType));
+
 
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
@@ -753,22 +766,33 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
             }
         }
 
-        public static string GetQueryForO2MValues(string fieldName, string displayFieldName, int contentId, List<int> ids, int maxNumberOfRecords)
+        public static string GetQueryForO2MValues(DatabaseType dbType, string fieldName, string displayFieldName, int contentId, List<int> ids, int maxNumberOfRecords)
         {
-            var query = new StringBuilder();
-            query.AppendFormatLine(" select subsel.content_item_id, {0}, Title from ( ", fieldName);
-            query.AppendFormatLine(" select u.content_item_id, u.{0}, CONVERT(NVARCHAR(255),[{1}]) as Title, ROW_NUMBER () over (PARTITION BY {0} order by u.content_item_id) AS [RowNum]", fieldName, displayFieldName);
-            query.AppendFormatLine(" from content_{0}_united as u with(nolock) where {2} in ({1})) as subsel ", contentId, string.Join(",", ids), fieldName);
-            query.AppendFormatLine(" where subsel.[RowNum] <= {0}", maxNumberOfRecords + 1);
-            return query.ToString();
+
+            var query = $@"
+            select subsel.content_item_id, {fieldName}, Title from (
+                select u.content_item_id, u.{fieldName}, {SqlQuerySyntaxHelper.CastToString(dbType, Escape(dbType, displayFieldName))} as Title, ROW_NUMBER ()
+                over (PARTITION BY {fieldName} order by u.content_item_id) AS {Escape(dbType, "RowNum")}
+                from content_{contentId}_united as u {WithNoLock(dbType)} where {fieldName} in ({string.Join(",", ids)})) as subsel
+                where subsel.{Escape(dbType, "RowNum")} <= {maxNumberOfRecords + 1}
+";
+
+
+            // var query = new StringBuilder();
+            // query.Append($" select subsel.content_item_id, {fieldName}, Title from ( ", );
+            // query.AppendFormatLine(" select u.content_item_id, u.{0}, CONVERT(NVARCHAR(255),[{1}]) as Title, ROW_NUMBER () over (PARTITION BY {0} order by u.content_item_id) AS [RowNum]", fieldName, displayFieldName);
+            // query.AppendFormatLine(" from content_{0}_united as u with(nolock) where {2} in ({1})) as subsel ", contentId, string.Join(",", ids), fieldName);
+            // query.AppendFormatLine(" where subsel.[RowNum] <= {0}", maxNumberOfRecords + 1);
+            return query;
         }
 
         public static Dictionary<string, List<string>> GetM2OValuesBatch(DbConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var result = new Dictionary<string, List<string>>();
             if (ids.Any())
             {
-                var query = GetQueryForO2MValues(fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
+                var query = GetQueryForO2MValues(dbType, fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
 
                 using (var cmd = DbCommandFactory.Create(query, connection))
                 {
@@ -796,10 +820,11 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
 
         public static Dictionary<Tuple<int, int>, List<int>> GetM2OValues(DbConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var result = new Dictionary<Tuple<int, int>, List<int>>();
             if (ids.Any())
             {
-                var query = GetQueryForO2MValues(fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
+                var query = GetQueryForO2MValues(dbType, fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
 
                 using (var cmd = DbCommandFactory.Create(query, connection))
                 {
@@ -2665,7 +2690,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             var textfields = !allfields && ftsOptions.FieldIdList.Contains(",");
             if (allfields || textfields)
             {
-                extensionContentIds = GetReferencedAggregatedContentIds(cn, contentId, null);
+                extensionContentIds = GetReferencedAggregatedContentIds(null, cn, contentId, null);
                 aggregatedFieldMap = GetAggregatedFieldNames(cn, extensionContentIds);
                 allContentIds = string.Join(",", new[] { contentId }.Concat(extensionContentIds));
             }
@@ -5735,54 +5760,69 @@ order by ActionDate desc
             out totalRecords
         ).ToList();
 
-        public static List<DataRow> GetArticlesForExport(DbConnection sqlConnection, int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, out int totalRecords) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Article,
-            $"base.[content_item_id] {columns}, ci.unique_id, base.created, base.modified",
-            $"[dbo].[content_{contentId}_united] base {extensions} LEFT JOIN CONTENT_ITEM ci ON base.content_item_id = ci.content_item_id",
-            string.IsNullOrEmpty(orderBy) ? "base.CONTENT_ITEM_ID DESC" : orderBy,
-            filter,
-            startRow,
-            pageSize,
-            out totalRecords
-        ).ToList();
+        public static List<DataRow> GetArticlesForExport(DbConnection sqlConnection, int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, out int totalRecords)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Article,
+                $"base.{Escape(dbType, "content_item_id")} {columns}, ci.unique_id, base.created, base.modified",
+                $"content_{contentId}_united base {extensions} LEFT JOIN CONTENT_ITEM ci ON base.content_item_id = ci.content_item_id",
+                string.IsNullOrEmpty(orderBy) ? "base.CONTENT_ITEM_ID DESC" : orderBy,
+                filter,
+                startRow,
+                pageSize,
+                out totalRecords
+            ).ToList();
+        }
 
         /// <summary>
         /// Находит все контенты-расширения, задействованные в статьях заданного контента
         /// </summary>
-        public static int[] GetReferencedAggregatedContentIds(DbConnection sqlConnection, int contentId, int[] articleIds, bool isArchive = false)
+        public static int[] GetReferencedAggregatedContentIds(QPModelDataContext context, DbConnection sqlConnection, int contentId, int[] articleIds, bool isArchive = false)
         {
-            const string query = @"
-                DECLARE @query NVARCHAR(1000)
-                SET @query = ''
 
-                SELECT
-                    @query = @query + ATTRIBUTE_NAME + ','
-                FROM
-                    CONTENT_ATTRIBUTE f
-                    JOIN CONTENT c ON c.CONTENT_ID = f.CONTENT_ID
-                WHERE
-                    c.CONTENT_ID = @contentId AND
-                    IS_CLASSIFIER = 1
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            if (context == null)
+            {
+                switch (dbType)
+                {
+                    case DatabaseType.SqlServer:
+                        context = new SqlServerQPModelDataContext(sqlConnection);
+                        break;
+                    case DatabaseType.Postgres:
+                        context = new NpgSqlQPModelDataContext(sqlConnection);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
 
-                IF NOT @query = ''
-                BEGIN
-                    DECLARE @queryWithoutLastComma NVARCHAR(1000) = SUBSTRING(@query, 0, LEN(@query));
-                    SET @query =
-                        'SELECT DISTINCT ' + @queryWithoutLastComma + ' FROM CONTENT_' + LTRIM(STR(@contentId))  +
-                        ' WHERE ARCHIVE = ' + CAST(@archive AS CHAR(1))
+            var fieldNames = context
+                .FieldSet
+                .Where(x => x.ContentId == contentId && x.IsClassifier)
+                .Select(x => Escape(dbType, x.Name))
+                .ToArray();
 
-                    IF EXISTS (SELECT NULL FROM @articleIds)
-                        SET @query = @query + ' AND CONTENT_ITEM_ID IN (SELECT Id FROM @articleIds)'
+            if (!fieldNames.Any())
+            {
+                return new int[0];
+            }
 
-                    EXEC sp_executesql @query, N'@articleIds Ids READONLY', @articleIds
-                END";
+            var query = $@"
+                    select distinct {string.Join(",", fieldNames)}
+                    from content_{contentId}
+                    where {SqlQuerySyntaxHelper.CastToBool(dbType, "archive")} = @archive
+                    {(articleIds != null && articleIds.Any()
+                    ? $"AND content_item_id in (select Id from {IdList(dbType, "@articleIds")})"
+                    : string.Empty)}
+                    ";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@contentId", contentId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@articleIds", articleIds));
+                cmd.Parameters.Add(GetIdsDatatableParam("@articleIds", articleIds, dbType));
                 cmd.Parameters.AddWithValue("@archive", isArchive);
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -10028,24 +10068,28 @@ order by ActionDate desc
 
         public static int[] SortIdsByFieldName(DbConnection sqlConnection, int[] ids, int contentId, string fieldName, bool isArchive)
         {
-            const string template = @"
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var query = $@"
                 select
                     CONTENT_ITEM_ID
                 from
-                    content_{0}_united a with(nolock) {1}
+                    content_{contentId}_united a {WithNoLock(dbType)}
+                    {(ids == null
+                        ? string.Empty
+                        : $"join {IdList(dbType, "@ids", "ids")} on a.CONTENT_ITEM_ID = ids.Id"
+                    )}
                 WHERE
-                   a.archive = @archive
+                   {SqlQuerySyntaxHelper.CastToBool(dbType, "a.archive")} = @archive
                 ORDER BY
-                    a.[{2}]";
+                    a.{Escape(dbType, fieldName)}";
 
-            const string join = "join @ids ids on a.CONTENT_ITEM_ID = ids.Id";
-            var query = string.Format(template, contentId, ids == null ? null : join, fieldName);
+
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 if (ids != null)
                 {
-                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
                 }
                 cmd.Parameters.AddWithValue("@archive", isArchive);
                 var result = new List<int>();

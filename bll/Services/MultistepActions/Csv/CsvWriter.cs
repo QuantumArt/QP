@@ -14,6 +14,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
@@ -21,10 +22,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
     {
         private const string FolderForUpload = "temp";
         private const string IdentifierFieldName = FieldName.ContentItemId;
-        private const string ExtensionQueryTemplate = " LEFT JOIN CONTENT_{0}_united [ex{1}] ON [ex{1}].[{2}] = base.CONTENT_ITEM_ID ";
-        private const string FieldNameQueryTemplate = "[ex{0}].[{1}] [{0}.{1}]";
+
         private const string FieldNameHeaderTemplate = "{0}.{1}";
-        private const string BaseFieldNameQueryTemplate = "base.[{0}]";
 
         private readonly int _siteId;
         private readonly int _contentId;
@@ -165,7 +164,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
 
                 foreach (var article in articles)
-                {                    
+                {
                     _sb.Append(_contentId);
                     _sb.Append(_settings.Delimiter);
                     _sb.AppendFormat("{0}{1}", article["content_item_id"], _settings.Delimiter);
@@ -355,7 +354,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             if (field != null && (field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne))
             {
                 value = string.Empty;
-                var mapValue = field.RelationType == RelationType.ManyToMany ? field.LinkId.Value.ToString() : article["content_Item_id"] + "_" + field.Id; 
+                var mapValue = field.RelationType == RelationType.ManyToMany ? field.LinkId.Value.ToString() : article["content_Item_id"] + "_" + field.Id;
                 if (valuesWithRelation.TryGetValue(mapValue, out var mappings) && mappings.Any())
                 {
                     var key = field.ContentId == _contentId ? IdentifierFieldName : string.Format(FieldNameHeaderTemplate, field.Content.Name, IdentifierFieldName);
@@ -387,22 +386,25 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             foreach (var content in extensionContents)
             {
-                fields = GetExtensionFields(content, FieldNameHeaderTemplate);
+                fields =  GetExtensionFields(content, FieldNameHeaderTemplate, QPContext.DatabaseType);
                 result.AddRange(fields);
             }
 
             return result.ToArray();
         }
 
+        private string Escape(DatabaseType dbType, string expression) => SqlQuerySyntaxHelper.EscapeEntityName(dbType, expression);
         private string[] GetFieldNames(IEnumerable<Content> extensionContents)
         {
             var result = new List<string>();
-            var fields = GetBaseFields().Select(s => string.Format(BaseFieldNameQueryTemplate, s.Name));
+            var dbType = QPContext.DatabaseType;
+            var fields = GetBaseFields().Select(s => $"base.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, s.Name)}");
             result.AddRange(fields);
 
             foreach (var content in extensionContents)
             {
-                fields = GetExtensionFields(content, FieldNameQueryTemplate);
+                var template = $"{Escape(dbType, "ex{0}")}.{Escape(dbType, "{1}")} {Escape(dbType, "{0}.{1}")}";
+                fields = GetExtensionFields(content, template, dbType);
                 result.AddRange(fields);
             }
 
@@ -413,10 +415,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             where _settings.AllFields || _settings.CustomFieldIds.Contains(f.Id)
             select f;
 
-        private IEnumerable<string> GetExtensionFields(Content content, string template) => (from f in content.Fields
-                where (f.ExactType != FieldExactTypes.M2ORelation) & !f.Aggregated && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
-                select string.Format(template, content.Name, f.Name))
-            .Concat(new[] { string.Format(template, content.Name, IdentifierFieldName) });
+        private IEnumerable<string> GetExtensionFields(Content content, string template, DatabaseType databaseType)
+        {
+            return (from f in content.Fields
+                    where (f.ExactType != FieldExactTypes.M2ORelation) & !f.Aggregated && (_settings.AllFields || _settings.CustomFieldIds.Contains(f.Id))
+                    select string.Format(template, FixName(databaseType, content.Name),FixName(databaseType, f.Name) ))
+                .Concat(new[] { string.Format(template, FixName(databaseType, content.Name),FixName(databaseType, IdentifierFieldName)) });
+        }
+
+        private string FixName(DatabaseType dbType, string name) => dbType == DatabaseType.Postgres ? name.ToLower() : name;
 
         private static string GetExtensions(IEnumerable<Content> extensionContents)
         {
@@ -424,7 +431,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             foreach (var content in extensionContents)
             {
                 var name = content.Fields.Single(f => f.Aggregated).Name;
-                sb.AppendFormat(ExtensionQueryTemplate, content.Id, content.Name, name);
+                var dbType = QPContext.DatabaseType;
+                var tableName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, $"ex{content.Name}");
+                sb.Append($" LEFT JOIN CONTENT_{content.Id}_united {tableName} ON {tableName}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, name)} = base.CONTENT_ITEM_ID ");
             }
 
             return sb.ToString();
