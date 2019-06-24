@@ -1,4 +1,4 @@
-create view full_workflow_rules(workflow_rule_id, user_id, group_id, rule_order, predecessor_permission_id,
+create or replace view full_workflow_rules(workflow_rule_id, user_id, group_id, rule_order, predecessor_permission_id,
                                 successor_permission_id, successor_status_id, comment, workflow_id) as
     SELECT workflow_rules.workflow_rule_id,
            workflow_rules.user_id,

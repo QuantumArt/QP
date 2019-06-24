@@ -1,4 +1,4 @@
-create function qp_is_date(s character varying) returns boolean
+create or replace function qp_is_date(s character varying) returns boolean
     language plpgsql
 as
 $$
