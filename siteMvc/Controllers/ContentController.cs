@@ -264,7 +264,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Copy(int id, int? forceId, string forceFieldIds, string forceLinkIds)
         {
-            var result = ContentService.Copy(id, forceId, forceFieldIds.ToIntArray(), forceLinkIds.ToIntArray());
+            var result = ContentService.Copy(id, forceId, forceFieldIds?.ToIntArray(), forceLinkIds?.ToIntArray());
             PersistResultId(result.Id);
             PersistFromId(id);
             PersistFieldIds(result.FieldIds);

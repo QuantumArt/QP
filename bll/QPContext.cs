@@ -535,7 +535,7 @@ namespace Quantumart.QP8.BLL
 
         public static string CurrentDbConnectionString
         {
-            get => CurrentDbConnectionInfo.ConnectionString;
+            get => CurrentDbConnectionInfo?.ConnectionString;
 
             set => CurrentDbConnectionInfo = new QpConnectionInfo
             {

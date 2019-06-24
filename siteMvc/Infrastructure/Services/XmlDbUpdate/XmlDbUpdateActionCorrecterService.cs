@@ -485,8 +485,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         {
             if (context.Items.Contains(key))
             {
-                IReadOnlyList<int> oldIds = oldIdsCommaString.ToIntArray();
-                IReadOnlyList<int> newIds = context.Items[key].ToString().ToIntArray();
+                IReadOnlyList<int> oldIds = oldIdsCommaString?.ToIntArray();
+                IReadOnlyList<int> newIds = context.Items[key]?.ToString().ToIntArray();
                 if (oldIds == null || newIds == null)
                 {
                     return;

@@ -76,16 +76,15 @@ namespace Quantumart.QP8.BLL
 
         public QPConnectionScope(QpConnectionInfo info)
         {
-            Ensure.NotNull(info, "Connection info should not be null");
-            Ensure.NotNullOrWhiteSpace(info.ConnectionString, "Connection string should not be null or empty");
-
             if (Current == null)
             {
+                Ensure.NotNull(info, "Connection info should not be null");
+                Ensure.NotNullOrWhiteSpace(info.ConnectionString, "Connection string should not be null or empty");
                 Current = this;
                 ConnectionString = info.ConnectionString;
                 DbType = info.DbType;
             }
-            else if (!string.IsNullOrWhiteSpace(info.ConnectionString) && !info.ConnectionString.Equals(Current.ConnectionString, StringComparison.OrdinalIgnoreCase))
+            else if (info != null && !string.IsNullOrWhiteSpace(info.ConnectionString) && !info.ConnectionString.Equals(Current.ConnectionString, StringComparison.OrdinalIgnoreCase))
             {
                 throw new ArgumentException("Attempt to create connection in the existing scope with different connection string.");
             }

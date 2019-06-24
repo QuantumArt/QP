@@ -350,9 +350,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 id,
                 forceId,
                 forceLinkId,
-                forceVirtualFieldIds.ToIntArray(),
-                forceChildFieldIds.ToIntArray(),
-                forceChildLinkIds.ToIntArray()
+                forceVirtualFieldIds?.ToIntArray(),
+                forceChildFieldIds?.ToIntArray(),
+                forceChildLinkIds?.ToIntArray()
             );
 
             PersistResultId(result.Id);
