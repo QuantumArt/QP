@@ -171,8 +171,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     foreach (DataColumn column in article.Table.Columns)
                     {
                         var value = article[column.ColumnName].ToString();
-                        var field = fields.FirstOrDefault(f => f.ContentId == _contentId ? f.Name == column.ColumnName : string.Format(FieldNameHeaderTemplate, f.Content.Name, f.Name) == column.ColumnName);
-                        var alias = aliases.FirstOrDefault(n => aliases.Contains(column.ColumnName));
+                        var field = fields.FirstOrDefault(f => f.ContentId == _contentId 
+                            ? string.Equals(f.Name, column.ColumnName, StringComparison.InvariantCultureIgnoreCase)
+                            : string.Equals(string.Format(FieldNameHeaderTemplate, f.Content.Name, f.Name), column.ColumnName, StringComparison.InvariantCultureIgnoreCase));
+                        var alias = aliases.FirstOrDefault(n => aliases.Contains(column.ColumnName, StringComparer.InvariantCultureIgnoreCase));
                         if (!string.IsNullOrEmpty(alias))
                         {
                             _sb.AppendFormat("{0}{1}", FormatFieldValue(value), _settings.Delimiter);
