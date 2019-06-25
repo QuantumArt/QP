@@ -18,7 +18,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Dictionary<string, string> GetAppSettings()
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return DbRepository.GetAppSettings().ToDictionary(n => n.Key, n => n.Value);
             }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Transactions;
 using System.Xml.Linq;
@@ -9,6 +10,7 @@ using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
@@ -18,12 +20,17 @@ using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
+using IsolationLevel = System.Transactions.IsolationLevel;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
     public class XmlDbUpdateReplayService : IXmlDbUpdateReplayService
     {
         protected readonly string ConnectionString;
+
+        protected readonly DatabaseType DbType;
+
+        protected QpConnectionInfo ConnectionInfo => new QpConnectionInfo(ConnectionString, DbType);
 
         private readonly int _userId;
 
@@ -40,11 +47,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
 
         public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
-            : this(connectionString, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
+            : this(connectionString, DatabaseType.SqlServer, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
+        public XmlDbUpdateReplayService(string connectionString, DatabaseType dbType, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
@@ -53,6 +60,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             ConnectionString = connectionString;
+            DbType = dbType;
 
             _dbLogService = dbLogService;
             _appInfoRepository = appInfoRepository;
@@ -80,7 +88,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
             using (new ThreadStorageScopeContext())
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
-            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
+            using (new QPConnectionScope(ConnectionInfo, _identityInsertOptions))
             {
                 if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
                 {
@@ -156,6 +164,19 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, currentDbVersion, backendUrl, true).ToNormalizedString(SaveOptions.DisableFormatting, true);
                 _dbLogService.InsertActionLogEntry(logEntry);
             }
+
+            PostReplay();
+        }
+
+        private void PostReplay()
+        {
+            if (ConnectionInfo.DbType != DatabaseType.SqlServer)
+            {
+                using (var scope = new QPConnectionScope(ConnectionInfo))
+                {
+                    _appInfoRepository.PostReplay();
+                }
+            }
         }
 
         private XmlDbUpdateRecordedAction ReplayAction(XmlDbUpdateRecordedAction xmlAction, string backendUrl)
@@ -176,7 +197,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void ValidateReplayInput(XContainer xmlDocument, string currentDbVersion)
         {
-            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
+            using (new QPConnectionScope(ConnectionInfo, _identityInsertOptions))
             {
                 if (!ValidateDbVersion(xmlDocument, currentDbVersion))
                 {

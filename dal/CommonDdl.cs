@@ -362,5 +362,10 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(connection, sql);
         }
 
+        public static void PostgresPostReplay(DbConnection connection)
+        {
+
+        }
+
     }
 }

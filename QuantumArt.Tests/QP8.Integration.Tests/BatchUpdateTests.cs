@@ -148,7 +148,7 @@ namespace QP8.Integration.Tests
         {
             TestContext.WriteLine($"Using next database for tests: {Global.DbName}");
 
-            DbConnector = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
+            DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             DictionaryContentId = Global.GetContentId(DbConnector, DictionaryContent);
             BaseContentId = Global.GetContentId(DbConnector, BaseContent);
             ArticleService = new ArticleApiService(Global.ConnectionString, 1);
@@ -172,7 +172,7 @@ namespace QP8.Integration.Tests
             service.Process(Global.GetXml(@"TestData\batchupdate.xml"));
 
             Random = new Random();
-            DbConnector = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
+            DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             BaseContentId = Global.GetContentId(DbConnector, BaseContent);
             InitBaseContentFields();
             InitExtensions();

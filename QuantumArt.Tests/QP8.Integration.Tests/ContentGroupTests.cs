@@ -12,6 +12,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
+using DatabaseType = QP.ConfigurationService.Models.DatabaseType;
 
 namespace QP8.Integration.Tests
 {
@@ -31,6 +32,7 @@ namespace QP8.Integration.Tests
 
             var service = new XmlDbUpdateNonMvcReplayService(
                 Global.ConnectionString,
+                Global.DbType,
                 new HashSet<string>(new[] { EntityTypeCode.ContentGroup }),
                 1,
                 false,
@@ -42,8 +44,8 @@ namespace QP8.Integration.Tests
             );
 
             Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"TestData\group.xml")), "Create content group");
-            var cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
-            var id = (decimal)cnn.GetRealScalarData(new SqlCommand($"SELECT content_group_id FROM content_group WHERE name = '{GroupName}'"));
+            var cnn = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
+            var id = cnn.GetRealScalarData(cnn.CreateDbCommand($"SELECT content_group_id FROM content_group WHERE name = '{GroupName}'"));
             Assert.That(id, Is.EqualTo(SpecificGroupId), "Specific id created");
 
             cnn.ProcessData($"DELETE FROM content_group WHERE name = '{GroupName}'");
@@ -58,6 +60,8 @@ namespace QP8.Integration.Tests
 
             var service = new XmlDbUpdateNonMvcReplayService(
                 Global.ConnectionString,
+                Global.DbType,
+                null,
                 1,
                 false,
                 dbLogService.Object,
@@ -68,8 +72,8 @@ namespace QP8.Integration.Tests
             );
 
             Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"TestData\group.xml").Replace(GroupName, NewGroupName)), "Create content group");
-            var cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
-            var id = (decimal)cnn.GetRealScalarData(new SqlCommand($"SELECT content_group_id FROM content_group WHERE name = '{NewGroupName}'"));
+            var cnn = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
+            var id = cnn.GetRealScalarData(cnn.CreateDbCommand($"SELECT content_group_id FROM content_group WHERE name = '{NewGroupName}'"));
             Assert.That(id, Is.Not.EqualTo(SpecificGroupId), "Generated id created");
 
             cnn.ProcessData($"DELETE FROM content_group WHERE name = '{NewGroupName}'");

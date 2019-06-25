@@ -1,10 +1,16 @@
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
     public class ContentService : ServiceBase
     {
+        public ContentService(QpConnectionInfo info, int userId)
+            : base(info, userId)
+        {
+        }
+
         public ContentService(string connectionString, int userId)
             : base(connectionString, userId)
         {
@@ -17,7 +23,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public IEnumerable<Content> List(int siteId)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ContentRepository.GetListBySiteId(siteId);
             }
@@ -25,7 +31,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Content Read(int id)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ContentRepository.GetById(id);
             }
@@ -33,7 +39,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Content Save(Content content)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var result = content.Persist();
@@ -44,7 +50,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public void Delete(int contentId)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 var content = ContentRepository.GetById(contentId);
                 if (content != null)
@@ -58,7 +64,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public bool Exists(int id)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ContentRepository.Exists(id);
             }

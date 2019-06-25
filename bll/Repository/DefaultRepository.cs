@@ -237,55 +237,99 @@ namespace Quantumart.QP8.BLL.Repository
 
             if (QPConnectionScope.Current.IdentityInsertOptions.Contains(entityTypeCode))
             {
-                string table = null;
-                switch (entityTypeCode)
-                {
-                    case EntityTypeCode.ContentLink:
-                        table = "dbo.CONTENT_TO_CONTENT";
-                        break;
-                    case EntityTypeCode.Content:
-                        table = "dbo.CONTENT";
-                        break;
-                    case EntityTypeCode.ContentGroup:
-                        table = "dbo.CONTENT_GROUP";
-                        break;
-                    case EntityTypeCode.Field:
-                        table = "dbo.CONTENT_ATTRIBUTE";
-                        break;
-                    case EntityTypeCode.VisualEditorCommand:
-                        table = "dbo.VE_COMMAND";
-                        break;
-                    case EntityTypeCode.VisualEditorPlugin:
-                        table = "dbo.VE_PLUGIN";
-                        break;
-                    case EntityTypeCode.VisualEditorStyle:
-                        table = "dbo.VE_STYLE";
-                        break;
-                    case EntityTypeCode.CustomAction:
-                        table = "dbo.CUSTOM_ACTION";
-                        break;
-                    case EntityTypeCode.BackendAction:
-                        table = "dbo.BACKEND_ACTION";
-                        break;
-                    case EntityTypeCode.Site:
-                        table = "dbo.SITE";
-                        break;
-                    case EntityTypeCode.StatusType:
-                        table = "dbo.STATUS_TYPE";
-                        break;
-                    case EntityTypeCode.Workflow:
-                        table = "dbo.WORKFLOW";
-                        break;
-                    case EntityTypeCode.Notification:
-                        table = "dbo.NOTIFICATIONS";
-                        break;
-                }
+                var table = TableToInsert(entityTypeCode);
 
                 if (table != null)
                 {
-                    Common.ChangeInsertIdentityState(QPConnectionScope.Current.DbConnection, table, state);
+                    Common.ChangeInsertIdentityState(QPConnectionScope.Current.DbConnection, "dbo." + table, state);
                 }
             }
+        }
+
+        private static string TableIdToInsert(string entityTypeCode)
+        {
+            string tableId;
+            switch (entityTypeCode)
+            {
+                case EntityTypeCode.ContentLink:
+                    tableId = "link_id";
+                    break;
+                case EntityTypeCode.Content:
+                    tableId = "content_id";
+                    break;
+                case EntityTypeCode.ContentGroup:
+                    tableId = "content_group_id";
+                    break;
+                case EntityTypeCode.Field:
+                    tableId = "attribute_id";
+                    break;
+                case EntityTypeCode.Site:
+                    tableId = "site_id";
+                    break;
+                case EntityTypeCode.StatusType:
+                    tableId = "status_type_id";
+                    break;
+                case EntityTypeCode.Workflow:
+                    tableId = "workflow_id";
+                    break;
+                case EntityTypeCode.Notification:
+                    tableId = "notification_id";
+                    break;
+                default:
+                    tableId = "id";
+                    break;
+            }
+
+            return tableId;
+        }
+
+        private static string TableToInsert(string entityTypeCode)
+        {
+            string table = null;
+            switch (entityTypeCode)
+            {
+                case EntityTypeCode.ContentLink:
+                    table = "CONTENT_TO_CONTENT";
+                    break;
+                case EntityTypeCode.Content:
+                    table = "CONTENT";
+                    break;
+                case EntityTypeCode.ContentGroup:
+                    table = "CONTENT_GROUP";
+                    break;
+                case EntityTypeCode.Field:
+                    table = "CONTENT_ATTRIBUTE";
+                    break;
+                case EntityTypeCode.VisualEditorCommand:
+                    table = "VE_COMMAND";
+                    break;
+                case EntityTypeCode.VisualEditorPlugin:
+                    table = "VE_PLUGIN";
+                    break;
+                case EntityTypeCode.VisualEditorStyle:
+                    table = "VE_STYLE";
+                    break;
+                case EntityTypeCode.CustomAction:
+                    table = "CUSTOM_ACTION";
+                    break;
+                case EntityTypeCode.BackendAction:
+                    table = "BACKEND_ACTION";
+                    break;
+                case EntityTypeCode.Site:
+                    table = "SITE";
+                    break;
+                case EntityTypeCode.StatusType:
+                    table = "STATUS_TYPE";
+                    break;
+                case EntityTypeCode.Workflow:
+                    table = "WORKFLOW";
+                    break;
+                case EntityTypeCode.Notification:
+                    table = "NOTIFICATIONS";
+                    break;
+            }
+
+            return table;
         }
 
         internal static void TurnIdentityInsertOn(string entityTypeCode, EntityObject objectForCheck)

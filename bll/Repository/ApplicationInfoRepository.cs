@@ -19,5 +19,13 @@ namespace Quantumart.QP8.BLL.Repository
                 return DbRepository.Get().RecordActions;
             }
         }
+
+        public void PostReplay()
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.PostgresPostReplay(scope.DbConnection);
+            }
+        }
     }
 }

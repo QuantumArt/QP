@@ -5,16 +5,16 @@ namespace Quantumart.QP8.BLL.Adapters
 {
     public class NonQpEnvironmentContext : IDisposable
     {
-        public NonQpEnvironmentContext(string connectionString)
+        public NonQpEnvironmentContext(QpConnectionInfo info)
         {
             QPConfiguration.TempDirectory = @"c:\temp\";
-            QPContext.CurrentDbConnectionString = connectionString;
+            QPContext.CurrentDbConnectionInfo = info;
         }
 
         public void Dispose()
         {
             QPConfiguration.TempDirectory = null;
-            QPContext.CurrentDbConnectionString = null;
+            QPContext.CurrentDbConnectionInfo = null;
         }
     }
 }

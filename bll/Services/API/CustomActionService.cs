@@ -16,7 +16,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public CustomAction ReadByCode(string code)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return CustomActionRepository.GetByCode(code);
             }

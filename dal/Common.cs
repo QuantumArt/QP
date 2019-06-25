@@ -1108,6 +1108,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 cmd.Parameters.AddWithValue("@userId", userId);
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
+                var isSqlServer = connection is SqlConnection;
                 return dt.AsEnumerable().Select(n => (int)n.Field<decimal>("group_id")).ToArray();
             }
         }

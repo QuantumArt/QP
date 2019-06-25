@@ -70,7 +70,7 @@ namespace Quantumart.QP8.BLL
         }
 
         public QPConnectionScope(string connectionString, DatabaseType dbType = default(DatabaseType))
-            : this(new QpConnectionInfo { ConnectionString = connectionString, DbType = dbType})
+            : this(new QpConnectionInfo(connectionString, dbType))
         {
         }
 
@@ -92,8 +92,8 @@ namespace Quantumart.QP8.BLL
             Current._scopeCount++;
         }
 
-        public QPConnectionScope(string connectionString, HashSet<string> identityInsertOptions)
-            : this(connectionString)
+        public QPConnectionScope(QpConnectionInfo info, HashSet<string> identityInsertOptions)
+            : this(info)
         {
             IdentityInsertOptions = identityInsertOptions;
         }

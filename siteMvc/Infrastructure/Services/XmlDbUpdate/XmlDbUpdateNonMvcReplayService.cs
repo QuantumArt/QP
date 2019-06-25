@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.Adapters;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
@@ -26,6 +28,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         public XmlDbUpdateNonMvcReplayService(
             string connectionString,
+            DatabaseType dbType,
             HashSet<string> identityInsertOptions,
             int userId,
             bool useGuidSubstitution,
@@ -34,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             IXmlDbUpdateActionCorrecterService actionsCorrecterService,
             IXmlDbUpdateHttpContextProcessor httpContextProcessor,
             bool isQpInstalled = true)
-            : base(connectionString, identityInsertOptions, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
+            : base(connectionString, dbType, identityInsertOptions, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
         {
             _isQpInstalled = isQpInstalled;
         }
@@ -61,7 +64,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void QpNotInstalledProcess(string xmlString, IList<string> filePathes)
         {
-            using (new NonQpEnvironmentContext(ConnectionString))
+            using (new NonQpEnvironmentContext(ConnectionInfo))
             using (new FakeMvcApplicationContext())
             {
                 base.Process(xmlString, filePathes);

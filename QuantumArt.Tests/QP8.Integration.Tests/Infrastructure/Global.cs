@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using QP8.Infrastructure.Helpers;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
 using Quantumart.QPublishing.Database;
+using M = QP.ConfigurationService.Models;
 
 namespace QP8.Integration.Tests.Infrastructure
 {
@@ -15,7 +19,15 @@ namespace QP8.Integration.Tests.Infrastructure
 
         public static string DbName => TestContext.Parameters.Get("qp8_test_ci_dbname", $"qp8_test_ci_{Environment.MachineName.ToLowerInvariant()}");
 
-        public static string ConnectionString => $"Initial Catalog={DbName};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
+        //public static string ConnectionString => $"Initial Catalog={DbName};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
+        public static string ConnectionString => $"Server=mscpgsql01;Port=5432;Database=qp8_test;User Id=postgres;Password=1q2w-p=[;Application Name=UnitTest";
+
+        public static DatabaseType DbType = DatabaseType.Postgres;
+
+        public static M.DatabaseType ClientDbType => (M.DatabaseType)(int)DbType;
+
+        public static QpConnectionInfo ConnectionInfo => new QpConnectionInfo(ConnectionString, DbType);
+
 
         public static string GetXml(string fileName) => File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, fileName));
 
@@ -49,16 +61,16 @@ namespace QP8.Integration.Tests.Infrastructure
 
         public static void ClearContentData(DBConnector dbConnector, int articleId)
         {
-            using (var cmd = new SqlCommand("delete from CONTENT_DATA where CONTENT_ITEM_ID = @id"))
+            using (var cmd = dbConnector.CreateDbCommand("delete from CONTENT_DATA where CONTENT_ITEM_ID = @id"))
             {
                 cmd.Parameters.AddWithValue("@id", articleId);
-                dbConnector.GetRealData(cmd);
+                dbConnector.ProcessData(cmd);
             }
         }
 
         public static ContentDataItem[] GetContentData(DBConnector dbConnector, int articleId)
         {
-            using (var cmd = new SqlCommand("select * from CONTENT_DATA where CONTENT_ITEM_ID = @id"))
+            using (var cmd = dbConnector.CreateDbCommand("select * from CONTENT_DATA where CONTENT_ITEM_ID = @id"))
             {
                 cmd.Parameters.AddWithValue("@id", articleId);
                 return dbConnector.GetRealData(cmd)

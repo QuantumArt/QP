@@ -121,7 +121,7 @@ namespace Quantumart.QP8.Configuration
                 if (!String.IsNullOrEmpty(connectionString))
                 {
                     connectionString = TuneConnectionString(connectionString, appName, dbType);
-                    return new QpConnectionInfo { ConnectionString = connectionString, DbType = dbType };
+                    return new QpConnectionInfo(connectionString, dbType);
                 }
             }
 

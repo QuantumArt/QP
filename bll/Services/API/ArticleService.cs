@@ -6,6 +6,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
@@ -23,9 +24,14 @@ namespace Quantumart.QP8.BLL.Services.API
         {
         }
 
+        public ArticleService(QpConnectionInfo info, int userId)
+            : base(info, userId)
+        {
+        }
+
         public Article New(int contentId)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return Article.CreateNewForSave(contentId);
             }
@@ -33,7 +39,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Article Read(int id, bool forceLoadFieldValues = false, bool excludeArchive = false)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 var article = ArticleRepository.GetById(id);
                 if (article == null || excludeArchive && article.Archived)
@@ -53,7 +59,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Article Read(int id, int contentId, bool forceLoadFieldValues = false, bool excludeArchive = false)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 var content = ContentRepository.GetById(contentId);
                 if (content == null)
@@ -68,7 +74,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public IEnumerable<Article> List(int contentId, int[] ids, bool excludeArchive = false, string filter = "")
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetList(ids, true, excludeArchive, contentId, filter);
             }
@@ -76,7 +82,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public IEnumerable<int> Ids(int contentId, int[] ids, bool excludeArchive = false, string filter = "")
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetIds(ids, excludeArchive, contentId, filter);
             }
@@ -84,7 +90,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public string GetRelatedItems(int fieldId, int? id, bool excludeArchive = false)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetRelatedItems(new [] {fieldId}, id, excludeArchive)[fieldId];
             }
@@ -92,7 +98,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Dictionary<int, string> GetRelatedItemsMultiple(int fieldId, int[] ids, bool excludeArchive = false)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetRelatedItemsMultiple(fieldId, ids, excludeArchive);
             }
@@ -100,7 +106,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Dictionary<int, Dictionary<int, List<int>>> GetRelatedItemsMultiple(int[] fieldIds, int[] ids, bool excludeArchive = false)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetRelatedItemsMultiple(fieldIds, ids, excludeArchive);
             }
@@ -109,7 +115,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public string GetLinkedItems(int linkId, int id, bool excludeArchive = false)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetLinkedItems(new [] {linkId}, id, excludeArchive)[linkId];
             }
@@ -117,7 +123,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Dictionary<int, string> GetLinkedItemsMultiple(int linkId, int[] ids, bool excludeArchive = false)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetLinkedItemsMultiple(linkId, ids, excludeArchive);
             }
@@ -125,7 +131,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Dictionary<int, Dictionary<int, List<int>>> GetLinkedItemsMultiple(int[] linkIds, int[] ids, bool excludeArchive = false)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetLinkedItemsMultiple(linkIds, ids, excludeArchive);
             }
@@ -134,7 +140,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Article CopyAndRead(Article article)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 var result = Copy(article);
                 if (result.Message.Type == ActionMessageType.Error)
@@ -148,7 +154,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public CopyResult Copy(Article article)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var result = ArticleServices.ArticleService.Copy(article.Id, true, false);
@@ -159,7 +165,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Article Save(Article article, bool disableNotifications = false)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var result = article.Persist(disableNotifications);
@@ -170,7 +176,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public MessageResult Delete(int articleId)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var articleToRemove = ArticleRepository.GetById(articleId);
@@ -188,7 +194,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public MessageResult Delete(int contentId, int[] articleIds)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var result = ArticleServices.ArticleService.Remove(contentId, articleIds, false, true, false);
@@ -199,7 +205,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public void SimpleDelete(int[] articleIds)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 ArticleRepository.MultipleDelete(articleIds, true, true);
@@ -209,7 +215,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public MessageResult SetArchiveFlag(int contentId, int[] articleIds, bool flag)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var result = flag
@@ -223,7 +229,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public void SimpleSetArchiveFlag(int[] articleIds, bool flag)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 ArticleRepository.SetArchiveFlag(articleIds, flag, true);
@@ -233,7 +239,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public MessageResult Publish(int contentId, int[] articleIds)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var result = ArticleServices.ArticleService.Publish(contentId, articleIds, true, false);
@@ -244,7 +250,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public void SimplePublish(int[] articleIds)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 ArticleRepository.Publish(articleIds, true);
@@ -254,7 +260,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public string[] GetFieldValues(int[] ids, int contentId, int fieldId)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetFieldValues(ids, contentId, fieldId);
             }
@@ -262,7 +268,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public string[] GetFieldValues(int[] ids, int contentId, string fieldName)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return ArticleRepository.GetFieldValues(ids, contentId, fieldName);
             }
@@ -270,7 +276,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Dictionary<int, bool> CheckRelationSecurity(int contentId, int[] ids, bool isDeletable)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var result = ArticleRepository.CheckRelationSecurity(contentId, ids, isDeletable);
@@ -300,7 +306,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData, bool createVersions)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 var result = ArticleRepository.BatchUpdate(articles.ToArray(), formatArticleData, createVersions);
@@ -313,7 +319,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public IList<int> GetParentIds(IList<int> ids, int fieldId)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 var treeField = FieldRepository.GetById(fieldId);
                 return ArticleRepository.GetParentIds(ids, treeField.Id, treeField.Name);
@@ -325,7 +331,7 @@ namespace Quantumart.QP8.BLL.Services.API
         public RulesException ValidateXamlById(int articleId, string customerCode, bool persistChanges = false)
         {
             var errors = new RulesException();
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
                 Article.ValidateXamlById(articleId, errors, customerCode, persistChanges);

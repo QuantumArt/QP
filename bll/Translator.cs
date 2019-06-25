@@ -11,21 +11,21 @@ namespace Quantumart.QP8.BLL
     {
         public static string Translate(string phrase)
         {
-#if !NET_STANDARD
-            if (!string.IsNullOrWhiteSpace(phrase) && QPContext.CurrentUserIdentity != null)
-            {
-                var dictionaries = Dictionaries.Value;
-                var keyPhrase = phrase.ToLowerInvariant();
-                if (dictionaries.ContainsKey(keyPhrase))
-                {
-                    return dictionaries[keyPhrase].ContainsKey(QPContext.CurrentUserIdentity.LanguageId)
-                        ? dictionaries[keyPhrase][QPContext.CurrentUserIdentity.LanguageId]
-                        : phrase;
-                }
-
-                return phrase;
-            }
-#endif
+// #if !NET_STANDARD
+//             if (!string.IsNullOrWhiteSpace(phrase) && QPContext.CurrentUserIdentity != null)
+//             {
+//                 var dictionaries = Dictionaries.Value;
+//                 var keyPhrase = phrase.ToLowerInvariant();
+//                 if (dictionaries.ContainsKey(keyPhrase))
+//                 {
+//                     return dictionaries[keyPhrase].ContainsKey(QPContext.CurrentUserIdentity.LanguageId)
+//                         ? dictionaries[keyPhrase][QPContext.CurrentUserIdentity.LanguageId]
+//                         : phrase;
+//                 }
+//
+//                 return phrase;
+//             }
+// #endif
             return phrase;
         }
 

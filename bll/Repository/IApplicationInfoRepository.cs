@@ -5,5 +5,6 @@
         string GetCurrentDbVersion();
 
         bool RecordActions();
+        void PostReplay();
     }
 }

@@ -125,8 +125,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
         public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool generateNewFieldIds, bool generateNewContentIds, bool useGuidSubstitution)
         {
+            var info = QPContext.CurrentDbConnectionInfo;
             new XmlDbUpdateReplayService(
-                QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode),
+                info.ConnectionString,
+                info.DbType,
                 CommonHelpers.GetDbIdentityInsertOptions(generateNewFieldIds, generateNewContentIds),
                 QPContext.CurrentUserId,
                 useGuidSubstitution,

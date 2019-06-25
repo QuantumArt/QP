@@ -52,7 +52,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public static DatabaseType DatabaseType => CurrentDbConnectionInfo?.DbType ?? DatabaseType.SqlServer;
+        public static DatabaseType DatabaseType => QPConnectionScope.Current?.DbType ?? CurrentDbConnectionInfo?.DbType ?? DatabaseType.SqlServer;
 
         private static QPModelDataContext CreateDbContextUsingConnection()
         {
@@ -537,10 +537,7 @@ namespace Quantumart.QP8.BLL
         {
             get => CurrentDbConnectionInfo?.ConnectionString;
 
-            set => CurrentDbConnectionInfo = new QpConnectionInfo
-            {
-                ConnectionString = value
-            };
+            set => CurrentDbConnectionInfo = new QpConnectionInfo(value, DatabaseType.SqlServer);
         }
 
         public static QpConnectionInfo CurrentDbConnectionInfo
@@ -553,12 +550,7 @@ namespace Quantumart.QP8.BLL
                     var info = QPConfiguration.GetConnectionInfo(CurrentCustomerCode);
                     if (info != null)
                     {
-                        result = new QpConnectionInfo()
-                        {
-                            ConnectionString = info.ConnectionString,
-                            DbType = info.DbType
-                        };
-
+                        result = new QpConnectionInfo(info.ConnectionString, info.DbType);
                         SetValueToStorage(ref _currentDbConnectionInfo, result, HttpContextItems.CurrentDbConnectionStringKey);
                     }
                 }
