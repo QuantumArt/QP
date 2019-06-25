@@ -171,7 +171,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     foreach (DataColumn column in article.Table.Columns)
                     {
                         var value = article[column.ColumnName].ToString();
-                        var field = fields.FirstOrDefault(f => f.ContentId == _contentId 
+                        var field = fields.FirstOrDefault(f => f.ContentId == _contentId
                             ? string.Equals(f.Name, column.ColumnName, StringComparison.InvariantCultureIgnoreCase)
                             : string.Equals(string.Format(FieldNameHeaderTemplate, f.Content.Name, f.Name), column.ColumnName, StringComparison.InvariantCultureIgnoreCase));
                         var alias = aliases.FirstOrDefault(n => aliases.Contains(column.ColumnName, StringComparer.InvariantCultureIgnoreCase));
@@ -183,7 +183,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         {
                             _sb.AppendFormat("{0}{1}", FormatFieldValue(article, value, field, dict), _settings.Delimiter);
                         }
-                        else if (_extensionContents.Any(c => string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName) == column.ColumnName))
+                        else if (_extensionContents.Any(c => string.Equals(string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName), column.ColumnName, StringComparison.InvariantCultureIgnoreCase)))
                         {
                             _sb.AppendFormat("{0}{1}", string.IsNullOrEmpty(value) ? "NULL" : value, _settings.Delimiter);
                         }
@@ -218,6 +218,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private List<DataRow> GetArticlesForExport(IEnumerable<ExportSettings.FieldSetting> fieldsToExpand)
         {
+            var dbType = QPContext.DatabaseType;
             var sb = new StringBuilder();
             if (_settings.FieldNames.Any())
             {
@@ -227,6 +228,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
             }
 
+            var ns = SqlQuerySyntaxHelper.DbSchemaName(dbType);
             foreach (var field in fieldsToExpand)
             {
                 if (field.ExcludeFromSQLRequest)
@@ -235,17 +237,27 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
                 else if (field.ExactType == FieldExactTypes.O2MRelation)
                 {
-                    sb.AppendFormat(", {0} as [{1}]", string.Join(" + '; ' + ", GetParts(field)), field.Alias);
+                    var fieldName = string.Join(" + '; ' + ", GetParts(field));
+                    sb.Append($", {fieldName} as {SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Alias)}");
                 }
                 else if (field.ExactType == FieldExactTypes.M2ORelation && field.Related.Any())
                 {
                     var related = field.Related.First(f => !f.IsRelation).Id;
-                    sb.AppendFormat(", dbo.[qp_m2o_titles](base.content_item_id, {0}, {1}, 255) as [{2}]", related, field.RelatedAttributeId, field.Alias);
+                    var contentItemIdField = dbType == DatabaseType.Postgres ? "content_item_id::integer" : "content_item_id";
+
+                    sb.Append($", {ns}.qp_m2o_titles(base.{contentItemIdField}, {related}, {field.RelatedAttributeId}, 255) as {SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Alias)}");
                 }
                 else
                 {
-                    var contentCondition = field.FromExtension ? $"[ex{field.ContentName}].content_item_id" : "base.content_item_id";
-                    sb.AppendFormat(", dbo.[qp_link_titles]({0}, {1}, {2}, 255) as [{3}]", field.LinkId, contentCondition, field.RelatedAttributeId, field.Alias);
+                    var contentCondition = field.FromExtension
+                        ? $"{SqlQuerySyntaxHelper.EscapeEntityName(dbType, $"ex{field.ContentName}")}.content_item_id"
+                        : "base.content_item_id";
+
+                    if (dbType == DatabaseType.Postgres)
+                    {
+                        contentCondition += "::integer";
+                    }
+                    sb.Append($", {ns}.qp_link_titles({field.LinkId}, {contentCondition}, {field.RelatedAttributeId}, 255) as {SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Alias)}");
                 }
             }
 
@@ -261,10 +273,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private static IEnumerable<string> GetParts(ExportSettings.FieldSetting field)
         {
+
             var parts = new List<string>();
+            var dbType = QPContext.DatabaseType;
+            var ns = SqlQuerySyntaxHelper.DbSchemaName(dbType);
+            var contentItemIdField = dbType == DatabaseType.Postgres ? "content_item_id::integer" : "content_item_id";
             if (field.Related == null || !field.Related.Any())
             {
-                parts.Add($"cast({field.TableAlias}.content_item_id as nvarchar(255))");
+                parts.Add($"{SqlQuerySyntaxHelper.CastToString(dbType, field.TableAlias)}.content_item_id");
             }
             else
             {
@@ -273,13 +289,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     switch (f.ExactType)
                     {
                         case FieldExactTypes.M2MRelation:
-                            parts.Add(string.Format("dbo.qp_link_titles({0}, {2}.content_item_id, {1}, 255)", f.LinkId.Value, f.RelatedAttributeId, field.TableAlias));
+
+                            parts.Add($"{ns}.qp_link_titles({f.LinkId.Value}, {field.TableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, 255)");
                             break;
                         case FieldExactTypes.O2MRelation:
-                           parts.Add($"cast( {f.TableAlias}.[{f.RelatedAttributeName}] as nvarchar(255))");
+                           parts.Add($"{SqlQuerySyntaxHelper.CastToString(dbType, $"{f.TableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.RelatedAttributeName)}")}");
                            break;
                         case FieldExactTypes.M2ORelation:
-                            parts.Add(string.Format("dbo.[qp_m2o_titles](base.content_item_id, {0}, {1}, 255)", f.Id, field.RelatedAttributeId));
+
+                            parts.Add($"{ns}.qp_m2o_titles(base.{contentItemIdField}, {f.Id}, {field.RelatedAttributeId}, 255)");
                             break;
                         default:
                             parts.Add(new[]
@@ -292,8 +310,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                                 FieldExactTypes.Numeric,
                                 FieldExactTypes.Classifier
                             }.Contains(f.ExactType)
-                                ? $"isnull(cast ( {field.TableAlias}.[{f.Name}] as nvarchar(255)), '')"
-                                : $"isnull( {field.TableAlias}.[{f.Name}], '')");
+                                ? $"coalesce({SqlQuerySyntaxHelper.CastToString(dbType, $"{field.TableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name)}")}, '')"
+                                : $"coalesce( {field.TableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name)}, '')");
                             break;
                     }
                 }
