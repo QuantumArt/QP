@@ -144,7 +144,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { new object[] { 1, 2, 3 }, false, false }
                     }
                 },
-                ExpectedValue = "(c.[text] LIKE '%TesT%') AND (c.[date] BETWEEN '20110517 00:00:00' AND '20110518 23:59:59') AND ([dbo].[qp_abs_time_seconds](c.[time]) BETWEEN 39521 AND 82721) AND (c.[number] BETWEEN 0 AND 1) AND (c.[boolean] = 1) AND (c.[o2m] IN (select id from @field))"
+                ExpectedValue = "(c.[text] LIKE '%TesT%') AND (c.[date] BETWEEN '20110517 00:00:00' AND '20110518 23:59:59') AND (dbo.qp_abs_time_seconds(c.[time]) BETWEEN 39521 AND 82721) AND (c.[number] BETWEEN 0 AND 1) AND (c.[boolean] = 1) AND (c.[o2m] IN (select id from @field i))"
             }
         };
 
@@ -1270,7 +1270,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { false, "10:58:41 PM", null, false }
                     }
                 },
-                ExpectedValue = "([dbo].[qp_abs_time_seconds](c.[time]) >= 82721)"
+                ExpectedValue = "(dbo.qp_abs_time_seconds(c.[time]) >= 82721)"
             },
             new FilterParserTestData
             {
@@ -1285,7 +1285,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { false, "10:58:41 PM", "", false }
                     }
                 },
-                ExpectedValue = "([dbo].[qp_abs_time_seconds](c.[time]) >= 82721)"
+                ExpectedValue = "(dbo.qp_abs_time_seconds(c.[time]) >= 82721)"
             },
 
             new FilterParserTestData
@@ -1301,7 +1301,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { false, null, "10:58:41 PM", false }
                     }
                 },
-                ExpectedValue = "([dbo].[qp_abs_time_seconds](c.[time]) <= 82721)"
+                ExpectedValue = "(dbo.qp_abs_time_seconds(c.[time]) <= 82721)"
             },
             new FilterParserTestData
             {
@@ -1316,7 +1316,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { false, "", "10:58:41 PM", false }
                     }
                 },
-                ExpectedValue = "([dbo].[qp_abs_time_seconds](c.[time]) <= 82721)"
+                ExpectedValue = "(dbo.qp_abs_time_seconds(c.[time]) <= 82721)"
             },
             new FilterParserTestData
             {
@@ -1331,7 +1331,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { false, "10:58:41 PM", "10:58:41 PM", false }
                     }
                 },
-                ExpectedValue = "([dbo].[qp_abs_time_seconds](c.[time]) = 82721)"
+                ExpectedValue = "(dbo.qp_abs_time_seconds(c.[time]) = 82721)"
             },
             new FilterParserTestData
             {
@@ -1346,7 +1346,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { false, "10:58:41 AM", "10:58:41 PM", false }
                     }
                 },
-                ExpectedValue = "([dbo].[qp_abs_time_seconds](c.[time]) BETWEEN 39521 AND 82721)"
+                ExpectedValue = "(dbo.qp_abs_time_seconds(c.[time]) BETWEEN 39521 AND 82721)"
             },
             new FilterParserTestData
             {
@@ -1361,7 +1361,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { false, "10:58:41 PM", "10:58:41 AM", false }
                     }
                 },
-                ExpectedValue = "([dbo].[qp_abs_time_seconds](c.[time]) BETWEEN 39521 AND 82721)"
+                ExpectedValue = "(dbo.qp_abs_time_seconds(c.[time]) BETWEEN 39521 AND 82721)"
             },
             new FilterParserTestData
             {
@@ -1406,7 +1406,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { false, "10:58:41 PM", null, true }
                     }
                 },
-                ExpectedValue = "([dbo].[qp_abs_time_seconds](c.[time]) = 82721)"
+                ExpectedValue = "(dbo.qp_abs_time_seconds(c.[time]) = 82721)"
             },
 
             new FilterParserTestData
@@ -1422,7 +1422,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { false, "10:58:41 PM", "10:58:41 AM", true }
                     }
                 },
-                ExpectedValue = "([dbo].[qp_abs_time_seconds](c.[time]) = 82721)"
+                ExpectedValue = "(dbo.qp_abs_time_seconds(c.[time]) = 82721)"
             }
         };
 
@@ -2174,7 +2174,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         QueryParams = new object[] { new object[] { 1, 2, 3 }, false, false }
                     }
                 },
-                ExpectedValue = "(c.[testcolumn] IN (select id from @field))"
+                ExpectedValue = "(c.[testcolumn] IN (select id from @field i))"
             },
 
             new FilterParserTestData

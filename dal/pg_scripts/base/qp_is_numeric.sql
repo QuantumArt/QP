@@ -1,4 +1,4 @@
-create function qp_is_numeric(text) returns boolean
+create or replace function qp_is_numeric(text) returns boolean
     immutable
     strict
     language plpgsql

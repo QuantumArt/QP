@@ -34,7 +34,7 @@ namespace Quantumart.QP8.DAL.Entities
             {
                 builder.ToTable("content_group");
 
-                builder.Property(x => x.Id).HasColumnName("content_group_id");
+                builder.Property(x => x.Id).HasColumnName("content_group_id").ValueGeneratedOnAdd();
 				builder.Property(x => x.SiteId).HasColumnName("site_id");
 				builder.Property(x => x.Name).HasColumnName("name");
 

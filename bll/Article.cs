@@ -1337,7 +1337,7 @@ namespace Quantumart.QP8.BLL
             foreach (var constraint in Content.Constraints)
             {
                 var fieldValuesToTest = constraint.Filter(FieldValues);
-                if (fieldValuesToTest[0].Field.Id != exceptFieldId)
+                if (fieldValuesToTest.Any() && fieldValuesToTest[0].Field.Id != exceptFieldId)
                 {
                     if (!ArticleRepository.ValidateUnique(fieldValuesToTest, out var constraintToDisplay, out var conflictingIds))
                     {
