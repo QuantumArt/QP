@@ -151,7 +151,7 @@ namespace QP8.Integration.Tests
             DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             DictionaryContentId = Global.GetContentId(DbConnector, DictionaryContent);
             BaseContentId = Global.GetContentId(DbConnector, BaseContent);
-            ArticleService = new ArticleApiService(Global.ConnectionString, 1);
+            ArticleService = new ArticleApiService(Global.ConnectionInfo, 1);
             Clear();
 
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
@@ -160,6 +160,8 @@ namespace QP8.Integration.Tests
 
             var service = new XmlDbUpdateNonMvcReplayService(
                 Global.ConnectionString,
+                Global.DbType,
+                null,
                 1,
                 false,
                 dbLogService.Object,
@@ -235,10 +237,10 @@ namespace QP8.Integration.Tests
 
         private static void Clear()
         {
-            var contentService = new ContentApiService(Global.ConnectionString, 1);
+            var contentService = new ContentApiService(Global.ConnectionInfo, 1);
             var baseContentExists = contentService.Exists(BaseContentId);
             var dictionaryContentExists = contentService.Exists(DictionaryContentId);
-            var fieldService = new FieldApiService(Global.ConnectionString, 1);
+            var fieldService = new FieldApiService(Global.ConnectionInfo, 1);
 
             if (dictionaryContentExists)
             {
@@ -339,7 +341,7 @@ namespace QP8.Integration.Tests
             Assert.That(contentData, Is.Not.Null);
             Assert.That(contentData, Has.Length.EqualTo(4), ContentDataIsEmpty);
 
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);
@@ -414,7 +416,7 @@ namespace QP8.Integration.Tests
             Assert.That(DictionaryContentId, Is.EqualTo(articleResult.ContentId));
             Assert.That(articleResult.OriginalArticleId, Is.Not.EqualTo(articleResult.CreatedArticleId));
 
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);
@@ -607,7 +609,7 @@ namespace QP8.Integration.Tests
 
         private static void ClearClassifierField(int articleId)
         {
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
                 var article = ArticleService.Read(articleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);

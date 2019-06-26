@@ -358,6 +358,39 @@ FROM ((user_group ug
 alter table user_group_tree
     owner to postgres;
 
+create or replace view v_user_query_attrs AS
+	select vca.ATTRIBUTE_ID as USER_QUERY_ATTR_ID, ca.ATTRIBUTE_ID BASE_ATTR_ID
+	from user_query_attrs uqa
+	join CONTENT_ATTRIBUTE vca on uqa.virtual_content_id = vca.CONTENT_ID
+	join CONTENT_ATTRIBUTE ca on uqa.user_query_attr_id = ca.ATTRIBUTE_ID
+	where vca.ATTRIBUTE_NAME = ca.ATTRIBUTE_NAME
+
+alter table v_user_query_attrs
+    owner to postgres;
+create or replace view VIRTUAL_ATTR_BASE_ATTR_RELATION AS
+	WITH V2BREL AS
+		(SELECT USER_QUERY_ATTR_ID as VIRTUAL_ATTR_ID
+			  ,BASE_ATTR_ID as BASE_ATTR_ID
+		FROM V_USER_QUERY_ATTRS
+		UNION ALL
+		SELECT virtual_attr_id as VIRTUAL_ATTR_ID
+			  ,union_attr_id as BASE_ATTR_ID
+		FROM union_attrs
+		UNION ALL
+		select ATTRIBUTE_ID as VIRTUAL_ATTR_ID,
+		persistent_attr_id as BASE_ATTR_ID
+		from CONTENT_ATTRIBUTE
+		where persistent_attr_id is not null)
+	select AR.BASE_ATTR_ID, BC.CONTENT_ID BASE_CNT_ID, BC.VIRTUAL_TYPE BASE_CNT_VTYPE,
+	AR.VIRTUAL_ATTR_ID, VC.CONTENT_ID VIRTUAL_CNT_ID, VC.VIRTUAL_TYPE VIRTUAL_CNT_VTYPE
+	from V2BREL AR
+	JOIN CONTENT_ATTRIBUTE BA ON BA.ATTRIBUTE_ID = AR.BASE_ATTR_ID
+	JOIN CONTENT_ATTRIBUTE VA ON VA.ATTRIBUTE_ID = AR.VIRTUAL_ATTR_ID
+	JOIN CONTENT BC ON BA.CONTENT_ID = BC.CONTENT_ID
+	JOIN CONTENT VC ON VA.CONTENT_ID = VC.CONTENT_ID
+
+alter table v_user_query_attrs
+    owner to postgres;
 create or replace view workflow_max_statuses AS
 
 select workflow_id, STATUS_TYPE_ID as max_status_type_id from
@@ -416,32 +449,6 @@ BEGIN
 	return coalesce(agg_ids, ARRAY[]::int[]);
 END;
 $$;
-CREATE OR REPLACE PROCEDURE public.qp_before_content_item_delete(
-	ids integer[])
-LANGUAGE 'plpgsql'
-AS $BODY$
-	DECLARE
-	    version_ids integer[];
-	BEGIN
-	    IF ids IS NOT NULL THEN
-	        version_ids := array_agg(civ.content_item_version_id)
-	            from content_item_version civ where content_item_id = ANY(ids);
-	        call qp_before_content_item_version_delete(version_ids);
-
-            delete from waiting_for_approval where content_item_id = ANY(ids);
-            delete from child_delays where child_id = ANY(ids);
-            delete from content_item_version where content_item_id = ANY(ids);
-            delete from item_to_item_version where linked_item_id = ANY(ids);
-            delete from item_link where item_id = ANY(ids) or linked_item_id = ANY(ids);
-            delete from item_link_async where item_id = ANY(ids) or linked_item_id = ANY(ids);
-            delete from field_article_bind where article_id = ANY(ids);
-            delete from content_data where content_item_id = ANY(ids);
-        END IF;
-	END;
-$BODY$;
-
-ALTER PROCEDURE public.qp_before_content_item_delete(integer[])
-    OWNER TO postgres;
 CREATE OR REPLACE PROCEDURE public.qp_before_content_item_version_delete(
 	version_ids integer[])
 LANGUAGE 'plpgsql'
@@ -542,40 +549,42 @@ AS $BODY$
 	        'coalesce(LAST_MODIFIED_BY::int, 0) as LAST_MODIFIED_BY'
 	    ];
         is_user_query := virtual_type = 3 from content where content_id = cid;
-        attrs := array_agg(ca.* order by attribute_order) from content_attribute ca where content_id = cid ;
-        foreach attr in ARRAY attrs
-	    loop
-	        do_cast := true;
-		    field_template = 'cast(%s as %s) as %s';
-            field := '"' || lower(attr.attribute_name) || '"';
-			if attr.attribute_type_id = 2 and attr.attribute_size = 0 and attr.is_long then
-				type_name := 'bigint';
-			elseif attr.attribute_type_id = 11 or attr.attribute_type_id = 13
-			    or attr.attribute_type_id = 2 and attr.attribute_size = 0 and not attr.is_long then
-				type_name := 'int';
-			elseif attr.attribute_type_id = 2 and attr.attribute_size <> 0 and not attr.is_long then
-				type_name := 'float';
-			elseif attr.attribute_type_id = 2 and attr.attribute_size <> 0 and attr.is_long then
-				type_name := format('decimal(18, %s)', attr.attribute_size);
-			elseif attr.attribute_type_id = 3 then
-				type_name := 'boolean';
-				field_template := 'cast(coalesce(%s::int, 0) as %s) as %s';
-			elseif attr.attribute_type_id = 4 then
-				type_name := 'date';
-			elseif attr.attribute_type_id = 5 then
-				type_name := 'time';
-			elseif attr.attribute_type_id in (9,10) then
-				type_name := 'text';
-		    else
-	            do_cast := false;
-	        end if;
+        attrs := array_agg(ca.* order by attribute_order) from content_attribute ca where content_id = cid;
+	    if attrs is not null THEN
+            foreach attr in ARRAY attrs
+            loop
+                do_cast := true;
+                field_template = 'cast(%s as %s) as %s';
+                field := '"' || lower(attr.attribute_name) || '"';
+                if attr.attribute_type_id = 2 and attr.attribute_size = 0 and attr.is_long then
+                    type_name := 'bigint';
+                elseif attr.attribute_type_id = 11 or attr.attribute_type_id = 13
+                    or attr.attribute_type_id = 2 and attr.attribute_size = 0 and not attr.is_long then
+                    type_name := 'int';
+                elseif attr.attribute_type_id = 2 and attr.attribute_size <> 0 and not attr.is_long then
+                    type_name := 'float';
+                elseif attr.attribute_type_id = 2 and attr.attribute_size <> 0 and attr.is_long then
+                    type_name := format('decimal(18, %s)', attr.attribute_size);
+                elseif attr.attribute_type_id = 3 then
+                    type_name := 'boolean';
+                    field_template := 'cast(coalesce(%s::int, 0) as %s) as %s';
+                elseif attr.attribute_type_id = 4 then
+                    type_name := 'date';
+                elseif attr.attribute_type_id = 5 then
+                    type_name := 'time';
+                elseif attr.attribute_type_id in (9,10) then
+                    type_name := 'text';
+                else
+                    do_cast := false;
+                end if;
 
-	        if do_cast then
-                field := format(field_template, field, type_name, field);
-            end if;
-            fields := array_append(fields, field);
+                if do_cast then
+                    field := format(field_template, field, type_name, field);
+                end if;
+                fields := array_append(fields, field);
+            end loop;
+        end if;
 
-        end loop;
 
         sql := 'create view content_%s_new as select %s from content_%s';
 	    sql := format(sql, cid, array_to_string(fields, ', '), cid);
@@ -1460,6 +1469,103 @@ AS $BODY$
 $BODY$;
 
 ALTER FUNCTION public.qp_authenticate(text, text, boolean, boolean)
+    OWNER TO postgres;
+CREATE OR REPLACE PROCEDURE public.qp_before_content_delete(
+	ids integer[])
+LANGUAGE 'plpgsql'
+AS $BODY$
+	DECLARE
+	    item_ids integer[];
+	    attr_ids integer[];
+	    link_ids integer[];
+	BEGIN
+	    IF ids IS NOT NULL THEN
+
+	        CREATE TEMP TABLE disable_td_delete_item(id numeric);
+
+	        item_ids := array_agg(ci.content_item_id) from content_item ci where content_id = ANY(ids);
+	        call qp_before_content_item_delete(item_ids);
+
+	        delete from content_item where content_id = ANY(ids);
+
+	        DROP TABLE disable_td_delete_item;
+
+	        attr_ids := array_agg(attribute_id) from content_attribute ca where content_id = ANY(ids);
+	        IF attr_ids IS NOT NULL THEN
+                update content_attribute set related_attribute_id = NULL where related_attribute_id = ANY(attr_ids);
+
+                update content_attribute set CLASSIFIER_ATTRIBUTE_ID = NULL, AGGREGATED = false
+                where CLASSIFIER_ATTRIBUTE_ID = ANY(attr_ids);
+
+                delete from content_attribute where BACK_RELATED_ATTRIBUTE_ID = any(attr_ids);
+
+                update content_attribute set TREE_ORDER_FIELD = NULL where TREE_ORDER_FIELD = ANY(attr_ids);
+            END IF;
+
+	        link_ids := array_agg(link_id) from content_to_content cc
+	            where cc.l_content_id = ANY(ids) or cc.r_content_id = ANY(ids);
+
+	        if link_ids IS NOT NULL THEN
+    	        call qp_before_content_to_content_delete(link_ids);
+
+            end if;
+            update content_attribute set link_id = null where link_id = ANY(link_ids);
+
+            delete from content_to_content where l_content_id = ANY(ids) or r_content_id = ANY(ids);
+
+            delete from container where content_id = ANY(ids);
+            delete from content_form where content_id = ANY(ids);
+            delete from user_default_filter where content_id = ANY(ids);
+            delete from content_tab_bind where content_id = ANY(ids);
+            delete from action_content_bind where content_id = ANY(ids);
+
+        END IF;
+	END;
+$BODY$;
+
+ALTER PROCEDURE public.qp_before_content_delete(integer[])
+    OWNER TO postgres;
+CREATE OR REPLACE PROCEDURE public.qp_before_content_item_delete(
+	ids integer[])
+LANGUAGE 'plpgsql'
+AS $BODY$
+	DECLARE
+	    version_ids integer[];
+	BEGIN
+	    IF ids IS NOT NULL THEN
+	        version_ids := array_agg(civ.content_item_version_id)
+	            from content_item_version civ where content_item_id = ANY(ids);
+	        call qp_before_content_item_version_delete(version_ids);
+
+            delete from waiting_for_approval where content_item_id = ANY(ids);
+            delete from child_delays where child_id = ANY(ids);
+            delete from content_item_version where content_item_id = ANY(ids);
+            delete from item_to_item_version where linked_item_id = ANY(ids);
+            delete from item_link where item_id = ANY(ids) or linked_item_id = ANY(ids);
+            delete from item_link_async where item_id = ANY(ids) or linked_item_id = ANY(ids);
+            delete from field_article_bind where article_id = ANY(ids);
+            delete from content_data where content_item_id = ANY(ids);
+        END IF;
+	END;
+$BODY$;
+
+ALTER PROCEDURE public.qp_before_content_item_delete(integer[])
+    OWNER TO postgres;
+CREATE OR REPLACE PROCEDURE public.qp_before_content_to_content_delete(
+	ids integer[])
+LANGUAGE 'plpgsql'
+AS $BODY$
+	DECLARE
+	BEGIN
+	    IF ids IS NOT NULL THEN
+            delete from content_attribute ca where link_id = ANY(ids);
+            delete from item_to_item ii where link_id = ANY(ids);
+            delete from item_link_async ila where link_id = ANY(ids);
+        END IF;
+	END;
+$BODY$;
+
+ALTER PROCEDURE public.qp_before_content_to_content_delete(integer[])
     OWNER TO postgres;
 
 CREATE OR REPLACE PROCEDURE public.qp_content_united_views_recreate()
@@ -2785,6 +2891,20 @@ $BODY$;
 alter procedure qp_update_m2o_final(numeric) owner to postgres;
 
 
+create or replace function process_before_content_delete() returns trigger
+    language plpgsql
+as
+$$
+    DECLARE
+        ids integer[];
+    BEGIN
+        ids := ARRAY[old.CONTENT_ID]::int[];
+        call qp_before_content_delete(ids);
+		RETURN OLD;
+	END;
+$$;
+
+alter function process_before_content_delete() owner to postgres;
 create or replace function process_before_content_item_delete() returns trigger
     language plpgsql
 as
@@ -2814,6 +2934,20 @@ $$;
 
 alter function process_before_content_item_version_delete() owner to postgres;
 
+create or replace function process_before_content_to_content_delete() returns trigger
+    language plpgsql
+as
+$$
+    DECLARE
+        ids integer[];
+    BEGIN
+        ids := ARRAY[old.LINK_ID]::int[];
+        call qp_before_content_to_content_delete(ids);
+		RETURN OLD;
+	END;
+$$;
+
+alter function process_before_content_to_content_delete() owner to postgres;
 -- FUNCTION: public.process_content_data_upsert()
 
 -- DROP FUNCTION public.process_content_data_upsert();
@@ -3344,6 +3478,16 @@ $tiu_update_hash$ LANGUAGE plpgsql;
 alter function update_hash() owner to postgres;
 
 
+create trigger tbd_content
+    before delete
+    on content
+    for each row
+execute procedure process_before_content_delete();
+create trigger tbd_content_to_content
+    before delete
+    on content_to_content
+    for each row
+execute procedure process_before_content_to_content_delete();
 -- auto-generated definition
 create trigger tbd_delete_item
     before delete

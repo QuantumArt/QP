@@ -7119,8 +7119,10 @@ order by ActionDate desc
         public static Dictionary<int, int> GetArticleHierarchy(DbConnection sqlConnection, int contentId, string treeFieldName)
         {
             var result = new Dictionary<int, int>();
-            var parentIdParam = string.IsNullOrEmpty(treeFieldName) ? "cast(0 as numeric)" : "ISNULL([" + treeFieldName + "], 0)";
-            var sql = $"select content_item_id as id, {parentIdParam} as parent_id from content_{contentId}_united with(nolock) where archive = 0";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var name = SqlQuerySyntaxHelper.FieldName(dbType, treeFieldName);
+            var parentIdParam = string.IsNullOrEmpty(treeFieldName) ? "cast(0 as numeric)" : $"coalesce({name}, 0)";
+            var sql = $"select content_item_id as id, {parentIdParam} as parent_id from content_{contentId}_united {WithNoLock(dbType)} where archive = 0";
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;

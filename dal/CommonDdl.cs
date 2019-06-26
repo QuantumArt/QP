@@ -351,14 +351,16 @@ namespace Quantumart.QP8.DAL
         public static void CreateLinkView(DbConnection connection, ContentToContentDAL item)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_build_link_view", item.LinkId.ToString(CultureInfo.InvariantCulture));
+            var spName = dbType == DatabaseType.SqlServer ? "qp_build_link_view" : "qp_link_view_create";
+            var sql = SqlQuerySyntaxHelper.SpCall(dbType, spName , item.LinkId.ToString(CultureInfo.InvariantCulture));
             ExecuteSql(connection, sql);
         }
 
         public static void DropLinkView(DbConnection connection, ContentToContentDAL item)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_drop_link_view", item.LinkId.ToString(CultureInfo.InvariantCulture));
+            var spName = dbType == DatabaseType.SqlServer ? "qp_drop_link_view" : "qp_link_view_drop";
+            var sql = SqlQuerySyntaxHelper.SpCall(dbType, spName, item.LinkId.ToString(CultureInfo.InvariantCulture));
             ExecuteSql(connection, sql);
         }
 
