@@ -5959,9 +5959,9 @@ order by ActionDate desc
                     var result = new Dictionary<int, Dictionary<int, int>>();
                     while (reader.Read())
                     {
-                        var id = (int)(decimal)reader["Id"];
-                        var fieldId = (int)reader["FieldId"];
-                        var extensionId = (int)(decimal)reader["ExtensionId"];
+                        var id = Converter.ToInt32(reader["Id"]);
+                        var fieldId = Converter.ToInt32(reader["FieldId"]);
+                        var extensionId = Converter.ToInt32(reader["ExtensionId"]);
 
                         Dictionary<int, int> articleMap;
                         if (result.ContainsKey(id))
