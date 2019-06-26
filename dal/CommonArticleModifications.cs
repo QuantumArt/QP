@@ -21,16 +21,7 @@ namespace Quantumart.QP8.DAL
             var sql = $"select id, modified from {ns}.qp_persist_article(@xml)";
             using (var cmd = DbCommandFactory.Create(sql, currentDbConnection))
             {
-                cmd.CommandType = CommandType.Text;
-                if (databaseType == DatabaseType.Postgres)
-                {
-                    cmd.Parameters.Add(new NpgsqlParameter("@xml", NpgsqlDbType.Xml) { Value = xml });
-                }
-                else
-                {
-                    cmd.Parameters.Add(new SqlParameter("@xml", SqlDbType.Xml) { Value = xml });
-                }
-
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xml", xml, databaseType));
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
                 id = (int)dt.Rows[0]["id"];
@@ -124,18 +115,9 @@ namespace Quantumart.QP8.DAL
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
-                cmd.CommandType = CommandType.Text;
-
                 var doc = new XDocument(new XElement("guids"));
                 doc.Root?.Add(guids.Select(n => new XElement("guid", n.ToString())));
-                if (databaseType == DatabaseType.Postgres)
-                {
-                    cmd.Parameters.Add(new NpgsqlParameter("@xml", NpgsqlDbType.Xml) { Value = doc.ToString() });
-                }
-                else
-                {
-                    cmd.Parameters.Add(new SqlParameter("@xml", SqlDbType.Xml) { Value = doc.ToString() });
-                }
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xml", doc.ToString(), databaseType));
 
                 var result = new Dictionary<Guid, int>();
                 using (var dr = cmd.ExecuteReader())

@@ -906,8 +906,8 @@ cil.locked_by,
                 return Common.CountDuplicates(
                     QPConnectionScope.Current.DbConnection,
                     constraint.ContentId,
-                    Converter.ToIdCommaList(constraint.Rules.Select(n => n.FieldId).Where(n => n != exceptFieldId)),
-                    Converter.ToIdCommaList(restrictToIds));
+                    constraint.Rules.Select(n => n.FieldId).Where(n => n != exceptFieldId).ToArray(),
+                    restrictToIds);
             }
         }
 
