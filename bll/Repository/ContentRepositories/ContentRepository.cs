@@ -1083,7 +1083,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetAggregatedArticleIdsMap(scope.DbConnection, contentId, articleIds);
+                return Common.GetAggregatedArticleIdsMap(QPContext.EFContext, scope.DbConnection, contentId, articleIds);
             }
         }
     }

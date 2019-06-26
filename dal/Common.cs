@@ -5897,39 +5897,63 @@ order by ActionDate desc
             }
         }
 
-        public static Dictionary<int, Dictionary<int, int>> GetAggregatedArticleIdsMap(DbConnection sqlConnection, int contentId, int[] articleIds)
+        public static Dictionary<int, Dictionary<int, int>> GetAggregatedArticleIdsMap(QPModelDataContext efContext, DbConnection sqlConnection, int contentId, int[] articleIds)
         {
-            const string query = @"
-                DECLARE @query NVARCHAR(MAX)
-                SET @query = ''
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
 
+
+
+
+            // string query = @"
+            //     DECLARE @query NVARCHAR(MAX)
+            //     SET @query = ''
+            //
+            //     SELECT
+            //         @query = @query + '
+            //         SELECT
+            //             ids.Id [Id],' +
+            //             CONVERT(NVARCHAR(10), f.ATTRIBUTE_ID) +' [FieldId],
+            //             a.CONTENT_ITEM_ID [ExtensionId]
+            //         FROM
+            //             @ids ids
+            //             JOIN CONTENT_' + CONVERT(NVARCHAR(10), ef.CONTENT_ID) + ' a ON a.' + ef.ATTRIBUTE_NAME +' = ids.Id
+            //         UNION'
+            //     FROM
+            //         [CONTENT_ATTRIBUTE] f
+            //         JOIN [CONTENT_ATTRIBUTE] ef ON ef.CLASSIFIER_ATTRIBUTE_ID = f.ATTRIBUTE_ID
+            //     WHERE
+            //         f.CONTENT_ID = @contentId
+            //
+            //     IF @query <> ''
+            //     BEGIN
+            //         SET @query = LEFT(@query, LEN(@query) - LEN('UNION'))
+            //         EXEC sp_executesql @query, N'@ids Ids READONLY', @ids
+            //     END";
+
+
+            var fields = efContext
+                .FieldSet
+                .Include(x => x.Aggregators)
+                .ThenInclude(y => y.Classifier)
+                .Where(x => x.Classifier != null && x.Classifier.ContentId == contentId);
+
+            var queryParts = fields.Select(ef => $@"
                 SELECT
-                    @query = @query + '
-                    SELECT
-                        ids.Id [Id],' +
-                        CONVERT(NVARCHAR(10), f.ATTRIBUTE_ID) +' [FieldId],
-                        a.CONTENT_ITEM_ID [ExtensionId]
-                    FROM
-                        @ids ids
-                        JOIN CONTENT_' + CONVERT(NVARCHAR(10), ef.CONTENT_ID) + ' a ON a.' + ef.ATTRIBUTE_NAME +' = ids.Id
-                    UNION'
+                    ids.Id,
+                    {ef.Classifier.Id} {Escape(dbType, "FieldId")},
+                    a.content_item_id {Escape(dbType, "ExtensionId")}
                 FROM
-                    [CONTENT_ATTRIBUTE] f
-                    JOIN [CONTENT_ATTRIBUTE] ef ON ef.CLASSIFIER_ATTRIBUTE_ID = f.ATTRIBUTE_ID
-                WHERE
-                    f.CONTENT_ID = @contentId
+                    {IdList(dbType, "@ids", "ids")}
+                    JOIN content_{ef.ContentId} a ON a.{Escape(dbType, ef.Name)} = ids.Id
+                ").ToList();
+            var query = string.Join(" UNION ", queryParts);
 
-                IF @query <> ''
-                BEGIN
-                    SET @query = LEFT(@query, LEN(@query) - LEN('UNION'))
-                    EXEC sp_executesql @query, N'@ids Ids READONLY', @ids
-                END";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@contentId", contentId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds));
+                // cmd.Parameters.AddWithValue("@contentId", contentId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds, dbType));
                 using (var reader = cmd.ExecuteReader())
                 {
                     var result = new Dictionary<int, Dictionary<int, int>>();
@@ -6632,7 +6656,9 @@ order by ActionDate desc
                 relatedIds.Add(0);
             }
 
-            var query = $"select content_item_id from content_{contentId} c with(nolock) where content_item_id in ({string.Join(",", relatedIds)}) {condition}";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+
+            var query = $"select content_item_id from content_{contentId} c {WithNoLock(dbType)} where content_item_id in ({string.Join(",", relatedIds)}) {condition}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
