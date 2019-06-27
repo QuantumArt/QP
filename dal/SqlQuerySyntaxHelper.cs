@@ -224,6 +224,18 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static DbParameter GetXmlParameter(string paramName, string xml, DatabaseType databaseType = DatabaseType.SqlServer)
+        {
+            if (databaseType == DatabaseType.SqlServer)
+            {
+                return new SqlParameter(paramName, SqlDbType.Xml) { Value = xml };
+            }
+            else
+            {
+                return new NpgsqlParameter(paramName, NpgsqlDbType.Xml) { Value = xml };
+            }
+        }
+
         public static DataTable IdsToDataTable(IEnumerable<int> ids)
         {
             var dt = new DataTable();

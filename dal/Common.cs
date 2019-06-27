@@ -414,14 +414,24 @@ namespace Quantumart.QP8.DAL
 
         }
 
-        public static int CountDuplicates(DbConnection connection, int contentId, string fieldIds, string itemIds)
+        public static int CountDuplicates(DbConnection connection, int contentId, int[] fieldIds, int[] itemIds)
         {
-            using (var cmd = DbCommandFactory.Create("qp_count_duplicates", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = dbType == DatabaseType.SqlServer ? "qp_count_duplicates" : "select qp_count_duplicates(@content_id, @field_ids, @ids);";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
                 cmd.Parameters.AddWithValue("@content_id", contentId);
-                cmd.Parameters.AddWithValue("@field_ids", fieldIds);
-                cmd.Parameters.AddWithValue("@ids", itemIds);
+                if (dbType == DatabaseType.SqlServer)
+                {
+                    cmd.Parameters.AddWithValue("@field_ids", Converter.ToIdCommaList(fieldIds));
+                    cmd.Parameters.AddWithValue("@ids", Converter.ToIdCommaList(itemIds));
+                }
+                else
+                {
+                    cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@field_ids", fieldIds, dbType));
+                    cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", itemIds, dbType));
+                }
                 return (int)cmd.ExecuteScalar();
             }
         }
@@ -10223,287 +10233,6 @@ order by ActionDate desc
             }
         }
 
-        #region BatchUpdate
-
-        #region BatchInsertQuery
-
-        private const string BatchInsertQuery = @"
-            DECLARE @articles TABLE
-            (
-                Id INT PRIMARY KEY IDENTITY(1,1),
-                ContentId INT,
-                ArticleId INT
-                UNIQUE (ContentId, ArticleId)
-            )
-
-            DECLARE @statuses TABLE
-            (
-                ContentId INT PRIMARY KEY,
-                StatusId INT,
-                UNIQUE (StatusId, ContentId)
-            )
-
-            DECLARE @ids TABLE
-            (
-                Id INT PRIMARY KEY IDENTITY(1,1),
-                ArticleId INT
-                UNIQUE (ArticleId)
-            )
-
-            INSERT INTO
-                @articles(ContentId, ArticleId)
-            SELECT DISTINCT
-                ContentId,
-                ArticleId
-            FROM
-                @values
-            EXCEPT
-                SELECT
-                    CONTENT_ID,
-                    CONTENT_ITEM_ID
-                FROM
-                    CONTENT_ITEM
-            ORDER BY
-                ArticleId DESC
-
-            INSERT INTO
-                @statuses(ContentId, StatusId)
-            SELECT
-                a.ContentId,
-                CASE
-                    WHEN
-                        w.WORKFLOW_ID IS NULL
-                    THEN
-                    (
-                        SELECT STATUS_TYPE_ID
-                        FROM STATUS_TYPE t
-                        WHERE t.STATUS_TYPE_NAME = 'Published' AND t.SITE_ID = c.SITE_ID)
-                    ELSE
-                    (
-                        SELECT STATUS_TYPE_ID
-                        FROM STATUS_TYPE t
-                        WHERE t.STATUS_TYPE_NAME = 'None' AND t.SITE_ID = c.SITE_ID
-                    )
-                END StatusId
-            FROM
-                @articles a
-                JOIN CONTENT c ON a.ContentId = c.CONTENT_ID
-                LEFT JOIN CONTENT_WORKFLOW_BIND w ON a.ContentId = w.CONTENT_ID
-            GROUP BY
-                a.ContentId,
-                w.WORKFLOW_ID,
-                c.SITE_ID
-
-            INSERT INTO CONTENT_ITEM
-            (
-                CONTENT_ID,
-                VISIBLE,
-                STATUS_TYPE_ID,
-                LAST_MODIFIED_BY,
-                NOT_FOR_REPLICATION
-            )
-            OUTPUT
-                INSERTED.CONTENT_ITEM_ID INTO @ids(ArticleId)
-            SELECT
-                a.ContentId,
-                @visible,
-                s.StatusId,
-                @userId,
-                1
-            FROM
-                @articles a
-                JOIN @statuses s ON a.ContentId = s.ContentId
-            ORDER BY
-                ArticleId DESC
-
-            SELECT
-                old.ArticleId OriginalArticleId,
-                new.ArticleId CreatedArticleId,
-                old.ContentId
-            FROM
-                @ids new
-                JOIN @articles old ON new.Id = old.Id";
-
-        #endregion
-
-        public static IEnumerable<DataRow> BatchInsert(DbConnection sqlConnection, DataTable articles, bool visible, int userId)
-        {
-            using (var cmd = DbCommandFactory.Create(BatchInsertQuery, sqlConnection))
-            {
-                cmd.Parameters.Add(new SqlParameter("@values", SqlDbType.Structured) { TypeName = "Values", Value = articles });
-                cmd.Parameters.AddWithValue("@visible", visible ? 1 : 0);
-                cmd.Parameters.AddWithValue("@userId", userId);
-
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        #region BatchUpdateQuery
-
-        private const string BatchUpdateQuery = @"
-            UPDATE
-                CONTENT_ITEM
-            SET
-                NOT_FOR_REPLICATION = 1,
-                MODIFIED = GETDATE(),
-                LAST_MODIFIED_BY = @userId
-            WHERE
-                NOT_FOR_REPLICATION = 0 AND
-                CONTENT_ITEM_ID IN (SELECT DISTINCT ArticleId FROM @values)
-
-            INSERT INTO
-                CONTENT_DATA (ATTRIBUTE_ID, CONTENT_ITEM_ID, CREATED, MODIFIED, [DATA], BLOB_DATA, not_for_replication)
-            SELECT
-                v.FieldId ATTRIBUTE_ID,
-                v.ArticleId CONTENT_ITEM_ID,
-                GETDATE() CREATED,
-                GETDATE() MODIFIED,
-                CASE
-                    WHEN t.DATABASE_TYPE != 'NTEXT' AND v.Value != '' THEN v.Value
-                    ELSE NULL
-                END [DATA],
-                CASE
-                    WHEN t.DATABASE_TYPE = 'NTEXT' AND v.Value != '' THEN v.Value
-                    ELSE NULL
-                END [BLOB_DATA],
-                1 not_for_replication
-            FROM
-                CONTENT_DATA d
-                RIGHT JOIN @values v ON v.ArticleId = d.CONTENT_ITEM_ID AND v.FieldId = d.ATTRIBUTE_ID
-                JOIN CONTENT_ATTRIBUTE a ON v.FieldId = a.ATTRIBUTE_ID AND v.ContentId = a.CONTENT_ID
-                JOIN ATTRIBUTE_TYPE t ON a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID
-            WHERE
-                d.ATTRIBUTE_ID IS NULL
-
-            UPDATE
-                CONTENT_DATA
-            SET
-                DATA =
-                CASE
-                    WHEN t.DATABASE_TYPE != 'NTEXT' AND v.Value != '' THEN v.Value
-                    ELSE NULL
-                END,
-                BLOB_DATA =
-                CASE
-                    WHEN t.DATABASE_TYPE = 'NTEXT' AND v.Value != '' THEN v.Value
-                    ELSE NULL
-                END
-            FROM
-                CONTENT_DATA d
-                JOIN @values v ON v.ArticleId = d.CONTENT_ITEM_ID AND v.FieldId = d.ATTRIBUTE_ID
-                JOIN CONTENT_ATTRIBUTE a ON v.FieldId = a.ATTRIBUTE_ID AND v.ContentId = a.CONTENT_ID
-                JOIN ATTRIBUTE_TYPE t ON a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID";
-
-        #endregion
-
-        public static void BatchUpdate(DbConnection sqlConnection, DataTable articles, int userId)
-        {
-            using (var cmd = DbCommandFactory.Create(BatchUpdateQuery, sqlConnection))
-            {
-                cmd.Parameters.Add(new SqlParameter("@values", SqlDbType.Structured) { TypeName = "Values", Value = articles });
-                cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        #region GetRelationsQuery
-
-        private const string GetRelationsQuery = @"
-            SELECT
-                f.ArticleId,
-                a.CONTENT_ID ContentId,
-                a.ATTRIBUTE_ID FieldId,
-                a.ATTRIBUTE_NAME FieldName,
-                f.Value FieldValue,
-                CASE
-                    WHEN otm.CONTENT_ID IS NOT NULL THEN a.CONTENT_ID
-                    WHEN mto.CONTENT_ID IS NOT NULL THEN mto.CONTENT_ID
-                    WHEN mtm.linked_content_id IS NOT NULL THEN mtm.linked_content_id
-                    WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.CONTENT_ID
-                    ELSE NULL
-                END RefContentId,
-                CASE
-                    WHEN otm.CONTENT_ID IS NOT NULL THEN a.ATTRIBUTE_ID
-                    WHEN mto.CONTENT_ID IS NOT NULL THEN mto.ATTRIBUTE_ID
-                    WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.ATTRIBUTE_ID
-                    ELSE NULL
-                END RefFieldId,
-                CASE
-                    WHEN mtm.link_id IS NOT NULL THEN mtm.link_id
-                    ELSE NULL
-                END LinkId
-            FROM
-                @values f
-                JOIN CONTENT_ATTRIBUTE a ON f.FieldId = a.ATTRIBUTE_ID AND f.ContentId = a.CONTENT_ID
-                LEFT JOIN CONTENT_ATTRIBUTE otm ON a.RELATED_ATTRIBUTE_ID = otm.ATTRIBUTE_ID
-                LEFT JOIN CONTENT_ATTRIBUTE mto ON a.BACK_RELATED_ATTRIBUTE_ID = mto.ATTRIBUTE_ID
-                LEFT JOIN CONTENT_LINK mtm ON a.LINK_ID = mtm.LINK_ID AND a.CONTENT_ID = mtm.content_id
-                LEFT JOIN CONTENT_ATTRIBUTE classifier ON a.ATTRIBUTE_ID = classifier.CLASSIFIER_ATTRIBUTE_ID AND CAST(classifier.CONTENT_ID AS NVARCHAR(MAX)) = f.Value
-            WHERE
-                otm.CONTENT_ID IS NOT NULL OR
-                mto.CONTENT_ID IS NOT NULL OR
-                mtm.linked_content_id IS NOT NULL OR
-                classifier.CONTENT_ID IS NOT NULL";
-
-        #endregion
-
-        public static IEnumerable<DataRow> GetRelations(DbConnection sqlConnection, DataTable articles)
-        {
-            using (var cmd = DbCommandFactory.Create(GetRelationsQuery, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@values", SqlDbType.Structured) { TypeName = "Values", Value = articles });
-
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        public static void ReplicateItems(DbConnection sqlConnection, int[] articleIds, int[] fieldIds)
-        {
-            using (var cmd = DbCommandFactory.Create("qp_replicate_items", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", articleIds) });
-                cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", fieldIds) });
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        #endregion
-
-        public static DataTable GetFieldTypes(DbConnection cnn, int[] ids)
-        {
-            const string text = "select attribute_id, BACK_RELATED_ATTRIBUTE_ID, attribute_type_id, link_id, is_classifier, " +
-                "cast(case when isnull(cast(enum_values as nvarchar(max)), '') <> '' then 1 else 0 end as bit) as is_string_enum " +
-                "from content_attribute where attribute_id in (select id from @ids)";
-
-            using (var cmd = DbCommandFactory.Create(text, cnn))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-
-                return dt;
-            }
-        }
-
-        public static DataTable IdsToDataTable(IEnumerable<int> ids)
-        {
-            var dt = new DataTable();
-            dt.Columns.Add("id");
-            foreach (var id in ids ?? Enumerable.Empty<int>())
-            {
-                dt.Rows.Add(id);
-            }
-
-            return dt;
-        }
 
         public static IList<int> GetParentIdsTreeResult(DbConnection cn, IList<int> ids, int fieldId, string fieldName, int? contentId)
         {
